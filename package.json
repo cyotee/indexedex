@@ -1,0 +1,70 @@
+{
+  "name": "indexedex",
+  "version": "0.0.1",
+  "description": "Composed Indexed Liquidity",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "forge test",
+    "compile": "clear && forge compile --sizes",
+    "coverage": "forge coverage",
+    "list": "task-master list",
+    "generate": "task-master generate",
+    "parse-prd": "task-master parse-prd",
+    "update-file-index": "./scripts/generate-file-index.sh",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyotee/indexedex.git"
+  },
+  "keywords": [
+    "defi",
+    "EVM",
+    "Solidity"
+  ],
+  "author": "cyotee doge",
+  "license": "BUSL-1.1",
+  "bugs": {
+    "url": "https://github.com/cyotee/indexedex/issues"
+  },
+  "homepage": "https://github.com/cyotee/indexedex#readme",
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@babel/core": "^7.28.3",
+    "@babel/runtime": "^7.28.3",
+    "@nomicfoundation/hardhat-foundry": "^1.1.3",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "axios": "^1.11.0",
+    "boxen": "^8.0.1",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^11.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "fastmcp": "^1.20.5",
+    "figlet": "^1.8.0",
+    "form-data": "^4.0.4",
+    "fuse.js": "^7.0.0",
+    "gradient-string": "^3.0.0",
+    "hardhat": "^2.23.0",
+    "helmet": "^8.1.0",
+    "husky": "^9.1.7",
+    "inquirer": "^12.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^10.2.0",
+    "openai": "^4.89.0",
+    "ora": "^8.2.0",
+    "task-master-ai": "^0.13.2",
+    "typescript": "^5.9.2"
+  },
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447",
+  "dependencies": {
+    "@opengsn/contracts": "^3.0.0-beta.6",
+    "@wagmi/cli": "^2.4.0"
+  }
+}

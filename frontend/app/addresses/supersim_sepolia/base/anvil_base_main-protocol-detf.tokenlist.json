@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 84532,
+    "address": "0x599aa2Fc58D4D405C11D53D009fA077Dc4B91311",
+    "name": "Protocol DETF CHIR",
+    "symbol": "CHIR",
+    "decimals": 18
+  },
+  {
+    "chainId": 84532,
+    "address": "0x53Dd9770D5214A27CCaE53E3B94E873f983071eE",
+    "name": "Rich Token",
+    "symbol": "RICH",
+    "decimals": 18
+  },
+  {
+    "chainId": 84532,
+    "address": "0x7919eEc59e1BfF7B3813bAcFa5330069ba08704e",
+    "name": "RICHIR",
+    "symbol": "RICHIR",
+    "decimals": 18
+  }
+]

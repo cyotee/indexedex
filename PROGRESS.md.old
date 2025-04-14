@@ -1,0 +1,42 @@
+# Progress - ExchangeOut Route Test Coverage
+
+## Recent Work
+
+### Uniswap V2 Bug Fix
+- **File**: `contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol`
+- **Issue**: `indexSource.pool` was not initialized before calling `_loadIndexSourceReserves` in `exchangeOut`
+- **Fix**: Added early pool initialization at line 364
+- **Test**: Added `UniswapV2StandardExchangeOut_PassThrough.t.sol` with 6 tests verifying preview == execution
+
+### Balancer V3 Router Bug Fix
+- **File**: `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactOutSwapTarget.sol`
+- **Issue**: In Vault Pass-Through route with WETH unwrap, used `params.limit` instead of `estimatedAmountIn` when calling `vault.exchangeOut` with `pretransferred=true`
+- **Fix**: Changed line 231 from `params.limit` to `estimatedAmountIn`
+- **Test**: Added `BalancerV3StandardExchangeRouter_WethUnwrap.t.sol` with 6 tests
+
+### Test Coverage Gaps Identified
+
+#### Aerodrome Standard Exchange
+- **Status**: ✅ No WETH wrapping - different architecture
+- **Routes**: 7 routes implemented in exchangeOut
+- **Test Coverage**: Tests exist but need verification for all routes
+
+#### Balancer V3 Router (All Bugs Fixed)
+| Bug # | Route | File Location | Issue | Status |
+|-------|-------|---------------|-------|--------|
+| 2 | Vault Deposit (WETH wrap) | Line 299 | Uses `params.limit` with `pretransferred=true` | ✅ Fixed |
+| 3 | Vault Withdrawal (WETH unwrap) | Line 343 | Uses `params.limit` with `pretransferred=true` | ✅ Fixed |
+| 4 | Deposit then Swap | Line 475 | Uses `params.limit` via `_exchangeOutFromVault` | ✅ Fixed |
+
+### Files Changed
+- `contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol` - Fixed pool initialization
+- `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactOutSwapTarget.sol` - Fixed 3 WETH bugs
+- `contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol` - Added aeroDaiWethVault for testing
+- `test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchangeOut_PassThrough.t.sol` - New test file
+- `test/foundry/spec/protocol/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_WethUnwrap.t.sol` - New test file
+- `test/foundry/spec/protocol/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_VaultWeth.t.sol` - New test file
+
+### Next Steps
+1. ✅ Fix remaining bugs (2, 3, 4) in Balancer V3 router - DONE
+2. ✅ Added WETH tests for pure swap route
+3. Combined routes WETH tests require vault to have WETH registered - deferred due to infrastructure limitations

@@ -1,0 +1,23 @@
+<svg width="400" height="e00" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#000000" rx="10" ry="10"/>
+  <!-- Logo Here -->
+  <!-- Token ID -->
+  <text x="200" y="50" font-family="Courier New, monospace" font-size="24" font-weight="bold" text-anchor="middle" fill="#00ff00">Token ID: 12345</text>
+
+  <!-- Time until unlock label -->
+  <text x="200" y="90" font-family="Courier New, monospace" font-size="18" text-anchor="middle" fill="#00ff00">Time until Unlock</text>
+
+  <!-- Formatted time -->
+  <text x="200" y="120" font-family="Courier New, monospace" font-size="18" font-weight="bold" text-anchor="middle" fill="#00ff00">30:00:00:00</text>
+
+  <!-- Token 1 -->
+  <rect x="50" y="170" width="150" height="100" fill="none" rx="5" ry="5" stroke="#00ff00" stroke-width="1"/>
+  <text x="125" y="200" font-family="Courier New, monospace" font-size="16" font-weight="bold" text-anchor="middle" fill="#00ff00">ETH</text>
+  <text x="125" y="240" font-family="Courier New, monospace" font-size="14" text-anchor="middle" fill="#00ff00">Amount: 1.5</text>
+
+  <!-- Token 2 -->
+  <rect x="200" y="170" width="150" height="100" fill="none" rx="5" ry="5" stroke="#00ff00" stroke-width="1"/>
+  <text x="275" y="200" font-family="Courier New, monospace" font-size="16" font-weight="bold" text-anchor="middle" fill="#00ff00">USDC</text>
+  <text x="275" y="240" font-family="Courier New, monospace" font-size="14" text-anchor="middle" fill="#00ff00">Amount: 1000</text>
+</svg>

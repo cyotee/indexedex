@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 84532,
+    "address": "0x455D8F396fEa9C5da88C1135A521Ef47275F7D60",
+    "name": "Pachira Vault of (TTA / TTB) via TTA/TTB",
+    "symbol": "abSV",
+    "decimals": 18
+  },
+  {
+    "chainId": 84532,
+    "address": "0xACe374b105541a9A0Afc08e3Db2948a0BF24CDAA",
+    "name": "Pachira Vault of (TTA / TTC) via TTA/TTC",
+    "symbol": "acSV",
+    "decimals": 18
+  },
+  {
+    "chainId": 84532,
+    "address": "0x8c72E1218A5f2c2Ef0b94b0717A1821C19A45dcE",
+    "name": "Pachira Vault of (TTB / TTC) via TTB/TTC",
+    "symbol": "bcSV",
+    "decimals": 18
+  }
+]

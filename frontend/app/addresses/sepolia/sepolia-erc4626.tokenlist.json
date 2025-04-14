@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0xb5CFa72bcEf5D87b2A3d7e959686Bd1aDAdCe26e",
+    "name": " Crane ERC4626 of Test Token A",
+    "symbol": "ttaERC4626Vault",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x57Ea5CAAbA317ab7083370B258f75C780F37feD7",
+    "name": " Crane ERC4626 of Test Token B",
+    "symbol": "ttbERC4626Vault",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x941F0148711530b7824B126B64E707CE1A8111d0",
+    "name": " Crane ERC4626 of Test Token C",
+    "symbol": "ttcERC4626Vault",
+    "decimals": 18
+  }
+]

@@ -1,0 +1,3 @@
+[submodule "lib/daosys"]
+	path = lib/daosys
+	url = https://github.com/cyotee/daosys

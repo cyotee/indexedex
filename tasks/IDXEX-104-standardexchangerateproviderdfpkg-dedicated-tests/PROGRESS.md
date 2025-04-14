@@ -1,0 +1,3 @@
+Last checkpoint: Not started
+
+Next step: Implement tests or code changes for StandardExchangeRateProviderDFPkg dedicated tests.

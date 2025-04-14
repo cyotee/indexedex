@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* Force Tailwind color utilities to read from indirection variables we can swap per theme */
+:root {
+  @theme inline {
+    --color-background: var(--t-background);
+    --color-foreground: var(--t-foreground);
+    --color-gray-900: var(--t-gray-900);
+    --color-gray-800: var(--t-gray-800);
+    --color-gray-700: var(--t-gray-700);
+    --color-gray-600: var(--t-gray-600);
+    --color-gray-500: var(--t-gray-500);
+    --color-gray-400: var(--t-gray-400);
+    --color-gray-300: var(--t-gray-300);
+    --color-slate-700: var(--t-slate-700);
+    --color-slate-600: var(--t-slate-600);
+    --color-blue-600: var(--t-blue-600);
+    --color-yellow-600: var(--t-yellow-600);
+    --color-orange-600: var(--t-orange-600);
+    --color-green-600: var(--t-green-600);
+    --color-green-300: var(--t-green-300);
+    /* Optional named tokens for targeted usage */
+    --color-primary: var(--t-primary);
+    --color-primary-light: var(--t-primary-light);
+    --color-selectedBg: var(--t-selectedBg);
+    --color-textSubtle: var(--t-textSubtle);
+    --color-error: var(--t-error);
+  }
+}
+
+/* Theme: Pachira (previous UI) */
+[data-theme="pachira"] {
+  /* Match Current's black background */
+  --t-background: #0a0a0a;
+  --t-foreground: #EDEDED;
+  /* Make bg-gray-900 black to match Current */
+  --t-gray-900: #0a0a0a;
+  --t-gray-800: #272C39;
+  --t-gray-700: #303544;
+  --t-gray-600: #3C4150;
+  --t-gray-500: #676767;
+  --t-gray-400: #999999;
+  --t-gray-300: #B6BDC8;
+  --t-slate-700: #303544;
+  --t-slate-600: #3C4150;
+  --t-blue-600: #05A0B6;
+  /* Also map lighter blues often used for hover/labels to lime family */
+  --t-blue-500: #22c55e;
+  --t-blue-400: #34d399;
+  --t-blue-300: #86efac;
+  --t-yellow-600: #f3e3ae;
+  --t-orange-600: #FF9900;
+  --t-green-600: #4FD44B;
+  --t-green-300: #E9FAC8;
+  --t-primary: #1C1D21;
+  --t-primary-light: #282929;
+  --t-selectedBg: #1A3721;
+  --t-textSubtle: #E9FAC8;
+  --t-error: #E6386A;
+}
+
+/* Theme: Current (preserve today's look; rely on Tailwind defaults for scales) */
+[data-theme="current"] {
+  --t-background: #0a0a0a;
+  --t-foreground: #ededed;
+  /* Use Tailwind defaults for the rest by matching typical dark defaults */
+  --t-gray-900: #0a0a0a;
+  --t-gray-800: #1f2937;
+  --t-gray-700: #374151;
+  --t-gray-600: #4b5563;
+  --t-gray-500: #6b7280;
+  --t-gray-400: #9ca3af;
+  --t-gray-300: #d1d5db;
+  --t-slate-700: #334155;
+  --t-slate-600: #475569;
+  --t-blue-600: #2563eb;
+  --t-yellow-600: #ca8a04;
+  --t-orange-600: #ea580c;
+  --t-green-600: #16a34a;
+  --t-green-300: #86efac;
+  --t-primary: #0a0a0a;
+  --t-primary-light: #1f2937;
+  --t-selectedBg: #0f172a;
+  --t-textSubtle: #d1d5db;
+  --t-error: #ef4444;
+}
+
+body {
+  background: var(--t-background);
+  color: var(--t-foreground);
+}
+
+/* Animated wavy lines in lower-right for Pachira theme */
+[data-theme="pachira"] body::after {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: min(60vw, 800px);
+  height: min(40vh, 400px);
+  background: url('/images/bg_web.svg') no-repeat right bottom / contain;
+  opacity: 0.55;
+  pointer-events: none;
+  animation: wave-fade 8s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="pachira"] body::after {
+    animation: none;
+    transform: none;
+  }
+}
+
+@keyframes wave-fade {
+  from { opacity: 0.4; transform: translateY(6px); }
+  to { opacity: 0.7; transform: translateY(0); }
+}
+
+/* Panel lime highlighting for Pachira theme (non-invasive selectors) */
+[data-theme="pachira"] .border.border-gray-700,
+[data-theme="pachira"] .border.border-gray-600,
+[data-theme="pachira"] .border.border-slate-700,
+[data-theme="pachira"] .border.border-slate-600 {
+  border-color: rgba(79, 212, 75, 0.6) !important;
+  box-shadow: 0 0 0 1px rgba(79, 212, 75, 0.18) inset, 0 0 14px rgba(79, 212, 75, 0.12);
+}
+
+[data-theme="pachira"] .rounded-lg.bg-gray-800,
+[data-theme="pachira"] .rounded-lg.bg-gray-800\/50,
+[data-theme="pachira"] .rounded-lg.bg-gray-700,
+[data-theme="pachira"] .rounded-lg.bg-slate-700,
+[data-theme="pachira"] .rounded-lg.bg-slate-700\/50,
+[data-theme="pachira"] .rounded-md.bg-gray-800,
+[data-theme="pachira"] .rounded-md.bg-gray-800\/50,
+[data-theme="pachira"] .rounded-md.bg-gray-700,
+[data-theme="pachira"] .rounded-md.bg-slate-700,
+[data-theme="pachira"] .rounded-md.bg-slate-700\/50 {
+  box-shadow: 0 0 0 1px rgba(79, 212, 75, 0.18) inset, 0 0 14px rgba(79, 212, 75, 0.12);
+}
+
+/* Green text tone for Pachira theme */
+[data-theme="pachira"] {
+  --t-foreground: #E9FAC8;
+}
+
+[data-theme="pachira"] .text-white { color: #E9FAC8 !important; }
+[data-theme="pachira"] .text-gray-300 { color: #B6FFC0 !important; }
+[data-theme="pachira"] .text-gray-400 { color: #A6F5B0 !important; }
+[data-theme="pachira"] .text-gray-200 { color: #CCFFD5 !important; }
+[data-theme="pachira"] .text-blue-300 { color: #86efac !important; }
+[data-theme="pachira"] .text-blue-600 { color: #22c55e !important; }

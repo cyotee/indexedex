@@ -1,0 +1,58 @@
+# Plan - ExchangeOut Route Test Coverage
+
+## Goal
+Ensure adequate test coverage for all exchangeOut routes across all Standard Exchange implementations, with a focus on catching WETH wrapping/unwrapping bugs.
+
+## Background
+- The bug in Balancer V3 router (using `params.limit` instead of `estimatedAmountIn` with `pretransferred=true`) was only caught because a user ran a fork test with WETH unwrapping
+- Current test suite has gaps: no tests for WETH wrapping/unwrapping in most routes
+- Similar bugs likely exist in multiple routes
+
+## Test Coverage Requirements
+
+### Per Route, Test These Scenarios:
+1. **Basic functionality** - Happy path works
+2. **Preview == Execution** - `previewExchangeOut` matches `amountIn` returned by `exchangeOut`
+3. **Slippage protection** - Reverts when `maxAmountIn` exceeded
+4. **Deadline enforcement** - Reverts when deadline passed
+5. **pretransferred=true** - Works correctly with pre-transferred tokens
+6. **pretransferred=false** - Works correctly with approvals
+7. **WETH wrapping** - `wethIsEth=true` with tokenIn=WETH
+8. **WETH unwrapping** - `wethIsEth=true` with tokenOut=WETH
+
+## Implementation Plan
+
+### Phase 1: Fix Known Bugs (Priority: Critical)
+- [x] Fix Bug #2: Vault Deposit (WETH wrap) - Line 299
+- [x] Fix Bug #3: Vault Withdrawal (WETH unwrap) - Line 343
+- [x] Fix Bug #4: Deposit then Swap - Line 475
+
+### Phase 2: Add Missing Tests (Priority: High)
+- [x] Pure swap WETH tests - Added in BalancerV3StandardExchangeRouter_WethUnwrap.t.sol
+- [x] Vault WETH tests - Added in BalancerV3StandardExchangeRouter_VaultWeth.t.sol (Deposit, Withdrawal)
+- [x] Combined routes WETH tests - Added in BalancerV3StandardExchangeRouter_CombinedRoutesWeth.t.sol (Deposit then Swap, Swap then Withdrawal)
+- [x] Added aeroDaiWethVault to TestBase_BalancerV3StandardExchangeRouter for testing
+
+#### Uniswap V2
+- [ ] Add Vault Deposit tests (Route 3)
+- [ ] Add Vault Withdrawal tests (Route 5)
+- [ ] Add Pass-through ZapOut tests (Route 6)
+- [ ] Add ZapOut Vault Withdrawal tests (Route 7)
+- [ ] Add WETH wrapping tests (if applicable)
+
+### Phase 3: Verification (Priority: Medium)
+- [ ] Run full test suite
+- [ ] Add fuzz tests for edge cases
+- [ ] Document test coverage matrix
+
+## Files to Modify
+- `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactOutSwapTarget.sol`
+- `test/foundry/spec/protocol/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_VaultDeposit.t.sol`
+- `test/foundry/spec/protocol/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_VaultWithdrawal.t.sol`
+
+## Test Files to Create (if needed)
+- Additional test files for combined routes with WETH
+
+## References
+- Bug pattern: `params.limit` used instead of actual transferred amount when `pretransferred=true`
+- Similar to: BalancerV3StandardExchangeRouterExactOutSwapTarget.sol line 231 (FIXED)

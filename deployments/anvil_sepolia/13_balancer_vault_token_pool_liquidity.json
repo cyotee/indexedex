@@ -1,0 +1,6 @@
+{
+  "initialUnderlying": "10000000000000000000000",
+  "initialVaultShares": "10000000000000000000000",
+  "mintTestTokens": "1000000000000000000000000",
+  "vaultAssetDeposit": "30000000000000000000000"
+}

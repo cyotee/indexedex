@@ -1,0 +1,3 @@
+forge-std/=lib/daosys/lib/crane/lib/forge-std/src/
+
+@crane/=lib/daosys/lib/crane/

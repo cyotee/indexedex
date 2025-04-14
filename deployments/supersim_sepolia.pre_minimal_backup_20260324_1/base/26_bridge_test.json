@@ -1,0 +1,9 @@
+{
+  "localChainId": 84532,
+  "localProtocolDetf": "0xc30A00a344621ED2Ff6B326D66680FCC6Ee3Ed8a",
+  "localRichToken": "0x0B6d92c0F511E6b1C5E6aD0Db091eBc501fd8574",
+  "peerChainId": 11155111,
+  "peerProtocolDetf": "0x2EEE16150D7711FEF128309c8E20655cF1dB96a8",
+  "peerRichToken": "0x0B6d92c0F511E6b1C5E6aD0Db091eBc501fd8574",
+  "testResult": "completed"
+}

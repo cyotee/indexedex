@@ -1,0 +1,48 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "node scripts/next.mjs dev --kill-port 3000",
+    "dev:fresh": "node scripts/next.mjs dev --clean --kill-port 3000",
+    "clean": "rm -rf .next",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "node scripts/typecheck.mjs",
+    "check": "npm run lint && npm run typecheck",
+    "hooks": "npx wagmi generate"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.45.1",
+    "@uniswap/permit2-sdk": "^1.4.0",
+    "next": "14.2.4",
+    "porto": "~0.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tevm": "^1.0.0-next.149",
+    "viem": "^2.43.5",
+    "voltaire": "npm:@tevm/voltaire",
+    "wagmi": "^3.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^20.12.10",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@wagmi/chains": "^1.8.0",
+    "@wagmi/cli": "^2.5.0",
+    "autoprefixer": "^10.4.21",
+    "bufferutil": "^4.0.8",
+    "encoding": "^0.1.13",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.4",
+    "lokijs": "^1.5.12",
+    "pino-pretty": "^10.3.1",
+    "postcss": "^8.5.6",
+    "supports-color": "^9.4.0",
+    "tailwindcss": "^4.1.12",
+    "typescript": "5.4.5",
+    "utf-8-validate": "^5.0.2"
+  }
+}

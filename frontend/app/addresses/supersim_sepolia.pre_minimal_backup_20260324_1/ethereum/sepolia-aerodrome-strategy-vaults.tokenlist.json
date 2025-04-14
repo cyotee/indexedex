@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0x44c12709c72dd4b6120f26A2370acF2BBeA378A2",
+    "name": "Pachira Vault (TTA / TTB) via vAMM-TTA/TTB",
+    "symbol": "aeroAbSV",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xF84b2D2020492155BD5Dc3B2C8a152Bbbb78cd1E",
+    "name": "Pachira Vault (TTA / TTC) via vAMM-TTA/TTC",
+    "symbol": "aeroAcSV",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x47238f5ab96C9C7BCe975bA8fdD27E7BAB0C1EA0",
+    "name": "Pachira Vault (TTB / TTC) via vAMM-TTB/TTC",
+    "symbol": "aeroBcSV",
+    "decimals": 18
+  }
+]

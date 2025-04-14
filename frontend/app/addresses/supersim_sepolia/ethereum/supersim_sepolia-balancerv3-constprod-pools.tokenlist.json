@@ -1,0 +1,30 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0xb945bcb382306C03E26aa6B9ce1CcA5a58E0D444",
+    "name": "BV3ConstProd of (Test Token B / Test Token A)",
+    "symbol": "abBalancerV3ConstProdPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xFDfB7A4713f6448f1E6EFF039c40F8c1F808B86E",
+    "name": "BV3ConstProd of (Test Token C / Test Token A)",
+    "symbol": "acBalancerV3ConstProdPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x4F3C6872906186635a68F6D14Cf999A5C02c5408",
+    "name": "BV3ConstProd of (Test Token B / Test Token C)",
+    "symbol": "bcBalancerV3ConstProdPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x624a5f6E742dF868178dC571Da6D26f5B3693A4d",
+    "name": "BV3ConstProd of (Wrapped Ether / Test Token C)",
+    "symbol": "wethcBalancerV3ConstProdPool",
+    "decimals": 18
+  }
+]

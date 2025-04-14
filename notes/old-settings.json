@@ -1,0 +1,488 @@
+{
+    "[asciidoc]": {
+        "editor.quickSuggestions": {
+        "comments": "off",
+        "other": "off",
+        "strings": "off"
+        },
+        "editor.wordWrap": "on"
+    },
+    "[handlebars]": {
+        "editor.suggest.insertMode": "replace"
+    },
+    "[solidity]": {
+        "editor.defaultFormatter": "rmcmk.forge-format-vsc"
+    },
+    "application.shellEnvironmentResolutionTimeout": 30,
+    "asciidoc.debug.enableErrorDiagnostics": false,
+    "asciidoc.extensions.registerWorkspaceExtensions": true,
+    "asciidoc.preview.markEditorSelection": false,
+    "asciidoc.preview.scrollEditorWithPreview": false,
+    "augment.nextEdit.highlightSuggestionsInTheEditor": true,
+    // "auto-comment-blocks.slashStyleBlocks": [
+    //     "solidity"
+    // ],
+    // "auto-comment-blocks.singleLineBlockOnEnter": false,
+    "better-comments.highlightPlainText": true,
+    "better-comments.multilineComments": true,
+    "better-comments.tags": [
+        {
+            "backgroundColor": "transparent",
+            "color": "#3399ff",
+            "strikethrough": false,
+            "tag": "PROD"
+        },
+        {
+            "backgroundColor": "transparent",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "tag": "!"
+        },
+        {
+            "backgroundColor": "transparent",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "tag": "?"
+        },
+        {
+            "backgroundColor": "transparent",
+            "color": "#474747",
+            "strikethrough": true,
+            "tag": "//"
+        },
+        {
+            "backgroundColor": "transparent",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "tag": "TODO"
+        },
+        {
+            "backgroundColor": "transparent",
+            "color": "#98C379",
+            "strikethrough": false,
+            "tag": "*"
+        }
+    ],
+    "camelk.integrations.runtimeVersion": "1.2.0",
+    "chat.tools.terminal.autoApprove": {
+        "tee": true,
+        "forge compile": true,
+        "forge build": true,
+        "forge --version": true,
+        "forge test": true,
+        "cd": true,
+        "echo": true,
+        "ls": true,
+        "pwd": true,
+        "cat": true,
+        "head": true,
+        "tail": true,
+        "findstr": true,
+        "wc": true,
+        "tr": true,
+        "cut": true,
+        "cmp": true,
+        "which": true,
+        "basename": true,
+        "dirname": true,
+        "realpath": true,
+        "readlink": true,
+        "stat": true,
+        "file": true,
+        "du": true,
+        "df": true,
+        "sleep": true,
+        "grep": true,
+        "git status": true,
+        "git log": true,
+        "git show": true,
+        "git diff": true,
+        "git grep": true,
+        "git branch": true,
+        "/^git branch\\b.*-(d|D|m|M|-delete|-force)\\b/": false,
+        "Get-ChildItem": true,
+        "Get-Content": true,
+        "Get-Date": true,
+        "Get-Random": true,
+        "Get-Location": true,
+        "Write-Host": true,
+        "Write-Output": true,
+        "Split-Path": true,
+        "Join-Path": true,
+        "Start-Sleep": true,
+        "Where-Object": true,
+        "/^Select-[a-z0-9]/i": true,
+        "/^Measure-[a-z0-9]/i": true,
+        "/^Compare-[a-z0-9]/i": true,
+        "/^Format-[a-z0-9]/i": true,
+        "/^Sort-[a-z0-9]/i": true,
+        "column": true,
+        "/^column\\b.*-c\\s+[0-9]{4,}/": false,
+        "date": true,
+        "/^date\\b.*(-s|--set)\\b/": false,
+        "find": true,
+        "/^find\\b.*-(delete|exec|execdir|fprint|fprintf|fls|ok|okdir)\\b/": false,
+        "sort": true,
+        "/^sort\\b.*-(o|S)\\b/": false,
+        "tree": true,
+        "/^tree\\b.*-o\\b/": false,
+        "/\\(.+\\)/s": {
+            "approve": false,
+            "matchCommandLine": true
+        },
+        "/\\{.+\\}/s": {
+            "approve": false,
+            "matchCommandLine": true
+        },
+        "/`.+`/s": {
+            "approve": false,
+            "matchCommandLine": true
+        },
+        "rm": false,
+        "rmdir": false,
+        "del": false,
+        "Remove-Item": false,
+        "ri": false,
+        "rd": false,
+        "erase": false,
+        "dd": false,
+        "kill": false,
+        "ps": false,
+        "top": false,
+        "Stop-Process": false,
+        "spps": false,
+        "taskkill": false,
+        "taskkill.exe": false,
+        "curl": false,
+        "wget": false,
+        "Invoke-RestMethod": false,
+        "Invoke-WebRequest": false,
+        "irm": false,
+        "iwr": false,
+        "chmod": false,
+        "chown": false,
+        "Set-ItemProperty": false,
+        "sp": false,
+        "Set-Acl": false,
+        "jq": false,
+        "xargs": false,
+        "eval": false,
+        "Invoke-Expression": false,
+        "iex": false
+    },
+    "CodeGPT.apiKey": "Grok",
+    "comment-divider.shouldLengthIncludeIndent": true,
+    "commentAnchors.tags.anchors": {
+        "ANCHOR": {
+            "highlightColor": "#A8C023",
+            "iconColor": "default",
+            "scope": "file"
+        },
+        "CONSIDER": {
+            "highlightColor": "#64DD17",
+            "iconColor": "green",
+            "scope": "workspace"
+        },
+        "FIXME": {
+            "highlightColor": "#F44336",
+            "iconColor": "red",
+            "scope": "workspace"
+        },
+        "IMPROVE": {
+            "highlightColor": "#BF00FF",
+            "iconColor": "purple",
+            "scope": "file"
+        },
+        "LINK": {
+            "behavior": "link",
+            "highlightColor": "#2ecc71",
+            "iconColor": "#2ecc71",
+            "scope": "workspace"
+        },
+        "NOTE": {
+            "highlightColor": "#FFB300",
+            "iconColor": "orange",
+            "scope": "file"
+        },
+        "REVIEW": {
+            "highlightColor": "#cccc2e",
+            "iconColor": "yellow",
+            "scope": "workspace"
+        },
+        "SECTION": {
+            "behavior": "region",
+            "highlightColor": "#896afc",
+            "iconColor": "blurple",
+            "scope": "workspace"
+        },
+        "TODO": {
+            "highlightColor": "#3ea8ff",
+            "iconColor": "blue",
+            "scope": "workspace"
+        }
+    },
+    "cSpell.enabledFileTypes": {
+        "json": false
+    },
+    // "cSpell.userWords": [
+    //     "Amts",
+    //     "arbos",
+    //     "balancerv",
+    //     "betterconsole",
+    //     "BITLENGTH",
+    //     "Brechtpd",
+    //     "calldatacopy",
+    //     "calldatasize",
+    //     "chainid",
+    //     "contractlist",
+    //     "cyotee",
+    //     "daosys",
+    //     "Degen",
+    //     "DETF",
+    //     "DETFDFP",
+    //     "DETFNFT",
+    //     "Devos",
+    //     "DFPkg",
+    //     "drpc",
+    //     "flashloan",
+    //     "Funcs",
+    //     "funcsel",
+    //     "funcsig",
+    //     "IERC",
+    //     "ifndef",
+    //     "Indexdex",
+    //     "indexedex",
+    //     "inheritdoc",
+    //     "INITCODE",
+    //     "interfaceid",
+    //     "ipfs",
+    //     "iszero",
+    //     "IWETH",
+    //     "keccak",
+    //     "lockdown",
+    //     "LPWD",
+    //     "maclaurin",
+    //     "Mintable",
+    //     "mises",
+    //     "mixedcase",
+    //     "mload",
+    //     "Mooni",
+    //     "Mooniswap",
+    //     "mstore",
+    //     "Muldiv",
+    //     "mulmod",
+    //     "multicall",
+    //     "noncirculating",
+    //     "OZIERC",
+    //     "Pachira",
+    //     "permissioned",
+    //     "permissionlessly",
+    //     "pkgs",
+    //     "pretransferred",
+    //     "rebuy",
+    //     "recapturable",
+    //     "recip",
+    //     "reclamm",
+    //     "Reentrancy",
+    //     "remappings",
+    //     "returndata",
+    //     "returndatacopy",
+    //     "solady",
+    //     "solhint",
+    //     "srbt",
+    //     "staticcall",
+    //     "toclevels",
+    //     "tokenlist",
+    //     "tokenlists",
+    //     "Trunc",
+    //     "TYPEHASH",
+    //     "unaliased",
+    //     "uqdiv",
+    //     "viem",
+    //     "Virt",
+    //     "wagmi",
+    //     "ZKDAO"
+    // ],
+    "dev.containers.workspaceMountConsistency": "consistent",
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.accessibilitySupport": "off",
+    "editor.copyWithSyntaxHighlighting": false,
+    "editor.detectIndentation": false,
+    "editor.fontSize": 14,
+    "editor.formatOnPaste": true,
+    "editor.guides.bracketPairs": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.inlineSuggest.syntaxHighlightingEnabled": true,
+    "editor.maxTokenizationLineLength": 200000,
+    "editor.minimap.enabled": true,
+    "editor.mouseWheelZoom": true,
+    "editor.renderControlCharacters": false,
+    "editor.renderWhitespace": "none",
+    "editor.suggestSelection": "first",
+    "editor.tokenColorCustomizations": {
+        "comments": "#00ff99"
+    },
+    "editor.wordWrapColumn": 120,
+    "editor.wrappingIndent": "indent",
+    "excalidraw.theme": "auto",
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "extensions.ignoreRecommendations": true,
+    "files.autoSave": "afterDelay",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.factorypath": true,
+        "**/.git": false,
+        "**/.project": true,
+        "**/.settings": true
+    },
+    "files.restoreUndoStack": false,
+    "git-autoconfig.configList": [
+        {},
+        {
+        "user.email": "cyotee@unstoppable.email",
+        "user.name": "cyotee doge"
+        }
+    ],
+    "git.autofetch": true,
+    "git.openRepositoryInParentFolders": "never",
+    "github.username": "cyotee",
+    "github.copilot.chat.localeOverride": "en",
+    "github.copilot.chat.terminalChatLocation": "terminal",
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.chat.agent.thinkingTool": true,
+    "github.copilot.chat.alternateGptPrompt.enabled": true,
+    "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+    "github.copilot.chat.languageContext.typescript.enabled": true,
+    "github.copilot.chat.nesFetcher": "electron-fetch",
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "github.copilot.enable": {
+        "plaintext": true,
+        "markdown": true,
+        "scminput": true
+    },
+    "githubPullRequests.pullBranch": "never",
+    "go.toolsManagement.autoUpdate": true,
+    "hardhat.telemetry": true,
+    "hediet.vscode-drawio.appearance": "dark",
+    "hediet.vscode-drawio.theme": "kennedy",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "keyboard.dispatch": "keyCode",
+    "mocha.requires": [
+        "@nomiclabs/hardhat-etherscan",
+        "@nomiclabs/hardhat-truffle5",
+        "@nomiclabs/hardhat-waffle",
+        "@nomiclabs/hardhat-ethers",
+        "@nomiclabs/hardhat-web3",
+        "@nomiclabs/hardhat-ganache",
+        "@nomiclabs/hardhat-solhint",
+        "@openzeppelin/test-helpers",
+        "hardhat-gas-reporter"
+    ],
+    "mocha.runTestsOnSave": "true",
+    "notebook.output.textLineLimit": 999,
+    "npm.packageManager": "yarn",
+    "plantuml.diagramsRoot": "diagrams",
+    "plantuml.exportFormat": "svg",
+    "projectManager.git.baseFolders": [
+        "/Users/cyotee/Development/github-mimir-solutions"
+    ],
+    "python.venvFolders": [
+        "Library/Application Support/Code/User/globalStorage/ackeeblockchain.tools-for-solidity"
+    ],
+    "redhat.telemetry.enabled": false,
+    "rsp-ui.enableStartServerOnActivation": [
+        {
+        "id": "redhat.vscode-server-connector",
+        "name": "Red Hat Server Connector",
+        "startOnActivation": true
+        }
+    ],
+    "solidity-va.test.defaultUnittestTemplate": "hardhat",
+    "solidity-va.uml.actors.enable": true,
+    "solidity.compileUsingRemoteVersion": "v0.8.30",
+    "solidity.compilerOptimization": 200,
+    // "solidity.formatter": "none",
+    "solidity.packageDefaultDependenciesContractsDirectory": "src",
+    "solidity.packageDefaultDependenciesDirectory": "lib",
+    "solidity.linter": "solhint",
+    "solidity.solhintRules": {
+        "max-line-length": "disable"
+    },
+    "solidity.remappings": [
+        "forge-std/=lib/forge-std/src/",
+        "@openzeppelin/contracts/=dependencies/openzeppelin-contracts/contracts/",
+        "@solady/=dependencies/solady/src/",
+        "permit2/=dependencies/permit2/",
+        "@balancer-labs/v3-interfaces/=dependencies/balancer-v3-monorepo/pkg/interfaces/",
+        "@balancer-labs/v3-vault/=dependencies/balancer-v3-monorepo/pkg/vault/",
+        "@balancer-labs/v3-solidity-utils/=dependencies/balancer-v3-monorepo/pkg/solidity-utils/",
+        "@balancer-labs/v3-pool-utils/=dependencies/balancer-v3-monorepo/pkg/pool-utils/",
+        "@balancer-labs/v3-reclamm/=dependencies/reclamm"
+    ],
+    "svg.preview.mode": "img",
+    "tabnine.experimentalAutoImports": true,
+    "task.autoDetect": "off",
+    "taskExplorer.autoRefresh": false,
+    "taskExplorer.enableAnsiconForAnt": false,
+    "taskExplorer.enableExplorerView": false,
+    "taskExplorer.enabledTasks": {
+        "ant": false,
+        "bash": false,
+        "composer": false,
+        "gradle": false,
+        "grunt": false,
+        "gulp": false,
+        "make": false,
+        "maven": false,
+        "perl": false,
+        "powershell": false,
+        "ruby": false
+    },
+    "terminal.integrated.fontSize": 14,
+    "terminal.integrated.shellIntegration.enabled": true,
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "todo-tree.tree.showScanModeButton": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "vetur.grammar.customBlocks": {
+        "docs": "md",
+        "i18n": "json",
+        "preview-props": "json"
+    },
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "workbench.activityBar.orientation": "vertical",
+    "workbench.colorTheme": "Night Owl Black (No Italics)",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.wrapTabs": true,
+    "workbench.editorAssociations": {
+        "*.blinkmind": "default"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.list.horizontalScrolling": true,
+    "workbench.preferredHighContrastColorTheme": "Tomorrow Night Blue",
+    "workbench.preferredLightColorTheme": "Tomorrow Night Blue",
+    "workbench.startupEditor": "none",
+    "workbench.tree.indent": 4,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.colorCustomizations": {
+        "list.activeSelectionBackground": "#7bff46b2",
+        "list.activeSelectionForeground": "#000000",
+        "list.inactiveSelectionBackground": "#7bff46b2",
+        "list.inactiveSelectionForeground": "#000000",
+        "editor.findMatchForeground": "#000000", // Example: Yellow text for current find match
+        "editor.findMatchBackground": "#00ff00", // Color for the active find match
+        "editor.findMatchHighlightForeground": "#000000", // Example: Orange text for other find matches
+        "editor.findMatchHighlightBackground": "#7bff46b2" // Color for other find matches
+    },
+    "yarn.enableTouchbar": true,
+    "yarn.runInTerminal": false,
+    "chat.agent.maxRequests": 100,
+    "chat.mcp.gallery.enabled": true,
+    "editor.quickSuggestions": {
+        "other": "off"
+    },
+    "cSpell.userWords": [
+        "csize"
+    ],
+
+}

@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@opencode-ai/plugin": "1.1.53"
+  },
+  "devDependencies": {
+    "jsonc-parser": "3.3.1",
+    "zod": "4.3.5",
+    "unique-names-generator": "4.7.1",
+    "node-notifier": "10.0.1",
+    "detect-terminal": "2.0.0"
+  }
+}

@@ -1,0 +1,164 @@
+# Nested Liquidity Pools with Balancer V3 Stable Pools
+
+This document describes a DeFi system integrating an external Constant Product DEX liquidity pool into a Strategy Vault, wrapped in an ERC4626 vault token, and managed by a Balancer V3 SV Conversion Pool, two Constant Product pools, new Strategy Vaults, and two Stable Pools. The diagrams focus on the pools, vaults, and tokens, omitting user interaction and vault management components.
+
+## Explanation
+
+### External Constant Product DEX LP Token
+A Constant Product liquidity pool, as used in DEXes like Uniswap V2 or Camelot, holds a pair of tokens (Token A and Token B) and facilitates trading using the constant product formula (`x * y = k`). The pool issues an LP token, denoted `ConstProd_A_B`, representing a share of the pool’s liquidity.
+
+For example:
+- A Uniswap V2 pool for Token A and Token B issues `ConstProd_A_B`.
+- Liquidity providers deposit Token A and Token B, receiving `ConstProd_A_B`.
+
+### Original Strategy Vault (SV)
+The original Strategy Vault, denoted `SV_A_B`, encapsulates the LP token `ConstProd_A_B` to standardize DEX-specific integration logic (e.g., for Uniswap V2 or Camelot). It treats deposits and withdrawals as swaps.
+
+For example:
+- Depositing Token A mints `SV_A_B` tokens (swap: Token A → SV).
+- Withdrawing burns `SV_A_B` for Token B (swap: SV → Token B).
+
+### ERC4626 Vault Wrapper
+The Strategy Vault is wrapped in an ERC4626 vault token, denoted `4626_SV_A_B`, for compatibility with Balancer V3’s Liquidity Buffers.
+
+### SV Conversion Pool (Custom Balancer V3 Pool)
+The SV Conversion Pool is a custom Balancer V3 pool that:
+- Holds only the ERC4626 vault token (`4626_SV_A_B`).
+- Handles swaps (e.g., Token A ↔ Token B, Token A ↔ SV) and deposits/withdrawals by calling the SV’s logic.
+
+### Dual Constant Product Balancer V3 Pools
+Two Constant Product pools operate within the Balancer V3 framework, each using the `x * y = k` formula:
+- **Pool 1**: Pairs `4626_SV_A_B` with Token A (e.g., `4626_SV_A_B/Token_A`), issuing a Balancer Pool Token (`BPT_Pool_1`).
+- **Pool 2**: Pairs `4626_SV_A_B` with Token B (e.g., `4626_SV_A_B/Token_B`), issuing a Balancer Pool Token (`BPT_Pool_2`).
+A Rate Provider adjusts the valuation of `4626_SV_A_B` using the original SV’s ZapOut valuation.
+
+### New Strategy Vaults (SVs)
+For each Constant Product pool, two new ERC4626-compliant Strategy Vaults are created:
+- For Pool 1:
+  - **SV_A_Pool_1**: Holds `BPT_Pool_1`, values reserves as the ZapOut value of Token A extractable from the pool.
+  - **SV_B_Pool_1**: Holds `BPT_Pool_1`, values reserves as the ZapOut value of Token B extractable from the pool.
+- For Pool 2:
+  - **SV_A_Pool_2**: Holds `BPT_Pool_2`, values reserves as the ZapOut value of Token A extractable from the pool.
+  - **SV_B_Pool_2**: Holds `BPT_Pool_2`, values reserves as the ZapOut value of Token B extractable from the pool.
+
+Each new SV:
+- Processes deposits as a standard ERC4626 vault, minting vault shares for `BPT` deposits.
+- Exposes a Rate Provider interface, valuing its reserves based on the ZapOut value of the pool’s LP token in terms of Token A or Token B.
+- Provides distinct token addresses for use in Balancer.
+
+### Balancer V3 Stable Pools
+Two Stable Pools operate within the Balancer V3 framework, designed for tokens valued as the same underlying asset:
+- **Stable Pool A**: Pairs `SV_A_Pool_1` and `SV_A_Pool_2`, both valued in Token A via their Rate Providers, issuing `BPT_Stable_A`.
+- **Stable Pool B**: Pairs `SV_B_Pool_1` and `SV_B_Pool_2`, both valued in Token B via their Rate Providers, issuing `BPT_Stable_B`.
+Stable Pools are used because the paired SVs’ Rate Providers value them as the same token, enabling stable swap behavior.
+
+### Rate Providers
+- **Original Rate Provider**: Adjusts `4626_SV_A_B` valuation in the Constant Product pools using the original SV’s ZapOut value.
+- **New SV Rate Providers**: Each new SV integrates a Rate Provider, valuing its reserves as the ZapOut value of its `BPT` in terms of Token A or Token B, used in the Stable Pools.
+
+Purpose of the architecture:
+- **Unified Interface**: Simplifies interactions within the Balancer V3 framework.
+- **Scalability**: Supports multiple pools and Strategy Vaults.
+- **Flexibility**: Enables advanced pricing via integrated Rate Providers and stable swaps.
+
+## Diagram
+
+### Primary Diagram (Constant Product Pools, New SVs, and Stable Pools)
+This Mermaid diagram illustrates the Constant Product pools, their new Strategy Vaults, and the Stable Pools, using simplified labels:
+
+```mermaid
+graph TD
+    Pool1[Const_Prod_Pool_1: 4626_SV_A_B/Token_A] --> T1[4626_SV_A_B]
+    Pool1 --> T2[Token_A]
+    Pool1 --> BPT1[BPT_Pool_1]
+    Pool2[Const_Prod_Pool_2: 4626_SV_A_B/Token_B] --> T3[4626_SV_A_B]
+    Pool2 --> T4[Token_B]
+    Pool2 --> BPT2[BPT_Pool_2]
+    StablePoolA[Stable_Pool_A: SV_A_Pool_1/SV_A_Pool_2] --> SV_A1[SV_A_Pool_1: ERC4626_Token_A]
+    StablePoolA --> SV_A2[SV_A_Pool_2: ERC4626_Token_A]
+    StablePoolA --> BPT_SA[BPT_Stable_A]
+    StablePoolB[Stable_Pool_B: SV_B_Pool_1/SV_B_Pool_2] --> SV_B1[SV_B_Pool_1: ERC4626_Token_B]
+    StablePoolB --> SV_B2[SV_B_Pool_2: ERC4626_Token_B]
+    StablePoolB --> BPT_SB[BPT_Stable_B]
+    BPT1 --> SV_A1
+    BPT1 --> SV_B1
+    BPT2 --> SV_A2
+    BPT2 --> SV_B2
+    SV_A1 --> RP_A1[Rate_Provider: ZapOut_Token_A]
+    SV_B1 --> RP_B1[Rate_Provider: ZapOut_Token_B]
+    SV_A2 --> RP_A2[Rate_Provider: ZapOut_Token_A]
+    SV_B2 --> RP_B2[Rate_Provider: ZapOut_Token_B]
+    RateProvider[Rate_Provider: ZapOut_SV_A_B] -->|Adjusts_Valuation| T1
+    RateProvider -->|Adjusts_Valuation| T3
+```
+
+### Diagram Description
+- **Const_Prod_Pool_1**: Holds `4626_SV_A_B` and Token A, issuing `BPT_Pool_1`.
+- **Const_Prod_Pool_2**: Holds `4626_SV_A_B` and Token B, issuing `BPT_Pool_2`.
+- **BPT_Pool_1**: Deposited into `SV_A_Pool_1` (Token A) and `SV_B_Pool_1` (Token B).
+- **BPT_Pool_2**: Deposited into `SV_A_Pool_2` (Token A) and `SV_B_Pool_2` (Token B).
+- **Stable_Pool_A**: Pairs `SV_A_Pool_1` and `SV_A_Pool_2`, valued in Token A, issuing `BPT_Stable_A`.
+- **Stable_Pool_B**: Pairs `SV_B_Pool_1` and `SV_B_Pool_2`, valued in Token B, issuing `BPT_Stable_B`.
+- **Rate_Provider**: Adjusts `4626_SV_A_B` valuation in Constant Product pools.
+- **New SV Rate Providers**: Value SV reserves in Token A or Token B for Stable Pools.
+- Arrows (`-->`) show relationships between pools, tokens, vaults, and Rate Providers.
+
+### Alternative Diagram (Full System)
+This diagram shows the full system, including the SV Conversion Pool, original SV, LP token, Token A/B, new SVs, and Stable Pools, excluding user and vault management:
+
+```mermaid
+graph TD
+    Pool1[SV_Conversion_Pool] --> Vault4626[4626_SV_A_B: ERC4626_Vault]
+    Vault4626 --> SV[SV_A_B: Strategy_Vault]
+    SV --> LP[LP_A_B: ConstProd_A_B]
+    LP --> T5[Token_A]
+    LP --> T6[Token_B]
+    Pool2[Const_Prod_Pool_1: 4626_SV_A_B/Token_A] --> T1[4626_SV_A_B]
+    Pool2 --> T2[Token_A]
+    Pool2 --> BPT1[BPT_Pool_1]
+    Pool3[Const_Prod_Pool_2: 4626_SV_A_B/Token_B] --> T3[4626_SV_A_B]
+    Pool3 --> T4[Token_B]
+    Pool3 --> BPT2[BPT_Pool_2]
+    StablePoolA[Stable_Pool_A: SV_A_Pool_1/SV_A_Pool_2] --> SV_A1[SV_A_Pool_1: ERC4626_Token_A]
+    StablePoolA --> SV_A2[SV_A_Pool_2: ERC4626_Token_A]
+    StablePoolA --> BPT_SA[BPT_Stable_A]
+    StablePoolB[Stable_Pool_B: SV_B_Pool_1/SV_B_Pool_2] --> SV_B1[SV_B_Pool_1: ERC4626_Token_B]
+    StablePoolB --> SV_B2[SV_B_Pool_2: ERC4626_Token_B]
+    StablePoolB --> BPT_SB[BPT_Stable_B]
+    BPT1 --> SV_A1
+    BPT1 --> SV_B1
+    BPT2 --> SV_A2
+    BPT2 --> SV_B2
+    SV_A1 --> RP_A1[Rate_Provider: ZapOut_Token_A]
+    SV_B1 --> RP_B1[Rate_Provider: ZapOut_Token_B]
+    SV_A2 --> RP_A2[Rate_Provider: ZapOut_Token_A]
+    SV_B2 --> RP_B2[Rate_Provider: ZapOut_Token_B]
+    RateProvider[Rate_Provider: ZapOut_SV_A_B] -->|Adjusts_Valuation| T1
+    RateProvider -->|Adjusts_Valuation| T3
+    RateProvider -->|Uses_ZapOut| SV
+```
+
+## Rendering Instructions
+To visualize either diagram:
+1. Copy the Mermaid code (starting with `graph TD`).
+2. Paste it into a Mermaid-compatible tool, such as the [Mermaid Live Editor](https://mermaid.live/).
+3. Use a recent Mermaid version (v10.0.0 or later) for best compatibility.
+4. If rendering fails, check for:
+   - Extra spaces or line breaks in the copied code.
+   - Tool compatibility (e.g., try VS Code with the Mermaid plugin).
+   - Incorrect code block formatting (ensure it starts with ```mermaid and ends with ```).
+
+## Iterative Refinements
+Potential additions include:
+- Clarifying ZapOut valuation for new SVs (e.g., extractable Token A/B amounts).
+- Specifying tokens (e.g., ETH/USDC for Token A/B).
+- Adding a diagram for a swap in a Stable Pool.
+- Detailing Stable Pool mechanics (e.g., how Rate Providers enable stable swaps).
+- Exploring use of `BPT_Stable_A` and `BPT_Stable_B` in other pools or SVs.
+
+## Troubleshooting Rendering Issues
+If rendering issues occur:
+- Share the exact error message from the Mermaid Live Editor or other tool.
+- Verify the tool’s version (e.g., Mermaid Live Editor should be up-to-date).
+- Test the alternative diagram.
+- Try a different renderer (e.g., GitHub, VS Code, or Mermaid CLI).

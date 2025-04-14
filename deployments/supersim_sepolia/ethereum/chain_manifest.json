@@ -1,0 +1,17 @@
+{
+  "chainRole": "ethereum",
+  "chirWethVault": "0xf281CAcEb94d740D63cc44513804B3a3cB4F84E7",
+  "environment": "supersim_sepolia",
+  "frontendDir": "frontend/app/addresses/supersim_sepolia/ethereum",
+  "outDir": "deployments/supersim_sepolia/ethereum",
+  "protocolDetf": "0x2EEE16150D7711FEF128309c8E20655cF1dB96a8",
+  "protocolDetfPkg": "0xd63A63A2734e43c42A58b4cB204C78A05d642DBa",
+  "protocolNFTVaultPkg": "0xE514bf349D611284b25D4597130a345Eb3A4f119",
+  "protocolNftVault": "0xE41B8a19BCC07bbe8F3B0F8E9De3F5cbDC32fa0E",
+  "reservePool": "0xD93197bF46813EbC7DfB4dC18059dc2C443215D6",
+  "richChirVault": "0xd3c0e990655CD28755BEA632Cd2ed22E6644ec7f",
+  "richToken": "0x0B6d92c0F511E6b1C5E6aD0Db091eBc501fd8574",
+  "richTokenPkg": "0xFE10Ad6dcD481d6fC5483276f62D6F24Bd9EEdB6",
+  "richirPkg": "0x16E0D6e9CF29dAEdeeAE2Ee3Cbf9eF5BabcdB24e",
+  "richirToken": "0x035dA3Eb63A382ed858d9A658bB160217ee01006"
+}

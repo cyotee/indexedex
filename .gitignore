@@ -1,0 +1,60 @@
+*.code-workspace
+
+node_modules
+.env
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+
+# Private individual user cursor rules
+.cursor/rules/_*.mdc
+
+# Added by Claude Task Master
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+.DS_Store
+.cursor/mcp.json
+
+broadcast/
+
+# repo-local temp files (do not use system /tmp)
+tmp/
+
+
+.claude/homunculus/
+
+.claude/settings.local.json
+frontend/app/generated.ts
+frontend/yarn.lock
+
+out/
+cache_forge/

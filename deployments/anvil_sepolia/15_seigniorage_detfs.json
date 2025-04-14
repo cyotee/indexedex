@@ -1,0 +1,18 @@
+{
+  "detf_abVault": "0x0dFAAe3cBd601e96846CD0BD3E0800eA9DE27195",
+  "detf_acVault": "0x71CC6EDb4dC1630e0C9839099F41CB8d0dbbf8AA",
+  "detf_aeroAbVault": "0xF27A3867b6A0e21B56737aF7cbc08F5b05feDf21",
+  "detf_aeroAcVault": "0x033278194F110f68aEDe471ED5834ec95415c082",
+  "detf_aeroBcVault": "0x165A4bf9A35B17b16a242366496e96D526C5fC9b",
+  "detf_bcVault": "0xF615cfdE459f50F7E7e465E3e2FC41e2f5D6F660",
+  "erc20MintBurnOwnableFacet": "0x4B9ebd10B54bd454204D29f5b3b32C85b306d96D",
+  "erc721Facet": "0xf8746Bd8a89aa3e0210F3E374bFB5Cca5EA84Fa5",
+  "seigniorageDetfPkg": "0x2E63B9fF7Ef9212b2f124f9f2750F8b653C24A46",
+  "seigniorageExchangeInFacet": "0xf6cA2ccDbABEb4B146fa81349B6BC23cB780464C",
+  "seigniorageExchangeOutFacet": "0x574865a223B879FC45E1254Dac19CEFaCAfab289",
+  "seigniorageNFTVaultFacet": "0x8a14CbeEF357a57e7c1875af1f962AC9b09BDfC0",
+  "seigniorageNFTVaultPkg": "0xB19Ba6c30702faf58d9E1c6958D46e653F6C65cD",
+  "seigniorageTokenPkg": "0xA0F6b3962Fa2d255a8735eEc82E18C3777328624",
+  "seigniorageUnderwritingFacet": "0x0AeAAB2BA91dA9734cc12E00469B4BDb3E3227dF",
+  "weightedPool8020Factory": "0xc5D305E1E9Ef1A68d1D3D0805108dbCbABce99cC"
+}

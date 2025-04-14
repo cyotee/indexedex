@@ -1,0 +1,57 @@
+@startuml IRouter_removeLiquidityCustom
+actor User
+participant Router
+participant Vault
+participant Pool
+participant Hooks
+
+== Initiation ==
+User -> Router: removeLiquidityCustom(pool, maxBptAmountIn, minAmountsOut, wethIsEth, userData)
+note right: User calls Router to remove liquidity with custom logic.\n**Code Citation**: Router.sol#L280-L302
+
+== Vault Unlocking ==
+Router -> Vault: unlock(encoded params)
+note right: Router encodes params and calls Vault.unlock.\n**Code Citation**: Router.sol#L286-L301
+
+== Remove Liquidity Hook ==
+Vault -> Router: removeLiquidityHook(params)
+note right: Vault executes Router's hook.\n**Code Citation**: Router.sol#L292-L327
+
+== Remove Liquidity Logic ==
+Router -> Vault: removeLiquidity(RemoveLiquidityParams with kind=CUSTOM)
+note right: Router calls Vault for custom removal.\n**Code Citation**: Router.sol#L294-L302
+
+alt shouldCallBeforeRemoveLiquidity == true
+    Vault -> Hooks: onBeforeRemoveLiquidity(...)
+    note right: Optional pre-removal hook.\n**Code Citation**: HooksConfigLib.sol#L234-L242
+    Hooks --> Vault: true
+end alt
+
+Vault -> Pool: onRemoveLiquidityCustom(router, maxBptAmountIn, minAmountsOutScaled18, balancesLiveScaled18, userData)
+note right: Pool computes custom amounts.\n**Code Citation**: IPoolLiquidity.sol#L26-L39
+Pool --> Vault: bptAmountIn, amountsOutScaled18, returnData
+
+alt shouldCallAfterRemoveLiquidity == true
+    Vault -> Hooks: onAfterRemoveLiquidity(...)
+    note right: Optional post-removal hook, may adjust amounts.\n**Code Citation**: HooksConfigLib.sol#L244-L252
+    Hooks --> Vault: adjustedAmountsOutRaw
+end alt
+
+Vault --> Router: bptAmountIn, amountsOut, returnData
+
+== Token Transfers ==
+loop for each token
+    alt wethIsEth == true and token == WETH
+        Router -> Vault: unwrap WETH and transfer ETH to user
+        note right: WETH unwrapped to ETH.\n**Code Citation**: Router.sol#L314-L316
+    else
+        Router -> Vault: sendTo(token, user, amountsOut[i])
+        note right: Token sent to user.\n**Code Citation**: Router.sol#L318-L320
+    end alt
+end loop
+
+== Finalization ==
+Router -> User: bptAmountIn, amountsOut, returnData
+note right: Results returned to user.\n**Code Citation**: Router.sol#L302
+
+@enduml

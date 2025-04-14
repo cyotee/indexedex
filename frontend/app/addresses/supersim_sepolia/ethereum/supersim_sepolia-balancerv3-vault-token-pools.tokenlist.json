@@ -1,0 +1,58 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0x09de3a16C73D8Aa85F3f04F0a51Cf046f19dc6eD",
+    "name": "BV3ConstProd of (Pachira Vault of (TTB / TTA) via TTB/TTA / Test Token A)",
+    "symbol": "uniAbVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x50ECEaC73a6EC9f83db5984114C8AD98825Cdb94",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault of (TTB / TTA) via TTB/TTA)",
+    "symbol": "uniAbVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xC5E5ceB1260e77De953e91d60f3b77bF0202e683",
+    "name": "BV3ConstProd of (Pachira Vault of (TTC / TTA) via TTC/TTA / Test Token A)",
+    "symbol": "uniAcVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xFaFda5465E5083C9Dd6F539E4490Ac39Caa4275a",
+    "name": "BV3ConstProd of (Pachira Vault of (TTC / TTA) via TTC/TTA / Test Token C)",
+    "symbol": "uniAcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xCe3c605C71341512aFa0eb7F98c3cA62e1bbcE5D",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault of (TTB / TTC) via TTB/TTC)",
+    "symbol": "uniBcVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x55078771723EB5a812135D52c439c451dAe2D4DE",
+    "name": "BV3ConstProd of (Test Token C / Pachira Vault of (TTB / TTC) via TTB/TTC)",
+    "symbol": "uniBcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x08b811a6621d3E1d206e3dCC3e121b10e5F79618",
+    "name": "BV3ConstProd of (Wrapped Ether / Pachira Vault of (WETH / TTC) via WETH/TTC)",
+    "symbol": "uniWethcVault_weth_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x34C78f562A3993f47B27910F037F0ABC7842a3e0",
+    "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via WETH/TTC / Test Token C)",
+    "symbol": "uniWethcVault_ttc_BalancerPool",
+    "decimals": 18
+  }
+]

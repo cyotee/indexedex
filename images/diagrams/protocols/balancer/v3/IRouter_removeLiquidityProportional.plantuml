@@ -1,0 +1,67 @@
+@startuml IRouter_removeLiquidityProportional
+actor User
+participant Router
+participant Vault
+participant Hooks
+
+== Initiation ==
+User -> Router: removeLiquidityProportional(pool, exactBptAmountIn, minAmountsOut, wethIsEth, userData)
+note right: User calls Router to remove liquidity proportionally.\n**Code Citation**: Router.sol#L216-L233
+
+== Vault Unlocking ==
+Router -> Vault: unlock(encoded params)
+note right: Router encodes RemoveLiquidityHookParams and calls Vault.unlock.\n**Code Citation**: Router.sol#L222-L232\n**Code Citation (Vault)**: Vault.sol#L191-L197
+
+== Remove Liquidity Hook ==
+Vault -> Router: removeLiquidityHook(params)
+note right: Vault executes Router's removeLiquidityHook.\n**Code Citation**: Router.sol#L292-L327
+
+== Remove Liquidity Logic ==
+Router -> Vault: removeLiquidity(RemoveLiquidityParams with kind=PROPORTIONAL)
+note right: Router calls Vault.removeLiquidity for proportional removal.\n**Code Citation**: Router.sol#L294-L302\n**Code Citation (Vault)**: Vault.sol#L1042-L1102
+
+alt shouldCallBeforeRemoveLiquidity == true
+    Vault -> Hooks: onBeforeRemoveLiquidity(sender, pool, maxBptAmountIn, minAmountsOutScaled18, balancesLiveScaled18, userData)
+    note right: Vault calls hook (if enabled) for pre-remove liquidity logic.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L234-L242
+    Hooks --> Vault: true
+    note right: Hook returns true, signaling success.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L239
+end alt
+
+Vault -> Vault: computeProportionalAmountsOut(balancesLiveScaled18, totalSupply, exactBptAmountIn)
+note right: Vault calculates proportional amounts out.\n**Code Citation (Vault)**: Vault.sol#L1053-L1060\n**Code Citation (BasePoolMath)**: BasePoolMath.sol#L78-L94
+
+alt shouldCallAfterRemoveLiquidity == true
+    Vault -> Hooks: onAfterRemoveLiquidity(sender, pool, amountsOutScaled18, amountsOutRaw, bptAmountIn, balancesLiveScaled18, userData)
+    note right: Vault calls hook (if enabled) for post-remove liquidity logic.\nMay adjust amountsOutRaw if enableHookAdjustedAmounts is true.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L244-L252
+    Hooks --> Vault: true
+    note right: Hook returns true, confirming success.\n**Code Citation (Hooks)**: HooksConfigLib.sol#L249
+end alt
+
+Vault --> Router: bptAmountIn, amountsOut, returnData
+
+== Token Transfers ==
+loop for each token in tokens
+    alt wethIsEth == true and token == WETH
+        Router -> Vault: unwrap WETH to ETH
+        note right: If wethIsEth is true and token is WETH, Router unwraps WETH to ETH.\n**Code Citation**: Router.sol#L314-L316
+        Vault -> User: transfer ETH
+        note right: Vault transfers ETH to user.\n**Code Citation (Vault)**: Vault.sol#L199-L212
+    else
+        Router -> Vault: sendTo(token, user, amountsOut[i])
+        note right: Router instructs Vault to send token amounts to user.\n**Code Citation**: Router.sol#L318-L320
+        Vault -> User: transfer token
+        note right: Vault transfers token to user.\n**Code Citation (Vault)**: Vault.sol#L199-L212
+    end alt
+end loop
+
+== Vault Settlement ==
+Vault -> Vault: check _tokenDeltas == 0
+note right: Vault ensures all transient debts are settled.\n**Code Citation (Vault)**: Vault.sol#L167-L189
+Vault --> Router: encoded result
+
+== Router Finalization ==
+Router -> User: amountsOut
+note right: Router returns withdrawn token amounts to user.\n**Code Citation**: Router.sol#L233
+note left: Delivers amountsOut to user, concluding the operation.
+
+@enduml

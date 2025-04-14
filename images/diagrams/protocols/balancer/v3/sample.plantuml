@@ -1,0 +1,79 @@
+@startuml
+actor User
+participant Router
+participant Vault
+participant Pool
+participant ZapHook
+participant CamelotPair
+participant ERC4626Vault
+
+== Initiation ==
+User -> Router: swapSingleTokenExactIn(pool, lpToken, tokenA, 100, minAmountOut, deadline, false, userData)
+note right: User initiates EXACT_IN swap, sending 100 LP to receive Token A (minAmountOut).
+
+== Vault Unlocking ==
+Router -> Vault: unlock(params)
+note right: Router calls unlock, entering transient state, allowing transient debts.
+
+== Before Swap Hook ==
+Vault -> ZapHook: onBeforeSwap(swapParams, pool, vaultSwapParams, swapState)
+note right: Vault calls hook to prepare swap; hook unwraps ERC4626 and settles tokenOut (A).
+ZapHook -> Vault: erc4626BufferWrapOrUnwrap(wrappedToken=erc4626Vault, UNWRAP, EXACT_IN, 100)
+note right: Hook unwraps 100 ERC4626 to 100 LP, taking debt in ERC4626, supplying credit in LP.
+Vault --> ZapHook: lpReceived=100
+ZapHook -> CamelotPair: removeLiquidity(tokenA, tokenB, 100, 0, 0, vault, deadline)
+note right: Hook burns 100 LP to get 50 A and 50 B, directing tokens to Vault.
+CamelotPair --> ZapHook: amountA=50, amountB=50
+ZapHook -> Vault: settle(tokenA, 50)
+note right: Hook settles 50 A to _reservesOf[tokenA] for user transfer.
+ZapHook -> Vault: settle(tokenB, 50)
+note right: Hook settles 50 B to avoid unaccounted tokens.
+ZapHook --> Vault: true
+note right: Hook returns true, signaling successful preparation.
+
+== Core Swap ==
+Vault -> Pool: onSwap(swapParams)
+note right: Vault calls pool to compute swap output; pool returns 0 (hooks adjust amount).
+Pool --> Vault: 0
+Vault -> Vault: update _tokenDeltas(tokenIn=lpToken, amountInRaw=100)
+note right: Vault records debt for 100 LP.
+Vault -> Vault: update _tokenDeltas(tokenOut=tokenA, amountOutRaw=50)
+note right: Vault records credit for 50 A.
+Vault -> Vault: update _poolTokenBalances(pool, tokenIn=lpToken, +100)
+note right: Vault updates pool balance (LP, to be wrapped to ERC4626).
+Vault -> Vault: update _poolTokenBalances(pool, tokenOut=tokenA, -50)
+note right: Vault decreases tokenA balance (typically 0 in pool).
+Vault -> Vault: emit Swap(pool, lpToken, tokenA, 100, 50)
+note right: Vault emits Swap event.
+
+== After Swap Hook ==
+Vault -> ZapHook: onAfterSwap(sender, vaultSwapParams, swapState, ...)
+note right: Vault calls hook to finalize swap and settle tokenIn (LP).
+ZapHook -> Vault: lpToken.balanceOf(vault)
+note right: Hook checks LP balance post-_takeTokenIn (100 LP available).
+Vault --> ZapHook: lpBalance=100
+ZapHook -> Vault: erc4626BufferWrapOrUnwrap(wrappedToken=erc4626Vault, WRAP, EXACT_IN, 100)
+note right: Hook wraps 100 LP to 100 ERC4626 shares, settling pool liquidity.
+Vault --> ZapHook: shares=100
+ZapHook -> Vault: settle(erc4626Vault, 100)
+note right: Hook settles ERC4626 shares to _poolTokenBalances[pool].
+ZapHook --> Vault: newAmountCalculatedRaw=50
+note right: Hook returns adjusted amountOut (50 A).
+
+== Router Settlement ==
+Router -> Vault: _takeTokenIn(sender, lpToken, 100, false)
+note right: Router transfers 100 LP to Vault, updating _reservesOf[lpToken].
+Vault -> Vault: settle(lpToken, 100)
+note right: Vault settles LP, balancing tokenIn debt.
+Router -> Vault: _sendTokenOut(sender, tokenA, 50, false)
+note right: Router sends 50 A to user via vault.sendTo.
+Vault -> User: sendTo(tokenA, user, 50)
+note right: Vault transfers 50 A to user.
+Router --> User: amountOut=50
+note right: Router returns swap result.
+
+== Vault Settlement ==
+Vault -> Vault: check _tokenDeltas == 0
+note right: Vault ensures all transient debts are settled, maintaining ERC4626 invariant.
+
+@enduml

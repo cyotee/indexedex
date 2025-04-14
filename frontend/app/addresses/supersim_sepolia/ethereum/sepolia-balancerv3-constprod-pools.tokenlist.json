@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0x187c3ADC88f511Ebd1fb169603415B941Aa69843",
+    "name": "BV3ConstProd of (Test Token A / Test Token B)",
+    "symbol": "abBalancerV3ConstProdPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xE48b4D38DE6a5fCaf36Ec4A38c9Be6a9F1C38B2B",
+    "name": "BV3ConstProd of (Test Token A / Test Token C)",
+    "symbol": "acBalancerV3ConstProdPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x2863c201ec55B1b1F02a0f5105243de2921D181f",
+    "name": "BV3ConstProd of (Test Token B / Test Token C)",
+    "symbol": "bcBalancerV3ConstProdPool",
+    "decimals": 18
+  }
+]

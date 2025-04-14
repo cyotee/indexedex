@@ -1,0 +1,114 @@
+[
+  {
+    "chainId": 31337,
+    "address": "0x4d1B2A1a3EFD107E3B02199E8260D95319AAd399",
+    "name": "BV3ConstProd of (Test Token A / Pachira Vault of (TTA / TTB) via UNI-V2)",
+    "symbol": "uniAbVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x7a0997217E93A3C0561f2BB325A87cB7dAad55Ad",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault of (TTA / TTB) via UNI-V2)",
+    "symbol": "uniAbVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x81A94784807Bc20759A043f8cd10f99aAa445193",
+    "name": "BV3ConstProd of (Test Token A / Pachira Vault of (TTA / TTC) via UNI-V2)",
+    "symbol": "uniAcVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x9e741872793c8F42A96358320328D713d043884E",
+    "name": "BV3ConstProd of (Pachira Vault of (TTA / TTC) via UNI-V2 / Test Token C)",
+    "symbol": "uniAcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x09d89FBb8c6ACD3518a9373482b9225e026107ef",
+    "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via UNI-V2 / Test Token B)",
+    "symbol": "uniBcVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x4BcC6b75DCaC5C917A38f3039DCb49Acf8dFEee2",
+    "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via UNI-V2 / Test Token C)",
+    "symbol": "uniBcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x6709E6C132e0751C6D2D903018f523d9Be0ce762",
+    "name": "BV3ConstProd of (Test Token A / Pachira Vault (TTA / TTB) via vAMM-TTA/TTB)",
+    "symbol": "aeroAbVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xAdb88dd6B1a0c24c61EC1466939ab2004dFcba86",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault (TTA / TTB) via vAMM-TTA/TTB)",
+    "symbol": "aeroAbVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x01EBF0827E021Fb84634a626050b00aE2024235d",
+    "name": "BV3ConstProd of (Test Token A / Pachira Vault (TTA / TTC) via vAMM-TTA/TTC)",
+    "symbol": "aeroAcVault_ttA_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xa30ad0C0b4B2215E2E2bfba84FEB3988ebc50FBc",
+    "name": "BV3ConstProd of (Pachira Vault (TTA / TTC) via vAMM-TTA/TTC / Test Token C)",
+    "symbol": "aeroAcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xEEF0107A78C1E6461d44065Bf55FA23cCab14eC3",
+    "name": "BV3ConstProd of (Test Token B / Pachira Vault (TTB / TTC) via vAMM-TTB/TTC)",
+    "symbol": "aeroBcVault_ttB_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x60f8AC1f25ED13F10A611BeF46828a826b5C86C4",
+    "name": "BV3ConstProd of (Test Token C / Pachira Vault (TTB / TTC) via vAMM-TTB/TTC)",
+    "symbol": "aeroBcVault_ttC_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0xDeE813C39B37DeD32018456dfaA013a6E993D232",
+    "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via UNI-V2 / Wrapped Ether)",
+    "symbol": "uniWethcVault_weth_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x4392eF8956340F800017A3B7A29b656e9d83680A",
+    "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via UNI-V2 / Test Token C)",
+    "symbol": "uniWethcVault_ttc_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x5c7bc267affc36cE876229c5921e1F964AD78b11",
+    "name": "BV3ConstProd of (Wrapped Ether / Pachira Vault (WETH / TTC) via vAMM-WETH/TTC)",
+    "symbol": "aeroWethcVault_weth_BalancerPool",
+    "decimals": 18
+  },
+  {
+    "chainId": 31337,
+    "address": "0x7eC394c10b02f48aBD0608a466b9d397d8EBE93f",
+    "name": "BV3ConstProd of (Pachira Vault (WETH / TTC) via vAMM-WETH/TTC / Test Token C)",
+    "symbol": "aeroWethcVault_ttc_BalancerPool",
+    "decimals": 18
+  }
+]

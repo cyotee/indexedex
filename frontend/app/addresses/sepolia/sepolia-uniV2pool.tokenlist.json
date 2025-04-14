@@ -1,0 +1,23 @@
+[
+  {
+    "chainId": 11155111,
+    "address": "0x8359E6c5fD32570C488EEF3640249e522Fd4011a",
+    "name": "MockUniV2 Pair of TTA/TTB",
+    "symbol": "abUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0x923261aD5bdD9Fef61c593A87511C1438781a720",
+    "name": "MockUniV2 Pair of TTA/TTC",
+    "symbol": "acUniV2Pool",
+    "decimals": 18
+  },
+  {
+    "chainId": 11155111,
+    "address": "0xB32C02C68f3BF29787AE4088E263873e50593Fc8",
+    "name": "MockUniV2 Pair of TTB/TTC",
+    "symbol": "bcUniV2Pool",
+    "decimals": 18
+  }
+]
