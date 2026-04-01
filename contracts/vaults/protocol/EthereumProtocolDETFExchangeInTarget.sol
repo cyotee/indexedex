@@ -542,12 +542,32 @@ contract EthereumProtocolDETFExchangeInTarget is EthereumProtocolDETFCommon, Ree
 		ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
 	}
 
+	/**
+	 * @notice Executes WETH -> RICHIR conversion via the direct deposit route.
+	 * @dev Atomically: WETH -> CHIR/WETH vault shares -> BPT -> protocol NFT -> mint RICHIR.
+	 *      Unlike `bondWithWeth`, this path does not mint CHIR or create balanced LP.
+	 *      It deposits WETH directly into the CHIR/WETH vault, then routes the resulting
+	 *      vault shares into the reserve pool and mints RICHIR against the protocol NFT.
+	 * @param layout_ Storage layout reference
+	 * @param p_ Exchange parameters
+	 * @return amountOut_ Amount of RICHIR minted
+	 */
 	function _executeWethToRichir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
 		internal
 		returns (uint256 amountOut_)
 	{
 		uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
-		uint256 chirWethShares = _depositWethToChirWethVaultViaBalancedLp(layout_, actualIn, msg.sender, p_.deadline);
+
+		p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
+		uint256 chirWethShares = layout_.chirWethVault.exchangeIn(
+			p_.tokenIn,
+			actualIn,
+			IERC20(address(layout_.chirWethVault)),
+			0,
+			address(this),
+			true,
+			p_.deadline
+		);
 
 		uint256 bptOut = _addToReservePoolForWethToRichir(layout_, chirWethShares, p_.deadline);
 		IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));

@@ -329,6 +329,7 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
         uint256 amountIn = 5_000e18;
         uint256 protocolId = detf.protocolNFTId();
         uint256 posBefore = protocolNFTVault.getPosition(protocolId).originalShares;
+        uint256 chirSupplyBefore = IERC20(address(detf)).totalSupply();
 
         uint256 previewRichir = IStandardExchangeIn(address(detf)).previewExchangeIn(
             IERC20(address(weth9)),
@@ -355,10 +356,13 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
         uint256 actualRichirMinted = _sumTransferMints(logs, address(richir), detfAlice);
         uint256 posAfter = protocolNFTVault.getPosition(protocolId).originalShares;
         uint256 actualBptAddedToProtocolNft = posAfter - posBefore;
+        uint256 chirSupplyAfter = IERC20(address(detf)).totalSupply();
 
         assertEq(actualRichir, actualRichirMinted, "route return should match the minted RICHIR amount");
         assertGt(actualVaultSharesMinted, 0, "execution should mint intermediate vault shares");
         assertGt(actualBptAddedToProtocolNft, 0, "execution should add reserve shares to the protocol NFT");
+        // Unchanged CHIR total supply proves this direct route did not mint CHIR.
+        assertEq(chirSupplyAfter, chirSupplyBefore, "direct WETH to RICHIR should not mint CHIR");
         assertLt(previewRichir, actualRichir, "preview should remain conservative because of the output buffer");
 
         uint256 richirDiff = actualRichir - previewRichir;

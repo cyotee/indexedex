@@ -85,7 +85,7 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
      *      3. CHIR → WETH (redeem when below burn threshold)
      *      4. RICHIR → WETH (redeem RICHIR for WETH)
      *      5. RICH → RICHIR (convert RICH to RICHIR)
-     *      6. WETH → RICHIR (convert WETH to RICHIR)
+    *      6. WETH → RICHIR (direct WETH deposit into the CHIR/WETH vault, then mint RICHIR)
      *      7. WETH → RICH (buy RICH with WETH, multi-hop)
      *      8. RICH → WETH (sell RICH for WETH, multi-hop)
      *      9. BPT → WETH (proportional exit, unwind to WETH)
@@ -401,48 +401,27 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
     /*                      WETH → RICHIR Preview                             */
     /* ---------------------------------------------------------------------- */
 
+    /**
+     * @notice Previews the direct WETH -> RICHIR deposit route.
+     * @dev Models the same direct CHIR/WETH vault deposit used by execution.
+     *      This path does not preview any synthetic CHIR mint because the route
+     *      deposits WETH directly into the CHIR/WETH vault before reserve-pool routing.
+     * @param layout_ Storage layout reference
+     * @param wethIn_ Amount of WETH deposited
+     * @return richirOut_ Expected RICHIR output
+     */
     function _previewWethToRichir(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
         internal
         view
         returns (uint256 richirOut_)
     {
-        if (wethIn_ == 0) {
-            return 0;
-        }
-
-        uint256 vaultShares = _previewBalancedChirWethVaultShares(layout_, wethIn_);
-        ReservePoolBptPreview memory p = _previewReservePoolBptOut(layout_, layout_.chirWethVaultIndex, vaultShares);
-
-        ReservePoolData memory resPoolData;
-        _loadReservePoolData(resPoolData, new uint256[](0));
-
-        BaseProtocolDETFPreviewHelpers.RichirCalc memory calc = BaseProtocolDETFPreviewHelpers.RichirCalc({
-            balV3Vault: address(resPoolData.balV3Vault),
-            reservePool: address(resPoolData.reservePool),
-            reservePoolSwapFee: resPoolData.reservePoolSwapFee,
-            weightsArray: resPoolData.weightsArray,
-            chirWethVault: address(layout_.chirWethVault),
-            richChirVault: address(layout_.richChirVault),
-            chirToken: address(this),
-            wethToken: address(layout_.wethToken),
-            poolBalsRaw: p.balancesRaw,
-            chirIdx: p.chirIdx,
-            richIdx: p.richIdx,
-            vaultIdx: layout_.chirWethVaultIndex,
-            sharesAdded: vaultShares,
-            poolSupply: p.poolSupply,
-            bptAdded: p.bptOut,
-            newPosShares: layout_.protocolNFTVault.getPosition(layout_.protocolNFTId).originalShares + p.bptOut,
-            newTotShares: layout_.richirToken.totalShares() + p.bptOut
-        });
-
-        richirOut_ = BaseProtocolDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
-        richirOut_ = richirOut_ - ((richirOut_ * PREVIEW_RICHIR_BUFFER_BPS) / PREVIEW_BUFFER_DENOMINATOR);
-
-        if (_buildCompoundSim(layout_.chirWethVault).compoundLP == 0) {
-            richirOut_ =
-                richirOut_ - ((richirOut_ * DIRECT_PREVIEW_EXTRA_BUFFER_BPS) / PREVIEW_BUFFER_DENOMINATOR);
-        }
+        richirOut_ = _previewDepositToRichir(
+            layout_,
+            layout_.chirWethVault,
+            layout_.wethToken,
+            wethIn_,
+            layout_.chirWethVaultIndex
+        );
     }
 
     function _previewDepositToRichir(

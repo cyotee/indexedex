@@ -54,7 +54,7 @@ import {TokenInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3
  *      - CHIR → WETH (redeem when synthetic price is above the upper deadband threshold)
  *      - RICHIR → WETH (redeem RICHIR for WETH)
  *      - RICH → RICHIR (bond route via exchangeIn)
- *      - WETH → RICHIR (bond route via exchangeIn)
+ *      - WETH → RICHIR (direct WETH deposit into the CHIR/WETH vault; no CHIR mint)
  *      - WETH → RICH (buy RICH with WETH, multi-hop through CHIR)
  *      - RICH → WETH (sell RICH for WETH, multi-hop through CHIR)
  */
@@ -907,14 +907,15 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     }
 
     /**
-      * @notice Executes WETH → RICHIR conversion via exchangeIn route.
-      * @dev Atomically: WETH → vault shares → BPT → protocol NFT → mint RICHIR.
-      *      This is equivalent to `bondWithWeth` (min lock duration) followed by
-      *      immediate `sellNFT`, but accessible via the IStandardExchangeIn interface.
-      * @param layout_ Storage layout reference
-      * @param p_ Exchange parameters
-      * @return amountOut_ Amount of RICHIR minted
-      */
+     * @notice Executes WETH → RICHIR conversion via the direct deposit route.
+     * @dev Atomically: WETH → CHIR/WETH vault shares → BPT → protocol NFT → mint RICHIR.
+     *      Unlike `bondWithWeth`, this path does not mint CHIR or create balanced LP.
+     *      It deposits WETH directly into the CHIR/WETH vault, then routes the resulting
+     *      vault shares into the reserve pool and mints RICHIR against the protocol NFT.
+     * @param layout_ Storage layout reference
+     * @param p_ Exchange parameters
+     * @return amountOut_ Amount of RICHIR minted
+     */
     function _executeWethToRichir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
@@ -922,7 +923,17 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Secure WETH transfer
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
-        uint256 chirWethShares = _depositWethToChirWethVaultViaBalancedLp(layout_, actualIn, msg.sender, p_.deadline);
+        // Direct route: deposit WETH to the CHIR/WETH vault without minting CHIR.
+        p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
+        uint256 chirWethShares = layout_.chirWethVault.exchangeIn(
+            p_.tokenIn,
+            actualIn,
+            IERC20(address(layout_.chirWethVault)),
+            0,
+            address(this),
+            true,
+            p_.deadline
+        );
 
         // Add LP shares to 80/20 reserve pool (get BPT)
         uint256 bptOut = _addToReservePoolForWethToRichir(layout_, chirWethShares, p_.deadline);
