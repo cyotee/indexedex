@@ -16,7 +16,7 @@
   "dependencies": {
     "@tanstack/react-query": "5.45.1",
     "@uniswap/permit2-sdk": "^1.4.0",
-    "next": "14.2.4",
+    "next": "15.5.15",
     "porto": "~0.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
