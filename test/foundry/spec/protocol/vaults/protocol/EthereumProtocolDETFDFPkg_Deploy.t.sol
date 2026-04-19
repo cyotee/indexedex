@@ -88,6 +88,7 @@ import {
 import {
     EthereumProtocolDETF_Pkg_FactoryService
 } from "contracts/vaults/protocol/EthereumProtocolDETF_Pkg_FactoryService.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
 
 contract EthereumProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
@@ -245,6 +246,7 @@ contract EthereumProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExc
         IFacet protocolDETFExchangeInQueryFacet = create3Factory.deployEthereumProtocolDETFExchangeInQueryFacet();
         IFacet protocolDETFExchangeOutFacet = create3Factory.deployEthereumProtocolDETFExchangeOutFacet();
         IFacet protocolDETFBondingFacet = create3Factory.deployEthereumProtocolDETFBondingFacet();
+        IFacet protocolDETFBridgeFacet = create3Factory.deployEthereumProtocolDETFBridgeFacet();
         IFacet protocolDETFBondingQueryFacet = create3Factory.deployEthereumProtocolDETFBondingQueryFacet();
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
         IFacet richirFacet = create3Factory.deployRICHIRFacet();
@@ -293,6 +295,7 @@ contract EthereumProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExc
                 protocolDETFExchangeInQueryFacet: protocolDETFExchangeInQueryFacet,
                 protocolDETFExchangeOutFacet: protocolDETFExchangeOutFacet,
                 protocolDETFBondingFacet: protocolDETFBondingFacet,
+                protocolDETFBridgeFacet: protocolDETFBridgeFacet,
                 protocolDETFBondingQueryFacet: protocolDETFBondingQueryFacet
             });
 
@@ -315,9 +318,12 @@ contract EthereumProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExc
                 richirPkg: richirPkg,
                 rateProviderPkg: rateProviderPkg
             });
+            ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig;
 
         IEthereumProtocolDETFDFPkg.PkgInit memory detfPkgInit =
-            EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(facets, infra, pkgs);
+            EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(
+                facets, infra, pkgs, bridgeConfig
+            );
 
         vm.startPrank(owner);
         protocolDETFDFPkg = IVaultRegistryDeployment(address(indexedexManager)).deployEthereumProtocolDETFDFPkg(detfPkgInit);

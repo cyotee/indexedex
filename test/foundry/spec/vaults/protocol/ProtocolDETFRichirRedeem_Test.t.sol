@@ -31,8 +31,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -69,8 +69,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -97,8 +97,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -131,8 +131,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -165,8 +165,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
@@ -205,8 +205,8 @@ contract ProtocolDETFRichirRedeem_Test is ProtocolDETFIntegrationBase {
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 

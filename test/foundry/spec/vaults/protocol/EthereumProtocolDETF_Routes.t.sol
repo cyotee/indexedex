@@ -21,6 +21,7 @@ import {ProtocolDETFEthereumCustomFixtureHelpers} from "./ProtocolDETF_CustomFix
 contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureHelpers {
     function test_exchangeIn_weth_to_chir_preview_reverts_when_minting_not_allowed() public {
         uint256 amountIn = 10_000e18;
+        _driveEthereumToBurnEnabled(detf);
         uint256 syntheticPrice = detf.syntheticPrice();
         uint256 mintThreshold = detf.mintThreshold();
 
@@ -30,6 +31,7 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
     function test_route_weth_to_chir_reverts_when_minting_not_allowed() public {
         uint256 amountIn = 10_000e18;
+        _driveEthereumToBurnEnabled(detf);
         uint256 syntheticPrice = detf.syntheticPrice();
         uint256 mintThreshold = detf.mintThreshold();
 
@@ -79,9 +81,10 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
     function test_route_chir_to_weth_when_burning_allowed() public {
         uint256 amountIn = 5_000e18;
+        _driveEthereumToBurnEnabled(detf);
         deal(address(detf), detfAlice, amountIn, true);
 
-        assertTrue(detf.isBurningAllowed(), "default fixture should permit burning");
+        _assertBurnEnabled(detf);
 
         vm.startPrank(detfAlice);
         IERC20(address(detf)).approve(address(detf), amountIn);
@@ -91,6 +94,27 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
         vm.stopPrank();
 
         assertGt(wethOut, 0, "burn route should return WETH");
+    }
+
+    function test_exchangeIn_chir_to_weth_preview_matches_execution_when_burning_allowed() public {
+        uint256 amountIn = 4e18;
+
+        _driveEthereumToBurnEnabled(detf);
+        deal(address(detf), detfAlice, amountIn, true);
+
+        uint256 expectedWeth = IStandardExchangeIn(address(detf)).previewExchangeIn(
+            IERC20(address(detf)), amountIn, IERC20(address(weth9))
+        );
+        assertGt(expectedWeth, 0, "preview should return non-zero");
+
+        vm.startPrank(detfAlice);
+        IERC20(address(detf)).approve(address(detf), amountIn);
+        uint256 wethOut = IStandardExchangeIn(address(detf)).exchangeIn(
+            IERC20(address(detf)), amountIn, IERC20(address(weth9)), 0, detfAlice, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        assertEq(wethOut, expectedWeth, "CHIR->WETH execution output must match preview exactly");
     }
 
     function test_route_chir_to_weth_reverts_when_burning_not_allowed_in_mint_enabled_fixture() public {
@@ -115,6 +139,7 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
     function test_exchangeOut_weth_to_chir_preview_reverts_when_minting_not_allowed() public {
         uint256 exactChirOut = 1_000e18;
+        _driveEthereumToBurnEnabled(detf);
         uint256 syntheticPrice = detf.syntheticPrice();
         uint256 mintThreshold = detf.mintThreshold();
 
@@ -245,6 +270,7 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
     function test_exchangeIn_rich_to_chir_preview_reverts_when_minting_not_allowed() public {
         uint256 amountIn = 5_000e18;
+        _driveEthereumToBurnEnabled(detf);
         uint256 syntheticPrice = detf.syntheticPrice();
         uint256 mintThreshold = detf.mintThreshold();
 
@@ -377,8 +403,8 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
         vm.startPrank(detfAlice);
         rich.approve(address(detf), richBondAmount);
-        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-            richBondAmount, lockDuration, detfAlice, block.timestamp + 1 hours
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
         );
         IBaseProtocolDETFBonding(address(detf)).sellNFT(tokenId, detfAlice);
         vm.stopPrank();

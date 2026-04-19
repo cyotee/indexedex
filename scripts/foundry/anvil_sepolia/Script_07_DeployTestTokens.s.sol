@@ -4,11 +4,14 @@ pragma solidity ^0.8.0;
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
+import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 import {IERC20MintBurnOwnableOperableDFPkg, ERC20MintBurnOwnableOperableDFPkg} from
     "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
 import {ERC20MintBurnOwnableFacet} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol";
@@ -18,6 +21,8 @@ import {ERC20MinterFacadeFacetDFPkg, IERC20MinterFacadeFacetDFPkg} from
 
 contract Script_07_DeployTestTokens is DeploymentBase {
     using BetterEfficientHashLib for bytes;
+
+    uint256 private constant RICH_TOTAL_SUPPLY = 1_000_000_000e18;
 
     ICreate3FactoryProxy private create3Factory;
     IDiamondPackageCallBackFactory private diamondPackageFactory;
@@ -31,6 +36,8 @@ contract Script_07_DeployTestTokens is DeploymentBase {
     IERC20MintBurn private ttA;
     IERC20MintBurn private ttB;
     IERC20MintBurn private ttC;
+    IERC20MintBurn private demoWeth;
+    IERC20 private richToken;
     IERC20MinterFacade private erc20MinterFacade;
 
     function run() external {
@@ -95,10 +102,36 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         bytes32 saltA = keccak256(abi.encodePacked("TestTokenA"));
         bytes32 saltB = keccak256(abi.encodePacked("TestTokenB"));
         bytes32 saltC = keccak256(abi.encodePacked("TestTokenC"));
+        bytes32 saltDemoWeth = keccak256(abi.encodePacked("DemoWETH"));
 
         ttA = IERC20MintBurn(tokenPkg.deployToken("Test Token A", "TTA", 18, owner, saltA));
         ttB = IERC20MintBurn(tokenPkg.deployToken("Test Token B", "TTB", 18, owner, saltB));
         ttC = IERC20MintBurn(tokenPkg.deployToken("Test Token C", "TTC", 18, owner, saltC));
+        demoWeth = IERC20MintBurn(tokenPkg.deployToken("DemoWETH", "DemoWETH", 18, owner, saltDemoWeth));
+
+        IERC20PermitDFPkg.PkgInit memory richPkgInit =
+            IERC20PermitDFPkg.PkgInit({erc20Facet: erc20Facet, erc5267Facet: erc5267Facet, erc2612Facet: erc2612Facet});
+
+        IERC20PermitDFPkg richTokenPkg = IERC20PermitDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(ERC20PermitDFPkg).creationCode,
+                    abi.encode(richPkgInit),
+                    abi.encode(type(ERC20PermitDFPkg).name, "DemoRichToken")._hash()
+                )
+            )
+        );
+
+        IERC20PermitDFPkg.PkgArgs memory richArgs = IERC20PermitDFPkg.PkgArgs({
+            name: "Rich Token",
+            symbol: "RICH",
+            decimals: 18,
+            totalSupply: RICH_TOTAL_SUPPLY,
+            recipient: owner,
+            optionalSalt: keccak256(abi.encodePacked("DemoRichToken"))
+        });
+
+        richToken = IERC20(diamondPackageFactory.deploy(IDiamondFactoryPackage(address(richTokenPkg)), abi.encode(richArgs)));
 
         _deployAndAuthorizeERC20MinterFacade();
     }
@@ -107,17 +140,24 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         (address tokenA, bool hasA) = _readAddressSafe("07_test_tokens.json", "testTokenA");
         (address tokenB, bool hasB) = _readAddressSafe("07_test_tokens.json", "testTokenB");
         (address tokenC, bool hasC) = _readAddressSafe("07_test_tokens.json", "testTokenC");
+        (address demoWethAddr, bool hasDemoWeth) = _readAddressSafe("07_test_tokens.json", "demoWeth");
+        (address richTokenAddr, bool hasRich) = _readAddressSafe("07_test_tokens.json", "richToken");
 
-        if (!hasA || !hasB || !hasC) {
+        if (!hasA || !hasB || !hasC || !hasDemoWeth || !hasRich) {
             return false;
         }
-        if (tokenA.code.length == 0 || tokenB.code.length == 0 || tokenC.code.length == 0) {
+        if (
+            tokenA.code.length == 0 || tokenB.code.length == 0 || tokenC.code.length == 0
+                || demoWethAddr.code.length == 0 || richTokenAddr.code.length == 0
+        ) {
             return false;
         }
 
         ttA = IERC20MintBurn(tokenA);
         ttB = IERC20MintBurn(tokenB);
         ttC = IERC20MintBurn(tokenC);
+        demoWeth = IERC20MintBurn(demoWethAddr);
+        richToken = IERC20(richTokenAddr);
 
         (address facade, bool hasFacade) = _readAddressSafe("07_test_tokens.json", "erc20MinterFacade");
         if (hasFacade && facade.code.length > 0) {
@@ -156,6 +196,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         IOperable(address(ttA)).setOperatorFor(IERC20MintBurn.mint.selector, address(erc20MinterFacade), true);
         IOperable(address(ttB)).setOperatorFor(IERC20MintBurn.mint.selector, address(erc20MinterFacade), true);
         IOperable(address(ttC)).setOperatorFor(IERC20MintBurn.mint.selector, address(erc20MinterFacade), true);
+        IOperable(address(demoWeth)).setOperatorFor(IERC20MintBurn.mint.selector, address(erc20MinterFacade), true);
     }
 
     function _exportJson() internal {
@@ -163,6 +204,8 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         json = vm.serializeAddress("tokens", "testTokenA", address(ttA));
         json = vm.serializeAddress("tokens", "testTokenB", address(ttB));
         json = vm.serializeAddress("tokens", "testTokenC", address(ttC));
+        json = vm.serializeAddress("tokens", "demoWeth", address(demoWeth));
+        json = vm.serializeAddress("tokens", "richToken", address(richToken));
         json = vm.serializeAddress("tokens", "erc20MinterFacade", address(erc20MinterFacade));
         _writeJson(json, "07_test_tokens.json");
     }
@@ -171,6 +214,8 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         _logAddress("Test Token A (TTA):", address(ttA));
         _logAddress("Test Token B (TTB):", address(ttB));
         _logAddress("Test Token C (TTC):", address(ttC));
+        _logAddress("DemoWETH:", address(demoWeth));
+        _logAddress("RICH:", address(richToken));
         _logAddress("ERC20 Minter Facade:", address(erc20MinterFacade));
         _logComplete("Stage 7");
     }

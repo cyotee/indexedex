@@ -14,6 +14,7 @@ import {
 } from "contracts/vaults/protocol/EthereumProtocolDETFExchangeInQueryFacet.sol";
 import {EthereumProtocolDETFExchangeOutFacet} from "contracts/vaults/protocol/EthereumProtocolDETFExchangeOutFacet.sol";
 import {EthereumProtocolDETFBondingFacet} from "contracts/vaults/protocol/EthereumProtocolDETFBondingFacet.sol";
+import {EthereumProtocolDETFBridgeFacet} from "contracts/vaults/protocol/EthereumProtocolDETFBridgeFacet.sol";
 import {
     EthereumProtocolDETFBondingQueryFacet
 } from "contracts/vaults/protocol/EthereumProtocolDETFBondingQueryFacet.sol";
@@ -65,6 +66,17 @@ library EthereumProtocolDETF_Facet_FactoryService {
             abi.encode(type(EthereumProtocolDETFBondingFacet).name)._hash()
         );
         vm.label(address(instance), type(EthereumProtocolDETFBondingFacet).name);
+    }
+
+    function deployEthereumProtocolDETFBridgeFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(EthereumProtocolDETFBridgeFacet).creationCode,
+            abi.encode(type(EthereumProtocolDETFBridgeFacet).name)._hash()
+        );
+        vm.label(address(instance), type(EthereumProtocolDETFBridgeFacet).name);
     }
 
     function deployEthereumProtocolDETFBondingQueryFacet(ICreate3FactoryProxy create3Factory)

@@ -5,13 +5,10 @@ import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
-import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 import {IApprovedMessageSenderRegistry} from "@crane/contracts/interfaces/IApprovedMessageSenderRegistry.sol";
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 
@@ -42,15 +39,6 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
         RemoteConfig memory remoteConfig = _readRemoteConfig(remoteDir);
         ChainBridgeConfig memory chainConfig = _chainBridgeConfig();
 
-        bytes memory initData = _buildBridgeInitData(
-            localConfig.bridgeTokenRegistry,
-            chainConfig.standardBridge,
-            chainConfig.messenger,
-            localConfig.localRelayer,
-            chainConfig.peerChainId,
-            remoteConfig.peerRelayer
-        );
-
         if (privateKey != 0) {
             vm.startBroadcast(privateKey);
         } else {
@@ -70,9 +58,6 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
             BRIDGE_MIN_GAS_LIMIT
         );
         localConfig.approvedRegistry.approveSender(localConfig.protocolDetf, remoteConfig.protocolDetf);
-
-        (bool success,) = localConfig.protocolDetf.call(abi.encodeWithSignature("initBridge(bytes)", initData));
-        require(success, "initBridge failed");
 
         vm.stopBroadcast();
 
@@ -95,8 +80,6 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
     }
 
     struct ChainBridgeConfig {
-        IStandardBridge standardBridge;
-        ICrossDomainMessenger messenger;
         uint256 peerChainId;
     }
 
@@ -123,48 +106,14 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
 
     function _chainBridgeConfig() internal view returns (ChainBridgeConfig memory config) {
         if (block.chainid == ETHEREUM_SEPOLIA.CHAIN_ID) {
-            return ChainBridgeConfig({
-                standardBridge: IStandardBridge(payable(ETHEREUM_SEPOLIA.BASE_L1_STANDARD_BRIDGE)),
-                messenger: ICrossDomainMessenger(ETHEREUM_SEPOLIA.BASE_L1_CROSS_DOMAIN_MESSENGER),
-                peerChainId: BASE_SEPOLIA.CHAIN_ID
-            });
+            return ChainBridgeConfig({peerChainId: BASE_SEPOLIA.CHAIN_ID});
         }
 
         if (block.chainid == BASE_SEPOLIA.CHAIN_ID) {
-            return ChainBridgeConfig({
-                standardBridge: IStandardBridge(payable(BASE_SEPOLIA.L2_STANDARD_BRIDGE)),
-                messenger: ICrossDomainMessenger(BASE_SEPOLIA.L2_CROSSDOMAIN_MESSENGER),
-                peerChainId: ETHEREUM_SEPOLIA.CHAIN_ID
-            });
+            return ChainBridgeConfig({peerChainId: ETHEREUM_SEPOLIA.CHAIN_ID});
         }
 
         revert("Unsupported chain for SuperSim bridge bootstrap");
-    }
-
-    function _buildBridgeInitData(
-        ISuperChainBridgeTokenRegistry registry,
-        IStandardBridge standardBridge,
-        ICrossDomainMessenger messenger,
-        address localRelayer,
-        uint256 peerChainId,
-        address peerRelayer
-    ) internal pure returns (bytes memory initData) {
-        uint256[] memory peerChainIds = new uint256[](1);
-        address[] memory peerRelayers = new address[](1);
-
-        peerChainIds[0] = peerChainId;
-        peerRelayers[0] = peerRelayer;
-
-        initData = abi.encode(
-            ProtocolDETFSuperchainBridgeRepo.InitData({
-                bridgeTokenRegistry: registry,
-                standardBridge: standardBridge,
-                messenger: messenger,
-                localRelayer: localRelayer,
-                peerChainIds: peerChainIds,
-                peerRelayers: peerRelayers
-            })
-        );
     }
 
     function _exportJson(

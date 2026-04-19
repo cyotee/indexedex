@@ -1,6 +1,6 @@
 {
-  "create3Factory": "0xae187b18B5d5a3fdd5f4b5B172aB76972698d0ac",
+  "create3Factory": "0x7eE27939841d68d04875FF8431E92B5089082c93",
   "deployer": "0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7",
-  "diamondPackageFactory": "0xDbB25D63eAa1E454Db13C4033237c46DEE412767",
+  "diamondPackageFactory": "0x8B0e33A6A8A4d4AB7DDB5E8ab37b66cb04bDb957",
   "owner": "0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7"
 }

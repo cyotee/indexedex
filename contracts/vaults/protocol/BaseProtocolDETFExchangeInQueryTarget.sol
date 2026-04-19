@@ -9,6 +9,7 @@ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
+import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
@@ -54,12 +55,7 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
 
     uint256 private constant DIRECT_PREVIEW_EXTRA_BUFFER_BPS = 20;
     uint256 private constant RICHIR_REDEMPTION_PREVIEW_BUFFER_BPS = 1750;
-
-    // Error for unsupported preview routes. If tests exercise a route that
-    // corresponds to a token-specific function (eg. richToRichir/wethToRichir),
-    // implement that route in `previewExchangeIn` instead of relying on a
-    // generic fallback.
-    error PreviewRouteNotSupported();
+    uint256 private constant BASE_CHIR_REDEMPTION_ROUNDING_ADJUSTMENT = 1;
 
     struct ReservePoolBptPreview {
         uint256[] balancesRaw;
@@ -114,7 +110,10 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
                 revert BurningNotAllowed(syntheticPrice, layout.burnThreshold);
             }
 
-            return _previewChirRedemption(layout, amountIn);
+            uint256 bptIn = _previewChirRedemptionBptIn(amountIn);
+            (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
+                _previewChirRedemptionReserveShares(layout, bptIn);
+            return _previewChirRedemptionUnwind(layout, chirWethVaultSharesOut, richChirVaultSharesOut);
         }
 
         /* ------------------------------------------------------------------ */
@@ -154,7 +153,10 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isRichirToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _previewRichirToWeth(layout, amountIn);
+            uint256 bptIn = _previewRichirRedemptionBptIn(layout, amountIn);
+            (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
+                _previewChirRedemptionReserveShares(layout, bptIn);
+            return _previewRichirRedemptionUnwind(layout, chirWethVaultSharesOut, richChirVaultSharesOut);
         }
 
         /* ------------------------------------------------------------------ */
@@ -162,7 +164,15 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isRichirToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return _previewRichirToRich(layout, amountIn);
+            uint256 bptIn = _previewRichirRedemptionBptIn(layout, amountIn);
+            (, uint256 richChirVaultSharesOut) = _previewChirRedemptionReserveShares(layout, bptIn);
+            uint256 amountOut_ = layout.richChirVault.previewExchangeIn(
+                IERC20(address(layout.richChirVault)), richChirVaultSharesOut, layout.richToken
+            );
+            if (amountOut_ > 10) {
+                amountOut_ -= 10;
+            }
+            return amountOut_;
         }
 
         /* ------------------------------------------------------------------ */
@@ -170,8 +180,13 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isRichToken(layout, tokenIn) && _isRichirToken(layout, tokenOut)) {
-            // Preview uses the existing richToRichir preview logic
-            return _previewRichToRichir(layout, amountIn);
+            return _previewDepositToRichir(
+                layout,
+                layout.richChirVault,
+                layout.richToken,
+                amountIn,
+                layout.richChirVaultIndex
+            );
         }
 
         /* ------------------------------------------------------------------ */
@@ -179,8 +194,13 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isWethToken(layout, tokenIn) && _isRichirToken(layout, tokenOut)) {
-            // Preview uses the existing wethToRichir preview logic
-            return _previewWethToRichir(layout, amountIn);
+            return _previewDepositToRichir(
+                layout,
+                layout.chirWethVault,
+                layout.wethToken,
+                amountIn,
+                layout.chirWethVaultIndex
+            );
         }
 
         /* ------------------------------------------------------------------ */
@@ -194,7 +214,13 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
                         || address(tokenIn) == address(ERC4626Repo._reserveAsset())
                 )
         ) {
-            return _previewBptToWeth(layout, amountIn);
+            if (amountIn == 0) {
+                return 0;
+            }
+
+            (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
+                _previewChirRedemptionReserveShares(layout, amountIn);
+            return _previewChirRedemptionUnwind(layout, chirWethVaultSharesOut, richChirVaultSharesOut);
         }
 
         /* ------------------------------------------------------------------ */
@@ -202,7 +228,14 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isWethToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return _previewWethToRich(layout, amountIn);
+            return _previewSwapViaChir(
+                layout,
+                layout.chirWethVault,
+                layout.wethToken,
+                amountIn,
+                layout.richChirVault,
+                layout.richToken
+            );
         }
 
         /* ------------------------------------------------------------------ */
@@ -210,66 +243,22 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         /* ------------------------------------------------------------------ */
 
         if (_isRichToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _previewRichToWeth(layout, amountIn);
+            return _previewSwapViaChir(
+                layout,
+                layout.richChirVault,
+                layout.richToken,
+                amountIn,
+                layout.chirWethVault,
+                layout.wethToken
+            );
         }
 
         revert InvalidToken(tokenIn);
     }
 
-    function _previewBptToWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptAmount)
-        internal
-        view
-        returns (uint256 wethOut)
-    {
-        if (bptAmount == 0) {
-            return 0;
-        }
-
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _previewChirRedemptionReserveShares(layout_, bptAmount);
-        wethOut = _previewChirRedemptionUnwind(layout_, chirWethVaultSharesOut, richChirVaultSharesOut);
-    }
-
     /* ---------------------------------------------------------------------- */
     /*                       Internal Preview Helpers                         */
     /* ---------------------------------------------------------------------- */
-
-    function _previewChirRedemption(BaseProtocolDETFRepo.Storage storage layout_, uint256 amountIn_)
-        internal
-        view
-        returns (uint256 amountOut_)
-    {
-        uint256 bptIn = _previewChirRedemptionBptIn(amountIn_);
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _previewChirRedemptionReserveShares(layout_, bptIn);
-        amountOut_ = _previewChirRedemptionUnwind(layout_, chirWethVaultSharesOut, richChirVaultSharesOut);
-    }
-
-    function _previewRichirToWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 richirAmount_)
-        internal
-        view
-        returns (uint256 amountOut_)
-    {
-        uint256 bptIn = _previewRichirRedemptionBptIn(layout_, richirAmount_);
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _previewChirRedemptionReserveShares(layout_, bptIn);
-        amountOut_ = _previewRichirRedemptionUnwind(layout_, chirWethVaultSharesOut, richChirVaultSharesOut);
-    }
-
-    function _previewRichirToRich(BaseProtocolDETFRepo.Storage storage layout_, uint256 richirAmount_)
-        internal
-        view
-        returns (uint256 amountOut_)
-    {
-        uint256 bptIn = _previewRichirRedemptionBptIn(layout_, richirAmount_);
-        (, uint256 richChirVaultSharesOut) = _previewChirRedemptionReserveShares(layout_, bptIn);
-        amountOut_ = layout_.richChirVault.previewExchangeIn(
-            IERC20(address(layout_.richChirVault)), richChirVaultSharesOut, layout_.richToken
-        );
-        if (amountOut_ > 10) {
-            amountOut_ -= 10;
-        }
-    }
 
     function _previewRichirRedemptionBptIn(BaseProtocolDETFRepo.Storage storage layout_, uint256 richirAmount_)
         internal
@@ -305,15 +294,19 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
     {
         ReservePoolData memory resPoolData;
-        uint256[] memory currentBalancesRaw = _loadReservePoolData(resPoolData, new uint256[](0));
+        (, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
         if (resPoolData.resPoolTotalSupply == 0) {
             revert ZeroAmount();
         }
 
-        chirWethVaultSharesOut_ =
-            (currentBalancesRaw[layout_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
-        richChirVaultSharesOut_ =
-            (currentBalancesRaw[layout_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+        uint256[] memory amountsOut = BalancerV38020WeightedPoolMath.calcProportionalAmountsOutGivenBptIn(
+            currentBalancesRaw,
+            resPoolData.resPoolTotalSupply,
+            bptIn_
+        );
+
+        chirWethVaultSharesOut_ = amountsOut[layout_.chirWethVaultIndex];
+        richChirVaultSharesOut_ = amountsOut[layout_.richChirVaultIndex];
     }
 
     // function _rateOf(TokenInfo memory t_) internal view returns (uint256 rate_) {
@@ -335,9 +328,12 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
             .previewExchangeIn(IERC20(address(layout_.richChirVault)), richChirVaultSharesOut_, IERC20(address(this)));
 
         uint256 wethFromChirSwap =
-            layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), chirFromRichChir, layout_.wethToken);
+            _previewChirSwapAfterChirWethAerodromeUnwind(layout_, chirWethVaultSharesOut_, wethFromChirWeth, chirFromRichChir);
 
         amountOut_ = wethFromChirWeth + wethFromChirSwap;
+        if (amountOut_ > BASE_CHIR_REDEMPTION_ROUNDING_ADJUSTMENT) {
+            amountOut_ -= BASE_CHIR_REDEMPTION_ROUNDING_ADJUSTMENT;
+        }
     }
 
     function _previewRichirRedemptionUnwind(
@@ -377,51 +373,6 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
             richOut_ = (lpOut * reserve1) / totalSupply;
             chirOut_ = (lpOut * reserve0) / totalSupply;
         }
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                      RICH → RICHIR Preview                            */
-    /* ---------------------------------------------------------------------- */
-
-    function _previewRichToRichir(BaseProtocolDETFRepo.Storage storage layout_, uint256 richIn_)
-        internal
-        view
-        returns (uint256 richirOut_)
-    {
-        richirOut_ = _previewDepositToRichir(
-            layout_,
-            layout_.richChirVault,
-            layout_.richToken,
-            richIn_,
-            layout_.richChirVaultIndex
-        );
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                      WETH → RICHIR Preview                             */
-    /* ---------------------------------------------------------------------- */
-
-    /**
-     * @notice Previews the direct WETH -> RICHIR deposit route.
-     * @dev Models the same direct CHIR/WETH vault deposit used by execution.
-     *      This path does not preview any synthetic CHIR mint because the route
-     *      deposits WETH directly into the CHIR/WETH vault before reserve-pool routing.
-     * @param layout_ Storage layout reference
-     * @param wethIn_ Amount of WETH deposited
-     * @return richirOut_ Expected RICHIR output
-     */
-    function _previewWethToRichir(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
-        internal
-        view
-        returns (uint256 richirOut_)
-    {
-        richirOut_ = _previewDepositToRichir(
-            layout_,
-            layout_.chirWethVault,
-            layout_.wethToken,
-            wethIn_,
-            layout_.chirWethVaultIndex
-        );
     }
 
     function _previewDepositToRichir(
@@ -517,44 +468,6 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
         p_.richIdx = resPoolData.richChirVaultIndex;
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                      WETH → RICH Preview                               */
-    /* ---------------------------------------------------------------------- */
-
-    function _previewWethToRich(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
-        internal
-        view
-        returns (uint256 richOut_)
-    {
-        richOut_ = _previewSwapViaChir(
-            layout_,
-            layout_.chirWethVault,
-            layout_.wethToken,
-            wethIn_,
-            layout_.richChirVault,
-            layout_.richToken
-        );
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                      RICH → WETH Preview                               */
-    /* ---------------------------------------------------------------------- */
-
-    function _previewRichToWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 richIn_)
-        internal
-        view
-        returns (uint256 wethOut_)
-    {
-        wethOut_ = _previewSwapViaChir(
-            layout_,
-            layout_.richChirVault,
-            layout_.richToken,
-            richIn_,
-            layout_.chirWethVault,
-            layout_.wethToken
-        );
-    }
-
     function _previewSwapViaChir(
         BaseProtocolDETFRepo.Storage storage,
         IStandardExchange vaultIn_,
@@ -608,6 +521,49 @@ contract BaseProtocolDETFExchangeInQueryTarget is BaseProtocolDETFCommon {
 
         // 50/50 split: user receives base * (1 - pct/2)
         chirOut_ = baseChir * (FixedPoint.ONE - seignioragePct / 2) / FixedPoint.ONE;
+    }
+
+    function _previewChirSwapAfterChirWethAerodromeUnwind(
+        BaseProtocolDETFRepo.Storage storage layout_,
+        uint256 chirWethVaultSharesIn_,
+        uint256 wethFromChirWeth_,
+        uint256 chirIn_
+    ) internal view returns (uint256 wethOut_) {
+        if (chirIn_ == 0) {
+            return 0;
+        }
+
+        IPool chirWethPool = IPool(address(IERC4626(address(layout_.chirWethVault)).asset()));
+        AeroCompoundSim memory sim_ = _buildCompoundSim(layout_.chirWethVault);
+        uint256 lpFromShares_ = layout_.chirWethVault.previewExchangeIn(
+            IERC20(address(layout_.chirWethVault)), chirWethVaultSharesIn_, IERC20(address(chirWethPool))
+        );
+
+        if (lpFromShares_ == 0) {
+            return 0;
+        }
+
+        uint256 wethReserve_ = sim_.token0 == address(layout_.wethToken) ? sim_.reserve0 : sim_.reserve1;
+        uint256 chirReserve_ = sim_.token0 == address(layout_.wethToken) ? sim_.reserve1 : sim_.reserve0;
+
+        if (wethFromChirWeth_ >= wethReserve_) {
+            return 0;
+        }
+
+        (, uint256 chirWithdrawn) = ConstProdUtils._withdrawQuote(
+            lpFromShares_, sim_.lpTotalSupply, wethReserve_, chirReserve_
+        );
+
+        uint256 chirFeeTaken = (chirWithdrawn * sim_.swapFeePercent) / 10_000;
+        if (chirFeeTaken >= chirReserve_) {
+            return 0;
+        }
+
+        uint256 postUnwindWethReserve_ = wethReserve_ - wethFromChirWeth_;
+        uint256 postUnwindChirReserve_ = chirReserve_ - chirFeeTaken;
+        wethOut_ = ConstProdUtils._saleQuote(
+            chirIn_, postUnwindChirReserve_, postUnwindWethReserve_, sim_.swapFeePercent, 10_000
+        );
     }
 
 }

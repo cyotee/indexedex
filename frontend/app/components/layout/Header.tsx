@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { useAccount, useChainId, useConnect, useConnection, useDisconnect, useSwitchChain } from 'wagmi';
 import { baseSepolia, sepolia } from 'wagmi/chains';
 
+import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '../../lib/addressArtifacts';
 import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment';
+import { useSelectedNetwork } from '../../lib/networkSelection';
 
 type HeaderChainOption = 'ethereum' | 'base';
 
@@ -49,21 +51,34 @@ type ChainSwitchNotice = {
   message: string;
 };
 
+type SwitchInspection = {
+  connectorLooksMetaMask: boolean;
+  connectorProviderIsMetaMask: boolean;
+  browserProviderIsMetaMask: boolean;
+  switchProviderIsMetaMask: boolean;
+  summary: string;
+};
+
 const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545';
 const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:9545';
 
+function isLocalSepoliaEnvironment(environment: string): boolean {
+  return environment === 'supersim_sepolia';
+}
+
 function getSwitchableChains(environment: string): Record<HeaderChainOption, SwitchableChain> {
-  const ethereumRpcUrls = environment === 'supersim_sepolia'
+  const useLocalRpc = isLocalSepoliaEnvironment(environment);
+  const ethereumRpcUrls = useLocalRpc
     ? [localRpcUrl]
     : [...sepolia.rpcUrls.default.http];
-  const baseRpcUrls = environment === 'supersim_sepolia'
+  const baseRpcUrls = useLocalRpc
     ? [baseRpcUrl]
     : [...baseSepolia.rpcUrls.default.http];
 
   return {
     ethereum: {
       option: 'ethereum',
-      label: 'Ethereum',
+      label: 'Ethereum Sepolia',
       chainId: sepolia.id,
       hexChainId: `0x${sepolia.id.toString(16)}`,
       chainName: sepolia.name,
@@ -72,7 +87,7 @@ function getSwitchableChains(environment: string): Record<HeaderChainOption, Swi
     },
     base: {
       option: 'base',
-      label: 'Base',
+      label: 'Base Sepolia',
       chainId: baseSepolia.id,
       hexChainId: `0x${baseSepolia.id.toString(16)}`,
       chainName: baseSepolia.name,
@@ -241,14 +256,95 @@ async function waitForAnyProviderChainId(
   return undefined;
 }
 
+async function inspectSwitchContext(
+  activeConnector: SwitchConnector | undefined,
+  connectorId: string | undefined,
+  address: string | undefined,
+): Promise<{
+  browserEthereum: BrowserEthereumProvider | undefined;
+  connectorProvider: BrowserEthereumProvider | undefined;
+  switchProvider: BrowserEthereumProvider | undefined;
+  connectorLooksMetaMask: boolean;
+  connectorProviderIsMetaMask: boolean;
+  browserProviderIsMetaMask: boolean;
+  switchProviderIsMetaMask: boolean;
+  selectedAddress: string;
+  selectedChainId: number | string;
+  debugSummary: string;
+}> {
+  const browserEthereum = (window as typeof window & { ethereum?: BrowserEthereumProvider }).ethereum;
+  const connectorProvider = activeConnector?.getProvider
+    ? await activeConnector.getProvider().catch(() => undefined)
+    : undefined;
+  const nestedProviders = Array.isArray(browserEthereum?.providers) ? browserEthereum.providers : [];
+
+  const candidateProviders = [connectorProvider, ...nestedProviders, browserEthereum]
+    .filter((provider): provider is BrowserEthereumProvider => !!provider)
+    .filter((provider, index, providers) => providers.indexOf(provider) === index);
+
+  const providerMatches: Array<{
+    provider: BrowserEthereumProvider;
+    matchesConnector: boolean;
+    matchesWallet: boolean;
+  }> = await Promise.all(candidateProviders.map(async (provider) => ({
+    provider,
+    matchesConnector: matchesConnectorProvider(provider, connectorId),
+    matchesWallet: await matchesWalletAddress(provider, address),
+  })));
+
+  const provider: BrowserEthereumProvider | undefined = providerMatches.find((entry) => entry.matchesConnector && entry.matchesWallet)?.provider
+    ?? providerMatches.find((entry) => entry.matchesWallet)?.provider
+    ?? providerMatches.find((entry) => entry.matchesConnector)?.provider
+    ?? connectorProvider
+    ?? browserEthereum;
+
+  const directMetaMaskProvider = [browserEthereum, ...nestedProviders]
+    .find((candidate) => isMetaMaskProvider(candidate));
+
+  const switchProvider = connectorProvider
+    ?? (isMetaMaskConnector(activeConnector)
+      ? directMetaMaskProvider ?? provider
+      : provider);
+
+  const selectedChainId = await readProviderChainId(switchProvider);
+  const connectorLooksMetaMask = isMetaMaskConnector(activeConnector);
+  const connectorProviderIsMetaMask = isMetaMaskProvider(connectorProvider);
+  const browserProviderIsMetaMask = isMetaMaskProvider(browserEthereum);
+  const switchProviderIsMetaMask = isMetaMaskProvider(switchProvider);
+  const debugSummary = [
+    `connector=${activeConnector?.name ?? connectorId ?? 'none'}`,
+    `connectorId=${connectorId ?? 'none'}`,
+    `connectorMetaMask=${connectorLooksMetaMask ? 'yes' : 'no'}`,
+    `connectorProviderMetaMask=${connectorProviderIsMetaMask ? 'yes' : 'no'}`,
+    `browserProviderMetaMask=${browserProviderIsMetaMask ? 'yes' : 'no'}`,
+    `switchProviderMetaMask=${switchProviderIsMetaMask ? 'yes' : 'no'}`,
+    `selectedAddress=${switchProvider?.selectedAddress ?? 'unknown'}`,
+    `selectedChain=${selectedChainId ?? switchProvider?.chainId ?? 'unknown'}`,
+  ].join(' | ');
+
+  return {
+    browserEthereum,
+    connectorProvider,
+    switchProvider,
+    connectorLooksMetaMask,
+    connectorProviderIsMetaMask,
+    browserProviderIsMetaMask,
+    switchProviderIsMetaMask,
+    selectedAddress: switchProvider?.selectedAddress ?? 'unknown',
+    selectedChainId: selectedChainId ?? switchProvider?.chainId ?? 'unknown',
+    debugSummary,
+  };
+}
+
 export function Header() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { connectAsync, connectors, status, error } = useConnect();
   const connection = useConnection();
   const { disconnect } = useDisconnect();
-  const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
+  const { switchChainAsync } = useSwitchChain();
   const { environment } = useDeploymentEnvironment();
+  const { selectedChainId, setSelectedChainId } = useSelectedNetwork();
 
   const preferredConnector = resolvePreferredConnector(connectors);
   const fallbackConnector = resolveFallbackConnector(connectors, preferredConnector);
@@ -277,13 +373,20 @@ export function Header() {
   const [styleTheme, setStyleTheme] = useState<string>('pachira')
   const [chainSwitchError, setChainSwitchError] = useState<string>('');
   const [chainSwitchDebug, setChainSwitchDebug] = useState<string>('');
-  const [pendingChainOption, setPendingChainOption] = useState<HeaderChainOption | null>(null);
+  const [isPromptingWalletSwitch, setIsPromptingWalletSwitch] = useState(false);
   const [chainSwitchNotice, setChainSwitchNotice] = useState<ChainSwitchNotice | null>(null);
+  const [switchInspection, setSwitchInspection] = useState<SwitchInspection | null>(null);
 
   const chainOptions = getSwitchableChains(environment);
-  const selectedChainOption = pendingChainOption ?? resolveHeaderChainOption(chainId);
+  const selectedChainOption = resolveHeaderChainOption(selectedChainId);
   const activeConnector = (connection.connector ?? preferredConnector) as SwitchConnector | undefined;
   const connectorId = activeConnector?.id;
+  const walletNeedsSwitchPrompt = isConnected
+    && typeof chainId === 'number'
+    && chainId !== selectedChainId
+    && chainId !== CHAIN_ID_ANVIL
+    && chainId !== CHAIN_ID_LOCALHOST;
+  const selectedTargetChain = chainOptions[selectedChainOption];
 
   useEffect(() => {
     try {
@@ -294,23 +397,6 @@ export function Header() {
   }, [])
 
   useEffect(() => {
-    if (pendingChainOption && resolveHeaderChainOption(chainId) === pendingChainOption) {
-      setPendingChainOption(null)
-      setChainSwitchError('')
-      setChainSwitchDebug('')
-      setChainSwitchNotice({
-        tone: 'success',
-        message: `Wallet switched to ${chainOptions[resolveHeaderChainOption(chainId)].label}`,
-      })
-      return
-    }
-
-    if (!isSwitchingChain) {
-      setPendingChainOption(null)
-    }
-  }, [chainId, chainOptions, isSwitchingChain, pendingChainOption])
-
-  useEffect(() => {
     if (!chainSwitchNotice) return
 
     const timeout = window.setTimeout(() => {
@@ -319,6 +405,30 @@ export function Header() {
 
     return () => window.clearTimeout(timeout)
   }, [chainSwitchNotice])
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void inspectSwitchContext(activeConnector, connectorId, address)
+      .then((context) => {
+        if (cancelled) return;
+        setSwitchInspection({
+          connectorLooksMetaMask: context.connectorLooksMetaMask,
+          connectorProviderIsMetaMask: context.connectorProviderIsMetaMask,
+          browserProviderIsMetaMask: context.browserProviderIsMetaMask,
+          switchProviderIsMetaMask: context.switchProviderIsMetaMask,
+          summary: context.debugSummary,
+        });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setSwitchInspection(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeConnector, connectorId, address, chainId]);
 
   useEffect(() => {
     const browserEthereum = (window as typeof window & { ethereum?: BrowserEthereumProvider }).ethereum
@@ -333,9 +443,13 @@ export function Header() {
 
       if (!Number.isFinite(normalizedChainId)) return
 
-      setPendingChainOption(null)
+      setIsPromptingWalletSwitch(false)
       setChainSwitchError('')
       setChainSwitchDebug('')
+
+      if (normalizedChainId === CHAIN_ID_ANVIL || normalizedChainId === CHAIN_ID_LOCALHOST) {
+        return
+      }
 
       const resolvedOption = resolveHeaderChainOption(normalizedChainId)
       setChainSwitchNotice({
@@ -362,41 +476,10 @@ export function Header() {
   }
 
   async function requestWalletChainSwitch(target: SwitchableChain, priorDebug?: string) {
-    const browserEthereum = (window as typeof window & { ethereum?: BrowserEthereumProvider }).ethereum
-    const connectorProvider = activeConnector?.getProvider
-      ? await activeConnector.getProvider().catch(() => undefined)
-      : undefined
-    const preferBrowserProvider = Boolean(browserEthereum?.request) && isBrowserInjectedConnector(activeConnector)
-    const nestedProviders = Array.isArray(browserEthereum?.providers) ? browserEthereum.providers : []
-
-    const candidateProviders = [connectorProvider, ...nestedProviders, browserEthereum]
-      .filter((provider): provider is BrowserEthereumProvider => !!provider)
-      .filter((provider, index, providers) => providers.indexOf(provider) === index)
-
-    const providerMatches: Array<{
-      provider: BrowserEthereumProvider
-      matchesConnector: boolean
-      matchesWallet: boolean
-    }> = await Promise.all(candidateProviders.map(async (provider) => ({
-      provider,
-      matchesConnector: matchesConnectorProvider(provider, connectorId),
-      matchesWallet: await matchesWalletAddress(provider, address),
-    })))
-
-    const provider: BrowserEthereumProvider | undefined = providerMatches.find((entry) => entry.matchesConnector && entry.matchesWallet)?.provider
-      ?? providerMatches.find((entry) => entry.matchesWallet)?.provider
-      ?? providerMatches.find((entry) => entry.matchesConnector)?.provider
-      ?? connectorProvider
-      ?? browserEthereum
-
-    const directMetaMaskProvider = [browserEthereum, ...nestedProviders]
-      .find((candidate) => isMetaMaskProvider(candidate))
-
-    const switchProvider = preferBrowserProvider
-      ? browserEthereum
-      : isMetaMaskConnector(activeConnector)
-        ? directMetaMaskProvider ?? provider
-        : provider
+    const context = await inspectSwitchContext(activeConnector, connectorId, address)
+    const browserEthereum = context.browserEthereum
+    const connectorProvider = context.connectorProvider
+    const switchProvider = context.switchProvider
 
     const [browserAccounts, connectorAccounts, selectedAccounts] = await Promise.all([
       getProviderAccounts(browserEthereum),
@@ -404,30 +487,25 @@ export function Header() {
       getProviderAccounts(switchProvider),
     ])
 
-    const selectedChainId = await readProviderChainId(switchProvider)
-
     const directDebugPrefix = [
       priorDebug,
-      `connector=${connectorId ?? 'none'}`,
+      context.debugSummary,
       `target=${target.chainId}`,
-      `candidates=${candidateProviders.length}`,
+      `hasConnectorProvider=${connectorProvider?.request ? 'yes' : 'no'}`,
       `selectedMetaMask=${switchProvider?.isMetaMask === true ? 'yes' : 'no'}`,
       `selectedCoinbase=${switchProvider?.isCoinbaseWallet === true ? 'yes' : 'no'}`,
       `selectedAddress=${switchProvider?.selectedAddress ?? 'unknown'}`,
-      `selectedChain=${selectedChainId ?? switchProvider?.chainId ?? 'unknown'}`,
+      `selectedChain=${context.selectedChainId}`,
     ].filter(Boolean).join(' | ')
 
     setChainSwitchDebug(directDebugPrefix)
     logChainSwitch('requestWalletChainSwitch:selected-provider', {
       connectorId: connectorId ?? 'none',
       targetChainId: target.chainId,
-      candidateProviders: candidateProviders.length,
-      preferBrowserProvider,
-      browserHasProvidersArray: Array.isArray(browserEthereum?.providers),
-      browserProvidersCount: nestedProviders.length,
-      browserIsMetaMask: browserEthereum?.isMetaMask === true,
-      connectorIsMetaMask: connectorProvider?.isMetaMask === true,
-      selectedMetaMask: switchProvider?.isMetaMask === true,
+      browserIsMetaMask: context.browserProviderIsMetaMask,
+      connectorIsMetaMask: context.connectorProviderIsMetaMask,
+      connectorLooksMetaMask: context.connectorLooksMetaMask,
+      selectedMetaMask: context.switchProviderIsMetaMask,
       selectedCoinbase: switchProvider?.isCoinbaseWallet === true,
       browserEqualsConnectorProvider: Boolean(browserEthereum && connectorProvider && browserEthereum === connectorProvider),
       browserEqualsSwitchProvider: Boolean(browserEthereum && switchProvider && browserEthereum === switchProvider),
@@ -452,9 +530,7 @@ export function Header() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: target.hexChainId }],
       })
-      const switchedChainId = preferBrowserProvider
-        ? await waitForAnyProviderChainId(target.chainId, [browserEthereum, connectorProvider].filter((entry): entry is BrowserEthereumProvider => Boolean(entry)))
-        : await waitForProviderChainId(switchProvider, target.chainId)
+      const switchedChainId = await waitForProviderChainId(switchProvider, target.chainId)
       logChainSwitch('requestWalletChainSwitch:wallet_switchEthereumChain:result', {
         targetChainId: target.chainId,
         switchedChainId: switchedChainId ?? 'unknown',
@@ -497,9 +573,7 @@ export function Header() {
         blockExplorerUrls: target.blockExplorerUrls,
       }],
     })
-    const addedChainId = preferBrowserProvider
-      ? await waitForAnyProviderChainId(target.chainId, [browserEthereum, connectorProvider].filter((entry): entry is BrowserEthereumProvider => Boolean(entry)))
-      : await waitForProviderChainId(switchProvider, target.chainId)
+    const addedChainId = await waitForProviderChainId(switchProvider, target.chainId)
     logChainSwitch('requestWalletChainSwitch:wallet_addEthereumChain:result', {
       targetChainId: target.chainId,
       addedChainId: addedChainId ?? 'unknown',
@@ -531,81 +605,156 @@ export function Header() {
     })
     setChainSwitchError('')
     setChainSwitchDebug('')
-    setChainSwitchNotice({ tone: 'info', message: `Switching wallet to ${target.label}...` })
 
     if (nextOption === selectedChainOption) {
       setChainSwitchNotice(null)
       return
     }
 
-    setPendingChainOption(nextOption)
+    setSelectedChainId(target.chainId as typeof selectedChainId)
 
-    const providerChainIdBefore = await readActiveProviderChainId()
+    if (!isConnected) {
+      setChainSwitchNotice({ tone: 'success', message: `Showing ${target.label}` })
+      return
+    }
+
+    if (chainId === CHAIN_ID_ANVIL || chainId === CHAIN_ID_LOCALHOST) {
+      setChainSwitchDebug('')
+      setChainSwitchNotice({
+        tone: 'success',
+        message: `Using local wallet chain ${chainId} for ${target.label}`,
+      })
+      return
+    }
+
     logChainSwitch('handleChainSelection:provider-before', {
-      providerChainIdBefore: providerChainIdBefore ?? 'unknown',
+      providerChainIdBefore: chainId ?? 'unknown',
       targetChainId: target.chainId,
     })
 
-    if (providerChainIdBefore === target.chainId) {
-      setPendingChainOption(null)
+    if (chainId === target.chainId) {
       setChainSwitchNotice({ tone: 'success', message: `Wallet already on ${target.label}` })
       return
     }
 
-    let wagmiError: unknown
-    let wagmiDebug = `preSwitch | connector=${connectorId ?? 'none'} | wagmiChain=${chainId ?? 'unknown'} | providerBefore=${providerChainIdBefore ?? 'unknown'} | target=${target.chainId}`
+    await promptWalletSwitch(target)
 
-    try {
-      logChainSwitch('handleChainSelection:wagmi-switch:start', {
-        targetChainId: target.chainId,
-      })
-      await switchChainAsync({ chainId: target.chainId })
-      const browserEthereum = (window as typeof window & { ethereum?: BrowserEthereumProvider }).ethereum
-      const connectorProvider = activeConnector?.getProvider
-        ? await activeConnector.getProvider().catch(() => undefined)
-        : undefined
-      const providerChainId = isBrowserInjectedConnector(activeConnector) && browserEthereum?.request
-        ? await waitForAnyProviderChainId(target.chainId, [browserEthereum, connectorProvider].filter((entry): entry is BrowserEthereumProvider => Boolean(entry)))
-        : await waitForProviderChainId(connectorProvider, target.chainId)
-      logChainSwitch('handleChainSelection:wagmi-switch:result', {
-        targetChainId: target.chainId,
-        providerChainId: providerChainId ?? 'unknown',
-      })
-      if (providerChainId === target.chainId) {
-        setChainSwitchDebug('')
-        return
-      }
-
-      wagmiDebug = `wagmiSwitch=stale | connector=${connectorId ?? 'none'} | wagmiChain=${chainId ?? 'unknown'} | providerBefore=${providerChainIdBefore ?? 'unknown'} | target=${target.chainId} | provider=${providerChainId ?? 'unknown'}`
-      setChainSwitchDebug(wagmiDebug)
-    } catch (error) {
-      wagmiError = error
-      const message = error instanceof Error ? error.message : String(error)
-      logChainSwitch('handleChainSelection:wagmi-switch:error', { message })
-      wagmiDebug = `wagmiSwitch=error:${message} | connector=${connectorId ?? 'none'} | wagmiChain=${chainId ?? 'unknown'} | providerBefore=${providerChainIdBefore ?? 'unknown'} | target=${target.chainId}`
-      setChainSwitchDebug(wagmiDebug)
-    }
-
-    try {
-      await requestWalletChainSwitch(target, wagmiDebug)
-      const providerChainId = await readActiveProviderChainId()
-      if (providerChainId === target.chainId) {
-        setChainSwitchDebug('')
-        return
-      }
-    } catch (fallbackError) {
-      const message = fallbackError instanceof Error
-        ? fallbackError.message
-        : wagmiError instanceof Error
-          ? wagmiError.message
-          : 'Failed to switch wallet network'
-      setChainSwitchError(message)
-      setChainSwitchNotice(null)
-      setPendingChainOption(null)
+    const providerChainIdAfter = await readActiveProviderChainId()
+    if (providerChainIdAfter === target.chainId) {
       return
     }
 
-    setPendingChainOption(null)
+    setChainSwitchNotice({
+      tone: 'info',
+      message: `Showing ${target.label}. Use the wallet switch button below to prompt your wallet from chain ${chainId ?? 'unknown'}.`,
+    })
+  }
+
+  async function promptWalletSwitch(target: SwitchableChain) {
+    setChainSwitchError('')
+    setChainSwitchDebug('')
+    setIsPromptingWalletSwitch(true)
+    setChainSwitchNotice({ tone: 'info', message: `Requesting wallet switch to ${target.label}...` })
+
+    const context = switchInspection
+    const debugPrefix = `promptSwitch | ${context?.summary ?? `connector=${activeConnector?.name ?? connectorId ?? 'none'}`} | wagmiChain=${chainId ?? 'unknown'} | providerBefore=${chainId ?? 'unknown'} | target=${target.chainId}`
+    setChainSwitchDebug(debugPrefix)
+
+    const metaMaskSwitchAllowed = context != null
+      && context.connectorLooksMetaMask
+      && (context.connectorProviderIsMetaMask || context.browserProviderIsMetaMask || context.switchProviderIsMetaMask)
+
+    if (!metaMaskSwitchAllowed) {
+      setChainSwitchError('Wallet network switching is only enabled when the active connector is clearly MetaMask EVM. Reconnect with the MetaMask connector and try again.')
+      setChainSwitchNotice(null)
+      setIsPromptingWalletSwitch(false)
+      return
+    }
+
+    try {
+      const browserEthereum = (window as typeof window & { ethereum?: BrowserEthereumProvider }).ethereum
+      const directMetaMaskProvider = isMetaMaskProvider(browserEthereum) ? browserEthereum : undefined
+
+      if (directMetaMaskProvider?.request) {
+        try {
+          logChainSwitch('handleWalletSwitchPrompt:direct-metamask-switch:start', {
+            targetChainId: target.chainId,
+            targetHexChainId: target.hexChainId,
+          })
+          await directMetaMaskProvider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: target.hexChainId }],
+          })
+          logChainSwitch('handleWalletSwitchPrompt:direct-metamask-switch:result', {
+            targetChainId: target.chainId,
+          })
+        } catch (error) {
+          const code = typeof error === 'object' && error !== null && 'code' in error ? (error as { code?: number }).code : undefined
+          if (code === 4902) {
+            logChainSwitch('handleWalletSwitchPrompt:direct-metamask-add:start', {
+              targetChainId: target.chainId,
+              targetHexChainId: target.hexChainId,
+            })
+            await directMetaMaskProvider.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: target.hexChainId,
+                chainName: target.chainName,
+                nativeCurrency: {
+                  name: 'Ether',
+                  symbol: 'ETH',
+                  decimals: 18,
+                },
+                rpcUrls: target.rpcUrls,
+                blockExplorerUrls: target.blockExplorerUrls,
+              }],
+            })
+            logChainSwitch('handleWalletSwitchPrompt:direct-metamask-add:result', {
+              targetChainId: target.chainId,
+            })
+          } else {
+            throw error
+          }
+        }
+      } else if (switchChainAsync) {
+        logChainSwitch('handleWalletSwitchPrompt:wagmi-switch:start', {
+          targetChainId: target.chainId,
+          connectorId: connectorId ?? 'none',
+        })
+        await switchChainAsync({ chainId: target.chainId })
+        logChainSwitch('handleWalletSwitchPrompt:wagmi-switch:result', {
+          targetChainId: target.chainId,
+        })
+      } else {
+        await requestWalletChainSwitch(target, debugPrefix)
+      }
+
+      const providerChainIdAfter = await readActiveProviderChainId()
+      if (providerChainIdAfter !== target.chainId) {
+        await requestWalletChainSwitch(target, `${debugPrefix} | wagmiProviderAfter=${providerChainIdAfter ?? 'unknown'}`)
+      }
+
+      const verifiedProviderChainId = await readActiveProviderChainId()
+      if (verifiedProviderChainId === target.chainId) {
+        setChainSwitchError('')
+        setChainSwitchDebug('')
+        setChainSwitchNotice({ tone: 'success', message: `Wallet switched to ${target.label}` })
+        return
+      }
+
+      setChainSwitchError(`Wallet did not switch to ${target.label}. Current wallet chain is ${verifiedProviderChainId ?? 'unknown'}.`)
+      setChainSwitchNotice(null)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to switch wallet network'
+      setChainSwitchError(message)
+      setChainSwitchNotice(null)
+    } finally {
+      setIsPromptingWalletSwitch(false)
+    }
+  }
+
+  async function handleWalletSwitchPrompt() {
+    await promptWalletSwitch(selectedTargetChain)
   }
 
   return (
@@ -721,19 +870,32 @@ export function Header() {
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="flex flex-col items-end gap-1">
               <label className="text-[10px] uppercase tracking-wide text-gray-400" htmlFor="header-chain-selector">
-                Chain
+                App Network
               </label>
               <select
                 id="header-chain-selector"
                 className="rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-gray-100"
                 value={selectedChainOption}
                 onChange={(event) => void handleChainSelection(event.target.value as HeaderChainOption)}
-                disabled={isSwitchingChain}
-                title="Switch wallet network"
+                disabled={isPromptingWalletSwitch}
+                title="Select app network"
               >
-                <option value="ethereum">Ethereum</option>
-                <option value="base">Base</option>
+                <option value="ethereum">Ethereum Sepolia</option>
+                <option value="base">Base Sepolia</option>
               </select>
+              <div className="max-w-[220px] text-right text-[10px] leading-tight text-gray-400">
+                Selecting a network updates the app and prompts your wallet when a non-local wallet chain does not match.
+              </div>
+              {walletNeedsSwitchPrompt ? (
+                <button
+                  onClick={() => void handleWalletSwitchPrompt()}
+                  disabled={isPromptingWalletSwitch}
+                  className="rounded-md border border-sky-600 bg-sky-700 px-2 py-1 text-[10px] text-white hover:bg-sky-600 disabled:opacity-50"
+                  title={`Prompt wallet to switch to ${selectedTargetChain.label}`}
+                >
+                  {isPromptingWalletSwitch ? 'Switching Wallet…' : `Switch Wallet Network to ${selectedTargetChain.label}`}
+                </button>
+              ) : null}
               {chainSwitchError ? (
                 <div className="max-w-[220px] text-right text-[10px] leading-tight text-red-300">
                   {chainSwitchError}

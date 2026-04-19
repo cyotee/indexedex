@@ -1,123 +1,43 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useAccount, useChainId, useConnection, useConnectorClient, useReadContract, useWalletClient, useWriteContract } from 'wagmi'
-import { erc20Abi, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { PublicClient } from 'viem'
+import { usePublicClient, useWriteContract } from 'wagmi'
 
-import { CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '../lib/addressArtifacts'
-import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
-import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
+import WalletStatusBanner from '../components/WalletStatusBanner'
+import { CHAIN_ID_SEPOLIA, getAddressArtifacts } from '../lib/addressArtifacts'
+import useChainResolution from '../lib/hooks/useChainResolution'
+import useRouterBytecode from '../lib/hooks/useRouterBytecode'
+import useStakingContractReads from '../lib/hooks/useStakingContractReads'
+import { protocolDetfAbi } from '../lib/protocolDetfAbi'
 import { getProtocolDetfsForChain, type Address } from '../lib/tokenlists'
-import { resolveAppChain } from '../lib/runtimeChains'
+import BondSection from './sections/BondSection'
+import BurnChirSection from './sections/BurnChirSection'
+import DetfSelectorSection from './sections/DetfSelectorSection'
+import MintChirSection from './sections/MintChirSection'
+import PriceInfoSection from './sections/PriceInfoSection'
+import SellNftSection from './sections/SellNftSection'
+import StakingDebugPanel from './sections/StakingDebugPanel'
 
-const protocolDetfAbi = [
-  { type: 'function', name: 'richToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'richirToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'wethToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'protocolNFTVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'syntheticPrice', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'uint256' }] },
-  { type: 'function', name: 'mintThreshold', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'uint256' }] },
-  { type: 'function', name: 'burnThreshold', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'uint256' }] },
-  { type: 'function', name: 'isMintingAllowed', stateMutability: 'view', inputs: [], outputs: [{ name: 'allowed', type: 'bool' }] },
-  { type: 'function', name: 'isBurningAllowed', stateMutability: 'view', inputs: [], outputs: [{ name: 'allowed', type: 'bool' }] },
-
-  // IStandardExchangeIn - use exchangeIn with WETH->CHIR to mint
+const erc20ApproveAbi = [
   {
     type: 'function',
-    name: 'exchangeIn',
+    name: 'approve',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'tokenIn', type: 'address' },
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'tokenOut', type: 'address' },
-      { name: 'minAmountOut', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'pretransferred', type: 'bool' },
-      { name: 'deadline', type: 'uint256' },
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
     ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'previewExchangeIn',
-    stateMutability: 'view',
-    inputs: [
-      { name: 'tokenIn', type: 'address' },
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'tokenOut', type: 'address' },
-    ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'bondWithWeth',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'lockDuration', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'shares', type: 'uint256' },
-    ],
-  },
-  {
-    type: 'function',
-    name: 'bondWithRich',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'lockDuration', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'shares', type: 'uint256' },
-    ],
-  },
-  {
-    type: 'function',
-    name: 'sellNFT',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'richirMinted', type: 'uint256' }],
+    outputs: [{ name: '', type: 'bool' }],
   },
 ] as const
 
-function clampInt(value: string, fallback: number): number {
-  const n = Number(value)
-  if (!Number.isFinite(n)) return fallback
-  return Math.max(0, Math.floor(n))
-}
-
 export default function StakingPageClient() {
-  const configChainId = useChainId()
-  const { address, chainId: accountChainId, isConnected } = useAccount()
-  const connection = useConnection()
-  const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
-  const browserChainId = useBrowserChainId(isConnected)
-  const { data: connectorClient } = useConnectorClient()
-  const { data: walletClient } = useWalletClient()
-  const { environment } = useDeploymentEnvironment()
+  const chain = useChainResolution(CHAIN_ID_SEPOLIA)
+  const publicClient = usePublicClient({ chainId: chain.dataChainId }) as PublicClient | undefined
+  const { writeContractAsync, isPending: isWritePending } = useWriteContract()
 
-  const attachedWalletChainId = isConnected
-    ? (accountChainId ?? connection.chainId ?? walletClient?.chain?.id ?? connectorClient?.chain?.id ?? connectedWalletChainId ?? browserChainId)
-    : undefined
-  const resolvedConfigChainId = configChainId !== undefined ? resolveArtifactsChainId(configChainId, environment) : null
-  const resolvedWalletChainId = attachedWalletChainId !== undefined
-    ? resolveArtifactsChainId(attachedWalletChainId, environment)
-    : null
-  const dataChainId = resolvedWalletChainId ?? resolvedConfigChainId ?? CHAIN_ID_SEPOLIA
-  const detfs = useMemo(() => getProtocolDetfsForChain(dataChainId, environment), [dataChainId, environment])
-  const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)
-  const artifacts = useMemo(() => getAddressArtifacts(dataChainId, environment), [dataChainId, environment])
+  const artifacts = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment), [chain.dataChainId, chain.environment])
   const platform = artifacts.platform as {
     protocolDetf?: string
     richToken?: string
@@ -126,23 +46,19 @@ export default function StakingPageClient() {
     weth9?: string
     protocolNftVault?: string
     reservePool?: string
+    balancerV3StandardExchangeRouter?: `0x${string}`
+    permit2?: `0x${string}`
   }
 
-  const targetChain = useMemo(() => resolveAppChain(dataChainId), [dataChainId])
-
-  const detfOptions = useMemo(
-    () => detfs.map((t) => ({ value: t.address, label: t.name || t.symbol })),
-    [detfs]
-  )
-
-  const [selectedDetf, setSelectedDetf] = useState<Address | ''>(() => (detfs[0]?.address ?? ''))
-  const { writeContractAsync, isPending: isWritePending } = useWriteContract()
-  const [status, setStatus] = useState<string>('')
+  const detfs = useMemo(() => getProtocolDetfsForChain(chain.dataChainId, chain.environment), [chain.dataChainId, chain.environment])
+  const detfOptions = useMemo(() => detfs.map((token) => ({ value: token.address, label: token.name || token.symbol })), [detfs])
+  const [selectedDetf, setSelectedDetf] = useState<Address | ''>(() => detfs[0]?.address ?? '')
+  const [status, setStatus] = useState('')
 
   useEffect(() => {
     setSelectedDetf(detfs[0]?.address ?? '')
     setStatus('')
-  }, [dataChainId, environment])
+  }, [chain.dataChainId, chain.environment, detfs])
 
   useEffect(() => {
     if (detfs.length === 0) {
@@ -160,492 +76,255 @@ export default function StakingPageClient() {
   }, [detfs])
 
   const detfAddress = selectedDetf ? (selectedDetf as `0x${string}`) : undefined
-  const hasDetfAddress = !!detfAddress
-
-  const { data: richToken } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'richToken',
-    args: [],
-    query: { enabled: !!detfAddress },
+  const stakingReads = useStakingContractReads({
+    detfAddress,
+    dataChainId: chain.dataChainId,
+    platform,
+    address: chain.address,
   })
 
-  const { data: richirToken } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'richirToken',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
+  const routerCandidate = useMemo(() => platform.balancerV3StandardExchangeRouter, [platform.balancerV3StandardExchangeRouter])
+  const { routerAddress, routerHasBytecode, routerBytecodeError } = useRouterBytecode({ publicClient, routerCandidate })
+  const permit2Address = platform.permit2
 
-  const { data: wethToken } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'wethToken',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: nftVault } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'protocolNFTVault',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: reservePool } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'reservePool',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: syntheticPrice, error: syntheticPriceError } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'syntheticPrice',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: mintThreshold, error: mintThresholdError } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'mintThreshold',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: burnThreshold, error: burnThresholdError } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'burnThreshold',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: isMintingAllowed } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'isMintingAllowed',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: isBurningAllowed } = useReadContract({
-    chainId: dataChainId,
-    address: detfAddress,
-    abi: protocolDetfAbi,
-    functionName: 'isBurningAllowed',
-    args: [],
-    query: { enabled: !!detfAddress },
-  })
-
-  const { data: richDecimals } = useReadContract({
-    chainId: dataChainId,
-    address: richToken && richToken !== zeroAddress ? (richToken as `0x${string}`) : undefined,
-    abi: erc20Abi,
-    functionName: 'decimals',
-    args: [],
-    query: { enabled: !!richToken && richToken !== zeroAddress },
-  })
-
-  const { data: wethDecimals } = useReadContract({
-    chainId: dataChainId,
-    address:
-      (wethToken && wethToken !== zeroAddress ? (wethToken as `0x${string}`) : undefined) ??
-      ((platform.weth9 ?? platform.weth) && (platform.weth9 ?? platform.weth) !== zeroAddress
-        ? ((platform.weth9 ?? platform.weth) as `0x${string}`)
-        : undefined),
-    abi: erc20Abi,
-    functionName: 'decimals',
-    args: [],
-    query: {
-      enabled:
-        !!((wethToken && wethToken !== zeroAddress ? wethToken : undefined) ?? (platform.weth9 ?? platform.weth)) &&
-        ((wethToken && wethToken !== zeroAddress ? wethToken : (platform.weth9 ?? platform.weth)) !== zeroAddress),
-    },
-  })
-
-  const effectiveRichToken = (richToken && richToken !== zeroAddress ? richToken : platform.richToken) as `0x${string}` | undefined
-  const effectiveRichirToken = (richirToken && richirToken !== zeroAddress ? richirToken : platform.richirToken) as `0x${string}` | undefined
-  const platformWethToken = platform.weth9 ?? platform.weth
-  const effectiveWethToken = (wethToken && wethToken !== zeroAddress ? wethToken : platformWethToken) as `0x${string}` | undefined
-
-  const richDec = Number(richDecimals ?? 18)
-  const wethDec = Number(wethDecimals ?? 18)
-
-  const syntheticPriceDisplay = syntheticPrice !== undefined ? formatUnits(syntheticPrice, 18) : null
-  const mintThresholdDisplay = mintThreshold !== undefined ? formatUnits(mintThreshold, 18) : null
-  const burnThresholdDisplay = burnThreshold !== undefined ? formatUnits(burnThreshold, 18) : null
-  const syntheticPriceStatus = !hasDetfAddress
-    ? '—'
-    : syntheticPriceError
-    ? 'Unavailable: read reverted on current pool state.'
-    : syntheticPriceDisplay ?? '—'
-  const mintThresholdStatus = !hasDetfAddress
-    ? '—'
-    : mintThresholdError
-    ? 'Unavailable'
-    : mintThresholdDisplay ?? '—'
-  const burnThresholdStatus = !hasDetfAddress
-    ? '—'
-    : burnThresholdError
-    ? 'Unavailable'
-    : burnThresholdDisplay ?? '—'
-  const richTokenAddress = hasDetfAddress ? (effectiveRichToken ?? '—') : (platform.richToken ?? '—')
-  const richirTokenAddress = hasDetfAddress ? (effectiveRichirToken ?? '—') : (platform.richirToken ?? '—')
-  const nftVaultAddress = hasDetfAddress ? (nftVault ?? platform.protocolNftVault ?? '—') : (platform.protocolNftVault ?? '—')
-  const reservePoolAddress = hasDetfAddress ? (reservePool ?? platform.reservePool ?? '—') : (platform.reservePool ?? '—')
-
-  const [mintWethAmount, setMintWethAmount] = useState('')
-  const [bondWethAmount, setBondWethAmount] = useState('')
-  const [bondRichAmount, setBondRichAmount] = useState('')
-  const [lockDays, setLockDays] = useState('30')
-  const [sellTokenId, setSellTokenId] = useState('')
-
-  const lockSeconds = useMemo(() => BigInt(clampInt(lockDays, 30) * 24 * 60 * 60), [lockDays])
-
-  const parsedMintWeth = useMemo(() => {
-    if (!mintWethAmount) return undefined
-    try {
-      return parseUnits(mintWethAmount, wethDec)
-    } catch {
-      return undefined
+  const waitForReceiptAndRefresh = useCallback(async (hash: `0x${string}`, label: string) => {
+    if (!publicClient) {
+      setStatus(`${label} submitted: ${hash}`)
+      return
     }
-  }, [mintWethAmount, wethDec])
 
-  const parsedBondWeth = useMemo(() => {
-    if (!bondWethAmount) return undefined
-    try {
-      return parseUnits(bondWethAmount, wethDec)
-    } catch {
-      return undefined
-    }
-  }, [bondWethAmount, wethDec])
+    setStatus(`${label} submitted: ${hash}. Waiting for confirmation…`)
+    await publicClient.waitForTransactionReceipt({ hash })
+    await stakingReads.refreshDetfState()
+    setStatus(`${label} confirmed: ${hash}`)
+  }, [publicClient, stakingReads])
 
-  const parsedBondRich = useMemo(() => {
-    if (!bondRichAmount) return undefined
-    try {
-      return parseUnits(bondRichAmount, richDec)
-    } catch {
-      return undefined
-    }
-  }, [bondRichAmount, richDec])
-
-  async function approveToken(token: `0x${string}`, spender: `0x${string}`, amount: bigint) {
+  const approveToken = useCallback(async (token: `0x${string}`, spender: `0x${string}`, amount: bigint) => {
     setStatus('Submitting approval…')
     const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
+      chain: chain.targetChain,
+      account: chain.address,
       address: token,
-      abi: erc20Abi,
+      abi: erc20ApproveAbi,
       functionName: 'approve',
       args: [spender, amount],
     })
-    setStatus(`Approval submitted: ${hash}`)
-  }
+    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Approval')
+  }, [writeContractAsync, chain.targetChain, chain.address, waitForReceiptAndRefresh])
 
-  async function mintWithWeth() {
-    if (!detfAddress || !parsedMintWeth || !address || !effectiveWethToken) return
-    if (attachedWalletChainId !== dataChainId) {
-      setStatus(`Switch wallet network to chainId ${dataChainId} to mint.`)
+  const handleBondWithWeth = useCallback(async (amount: bigint, lockSeconds: bigint, wethAsEth: boolean) => {
+    if (!detfAddress || !chain.address || !stakingReads.effectiveWethToken) return
+    if (!chain.walletMatchesDataChain) {
+      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
       return
     }
-    setStatus('Approving WETH…')
-    await approveToken(effectiveWethToken, detfAddress, parsedMintWeth)
-    setStatus('Minting CHIR via exchangeIn…')
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60) // 5 minutes
+
+    if (!wethAsEth) {
+      await approveToken(stakingReads.effectiveWethToken, detfAddress, amount)
+    }
+    setStatus(wethAsEth ? 'Bonding with native ETH…' : 'Bonding with WETH…')
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
     const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
+      chain: chain.targetChain,
+      account: chain.address,
       address: detfAddress,
       abi: protocolDetfAbi,
-      functionName: 'exchangeIn',
-      args: [
-        effectiveWethToken,           // tokenIn: WETH
-        parsedMintWeth,                // amountIn
-        detfAddress,                   // tokenOut: CHIR (the DETF itself)
-        BigInt(0),                     // minAmountOut (0 for now, could add slippage)
-        address as `0x${string}`,      // recipient
-        false,                         // pretransferred
-        deadline,                      // deadline
-      ],
+      functionName: 'bond',
+      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, wethAsEth, deadline],
+      value: wethAsEth ? amount : undefined,
     })
-    setStatus(`exchangeIn (WETH→CHIR) submitted: ${hash}`)
-  }
+    await waitForReceiptAndRefresh(hash as `0x${string}`, wethAsEth ? 'Bond ETH' : 'Bond WETH')
+  }, [detfAddress, chain, stakingReads.effectiveWethToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
-  async function bondWithWeth() {
-    if (!detfAddress || !parsedBondWeth || !address || !effectiveWethToken) return
-    if (attachedWalletChainId !== dataChainId) {
-      setStatus(`Switch wallet network to chainId ${dataChainId} to bond.`)
+  const handleBondWithRich = useCallback(async (amount: bigint, lockSeconds: bigint) => {
+    if (!detfAddress || !chain.address || !stakingReads.effectiveRichToken) return
+    if (!chain.walletMatchesDataChain) {
+      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
       return
     }
-    setStatus('Approving WETH…')
-    await approveToken(effectiveWethToken, detfAddress, parsedBondWeth)
-    setStatus('Bonding with WETH…')
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60) // 5 minutes
-    const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
-      address: detfAddress,
-      abi: protocolDetfAbi,
-      functionName: 'bondWithWeth',
-      args: [parsedBondWeth, lockSeconds, address as `0x${string}`, deadline],
-    })
-    setStatus(`bondWithWeth submitted: ${hash}`)
-  }
 
-  async function bondWithRich() {
-    if (!detfAddress || !parsedBondRich || !address || !effectiveRichToken) return
-    if (attachedWalletChainId !== dataChainId) {
-      setStatus(`Switch wallet network to chainId ${dataChainId} to bond.`)
-      return
-    }
-    setStatus('Approving RICH…')
-    await approveToken(effectiveRichToken, detfAddress, parsedBondRich)
+    await approveToken(stakingReads.effectiveRichToken, detfAddress, amount)
     setStatus('Bonding with RICH…')
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60) // 5 minutes
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
     const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
+      chain: chain.targetChain,
+      account: chain.address,
       address: detfAddress,
       abi: protocolDetfAbi,
-      functionName: 'bondWithRich',
-      args: [parsedBondRich, lockSeconds, address as `0x${string}`, deadline],
+      functionName: 'bond',
+      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, false, deadline],
     })
-    setStatus(`bondWithRich submitted: ${hash}`)
-  }
+    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond RICH')
+  }, [detfAddress, chain, stakingReads.effectiveRichToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
-  async function sellNft() {
-    if (!detfAddress || !address) return
-    if (attachedWalletChainId !== dataChainId) {
-      setStatus(`Switch wallet network to chainId ${dataChainId} to sell.`)
+  const handleSellNft = useCallback(async (tokenId: bigint) => {
+    if (!detfAddress || !chain.address) return
+    if (!chain.walletMatchesDataChain) {
+      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to sell.`)
       return
     }
-    const tokenId = BigInt(clampInt(sellTokenId, 0))
+
     setStatus('Selling NFT…')
     const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
+      chain: chain.targetChain,
+      account: chain.address,
       address: detfAddress,
       abi: protocolDetfAbi,
       functionName: 'sellNFT',
-      args: [tokenId, address as `0x${string}`],
+      args: [tokenId, chain.address],
     })
-    setStatus(`sellNFT submitted: ${hash}`)
-  }
+    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Sell NFT')
+  }, [detfAddress, chain, writeContractAsync, waitForReceiptAndRefresh])
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-gray-100">
+    <div className="mx-auto max-w-5xl px-4 text-gray-100 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-semibold">Staking</h1>
       <p className="mt-2 text-sm text-gray-300">
-        Protocol DETF (CHIR): bond with WETH/RICH to mint NFT positions, or mint CHIR directly.
+        Protocol DETF (CHIR): bond with WETH or RICH to mint NFT positions, mint CHIR through the Standard Exchange Router, or burn CHIR back through the same router path.
       </p>
 
-      {isUnsupportedChain ? (
-        <div className="mt-4 rounded-lg border border-yellow-700 bg-yellow-950/40 p-4">
-          <p className="text-sm text-yellow-100">
-            Wallet chainId {String(attachedWalletChainId ?? '(unknown)')} is not mapped for {environment}. Showing staking
-            addresses from chainId {dataChainId} instead.
-          </p>
-        </div>
-      ) : null}
-
-      {isConnected && attachedWalletChainId !== undefined && !isUnsupportedChain && attachedWalletChainId !== dataChainId ? (
-        <div className="mt-4 rounded-lg border border-yellow-700 bg-yellow-950/40 p-4">
-          <p className="text-sm text-yellow-100">
-            Wallet is connected to chainId {attachedWalletChainId}, but this page is showing Protocol DETF deployments for
-            chainId {dataChainId}. Switch your wallet network to chainId {dataChainId} to interact.
-          </p>
-        </div>
-      ) : null}
+      <WalletStatusBanner
+        className="mt-4"
+        isConnected={chain.isConnected}
+        isUnsupportedChain={chain.isUnsupportedChain}
+        walletMatchesDataChain={chain.walletMatchesDataChain}
+        attachedWalletChainId={chain.attachedWalletChainId}
+        dataChainId={chain.dataChainId}
+        environment={chain.environment}
+      />
 
       {detfOptions.length === 0 ? (
         <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800 p-4">
-          <p className="text-sm text-gray-200">
-            No Protocol DETF found for this chain. Run Stage 16 and then re-export tokenlists.
-          </p>
+          <p className="text-sm text-gray-200">No Protocol DETF found for this chain. Run Stage 16 and then re-export tokenlists.</p>
         </div>
       ) : (
-        <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800 p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <label className="block text-xs text-gray-400">Protocol DETF</label>
-              <select
-                value={selectedDetf}
-                onChange={(e) => setSelectedDetf(e.target.value as Address)}
-                className="mt-1 w-full rounded-md bg-gray-900 border border-gray-700 px-3 py-2 text-sm"
-              >
-                {detfOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="mt-6 space-y-4">
+          <DetfSelectorSection
+            detfOptions={detfOptions}
+            selectedDetf={selectedDetf}
+            onSelect={(value) => setSelectedDetf(value as Address)}
+            isConnected={chain.isConnected}
+            address={chain.address}
+            attachedWalletChainId={chain.attachedWalletChainId}
+            dataChainId={chain.dataChainId}
+          />
 
-            <div className="text-xs text-gray-400">
-              Wallet: {isConnected && address ? `${address.slice(0, 6)}…${address.slice(-4)}` : 'not connected'}
-            </div>
-            <div className="text-xs text-gray-400">
-              Wallet chain: {attachedWalletChainId ?? '—'} | Display chain: {dataChainId}
-            </div>
-            <div className="text-xs text-gray-500">
-              account {accountChainId ?? '—'} | connection {connection.chainId ?? '—'} | walletClient {walletClient?.chain?.id ?? '—'} | connectorClient {connectorClient?.chain?.id ?? '—'} | connectorHook {connectedWalletChainId ?? '—'} | browser {browserChainId ?? '—'} | config {configChainId ?? '—'}
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <div className="text-xs text-gray-400">CHIR (Proxy)</div>
-              <div className="text-sm break-all">{detfAddress ?? '—'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">RICH</div>
-              <div className="text-sm break-all">{richTokenAddress}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">RICHIR</div>
-              <div className="text-sm break-all">{richirTokenAddress}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">NFT Vault</div>
-              <div className="text-sm break-all">{nftVaultAddress}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Reserve Pool</div>
-              <div className="text-sm break-all">{reservePoolAddress}</div>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-xs text-gray-400">Synthetic Price (RICH per WETH)</div>
-              <div className="text-sm">{syntheticPriceStatus}</div>
-              <div className="mt-2 text-xs text-gray-400">Mint threshold</div>
-              <div className="text-sm">{mintThresholdStatus}</div>
-              <div className="mt-2 text-xs text-gray-400">Burn threshold</div>
-              <div className="text-sm">{burnThresholdStatus}</div>
-              {syntheticPriceError ? (
-                <div className="mt-2 text-xs text-amber-300">
-                  The Protocol DETF contract on this chain reverted when calculating the synthetic price.
-                </div>
-              ) : null}
-              <div className="mt-2 text-xs text-gray-400">
-                Minting allowed: <span className="text-gray-200">{String(isMintingAllowed ?? '—')}</span>
+          <div className="rounded-lg border border-gray-700 bg-gray-800 p-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <div className="text-xs text-gray-400">CHIR (Proxy)</div>
+                <div className="break-all text-sm text-gray-100">{detfAddress ?? '—'}</div>
               </div>
-              <div className="text-xs text-gray-400">
-                Burning allowed: <span className="text-gray-200">{String(isBurningAllowed ?? '—')}</span>
+              <div>
+                <div className="text-xs text-gray-400">RICH</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.richTokenAddress}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">RICHIR</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.richirTokenAddress}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">NFT Vault</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.nftVaultAddress}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-400">Reserve Pool</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.reservePoolAddress}</div>
               </div>
             </div>
+          </div>
 
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-sm font-medium">Mint CHIR with WETH</div>
-              <label className="mt-2 block text-xs text-gray-400">WETH amount</label>
-              <input
-                value={mintWethAmount}
-                onChange={(e) => setMintWethAmount(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="1.0"
-              />
-              <button
-                onClick={mintWithWeth}
-                disabled={!isConnected || attachedWalletChainId !== dataChainId || isWritePending || !parsedMintWeth || !effectiveWethToken}
-                className="mt-3 w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium hover:bg-green-500 disabled:opacity-50"
-              >
-                Mint
-              </button>
+          <PriceInfoSection
+            syntheticPriceStatus={stakingReads.syntheticPriceStatus}
+            mintThresholdStatus={stakingReads.mintThresholdStatus}
+            burnThresholdStatus={stakingReads.burnThresholdStatus}
+            syntheticPriceError={stakingReads.syntheticPriceError as Error | undefined}
+            mintingAllowedNow={stakingReads.mintingAllowedNow}
+            burningAllowedNow={stakingReads.burningAllowedNow}
+            availabilityMismatch={stakingReads.availabilityMismatch}
+          />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <MintChirSection
+              detfAddress={detfAddress}
+              effectiveWethToken={stakingReads.effectiveWethToken}
+              dataChainId={chain.dataChainId}
+              isConnected={chain.isConnected}
+              walletMatchesDataChain={chain.walletMatchesDataChain}
+              mintingAllowedNow={stakingReads.mintingAllowedNow}
+              routerAddress={routerAddress}
+              routerHasBytecode={routerHasBytecode}
+              permit2Address={permit2Address}
+              address={chain.address}
+              publicClient={publicClient}
+              targetChain={chain.targetChain}
+              writeContractAsync={writeContractAsync}
+              setStatus={setStatus}
+              waitForReceiptAndRefresh={waitForReceiptAndRefresh}
+              wethDecimals={stakingReads.wethDec}
+            />
+
+            <BurnChirSection
+              detfAddress={detfAddress}
+              effectiveWethToken={stakingReads.effectiveWethToken}
+              dataChainId={chain.dataChainId}
+              isConnected={chain.isConnected}
+              walletMatchesDataChain={chain.walletMatchesDataChain}
+              burningAllowedNow={stakingReads.burningAllowedNow}
+              routerAddress={routerAddress}
+              routerHasBytecode={routerHasBytecode}
+              permit2Address={permit2Address}
+              address={chain.address}
+              publicClient={publicClient}
+              targetChain={chain.targetChain}
+              writeContractAsync={writeContractAsync}
+              setStatus={setStatus}
+              waitForReceiptAndRefresh={waitForReceiptAndRefresh}
+              chirBalance={stakingReads.chirBalance as bigint | undefined}
+              wethDecimals={stakingReads.wethDec}
+            />
+          </div>
+
+          <BondSection
+            isConnected={chain.isConnected}
+            walletMatchesDataChain={chain.walletMatchesDataChain}
+            isWritePending={isWritePending}
+            wethDecimals={stakingReads.wethDec}
+            richDecimals={stakingReads.richDec}
+            wethBalance={stakingReads.wethBalance as bigint | undefined}
+            richBalance={stakingReads.richBalance as bigint | undefined}
+            onBondWithWeth={handleBondWithWeth}
+            onBondWithRich={handleBondWithRich}
+          />
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <SellNftSection
+              isConnected={chain.isConnected}
+              walletMatchesDataChain={chain.walletMatchesDataChain}
+              isWritePending={isWritePending}
+              onSell={handleSellNft}
+            />
+            <div className="rounded-md border border-gray-700 bg-gray-900 p-3">
+              <div className="text-sm font-medium text-gray-100">Status</div>
+              <div className="mt-2 break-all text-sm text-gray-200">{status || '—'}</div>
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-sm font-medium">Bond with WETH</div>
-              <label className="mt-2 block text-xs text-gray-400">WETH amount</label>
-              <input
-                value={bondWethAmount}
-                onChange={(e) => setBondWethAmount(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="0.5"
-              />
-              <label className="mt-2 block text-xs text-gray-400">Lock (days)</label>
-              <input
-                value={lockDays}
-                onChange={(e) => setLockDays(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="30"
-              />
-              <button
-                onClick={bondWithWeth}
-                disabled={!isConnected || attachedWalletChainId !== dataChainId || isWritePending || !parsedBondWeth || !effectiveWethToken}
-                className="mt-3 w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-medium hover:bg-blue-500 disabled:opacity-50"
-              >
-                Bond WETH
-              </button>
-            </div>
-
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-sm font-medium">Bond with RICH</div>
-              <label className="mt-2 block text-xs text-gray-400">RICH amount</label>
-              <input
-                value={bondRichAmount}
-                onChange={(e) => setBondRichAmount(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="100"
-              />
-              <label className="mt-2 block text-xs text-gray-400">Lock (days)</label>
-              <input
-                value={lockDays}
-                onChange={(e) => setLockDays(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="30"
-              />
-              <button
-                onClick={bondWithRich}
-                disabled={!isConnected || attachedWalletChainId !== dataChainId || isWritePending || !parsedBondRich || !effectiveRichToken}
-                className="mt-3 w-full rounded-md bg-purple-600 px-3 py-2 text-sm font-medium hover:bg-purple-500 disabled:opacity-50"
-              >
-                Bond RICH
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-sm font-medium">Sell NFT for RICHIR</div>
-              <label className="mt-2 block text-xs text-gray-400">Token ID</label>
-              <input
-                value={sellTokenId}
-                onChange={(e) => setSellTokenId(e.target.value)}
-                className="mt-1 w-full rounded-md bg-gray-950 border border-gray-700 px-3 py-2 text-sm"
-                placeholder="1"
-              />
-              <button
-                onClick={sellNft}
-                disabled={!isConnected || attachedWalletChainId !== dataChainId || isWritePending}
-                className="mt-3 w-full rounded-md bg-orange-600 px-3 py-2 text-sm font-medium hover:bg-orange-500 disabled:opacity-50"
-              >
-                Sell NFT
-              </button>
-            </div>
-
-            <div className="rounded-md bg-gray-900 border border-gray-700 p-3">
-              <div className="text-sm font-medium">Status</div>
-              <div className="mt-2 text-sm text-gray-200 break-all">{status || '—'}</div>
-            </div>
-          </div>
+          <StakingDebugPanel
+            chainSources={chain.chainSources}
+            attachedWalletChainId={chain.attachedWalletChainId}
+            resolvedWalletChainId={chain.resolvedWalletChainId}
+            dataChainId={chain.dataChainId}
+            routerAddress={routerAddress}
+            routerHasBytecode={routerHasBytecode}
+            routerBytecodeError={routerBytecodeError}
+            detfAddress={detfAddress}
+            richTokenAddress={stakingReads.richTokenAddress}
+            richirTokenAddress={stakingReads.richirTokenAddress}
+            reservePoolAddress={stakingReads.reservePoolAddress}
+            nftVaultAddress={stakingReads.nftVaultAddress}
+            status={status}
+          />
         </div>
       )}
     </div>

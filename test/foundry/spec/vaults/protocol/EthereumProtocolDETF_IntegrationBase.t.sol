@@ -32,6 +32,9 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {IERC20PermitDFPkg, ERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
@@ -94,10 +97,12 @@ import {
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
-
-interface IProtocolDETFBridgeInit {
-    function initBridge(bytes calldata initData) external;
-}
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+import {
+    MockProtocolDETFBridgeTokenRegistry,
+    MockProtocolDETFStandardBridge,
+    MockProtocolDETFMessenger
+} from "test/foundry/spec/vaults/protocol/ProtocolDETFRichBridge_UnitTestBase.t.sol";
 
 abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExchangeRouter {
     using EthereumProtocolDETF_Facet_FactoryService for ICreate3FactoryProxy;
@@ -111,6 +116,7 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
     uint256 internal constant DEFAULT_SWAP_FEE = 1e16;
     uint256 internal constant INITIAL_WETH_DEPOSIT = 1_000_000e18;
     uint256 internal constant INITIAL_RICH_DEPOSIT = 10_000_000e18;
+    uint256 internal constant BRIDGE_TEST_TARGET_CHAIN_ID = 84_532;
 
     IProtocolDETF internal detf;
     IERC20 internal rich;
@@ -123,6 +129,14 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IWeightedPool internal reservePool;
     IWeightedPool8020Factory internal weighted8020Factory;
+
+    MockProtocolDETFBridgeTokenRegistry internal bridgeTokenRegistryMock;
+    MockProtocolDETFStandardBridge internal standardBridgeMock;
+    MockProtocolDETFMessenger internal messengerMock;
+    address internal bridgeLocalRelayer;
+    address internal bridgePeerRelayer;
+    address internal bridgePeerDetf;
+    IERC20 internal bridgeRemoteRichToken;
 
     IWETH internal weth9;
     address internal uniswapV2FeeToSetter;
@@ -168,10 +182,35 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         _deployRichTokenPkg();
         _deployRichToken();
         _deployUniswapV2StandardExchangePkg();
+        _deployBridgeMocks();
         _deployProtocolPkgs();
         _registerProtocolPkgs();
         _deployProtocolDetf();
         _fundUsers();
+    }
+
+    function _deployBridgeMocks() internal {
+        bridgeTokenRegistryMock = new MockProtocolDETFBridgeTokenRegistry();
+        standardBridgeMock = new MockProtocolDETFStandardBridge();
+        messengerMock = new MockProtocolDETFMessenger();
+        bridgeLocalRelayer = makeAddr("bridgeLocalRelayer");
+        bridgePeerRelayer = makeAddr("bridgePeerRelayer");
+        bridgePeerDetf = makeAddr("bridgePeerDetf");
+        bridgeRemoteRichToken = IERC20(makeAddr("bridgeRemoteRichToken"));
+    }
+
+    function _bridgePkgConfig()
+        internal
+        view
+        returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig)
+    {
+        bridgeConfig = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+            bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(bridgeTokenRegistryMock)),
+            standardBridge: IStandardBridge(payable(address(standardBridgeMock))),
+            messenger: ICrossDomainMessenger(address(messengerMock)),
+            localRelayer: bridgeLocalRelayer,
+            peerRelayer: bridgePeerRelayer
+        });
     }
 
     function _deployWeightedPool8020Factory() internal {
@@ -282,6 +321,7 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         IFacet protocolDETFExchangeInQueryFacet = create3Factory.deployEthereumProtocolDETFExchangeInQueryFacet();
         IFacet protocolDETFExchangeOutFacet = create3Factory.deployEthereumProtocolDETFExchangeOutFacet();
         IFacet protocolDETFBondingFacet = create3Factory.deployEthereumProtocolDETFBondingFacet();
+        IFacet protocolDETFBridgeFacet = create3Factory.deployEthereumProtocolDETFBridgeFacet();
         IFacet protocolDETFBondingQueryFacet = create3Factory.deployEthereumProtocolDETFBondingQueryFacet();
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
         IFacet richirFacet = create3Factory.deployRICHIRFacet();
@@ -331,6 +371,7 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
                 protocolDETFExchangeInQueryFacet: protocolDETFExchangeInQueryFacet,
                 protocolDETFExchangeOutFacet: protocolDETFExchangeOutFacet,
                 protocolDETFBondingFacet: protocolDETFBondingFacet,
+                protocolDETFBridgeFacet: protocolDETFBridgeFacet,
                 protocolDETFBondingQueryFacet: protocolDETFBondingQueryFacet
             });
 
@@ -355,7 +396,9 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
             });
 
         IEthereumProtocolDETFDFPkg.PkgInit memory detfPkgInit =
-            EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(facets, infra, pkgs);
+            EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(
+                facets, infra, pkgs, _bridgePkgConfig()
+            );
 
         vm.startPrank(owner);
         protocolDETFDFPkg = IVaultRegistryDeployment(address(indexedexManager)).deployEthereumProtocolDETFDFPkg(detfPkgInit);
@@ -421,6 +464,11 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         richChirVault = detf.richChirVault();
         reservePool = IWeightedPool(detf.reservePool());
 
+        bridgeTokenRegistryMock.setRemoteToken(
+            BRIDGE_TEST_TARGET_CHAIN_ID, IERC20(address(detf)), IERC20(bridgePeerDetf), 0
+        );
+        bridgeTokenRegistryMock.setRemoteToken(BRIDGE_TEST_TARGET_CHAIN_ID, rich, bridgeRemoteRichToken, 120_000);
+
         (chirWethVaultIndex, richChirVaultIndex) =
             address(chirWethVault) < address(richChirVault) ? (0, 1) : (1, 0);
 
@@ -438,10 +486,6 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         rich.transfer(detfAlice, 1_000_000e18);
         rich.transfer(detfBob, 1_000_000e18);
         vm.stopPrank();
-    }
-
-    function _initBridge(bytes memory initData) internal {
-        IProtocolDETFBridgeInit(address(detf)).initBridge(initData);
     }
 
     function _mintWeth(address recipient, uint256 amount) internal {
@@ -471,7 +515,9 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         while (remaining > 0) {
             uint256 chunk = remaining > 10_000e18 ? 10_000e18 : remaining;
             IERC20(address(weth9)).approve(address(detf), chunk);
-            IBaseProtocolDETFBonding(address(detf)).bondWithWeth(chunk, 30 days, user, block.timestamp + 1 hours);
+            IBaseProtocolDETFBonding(address(detf)).bond(
+                IERC20(address(weth9)), chunk, 30 days, user, false, block.timestamp + 1 hours
+            );
             remaining -= chunk;
         }
         vm.stopPrank();

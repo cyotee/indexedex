@@ -58,7 +58,6 @@ import {
  * @dev Handles exact-output exchanges:
  *      - WETH → CHIR (mint exact CHIR amount)
  *      - CHIR → RICH (buy exact RICH amount)
- *      - CHIR → WETH (redeem for exact WETH amount)
  *      - WETH → RICH (buy exact RICH amount via multi-hop)
  *      - RICH → CHIR (buy exact CHIR amount)
  */
@@ -95,9 +94,8 @@ contract BaseProtocolDETFExchangeOutTarget is BaseProtocolDETFCommon, Reentrancy
      * @dev Supported routes:
      *      1. WETH → CHIR (mint exact CHIR when above mint threshold)
      *      2. CHIR → RICH (buy exact RICH amount)
-     *      3. CHIR → WETH (redeem for exact WETH when below burn threshold)
-     *      4. WETH → RICH (buy exact RICH via multi-hop)
-     *      5. RICH → CHIR (buy exact CHIR via multi-hop)
+     *      3. WETH → RICH (buy exact RICH via multi-hop)
+     *      4. RICH → CHIR (buy exact CHIR via multi-hop)
      */
     function previewExchangeOut(IERC20 tokenIn_, IERC20 tokenOut_, uint256 amountOut_)
         external
@@ -128,11 +126,6 @@ contract BaseProtocolDETFExchangeOutTarget is BaseProtocolDETFCommon, Reentrancy
             // Delegate to RICH/CHIR vault
             amountIn_ = layout.richChirVault.previewExchangeOut(tokenIn_, tokenOut_, amountOut_);
             return amountIn_;
-        }
-
-        // Route: CHIR → WETH (redeem for exact WETH)
-        if (_isChirToken(tokenIn_) && _isWethToken(layout, tokenOut_)) {
-            return _previewChirToWethExact(layout, amountOut_);
         }
 
         // Route: RICHIR → WETH - NOT SUPPORTED
@@ -212,12 +205,6 @@ contract BaseProtocolDETFExchangeOutTarget is BaseProtocolDETFCommon, Reentrancy
         // Route: CHIR → RICH (buy exact RICH)
         if (_isChirToken(tokenIn_) && _isRichToken(layout, tokenOut_)) {
             amountIn_ = _executeChirToRichExact(layout, params);
-            return amountIn_;
-        }
-
-        // Route: CHIR → WETH (redeem for exact WETH)
-        if (_isChirToken(tokenIn_) && _isWethToken(layout, tokenOut_)) {
-            amountIn_ = _executeChirToWethExact(layout, params);
             return amountIn_;
         }
 
@@ -363,10 +350,9 @@ contract BaseProtocolDETFExchangeOutTarget is BaseProtocolDETFCommon, Reentrancy
                 p_.tokenIn, actualIn, IERC20(address(layout_.chirWethVault)), 0, address(this), true, p_.deadline
             );
 
-        // Mint seigniorage to protocol NFT vault
+        // Mint seigniorage to the NFT vault as reward-token accrual
         if (calc.seigniorageTokens > 0) {
             ERC20Repo._mint(address(layout_.protocolNFTVault), calc.seigniorageTokens);
-            layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, calc.seigniorageTokens);
         }
 
         // Mint exact CHIR to recipient

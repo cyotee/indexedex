@@ -95,7 +95,7 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
         assertEq(cfg.tokens[0], lpToken, "vaultConfig.tokens[0] (lpToken)");
 
         // Still validate the interface exists at compile-time.
-        IProtocolNFTVault(vaultAddr);
+        assertEq(address(IProtocolNFTVault(vaultAddr).rewardToken()), rewardToken, "configured reward token");
         rewardToken; // silence unused local warning if assertions change later
     }
 

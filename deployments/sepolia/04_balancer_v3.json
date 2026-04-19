@@ -1,9 +1,9 @@
 {
-  "balancerV3ConstantProductPoolStandardVaultPkg": "0x858253aD4458680E93ee88EFCf520cD7054bC145",
+  "balancerV3ConstantProductPoolStandardVaultPkg": "0xe06fB53cE28908ce8e41c205c6090465287E4f11",
   "balancerV3Router": "0x5e315f96389C1aaF9324D97d3512ae1e0Bf3C21a",
-  "balancerV3RouterPkg": "0x79f493c98126b0959Ab12928b52B1c6E4c883Eef",
-  "balancerV3StandardExchangeRouter": "0x676fC93b26010aD1ec48Dd98aAdb4743F34f87fE",
+  "balancerV3RouterPkg": "0xA1AA87b75A84a28961Ee325980f3eFE880E5B827",
+  "balancerV3StandardExchangeRouter": "0x9c139cC911f28c07af9F01534571322a80B01d47",
   "balancerV3Vault": "0xbA1333333333a1BA1108E8412f11850A5C319bA9",
-  "rateProviderPkg": "0x7C31705D2d90551c852C5728cb6bF78858e17387",
+  "rateProviderPkg": "0xAf1758C435fF970aF178d6485f5AFf2Fab86f502",
   "weth": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
 }

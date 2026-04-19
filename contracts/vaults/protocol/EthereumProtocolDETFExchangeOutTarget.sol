@@ -89,10 +89,6 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			return layout.richChirVault.previewExchangeOut(tokenIn_, tokenOut_, amountOut_);
 		}
 
-		if (_isChirToken(tokenIn_) && _isWethToken(layout, tokenOut_)) {
-			return _previewChirToWethExact(layout, amountOut_);
-		}
-
 		if (_isRichirToken(layout, tokenIn_) && _isWethToken(layout, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
@@ -150,9 +146,6 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		}
 		if (_isChirToken(tokenIn_) && _isRichToken(layout, tokenOut_)) {
 			return _executeChirToRichExact(layout, params);
-		}
-		if (_isChirToken(tokenIn_) && _isWethToken(layout, tokenOut_)) {
-			return _executeChirToWethExact(layout, params);
 		}
 		if (_isRichirToken(layout, tokenIn_) && _isWethToken(layout, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
@@ -247,7 +240,6 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 
 		if (calc.seigniorageTokens > 0) {
 			ERC20Repo._mint(address(layout_.protocolNFTVault), calc.seigniorageTokens);
-			layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, calc.seigniorageTokens);
 		}
 
 		ERC20Repo._mint(p_.recipient, p_.amountOut);

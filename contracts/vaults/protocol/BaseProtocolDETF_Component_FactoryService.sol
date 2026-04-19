@@ -37,6 +37,7 @@ import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
     IAerodromeStandardExchangeDFPkg
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 /**
  * @title BaseProtocolDETF_Component_FactoryService
@@ -63,6 +64,7 @@ library BaseProtocolDETF_Component_FactoryService {
         IFacet protocolDETFExchangeInQueryFacet;
         IFacet protocolDETFExchangeOutFacet;
         IFacet protocolDETFBondingFacet;
+        IFacet protocolDETFBridgeFacet;
         IFacet protocolDETFBondingQueryFacet;
         IFacet multiStepOwnableFacet;
         IFacet operableFacet;
@@ -96,7 +98,8 @@ library BaseProtocolDETF_Component_FactoryService {
     function buildProtocolDETFPkgInit(
         ProtocolDETFFacets memory facets,
         ProtocolDETFInfra memory infra,
-        ProtocolDETFPkgs memory pkgs
+        ProtocolDETFPkgs memory pkgs,
+        ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig
     ) internal pure returns (IBaseProtocolDETFDFPkg.PkgInit memory pkgInit) {
         pkgInit = IBaseProtocolDETFDFPkg.PkgInit({
             erc20Facet: facets.erc20Facet,
@@ -108,6 +111,7 @@ library BaseProtocolDETF_Component_FactoryService {
             protocolDETFExchangeInQueryFacet: facets.protocolDETFExchangeInQueryFacet,
             protocolDETFExchangeOutFacet: facets.protocolDETFExchangeOutFacet,
             protocolDETFBondingFacet: facets.protocolDETFBondingFacet,
+            protocolDETFBridgeFacet: facets.protocolDETFBridgeFacet,
             protocolDETFBondingQueryFacet: facets.protocolDETFBondingQueryFacet,
             multiStepOwnableFacet: facets.multiStepOwnableFacet,
             operableFacet: facets.operableFacet,
@@ -123,7 +127,8 @@ library BaseProtocolDETF_Component_FactoryService {
             aerodromeStandardExchangeDFPkg: pkgs.aerodromeStandardExchangeDFPkg,
             protocolNFTVaultPkg: pkgs.protocolNFTVaultPkg,
             richirPkg: pkgs.richirPkg,
-            rateProviderPkg: pkgs.rateProviderPkg
+            rateProviderPkg: pkgs.rateProviderPkg,
+            bridgeConfig: bridgeConfig
         });
     }
 

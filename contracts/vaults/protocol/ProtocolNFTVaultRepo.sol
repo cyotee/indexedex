@@ -45,7 +45,7 @@ string constant SVG_SHARES_PREFIX =
     '</text><rect x="50" y="120" width="300" height="80" rx="5" ry="5" fill="none" stroke="#00ff00"/><text x="200" y="150" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Shares: ';
 
 string constant SVG_REWARDS_PREFIX =
-    '</text><text x="200" y="180" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Pending RICH: ';
+    '</text><text x="200" y="180" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Pending CHIR: ';
 
 string constant SVG_TEXT_CLOSE = "</text>";
 string constant SVG_IMAGE_CLOSE = "</svg>";
@@ -58,7 +58,7 @@ string constant SVG_IMAGE_CLOSE = "</svg>";
  *      Manages bond positions with:
  *      - Original shares (base LP allocation)
  *      - Effective shares (boosted by lock duration)
- *      - RICH rewards tracking
+ *      - Reward-token tracking (CHIR for Protocol DETF deployments)
  *      - Protocol-owned NFT for accumulated positions
  */
 library ProtocolNFTVaultRepo {
@@ -72,7 +72,7 @@ library ProtocolNFTVaultRepo {
         IProtocolDETF protocolDETF;
         /// @notice The LP token (BPT from reserve pool)
         IERC20 lpToken;
-        /// @notice The reward token (RICH)
+        /// @notice The reward token (CHIR for Protocol DETF deployments)
         IERC20 rewardToken;
         /// @notice Last recorded reward token balance for calculating new rewards
         uint256 lastRewardTokenBalance;

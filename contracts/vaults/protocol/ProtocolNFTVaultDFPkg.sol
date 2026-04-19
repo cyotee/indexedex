@@ -56,7 +56,7 @@ interface IProtocolNFTVaultDFPkg is IDiamondFactoryPackage {
         IProtocolDETF protocolDETF;
         /// @notice The LP token (BPT from the 80/20 pool)
         IERC20 lpToken;
-        /// @notice The reward token (RICH)
+        /// @notice The reward token (CHIR for Protocol DETF deployments)
         IERC20 rewardToken;
         /// @notice Decimal offset for share calculations
         uint8 decimalOffset;

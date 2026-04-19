@@ -1,21 +1,21 @@
 [
   {
     "chainId": 11155111,
-    "address": "0x1B4837D65f8A872d40d391523E6415612a362E7D",
+    "address": "0x5Ce5eA23c3d7C1C8EDba9F4A44A9fff376275BF2",
     "name": "Test Token A",
     "symbol": "TTA",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0x973a31323f69BBD4211e7176ddA4aFC04d345ef4",
+    "address": "0xDe4071a0bcC669b2E3AB9182d0C3B26D3b75CCD2",
     "name": "Test Token B",
     "symbol": "TTB",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0xf601539472d09720df434a824871563F167fe9c6",
+    "address": "0x6Fb1727CeF7C7a25dBC99EC50a2309777d54A258",
     "name": "Test Token C",
     "symbol": "TTC",
     "decimals": 18

@@ -16,26 +16,27 @@ import {
 } from "./ProtocolDETF_CustomFixtureHelpers.t.sol";
 
 contract ProtocolDETFSyntheticThresholdsBaseTest is ProtocolDETFBaseCustomFixtureHelpers {
-    function test_default_fixture_prefers_burning() public view {
+    function test_default_fixture_prefers_minting() public view {
         assertGt(detf.syntheticPrice(), detf.mintThreshold(), "default fixture should start above the upper deadband bound");
-        assertFalse(detf.isMintingAllowed(), "minting should be disabled above the upper deadband bound");
-        assertTrue(detf.isBurningAllowed(), "burning should be enabled above the upper deadband bound");
+        assertTrue(detf.isMintingAllowed(), "minting should be enabled above the upper deadband bound");
+        assertFalse(detf.isBurningAllowed(), "burning should be disabled above the upper deadband bound");
     }
 
-    function test_low_price_fixture_prefers_minting_and_allows_weth_to_chir() public {
-        IProtocolDETF lowPriceDetf = _deployMintEnabledDetf();
+    function test_low_price_fixture_prefers_burning_and_allows_chir_to_weth() public {
+        IProtocolDETF lowPriceDetf = _deployBurnEnabledDetf();
 
-        _assertMintEnabled(lowPriceDetf);
+        _assertBurnEnabled(lowPriceDetf);
 
-        uint256 amountIn = 10_000e18;
+        uint256 amountIn = 5_000e18;
+        deal(address(lowPriceDetf), detfAlice, amountIn, true);
         vm.startPrank(detfAlice);
-        IERC20(address(weth9)).approve(address(lowPriceDetf), amountIn);
-        uint256 chirOut = IStandardExchangeIn(address(lowPriceDetf)).exchangeIn(
-            IERC20(address(weth9)), amountIn, IERC20(address(lowPriceDetf)), 0, detfAlice, false, block.timestamp + 1 hours
+        IERC20(address(lowPriceDetf)).approve(address(lowPriceDetf), amountIn);
+        uint256 wethOut = IStandardExchangeIn(address(lowPriceDetf)).exchangeIn(
+            IERC20(address(lowPriceDetf)), amountIn, IERC20(address(weth9)), 0, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
 
-        assertGt(chirOut, 0, "mint-enabled fixture should allow WETH to CHIR minting");
+        assertGt(wethOut, 0, "burn-enabled fixture should allow CHIR to WETH redemption");
     }
 
     function test_near_peg_fixture_enforces_deadband() public {
@@ -75,14 +76,14 @@ contract ProtocolDETFSyntheticThresholdsBaseTest is ProtocolDETFBaseCustomFixtur
 }
 
 contract ProtocolDETFSyntheticThresholdsEthereumTest is ProtocolDETFEthereumCustomFixtureHelpers {
-    function test_default_fixture_prefers_burning() public view {
+    function test_default_fixture_prefers_minting() public view {
         assertGt(detf.syntheticPrice(), detf.mintThreshold(), "default fixture should start above the upper deadband bound");
-        assertFalse(detf.isMintingAllowed(), "minting should be disabled above the upper deadband bound");
-        assertTrue(detf.isBurningAllowed(), "burning should be enabled above the upper deadband bound");
+        assertTrue(detf.isMintingAllowed(), "minting should be enabled above the upper deadband bound");
+        assertFalse(detf.isBurningAllowed(), "burning should be disabled above the upper deadband bound");
     }
 
-    function test_low_price_fixture_prefers_minting() public {
-        _driveEthereumToMintEnabled(detf);
+    function test_low_price_fixture_prefers_burning() public {
+        _driveEthereumToBurnEnabled(detf);
     }
 
     function test_near_peg_fixture_enforces_deadband() public {

@@ -56,6 +56,18 @@ fi
 #                      Defaults to `150` because local Aerodrome LP mint flows materially
 #                      underestimate gas on the Base fork during later liquidity seeding stages.
 #
+# DEPLOYMENT INVENTORY:
+# - Local SuperSim environment: launches or reuses Sepolia and Base Sepolia fork RPCs for local testing.
+# - Broadcast funding: sweeps ETH from the default local dev accounts into DEPLOYER_ADDRESS on both forks.
+# - Minimal Ethereum deployment: deploys the minimal Ethereum-side Protocol DETF stack, including the custom BalancerV3StandardExchangeRouter package and proxy.
+# - Minimal Base deployment: deploys the minimal Base-side Protocol DETF stack, including the custom BalancerV3StandardExchangeRouter package and proxy.
+# - Superchain bridge infrastructure: deploys the bridge contracts and support infrastructure on both forks.
+# - Superchain bridge configuration: wires the bridge relationships between the Ethereum and Base deployments.
+# - Deployment summaries: merges staged JSON outputs into deployment summary JSON for each fork.
+# - Frontend artifacts: exports tokenlists, contractlists, and merged platform deployment addresses into the local `supersim_sepolia` bundle.
+# - Router verification: verifies that the expected custom router artifacts exist and have bytecode on both forks.
+# - Intentional omission: does not perform the optional final sweep to FINAL_RECIPIENT_ADDRESS.
+#
 # What this script does:
 #   1. Starts SuperSim if it is not already running.
 #   2. Waits for both Ethereum and Base RPC endpoints.

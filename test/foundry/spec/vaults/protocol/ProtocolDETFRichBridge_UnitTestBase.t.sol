@@ -4,16 +4,12 @@ pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
-import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
-import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/protocols/l2s/superchain/relayers/token/ITokenTransferRelayer.sol";
 
@@ -152,46 +148,11 @@ abstract contract ProtocolDETFRichBridgeUnitTestBase is Test {
 
     function _mintRich(address recipient, uint256 amount) internal virtual;
 
-    function _applyBridgeInit(bytes memory initData) internal virtual;
-
-    function _setUpLocalBridgeConfig() internal {
-        bridgeTokenRegistry = new MockProtocolDETFBridgeTokenRegistry();
-        standardBridge = new MockProtocolDETFStandardBridge();
-        messenger = new MockProtocolDETFMessenger();
-
-        localRelayer = _owner();
-        peerDetf = makeAddr("peerDetf");
-        peerRelayer = makeAddr("peerRelayer");
-        remoteRichToken = IERC20(makeAddr("remoteRichToken"));
-
-        bridgeTokenRegistry.setRemoteToken(TARGET_CHAIN_ID, IERC20(address(_detf())), IERC20(peerDetf), 0);
-        bridgeTokenRegistry.setRemoteToken(TARGET_CHAIN_ID, _rich(), remoteRichToken, BRIDGE_MIN_GAS_LIMIT);
-
-        uint256[] memory peerChainIds = new uint256[](1);
-        peerChainIds[0] = TARGET_CHAIN_ID;
-
-        address[] memory peerRelayers = new address[](1);
-        peerRelayers[0] = peerRelayer;
-
-        _applyBridgeInit(
-            abi.encode(
-                ProtocolDETFSuperchainBridgeRepo.InitData({
-                    bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(bridgeTokenRegistry)),
-                    standardBridge: IStandardBridge(payable(address(standardBridge))),
-                    messenger: ICrossDomainMessenger(address(messenger)),
-                    localRelayer: localRelayer,
-                    peerChainIds: peerChainIds,
-                    peerRelayers: peerRelayers
-                })
-            )
-        );
-    }
-
     function _mintRichirFromBondSale(uint256 wethAmount) internal returns (uint256 richirMinted) {
         vm.startPrank(_alice());
         _detf().wethToken().approve(address(_detf()), wethAmount);
         (uint256 tokenId,) = IBaseProtocolDETFBonding(address(_detf()))
-            .bondWithWeth(wethAmount, 30 days, _alice(), block.timestamp + 1 hours);
+            .bond(_detf().wethToken(), wethAmount, 30 days, _alice(), false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         vm.prank(_alice());

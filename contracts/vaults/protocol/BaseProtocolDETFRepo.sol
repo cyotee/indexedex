@@ -15,6 +15,7 @@ import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/I
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {AddressSet} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -42,6 +43,8 @@ import {
  *      - Protocol-owned NFT for accumulating sold positions
  */
 library BaseProtocolDETFRepo {
+    using AddressSetRepo for AddressSet;
+
     error TokenNotSupported();
     error NotAllowedRichirRedeem(address caller);
 
@@ -108,14 +111,17 @@ library BaseProtocolDETFRepo {
         /// @notice The Balancer V3 prepay router for liquidity operations
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
 
-        /// @notice Upper deadband bound; burning is enabled only above this value
+        /// @notice Upper deadband bound; minting is enabled only above this value
         uint256 mintThreshold;
 
-        /// @notice Lower deadband bound; minting is enabled only below this value
+        /// @notice Lower deadband bound; burning is enabled only below this value
         uint256 burnThreshold;
 
         /// @notice AddressSet of addresses allowed to use the RICHIR→RICH exchange route
         AddressSet allowedRichirRedeemAddresses;
+
+        /// @notice AddressSet of tokens accepted by the unified bond entry point
+        AddressSet acceptedBondTokens;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -151,6 +157,8 @@ library BaseProtocolDETFRepo {
         layout_.wethToken = IERC20(protocolConfig_.wethToken);
         layout_.mintThreshold = mintThreshold_;
         layout_.burnThreshold = burnThreshold_;
+        layout_.acceptedBondTokens._add(protocolConfig_.richToken);
+        layout_.acceptedBondTokens._add(protocolConfig_.wethToken);
     }
 
     function _initialize(
@@ -280,6 +288,42 @@ library BaseProtocolDETFRepo {
 
     function _protocolConfig() internal view returns (ProtocolConfig memory) {
         return _protocolConfig(_layout());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Accepted Bond Tokens                           */
+    /* ---------------------------------------------------------------------- */
+
+    function _acceptedBondTokens(Storage storage layout_) internal view returns (address[] memory) {
+        return layout_.acceptedBondTokens._asArray();
+    }
+
+    function _acceptedBondTokens() internal view returns (address[] memory) {
+        return _acceptedBondTokens(_layout());
+    }
+
+    function _isAcceptedBondToken(Storage storage layout_, address token_) internal view returns (bool) {
+        return layout_.acceptedBondTokens._contains(token_);
+    }
+
+    function _isAcceptedBondToken(address token_) internal view returns (bool) {
+        return _isAcceptedBondToken(_layout(), token_);
+    }
+
+    function _addAcceptedBondToken(Storage storage layout_, address token_) internal returns (bool) {
+        return layout_.acceptedBondTokens._add(token_);
+    }
+
+    function _addAcceptedBondToken(address token_) internal returns (bool) {
+        return _addAcceptedBondToken(_layout(), token_);
+    }
+
+    function _removeAcceptedBondToken(Storage storage layout_, address token_) internal {
+        layout_.acceptedBondTokens._remove(token_);
+    }
+
+    function _removeAcceptedBondToken(address token_) internal {
+        _removeAcceptedBondToken(_layout(), token_);
     }
 
     /* ---------------------------------------------------------------------- */

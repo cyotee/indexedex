@@ -19,10 +19,10 @@ contract ProtocolDETFSellNFTTest is ProtocolDETFIntegrationBase {
         vm.startPrank(detfAlice);
         IERC20(address(weth9)).approve(address(detf), amountIn);
         (uint256 tokenId, uint256 shares) = IBaseProtocolDETFBonding(address(detf))
-            .bondWithWeth(amountIn, lockDuration, detfAlice, block.timestamp + 1 hours);
+            .bond(IERC20(address(weth9)), amountIn, lockDuration, detfAlice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
-        assertGt(IERC20(address(detf)).totalSupply(), chirSupplyBefore, "bondWithWeth should mint CHIR for paired liquidity");
+        assertGt(IERC20(address(detf)).totalSupply(), chirSupplyBefore, "WETH bonding should mint CHIR for paired liquidity");
 
         uint256 protocolId = protocolNFTVault.protocolNFTId();
         uint256 protocolPrincipalBefore = protocolNFTVault.originalSharesOf(protocolId);

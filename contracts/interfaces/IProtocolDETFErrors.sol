@@ -36,6 +36,9 @@ interface IProtocolDETFErrors {
     /// @notice Token is not RICH
     error NotRichToken(IERC20 token);
 
+    /// @notice Token is not an accepted bond token
+    error BondTokenNotSupported(IERC20 token);
+
     /// @notice Token is not CHIR
     error NotChirToken(IERC20 token);
 
@@ -51,6 +54,12 @@ interface IProtocolDETFErrors {
 
     /// @notice Zero amount provided
     error ZeroAmount();
+
+    /// @notice Native ETH bonding is only valid for the WETH route
+    error InvalidEthBondRoute(IERC20 token);
+
+    /// @notice The provided msg.value does not match the expected amount
+    error IncorrectEthValue(uint256 expected, uint256 actual);
 
     /// @notice Insufficient balance for operation
     error InsufficientBalance(uint256 required, uint256 available);

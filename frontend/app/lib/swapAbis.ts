@@ -33,7 +33,7 @@ export const routerDebugAbi = [
   },
 ] as const
 
-const swapParamsAbi = [
+export const swapParamsAbi = [
   { name: 'sender', type: 'address' },
   { name: 'kind', type: 'uint8' },
   { name: 'pool', type: 'address' },
@@ -48,7 +48,7 @@ const swapParamsAbi = [
   { name: 'userData', type: 'bytes' }
 ] as const
 
-const permitAbi = [
+export const permitAbi = [
   { name: 'permitted', type: 'tuple', components: [
     { name: 'token', type: 'address' },
     { name: 'amount', type: 'uint256' }

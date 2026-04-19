@@ -1,10 +1,10 @@
 {
-  "approvedMessageSenderRegistry": "0x47880EF1aE9b1d2bA2c99C2633299f94581078af",
-  "bridgeTokenRegistry": "0xd28e014861317ACc8D3af05a5080f5596a8BB0eB",
+  "approvedMessageSenderRegistry": "0x56a2cecdA091c0900aF5a2Db6647CB4F3cf4fAe7",
+  "bridgeTokenRegistry": "0x31547802aa003028C059F61AA3c683976C43CE60",
   "localChainId": 84532,
-  "localRelayer": "0x73b82E77D8d5dcEF1fcbb6fbe180318061F5C37A",
+  "localRelayer": "0xfc57Cc2aa8D9fEFc28820136e3a23c32F5a669BB",
   "peerChainId": 11155111,
-  "peerProtocolDetf": "0x2EEE16150D7711FEF128309c8E20655cF1dB96a8",
-  "peerRelayer": "0x73b82E77D8d5dcEF1fcbb6fbe180318061F5C37A",
-  "protocolDetf": "0xc30A00a344621ED2Ff6B326D66680FCC6Ee3Ed8a"
+  "peerProtocolDetf": "0x320BAE34c4cb182957d12f96937D90d0B7414E60",
+  "peerRelayer": "0xfc57Cc2aa8D9fEFc28820136e3a23c32F5a669BB",
+  "protocolDetf": "0x5aF97de79b536D4AEB8e6dbD5f5C8d1dE2B81522"
 }

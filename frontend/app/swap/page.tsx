@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
 import { useReadContract, useWriteContract } from 'wagmi'
-import { foundry, localhost, sepolia } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 import { balancerV3StandardExchangeRouterExactInQueryFacetAbi } from '../generated'
 import { balancerV3StandardExchangeRouterExactOutQueryFacetAbi } from '../generated'
 import {
@@ -12,7 +12,8 @@ import {
   balancerV3StandardExchangeRouterExactOutSwapFacetAbi,
   balancerV3StandardExchangeRouterExactOutSwapTargetAbi,
 } from '../generated'
-import { createPublicClient, erc20Abi, http } from 'viem'
+import { erc20Abi } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { decodeEventLog, encodeAbiParameters, formatUnits, hashTypedData, keccak256, parseUnits, recoverAddress } from 'viem'
 import type { Log } from 'viem'
 import DebugPanel from '../components/DebugPanel'
@@ -20,8 +21,9 @@ import { debugError, debugLog } from '../lib/debug'
 import { usePreferredBrowserChainId } from '../lib/browserChain'
 
 import { hasBytecode, isZeroAddress } from '../lib/onchain'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
-import { buildPermit2WitnessDigest, createWitnessFromSwapParams, getPermit2TypedData } from '../lib/permit2-signature'
+import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '../lib/permit2-signature'
 
 import {
   CHAIN_ID_ANVIL,
@@ -51,38 +53,6 @@ const ZERO_ADDR = '0x0000000000000000000000000000000000000000' as `0x${string}`
 const MAX_UINT160 = (BigInt(1) << BigInt(160)) - BigInt(1)
 const SELECTOR_SWAP_EXACT_IN_WITH_PERMIT = '0x7585dc3d' as `0x${string}`
 const SELECTOR_SWAP_EXACT_OUT_WITH_PERMIT = '0x5bc8b2f3' as `0x${string}`
-
-function buildPermitIntentKey(params: {
-  chainId: number
-  owner: `0x${string}`
-  spender: `0x${string}`
-  pool: `0x${string}`
-  tokenIn: `0x${string}`
-  tokenInVault: `0x${string}`
-  tokenOut: `0x${string}`
-  tokenOutVault: `0x${string}`
-  amountGiven: bigint
-  limit: bigint
-  wethIsEth: boolean
-  userDataHash: `0x${string}`
-  isExactIn: boolean
-}): string {
-  return [
-    params.chainId.toString(),
-    params.owner.toLowerCase(),
-    params.spender.toLowerCase(),
-    params.pool.toLowerCase(),
-    params.tokenIn.toLowerCase(),
-    params.tokenInVault.toLowerCase(),
-    params.tokenOut.toLowerCase(),
-    params.tokenOutVault.toLowerCase(),
-    params.amountGiven.toString(),
-    params.limit.toString(),
-    params.wethIsEth ? '1' : '0',
-    params.userDataHash.toLowerCase(),
-    params.isExactIn ? 'in' : 'out',
-  ].join('|')
-}
 
 // function prettyLabel(key: string): string {
 //   let label = key
@@ -360,6 +330,7 @@ function buildExactOutArgs(input: BuildExactOutArgsInput): BuildArgsOutput {
 export default function SwapPage() {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
+  const { selectedChainId } = useSelectedNetwork()
   const connection = useConnection()
   const connectorId = connection.connector?.id
   const { data: connectorClient } = useConnectorClient()
@@ -371,21 +342,16 @@ export default function SwapPage() {
   const browserChainId = usePreferredBrowserChainId(isConnected, preferredBrowserChainIds, connectorId, address)
   const walletChainId = isConnected
     ? (browserChainId ?? connectorClient?.chain?.id ?? walletClient?.chain?.id ?? connection.chainId ?? configChainId)
-    : configChainId
-  const resolvedChainId = resolveArtifactsChainId(walletChainId ?? CHAIN_ID_SEPOLIA) ?? walletChainId ?? CHAIN_ID_SEPOLIA
+    : selectedChainId
+  const resolvedChainId = resolveArtifactsChainId(walletChainId ?? selectedChainId, undefined, selectedChainId) ?? selectedChainId ?? CHAIN_ID_SEPOLIA
   const isUnsupportedChain = isConnected && walletChainId !== undefined && !isSupportedChainId(walletChainId)
   const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })
-
-  const localhostPublicClient = useMemo(() => {
-    return createPublicClient({ transport: http('http://127.0.0.1:8545') })
-  }, [])
 
   const publicClient = useMemo(() => {
     if (isUnsupportedChain) return null
     if (wagmiPublicClient) return wagmiPublicClient
-    if (resolvedChainId === foundry.id || resolvedChainId === localhost.id) return localhostPublicClient
     return null
-  }, [isUnsupportedChain, wagmiPublicClient, resolvedChainId, localhostPublicClient])
+  }, [isUnsupportedChain, wagmiPublicClient])
   const { signTypedDataAsync } = useSignTypedData()
 
   const artifacts = useMemo(() => {

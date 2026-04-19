@@ -213,7 +213,6 @@ contract EthereumProtocolDETFExchangeInTarget is EthereumProtocolDETFCommon, Ree
 
 		if (calc.protocolChir > 0) {
 			ERC20Repo._mint(address(layout_.protocolNFTVault), calc.protocolChir);
-			layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, calc.protocolChir);
 		}
 
 		ERC20Repo._mint(p_.recipient, calc.userChir);
@@ -545,7 +544,7 @@ contract EthereumProtocolDETFExchangeInTarget is EthereumProtocolDETFCommon, Ree
 	/**
 	 * @notice Executes WETH -> RICHIR conversion via the direct deposit route.
 	 * @dev Atomically: WETH -> CHIR/WETH vault shares -> BPT -> protocol NFT -> mint RICHIR.
-	 *      Unlike `bondWithWeth`, this path does not mint CHIR or create balanced LP.
+	 *      Unlike bonding through the unified WETH route, this path does not mint CHIR or create balanced LP.
 	 *      It deposits WETH directly into the CHIR/WETH vault, then routes the resulting
 	 *      vault shares into the reserve pool and mints RICHIR against the protocol NFT.
 	 * @param layout_ Storage layout reference

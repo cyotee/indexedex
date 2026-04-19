@@ -17,7 +17,7 @@ contract ProtocolDETFRedeemPositionTest is ProtocolDETFIntegrationBase {
         vm.startPrank(detfAlice);
         IERC20(address(weth9)).approve(address(detf), amountIn);
         (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf))
-            .bondWithWeth(amountIn, lockDuration, detfAlice, block.timestamp + 1 hours);
+            .bond(IERC20(address(weth9)), amountIn, lockDuration, detfAlice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         vm.warp(block.timestamp + lockDuration + 1);

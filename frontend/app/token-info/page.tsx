@@ -1,11 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useWalletClient } from 'wagmi'
+import { useAccount, useConnection, useConnectorClient, usePublicClient, useWalletClient } from 'wagmi'
 import { erc20Abi, formatUnits } from 'viem'
 import { debugError, debugLog, debugWarn } from '../lib/debug'
 import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
 import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 import {
   CHAIN_ID_SEPOLIA,
@@ -36,7 +37,7 @@ interface TokenInfo {
 export default function TokenInfoPage() {
   const { address, chainId: accountChainId, isConnected } = useAccount()
   const { environment } = useDeploymentEnvironment()
-  const configChainId = useChainId()
+  const { selectedChainId } = useSelectedNetwork()
   const connection = useConnection()
   const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
   const browserChainId = useBrowserChainId(isConnected)
@@ -45,11 +46,10 @@ export default function TokenInfoPage() {
   const attachedWalletChainId = isConnected
     ? (accountChainId ?? connection.chainId ?? walletClient?.chain?.id ?? connectorClient?.chain?.id ?? connectedWalletChainId ?? browserChainId)
     : undefined
-  const resolvedConfigChainId = configChainId !== undefined ? resolveArtifactsChainId(configChainId, environment) : null
   const resolvedWalletChainId = attachedWalletChainId !== undefined
-    ? resolveArtifactsChainId(attachedWalletChainId, environment)
+    ? resolveArtifactsChainId(attachedWalletChainId, environment, selectedChainId)
     : null
-  const resolvedChainId = resolvedWalletChainId ?? resolvedConfigChainId ?? CHAIN_ID_SEPOLIA
+  const resolvedChainId = selectedChainId ?? CHAIN_ID_SEPOLIA
   const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })
   const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)
   const artifacts = useMemo(() => {

@@ -188,13 +188,19 @@ contract EthereumProtocolDETFExchangeInQueryTarget is EthereumProtocolDETFCommon
 		returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
 	{
 		ReservePoolData memory resPoolData;
-		uint256[] memory currentBalancesRaw = _loadReservePoolData(resPoolData, new uint256[](0));
+		(, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
 		if (resPoolData.resPoolTotalSupply == 0) {
 			revert ZeroAmount();
 		}
 
-		chirWethVaultSharesOut_ = (currentBalancesRaw[layout_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
-		richChirVaultSharesOut_ = (currentBalancesRaw[layout_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+		uint256[] memory amountsOut = BalancerV38020WeightedPoolMath.calcProportionalAmountsOutGivenBptIn(
+			currentBalancesRaw,
+			resPoolData.resPoolTotalSupply,
+			bptIn_
+		);
+
+		chirWethVaultSharesOut_ = amountsOut[layout_.chirWethVaultIndex];
+		richChirVaultSharesOut_ = amountsOut[layout_.richChirVaultIndex];
 	}
 
 	function _previewChirRedemptionUnwind(
@@ -202,9 +208,13 @@ contract EthereumProtocolDETFExchangeInQueryTarget is EthereumProtocolDETFCommon
 		uint256 chirWethVaultSharesOut_,
 		uint256 richChirVaultSharesOut_
 	) internal view returns (uint256 amountOut_) {
-		uint256 wethFromChirWeth = layout_.chirWethVault.previewExchangeIn(IERC20(address(layout_.chirWethVault)), chirWethVaultSharesOut_, layout_.wethToken);
-		uint256 chirFromRichChir = layout_.richChirVault.previewExchangeIn(IERC20(address(layout_.richChirVault)), richChirVaultSharesOut_, IERC20(address(this)));
-		uint256 wethFromChirSwap = layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), chirFromRichChir, layout_.wethToken);
+		uint256 wethFromChirWeth =
+			layout_.chirWethVault.previewExchangeIn(IERC20(address(layout_.chirWethVault)), chirWethVaultSharesOut_, layout_.wethToken);
+
+		uint256 chirFromRichChir =
+			layout_.richChirVault.previewExchangeIn(IERC20(address(layout_.richChirVault)), richChirVaultSharesOut_, IERC20(address(this)));
+
+		uint256 wethFromChirSwap = _previewChirSwapAfterChirWethUnwind(layout_, wethFromChirWeth, chirFromRichChir);
 		amountOut_ = wethFromChirWeth + wethFromChirSwap;
 	}
 
@@ -416,6 +426,37 @@ contract EthereumProtocolDETFExchangeInQueryTarget is EthereumProtocolDETFCommon
 		uint256 wethWithIncentive = wethIn_ + (wethIn_ * seignioragePct / FixedPoint.ONE);
 		uint256 baseChir = ConstProdUtils._saleQuote(wethWithIncentive, wethReserve, chirReserve, swapFeePercent);
 		chirOut_ = baseChir * (FixedPoint.ONE - seignioragePct / 2) / FixedPoint.ONE;
+	}
+
+	function _previewChirSwapAfterChirWethUnwind(
+		BaseProtocolDETFRepo.Storage storage layout_,
+		uint256 wethFromChirWeth_,
+		uint256 chirIn_
+	) internal view returns (uint256 wethOut_) {
+		if (chirIn_ == 0) {
+			return 0;
+		}
+
+		IUniswapV2Pair chirWethPool = IUniswapV2Pair(address(IERC4626(address(layout_.chirWethVault)).asset()));
+		(uint256 reserve0, uint256 reserve1,) = chirWethPool.getReserves();
+
+		uint256 wethReserve;
+		uint256 chirReserve;
+		if (chirWethPool.token0() == address(layout_.wethToken)) {
+			wethReserve = reserve0;
+			chirReserve = reserve1;
+		} else {
+			wethReserve = reserve1;
+			chirReserve = reserve0;
+		}
+
+		if (wethFromChirWeth_ >= wethReserve) {
+			return 0;
+		}
+
+		uint256 swapFeePercent = _poolSwapFeePercent(address(chirWethPool));
+		uint256 postUnwindWethReserve = wethReserve - wethFromChirWeth_;
+		wethOut_ = ConstProdUtils._saleQuote(chirIn_, chirReserve, postUnwindWethReserve, swapFeePercent);
 	}
 
 }

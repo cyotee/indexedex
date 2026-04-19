@@ -11,12 +11,15 @@ import {
 } from "test/foundry/spec/vaults/protocol/ProtocolDETF_IntegrationBase.t.sol";
 
 contract ProtocolDETFRichBridgeLocalTest is BaseProtocolDETFIntegrationTestBase, ProtocolDETFRichBridgeUnitTestBase {
-    address internal bridgeRelayer;
-
     function setUp() public override {
         BaseProtocolDETFIntegrationTestBase.setUp();
-        bridgeRelayer = makeAddr("bridgeRelayer");
-        _setUpLocalBridgeConfig();
+        bridgeTokenRegistry = bridgeTokenRegistryMock;
+        standardBridge = standardBridgeMock;
+        messenger = messengerMock;
+        localRelayer = bridgeLocalRelayer;
+        peerDetf = bridgePeerDetf;
+        peerRelayer = bridgePeerRelayer;
+        remoteRichToken = bridgeRemoteRichToken;
     }
 
     function _detf() internal view override returns (IProtocolDETF) {
@@ -40,15 +43,11 @@ contract ProtocolDETFRichBridgeLocalTest is BaseProtocolDETFIntegrationTestBase,
     }
 
     function _owner() internal view override returns (address) {
-        return bridgeRelayer;
+        return owner;
     }
 
     function _mintRich(address recipient, uint256 amount) internal override {
         vm.prank(owner);
         rich.transfer(recipient, amount);
-    }
-
-    function _applyBridgeInit(bytes memory initData) internal override {
-        _initBridge(initData);
     }
 }

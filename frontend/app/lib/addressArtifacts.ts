@@ -20,6 +20,10 @@ export const CHAIN_ID_ANVIL = 31337
 export const CHAIN_ID_LOCALHOST = 1337
 export const CHAIN_ID_BASE = 8453
 
+function isLocalSepoliaEnvironment(environment: DeploymentEnvironment): boolean {
+  return environment === 'supersim_sepolia'
+}
+
 let defaultDeploymentEnvironment: DeploymentEnvironment =
   (process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT as DeploymentEnvironment | undefined) ?? 'supersim_sepolia'
 
@@ -35,16 +39,17 @@ export function getDefaultDeploymentEnvironment(): DeploymentEnvironment {
 
 export function resolveArtifactsChainId(
   chainId: number,
-  environment: DeploymentEnvironment = defaultDeploymentEnvironment
+  environment: DeploymentEnvironment = defaultDeploymentEnvironment,
+  preferredCanonicalChainId?: CanonicalArtifactChainId
 ): CanonicalArtifactChainId | null {
   if (chainId === CHAIN_ID_SEPOLIA) return CHAIN_ID_SEPOLIA
   if (chainId === CHAIN_ID_BASE_SEPOLIA) return CHAIN_ID_BASE_SEPOLIA
 
   if (chainId === CHAIN_ID_ANVIL || chainId === CHAIN_ID_LOCALHOST) {
-    return CHAIN_ID_SEPOLIA
+    return preferredCanonicalChainId ?? CHAIN_ID_SEPOLIA
   }
 
-  if (chainId === CHAIN_ID_BASE && environment === 'supersim_sepolia') {
+  if (chainId === CHAIN_ID_BASE && isLocalSepoliaEnvironment(environment)) {
     return CHAIN_ID_BASE_SEPOLIA
   }
 

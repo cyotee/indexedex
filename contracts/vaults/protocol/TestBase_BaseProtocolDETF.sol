@@ -130,6 +130,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
     IFacet internal protocolDETFExchangeInFacet;
     IFacet internal protocolDETFExchangeOutFacet;
     IFacet internal protocolDETFBondingFacet;
+    IFacet internal protocolDETFBridgeFacet;
     IFacet internal protocolNFTVaultFacet;
     IFacet internal richirFacet;
 
@@ -208,6 +209,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
         protocolDETFExchangeInFacet = create3Factory.deployBaseProtocolDETFExchangeInFacet();
         protocolDETFExchangeOutFacet = create3Factory.deployBaseProtocolDETFExchangeOutFacet();
         protocolDETFBondingFacet = create3Factory.deployBaseProtocolDETFBondingFacet();
+        protocolDETFBridgeFacet = create3Factory.deployBaseProtocolDETFBridgeFacet();
 
         // Protocol NFT Vault facet
         protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
@@ -332,7 +334,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
         vm.startPrank(user);
         IERC20(address(weth)).approve(address(protocolDETF), wethAmount);
         (tokenId,) = IBaseProtocolDETFBonding(address(protocolDETF))
-            .bondWithWeth(wethAmount, lockDuration, user, block.timestamp + 1 hours);
+            .bond(IERC20(address(weth)), wethAmount, lockDuration, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -347,7 +349,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
         vm.startPrank(user);
         rich.approve(address(protocolDETF), richAmount);
         (tokenId,) = IBaseProtocolDETFBonding(address(protocolDETF))
-            .bondWithRich(richAmount, lockDuration, user, block.timestamp + 1 hours);
+            .bond(rich, richAmount, lockDuration, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

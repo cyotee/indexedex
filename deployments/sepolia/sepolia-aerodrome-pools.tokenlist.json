@@ -1,22 +1,22 @@
 [
   {
     "chainId": 11155111,
-    "address": "0xB4afeBB93DA017904E2f94b53061D60EE1D2a394",
+    "address": "0xC91C5eeB178a740eb704455ba2A45575044A09D9",
     "name": "Volatile AMM - TTA/TTB",
     "symbol": "aeroAbPool",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0xb878294049B2069db0D1005738cA94D5631d5555",
+    "address": "0xA2e4B9Ab3FcDbE9a99F92A6c68Cce55F803F0AcB",
     "name": "Volatile AMM - TTA/TTC",
     "symbol": "aeroAcPool",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0xE7e52BE9e79D6950b2927170332372619aDA1b4f",
-    "name": "Volatile AMM - TTB/TTC",
+    "address": "0x543350Eb17f2a6149986360b5c2380Bd55D53A29",
+    "name": "Volatile AMM - TTC/TTB",
     "symbol": "aeroBcPool",
     "decimals": 18
   }

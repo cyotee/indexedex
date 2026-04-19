@@ -321,28 +321,28 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
      * @notice Checks if minting is allowed based on synthetic price.
      * @param layout_ Storage layout reference
      * @param syntheticPrice_ Current synthetic price
-     * @return allowed True if synthetic price is below the lower deadband threshold
+     * @return allowed True if synthetic price is above the upper deadband threshold
      */
     function _isMintingAllowed(BaseProtocolDETFRepo.Storage storage layout_, uint256 syntheticPrice_)
         internal
         view
         returns (bool allowed)
     {
-        return syntheticPrice_ < layout_.burnThreshold;
+        return syntheticPrice_ > layout_.mintThreshold;
     }
 
     /**
      * @notice Checks if burning/redemption is allowed based on synthetic price.
      * @param layout_ Storage layout reference
      * @param syntheticPrice_ Current synthetic price
-     * @return allowed True if synthetic price is above the upper deadband threshold
+     * @return allowed True if synthetic price is below the lower deadband threshold
      */
     function _isBurningAllowed(BaseProtocolDETFRepo.Storage storage layout_, uint256 syntheticPrice_)
         internal
         view
         returns (bool allowed)
     {
-        return syntheticPrice_ > layout_.mintThreshold;
+        return syntheticPrice_ < layout_.burnThreshold;
     }
 
     /* ---------------------------------------------------------------------- */

@@ -1,6 +1,6 @@
 'use client'
 
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useReadContract } from 'wagmi'
 import { useState, useMemo } from 'react'
 import { createUseReadContract } from 'wagmi/codegen'
@@ -8,6 +8,7 @@ import DebugPanel from '../components/DebugPanel'
 
 // Token list helpers
 import { getStrategyVaultTokensForChain } from '../lib/tokenlists'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 // Define the interfaces we'll be using
 const IStandardVaultABI = [
@@ -190,8 +191,8 @@ interface VaultInfo {
 
 export default function VaultsPage() {
   const { address, isConnected } = useAccount()
-  const chainId = useChainId()
-  const resolvedChainId = chainId || 11155111
+  const { selectedChainId } = useSelectedNetwork()
+  const resolvedChainId = selectedChainId || 11155111
   const [selectedVault, setSelectedVault] = useState<string>('')
 
   // Get vault options from token list (strategy vault share tokens)

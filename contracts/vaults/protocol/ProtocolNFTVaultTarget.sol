@@ -28,7 +28,7 @@ import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol
  * @title ProtocolNFTVaultTarget
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Implementation of the Protocol NFT Vault.
- * @dev Manages NFT-based bonding positions with time-locked rewards.
+ * @dev Manages NFT-based bonding positions with time-locked reward-token accrual.
  *      Users lock LP tokens for a duration and receive boosted reward shares.
  *      The Protocol DETF owns this vault and is the only entity that can create lock positions.
  */
@@ -376,7 +376,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     }
 
     /**
-     * @notice Returns the reward token (RICH) contract.
+     * @notice Returns the reward token contract.
      */
     function rewardToken() external view returns (IERC20) {
         return ProtocolNFTVaultRepo._rewardToken();
@@ -447,12 +447,13 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     //  * @inheritdoc IProtocolNFTVault
     //  */
     function reallocateProtocolRewards(address recipient) external returns (uint256 amount) {
-        // Only allow feeTo address (FeeCollector) from VaultFeeOracle to call this
-        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo())) {
+        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+
+        // Allow FeeCollector or the Protocol DETF itself to collect the protocol NFT's accrued reward-token share.
+        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layout.protocolDETF)) {
             revert NotAuthorized(msg.sender);
         }
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
         uint256 protocolTokenId = layout.protocolNFTId;
 
         // Update global rewards

@@ -14,12 +14,15 @@ contract EthereumProtocolDETFRichBridgeLocalTest is
     EthereumProtocolDETFIntegrationTestBase,
     ProtocolDETFRichBridgeUnitTestBase
 {
-    address internal bridgeRelayer;
-
     function setUp() public override {
         EthereumProtocolDETFIntegrationTestBase.setUp();
-        bridgeRelayer = makeAddr("bridgeRelayer");
-        _setUpLocalBridgeConfig();
+        bridgeTokenRegistry = bridgeTokenRegistryMock;
+        standardBridge = standardBridgeMock;
+        messenger = messengerMock;
+        localRelayer = bridgeLocalRelayer;
+        peerDetf = bridgePeerDetf;
+        peerRelayer = bridgePeerRelayer;
+        remoteRichToken = bridgeRemoteRichToken;
     }
 
     function _detf() internal view override returns (IProtocolDETF) {
@@ -43,15 +46,11 @@ contract EthereumProtocolDETFRichBridgeLocalTest is
     }
 
     function _owner() internal view override returns (address) {
-        return bridgeRelayer;
+        return owner;
     }
 
     function _mintRich(address recipient, uint256 amount) internal override {
         vm.prank(owner);
         rich.transfer(recipient, amount);
-    }
-
-    function _applyBridgeInit(bytes memory initData) internal override {
-        _initBridge(initData);
     }
 }

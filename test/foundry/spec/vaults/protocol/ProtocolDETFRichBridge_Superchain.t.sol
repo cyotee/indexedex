@@ -163,8 +163,8 @@ contract TestProtocolDETFBridgeHarness {
         feeTo = feeTo_;
     }
 
-    function initBridge(bytes calldata initData_) external {
-        ProtocolDETFSuperchainBridgeRepo._initialize(initData_);
+    function initBridgeConfig(ProtocolDETFSuperchainBridgeRepo.BridgeConfig calldata bridgeConfig_) external {
+        ProtocolDETFSuperchainBridgeRepo._initialize(bridgeConfig_);
     }
 
     function previewBridgeRichir(uint256 targetChainId, uint256 richirAmount)
@@ -183,6 +183,9 @@ contract TestProtocolDETFBridgeHarness {
         }
 
         ProtocolDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId];
+        if (peer.relayer == address(0)) {
+            peer.relayer = bridgeLayout.defaultPeerRelayer;
+        }
         if (peer.relayer == address(0)) {
             revert IProtocolDETFErrors.BridgePeerNotConfigured(targetChainId);
         }
@@ -227,6 +230,9 @@ contract TestProtocolDETFBridgeHarness {
 
         BridgeExecution memory execution;
         execution.peer = bridgeLayout.peers[args.targetChainId];
+        if (execution.peer.relayer == address(0)) {
+            execution.peer.relayer = bridgeLayout.defaultPeerRelayer;
+        }
         if (execution.peer.relayer == address(0)) {
             revert IProtocolDETFErrors.BridgePeerNotConfigured(args.targetChainId);
         }
@@ -434,13 +440,12 @@ abstract contract ProtocolDETFRichBridgeSuperchainTestBase is Test {
         _ethereumBridgeRegistry.setRemoteToken(_baseChainId(), IERC20(address(_ethereumDetf)), IERC20(address(_baseDetf)), 0);
         _ethereumBridgeRegistry.setRemoteToken(_baseChainId(), IERC20(address(_ethereumRich)), _baseRich, _BRIDGE_MIN_GAS_LIMIT);
         _ethereumApprovedRegistry.approveSender(address(_ethereumDetf), address(_baseDetf));
-        _ethereumDetf.initBridge(
-            _buildBridgeInitData(
+        _ethereumDetf.initBridgeConfig(
+            _buildBridgeConfig(
                 _ethereumBridgeRegistry,
                 _ethereumStandardBridge(),
                 _ethereumCrossDomainMessenger(),
                 address(_ethereumRelayer),
-                _baseChainId(),
                 address(_baseRelayer)
             )
         );
@@ -449,13 +454,12 @@ abstract contract ProtocolDETFRichBridgeSuperchainTestBase is Test {
     _baseBridgeRegistry.setRemoteToken(_ethereumChainId(), IERC20(address(_baseDetf)), IERC20(address(_ethereumDetf)), 0);
         _baseBridgeRegistry.setRemoteToken(_ethereumChainId(), _baseRich, IERC20(address(_ethereumRich)), _BRIDGE_MIN_GAS_LIMIT);
         _baseApprovedRegistry.approveSender(address(_baseDetf), address(_ethereumDetf));
-        _baseDetf.initBridge(
-            _buildBridgeInitData(
+        _baseDetf.initBridgeConfig(
+            _buildBridgeConfig(
                 _baseBridgeRegistry,
                 _baseStandardBridge(),
                 _baseCrossDomainMessenger(),
                 address(_baseRelayer),
-                _ethereumChainId(),
                 address(_ethereumRelayer)
             )
         );
@@ -518,30 +522,20 @@ abstract contract ProtocolDETFRichBridgeSuperchainTestBase is Test {
         );
     }
 
-    function _buildBridgeInitData(
+    function _buildBridgeConfig(
         ISuperChainBridgeTokenRegistry registry,
         address standardBridge,
         address messenger,
         address localRelayer,
-        uint256 peerChainId,
         address peerRelayer
-    ) internal pure returns (bytes memory initData) {
-        uint256[] memory peerChainIds = new uint256[](1);
-        address[] memory peerRelayers = new address[](1);
-
-        peerChainIds[0] = peerChainId;
-        peerRelayers[0] = peerRelayer;
-
-        initData = abi.encode(
-            ProtocolDETFSuperchainBridgeRepo.InitData({
-                bridgeTokenRegistry: registry,
-                standardBridge: IStandardBridge(payable(standardBridge)),
-                messenger: ICrossDomainMessenger(messenger),
-                localRelayer: localRelayer,
-                peerChainIds: peerChainIds,
-                peerRelayers: peerRelayers
-            })
-        );
+    ) internal pure returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig) {
+        bridgeConfig = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+            bridgeTokenRegistry: registry,
+            standardBridge: IStandardBridge(payable(standardBridge)),
+            messenger: ICrossDomainMessenger(messenger),
+            localRelayer: localRelayer,
+            peerRelayer: peerRelayer
+        });
     }
 
     function _ethereumMessenger() internal view returns (ICrossDomainMessenger) {
@@ -754,13 +748,12 @@ abstract contract ProtocolDETFRichBridgeSuperchainTestBase is Test {
         TestProtocolDETFBridgeHarness detfWithoutRemote =
             new TestProtocolDETFBridgeHarness(IERC20(address(_ethereumRich)), _ethereumRichir, _feeTo);
         _ethereumBridgeRegistry.setRemoteToken(999_999, IERC20(address(detfWithoutRemote)), IERC20(address(_baseDetf)), 0);
-        detfWithoutRemote.initBridge(
-            _buildBridgeInitData(
+        detfWithoutRemote.initBridgeConfig(
+            _buildBridgeConfig(
                 _ethereumBridgeRegistry,
                 _ethereumStandardBridge(),
                 _ethereumCrossDomainMessenger(),
                 address(_ethereumRelayer),
-                999_999,
                 address(_baseRelayer)
             )
         );

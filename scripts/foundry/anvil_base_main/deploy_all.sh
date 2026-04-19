@@ -41,6 +41,22 @@
 # - This script always runs Foundry scripts with `--unlocked` and `--sender "$SENDER"`.
 # - If Anvil is not running, this script will attempt to start it via `nohup`.
 #
+# DEPLOYMENT INVENTORY:
+# - Core factory infrastructure: Create3 factory and Diamond package factory.
+# - Shared protocol facets: ERC20, ERC4626, ownership, and other reusable facets.
+# - Core protocol proxies: FeeCollector and IndexedexManager.
+# - DEX packages: Uniswap V2, Aerodrome, and Balancer V3 packages.
+# - Test assets: TTA, TTB, and TTC tokens.
+# - Base trading pools: Uniswap V2 pools, Balancer const-prod pools, and related liquidity.
+# - Strategy vaults: standard strategy vaults plus Aerodrome strategy vaults.
+# - Rate infrastructure: standard exchange rate providers.
+# - Vault-token pools: Balancer const-prod vault-token pools and seeded liquidity.
+# - ERC4626 vaults: permit-enabled ERC4626 vaults for TTA, TTB, and TTC.
+# - DETFs: seigniorage DETFs and the Protocol DETF (CHIR).
+# - WETH/TTC expansion: pools, strategy vaults, liquidity, rate providers, vault-token pools, and vault-vault pool.
+# - Frontend artifacts: segmented tokenlists and merged platform deployment addresses.
+# - Final balance consolidation: sweeps ETH and ERC20 balances into DEPLOYER_ADDRESS.
+#
 # =============================================================================
 
 set -e  # Exit on first error

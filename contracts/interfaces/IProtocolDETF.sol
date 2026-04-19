@@ -116,34 +116,34 @@ interface IProtocolDETF {
     /**
      * @notice Calculates the synthetic spot price quoted as RICH per 1 WETH.
      * @dev Derived from the protocol-owned reserve backing and weighted-pool spot-price math.
-     *      `1e18` represents peg, values below peg favor minting, and values above peg favor burning.
+        *      `1e18` represents peg, values above peg favor minting, and values below peg favor burning.
      * @return syntheticPrice The synthetic price (1e18 = peg)
      */
     function syntheticPrice() external view returns (uint256);
 
     /**
      * @notice Returns the upper deadband bound.
-     * @dev Burning is allowed only when the synthetic price is above this bound.
+        * @dev Minting is allowed only when the synthetic price is above this bound.
      * @return threshold The upper deadband bound (e.g., 1.005e18)
      */
     function mintThreshold() external view returns (uint256);
 
     /**
      * @notice Returns the lower deadband bound.
-     * @dev Minting is allowed only when the synthetic price is below this bound.
+        * @dev Burning is allowed only when the synthetic price is below this bound.
      * @return threshold The lower deadband bound (e.g., 0.995e18)
      */
     function burnThreshold() external view returns (uint256);
 
     /**
      * @notice Checks if minting is currently allowed.
-     * @return allowed True if syntheticPrice is below `burnThreshold()`
+        * @return allowed True if syntheticPrice is above `mintThreshold()`
      */
     function isMintingAllowed() external view returns (bool allowed);
 
     /**
      * @notice Checks if burning/redemption is currently allowed.
-     * @return allowed True if syntheticPrice is above `mintThreshold()`
+        * @return allowed True if syntheticPrice is below `burnThreshold()`
      */
     function isBurningAllowed() external view returns (bool allowed);
 
@@ -169,30 +169,34 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Bonds WETH to receive an NFT position.
-     * @dev WETH paired with minted CHIR, LPed into CHIR/WETH pool.
-     * @param wethAmount Amount of WETH to bond
-     * @param lockDuration Duration to lock the position in seconds
-     * @param recipient Address to receive the NFT
-     * @param pretransferred Whether WETH was already transferred
-     * @return tokenId The minted NFT token ID
+     * @notice Returns the accepted bond-token set for the unified bond route.
+     * @return tokens The accepted bond tokens.
      */
-    function bondWithWeth(uint256 wethAmount, uint256 lockDuration, address recipient, bool pretransferred)
-        external
-        returns (uint256 tokenId);
+    function acceptedBondTokens() external view returns (address[] memory tokens);
 
     /**
-     * @notice Bonds RICH to receive an NFT position.
-     * @dev RICH paired with minted CHIR, LPed into RICH/CHIR pool.
-     * @param richAmount Amount of RICH to bond
-     * @param lockDuration Duration to lock the position in seconds
-     * @param recipient Address to receive the NFT
-     * @param pretransferred Whether RICH was already transferred
-     * @return tokenId The minted NFT token ID
+     * @notice Returns whether a token is accepted by the unified bond route.
+     * @param token The candidate bond token.
+     * @return isAccepted True if the token is supported.
      */
-    function bondWithRich(uint256 richAmount, uint256 lockDuration, address recipient, bool pretransferred)
+    function isAcceptedBondToken(IERC20 token) external view returns (bool isAccepted);
+
+    /**
+     * @notice Bonds an accepted token to receive an NFT position.
+     * @dev WETH can be supplied as native ETH when `wethAsEth` is true.
+     * @param tokenIn Accepted bond token to route.
+     * @param amountIn Amount of tokenIn to bond.
+     * @param lockDuration Duration to lock the position in seconds.
+     * @param recipient Address to receive the NFT.
+     * @param wethAsEth If true, wrap `msg.value` into WETH before bonding.
+     * @param deadline Transaction deadline.
+     * @return tokenId The minted NFT token ID.
+     * @return shares The underlying share amount.
+     */
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
         external
-        returns (uint256 tokenId);
+        payable
+        returns (uint256 tokenId, uint256 shares);
 
     /* ---------------------------------------------------------------------- */
     /*                       Seigniorage Capture                              */
@@ -200,8 +204,7 @@ interface IProtocolDETF {
 
     /**
         * @notice Captures seigniorage when the synthetic price is above peg.
-     * @dev Mints CHIR, zaps into RICH/CHIR vault, adds to reserve.
-     *      Not credited to any account - benefits all NFT holders.
+     * @dev Compounds only the protocol NFT's accrued CHIR reward share into reserve-backed LP.
      * @return seigniorageCaptured Amount of CHIR minted as seigniorage
      */
     function captureSeigniorage() external returns (uint256 seigniorageCaptured);
@@ -290,10 +293,10 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Withdraws pending RICH rewards for a bond position.
+     * @notice Withdraws pending reward-token rewards for a bond position.
      * @param tokenId The NFT token ID
      * @param recipient Address to receive the rewards
-     * @return rewards Amount of RICH rewards withdrawn
+     * @return rewards Amount of reward-token rewards withdrawn. For Protocol DETF deployments this is CHIR.
      */
     function withdrawRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {BridgeTokenPlanning} from "../shared/BridgeTokenPlanning.sol";
 
 contract Script_ExportTokenlists is DeploymentBase {
     string internal constant UI_PREFIX = "public_sepolia";
@@ -97,10 +98,37 @@ contract Script_ExportTokenlists is DeploymentBase {
     }
 
     function _exportTestTokens(string memory chainIdStr) internal {
-        string[] memory entries = new string[](3);
-        entries[0] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenA"), "Test Token A", "TTA");
-        entries[1] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenB"), "Test Token B", "TTB");
-        entries[2] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenC"), "Test Token C", "TTC");
+        string[] memory entries = new string[](5);
+        entries[0] = _tokenlistEntry(
+            chainIdStr,
+            _readAddress("05_test_tokens.json", "testTokenA"),
+            BridgeTokenPlanning.wrappedName("Test Token A"),
+            BridgeTokenPlanning.wrappedSymbol("TTA")
+        );
+        entries[1] = _tokenlistEntry(
+            chainIdStr,
+            _readAddress("05_test_tokens.json", "testTokenB"),
+            BridgeTokenPlanning.wrappedName("Test Token B"),
+            BridgeTokenPlanning.wrappedSymbol("TTB")
+        );
+        entries[2] = _tokenlistEntry(
+            chainIdStr,
+            _readAddress("05_test_tokens.json", "testTokenC"),
+            BridgeTokenPlanning.wrappedName("Test Token C"),
+            BridgeTokenPlanning.wrappedSymbol("TTC")
+        );
+        entries[3] = _tokenlistEntry(
+            chainIdStr,
+            _readAddress("05_test_tokens.json", "demoWeth"),
+            BridgeTokenPlanning.wrappedName("DemoWETH"),
+            BridgeTokenPlanning.wrappedSymbol("DemoWETH")
+        );
+        entries[4] = _tokenlistEntry(
+            chainIdStr,
+            _readAddress("05_test_tokens.json", "richToken"),
+            BridgeTokenPlanning.wrappedName("Rich Token"),
+            BridgeTokenPlanning.wrappedSymbol("RICH")
+        );
         _writeTokenlist(_uiTokenlistFilename("tokens.tokenlist.json"), entries);
     }
 
@@ -217,7 +245,12 @@ contract Script_ExportTokenlists is DeploymentBase {
 
         string[] memory entries = new string[](3);
         entries[0] = _tokenlistEntry(chainIdStr, chir, "Protocol DETF (CHIR)", "CHIR");
-        entries[1] = _tokenlistEntry(chainIdStr, rich, "RICH Token", "RICH");
+        entries[1] = _tokenlistEntry(
+            chainIdStr,
+            rich,
+            BridgeTokenPlanning.wrappedName("Rich Token"),
+            BridgeTokenPlanning.wrappedSymbol("RICH")
+        );
         entries[2] = _tokenlistEntry(chainIdStr, richir, "RICHIR Token", "RICHIR");
         _writeTokenlist(_uiTokenlistFilename("protocol-detf.tokenlist.json"), entries);
     }

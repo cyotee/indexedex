@@ -1,22 +1,22 @@
 [
   {
     "chainId": 11155111,
-    "address": "0x187c3ADC88f511Ebd1fb169603415B941Aa69843",
+    "address": "0x39E9Ef1B1a3dD5c49b3758f770552b084F1E4F42",
     "name": "BV3ConstProd of (Test Token A / Test Token B)",
     "symbol": "abBalancerV3ConstProdPool",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0xE48b4D38DE6a5fCaf36Ec4A38c9Be6a9F1C38B2B",
+    "address": "0x37F1b11FA40947ce4cB920f26439F67FEa6D2d66",
     "name": "BV3ConstProd of (Test Token A / Test Token C)",
     "symbol": "acBalancerV3ConstProdPool",
     "decimals": 18
   },
   {
     "chainId": 11155111,
-    "address": "0x2863c201ec55B1b1F02a0f5105243de2921D181f",
-    "name": "BV3ConstProd of (Test Token B / Test Token C)",
+    "address": "0x8C368bb2E5fcbC5b81085EF135d4ba216188EA6B",
+    "name": "BV3ConstProd of (Test Token C / Test Token B)",
     "symbol": "bcBalancerV3ConstProdPool",
     "decimals": 18
   }

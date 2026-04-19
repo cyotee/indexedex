@@ -22,14 +22,41 @@ if len(sys.argv) != 4:
 deployments_dir = sys.argv[1]
 frontend_dir = sys.argv[2]
 chain_id = int(sys.argv[3])
+frontend_export_prefix = os.environ.get("FRONTEND_EXPORT_PREFIX", "").strip()
+frontend_export_tokenlist_prefix = os.environ.get("FRONTEND_EXPORT_TOKENLIST_PREFIX", "").strip()
+frontend_export_contractlist_prefix = os.environ.get("FRONTEND_EXPORT_CONTRACTLIST_PREFIX", "").strip()
+
+if frontend_export_prefix:
+    if not frontend_export_tokenlist_prefix:
+        frontend_export_tokenlist_prefix = frontend_export_prefix
+    if not frontend_export_contractlist_prefix:
+        frontend_export_contractlist_prefix = frontend_export_prefix
 
 os.makedirs(frontend_dir, exist_ok=True)
 
-for path in glob.glob(os.path.join(deployments_dir, "*.tokenlist.json")):
-    shutil.copy2(path, os.path.join(frontend_dir, os.path.basename(path)))
 
+def remap_filename(filename: str, prefix: str) -> str:
+    if not prefix:
+        return filename
+    if "-" not in filename:
+        return filename
+    _, suffix = filename.split("-", 1)
+    return f"{prefix}-{suffix}"
+
+for path in glob.glob(os.path.join(deployments_dir, "*.tokenlist.json")):
+    filename = remap_filename(os.path.basename(path), frontend_export_tokenlist_prefix)
+    shutil.copy2(path, os.path.join(frontend_dir, filename))
+
+copied_contractlists = False
 for path in glob.glob(os.path.join(deployments_dir, "*.contractlist.json")):
-    shutil.copy2(path, os.path.join(frontend_dir, os.path.basename(path)))
+    filename = remap_filename(os.path.basename(path), frontend_export_contractlist_prefix)
+    shutil.copy2(path, os.path.join(frontend_dir, filename))
+    copied_contractlists = True
+
+if frontend_export_contractlist_prefix and not copied_contractlists:
+    with open(os.path.join(frontend_dir, f"{frontend_export_contractlist_prefix}-factories.contractlist.json"), "w", encoding="utf-8") as handle:
+        json.dump([], handle, indent=2)
+        handle.write("\n")
 
 def sort_key(path: str) -> tuple[int, str]:
     name = os.path.basename(path)

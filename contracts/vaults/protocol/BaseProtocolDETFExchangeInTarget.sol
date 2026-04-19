@@ -257,10 +257,9 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             revert SlippageExceeded(p_.minAmountOut, calc.userChir);
         }
 
-        // Step 11: Mint CHIR to protocol NFT (seigniorage share)
+        // Step 11: Mint CHIR to the NFT vault as reward-token accrual
         if (calc.protocolChir > 0) {
             ERC20Repo._mint(address(layout_.protocolNFTVault), calc.protocolChir);
-            layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, calc.protocolChir);
         }
 
         // Step 12: Mint CHIR to user
@@ -744,7 +743,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     /**
       * @notice Executes RICH → RICHIR conversion via exchangeIn route.
       * @dev Atomically: RICH → vault shares → BPT → protocol NFT → mint RICHIR.
-      *      This is equivalent to `bondWithRich` (min lock duration) followed by
+    *      This is equivalent to bonding with RICH via the unified bond route (min lock duration) followed by
       *      immediate `sellNFT`, but accessible via the IStandardExchangeIn interface.
       * @param layout_ Storage layout reference
       * @param p_ Exchange parameters
@@ -909,7 +908,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     /**
      * @notice Executes WETH → RICHIR conversion via the direct deposit route.
      * @dev Atomically: WETH → CHIR/WETH vault shares → BPT → protocol NFT → mint RICHIR.
-     *      Unlike `bondWithWeth`, this path does not mint CHIR or create balanced LP.
+    *      Unlike bonding through the unified WETH route, this path does not mint CHIR or create balanced LP.
      *      It deposits WETH directly into the CHIR/WETH vault, then routes the resulting
      *      vault shares into the reserve pool and mints RICHIR against the protocol NFT.
      * @param layout_ Storage layout reference

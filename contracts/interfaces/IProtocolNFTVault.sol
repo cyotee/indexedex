@@ -22,7 +22,7 @@ import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
  *      - Original shares (base LP allocation)
  *      - Effective shares (boosted by lock duration)
  *      - Unlock time (when position can be redeemed)
- *      - RICH rewards (accumulated from protocol fees)
+ *      - CHIR rewards (accumulated from protocol seigniorage and vault-held CHIR rewards)
  *
  *      The protocol-owned NFT has no unlock time and accumulates LP
  *      from sold user NFTs.
@@ -60,8 +60,8 @@ interface IProtocolNFTVault is IERC721 {
     function lpToken() external view returns (IERC20);
 
     /**
-     * @notice Returns the reward token (RICH).
-     * @return The RICH token
+    * @notice Returns the reward token.
+    * @return The reward token for this vault's accrual model. For Protocol DETF deployments this is CHIR.
      */
     function rewardToken() external view returns (IERC20);
 
@@ -120,9 +120,9 @@ interface IProtocolNFTVault is IERC721 {
     function isUnlocked(uint256 tokenId) external view returns (bool unlocked);
 
     /**
-     * @notice Returns pending RICH rewards for a token ID.
+    * @notice Returns pending reward-token rewards for a token ID.
      * @param tokenId The NFT token ID
-     * @return pending Amount of pending RICH rewards
+    * @return pending Amount of pending reward-token rewards. For Protocol DETF deployments this is CHIR.
      */
     function pendingRewards(uint256 tokenId) external view returns (uint256 pending);
 
@@ -170,10 +170,10 @@ interface IProtocolNFTVault is IERC721 {
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline) external returns (uint256 wethOut);
 
     /**
-     * @notice Claims RICH rewards without redeeming position.
+    * @notice Claims reward-token rewards without redeeming position.
      * @param tokenId The NFT token ID
      * @param recipient Address to receive rewards
-     * @return rewards Amount of RICH rewards claimed
+    * @return rewards Amount of reward-token rewards claimed. For Protocol DETF deployments this is CHIR.
      */
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
@@ -187,7 +187,7 @@ interface IProtocolNFTVault is IERC721 {
      *      the canonical Bond NFT → RICHIR route.
      *
      *      Semantics (per TASK.md):
-     *      - Harvest pending RICH rewards and send them to `rewardsRecipient`.
+    *      - Harvest pending reward-token rewards and send them to `rewardsRecipient`.
      *      - Transfer principal-only shares (`originalShares`) into the protocol NFT.
      *      - Burn the sold bond NFT.
      *
@@ -195,7 +195,7 @@ interface IProtocolNFTVault is IERC721 {
      * @param seller The expected owner of `tokenId`.
      * @param rewardsRecipient Address to receive harvested rewards.
      * @return principalShares Principal-only shares contributed to the protocol NFT.
-     * @return rewardsClaimed Amount of RICH rewards claimed.
+     * @return rewardsClaimed Amount of reward-token rewards claimed. For Protocol DETF deployments this is CHIR.
      */
     function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
         external
@@ -226,7 +226,7 @@ interface IProtocolNFTVault is IERC721 {
      * @notice Reallocates uncollected protocol NFT rewards as bond incentives.
      * @dev Can only be called by feeTo address from VaultFeeOracle.
      * @param recipient Address to receive reallocated rewards
-     * @return amount Amount of RICH reallocated
+    * @return amount Amount of reward-token rewards reallocated. For Protocol DETF deployments this is CHIR.
      */
     function reallocateProtocolRewards(address recipient) external returns (uint256 amount);
 

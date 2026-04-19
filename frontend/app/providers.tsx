@@ -8,12 +8,15 @@ import { http } from 'viem';
 
 import {
   DeploymentEnvironmentContext,
-  DeploymentEnvironmentToggle,
   DEFAULT_DEPLOYMENT_ENVIRONMENT,
-  DEPLOYMENT_ENVIRONMENT_STORAGE_KEY,
-  isDeploymentEnvironment,
 } from './lib/deploymentEnvironment';
 import { setDefaultDeploymentEnvironment } from './lib/addressArtifacts';
+import {
+  DEFAULT_SELECTED_CHAIN_ID,
+  isCanonicalArtifactChainId,
+  NetworkSelectionContext,
+  SELECTED_NETWORK_STORAGE_KEY,
+} from './lib/networkSelection';
 
 const queryClient = new QueryClient();
 const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545';
@@ -21,32 +24,39 @@ const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:954
 const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ?? sepolia.rpcUrls.default.http[0];
 const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSepolia.rpcUrls.default.http[0];
 
+function isLocalSepoliaEnvironment(environment: string): boolean {
+  return environment === 'supersim_sepolia';
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [environment, setEnvironment] = useState(DEFAULT_DEPLOYMENT_ENVIRONMENT);
+  const environment = DEFAULT_DEPLOYMENT_ENVIRONMENT;
+  const setEnvironment = () => {};
+  const [selectedChainId, setSelectedChainId] = useState(DEFAULT_SELECTED_CHAIN_ID);
+
+  useEffect(() => {
+    setDefaultDeploymentEnvironment(environment);
+  }, [environment]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const stored = window.localStorage.getItem(DEPLOYMENT_ENVIRONMENT_STORAGE_KEY);
-    if (stored && isDeploymentEnvironment(stored)) {
-      setEnvironment(stored);
-      setDefaultDeploymentEnvironment(stored);
-      return;
+    const stored = Number(window.localStorage.getItem(SELECTED_NETWORK_STORAGE_KEY));
+    if (Number.isFinite(stored) && isCanonicalArtifactChainId(stored)) {
+      setSelectedChainId(stored);
     }
-
-    setDefaultDeploymentEnvironment(DEFAULT_DEPLOYMENT_ENVIRONMENT);
   }, []);
 
   useEffect(() => {
-    setDefaultDeploymentEnvironment(environment);
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem(DEPLOYMENT_ENVIRONMENT_STORAGE_KEY, environment);
+      window.localStorage.setItem(SELECTED_NETWORK_STORAGE_KEY, String(selectedChainId));
     }
-  }, [environment]);
+  }, [selectedChainId]);
 
   const config = useMemo(
-    () =>
-      createConfig({
+    () => {
+      const useLocalRpc = isLocalSepoliaEnvironment(environment);
+
+      return createConfig({
         chains: [sepolia, baseSepolia, foundry, localhost, base],
         multiInjectedProviderDiscovery: false,
         ssr: true,
@@ -60,21 +70,23 @@ export function Providers({ children }: { children: React.ReactNode }) {
           [foundry.id]: http(localRpcUrl),
           [localhost.id]: http(localRpcUrl),
           [base.id]: http(base.rpcUrls.default.http[0]),
-          [sepolia.id]: http(environment === 'supersim_sepolia' ? localRpcUrl : sepoliaRpcUrl),
-          [baseSepolia.id]: http(environment === 'supersim_sepolia' ? baseRpcUrl : baseSepoliaRpcUrl),
+          [sepolia.id]: http(useLocalRpc ? localRpcUrl : sepoliaRpcUrl),
+          [baseSepolia.id]: http(useLocalRpc ? baseRpcUrl : baseSepoliaRpcUrl),
         },
-      }),
+      })
+    },
     [environment]
   );
 
   return (
     <DeploymentEnvironmentContext.Provider value={{ environment, setEnvironment }}>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <DeploymentEnvironmentToggle />
-        </QueryClientProvider>
-      </WagmiProvider>
+      <NetworkSelectionContext.Provider value={{ selectedChainId, setSelectedChainId }}>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </WagmiProvider>
+      </NetworkSelectionContext.Provider>
     </DeploymentEnvironmentContext.Provider>
   );
 }

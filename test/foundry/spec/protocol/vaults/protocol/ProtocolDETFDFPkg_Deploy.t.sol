@@ -62,6 +62,7 @@ import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.s
 import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
 import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
 
 contract BaseProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
@@ -181,6 +182,7 @@ contract BaseProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchang
         IFacet protocolDETFExchangeInQueryFacet = create3Factory.deployBaseProtocolDETFExchangeInQueryFacet();
         IFacet protocolDETFExchangeOutFacet = create3Factory.deployBaseProtocolDETFExchangeOutFacet();
         IFacet protocolDETFBondingFacet = create3Factory.deployBaseProtocolDETFBondingFacet();
+        IFacet protocolDETFBridgeFacet = create3Factory.deployBaseProtocolDETFBridgeFacet();
         IFacet protocolDETFBondingQueryFacet = create3Factory.deployBaseProtocolDETFBondingQueryFacet();
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
         IFacet richirFacet = create3Factory.deployRICHIRFacet();
@@ -221,22 +223,21 @@ contract BaseProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchang
 
         vm.startPrank(owner);
         // Deploy Protocol DETF package.
-        BaseProtocolDETF_Component_FactoryService.ProtocolDETFFacets memory facets =
-            BaseProtocolDETF_Component_FactoryService.ProtocolDETFFacets({
-                erc20Facet: erc20Facet,
-                erc5267Facet: erc5267Facet,
-                erc2612Facet: erc2612Facet,
-                erc4626BasicVaultFacet: erc4626BasicVaultFacet,
-                erc4626StandardVaultFacet: erc4626StandardVaultFacet,
-                protocolDETFExchangeInFacet: protocolDETFExchangeInFacet,
-                protocolDETFExchangeInQueryFacet: protocolDETFExchangeInQueryFacet,
-                protocolDETFExchangeOutFacet: protocolDETFExchangeOutFacet,
-                protocolDETFBondingFacet: protocolDETFBondingFacet,
-                protocolDETFBondingQueryFacet: protocolDETFBondingQueryFacet,
-                multiStepOwnableFacet: multiStepOwnableFacet,
-                operableFacet: operableFacet,
-                protocolDETFRichirRedeemFacet: protocolDETFRichirRedeemFacet
-            });
+        BaseProtocolDETF_Component_FactoryService.ProtocolDETFFacets memory facets;
+        facets.erc20Facet = erc20Facet;
+        facets.erc5267Facet = erc5267Facet;
+        facets.erc2612Facet = erc2612Facet;
+        facets.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
+        facets.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        facets.protocolDETFExchangeInFacet = protocolDETFExchangeInFacet;
+        facets.protocolDETFExchangeInQueryFacet = protocolDETFExchangeInQueryFacet;
+        facets.protocolDETFExchangeOutFacet = protocolDETFExchangeOutFacet;
+        facets.protocolDETFBondingFacet = protocolDETFBondingFacet;
+        facets.protocolDETFBridgeFacet = protocolDETFBridgeFacet;
+        facets.protocolDETFBondingQueryFacet = protocolDETFBondingQueryFacet;
+        facets.multiStepOwnableFacet = multiStepOwnableFacet;
+        facets.operableFacet = operableFacet;
+        facets.protocolDETFRichirRedeemFacet = protocolDETFRichirRedeemFacet;
 
         BaseProtocolDETF_Component_FactoryService.ProtocolDETFInfra memory infra =
             BaseProtocolDETF_Component_FactoryService.ProtocolDETFInfra({
@@ -257,9 +258,10 @@ contract BaseProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchang
                 richirPkg: richirPkg,
                 rateProviderPkg: rateProviderPkg
             });
+            ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig;
 
         IBaseProtocolDETFDFPkg.PkgInit memory detfPkgInit =
-            BaseProtocolDETF_Component_FactoryService.buildProtocolDETFPkgInit(facets, infra, pkgs);
+            BaseProtocolDETF_Component_FactoryService.buildProtocolDETFPkgInit(facets, infra, pkgs, bridgeConfig);
 
         protocolDETFDFPkg = IVaultRegistryDeployment(address(indexedexManager)).deployBaseProtocolDETFDFPkg(detfPkgInit);
         vm.stopPrank();

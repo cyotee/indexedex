@@ -57,6 +57,7 @@ import supersimBaseProtocolDetfJson from './supersim_sepolia/base/anvil_base_mai
 
 export const CHAIN_ID_SEPOLIA = 11155111 as const
 export const CHAIN_ID_BASE_SEPOLIA = 84532 as const
+const CANONICAL_PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
 export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia'
 export type ChainRole = 'ethereum' | 'base'
@@ -91,6 +92,10 @@ const normalizePlatform = (platform: any, chainId: CanonicalArtifactChainId) => 
   if (weth9) {
     normalized.weth9 = weth9
     normalized.weth = weth9
+  }
+
+  if (!normalized.permit2) {
+    normalized.permit2 = CANONICAL_PERMIT2_ADDRESS
   }
 
   return normalized

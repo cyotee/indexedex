@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useReadContract } from 'wagmi'
 import { useWriteContract } from 'wagmi'
 import { erc20Abi } from 'viem'
@@ -14,6 +14,7 @@ import {
   type TokenOption
 } from '../lib/tokenlists'
 import { resolveAppChain } from '../lib/runtimeChains'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 const erc20MinterFacadeAbi = [
   {
@@ -31,8 +32,8 @@ const erc20MinterFacadeAbi = [
 
 export default function MintPage() {
   const { address, isConnected } = useAccount()
-  const chainId = useChainId()
-  const resolvedChainId = chainId || 11155111
+  const { selectedChainId } = useSelectedNetwork()
+  const resolvedChainId = selectedChainId || 11155111
   const { writeContract } = useWriteContract()
 
   const chain = useMemo(() => {

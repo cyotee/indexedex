@@ -9,13 +9,17 @@ import {DeploymentBase} from "./DeploymentBase.sol";
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
-import {BASE_MAIN} from "@crane/contracts/constants/networks/BASE_MAIN.sol";
+import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
+import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
@@ -52,6 +56,7 @@ import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/Bas
 import {IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 /// @title Script_16_DeployProtocolDETF (Public Sepolia)
 /// @notice Deploys the Base Protocol DETF instance required for bridge config and UI testing.
@@ -83,6 +88,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private erc5267Facet;
 	IFacet private erc4626BasicVaultFacet;
 	IFacet private erc4626StandardVaultFacet;
+	IFacet private multiStepOwnableFacet;
+	IFacet private operableFacet;
 
 	// Stage 04 outputs
 	IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
@@ -100,7 +107,9 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private protocolExchangeInQueryFacet;
 	IFacet private protocolExchangeOutFacet;
 	IFacet private protocolBondingFacet;
+	IFacet private protocolBridgeFacet;
 	IFacet private protocolBondingQueryFacet;
+	IFacet private protocolRichirRedeemFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
 
@@ -117,6 +126,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	/* ---------------------------------------------------------------------- */
 
 	address private richToken;
+	address private demoWethToken;
 	address private protocolDetf;
 
 	address private protocolNftVault;
@@ -146,9 +156,6 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		console.log("[Stage 16][BASE] Checkpoint: deploying facets");
 		_deployFacets();
 		console.log("[Stage 16][BASE] Checkpoint: facets deployed");
-		console.log("[Stage 16][BASE] Checkpoint: deploying RICH token");
-		_deployRichToken();
-		console.log("[Stage 16][BASE] Checkpoint: RICH token deployed");
 		console.log("[Stage 16][BASE] Checkpoint: deploying packages");
 		_deployWeightedPool8020FactoryIfNeeded();
 		_deployPkgs();
@@ -180,12 +187,16 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		erc5267Facet = IFacet(_readAddress("02_shared_facets.json", "erc5267Facet"));
 		erc4626BasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626BasicVaultFacet"));
 		erc4626StandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626StandardVaultFacet"));
+		multiStepOwnableFacet = IFacet(_readAddress("02_shared_facets.json", "multiStepOwnableFacet"));
+		operableFacet = IFacet(_readAddress("02_shared_facets.json", "operableFacet"));
 
 		balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(
 			_readAddress("04_dex_packages.json", "balancerV3StandardExchangeRouter")
 		);
 		aerodromePkg = IAerodromeStandardExchangeDFPkg(_readAddress("04_dex_packages.json", "aerodromePkg"));
 		rateProviderPkg = IStandardExchangeRateProviderDFPkg(_readAddress("04_dex_packages.json", "rateProviderPkg"));
+		richToken = _readAddress("05_test_tokens.json", "richToken");
+		demoWethToken = _readAddress("05_test_tokens.json", "demoWeth");
 
 		// Stage 15 may not exist in public sepolia
 		(address weightedPoolFactoryAddr, bool wpExists) = _readAddressSafe("15_seigniorage_detfs.json", "weightedPool8020Factory");
@@ -197,9 +208,13 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		require(address(diamondPackageFactory) != address(0), "DiamondPackageFactory not found");
 		require(address(vaultRegistry) != address(0), "VaultRegistry not found");
 		require(address(feeOracle) != address(0), "FeeOracle not found");
+		require(address(multiStepOwnableFacet) != address(0), "MultiStepOwnableFacet not found");
+		require(address(operableFacet) != address(0), "OperableFacet not found");
 		require(address(balancerV3StandardExchangeRouter) != address(0), "BalancerV3Router not found");
 		require(address(aerodromePkg) != address(0), "Aerodrome pkg not found");
 		require(address(rateProviderPkg) != address(0), "RateProvider pkg not found");
+		require(richToken != address(0), "Bridged RICH not found");
+		require(demoWethToken != address(0), "Bridged DemoWETH not found");
 	}
 
 	function _deployWeightedPool8020FactoryIfNeeded() internal {
@@ -234,9 +249,15 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		console.log("[Stage 16][BASE] Deploy facet: BaseProtocolDETFBondingFacet");
 		protocolBondingFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingFacet(create3Factory);
 		console.log("[Stage 16][BASE] Deployed facet", address(protocolBondingFacet));
+		console.log("[Stage 16][BASE] Deploy facet: BaseProtocolDETFBridgeFacet");
+		protocolBridgeFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBridgeFacet(create3Factory);
+		console.log("[Stage 16][BASE] Deployed facet", address(protocolBridgeFacet));
 		console.log("[Stage 16][BASE] Deploy facet: BaseProtocolDETFBondingQueryFacet");
 		protocolBondingQueryFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingQueryFacet(create3Factory);
 		console.log("[Stage 16][BASE] Deployed facet", address(protocolBondingQueryFacet));
+		console.log("[Stage 16][BASE] Deploy facet: BaseProtocolDETFRichirRedeemFacet");
+		protocolRichirRedeemFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFRichirRedeemFacet(create3Factory);
+		console.log("[Stage 16][BASE] Deployed facet", address(protocolRichirRedeemFacet));
 		console.log("[Stage 16][BASE] Deploy facet: ProtocolNFTVaultFacet");
 		protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
 		console.log("[Stage 16][BASE] Deployed facet", address(protocolNFTVaultFacet));
@@ -252,44 +273,6 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			vm.label(address(erc721Facet), "ProtocolDETF_ERC721Facet");
 			console.log("[Stage 16][BASE] Deployed facet", address(erc721Facet));
 		}
-	}
-
-	function _deployRichToken() internal {
-		console.log("[Stage 16][BASE] Deploy package: ERC20PermitDFPkg(RICH)");
-		IERC20PermitDFPkg.PkgInit memory pkgInit = IERC20PermitDFPkg.PkgInit({
-			erc20Facet: erc20Facet,
-			erc5267Facet: erc5267Facet,
-			erc2612Facet: erc2612Facet
-		});
-
-		richTokenPkg = IERC20PermitDFPkg(
-			address(
-				create3Factory.deployPackageWithArgs(
-					type(ERC20PermitDFPkg).creationCode,
-					abi.encode(pkgInit),
-					abi.encode(type(ERC20PermitDFPkg).name)._hash()
-				)
-			)
-		);
-		require(address(richTokenPkg) != address(0), "RICH token pkg deploy failed");
-		vm.label(address(richTokenPkg), "ERC20PermitDFPkg(RICH)");
-		console.log("[Stage 16][BASE] Deployed package", address(richTokenPkg));
-
-		// Deploy the RICH token proxy and mint initial supply to `owner`.
-		IERC20PermitDFPkg.PkgArgs memory richArgs = IERC20PermitDFPkg.PkgArgs({
-			name: "Rich Token",
-			symbol: "RICH",
-			decimals: 18,
-			totalSupply: RICH_TOTAL_SUPPLY,
-			recipient: owner,
-			optionalSalt: bytes32(0)
-		});
-
-		console.log("[Stage 16][BASE] Deploy proxy: RICH");
-		richToken = diamondPackageFactory.deploy(IDiamondFactoryPackage(address(richTokenPkg)), abi.encode(richArgs));
-		require(richToken != address(0), "RICH token deploy failed");
-		vm.label(richToken, "RICH");
-		console.log("[Stage 16][BASE] Deployed proxy", richToken);
 	}
 
 	function _deployPkgs() internal {
@@ -339,7 +322,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			facets.protocolDETFExchangeInQueryFacet = protocolExchangeInQueryFacet;
 			facets.protocolDETFExchangeOutFacet = protocolExchangeOutFacet;
 			facets.protocolDETFBondingFacet = protocolBondingFacet;
+			facets.protocolDETFBridgeFacet = protocolBridgeFacet;
 			facets.protocolDETFBondingQueryFacet = protocolBondingQueryFacet;
+			facets.multiStepOwnableFacet = multiStepOwnableFacet;
+			facets.operableFacet = operableFacet;
+			facets.protocolDETFRichirRedeemFacet = protocolRichirRedeemFacet;
 
 			BaseProtocolDETF_Component_FactoryService.ProtocolDETFInfra memory infra;
 			infra.feeOracle = feeOracle;
@@ -360,7 +347,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			IBaseProtocolDETFDFPkg.PkgInit memory detfPkgInit = BaseProtocolDETF_Component_FactoryService.buildProtocolDETFPkgInit(
 				facets,
 				infra,
-				pkgs
+				pkgs,
+				_bridgePkgConfig()
 			);
 
 			protocolDetfPkg = BaseProtocolDETF_Pkg_FactoryService.deployBaseProtocolDETFDFPkg(vaultRegistry, detfPkgInit);
@@ -371,9 +359,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 	function _approveInitialFunding() internal {
 		if (INITIAL_WETH_DEPOSIT > 0) {
-			weth.deposit{value: INITIAL_WETH_DEPOSIT}();
-			weth.approve(address(permit2), type(uint256).max);
-			permit2.approve(address(weth), address(protocolDetfPkg), uint160(INITIAL_WETH_DEPOSIT), type(uint48).max);
+			IERC20(demoWethToken).approve(address(permit2), type(uint256).max);
+			permit2.approve(demoWethToken, address(protocolDetfPkg), uint160(INITIAL_WETH_DEPOSIT), type(uint48).max);
 		}
 
 		if (INITIAL_RICH_DEPOSIT > 0) {
@@ -390,12 +377,12 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				richToken: richToken,
 				richInitialDepositAmount: INITIAL_RICH_DEPOSIT,
 				richMintChirPercent: ONE_WAD,
-				wethToken: address(weth),
+				wethToken: demoWethToken,
 				wethInitialDepositAmount: INITIAL_WETH_DEPOSIT,
 				wethMintChirPercent: ONE_WAD
 			}),
-			bridgeInitData: bytes(""),
-			funder: owner
+			funder: owner,
+			owner: owner
 		});
 
 		protocolDetf = vaultRegistry.deployVault(IStandardVaultPkg(address(protocolDetfPkg)), abi.encode(args));
@@ -420,7 +407,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		string memory json;
 
 		json = vm.serializeAddress("", "richToken", richToken);
-		json = vm.serializeAddress("", "richTokenPkg", address(richTokenPkg));
+		json = vm.serializeAddress("", "demoWethToken", demoWethToken);
 
 		json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
 		json = vm.serializeAddress("", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
@@ -442,5 +429,30 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		_logAddress("RICHIR:", richirToken);
 		_logAddress("Reserve Pool:", reservePool);
 		_logComplete("Stage 16 (Public Sepolia)");
+	}
+
+	function _bridgePkgConfig() internal view returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig) {
+		string memory remoteOutDir = _requiredEnvString("REMOTE_OUT_DIR");
+		address bridgeRegistry = _readAddress("24_superchain_bridge.json", "bridgeTokenRegistry");
+		address localRelayer = _readAddress("24_superchain_bridge.json", "tokenTransferRelayer");
+		address peerRelayer = _readAddressFromDir(remoteOutDir, "24_superchain_bridge.json", "tokenTransferRelayer");
+
+		bridgeConfig = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+			bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(bridgeRegistry),
+			standardBridge: IStandardBridge(payable(BASE_SEPOLIA.L2_STANDARD_BRIDGE)),
+			messenger: ICrossDomainMessenger(BASE_SEPOLIA.L2_CROSSDOMAIN_MESSENGER),
+			localRelayer: localRelayer,
+			peerRelayer: peerRelayer
+		});
+	}
+
+	function _requiredEnvString(string memory key) internal view returns (string memory value) {
+		value = vm.envString(key);
+		require(bytes(value).length > 0, "Missing required env string");
+	}
+
+	function _readAddressFromDir(string memory outDir, string memory file, string memory key) internal view returns (address) {
+		string memory json = vm.readFile(string.concat(outDir, "/", file));
+		return vm.parseJsonAddress(json, string.concat(".", key));
 	}
 }

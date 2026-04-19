@@ -55,6 +55,7 @@ import {EthereumProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol
 import {IEthereumProtocolDETFDFPkg} from "contracts/vaults/protocol/EthereumProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 /// @title Script_16_DeployProtocolDETF
 /// @notice Deploys the Protocol DETF (CHIR) and its supporting infra.
@@ -109,6 +110,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private protocolExchangeInQueryFacet;
 	IFacet private protocolExchangeOutFacet;
 	IFacet private protocolBondingFacet;
+	IFacet private protocolBridgeFacet;
 	IFacet private protocolBondingQueryFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
@@ -255,6 +257,9 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBondingFacet");
 		protocolBondingFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBondingFacet(create3Factory);
 		console.log("[Stage 16][ETH] Deployed facet", address(protocolBondingFacet));
+		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBridgeFacet");
+		protocolBridgeFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBridgeFacet(create3Factory);
+		console.log("[Stage 16][ETH] Deployed facet", address(protocolBridgeFacet));
 		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBondingQueryFacet");
 		protocolBondingQueryFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBondingQueryFacet(create3Factory);
 		console.log("[Stage 16][ETH] Deployed facet", address(protocolBondingQueryFacet));
@@ -361,6 +366,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			facets.protocolDETFExchangeInQueryFacet = protocolExchangeInQueryFacet;
 			facets.protocolDETFExchangeOutFacet = protocolExchangeOutFacet;
 			facets.protocolDETFBondingFacet = protocolBondingFacet;
+			facets.protocolDETFBridgeFacet = protocolBridgeFacet;
 			facets.protocolDETFBondingQueryFacet = protocolBondingQueryFacet;
 
 			EthereumProtocolDETF_Component_FactoryService.EthereumProtocolDETFInfra memory infra;
@@ -380,10 +386,13 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			pkgs.richirPkg = richirPkg;
 			pkgs.rateProviderPkg = rateProviderPkg;
 
+			ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig;
+
 			IEthereumProtocolDETFDFPkg.PkgInit memory detfPkgInit = EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(
 				facets,
 				infra,
-				pkgs
+				pkgs,
+				bridgeConfig
 			);
 
 			protocolDetfPkg = EthereumProtocolDETF_Pkg_FactoryService.deployEthereumProtocolDETFDFPkg(vaultRegistry, detfPkgInit);
@@ -421,7 +430,6 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				wethInitialDepositAmount: INITIAL_WETH_DEPOSIT,
 				wethMintChirPercent: ONE_WAD
 			}),
-			bridgeInitData: bytes(""),
 			funder: owner
 		});
 

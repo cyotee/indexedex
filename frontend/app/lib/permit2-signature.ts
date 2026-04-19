@@ -74,6 +74,22 @@ export type Permit2SignatureParams = {
   witness: WitnessData
 }
 
+export type PermitIntentKeyParams = {
+  chainId: number
+  owner: Address
+  spender: Address
+  pool: Address
+  tokenIn: Address
+  tokenInVault: Address
+  tokenOut: Address
+  tokenOutVault: Address
+  amountGiven: bigint
+  limit: bigint
+  wethIsEth: boolean
+  userDataHash: Hash
+  isExactIn: boolean
+}
+
 export function getPermit2DomainSeparator(
   chainId: number,
   permit2Address: Address
@@ -195,6 +211,24 @@ export function createWitnessFromSwapParams(
     wethIsEth,
     userData,
   }
+}
+
+export function buildPermitIntentKey(params: PermitIntentKeyParams): string {
+  return [
+    params.chainId.toString(),
+    params.owner.toLowerCase(),
+    params.spender.toLowerCase(),
+    params.pool.toLowerCase(),
+    params.tokenIn.toLowerCase(),
+    params.tokenInVault.toLowerCase(),
+    params.tokenOut.toLowerCase(),
+    params.tokenOutVault.toLowerCase(),
+    params.amountGiven.toString(),
+    params.limit.toString(),
+    params.wethIsEth ? '1' : '0',
+    params.userDataHash.toLowerCase(),
+    params.isExactIn ? 'in' : 'out',
+  ].join('|')
 }
 
 const DOMAIN_TYPEHASH = keccak256(toHex('EIP712Domain(string name,uint256 chainId,address verifyingContract)'))

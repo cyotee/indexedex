@@ -17,6 +17,7 @@ import { erc20Abi, formatUnits, zeroAddress, parseAbiItem } from 'viem'
 import DebugPanel from '../components/DebugPanel'
 import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
 import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 import {
   CHAIN_ID_SEPOLIA,
@@ -392,7 +393,7 @@ function isProtocolMetadataUnavailableError(error: unknown): boolean {
 export default function PortfolioPage() {
   const { address, chainId: accountChainId, isConnected } = useAccount()
   const { environment } = useDeploymentEnvironment()
-  const configChainId = useChainId()
+  const { selectedChainId } = useSelectedNetwork()
   const connection = useConnection()
   const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
   const browserChainId = useBrowserChainId(isConnected)
@@ -402,11 +403,10 @@ export default function PortfolioPage() {
   const attachedWalletChainId = isConnected
     ? (accountChainId ?? connection.chainId ?? walletClient?.chain?.id ?? connectorClient?.chain?.id ?? connectedWalletChainId ?? browserChainId)
     : undefined
-  const resolvedConfigChainId = configChainId !== undefined ? resolveArtifactsChainId(configChainId, environment) : null
   const resolvedWalletChainId = attachedWalletChainId !== undefined
-    ? resolveArtifactsChainId(attachedWalletChainId, environment)
+    ? resolveArtifactsChainId(attachedWalletChainId, environment, selectedChainId)
     : null
-  const resolvedChainId = resolvedWalletChainId ?? resolvedConfigChainId ?? CHAIN_ID_SEPOLIA
+  const resolvedChainId = selectedChainId ?? CHAIN_ID_SEPOLIA
   const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })
   const publicClient = useMemo(() => wagmiPublicClient ?? null, [wagmiPublicClient])
   const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)

@@ -10,15 +10,18 @@ import {DeploymentBase as AnvilDeploymentBase} from "../../anvil_sepolia/Deploym
 /* -------------------------------------------------------------------------- */
 
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
+import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
-import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
+import {IERC20MinterFacade} from "@crane/contracts/tokens/ERC20/IERC20MinterFacade.sol";
 import {IWeightedPool8020Factory} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -54,21 +57,17 @@ import {EthereumProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol
 import {IEthereumProtocolDETFDFPkg} from "contracts/vaults/protocol/EthereumProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
-/// @title Script_16_DeployProtocolDETF (Public Sepolia - No WETH)
-/// @notice Deploys the Protocol DETF (CHIR) without WETH seeding for public Sepolia.
+/// @title Script_16_DeployProtocolDETF (Public Sepolia - DemoWETH)
+/// @notice Deploys the Protocol DETF (CHIR) using DemoWETH as the DETF base asset on public Sepolia.
 contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
-	using BetterEfficientHashLib for bytes;
-
 	/* ---------------------------------------------------------------------- */
 	/*                                 Constants                               */
 	/* ---------------------------------------------------------------------- */
 
-	uint256 private constant RICH_TOTAL_SUPPLY = 1_000_000_000e18;
-
 	// Initial liquidity used by the Protocol DETF package during deployment.
-	// IMPORTANT: Set to 0 for public Sepolia where we don't have WETH funding.
-	uint256 private constant INITIAL_WETH_DEPOSIT = 0;
+	uint256 private constant INITIAL_DEMO_WETH_DEPOSIT = 10e18;
 	uint256 private constant INITIAL_RICH_DEPOSIT = 10e18;
 
 	uint256 private constant ONE_WAD = 1e18;
@@ -96,6 +95,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 
 	// Stage 15 output (re-used)
 	IWeightedPool8020Factory private weightedPool8020Factory;
+	IERC20MinterFacade private erc20MinterFacade;
 
 	/* ---------------------------------------------------------------------- */
 	/*                            Deployed infra                               */
@@ -105,13 +105,12 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 	IFacet private protocolExchangeInQueryFacet;
 	IFacet private protocolExchangeOutFacet;
 	IFacet private protocolBondingFacet;
+	IFacet private protocolBridgeFacet;
 	IFacet private protocolBondingQueryFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
 
 	IFacet private erc721Facet;
-
-	IERC20PermitDFPkg private richTokenPkg;
 
 	IProtocolNFTVaultDFPkg private protocolNFTVaultPkg;
 	IRICHIRDFPkg private richirPkg;
@@ -121,6 +120,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 	/*                              Deployed addresses                          */
 	/* ---------------------------------------------------------------------- */
 
+	address private demoWeth;
 	address private richToken;
 	address private protocolDetf;
 
@@ -159,9 +159,6 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 		console.log("[Stage 16][ETH] Checkpoint: deploying facets");
 		_deployFacets();
 		console.log("[Stage 16][ETH] Checkpoint: facets deployed");
-		console.log("[Stage 16][ETH] Checkpoint: deploying RICH token");
-		_deployRichToken();
-		console.log("[Stage 16][ETH] Checkpoint: RICH token deployed");
 		console.log("[Stage 16][ETH] Checkpoint: deploying packages");
 		_deployPkgs();
 		console.log("[Stage 16][ETH] Checkpoint: packages deployed");
@@ -200,6 +197,9 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 		uniswapV2Pkg = IUniswapV2StandardExchangeDFPkg(_readAddress("05_uniswap_v2.json", "uniswapV2Pkg"));
 		
 		rateProviderPkg = IStandardExchangeRateProviderDFPkg(_readAddress("04_balancer_v3.json", "rateProviderPkg"));
+		erc20MinterFacade = IERC20MinterFacade(_readAddress("07_test_tokens.json", "erc20MinterFacade"));
+		demoWeth = _readAddress("07_test_tokens.json", "demoWeth");
+		richToken = _readAddress("07_test_tokens.json", "richToken");
 
 		// Try to read from stage 15 (may not exist if stage 15 hasn't run)
 		(address weightedPoolFactoryAddr, bool wpExists) = _readAddressSafe("15_seigniorage_detfs.json", "weightedPool8020Factory");
@@ -214,6 +214,9 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 		require(address(balancerV3StandardExchangeRouter) != address(0), "BalancerV3Router not found");
 		require(address(uniswapV2Pkg) != address(0), "UniswapV2 pkg not found");
 		require(address(rateProviderPkg) != address(0), "RateProvider pkg not found");
+		require(address(erc20MinterFacade) != address(0), "ERC20MinterFacade not found");
+		require(demoWeth != address(0), "DemoWETH not found");
+		require(richToken != address(0), "RICH not found");
 		
 		// weightedPool8020Factory may be zero if stage 15 hasn't been run
 	}
@@ -231,6 +234,9 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBondingFacet");
 		protocolBondingFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBondingFacet(create3Factory);
 		console.log("[Stage 16][ETH] Deployed facet", address(protocolBondingFacet));
+		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBridgeFacet");
+		protocolBridgeFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBridgeFacet(create3Factory);
+		console.log("[Stage 16][ETH] Deployed facet", address(protocolBridgeFacet));
 		console.log("[Stage 16][ETH] Deploy facet: EthereumProtocolDETFBondingQueryFacet");
 		protocolBondingQueryFacet = EthereumProtocolDETF_Facet_FactoryService.deployEthereumProtocolDETFBondingQueryFacet(create3Factory);
 		console.log("[Stage 16][ETH] Deployed facet", address(protocolBondingQueryFacet));
@@ -249,45 +255,6 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 			vm.label(address(erc721Facet), "ProtocolDETF_ERC721Facet");
 			console.log("[Stage 16][ETH] Deployed facet", address(erc721Facet));
 		}
-	}
-
-	function _deployRichToken() internal {
-		console.log("[Stage 16][ETH] Deploy package: ERC20PermitDFPkg(RICH)");
-		// Deploy the ERC20PermitDFPkg itself via CREATE3.
-		IERC20PermitDFPkg.PkgInit memory pkgInit = IERC20PermitDFPkg.PkgInit({
-			erc20Facet: erc20Facet,
-			erc5267Facet: erc5267Facet,
-			erc2612Facet: erc2612Facet
-		});
-
-		richTokenPkg = IERC20PermitDFPkg(
-			address(
-				create3Factory.deployPackageWithArgs(
-					type(ERC20PermitDFPkg).creationCode,
-					abi.encode(pkgInit),
-					abi.encode(type(ERC20PermitDFPkg).name)._hash()
-				)
-			)
-		);
-		require(address(richTokenPkg) != address(0), "RICH token pkg deploy failed");
-		vm.label(address(richTokenPkg), "ERC20PermitDFPkg(RICH)");
-		console.log("[Stage 16][ETH] Deployed package", address(richTokenPkg));
-
-		// Deploy the RICH token proxy and mint initial supply to `owner`.
-		IERC20PermitDFPkg.PkgArgs memory richArgs = IERC20PermitDFPkg.PkgArgs({
-			name: "Rich Token",
-			symbol: "RICH",
-			decimals: 18,
-			totalSupply: RICH_TOTAL_SUPPLY,
-			recipient: owner,
-			optionalSalt: bytes32(0)
-		});
-
-		console.log("[Stage 16][ETH] Deploy proxy: RICH");
-		richToken = diamondPackageFactory.deploy(IDiamondFactoryPackage(address(richTokenPkg)), abi.encode(richArgs));
-		require(richToken != address(0), "RICH token deploy failed");
-		vm.label(richToken, "RICH");
-		console.log("[Stage 16][ETH] Deployed proxy", richToken);
 	}
 
 	function _deployPkgs() internal {
@@ -337,6 +304,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 			facets.protocolDETFExchangeInQueryFacet = protocolExchangeInQueryFacet;
 			facets.protocolDETFExchangeOutFacet = protocolExchangeOutFacet;
 			facets.protocolDETFBondingFacet = protocolBondingFacet;
+			facets.protocolDETFBridgeFacet = protocolBridgeFacet;
 			facets.protocolDETFBondingQueryFacet = protocolBondingQueryFacet;
 
 			EthereumProtocolDETF_Component_FactoryService.EthereumProtocolDETFInfra memory infra;
@@ -359,7 +327,8 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 			IEthereumProtocolDETFDFPkg.PkgInit memory detfPkgInit = EthereumProtocolDETF_Component_FactoryService.buildEthereumProtocolDETFPkgInit(
 				facets,
 				infra,
-				pkgs
+				pkgs,
+				_bridgePkgConfig()
 			);
 
 			protocolDetfPkg = EthereumProtocolDETF_Pkg_FactoryService.deployEthereumProtocolDETFDFPkg(vaultRegistry, detfPkgInit);
@@ -369,11 +338,11 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 	}
 
 	function _approveInitialFunding() internal {
-		console.log("[Stage 16][ETH] Approve funding: WETH", INITIAL_WETH_DEPOSIT);
-		if (INITIAL_WETH_DEPOSIT > 0) {
-			weth.deposit{value: INITIAL_WETH_DEPOSIT}();
-			weth.approve(address(permit2), type(uint256).max);
-			permit2.approve(address(weth), address(protocolDetfPkg), uint160(INITIAL_WETH_DEPOSIT), type(uint48).max);
+		console.log("[Stage 16][ETH] Mint/approve funding: DemoWETH", INITIAL_DEMO_WETH_DEPOSIT);
+		if (INITIAL_DEMO_WETH_DEPOSIT > 0) {
+			erc20MinterFacade.mintToken(IERC20MintBurn(demoWeth), INITIAL_DEMO_WETH_DEPOSIT, owner);
+			IERC20(demoWeth).approve(address(permit2), type(uint256).max);
+			permit2.approve(demoWeth, address(protocolDetfPkg), uint160(INITIAL_DEMO_WETH_DEPOSIT), type(uint48).max);
 		}
 
 		console.log("[Stage 16][ETH] Approve funding: RICH", INITIAL_RICH_DEPOSIT);
@@ -392,11 +361,10 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 				richToken: richToken,
 				richInitialDepositAmount: INITIAL_RICH_DEPOSIT,
 				richMintChirPercent: ONE_WAD,
-				wethToken: address(weth),
-				wethInitialDepositAmount: INITIAL_WETH_DEPOSIT,
+				wethToken: demoWeth,
+				wethInitialDepositAmount: INITIAL_DEMO_WETH_DEPOSIT,
 				wethMintChirPercent: ONE_WAD
 			}),
-			bridgeInitData: bytes(""),
 			funder: owner
 		});
 
@@ -422,8 +390,8 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 	function _exportJson() internal {
 		string memory json;
 
+		json = vm.serializeAddress("", "demoWeth", demoWeth);
 		json = vm.serializeAddress("", "richToken", richToken);
-		json = vm.serializeAddress("", "richTokenPkg", address(richTokenPkg));
 
 		json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
 		json = vm.serializeAddress("", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
@@ -440,11 +408,37 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 	}
 
 	function _logResults() internal view {
+		_logAddress("DemoWETH:", demoWeth);
 		_logAddress("RICH:", richToken);
 		_logAddress("ProtocolDETF (CHIR):", protocolDetf);
 		_logAddress("Protocol NFT Vault:", protocolNftVault);
 		_logAddress("RICHIR:", richirToken);
 		_logAddress("Reserve Pool:", reservePool);
-		_logComplete("Stage 16 (Public Sepolia - No WETH)");
+		_logComplete("Stage 16 (Public Sepolia - DemoWETH)");
+	}
+
+	function _bridgePkgConfig() internal view returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig) {
+		string memory remoteOutDir = _requiredEnvString("REMOTE_OUT_DIR");
+		address bridgeRegistry = _readAddress("24_superchain_bridge.json", "bridgeTokenRegistry");
+		address localRelayer = _readAddress("24_superchain_bridge.json", "tokenTransferRelayer");
+		address peerRelayer = _readAddressFromDir(remoteOutDir, "24_superchain_bridge.json", "tokenTransferRelayer");
+
+		bridgeConfig = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+			bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(bridgeRegistry),
+			standardBridge: IStandardBridge(payable(ETHEREUM_SEPOLIA.BASE_L1_STANDARD_BRIDGE)),
+			messenger: ICrossDomainMessenger(ETHEREUM_SEPOLIA.BASE_L1_CROSS_DOMAIN_MESSENGER),
+			localRelayer: localRelayer,
+			peerRelayer: peerRelayer
+		});
+	}
+
+	function _requiredEnvString(string memory key) internal view returns (string memory value) {
+		value = vm.envString(key);
+		require(bytes(value).length > 0, "Missing required env string");
+	}
+
+	function _readAddressFromDir(string memory outDir, string memory file, string memory key) internal view returns (address) {
+		string memory json = vm.readFile(string.concat(outDir, "/", file));
+		return vm.parseJsonAddress(json, string.concat(".", key));
 	}
 }

@@ -186,6 +186,9 @@ contract BaseProtocolDETFBondingQueryTarget is BaseProtocolDETFCommon {
 
         ProtocolDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId];
         if (peer.relayer == address(0)) {
+            peer.relayer = bridgeLayout.defaultPeerRelayer;
+        }
+        if (peer.relayer == address(0)) {
             revert BridgePeerNotConfigured(targetChainId);
         }
 

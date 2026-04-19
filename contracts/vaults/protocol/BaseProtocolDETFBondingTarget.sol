@@ -16,29 +16,24 @@ import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
-import {SuperchainSenderNonceRepo} from "@crane/contracts/protocols/l2s/superchain/senders/SuperchainSenderNonceRepo.sol";
 import {
     BalancerV3VaultAwareRepo
 } from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareRepo.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
-import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {BaseProtocolDETFCommon} from "contracts/vaults/protocol/BaseProtocolDETFCommon.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {
     BalancerV38020WeightedPoolMath
 } from "contracts/protocols/dexes/balancer/v3/utils/BalancerV38020WeightedPoolMath.sol";
@@ -51,34 +46,37 @@ import {TokenInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3
  */
 interface IBaseProtocolDETFBonding {
     /**
-     * @notice Creates a bonded position with WETH.
-     * @param amountIn WETH amount to bond
-     * @param lockDuration Lock duration in seconds
-     * @param recipient Address to receive the NFT
-     * @param deadline Transaction deadline
-     * @return tokenId The minted NFT token ID
-     * @return shares The underlying share amount
+     * @notice Returns the accepted bond-token set for the unified bond route.
+     * @return tokens The accepted bond tokens.
      */
-    function bondWithWeth(uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
-        external
-        returns (uint256 tokenId, uint256 shares);
+    function acceptedBondTokens() external view returns (address[] memory tokens);
 
     /**
-     * @notice Creates a bonded position with RICH tokens.
-     * @param amountIn RICH amount to bond
+     * @notice Returns whether a token is accepted by the unified bond route.
+     * @param token The candidate bond token.
+     * @return isAccepted True if the token is supported.
+     */
+    function isAcceptedBondToken(IERC20 token) external view returns (bool isAccepted);
+
+    /**
+     * @notice Creates a bonded position with an accepted bond token.
+     * @param tokenIn Accepted bond token
+     * @param amountIn Token amount to bond
      * @param lockDuration Lock duration in seconds
      * @param recipient Address to receive the NFT
+     * @param wethAsEth Whether to wrap native ETH into WETH before bonding
      * @param deadline Transaction deadline
      * @return tokenId The minted NFT token ID
      * @return shares The underlying share amount
      */
-    function bondWithRich(uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
         external
+        payable
         returns (uint256 tokenId, uint256 shares);
 
     /**
      * @notice Captures accumulated seigniorage into the reserve pool.
-     * @dev Called periodically to convert protocol-owned CHIR into LP tokens.
+        * @dev Called periodically to compound only the protocol NFT's accrued CHIR share into LP tokens.
      * @return bptReceived Amount of BPT received
      */
     function captureSeigniorage() external returns (uint256 bptReceived);
@@ -86,12 +84,12 @@ interface IBaseProtocolDETFBonding {
     /**
      * @notice Sells a user bond NFT position to the protocol for RICHIR.
      * @dev Canonical Bond NFT → RICHIR route.
-     *      - Harvests pending RICH rewards for `tokenId` and pays them to `recipient`.
+    *      - Harvests pending CHIR rewards for `tokenId` and pays them to `recipient`.
      *      - Transfers principal-only shares into the protocol-owned position.
      *      - Burns the sold bond NFT.
      *      - Mints RICHIR against the contributed principal shares.
      * @param tokenId The bond NFT tokenId to sell.
-     * @param recipient Address to receive both rewards (RICH) and minted RICHIR.
+    * @param recipient Address to receive both rewards (CHIR) and minted RICHIR.
      * @return richirMinted Amount of RICHIR minted.
      */
     function sellNFT(uint256 tokenId, address recipient) external returns (uint256 richirMinted);
@@ -138,6 +136,8 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     using BetterSafeERC20 for IERC20;
     using BaseProtocolDETFRepo for BaseProtocolDETFRepo.Storage;
 
+    error EthRefundFailed(address recipient, uint256 amount);
+
     struct BalancedLiquidityResult {
         uint256 wethUsed;
         uint256 chirUsed;
@@ -152,66 +152,9 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         uint256 lpMinted;
     }
 
-    struct BridgeExecution {
-        ProtocolDETFSuperchainBridgeRepo.PeerConfig peer;
-        IERC20 remoteDetfToken;
-        IERC20 remoteRichToken;
-        uint256 bridgeMinGasLimit;
-        uint256 actualRichirIn;
-        uint256 sharesBurned;
-        uint256 reserveSharesBurned;
-        uint256 chirWethVaultSharesOut;
-        uint256 richChirVaultSharesOut;
-        uint256 localBptOut;
-        uint256 senderNonce;
-    }
-
-    event BridgeInitiated(
-        address indexed sender,
-        uint256 indexed targetChainId,
-        address indexed recipient,
-        uint256 richirAmountIn,
-        uint256 sharesBurned,
-        uint256 reserveSharesBurned,
-        uint256 localRichirOut,
-        uint256 richOut,
-        uint256 nonce
-    );
-
-    event BridgeReceived(address indexed relayer, address indexed recipient, uint256 richAmount, uint256 richirOut);
-
-    event BridgeDustSent(IERC20 indexed token, address indexed feeTo, uint256 amount);
-
     /* ---------------------------------------------------------------------- */
     /*                          Liquidity Operations                          */
     /* ---------------------------------------------------------------------- */
-
-    function initBridge(bytes calldata initData) external virtual lock {
-        if (!_isInitialized()) {
-            revert ReservePoolNotInitialized();
-        }
-
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
-        if (
-            address(bridgeLayout.messenger) != address(0)
-                || address(bridgeLayout.standardBridge) != address(0)
-                || address(bridgeLayout.bridgeTokenRegistry) != address(0)
-                || bridgeLayout.localRelayer != address(0)
-        ) {
-            revert BridgeConfigAlreadySet();
-        }
-
-        ProtocolDETFSuperchainBridgeRepo._initialize(initData);
-
-        if (
-            address(bridgeLayout.messenger) == address(0)
-                || address(bridgeLayout.standardBridge) == address(0)
-                || address(bridgeLayout.bridgeTokenRegistry) == address(0)
-                || bridgeLayout.localRelayer == address(0)
-        ) {
-            revert BridgeConfigNotSet();
-        }
-    }
 
     /// @notice Claim liquidity from the reserve pool and return WETH.
     function claimLiquidity(uint256 lpAmount, address recipient) external lock returns (uint256 extractedWeth) {
@@ -262,228 +205,6 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
         // Keep BasicVault reserve views in-sync with actual BPT balance.
         ERC4626Repo._setLastTotalAssets(bpt.balanceOf(address(this)));
-    }
-
-    function bridgeRichir(IProtocolDETF.BridgeArgs calldata args)
-        external
-        lock
-        returns (uint256 localRichirOut, uint256 richOut)
-    {
-        if (block.timestamp > args.deadline) {
-            revert DeadlineExceeded(args.deadline, block.timestamp);
-        }
-
-        if (args.richirAmount == 0) {
-            revert ZeroAmount();
-        }
-
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
-        if (!_isInitialized()) {
-            revert ReservePoolNotInitialized();
-        }
-
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
-        if (
-            address(bridgeLayout.messenger) == address(0)
-                || address(bridgeLayout.standardBridge) == address(0)
-                || address(bridgeLayout.bridgeTokenRegistry) == address(0)
-        ) {
-            revert BridgeConfigNotSet();
-        }
-
-        BridgeExecution memory execution;
-
-        execution.peer = bridgeLayout.peers[args.targetChainId];
-        if (execution.peer.relayer == address(0)) {
-            revert BridgePeerNotConfigured(args.targetChainId);
-        }
-
-        execution.remoteDetfToken = bridgeLayout.bridgeTokenRegistry.getRemoteToken(
-            args.targetChainId, IERC20(address(this))
-        );
-        if (address(execution.remoteDetfToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(args.targetChainId, IERC20(address(this)));
-        }
-
-        (execution.remoteRichToken, execution.bridgeMinGasLimit) =
-            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(args.targetChainId, layout.richToken);
-        if (address(execution.remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(args.targetChainId, layout.richToken);
-        }
-
-        uint256 richirBalanceBefore = layout.richirToken.balanceOf(address(this));
-        IERC20(address(layout.richirToken)).safeTransferFrom(msg.sender, address(this), args.richirAmount);
-        execution.actualRichirIn = layout.richirToken.balanceOf(address(this)) - richirBalanceBefore;
-
-        execution.sharesBurned = layout.richirToken.convertToShares(execution.actualRichirIn);
-        execution.reserveSharesBurned = _calcRichirBridgeBptIn(layout, execution.actualRichirIn);
-
-        IERC20(address(layout.richirToken)).safeTransfer(address(layout.richirToken), execution.actualRichirIn);
-        layout.richirToken.burnShares(execution.actualRichirIn, address(0), true);
-
-        (execution.chirWethVaultSharesOut, execution.richChirVaultSharesOut) =
-            _exitReservePoolProportionalForBridge(layout, execution.reserveSharesBurned);
-
-        if (execution.chirWethVaultSharesOut > 0) {
-            execution.localBptOut =
-                _addToReservePool(layout, layout.chirWethVaultIndex, execution.chirWethVaultSharesOut, args.deadline);
-            if (execution.localBptOut > 0) {
-                IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-                reservePoolToken.forceApprove(address(layout.protocolNFTVault), execution.localBptOut);
-                layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, execution.localBptOut);
-                localRichirOut = layout.richirToken.mintFromNFTSale(execution.localBptOut, msg.sender);
-            }
-        }
-
-        if (localRichirOut < args.minLocalRichirOut) {
-            revert SlippageExceeded(args.minLocalRichirOut, localRichirOut);
-        }
-
-        if (execution.richChirVaultSharesOut > 0) {
-            IERC20 richChirVaultToken = IERC20(address(layout.richChirVault));
-            richChirVaultToken.forceApprove(address(layout.richChirVault), execution.richChirVaultSharesOut);
-            richOut = layout.richChirVault.exchangeIn(
-                richChirVaultToken,
-                execution.richChirVaultSharesOut,
-                layout.richToken,
-                0,
-                address(this),
-                false,
-                args.deadline
-            );
-        }
-
-        if (richOut < args.minRichOut) {
-            revert SlippageExceeded(args.minRichOut, richOut);
-        }
-
-        execution.senderNonce = SuperchainSenderNonceRepo._useNonce(address(this), args.targetChainId);
-
-        layout.richToken.forceApprove(address(bridgeLayout.standardBridge), richOut);
-        bridgeLayout.standardBridge.bridgeERC20To(
-            address(layout.richToken),
-            address(execution.remoteRichToken),
-            execution.peer.relayer,
-            richOut,
-            uint32(execution.bridgeMinGasLimit),
-            bytes("")
-        );
-
-        bytes memory receiveData = abi.encodeCall(
-            IProtocolDETF.receiveBridgedRich,
-            (args.recipient == address(0) ? msg.sender : args.recipient, richOut, args.deadline)
-        );
-        bytes memory relayData = abi.encodeCall(
-            ITokenTransferRelayer.relayTokenTransfer,
-            (
-                address(execution.remoteDetfToken),
-                execution.remoteRichToken,
-                richOut,
-                execution.senderNonce,
-                false,
-                false,
-                receiveData
-            )
-        );
-        bridgeLayout.messenger.sendMessage(execution.peer.relayer, relayData, args.messageGasLimit);
-
-        _sweepBridgeRichDust(layout);
-
-        emit BridgeInitiated(
-            msg.sender,
-            args.targetChainId,
-            args.recipient == address(0) ? msg.sender : args.recipient,
-            execution.actualRichirIn,
-            execution.sharesBurned,
-            execution.reserveSharesBurned,
-            localRichirOut,
-            richOut,
-            execution.senderNonce
-        );
-    }
-
-    function receiveBridgedRich(address recipient, uint256 richAmount, uint256 deadline)
-        external
-        lock
-        returns (uint256 richirOut)
-    {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
-        address expectedRelayer = ProtocolDETFSuperchainBridgeRepo._localRelayer();
-
-        if (expectedRelayer == address(0)) {
-            revert BridgeConfigNotSet();
-        }
-
-        if (msg.sender != expectedRelayer) {
-            revert NotBridgeRelayer(msg.sender, expectedRelayer);
-        }
-
-        recipient = recipient == address(0) ? msg.sender : recipient;
-        richirOut = _receiveBridgedRichToRichir(layout, richAmount, recipient, deadline);
-
-        emit BridgeReceived(msg.sender, recipient, richAmount, richirOut);
-    }
-
-    function _receiveBridgedRichToRichir(
-        BaseProtocolDETFRepo.Storage storage layout_,
-        uint256 richAmount_,
-        address recipient_,
-        uint256 deadline_
-    ) internal returns (uint256 richirOut_) {
-        uint256 actualIn = _secureTokenTransfer(layout_.richToken, richAmount_, false);
-
-        layout_.richToken.safeTransfer(address(layout_.richChirVault), actualIn);
-        uint256 richChirShares = layout_.richChirVault.exchangeIn(
-            layout_.richToken,
-            actualIn,
-            IERC20(address(layout_.richChirVault)),
-            0,
-            address(this),
-            true,
-            deadline_
-        );
-
-        uint256 bptOut = _addToReservePool(layout_, layout_.richChirVaultIndex, richChirShares, deadline_);
-        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-        reservePoolToken.forceApprove(address(layout_.protocolNFTVault), bptOut);
-        layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, bptOut);
-
-        richirOut_ = layout_.richirToken.mintFromNFTSale(bptOut, recipient_);
-    }
-
-    function _calcRichirBridgeBptIn(BaseProtocolDETFRepo.Storage storage layout_, uint256 richirAmount_)
-        internal
-        view
-        returns (uint256 bptIn_)
-    {
-        uint256 richirShares = layout_.richirToken.convertToShares(richirAmount_);
-        uint256 totalRichirShares = layout_.richirToken.totalShares();
-        uint256 protocolNftBpt = layout_.protocolNFTVault.originalSharesOf(layout_.protocolNFTId);
-        bptIn_ = (richirShares * protocolNftBpt) / totalRichirShares;
-    }
-
-    function _exitReservePoolProportionalForBridge(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptIn_)
-        internal
-        returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
-    {
-        IWeightedPool pool = _reservePool();
-        IERC20(address(pool)).forceApprove(address(layout_.balancerV3PrepayRouter), bptIn_);
-        uint256[] memory minAmountsOut = new uint256[](2);
-        uint256[] memory amountsOut =
-            layout_.balancerV3PrepayRouter.prepayRemoveLiquidityProportional(address(pool), bptIn_, minAmountsOut, "");
-        chirWethVaultSharesOut_ = amountsOut[layout_.chirWethVaultIndex];
-        richChirVaultSharesOut_ = amountsOut[layout_.richChirVaultIndex];
-    }
-
-    function _sweepBridgeRichDust(BaseProtocolDETFRepo.Storage storage layout_) internal {
-        uint256 richDust = layout_.richToken.balanceOf(address(this));
-        if (richDust == 0) {
-            return;
-        }
-
-        address feeTo = address(layout_._feeOracle().feeTo());
-        layout_.richToken.safeTransfer(feeTo, richDust);
-        emit BridgeDustSent(layout_.richToken, feeTo, richDust);
     }
 
     function _calcMinChirWethVaultOutRaw(
@@ -589,6 +310,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         BaseProtocolDETFRepo.Storage storage layout_,
         uint256 wethAmount_,
         address wethRefundRecipient_,
+        bool wethRefundAsEth_,
         uint256 deadline_
     ) internal returns (uint256 vaultShares_) {
         BalancedVaultDepositResult memory result_ = _mintAndAddBalancedChirWethLiquidity(layout_, wethAmount_, deadline_);
@@ -598,7 +320,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         }
 
         if (wethAmount_ > result_.wethUsed) {
-            layout_.wethToken.safeTransfer(wethRefundRecipient_, wethAmount_ - result_.wethUsed);
+            _refundUnusedWeth(layout_, wethAmount_ - result_.wethUsed, wethRefundRecipient_, wethRefundAsEth_);
         }
 
         IERC20(result_.pool).safeTransfer(address(layout_.chirWethVault), result_.lpMinted);
@@ -611,6 +333,64 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
             true,
             deadline_
         );
+    }
+
+    function acceptedBondTokens() external view returns (address[] memory tokens_) {
+        return BaseProtocolDETFRepo._acceptedBondTokens();
+    }
+
+    function isAcceptedBondToken(IERC20 token) external view returns (bool isAccepted_) {
+        return BaseProtocolDETFRepo._isAcceptedBondToken(address(token));
+    }
+
+    function _refundUnusedWeth(
+        BaseProtocolDETFRepo.Storage storage layout_,
+        uint256 refundAmount_,
+        address recipient_,
+        bool refundAsEth_
+    ) internal {
+        if (refundAmount_ == 0) {
+            return;
+        }
+
+        if (!refundAsEth_) {
+            layout_.wethToken.safeTransfer(recipient_, refundAmount_);
+            return;
+        }
+
+        IWETH(address(layout_.wethToken)).withdraw(refundAmount_);
+        (bool success,) = recipient_.call{value: refundAmount_}("");
+        if (!success) {
+            revert EthRefundFailed(recipient_, refundAmount_);
+        }
+    }
+
+    function _collectBondInput(
+        BaseProtocolDETFRepo.Storage storage layout_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        bool wethAsEth_
+    ) internal {
+        if (!layout_._isAcceptedBondToken(address(tokenIn_))) {
+            revert BondTokenNotSupported(tokenIn_);
+        }
+
+        if (wethAsEth_) {
+            if (!_isWethToken(layout_, tokenIn_)) {
+                revert InvalidEthBondRoute(tokenIn_);
+            }
+            if (msg.value != amountIn_) {
+                revert IncorrectEthValue(amountIn_, msg.value);
+            }
+            IWETH(address(layout_.wethToken)).deposit{value: amountIn_}();
+            return;
+        }
+
+        if (msg.value != 0) {
+            revert IncorrectEthValue(0, msg.value);
+        }
+
+        tokenIn_.safeTransferFrom(msg.sender, address(this), amountIn_);
     }
 
     function _mintAndAddBalancedChirWethLiquidity(
@@ -657,9 +437,10 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         result_.lpMinted = IUniswapV2Pair(quote_.pool).mint(address(this));
     }
 
-    /// @notice Creates a bonded position with WETH.
-    function bondWithWeth(uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
+    /// @notice Creates a bonded position with an accepted bond token.
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
         external
+        payable
         lock
         returns (uint256 tokenId, uint256 shares)
     {
@@ -681,56 +462,33 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
             recipient = msg.sender;
         }
 
-        // Transfer WETH from user
-        layout.wethToken.safeTransferFrom(msg.sender, address(this), amountIn);
+        _collectBondInput(layout, tokenIn, amountIn, wethAsEth);
 
-        uint256 chirWethShares = _depositWethToChirWethVaultViaBalancedLp(layout, amountIn, msg.sender, deadline);
-
-        // Add LP shares to 80/20 reserve pool
-        shares = _addToReservePool(layout, layout.chirWethVaultIndex, chirWethShares, deadline);
-
-        // Create bonded position in NFT vault
-        tokenId = layout.protocolNFTVault.createPosition(shares, lockDuration, recipient);
-    }
-
-    /// @notice Creates a bonded position with RICH tokens.
-    function bondWithRich(uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
-        external
-        lock
-        returns (uint256 tokenId, uint256 shares)
-    {
-        if (block.timestamp > deadline) {
-            revert DeadlineExceeded(deadline, block.timestamp);
-        }
-
-        if (amountIn == 0) {
-            revert ZeroAmount();
-        }
-
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
-
-        if (!_isInitialized()) {
-            revert ReservePoolNotInitialized();
-        }
-
-        if (recipient == address(0)) {
-            recipient = msg.sender;
-        }
-
-        // Transfer RICH from user
-        layout.richToken.safeTransferFrom(msg.sender, address(this), amountIn);
-
-        // Deposit RICH into RICH/CHIR vault to get LP shares
-        layout.richToken.safeTransfer(address(layout.richChirVault), amountIn);
-        uint256 richChirShares = layout.richChirVault
-            .exchangeIn(
-                layout.richToken, amountIn, IERC20(address(layout.richChirVault)), 0, address(this), true, deadline
+        if (_isWethToken(layout, tokenIn)) {
+            uint256 chirWethShares = _depositWethToChirWethVaultViaBalancedLp(
+                layout,
+                amountIn,
+                msg.sender,
+                wethAsEth,
+                deadline
             );
+            shares = _addToReservePool(layout, layout.chirWethVaultIndex, chirWethShares, deadline);
+        } else if (_isRichToken(layout, tokenIn)) {
+            layout.richToken.safeTransfer(address(layout.richChirVault), amountIn);
+            uint256 richChirShares = layout.richChirVault.exchangeIn(
+                layout.richToken,
+                amountIn,
+                IERC20(address(layout.richChirVault)),
+                0,
+                address(this),
+                true,
+                deadline
+            );
+            shares = _addToReservePool(layout, layout.richChirVaultIndex, richChirShares, deadline);
+        } else {
+            revert BondTokenNotSupported(tokenIn);
+        }
 
-        // Add LP shares to 80/20 reserve pool
-        shares = _addToReservePool(layout, layout.richChirVaultIndex, richChirShares, deadline);
-
-        // Create bonded position in NFT vault
         tokenId = layout.protocolNFTVault.createPosition(shares, lockDuration, recipient);
     }
 
@@ -738,7 +496,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     /*                        Seigniorage Capture                             */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Captures accumulated seigniorage into the reserve pool.
+    /// @notice Captures the protocol NFT's accrued CHIR share into the reserve pool.
     function captureSeigniorage() external lock returns (uint256 bptReceived) {
         BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
 
@@ -746,14 +504,11 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
             revert ReservePoolNotInitialized();
         }
 
-        // Get protocol-owned CHIR balance
-        uint256 chirBalance = ERC20Repo._balanceOf(address(layout.protocolNFTVault));
+        // Collect only the protocol NFT's accrued reward-token share.
+        uint256 chirBalance = layout.protocolNFTVault.reallocateProtocolRewards(address(this));
         if (chirBalance == 0) {
             revert NoSeigniorageToCapture();
         }
-
-        // Transfer CHIR from NFT vault to this contract
-        IERC20(address(this)).safeTransferFrom(address(layout.protocolNFTVault), address(this), chirBalance);
 
         // Add CHIR to CHIR/WETH pool to get vault shares
         IERC20(address(this)).safeTransfer(address(layout.chirWethVault), chirBalance);

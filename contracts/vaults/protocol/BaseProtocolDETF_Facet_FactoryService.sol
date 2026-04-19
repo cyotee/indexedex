@@ -24,6 +24,7 @@ import {BaseProtocolDETFExchangeInFacet} from "contracts/vaults/protocol/BasePro
 import {BaseProtocolDETFExchangeInQueryFacet} from "contracts/vaults/protocol/BaseProtocolDETFExchangeInQueryFacet.sol";
 import {BaseProtocolDETFExchangeOutFacet} from "contracts/vaults/protocol/BaseProtocolDETFExchangeOutFacet.sol";
 import {BaseProtocolDETFBondingFacet} from "contracts/vaults/protocol/BaseProtocolDETFBondingFacet.sol";
+import {BaseProtocolDETFBridgeFacet} from "contracts/vaults/protocol/BaseProtocolDETFBridgeFacet.sol";
 import {BaseProtocolDETFBondingQueryFacet} from "contracts/vaults/protocol/BaseProtocolDETFBondingQueryFacet.sol";
 import {BaseProtocolDETFRichirRedeemFacet} from "contracts/vaults/protocol/BaseProtocolDETFRichirRedeemFacet.sol";
 import {ProtocolNFTVaultFacet} from "contracts/vaults/protocol/ProtocolNFTVaultFacet.sol";
@@ -74,6 +75,13 @@ library BaseProtocolDETF_Facet_FactoryService {
             type(BaseProtocolDETFBondingFacet).creationCode, abi.encode(type(BaseProtocolDETFBondingFacet).name)._hash()
         );
         vm.label(address(instance), type(BaseProtocolDETFBondingFacet).name);
+    }
+
+    function deployBaseProtocolDETFBridgeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(
+            type(BaseProtocolDETFBridgeFacet).creationCode, abi.encode(type(BaseProtocolDETFBridgeFacet).name)._hash()
+        );
+        vm.label(address(instance), type(BaseProtocolDETFBridgeFacet).name);
     }
 
     function deployBaseProtocolDETFBondingQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {

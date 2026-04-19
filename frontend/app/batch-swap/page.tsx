@@ -9,6 +9,7 @@ import { formatUnits, parseUnits } from 'viem'
 import DebugPanel from '../components/DebugPanel'
 import { debugError, debugLog } from '../lib/debug'
 import { usePreferredBrowserChainId } from '../lib/browserChain'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 // Import generated hooks
 import { 
@@ -208,6 +209,7 @@ function buildBatchPermitIntentKey(params: {
 export default function BatchSwapPage() {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
+  const { selectedChainId } = useSelectedNetwork()
   const connection = useConnection()
   const connectorId = connection.connector?.id
   const { data: connectorClient } = useConnectorClient()
@@ -219,8 +221,8 @@ export default function BatchSwapPage() {
   const browserChainId = usePreferredBrowserChainId(isConnected, preferredBrowserChainIds, connectorId, address)
   const walletChainId = isConnected
     ? (browserChainId ?? connectorClient?.chain?.id ?? walletClient?.chain?.id ?? connection.chainId ?? configChainId)
-    : configChainId
-  const resolvedChainId = resolveArtifactsChainId(walletChainId ?? 11155111) ?? walletChainId ?? 11155111
+    : selectedChainId
+  const resolvedChainId = resolveArtifactsChainId(walletChainId ?? selectedChainId, undefined, selectedChainId) ?? selectedChainId ?? 11155111
   const isUnsupportedChain = isConnected && walletChainId !== undefined && !isSupportedChainId(walletChainId)
   const activeChain = useMemo(() => resolveAppChain(resolvedChainId), [resolvedChainId])
   const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })

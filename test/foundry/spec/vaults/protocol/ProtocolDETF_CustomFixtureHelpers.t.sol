@@ -47,6 +47,10 @@ abstract contract ProtocolDETFBaseCustomFixtureHelpers is BaseIntegration {
     }
 
     function _deployMintEnabledDetf() internal returns (IProtocolDETF customDetf) {
+        return _deployCustomDetf(10_000_000e18, 100_000e18);
+    }
+
+    function _deployBurnEnabledDetf() internal returns (IProtocolDETF customDetf) {
         return _deployCustomDetf(100_000e18, 10_000_000e18);
     }
 
@@ -55,9 +59,15 @@ abstract contract ProtocolDETFBaseCustomFixtureHelpers is BaseIntegration {
     }
 
     function _assertMintEnabled(IProtocolDETF detf_) internal view {
-        assertLt(detf_.syntheticPrice(), detf_.burnThreshold(), "fixture should be below lower deadband bound");
+        assertGt(detf_.syntheticPrice(), detf_.mintThreshold(), "fixture should be above upper deadband bound");
         assertTrue(detf_.isMintingAllowed(), "minting should be enabled");
         assertFalse(detf_.isBurningAllowed(), "burning should be disabled");
+    }
+
+    function _assertBurnEnabled(IProtocolDETF detf_) internal view {
+        assertLt(detf_.syntheticPrice(), detf_.burnThreshold(), "fixture should be below lower deadband bound");
+        assertFalse(detf_.isMintingAllowed(), "minting should be disabled");
+        assertTrue(detf_.isBurningAllowed(), "burning should be enabled");
     }
 
     function _assertDeadband(IProtocolDETF detf_) internal view {
@@ -102,6 +112,10 @@ abstract contract ProtocolDETFEthereumCustomFixtureHelpers is EthereumIntegratio
     }
 
     function _deployMintEnabledEthereumDetf() internal returns (IProtocolDETF customDetf) {
+        return _deployCustomEthereumDetf(10_000_000e18, 100_000e18);
+    }
+
+    function _deployBurnEnabledEthereumDetf() internal returns (IProtocolDETF customDetf) {
         return _deployCustomEthereumDetf(100_000e18, 10_000_000e18);
     }
 
@@ -110,9 +124,15 @@ abstract contract ProtocolDETFEthereumCustomFixtureHelpers is EthereumIntegratio
     }
 
     function _assertMintEnabled(IProtocolDETF detf_) internal view {
-        assertLt(detf_.syntheticPrice(), detf_.burnThreshold(), "fixture should be below lower deadband bound");
+        assertGt(detf_.syntheticPrice(), detf_.mintThreshold(), "fixture should be above upper deadband bound");
         assertTrue(detf_.isMintingAllowed(), "minting should be enabled");
         assertFalse(detf_.isBurningAllowed(), "burning should be disabled");
+    }
+
+    function _assertBurnEnabled(IProtocolDETF detf_) internal view {
+        assertLt(detf_.syntheticPrice(), detf_.burnThreshold(), "fixture should be below lower deadband bound");
+        assertFalse(detf_.isMintingAllowed(), "minting should be disabled");
+        assertTrue(detf_.isBurningAllowed(), "burning should be enabled");
     }
 
     function _assertDeadband(IProtocolDETF detf_) internal view {
@@ -132,12 +152,29 @@ abstract contract ProtocolDETFEthereumCustomFixtureHelpers is EthereumIntegratio
 
         uint256 iterations = 0;
         while (!detf_.isMintingAllowed()) {
+            _swapRichToWeth(detf_, 25_000e18);
+            iterations++;
+            require(iterations < 20, "unable to push Ethereum DETF above upper deadband");
+        }
+
+        _assertMintEnabled(detf_);
+    }
+
+    function _driveEthereumToBurnEnabled(IProtocolDETF detf_) internal {
+        if (detf_.isBurningAllowed()) {
+            return;
+        }
+
+        _driveEthereumToDeadband(detf_);
+
+        uint256 iterations = 0;
+        while (!detf_.isBurningAllowed()) {
             _swapWethToRich(detf_, 25_000e18);
             iterations++;
             require(iterations < 20, "unable to push Ethereum DETF below lower deadband");
         }
 
-        _assertMintEnabled(detf_);
+        _assertBurnEnabled(detf_);
     }
 
     function _driveEthereumToDeadband(IProtocolDETF detf_) internal {
@@ -189,6 +226,23 @@ abstract contract ProtocolDETFEthereumCustomFixtureHelpers is EthereumIntegratio
             IERC20(address(weth9)),
             amountIn_,
             rich,
+            0,
+            detfAlice,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+    }
+
+    function _swapRichToWeth(IProtocolDETF detf_, uint256 amountIn_) internal returns (uint256 wethOut_) {
+        deal(address(rich), detfAlice, rich.balanceOf(detfAlice) + amountIn_, true);
+
+        vm.startPrank(detfAlice);
+        IERC20(address(rich)).approve(address(detf_), type(uint256).max);
+        wethOut_ = IStandardExchangeIn(address(detf_)).exchangeIn(
+            IERC20(address(rich)),
+            amountIn_,
+            IERC20(address(weth9)),
             0,
             detfAlice,
             false,

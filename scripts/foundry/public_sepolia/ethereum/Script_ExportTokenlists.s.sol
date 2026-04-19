@@ -97,10 +97,12 @@ contract Script_ExportTokenlists is DeploymentBase {
     }
 
     function _exportTestTokens(string memory chainIdStr) internal {
-        string[] memory entries = new string[](3);
+        string[] memory entries = new string[](5);
         entries[0] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "testTokenA"), "Test Token A", "TTA");
         entries[1] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "testTokenB"), "Test Token B", "TTB");
         entries[2] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "testTokenC"), "Test Token C", "TTC");
+        entries[3] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "demoWeth"), "DemoWETH", "DemoWETH");
+        entries[4] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "richToken"), "RICH Token", "RICH");
         _writeTokenlist(_uiTokenlistFilename("tokens.tokenlist.json"), entries);
     }
 

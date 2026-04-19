@@ -63,7 +63,7 @@ contract ProtocolNFTVaultPermissions_Negative_Test is ProtocolDETFIntegrationBas
 
     /**
      * @notice Test that reallocateProtocolRewards reverts when called by an unauthorized address.
-     * @dev The function should only be callable by feeOracle.feeTo() (the FeeCollector).
+     * @dev The function should only be callable by feeOracle.feeTo() (the FeeCollector) or the Protocol DETF.
      */
     function test_reallocateProtocolRewards_revertsForUnauthorizedCaller() public {
         address attacker = makeAddr("attacker");
@@ -75,8 +75,8 @@ contract ProtocolNFTVaultPermissions_Negative_Test is ProtocolDETFIntegrationBas
 
     /**
      * @notice Test that reallocateProtocolRewards reverts even when called by the feeOracle itself.
-     * @dev Only feeOracle.feeTo() (FeeCollector) is authorized, not the oracle contract.
-     *      This test ensures the fix was applied correctly - the oracle should NOT be authorized.
+     * @dev Only feeOracle.feeTo() (FeeCollector) or the Protocol DETF is authorized.
+     *      The oracle contract itself should NOT be authorized.
      */
     function test_reallocateProtocolRewards_revertsForFeeOracle() public {
         // indexedexManager is the feeOracle in test setup
@@ -89,7 +89,7 @@ contract ProtocolNFTVaultPermissions_Negative_Test is ProtocolDETFIntegrationBas
 
     /**
      * @notice Test that reallocateProtocolRewards reverts when called by owner.
-     * @dev Owner is not the FeeCollector, so should be unauthorized.
+     * @dev Owner is not the FeeCollector or the Protocol DETF, so should be unauthorized.
      */
     function test_reallocateProtocolRewards_revertsForOwner() public {
         vm.prank(owner);
@@ -111,6 +111,17 @@ contract ProtocolNFTVaultPermissions_Negative_Test is ProtocolDETFIntegrationBas
 
         // Amount may be 0 if no rewards accumulated, but call should succeed
         // The important thing is that it doesn't revert with NotAuthorized
+        assertGe(amount, 0, "Amount should be >= 0");
+    }
+
+    /**
+     * @notice Test that reallocateProtocolRewards succeeds when called by the Protocol DETF.
+     * @dev captureSeigniorage() relies on this authorization path to compound only the protocol NFT's CHIR share.
+     */
+    function test_reallocateProtocolRewards_succeedsForProtocolDetf() public {
+        vm.prank(address(detf));
+        uint256 amount = protocolNFTVault.reallocateProtocolRewards(detfAlice);
+
         assertGe(amount, 0, "Amount should be >= 0");
     }
 }

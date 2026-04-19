@@ -1,5 +1,5 @@
 {
-  "approvedMessageSenderRegistry": "0x47880EF1aE9b1d2bA2c99C2633299f94581078af",
-  "bridgeTokenRegistry": "0xd28e014861317ACc8D3af05a5080f5596a8BB0eB",
-  "tokenTransferRelayer": "0x73b82E77D8d5dcEF1fcbb6fbe180318061F5C37A"
+  "approvedMessageSenderRegistry": "0x56a2cecdA091c0900aF5a2Db6647CB4F3cf4fAe7",
+  "bridgeTokenRegistry": "0x31547802aa003028C059F61AA3c683976C43CE60",
+  "tokenTransferRelayer": "0xfc57Cc2aa8D9fEFc28820136e3a23c32F5a669BB"
 }

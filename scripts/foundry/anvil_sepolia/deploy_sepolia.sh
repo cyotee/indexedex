@@ -48,6 +48,23 @@
 # - This deployment forks from Ethereum Sepolia and deploys our own Uniswap V2 and Aerodrome
 #   instances that use the same WETH as Balancer V3 (0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9)
 #
+# DEPLOYMENT INVENTORY:
+# - Core factory infrastructure: Create3 factory and Diamond package factory.
+# - Shared protocol facets: ERC20, ERC4626, ownership, and other reusable facets.
+# - Core protocol proxies: FeeCollector and IndexedexManager.
+# - Balancer V3 integration: connects to existing Balancer V3 Sepolia infrastructure.
+# - Custom DEX deployments: project-owned Uniswap V2 and Aerodrome instances wired to Sepolia WETH.
+# - Test assets: TTA, TTB, and TTC tokens.
+# - Trading pools: Uniswap V2, Aerodrome, and Balancer pools plus seeded base liquidity.
+# - Strategy vaults: standard strategy vaults for the deployed exchange integrations.
+# - Rate infrastructure: standard exchange rate providers.
+# - Vault-token pools: Balancer const-prod vault-token pools and seeded liquidity.
+# - ERC4626 vaults: permit-enabled ERC4626 vaults for TTA, TTB, and TTC.
+# - DETFs: seigniorage DETFs and the Protocol DETF (CHIR).
+# - WETH/TTC expansion: pools, strategy vaults, liquidity, rate providers, vault-token pools, and vault-vault pool.
+# - Frontend artifacts: segmented tokenlists and merged platform deployment addresses.
+# - Final balance consolidation: sweeps ETH and ERC20 balances into DEPLOYER_ADDRESS.
+#
 # =============================================================================
 
 set -e  # Exit on first error

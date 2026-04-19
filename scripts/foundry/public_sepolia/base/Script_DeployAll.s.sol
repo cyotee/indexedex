@@ -9,15 +9,15 @@ import {Script_03A_DeployUniswapV2Core} from "../../supersim/base/Script_03A_Dep
 import {Script_03B_DeployBalancerV3Core} from "../../supersim/base/Script_03B_DeployBalancerV3Core.s.sol";
 import {Script_03C_DeployAerodromeCore} from "../../supersim/base/Script_03C_DeployAerodromeCore.s.sol";
 import {Script_04_DeployDEXPackages} from "../../anvil_base_main/Script_04_DeployDEXPackages.s.sol";
-import {Script_05_DeployTestTokens} from "../../anvil_base_main/Script_05_DeployTestTokens.s.sol";
+import {Script_05_DeployTestTokens} from "./Script_05_DeployTestTokens.s.sol";
 import {Script_06_DeployPools} from "../../anvil_base_main/Script_06_DeployPools.s.sol";
 import {Script_07_DeployStrategyVaults} from "../../anvil_base_main/Script_07_DeployStrategyVaults.s.sol";
 import {Script_08_DeployAerodromeStrategyVaults} from "../../anvil_base_main/Script_08_DeployAerodromeStrategyVaults.s.sol";
 import {Script_09_DeployBalancerConstProdPools} from "../../anvil_base_main/Script_09_DeployBalancerConstProdPools.s.sol";
-import {Script_10_DepositBaseLiquidity} from "../../anvil_base_main/Script_10_DepositBaseLiquidity.s.sol";
+import {Script_10_DepositBaseLiquidity} from "./Script_10_DepositBaseLiquidity.s.sol";
 import {Script_11_DeployStandardExchangeRateProviders} from "../../anvil_base_main/Script_11_DeployStandardExchangeRateProviders.s.sol";
 import {Script_12_DeployBalancerConstProdVaultTokenPools} from "../../anvil_base_main/Script_12_DeployBalancerConstProdVaultTokenPools.s.sol";
-import {Script_13_SeedBalancerVaultTokenPoolLiquidity} from "../../anvil_base_main/Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol";
+import {Script_13_SeedBalancerVaultTokenPoolLiquidity} from "./Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_base_main/Script_14_DeployERC4626PermitVaults.s.sol";
 import {Script_15_DeploySeigniorageDETFS} from "../../anvil_base_main/Script_15_DeploySeigniorageDETFS.s.sol";
 
@@ -54,7 +54,9 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         new Script_15_DeploySeigniorageDETFS().run();
 
         // Stage 16 - Protocol DETF (packages only, no funding)
-        _runProtocolDetfStage16();
+        if (!vm.envOr("PUBLIC_SEPOLIA_SKIP_STAGE16", false)) {
+            _runProtocolDetfStage16();
+        }
 
         new Script_ExportTokenlists().run();
     }

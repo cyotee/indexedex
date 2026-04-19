@@ -1,6 +1,6 @@
 'use client'
 
-import { useAccount, useChainId, useReadContract, useWriteContract } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { useMemo, useState, useCallback } from 'react'
 import DebugPanel from '../components/DebugPanel'
 import { getFactories, getFactoryFunctions, type ContractListFactory, type ContractListArgument, type ContractListArgUI, buildOptionsFromUI, resolveLabel } from '../lib/contractlists'
@@ -12,6 +12,7 @@ import {
     useSimulateUniswapV2StandardExchangeDfPkgDeployVault,
     useWatchVaultRegistryDeploymentFacetNewVaultEvent
 } from '../generated'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 function ContractFunctionSelectField({
     arg,
@@ -80,10 +81,10 @@ function ContractFunctionSelectField({
 
 export default function CreatePage() {
     const { isConnected } = useAccount()
-    const chainId = useChainId()
+    const { selectedChainId } = useSelectedNetwork()
     const { writeContract } = useWriteContract()
 
-    const resolvedChainId = chainId || 11155111
+    const resolvedChainId = selectedChainId || 11155111
     const factories = useMemo(() => getFactories(resolvedChainId), [resolvedChainId])
     const [selectedFactoryIndex, setSelectedFactoryIndex] = useState<number>(-1)
     const selectedFactory: ContractListFactory | undefined = factories[selectedFactoryIndex]

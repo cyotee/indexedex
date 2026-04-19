@@ -25,11 +25,20 @@ library ProtocolDETFSuperchainBridgeRepo {
         address[] peerRelayers;
     }
 
+    struct BridgeConfig {
+        ISuperChainBridgeTokenRegistry bridgeTokenRegistry;
+        IStandardBridge standardBridge;
+        ICrossDomainMessenger messenger;
+        address localRelayer;
+        address peerRelayer;
+    }
+
     struct Storage {
         ISuperChainBridgeTokenRegistry bridgeTokenRegistry;
         IStandardBridge standardBridge;
         ICrossDomainMessenger messenger;
         address localRelayer;
+        address defaultPeerRelayer;
         mapping(uint256 => PeerConfig) peers;
     }
 
@@ -66,6 +75,43 @@ library ProtocolDETFSuperchainBridgeRepo {
         for (uint256 i = 0; i < peerCount; ++i) {
             layout_.peers[initData_.peerChainIds[i]] = PeerConfig({relayer: initData_.peerRelayers[i]});
         }
+
+        if (peerCount == 1) {
+            layout_.defaultPeerRelayer = initData_.peerRelayers[0];
+        }
+    }
+
+    function _initialize(BridgeConfig memory bridgeConfig_) internal {
+        _initialize(_layout(), bridgeConfig_);
+    }
+
+    function _initialize(Storage storage layout_, BridgeConfig memory bridgeConfig_) internal {
+        bool hasAnyCoreConfig = address(bridgeConfig_.bridgeTokenRegistry) != address(0)
+            || address(bridgeConfig_.standardBridge) != address(0) || address(bridgeConfig_.messenger) != address(0)
+            || bridgeConfig_.localRelayer != address(0);
+
+        if (!hasAnyCoreConfig) {
+            return;
+        }
+
+        if (
+            address(bridgeConfig_.bridgeTokenRegistry) == address(0)
+                || address(bridgeConfig_.standardBridge) == address(0)
+                || address(bridgeConfig_.messenger) == address(0) || bridgeConfig_.localRelayer == address(0)
+        ) {
+            revert("ProtocolDETFSuperchainBridgeRepo: incomplete bridge config");
+        }
+
+        layout_.bridgeTokenRegistry = bridgeConfig_.bridgeTokenRegistry;
+        layout_.standardBridge = bridgeConfig_.standardBridge;
+        layout_.messenger = bridgeConfig_.messenger;
+        layout_.localRelayer = bridgeConfig_.localRelayer;
+
+        if (bridgeConfig_.peerRelayer == address(0)) {
+            return;
+        }
+
+        layout_.defaultPeerRelayer = bridgeConfig_.peerRelayer;
     }
 
     function _bridgeTokenRegistry(Storage storage layout_)
@@ -102,6 +148,14 @@ library ProtocolDETFSuperchainBridgeRepo {
 
     function _localRelayer() internal view returns (address localRelayer_) {
         return _localRelayer(_layout());
+    }
+
+    function _defaultPeerRelayer(Storage storage layout_) internal view returns (address peerRelayer_) {
+        return layout_.defaultPeerRelayer;
+    }
+
+    function _defaultPeerRelayer() internal view returns (address peerRelayer_) {
+        return _defaultPeerRelayer(_layout());
     }
 
     function _peer(Storage storage layout_, uint256 chainId_) internal view returns (PeerConfig memory peer_) {

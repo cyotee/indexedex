@@ -27,12 +27,15 @@ import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 import {
     IWeightedPool8020Factory
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
@@ -103,6 +106,7 @@ interface IBaseProtocolDETFDFPkg is IDiamondFactoryPackage {
         IFacet protocolDETFExchangeInQueryFacet;
         IFacet protocolDETFExchangeOutFacet;
         IFacet protocolDETFBondingFacet;
+        IFacet protocolDETFBridgeFacet;
         IFacet protocolDETFBondingQueryFacet;
 
         IFacet multiStepOwnableFacet;
@@ -133,13 +137,14 @@ interface IBaseProtocolDETFDFPkg is IDiamondFactoryPackage {
 
         /// @notice Package used to deploy a StandardExchange-backed Balancer rate provider.
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
+
+        ProtocolDETFSuperchainBridgeRepo.BridgeConfig bridgeConfig;
     }
 
     struct PkgArgs {
         string name;
         string symbol;
         BaseProtocolDETFRepo.ProtocolConfig protocolConfig;
-        bytes bridgeInitData;
 
         /// @notice Address to pull initial deposit funds from (Permit2 owner)
         /// @dev This is required because `updatePkg()` is called by the Diamond factory.
@@ -180,6 +185,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     IFacet immutable PROTOCOL_DETF_EXCHANGE_IN_QUERY_FACET;
     IFacet immutable PROTOCOL_DETF_EXCHANGE_OUT_FACET;
     IFacet immutable PROTOCOL_DETF_BONDING_FACET;
+    IFacet immutable PROTOCOL_DETF_BRIDGE_FACET;
     IFacet immutable PROTOCOL_DETF_BONDING_QUERY_FACET;
 
     IFacet immutable MULTI_STEP_OWNABLE_FACET;
@@ -205,6 +211,12 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     IRICHIRDFPkg immutable RICHIR_PKG;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
 
+    ISuperChainBridgeTokenRegistry immutable BRIDGE_TOKEN_REGISTRY;
+    IStandardBridge immutable BRIDGE_STANDARD_BRIDGE;
+    ICrossDomainMessenger immutable BRIDGE_MESSENGER;
+    address immutable BRIDGE_LOCAL_RELAYER;
+    address immutable BRIDGE_PEER_RELAYER;
+
     constructor(PkgInit memory pkgInit) {
         SELF = address(this);
         ERC20_FACET = pkgInit.erc20Facet;
@@ -218,6 +230,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
         PROTOCOL_DETF_EXCHANGE_IN_QUERY_FACET = pkgInit.protocolDETFExchangeInQueryFacet;
         PROTOCOL_DETF_EXCHANGE_OUT_FACET = pkgInit.protocolDETFExchangeOutFacet;
         PROTOCOL_DETF_BONDING_FACET = pkgInit.protocolDETFBondingFacet;
+        PROTOCOL_DETF_BRIDGE_FACET = pkgInit.protocolDETFBridgeFacet;
         PROTOCOL_DETF_BONDING_QUERY_FACET = pkgInit.protocolDETFBondingQueryFacet;
 
         MULTI_STEP_OWNABLE_FACET = pkgInit.multiStepOwnableFacet;
@@ -239,6 +252,11 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
         PROTOCOL_NFT_VAULT_PKG = pkgInit.protocolNFTVaultPkg;
         RICHIR_PKG = pkgInit.richirPkg;
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
+        BRIDGE_TOKEN_REGISTRY = pkgInit.bridgeConfig.bridgeTokenRegistry;
+        BRIDGE_STANDARD_BRIDGE = pkgInit.bridgeConfig.standardBridge;
+        BRIDGE_MESSENGER = pkgInit.bridgeConfig.messenger;
+        BRIDGE_LOCAL_RELAYER = pkgInit.bridgeConfig.localRelayer;
+        BRIDGE_PEER_RELAYER = pkgInit.bridgeConfig.peerRelayer;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -273,7 +291,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](13);
+        facetAddresses_ = new address[](14);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -283,10 +301,11 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
         facetAddresses_[6] = address(PROTOCOL_DETF_EXCHANGE_IN_QUERY_FACET);
         facetAddresses_[7] = address(PROTOCOL_DETF_EXCHANGE_OUT_FACET);
         facetAddresses_[8] = address(PROTOCOL_DETF_BONDING_FACET);
-        facetAddresses_[9] = address(PROTOCOL_DETF_BONDING_QUERY_FACET);
-        facetAddresses_[10] = address(MULTI_STEP_OWNABLE_FACET);
-        facetAddresses_[11] = address(OPERABLE_FACET);
-        facetAddresses_[12] = address(PROTOCOL_DETF_RICHIR_REDEEM_FACET);
+        facetAddresses_[9] = address(PROTOCOL_DETF_BRIDGE_FACET);
+        facetAddresses_[10] = address(PROTOCOL_DETF_BONDING_QUERY_FACET);
+        facetAddresses_[11] = address(MULTI_STEP_OWNABLE_FACET);
+        facetAddresses_[12] = address(OPERABLE_FACET);
+        facetAddresses_[13] = address(PROTOCOL_DETF_RICHIR_REDEEM_FACET);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
@@ -318,7 +337,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](13);
+        facetCuts_ = new IDiamond.FacetCut[](14);
 
         facetCuts_[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
@@ -366,21 +385,26 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
             functionSelectors: PROTOCOL_DETF_BONDING_FACET.facetFuncs()
         });
         facetCuts_[9] = IDiamond.FacetCut({
+            facetAddress: address(PROTOCOL_DETF_BRIDGE_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: PROTOCOL_DETF_BRIDGE_FACET.facetFuncs()
+        });
+        facetCuts_[10] = IDiamond.FacetCut({
             facetAddress: address(PROTOCOL_DETF_BONDING_QUERY_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: PROTOCOL_DETF_BONDING_QUERY_FACET.facetFuncs()
         });
-        facetCuts_[10] = IDiamond.FacetCut({
+        facetCuts_[11] = IDiamond.FacetCut({
             facetAddress: address(MULTI_STEP_OWNABLE_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_STEP_OWNABLE_FACET.facetFuncs()
         });
-        facetCuts_[11] = IDiamond.FacetCut({
+        facetCuts_[12] = IDiamond.FacetCut({
             facetAddress: address(OPERABLE_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: OPERABLE_FACET.facetFuncs()
         });
-        facetCuts_[12] = IDiamond.FacetCut({
+        facetCuts_[13] = IDiamond.FacetCut({
             facetAddress: address(PROTOCOL_DETF_RICHIR_REDEEM_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: PROTOCOL_DETF_RICHIR_REDEEM_FACET.facetFuncs()
@@ -486,7 +510,15 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
         // Initialize MultiStepOwnable with owner from PkgArgs (1 day ownership buffer period)
         MultiStepOwnableRepo._initialize(args.owner, 1 days);
 
-        ProtocolDETFSuperchainBridgeRepo._initialize(args.bridgeInitData);
+        ProtocolDETFSuperchainBridgeRepo._initialize(
+            ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+                bridgeTokenRegistry: BRIDGE_TOKEN_REGISTRY,
+                standardBridge: BRIDGE_STANDARD_BRIDGE,
+                messenger: BRIDGE_MESSENGER,
+                localRelayer: BRIDGE_LOCAL_RELAYER,
+                peerRelayer: BRIDGE_PEER_RELAYER
+            })
+        );
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -626,7 +658,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
                 string.concat("pNFT-", ERC20Repo._symbol()),
                 IProtocolDETF(address(this)),
                 IERC20(reservePool),
-                BaseProtocolDETFRepo._richToken(detfStorage),
+                IERC20(address(this)),
                 9,
                 address(this)
             );

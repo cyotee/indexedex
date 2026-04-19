@@ -8,6 +8,9 @@ Object.defineProperty(exports, "getArtifactBundle", { enumerable: true, get: fun
 exports.CHAIN_ID_ANVIL = 31337;
 exports.CHAIN_ID_LOCALHOST = 1337;
 exports.CHAIN_ID_BASE = 8453;
+function isLocalSepoliaEnvironment(environment) {
+    return environment === 'supersim_sepolia';
+}
 let defaultDeploymentEnvironment = process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT ?? 'supersim_sepolia';
 function setDefaultDeploymentEnvironment(environment) {
     defaultDeploymentEnvironment = environment;
@@ -25,7 +28,7 @@ function resolveArtifactsChainId(chainId, environment = defaultDeploymentEnviron
     if (chainId === exports.CHAIN_ID_ANVIL || chainId === exports.CHAIN_ID_LOCALHOST) {
         return addresses_1.CHAIN_ID_SEPOLIA;
     }
-    if (chainId === exports.CHAIN_ID_BASE && environment === 'supersim_sepolia') {
+    if (chainId === exports.CHAIN_ID_BASE && isLocalSepoliaEnvironment(environment)) {
         return addresses_1.CHAIN_ID_BASE_SEPOLIA;
     }
     return null;

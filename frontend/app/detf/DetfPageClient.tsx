@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useAccount, useChainId } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useReadContract, useSimulateContract, useWriteContract } from 'wagmi'
 import { erc20Abi, formatUnits, parseUnits, zeroAddress } from 'viem'
 
@@ -14,6 +14,7 @@ import {
   getSeigniorageDetfsForChain,
 } from '../lib/tokenlists'
 import { resolveAppChain } from '../lib/runtimeChains'
+import { useSelectedNetwork } from '../lib/networkSelection'
 
 const seigniorageDetfAbi = [
   {
@@ -237,8 +238,8 @@ function clampInt(value: string, fallback: number): number {
 const ZERO_BIGINT = BigInt(0)
 
 export default function DetfPageClient() {
-  const chainId = useChainId()
-  const resolvedChainId = chainId || 11155111
+  const { selectedChainId } = useSelectedNetwork()
+  const resolvedChainId = selectedChainId || 11155111
   const activeChain = useMemo(() => resolveAppChain(resolvedChainId), [resolvedChainId])
   const { address, isConnected } = useAccount()
 

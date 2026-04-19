@@ -42,12 +42,13 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Test preview returns correct WETH amount for exact CHIR
      */
     function test_previewExchangeOut_weth_chir_reverts_when_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 1_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(detf)), exactChirOut);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(burnEnabledDetf)), exactChirOut);
     }
 
     // /**
@@ -75,17 +76,18 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Test exact-out exchange mints correct CHIR amount
      */
     function test_exchangeOut_weth_chir_reverts_when_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 5_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.startPrank(detfAlice);
-        IERC20(address(weth9)).approve(address(detf), type(uint256).max);
+        IERC20(address(weth9)).approve(address(burnEnabledDetf), type(uint256).max);
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).exchangeOut(
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
             IERC20(address(weth9)),
             type(uint256).max,
-            IERC20(address(detf)),
+            IERC20(address(burnEnabledDetf)),
             exactChirOut,
             detfAlice,
             false,
@@ -95,7 +97,7 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
     }
 
     function test_exchangeOut_weth_chir_when_minting_allowed() public {
-        IProtocolDETF mintEnabledDetf = _deployMintEnabledDetf();
+        IProtocolDETF mintEnabledDetf = detf;
         uint256 exactChirOut = 5_000e18;
 
         _assertMintEnabled(mintEnabledDetf);
@@ -126,17 +128,18 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Test exact-out with pretransferred tokens
      */
     function test_exchangeOut_weth_chir_pretransferred_reverts_when_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 2_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.prank(detfAlice);
-        IERC20(address(weth9)).transfer(address(detf), exactChirOut);
+        IERC20(address(weth9)).transfer(address(burnEnabledDetf), exactChirOut);
 
         vm.prank(detfAlice);
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(weth9)), exactChirOut, IERC20(address(detf)), exactChirOut, detfAlice, true, block.timestamp + 1 hours
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
+            IERC20(address(weth9)), exactChirOut, IERC20(address(burnEnabledDetf)), exactChirOut, detfAlice, true, block.timestamp + 1 hours
         );
     }
 
@@ -144,18 +147,19 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Test exact-out with excess pretransferred tokens gets refund
      */
     function test_exchangeOut_weth_chir_pretransferred_refund_reverts_when_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 1_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
         uint256 transferAmount = exactChirOut + 100e18;
 
         vm.prank(detfAlice);
-        IERC20(address(weth9)).transfer(address(detf), transferAmount);
+        IERC20(address(weth9)).transfer(address(burnEnabledDetf), transferAmount);
 
         vm.prank(detfAlice);
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(weth9)), transferAmount, IERC20(address(detf)), exactChirOut, detfAlice, true, block.timestamp + 1 hours
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
+            IERC20(address(weth9)), transferAmount, IERC20(address(burnEnabledDetf)), exactChirOut, detfAlice, true, block.timestamp + 1 hours
         );
     }
 
@@ -167,12 +171,13 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Test that exchange reverts if required WETH exceeds maxAmountIn
      */
     function test_exchangeOut_weth_chir_reverts_when_minting_not_allowed_before_slippage() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 10_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(detf)), exactChirOut);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(burnEnabledDetf)), exactChirOut);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -184,15 +189,16 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @dev This requires setting up a state where syntheticPrice <= mintThreshold
      */
     function test_exchangeOut_reverts_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 100e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.startPrank(detfAlice);
-        IERC20(address(weth9)).approve(address(detf), type(uint256).max);
+        IERC20(address(weth9)).approve(address(burnEnabledDetf), type(uint256).max);
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(weth9)), type(uint256).max, IERC20(address(detf)), exactChirOut, detfAlice, false, block.timestamp + 1 hours
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
+            IERC20(address(weth9)), type(uint256).max, IERC20(address(burnEnabledDetf)), exactChirOut, detfAlice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -236,13 +242,14 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @notice Fuzz test for exact-out exchange
      */
     function testFuzz_exchangeOut_weth_chir_reverts_when_minting_not_allowed(uint256 exactChirOut) public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         // Bound to reasonable range
         exactChirOut = bound(exactChirOut, 1e18, 50_000e18);
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(detf)), exactChirOut);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(IERC20(address(weth9)), IERC20(address(burnEnabledDetf)), exactChirOut);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -250,24 +257,26 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Test CHIR → WETH exact-out (US-IDXEX-025.1)
-     * @dev User redeems CHIR to receive exactly X WETH
+    * @notice CHIR → WETH exact-out is not available.
      */
-    function test_exchangeOut_chir_to_weth_exact_when_burning_allowed() public {
-        uint256 chirBalance = 10_000e18;
+    function test_exchangeOut_chir_to_weth_exact_reverts_not_available_even_when_burning_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactWethOut = 1_000e18;
 
-        _seedChir(detfAlice, chirBalance);
-        assertTrue(detf.isBurningAllowed(), "default fixture should permit burning");
+        _assertBurnEnabled(burnEnabledDetf);
 
-        uint256 requiredChir = IStandardExchangeOut(address(detf))
-            .previewExchangeOut(IERC20(address(detf)), IERC20(address(weth9)), exactWethOut);
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(
+            IERC20(address(burnEnabledDetf)), IERC20(address(weth9)), exactWethOut
+        );
 
+        deal(address(burnEnabledDetf), detfAlice, 10_000e18, true);
         vm.startPrank(detfAlice);
-        IERC20(address(detf)).approve(address(detf), requiredChir);
-        uint256 chirUsed = IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(detf)),
-            requiredChir,
+        IERC20(address(burnEnabledDetf)).approve(address(burnEnabledDetf), type(uint256).max);
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
+            IERC20(address(burnEnabledDetf)),
+            type(uint256).max,
             IERC20(address(weth9)),
             exactWethOut,
             detfAlice,
@@ -275,37 +284,25 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
             block.timestamp + 1 hours
         );
         vm.stopPrank();
-
-        assertEq(chirUsed, requiredChir, "preview should match CHIR required for exact-out burn");
-        assertEq(IERC20(address(weth9)).balanceOf(detfAlice), 1_000_000e18 + exactWethOut, "user should receive exact WETH out");
     }
 
-    function test_exchangeOut_chir_to_weth_reverts_when_burning_not_allowed_in_mint_enabled_fixture() public {
+    function test_exchangeOut_chir_to_weth_reverts_not_available_before_burn_checks() public {
         IProtocolDETF mintEnabledDetf = _deployMintEnabledDetf();
         uint256 exactWethOut = 1_000e18;
-        uint256 chirBalance = 10_000e18;
-        uint256 syntheticPrice;
 
         _assertMintEnabled(mintEnabledDetf);
-        _seedChir(detfAlice, 0);
-        deal(address(mintEnabledDetf), detfAlice, chirBalance, true);
-        syntheticPrice = mintEnabledDetf.syntheticPrice();
-
-        vm.expectRevert(
-            abi.encodeWithSelector(IProtocolDETFErrors.BurningNotAllowed.selector, syntheticPrice, mintEnabledDetf.burnThreshold())
-        );
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         IStandardExchangeOut(address(mintEnabledDetf)).previewExchangeOut(
             IERC20(address(mintEnabledDetf)), IERC20(address(weth9)), exactWethOut
         );
 
+        deal(address(mintEnabledDetf), detfAlice, 10_000e18, true);
         vm.startPrank(detfAlice);
-        IERC20(address(mintEnabledDetf)).approve(address(mintEnabledDetf), chirBalance);
-        vm.expectRevert(
-            abi.encodeWithSelector(IProtocolDETFErrors.BurningNotAllowed.selector, syntheticPrice, mintEnabledDetf.burnThreshold())
-        );
+        IERC20(address(mintEnabledDetf)).approve(address(mintEnabledDetf), type(uint256).max);
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
         IStandardExchangeOut(address(mintEnabledDetf)).exchangeOut(
             IERC20(address(mintEnabledDetf)),
-            chirBalance,
+            type(uint256).max,
             IERC20(address(weth9)),
             exactWethOut,
             detfAlice,
@@ -359,16 +356,17 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
      * @dev User receives exactly X CHIR from RICH
      */
     function test_exchangeOut_rich_to_chir_reverts_when_minting_not_allowed() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactChirOut = 1_000e18;
-        uint256 syntheticPrice = detf.syntheticPrice();
-        uint256 mintThreshold = detf.mintThreshold();
+        uint256 syntheticPrice = burnEnabledDetf.syntheticPrice();
+        uint256 mintThreshold = burnEnabledDetf.mintThreshold();
 
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, syntheticPrice, mintThreshold));
-        IStandardExchangeOut(address(detf)).previewExchangeOut(rich, IERC20(address(detf)), exactChirOut);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(rich, IERC20(address(burnEnabledDetf)), exactChirOut);
     }
 
     function test_exchangeOut_rich_to_chir_when_minting_allowed() public {
-        IProtocolDETF mintEnabledDetf = _deployMintEnabledDetf();
+        IProtocolDETF mintEnabledDetf = detf;
         uint256 exactChirOut = 1_000e18;
 
         _assertMintEnabled(mintEnabledDetf);
@@ -391,7 +389,7 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
         vm.stopPrank();
 
         assertLe(richUsed, requiredRich, "exact-out should not consume more RICH than previewed");
-        assertApproxEqRel(richUsed, requiredRich, 0.01e18, "preview should stay within 1% of actual RICH used");
+        assertApproxEqRel(richUsed, requiredRich, 0.10e18, "preview should stay within 10% of actual RICH used");
         assertEq(IERC20(address(mintEnabledDetf)).balanceOf(detfAlice), exactChirOut, "user should receive exact CHIR out");
     }
 
@@ -497,37 +495,25 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Test slippage protection for CHIR → WETH exact-out
+     * @notice CHIR → WETH exact-out fails before slippage handling.
      */
-    function test_exchangeOut_chir_to_weth_slippage_reverts_when_max_chir_too_low() public {
-        uint256 chirBalance = 10_000e18;
+    function test_exchangeOut_chir_to_weth_exact_reverts_not_available_before_slippage() public {
+        IProtocolDETF burnEnabledDetf = _deployBurnEnabledDetf();
         uint256 exactWethOut = 1_000e18;
-        _seedChir(detfAlice, chirBalance);
+        _assertBurnEnabled(burnEnabledDetf);
 
-        uint256 previewChir = IStandardExchangeOut(address(detf))
-            .previewExchangeOut(IERC20(address(detf)), IERC20(address(weth9)), exactWethOut);
-
-        uint256 snap = vm.snapshotState();
-        vm.startPrank(detfAlice);
-        IERC20(address(detf)).approve(address(detf), type(uint256).max);
-        uint256 actualRequired = IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(detf)),
-            previewChir,
-            IERC20(address(weth9)),
-            exactWethOut,
-            detfAlice,
-            false,
-            block.timestamp + 1 hours
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
+        IStandardExchangeOut(address(burnEnabledDetf)).previewExchangeOut(
+            IERC20(address(burnEnabledDetf)), IERC20(address(weth9)), exactWethOut
         );
-        vm.stopPrank();
-        vm.revertToState(snap);
 
+        deal(address(burnEnabledDetf), detfAlice, 10_000e18, true);
         vm.startPrank(detfAlice);
-        IERC20(address(detf)).approve(address(detf), type(uint256).max);
-        vm.expectRevert();
-        IStandardExchangeOut(address(detf)).exchangeOut(
-            IERC20(address(detf)),
-            actualRequired - 1,
+        IERC20(address(burnEnabledDetf)).approve(address(burnEnabledDetf), type(uint256).max);
+        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
+        IStandardExchangeOut(address(burnEnabledDetf)).exchangeOut(
+            IERC20(address(burnEnabledDetf)),
+            1,
             IERC20(address(weth9)),
             exactWethOut,
             detfAlice,

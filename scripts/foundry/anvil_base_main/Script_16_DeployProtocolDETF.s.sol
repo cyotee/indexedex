@@ -52,6 +52,7 @@ import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/Bas
 import {IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 /// @title Script_16_DeployProtocolDETF
 /// @notice Deploys the Protocol DETF (CHIR) and its supporting infra.
@@ -89,6 +90,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private erc5267Facet;
 	IFacet private erc4626BasicVaultFacet;
 	IFacet private erc4626StandardVaultFacet;
+	IFacet private multiStepOwnableFacet;
+	IFacet private operableFacet;
 
 	// Stage 04 outputs
 	IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
@@ -106,7 +109,9 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private protocolExchangeInQueryFacet;
 	IFacet private protocolExchangeOutFacet;
 	IFacet private protocolBondingFacet;
+	IFacet private protocolBridgeFacet;
 	IFacet private protocolBondingQueryFacet;
+	IFacet private protocolRichirRedeemFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
 
@@ -194,6 +199,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		erc5267Facet = IFacet(_readAddress("02_shared_facets.json", "erc5267Facet"));
 		erc4626BasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626BasicVaultFacet"));
 		erc4626StandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626StandardVaultFacet"));
+		multiStepOwnableFacet = IFacet(_readAddress("02_shared_facets.json", "multiStepOwnableFacet"));
+		operableFacet = IFacet(_readAddress("02_shared_facets.json", "operableFacet"));
 
 		balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(
 			_readAddress("04_dex_packages.json", "balancerV3StandardExchangeRouter")
@@ -211,6 +218,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		require(address(diamondPackageFactory) != address(0), "DiamondPackageFactory not found");
 		require(address(vaultRegistry) != address(0), "VaultRegistry not found");
 		require(address(feeOracle) != address(0), "FeeOracle not found");
+		require(address(multiStepOwnableFacet) != address(0), "MultiStepOwnableFacet not found");
+		require(address(operableFacet) != address(0), "OperableFacet not found");
 		require(address(balancerV3StandardExchangeRouter) != address(0), "BalancerV3StandardExchangeRouter not found");
 		require(address(aerodromePkg) != address(0), "Aerodrome pkg not found");
 		require(address(rateProviderPkg) != address(0), "RateProvider pkg not found");
@@ -240,7 +249,9 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		protocolExchangeInQueryFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFExchangeInQueryFacet(create3Factory);
 		protocolExchangeOutFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFExchangeOutFacet(create3Factory);
 		protocolBondingFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingFacet(create3Factory);
+		protocolBridgeFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBridgeFacet(create3Factory);
 		protocolBondingQueryFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingQueryFacet(create3Factory);
+		protocolRichirRedeemFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFRichirRedeemFacet(create3Factory);
 		protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
 		richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
 
@@ -329,7 +340,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			facets.protocolDETFExchangeInQueryFacet = protocolExchangeInQueryFacet;
 			facets.protocolDETFExchangeOutFacet = protocolExchangeOutFacet;
 			facets.protocolDETFBondingFacet = protocolBondingFacet;
+			facets.protocolDETFBridgeFacet = protocolBridgeFacet;
 			facets.protocolDETFBondingQueryFacet = protocolBondingQueryFacet;
+			facets.multiStepOwnableFacet = multiStepOwnableFacet;
+			facets.operableFacet = operableFacet;
+			facets.protocolDETFRichirRedeemFacet = protocolRichirRedeemFacet;
 
 			BaseProtocolDETF_Component_FactoryService.ProtocolDETFInfra memory infra;
 			infra.feeOracle = feeOracle;
@@ -348,10 +363,13 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			pkgs.richirPkg = richirPkg;
 			pkgs.rateProviderPkg = rateProviderPkg;
 
+			ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig;
+
 			IBaseProtocolDETFDFPkg.PkgInit memory detfPkgInit = BaseProtocolDETF_Component_FactoryService.buildProtocolDETFPkgInit(
 				facets,
 				infra,
-				pkgs
+				pkgs,
+				bridgeConfig
 			);
 
 			protocolDetfPkg = BaseProtocolDETF_Pkg_FactoryService.deployBaseProtocolDETFDFPkg(vaultRegistry, detfPkgInit);
@@ -385,8 +403,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				wethInitialDepositAmount: INITIAL_WETH_DEPOSIT,
 				wethMintChirPercent: ONE_WAD
 			}),
-			bridgeInitData: bytes(""),
-			funder: owner
+			funder: owner,
+			owner: owner
 		});
 
 		protocolDetf = vaultRegistry.deployVault(IStandardVaultPkg(address(protocolDetfPkg)), abi.encode(args));

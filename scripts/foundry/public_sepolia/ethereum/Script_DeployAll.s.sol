@@ -27,6 +27,10 @@ contract DeploymentBase is AnvilDeploymentBase {
 
         revert("OUT_DIR_OVERRIDE must be set");
     }
+
+    function _skipProtocolDetfStage16() internal view returns (bool) {
+        return vm.envOr("PUBLIC_SEPOLIA_SKIP_STAGE16", false);
+    }
 }
 
 contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
@@ -46,7 +50,9 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         new Script_14_DeployERC4626PermitVaults().run();
         new Script_15_DeploySeigniorageDETFS().run();
 
-        _runStage16();
+        if (!_skipProtocolDetfStage16()) {
+            _runStage16();
+        }
         new Script_ExportTokenlists().run();
     }
 

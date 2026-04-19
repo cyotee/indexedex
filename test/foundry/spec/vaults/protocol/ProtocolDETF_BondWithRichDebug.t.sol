@@ -26,12 +26,7 @@ contract ProtocolDETFBondWithRichDebugBaseTest is BaseIntegration {
         vm.startPrank(detfAlice);
         rich.approve(address(detf), type(uint256).max);
         for (uint256 i = 0; i < steps.length; ++i) {
-            IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-                steps[i],
-                30 days,
-                detfAlice,
-                block.timestamp + 1 hours
-            );
+            IBaseProtocolDETFBonding(address(detf)).bond(rich, steps[i], 30 days, detfAlice, false, block.timestamp + 1 hours);
             console.log("richBonded", steps[i]);
             console.log("syntheticPrice", detf.syntheticPrice());
         }
@@ -58,12 +53,7 @@ contract ProtocolDETFBondWithRichDebugEthereumTest is EthereumIntegration {
         vm.startPrank(detfAlice);
         rich.approve(address(detf), type(uint256).max);
         for (uint256 i = 0; i < steps.length; ++i) {
-            IBaseProtocolDETFBonding(address(detf)).bondWithRich(
-                steps[i],
-                30 days,
-                detfAlice,
-                block.timestamp + 1 hours
-            );
+            IBaseProtocolDETFBonding(address(detf)).bond(rich, steps[i], 30 days, detfAlice, false, block.timestamp + 1 hours);
             console.log("richBonded", steps[i]);
             console.log("syntheticPrice", detf.syntheticPrice());
         }
