@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 // Crane IERC20 imported below
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {PoolFactoryMock} from "contracts/test/balancer/v3/PoolFactoryMock.sol";
 import {
     CastingHelpers
 } from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/CastingHelpers.sol";
@@ -383,9 +382,6 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
         string memory name = "Test-Init Pool";
         string memory symbol = "TEST-INIT";
 
-        newPool = PoolFactoryMock(testPoolFactory).createPool(name, symbol);
-        vm.label(newPool, "testInitPool");
-
         // Register with sorted tokens (but don't initialize)
         address[] memory poolTokens = new address[](2);
         if (address(dai) < address(usdc)) {
@@ -396,15 +392,6 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
             poolTokens[1] = address(dai);
         }
 
-        PoolFactoryMock(testPoolFactory)
-            .registerTestPool(
-                newPool,
-                vault.buildTokenConfig(poolTokens.asIERC20()),
-                testPoolHooksContract,
-                address(this) // pool creator
-            );
-
-        // Approve pool BPT for all users
-        approveForPool(IERC20(newPool));
+        newPool = _createWeightedPool(name, symbol, poolTokens, address(this), "testInitPool");
     }
 }

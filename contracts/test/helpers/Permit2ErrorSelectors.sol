@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.30;
+pragma solidity ^0.8.30;
 
 /// @title Permit2ErrorSelectors
 /// @notice Helper library exposing bytes4 selectors for common Permit2 revert/error

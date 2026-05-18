@@ -7,7 +7,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
-import {IBaseProtocolDETFRichirRedeem} from "contracts/interfaces/IBaseProtocolDETFRichirRedeem.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
 import {
@@ -432,6 +431,37 @@ contract ProtocolDETFRoutesIntegrationTest is ProtocolDETFEthereumCustomFixtureH
 
         assertLe(expectedWeth, wethOut, "exact-in preview must not exceed actual output");
         assertApproxEqRel(wethOut, expectedWeth, 0.01e18, "preview should stay within 1% of actual output");
+    }
+
+    function test_richir_to_rich_route_is_unsupported_on_ethereum() public {
+        uint256 richBondAmount = 1_000_000e18;
+        uint256 lockDuration = 30 days;
+
+        vm.startPrank(detfAlice);
+        rich.approve(address(detf), richBondAmount);
+        (uint256 tokenId,) = IBaseProtocolDETFBonding(address(detf)).bond(
+            rich, richBondAmount, lockDuration, detfAlice, false, block.timestamp + 1 hours
+        );
+        IBaseProtocolDETFBonding(address(detf)).sellNFT(tokenId, detfAlice);
+        vm.stopPrank();
+
+        uint256 richirAmount = richir.balanceOf(detfAlice);
+        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.InvalidToken.selector, IERC20(address(richir))));
+        IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(richir)), richirAmount, rich);
+
+        vm.startPrank(detfAlice);
+        richir.approve(address(detf), richirAmount);
+        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.InvalidToken.selector, IERC20(address(richir))));
+        IStandardExchangeIn(address(detf)).exchangeIn(
+            IERC20(address(richir)),
+            richirAmount,
+            rich,
+            0,
+            detfAlice,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
     }
 
     function test_roundtrip_weth_rich_weth() public {

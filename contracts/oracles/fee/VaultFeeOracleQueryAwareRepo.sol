@@ -10,26 +10,26 @@ library VaultFeeOracleQueryAwareRepo {
         IVaultFeeOracleQuery vaultFeeOracleQuery;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layout(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
+    function _layout() internal pure returns (Storage storage layoutStruct) {
         return _layout(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, IVaultFeeOracleQuery vaultFeeOracleQuery_) internal {
-        layout.vaultFeeOracleQuery = vaultFeeOracleQuery_;
+    function _initialize(Storage storage layoutStruct, IVaultFeeOracleQuery vaultFeeOracleQuery_) internal {
+        layoutStruct.vaultFeeOracleQuery = vaultFeeOracleQuery_;
     }
 
     function _initialize(IVaultFeeOracleQuery vaultFeeOracleQuery_) internal {
         _initialize(_layout(), vaultFeeOracleQuery_);
     }
 
-    function _feeOracle(Storage storage layout) internal view returns (IVaultFeeOracleQuery vaultFeeOracleQuery_) {
-        return layout.vaultFeeOracleQuery;
+    function _feeOracle(Storage storage layoutStruct) internal view returns (IVaultFeeOracleQuery vaultFeeOracleQuery_) {
+        return layoutStruct.vaultFeeOracleQuery;
     }
 
     function _feeOracle() internal view returns (IVaultFeeOracleQuery vaultFeeOracleQuery_) {

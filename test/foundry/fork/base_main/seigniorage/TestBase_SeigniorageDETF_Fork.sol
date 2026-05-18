@@ -71,18 +71,6 @@ import {
     StandardExchangeRateProviderFacet
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderFacet.sol";
 
-/* -------------------------------------------------------------------------- */
-/*                               Test-Only Mock                               */
-/* -------------------------------------------------------------------------- */
-
-contract ForkMockSeigniorageNFTVaultDFPkg is SeigniorageNFTVaultDFPkg {
-    constructor(PkgInit memory pkgInit) SeigniorageNFTVaultDFPkg(pkgInit) {}
-
-    function processArgs(bytes memory pkgArgs) public pure override returns (bytes memory) {
-        return pkgArgs;
-    }
-}
-
 /**
  * @title TestBase_SeigniorageDETF_Fork
  * @notice Base test fixture for Seigniorage DETF fork tests on Base mainnet.
@@ -141,7 +129,7 @@ contract TestBase_SeigniorageDETF_Fork is TestBase_BalancerV3Fork_StrategyVault 
         (IFacet exchangeInFacet, IFacet exchangeOutFacet, IFacet underwritingFacet, IFacet nftVaultFacet) =
             _deploySeigniorageFacets();
         IFacet erc721Facet = _deployERC721Facet();
-        ISeigniorageNFTVaultDFPkg nftVaultPkg = _deployMockNftVaultPkg(erc721Facet, nftVaultFacet);
+        ISeigniorageNFTVaultDFPkg nftVaultPkg = _deployNftVaultPkg(erc721Facet, nftVaultFacet);
         IERC20PermitMintBurnLockedOwnableDFPkg seigniorageTokenPkg = _deploySeigniorageTokenPkg();
         IStandardExchangeRateProviderDFPkg reserveVaultRateProviderPkg = _deployStandardExchangeRateProviderPkg();
 
@@ -205,7 +193,7 @@ contract TestBase_SeigniorageDETF_Fork is TestBase_BalancerV3Fork_StrategyVault 
         vm.label(address(facet), "ERC20MintBurnOwnableFacet");
     }
 
-    function _deployMockNftVaultPkg(IFacet erc721Facet, IFacet seigniorageNFTVaultFacet)
+    function _deployNftVaultPkg(IFacet erc721Facet, IFacet seigniorageNFTVaultFacet)
         internal
         returns (ISeigniorageNFTVaultDFPkg nftVaultPkg)
     {
@@ -218,21 +206,14 @@ contract TestBase_SeigniorageDETF_Fork is TestBase_BalancerV3Fork_StrategyVault 
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager))
         });
 
-        bytes memory initArgs = abi.encode(nftPkgInit);
-        bytes memory initCode = type(ForkMockSeigniorageNFTVaultDFPkg).creationCode;
-
-        address pkgAddr =
-            create3Factory.create3WithArgs(initCode, initArgs, keccak256("ForkMockSeigniorageNFTVaultDFPkg"));
-        nftVaultPkg = ISeigniorageNFTVaultDFPkg(pkgAddr);
-        vm.label(pkgAddr, "ForkMockSeigniorageNFTVaultDFPkg");
-
         vm.startPrank(owner);
-        IVaultRegistryVaultPackageManager(address(indexedexManager))
-            .registerPackage(pkgAddr, IStandardVaultPkg(pkgAddr).vaultDeclaration());
+        nftVaultPkg = Seigniorage_Component_FactoryService.deploySeigniorageNFTVaultDFPkg(
+            IVaultRegistryDeployment(address(indexedexManager)), nftPkgInit
+        );
         vm.stopPrank();
 
         assertTrue(
-            IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(pkgAddr),
+            IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(nftVaultPkg)),
             "NFT vault package not registered"
         );
     }

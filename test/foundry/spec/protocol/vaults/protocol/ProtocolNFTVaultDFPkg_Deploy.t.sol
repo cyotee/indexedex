@@ -5,9 +5,11 @@ import {Test} from "forge-std/Test.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
-import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
@@ -30,6 +32,7 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
     using BaseProtocolDETF_Pkg_FactoryService for IVaultRegistryDeployment;
 
     IProtocolNFTVaultDFPkg internal pkg;
+    ERC20PermitDFPkg internal erc20PermitPkg;
 
     function setUp() public override {
         super.setUp();
@@ -55,6 +58,8 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
             .registerPackage(address(pkg), IStandardVaultPkg(address(pkg)).vaultDeclaration());
         vm.stopPrank();
 
+        erc20PermitPkg = _deployTestTokenPkg();
+
         assertTrue(
             IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(pkg)),
             "ProtocolNFTVaultDFPkg not registered"
@@ -63,24 +68,17 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
 
     function test_deployVault_success() public {
         // Deploy two simple ERC20s via CREATE3 for lpToken and rewardToken.
-        address lpToken = create3Factory.create3WithArgs(
-            type(ERC20PermitMintableStub).creationCode,
-            abi.encode("LP Token", "LP", uint8(18), owner, uint256(0)),
-            keccak256("ProtocolNFTVault_LP_Token")
-        );
-        address rewardToken = create3Factory.create3WithArgs(
-            type(ERC20PermitMintableStub).creationCode,
-            abi.encode("Reward Token", "RWD", uint8(18), owner, uint256(0)),
-            keccak256("ProtocolNFTVault_Reward_Token")
-        );
+        address lpToken = address(_deployTestToken("LP Token", "LP", keccak256("ProtocolNFTVault_LP_Token")));
+        address rewardToken =
+            address(_deployTestToken("Reward Token", "RWD", keccak256("ProtocolNFTVault_Reward_Token")));
 
         vm.startPrank(owner);
         address vaultAddr = pkg.deployVault(
             "Protocol NFT Vault",
             "pNFT",
             IProtocolDETF(address(0xBEEF)),
-            ERC20PermitMintableStub(lpToken),
-            ERC20PermitMintableStub(rewardToken),
+            IERC20(lpToken),
+            IERC20(rewardToken),
             9,
             owner
         );
@@ -107,12 +105,43 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
                     name: "x",
                     symbol: "y",
                     protocolDETF: IProtocolDETF(address(0xBEEF)),
-                    lpToken: ERC20PermitMintableStub(address(0xCAFE)),
-                    rewardToken: ERC20PermitMintableStub(address(0xF00D)),
+                    lpToken: IERC20(address(0xCAFE)),
+                    rewardToken: IERC20(address(0xF00D)),
                     decimalOffset: 9,
                     owner: owner
                 })
             )
         );
+    }
+
+    function _deployTestTokenPkg() internal returns (ERC20PermitDFPkg pkg_) {
+        IERC20PermitDFPkg.PkgInit memory pkgInit = IERC20PermitDFPkg.PkgInit({
+            erc20Facet: erc20Facet,
+            erc5267Facet: erc5267Facet,
+            erc2612Facet: erc2612Facet
+        });
+
+        pkg_ = ERC20PermitDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(ERC20PermitDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    keccak256(abi.encode(type(ERC20PermitDFPkg).name, pkgInit, "ProtocolNFTVaultDeploy"))
+                )
+            )
+        );
+    }
+
+    function _deployTestToken(string memory name_, string memory symbol_, bytes32 salt_) internal returns (IERC20 token_) {
+        IERC20PermitDFPkg.PkgArgs memory pkgArgs = IERC20PermitDFPkg.PkgArgs({
+            name: name_,
+            symbol: symbol_,
+            decimals: 18,
+            totalSupply: 0,
+            recipient: address(0),
+            optionalSalt: salt_
+        });
+
+        token_ = IERC20(diamondPackageFactory.deploy(IDiamondFactoryPackage(address(erc20PermitPkg)), abi.encode(pkgArgs)));
     }
 }

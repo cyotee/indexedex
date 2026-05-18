@@ -1,43 +1,38 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import '@crane/contracts/utils/BetterEfficientHashLib.sol';
+import "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
-/**
- * @title SlipstreamVaultRepo - Storage library for Slipstream vault position data.
- * @author cyotee doge <doge.cyotee>
- * @notice Stores the vault's concentrated liquidity position parameters.
- * @dev Supports multiple managed positions (at least 2: one token0-side, one token1-side)
- */
 library SlipstreamVaultRepo {
     using BetterEfficientHashLib for bytes;
 
-    /// @notice Maximum number of positions the vault can manage
-    uint8 constant MAX_POSITIONS = 8;
+    uint16 internal constant MAX_BPS = 10_000;
+    bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.slipstream");
 
-    bytes32 internal constant STORAGE_SLOT = keccak256('indexedex.vaults.slipstream');
+    enum PositionKind {
+        Center,
+        LowerWing,
+        UpperWing
+    }
 
-    /// @notice Represents a single Slipstream liquidity position
     struct Position {
         int24 tickLower;
         int24 tickUpper;
         uint128 liquidity;
+        bool created;
     }
 
-    /// @notice Strategy configuration for position management
     struct StrategyConfig {
         uint24 widthMultiplier;
+        uint24 centerWidthMultiplier;
+        uint16 activeLiquidityBps;
     }
 
     struct Storage {
-        // Single double-sided position
-        Position position;
-        bool positionCreated;
-        
-        // Strategy configuration (widthMultiplier for position creation)
+        Position centerPosition;
+        Position lowerWingPosition;
+        Position upperWingPosition;
         StrategyConfig strategy;
-        
-        // Last known pool state for cache invalidation
         uint160 lastSqrtPriceX96;
         int24 lastTick;
         uint32 lastTimestamp;
@@ -53,91 +48,104 @@ library SlipstreamVaultRepo {
         return _layout(STORAGE_SLOT);
     }
 
-    /* ---------------------- Initialization ---------------------- */
-
-    /// @notice Initialize with width multiplier only
-    /// @dev Position is created on first deposit using derived ticks
     function _initialize(Storage storage layout_, uint24 widthMultiplier_) internal {
         require(widthMultiplier_ >= 1, "widthMultiplier must be >= 1");
-        layout_.strategy = StrategyConfig({widthMultiplier: widthMultiplier_});
-        layout_.positionCreated = false;
+        layout_.strategy = StrategyConfig({widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: 1000});
     }
 
-    /* ---------------------- Position Creation ---------------------- */
-
-    /// @notice Create the single double-sided position on first deposit
-    /// @dev Sets the position ticks directly
-    function _createPositionIfNeeded(Storage storage layout_, int24 tickLower, int24 tickUpper) internal {
-        if (layout_.positionCreated) return;
-        
-        layout_.position = Position({
-            tickLower: tickLower,
-            tickUpper: tickUpper,
-            liquidity: 0
-        });
-        layout_.positionCreated = true;
+    function _initialize(uint24 widthMultiplier_) internal {
+        _initialize(_layout(), widthMultiplier_);
     }
 
-    function _createPositionIfNeeded(int24 tickLower, int24 tickUpper) internal {
-        _createPositionIfNeeded(_layout(), tickLower, tickUpper);
+    function _position(Storage storage layout_, PositionKind kind_) internal view returns (Position storage position_) {
+        if (kind_ == PositionKind.Center) {
+            return layout_.centerPosition;
+        }
+        if (kind_ == PositionKind.LowerWing) {
+            return layout_.lowerWingPosition;
+        }
+        return layout_.upperWingPosition;
     }
 
-    /// @notice Check if position has been created
+    function _createPositionIfNeeded(Storage storage layout_, PositionKind kind_, int24 tickLower_, int24 tickUpper_)
+        internal
+    {
+        Position storage position_ = _position(layout_, kind_);
+        if (position_.created) {
+            return;
+        }
+
+        position_.tickLower = tickLower_;
+        position_.tickUpper = tickUpper_;
+        position_.created = true;
+    }
+
+    function _createPositionIfNeeded(PositionKind kind_, int24 tickLower_, int24 tickUpper_) internal {
+        _createPositionIfNeeded(_layout(), kind_, tickLower_, tickUpper_);
+    }
+
     function _isPositionCreated(Storage storage layout_) internal view returns (bool) {
-        return layout_.positionCreated;
+        return layout_.centerPosition.created || layout_.lowerWingPosition.created || layout_.upperWingPosition.created;
     }
 
     function _isPositionCreated() internal view returns (bool) {
         return _isPositionCreated(_layout());
     }
 
-    /* ---------------------- Position Access ---------------------- */
-
-    /// @notice Get the single position (always index 0)
-    function _getPosition(Storage storage layout_) internal view returns (Position storage) {
-        return layout_.position;
+    function _isPositionCreated(Storage storage layout_, PositionKind kind_) internal view returns (bool) {
+        return _position(layout_, kind_).created;
     }
 
-    function _getPosition() internal view returns (Position storage) {
-        return _getPosition(_layout());
+    function _isPositionCreated(PositionKind kind_) internal view returns (bool) {
+        return _isPositionCreated(_layout(), kind_);
     }
 
-    /// @notice Get position ticks
-    function _getPositionTicks(Storage storage layout_) internal view returns (int24 tickLower, int24 tickUpper) {
-        tickLower = layout_.position.tickLower;
-        tickUpper = layout_.position.tickUpper;
+    function _getPosition(Storage storage layout_, PositionKind kind_) internal view returns (Position storage) {
+        return _position(layout_, kind_);
     }
 
-    function _getPositionTicks() internal view returns (int24 tickLower, int24 tickUpper) {
-        return _getPositionTicks(_layout());
+    function _getPosition(PositionKind kind_) internal view returns (Position storage) {
+        return _getPosition(_layout(), kind_);
     }
 
-    /// @notice Update position liquidity
-    function _updatePositionLiquidity(Storage storage layout_, uint128 liquidity_) internal {
-        layout_.position.liquidity = liquidity_;
+    function _getPositionTicks(Storage storage layout_, PositionKind kind_)
+        internal
+        view
+        returns (int24 tickLower_, int24 tickUpper_)
+    {
+        Position storage position_ = _position(layout_, kind_);
+        tickLower_ = position_.tickLower;
+        tickUpper_ = position_.tickUpper;
     }
 
-    function _updatePositionLiquidity(uint128 liquidity_) internal {
-        _updatePositionLiquidity(_layout(), liquidity_);
+    function _getPositionTicks(PositionKind kind_) internal view returns (int24 tickLower_, int24 tickUpper_) {
+        return _getPositionTicks(_layout(), kind_);
     }
 
-    /* ---------------------- Position Key ---------------------- */
-
-    /// @notice Calculate position key for the vault's single position
-    function _getPositionKey(Storage storage layout_, address owner_) internal view returns (bytes32) {
-        return abi.encode(owner_, layout_.position.tickLower, layout_.position.tickUpper)._hash();
+    function _updatePositionLiquidity(Storage storage layout_, PositionKind kind_, uint128 liquidity_) internal {
+        _position(layout_, kind_).liquidity = liquidity_;
     }
 
-    function _getPositionKey(address owner_) internal view returns (bytes32) {
-        return _getPositionKey(_layout(), owner_);
+    function _updatePositionLiquidity(PositionKind kind_, uint128 liquidity_) internal {
+        _updatePositionLiquidity(_layout(), kind_, liquidity_);
     }
 
-    /// @notice Get position key for vault's own position
-    function _getOwnPositionKey() internal view returns (bytes32) {
-        return _getPositionKey(address(this));
+    function _getPositionKey(Storage storage layout_, PositionKind kind_, address owner_)
+        internal
+        view
+        returns (bytes32)
+    {
+        Position storage position_ = _position(layout_, kind_);
+        return abi.encode(owner_, position_.tickLower, position_.tickUpper)._hash();
     }
 
-    /* ---------------------- Strategy Config ---------------------- */
+    function _getPositionKey(PositionKind kind_, address owner_) internal view returns (bytes32) {
+        return _getPositionKey(_layout(), kind_, owner_);
+    }
+
+    function _getOwnPositionKey(PositionKind kind_) internal view returns (bytes32) {
+        return _getPositionKey(kind_, address(this));
+    }
 
     function _strategy(Storage storage layout_) internal view returns (StrategyConfig memory) {
         return layout_.strategy;
@@ -155,7 +163,29 @@ library SlipstreamVaultRepo {
         return _widthMultiplier(_layout());
     }
 
-    /* ---------------------- Cache ---------------------- */
+    function _centerWidthMultiplier(Storage storage layout_) internal view returns (uint24) {
+        return layout_.strategy.centerWidthMultiplier;
+    }
+
+    function _centerWidthMultiplier() internal view returns (uint24) {
+        return _centerWidthMultiplier(_layout());
+    }
+
+    function _activeLiquidityBps(Storage storage layout_) internal view returns (uint16) {
+        return layout_.strategy.activeLiquidityBps;
+    }
+
+    function _activeLiquidityBps() internal view returns (uint16) {
+        return _activeLiquidityBps(_layout());
+    }
+
+    function _inactiveLiquidityBps(Storage storage layout_) internal view returns (uint16) {
+        return MAX_BPS - layout_.strategy.activeLiquidityBps;
+    }
+
+    function _inactiveLiquidityBps() internal view returns (uint16) {
+        return _inactiveLiquidityBps(_layout());
+    }
 
     function _setPoolState(Storage storage layout_, uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
         layout_.lastSqrtPriceX96 = sqrtPriceX96_;
@@ -163,26 +193,20 @@ library SlipstreamVaultRepo {
         layout_.lastTimestamp = timestamp_;
     }
 
-    function _lastPoolState(Storage storage layout_) internal view returns (uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) {
+    function _lastPoolState(Storage storage layout_)
+        internal
+        view
+        returns (uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_)
+    {
         return (layout_.lastSqrtPriceX96, layout_.lastTick, layout_.lastTimestamp);
     }
 
-    /* ---------------------- Position State Checks ---------------------- */
-
-    /// @notice Check if the position is in-range (double-sided)
-    function _isPositionInRange(Storage storage layout_, int24 currentTick) internal view returns (bool) {
-        return currentTick >= layout_.position.tickLower && currentTick < layout_.position.tickUpper;
+    function _isPositionInRange(Storage storage layout_, PositionKind kind_, int24 currentTick) internal view returns (bool) {
+        Position storage position_ = _position(layout_, kind_);
+        return position_.created && currentTick >= position_.tickLower && currentTick < position_.tickUpper;
     }
 
-    /// @notice Check if the position is in-range
-    function _isPositionInRange(int24 currentTick) internal view returns (bool) {
-        return _isPositionInRange(_layout(), currentTick);
+    function _isPositionInRange(PositionKind kind_, int24 currentTick) internal view returns (bool) {
+        return _isPositionInRange(_layout(), kind_, currentTick);
     }
-}
-
-// Minimal interface for slot0() - actual implementation uses full ICLPool
-interface ICLPool {
-    function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, bool unlocked);
-    function token0() external view returns (address);
-    function token1() external view returns (address);
 }

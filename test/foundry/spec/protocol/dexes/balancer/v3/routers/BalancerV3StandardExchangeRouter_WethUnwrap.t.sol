@@ -88,6 +88,7 @@ contract BalancerV3StandardExchangeRouter_WethUnwrap_Test is TestBase_BalancerV3
         dai.mint(alice, SWAP_AMOUNT * 100);
         deal(alice, SWAP_AMOUNT * 100);
 
+        uint256 snap = vm.snapshotState();
         vm.prank(address(0), address(0));
         uint256 expectedDaiIn = seRouter.querySwapSingleTokenExactOut(
             daiWethPool,
@@ -99,6 +100,7 @@ contract BalancerV3StandardExchangeRouter_WethUnwrap_Test is TestBase_BalancerV3
             alice,
             ""
         );
+        vm.revertToState(snap);
 
         vm.startPrank(alice);
 

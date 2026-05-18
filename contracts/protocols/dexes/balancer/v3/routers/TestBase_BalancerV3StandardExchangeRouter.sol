@@ -18,9 +18,10 @@ import {IERC20 as OZIERC20} from "@crane/contracts/interfaces/IERC20.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {PoolFactoryMock} from "contracts/test/balancer/v3/PoolFactoryMock.sol";
-import {PoolHooksMock} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/PoolHooksMock.sol";
-import {TokenConfig, HookFlags} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
+import {
+    WeightedPoolFactory
+} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {TokenConfig, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {
     CastingHelpers
 } from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/CastingHelpers.sol";
@@ -31,6 +32,7 @@ import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/c
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
@@ -86,6 +88,7 @@ import {
  *      - Combined vault + swap operations
  */
 contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, IndexedexTest {
+    using BetterEfficientHashLib for bytes;
     using CastingHelpers for address[];
     using FixedPoint for uint256;
     using ArrayHelpers for *;
@@ -270,7 +273,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
         // Create pool factory
         testPoolFactory = _createPoolFactory();
 
-        // Create hooks
+        // These tests do not require Balancer pool hooks.
         testPoolHooksContract = _createHook();
 
         // Create DAI/USDC pool for direct swap tests
@@ -287,26 +290,69 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
     }
 
     function _createPoolFactory() internal virtual returns (address) {
-        PoolFactoryMock factory = new PoolFactoryMock(IVault(address(vault)), 365 days);
-        vm.label(address(factory), "PoolFactoryMock");
-        return address(factory);
+        // bytes32 salt = keccak256("IndexedexBalancerV3WeightedPoolFactory");
+        bytes32 salt = abi.encodePacked("IndexedexBalancerV3WeightedPoolFactory")._hash();
+        bytes memory initCode = type(WeightedPoolFactory).creationCode;
+        bytes memory initArgs = abi.encode(IVault(address(vault)), uint32(365 days), "Factory v1", "Pool v1");
+
+        address factory = create3Factory.create3WithArgs(initCode, initArgs, salt);
+        vm.label(factory, "WeightedPoolFactory");
+        return factory;
     }
 
     function _createHook() internal virtual returns (address) {
-        HookFlags memory hookFlags;
-        PoolHooksMock newHook = new PoolHooksMock(IVault(address(vault)));
-        newHook.allowFactory(testPoolFactory);
-        newHook.setHookFlags(hookFlags);
-        vm.label(address(newHook), "PoolHooksMock");
-        return address(newHook);
+        return address(0);
+    }
+
+    function _equalWeights(uint256 tokenCount) internal pure returns (uint256[] memory weights) {
+        weights = new uint256[](tokenCount);
+        uint256 normalizedWeight = FixedPoint.ONE / tokenCount;
+        for (uint256 index = 0; index < tokenCount; index++) {
+            weights[index] = normalizedWeight;
+        }
+    }
+
+    function _poolRoleAccounts(address poolCreator) internal pure returns (PoolRoleAccounts memory roleAccounts) {
+        roleAccounts.poolCreator = poolCreator;
+    }
+
+    function _poolSalt(string memory name, string memory symbol, address poolCreator) internal view returns (bytes32) {
+        // return keccak256(abi.encodePacked(name, symbol, poolCreator, block.timestamp));
+        return abi.encodePacked(name, symbol, poolCreator, block.timestamp)._hash();
+    }
+
+    function _createWeightedPool(
+        string memory name,
+        string memory symbol,
+        address[] memory poolTokens,
+        address poolCreator,
+        string memory label
+    ) internal virtual returns (address newPool) {
+        TokenConfig[] memory tokenConfigs = vault.buildTokenConfig(poolTokens.asIERC20());
+        uint256[] memory weights = _equalWeights(poolTokens.length);
+        PoolRoleAccounts memory roleAccounts = _poolRoleAccounts(poolCreator);
+        bytes32 salt = _poolSalt(name, symbol, poolCreator);
+
+        newPool = WeightedPoolFactory(testPoolFactory).create(
+            name,
+            symbol,
+            tokenConfigs,
+            weights,
+            roleAccounts,
+            0.003e18,
+            address(0),
+            false,
+            false,
+            salt
+        );
+        vm.label(newPool, label);
+
+        approveForPool(OZIERC20(newPool));
     }
 
     function _createDaiUsdcPool() internal virtual returns (address) {
         string memory name = "DAI-USDC Pool";
         string memory symbol = "DAI-USDC";
-
-        address newPool = PoolFactoryMock(testPoolFactory).createPool(name, symbol);
-        vm.label(newPool, "daiUsdcPool");
 
         // Register with sorted tokens
         address[] memory poolTokens = new address[](2);
@@ -318,13 +364,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
             poolTokens[1] = address(dai);
         }
 
-        PoolFactoryMock(testPoolFactory)
-            .registerTestPool(newPool, vault.buildTokenConfig(poolTokens.asIERC20()), testPoolHooksContract, lp);
-
-        // Approve pool BPT for all users
-        approveForPool(OZIERC20(newPool));
-
-        return newPool;
+        return _createWeightedPool(name, symbol, poolTokens, lp, "daiUsdcPool");
     }
 
     function _initDaiUsdcPool() internal virtual {
@@ -351,9 +391,6 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
         string memory name = "DAI-WETH Pool";
         string memory symbol = "DAI-WETH";
 
-        address newPool = PoolFactoryMock(testPoolFactory).createPool(name, symbol);
-        vm.label(newPool, "daiWethPool");
-
         // Register with sorted tokens
         address[] memory poolTokens = new address[](2);
         if (address(dai) < address(weth)) {
@@ -364,13 +401,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
             poolTokens[1] = address(dai);
         }
 
-        PoolFactoryMock(testPoolFactory)
-            .registerTestPool(newPool, vault.buildTokenConfig(poolTokens.asIERC20()), testPoolHooksContract, lp);
-
-        // Approve pool BPT for all users
-        approveForPool(OZIERC20(newPool));
-
-        return newPool;
+        return _createWeightedPool(name, symbol, poolTokens, lp, "daiWethPool");
     }
 
     function _initDaiWethPool() internal virtual {
@@ -416,11 +447,15 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
         IStandardExchangeProxy tokenOutVault,
         uint256 exactAmountIn
     ) internal returns (uint256 amountOut) {
+        uint256 snapshotId = vm.snapshotState();
+
         // Query functions require tx.origin = address(0)
         vm.prank(address(0), address(0));
         amountOut = seRouter.querySwapSingleTokenExactIn(
             pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn, lp, ""
         );
+
+        vm.revertToState(snapshotId);
     }
 
     function _queryExactOut(
@@ -431,10 +466,14 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
         IStandardExchangeProxy tokenOutVault,
         uint256 exactAmountOut
     ) internal returns (uint256 amountIn) {
+        uint256 snapshotId = vm.snapshotState();
+
         vm.prank(address(0), address(0));
         amountIn = seRouter.querySwapSingleTokenExactOut(
             pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountOut, lp, ""
         );
+
+        vm.revertToState(snapshotId);
     }
 
     /* ---------------------------------------------------------------------- */

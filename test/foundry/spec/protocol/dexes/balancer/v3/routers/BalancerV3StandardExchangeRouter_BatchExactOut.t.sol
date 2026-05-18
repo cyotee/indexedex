@@ -99,9 +99,15 @@ contract BalancerV3StandardExchangeRouter_BatchExactOut_Test is TestBase_Balance
             tokenIn: IERC20(address(dai)), steps: steps, maxAmountIn: MAX_AMOUNT_IN, exactAmountOut: SWAP_AMOUNT
         });
 
+        // `querySwapExactOut` executes a real path during `vault.quote`, including token movement.
+        // Snapshot so execution runs against identical state.
+        uint256 snapshotId = vm.snapshotState();
+
         // Query expected input
         vm.prank(address(0), address(0));
         (uint256[] memory expectedAmountsIn,,) = batchExactOutRouter.querySwapExactOut(paths, alice, "");
+
+        vm.revertToState(snapshotId);
 
         vm.startPrank(alice);
 

@@ -54,8 +54,16 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         // than 1e18 raw share units, so quoting 1e18 would effectively ask to
         // redeem non-existent shares and collapse to zero.
         uint256 quoteAmount = totalShares < ONE_WAD ? totalShares : ONE_WAD;
-        uint256 out =
-            layout.reserveVault.previewExchangeIn(IERC20(address(layout.reserveVault)), quoteAmount, layout.rateTarget);
+        (bool success, uint256 out) = _safePreviewExchangeIn(layout.reserveVault, quoteAmount, layout.rateTarget);
+
+        for (uint256 i = 0; !success && quoteAmount > 1 && i < 18; ++i) {
+            quoteAmount /= 2;
+            (success, out) = _safePreviewExchangeIn(layout.reserveVault, quoteAmount, layout.rateTarget);
+        }
+
+        if (!success || quoteAmount == 0) {
+            return 0;
+        }
 
         for (uint256 i = 0; out == 0 && quoteAmount < totalShares && i < 18; ++i) {
             uint256 nextQuote = quoteAmount * 10;
@@ -65,10 +73,13 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             if (nextQuote == quoteAmount) {
                 break;
             }
+            (bool nextSuccess, uint256 nextOut) =
+                _safePreviewExchangeIn(layout.reserveVault, nextQuote, layout.rateTarget);
+            if (!nextSuccess) {
+                break;
+            }
             quoteAmount = nextQuote;
-            out = layout.reserveVault.previewExchangeIn(
-                IERC20(address(layout.reserveVault)), quoteAmount, layout.rateTarget
-            );
+            out = nextOut;
         }
 
         if (quoteAmount != ONE_WAD) {
@@ -85,6 +96,20 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         }
 
         return out / (10 ** (targetDecimals - 18));
+    }
+
+    function _safePreviewExchangeIn(IStandardExchange reserveVault_, uint256 quoteAmount_, IERC20 rateTarget_)
+        internal
+        view
+        returns (bool success_, uint256 out_)
+    {
+        try reserveVault_.previewExchangeIn(IERC20(address(reserveVault_)), quoteAmount_, rateTarget_) returns (
+            uint256 quotedOut
+        ) {
+            return (true, quotedOut);
+        } catch {
+            return (false, 0);
+        }
     }
 
     /* ---------------------------------------------------------------------- */

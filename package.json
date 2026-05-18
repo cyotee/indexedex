@@ -2,6 +2,7 @@
   "name": "indexedex",
   "version": "0.0.1",
   "description": "Composed Indexed Liquidity",
+  "private": true,
   "main": "index.js",
   "directories": {
     "lib": "lib"

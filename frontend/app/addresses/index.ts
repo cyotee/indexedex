@@ -45,15 +45,15 @@ import supersimEthereumSeigniorageDetfsJson from './supersim_sepolia/ethereum/su
 import supersimEthereumProtocolDetfJson from './supersim_sepolia/ethereum/supersim_sepolia-protocol-detf.tokenlist.json'
 
 import supersimBasePlatformJson from './supersim_sepolia/base/base_deployments.json'
-import supersimBaseTokensJson from './supersim_sepolia/base/anvil_base_main-tokens.tokenlist.json'
-import supersimBaseErc4626Json from './supersim_sepolia/base/anvil_base_main-erc4626.tokenlist.json'
-import supersimBaseStrategyVaultsJson from './supersim_sepolia/base/anvil_base_main-strategy-vaults.tokenlist.json'
-import supersimBaseUniV2PoolsJson from './supersim_sepolia/base/anvil_base_main-uniV2pool.tokenlist.json'
-import supersimBaseAerodromePoolsJson from './supersim_sepolia/base/anvil_base_main-aerodrome-pools.tokenlist.json'
-import supersimBaseAerodromeStrategyVaultsJson from './supersim_sepolia/base/anvil_base_main-aerodrome-strategy-vaults.tokenlist.json'
-import supersimBaseBalancerPoolsJson from './supersim_sepolia/base/anvil_base_main-balancerv3-pools.tokenlist.json'
-import supersimBaseSeigniorageDetfsJson from './supersim_sepolia/base/anvil_base_main-seigniorage-detfs.tokenlist.json'
-import supersimBaseProtocolDetfJson from './supersim_sepolia/base/anvil_base_main-protocol-detf.tokenlist.json'
+import supersimBaseTokensJson from './supersim_sepolia/base/supersim_sepolia-tokens.tokenlist.json'
+import supersimBaseErc4626Json from './supersim_sepolia/base/supersim_sepolia-erc4626.tokenlist.json'
+import supersimBaseStrategyVaultsJson from './supersim_sepolia/base/supersim_sepolia-strategy-vaults.tokenlist.json'
+import supersimBaseUniV2PoolsJson from './supersim_sepolia/base/supersim_sepolia-uniV2pool.tokenlist.json'
+import supersimBaseAerodromePoolsJson from './supersim_sepolia/base/supersim_sepolia-aerodrome-pools.tokenlist.json'
+import supersimBaseAerodromeStrategyVaultsJson from './supersim_sepolia/base/supersim_sepolia-aerodrome-strategy-vaults.tokenlist.json'
+import supersimBaseBalancerPoolsJson from './supersim_sepolia/base/supersim_sepolia-balancerv3-pools.tokenlist.json'
+import supersimBaseSeigniorageDetfsJson from './supersim_sepolia/base/supersim_sepolia-seigniorage-detfs.tokenlist.json'
+import supersimBaseProtocolDetfJson from './supersim_sepolia/base/supersim_sepolia-protocol-detf.tokenlist.json'
 
 export const CHAIN_ID_SEPOLIA = 11155111 as const
 export const CHAIN_ID_BASE_SEPOLIA = 84532 as const

@@ -7,9 +7,6 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICLPool} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/ICLPool.sol";
-import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
-import {SlipstreamUtils} from "@crane/contracts/utils/math/SlipstreamUtils.sol";
-import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
@@ -23,24 +20,24 @@ import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slips
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 import {SlipstreamStandardExchangeCommon} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol";
 
-/**
- * @title SlipstreamStandardExchangeOutTarget - Exchange out operations for Slipstream vaults.
- * @author cyotee doge <doge.cyotee>
- * @notice Handles withdrawal and swap operations for Slipstream concentrated liquidity positions.
- */
 contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon, ReentrancyLockModifiers, IStandardExchangeOut {
     using BetterSafeERC20 for IERC20;
 
-    /* ------------------------- Custom Errors ------------------------- */
-    
+    struct ZapOutState {
+        uint256 totalShares;
+        address token0;
+        address token1;
+        uint256 outBalanceBefore;
+        uint256 amount0;
+        uint256 amount1;
+        uint256 actualOut;
+    }
+
     error SlipstreamExchangeOut_DeadlineExceeded();
     error SlipstreamExchangeOut_InsufficientOutput();
     error SlipstreamExchangeOut_ZeroShares();
     error SlipstreamExchangeOut_SlippageExceeded();
 
-    /* ------------------------- IStandardExchangeOut ------------------------ */
-
-    /// @notice Preview the amount of tokens required for a desired output
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
         external
         view
@@ -51,22 +48,18 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         address token0 = pool.token0();
         address token1 = pool.token1();
 
-        // Passthrough swap: token0 <-> token1
-        if ((address(tokenIn) == token0 && address(tokenOut) == token1) ||
-            (address(tokenIn) == token1 && address(tokenOut) == token0)) {
+        if ((address(tokenIn) == token0 && address(tokenOut) == token1)
+            || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
             return _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
         }
 
-        // ZapOut withdrawal: vault shares -> token0/token1 (Route 4)
-        if (address(tokenIn) == address(this) && 
-            (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
             return _previewZapOutWithdrawal(tokenOut, amountOut);
         }
 
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
-    /// @notice Execute a swap or withdrawal
     function exchangeOut(
         IERC20 tokenIn,
         uint256 maxAmountIn,
@@ -75,49 +68,31 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         address recipient,
         bool pretransferred,
         uint256 deadline
-    )
-        external
-        override
-        lock
-        returns (uint256 amountIn)
-    {
+    ) external override lock returns (uint256 amountIn) {
         if (deadline < block.timestamp) revert SlipstreamExchangeOut_DeadlineExceeded();
 
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
         address token0 = pool.token0();
         address token1 = pool.token1();
 
-        // Passthrough swap: token0 <-> token1
-        if ((address(tokenIn) == token0 && address(tokenOut) == token1) ||
-            (address(tokenIn) == token1 && address(tokenOut) == token0)) {
+        if ((address(tokenIn) == token0 && address(tokenOut) == token1)
+            || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
             amountIn = _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
             if (amountIn > maxAmountIn) revert SlipstreamExchangeOut_InsufficientOutput();
 
             _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             _swap(address(tokenIn), address(tokenOut), amountIn, amountOut, recipient);
             _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
-
             return amountIn;
         }
 
-        // ZapOut withdrawal: vault shares -> token0/token1 (Route 4)
-        if (address(tokenIn) == address(this) && 
-            (address(tokenOut) == token0 || address(tokenOut) == token1)) {
-            // For zap out, tokenIn is the vault shares (this), amountOut is desired token output
-            // maxAmountIn represents the max shares to burn
-            amountIn = _executeZapOutWithdrawal(tokenOut, maxAmountIn, amountOut, recipient);
-            return amountIn;
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+            return _executeZapOutWithdrawal(tokenOut, maxAmountIn, amountOut, recipient, pretransferred);
         }
 
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
-    /* -------------------------------------------------------------------------- */
-    /*                           ZapOut Withdrawal Logic (Route 4)                      */
-    /* -------------------------------------------------------------------------- */
-
-    /// @notice Preview zap-out withdrawal - convert desired token output to required shares
-    /// @dev Uses ConstProdUtils._withdrawQuote for entitlement calculation
     function _previewZapOutWithdrawal(IERC20 tokenOut, uint256 desiredAmountOut)
         internal
         view
@@ -125,201 +100,147 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
     {
         if (desiredAmountOut == 0) revert SlipstreamExchangeOut_ZeroShares();
 
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        address token0 = pool.token0();
-        bool zeroForOne = address(tokenOut) == token0;
-        
-        // Get total vault reserves and total shares
-        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         uint256 totalShares = IERC20(address(this)).totalSupply();
-        
-        if (totalShares == 0) revert SlipstreamExchangeOut_ZeroShares();
-        
-        // Calculate shares required using proportional conversion
-        uint256 outputReserve = zeroForOne ? reserve0 : reserve1;
-        sharesRequired = (desiredAmountOut * totalShares) / outputReserve;
-        
-        // Add small buffer for slippage
-        sharesRequired = sharesRequired * 10001 / 10000;
+        if (totalShares == 0 || !SlipstreamVaultRepo._isPositionCreated()) revert SlipstreamExchangeOut_ZeroShares();
+
+        uint256 low = 1;
+        uint256 high = totalShares;
+
+        while (low < high) {
+            uint256 mid = low + (high - low) / 2;
+            uint256 quotedAmountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+            if (quotedAmountOut >= desiredAmountOut) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        if (high < totalShares) {
+            uint256 buffer = high / 100;
+            if (buffer == 0) {
+                buffer = 1;
+            }
+            uint256 buffered = high + buffer;
+            return buffered > totalShares ? totalShares : buffered;
+        }
+        return high;
     }
 
-    /// @notice Execute zap-out withdrawal - burn shares, return tokens via pool.burn()
-    /// @dev Burns liquidity from pool, collects fees, swaps if needed
+    function _quoteZapOutAmount(IERC20 tokenOut, uint256 sharesBurned, uint256 totalShares)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
+        (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
+        address token0 = _pool().token0();
+        if (address(tokenOut) == token0) {
+            return amount0 + _quoteSwap(_pool().token1(), token0, amount1);
+        }
+        return amount1 + _quoteSwap(token0, _pool().token1(), amount0);
+    }
+
     function _executeZapOutWithdrawal(
         IERC20 tokenOut,
         uint256 maxSharesToBurn,
         uint256 minAmountOut,
-        address recipient
+        address recipient,
+        bool pretransferred
     ) internal returns (uint256 sharesBurned) {
-        // Collect fees first
-        _collectFees();
-        
-        // Get position and liquidity info
-        (int24 tickLower, int24 tickUpper, uint128 currentLiquidity) = _getPositionLiquidityInfo();
-        
-        // Calculate proportional liquidity to burn based on shares
-        uint256 totalShares = IERC20(address(this)).totalSupply();
-        uint128 liquidityToBurn = uint128((maxSharesToBurn * currentLiquidity) / totalShares);
-        
-        // Ensure minimum liquidity burn
-        if (liquidityToBurn == 0) revert SlipstreamExchangeOut_ZeroShares();
-        
-        // Burn, collect, and get amounts
-        (uint256 amount0, uint256 amount1) = _burnAndCollect(tickLower, tickUpper, liquidityToBurn);
-        
-        // Calculate shares burned (proportional to liquidity removed)
-        sharesBurned = uint256((liquidityToBurn * totalShares) / currentLiquidity);
-        
-        // Process withdrawal and handle swap
-        _processWithdrawal(tokenOut, amount0, amount1, sharesBurned, minAmountOut, recipient);
-    }
+        ZapOutState memory state;
+        _collectManagedFees();
 
-    /// @notice Get position ticks and current liquidity
-    function _getPositionLiquidityInfo() internal view returns (int24 tickLower, int24 tickUpper, uint128 liquidity) {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        bytes32 positionKey = SlipstreamVaultRepo._getOwnPositionKey();
-        
-        (tickLower, tickUpper) = SlipstreamVaultRepo._getPositionTicks();
-        (liquidity, , , , ) = pool.positions(positionKey);
-        
-        if (liquidity == 0) revert SlipstreamExchangeOut_ZeroShares();
-    }
+        state.totalShares = IERC20(address(this)).totalSupply();
+        sharesBurned = _previewZapOutWithdrawal(tokenOut, minAmountOut);
+        if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) revert SlipstreamExchangeOut_InsufficientOutput();
 
-    /// @notice Process withdrawal after burn
-    function _processWithdrawal(
-        IERC20 tokenOut,
-        uint256 amount0,
-        uint256 amount1,
-        uint256 sharesBurned,
-        uint256 minAmountOut,
-        address recipient
-    ) internal {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        address token0 = pool.token0();
-        bool zeroForOne = address(tokenOut) == token0;
-        
-        // Calculate actual output based on which token user wants
-        uint256 amountOut = zeroForOne ? amount0 : amount1;
-        
-        // Enforce minimum output
-        if (amountOut < minAmountOut) revert SlipstreamExchangeOut_SlippageExceeded();
-        
-        // Handle swap if needed
-        _handleZapOutSwap(zeroForOne, amount0, amount1, token0);
-        
-        // Update position liquidity in repo
-        _updatePositionLiquidityInRepo();
-        
-        // Burn shares from sender
-        ERC20Repo._burn(msg.sender, sharesBurned);
-        
-        // Transfer output tokens to recipient
-        IERC20(address(tokenOut)).safeTransfer(recipient, amountOut);
-    }
+        state.token0 = _pool().token0();
+        state.token1 = _pool().token1();
+        state.outBalanceBefore = IERC20(address(tokenOut)).balanceOf(address(this));
 
-    /// @notice Update position liquidity in repo
-    function _updatePositionLiquidityInRepo() internal {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        bytes32 positionKey = SlipstreamVaultRepo._getOwnPositionKey();
-        (uint128 newLiquidity, , , , ) = pool.positions(positionKey);
-        SlipstreamVaultRepo._updatePositionLiquidity(newLiquidity);
-    }
+        (state.amount0, state.amount1) = _burnManagedLiquidity(sharesBurned, state.totalShares);
 
-    /// @notice Handle swap for zap-out if needed
-    function _handleZapOutSwap(bool zeroForOne, uint256 amount0, uint256 amount1, address token0) internal {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        
-        if (zeroForOne && amount1 > 0) {
-            // Received token1 but want token0 - swap
-            IERC20(pool.token1()).forceApprove(address(pool), amount1);
-            _swap(pool.token1(), token0, amount1, 0, address(this));
-        } else if (!zeroForOne && amount0 > 0) {
-            // Received token0 but want token1 - swap
-            IERC20(token0).forceApprove(address(pool), amount0);
-            _swap(token0, pool.token1(), amount0, 0, address(this));
+        if (address(tokenOut) == state.token0 && state.amount1 > 0) {
+            _swap(state.token1, state.token0, state.amount1, 0, address(this));
+        } else if (address(tokenOut) == state.token1 && state.amount0 > 0) {
+            _swap(state.token0, state.token1, state.amount0, 0, address(this));
         }
+
+        _updateManagedPositionLiquidities();
+
+        state.actualOut = IERC20(address(tokenOut)).balanceOf(address(this)) - state.outBalanceBefore;
+        if (state.actualOut < minAmountOut) revert SlipstreamExchangeOut_SlippageExceeded();
+
+        if (pretransferred) {
+            ERC20Repo._burn(address(this), sharesBurned);
+            if (maxSharesToBurn > sharesBurned) {
+                ERC20Repo._transfer(address(this), msg.sender, maxSharesToBurn - sharesBurned);
+            }
+        } else {
+            ERC20Repo._burn(msg.sender, sharesBurned);
+        }
+
+        IERC20(address(tokenOut)).safeTransfer(recipient, state.actualOut);
     }
 
-    /// @notice Burn liquidity and collect from pool
-    function _burnAndCollect(
-        int24 tickLower,
-        int24 tickUpper,
-        uint128 liquidityToBurn
+    function _burnManagedLiquidity(uint256 sharesBurned, uint256 totalShares)
+        internal
+        returns (uint256 amount0, uint256 amount1)
+    {
+        (uint256 center0, uint256 center1) =
+            _burnPositionLiquidity(SlipstreamVaultRepo.PositionKind.Center, sharesBurned, totalShares);
+        (uint256 lower0, uint256 lower1) =
+            _burnPositionLiquidity(SlipstreamVaultRepo.PositionKind.LowerWing, sharesBurned, totalShares);
+        (uint256 upper0, uint256 upper1) =
+            _burnPositionLiquidity(SlipstreamVaultRepo.PositionKind.UpperWing, sharesBurned, totalShares);
+
+        amount0 = center0 + lower0 + upper0;
+        amount1 = center1 + lower1 + upper1;
+    }
+
+    function _burnPositionLiquidity(
+        SlipstreamVaultRepo.PositionKind kind_,
+        uint256 sharesBurned,
+        uint256 totalShares
     ) internal returns (uint256 amount0, uint256 amount1) {
+        uint128 currentLiquidity = _getPositionLiquidityFromPool(kind_);
+        if (currentLiquidity == 0 || totalShares == 0) {
+            return (0, 0);
+        }
+
+        uint128 liquidityToBurn = uint128((sharesBurned * currentLiquidity) / totalShares);
+        if (liquidityToBurn == 0) {
+            return (0, 0);
+        }
+
+        (int24 tickLower, int24 tickUpper) = SlipstreamVaultRepo._getPositionTicks(kind_);
+        return _burnAndCollect(tickLower, tickUpper, liquidityToBurn);
+    }
+
+    function _burnAndCollect(int24 tickLower, int24 tickUpper, uint128 liquidityToBurn)
+        internal
+        returns (uint256 amount0, uint256 amount1)
+    {
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
         address token0 = pool.token0();
         address token1 = pool.token1();
-        
-        // Snapshot balances before burn
+
         uint256 bal0Before = IERC20(token0).balanceOf(address(this));
         uint256 bal1Before = IERC20(token1).balanceOf(address(this));
-        
-        // Burn liquidity from pool
+
         pool.burn(tickLower, tickUpper, liquidityToBurn);
-        
-        // Collect fees owed
-        pool.collect(
-            address(this),
-            tickLower,
-            tickUpper,
-            type(uint128).max,
-            type(uint128).max
-        );
-        
-        // Get amounts returned from burn + fees
+        pool.collect(address(this), tickLower, tickUpper, type(uint128).max, type(uint128).max);
+
         amount0 = IERC20(token0).balanceOf(address(this)) - bal0Before;
         amount1 = IERC20(token1).balanceOf(address(this)) - bal1Before;
     }
 
-    /// @notice Collect fees from the vault's position
-    function _collectFees() internal {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        (int24 tickLower, int24 tickUpper) = SlipstreamVaultRepo._getPositionTicks();
-        bytes32 positionKey = SlipstreamVaultRepo._getOwnPositionKey();
-        
-        // Check if position has fees owed
-        (, , , uint128 tokensOwed0, uint128 tokensOwed1) = pool.positions(positionKey);
-        
-        if (tokensOwed0 > 0 || tokensOwed1 > 0) {
-            pool.collect(
-                address(this),
-                tickLower,
-                tickUpper,
-                type(uint128).max,
-                type(uint128).max
-            );
-        }
-    }
-
-    /// @notice Quote a swap for exact output (reverse quote)
-    function _quoteSwapOut(address tokenIn, address /*tokenOut*/, uint256 amountOut)
-        internal
-        view
-        override
-        returns (uint256 amountIn)
-    {
-        SlipstreamPositionState memory state = _loadPositionState();
-        bool zeroForOne = tokenIn == state.token0;
-
-        amountIn = SlipstreamUtils._quoteExactOutputSingle(
-            amountOut,
-            state.sqrtPriceX96,
-            state.liquidity,
-            state.fee + state.unstakedFee,
-            zeroForOne
-        );
-    }
-
-    /// @notice Securely transfer tokens into the vault
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
         if (pretransferred) {
-            require(
-                tokenIn.balanceOf(address(this)) >= amountIn,
-                "SlipstreamExchangeOut: insufficient pretransferred balance"
-            );
+            require(tokenIn.balanceOf(address(this)) >= amountIn, "SlipstreamExchangeOut: insufficient pretransferred balance");
             return amountIn;
         }
 
@@ -328,7 +249,6 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         actualIn = tokenIn.balanceOf(address(this)) - balBefore;
     }
 
-    /// @notice Refund excess tokens
     function _refundExcess(
         IERC20 token,
         uint256 maxAmount,
@@ -337,8 +257,7 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         address recipient
     ) internal {
         if (pretransferred && maxAmount > usedAmount) {
-            uint256 refund = maxAmount - usedAmount;
-            token.safeTransfer(recipient, refund);
+            token.safeTransfer(recipient, maxAmount - usedAmount);
         }
     }
 }

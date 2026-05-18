@@ -15,26 +15,26 @@ library SlipstreamFactoryAwareRepo {
         ICLFactory factory;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layout(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
+    function _layout() internal pure returns (Storage storage layoutStruct) {
         return _layout(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, ICLFactory factory_) internal {
-        layout.factory = factory_;
+    function _initialize(Storage storage layoutStruct, ICLFactory factory_) internal {
+        layoutStruct.factory = factory_;
     }
 
     function _initialize(ICLFactory factory_) internal {
         _initialize(_layout(), factory_);
     }
 
-    function _slipstreamFactory(Storage storage layout) internal view returns (ICLFactory factory_) {
-        return layout.factory;
+    function _slipstreamFactory(Storage storage layoutStruct) internal view returns (ICLFactory factory_) {
+        return layoutStruct.factory;
     }
 
     function _slipstreamFactory() internal view returns (ICLFactory factory_) {

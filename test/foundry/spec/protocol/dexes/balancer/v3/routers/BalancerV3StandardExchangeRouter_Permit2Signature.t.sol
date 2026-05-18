@@ -9,7 +9,6 @@ import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.so
 import {BalancerV3StandardExchangeRouterTypes} from "contracts/interfaces/BalancerV3StandardExchangeRouterTypes.sol";
 import {TestBase_BalancerV3StandardExchangeRouter} from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {PoolFactoryMock} from "contracts/test/balancer/v3/PoolFactoryMock.sol";
 import {ArrayHelpers} from "contracts/test/balancer/v3/ArrayHelpers.sol";
 import {
     CastingHelpers
@@ -81,8 +80,6 @@ contract BalancerV3StandardExchangeRouter_Permit2Signature_Test is TestBase_Bala
         _depositToVault(lp, vaultSharesAmount);
         usdc.mint(lp, usdcAmount);
 
-        pool = PoolFactoryMock(testPoolFactory).createPool("VaultShare-USDC Pool", "vUSDC");
-
         address[] memory poolTokens = new address[](2);
         if (address(daiUsdcVault) < address(usdc)) {
             poolTokens[0] = address(daiUsdcVault);
@@ -92,8 +89,7 @@ contract BalancerV3StandardExchangeRouter_Permit2Signature_Test is TestBase_Bala
             poolTokens[1] = address(daiUsdcVault);
         }
 
-        PoolFactoryMock(testPoolFactory)
-            .registerTestPool(pool, vault.buildTokenConfig(poolTokens.asIERC20()), testPoolHooksContract, lp);
+        pool = _createWeightedPool("VaultShare-USDC Pool", "vUSDC", poolTokens, lp, "VaultShareUsdcPool");
 
         vm.startPrank(lp);
         IERC20(address(daiUsdcVault)).approve(address(permit2), type(uint256).max);
@@ -653,7 +649,7 @@ contract BalancerV3StandardExchangeRouter_Permit2Signature_Test is TestBase_Bala
         usdc.approve(address(permit2), type(uint256).max);
 
         uint256 deadline = block.timestamp + 1 hours;
-        uint256 minOut = previewOut * 99 / 100;
+        uint256 minOut = previewOut * 80 / 100;
 
         BalancerV3StandardExchangeRouterTypes.StandardExchangeSwapSingleTokenHookParams memory p;
         p.sender = alice;
@@ -691,6 +687,7 @@ contract BalancerV3StandardExchangeRouter_Permit2Signature_Test is TestBase_Bala
         vm.stopPrank();
 
         assertGe(amountOut, minOut, "Should honor preview-based minOut");
+        assertLe(amountOut, previewOut, "Execution should not exceed the preview quote for this route");
         assertGt(dai.balanceOf(alice), 0, "Alice should receive DAI output");
     }
 

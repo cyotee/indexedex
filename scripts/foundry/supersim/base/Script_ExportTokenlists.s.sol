@@ -5,6 +5,8 @@ import {DeploymentBase} from "../../anvil_base_main/DeploymentBase.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 contract Script_ExportTokenlists is DeploymentBase {
+    string internal constant UI_PREFIX = "supersim_sepolia";
+
     function run() external {
         _setup();
         _ensureOutDir();
@@ -20,6 +22,10 @@ contract Script_ExportTokenlists is DeploymentBase {
         _exportERC4626Vaults(chainIdStr);
         _exportSeigniorageDetfs(chainIdStr);
         _exportProtocolDetf(chainIdStr);
+    }
+
+    function _uiTokenlistFilename(string memory suffix) internal pure returns (string memory) {
+        return string.concat(UI_PREFIX, "-", suffix);
     }
 
     function _tokenName(address token, string memory fallbackName) internal view returns (string memory) {
@@ -95,7 +101,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[0] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenA"), "Test Token A", "TTA");
         entries[1] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenB"), "Test Token B", "TTB");
         entries[2] = _tokenlistEntry(chainIdStr, _readAddress("05_test_tokens.json", "testTokenC"), "Test Token C", "TTC");
-        _writeTokenlist("anvil_base_main-tokens.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("tokens.tokenlist.json"), entries);
     }
 
     function _exportUniV2Pools(string memory chainIdStr) internal {
@@ -103,7 +109,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[0] = _tokenlistEntry(chainIdStr, _readAddress("06_pools.json", "abPool"), "ab UniV2 Pool", "abUniV2Pool");
         entries[1] = _tokenlistEntry(chainIdStr, _readAddress("06_pools.json", "acPool"), "ac UniV2 Pool", "acUniV2Pool");
         entries[2] = _tokenlistEntry(chainIdStr, _readAddress("06_pools.json", "bcPool"), "bc UniV2 Pool", "bcUniV2Pool");
-        _writeTokenlist("anvil_base_main-uniV2pool.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("uniV2pool.tokenlist.json"), entries);
     }
 
     function _exportAerodromePools(string memory chainIdStr) internal {
@@ -115,7 +121,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         if (entries.length == 4) {
             entries[3] = _tokenlistEntry(chainIdStr, aeroWethcPool, "wethc Aerodrome Pool", "aeroWethcPool");
         }
-        _writeTokenlist("anvil_base_main-aerodrome-pools.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("aerodrome-pools.tokenlist.json"), entries);
     }
 
     function _exportStrategyVaults(string memory chainIdStr) internal {
@@ -123,7 +129,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[0] = _tokenlistEntry(chainIdStr, _readAddress("07_strategy_vaults.json", "abVault"), "ab UniV2 Pool Strategy Vault", "abSV");
         entries[1] = _tokenlistEntry(chainIdStr, _readAddress("07_strategy_vaults.json", "acVault"), "ac UniV2 Pool Strategy Vault", "acSV");
         entries[2] = _tokenlistEntry(chainIdStr, _readAddress("07_strategy_vaults.json", "bcVault"), "bc UniV2 Pool Strategy Vault", "bcSV");
-        _writeTokenlist("anvil_base_main-strategy-vaults.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("strategy-vaults.tokenlist.json"), entries);
     }
 
     function _exportAerodromeStrategyVaults(string memory chainIdStr) internal {
@@ -135,7 +141,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         if (entries.length == 4) {
             entries[3] = _tokenlistEntry(chainIdStr, aeroWethcVault, "wethc Aerodrome Pool Strategy Vault", "aeroWethcSV");
         }
-        _writeTokenlist("anvil_base_main-aerodrome-strategy-vaults.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("aerodrome-strategy-vaults.tokenlist.json"), entries);
     }
 
     function _exportBalancerPools(string memory chainIdStr) internal {
@@ -182,7 +188,7 @@ contract Script_ExportTokenlists is DeploymentBase {
             entries[i++] = _tokenlistEntry(chainIdStr, reservePool, "Protocol DETF Reserve Pool", "protocolDetfReservePool");
         }
 
-        _writeTokenlist("anvil_base_main-balancerv3-pools.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("balancerv3-pools.tokenlist.json"), entries);
     }
 
     function _exportERC4626Vaults(string memory chainIdStr) internal {
@@ -190,7 +196,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         (address ttbVault, bool okB) = _readAddressSafe("14_erc4626_permit_vaults.json", "erc4626VaultTTB");
         (address ttcVault, bool okC) = _readAddressSafe("14_erc4626_permit_vaults.json", "erc4626VaultTTC");
         if (!(okA && okB && okC) || ttaVault == address(0) || ttbVault == address(0) || ttcVault == address(0)) {
-            _writeEmptyTokenlist("anvil_base_main-erc4626.tokenlist.json");
+            _writeEmptyTokenlist(_uiTokenlistFilename("erc4626.tokenlist.json"));
             return;
         }
 
@@ -198,7 +204,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[0] = _tokenlistEntry(chainIdStr, ttaVault, "TTA ERC4626 Vault", "ttaERC4626Vault");
         entries[1] = _tokenlistEntry(chainIdStr, ttbVault, "TTB ERC4626 Vault", "ttbERC4626Vault");
         entries[2] = _tokenlistEntry(chainIdStr, ttcVault, "TTC ERC4626 Vault", "ttcERC4626Vault");
-        _writeTokenlist("anvil_base_main-erc4626.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("erc4626.tokenlist.json"), entries);
     }
 
     function _exportSeigniorageDetfs(string memory chainIdStr) internal {
@@ -209,14 +215,14 @@ contract Script_ExportTokenlists is DeploymentBase {
         (address detfAeroAc, bool okAeroAc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_aeroAcVault");
         (address detfAeroBc, bool okAeroBc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_aeroBcVault");
         if (!(okAb && okAc && okBc && okAeroAb && okAeroAc && okAeroBc)) {
-            _writeEmptyTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json");
+            _writeEmptyTokenlist(_uiTokenlistFilename("seigniorage-detfs.tokenlist.json"));
             return;
         }
         if (
             detfAb == address(0) || detfAc == address(0) || detfBc == address(0) || detfAeroAb == address(0)
                 || detfAeroAc == address(0) || detfAeroBc == address(0)
         ) {
-            _writeEmptyTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json");
+            _writeEmptyTokenlist(_uiTokenlistFilename("seigniorage-detfs.tokenlist.json"));
             return;
         }
 
@@ -227,7 +233,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[3] = _tokenlistEntry(chainIdStr, detfAeroAb, "Seigniorage DETF (aeroAbVault)", "sdetfAeroAb");
         entries[4] = _tokenlistEntry(chainIdStr, detfAeroAc, "Seigniorage DETF (aeroAcVault)", "sdetfAeroAc");
         entries[5] = _tokenlistEntry(chainIdStr, detfAeroBc, "Seigniorage DETF (aeroBcVault)", "sdetfAeroBc");
-        _writeTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("seigniorage-detfs.tokenlist.json"), entries);
     }
 
     function _exportProtocolDetf(string memory chainIdStr) internal {
@@ -235,7 +241,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "richToken");
         (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "richirToken");
         if (!(okChir && okRich && okRichir) || chir == address(0) || rich == address(0) || richir == address(0)) {
-            _writeEmptyTokenlist("anvil_base_main-protocol-detf.tokenlist.json");
+            _writeEmptyTokenlist(_uiTokenlistFilename("protocol-detf.tokenlist.json"));
             return;
         }
 
@@ -243,6 +249,6 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[0] = _tokenlistEntry(chainIdStr, chir, "Protocol DETF (CHIR)", "CHIR");
         entries[1] = _tokenlistEntry(chainIdStr, rich, "RICH Token", "RICH");
         entries[2] = _tokenlistEntry(chainIdStr, richir, "RICHIR Token", "RICHIR");
-        _writeTokenlist("anvil_base_main-protocol-detf.tokenlist.json", entries);
+        _writeTokenlist(_uiTokenlistFilename("protocol-detf.tokenlist.json"), entries);
     }
 }

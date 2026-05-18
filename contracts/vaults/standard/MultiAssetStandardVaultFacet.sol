@@ -62,11 +62,11 @@ contract MultiAssetStandardVaultFacet is IStandardVault, IFacet {
     }
 
     function vaultConfig() public view returns (VaultConfig memory vaultConfig_) {
-        StandardVaultRepo.Storage storage layout = StandardVaultRepo._layout();
+        StandardVaultRepo.Storage storage standardVaultStorage = StandardVaultRepo._layout();
         vaultConfig_ = IStandardVault.VaultConfig({
-            vaultFeeTypeIds: StandardVaultRepo._vaultFeeTypeIds(layout),
-            contentsId: StandardVaultRepo._contentsId(layout),
-            vaultTypes: StandardVaultRepo._vaultTypes(layout),
+            vaultFeeTypeIds: StandardVaultRepo._vaultFeeTypeIds(standardVaultStorage),
+            contentsId: StandardVaultRepo._contentsId(standardVaultStorage),
+            vaultTypes: StandardVaultRepo._vaultTypes(standardVaultStorage),
             tokens: MultiAssetBasicVaultRepo._vaultTokens()
         });
     }

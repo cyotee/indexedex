@@ -26,29 +26,29 @@ library StandardVaultRepo {
         mapping(address token => uint8 decimals) decimalOfToken;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layout(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
+    function _layout() internal pure returns (Storage storage layoutStruct) {
         return _layout(STORAGE_SLOT);
     }
 
     function _initialize(
-        Storage storage layout,
+        Storage storage layoutStruct,
         IVaultFeeOracleQuery feeOracle,
         bytes32 vaultFeeTypeIds,
         bytes4[] memory vaultTypes,
         bytes32 contentsId
     ) internal {
         // _initPermit2Aware(permit2);
-        layout.feeOracle = feeOracle;
-        layout.vaultFeeTypeIds = vaultFeeTypeIds;
-        layout.vaultTypes._add(vaultTypes);
-        // layout.contentsId = abi.encode(vaultTokens)._hash();
-        layout.contentsId = contentsId;
+        layoutStruct.feeOracle = feeOracle;
+        layoutStruct.vaultFeeTypeIds = vaultFeeTypeIds;
+        layoutStruct.vaultTypes._add(vaultTypes);
+        // layoutStruct.contentsId = abi.encode(vaultTokens)._hash();
+        layoutStruct.contentsId = contentsId;
         // MultiAssetBasicVaultRepo._addVaultTokens(vaultTokens);
     }
 
@@ -61,32 +61,32 @@ library StandardVaultRepo {
         _initialize(_layout(), feeOracle, vaultFeeTypeIds, vaultTypes, contentsId);
     }
 
-    function _feeOracle(Storage storage layout) internal view returns (IVaultFeeOracleQuery) {
-        return layout.feeOracle;
+    function _feeOracle(Storage storage layoutStruct) internal view returns (IVaultFeeOracleQuery) {
+        return layoutStruct.feeOracle;
     }
 
     function _feeOracle() internal view returns (IVaultFeeOracleQuery) {
         return _feeOracle(_layout());
     }
 
-    function _vaultFeeTypeIds(Storage storage layout) internal view returns (bytes32) {
-        return layout.vaultFeeTypeIds;
+    function _vaultFeeTypeIds(Storage storage layoutStruct) internal view returns (bytes32) {
+        return layoutStruct.vaultFeeTypeIds;
     }
 
     function _vaultFeeTypeIds() internal view returns (bytes32) {
         return _vaultFeeTypeIds(_layout());
     }
 
-    function _vaultTypes(Storage storage layout) internal view returns (bytes4[] memory vaultTypes_) {
-        return layout.vaultTypes._values();
+    function _vaultTypes(Storage storage layoutStruct) internal view returns (bytes4[] memory vaultTypes_) {
+        return layoutStruct.vaultTypes._values();
     }
 
     function _vaultTypes() internal view returns (bytes4[] memory vaultTypes_) {
         return _vaultTypes(_layout());
     }
 
-    function _contentsId(Storage storage layout) internal view returns (bytes32) {
-        return layout.contentsId;
+    function _contentsId(Storage storage layoutStruct) internal view returns (bytes32) {
+        return layoutStruct.contentsId;
     }
 
     function _contentsId() internal view returns (bytes32) {

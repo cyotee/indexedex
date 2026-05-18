@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.30;
+pragma solidity ^0.8.30;
 
 /// @notice Lightweight helper for fuzz harnesses to detect invariant drift.
 /// The detector calls a target view function repeatedly (optionally with

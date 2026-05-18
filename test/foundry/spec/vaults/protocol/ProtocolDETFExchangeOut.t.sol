@@ -124,6 +124,36 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
         assertEq(IERC20(address(mintEnabledDetf)).balanceOf(detfAlice), exactChirOut, "user should receive exact CHIR out");
     }
 
+    function test_exchangeOut_weth_chir_pretransferred_when_minting_allowed() public {
+        IProtocolDETF mintEnabledDetf = detf;
+        uint256 exactChirOut = 2_000e18;
+
+        _assertMintEnabled(mintEnabledDetf);
+
+        uint256 requiredWeth = IStandardExchangeOut(address(mintEnabledDetf)).previewExchangeOut(
+            IERC20(address(weth9)), IERC20(address(mintEnabledDetf)), exactChirOut
+        );
+        uint256 aliceWethBefore = IERC20(address(weth9)).balanceOf(detfAlice);
+
+        vm.prank(detfAlice);
+        IERC20(address(weth9)).transfer(address(mintEnabledDetf), requiredWeth);
+
+        vm.prank(detfAlice);
+        uint256 wethUsed = IStandardExchangeOut(address(mintEnabledDetf)).exchangeOut(
+            IERC20(address(weth9)),
+            requiredWeth,
+            IERC20(address(mintEnabledDetf)),
+            exactChirOut,
+            detfAlice,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        assertLe(wethUsed, requiredWeth, "pretransferred exact-out should not exceed the previewed WETH cap");
+        assertEq(IERC20(address(weth9)).balanceOf(detfAlice), aliceWethBefore - wethUsed, "refund should reduce net WETH cost to the actual amount used");
+        assertEq(IERC20(address(mintEnabledDetf)).balanceOf(detfAlice), exactChirOut, "user should receive exact CHIR out");
+    }
+
     /**
      * @notice Test exact-out with pretransferred tokens
      */
@@ -351,6 +381,32 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
         assertEq(wethUsed, requiredWeth, "Actual WETH used should match preview");
     }
 
+    function test_exchangeOut_chir_to_rich_exact() public {
+        uint256 exactRichOut = 500e18;
+        _seedChir(detfAlice, 5_000e18);
+
+        uint256 requiredChir = IStandardExchangeOut(address(detf)).previewExchangeOut(
+            IERC20(address(detf)), rich, exactRichOut
+        );
+
+        uint256 aliceRichBefore = rich.balanceOf(detfAlice);
+        vm.startPrank(detfAlice);
+        IERC20(address(detf)).approve(address(detf), requiredChir);
+        uint256 chirUsed = IStandardExchangeOut(address(detf)).exchangeOut(
+            IERC20(address(detf)),
+            requiredChir,
+            rich,
+            exactRichOut,
+            detfAlice,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        assertEq(chirUsed, requiredChir, "actual CHIR used should match preview");
+        assertEq(rich.balanceOf(detfAlice) - aliceRichBefore, exactRichOut, "user should receive exact RICH out");
+    }
+
     /**
      * @notice Test RICH → CHIR exact-out (US-IDXEX-025.4)
      * @dev User receives exactly X CHIR from RICH
@@ -488,6 +544,31 @@ contract ProtocolDETFExchangeOut is ProtocolDETFBaseCustomFixtureHelpers {
         IStandardExchangeOut(address(detf)).previewExchangeOut(
             IERC20(address(richir)), IERC20(address(weth9)), exactWethOut
         );
+    }
+
+    function test_exchangeOut_richir_to_weth_exact_execution_reverts_route_not_supported() public {
+        uint256 exactWethOut = 10e18;
+
+        vm.startPrank(detfAlice);
+        richir.approve(address(detf), type(uint256).max);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IStandardExchangeErrors.RouteNotSupported.selector,
+                address(richir),
+                address(weth9),
+                IStandardExchangeOut.exchangeOut.selector
+            )
+        );
+        IStandardExchangeOut(address(detf)).exchangeOut(
+            IERC20(address(richir)),
+            type(uint256).max,
+            IERC20(address(weth9)),
+            exactWethOut,
+            detfAlice,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
     }
 
     /* ---------------------------------------------------------------------- */

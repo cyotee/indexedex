@@ -15,26 +15,26 @@ library SlipstreamPoolAwareRepo {
         ICLPool pool;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layout(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
+    function _layout() internal pure returns (Storage storage layoutStruct) {
         return _layout(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, ICLPool pool_) internal {
-        layout.pool = pool_;
+    function _initialize(Storage storage layoutStruct, ICLPool pool_) internal {
+        layoutStruct.pool = pool_;
     }
 
     function _initialize(ICLPool pool_) internal {
         _initialize(_layout(), pool_);
     }
 
-    function _slipstreamPool(Storage storage layout) internal view returns (ICLPool pool_) {
-        return layout.pool;
+    function _slipstreamPool(Storage storage layoutStruct) internal view returns (ICLPool pool_) {
+        return layoutStruct.pool;
     }
 
     function _slipstreamPool() internal view returns (ICLPool pool_) {

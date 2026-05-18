@@ -60,11 +60,11 @@ contract ERC4626StandardVaultFacet is IStandardVault, IFacet {
     function vaultConfig() public view returns (VaultConfig memory vaultConfig_) {
         address[] memory tokens_ = new address[](1);
         tokens_[0] = address(ERC4626Repo._reserveAsset());
-        StandardVaultRepo.Storage storage layout = StandardVaultRepo._layout();
+        StandardVaultRepo.Storage storage standardVaultStorage = StandardVaultRepo._layout();
         vaultConfig_ = IStandardVault.VaultConfig({
-            vaultFeeTypeIds: StandardVaultRepo._vaultFeeTypeIds(layout),
-            contentsId: StandardVaultRepo._contentsId(layout),
-            vaultTypes: StandardVaultRepo._vaultTypes(layout),
+            vaultFeeTypeIds: StandardVaultRepo._vaultFeeTypeIds(standardVaultStorage),
+            contentsId: StandardVaultRepo._contentsId(standardVaultStorage),
+            vaultTypes: StandardVaultRepo._vaultTypes(standardVaultStorage),
             tokens: tokens_
         });
     }

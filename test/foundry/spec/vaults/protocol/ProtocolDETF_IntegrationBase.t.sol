@@ -23,14 +23,20 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
+import {IFacetRegistry} from "@crane/contracts/registries/facet/IFacetRegistry.sol";
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {IERC20PermitDFPkg, ERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
+import {
+    SuperChainBridgeTokenRegistryFactoryService
+} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryFactoryService.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -76,11 +82,6 @@ import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVault
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
-import {
-    MockProtocolDETFBridgeTokenRegistry,
-    MockProtocolDETFStandardBridge,
-    MockProtocolDETFMessenger
-} from "test/foundry/spec/vaults/protocol/ProtocolDETFRichBridge_UnitTestBase.t.sol";
 
 abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
@@ -105,9 +106,9 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
     IWeightedPool internal reservePool;
     IWeightedPool8020Factory internal weighted8020Factory;
 
-    MockProtocolDETFBridgeTokenRegistry internal bridgeTokenRegistryMock;
-    MockProtocolDETFStandardBridge internal standardBridgeMock;
-    MockProtocolDETFMessenger internal messengerMock;
+    ISuperChainBridgeTokenRegistry internal bridgeTokenRegistryTest;
+    IStandardBridge internal standardBridgeTest;
+    ICrossDomainMessenger internal messengerTest;
     address internal bridgeLocalRelayer;
     address internal bridgePeerRelayer;
     address internal bridgePeerDetf;
@@ -129,6 +130,8 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         detfBob = makeAddr("detfBob");
         weth9 = IWETH(address(weth));
 
+        _beforeProtocolDeploy();
+
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager))
             .setDefaultDexSwapFeeOfTypeId(type(IBaseProtocolDETFBonding).interfaceId, DEFAULT_SWAP_FEE);
@@ -148,17 +151,30 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         _deployStandardExchangeRateProviderPkg();
         _deployRichTokenPkg();
         _deployRichToken();
-        _deployBridgeMocks();
         _deployProtocolPkgs();
         _registerProtocolPkgs();
         _deployProtocolDetf();
         _fundUsers();
     }
 
-    function _deployBridgeMocks() internal {
-        bridgeTokenRegistryMock = new MockProtocolDETFBridgeTokenRegistry();
-        standardBridgeMock = new MockProtocolDETFStandardBridge();
-        messengerMock = new MockProtocolDETFMessenger();
+    function _beforeProtocolDeploy() internal virtual {}
+
+    function _deployBridgeDependencies() internal {
+        IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
+        IFacet operableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IOperable).interfaceId);
+
+        bridgeTokenRegistryTest = SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistry(
+            diamondPackageFactory,
+            SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistryDFPkg(
+                create3Factory,
+                ownableFacet,
+                operableFacet,
+                SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistryFacet(create3Factory)
+            ),
+            address(this)
+        );
+        standardBridgeTest = IStandardBridge(payable(address(0)));
+        messengerTest = ICrossDomainMessenger(address(0));
         bridgeLocalRelayer = makeAddr("bridgeLocalRelayer");
         bridgePeerRelayer = makeAddr("bridgePeerRelayer");
         bridgePeerDetf = makeAddr("bridgePeerDetf");
@@ -171,9 +187,9 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig)
     {
         bridgeConfig = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
-            bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(bridgeTokenRegistryMock)),
-            standardBridge: IStandardBridge(payable(address(standardBridgeMock))),
-            messenger: ICrossDomainMessenger(address(messengerMock)),
+            bridgeTokenRegistry: bridgeTokenRegistryTest,
+            standardBridge: standardBridgeTest,
+            messenger: messengerTest,
             localRelayer: bridgeLocalRelayer,
             peerRelayer: bridgePeerRelayer
         });
@@ -408,10 +424,12 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
         richChirVault = detf.richChirVault();
         reservePool = IWeightedPool(detf.reservePool());
 
-        bridgeTokenRegistryMock.setRemoteToken(
-            BRIDGE_TEST_TARGET_CHAIN_ID, IERC20(address(detf)), IERC20(bridgePeerDetf), 0
-        );
-        bridgeTokenRegistryMock.setRemoteToken(BRIDGE_TEST_TARGET_CHAIN_ID, rich, bridgeRemoteRichToken, 120_000);
+        if (address(bridgeTokenRegistryTest) != address(0)) {
+            bridgeTokenRegistryTest.setRemoteToken(
+                BRIDGE_TEST_TARGET_CHAIN_ID, IERC20(address(detf)), IERC20(bridgePeerDetf), 0
+            );
+            bridgeTokenRegistryTest.setRemoteToken(BRIDGE_TEST_TARGET_CHAIN_ID, rich, bridgeRemoteRichToken, 120_000);
+        }
 
         vm.prank(address(detf));
         IERC20(address(reservePool)).approve(address(vault), type(uint256).max);

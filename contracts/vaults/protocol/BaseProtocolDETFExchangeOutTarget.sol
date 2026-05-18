@@ -359,8 +359,8 @@ contract BaseProtocolDETFExchangeOutTarget is BaseProtocolDETFCommon, Reentrancy
         ERC20Repo._mint(p_.recipient, p_.amountOut);
 
         // Refund excess WETH if pretransferred and we received more than needed
-        if (p_.pretransferred && actualIn > amountIn_) {
-            p_.tokenIn.safeTransfer(msg.sender, actualIn - amountIn_);
+        if (p_.pretransferred && p_.maxAmountIn > amountIn_) {
+            p_.tokenIn.safeTransfer(msg.sender, p_.maxAmountIn - amountIn_);
         }
     }
 

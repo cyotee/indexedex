@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.30;
+pragma solidity ^0.8.30;
 
 library SeigniorageSetterSelectors {
     // canonical selector for `setSeigniorage(uint256)`

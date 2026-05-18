@@ -9,7 +9,6 @@ import {DeploymentBase} from "./DeploymentBase.sol";
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
-import {BASE_MAIN} from "@crane/contracts/constants/networks/BASE_MAIN.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -21,12 +20,16 @@ import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 import {IWeightedPool8020Factory} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
 import {WeightedPool8020Factory} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPool8020Factory.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                 Balancer V3                                */
-/* -------------------------------------------------------------------------- */
-
-import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRouter.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -35,101 +38,99 @@ import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/I
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IBalancerV3StandardExchangeRouterProxy} from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {IBalancerV3StandardExchangeRouterPrepay} from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
+import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 
 import {
 	IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
-
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-
-import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
-import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
+import {
+	IUniswapV4StandardExchangeDFPkg
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {
+	UniswapV4_Component_FactoryService
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
+import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
+import {
+	SingleVaultDetf_Component_FactoryService
+} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Component_FactoryService.sol";
+import {
+	SingleVaultDetf_Facet_FactoryService
+} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Facet_FactoryService.sol";
+import {
+	SingleVaultDetf_Pkg_FactoryService
+} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
+import {
+	ISingleVaultDetfDFPkg
+} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
+import {
+	BaseProtocolDETF_Component_FactoryService
+} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
 import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
-import {IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
+import {
+	SingleVaultDetfUniswapV4LiquiditySeeder
+} from "../shared/SingleVaultDetfUniswapV4LiquiditySeeder.sol";
+
 /// @title Script_16_DeployProtocolDETF
-/// @notice Deploys the Protocol DETF (CHIR) and its supporting infra.
-/// @dev Run: forge script scripts/foundry/anvil_base_main/Script_16_DeployProtocolDETF.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --unlocked --sender <DEV_ADDRESS>
+/// @notice Deploys the single-vault DETF behind the existing Stage 16 entrypoint.
 contract Script_16_DeployProtocolDETF is DeploymentBase {
 	using BetterEfficientHashLib for bytes;
-
-	/* ---------------------------------------------------------------------- */
-	/*                                 Constants                               */
-	/* ---------------------------------------------------------------------- */
+	using VaultComponentFactoryService for ICreate3FactoryProxy;
+	using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
+	using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
 
 	uint256 private constant RICH_TOTAL_SUPPLY = 1_000_000_000e18;
-
-	// Initial liquidity used by the Protocol DETF package during deployment.
-	// These are pulled from `funder` via Permit2 during `updatePkg()`.
-	// IMPORTANT: These should be roughly equal to create balanced pools.
-	// Unbalanced pools cause the synthetic price to deviate significantly from peg.
-	uint256 private constant INITIAL_WETH_DEPOSIT = 10e18; // 10 WETH
-	uint256 private constant INITIAL_RICH_DEPOSIT = 10e18; // 10 RICH
-
-	uint256 private constant ONE_WAD = 1e18;
-
-	/* ---------------------------------------------------------------------- */
-	/*                                 Inputs                                  */
-	/* ---------------------------------------------------------------------- */
+	uint256 private constant INITIAL_WETH_DEPOSIT = 10e18;
+	uint256 private constant INITIAL_RICH_DEPOSIT = 10e18;
+	uint24 private constant WETH_RICH_WIDTH_MULTIPLIER = 60;
+	uint24 private constant WETH_RICH_FEE = 3000;
+	int24 private constant WETH_RICH_TICK_SPACING = 60;
 
 	ICreate3FactoryProxy private create3Factory;
 	IDiamondPackageCallBackFactory private diamondPackageFactory;
 	IVaultRegistryDeployment private vaultRegistry;
 	IVaultFeeOracleQuery private feeOracle;
 
-	// Shared facets
 	IFacet private erc20Facet;
 	IFacet private erc2612Facet;
 	IFacet private erc5267Facet;
 	IFacet private erc4626BasicVaultFacet;
 	IFacet private erc4626StandardVaultFacet;
-	IFacet private multiStepOwnableFacet;
 	IFacet private operableFacet;
+	IFacet private multiAssetBasicVaultFacet;
+	IFacet private multiAssetStandardVaultFacet;
 
-	// Stage 04 outputs
 	IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
-	IAerodromeStandardExchangeDFPkg private aerodromePkg;
 	IStandardExchangeRateProviderDFPkg private rateProviderPkg;
-
-	// Stage 15 output (re-used)
 	IWeightedPool8020Factory private weightedPool8020Factory;
 
-	/* ---------------------------------------------------------------------- */
-	/*                            Deployed infra                               */
-	/* ---------------------------------------------------------------------- */
-
-	IFacet private protocolExchangeInFacet;
-	IFacet private protocolExchangeInQueryFacet;
-	IFacet private protocolExchangeOutFacet;
-	IFacet private protocolBondingFacet;
-	IFacet private protocolBridgeFacet;
-	IFacet private protocolBondingQueryFacet;
-	IFacet private protocolRichirRedeemFacet;
+	IFacet private singleVaultDetfExchangeInFacet;
+	IFacet private singleVaultDetfExchangeInQueryFacet;
+	IFacet private singleVaultDetfExchangeOutFacet;
+	IFacet private singleVaultDetfBondingFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
-
+	IFacet private uniswapV4StandardExchangeInFacet;
+	IFacet private uniswapV4StandardExchangeOutFacet;
 	IFacet private erc721Facet;
 
 	IERC20PermitDFPkg private richTokenPkg;
-
 	IProtocolNFTVaultDFPkg private protocolNFTVaultPkg;
 	IRICHIRDFPkg private richirPkg;
-	IBaseProtocolDETFDFPkg private protocolDetfPkg;
+	IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
+	ISingleVaultDetfDFPkg private protocolDetfPkg;
 
-	/* ---------------------------------------------------------------------- */
-	/*                              Deployed addresses                          */
-	/* ---------------------------------------------------------------------- */
+	IPoolManager private poolManager;
+	SingleVaultDetfUniswapV4LiquiditySeeder private liquiditySeeder;
 
 	address private richToken;
 	address private protocolDetf;
-
 	address private protocolNftVault;
 	address private richirToken;
 	address private reservePool;
@@ -142,55 +143,30 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 	function _runProtocolDetfStage16() internal {
 		console.log("[Stage 16] Checkpoint: begin run()");
-		console.log("[Stage 16] Checkpoint: calling _setup()");
 		_setup();
-		console.log("[Stage 16] Checkpoint: _setup() complete");
-		console.log("[Stage 16] Checkpoint: calling _loadPreviousDeployments()");
 		_loadPreviousDeployments();
-		console.log("[Stage 16] Checkpoint: _loadPreviousDeployments() complete");
-		console.log("[Stage 16] create3Factory", address(create3Factory));
-		console.log("[Stage 16] diamondPackageFactory", address(diamondPackageFactory));
-		console.log("[Stage 16] vaultRegistry", address(vaultRegistry));
-		console.log("[Stage 16] feeOracle", address(feeOracle));
-		console.log("[Stage 16] balancerV3StandardExchangeRouter", address(balancerV3StandardExchangeRouter));
-		console.log("[Stage 16] aerodromePkg", address(aerodromePkg));
-		console.log("[Stage 16] rateProviderPkg", address(rateProviderPkg));
-		console.log("[Stage 16] weightedPool8020Factory", address(weightedPool8020Factory));
 
-		_logHeader("Stage 16: Deploy Protocol DETF (CHIR)");
-		console.log("[Stage 16] Checkpoint: starting broadcast");
+		_logHeader("Stage 16: Deploy Single Vault DETF (CHIR)");
 
 		vm.startBroadcast();
 
-		console.log("[Stage 16] Checkpoint: deploying facets");
-		_deployFacets();
-		console.log("[Stage 16] Checkpoint: facets deployed");
-		console.log("[Stage 16] Checkpoint: deploying RICH token");
-		_deployRichToken();
-		console.log("[Stage 16] Checkpoint: RICH token deployed");
-		console.log("[Stage 16] Checkpoint: deploying packages");
 		_deployWeightedPool8020FactoryIfNeeded();
+		_deployFacets();
+		_deployRichToken();
+		_deployUniswapV4PoolInfra();
+		_seedWethRichPool();
 		_deployPkgs();
-		console.log("[Stage 16] Checkpoint: packages deployed");
-		console.log("[Stage 16] Checkpoint: approving initial funding");
-		_approveInitialFunding();
-		console.log("[Stage 16] Checkpoint: initial funding approved");
-		console.log("[Stage 16] Checkpoint: deploying Protocol DETF");
 		_deployProtocolDetf();
-		console.log("[Stage 16] Checkpoint: Protocol DETF deployed");
 
 		vm.stopBroadcast();
-		console.log("[Stage 16] Checkpoint: broadcast stopped");
 
 		_exportJson();
-		console.log("[Stage 16] Checkpoint: json exported");
 		_logResults();
 	}
 
 	function _loadPreviousDeployments() internal {
 		create3Factory = ICreate3FactoryProxy(_readAddress("01_factories.json", "create3Factory"));
 		diamondPackageFactory = IDiamondPackageCallBackFactory(_readAddress("01_factories.json", "diamondPackageFactory"));
-
 		vaultRegistry = IVaultRegistryDeployment(_readAddress("03_core_proxies.json", "vaultRegistry"));
 		feeOracle = IVaultFeeOracleQuery(_readAddress("03_core_proxies.json", "vaultFeeOracle"));
 
@@ -199,13 +175,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		erc5267Facet = IFacet(_readAddress("02_shared_facets.json", "erc5267Facet"));
 		erc4626BasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626BasicVaultFacet"));
 		erc4626StandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626StandardVaultFacet"));
-		multiStepOwnableFacet = IFacet(_readAddress("02_shared_facets.json", "multiStepOwnableFacet"));
 		operableFacet = IFacet(_readAddress("02_shared_facets.json", "operableFacet"));
 
 		balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(
 			_readAddress("04_dex_packages.json", "balancerV3StandardExchangeRouter")
 		);
-		aerodromePkg = IAerodromeStandardExchangeDFPkg(_readAddress("04_dex_packages.json", "aerodromePkg"));
 		rateProviderPkg = IStandardExchangeRateProviderDFPkg(_readAddress("04_dex_packages.json", "rateProviderPkg"));
 
 		(address weightedPoolFactoryAddr, bool weightedPoolFactoryExists) =
@@ -218,10 +192,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		require(address(diamondPackageFactory) != address(0), "DiamondPackageFactory not found");
 		require(address(vaultRegistry) != address(0), "VaultRegistry not found");
 		require(address(feeOracle) != address(0), "FeeOracle not found");
-		require(address(multiStepOwnableFacet) != address(0), "MultiStepOwnableFacet not found");
-		require(address(operableFacet) != address(0), "OperableFacet not found");
 		require(address(balancerV3StandardExchangeRouter) != address(0), "BalancerV3StandardExchangeRouter not found");
-		require(address(aerodromePkg) != address(0), "Aerodrome pkg not found");
 		require(address(rateProviderPkg) != address(0), "RateProvider pkg not found");
 	}
 
@@ -230,41 +201,37 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			return;
 		}
 
-		bytes32 salt = keccak256("SeigniorageWeightedPool8020Factory");
-		bytes memory initCode = type(WeightedPool8020Factory).creationCode;
-		bytes memory initArgs = abi.encode(
-			balancerV3Vault,
-			uint32(365 days),
-			"Factory v1",
-			"8020Pool v1"
+		weightedPool8020Factory = IWeightedPool8020Factory(
+			create3Factory.create3WithArgs(
+				type(WeightedPool8020Factory).creationCode,
+				abi.encode(balancerV3Vault, uint32(365 days), "Factory v1", "8020Pool v1"),
+				keccak256("SingleVaultDetfWeightedPool8020Factory")
+			)
 		);
-
-		weightedPool8020Factory = IWeightedPool8020Factory(create3Factory.create3WithArgs(initCode, initArgs, salt));
-		require(address(weightedPool8020Factory) != address(0), "WeightedPool8020Factory deploy failed");
-		vm.label(address(weightedPool8020Factory), "WeightedPool8020Factory");
+		vm.label(address(weightedPool8020Factory), "SingleVaultDetfWeightedPool8020Factory");
 	}
 
 	function _deployFacets() internal {
-		protocolExchangeInFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFExchangeInFacet(create3Factory);
-		protocolExchangeInQueryFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFExchangeInQueryFacet(create3Factory);
-		protocolExchangeOutFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFExchangeOutFacet(create3Factory);
-		protocolBondingFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingFacet(create3Factory);
-		protocolBridgeFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBridgeFacet(create3Factory);
-		protocolBondingQueryFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFBondingQueryFacet(create3Factory);
-		protocolRichirRedeemFacet = BaseProtocolDETF_Facet_FactoryService.deployBaseProtocolDETFRichirRedeemFacet(create3Factory);
+		multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+		multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
+
+		singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
+		singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
+		singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
+		singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
+
 		protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
 		richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
+		uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+		uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
-		// ERC721 facet needed by Protocol NFT Vault
-		{
-			bytes32 facetSalt = keccak256("ProtocolDETF_ERC721Facet");
-			erc721Facet = IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, facetSalt));
-			vm.label(address(erc721Facet), "ProtocolDETF_ERC721Facet");
-		}
+		erc721Facet = IFacet(
+			create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetf_ERC721Facet"))
+		);
+		vm.label(address(erc721Facet), "SingleVaultDetf_ERC721Facet");
 	}
 
 	function _deployRichToken() internal {
-		// Deploy the ERC20PermitDFPkg itself via CREATE3.
 		IERC20PermitDFPkg.PkgInit memory pkgInit = IERC20PermitDFPkg.PkgInit({
 			erc20Facet: erc20Facet,
 			erc5267Facet: erc5267Facet,
@@ -276,153 +243,195 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				create3Factory.deployPackageWithArgs(
 					type(ERC20PermitDFPkg).creationCode,
 					abi.encode(pkgInit),
-					abi.encode(type(ERC20PermitDFPkg).name)._hash()
+					abi.encode(type(ERC20PermitDFPkg).name, "SingleVaultDetfRich")._hash()
 				)
 			)
 		);
-		require(address(richTokenPkg) != address(0), "RICH token pkg deploy failed");
 		vm.label(address(richTokenPkg), "ERC20PermitDFPkg(RICH)");
 
-		// Deploy the RICH token proxy and mint initial supply to `owner`.
-		IERC20PermitDFPkg.PkgArgs memory richArgs = IERC20PermitDFPkg.PkgArgs({
-			name: "Rich Token",
-			symbol: "RICH",
-			decimals: 18,
-			totalSupply: RICH_TOTAL_SUPPLY,
-			recipient: owner,
-			optionalSalt: bytes32(0)
-		});
-
-		richToken = diamondPackageFactory.deploy(IDiamondFactoryPackage(address(richTokenPkg)), abi.encode(richArgs));
-		require(richToken != address(0), "RICH token deploy failed");
+		richToken = diamondPackageFactory.deploy(
+			IDiamondFactoryPackage(address(richTokenPkg)),
+			abi.encode(
+				IERC20PermitDFPkg.PkgArgs({
+					name: "Rich Token",
+					symbol: "RICH",
+					decimals: 18,
+					totalSupply: RICH_TOTAL_SUPPLY,
+					recipient: owner,
+					optionalSalt: keccak256("SingleVaultDetfRichToken")
+				})
+			)
+		);
 		vm.label(richToken, "RICH");
 	}
 
+	function _deployUniswapV4PoolInfra() internal {
+		poolManager = IPoolManager(
+			create3Factory.create3WithArgs(
+				type(PoolManager).creationCode,
+				abi.encode(owner),
+				keccak256("SingleVaultDetfPoolManager")
+			)
+		);
+		vm.label(address(poolManager), "SingleVaultDetfPoolManager");
+
+		liquiditySeeder = SingleVaultDetfUniswapV4LiquiditySeeder(
+			create3Factory.create3WithArgs(
+				type(SingleVaultDetfUniswapV4LiquiditySeeder).creationCode,
+				abi.encode(poolManager),
+				keccak256("SingleVaultDetfLiquiditySeeder")
+			)
+		);
+		vm.label(address(liquiditySeeder), "SingleVaultDetfLiquiditySeeder");
+	}
+
+	function _seedWethRichPool() internal {
+		PoolKey memory poolKey = _buildPoolKey();
+
+		PoolManager(address(poolManager)).initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
+
+		weth.deposit{value: INITIAL_WETH_DEPOSIT}();
+		IERC20(address(weth)).transfer(address(liquiditySeeder), INITIAL_WETH_DEPOSIT);
+		IERC20(richToken).transfer(address(liquiditySeeder), INITIAL_RICH_DEPOSIT);
+
+		liquiditySeeder.addLiquidity(
+			poolKey,
+			-int24(WETH_RICH_TICK_SPACING),
+			int24(WETH_RICH_TICK_SPACING),
+			LiquidityAmounts.getLiquidityForAmounts(
+				TickMath.getSqrtPriceAtTick(0),
+				TickMath.getSqrtPriceAtTick(-int24(WETH_RICH_TICK_SPACING)),
+				TickMath.getSqrtPriceAtTick(int24(WETH_RICH_TICK_SPACING)),
+				INITIAL_WETH_DEPOSIT,
+				INITIAL_RICH_DEPOSIT
+			)
+		);
+	}
+
 	function _deployPkgs() internal {
-		// Protocol NFT Vault package
-		{
-			IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseProtocolDETF_Component_FactoryService.buildProtocolNFTVaultPkgInit(
-				erc721Facet,
-				erc4626BasicVaultFacet,
-				erc4626StandardVaultFacet,
-				protocolNFTVaultFacet,
-				feeOracle,
-				vaultRegistry
-			);
+		IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseProtocolDETF_Component_FactoryService
+			.buildProtocolNFTVaultPkgInit(
+			erc721Facet,
+			erc4626BasicVaultFacet,
+			erc4626StandardVaultFacet,
+			protocolNFTVaultFacet,
+			feeOracle,
+			vaultRegistry
+		);
+		protocolNFTVaultPkg = BaseProtocolDETF_Pkg_FactoryService.deployProtocolNFTVaultDFPkg(vaultRegistry, nftPkgInit);
 
-			protocolNFTVaultPkg = BaseProtocolDETF_Pkg_FactoryService.deployProtocolNFTVaultDFPkg(vaultRegistry, nftPkgInit);
-			require(address(protocolNFTVaultPkg) != address(0), "Protocol NFT vault pkg deploy failed");
-		}
+		IRICHIRDFPkg.PkgInit memory richirPkgInit = BaseProtocolDETF_Component_FactoryService.buildRICHIRPkgInit(
+			erc20Facet,
+			erc5267Facet,
+			erc2612Facet,
+			richirFacet,
+			diamondPackageFactory
+		);
+		richirPkg = BaseProtocolDETF_Pkg_FactoryService.deployRICHIRDFPkg(create3Factory, richirPkgInit);
 
-		// RICHIR package
-		{
-			IRICHIRDFPkg.PkgInit memory richirPkgInit = BaseProtocolDETF_Component_FactoryService.buildRICHIRPkgInit(
+		IUniswapV4StandardExchangeDFPkg.PkgInit memory uniswapV4PkgInit =
+			UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
 				erc20Facet,
 				erc5267Facet,
 				erc2612Facet,
-				richirFacet,
-				diamondPackageFactory
+				multiAssetBasicVaultFacet,
+				multiAssetStandardVaultFacet,
+				uniswapV4StandardExchangeInFacet,
+				uniswapV4StandardExchangeOutFacet,
+				feeOracle,
+				vaultRegistry,
+				permit2,
+				poolManager
 			);
+		wethRichVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
+			vaultRegistry,
+			uniswapV4PkgInit
+		);
 
-			richirPkg = BaseProtocolDETF_Pkg_FactoryService.deployRICHIRDFPkg(create3Factory, richirPkgInit);
-			require(address(richirPkg) != address(0), "RICHIR pkg deploy failed");
-		}
+		SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets memory facets =
+			SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets({
+				erc20Facet: erc20Facet,
+				erc5267Facet: erc5267Facet,
+				erc2612Facet: erc2612Facet,
+				multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+				multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+				exchangeInFacet: singleVaultDetfExchangeInFacet,
+				exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
+				exchangeOutFacet: singleVaultDetfExchangeOutFacet,
+				bondingFacet: singleVaultDetfBondingFacet,
+				operableFacet: operableFacet
+			});
 
-		// Protocol DETF package
-		{
-			BaseProtocolDETF_Component_FactoryService.ProtocolDETFFacets memory facets;
-			facets.erc20Facet = erc20Facet;
-			facets.erc5267Facet = erc5267Facet;
-			facets.erc2612Facet = erc2612Facet;
-			facets.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
-			facets.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
-			facets.protocolDETFExchangeInFacet = protocolExchangeInFacet;
-			facets.protocolDETFExchangeInQueryFacet = protocolExchangeInQueryFacet;
-			facets.protocolDETFExchangeOutFacet = protocolExchangeOutFacet;
-			facets.protocolDETFBondingFacet = protocolBondingFacet;
-			facets.protocolDETFBridgeFacet = protocolBridgeFacet;
-			facets.protocolDETFBondingQueryFacet = protocolBondingQueryFacet;
-			facets.multiStepOwnableFacet = multiStepOwnableFacet;
-			facets.operableFacet = operableFacet;
-			facets.protocolDETFRichirRedeemFacet = protocolRichirRedeemFacet;
+		SingleVaultDetf_Component_FactoryService.SingleVaultDetfInfra memory infra =
+			SingleVaultDetf_Component_FactoryService.SingleVaultDetfInfra({
+				feeOracle: feeOracle,
+				vaultRegistryDeployment: vaultRegistry,
+				permit2: permit2,
+				wethToken: IERC20(address(weth)),
+				balancerV3Vault: balancerV3Vault,
+				balancerV3PrepayRouter: balancerV3StandardExchangeRouter,
+				weightedPool8020Factory: weightedPool8020Factory,
+				bridgeConfig: _emptyBridgeConfig(),
+				wethRichVaultPkg: wethRichVaultPkg,
+				protocolNFTVaultPkg: protocolNFTVaultPkg,
+				richirPkg: richirPkg,
+				rateProviderPkg: rateProviderPkg,
+				diamondFactory: diamondPackageFactory
+			});
 
-			BaseProtocolDETF_Component_FactoryService.ProtocolDETFInfra memory infra;
-			infra.feeOracle = feeOracle;
-			infra.vaultRegistryDeployment = vaultRegistry;
-			infra.permit2 = permit2;
-			infra.balancerV3Vault = balancerV3Vault;
-			// Use the canonical Balancer V3 Router for pool initialization (not our custom exchange router)
-			infra.balancerV3Router = IRouter(address(balancerV3Router));
-			infra.balancerV3PrepayRouter = IBalancerV3StandardExchangeRouterPrepay(address(balancerV3StandardExchangeRouter));
-			infra.weightedPool8020Factory = weightedPool8020Factory;
-			infra.diamondFactory = diamondPackageFactory;
-
-			BaseProtocolDETF_Component_FactoryService.ProtocolDETFPkgs memory pkgs;
-			pkgs.aerodromeStandardExchangeDFPkg = aerodromePkg;
-			pkgs.protocolNFTVaultPkg = protocolNFTVaultPkg;
-			pkgs.richirPkg = richirPkg;
-			pkgs.rateProviderPkg = rateProviderPkg;
-
-			ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig;
-
-			IBaseProtocolDETFDFPkg.PkgInit memory detfPkgInit = BaseProtocolDETF_Component_FactoryService.buildProtocolDETFPkgInit(
-				facets,
-				infra,
-				pkgs,
-				bridgeConfig
-			);
-
-			protocolDetfPkg = BaseProtocolDETF_Pkg_FactoryService.deployBaseProtocolDETFDFPkg(vaultRegistry, detfPkgInit);
-			require(address(protocolDetfPkg) != address(0), "Protocol DETF pkg deploy failed");
-		}
-	}
-
-	function _approveInitialFunding() internal {
-		// Ensure `owner` has WETH to seed the deployment.
-		if (INITIAL_WETH_DEPOSIT > 0) {
-			weth.deposit{value: INITIAL_WETH_DEPOSIT}();
-			weth.approve(address(permit2), type(uint256).max);
-			permit2.approve(address(weth), address(protocolDetfPkg), uint160(INITIAL_WETH_DEPOSIT), type(uint48).max);
-		}
-
-		if (INITIAL_RICH_DEPOSIT > 0) {
-			IERC20(richToken).approve(address(permit2), type(uint256).max);
-			permit2.approve(richToken, address(protocolDetfPkg), uint160(INITIAL_RICH_DEPOSIT), type(uint48).max);
-		}
+		protocolDetfPkg = SingleVaultDetf_Pkg_FactoryService.deploySingleVaultDetfDFPkg(
+			vaultRegistry,
+			SingleVaultDetf_Component_FactoryService.buildPkgInit(facets, infra)
+		);
 	}
 
 	function _deployProtocolDetf() internal {
-		IBaseProtocolDETFDFPkg.PkgArgs memory args = IBaseProtocolDETFDFPkg.PkgArgs({
-			name: "Protocol DETF CHIR",
-			symbol: "CHIR",
-			protocolConfig: BaseProtocolDETFRepo.ProtocolConfig({
-				richToken: richToken,
-				richInitialDepositAmount: INITIAL_RICH_DEPOSIT,
-				richMintChirPercent: ONE_WAD,
-				wethToken: address(weth),
-				wethInitialDepositAmount: INITIAL_WETH_DEPOSIT,
-				wethMintChirPercent: ONE_WAD
-			}),
-			funder: owner,
-			owner: owner
-		});
+		ISingleVaultDetfDFPkg.PkgArgs memory args = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
+			"Protocol DETF CHIR",
+			"CHIR",
+			IERC20(richToken),
+			INITIAL_RICH_DEPOSIT,
+			INITIAL_WETH_DEPOSIT,
+			_buildPoolKey(),
+			WETH_RICH_WIDTH_MULTIPLIER
+		);
 
 		protocolDetf = vaultRegistry.deployVault(IStandardVaultPkg(address(protocolDetfPkg)), abi.encode(args));
-		require(protocolDetf != address(0), "Protocol DETF deploy failed");
-		vm.label(protocolDetf, "ProtocolDETF(CHIR)");
+		vm.label(protocolDetf, "SingleVaultDetf(CHIR)");
 
 		IProtocolDETF detf = IProtocolDETF(protocolDetf);
 		protocolNftVault = address(detf.protocolNFTVault());
 		richirToken = address(detf.richirToken());
 		reservePool = detf.reservePool();
-		chirWethVault = address(detf.chirWethVault());
-		richChirVault = address(detf.richChirVault());
+		chirWethVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
+		richChirVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
 
 		vm.label(protocolNftVault, "ProtocolNFTVault");
 		vm.label(richirToken, "RICHIR");
 		vm.label(reservePool, "CHIR Reserve Pool");
-		vm.label(chirWethVault, "CHIR/WETH Vault");
-		vm.label(richChirVault, "RICH/CHIR Vault");
+		vm.label(chirWethVault, "WETH/RICH Vault");
+	}
+
+	function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
+		(address token0, address token1) = address(weth) < richToken ? (address(weth), richToken) : (richToken, address(weth));
+
+		poolKey_ = PoolKey({
+			currency0: Currency.wrap(token0),
+			currency1: Currency.wrap(token1),
+			fee: WETH_RICH_FEE,
+			tickSpacing: WETH_RICH_TICK_SPACING,
+			hooks: IHooks(address(0))
+		});
+	}
+
+	function _emptyBridgeConfig() internal pure returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory config_) {
+		config_ = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+			bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
+			standardBridge: IStandardBridge(payable(address(0))),
+			messenger: ICrossDomainMessenger(address(0)),
+			localRelayer: address(0),
+			peerRelayer: address(0)
+		});
 	}
 
 	function _exportJson() internal {
@@ -430,10 +439,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 		json = vm.serializeAddress("", "richToken", richToken);
 		json = vm.serializeAddress("", "richTokenPkg", address(richTokenPkg));
-
 		json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
 		json = vm.serializeAddress("", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
 		json = vm.serializeAddress("", "richirPkg", address(richirPkg));
+		json = vm.serializeAddress("", "wethRichVaultPkg", address(wethRichVaultPkg));
+		json = vm.serializeAddress("", "poolManager", address(poolManager));
 
 		json = vm.serializeAddress("", "protocolDetf", protocolDetf);
 		json = vm.serializeAddress("", "protocolNftVault", protocolNftVault);
@@ -447,10 +457,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 	function _logResults() internal view {
 		_logAddress("RICH:", richToken);
-		_logAddress("ProtocolDETF (CHIR):", protocolDetf);
+		_logAddress("Single Vault DETF (CHIR):", protocolDetf);
 		_logAddress("Protocol NFT Vault:", protocolNftVault);
 		_logAddress("RICHIR:", richirToken);
 		_logAddress("Reserve Pool:", reservePool);
+		_logAddress("WETH/RICH Vault:", chirWethVault);
 		_logComplete("Stage 16");
 	}
 }
