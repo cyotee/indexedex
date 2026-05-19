@@ -8,6 +8,7 @@ pragma solidity ^0.8.0;
 import {IERC20Events} from "@crane/contracts/interfaces/IERC20Events.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
@@ -97,14 +98,14 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @inheritdoc IRICHIR
      */
     function sharesOf(address account) external view returns (uint256) {
-        return RICHIRRepo._sharesOf(account);
+        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._sharesOf(account));
     }
 
     /**
      * @inheritdoc IRICHIR
      */
     function totalShares() external view returns (uint256) {
-        return RICHIRRepo._totalShares();
+        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._totalShares());
     }
 
     /**
@@ -140,7 +141,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      */
     function convertToShares(uint256 richirAmount) external view returns (uint256 shares) {
         uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layout());
-        return RICHIRRepo._balanceToShares(richirAmount, rate);
+        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._balanceToShares(richirAmount, rate));
     }
 
     /**
@@ -148,7 +149,8 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      */
     function convertToRichir(uint256 shares) external view returns (uint256 richirAmount) {
         uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layout());
-        return RICHIRRepo._sharesToBalance(shares, rate);
+        uint256 internalShares = RICHIRRepo._externalSharesToInternal(shares);
+        return RICHIRRepo._sharesToBalance(internalShares, rate);
     }
 
     /**
@@ -216,7 +218,10 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
 
         // Check sender has enough shares
         if (layout.sharesOf[from] < shares) {
-            revert InsufficientBalance(shares, layout.sharesOf[from]);
+            revert InsufficientBalance(
+                RICHIRRepo._internalSharesToExternal(shares),
+                RICHIRRepo._internalSharesToExternal(layout.sharesOf[from])
+            );
         }
 
         // Transfer shares
@@ -237,13 +242,14 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         if (lpShares == 0) revert ZeroAmount();
 
         RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
+        uint256 internalShares = RICHIRRepo._externalSharesToInternal(lpShares);
 
-        // Mint shares directly (1:1 with NFT effective shares)
-        RICHIRRepo._mintShares(layout, recipient, lpShares);
+        // Mint shares with internal precision while preserving 18-decimal external units.
+        RICHIRRepo._mintShares(layout, recipient, internalShares);
 
         // Calculate balance for return value and event
         uint256 rate = _getCurrentRedemptionRate(layout);
-        richirMinted = RICHIRRepo._sharesToBalance(lpShares, rate);
+        richirMinted = RICHIRRepo._sharesToBalance(internalShares, rate);
 
         emit IRICHIR.Minted(recipient, lpShares, lpShares, richirMinted);
         emit IERC20Events.Transfer(address(0), recipient, richirMinted);
@@ -282,7 +288,10 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
 
         // Check owner has enough shares
         if (layout.sharesOf[owner] < shares) {
-            revert InsufficientBalance(shares, layout.sharesOf[owner]);
+            revert InsufficientBalance(
+                RICHIRRepo._internalSharesToExternal(shares),
+                RICHIRRepo._internalSharesToExternal(layout.sharesOf[owner])
+            );
         }
 
         // Burn shares
@@ -295,7 +304,9 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         // The protocol-owned NFT holds WETH via the reserve pool
         layout.wethToken.safeTransfer(recipient, wethOut);
 
-        emit IRICHIR.Redeemed(msg.sender, recipient, richirAmount, shares, wethOut);
+        emit IRICHIR.Redeemed(
+            msg.sender, recipient, richirAmount, RICHIRRepo._internalSharesToExternal(shares), wethOut
+        );
         emit IERC20Events.Transfer(owner, address(0), richirAmount);
     }
 
@@ -313,7 +324,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
 
         RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
         uint256 rate = _getCurrentRedemptionRate(layout);
-        sharesBurned = RICHIRRepo._balanceToShares(richirAmount, rate);
+        uint256 internalSharesBurned = RICHIRRepo._balanceToShares(richirAmount, rate);
 
         // Handle transfer if not pretransferred
         address burnFrom = owner;
@@ -322,12 +333,17 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         }
 
         // Check owner has enough shares
-        if (layout.sharesOf[burnFrom] < sharesBurned) {
-            revert InsufficientBalance(sharesBurned, layout.sharesOf[burnFrom]);
+        if (layout.sharesOf[burnFrom] < internalSharesBurned) {
+            revert InsufficientBalance(
+                RICHIRRepo._internalSharesToExternal(internalSharesBurned),
+                RICHIRRepo._internalSharesToExternal(layout.sharesOf[burnFrom])
+            );
         }
 
         // Burn shares (no WETH transfer - caller handles that)
-        RICHIRRepo._burnShares(layout, burnFrom, sharesBurned);
+        RICHIRRepo._burnShares(layout, burnFrom, internalSharesBurned);
+
+        sharesBurned = RICHIRRepo._internalSharesToExternal(internalSharesBurned);
 
         emit IERC20Events.Transfer(burnFrom, address(0), richirAmount);
     }
@@ -402,7 +418,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
 
         // Rate = total WETH value / total RICHIR shares
         // This means 1 RICHIR share = (wethValue / totalShares) WETH
-        rate = (wethValue * ONE_WAD) / totalShares_;
+        rate = Math.mulDiv(wethValue, RICHIRRepo._shareUnit(), totalShares_);
 
         // Ensure rate never goes to 0 (minimum 1 wei per share)
         if (rate == 0) {

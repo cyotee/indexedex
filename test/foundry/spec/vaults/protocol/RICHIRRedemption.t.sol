@@ -10,6 +10,9 @@ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
  * @dev Specification tests for RICHIR rebasing mechanics and redemption.
  */
 contract RICHIRRedemptionTest is Test {
+    uint256 internal constant SHARE_SCALE = 1e9;
+    uint256 internal constant SHARE_UNIT = ONE_WAD * SHARE_SCALE;
+
     /* ---------------------------------------------------------------------- */
     /*                        Rebasing Balance Tests                          */
     /* ---------------------------------------------------------------------- */
@@ -149,6 +152,30 @@ contract RICHIRRedemptionTest is Test {
         assertApproxEqRel(backToBalance, balance, 1e12, "Should round-trip within tolerance");
     }
 
+    function test_internalShareGranularity_smallAmountProducesNonZeroInternalShares() public pure {
+        uint256 amount = 1; // 1 wei RICHIR
+        uint256 rate = 2e18; // 2 WETH per share
+
+        uint256 legacyShares = (amount * ONE_WAD) / rate;
+        uint256 internalShares = _balanceToInternalShares(amount, rate);
+
+        assertEq(legacyShares, 0, "Legacy 1e18 share math rounds to zero");
+        assertTrue(internalShares > 0, "Scaled internal shares preserve tiny conversions");
+    }
+
+    function test_internalPrecision_redeemAndTransferCycleRetainsMoreGranularity() public pure {
+        uint256 rate = 3e18;
+        uint256 amount = 1e12; // tiny amount where floor effects matter
+
+        uint256 legacyShares = _balanceToShares(amount, rate);
+        uint256 legacyRoundTrip = _sharesToBalance(legacyShares, rate);
+
+        uint256 internalShares = _balanceToInternalShares(amount, rate);
+        uint256 scaledRoundTrip = _internalSharesToBalance(internalShares, rate);
+
+        assertTrue(scaledRoundTrip >= legacyRoundTrip, "Scaled internal precision should not degrade round-trip");
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                         Transfer Tests                                 */
     /* ---------------------------------------------------------------------- */
@@ -179,5 +206,13 @@ contract RICHIRRedemptionTest is Test {
 
     function _balanceToShares(uint256 balance, uint256 rate) internal pure returns (uint256) {
         return (balance * ONE_WAD) / rate;
+    }
+
+    function _balanceToInternalShares(uint256 balance, uint256 rate) internal pure returns (uint256) {
+        return (balance * SHARE_UNIT) / rate;
+    }
+
+    function _internalSharesToBalance(uint256 shares, uint256 rate) internal pure returns (uint256) {
+        return (shares * rate) / SHARE_UNIT;
     }
 }

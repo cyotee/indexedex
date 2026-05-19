@@ -6,6 +6,7 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -30,7 +31,20 @@ import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
  *      - totalSupply(): Computed live as totalShares * redemptionRate
  */
 library RICHIRRepo {
+    using Math for uint256;
+
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.protocol.richir");
+
+    uint256 internal constant SHARE_SCALE = 1e9;
+    uint256 internal constant SHARE_UNIT = 1e18 * SHARE_SCALE;
+
+    function _shareScale() internal pure returns (uint256) {
+        return SHARE_SCALE;
+    }
+
+    function _shareUnit() internal pure returns (uint256) {
+        return SHARE_UNIT;
+    }
 
     struct Storage {
         /// @notice The Protocol DETF contract (CHIR)
@@ -45,10 +59,10 @@ library RICHIRRepo {
         /// @notice The protocol-owned NFT token ID held by this contract
         uint256 protocolNFTId;
 
-        /// @notice Total underlying shares
+        /// @notice Total underlying shares (scaled by SHARE_SCALE for internal precision)
         uint256 totalShares;
 
-        /// @notice Underlying shares per account (constant between transfers)
+        /// @notice Underlying shares per account (scaled by SHARE_SCALE)
         mapping(address account => uint256 shares) sharesOf;
 
         /// @notice Cached redemption rate (updated on each interaction)
@@ -250,19 +264,33 @@ library RICHIRRepo {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Calculates the RICHIR balance from shares.
-     * @dev balance = shares * redemptionRate / 1e18
+     * @notice Converts external share units to internal precision units.
      */
-    function _sharesToBalance(uint256 shares_, uint256 redemptionRate_) internal pure returns (uint256) {
-        return (shares_ * redemptionRate_) / 1e18;
+    function _externalSharesToInternal(uint256 externalShares_) internal pure returns (uint256) {
+        return externalShares_ * SHARE_SCALE;
+    }
+
+    /**
+     * @notice Converts internal share units to external share units (floor).
+     */
+    function _internalSharesToExternal(uint256 internalShares_) internal pure returns (uint256) {
+        return internalShares_ / SHARE_SCALE;
+    }
+
+    /**
+     * @notice Calculates the RICHIR balance from shares.
+     * @dev balance = internalShares * redemptionRate / SHARE_UNIT
+     */
+    function _sharesToBalance(uint256 internalShares_, uint256 redemptionRate_) internal pure returns (uint256) {
+        return internalShares_.mulDiv(redemptionRate_, SHARE_UNIT);
     }
 
     /**
      * @notice Calculates shares from RICHIR balance.
-     * @dev shares = balance * 1e18 / redemptionRate
+     * @dev internalShares = balance * SHARE_UNIT / redemptionRate
      */
     function _balanceToShares(uint256 balance_, uint256 redemptionRate_) internal pure returns (uint256) {
         if (redemptionRate_ == 0) return 0;
-        return (balance_ * 1e18) / redemptionRate_;
+        return balance_.mulDiv(SHARE_UNIT, redemptionRate_);
     }
 }
