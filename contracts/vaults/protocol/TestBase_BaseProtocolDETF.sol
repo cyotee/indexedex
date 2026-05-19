@@ -72,7 +72,7 @@ import {
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Test Base                                 */

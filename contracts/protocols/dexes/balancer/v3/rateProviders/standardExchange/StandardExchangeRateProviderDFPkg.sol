@@ -27,7 +27,7 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     StandardExchangeRateProviderRepo
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderRepo.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol";
 
 interface IStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage {
     struct PkgInit {

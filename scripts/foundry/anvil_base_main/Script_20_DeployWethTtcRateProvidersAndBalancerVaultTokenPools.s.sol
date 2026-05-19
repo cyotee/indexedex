@@ -22,7 +22,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
 

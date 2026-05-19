@@ -80,7 +80,7 @@ import {ISeigniorageNFTVaultDFPkg} from "contracts/vaults/seigniorage/Seigniorag
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 interface IWeightedPool8020FactoryExtended is IWeightedPool8020Factory {
     function getDeploymentAddress(bytes memory constructorArgs, bytes32 salt) external view returns (address);

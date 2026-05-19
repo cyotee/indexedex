@@ -44,7 +44,7 @@ import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 
 import {
 	IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {
 	IUniswapV4StandardExchangeDFPkg
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";

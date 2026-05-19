@@ -43,7 +43,7 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 
 import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 import {Seigniorage_Component_FactoryService} from "contracts/vaults/seigniorage/Seigniorage_Component_FactoryService.sol";
 import {ISeigniorageDETFDFPkg} from "contracts/vaults/seigniorage/SeigniorageDETFDFPkg.sol";

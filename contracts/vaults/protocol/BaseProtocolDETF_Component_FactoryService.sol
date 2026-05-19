@@ -30,7 +30,7 @@ import {
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";

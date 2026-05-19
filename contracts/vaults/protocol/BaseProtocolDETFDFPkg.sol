@@ -84,7 +84,7 @@ import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol
 import {BaseProtocolDETFRichirRedeemFacet} from "contracts/vaults/protocol/BaseProtocolDETFRichirRedeemFacet.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {
     IAerodromeStandardExchangeDFPkg
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";

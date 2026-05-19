@@ -52,7 +52,7 @@ import {
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {SeigniorageDETFExchangeInFacet} from "contracts/vaults/seigniorage/SeigniorageDETFExchangeInFacet.sol";
 import {SeigniorageDETFExchangeOutFacet} from "contracts/vaults/seigniorage/SeigniorageDETFExchangeOutFacet.sol";
 import {SeigniorageDETFUnderwritingFacet} from "contracts/vaults/seigniorage/SeigniorageDETFUnderwritingFacet.sol";

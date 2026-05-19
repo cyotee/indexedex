@@ -31,9 +31,9 @@ import {IBalancerV3StandardExchangeRouterProxy} from
     "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 
 import {StandardExchangeRateProvider_FactoryService} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProvider_FactoryService.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
 import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 import {BalancerV3ConstantProductPool_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";

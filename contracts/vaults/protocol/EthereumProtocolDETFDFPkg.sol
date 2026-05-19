@@ -79,7 +79,7 @@ import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {
     IUniswapV2StandardExchangeDFPkg
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";

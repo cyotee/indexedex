@@ -26,7 +26,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     StandardExchangeRateProviderRepo
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderRepo.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol";
 
 interface IStandardExchangeRateProvider is IRateProvider {
     function reserveVault() external view returns (IStandardExchange);

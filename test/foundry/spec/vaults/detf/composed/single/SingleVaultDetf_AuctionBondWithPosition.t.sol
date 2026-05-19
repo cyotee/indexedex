@@ -47,10 +47,10 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {
     IStandardExchangeRateProviderDFPkg,
     StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {
     StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderFacet.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
 import {
     TestBase_BalancerV3StandardExchangeRouter
 } from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";

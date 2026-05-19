@@ -106,7 +106,7 @@ The WETH/RICH vault for this DETF should not be a new bespoke vault implementati
 
 ### Balancer reserve and rate-provider dependencies
 
-- `contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol`
+- `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol`
 - `contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol`
 
 ## Proposed Production Files

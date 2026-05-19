@@ -1972,7 +1972,7 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol`
+### File: `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol`
 Kind: project
 Fingerprint: sha256[:12]=4a5faddb361b bytes=5153 mtime=2026-01-07T01:53:02
 Declares: contract StandardExchangeRateProviderDFPkg is IStandardExchangeRateProviderDFPkg | interface IStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage
@@ -1984,20 +1984,20 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderFacet.sol`
+### File: `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderFacet.sol`
 Kind: project
 Fingerprint: sha256[:12]=984b1b7e0fb8 bytes=4527 mtime=2026-01-07T01:53:02
 Declares: contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFacet | interface IStandardExchangeRateProvider is IRateProvider
 External/Public API: reserveVault(); rateTarget(); getRate(); facetName(); facetInterfaces(); facetFuncs(); facetMetadata()
 Imports: import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IERC20} from "@crane/contracts/interfaces/IERC20.sol"; | import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol"; | import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol"; | import {ONE_WAD} from "@crane/contracts/constants/Constants.sol"; | import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol"; | import {StandardExchangeRateProviderRepo} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderRepo.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderRepo.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderRepo.sol`
+### File: `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderRepo.sol`
 Kind: project
 Fingerprint: sha256[:12]=4857861d3c50 bytes=2517 mtime=2026-01-07T01:53:02
 Declares: library StandardExchangeRateProviderRepo
@@ -2010,16 +2010,16 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProvider_FactoryService.sol`
+### File: `contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProvider_FactoryService.sol`
 Kind: project
 Fingerprint: sha256[:12]=e40f3835ca99 bytes=3869 mtime=2026-01-21T19:20:06
 Declares: library StandardExchangeRateProvider_FactoryService
 External/Public API: (none detected)
 Imports: import {Vm} from "forge-std/Vm.sol"; | import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {ICreate3Factory} from "@crane/contracts/interfaces/ICreate3Factory.sol"; | import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol"; | import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol"; | import {StandardExchangeRateProviderFacet} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderFacet.sol"; | import {
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderFacet.sol"; | import {
     IStandardExchangeRateProviderDFPkg,
     StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
@@ -3272,7 +3272,7 @@ External/Public API: (none detected)
 Imports: import {IRouter} from "@balancer-labs/v3-interfaces/contracts/vault/IRouter.sol"; | import {IVault as IBalancerVault} from "@balancer-labs/v3-interfaces/contracts/vault/IVault.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol"; | import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol"; | import {IWeightedPool8020Factory} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol"; | import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol"; | import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol"; | import {IBalancerV3StandardExchangeRouterPrepay} from
     "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol"; | import {
     IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
@@ -8755,19 +8755,19 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFacet.sol`
+### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderFacet.sol`
 Kind: dependency
 Fingerprint: sha256[:12]=3ef57ce06771 bytes=3644 mtime=2025-12-30T19:55:20
 Declares: contract ERC4626RateProviderFacet is ERC4626RateProviderTarget, IFacet
 External/Public API: facetName(); facetInterfaces(); facetFuncs(); facetMetadata()
-Imports: import {EfficientHashLib} from "@solady/utils/EfficientHashLib.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol"; | import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol"; | import "@crane/contracts/GeneralErrors.sol"; | import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol"; | import {IERC4626RateProvider} from "@crane/contracts/interfaces/IERC4626RateProvider.sol"; | import {ERC4626RateProviderRepo} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderRepo.sol";
+Imports: import {EfficientHashLib} from "@solady/utils/EfficientHashLib.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol"; | import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol"; | import "@crane/contracts/GeneralErrors.sol"; | import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol"; | import {IERC4626RateProvider} from "@crane/contracts/interfaces/IERC4626RateProvider.sol"; | import {ERC4626RateProviderRepo} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderRepo.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFacetDFPkg.sol`
+### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderFacetDFPkg.sol`
 Kind: dependency
 Fingerprint: sha256[:12]=b7d135d4cd5d bytes=6141 mtime=2025-12-30T19:55:46
 Declares: contract ERC4626RateProviderFacetDFPkg is IERC4626RateProviderFacetDFPkg | interface IERC4626RateProviderFacetDFPkg is IDiamondFactoryPackage
@@ -8779,19 +8779,19 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFactoryService.sol`
+### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderFactoryService.sol`
 Kind: dependency
 Fingerprint: sha256[:12]=febc21d832a8 bytes=1732 mtime=2025-12-30T19:55:57
 Declares: library ERC4626RateProviderFactoryService
 External/Public API: (none detected)
-Imports: import {ICreate3Factory} from "@crane/contracts/interfaces/ICreate3Factory.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol"; | import {ERC4626RateProviderFacet} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFacet.sol"; | import {IERC4626RateProviderFacetDFPkg, ERC4626RateProviderFacetDFPkg} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderFacetDFPkg.sol";
+Imports: import {ICreate3Factory} from "@crane/contracts/interfaces/ICreate3Factory.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol"; | import {ERC4626RateProviderFacet} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderFacet.sol"; | import {IERC4626RateProviderFacetDFPkg, ERC4626RateProviderFacetDFPcontracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/v3/rateProviders/standardExchange/ERC4626RateProviderFacetDFPkg.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderRepo.sol`
+### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderRepo.sol`
 Kind: dependency
 Fingerprint: sha256[:12]=abdb002c0cef bytes=1496 mtime=2025-12-14T11:43:20
 Declares: library ERC4626RateProviderRepo
@@ -8804,12 +8804,12 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderTarget.sol`
+### File: `lib/daosys/lib/crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderTarget.sol`
 Kind: dependency
 Fingerprint: sha256[:12]=6648be516290 bytes=3267 mtime=2025-12-30T19:56:04
 Declares: contract ERC4626RateProviderTarget is IERC4626RateProvider
 External/Public API: getRate(); erc4626Vault()
-Imports: import {EfficientHashLib} from "@solady/utils/EfficientHashLib.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol"; | import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol"; | import "@crane/contracts/GeneralErrors.sol"; | import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol"; | import {IERC4626RateProvider} from "@crane/contracts/interfaces/IERC4626RateProvider.sol"; | import {ERC4626RateProviderRepo} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/ERC4626RateProviderRepo.sol";
+Imports: import {EfficientHashLib} from "@solady/utils/EfficientHashLib.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol"; | import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol"; | import "@crane/contracts/GeneralErrors.sol"; | import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol"; | import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol"; | import {IERC4626RateProvider} from "@crane/contracts/interfaces/IERC4626RateProvider.sol"; | import {ERC4626RateProviderRepo} from "@crane/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/ERC4626RateProviderRepo.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
@@ -70740,7 +70740,7 @@ Fingerprint: sha256[:12]=a9ad2181a06b bytes=12461 mtime=2026-01-23T01:51:25
 Declares: contract Script_11_DeployStandardExchangeRateProviders is DeploymentBase
 External/Public API: run()
 Imports: import {DeploymentBase} from "./DeploymentBase.sol"; | import {IERC20} from "@crane/contracts/interfaces/IERC20.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol"; | import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol";
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
@@ -70868,7 +70868,7 @@ Fingerprint: sha256[:12]=e2df99cc57e2 bytes=9123 mtime=2026-01-25T01:26:31
 Declares: contract Script_20_DeployWethTtcRateProvidersAndBalancerVaultTokenPools is DeploymentBase
 External/Public API: run()
 Imports: import {DeploymentBase} from "./DeploymentBase.sol"; | import {IERC20} from "@crane/contracts/interfaces/IERC20.sol"; | import {TokenConfig, TokenType} from "@balancer-labs/v3-interfaces/contracts/vault/VaultTypes.sol"; | import {IRateProvider} from "@balancer-labs/v3-interfaces/contracts/solidity-utils/helpers/IRateProvider.sol"; | import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol"; | import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderDFPkg.sol"; | import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderDFPkg.sol"; | import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
@@ -72416,7 +72416,7 @@ These are questions that block confidence in correctness or intent (some are aut
 - contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
 - contracts/oracles/fee/VaultFeeOracleRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
 - contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
-- contracts/protocols/dexes/balancer/v3/rateProviders/StandardExchangeRateProviderRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
+- contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/standardExchange/StandardExchangeRateProviderRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
 - contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
 - contracts/protocols/dexes/balancer/v3/routers/batch/BalancerV3StandardExchangeBatchRouterCommon.sol: uses assembly; confirm slot layout + memory safety assumptions
 - contracts/protocols/dexes/balancer/v3/vaults/SeigniorageVaultRepo.sol: uses assembly; confirm slot layout + memory safety assumptions
