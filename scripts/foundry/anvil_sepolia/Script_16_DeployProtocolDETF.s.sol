@@ -326,6 +326,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
             )
         );
 
+        ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_ = _emptyBridgeConfig();
         protocolDetfPkg = SingleVaultDetf_Pkg_FactoryService.deploySingleVaultDetfDFPkg(
             vaultRegistry,
             SingleVaultDetf_Component_FactoryService.buildPkgInit(
@@ -349,7 +350,11 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
                     balancerV3Vault: balancerV3Vault,
                     balancerV3PrepayRouter: balancerV3StandardExchangeRouter,
                     weightedPool8020Factory: weightedPool8020Factory,
-                    bridgeConfig: _emptyBridgeConfig(),
+                    bridgeTokenRegistry: bridgeConfig_.bridgeTokenRegistry,
+                    standardBridge: bridgeConfig_.standardBridge,
+                    messenger: bridgeConfig_.messenger,
+                    localRelayer: bridgeConfig_.localRelayer,
+                    peerRelayer: bridgeConfig_.peerRelayer,
                     wethRichVaultPkg: wethRichVaultPkg,
                     protocolNFTVaultPkg: protocolNFTVaultPkg,
                     richirPkg: richirPkg,

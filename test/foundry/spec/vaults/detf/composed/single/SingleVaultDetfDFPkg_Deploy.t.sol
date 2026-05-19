@@ -166,13 +166,11 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
                 balancerV3Vault: IBalancerVault(address(vault)),
                 balancerV3PrepayRouter: seRouter,
                 weightedPool8020Factory: weightedPool8020Factory,
-                bridgeConfig: ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
-                    bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
-                    standardBridge: IStandardBridge(payable(address(0))),
-                    messenger: ICrossDomainMessenger(address(0)),
-                    localRelayer: address(0),
-                    peerRelayer: address(0)
-                }),
+                bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
+                standardBridge: IStandardBridge(payable(address(0))),
+                messenger: ICrossDomainMessenger(address(0)),
+                localRelayer: address(0),
+                peerRelayer: address(0),
                 wethRichVaultPkg: wethRichVaultPkg,
                 protocolNFTVaultPkg: protocolNFTVaultPkg,
                 richirPkg: richirDFPkg,

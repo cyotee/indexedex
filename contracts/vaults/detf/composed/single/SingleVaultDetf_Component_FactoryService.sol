@@ -10,6 +10,9 @@ import {
     IWeightedPool8020Factory
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/ISuperChainBridgeTokenRegistry.sol";
+import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
+import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -22,7 +25,6 @@ import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {ISingleVaultDetfDFPkg} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 library SingleVaultDetf_Component_FactoryService {
     struct SingleVaultDetfFacets {
@@ -46,7 +48,11 @@ library SingleVaultDetf_Component_FactoryService {
         IBalancerVault balancerV3Vault;
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
         IWeightedPool8020Factory weightedPool8020Factory;
-        ProtocolDETFSuperchainBridgeRepo.BridgeConfig bridgeConfig;
+        ISuperChainBridgeTokenRegistry bridgeTokenRegistry;
+        IStandardBridge standardBridge;
+        ICrossDomainMessenger messenger;
+        address localRelayer;
+        address peerRelayer;
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
         IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
@@ -77,11 +83,11 @@ library SingleVaultDetf_Component_FactoryService {
             balancerV3Vault: infra_.balancerV3Vault,
             balancerV3PrepayRouter: infra_.balancerV3PrepayRouter,
             weightedPool8020Factory: infra_.weightedPool8020Factory,
-            bridgeTokenRegistry: infra_.bridgeConfig.bridgeTokenRegistry,
-            standardBridge: infra_.bridgeConfig.standardBridge,
-            messenger: infra_.bridgeConfig.messenger,
-            localRelayer: infra_.bridgeConfig.localRelayer,
-            peerRelayer: infra_.bridgeConfig.peerRelayer,
+            bridgeTokenRegistry: infra_.bridgeTokenRegistry,
+            standardBridge: infra_.standardBridge,
+            messenger: infra_.messenger,
+            localRelayer: infra_.localRelayer,
+            peerRelayer: infra_.peerRelayer,
             wethRichVaultPkg: infra_.wethRichVaultPkg,
             protocolNFTVaultPkg: infra_.protocolNFTVaultPkg,
             richirPkg: infra_.richirPkg,
