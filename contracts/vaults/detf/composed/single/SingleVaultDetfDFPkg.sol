@@ -110,7 +110,11 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
         IWeightedPool8020Factory weightedPool8020Factory;
 
-        ProtocolDETFSuperchainBridgeRepo.BridgeConfig bridgeConfig;
+        ISuperChainBridgeTokenRegistry bridgeTokenRegistry;
+        IStandardBridge standardBridge;
+        ICrossDomainMessenger messenger;
+        address localRelayer;
+        address peerRelayer;
         
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
         IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
@@ -215,11 +219,11 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         BALANCER_V3_VAULT = pkgInit.balancerV3Vault;
         BALANCER_V3_PREPAY_ROUTER = pkgInit.balancerV3PrepayRouter;
         WEIGHTED_POOL_8020_FACTORY = pkgInit.weightedPool8020Factory;
-        BRIDGE_TOKEN_REGISTRY = pkgInit.bridgeConfig.bridgeTokenRegistry;
-        STANDARD_BRIDGE = pkgInit.bridgeConfig.standardBridge;
-        BRIDGE_MESSENGER = pkgInit.bridgeConfig.messenger;
-        LOCAL_RELAYER = pkgInit.bridgeConfig.localRelayer;
-        PEER_RELAYER = pkgInit.bridgeConfig.peerRelayer;
+        BRIDGE_TOKEN_REGISTRY = pkgInit.bridgeTokenRegistry;
+        STANDARD_BRIDGE = pkgInit.standardBridge;
+        BRIDGE_MESSENGER = pkgInit.messenger;
+        LOCAL_RELAYER = pkgInit.localRelayer;
+        PEER_RELAYER = pkgInit.peerRelayer;
         WETH_RICH_VAULT_PKG = pkgInit.wethRichVaultPkg;
         PROTOCOL_NFT_VAULT_PKG = pkgInit.protocolNFTVaultPkg;
         RICHIR_PKG = pkgInit.richirPkg;
