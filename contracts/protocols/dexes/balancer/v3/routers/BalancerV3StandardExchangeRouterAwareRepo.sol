@@ -13,30 +13,30 @@ library BalancerV3StandardExchangeRouterAwareRepo {
         IBalancerV3StandardExchangeRouterProxy balancerV3StandardExchangeRouter;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, IBalancerV3StandardExchangeRouterProxy router_) internal {
-        layout.balancerV3StandardExchangeRouter = router_;
+    function _initialize(Storage storage layoutStruct, IBalancerV3StandardExchangeRouterProxy router_) internal {
+        layoutStruct.balancerV3StandardExchangeRouter = router_;
     }
 
     function _initialize(IBalancerV3StandardExchangeRouterProxy router_) internal {
-        _initialize(_layout(), router_);
+        _initialize(_layoutStruct(), router_);
     }
 
-    function _balancerV3StandardExchangeRouter(Storage storage layout)
+    function _balancerV3StandardExchangeRouter(Storage storage layoutStruct)
         internal
         view
         returns (IBalancerV3StandardExchangeRouterProxy router_)
     {
-        return layout.balancerV3StandardExchangeRouter;
+        return layoutStruct.balancerV3StandardExchangeRouter;
     }
 
     function _balancerV3StandardExchangeRouter()
@@ -44,6 +44,6 @@ library BalancerV3StandardExchangeRouterAwareRepo {
         view
         returns (IBalancerV3StandardExchangeRouterProxy router_)
     {
-        return _balancerV3StandardExchangeRouter(_layout());
+        return _balancerV3StandardExchangeRouter(_layoutStruct());
     }
 }

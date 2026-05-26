@@ -73,6 +73,7 @@ import {
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
 import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
@@ -159,7 +160,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     IRICHIRDFPkg internal richirDFPkg;
     IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
     PoolManager internal poolManager;
     SingleVaultDetfUniswapV4LiquiditySeeder internal liquiditySeeder;

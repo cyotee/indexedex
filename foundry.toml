@@ -16,7 +16,12 @@ ignored_error_codes = [
     3860,
     5574,
     2072,
-    2968  # Invalid NatSpec custom tag (upstream Crane issue with @custom:topic0)
+    # Invalid NatSpec custom tag (upstream Crane issue with @custom:topic0)
+    2968,
+    # Function state mutability can be restricted to pure
+    2018,
+    # Unused function parameter. Remove or comment out the variable name to silence this warning.
+    5667
 ]
 # block_gas_limit = "9223372036854775807"
 # evm_version = 'prague'
@@ -58,7 +63,12 @@ exclude_lints = [
     "unsafe-cheatcode",
     "named-struct-fields"
 ]
-ignore = ["lib/daosys/lib/crane/"]
+ignore = [
+    "lib/daosys/lib/crane/",
+    "contracts/vaults/basic/BasicVaultErrors.sol",
+    "contracts/vaults/seigniorage/nft/SeigniorageBondNFTFacet.sol",
+    "test/foundry/fork/sepolia/protocol/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol"
+]
 
 [rpc_endpoints]
 local = "http://127.0.0.1:8545"

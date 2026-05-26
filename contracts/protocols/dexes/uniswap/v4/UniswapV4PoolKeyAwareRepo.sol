@@ -16,78 +16,78 @@ library UniswapV4PoolKeyAwareRepo {
         PoolId poolId;
     }
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot_
+            layoutStruct.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, PoolKey memory poolKey_) internal {
-        layout.poolKey = poolKey_;
-        layout.poolId = poolKey_.toId();
+    function _initialize(Storage storage layoutStruct, PoolKey memory poolKey_) internal {
+        layoutStruct.poolKey = poolKey_;
+        layoutStruct.poolId = poolKey_.toId();
     }
 
     function _initialize(PoolKey memory poolKey_) internal {
-        _initialize(_layout(), poolKey_);
+        _initialize(_layoutStruct(), poolKey_);
     }
 
-    function _poolKey(Storage storage layout) internal view returns (PoolKey memory poolKey_) {
-        return layout.poolKey;
+    function _poolKey(Storage storage layoutStruct) internal view returns (PoolKey memory poolKey_) {
+        return layoutStruct.poolKey;
     }
 
     function _poolKey() internal view returns (PoolKey memory poolKey_) {
-        return _poolKey(_layout());
+        return _poolKey(_layoutStruct());
     }
 
-    function _poolId(Storage storage layout) internal view returns (PoolId poolId_) {
-        return layout.poolId;
+    function _poolId(Storage storage layoutStruct) internal view returns (PoolId poolId_) {
+        return layoutStruct.poolId;
     }
 
     function _poolId() internal view returns (PoolId poolId_) {
-        return _poolId(_layout());
+        return _poolId(_layoutStruct());
     }
 
-    function _currency0(Storage storage layout) internal view returns (Currency currency0_) {
-        return layout.poolKey.currency0;
+    function _currency0(Storage storage layoutStruct) internal view returns (Currency currency0_) {
+        return layoutStruct.poolKey.currency0;
     }
 
     function _currency0() internal view returns (Currency currency0_) {
-        return _currency0(_layout());
+        return _currency0(_layoutStruct());
     }
 
-    function _currency1(Storage storage layout) internal view returns (Currency currency1_) {
-        return layout.poolKey.currency1;
+    function _currency1(Storage storage layoutStruct) internal view returns (Currency currency1_) {
+        return layoutStruct.poolKey.currency1;
     }
 
     function _currency1() internal view returns (Currency currency1_) {
-        return _currency1(_layout());
+        return _currency1(_layoutStruct());
     }
 
-    function _fee(Storage storage layout) internal view returns (uint24 fee_) {
-        return layout.poolKey.fee;
+    function _fee(Storage storage layoutStruct) internal view returns (uint24 fee_) {
+        return layoutStruct.poolKey.fee;
     }
 
     function _fee() internal view returns (uint24 fee_) {
-        return _fee(_layout());
+        return _fee(_layoutStruct());
     }
 
-    function _tickSpacing(Storage storage layout) internal view returns (int24 tickSpacing_) {
-        return layout.poolKey.tickSpacing;
+    function _tickSpacing(Storage storage layoutStruct) internal view returns (int24 tickSpacing_) {
+        return layoutStruct.poolKey.tickSpacing;
     }
 
     function _tickSpacing() internal view returns (int24 tickSpacing_) {
-        return _tickSpacing(_layout());
+        return _tickSpacing(_layoutStruct());
     }
 
-    function _hooks(Storage storage layout) internal view returns (IHooks hooks_) {
-        return layout.poolKey.hooks;
+    function _hooks(Storage storage layoutStruct) internal view returns (IHooks hooks_) {
+        return layoutStruct.poolKey.hooks;
     }
 
     function _hooks() internal view returns (IHooks hooks_) {
-        return _hooks(_layout());
+        return _hooks(_layoutStruct());
     }
 }

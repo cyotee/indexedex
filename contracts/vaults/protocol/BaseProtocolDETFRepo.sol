@@ -34,7 +34,7 @@ import {
  * @title BaseProtocolDETFRepo
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Storage library for Protocol DETF vault state.
- * @dev Follows the Crane Repo pattern with dual _layout() functions.
+ * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
  *
  *      Key differences from SeigniorageDETF:
  *      - WETH-only minting (not reserve vault token)
@@ -128,14 +128,14 @@ library BaseProtocolDETFRepo {
     /*                           Layout Functions                             */
     /* ---------------------------------------------------------------------- */
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
-            layout_.slot := slot_
+            layoutStruct_.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -143,22 +143,22 @@ library BaseProtocolDETFRepo {
     /* ---------------------------------------------------------------------- */
 
     function _initialize(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         IVaultFeeOracleQuery feeOracle_,
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter_,
         ProtocolConfig memory protocolConfig_,
         uint256 mintThreshold_,
         uint256 burnThreshold_
     ) internal {
-        layout_.feeOracle = feeOracle_;
-        layout_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
-        layout_.protocolConfig = protocolConfig_;
-        layout_.richToken = IERC20(protocolConfig_.richToken);
-        layout_.wethToken = IERC20(protocolConfig_.wethToken);
-        layout_.mintThreshold = mintThreshold_;
-        layout_.burnThreshold = burnThreshold_;
-        layout_.acceptedBondTokens._add(protocolConfig_.richToken);
-        layout_.acceptedBondTokens._add(protocolConfig_.wethToken);
+        layoutStruct_.feeOracle = feeOracle_;
+        layoutStruct_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
+        layoutStruct_.protocolConfig = protocolConfig_;
+        layoutStruct_.richToken = IERC20(protocolConfig_.richToken);
+        layoutStruct_.wethToken = IERC20(protocolConfig_.wethToken);
+        layoutStruct_.mintThreshold = mintThreshold_;
+        layoutStruct_.burnThreshold = burnThreshold_;
+        layoutStruct_.acceptedBondTokens._add(protocolConfig_.richToken);
+        layoutStruct_.acceptedBondTokens._add(protocolConfig_.wethToken);
     }
 
     function _initialize(
@@ -168,20 +168,20 @@ library BaseProtocolDETFRepo {
         uint256 mintThreshold_,
         uint256 burnThreshold_
     ) internal {
-        _initialize(_layout(), feeOracle_, balancerV3PrepayRouter_, protocolConfig_, mintThreshold_, burnThreshold_);
+        _initialize(_layoutStruct(), feeOracle_, balancerV3PrepayRouter_, protocolConfig_, mintThreshold_, burnThreshold_);
     }
 
     function _initializeExchangeVaults(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         IStandardExchange chirWethVault_,
         IStandardExchange richChirVault_,
         IERC20 chirWethRateTarget_,
         IERC20 richChirRateTarget_
     ) internal {
-        layout_.chirWethVault = chirWethVault_;
-        layout_.richChirVault = richChirVault_;
-        layout_.chirWethRateTarget = chirWethRateTarget_;
-        layout_.richChirRateTarget = richChirRateTarget_;
+        layoutStruct_.chirWethVault = chirWethVault_;
+        layoutStruct_.richChirVault = richChirVault_;
+        layoutStruct_.chirWethRateTarget = chirWethRateTarget_;
+        layoutStruct_.richChirRateTarget = richChirRateTarget_;
     }
 
     function _initializeExchangeVaults(
@@ -190,11 +190,11 @@ library BaseProtocolDETFRepo {
         IERC20 chirWethRateTarget_,
         IERC20 richChirRateTarget_
     ) internal {
-        _initializeExchangeVaults(_layout(), chirWethVault_, richChirVault_, chirWethRateTarget_, richChirRateTarget_);
+        _initializeExchangeVaults(_layoutStruct(), chirWethVault_, richChirVault_, chirWethRateTarget_, richChirRateTarget_);
     }
 
     function _initializeReservePool(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         uint256 chirWethVaultIndex_,
         uint256 chirWethVaultWeight_,
         uint256 richChirVaultIndex_,
@@ -211,14 +211,14 @@ library BaseProtocolDETFRepo {
             revert IProtocolDETFErrors.InvalidReservePoolIndices(chirWethVaultIndex_, richChirVaultIndex_);
         }
 
-        layout_.chirWethVaultIndex = chirWethVaultIndex_;
-        layout_.chirWethVaultWeight = chirWethVaultWeight_;
-        layout_.richChirVaultIndex = richChirVaultIndex_;
-        layout_.richChirVaultWeight = richChirVaultWeight_;
-        layout_.protocolNFTVault = protocolNFTVault_;
-        layout_.richirToken = richirToken_;
-        layout_.protocolNFTId = protocolNFTId_;
-        layout_.isReservePoolInitialized = true;
+        layoutStruct_.chirWethVaultIndex = chirWethVaultIndex_;
+        layoutStruct_.chirWethVaultWeight = chirWethVaultWeight_;
+        layoutStruct_.richChirVaultIndex = richChirVaultIndex_;
+        layoutStruct_.richChirVaultWeight = richChirVaultWeight_;
+        layoutStruct_.protocolNFTVault = protocolNFTVault_;
+        layoutStruct_.richirToken = richirToken_;
+        layoutStruct_.protocolNFTId = protocolNFTId_;
+        layoutStruct_.isReservePoolInitialized = true;
     }
 
     function _initializeReservePool(
@@ -231,7 +231,7 @@ library BaseProtocolDETFRepo {
         uint256 protocolNFTId_
     ) internal {
         _initializeReservePool(
-            _layout(),
+            _layoutStruct(),
             chirWethVaultIndex_,
             chirWethVaultWeight_,
             richChirVaultIndex_,
@@ -246,231 +246,231 @@ library BaseProtocolDETFRepo {
     /*                         Reserve Pool State                             */
     /* ---------------------------------------------------------------------- */
 
-    function _isReservePoolInitialized(Storage storage layout_) internal view returns (bool) {
-        return layout_.isReservePoolInitialized;
+    function _isReservePoolInitialized(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.isReservePoolInitialized;
     }
 
     function _isReservePoolInitialized() internal view returns (bool) {
-        return _isReservePoolInitialized(_layout());
+        return _isReservePoolInitialized(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                              Tokens                                    */
     /* ---------------------------------------------------------------------- */
 
-    function _richToken(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.richToken;
+    function _richToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.richToken;
     }
 
     function _richToken() internal view returns (IERC20) {
-        return _richToken(_layout());
+        return _richToken(_layoutStruct());
     }
 
-    function _richirToken(Storage storage layout_) internal view returns (IRICHIR) {
-        return layout_.richirToken;
+    function _richirToken(Storage storage layoutStruct_) internal view returns (IRICHIR) {
+        return layoutStruct_.richirToken;
     }
 
     function _richirToken() internal view returns (IRICHIR) {
-        return _richirToken(_layout());
+        return _richirToken(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.wethToken;
+    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.wethToken;
     }
 
     function _wethToken() internal view returns (IERC20) {
-        return _wethToken(_layout());
+        return _wethToken(_layoutStruct());
     }
 
-    function _protocolConfig(Storage storage layout_) internal view returns (ProtocolConfig memory) {
-        return layout_.protocolConfig;
+    function _protocolConfig(Storage storage layoutStruct_) internal view returns (ProtocolConfig memory) {
+        return layoutStruct_.protocolConfig;
     }
 
     function _protocolConfig() internal view returns (ProtocolConfig memory) {
-        return _protocolConfig(_layout());
+        return _protocolConfig(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Accepted Bond Tokens                           */
     /* ---------------------------------------------------------------------- */
 
-    function _acceptedBondTokens(Storage storage layout_) internal view returns (address[] memory) {
-        return layout_.acceptedBondTokens._asArray();
+    function _acceptedBondTokens(Storage storage layoutStruct_) internal view returns (address[] memory) {
+        return layoutStruct_.acceptedBondTokens._asArray();
     }
 
     function _acceptedBondTokens() internal view returns (address[] memory) {
-        return _acceptedBondTokens(_layout());
+        return _acceptedBondTokens(_layoutStruct());
     }
 
-    function _isAcceptedBondToken(Storage storage layout_, address token_) internal view returns (bool) {
-        return layout_.acceptedBondTokens._contains(token_);
+    function _isAcceptedBondToken(Storage storage layoutStruct_, address token_) internal view returns (bool) {
+        return layoutStruct_.acceptedBondTokens._contains(token_);
     }
 
     function _isAcceptedBondToken(address token_) internal view returns (bool) {
-        return _isAcceptedBondToken(_layout(), token_);
+        return _isAcceptedBondToken(_layoutStruct(), token_);
     }
 
-    function _addAcceptedBondToken(Storage storage layout_, address token_) internal returns (bool) {
-        return layout_.acceptedBondTokens._add(token_);
+    function _addAcceptedBondToken(Storage storage layoutStruct_, address token_) internal returns (bool) {
+        return layoutStruct_.acceptedBondTokens._add(token_);
     }
 
     function _addAcceptedBondToken(address token_) internal returns (bool) {
-        return _addAcceptedBondToken(_layout(), token_);
+        return _addAcceptedBondToken(_layoutStruct(), token_);
     }
 
-    function _removeAcceptedBondToken(Storage storage layout_, address token_) internal {
-        layout_.acceptedBondTokens._remove(token_);
+    function _removeAcceptedBondToken(Storage storage layoutStruct_, address token_) internal {
+        layoutStruct_.acceptedBondTokens._remove(token_);
     }
 
     function _removeAcceptedBondToken(address token_) internal {
-        _removeAcceptedBondToken(_layout(), token_);
+        _removeAcceptedBondToken(_layoutStruct(), token_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                              Vaults                                    */
     /* ---------------------------------------------------------------------- */
 
-    function _chirWethVault(Storage storage layout_) internal view returns (IStandardExchange) {
-        return layout_.chirWethVault;
+    function _chirWethVault(Storage storage layoutStruct_) internal view returns (IStandardExchange) {
+        return layoutStruct_.chirWethVault;
     }
 
     function _chirWethVault() internal view returns (IStandardExchange) {
-        return _chirWethVault(_layout());
+        return _chirWethVault(_layoutStruct());
     }
 
-    function _richChirVault(Storage storage layout_) internal view returns (IStandardExchange) {
-        return layout_.richChirVault;
+    function _richChirVault(Storage storage layoutStruct_) internal view returns (IStandardExchange) {
+        return layoutStruct_.richChirVault;
     }
 
     function _richChirVault() internal view returns (IStandardExchange) {
-        return _richChirVault(_layout());
+        return _richChirVault(_layoutStruct());
     }
 
-    function _chirWethRateTarget(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.chirWethRateTarget;
+    function _chirWethRateTarget(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.chirWethRateTarget;
     }
 
     function _chirWethRateTarget() internal view returns (IERC20) {
-        return _chirWethRateTarget(_layout());
+        return _chirWethRateTarget(_layoutStruct());
     }
 
-    function _richChirRateTarget(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.richChirRateTarget;
+    function _richChirRateTarget(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.richChirRateTarget;
     }
 
     function _richChirRateTarget() internal view returns (IERC20) {
-        return _richChirRateTarget(_layout());
+        return _richChirRateTarget(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Pool Indices & Weights                         */
     /* ---------------------------------------------------------------------- */
 
-    function _chirWethVaultIndex(Storage storage layout_) internal view returns (uint256) {
-        return layout_.chirWethVaultIndex;
+    function _chirWethVaultIndex(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.chirWethVaultIndex;
     }
 
     function _chirWethVaultIndex() internal view returns (uint256) {
-        return _chirWethVaultIndex(_layout());
+        return _chirWethVaultIndex(_layoutStruct());
     }
 
-    function _chirWethVaultWeight(Storage storage layout_) internal view returns (uint256) {
-        return layout_.chirWethVaultWeight;
+    function _chirWethVaultWeight(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.chirWethVaultWeight;
     }
 
     function _chirWethVaultWeight() internal view returns (uint256) {
-        return _chirWethVaultWeight(_layout());
+        return _chirWethVaultWeight(_layoutStruct());
     }
 
-    function _richChirVaultIndex(Storage storage layout_) internal view returns (uint256) {
-        return layout_.richChirVaultIndex;
+    function _richChirVaultIndex(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.richChirVaultIndex;
     }
 
     function _richChirVaultIndex() internal view returns (uint256) {
-        return _richChirVaultIndex(_layout());
+        return _richChirVaultIndex(_layoutStruct());
     }
 
-    function _richChirVaultWeight(Storage storage layout_) internal view returns (uint256) {
-        return layout_.richChirVaultWeight;
+    function _richChirVaultWeight(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.richChirVaultWeight;
     }
 
     function _richChirVaultWeight() internal view returns (uint256) {
-        return _richChirVaultWeight(_layout());
+        return _richChirVaultWeight(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                              NFT Vault                                 */
     /* ---------------------------------------------------------------------- */
 
-    function _protocolNFTVault(Storage storage layout_) internal view returns (IProtocolNFTVault) {
-        return layout_.protocolNFTVault;
+    function _protocolNFTVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault) {
+        return layoutStruct_.protocolNFTVault;
     }
 
     function _protocolNFTVault() internal view returns (IProtocolNFTVault) {
-        return _protocolNFTVault(_layout());
+        return _protocolNFTVault(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layout_) internal view returns (uint256) {
-        return layout_.protocolNFTId;
+    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.protocolNFTId;
     }
 
     function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layout());
+        return _protocolNFTId(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                           Fee Oracle                                   */
     /* ---------------------------------------------------------------------- */
 
-    function _feeOracle(Storage storage layout_) internal view returns (IVaultFeeOracleQuery) {
-        return layout_.feeOracle;
+    function _feeOracle(Storage storage layoutStruct_) internal view returns (IVaultFeeOracleQuery) {
+        return layoutStruct_.feeOracle;
     }
 
     function _feeOracle() internal view returns (IVaultFeeOracleQuery) {
-        return _feeOracle(_layout());
+        return _feeOracle(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                       Balancer V3 Prepay Router                        */
     /* ---------------------------------------------------------------------- */
 
-    function _balancerV3PrepayRouter(Storage storage layout_)
+    function _balancerV3PrepayRouter(Storage storage layoutStruct_)
         internal
         view
         returns (IBalancerV3StandardExchangeRouterPrepay)
     {
-        return layout_.balancerV3PrepayRouter;
+        return layoutStruct_.balancerV3PrepayRouter;
     }
 
     function _balancerV3PrepayRouter() internal view returns (IBalancerV3StandardExchangeRouterPrepay) {
-        return _balancerV3PrepayRouter(_layout());
+        return _balancerV3PrepayRouter(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                          Price Thresholds                              */
     /* ---------------------------------------------------------------------- */
 
-    function _mintThreshold(Storage storage layout_) internal view returns (uint256) {
-        return layout_.mintThreshold;
+    function _mintThreshold(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.mintThreshold;
     }
 
     function _mintThreshold() internal view returns (uint256) {
-        return _mintThreshold(_layout());
+        return _mintThreshold(_layoutStruct());
     }
 
-    function _burnThreshold(Storage storage layout_) internal view returns (uint256) {
-        return layout_.burnThreshold;
+    function _burnThreshold(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.burnThreshold;
     }
 
     function _burnThreshold() internal view returns (uint256) {
-        return _burnThreshold(_layout());
+        return _burnThreshold(_layoutStruct());
     }
 
-    function _seigniorageIncentivePercentagePPM(Storage storage layout_) internal view returns (uint256) {
-        return layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+    function _seigniorageIncentivePercentagePPM(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
     }
 
     function _seigniorageIncentivePercentagePPM() internal view returns (uint256) {
-        return _seigniorageIncentivePercentagePPM(_layout());
+        return _seigniorageIncentivePercentagePPM(_layoutStruct());
     }
 }

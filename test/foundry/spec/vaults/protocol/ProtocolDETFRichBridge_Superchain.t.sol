@@ -172,7 +172,7 @@ contract TestProtocolDETFBridgeHarness {
         view
         returns (IProtocolDETF.BridgeQuote memory quote)
     {
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
 
         if (
             address(bridgeLayout.messenger) == address(0)
@@ -219,7 +219,7 @@ contract TestProtocolDETFBridgeHarness {
             revert IProtocolDETFErrors.ZeroAmount();
         }
 
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
         if (
             address(bridgeLayout.messenger) == address(0)
                 || address(bridgeLayout.standardBridge) == address(0)

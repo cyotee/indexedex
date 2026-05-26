@@ -41,7 +41,7 @@ contract AerodromeStandardExchangeInTarget is
         view
         returns (uint256 amountOut)
     {
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         IAerodromeRouter aerodromeRouter = AerodromeRouterAwareRepo._aerodromeRouter();
         IPool pool = IPool(address(ERC4626Repo._reserveAsset()));
@@ -57,7 +57,7 @@ contract AerodromeStandardExchangeInTarget is
             return pool.getAmountOut(amountIn, address(tokenIn));
         }
 
-        AerodromePoolMetadataRepo.Storage storage aeroPoolMeta = AerodromePoolMetadataRepo._layout();
+        AerodromePoolMetadataRepo.Storage storage aeroPoolMeta = AerodromePoolMetadataRepo._layoutStruct();
 
         /* ------------------------------------------------------------------ */
         /*                         Pass-through ZapIn                         */
@@ -249,7 +249,7 @@ contract AerodromeStandardExchangeInTarget is
         bool pretransferred,
         uint256 deadline
     ) external lock returns (uint256 amountOut) {
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         IAerodromeRouter aerodromeRouter = AerodromeRouterAwareRepo._aerodromeRouter();
         IPool pool = IPool(address(ERC4626Repo._reserveAsset()));
 
@@ -349,7 +349,7 @@ contract AerodromeStandardExchangeInTarget is
             vs.vaultTotalShares = ERC20Repo._totalSupply();
             vs.decimalOffset = ERC4626Repo._decimalOffset();
 
-            amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layout(), vs.vaultLpReserve, amountIn);
+            amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layoutStruct(), vs.vaultLpReserve, amountIn);
             amountOut =
                 BetterMath._convertToSharesDown(amountIn, vs.vaultLpReserve, vs.vaultTotalShares, vs.decimalOffset);
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);

@@ -78,7 +78,7 @@ import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDE
 import {IBaseProtocolDETFRichirRedeem} from "contracts/interfaces/IBaseProtocolDETFRichirRedeem.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {BaseProtocolDETFRichirRedeemFacet} from "contracts/vaults/protocol/BaseProtocolDETFRichirRedeemFacet.sol";
@@ -130,8 +130,8 @@ interface IBaseProtocolDETFDFPkg is IDiamondFactoryPackage {
 
         /// @notice Package used to deploy the RICH token during DETF init.
         IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg;
-        /// @notice Package used to deploy the Protocol NFT Vault during DETF init.
-        IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
+        /// @notice Package used to deploy the shared Self NFT inventory vault during DETF init.
+        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
         /// @notice Package used to deploy the RICHIR rebasing token during DETF init.
         IRICHIRDFPkg richirPkg;
 
@@ -207,7 +207,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     IAerodromeStandardExchangeDFPkg immutable AERODROME_STANDARD_EXCHANGE_DFPKG;
-    IProtocolNFTVaultDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
+    IDetfSelfNftInventoryDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
     IRICHIRDFPkg immutable RICHIR_PKG;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
 
@@ -535,7 +535,7 @@ contract BaseProtocolDETFDFPkg is IBaseProtocolDETFDFPkg, IStandardVaultPkg {
     }
 
     function _postDeployProxyContext(address expectedProxy) internal {
-        BaseProtocolDETFRepo.Storage storage detfStorage = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage detfStorage = BaseProtocolDETFRepo._layoutStruct();
         BaseProtocolDETFRepo.ProtocolConfig memory cfg = BaseProtocolDETFRepo._protocolConfig(detfStorage);
 
         _fundProxyAndDeployExchangeVaults(detfStorage, expectedProxy, cfg);

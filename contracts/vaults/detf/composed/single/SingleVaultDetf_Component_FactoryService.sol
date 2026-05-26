@@ -22,7 +22,7 @@ import {
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {ISingleVaultDetfDFPkg} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
 
@@ -54,7 +54,7 @@ library SingleVaultDetf_Component_FactoryService {
         address localRelayer;
         address peerRelayer;
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
-        IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
+        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;

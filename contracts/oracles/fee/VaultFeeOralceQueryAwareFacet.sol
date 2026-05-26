@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQueryAware.sol";
+import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 
-contract VaultFeeOralceQueryAwareFacet is IVautlFeeOracleQueryAware, IFacet {
+contract VaultFeeOralceQueryAwareFacet is IVaultFeeOracleQueryAware, IFacet {
     /* ---------------------------------------------------------------------- */
     /*                                 IFacet                                 */
     /* ---------------------------------------------------------------------- */
@@ -16,13 +16,13 @@ contract VaultFeeOralceQueryAwareFacet is IVautlFeeOracleQueryAware, IFacet {
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
         interfaces = new bytes4[](1);
-        interfaces[0] = type(IVautlFeeOracleQueryAware).interfaceId;
+        interfaces[0] = type(IVaultFeeOracleQueryAware).interfaceId;
         return interfaces;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](1);
-        funcs[0] = IVautlFeeOracleQueryAware.vaultFeeOracleQuery.selector;
+        funcs[0] = IVaultFeeOracleQueryAware.vaultFeeOracleQuery.selector;
     }
 
     function facetMetadata()

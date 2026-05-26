@@ -30,6 +30,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
+import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {EthereumProtocolDETFCommon} from "contracts/vaults/protocol/EthereumProtocolDETFCommon.sol";
 import {BaseProtocolDETFPreviewHelpers} from "contracts/vaults/protocol/BaseProtocolDETFPreviewHelpers.sol";
@@ -73,39 +74,39 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		view
 		returns (uint256 amountIn_)
 	{
-		BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+		BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
-		if (_isWethToken(layout, tokenIn_) && _isChirToken(tokenOut_)) {
+		if (_isWethToken(layoutStruct, tokenIn_) && _isChirToken(tokenOut_)) {
 			PoolReserves memory reserves;
-			_loadPoolReserves(layout, reserves);
+			_loadPoolReserves(layoutStruct, reserves);
 			uint256 syntheticPrice = _calcSyntheticPrice(reserves);
-			if (!_isMintingAllowed(layout, syntheticPrice)) {
-				revert MintingNotAllowed(syntheticPrice, layout.mintThreshold);
+			if (!_isMintingAllowed(layoutStruct, syntheticPrice)) {
+				revert MintingNotAllowed(syntheticPrice, layoutStruct.mintThreshold);
 			}
-			return _calcRequiredWethForExactChir(layout, amountOut_, reserves);
+			return _calcRequiredWethForExactChir(layoutStruct, amountOut_, reserves);
 		}
 
-		if (_isChirToken(tokenIn_) && _isRichToken(layout, tokenOut_)) {
-			return layout.richChirVault.previewExchangeOut(tokenIn_, tokenOut_, amountOut_);
+		if (_isChirToken(tokenIn_) && _isRichToken(layoutStruct, tokenOut_)) {
+			return layoutStruct.richChirVault.previewExchangeOut(tokenIn_, tokenOut_, amountOut_);
 		}
 
-		if (_isRichirToken(layout, tokenIn_) && _isWethToken(layout, tokenOut_)) {
+		if (_isRichirToken(layoutStruct, tokenIn_) && _isWethToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
 
-		if (_isWethToken(layout, tokenIn_) && _isRichToken(layout, tokenOut_)) {
-			return _previewWethToRichExact(layout, amountOut_);
+		if (_isWethToken(layoutStruct, tokenIn_) && _isRichToken(layoutStruct, tokenOut_)) {
+			return _previewWethToRichExact(layoutStruct, amountOut_);
 		}
 
-		if (_isRichToken(layout, tokenIn_) && _isChirToken(tokenOut_)) {
-			return _previewRichToChirExact(layout, amountOut_);
+		if (_isRichToken(layoutStruct, tokenIn_) && _isChirToken(tokenOut_)) {
+			return _previewRichToChirExact(layoutStruct, amountOut_);
 		}
 
-		if (_isRichToken(layout, tokenIn_) && _isRichirToken(layout, tokenOut_)) {
+		if (_isRichToken(layoutStruct, tokenIn_) && _isRichirToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
 
-		if (_isWethToken(layout, tokenIn_) && _isRichirToken(layout, tokenOut_)) {
+		if (_isWethToken(layoutStruct, tokenIn_) && _isRichirToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
 
@@ -125,9 +126,9 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			revert DeadlineExceeded(deadline_, block.timestamp);
 		}
 
-		BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+		BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 		PoolReserves memory reserves;
-		_loadPoolReserves(layout, reserves);
+		_loadPoolReserves(layoutStruct, reserves);
 		uint256 syntheticPrice = _calcSyntheticPrice(reserves);
 
 		ExchangeOutParams memory params = ExchangeOutParams({
@@ -141,25 +142,25 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			syntheticPrice: syntheticPrice
 		});
 
-		if (_isWethToken(layout, tokenIn_) && _isChirToken(tokenOut_)) {
-			return _executeMintExactChir(layout, params);
+		if (_isWethToken(layoutStruct, tokenIn_) && _isChirToken(tokenOut_)) {
+			return _executeMintExactChir(layoutStruct, params);
 		}
-		if (_isChirToken(tokenIn_) && _isRichToken(layout, tokenOut_)) {
-			return _executeChirToRichExact(layout, params);
+		if (_isChirToken(tokenIn_) && _isRichToken(layoutStruct, tokenOut_)) {
+			return _executeChirToRichExact(layoutStruct, params);
 		}
-		if (_isRichirToken(layout, tokenIn_) && _isWethToken(layout, tokenOut_)) {
+		if (_isRichirToken(layoutStruct, tokenIn_) && _isWethToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
-		if (_isWethToken(layout, tokenIn_) && _isRichToken(layout, tokenOut_)) {
-			return _executeWethToRichExact(layout, params);
+		if (_isWethToken(layoutStruct, tokenIn_) && _isRichToken(layoutStruct, tokenOut_)) {
+			return _executeWethToRichExact(layoutStruct, params);
 		}
-		if (_isRichToken(layout, tokenIn_) && _isChirToken(tokenOut_)) {
-			return _executeRichToChirExact(layout, params);
+		if (_isRichToken(layoutStruct, tokenIn_) && _isChirToken(tokenOut_)) {
+			return _executeRichToChirExact(layoutStruct, params);
 		}
-		if (_isRichToken(layout, tokenIn_) && _isRichirToken(layout, tokenOut_)) {
+		if (_isRichToken(layoutStruct, tokenIn_) && _isRichirToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
-		if (_isWethToken(layout, tokenIn_) && _isRichirToken(layout, tokenOut_)) {
+		if (_isWethToken(layoutStruct, tokenIn_) && _isRichirToken(layoutStruct, tokenOut_)) {
 			revert IStandardExchangeErrors.RouteNotSupported(address(tokenIn_), address(tokenOut_), msg.sig);
 		}
 
@@ -167,7 +168,7 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 	}
 
 	function _calcRequiredWethForExactChir(
-		BaseProtocolDETFRepo.Storage storage layout_,
+		BaseProtocolDETFRepo.Storage storage layoutStruct_,
 		uint256 amountOut_,
 		PoolReserves memory reserves_
 	) internal view returns (uint256 amountIn_) {
@@ -176,12 +177,14 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		if (syntheticPrice <= ONE_WAD) {
 			amountIn_ = amountOut_;
 		} else {
-			uint256 incentivePercent = layout_._seigniorageIncentivePercentagePPM();
+			uint256 incentivePercent = layoutStruct_._seigniorageIncentivePercentagePPM();
 			uint256 full = 1e6;
 
 			if (incentivePercent == 0 || incentivePercent >= full * 2) {
 				amountIn_ = BetterMath._mulDiv(amountOut_, syntheticPrice, ONE_WAD, Math.Rounding.Ceil);
-				amountIn_ = amountIn_ + ((amountIn_ * PREVIEW_WETH_CHIR_BUFFER_BPS) / PREVIEW_BUFFER_DENOMINATOR);
+				amountIn_ = DETFPreviewLib._applyMarkupBps(
+					amountIn_, PREVIEW_WETH_CHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR
+				);
 				return amountIn_;
 			}
 
@@ -199,7 +202,7 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			amountIn_ = BetterMath._mulDiv(requiredBoostedWETH, full, boostFactor, Math.Rounding.Ceil);
 		}
 
-		amountIn_ = amountIn_ + ((amountIn_ * PREVIEW_WETH_CHIR_BUFFER_BPS) / PREVIEW_BUFFER_DENOMINATOR);
+		amountIn_ = DETFPreviewLib._applyMarkupBps(amountIn_, PREVIEW_WETH_CHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR);
 	}
 
 	function _calcRequiredWethForExactChirExec(uint256 amountOut_, uint256 syntheticPrice_)
@@ -214,12 +217,12 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		}
 	}
 
-	function _executeMintExactChir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+	function _executeMintExactChir(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
 		internal
 		returns (uint256 amountIn_)
 	{
-		if (!_isMintingAllowed(layout_, p_.syntheticPrice)) {
-			revert MintingNotAllowed(p_.syntheticPrice, layout_.mintThreshold);
+		if (!_isMintingAllowed(layoutStruct_, p_.syntheticPrice)) {
+			revert MintingNotAllowed(p_.syntheticPrice, layoutStruct_.mintThreshold);
 		}
 
 		amountIn_ = _calcRequiredWethForExactChirExec(p_.amountOut, p_.syntheticPrice);
@@ -231,15 +234,15 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 
 		SeigniorageCalc memory calc;
 		calc.syntheticPrice = p_.syntheticPrice;
-		_calcSeigniorage(layout_, calc, actualIn);
+		_calcSeigniorage(layoutStruct_, calc, actualIn);
 
-		p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-		layout_.chirWethVault.exchangeIn(
-			p_.tokenIn, actualIn, IERC20(address(layout_.chirWethVault)), 0, address(this), true, p_.deadline
+		p_.tokenIn.safeTransfer(address(layoutStruct_.chirWethVault), actualIn);
+		layoutStruct_.chirWethVault.exchangeIn(
+			p_.tokenIn, actualIn, IERC20(address(layoutStruct_.chirWethVault)), 0, address(this), true, p_.deadline
 		);
 
 		if (calc.seigniorageTokens > 0) {
-			ERC20Repo._mint(address(layout_.protocolNFTVault), calc.seigniorageTokens);
+			ERC20Repo._mint(address(layoutStruct_.protocolNFTVault), calc.seigniorageTokens);
 		}
 
 		ERC20Repo._mint(p_.recipient, p_.amountOut);
@@ -249,21 +252,21 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		}
 	}
 
-	function _executeChirToRichExact(BaseProtocolDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+	function _executeChirToRichExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
 		internal
 		returns (uint256 amountIn_)
 	{
-		amountIn_ = layout_.richChirVault.previewExchangeOut(p_.tokenIn, p_.tokenOut, p_.amountOut);
+		amountIn_ = layoutStruct_.richChirVault.previewExchangeOut(p_.tokenIn, p_.tokenOut, p_.amountOut);
 		if (amountIn_ > p_.maxAmountIn) {
 			revert SlippageExceeded(p_.maxAmountIn, amountIn_);
 		}
 
 		_secureChirBurn(msg.sender, amountIn_, p_.pretransferred);
-		ERC20Repo._mint(address(layout_.richChirVault), amountIn_);
-		layout_.richChirVault.exchangeOut(p_.tokenIn, amountIn_, p_.tokenOut, p_.amountOut, p_.recipient, true, p_.deadline);
+		ERC20Repo._mint(address(layoutStruct_.richChirVault), amountIn_);
+		layoutStruct_.richChirVault.exchangeOut(p_.tokenIn, amountIn_, p_.tokenOut, p_.amountOut, p_.recipient, true, p_.deadline);
 	}
 
-	function _previewChirToWethExact(BaseProtocolDETFRepo.Storage storage layout_, uint256 exactWethOut_)
+	function _previewChirToWethExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 exactWethOut_)
 		internal
 		view
 		returns (uint256 chirIn_)
@@ -271,27 +274,27 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		if (exactWethOut_ == 0) return 0;
 
 		PoolReserves memory reserves;
-		_loadPoolReserves(layout_, reserves);
+		_loadPoolReserves(layoutStruct_, reserves);
 		uint256 syntheticPrice = _calcSyntheticPrice(reserves);
-		if (!_isBurningAllowed(layout_, syntheticPrice)) {
-			revert BurningNotAllowed(syntheticPrice, layout_.burnThreshold);
+		if (!_isBurningAllowed(layoutStruct_, syntheticPrice)) {
+			revert BurningNotAllowed(syntheticPrice, layoutStruct_.burnThreshold);
 		}
 
 		uint256 low = exactWethOut_;
 		uint256 high = exactWethOut_ * 2;
 		uint256 maxIterations = 128;
 		uint256 iterations = 0;
-		uint256 wethFromHigh = layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), high, layout_.wethToken);
+		uint256 wethFromHigh = layoutStruct_.chirWethVault.previewExchangeIn(IERC20(address(this)), high, layoutStruct_.wethToken);
 		while (wethFromHigh < exactWethOut_ && high < type(uint128).max && iterations < maxIterations) {
 			high = high * 2;
-			wethFromHigh = layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), high, layout_.wethToken);
+			wethFromHigh = layoutStruct_.chirWethVault.previewExchangeIn(IERC20(address(this)), high, layoutStruct_.wethToken);
 			++iterations;
 		}
 
 		iterations = 0;
 		while (low < high && iterations < maxIterations) {
 			uint256 mid = (low + high) / 2;
-			uint256 wethOut = layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), mid, layout_.wethToken);
+			uint256 wethOut = layoutStruct_.chirWethVault.previewExchangeIn(IERC20(address(this)), mid, layoutStruct_.wethToken);
 			if (wethOut < exactWethOut_) {
 				low = mid + 1;
 			} else {
@@ -301,62 +304,62 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		}
 
 		chirIn_ = low;
-		uint256 wethCheck = layout_.chirWethVault.previewExchangeIn(IERC20(address(this)), chirIn_, layout_.wethToken);
+		uint256 wethCheck = layoutStruct_.chirWethVault.previewExchangeIn(IERC20(address(this)), chirIn_, layoutStruct_.wethToken);
 		if (wethCheck < exactWethOut_) {
 			chirIn_ += 1;
 		}
 	}
 
-	function _executeChirToWethExact(BaseProtocolDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+	function _executeChirToWethExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
 		internal
 		returns (uint256 amountIn_)
 	{
-		if (!_isBurningAllowed(layout_, p_.syntheticPrice)) {
-			revert BurningNotAllowed(p_.syntheticPrice, layout_.burnThreshold);
+		if (!_isBurningAllowed(layoutStruct_, p_.syntheticPrice)) {
+			revert BurningNotAllowed(p_.syntheticPrice, layoutStruct_.burnThreshold);
 		}
 
-		amountIn_ = _previewChirToWethExact(layout_, p_.amountOut);
+		amountIn_ = _previewChirToWethExact(layoutStruct_, p_.amountOut);
 		if (amountIn_ > p_.maxAmountIn) {
 			revert SlippageExceeded(p_.maxAmountIn, amountIn_);
 		}
 
 		_secureChirBurn(msg.sender, amountIn_, p_.pretransferred);
-		ERC20Repo._mint(address(layout_.chirWethVault), amountIn_);
-		uint256 wethOut = layout_.chirWethVault.exchangeIn(
-			IERC20(address(this)), amountIn_, layout_.wethToken, p_.amountOut, p_.recipient, true, p_.deadline
+		ERC20Repo._mint(address(layoutStruct_.chirWethVault), amountIn_);
+		uint256 wethOut = layoutStruct_.chirWethVault.exchangeIn(
+			IERC20(address(this)), amountIn_, layoutStruct_.wethToken, p_.amountOut, p_.recipient, true, p_.deadline
 		);
 		if (wethOut < p_.amountOut) {
 			revert SlippageExceeded(p_.amountOut, wethOut);
 		}
 	}
 
-	function _previewWethToRichExact(BaseProtocolDETFRepo.Storage storage layout_, uint256 exactRichOut_)
+	function _previewWethToRichExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 exactRichOut_)
 		internal
 		view
 		returns (uint256 wethIn_)
 	{
 		if (exactRichOut_ == 0) return 0;
-		uint256 chirNeeded = layout_.richChirVault.previewExchangeOut(IERC20(address(this)), layout_.richToken, exactRichOut_);
-		wethIn_ = layout_.chirWethVault.previewExchangeOut(layout_.wethToken, IERC20(address(this)), chirNeeded);
+		uint256 chirNeeded = layoutStruct_.richChirVault.previewExchangeOut(IERC20(address(this)), layoutStruct_.richToken, exactRichOut_);
+		wethIn_ = layoutStruct_.chirWethVault.previewExchangeOut(layoutStruct_.wethToken, IERC20(address(this)), chirNeeded);
 	}
 
-	function _executeWethToRichExact(BaseProtocolDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+	function _executeWethToRichExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
 		internal
 		returns (uint256 amountIn_)
 	{
-		amountIn_ = _previewWethToRichExact(layout_, p_.amountOut);
+		amountIn_ = _previewWethToRichExact(layoutStruct_, p_.amountOut);
 		if (amountIn_ > p_.maxAmountIn) {
 			revert SlippageExceeded(p_.maxAmountIn, amountIn_);
 		}
 
-		uint256 actualIn = _secureTokenTransfer(layout_.wethToken, amountIn_, p_.pretransferred);
-		layout_.wethToken.safeTransfer(address(layout_.chirWethVault), actualIn);
-		uint256 chirOut = layout_.chirWethVault.exchangeIn(layout_.wethToken, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
-		IERC20(address(this)).safeTransfer(address(layout_.richChirVault), chirOut);
-		layout_.richChirVault.exchangeOut(IERC20(address(this)), chirOut, layout_.richToken, p_.amountOut, p_.recipient, true, p_.deadline);
+		uint256 actualIn = _secureTokenTransfer(layoutStruct_.wethToken, amountIn_, p_.pretransferred);
+		layoutStruct_.wethToken.safeTransfer(address(layoutStruct_.chirWethVault), actualIn);
+		uint256 chirOut = layoutStruct_.chirWethVault.exchangeIn(layoutStruct_.wethToken, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
+		IERC20(address(this)).safeTransfer(address(layoutStruct_.richChirVault), chirOut);
+		layoutStruct_.richChirVault.exchangeOut(IERC20(address(this)), chirOut, layoutStruct_.richToken, p_.amountOut, p_.recipient, true, p_.deadline);
 	}
 
-	function _previewRichToChirExact(BaseProtocolDETFRepo.Storage storage layout_, uint256 exactChirOut_)
+	function _previewRichToChirExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 exactChirOut_)
 		internal
 		view
 		returns (uint256 richIn_)
@@ -364,38 +367,38 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		if (exactChirOut_ == 0) return 0;
 
 		PoolReserves memory reserves;
-		_loadPoolReserves(layout_, reserves);
+		_loadPoolReserves(layoutStruct_, reserves);
 		uint256 syntheticPrice = _calcSyntheticPrice(reserves);
-		if (!_isMintingAllowed(layout_, syntheticPrice)) {
-			revert MintingNotAllowed(syntheticPrice, layout_.mintThreshold);
+		if (!_isMintingAllowed(layoutStruct_, syntheticPrice)) {
+			revert MintingNotAllowed(syntheticPrice, layoutStruct_.mintThreshold);
 		}
 
-		uint256 wethNeeded = _calcRequiredWethForExactChir(layout_, exactChirOut_, reserves);
-		uint256 chirNeeded = layout_.chirWethVault.previewExchangeOut(IERC20(address(this)), layout_.wethToken, wethNeeded);
-		richIn_ = layout_.richChirVault.previewExchangeOut(layout_.richToken, IERC20(address(this)), chirNeeded);
+		uint256 wethNeeded = _calcRequiredWethForExactChir(layoutStruct_, exactChirOut_, reserves);
+		uint256 chirNeeded = layoutStruct_.chirWethVault.previewExchangeOut(IERC20(address(this)), layoutStruct_.wethToken, wethNeeded);
+		richIn_ = layoutStruct_.richChirVault.previewExchangeOut(layoutStruct_.richToken, IERC20(address(this)), chirNeeded);
 	}
 
-	function _executeRichToChirExact(BaseProtocolDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+	function _executeRichToChirExact(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
 		internal
 		returns (uint256 amountIn_)
 	{
-		if (!_isMintingAllowed(layout_, p_.syntheticPrice)) {
-			revert MintingNotAllowed(p_.syntheticPrice, layout_.mintThreshold);
+		if (!_isMintingAllowed(layoutStruct_, p_.syntheticPrice)) {
+			revert MintingNotAllowed(p_.syntheticPrice, layoutStruct_.mintThreshold);
 		}
 
-		amountIn_ = _previewRichToChirExact(layout_, p_.amountOut);
+		amountIn_ = _previewRichToChirExact(layoutStruct_, p_.amountOut);
 		if (amountIn_ > p_.maxAmountIn) {
 			revert SlippageExceeded(p_.maxAmountIn, amountIn_);
 		}
 
-		uint256 actualIn = _secureTokenTransfer(layout_.richToken, amountIn_, p_.pretransferred);
-		layout_.richToken.safeTransfer(address(layout_.richChirVault), actualIn);
-		uint256 chirOut = layout_.richChirVault.exchangeIn(layout_.richToken, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
-		IERC20(address(this)).safeTransfer(address(layout_.chirWethVault), chirOut);
-		uint256 wethOut = layout_.chirWethVault.exchangeIn(IERC20(address(this)), chirOut, layout_.wethToken, 0, address(this), true, p_.deadline);
+		uint256 actualIn = _secureTokenTransfer(layoutStruct_.richToken, amountIn_, p_.pretransferred);
+		layoutStruct_.richToken.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
+		uint256 chirOut = layoutStruct_.richChirVault.exchangeIn(layoutStruct_.richToken, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
+		IERC20(address(this)).safeTransfer(address(layoutStruct_.chirWethVault), chirOut);
+		uint256 wethOut = layoutStruct_.chirWethVault.exchangeIn(IERC20(address(this)), chirOut, layoutStruct_.wethToken, 0, address(this), true, p_.deadline);
 
 		ExchangeOutParams memory mintParams = ExchangeOutParams({
-			tokenIn: layout_.wethToken,
+			tokenIn: layoutStruct_.wethToken,
 			maxAmountIn: wethOut,
 			tokenOut: IERC20(address(this)),
 			amountOut: p_.amountOut,
@@ -404,11 +407,11 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			deadline: p_.deadline,
 			syntheticPrice: p_.syntheticPrice
 		});
-		_executeMintExactChir(layout_, mintParams);
+		_executeMintExactChir(layoutStruct_, mintParams);
 	}
 
 	function _previewRichirOutFromVaultShares(
-		BaseProtocolDETFRepo.Storage storage layout_,
+		BaseProtocolDETFRepo.Storage storage layoutStruct_,
 		uint256 vaultIndex_,
 		uint256 vaultShares_
 	) internal view returns (uint256 richirOut_) {
@@ -423,10 +426,10 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		calc.reservePool = address(resPoolData.reservePool);
 		calc.reservePoolSwapFee = resPoolData.reservePoolSwapFee;
 		calc.weightsArray = resPoolData.weightsArray;
-		calc.chirWethVault = address(layout_.chirWethVault);
-		calc.richChirVault = address(layout_.richChirVault);
+		calc.chirWethVault = address(layoutStruct_.chirWethVault);
+		calc.richChirVault = address(layoutStruct_.richChirVault);
 		calc.chirToken = address(this);
-		calc.wethToken = address(layout_.wethToken);
+		calc.wethToken = address(layoutStruct_.wethToken);
 		calc.poolBalsRaw = preview_.balancesRaw;
 		calc.chirIdx = preview_.chirIdx;
 		calc.richIdx = preview_.richIdx;
@@ -434,8 +437,8 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 		calc.sharesAdded = vaultShares_;
 		calc.poolSupply = preview_.poolSupply;
 		calc.bptAdded = bptOut;
-		calc.newPosShares = layout_.protocolNFTVault.getPosition(layout_.protocolNFTId).originalShares + bptOut;
-		calc.newTotShares = layout_.richirToken.totalShares() + bptOut;
+		calc.newPosShares = layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + bptOut;
+		calc.newTotShares = layoutStruct_.richirToken.totalShares() + bptOut;
 
 		richirOut_ = BaseProtocolDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
 	}
@@ -461,7 +464,7 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			resPoolData.resPoolTotalSupply,
 			resPoolData.reservePoolSwapFee
 		);
-		bptOut = bptOut - ((bptOut * PREVIEW_BPT_BUFFER_BPS) / PREVIEW_BPT_BUFFER_DENOMINATOR);
+		bptOut = DETFPreviewLib._applyDiscountBps(bptOut, PREVIEW_BPT_BUFFER_BPS, PREVIEW_BPT_BUFFER_DENOMINATOR);
 
 		preview_.balancesRaw = balancesRaw;
 		preview_.bptOut = bptOut;
@@ -471,7 +474,7 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 	}
 
 	function _addToReservePoolForExactOut(
-		BaseProtocolDETFRepo.Storage storage layout_,
+		BaseProtocolDETFRepo.Storage storage layoutStruct_,
 		uint256 vaultShares_,
 		uint256 vaultIndex_
 	) internal returns (uint256 bptOut_) {
@@ -495,11 +498,11 @@ contract EthereumProtocolDETFExchangeOutTarget is EthereumProtocolDETFCommon, Re
 			resPoolData.reservePoolSwapFee
 		);
 
-		IERC20 vaultToken = vaultIndex_ == layout_.chirWethVaultIndex
-			? IERC20(address(layout_.chirWethVault))
-			: IERC20(address(layout_.richChirVault));
+		IERC20 vaultToken = vaultIndex_ == layoutStruct_.chirWethVaultIndex
+			? IERC20(address(layoutStruct_.chirWethVault))
+			: IERC20(address(layoutStruct_.richChirVault));
 		vaultToken.safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
-		layout_.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
+		layoutStruct_.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
 		ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
 	}
 

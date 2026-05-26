@@ -28,59 +28,59 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         view
         returns (uint256 amountOut)
     {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        if (_isWethToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return layout.wethRichVault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) {
+            return layoutStruct.wethRichVault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         }
 
-        if (_isRichToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return layout.wethRichVault.previewExchangeIn(tokenIn, amountIn, tokenOut);
+        if (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return layoutStruct.wethRichVault.previewExchangeIn(tokenIn, amountIn, tokenOut);
         }
 
-        if (_isWethToken(layout, tokenIn) && _isRichirToken(tokenOut)) {
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
             uint256 vaultSharesOut =
-                layout.wethRichVault.previewExchangeIn(layout.wethToken, amountIn, IERC20(address(layout.wethRichVault)));
-            uint256 bptOut = _previewBptOutForAddLiquidity(layout, 0, vaultSharesOut);
-            return _previewRichirMintForBpt(layout, bptOut);
+                layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.wethToken, amountIn, IERC20(address(layoutStruct.wethRichVault)));
+            uint256 bptOut = _previewBptOutForAddLiquidity(layoutStruct, 0, vaultSharesOut);
+            return _previewRichirMintForBpt(layoutStruct, bptOut);
         }
 
-        if (_isRichToken(layout, tokenIn) && _isRichirToken(tokenOut)) {
-            uint256 wethAmount = layout.wethRichVault.previewExchangeIn(layout.richToken, amountIn, layout.wethToken);
+        if (_isRichToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
+            uint256 wethAmount = layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.richToken, amountIn, layoutStruct.wethToken);
             uint256 vaultSharesOut =
-                layout.wethRichVault.previewExchangeIn(layout.wethToken, wethAmount, IERC20(address(layout.wethRichVault)));
-            uint256 bptOut = _previewBptOutForAddLiquidity(layout, 0, vaultSharesOut);
-            return _previewRichirMintForBpt(layout, bptOut);
+                layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.wethToken, wethAmount, IERC20(address(layoutStruct.wethRichVault)));
+            uint256 bptOut = _previewBptOutForAddLiquidity(layoutStruct, 0, vaultSharesOut);
+            return _previewRichirMintForBpt(layoutStruct, bptOut);
         }
 
-        if (address(tokenIn) == layout.reservePool && _isWethToken(layout, tokenOut)) {
-            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layout, amountIn);
-            return layout.wethRichVault.previewExchangeIn(IERC20(address(layout.wethRichVault)), vaultSharesOut, layout.wethToken);
+        if (address(tokenIn) == layoutStruct.reservePool && _isWethToken(layoutStruct, tokenOut)) {
+            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, amountIn);
+            return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.wethToken);
         }
 
-        if (address(tokenIn) == layout.reservePool && _isRichToken(layout, tokenOut)) {
-            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layout, amountIn);
-            return layout.wethRichVault.previewExchangeIn(IERC20(address(layout.wethRichVault)), vaultSharesOut, layout.richToken);
+        if (address(tokenIn) == layoutStruct.reservePool && _isRichToken(layoutStruct, tokenOut)) {
+            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, amountIn);
+            return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.richToken);
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
+        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
-            if (!_isBurningAllowed(layout, reserveSpotPrice)) {
-                revert BurningNotAllowed(reserveSpotPrice, layout.burnThreshold);
+            if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
+                revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
             uint256 bptIn = _previewChirRedemptionBptIn(amountIn);
-            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layout, bptIn);
-            return layout.wethRichVault.previewExchangeIn(IERC20(address(layout.wethRichVault)), vaultSharesOut, layout.wethToken);
+            (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, bptIn);
+            return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.wethToken);
         }
 
-        if (_isRichirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
-            uint256 bptIn = _previewRichirRedemptionBptIn(layout, amountIn);
-            uint256 vaultSharesOut = _previewVaultTokenOutForBptIn(layout, bptIn);
-            return layout.wethRichVault.previewExchangeIn(IERC20(address(layout.wethRichVault)), vaultSharesOut, layout.wethToken);
+        if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            uint256 bptIn = _previewRichirRedemptionBptIn(layoutStruct, amountIn);
+            uint256 vaultSharesOut = _previewVaultTokenOutForBptIn(layoutStruct, bptIn);
+            return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.wethToken);
         }
 
         revert IStandardExchangeIn.ExchangeInNotAvailable();
@@ -91,32 +91,32 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         view
         returns (uint256 amountIn)
     {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        if (_isWethToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return layout.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) {
+            return layoutStruct.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
         }
 
-        if (_isRichToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return layout.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
+        if (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return layoutStruct.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
+        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
-            if (!_isBurningAllowed(layout, reserveSpotPrice)) {
-                revert BurningNotAllowed(reserveSpotPrice, layout.burnThreshold);
+            if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
+                revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
             uint256 vaultSharesNeeded =
-                layout.wethRichVault.previewExchangeOut(IERC20(address(layout.wethRichVault)), layout.wethToken, amountOut);
-            return _previewChirRedemptionAmountForVaultSharesOut(layout, vaultSharesNeeded);
+                layoutStruct.wethRichVault.previewExchangeOut(IERC20(address(layoutStruct.wethRichVault)), layoutStruct.wethToken, amountOut);
+            return _previewChirRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
         }
 
-        if (_isRichirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _previewRichirToWethExact(layout, amountOut);
+        if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return _previewRichirToWethExact(layoutStruct, amountOut);
         }
 
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
@@ -127,29 +127,29 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             revert ZeroAmount();
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
         uint256 reserveSpotPrice = _calcReserveSpotPrice();
-        if (!_isMintingAllowed(layout, reserveSpotPrice)) {
-            revert MintingNotAllowed(reserveSpotPrice, layout.mintThreshold);
+        if (!_isMintingAllowed(layoutStruct, reserveSpotPrice)) {
+            revert MintingNotAllowed(reserveSpotPrice, layoutStruct.mintThreshold);
         }
 
         uint256 vaultSharesOut =
-            layout.wethRichVault.previewExchangeIn(layout.wethToken, wethAmount_, IERC20(address(layout.wethRichVault)));
-        chirMinted_ = _calcProportionalChirForVaultShares(layout, vaultSharesOut);
+            layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.wethToken, wethAmount_, IERC20(address(layoutStruct.wethRichVault)));
+        chirMinted_ = _splitMintedChir(layoutStruct, _calcProportionalChirForVaultShares(layoutStruct, vaultSharesOut)).userChir;
     }
 
     function previewClaimLiquidity(uint256 lpAmount_) external view returns (uint256 wethOut_) {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layout, lpAmount_);
-        wethOut_ = layout.wethRichVault.previewExchangeIn(IERC20(address(layout.wethRichVault)), vaultSharesOut, layout.wethToken);
+        (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, lpAmount_);
+        wethOut_ = layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.wethToken);
     }
 
     function previewBridgeRichir(uint256 targetChainId_, uint256 richirAmount_)
@@ -157,8 +157,8 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         view
         returns (IProtocolDETF.BridgeQuote memory quote_)
     {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
 
         if (
             address(bridgeLayout.messenger) == address(0)
@@ -181,9 +181,9 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             revert BridgeRemoteTokenNotConfigured(targetChainId_, IERC20(address(this)));
         }
 
-        (IERC20 remoteRichToken,) = bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId_, layout.richToken);
+        (IERC20 remoteRichToken,) = bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId_, layoutStruct.richToken);
         if (address(remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(targetChainId_, layout.richToken);
+            revert BridgeRemoteTokenNotConfigured(targetChainId_, layoutStruct.richToken);
         }
 
         if (richirAmount_ == 0) {
@@ -191,30 +191,30 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         }
 
         quote_.richirAmountIn = richirAmount_;
-        quote_.sharesBurned = layout._richirToken().convertToShares(richirAmount_);
+        quote_.sharesBurned = layoutStruct._richirToken().convertToShares(richirAmount_);
         if (quote_.sharesBurned == 0) {
             return quote_;
         }
 
-        uint256 totalRichirShares = layout._richirToken().totalShares();
-        uint256 protocolNftBpt = layout.protocolNFTVault.originalSharesOf(layout.protocolNFTId);
+        uint256 totalRichirShares = layoutStruct._richirToken().totalShares();
+        uint256 protocolNftBpt = layoutStruct.protocolNFTVault.originalSharesOf(layoutStruct.protocolNFTId);
         if (totalRichirShares == 0 || protocolNftBpt == 0) {
             return quote_;
         }
 
         quote_.reserveSharesBurned = quote_.sharesBurned * protocolNftBpt / totalRichirShares;
-        (uint256 chirAmountOut, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layout, quote_.reserveSharesBurned);
+        (uint256 chirAmountOut, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, quote_.reserveSharesBurned);
 
         if (chirAmountOut > 0) {
-            uint256 localBptOut = _previewBptOutForAddLiquidity(layout, chirAmountOut, 0);
-            quote_.localRichirOut = _previewRichirMintForBpt(layout, localBptOut);
+            uint256 localBptOut = _previewBptOutForAddLiquidity(layoutStruct, chirAmountOut, 0);
+            quote_.localRichirOut = _previewRichirMintForBpt(layoutStruct, localBptOut);
         }
 
         if (vaultSharesOut > 0) {
-            quote_.richOut = layout.wethRichVault.previewExchangeIn(
-                IERC20(address(layout.wethRichVault)),
+            quote_.richOut = layoutStruct.wethRichVault.previewExchangeIn(
+                IERC20(address(layoutStruct.wethRichVault)),
                 vaultSharesOut,
-                layout.richToken
+                layoutStruct.richToken
             );
         }
     }

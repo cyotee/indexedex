@@ -28,6 +28,13 @@ import {
     IStandardExchangeRateProviderDFPkg,
     StandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {
+    WrappedStandardExchangeRateProviderFacet
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol";
+import {
+    IWrappedStandardExchangeRateProviderDFPkg,
+    WrappedStandardExchangeRateProviderDFPkg
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol";
 
 /**
  * @title StandardExchangeRateProvider_FactoryService
@@ -55,6 +62,17 @@ library StandardExchangeRateProvider_FactoryService {
         vm.label(address(instance), type(StandardExchangeRateProviderFacet).name);
     }
 
+    function deployWrappedStandardExchangeRateProviderFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(WrappedStandardExchangeRateProviderFacet).creationCode,
+            abi.encode(type(WrappedStandardExchangeRateProviderFacet).name)._hash()
+        );
+        vm.label(address(instance), type(WrappedStandardExchangeRateProviderFacet).name);
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                            Package Deployment                          */
     /* ---------------------------------------------------------------------- */
@@ -79,5 +97,28 @@ library StandardExchangeRateProvider_FactoryService {
             )
         );
         vm.label(address(instance), type(StandardExchangeRateProviderDFPkg).name);
+    }
+
+    function deployWrappedStandardExchangeRateProviderDFPkg(
+        ICreate3FactoryProxy create3Factory,
+        IFacet rateProviderFacet,
+        IDiamondPackageCallBackFactory diamondFactory
+    ) internal returns (IWrappedStandardExchangeRateProviderDFPkg instance) {
+        IWrappedStandardExchangeRateProviderDFPkg.PkgInit memory pkgInit =
+            IWrappedStandardExchangeRateProviderDFPkg.PkgInit({
+                rateProviderFacet: rateProviderFacet,
+                diamondFactory: diamondFactory
+            });
+
+        instance = IWrappedStandardExchangeRateProviderDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(WrappedStandardExchangeRateProviderDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    abi.encode(type(WrappedStandardExchangeRateProviderDFPkg).name)._hash()
+                )
+            )
+        );
+        vm.label(address(instance), type(WrappedStandardExchangeRateProviderDFPkg).name);
     }
 }

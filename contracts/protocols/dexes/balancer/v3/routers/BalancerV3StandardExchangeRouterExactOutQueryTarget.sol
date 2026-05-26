@@ -132,7 +132,7 @@ contract BalancerV3StandardExchangeRouterExactOutQueryTarget is
         // Special-case: wrap ETH -> WETH "as a swap" quote.
         // When tokenIn == tokenOut == WETH and wethIsEth == true, input is 1:1.
         IWETH _weth = WETHAwareRepo._weth();
-        if (params.wethIsEth && params.pool == address(_weth) && params.tokenIn == _weth && params.tokenOut == _weth) {
+        if (params.wethIsEth && params.pool == address(_weth) && address(params.tokenIn) == address(_weth) && address(params.tokenOut) == address(_weth)) {
             return params.amountGiven;
         }
 

@@ -37,6 +37,8 @@ import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/set
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {DETFBondLifecycleLib} from "contracts/vaults/detf/core/DETFBondLifecycleLib.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/core/DETFMintSplitLib.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {BaseProtocolDETFCommon} from "contracts/vaults/protocol/BaseProtocolDETFCommon.sol";
 import {
@@ -112,14 +114,14 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             revert ZeroAmount();
         }
 
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
         PoolReserves memory reserves;
-        _loadPoolReserves(layout, reserves);
+        _loadPoolReserves(layoutStruct, reserves);
 
         ExchangeInParams memory params = ExchangeInParams({
             tokenIn: tokenIn,
@@ -136,72 +138,72 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         /*                         WETH → CHIR (Mint)                         */
         /* ------------------------------------------------------------------ */
 
-        if (_isWethToken(layout, tokenIn) && _isChirToken(tokenOut)) {
-            return _executeMintWithWeth(layout, params);
+        if (_isWethToken(layoutStruct, tokenIn) && _isChirToken(tokenOut)) {
+            return _executeMintWithWeth(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                    CHIR → WETH (Below-Peg Redeem)                  */
         /* ------------------------------------------------------------------ */
 
-        if (_isChirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _executeChirRedemption(layout, params);
+        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return _executeChirRedemption(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                      RICH → CHIR (Sell RICH)                       */
         /* ------------------------------------------------------------------ */
 
-        if (_isRichToken(layout, tokenIn) && _isChirToken(tokenOut)) {
-            return _executeRichToChir(layout, params);
+        if (_isRichToken(layoutStruct, tokenIn) && _isChirToken(tokenOut)) {
+            return _executeRichToChir(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                     RICHIR → WETH (Redemption)                     */
         /* ------------------------------------------------------------------ */
 
-        if (_isRichirToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _executeRichirRedemption(layout, params);
+        if (_isRichirToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return _executeRichirRedemption(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                      RICH → RICHIR (Single-Call)                   */
         /* ------------------------------------------------------------------ */
 
-        if (_isRichToken(layout, tokenIn) && _isRichirToken(layout, tokenOut)) {
-            return _executeRichToRichir(layout, params);
+        if (_isRichToken(layoutStruct, tokenIn) && _isRichirToken(layoutStruct, tokenOut)) {
+            return _executeRichToRichir(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                      WETH → RICHIR (Single-Call)                   */
         /* ------------------------------------------------------------------ */
 
-        if (_isWethToken(layout, tokenIn) && _isRichirToken(layout, tokenOut)) {
-            return _executeWethToRichir(layout, params);
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichirToken(layoutStruct, tokenOut)) {
+            return _executeWethToRichir(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                        WETH → RICH (Buy RICH)                      */
         /* ------------------------------------------------------------------ */
 
-        if (_isWethToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return _executeWethToRich(layout, params);
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) {
+            return _executeWethToRich(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                       RICH → WETH (Sell RICH)                      */
         /* ------------------------------------------------------------------ */
 
-        if (_isRichToken(layout, tokenIn) && _isWethToken(layout, tokenOut)) {
-            return _executeRichToWeth(layout, params);
+        if (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+            return _executeRichToWeth(layoutStruct, params);
         }
 
         /* ------------------------------------------------------------------ */
         /*                      RICHIR → RICH (Local Redeem)                   */
         /* ------------------------------------------------------------------ */
 
-        if (_isRichirToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) {
-            return _executeRichirToRich(layout, params);
+        if (_isRichirToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) {
+            return _executeRichirToRich(layoutStruct, params);
         }
 
         revert InvalidToken(tokenIn);
@@ -227,29 +229,29 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      11. Mint CHIR to user
      *      12. Return total CHIR to user
      */
-    function _executeMintWithWeth(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeMintWithWeth(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
-        if (!_isMintingAllowed(layout_, p_.syntheticPrice)) {
-            revert MintingNotAllowed(p_.syntheticPrice, layout_.mintThreshold);
+        if (!_isMintingAllowed(layoutStruct_, p_.syntheticPrice)) {
+            revert MintingNotAllowed(p_.syntheticPrice, layoutStruct_.mintThreshold);
         }
 
         // Secure WETH transfer
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Step 3-6: Get pool data and calculate CHIR amounts
-        MintCalc memory calc = _calcMintFromWeth(layout_, actualIn);
+        MintCalc memory calc = _calcMintFromWeth(layoutStruct_, actualIn);
 
         // Step 7: Deposit WETH into CHIR/WETH vault (capture shares)
-        p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-        uint256 chirWethShares = layout_.chirWethVault.exchangeIn(
-            p_.tokenIn, actualIn, IERC20(address(layout_.chirWethVault)), 0, address(this), true, p_.deadline
+        p_.tokenIn.safeTransfer(address(layoutStruct_.chirWethVault), actualIn);
+        uint256 chirWethShares = layoutStruct_.chirWethVault.exchangeIn(
+            p_.tokenIn, actualIn, IERC20(address(layoutStruct_.chirWethVault)), 0, address(this), true, p_.deadline
         );
 
         // Step 8-9: Deposit vault shares to Balancer reserve pool -> BPT -> add to protocol NFT
         if (chirWethShares > 0) {
-            _unbalancedDepositChirWethAndAddToProtocolNFT(layout_, chirWethShares);
+            _unbalancedDepositChirWethAndAddToProtocolNFT(layoutStruct_, chirWethShares);
         }
 
         // Step 10: Check minAmountOut against final user amount (AFTER adding discount)
@@ -259,7 +261,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Step 11: Mint CHIR to the NFT vault as reward-token accrual
         if (calc.protocolChir > 0) {
-            ERC20Repo._mint(address(layout_.protocolNFTVault), calc.protocolChir);
+            ERC20Repo._mint(address(layoutStruct_.protocolNFTVault), calc.protocolChir);
         }
 
         // Step 12: Mint CHIR to user
@@ -273,19 +275,19 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 protocolChir;
     }
 
-    function _calcMintFromWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 actualIn_)
+    function _calcMintFromWeth(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 actualIn_)
         internal
         view
         returns (MintCalc memory calc_)
     {
         // Get CHIR/WETH pool reserves
-        IUniswapV2Pair chirWethPool = IUniswapV2Pair(address(IERC4626(address(layout_.chirWethVault)).asset()));
+        IUniswapV2Pair chirWethPool = IUniswapV2Pair(address(IERC4626(address(layoutStruct_.chirWethVault)).asset()));
         (uint256 reserve0, uint256 reserve1,) = chirWethPool.getReserves();
         address token0 = chirWethPool.token0();
 
         uint256 wethReserve;
         uint256 chirReserve;
-        if (token0 == address(layout_.wethToken)) {
+        if (token0 == address(layoutStruct_.wethToken)) {
             wethReserve = reserve0;
             chirReserve = reserve1;
         } else {
@@ -297,49 +299,46 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 swapFeePercent = _poolSwapFeePercent(address(chirWethPool));
 
         // Apply seigniorage incentive - increase WETH amount
-        uint256 seignioragePct = layout_._feeOracle().seigniorageIncentivePercentageOfVault(address(this));
+        uint256 seignioragePct = layoutStruct_._feeOracle().seigniorageIncentivePercentageOfVault(address(this));
         uint256 wethWithIncentive = actualIn_ + (actualIn_ * seignioragePct / FixedPoint.ONE);
 
         // Use ConstProdUtils._saleQuote to calculate base CHIR
         uint256 baseChir =
             ConstProdUtils._saleQuote(wethWithIncentive, wethReserve, chirReserve, swapFeePercent);
 
-        // Split seigniorage 50/50
-        // User receives: baseChir * (1 - seignioragePct / 2)
-        // Protocol NFT receives: baseChir * (seignioragePct / 2)
-        calc_.userChir = baseChir * (FixedPoint.ONE - seignioragePct / 2) / FixedPoint.ONE;
-        calc_.protocolChir = baseChir * seignioragePct / 2 / FixedPoint.ONE;
+        // Split seigniorage 50/50 between the user-facing mint amount and protocol inventory.
+        (calc_.userChir, calc_.protocolChir) = DETFMintSplitLib._splitHalfSeigniorage(baseChir, seignioragePct);
     }
 
     /**
      * @notice Converts RICH to CHIR via Aerodrome swaps, then mints CHIR from WETH.
      * @dev Flow: RICH -> CHIR (RICH/CHIR pool) -> WETH (CHIR/WETH pool) -> CHIR mint.
      */
-    function _executeRichToChir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeRichToChir(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
-        if (!_isMintingAllowed(layout_, p_.syntheticPrice)) {
-            revert MintingNotAllowed(p_.syntheticPrice, layout_.mintThreshold);
+        if (!_isMintingAllowed(layoutStruct_, p_.syntheticPrice)) {
+            revert MintingNotAllowed(p_.syntheticPrice, layoutStruct_.mintThreshold);
         }
 
         // Secure RICH transfer
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Swap RICH -> CHIR using the RICH/CHIR Standard Exchange vault (Aerodrome router).
-        p_.tokenIn.safeTransfer(address(layout_.richChirVault), actualIn);
+        p_.tokenIn.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
 
-        uint256 chirOut = layout_.richChirVault
+        uint256 chirOut = layoutStruct_.richChirVault
             .exchangeIn(p_.tokenIn, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
 
         // Swap CHIR -> WETH using the CHIR/WETH Standard Exchange vault (Aerodrome router).
-        IERC20(address(this)).safeTransfer(address(layout_.chirWethVault), chirOut);
-        uint256 wethOut = layout_.chirWethVault
-            .exchangeIn(IERC20(address(this)), chirOut, layout_.wethToken, 0, address(this), true, p_.deadline);
+        IERC20(address(this)).safeTransfer(address(layoutStruct_.chirWethVault), chirOut);
+        uint256 wethOut = layoutStruct_.chirWethVault
+            .exchangeIn(IERC20(address(this)), chirOut, layoutStruct_.wethToken, 0, address(this), true, p_.deadline);
 
         // Mint CHIR from WETH using the canonical route.
         ExchangeInParams memory mintParams = ExchangeInParams({
-            tokenIn: layout_.wethToken,
+            tokenIn: layoutStruct_.wethToken,
             amountIn: wethOut,
             tokenOut: IERC20(address(this)),
             minAmountOut: p_.minAmountOut,
@@ -349,7 +348,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             syntheticPrice: p_.syntheticPrice
         });
 
-        amountOut_ = _executeMintWithWeth(layout_, mintParams);
+        amountOut_ = _executeMintWithWeth(layoutStruct_, mintParams);
     }
 
     /**
@@ -374,7 +373,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      because the exit changes the protocol NFT's BPT, which changes the
      *      RICHIR rate, which changes balances.
      */
-    function _executeRichirRedemption(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeRichirRedemption(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
@@ -386,15 +385,15 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 richirBalance = p_.tokenIn.balanceOf(address(this));
 
         // Step 2: Calculate BPT to exit BEFORE burning (rate still reflects current state)
-        uint256 bptIn = _calcRichirRedemptionBptIn(layout_, richirBalance);
+        uint256 bptIn = _calcRichirRedemptionBptIn(layoutStruct_, richirBalance);
 
         // Step 1: Burn RICHIR FIRST, before exiting the reserve pool
         // This is critical because the exit changes protocolNftBpt, which changes rate
-        p_.tokenIn.safeTransfer(address(layout_.richirToken), richirBalance);
-        layout_.richirToken.burnShares(richirBalance, address(0), true);
+        p_.tokenIn.safeTransfer(address(layoutStruct_.richirToken), richirBalance);
+        layoutStruct_.richirToken.burnShares(richirBalance, address(0), true);
 
         // Steps 3-10: Exit reserve pool, recycle RICH, swap CHIR → WETH
-        amountOut_ = _exitRecycleAndUnwindToWeth(layout_, bptIn, p_.deadline);
+        amountOut_ = _exitRecycleAndUnwindToWeth(layoutStruct_, bptIn, p_.deadline);
 
         // Slippage check against user's minAmountOut
         if (amountOut_ < p_.minAmountOut) {
@@ -402,21 +401,21 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         }
 
         // Step 11: Send WETH to recipient
-        layout_.wethToken.safeTransfer(p_.recipient, amountOut_);
+        layoutStruct_.wethToken.safeTransfer(p_.recipient, amountOut_);
     }
 
     /**
      * @notice Calculates BPT amount to exit for RICHIR redemption.
      * @dev bptIn = (richirShares / totalRichirShares) * protocolNftBpt
      */
-    function _calcRichirRedemptionBptIn(BaseProtocolDETFRepo.Storage storage layout_, uint256 richirAmount_)
+    function _calcRichirRedemptionBptIn(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 richirAmount_)
         internal
         view
         returns (uint256 bptIn_)
     {
-        uint256 richirShares = layout_.richirToken.convertToShares(richirAmount_);
-        uint256 totalRichirShares = layout_.richirToken.totalShares();
-        uint256 protocolNftBpt = layout_.protocolNFTVault.originalSharesOf(layout_.protocolNFTId);
+        uint256 richirShares = layoutStruct_.richirToken.convertToShares(richirAmount_);
+        uint256 totalRichirShares = layoutStruct_.richirToken.totalShares();
+        uint256 protocolNftBpt = layoutStruct_.protocolNFTVault.originalSharesOf(layoutStruct_.protocolNFTId);
         bptIn_ = (richirShares * protocolNftBpt) / totalRichirShares;
     }
 
@@ -432,21 +431,21 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      9. Swap CHIR → WETH (while max liquidity present)
      *      10. Redeem CHIR/WETH vault shares → WETH
      */
-    function _exitRecycleAndUnwindToWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptIn_, uint256 deadline_)
+    function _exitRecycleAndUnwindToWeth(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_, uint256 deadline_)
         internal
         returns (uint256 wethOut_)
     {
         // Step 3: Proportional exit from reserve pool
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layout_, bptIn_);
+        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layoutStruct_, bptIn_);
 
         // Steps 4-8: Recycle RICH back into reserve pool
-        uint256 chirFromRecycle = _recycleRichToReservePool(layout_, richChirVaultSharesOut, deadline_);
+        uint256 chirFromRecycle = _recycleRichToReservePool(layoutStruct_, richChirVaultSharesOut, deadline_);
 
         // Step 9: Swap CHIR → WETH (max liquidity present for best price)
-        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layout_, chirFromRecycle, deadline_);
+        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layoutStruct_, chirFromRecycle, deadline_);
 
         // Step 10: Redeem CHIR/WETH vault shares → WETH
-        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layout_, chirWethVaultSharesOut, deadline_);
+        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layoutStruct_, chirWethVaultSharesOut, deadline_);
 
         wethOut_ = wethFromChirWeth + wethFromChirSwap;
     }
@@ -462,21 +461,21 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @return chirOut_ CHIR received from the LP burn (not recycled)
      */
     function _recycleRichToReservePool(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 richChirVaultSharesIn_,
         uint256 deadline_
     ) internal returns (uint256 chirOut_) {
         // Step 4: Redeem RICH/CHIR vault shares → LP tokens
-        uint256 lpTokens = _redeemRichChirVaultToLP(layout_, richChirVaultSharesIn_, deadline_);
+        uint256 lpTokens = _redeemRichChirVaultToLP(layoutStruct_, richChirVaultSharesIn_, deadline_);
 
         // Step 5: Burn LP → RICH + CHIR
-        (uint256 richOut, uint256 chirFromBurn) = _burnRichChirLP(layout_, lpTokens);
+        (uint256 richOut, uint256 chirFromBurn) = _burnRichChirLP(layoutStruct_, lpTokens);
 
         // Step 6: Deposit RICH → RICH/CHIR vault shares
-        uint256 newVaultShares = _depositRichToRichChirVault(layout_, richOut, deadline_);
+        uint256 newVaultShares = _depositRichToRichChirVault(layoutStruct_, richOut, deadline_);
 
         // Steps 7-8: Unbalanced deposit to reserve pool → BPT → add to Protocol NFT
-        _unbalancedDepositAndAddToProtocolNFT(layout_, newVaultShares);
+        _unbalancedDepositAndAddToProtocolNFT(layoutStruct_, newVaultShares);
 
         // Return CHIR for later swap
         chirOut_ = chirFromBurn;
@@ -487,17 +486,17 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @dev Step 4: vault shares → LP tokens via exchangeIn(vaultToken, amount, lpToken, ...)
      */
     function _redeemRichChirVaultToLP(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 vaultSharesIn_,
         uint256 deadline_
     ) internal returns (uint256 lpOut_) {
-        IERC20 vaultToken = IERC20(address(layout_.richChirVault));
+        IERC20 vaultToken = IERC20(address(layoutStruct_.richChirVault));
         // Get the LP token (underlying asset) from the vault
-        IERC20 lpToken = IERC20(IERC4626(address(layout_.richChirVault)).asset());
+        IERC20 lpToken = IERC20(IERC4626(address(layoutStruct_.richChirVault)).asset());
 
-        vaultToken.forceApprove(address(layout_.richChirVault), vaultSharesIn_);
+        vaultToken.forceApprove(address(layoutStruct_.richChirVault), vaultSharesIn_);
         lpOut_ =
-            layout_.richChirVault.exchangeIn(vaultToken, vaultSharesIn_, lpToken, 0, address(this), false, deadline_);
+            layoutStruct_.richChirVault.exchangeIn(vaultToken, vaultSharesIn_, lpToken, 0, address(this), false, deadline_);
     }
 
     /**
@@ -505,12 +504,12 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @dev Step 5: Transfer LP to pool, call burn(address) to get both tokens.
      *      V2-style pairs return (amount0, amount1) sorted by address.
      */
-    function _burnRichChirLP(BaseProtocolDETFRepo.Storage storage layout_, uint256 lpAmount_)
+    function _burnRichChirLP(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 lpAmount_)
         internal
         returns (uint256 richOut_, uint256 chirOut_)
     {
         // Get the LP token (pool) address
-        IUniswapV2Pair pool = IUniswapV2Pair(address(IERC4626(address(layout_.richChirVault)).asset()));
+        IUniswapV2Pair pool = IUniswapV2Pair(address(IERC4626(address(layoutStruct_.richChirVault)).asset()));
 
         // Transfer LP tokens to the pool
         IERC20(address(pool)).safeTransfer(address(pool), lpAmount_);
@@ -520,7 +519,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Sort amounts by token order (token0 has lower address)
         address token0 = pool.token0();
-        if (token0 == address(layout_.richToken)) {
+        if (token0 == address(layoutStruct_.richToken)) {
             richOut_ = amount0;
             chirOut_ = amount1;
         } else {
@@ -533,16 +532,16 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @notice Deposits RICH into the RICH/CHIR vault to get vault shares.
      * @dev Step 6: RICH → vault shares via exchangeIn(RICH, amount, vaultToken, ...)
      */
-    function _depositRichToRichChirVault(BaseProtocolDETFRepo.Storage storage layout_, uint256 richIn_, uint256 deadline_)
+    function _depositRichToRichChirVault(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 richIn_, uint256 deadline_)
         internal
         returns (uint256 vaultSharesOut_)
     {
-        IERC20 richToken = layout_.richToken;
-        IERC20 vaultToken = IERC20(address(layout_.richChirVault));
+        IERC20 richToken = layoutStruct_.richToken;
+        IERC20 vaultToken = IERC20(address(layoutStruct_.richChirVault));
 
-        richToken.forceApprove(address(layout_.richChirVault), richIn_);
+        richToken.forceApprove(address(layoutStruct_.richChirVault), richIn_);
         vaultSharesOut_ =
-            layout_.richChirVault.exchangeIn(richToken, richIn_, vaultToken, 0, address(this), false, deadline_);
+            layoutStruct_.richChirVault.exchangeIn(richToken, richIn_, vaultToken, 0, address(this), false, deadline_);
     }
 
     /**
@@ -552,7 +551,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      8. Add BPT to Protocol NFT
      */
     function _unbalancedDepositAndAddToProtocolNFT(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 richChirVaultShares_
     ) internal {
         IWeightedPool pool = _reservePool();
@@ -560,14 +559,14 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Build amounts array (only RICH/CHIR vault index has value)
         uint256[] memory exactAmountsIn = new uint256[](2);
-        exactAmountsIn[layout_.richChirVaultIndex] = richChirVaultShares_;
-        exactAmountsIn[layout_.chirWethVaultIndex] = 0;
+        exactAmountsIn[layoutStruct_.richChirVaultIndex] = richChirVaultShares_;
+        exactAmountsIn[layoutStruct_.chirWethVaultIndex] = 0;
 
         // Approve vault shares to Balancer vault
-        IERC20(address(layout_.richChirVault)).safeTransfer(address(balV3Vault), richChirVaultShares_);
+        IERC20(address(layoutStruct_.richChirVault)).safeTransfer(address(balV3Vault), richChirVaultShares_);
 
         // Step 7: Unbalanced deposit to reserve pool
-        uint256 bptOut = layout_.balancerV3PrepayRouter
+        uint256 bptOut = layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(
                 address(pool),
                 exactAmountsIn,
@@ -577,8 +576,9 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Step 8: Add BPT to Protocol NFT
         if (bptOut > 0) {
-            IERC20(address(pool)).forceApprove(address(layout_.protocolNFTVault), bptOut);
-            layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, bptOut);
+            DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+                IERC20(address(pool)), layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
+            );
         }
     }
 
@@ -587,7 +587,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @dev Similar to _unbalancedDepositAndAddToProtocolNFT but for CHIR/WETH vault shares.
      */
     function _unbalancedDepositChirWethAndAddToProtocolNFT(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 chirWethVaultShares_
     ) internal {
         IWeightedPool pool = _reservePool();
@@ -595,14 +595,14 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Build amounts array (only CHIR/WETH vault index has value)
         uint256[] memory exactAmountsIn = new uint256[](2);
-        exactAmountsIn[layout_.chirWethVaultIndex] = chirWethVaultShares_;
-        exactAmountsIn[layout_.richChirVaultIndex] = 0;
+        exactAmountsIn[layoutStruct_.chirWethVaultIndex] = chirWethVaultShares_;
+        exactAmountsIn[layoutStruct_.richChirVaultIndex] = 0;
 
         // Approve vault shares to Balancer vault
-        IERC20(address(layout_.chirWethVault)).safeTransfer(address(balV3Vault), chirWethVaultShares_);
+        IERC20(address(layoutStruct_.chirWethVault)).safeTransfer(address(balV3Vault), chirWethVaultShares_);
 
         // Unbalanced deposit to reserve pool
-        uint256 bptOut = layout_.balancerV3PrepayRouter
+        uint256 bptOut = layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(
                 address(pool),
                 exactAmountsIn,
@@ -612,8 +612,9 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
 
         // Add BPT to Protocol NFT
         if (bptOut > 0) {
-            IERC20(address(pool)).forceApprove(address(layout_.protocolNFTVault), bptOut);
-            layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, bptOut);
+            DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+                IERC20(address(pool)), layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
+            );
         }
     }
 
@@ -621,15 +622,15 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @notice Legacy function for CHIR redemption - exits and unwinds both vaults to WETH.
      * @dev Used by _executeChirRedemption which doesn't need RICH recycling.
      */
-    function _exitAndUnwindToWeth(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptIn_, uint256 deadline_)
+    function _exitAndUnwindToWeth(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_, uint256 deadline_)
         internal
         returns (uint256 wethOut_)
     {
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layout_, bptIn_);
+        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layoutStruct_, bptIn_);
 
-        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layout_, chirWethVaultSharesOut, deadline_);
-        uint256 chirFromRichChir = _unwindRichChirVaultToChir(layout_, richChirVaultSharesOut, deadline_);
-        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layout_, chirFromRichChir, deadline_);
+        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layoutStruct_, chirWethVaultSharesOut, deadline_);
+        uint256 chirFromRichChir = _unwindRichChirVaultToChir(layoutStruct_, richChirVaultSharesOut, deadline_);
+        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layoutStruct_, chirFromRichChir, deadline_);
 
         wethOut_ = wethFromChirWeth + wethFromChirSwap;
     }
@@ -639,12 +640,12 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @dev Burns CHIR, exits the reserve pool proportionally against protocol-held BPT,
      *      then unwinds both reserve vault tokens into WETH.
      */
-    function _executeChirRedemption(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeChirRedemption(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
-        if (!_isBurningAllowed(layout_, p_.syntheticPrice)) {
-            revert BurningNotAllowed(p_.syntheticPrice, layout_.burnThreshold);
+        if (!_isBurningAllowed(layoutStruct_, p_.syntheticPrice)) {
+            revert BurningNotAllowed(p_.syntheticPrice, layoutStruct_.burnThreshold);
         }
 
         uint256 bptIn = _previewChirRedemptionBptIn(p_.amountIn);
@@ -652,11 +653,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Burn CHIR first (reduces supply) after using totalSupply for pricing.
         _secureChirBurn(msg.sender, p_.amountIn, p_.pretransferred);
 
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layout_, bptIn);
+        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) = _exitReservePoolProportional(layoutStruct_, bptIn);
 
-        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layout_, chirWethVaultSharesOut, p_.deadline);
-        uint256 chirFromRichChir = _unwindRichChirVaultToChir(layout_, richChirVaultSharesOut, p_.deadline);
-        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layout_, chirFromRichChir, p_.deadline);
+        uint256 wethFromChirWeth = _unwindChirWethVaultToWeth(layoutStruct_, chirWethVaultSharesOut, p_.deadline);
+        uint256 chirFromRichChir = _unwindRichChirVaultToChir(layoutStruct_, richChirVaultSharesOut, p_.deadline);
+        uint256 wethFromChirSwap = _swapChirToWethViaChirWethVault(layoutStruct_, chirFromRichChir, p_.deadline);
 
         amountOut_ = wethFromChirWeth + wethFromChirSwap;
 
@@ -664,59 +665,59 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             revert SlippageExceeded(p_.minAmountOut, amountOut_);
         }
 
-        layout_.wethToken.safeTransfer(p_.recipient, amountOut_);
+        layoutStruct_.wethToken.safeTransfer(p_.recipient, amountOut_);
     }
 
-    function _exitReservePoolProportional(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptIn_)
+    function _exitReservePoolProportional(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_)
         internal
         returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
     {
         IWeightedPool pool = _reservePool();
         // Balancer V3 prepay remove-liquidity burns BPT from `params.sender` (the caller).
         // Do NOT pre-transfer BPT to the vault; instead, approve the prepay router to pull/burn it.
-        IERC20(address(pool)).forceApprove(address(layout_.balancerV3PrepayRouter), bptIn_);
+        IERC20(address(pool)).forceApprove(address(layoutStruct_.balancerV3PrepayRouter), bptIn_);
         uint256[] memory minAmountsOut = new uint256[](2);
         uint256[] memory amountsOut =
-            layout_.balancerV3PrepayRouter.prepayRemoveLiquidityProportional(address(pool), bptIn_, minAmountsOut, "");
+            layoutStruct_.balancerV3PrepayRouter.prepayRemoveLiquidityProportional(address(pool), bptIn_, minAmountsOut, "");
 
-        chirWethVaultSharesOut_ = amountsOut[layout_.chirWethVaultIndex];
-        richChirVaultSharesOut_ = amountsOut[layout_.richChirVaultIndex];
+        chirWethVaultSharesOut_ = amountsOut[layoutStruct_.chirWethVaultIndex];
+        richChirVaultSharesOut_ = amountsOut[layoutStruct_.richChirVaultIndex];
     }
 
     function _unwindChirWethVaultToWeth(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 chirWethVaultSharesIn_,
         uint256 deadline_
     ) internal returns (uint256 wethOut_) {
-        IERC20 chirWethVaultToken = IERC20(address(layout_.chirWethVault));
-        chirWethVaultToken.forceApprove(address(layout_.chirWethVault), chirWethVaultSharesIn_);
-        wethOut_ = layout_.chirWethVault
+        IERC20 chirWethVaultToken = IERC20(address(layoutStruct_.chirWethVault));
+        chirWethVaultToken.forceApprove(address(layoutStruct_.chirWethVault), chirWethVaultSharesIn_);
+        wethOut_ = layoutStruct_.chirWethVault
             .exchangeIn(
-                chirWethVaultToken, chirWethVaultSharesIn_, layout_.wethToken, 0, address(this), false, deadline_
+                chirWethVaultToken, chirWethVaultSharesIn_, layoutStruct_.wethToken, 0, address(this), false, deadline_
             );
     }
 
     function _unwindRichChirVaultToChir(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 richChirVaultSharesIn_,
         uint256 deadline_
     ) internal returns (uint256 chirOut_) {
-        IERC20 richChirVaultToken = IERC20(address(layout_.richChirVault));
-        richChirVaultToken.forceApprove(address(layout_.richChirVault), richChirVaultSharesIn_);
-        chirOut_ = layout_.richChirVault
+        IERC20 richChirVaultToken = IERC20(address(layoutStruct_.richChirVault));
+        richChirVaultToken.forceApprove(address(layoutStruct_.richChirVault), richChirVaultSharesIn_);
+        chirOut_ = layoutStruct_.richChirVault
             .exchangeIn(
                 richChirVaultToken, richChirVaultSharesIn_, IERC20(address(this)), 0, address(this), false, deadline_
             );
     }
 
     function _swapChirToWethViaChirWethVault(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 chirIn_,
         uint256 deadline_
     ) internal returns (uint256 wethOut_) {
-        IERC20(address(this)).forceApprove(address(layout_.chirWethVault), chirIn_);
-        wethOut_ = layout_.chirWethVault
-            .exchangeIn(IERC20(address(this)), chirIn_, layout_.wethToken, 0, address(this), false, deadline_);
+        IERC20(address(this)).forceApprove(address(layoutStruct_.chirWethVault), chirIn_);
+        wethOut_ = layoutStruct_.chirWethVault
+            .exchangeIn(IERC20(address(this)), chirIn_, layoutStruct_.wethToken, 0, address(this), false, deadline_);
     }
 
     function _previewChirRedemptionBptIn(uint256 amountIn_) internal view virtual returns (uint256 bptIn_) {
@@ -745,11 +746,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
       * @dev Atomically: RICH → vault shares → BPT → protocol NFT → mint RICHIR.
     *      This is equivalent to bonding with RICH via the unified bond route (min lock duration) followed by
       *      immediate `sellNFT`, but accessible via the IStandardExchangeIn interface.
-      * @param layout_ Storage layout reference
+      * @param layoutStruct_ Storage layoutStruct reference
       * @param p_ Exchange parameters
       * @return amountOut_ Amount of RICHIR minted
       */
-    function _executeRichToRichir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeRichToRichir(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
@@ -757,22 +758,23 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Deposit RICH into RICH/CHIR vault to get LP shares
-        p_.tokenIn.safeTransfer(address(layout_.richChirVault), actualIn);
-        uint256 richChirShares = layout_.richChirVault
+        p_.tokenIn.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
+        uint256 richChirShares = layoutStruct_.richChirVault
             .exchangeIn(
-                p_.tokenIn, actualIn, IERC20(address(layout_.richChirVault)), 0, address(this), true, p_.deadline
+                p_.tokenIn, actualIn, IERC20(address(layoutStruct_.richChirVault)), 0, address(this), true, p_.deadline
             );
 
         // Add LP shares to 80/20 reserve pool (get BPT)
-        uint256 bptOut = _addToReservePoolForRichir(layout_, richChirShares, p_.deadline);
+        uint256 bptOut = _addToReservePoolForRichir(layoutStruct_, richChirShares, p_.deadline);
 
         // Add BPT directly to protocol-owned NFT (no user NFT created)
         IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-        reservePoolToken.forceApprove(address(layout_.protocolNFTVault), bptOut);
-        layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, bptOut);
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
+        );
 
         // Mint RICHIR to recipient (1:1 with BPT added to protocol NFT)
-        amountOut_ = layout_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
+        amountOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
 
         if (amountOut_ < p_.minAmountOut) {
             revert SlippageExceeded(p_.minAmountOut, amountOut_);
@@ -783,13 +785,13 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @notice Adds RICH/CHIR vault shares to the reserve pool for RICHIR minting.
      * @dev Uses the same logic as _addToReservePool in BondingTarget but localized here
      *      to avoid cross-facet calls.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param vaultShares_ Amount of vault shares to add
      * @param deadline_ Transaction deadline (unused but kept for consistency)
      * @return bptOut_ Amount of BPT received
      */
     function _addToReservePoolForRichir(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 vaultShares_,
         uint256 deadline_
     ) internal returns (uint256 bptOut_) {
@@ -802,27 +804,27 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
         }
 
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layout_.richChirVaultIndex]);
+        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layoutStruct_.richChirVaultIndex]);
 
         // Create deposit amounts array (single-sided deposit)
         uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[layout_.richChirVaultIndex] = vaultShares_;
+        amountsIn[layoutStruct_.richChirVaultIndex] = vaultShares_;
 
         // Calculate expected BPT
         bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
             balancesLiveScaled18,
             resPoolData.weightsArray,
-            layout_.richChirVaultIndex,
+            layoutStruct_.richChirVaultIndex,
             amountInLiveScaled18,
             resPoolData.resPoolTotalSupply,
             resPoolData.reservePoolSwapFee
         );
 
         // Transfer vault shares to Balancer vault
-        IERC20(address(layout_.richChirVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
+        IERC20(address(layoutStruct_.richChirVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
 
         // Add liquidity
-        layout_.balancerV3PrepayRouter
+        layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
 
         // Keep BasicVault reserve views in-sync with actual BPT balance
@@ -834,26 +836,26 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     /* ---------------------------------------------------------------------- */
 
     function _depositWethToChirWethVaultViaBalancedLp(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 wethAmount_,
         address wethRefundRecipient_,
         uint256 deadline_
     ) internal returns (uint256 vaultShares_) {
-        BalancedVaultDepositResult memory result_ = _mintAndAddBalancedChirWethLiquidity(layout_, wethAmount_, deadline_);
+        BalancedVaultDepositResult memory result_ = _mintAndAddBalancedChirWethLiquidity(layoutStruct_, wethAmount_, deadline_);
 
         if (result_.chirAmount > result_.chirUsed) {
             ERC20Repo._burn(address(this), result_.chirAmount - result_.chirUsed);
         }
 
         if (wethAmount_ > result_.wethUsed) {
-            layout_.wethToken.safeTransfer(wethRefundRecipient_, wethAmount_ - result_.wethUsed);
+            layoutStruct_.wethToken.safeTransfer(wethRefundRecipient_, wethAmount_ - result_.wethUsed);
         }
 
-        IERC20(result_.pool).safeTransfer(address(layout_.chirWethVault), result_.lpMinted);
-        vaultShares_ = layout_.chirWethVault.exchangeIn(
+        IERC20(result_.pool).safeTransfer(address(layoutStruct_.chirWethVault), result_.lpMinted);
+        vaultShares_ = layoutStruct_.chirWethVault.exchangeIn(
             IERC20(result_.pool),
             result_.lpMinted,
-            IERC20(address(layout_.chirWethVault)),
+            IERC20(address(layoutStruct_.chirWethVault)),
             0,
             address(this),
             true,
@@ -862,14 +864,14 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     }
 
     function _mintAndAddBalancedChirWethLiquidity(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 wethAmount_,
         uint256 deadline_
     ) internal returns (BalancedVaultDepositResult memory result_) {
         deadline_;
 
         (ChirWethLiquidityQuote memory quote, uint256 chirAmount, uint256 wethUsed) =
-            _quoteBalancedChirWethDepositAmounts(layout_, wethAmount_);
+            _quoteBalancedChirWethDepositAmounts(layoutStruct_, wethAmount_);
         if (chirAmount == 0 || wethUsed == 0) {
             revert ZeroAmount();
         }
@@ -892,7 +894,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         internal
         returns (BalancedLiquidityResult memory result_)
     {
-        if (quote_.token0 == address(BaseProtocolDETFRepo._layout().wethToken)) {
+        if (quote_.token0 == address(BaseProtocolDETFRepo._layoutStruct().wethToken)) {
             IERC20(quote_.token0).safeTransfer(quote_.pool, wethUsed_);
             IERC20(quote_.token1).safeTransfer(quote_.pool, chirAmount_);
         } else {
@@ -911,11 +913,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
     *      Unlike bonding through the unified WETH route, this path does not mint CHIR or create balanced LP.
      *      It deposits WETH directly into the CHIR/WETH vault, then routes the resulting
      *      vault shares into the reserve pool and mints RICHIR against the protocol NFT.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param p_ Exchange parameters
      * @return amountOut_ Amount of RICHIR minted
      */
-    function _executeWethToRichir(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeWethToRichir(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
@@ -923,11 +925,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Direct route: deposit WETH to the CHIR/WETH vault without minting CHIR.
-        p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-        uint256 chirWethShares = layout_.chirWethVault.exchangeIn(
+        p_.tokenIn.safeTransfer(address(layoutStruct_.chirWethVault), actualIn);
+        uint256 chirWethShares = layoutStruct_.chirWethVault.exchangeIn(
             p_.tokenIn,
             actualIn,
-            IERC20(address(layout_.chirWethVault)),
+            IERC20(address(layoutStruct_.chirWethVault)),
             0,
             address(this),
             true,
@@ -935,15 +937,16 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         );
 
         // Add LP shares to 80/20 reserve pool (get BPT)
-        uint256 bptOut = _addToReservePoolForWethToRichir(layout_, chirWethShares, p_.deadline);
+        uint256 bptOut = _addToReservePoolForWethToRichir(layoutStruct_, chirWethShares, p_.deadline);
 
         // Add BPT directly to protocol-owned NFT (no user NFT created)
         IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-        reservePoolToken.forceApprove(address(layout_.protocolNFTVault), bptOut);
-        layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, bptOut);
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
+        );
 
         // Mint RICHIR to recipient (1:1 with BPT added to protocol NFT)
-        amountOut_ = layout_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
+        amountOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
 
         if (amountOut_ < p_.minAmountOut) {
             revert SlippageExceeded(p_.minAmountOut, amountOut_);
@@ -954,13 +957,13 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      * @notice Adds CHIR/WETH vault shares to the reserve pool for RICHIR minting.
      * @dev Uses the same logic as _addToReservePool in BondingTarget but localized here
      *      to avoid cross-facet calls.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param vaultShares_ Amount of vault shares to add
      * @param deadline_ Transaction deadline (unused but kept for consistency)
      * @return bptOut_ Amount of BPT received
      */
     function _addToReservePoolForWethToRichir(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 vaultShares_,
         uint256 deadline_
     ) internal returns (uint256 bptOut_) {
@@ -973,27 +976,27 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
         }
 
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layout_.chirWethVaultIndex]);
+        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layoutStruct_.chirWethVaultIndex]);
 
         // Create deposit amounts array (single-sided deposit)
         uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[layout_.chirWethVaultIndex] = vaultShares_;
+        amountsIn[layoutStruct_.chirWethVaultIndex] = vaultShares_;
 
         // Calculate expected BPT
         bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
             balancesLiveScaled18,
             resPoolData.weightsArray,
-            layout_.chirWethVaultIndex,
+            layoutStruct_.chirWethVaultIndex,
             amountInLiveScaled18,
             resPoolData.resPoolTotalSupply,
             resPoolData.reservePoolSwapFee
         );
 
         // Transfer vault shares to Balancer vault
-        IERC20(address(layout_.chirWethVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
+        IERC20(address(layoutStruct_.chirWethVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
 
         // Add liquidity
-        layout_.balancerV3PrepayRouter
+        layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
 
         // Keep BasicVault reserve views in-sync with actual BPT balance
@@ -1011,11 +1014,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      2. Deposit WETH into CHIR/WETH vault → get CHIR
      *      3. Swap CHIR for RICH via RICH/CHIR vault
      *      4. Transfer RICH to recipient
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param p_ Exchange parameters
      * @return amountOut_ Amount of RICH received
      */
-    function _executeWethToRich(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeWethToRich(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
@@ -1023,8 +1026,8 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Step 1: WETH → CHIR via chirWethVault
-        p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-        uint256 chirOut = layout_.chirWethVault
+        p_.tokenIn.safeTransfer(address(layoutStruct_.chirWethVault), actualIn);
+        uint256 chirOut = layoutStruct_.chirWethVault
             .exchangeIn(
                 p_.tokenIn,
                 actualIn,
@@ -1036,12 +1039,12 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             );
 
         // Step 2: CHIR → RICH via richChirVault
-        IERC20(address(this)).safeTransfer(address(layout_.richChirVault), chirOut);
-        amountOut_ = layout_.richChirVault
+        IERC20(address(this)).safeTransfer(address(layoutStruct_.richChirVault), chirOut);
+        amountOut_ = layoutStruct_.richChirVault
             .exchangeIn(
                 IERC20(address(this)), // CHIR
                 chirOut,
-                layout_.richToken,
+                layoutStruct_.richToken,
                 p_.minAmountOut, // Apply slippage protection on final output
                 p_.recipient,
                 true, // pretransferred
@@ -1064,11 +1067,11 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *      2. Swap RICH for CHIR via RICH/CHIR vault
      *      3. Swap CHIR for WETH via CHIR/WETH vault
      *      4. Transfer WETH to recipient
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param p_ Exchange parameters
      * @return amountOut_ Amount of WETH received
      */
-    function _executeRichToWeth(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeRichToWeth(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
@@ -1076,8 +1079,8 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
         // Step 1: RICH → CHIR via richChirVault
-        p_.tokenIn.safeTransfer(address(layout_.richChirVault), actualIn);
-        uint256 chirOut = layout_.richChirVault
+        p_.tokenIn.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
+        uint256 chirOut = layoutStruct_.richChirVault
             .exchangeIn(
                 p_.tokenIn,
                 actualIn,
@@ -1089,12 +1092,12 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             );
 
         // Step 2: CHIR → WETH via chirWethVault
-        IERC20(address(this)).safeTransfer(address(layout_.chirWethVault), chirOut);
-        amountOut_ = layout_.chirWethVault
+        IERC20(address(this)).safeTransfer(address(layoutStruct_.chirWethVault), chirOut);
+        amountOut_ = layoutStruct_.chirWethVault
             .exchangeIn(
                 IERC20(address(this)), // CHIR
                 chirOut,
-                layout_.wethToken,
+                layoutStruct_.wethToken,
                 p_.minAmountOut, // Apply slippage protection on final output
                 p_.recipient,
                 true, // pretransferred
@@ -1123,12 +1126,12 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
      *
      *      Access control: sender must be in allowedRichirRedeemAddresses AddressSet.
      */
-    function _executeRichirToRich(BaseProtocolDETFRepo.Storage storage layout_, ExchangeInParams memory p_)
+    function _executeRichirToRich(BaseProtocolDETFRepo.Storage storage layoutStruct_, ExchangeInParams memory p_)
         internal
         returns (uint256 amountOut_)
     {
         // Access control: check if sender is allowed to use this route
-        if (!layout_.allowedRichirRedeemAddresses._contains(msg.sender)) {
+        if (!layoutStruct_.allowedRichirRedeemAddresses._contains(msg.sender)) {
             revert BaseProtocolDETFRepo.NotAllowedRichirRedeem(msg.sender);
         }
 
@@ -1150,38 +1153,38 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         }
 
         // Step 2: Calculate BPT to exit BEFORE burning (rate still reflects current state)
-        uint256 bptIn = _calcRichirRedemptionBptIn(layout_, actualIn);
+        uint256 bptIn = _calcRichirRedemptionBptIn(layoutStruct_, actualIn);
 
         // Step 3: Mirror bridgeRichir: move redeemed RICHIR into the token contract,
         // then burn from the token contract with pretransferred=true.
-        p_.tokenIn.safeTransfer(address(layout_.richirToken), actualIn);
-        layout_.richirToken.burnShares(actualIn, address(0), true);
+        p_.tokenIn.safeTransfer(address(layoutStruct_.richirToken), actualIn);
+        layoutStruct_.richirToken.burnShares(actualIn, address(0), true);
 
         // Step 4: Exit reserve pool proportionally
         (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _exitReservePoolProportional(layout_, bptIn);
+            _exitReservePoolProportional(layoutStruct_, bptIn);
 
         // Step 5: Re-invest CHIR/WETH portion back into reserve pool, mint local RICHIR
         if (chirWethVaultSharesOut > 0) {
             uint256 localBptOut =
-                _addToReservePoolForWethToRichir(layout_, chirWethVaultSharesOut, p_.deadline);
+                _addToReservePoolForWethToRichir(layoutStruct_, chirWethVaultSharesOut, p_.deadline);
             if (localBptOut > 0) {
                 IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-                reservePoolToken.forceApprove(address(layout_.protocolNFTVault), localBptOut);
-                layout_.protocolNFTVault.addToProtocolNFT(layout_.protocolNFTId, localBptOut);
+                reservePoolToken.forceApprove(address(layoutStruct_.protocolNFTVault), localBptOut);
+                layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, localBptOut);
                 // Mint local RICHIR to sender (not recipient - this is the reinvest portion)
-                layout_.richirToken.mintFromNFTSale(localBptOut, msg.sender);
+                layoutStruct_.richirToken.mintFromNFTSale(localBptOut, msg.sender);
             }
         }
 
         // Step 6: Exchange RICH/CHIR portion for RICH
         if (richChirVaultSharesOut > 0) {
-            IERC20 richChirVaultToken = IERC20(address(layout_.richChirVault));
-            richChirVaultToken.forceApprove(address(layout_.richChirVault), richChirVaultSharesOut);
-            amountOut_ = layout_.richChirVault.exchangeIn(
+            IERC20 richChirVaultToken = IERC20(address(layoutStruct_.richChirVault));
+            richChirVaultToken.forceApprove(address(layoutStruct_.richChirVault), richChirVaultSharesOut);
+            amountOut_ = layoutStruct_.richChirVault.exchangeIn(
                 richChirVaultToken,
                 richChirVaultSharesOut,
-                layout_.richToken,
+                layoutStruct_.richToken,
                 0, // minAmountOut on intermediate step - final slippage check below
                 address(this),
                 false,
@@ -1194,6 +1197,6 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
             revert SlippageExceeded(p_.minAmountOut, amountOut_);
         }
 
-        layout_.richToken.safeTransfer(p_.recipient, amountOut_);
+        layoutStruct_.richToken.safeTransfer(p_.recipient, amountOut_);
     }
 }

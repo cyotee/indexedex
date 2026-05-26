@@ -40,6 +40,7 @@ import {IPoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrom
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {
     BalancerV38020WeightedPoolMath
@@ -157,16 +158,16 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
 
     /**
      * @notice Loads pool reserves for synthetic price calculation.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param reserves_ Memory struct to populate
      */
-    function _loadPoolReserves(BaseProtocolDETFRepo.Storage storage layout_, PoolReserves memory reserves_)
+    function _loadPoolReserves(BaseProtocolDETFRepo.Storage storage layoutStruct_, PoolReserves memory reserves_)
         internal
         view
         virtual
     {
         // Get CHIR/WETH Aerodrome pool reserves
-        IUniswapV2Pair chirWethPool = IUniswapV2Pair(address(IERC4626(address(layout_.chirWethVault)).asset()));
+        IUniswapV2Pair chirWethPool = IUniswapV2Pair(address(IERC4626(address(layoutStruct_.chirWethVault)).asset()));
         reserves_.chirWethLpTotalSupply = IERC20(address(chirWethPool)).totalSupply();
         reserves_.chirWethFeePercent = _poolSwapFeePercent(address(chirWethPool));
         (uint256 reserve0, uint256 reserve1,) = chirWethPool.getReserves();
@@ -181,13 +182,13 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         }
 
         // Get RICH/CHIR Aerodrome pool reserves
-        IUniswapV2Pair richChirPool = IUniswapV2Pair(address(IERC4626(address(layout_.richChirVault)).asset()));
+        IUniswapV2Pair richChirPool = IUniswapV2Pair(address(IERC4626(address(layoutStruct_.richChirVault)).asset()));
         reserves_.richChirLpTotalSupply = IERC20(address(richChirPool)).totalSupply();
         reserves_.richChirFeePercent = _poolSwapFeePercent(address(richChirPool));
         (reserve0, reserve1,) = richChirPool.getReserves();
         token0 = richChirPool.token0();
 
-        if (token0 == address(layout_.richToken)) {
+        if (token0 == address(layoutStruct_.richToken)) {
             reserves_.richReserve = reserve0;
             reserves_.chirInRichPool = reserve1;
         } else {
@@ -198,8 +199,8 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         reserves_.chirTotalSupply = ERC20Repo._totalSupply();
 
         // Cache reserve pool weights (80/20)
-        reserves_.chirWethVaultWeight = layout_.chirWethVaultWeight;
-        reserves_.richChirVaultWeight = layout_.richChirVaultWeight;
+        reserves_.chirWethVaultWeight = layoutStruct_.chirWethVaultWeight;
+        reserves_.richChirVaultWeight = layoutStruct_.richChirVaultWeight;
     }
 
     /**
@@ -319,30 +320,30 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
 
     /**
      * @notice Checks if minting is allowed based on synthetic price.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param syntheticPrice_ Current synthetic price
      * @return allowed True if synthetic price is above the upper deadband threshold
      */
-    function _isMintingAllowed(BaseProtocolDETFRepo.Storage storage layout_, uint256 syntheticPrice_)
+    function _isMintingAllowed(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 syntheticPrice_)
         internal
         view
         returns (bool allowed)
     {
-        return syntheticPrice_ > layout_.mintThreshold;
+        return DETFThresholdPolicy._isMintingAllowed(layoutStruct_.mintThreshold, syntheticPrice_);
     }
 
     /**
      * @notice Checks if burning/redemption is allowed based on synthetic price.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param syntheticPrice_ Current synthetic price
      * @return allowed True if synthetic price is below the lower deadband threshold
      */
-    function _isBurningAllowed(BaseProtocolDETFRepo.Storage storage layout_, uint256 syntheticPrice_)
+    function _isBurningAllowed(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 syntheticPrice_)
         internal
         view
         returns (bool allowed)
     {
-        return syntheticPrice_ < layout_.burnThreshold;
+        return DETFThresholdPolicy._isBurningAllowed(layoutStruct_.burnThreshold, syntheticPrice_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -360,7 +361,7 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         view
         returns (TokenInfo[] memory tokenInfo_, uint256[] memory currentBalancesRaw_)
     {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         resPoolData_.balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         resPoolData_.reservePool = IWeightedPool(address(ERC4626Repo._reserveAsset()));
@@ -371,16 +372,16 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         (, tokenInfo_, currentBalancesRaw_,) = resPoolData_.balV3Vault.getPoolTokenInfo(address(resPoolData_.reservePool));
 
         // Cache indices
-        resPoolData_.chirWethVaultIndex = layout.chirWethVaultIndex;
-        resPoolData_.richChirVaultIndex = layout.richChirVaultIndex;
+        resPoolData_.chirWethVaultIndex = layoutStruct.chirWethVaultIndex;
+        resPoolData_.richChirVaultIndex = layoutStruct.richChirVaultIndex;
 
         // Load balances
         resPoolData_.chirWethVaultRawBalance = currentBalancesRaw_[resPoolData_.chirWethVaultIndex];
         resPoolData_.richChirVaultRawBalance = currentBalancesRaw_[resPoolData_.richChirVaultIndex];
 
         // Load weights
-        resPoolData_.chirWethVaultWeight = layout.chirWethVaultWeight;
-        resPoolData_.richChirVaultWeight = layout.richChirVaultWeight;
+        resPoolData_.chirWethVaultWeight = layoutStruct.chirWethVaultWeight;
+        resPoolData_.richChirVaultWeight = layoutStruct.richChirVaultWeight;
 
         // Create weights array for pool math
         resPoolData_.weightsArray = new uint256[](2);
@@ -792,7 +793,7 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
     /**
      * @notice Simulate the effect of adding an unbalanced vault token to the reserve pool
      *         and compute the resulting WETH value and redemption rate for a protocol NFT
-     * @param layout_ Storage layout pointer (allows accessing vault preview functions)
+     * @param layoutStruct_ Storage layoutStruct pointer (allows accessing vault preview functions)
      * @param resPoolData_ Reserve pool data previously loaded
      * @param currentRatedBalances_ Current rated balances array previously loaded
      * @param vaultIndexToAdd_ Index in rated balances to increase
@@ -920,11 +921,11 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
 
     /**
      * @notice Calculates seigniorage components for a mint operation above peg.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param calc_ Seigniorage calculation struct to populate
      * @param amountIn_ Amount of WETH deposited
      */
-    function _calcSeigniorage(BaseProtocolDETFRepo.Storage storage layout_, SeigniorageCalc memory calc_, uint256 amountIn_)
+    function _calcSeigniorage(BaseProtocolDETFRepo.Storage storage layoutStruct_, SeigniorageCalc memory calc_, uint256 amountIn_)
         internal
         view
     {
@@ -936,7 +937,7 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         calc_.grossSeigniorage = amountIn_ - (amountIn_ * ONE_WAD / calc_.syntheticPrice);
 
         // Get reduction percentage from fee oracle
-        uint256 reductionPPM = layout_._seigniorageIncentivePercentagePPM();
+        uint256 reductionPPM = layoutStruct_._seigniorageIncentivePercentagePPM();
         calc_.reducedFeePercent = reductionPPM;
 
         // Discount given to minter as incentive
@@ -975,30 +976,30 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
 
     /**
      * @notice Checks if the token is WETH.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param token_ Token to check
      * @return True if token is WETH
      */
-    function _isWethToken(BaseProtocolDETFRepo.Storage storage layout_, IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(layout_.wethToken);
+    function _isWethToken(BaseProtocolDETFRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(layoutStruct_.wethToken);
     }
 
     function _isWethToken(IERC20 token_) internal view returns (bool) {
-        return _isWethToken(BaseProtocolDETFRepo._layout(), token_);
+        return _isWethToken(BaseProtocolDETFRepo._layoutStruct(), token_);
     }
 
     /**
      * @notice Checks if the token is RICH.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param token_ Token to check
      * @return True if token is RICH
      */
-    function _isRichToken(BaseProtocolDETFRepo.Storage storage layout_, IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(layout_.richToken);
+    function _isRichToken(BaseProtocolDETFRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(layoutStruct_.richToken);
     }
 
     function _isRichToken(IERC20 token_) internal view returns (bool) {
-        return _isRichToken(BaseProtocolDETFRepo._layout(), token_);
+        return _isRichToken(BaseProtocolDETFRepo._layoutStruct(), token_);
     }
 
     /**
@@ -1012,16 +1013,16 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
 
     /**
      * @notice Checks if the token is RICHIR.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param token_ Token to check
      * @return True if token is RICHIR
      */
-    function _isRichirToken(BaseProtocolDETFRepo.Storage storage layout_, IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(layout_.richirToken);
+    function _isRichirToken(BaseProtocolDETFRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(layoutStruct_.richirToken);
     }
 
     function _isRichirToken(IERC20 token_) internal view returns (bool) {
-        return _isRichirToken(BaseProtocolDETFRepo._layout(), token_);
+        return _isRichirToken(BaseProtocolDETFRepo._layoutStruct(), token_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -1088,12 +1089,12 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         ERC20Repo._burn(pretransferred_ ? address(this) : owner_, amount_);
     }
 
-    function _loadChirWethLiquidityQuote(BaseProtocolDETFRepo.Storage storage layout_)
+    function _loadChirWethLiquidityQuote(BaseProtocolDETFRepo.Storage storage layoutStruct_)
         internal
         view
         returns (ChirWethLiquidityQuote memory quote_)
     {
-        quote_.pool = address(IERC4626(address(layout_.chirWethVault)).asset());
+        quote_.pool = address(IERC4626(address(layoutStruct_.chirWethVault)).asset());
 
         IUniswapV2Pair pool = IUniswapV2Pair(quote_.pool);
         quote_.totalSupply = IERC20(quote_.pool).totalSupply();
@@ -1103,71 +1104,71 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         quote_.stable = _poolIsStable(quote_.pool);
     }
 
-    function _quoteBalancedChirForWethDeposit(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
+    function _quoteBalancedChirForWethDeposit(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 wethIn_)
         internal
         view
         returns (ChirWethLiquidityQuote memory quote_, uint256 chirAmount_)
     {
-        quote_ = _loadChirWethLiquidityQuote(layout_);
+        quote_ = _loadChirWethLiquidityQuote(layoutStruct_);
 
         if (wethIn_ == 0 || quote_.reserve0 == 0 || quote_.reserve1 == 0) {
             return (quote_, 0);
         }
 
-        if (quote_.token0 == address(layout_.wethToken)) {
+        if (quote_.token0 == address(layoutStruct_.wethToken)) {
             chirAmount_ = (wethIn_ * quote_.reserve1) / quote_.reserve0;
         } else {
             chirAmount_ = (wethIn_ * quote_.reserve0) / quote_.reserve1;
         }
     }
 
-    function _quoteBalancedChirWethDepositAmounts(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
+    function _quoteBalancedChirWethDepositAmounts(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 wethIn_)
         internal
         view
         returns (ChirWethLiquidityQuote memory quote_, uint256 chirAmount_, uint256 wethUsed_)
     {
-        (quote_, chirAmount_) = _quoteBalancedChirForWethDeposit(layout_, wethIn_);
+        (quote_, chirAmount_) = _quoteBalancedChirForWethDeposit(layoutStruct_, wethIn_);
         if (chirAmount_ == 0) {
             return (quote_, 0, 0);
         }
 
-        if (quote_.token0 == address(layout_.wethToken)) {
+        if (quote_.token0 == address(layoutStruct_.wethToken)) {
             wethUsed_ = (chirAmount_ * quote_.reserve0) / quote_.reserve1;
         } else {
             wethUsed_ = (chirAmount_ * quote_.reserve1) / quote_.reserve0;
         }
     }
 
-    function _previewBalancedChirWethLpOut(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
+    function _previewBalancedChirWethLpOut(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 wethIn_)
         internal
         view
         returns (uint256 lpOut_)
     {
         (ChirWethLiquidityQuote memory quote, uint256 chirAmount, uint256 wethUsed) =
-            _quoteBalancedChirWethDepositAmounts(layout_, wethIn_);
+            _quoteBalancedChirWethDepositAmounts(layoutStruct_, wethIn_);
         if (chirAmount == 0 || wethUsed == 0 || quote.totalSupply == 0) {
             return 0;
         }
 
-        uint256 amount0 = quote.token0 == address(layout_.wethToken) ? wethUsed : chirAmount;
-        uint256 amount1 = quote.token0 == address(layout_.wethToken) ? chirAmount : wethUsed;
+        uint256 amount0 = quote.token0 == address(layoutStruct_.wethToken) ? wethUsed : chirAmount;
+        uint256 amount1 = quote.token0 == address(layoutStruct_.wethToken) ? chirAmount : wethUsed;
 
         uint256 liquidity0 = (amount0 * quote.totalSupply) / quote.reserve0;
         uint256 liquidity1 = (amount1 * quote.totalSupply) / quote.reserve1;
         lpOut_ = liquidity0 < liquidity1 ? liquidity0 : liquidity1;
     }
 
-    function _previewBalancedChirWethVaultShares(BaseProtocolDETFRepo.Storage storage layout_, uint256 wethIn_)
+    function _previewBalancedChirWethVaultShares(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 wethIn_)
         internal
         view
         returns (uint256 vaultShares_)
     {
-        uint256 lpOut = _previewBalancedChirWethLpOut(layout_, wethIn_);
+        uint256 lpOut = _previewBalancedChirWethLpOut(layoutStruct_, wethIn_);
         if (lpOut == 0) {
             return 0;
         }
 
-        ChirWethLiquidityQuote memory quote = _loadChirWethLiquidityQuote(layout_);
-        vaultShares_ = _previewVaultSharesPostCompound(layout_.chirWethVault, IERC20(quote.pool), lpOut);
+        ChirWethLiquidityQuote memory quote = _loadChirWethLiquidityQuote(layoutStruct_);
+        vaultShares_ = _previewVaultSharesPostCompound(layoutStruct_.chirWethVault, IERC20(quote.pool), lpOut);
     }
 }

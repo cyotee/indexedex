@@ -75,7 +75,7 @@ import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
@@ -117,7 +117,7 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         address peerRelayer;
         
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
-        IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
+        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;
@@ -190,7 +190,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     address immutable LOCAL_RELAYER;
     address immutable PEER_RELAYER;
     IUniswapV4StandardExchangeDFPkg immutable WETH_RICH_VAULT_PKG;
-    IProtocolNFTVaultDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
+    IDetfSelfNftInventoryDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
     IRICHIRDFPkg immutable RICHIR_PKG;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
     IERC20 immutable WETH_TOKEN;

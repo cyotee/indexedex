@@ -403,7 +403,7 @@ contract SeigniorageDETFDFPkg is ISeigniorageDETFDFPkg, IStandardVaultPkg {
             return true;
         }
 
-        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layoutStruct();
 
         address reservePool;
         {
@@ -452,7 +452,7 @@ contract SeigniorageDETFDFPkg is ISeigniorageDETFDFPkg, IStandardVaultPkg {
 
         address nft;
         {
-            ERC20Repo.Storage storage erc20Storage = ERC20Repo._layout();
+            ERC20Repo.Storage storage erc20Storage = ERC20Repo._layoutStruct();
 
             nft = SEIGNIORAGE_NFT_VAULT_PKG.deployVault(
                 // string memory name,

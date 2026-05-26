@@ -6,7 +6,7 @@ import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
-import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQueryAware.sol";
+import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol";
 
 /**
  * @title IStandardExchangeProxy
@@ -17,7 +17,7 @@ import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQue
  *      - IStandardVault: vaultFeeTypeIds, contentsId, vaultTypes, vaultConfig
  *      - IStandardExchangeIn: previewExchangeIn, exchangeIn
  *      - IStandardExchangeOut: previewExchangeOut, exchangeOut
- *      - IVautlFeeOracleQueryAware: vaultFeeOracleQuery
+ *      - IVaultFeeOracleQueryAware: vaultFeeOracleQuery
  */
 interface IStandardExchangeProxy is
     IERC4626PermitProxy,
@@ -25,5 +25,5 @@ interface IStandardExchangeProxy is
     IStandardVault,
     IStandardExchangeIn,
     IStandardExchangeOut,
-    IVautlFeeOracleQueryAware
+    IVaultFeeOracleQueryAware
 {}

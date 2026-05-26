@@ -28,11 +28,11 @@ abstract contract SeigniorageNFTVaultCommon is ISeigniorageNFTVault {
 
     /**
      * @notice Validates a lock duration is within acceptable bounds.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param duration_ Proposed lock duration in seconds
      */
-    function _validateLockDuration(SeigniorageNFTVaultRepo.Storage storage layout_, uint256 duration_) internal view {
-        layout_;
+    function _validateLockDuration(SeigniorageNFTVaultRepo.Storage storage layoutStruct_, uint256 duration_) internal view {
+        layoutStruct_;
 
         BondTerms memory terms = _bondTerms();
         if (duration_ < terms.minLockDuration) {
@@ -44,6 +44,6 @@ abstract contract SeigniorageNFTVaultCommon is ISeigniorageNFTVault {
     }
 
     function _validateLockDuration(uint256 duration_) internal view {
-        _validateLockDuration(SeigniorageNFTVaultRepo._layout(), duration_);
+        _validateLockDuration(SeigniorageNFTVaultRepo._layoutStruct(), duration_);
     }
 }

@@ -257,7 +257,7 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
         MultiStepOwnableRepo._initialize(decodedArgs.owner, 3 days);
         Create3FactoryAwareRepo._initialize(decodedArgs.create3Factory);
         DiamondPackageFactoryAwareRepo._initialize(decodedArgs.diamondPackageFactory);
-        VaultFeeOracleRepo.Storage storage feeLayout = VaultFeeOracleRepo._layout();
+        VaultFeeOracleRepo.Storage storage feeLayout = VaultFeeOracleRepo._layoutStruct();
         VaultFeeOracleRepo._setFeeTo(feeLayout, decodedArgs.feeTo);
         VaultFeeOracleRepo._setDefaultVaultUsageFee(feeLayout, DEFAULT_VAULT_USAGE_FEE);
         VaultFeeOracleRepo._setDefaultBondTerms(

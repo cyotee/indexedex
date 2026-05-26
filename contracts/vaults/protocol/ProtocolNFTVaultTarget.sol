@@ -19,6 +19,7 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {ProtocolNFTVaultRepo} from "contracts/vaults/protocol/ProtocolNFTVaultRepo.sol";
 import {ProtocolNFTVaultCommon} from "contracts/vaults/protocol/ProtocolNFTVaultCommon.sol";
 import {ProtocolNFTVaultService} from "contracts/vaults/protocol/ProtocolNFTVaultService.sol";
@@ -69,23 +70,23 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     {
         if (shares == 0) revert BaseSharesZero();
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
-        _validateLockDuration(layout, lockDuration);
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
+        _validateLockDuration(layoutStruct, lockDuration);
 
         uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration);
 
         // Update global rewards before creating position
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
         // Calculate effective shares with bonus
-        uint256 effectiveShares = (shares * bonusMultiplier) / ONE_WAD;
+        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(shares, bonusMultiplier);
 
         // Mint NFT
         tokenId = ERC721Repo._mint(recipient);
 
         // Create position with current reward debt
         ProtocolNFTVaultRepo._createPosition(
-            layout, tokenId, shares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
+            layoutStruct, tokenId, shares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
         );
 
         emit NewLock(tokenId, recipient, shares, bonusMultiplier, block.timestamp + lockDuration);
@@ -93,15 +94,15 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
 
     /// @notice Mints and records the protocol-owned NFT (once).
     function initializeProtocolNFT() external onlyOwner lock returns (uint256 tokenId) {
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
-        tokenId = ProtocolNFTVaultRepo._protocolNFTId(layout);
+        tokenId = ProtocolNFTVaultRepo._protocolNFTId(layoutStruct);
         if (ERC721Repo._ownerOf(tokenId) != address(0)) {
             return tokenId;
         }
 
         tokenId = ERC721Repo._mint(address(this));
-        ProtocolNFTVaultRepo._setProtocolNFTId(layout, tokenId);
+        ProtocolNFTVaultRepo._setProtocolNFTId(layoutStruct, tokenId);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -116,16 +117,16 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
         lock
         returns (uint256 wethOut)
     {
-        if (block.timestamp > deadline) {
+        if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
         // Validate caller using service struct
         {
             ProtocolNFTVaultService.RedeemParams memory params = ProtocolNFTVaultService.RedeemParams({
-                tokenId: tokenId, recipient: recipient, caller: msg.sender, protocolDETF: address(layout.protocolDETF)
+                tokenId: tokenId, recipient: recipient, caller: msg.sender, protocolDETF: address(layoutStruct.protocolDETF)
             });
             address owner = ERC721Repo._ownerOf(tokenId);
             if (!ProtocolNFTVaultService._validateRedeemCaller(params, owner)) {
@@ -140,29 +141,29 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
 
         // Check lock expiry
         {
-            uint256 unlockTime = layout.unlockTimeOf[tokenId];
-            if (block.timestamp < unlockTime) {
+            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+            if (DETFBondNFTMathLib._isUnlockPending(unlockTime, block.timestamp)) {
                 revert LockDurationNotExpired(block.timestamp, unlockTime);
             }
         }
 
         // Update and harvest rewards
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
-        uint256 rewards = _harvestRewardsInternal(layout, tokenId, recipient);
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
         // Get BPT amount (LP) from the canonical share ledger (effectiveShares)
-        uint256 lpAmount = ProtocolNFTVaultRepo._convertToAssets(layout, layout.effectiveSharesOf[tokenId]);
-        ProtocolNFTVaultRepo._removePosition(layout, tokenId);
+        uint256 lpAmount = ProtocolNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
+        ProtocolNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // Grant approval for burn if DETF is calling
-        if (msg.sender == address(layout.protocolDETF)) {
-            ERC721Repo._layout().approvedForTokenId[tokenId] = msg.sender;
+        if (msg.sender == address(layoutStruct.protocolDETF)) {
+            ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
         }
         ERC721Repo._burn(tokenId);
 
         // Canonical Bond NFT → WETH redemption:
         // delegate to ProtocolDETF, which custody-holds BPT and executes the pool unwind.
-        wethOut = layout.protocolDETF.claimLiquidity(lpAmount, recipient);
+        wethOut = layoutStruct.protocolDETF.claimLiquidity(lpAmount, recipient);
 
         emit IProtocolNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }
@@ -177,14 +178,14 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     function claimRewards(uint256 tokenId, address recipient) external lock returns (uint256 rewards) {
         // Validate ownership
         address owner = ERC721Repo._ownerOf(tokenId);
-        if (owner != msg.sender) {
+        if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender)) {
             revert NotBondHolder(owner, msg.sender);
         }
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
-        rewards = _harvestRewardsInternal(layout, tokenId, recipient);
+        rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
         emit IProtocolNFTVault.RewardsClaimed(tokenId, recipient, rewards);
     }
@@ -193,7 +194,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
      * @dev Internal function to harvest rewards for a position.
      *      Uses service library structs to avoid stack-too-deep.
      */
-    function _harvestRewardsInternal(ProtocolNFTVaultRepo.Storage storage layout_, uint256 tokenId_, address recipient_)
+    function _harvestRewardsInternal(ProtocolNFTVaultRepo.Storage storage layoutStruct_, uint256 tokenId_, address recipient_)
         internal
         returns (uint256 rewards_)
     {
@@ -201,9 +202,9 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
         ProtocolNFTVaultService.HarvestParams memory params = ProtocolNFTVaultService.HarvestParams({
             tokenId: tokenId_,
             recipient: recipient_,
-            effectiveShares: layout_.effectiveSharesOf[tokenId_],
-            rewardPerShares: layout_.rewardPerShares,
-            paidPerShare: layout_.userRewardPerSharePaid[tokenId_]
+            effectiveShares: layoutStruct_.effectiveSharesOf[tokenId_],
+            rewardPerShares: layoutStruct_.rewardPerShares,
+            paidPerShare: layoutStruct_.userRewardPerSharePaid[tokenId_]
         });
 
         //     // Calculate rewards using service
@@ -216,7 +217,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
         rewards_ = result.rewards;
 
         // Execute transfer using service
-        ProtocolNFTVaultService._executeHarvestTransfer(layout_, tokenId_, recipient_, rewards_);
+        ProtocolNFTVaultService._executeHarvestTransfer(layoutStruct_, tokenId_, recipient_, rewards_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -231,9 +232,9 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
             revert ProtocolNFTRestricted(tokenId);
         }
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
-        ProtocolNFTVaultRepo._addToPosition(layout, tokenId, shares);
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        ProtocolNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
     }
 
     /**
@@ -245,7 +246,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
         lock
         returns (uint256 principalShares, uint256 rewardsClaimed)
     {
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
         // Cannot sell protocol NFT, and token must exist.
         if (_isProtocolNFT(tokenId)) {
@@ -257,7 +258,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
             revert NotBondHolder(owner, seller);
         }
 
-        principalShares = layout.originalSharesOf[tokenId];
+        principalShares = layoutStruct.originalSharesOf[tokenId];
         if (principalShares == 0) {
             revert PositionNotFound(tokenId);
         }
@@ -267,17 +268,17 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
         }
 
         // Update + harvest rewards to recipient (per TASK.md).
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
-        rewardsClaimed = _harvestRewardsInternal(layout, tokenId, rewardsRecipient);
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);
 
         // Remove the sold position (burns bonus shares by removing effectiveShares).
-        ProtocolNFTVaultRepo._removePosition(layout, tokenId);
+        ProtocolNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // Transfer principal-only shares into the protocol NFT position.
-        ProtocolNFTVaultRepo._addToPosition(layout, layout.protocolNFTId, principalShares);
+        ProtocolNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.protocolNFTId, principalShares);
 
         // Burn the sold bond NFT.
-        ERC721Repo._layout().approvedForTokenId[tokenId] = msg.sender;
+        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
         ERC721Repo._burn(tokenId);
     }
 
@@ -290,8 +291,8 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
             revert ProtocolNFTRestricted(tokenId);
         }
 
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
-        ProtocolNFTVaultRepo._setProtocolNFTSold(layout, true);
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
+        ProtocolNFTVaultRepo._setProtocolNFTSold(layoutStruct, true);
         emit ProtocolNFTSaleMarked(tokenId);
     }
 
@@ -317,18 +318,18 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
      * @notice Returns the lock info for a position.
      */
     function lockInfoOf(uint256 tokenId) external view returns (LockInfo memory info) {
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
-        uint256 originalShares = ProtocolNFTVaultRepo._originalSharesOf(layout, tokenId);
-        uint256 effectiveShares = ProtocolNFTVaultRepo._effectiveSharesOf(layout, tokenId);
-        uint256 bonusMultiplier = ProtocolNFTVaultRepo._bonusMultiplierOf(layout, tokenId);
+        uint256 originalShares = ProtocolNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
+        uint256 effectiveShares = ProtocolNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
+        uint256 bonusMultiplier = ProtocolNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
 
         info.sharesAwarded = originalShares;
-        info.rewardPerShare = layout.rewardPerShares;
+        info.rewardPerShare = layoutStruct.rewardPerShares;
         info.bonusPercentage = bonusMultiplier != 0
             ? bonusMultiplier
             : (originalShares > 0 ? (effectiveShares * ONE_WAD) / originalShares : ONE_WAD);
-        info.unlockTime = ProtocolNFTVaultRepo._unlockTimeOf(layout, tokenId);
+        info.unlockTime = ProtocolNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
     }
 
     /**
@@ -447,20 +448,20 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     //  * @inheritdoc IProtocolNFTVault
     //  */
     function reallocateProtocolRewards(address recipient) external returns (uint256 amount) {
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
         // Allow FeeCollector or the Protocol DETF itself to collect the protocol NFT's accrued reward-token share.
-        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layout.protocolDETF)) {
+        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layoutStruct.protocolDETF)) {
             revert NotAuthorized(msg.sender);
         }
 
-        uint256 protocolTokenId = layout.protocolNFTId;
+        uint256 protocolTokenId = layoutStruct.protocolNFTId;
 
         // Update global rewards
-        ProtocolNFTVaultRepo._updateGlobalRewards(layout);
+        ProtocolNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
         // Harvest protocol NFT rewards
-        amount = _harvestRewardsInternal(layout, protocolTokenId, recipient);
+        amount = _harvestRewardsInternal(layoutStruct, protocolTokenId, recipient);
 
         emit IProtocolNFTVault.ProtocolRewardsReallocated(recipient, amount);
     }

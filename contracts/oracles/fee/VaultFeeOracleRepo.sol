@@ -41,14 +41,14 @@ library VaultFeeOracleRepo {
         // mapping(address vault => KinkLendingTerms lendingTerms) lendingTermsOfVault;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     function _validateWadPercentage(uint256 value_) internal pure {
@@ -70,7 +70,7 @@ library VaultFeeOracleRepo {
     }
 
     function _initVaultRegistryFeeOracle(
-        Storage storage layout,
+        Storage storage layoutStruct,
         IFeeCollectorProxy feeTo_,
         uint256 defaultVaultUsageFee_,
         BondTerms memory defaultBondTerms_,
@@ -83,302 +83,302 @@ library VaultFeeOracleRepo {
         _validateWadPercentage(defaultDexSwapFee_);
         _validateWadPercentage(defaultSeigniorageIncentivePercentage_);
         _validateBondTerms(defaultBondTerms_);
-        layout.feeTo = feeTo_;
-        layout.defaultVaultUsageFee = defaultVaultUsageFee_;
-        layout.defaultBondTerms = defaultBondTerms_;
-        layout.defaultDexSwapFee = defaultDexSwapFee_;
-        layout.defaultSeigniorageIncentivePercentage = defaultSeigniorageIncentivePercentage_;
-        // layout.defaultLendingTerms = defaultLendingTerms_;
+        layoutStruct.feeTo = feeTo_;
+        layoutStruct.defaultVaultUsageFee = defaultVaultUsageFee_;
+        layoutStruct.defaultBondTerms = defaultBondTerms_;
+        layoutStruct.defaultDexSwapFee = defaultDexSwapFee_;
+        layoutStruct.defaultSeigniorageIncentivePercentage = defaultSeigniorageIncentivePercentage_;
+        // layoutStruct.defaultLendingTerms = defaultLendingTerms_;
     }
 
-    function _feeTo(Storage storage layout) internal view returns (IFeeCollectorProxy) {
-        return layout.feeTo;
+    function _feeTo(Storage storage layoutStruct) internal view returns (IFeeCollectorProxy) {
+        return layoutStruct.feeTo;
     }
 
     function _feeTo() internal view returns (IFeeCollectorProxy) {
-        return _feeTo(_layout());
+        return _feeTo(_layoutStruct());
     }
 
-    function _setFeeTo(Storage storage layout, IFeeCollectorProxy feeTo_)
+    function _setFeeTo(Storage storage layoutStruct, IFeeCollectorProxy feeTo_)
         internal
         returns (IFeeCollectorProxy oldFeeTo)
     {
-        oldFeeTo = layout.feeTo;
-        layout.feeTo = feeTo_;
+        oldFeeTo = layoutStruct.feeTo;
+        layoutStruct.feeTo = feeTo_;
     }
 
     function _setFeeTo(IFeeCollectorProxy feeTo_) internal returns (IFeeCollectorProxy oldFeeTo) {
-        return _setFeeTo(_layout(), feeTo_);
+        return _setFeeTo(_layoutStruct(), feeTo_);
     }
 
     /* ------------------------------ Usage Fee ----------------------------- */
 
-    function _defaultVaultUsageFee(Storage storage layout) internal view returns (uint256) {
-        return layout.defaultVaultUsageFee;
+    function _defaultVaultUsageFee(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.defaultVaultUsageFee;
     }
 
     function _defaultVaultUsageFee() internal view returns (uint256) {
-        return _defaultVaultUsageFee(_layout());
+        return _defaultVaultUsageFee(_layoutStruct());
     }
 
-    function _setDefaultVaultUsageFee(Storage storage layout, uint256 defaultVaultUsageFee_)
+    function _setDefaultVaultUsageFee(Storage storage layoutStruct, uint256 defaultVaultUsageFee_)
         internal
         returns (uint256 oldDefaultVaultUsageFee)
     {
         _validateWadPercentage(defaultVaultUsageFee_);
-        oldDefaultVaultUsageFee = layout.defaultVaultUsageFee;
-        layout.defaultVaultUsageFee = defaultVaultUsageFee_;
+        oldDefaultVaultUsageFee = layoutStruct.defaultVaultUsageFee;
+        layoutStruct.defaultVaultUsageFee = defaultVaultUsageFee_;
     }
 
     function _setDefaultVaultUsageFee(uint256 defaultVaultUsageFee_)
         internal
         returns (uint256 oldDefaultVaultUsageFee)
     {
-        return _setDefaultVaultUsageFee(_layout(), defaultVaultUsageFee_);
+        return _setDefaultVaultUsageFee(_layoutStruct(), defaultVaultUsageFee_);
     }
 
-    function _defaultUsageFeeOfTypeId(Storage storage layout, bytes4 vaultFeeTypeId_) internal view returns (uint256) {
-        return layout.defaultUsageFeeOfType[vaultFeeTypeId_];
+    function _defaultUsageFeeOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_) internal view returns (uint256) {
+        return layoutStruct.defaultUsageFeeOfType[vaultFeeTypeId_];
     }
 
     function _defaultUsageFeeOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
-        return _defaultUsageFeeOfTypeId(_layout(), vaultFeeTypeId_);
+        return _defaultUsageFeeOfTypeId(_layoutStruct(), vaultFeeTypeId_);
     }
 
-    function _setDefaultUsageFeeOfTypeId(Storage storage layout, bytes4 vaultFeeTypeId_, uint256 defaultUsageFee_)
+    function _setDefaultUsageFeeOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_, uint256 defaultUsageFee_)
         internal
         returns (uint256 oldDefaultUsageFee)
     {
         _validateWadPercentage(defaultUsageFee_);
-        oldDefaultUsageFee = layout.defaultUsageFeeOfType[vaultFeeTypeId_];
-        layout.defaultUsageFeeOfType[vaultFeeTypeId_] = defaultUsageFee_;
+        oldDefaultUsageFee = layoutStruct.defaultUsageFeeOfType[vaultFeeTypeId_];
+        layoutStruct.defaultUsageFeeOfType[vaultFeeTypeId_] = defaultUsageFee_;
     }
 
     function _setDefaultUsageFeeOfTypeId(bytes4 vaultFeeTypeId_, uint256 defaultUsageFee_)
         internal
         returns (uint256 oldDefaultUsageFee)
     {
-        return _setDefaultUsageFeeOfTypeId(_layout(), vaultFeeTypeId_, defaultUsageFee_);
+        return _setDefaultUsageFeeOfTypeId(_layoutStruct(), vaultFeeTypeId_, defaultUsageFee_);
     }
 
-    function _usageFeeOfVault(Storage storage layout, address vault_) internal view returns (uint256) {
-        return layout.usageFeeOfVault[vault_];
+    function _usageFeeOfVault(Storage storage layoutStruct, address vault_) internal view returns (uint256) {
+        return layoutStruct.usageFeeOfVault[vault_];
     }
 
     function _usageFeeOfVault(address vault_) internal view returns (uint256) {
-        return _usageFeeOfVault(_layout(), vault_);
+        return _usageFeeOfVault(_layoutStruct(), vault_);
     }
 
-    function _overrideUsageFeeOfVault(Storage storage layout, address vault_, uint256 usageFee_)
+    function _overrideUsageFeeOfVault(Storage storage layoutStruct, address vault_, uint256 usageFee_)
         internal
         returns (uint256 oldUsageFee)
     {
         _validateWadPercentage(usageFee_);
-        oldUsageFee = layout.usageFeeOfVault[vault_];
-        layout.usageFeeOfVault[vault_] = usageFee_;
+        oldUsageFee = layoutStruct.usageFeeOfVault[vault_];
+        layoutStruct.usageFeeOfVault[vault_] = usageFee_;
     }
 
     function _overrideUsageFeeOfVault(address vault_, uint256 usageFee_) internal returns (uint256 oldUsageFee) {
-        return _overrideUsageFeeOfVault(_layout(), vault_, usageFee_);
+        return _overrideUsageFeeOfVault(_layoutStruct(), vault_, usageFee_);
     }
 
     /* ----------------------------- Bond Terms ----------------------------- */
 
-    function _defaultBondTerms(Storage storage layout) internal view returns (BondTerms memory) {
-        return layout.defaultBondTerms;
+    function _defaultBondTerms(Storage storage layoutStruct) internal view returns (BondTerms memory) {
+        return layoutStruct.defaultBondTerms;
     }
 
     function _defaultBondTerms() internal view returns (BondTerms memory) {
-        return _defaultBondTerms(_layout());
+        return _defaultBondTerms(_layoutStruct());
     }
 
-    function _setDefaultBondTerms(Storage storage layout, BondTerms memory defaultBondTerms_)
+    function _setDefaultBondTerms(Storage storage layoutStruct, BondTerms memory defaultBondTerms_)
         internal
         returns (BondTerms memory oldDefaultBondTerms)
     {
         _validateBondTerms(defaultBondTerms_);
-        oldDefaultBondTerms = layout.defaultBondTerms;
-        layout.defaultBondTerms = defaultBondTerms_;
+        oldDefaultBondTerms = layoutStruct.defaultBondTerms;
+        layoutStruct.defaultBondTerms = defaultBondTerms_;
     }
 
     function _setDefaultBondTerms(BondTerms memory defaultBondTerms_)
         internal
         returns (BondTerms memory oldDefaultBondTerms)
     {
-        return _setDefaultBondTerms(_layout(), defaultBondTerms_);
+        return _setDefaultBondTerms(_layoutStruct(), defaultBondTerms_);
     }
 
-    function _defaultBondTermsOfVaultTypeId(Storage storage layout, bytes4 vaultFeeTypeId_)
+    function _defaultBondTermsOfVaultTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
         internal
         view
         returns (BondTerms memory)
     {
-        return layout.defaultBondTermsOfType[vaultFeeTypeId_];
+        return layoutStruct.defaultBondTermsOfType[vaultFeeTypeId_];
     }
 
     function _defaultBondTermsOfVaultTypeId(bytes4 vaultFeeTypeId_) internal view returns (BondTerms memory) {
-        return _defaultBondTermsOfVaultTypeId(_layout(), vaultFeeTypeId_);
+        return _defaultBondTermsOfVaultTypeId(_layoutStruct(), vaultFeeTypeId_);
     }
 
     function _setDefaultBondTermsOfTypeId(
-        Storage storage layout,
+        Storage storage layoutStruct,
         bytes4 vaultFeeTypeId_,
         BondTerms memory defaultBondTerms_
     ) internal returns (BondTerms memory oldDefaultBondTerms) {
         _validateBondTerms(defaultBondTerms_);
-        oldDefaultBondTerms = layout.defaultBondTermsOfType[vaultFeeTypeId_];
-        layout.defaultBondTermsOfType[vaultFeeTypeId_] = defaultBondTerms_;
+        oldDefaultBondTerms = layoutStruct.defaultBondTermsOfType[vaultFeeTypeId_];
+        layoutStruct.defaultBondTermsOfType[vaultFeeTypeId_] = defaultBondTerms_;
     }
 
     function _setDefaultBondTermsOfTypeId(bytes4 vaultFeeTypeId_, BondTerms memory defaultBondTerms_)
         internal
         returns (BondTerms memory oldDefaultBondTerms)
     {
-        return _setDefaultBondTermsOfTypeId(_layout(), vaultFeeTypeId_, defaultBondTerms_);
+        return _setDefaultBondTermsOfTypeId(_layoutStruct(), vaultFeeTypeId_, defaultBondTerms_);
     }
 
-    function _bondTermsOfVault(Storage storage layout, address vault_) internal view returns (BondTerms memory) {
-        return layout.bondTermsOfVault[vault_];
+    function _bondTermsOfVault(Storage storage layoutStruct, address vault_) internal view returns (BondTerms memory) {
+        return layoutStruct.bondTermsOfVault[vault_];
     }
 
     function _bondTermsOfVault(address vault_) internal view returns (BondTerms memory) {
-        return _bondTermsOfVault(_layout(), vault_);
+        return _bondTermsOfVault(_layoutStruct(), vault_);
     }
 
-    function _overrideBondTermsOfVault(Storage storage layout, address vault_, BondTerms memory bondTerms_)
+    function _overrideBondTermsOfVault(Storage storage layoutStruct, address vault_, BondTerms memory bondTerms_)
         internal
         returns (BondTerms memory oldBondTerms)
     {
         _validateBondTerms(bondTerms_);
-        oldBondTerms = layout.bondTermsOfVault[vault_];
-        layout.bondTermsOfVault[vault_] = bondTerms_;
+        oldBondTerms = layoutStruct.bondTermsOfVault[vault_];
+        layoutStruct.bondTermsOfVault[vault_] = bondTerms_;
     }
 
     function _overrideBondTermsOfVault(address vault_, BondTerms memory bondTerms_)
         internal
         returns (BondTerms memory oldBondTerms)
     {
-        return _overrideBondTermsOfVault(_layout(), vault_, bondTerms_);
+        return _overrideBondTermsOfVault(_layoutStruct(), vault_, bondTerms_);
     }
 
     /* ------------------------------ DEX Terms ----------------------------- */
 
-    function _defaultDexSwapFee(Storage storage layout) internal view returns (uint256 defaultDexSwapFee_) {
-        return layout.defaultDexSwapFee;
+    function _defaultDexSwapFee(Storage storage layoutStruct) internal view returns (uint256 defaultDexSwapFee_) {
+        return layoutStruct.defaultDexSwapFee;
     }
 
     function _defaultDexSwapFee() internal view returns (uint256) {
-        return _defaultDexSwapFee(_layout());
+        return _defaultDexSwapFee(_layoutStruct());
     }
 
-    function _setDefaultDexSwapFee(Storage storage layout, uint256 defaultDexSwapFee_)
+    function _setDefaultDexSwapFee(Storage storage layoutStruct, uint256 defaultDexSwapFee_)
         internal
         returns (uint256 oldDefaultDexSwapFee)
     {
         _validateWadPercentage(defaultDexSwapFee_);
-        oldDefaultDexSwapFee = layout.defaultDexSwapFee;
-        layout.defaultDexSwapFee = defaultDexSwapFee_;
+        oldDefaultDexSwapFee = layoutStruct.defaultDexSwapFee;
+        layoutStruct.defaultDexSwapFee = defaultDexSwapFee_;
     }
 
     function _setDefaultDexSwapFee(uint256 defaultDexSwapFee_) internal returns (uint256 oldDefaultDexSwapFee) {
-        return _setDefaultDexSwapFee(_layout(), defaultDexSwapFee_);
+        return _setDefaultDexSwapFee(_layoutStruct(), defaultDexSwapFee_);
     }
 
-    function _defaultDexSwapFeeOfTypeId(Storage storage layout, bytes4 vaultFeeTypeId_)
+    function _defaultDexSwapFeeOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
         internal
         view
         returns (uint256)
     {
-        return layout.defaultDexSwapFeeOfType[vaultFeeTypeId_];
+        return layoutStruct.defaultDexSwapFeeOfType[vaultFeeTypeId_];
     }
 
     function _defaultDexSwapFeeOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
-        return _defaultDexSwapFeeOfTypeId(_layout(), vaultFeeTypeId_);
+        return _defaultDexSwapFeeOfTypeId(_layoutStruct(), vaultFeeTypeId_);
     }
 
-    function _setDefaultDexSwapFeeOfTypeId(Storage storage layout, bytes4 vaultFeeTypeId_, uint256 defaultDexSwapFee_)
+    function _setDefaultDexSwapFeeOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_, uint256 defaultDexSwapFee_)
         internal
         returns (uint256 oldDefaultDexSwapFee)
     {
         _validateWadPercentage(defaultDexSwapFee_);
-        oldDefaultDexSwapFee = layout.defaultDexSwapFeeOfType[vaultFeeTypeId_];
-        layout.defaultDexSwapFeeOfType[vaultFeeTypeId_] = defaultDexSwapFee_;
+        oldDefaultDexSwapFee = layoutStruct.defaultDexSwapFeeOfType[vaultFeeTypeId_];
+        layoutStruct.defaultDexSwapFeeOfType[vaultFeeTypeId_] = defaultDexSwapFee_;
     }
 
     function _setDefaultDexSwapFeeOfTypeId(bytes4 vaultFeeTypeId_, uint256 defaultDexSwapFee_)
         internal
         returns (uint256 oldDefaultDexSwapFee)
     {
-        return _setDefaultDexSwapFeeOfTypeId(_layout(), vaultFeeTypeId_, defaultDexSwapFee_);
+        return _setDefaultDexSwapFeeOfTypeId(_layoutStruct(), vaultFeeTypeId_, defaultDexSwapFee_);
     }
 
-    function _dexSwapFeeOfVault(Storage storage layout, address vault_) internal view returns (uint256) {
-        return layout.dexSwapFeeOfVault[vault_];
+    function _dexSwapFeeOfVault(Storage storage layoutStruct, address vault_) internal view returns (uint256) {
+        return layoutStruct.dexSwapFeeOfVault[vault_];
     }
 
     function _dexSwapFeeOfVault(address vault_) internal view returns (uint256) {
-        return _dexSwapFeeOfVault(_layout(), vault_);
+        return _dexSwapFeeOfVault(_layoutStruct(), vault_);
     }
 
-    function _overrideDexSwapFeeOfVault(Storage storage layout, address vault_, uint256 swapFee_)
+    function _overrideDexSwapFeeOfVault(Storage storage layoutStruct, address vault_, uint256 swapFee_)
         internal
         returns (uint256 oldSwapFee)
     {
         _validateWadPercentage(swapFee_);
-        oldSwapFee = layout.dexSwapFeeOfVault[vault_];
-        layout.dexSwapFeeOfVault[vault_] = swapFee_;
+        oldSwapFee = layoutStruct.dexSwapFeeOfVault[vault_];
+        layoutStruct.dexSwapFeeOfVault[vault_] = swapFee_;
     }
 
     function _overrideDexSwapFeeOfVault(address vault_, uint256 swapFee_) internal returns (uint256 oldSwapFee) {
-        return _overrideDexSwapFeeOfVault(_layout(), vault_, swapFee_);
+        return _overrideDexSwapFeeOfVault(_layoutStruct(), vault_, swapFee_);
     }
 
     /* ---------------------------- Seigniorage Terms --------------------------- */
 
-    function _defaultSeigniorageIncentivePercentage(Storage storage layout) internal view returns (uint256) {
-        return layout.defaultSeigniorageIncentivePercentage;
+    function _defaultSeigniorageIncentivePercentage(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.defaultSeigniorageIncentivePercentage;
     }
 
     function _defaultSeigniorageIncentivePercentage() internal view returns (uint256) {
-        return _defaultSeigniorageIncentivePercentage(_layout());
+        return _defaultSeigniorageIncentivePercentage(_layoutStruct());
     }
 
     function _setDefaultSeigniorageIncentivePercentage(
-        Storage storage layout,
+        Storage storage layoutStruct,
         uint256 defaultSeigniorageIncentivePercentage_
     ) internal returns (uint256 oldDefaultSeigniorageIncentivePercentage) {
         _validateWadPercentage(defaultSeigniorageIncentivePercentage_);
-        oldDefaultSeigniorageIncentivePercentage = layout.defaultSeigniorageIncentivePercentage;
-        layout.defaultSeigniorageIncentivePercentage = defaultSeigniorageIncentivePercentage_;
+        oldDefaultSeigniorageIncentivePercentage = layoutStruct.defaultSeigniorageIncentivePercentage;
+        layoutStruct.defaultSeigniorageIncentivePercentage = defaultSeigniorageIncentivePercentage_;
     }
 
     function _setDefaultSeigniorageIncentivePercentage(uint256 defaultSeigniorageIncentivePercentage_)
         internal
         returns (uint256 oldDefaultSeigniorageIncentivePercentage)
     {
-        return _setDefaultSeigniorageIncentivePercentage(_layout(), defaultSeigniorageIncentivePercentage_);
+        return _setDefaultSeigniorageIncentivePercentage(_layoutStruct(), defaultSeigniorageIncentivePercentage_);
     }
 
-    function _defaultSeigniorageIncentivePercentageOfTypeId(Storage storage layout, bytes4 vaultFeeTypeId_)
+    function _defaultSeigniorageIncentivePercentageOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
         internal
         view
         returns (uint256)
     {
-        return layout.seigniorageIncentivePercentageOfType[vaultFeeTypeId_];
+        return layoutStruct.seigniorageIncentivePercentageOfType[vaultFeeTypeId_];
     }
 
     function _defaultSeigniorageIncentivePercentageOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
-        return _defaultSeigniorageIncentivePercentageOfTypeId(_layout(), vaultFeeTypeId_);
+        return _defaultSeigniorageIncentivePercentageOfTypeId(_layoutStruct(), vaultFeeTypeId_);
     }
 
     function _setDefaultSeigniorageIncentivePercentageOfTypeId(
-        Storage storage layout,
+        Storage storage layoutStruct,
         bytes4 vaultTypeId_,
         uint256 defaultSeigniorageIncentivePercentage_
     ) internal returns (uint256 oldDefaultSeigniorageIncentivePercentage) {
         _validateWadPercentage(defaultSeigniorageIncentivePercentage_);
-        oldDefaultSeigniorageIncentivePercentage = layout.seigniorageIncentivePercentageOfType[vaultTypeId_];
-        layout.seigniorageIncentivePercentageOfType[vaultTypeId_] = defaultSeigniorageIncentivePercentage_;
+        oldDefaultSeigniorageIncentivePercentage = layoutStruct.seigniorageIncentivePercentageOfType[vaultTypeId_];
+        layoutStruct.seigniorageIncentivePercentageOfType[vaultTypeId_] = defaultSeigniorageIncentivePercentage_;
     }
 
     function _setDefaultSeigniorageIncentivePercentageOfTypeId(
@@ -386,36 +386,36 @@ library VaultFeeOracleRepo {
         uint256 defaultSeigniorageIncentivePercentage_
     ) internal returns (uint256 oldDefaultSeigniorageIncentivePercentage) {
         return _setDefaultSeigniorageIncentivePercentageOfTypeId(
-            _layout(), vaultTypeId_, defaultSeigniorageIncentivePercentage_
+            _layoutStruct(), vaultTypeId_, defaultSeigniorageIncentivePercentage_
         );
     }
 
-    function _seigniorageIncentivePercentageOfVault(Storage storage layout, address vault_)
+    function _seigniorageIncentivePercentageOfVault(Storage storage layoutStruct, address vault_)
         internal
         view
         returns (uint256)
     {
-        return layout.seigniorageIncentivePercentageOfVault[vault_];
+        return layoutStruct.seigniorageIncentivePercentageOfVault[vault_];
     }
 
     function _seigniorageIncentivePercentageOfVault(address vault_) internal view returns (uint256) {
-        return _seigniorageIncentivePercentageOfVault(_layout(), vault_);
+        return _seigniorageIncentivePercentageOfVault(_layoutStruct(), vault_);
     }
 
     function _overrideSeigniorageIncentivePercentageOfVault(
-        Storage storage layout,
+        Storage storage layoutStruct,
         address vault_,
         uint256 incentivePercentage_
     ) internal returns (uint256 oldIncentivePercentage) {
         _validateWadPercentage(incentivePercentage_);
-        oldIncentivePercentage = layout.seigniorageIncentivePercentageOfVault[vault_];
-        layout.seigniorageIncentivePercentageOfVault[vault_] = incentivePercentage_;
+        oldIncentivePercentage = layoutStruct.seigniorageIncentivePercentageOfVault[vault_];
+        layoutStruct.seigniorageIncentivePercentageOfVault[vault_] = incentivePercentage_;
     }
 
     function _overrideSeigniorageIncentivePercentageOfVault(address vault_, uint256 incentivePercentage_)
         internal
         returns (uint256 oldIncentivePercentage)
     {
-        return _overrideSeigniorageIncentivePercentageOfVault(_layout(), vault_, incentivePercentage_);
+        return _overrideSeigniorageIncentivePercentageOfVault(_layoutStruct(), vault_, incentivePercentage_);
     }
 }

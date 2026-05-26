@@ -30,7 +30,7 @@ import {
  * @title SeigniorageDETFRepo
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Storage library for Seigniorage DETF vault state.
- * @dev Follows the Crane Repo pattern with dual _layout() functions.
+ * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
  */
 library SeigniorageDETFRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.seigniorage.detf");
@@ -68,14 +68,14 @@ library SeigniorageDETFRepo {
     /*                           Layout Functions                             */
     /* ---------------------------------------------------------------------- */
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
-            layout_.slot := slot_
+            layoutStruct_.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -83,7 +83,7 @@ library SeigniorageDETFRepo {
     /* ---------------------------------------------------------------------- */
 
     function _initialize(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         // IVault balancerV3Vault_,
         // IRouter balancerV3Router_,
         IVaultFeeOracleQuery feeOracle_,
@@ -97,18 +97,18 @@ library SeigniorageDETFRepo {
         // uint256 reserveVaultReservePoolWeight_,
         // ISeigniorageNFTVault seigniorageNFTVault_,
     ) internal {
-        // layout_.balancerV3Vault = balancerV3Vault_;
-        // layout_.balancerV3Router = balancerV3Router_;
-        layout_.feeOracle = feeOracle_;
-        layout_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
-        layout_.reserveVault = reserveVault_;
-        layout_.reserveVaultRateTarget = reserveVaultRateTarget_;
-        layout_.seigniorageToken = seigniorageToken_;
-        // layout_.selfIndexInReservePool = selfIndexInReservePool_;
-        // layout_.selfReservePoolWeight = selfReservePoolWeight_;
-        // layout_.reserveVaultIndexInReservePool = reserveVaultIndexInReservePool_;
-        // layout_.reserveVaultReservePoolWeight = reserveVaultReservePoolWeight_;
-        // layout_.seigniorageNFTVault = seigniorageNFTVault_;
+        // layoutStruct_.balancerV3Vault = balancerV3Vault_;
+        // layoutStruct_.balancerV3Router = balancerV3Router_;
+        layoutStruct_.feeOracle = feeOracle_;
+        layoutStruct_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
+        layoutStruct_.reserveVault = reserveVault_;
+        layoutStruct_.reserveVaultRateTarget = reserveVaultRateTarget_;
+        layoutStruct_.seigniorageToken = seigniorageToken_;
+        // layoutStruct_.selfIndexInReservePool = selfIndexInReservePool_;
+        // layoutStruct_.selfReservePoolWeight = selfReservePoolWeight_;
+        // layoutStruct_.reserveVaultIndexInReservePool = reserveVaultIndexInReservePool_;
+        // layoutStruct_.reserveVaultReservePoolWeight = reserveVaultReservePoolWeight_;
+        // layoutStruct_.seigniorageNFTVault = seigniorageNFTVault_;
     }
 
     function _initialize(
@@ -119,31 +119,31 @@ library SeigniorageDETFRepo {
         IERC20MintBurn seigniorageToken_
     ) internal {
         _initialize(
-            _layout(), feeOracle_, balancerV3PrepayRouter_, reserveVault_, reserveVaultRateTarget_, seigniorageToken_
+            _layoutStruct(), feeOracle_, balancerV3PrepayRouter_, reserveVault_, reserveVaultRateTarget_, seigniorageToken_
         );
     }
 
     function _initialize(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         uint256 selfIndexInReservePool_,
         uint256 selfReservePoolWeight_,
         uint256 reserveVaultIndexInReservePool_,
         uint256 reserveVaultReservePoolWeight_,
         ISeigniorageNFTVault seigniorageNFTVault_
     ) internal {
-        // layout_.balancerV3Vault = balancerV3Vault_;
-        // layout_.balancerV3Router = balancerV3Router_;
-        // layout_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
-        // layout_.reserveVault = reserveVault_;
-        // layout_.reserveVaultRateTarget = reserveVaultRateTarget_;
-        // layout_.reserveVaultTokens._add(reserveVaultTokens_);
-        layout_.selfIndexInReservePool = selfIndexInReservePool_;
-        layout_.selfReservePoolWeight = selfReservePoolWeight_;
-        layout_.reserveVaultIndexInReservePool = reserveVaultIndexInReservePool_;
-        layout_.reserveVaultReservePoolWeight = reserveVaultReservePoolWeight_;
-        // layout_.seigniorageToken = seigniorageToken_;
-        layout_.seigniorageNFTVault = seigniorageNFTVault_;
-        // layout_.feeOracle = feeOracle_;
+        // layoutStruct_.balancerV3Vault = balancerV3Vault_;
+        // layoutStruct_.balancerV3Router = balancerV3Router_;
+        // layoutStruct_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
+        // layoutStruct_.reserveVault = reserveVault_;
+        // layoutStruct_.reserveVaultRateTarget = reserveVaultRateTarget_;
+        // layoutStruct_.reserveVaultTokens._add(reserveVaultTokens_);
+        layoutStruct_.selfIndexInReservePool = selfIndexInReservePool_;
+        layoutStruct_.selfReservePoolWeight = selfReservePoolWeight_;
+        layoutStruct_.reserveVaultIndexInReservePool = reserveVaultIndexInReservePool_;
+        layoutStruct_.reserveVaultReservePoolWeight = reserveVaultReservePoolWeight_;
+        // layoutStruct_.seigniorageToken = seigniorageToken_;
+        layoutStruct_.seigniorageNFTVault = seigniorageNFTVault_;
+        // layoutStruct_.feeOracle = feeOracle_;
     }
 
     // function _initialize(
@@ -162,7 +162,7 @@ library SeigniorageDETFRepo {
     //     IVaultFeeOracleQuery feeOracle_
     // ) internal {
     //     _initialize(
-    //         _layout(),
+    //         _layoutStruct(),
     //         balancerV3Vault_,
     //         balancerV3Router_,
     //         balancerV3PrepayRouter_,
@@ -183,155 +183,155 @@ library SeigniorageDETFRepo {
     /*                         Reserve Pool State                             */
     /* ---------------------------------------------------------------------- */
 
-    function _isReservePoolInitialized(Storage storage layout_) internal view returns (bool) {
-        return layout_.isReservePoolInitialized;
+    function _isReservePoolInitialized(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.isReservePoolInitialized;
     }
 
     function _isReservePoolInitialized() internal view returns (bool) {
-        return _isReservePoolInitialized(_layout());
+        return _isReservePoolInitialized(_layoutStruct());
     }
 
-    function _setIsReservePoolInitialized(Storage storage layout_) internal {
-        layout_.isReservePoolInitialized = true;
+    function _setIsReservePoolInitialized(Storage storage layoutStruct_) internal {
+        layoutStruct_.isReservePoolInitialized = true;
     }
 
     function _setIsReservePoolInitialized() internal {
-        _setIsReservePoolInitialized(_layout());
+        _setIsReservePoolInitialized(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                          Balancer V3 Vault                             */
     /* ---------------------------------------------------------------------- */
 
-    // function _balancerV3Vault(Storage storage layout_) internal view returns (IVault) {
-    //     return layout_.balancerV3Vault;
+    // function _balancerV3Vault(Storage storage layoutStruct_) internal view returns (IVault) {
+    //     return layoutStruct_.balancerV3Vault;
     // }
 
     // function _balancerV3Vault() internal view returns (IVault) {
-    //     return _balancerV3Vault(_layout());
+    //     return _balancerV3Vault(_layoutStruct());
     // }
 
     /* ---------------------------------------------------------------------- */
     /*                         Balancer V3 Router                             */
     /* ---------------------------------------------------------------------- */
 
-    // function _balancerV3Router(Storage storage layout_) internal view returns (IRouter) {
-    //     return layout_.balancerV3Router;
+    // function _balancerV3Router(Storage storage layoutStruct_) internal view returns (IRouter) {
+    //     return layoutStruct_.balancerV3Router;
     // }
 
     // function _balancerV3Router() internal view returns (IRouter) {
-    //     return _balancerV3Router(_layout());
+    //     return _balancerV3Router(_layoutStruct());
     // }
 
     /* ---------------------------------------------------------------------- */
     /*                           Reserve Vault                                */
     /* ---------------------------------------------------------------------- */
 
-    function _reserveVault(Storage storage layout_) internal view returns (IStandardExchange) {
-        return layout_.reserveVault;
+    function _reserveVault(Storage storage layoutStruct_) internal view returns (IStandardExchange) {
+        return layoutStruct_.reserveVault;
     }
 
     function _reserveVault() internal view returns (IStandardExchange) {
-        return _reserveVault(_layout());
+        return _reserveVault(_layoutStruct());
     }
 
-    function _reserveVaultRateTarget(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.reserveVaultRateTarget;
+    function _reserveVaultRateTarget(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.reserveVaultRateTarget;
     }
 
     function _reserveVaultRateTarget() internal view returns (IERC20) {
-        return _reserveVaultRateTarget(_layout());
+        return _reserveVaultRateTarget(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Pool Indices & Weights                         */
     /* ---------------------------------------------------------------------- */
 
-    function _selfIndexInReservePool(Storage storage layout_) internal view returns (uint256) {
-        return layout_.selfIndexInReservePool;
+    function _selfIndexInReservePool(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.selfIndexInReservePool;
     }
 
     function _selfIndexInReservePool() internal view returns (uint256) {
-        return _selfIndexInReservePool(_layout());
+        return _selfIndexInReservePool(_layoutStruct());
     }
 
-    function _selfReservePoolWeight(Storage storage layout_) internal view returns (uint256) {
-        return layout_.selfReservePoolWeight;
+    function _selfReservePoolWeight(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.selfReservePoolWeight;
     }
 
     function _selfReservePoolWeight() internal view returns (uint256) {
-        return _selfReservePoolWeight(_layout());
+        return _selfReservePoolWeight(_layoutStruct());
     }
 
-    function _reserveVaultIndexInReservePool(Storage storage layout_) internal view returns (uint256) {
-        return layout_.reserveVaultIndexInReservePool;
+    function _reserveVaultIndexInReservePool(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.reserveVaultIndexInReservePool;
     }
 
     function _reserveVaultIndexInReservePool() internal view returns (uint256) {
-        return _reserveVaultIndexInReservePool(_layout());
+        return _reserveVaultIndexInReservePool(_layoutStruct());
     }
 
-    function _reserveVaultReservePoolWeight(Storage storage layout_) internal view returns (uint256) {
-        return layout_.reserveVaultReservePoolWeight;
+    function _reserveVaultReservePoolWeight(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.reserveVaultReservePoolWeight;
     }
 
     function _reserveVaultReservePoolWeight() internal view returns (uint256) {
-        return _reserveVaultReservePoolWeight(_layout());
+        return _reserveVaultReservePoolWeight(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Seigniorage Components                         */
     /* ---------------------------------------------------------------------- */
 
-    function _seigniorageToken(Storage storage layout_) internal view returns (IERC20MintBurn) {
-        return layout_.seigniorageToken;
+    function _seigniorageToken(Storage storage layoutStruct_) internal view returns (IERC20MintBurn) {
+        return layoutStruct_.seigniorageToken;
     }
 
     function _seigniorageToken() internal view returns (IERC20MintBurn) {
-        return _seigniorageToken(_layout());
+        return _seigniorageToken(_layoutStruct());
     }
 
-    function _seigniorageNFTVault(Storage storage layout_) internal view returns (ISeigniorageNFTVault) {
-        return layout_.seigniorageNFTVault;
+    function _seigniorageNFTVault(Storage storage layoutStruct_) internal view returns (ISeigniorageNFTVault) {
+        return layoutStruct_.seigniorageNFTVault;
     }
 
     function _seigniorageNFTVault() internal view returns (ISeigniorageNFTVault) {
-        return _seigniorageNFTVault(_layout());
+        return _seigniorageNFTVault(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                           Fee Oracle                                   */
     /* ---------------------------------------------------------------------- */
 
-    function _feeOracle(Storage storage layout_) internal view returns (IVaultFeeOracleQuery) {
-        return layout_.feeOracle;
+    function _feeOracle(Storage storage layoutStruct_) internal view returns (IVaultFeeOracleQuery) {
+        return layoutStruct_.feeOracle;
     }
 
     function _feeOracle() internal view returns (IVaultFeeOracleQuery) {
-        return _feeOracle(_layout());
+        return _feeOracle(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                       Balancer V3 Prepay Router                        */
     /* ---------------------------------------------------------------------- */
 
-    function _balancerV3PrepayRouter(Storage storage layout_)
+    function _balancerV3PrepayRouter(Storage storage layoutStruct_)
         internal
         view
         returns (IBalancerV3StandardExchangeRouterPrepay)
     {
-        return layout_.balancerV3PrepayRouter;
+        return layoutStruct_.balancerV3PrepayRouter;
     }
 
     function _balancerV3PrepayRouter() internal view returns (IBalancerV3StandardExchangeRouterPrepay) {
-        return _balancerV3PrepayRouter(_layout());
+        return _balancerV3PrepayRouter(_layoutStruct());
     }
 
-    function _swapFeeReductionPercentagePPM(Storage storage layout_) internal view returns (uint256) {
-        return layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+    function _swapFeeReductionPercentagePPM(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
     }
 
     function _swapFeeReductionPercentagePPM() internal view returns (uint256) {
-        return _swapFeeReductionPercentagePPM(_layout());
+        return _swapFeeReductionPercentagePPM(_layoutStruct());
     }
 }

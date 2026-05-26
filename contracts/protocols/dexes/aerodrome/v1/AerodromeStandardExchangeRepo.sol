@@ -18,94 +18,94 @@ library AerodromeStandardExchangeRepo {
         uint256 excessToken1;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout_) {
+    function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct_) {
         assembly {
-            layout_.slot := slot
+            layoutStruct_.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout_) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct_) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ------ Excess Token0 ------ */
 
-    function _excessToken0(Storage storage layout_) internal view returns (uint256) {
-        return layout_.excessToken0;
+    function _excessToken0(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.excessToken0;
     }
 
     function _excessToken0() internal view returns (uint256) {
-        return _excessToken0(_layout());
+        return _excessToken0(_layoutStruct());
     }
 
-    function _setExcessToken0(Storage storage layout_, uint256 amount_) internal {
-        layout_.excessToken0 = amount_;
+    function _setExcessToken0(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.excessToken0 = amount_;
     }
 
     function _setExcessToken0(uint256 amount_) internal {
-        _setExcessToken0(_layout(), amount_);
+        _setExcessToken0(_layoutStruct(), amount_);
     }
 
-    function _addExcessToken0(Storage storage layout_, uint256 amount_) internal {
-        layout_.excessToken0 += amount_;
+    function _addExcessToken0(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.excessToken0 += amount_;
     }
 
     function _addExcessToken0(uint256 amount_) internal {
-        _addExcessToken0(_layout(), amount_);
+        _addExcessToken0(_layoutStruct(), amount_);
     }
 
-    function _clearExcessToken0(Storage storage layout_) internal returns (uint256 cleared_) {
-        cleared_ = layout_.excessToken0;
-        layout_.excessToken0 = 0;
+    function _clearExcessToken0(Storage storage layoutStruct_) internal returns (uint256 cleared_) {
+        cleared_ = layoutStruct_.excessToken0;
+        layoutStruct_.excessToken0 = 0;
     }
 
     function _clearExcessToken0() internal returns (uint256 cleared_) {
-        return _clearExcessToken0(_layout());
+        return _clearExcessToken0(_layoutStruct());
     }
 
     /* ------ Excess Token1 ------ */
 
-    function _excessToken1(Storage storage layout_) internal view returns (uint256) {
-        return layout_.excessToken1;
+    function _excessToken1(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.excessToken1;
     }
 
     function _excessToken1() internal view returns (uint256) {
-        return _excessToken1(_layout());
+        return _excessToken1(_layoutStruct());
     }
 
-    function _setExcessToken1(Storage storage layout_, uint256 amount_) internal {
-        layout_.excessToken1 = amount_;
+    function _setExcessToken1(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.excessToken1 = amount_;
     }
 
     function _setExcessToken1(uint256 amount_) internal {
-        _setExcessToken1(_layout(), amount_);
+        _setExcessToken1(_layoutStruct(), amount_);
     }
 
-    function _addExcessToken1(Storage storage layout_, uint256 amount_) internal {
-        layout_.excessToken1 += amount_;
+    function _addExcessToken1(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.excessToken1 += amount_;
     }
 
     function _addExcessToken1(uint256 amount_) internal {
-        _addExcessToken1(_layout(), amount_);
+        _addExcessToken1(_layoutStruct(), amount_);
     }
 
-    function _clearExcessToken1(Storage storage layout_) internal returns (uint256 cleared_) {
-        cleared_ = layout_.excessToken1;
-        layout_.excessToken1 = 0;
+    function _clearExcessToken1(Storage storage layoutStruct_) internal returns (uint256 cleared_) {
+        cleared_ = layoutStruct_.excessToken1;
+        layoutStruct_.excessToken1 = 0;
     }
 
     function _clearExcessToken1() internal returns (uint256 cleared_) {
-        return _clearExcessToken1(_layout());
+        return _clearExcessToken1(_layoutStruct());
     }
 
     /* ------ Convenience ------ */
 
-    function _clearExcessTokens(Storage storage layout_) internal returns (uint256 cleared0_, uint256 cleared1_) {
-        cleared0_ = _clearExcessToken0(layout_);
-        cleared1_ = _clearExcessToken1(layout_);
+    function _clearExcessTokens(Storage storage layoutStruct_) internal returns (uint256 cleared0_, uint256 cleared1_) {
+        cleared0_ = _clearExcessToken0(layoutStruct_);
+        cleared1_ = _clearExcessToken1(layoutStruct_);
     }
 
     function _clearExcessTokens() internal returns (uint256 cleared0_, uint256 cleared1_) {
-        return _clearExcessTokens(_layout());
+        return _clearExcessTokens(_layoutStruct());
     }
 }

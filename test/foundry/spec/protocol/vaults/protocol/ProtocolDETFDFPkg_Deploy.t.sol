@@ -57,6 +57,7 @@ import {
 
 import {IBaseProtocolDETFDFPkg, BaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
@@ -77,7 +78,7 @@ contract BaseProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchang
     IERC20PermitDFPkg internal richTokenPkg;
     IERC20 internal richToken;
 
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
     IRICHIRDFPkg internal richirPkg;
     IBaseProtocolDETFDFPkg internal protocolDETFDFPkg;
 

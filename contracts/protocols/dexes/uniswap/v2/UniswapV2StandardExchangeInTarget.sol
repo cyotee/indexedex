@@ -67,7 +67,7 @@ contract UniswapV2StandardExchangeInTarget is
         // 6. Pass-through ZapOut - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool as tokenIn.
         // 7. ZapOut Vault Withdrawal - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool token from the vault.
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         /* ------------------------------------------------------------------ */
         /*                          Pass-through Swap                         */
@@ -387,7 +387,7 @@ contract UniswapV2StandardExchangeInTarget is
         // 7. ZapOut Vault Withdrawal - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool token from the vault.
         //    Implemented in seventh branch.
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         /* ------------------------------------------------------------------ */
         /*                          Pass-through Swap                         */
@@ -575,7 +575,7 @@ contract UniswapV2StandardExchangeInTarget is
             // );
             // Secure the pool token to vault control.
             amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layout(),
+                ERC4626Repo._layoutStruct(),
                 vault.vaultLpReserve,
                 // uint256 amountTokenToDeposit,
                 amountIn

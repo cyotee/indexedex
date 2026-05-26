@@ -24,6 +24,7 @@ import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {RICHIRRepo} from "contracts/vaults/protocol/RICHIRRepo.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 
 /**
  * @title RICHIRTarget
@@ -79,9 +80,9 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @notice Returns the total supply (computed from totalShares * redemptionRate).
      */
     function totalSupply() external view returns (uint256) {
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 rate = _getCurrentRedemptionRate(layout);
-        return RICHIRRepo._sharesToBalance(layout.totalShares, rate);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
+        return RICHIRRepo._sharesToBalance(layoutStruct.totalShares, rate);
     }
 
     /**
@@ -89,9 +90,9 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @dev This value changes over time as the redemption rate changes.
      */
     function balanceOf(address account) external view returns (uint256) {
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 rate = _getCurrentRedemptionRate(layout);
-        return RICHIRRepo._sharesToBalance(layout.sharesOf[account], rate);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
+        return RICHIRRepo._sharesToBalance(layoutStruct.sharesOf[account], rate);
     }
 
     /**
@@ -112,35 +113,42 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @inheritdoc IRICHIR
      */
     function redemptionRate() external view returns (uint256) {
-        return _getCurrentRedemptionRate(RICHIRRepo._layout());
+        return _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
     }
 
     /**
      * @inheritdoc IRICHIR
      */
     function protocolDETF() external view returns (address) {
-        return address(RICHIRRepo._layout().protocolDETF);
+        return address(RICHIRRepo._layoutStruct().protocolDETF);
+    }
+
+    /**
+     * @inheritdoc IRICHIR
+     */
+    function setProtocolDETF(address detf_) external onlyOwner {
+        RICHIRRepo._setProtocolDETF(IProtocolDETF(detf_));
     }
 
     /**
      * @inheritdoc IRICHIR
      */
     function protocolNFTId() external view returns (uint256) {
-        return RICHIRRepo._layout().protocolNFTId;
+        return RICHIRRepo._layoutStruct().protocolNFTId;
     }
 
     /**
      * @inheritdoc IRICHIR
      */
     function wethToken() external view returns (IERC20) {
-        return RICHIRRepo._layout().wethToken;
+        return RICHIRRepo._layoutStruct().wethToken;
     }
 
     /**
      * @inheritdoc IRICHIR
      */
     function convertToShares(uint256 richirAmount) external view returns (uint256 shares) {
-        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layout());
+        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
         return RICHIRRepo._internalSharesToExternal(RICHIRRepo._balanceToShares(richirAmount, rate));
     }
 
@@ -148,7 +156,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @inheritdoc IRICHIR
      */
     function convertToRichir(uint256 shares) external view returns (uint256 richirAmount) {
-        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layout());
+        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
         uint256 internalShares = RICHIRRepo._externalSharesToInternal(shares);
         return RICHIRRepo._sharesToBalance(internalShares, rate);
     }
@@ -157,11 +165,55 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @inheritdoc IRICHIR
      */
     function previewRedeem(uint256 richirAmount) external view returns (uint256 wethOut) {
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 rate = _getCurrentRedemptionRate(layout);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         uint256 shares = RICHIRRepo._balanceToShares(richirAmount, rate);
         // WETH out equals the share value at current rate
         wethOut = RICHIRRepo._sharesToBalance(shares, rate);
+    }
+
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (amountIn == 0) {
+            return 0;
+        }
+        if (address(tokenIn) != address(this)) {
+            revert InvalidToken(tokenIn);
+        }
+        if (address(tokenOut) != address(RICHIRRepo._layoutStruct().wethToken)) {
+            revert InvalidToken(tokenOut);
+        }
+
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
+        uint256 shares = RICHIRRepo._balanceToShares(amountIn, rate);
+        amountOut = RICHIRRepo._sharesToBalance(shares, rate);
+    }
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        if (amountOut == 0) {
+            return 0;
+        }
+        if (address(tokenIn) != address(this)) {
+            revert InvalidToken(tokenIn);
+        }
+        if (address(tokenOut) != address(RICHIRRepo._layoutStruct().wethToken)) {
+            revert InvalidToken(tokenOut);
+        }
+
+        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
+        if (rate == 0) {
+            revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        }
+
+        amountIn = Math.mulDiv(amountOut, ONE_WAD, rate, Math.Rounding.Ceil);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -197,7 +249,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @notice Transfers tokens from one address to another.
      */
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
-        ERC20Repo._spendAllowance(ERC20Repo._layout(), from, msg.sender, amount);
+        ERC20Repo._spendAllowance(ERC20Repo._layoutStruct(), from, msg.sender, amount);
         _transfer(from, to, amount);
         return true;
     }
@@ -209,23 +261,23 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         if (from == address(0)) revert ZeroAmount();
         if (to == address(0)) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 rate = _getCurrentRedemptionRate(layout);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
 
         // Convert balance to shares
         uint256 shares = RICHIRRepo._balanceToShares(amount, rate);
         if (shares == 0) revert ZeroAmount();
 
         // Check sender has enough shares
-        if (layout.sharesOf[from] < shares) {
+        if (layoutStruct.sharesOf[from] < shares) {
             revert InsufficientBalance(
                 RICHIRRepo._internalSharesToExternal(shares),
-                RICHIRRepo._internalSharesToExternal(layout.sharesOf[from])
+                RICHIRRepo._internalSharesToExternal(layoutStruct.sharesOf[from])
             );
         }
 
         // Transfer shares
-        RICHIRRepo._transferShares(layout, from, to, shares);
+        RICHIRRepo._transferShares(layoutStruct, from, to, shares);
 
         emit IERC20Events.Transfer(from, to, amount);
     }
@@ -241,14 +293,14 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 richirMinted) {
         if (lpShares == 0) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
         uint256 internalShares = RICHIRRepo._externalSharesToInternal(lpShares);
 
         // Mint shares with internal precision while preserving 18-decimal external units.
-        RICHIRRepo._mintShares(layout, recipient, internalShares);
+        RICHIRRepo._mintShares(layoutStruct, recipient, internalShares);
 
         // Calculate balance for return value and event
-        uint256 rate = _getCurrentRedemptionRate(layout);
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         richirMinted = RICHIRRepo._sharesToBalance(internalShares, rate);
 
         emit IRICHIR.Minted(recipient, lpShares, lpShares, richirMinted);
@@ -268,46 +320,88 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         returns (uint256 wethOut)
     {
         if (richirAmount == 0) revert ZeroAmount();
-        if (recipient == address(0)) recipient = msg.sender;
 
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 actualIn = _secureTokenTransfer(IERC20(address(this)), richirAmount, pretransferred);
+        wethOut = _executeRedeem(layoutStruct, actualIn, recipient == address(0) ? msg.sender : recipient);
+    }
 
-        // Check redemption is allowed (synthetic price below burn threshold)
-        // Note: The Protocol DETF checks price gate internally when calling this
+    function exchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external lock returns (uint256 amountOut) {
+        if (block.timestamp > deadline) {
+            revert DeadlineExceeded(deadline, block.timestamp);
+        }
+        if (amountIn == 0) revert ZeroAmount();
+        if (address(tokenIn) != address(this)) {
+            revert InvalidToken(tokenIn);
+        }
 
-        // Get current rate and convert to shares
-        uint256 rate = _getCurrentRedemptionRate(layout);
-        uint256 shares = RICHIRRepo._balanceToShares(richirAmount, rate);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        if (address(tokenOut) != address(layoutStruct.wethToken)) {
+            revert InvalidToken(tokenOut);
+        }
 
-        // Handle transfer if not pretransferred
-        address owner = msg.sender;
+        uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+        amountOut = _executeRedeem(layoutStruct, actualIn, recipient == address(0) ? msg.sender : recipient);
+        if (amountOut < minAmountOut) {
+            revert SlippageExceeded(minAmountOut, amountOut);
+        }
+    }
+
+    function exchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external lock returns (uint256 amountIn) {
+        if (block.timestamp > deadline) {
+            revert DeadlineExceeded(deadline, block.timestamp);
+        }
+        if (amountOut == 0) revert ZeroAmount();
+        if (address(tokenIn) != address(this)) {
+            revert InvalidToken(tokenIn);
+        }
+
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        if (address(tokenOut) != address(layoutStruct.wethToken)) {
+            revert InvalidToken(tokenOut);
+        }
+
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
+        amountIn = Math.mulDiv(amountOut, ONE_WAD, rate, Math.Rounding.Ceil);
+        if (amountIn > maxAmountIn) {
+            revert SlippageExceeded(maxAmountIn, amountIn);
+        }
+
+        uint256 depositedIn;
         if (pretransferred) {
-            // Tokens already at this contract, burn from here
-            owner = address(this);
+            depositedIn = maxAmountIn;
+        } else {
+            depositedIn = _secureTokenTransfer(tokenIn, amountIn, false);
         }
 
-        // Check owner has enough shares
-        if (layout.sharesOf[owner] < shares) {
-            revert InsufficientBalance(
-                RICHIRRepo._internalSharesToExternal(shares),
-                RICHIRRepo._internalSharesToExternal(layout.sharesOf[owner])
-            );
+        if (depositedIn < amountIn) {
+            revert SlippageExceeded(amountIn, depositedIn);
         }
 
-        // Burn shares
-        RICHIRRepo._burnShares(layout, owner, shares);
+        uint256 actualOut = _executeRedeem(layoutStruct, amountIn, recipient == address(0) ? msg.sender : recipient);
+        if (actualOut < amountOut) {
+            revert SlippageExceeded(amountOut, actualOut);
+        }
 
-        // Calculate WETH amount based on current rate
-        wethOut = RICHIRRepo._sharesToBalance(shares, rate);
-
-        // Transfer WETH from NFT vault to recipient
-        // The protocol-owned NFT holds WETH via the reserve pool
-        layout.wethToken.safeTransfer(recipient, wethOut);
-
-        emit IRICHIR.Redeemed(
-            msg.sender, recipient, richirAmount, RICHIRRepo._internalSharesToExternal(shares), wethOut
-        );
-        emit IERC20Events.Transfer(owner, address(0), richirAmount);
+        if (depositedIn > amountIn) {
+            IERC20(address(this)).safeTransfer(msg.sender, depositedIn - amountIn);
+        }
     }
 
     /**
@@ -322,8 +416,8 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     {
         if (richirAmount == 0) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 rate = _getCurrentRedemptionRate(layout);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         uint256 internalSharesBurned = RICHIRRepo._balanceToShares(richirAmount, rate);
 
         // Handle transfer if not pretransferred
@@ -333,15 +427,15 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         }
 
         // Check owner has enough shares
-        if (layout.sharesOf[burnFrom] < internalSharesBurned) {
+        if (layoutStruct.sharesOf[burnFrom] < internalSharesBurned) {
             revert InsufficientBalance(
                 RICHIRRepo._internalSharesToExternal(internalSharesBurned),
-                RICHIRRepo._internalSharesToExternal(layout.sharesOf[burnFrom])
+                RICHIRRepo._internalSharesToExternal(layoutStruct.sharesOf[burnFrom])
             );
         }
 
         // Burn shares (no WETH transfer - caller handles that)
-        RICHIRRepo._burnShares(layout, burnFrom, internalSharesBurned);
+        RICHIRRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
 
         sharesBurned = RICHIRRepo._internalSharesToExternal(internalSharesBurned);
 
@@ -357,12 +451,12 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @dev Can be called by anyone to refresh the rate.
      */
     function updateRedemptionRate() external {
-        RICHIRRepo.Storage storage layout = RICHIRRepo._layout();
-        uint256 oldRate = layout.cachedRedemptionRate;
-        uint256 newRate = _calcCurrentRedemptionRate(layout);
+        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        uint256 oldRate = layoutStruct.cachedRedemptionRate;
+        uint256 newRate = _calcCurrentRedemptionRate(layoutStruct);
 
         if (newRate != oldRate) {
-            RICHIRRepo._setCachedRedemptionRate(layout, newRate);
+            RICHIRRepo._setCachedRedemptionRate(layoutStruct, newRate);
             emit IRICHIR.RedemptionRateUpdated(oldRate, newRate);
         }
     }
@@ -377,14 +471,53 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     /**
      * @dev Gets the current redemption rate, updating cache if stale.
      */
-    function _getCurrentRedemptionRate(RICHIRRepo.Storage storage layout_) internal view returns (uint256) {
+    function _getCurrentRedemptionRate(RICHIRRepo.Storage storage layoutStruct_) internal view returns (uint256) {
         // If rate was updated this block, use cached value
-        if (layout_.lastRateUpdateBlock == block.number) {
-            return layout_.cachedRedemptionRate;
+        if (layoutStruct_.lastRateUpdateBlock == block.number) {
+            return layoutStruct_.cachedRedemptionRate;
         }
 
         // Otherwise calculate fresh rate
-        return _calcCurrentRedemptionRate(layout_);
+        return _calcCurrentRedemptionRate(layoutStruct_);
+    }
+
+    function _executeRedeem(RICHIRRepo.Storage storage layoutStruct_, uint256 richirAmount_, address recipient_)
+        internal
+        returns (uint256 wethOut_)
+    {
+        uint256 rate = _getCurrentRedemptionRate(layoutStruct_);
+        uint256 shares = RICHIRRepo._balanceToShares(richirAmount_, rate);
+
+        if (layoutStruct_.sharesOf[address(this)] < shares) {
+            revert InsufficientBalance(
+                RICHIRRepo._internalSharesToExternal(shares),
+                RICHIRRepo._internalSharesToExternal(layoutStruct_.sharesOf[address(this)])
+            );
+        }
+
+        RICHIRRepo._burnShares(layoutStruct_, address(this), shares);
+        wethOut_ = RICHIRRepo._sharesToBalance(shares, rate);
+        layoutStruct_.wethToken.safeTransfer(recipient_, wethOut_);
+
+        emit IRICHIR.Redeemed(
+            msg.sender, recipient_, richirAmount_, RICHIRRepo._internalSharesToExternal(shares), wethOut_
+        );
+        emit IERC20Events.Transfer(address(this), address(0), richirAmount_);
+    }
+
+    function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
+        if (pretransferred_) {
+            return amount_;
+        }
+
+        if (address(token_) == address(this)) {
+            _transfer(msg.sender, address(this), amount_);
+            return amount_;
+        }
+
+        uint256 balanceBefore = token_.balanceOf(address(this));
+        token_.safeTransferFrom(msg.sender, address(this), amount_);
+        actualIn_ = token_.balanceOf(address(this)) - balanceBefore;
     }
 
     /**
@@ -393,24 +526,24 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      *      This allows RICHIR to rebase based on the underlying LP value.
      * @return rate The redemption rate (1e18 = 1:1)
      */
-    function _calcCurrentRedemptionRate(RICHIRRepo.Storage storage layout_) internal view returns (uint256 rate) {
-        uint256 totalShares_ = layout_.totalShares;
+    function _calcCurrentRedemptionRate(RICHIRRepo.Storage storage layoutStruct_) internal view returns (uint256 rate) {
+        uint256 totalShares_ = layoutStruct_.totalShares;
         if (totalShares_ == 0) {
             return ONE_WAD;
         }
 
         // Get protocol-owned NFT position
-        IProtocolNFTVault.Position memory position = layout_.nftVault.getPosition(layout_.protocolNFTId);
+        IProtocolNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.protocolNFTId);
         if (position.originalShares == 0) {
             return ONE_WAD;
         }
 
         // Calculate WETH value of the protocol NFT's BPT via the generic StandardExchange preview.
-        IERC20 bpt = IERC20(layout_.protocolDETF.reservePool());
-        uint256 wethValue = IStandardExchangeIn(address(layout_.protocolDETF)).previewExchangeIn(
+        IERC20 bpt = IERC20(layoutStruct_.protocolDETF.reservePool());
+        uint256 wethValue = IStandardExchangeIn(address(layoutStruct_.protocolDETF)).previewExchangeIn(
             bpt,
             position.originalShares,
-            layout_.wethToken
+            layoutStruct_.wethToken
         );
         if (wethValue == 0) {
             return ONE_WAD;

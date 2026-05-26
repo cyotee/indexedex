@@ -77,242 +77,242 @@ library VaultRegistryVaultRepo {
         // Bytes4Set tbdVaultTypeIds3;
     }
 
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     function _registerVault(
-        Storage storage layout,
+        Storage storage layoutStruct,
         address vault,
         address pkg,
         IStandardVault.VaultConfig memory vaultConfig
     ) internal {
         // _registerVault(vault, pkg, vaultConfig.vaultTypes, vaultConfig.tokens);
         // VaultRegistryLayout.vaults
-        layout.vaults._add(vault);
+        layoutStruct.vaults._add(vault);
         // tokens = tokens._sort();
         // bytes32 contentsID = keccak256(abi.encode(tokens));
         /// forge-lint: disable-next-line(mixed-case-variable)
         // bytes32 contentsID = abi.encode(tokens).hash();
         // VaultRegistryLayout.contentsIds
-        layout.contentsIds._add(vaultConfig.contentsId);
+        layoutStruct.contentsIds._add(vaultConfig.contentsId);
         // VaultRegistryLayout.vaultsOfPkg
-        layout.vaultsOfPkg[pkg]._add(vault);
+        layoutStruct.vaultsOfPkg[pkg]._add(vault);
         // VaultRegistryLayout.vaultsOfContentsId
-        layout.vaultsOfContentsId[vaultConfig.contentsId]._add(vault);
+        layoutStruct.vaultsOfContentsId[vaultConfig.contentsId]._add(vault);
         // VaultRegistryLayout.vaultsOfContentsIdOfPkg
-        layout.vaultsOfContentsIdOfPkg[pkg][vaultConfig.contentsId]._add(vault);
-        layout.feeTypeIdsOfVault[vault] = vaultConfig.vaultFeeTypeIds;
+        layoutStruct.vaultsOfContentsIdOfPkg[pkg][vaultConfig.contentsId]._add(vault);
+        layoutStruct.feeTypeIdsOfVault[vault] = vaultConfig.vaultFeeTypeIds;
         VaultFeeTypeIds memory feeTypeIds_ = VaultTypeUtils._decodeVaultFeeTypeIds(vaultConfig.vaultFeeTypeIds);
-        layout.usageFeeIdOfVault[vault] = feeTypeIds_.usage;
-        layout.dexFeeIdOfVault[vault] = feeTypeIds_.dex;
-        layout.bondFeeIdOfVault[vault] = feeTypeIds_.bond;
-        layout.seigniorageIdOfVault[vault] = feeTypeIds_.seigniorage;
-        layout.lendingFeeIdOfVault[vault] = feeTypeIds_.lending;
-        // layout.tbdFeeIdOfVault0[vault] = feeTypeIds_.tbd0;
-        // layout.tbdFeeIdOfVault1[vault] = feeTypeIds_.tbd1;
-        // layout.tbdFeeIdOfVault2[vault] = feeTypeIds_.tbd2;
-        // layout.tbdFeeIdOfVault3[vault] = feeTypeIds_.tbd3;
+        layoutStruct.usageFeeIdOfVault[vault] = feeTypeIds_.usage;
+        layoutStruct.dexFeeIdOfVault[vault] = feeTypeIds_.dex;
+        layoutStruct.bondFeeIdOfVault[vault] = feeTypeIds_.bond;
+        layoutStruct.seigniorageIdOfVault[vault] = feeTypeIds_.seigniorage;
+        layoutStruct.lendingFeeIdOfVault[vault] = feeTypeIds_.lending;
+        // layoutStruct.tbdFeeIdOfVault0[vault] = feeTypeIds_.tbd0;
+        // layoutStruct.tbdFeeIdOfVault1[vault] = feeTypeIds_.tbd1;
+        // layoutStruct.tbdFeeIdOfVault2[vault] = feeTypeIds_.tbd2;
+        // layoutStruct.tbdFeeIdOfVault3[vault] = feeTypeIds_.tbd3;
         emit IVaultRegistryEvents.NewVault(
             vault, pkg, vaultConfig.vaultFeeTypeIds, vaultConfig.contentsId, vaultConfig.vaultTypes, vaultConfig.tokens
         );
         for (uint256 typesCursor; typesCursor < vaultConfig.vaultTypes.length; typesCursor++) {
             // VaultRegistryLayout.vaultsOfType
-            layout.vaultsOfType[vaultConfig.vaultTypes[typesCursor]]._add(vault);
+            layoutStruct.vaultsOfType[vaultConfig.vaultTypes[typesCursor]]._add(vault);
             // VaultRegistryLayout.vaultsOfContentsIdOfTypeId
-            layout.vaultsOfContentsIdOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.contentsId]._add(vault);
+            layoutStruct.vaultsOfContentsIdOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.contentsId]._add(vault);
             emit IVaultRegistryEvents.NewVaultOfType(vault, pkg, vaultConfig.vaultTypes[typesCursor]);
             for (uint256 tokensCursor; tokensCursor < vaultConfig.tokens.length; tokensCursor++) {
                 // VaultRegistryLayout.tokens
-                layout.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
+                layoutStruct.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
                 // VaultRegistryLayout.vaultsOfToken
-                layout.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._add(vault);
+                layoutStruct.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._add(vault);
                 // VaultRegistryLayout.vaultsOfTokenOfTypeId
-                layout.vaultsOfTokenOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.tokens[tokensCursor]]._add(
+                layoutStruct.vaultsOfTokenOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.tokens[tokensCursor]]._add(
                     vault
                 );
                 // VaultRegistryLayout.vaultsOfTokenOfPkg
-                layout.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._add(vault);
+                layoutStruct.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._add(vault);
                 emit IVaultRegistryEvents.NewVaultOfToken(vault, pkg, vaultConfig.tokens[tokensCursor]);
             }
         }
     }
 
     function _registerVault(address vault, address pkg, IStandardVault.VaultConfig memory vaultConfig) internal {
-        _registerVault(_layout(), vault, pkg, vaultConfig);
+        _registerVault(_layoutStruct(), vault, pkg, vaultConfig);
     }
 
     function _removeVault(
-        Storage storage layout,
+        Storage storage layoutStruct,
         address vault,
         address pkg,
         IStandardVault.VaultConfig memory vaultConfig
     ) internal {
         // _registerVault(vault, pkg, vaultConfig.vaultTypes, vaultConfig.tokens);
         // VaultRegistryLayout.vaults
-        layout.vaults._remove(vault);
+        layoutStruct.vaults._remove(vault);
         // tokens = tokens._sort();
         // bytes32 contentsID = keccak256(abi.encode(tokens));
         /// forge-lint: disable-next-line(mixed-case-variable)
         // bytes32 contentsID = abi.encode(tokens).hash();
         // VaultRegistryLayout.contentsIds
-        // layout.contentsIds._add(vaultConfig.contentsId);
+        // layoutStruct.contentsIds._add(vaultConfig.contentsId);
         // VaultRegistryLayout.vaultsOfPkg
-        layout.vaultsOfPkg[pkg]._remove(vault);
+        layoutStruct.vaultsOfPkg[pkg]._remove(vault);
         // VaultRegistryLayout.vaultsOfContentsId
-        layout.vaultsOfContentsId[vaultConfig.contentsId]._remove(vault);
+        layoutStruct.vaultsOfContentsId[vaultConfig.contentsId]._remove(vault);
         // VaultRegistryLayout.vaultsOfContentsIdOfPkg
-        layout.vaultsOfContentsIdOfPkg[pkg][vaultConfig.contentsId]._remove(vault);
-        layout.feeTypeIdsOfVault[vault] = vaultConfig.vaultFeeTypeIds;
+        layoutStruct.vaultsOfContentsIdOfPkg[pkg][vaultConfig.contentsId]._remove(vault);
+        layoutStruct.feeTypeIdsOfVault[vault] = vaultConfig.vaultFeeTypeIds;
         // VaultFeeTypeIds memory feeTypeIds_ = VaultTypeUtils._decodeVaultFeeTypeIds(vaultConfig.vaultFeeTypeIds);
-        delete layout.usageFeeIdOfVault[vault];
-        delete layout.dexFeeIdOfVault[vault];
-        delete layout.bondFeeIdOfVault[vault];
-        delete layout.seigniorageIdOfVault[vault];
-        delete layout.lendingFeeIdOfVault[vault];
-        // layout.tbdFeeIdOfVault0[vault] = feeTypeIds_.tbd0;
-        // layout.tbdFeeIdOfVault1[vault] = feeTypeIds_.tbd1;
-        // layout.tbdFeeIdOfVault2[vault] = feeTypeIds_.tbd2;
-        // layout.tbdFeeIdOfVault3[vault] = feeTypeIds_.tbd3;
+        delete layoutStruct.usageFeeIdOfVault[vault];
+        delete layoutStruct.dexFeeIdOfVault[vault];
+        delete layoutStruct.bondFeeIdOfVault[vault];
+        delete layoutStruct.seigniorageIdOfVault[vault];
+        delete layoutStruct.lendingFeeIdOfVault[vault];
+        // layoutStruct.tbdFeeIdOfVault0[vault] = feeTypeIds_.tbd0;
+        // layoutStruct.tbdFeeIdOfVault1[vault] = feeTypeIds_.tbd1;
+        // layoutStruct.tbdFeeIdOfVault2[vault] = feeTypeIds_.tbd2;
+        // layoutStruct.tbdFeeIdOfVault3[vault] = feeTypeIds_.tbd3;
         // emit IVaultRegistryEvents.NewVault(
         //     vault, pkg, vaultConfig.vaultFeeTypeIds, vaultConfig.contentsId, vaultConfig.vaultTypes, vaultConfig.tokens
         // );
         for (uint256 typesCursor; typesCursor < vaultConfig.vaultTypes.length; typesCursor++) {
             // VaultRegistryLayout.vaultsOfType
-            layout.vaultsOfType[vaultConfig.vaultTypes[typesCursor]]._remove(vault);
+            layoutStruct.vaultsOfType[vaultConfig.vaultTypes[typesCursor]]._remove(vault);
             // VaultRegistryLayout.vaultsOfContentsIdOfTypeId
-            layout.vaultsOfContentsIdOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.contentsId]._remove(
+            layoutStruct.vaultsOfContentsIdOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.contentsId]._remove(
                 vault
             );
             // emit IVaultRegistryEvents.NewVaultOfType(vault, pkg, vaultConfig.vaultTypes[typesCursor]);
             for (uint256 tokensCursor; tokensCursor < vaultConfig.tokens.length; tokensCursor++) {
                 // VaultRegistryLayout.tokens
-                // layout.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
+                // layoutStruct.vaultTokens._add(vaultConfig.tokens[tokensCursor]);
                 // VaultRegistryLayout.vaultsOfToken
-                layout.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._remove(vault);
+                layoutStruct.vaultsOfToken[vaultConfig.tokens[tokensCursor]]._remove(vault);
                 // VaultRegistryLayout.vaultsOfTokenOfTypeId
-                layout.vaultsOfTokenOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.tokens[tokensCursor]]._remove(
+                layoutStruct.vaultsOfTokenOfTypeId[vaultConfig.vaultTypes[typesCursor]][vaultConfig.tokens[tokensCursor]]._remove(
                     vault
                 );
                 // VaultRegistryLayout.vaultsOfTokenOfPkg
-                layout.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._remove(vault);
+                layoutStruct.vaultsOfTokenOfPkg[pkg][vaultConfig.tokens[tokensCursor]]._remove(vault);
                 // emit IVaultRegistryEvents.NewVaultOfToken(vault, pkg, vaultConfig.tokens[tokensCursor]);
             }
         }
     }
 
     function _removeVault(address vault, address pkg, IStandardVault.VaultConfig memory vaultConfig) internal {
-        _removeVault(_layout(), vault, pkg, vaultConfig);
+        _removeVault(_layoutStruct(), vault, pkg, vaultConfig);
     }
 
-    function _isVault(Storage storage layout, address vault) internal view returns (bool) {
-        return layout.vaults._contains(vault);
+    function _isVault(Storage storage layoutStruct, address vault) internal view returns (bool) {
+        return layoutStruct.vaults._contains(vault);
     }
 
     function _isVault(address vault) internal view returns (bool) {
-        return _isVault(_layout(), vault);
+        return _isVault(_layoutStruct(), vault);
     }
 
-    function _vaults(Storage storage layout) internal view returns (address[] memory vaults_) {
-        return layout.vaults._values();
+    function _vaults(Storage storage layoutStruct) internal view returns (address[] memory vaults_) {
+        return layoutStruct.vaults._values();
     }
 
     function _vaults() internal view returns (address[] memory vaults_) {
-        return _vaults(_layout());
+        return _vaults(_layoutStruct());
     }
 
-    function _contentsIds(Storage storage layout) internal view returns (bytes32[] memory contentsIds_) {
-        return layout.contentsIds._values();
+    function _contentsIds(Storage storage layoutStruct) internal view returns (bytes32[] memory contentsIds_) {
+        return layoutStruct.contentsIds._values();
     }
 
     function _contentsIds() internal view returns (bytes32[] memory contentsIds_) {
-        return _contentsIds(_layout());
+        return _contentsIds(_layoutStruct());
     }
 
-    function _vaultTokens(Storage storage layout) internal view returns (address[] memory vaultTokens_) {
-        return layout.vaultTokens._values();
+    function _vaultTokens(Storage storage layoutStruct) internal view returns (address[] memory vaultTokens_) {
+        return layoutStruct.vaultTokens._values();
     }
 
     function _vaultTokens() internal view returns (address[] memory vaultTokens_) {
-        return _vaultTokens(_layout());
+        return _vaultTokens(_layoutStruct());
     }
 
-    function _isContainedToken(Storage storage layout, address token) internal view returns (bool) {
-        return layout.vaultTokens._contains(token);
+    function _isContainedToken(Storage storage layoutStruct, address token) internal view returns (bool) {
+        return layoutStruct.vaultTokens._contains(token);
     }
 
     function _isContainedToken(address token) internal view returns (bool) {
-        return _isContainedToken(_layout(), token);
+        return _isContainedToken(_layoutStruct(), token);
     }
 
-    function _vaultFeeTypeIds(Storage storage layout, address vault) internal view returns (bytes32 feeTypeIds_) {
-        return layout.feeTypeIdsOfVault[vault];
+    function _vaultFeeTypeIds(Storage storage layoutStruct, address vault) internal view returns (bytes32 feeTypeIds_) {
+        return layoutStruct.feeTypeIdsOfVault[vault];
     }
 
     function _vaultFeeTypeIds(address vault) internal view returns (bytes32 feeTypeIds_) {
-        return _vaultFeeTypeIds(_layout(), vault);
+        return _vaultFeeTypeIds(_layoutStruct(), vault);
     }
 
-    function _vaultsOfPkg(Storage storage layout, address pkg) internal view returns (address[] memory vaults_) {
-        return layout.vaultsOfPkg[pkg]._values();
+    function _vaultsOfPkg(Storage storage layoutStruct, address pkg) internal view returns (address[] memory vaults_) {
+        return layoutStruct.vaultsOfPkg[pkg]._values();
     }
 
     function _vaultsOfPkg(address pkg) internal view returns (address[] memory vaults_) {
-        return _vaultsOfPkg(_layout(), pkg);
+        return _vaultsOfPkg(_layoutStruct(), pkg);
     }
 
-    function _vaultsOfToken(Storage storage layout, address token) internal view returns (address[] memory vaults_) {
-        return layout.vaultsOfToken[token]._values();
+    function _vaultsOfToken(Storage storage layoutStruct, address token) internal view returns (address[] memory vaults_) {
+        return layoutStruct.vaultsOfToken[token]._values();
     }
 
     function _vaultsOfToken(address token) internal view returns (address[] memory vaults_) {
-        return _vaultsOfToken(_layout(), token);
+        return _vaultsOfToken(_layoutStruct(), token);
     }
 
-    function _vaultsOfContentsId(Storage storage layout, bytes32 contentsId)
+    function _vaultsOfContentsId(Storage storage layoutStruct, bytes32 contentsId)
         internal
         view
         returns (address[] memory vaults_)
     {
-        return layout.vaultsOfContentsId[contentsId]._values();
+        return layoutStruct.vaultsOfContentsId[contentsId]._values();
     }
 
     function _vaultsOfContentsId(bytes32 contentsId) internal view returns (address[] memory vaults_) {
-        return _vaultsOfContentsId(_layout(), contentsId);
+        return _vaultsOfContentsId(_layoutStruct(), contentsId);
     }
 
-    function _vaultsOfType(Storage storage layout, bytes4 typeId) internal view returns (address[] memory vaults_) {
-        return layout.vaultsOfType[typeId]._values();
+    function _vaultsOfType(Storage storage layoutStruct, bytes4 typeId) internal view returns (address[] memory vaults_) {
+        return layoutStruct.vaultsOfType[typeId]._values();
     }
 
     function _vaultsOfType(bytes4 typeId) internal view returns (address[] memory vaults_) {
-        return _vaultsOfType(_layout(), typeId);
+        return _vaultsOfType(_layoutStruct(), typeId);
     }
 
-    function _vaultsOfTokenOfTypeId(Storage storage layout, bytes4 typeId, address token)
+    function _vaultsOfTokenOfTypeId(Storage storage layoutStruct, bytes4 typeId, address token)
         internal
         view
         returns (address[] memory vaults_)
     {
-        return layout.vaultsOfTokenOfTypeId[typeId][token]._values();
+        return layoutStruct.vaultsOfTokenOfTypeId[typeId][token]._values();
     }
 
     function _vaultsOfTokenOfTypeId(bytes4 typeId, address token) internal view returns (address[] memory vaults_) {
-        return _vaultsOfTokenOfTypeId(_layout(), typeId, token);
+        return _vaultsOfTokenOfTypeId(_layoutStruct(), typeId, token);
     }
 
-    function _vaultsOfContentsIdOfTypeId(Storage storage layout, bytes4 typeId, bytes32 contentsId)
+    function _vaultsOfContentsIdOfTypeId(Storage storage layoutStruct, bytes4 typeId, bytes32 contentsId)
         internal
         view
         returns (address[] memory vaults_)
     {
-        return layout.vaultsOfContentsIdOfTypeId[typeId][contentsId]._values();
+        return layoutStruct.vaultsOfContentsIdOfTypeId[typeId][contentsId]._values();
     }
 
     function _vaultsOfContentsIdOfTypeId(bytes4 typeId, bytes32 contentsId)
@@ -320,27 +320,27 @@ library VaultRegistryVaultRepo {
         view
         returns (address[] memory vaults_)
     {
-        return _vaultsOfContentsIdOfTypeId(_layout(), typeId, contentsId);
+        return _vaultsOfContentsIdOfTypeId(_layoutStruct(), typeId, contentsId);
     }
 
-    function _vaultsOfTokenOfPkg(Storage storage layout, address pkg, address token)
+    function _vaultsOfTokenOfPkg(Storage storage layoutStruct, address pkg, address token)
         internal
         view
         returns (address[] memory vaults_)
     {
-        return layout.vaultsOfTokenOfPkg[pkg][token]._values();
+        return layoutStruct.vaultsOfTokenOfPkg[pkg][token]._values();
     }
 
     function _vaultsOfTokenOfPkg(address pkg, address token) internal view returns (address[] memory vaults_) {
-        return _vaultsOfTokenOfPkg(_layout(), pkg, token);
+        return _vaultsOfTokenOfPkg(_layoutStruct(), pkg, token);
     }
 
-    function _vaultsOfContentsIdOfPkg(Storage storage layout, address pkg, bytes32 contentsId)
+    function _vaultsOfContentsIdOfPkg(Storage storage layoutStruct, address pkg, bytes32 contentsId)
         internal
         view
         returns (address[] memory vaults_)
     {
-        return layout.vaultsOfContentsIdOfPkg[pkg][contentsId]._values();
+        return layoutStruct.vaultsOfContentsIdOfPkg[pkg][contentsId]._values();
     }
 
     function _vaultsOfContentsIdOfPkg(address pkg, bytes32 contentsId)
@@ -348,50 +348,50 @@ library VaultRegistryVaultRepo {
         view
         returns (address[] memory vaults_)
     {
-        return _vaultsOfContentsIdOfPkg(_layout(), pkg, contentsId);
+        return _vaultsOfContentsIdOfPkg(_layoutStruct(), pkg, contentsId);
     }
 
-    function _usageFeeIdOfVault(Storage storage layout, address vault) internal view returns (bytes4 usageFeeId_) {
-        return layout.usageFeeIdOfVault[vault];
+    function _usageFeeIdOfVault(Storage storage layoutStruct, address vault) internal view returns (bytes4 usageFeeId_) {
+        return layoutStruct.usageFeeIdOfVault[vault];
     }
 
     function _usageFeeIdOfVault(address vault) internal view returns (bytes4 usageFeeId_) {
-        return _usageFeeIdOfVault(_layout(), vault);
+        return _usageFeeIdOfVault(_layoutStruct(), vault);
     }
 
-    function _dexFeeIdOfVault(Storage storage layout, address vault) internal view returns (bytes4 dexFeeId_) {
-        return layout.dexFeeIdOfVault[vault];
+    function _dexFeeIdOfVault(Storage storage layoutStruct, address vault) internal view returns (bytes4 dexFeeId_) {
+        return layoutStruct.dexFeeIdOfVault[vault];
     }
 
     function _dexFeeIdOfVault(address vault) internal view returns (bytes4 dexFeeId_) {
-        return _dexFeeIdOfVault(_layout(), vault);
+        return _dexFeeIdOfVault(_layoutStruct(), vault);
     }
 
-    function _bondFeeIdOfVault(Storage storage layout, address vault) internal view returns (bytes4 bondFeeId_) {
-        return layout.bondFeeIdOfVault[vault];
+    function _bondFeeIdOfVault(Storage storage layoutStruct, address vault) internal view returns (bytes4 bondFeeId_) {
+        return layoutStruct.bondFeeIdOfVault[vault];
     }
 
     function _bondFeeIdOfVault(address vault) internal view returns (bytes4 bondFeeId_) {
-        return _bondFeeIdOfVault(_layout(), vault);
+        return _bondFeeIdOfVault(_layoutStruct(), vault);
     }
 
-    function _seigniorageIncentiveIdOfVault(Storage storage layout, address vault)
+    function _seigniorageIncentiveIdOfVault(Storage storage layoutStruct, address vault)
         internal
         view
         returns (bytes4 seigniorageId_)
     {
-        return layout.seigniorageIdOfVault[vault];
+        return layoutStruct.seigniorageIdOfVault[vault];
     }
 
     function _seigniorageIncentiveIdOfVault(address vault) internal view returns (bytes4 seigniorageId_) {
-        return _seigniorageIncentiveIdOfVault(_layout(), vault);
+        return _seigniorageIncentiveIdOfVault(_layoutStruct(), vault);
     }
 
-    function _lendingFeeIdOfVault(Storage storage layout, address vault) internal view returns (bytes4 lendingFeeId_) {
-        return layout.lendingFeeIdOfVault[vault];
+    function _lendingFeeIdOfVault(Storage storage layoutStruct, address vault) internal view returns (bytes4 lendingFeeId_) {
+        return layoutStruct.lendingFeeIdOfVault[vault];
     }
 
     function _lendingFeeIdOfVault(address vault) internal view returns (bytes4 lendingFeeId_) {
-        return _lendingFeeIdOfVault(_layout(), vault);
+        return _lendingFeeIdOfVault(_layoutStruct(), vault);
     }
 }

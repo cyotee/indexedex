@@ -70,9 +70,9 @@ contract AerodromeStandardExchangeOutTarget is
         // 7. ZapOut Vault Withdrawal - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool token from the vault.
         //    Implemented in seventh branch.
 
-        // ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        // ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         // IPool pool = IPool(address(ERC4626Repo._reserveAsset()));
-        // AerodromePoolMetadataRepo.Storage storage  = AerodromePoolMetadataRepo._layout();
+        // AerodromePoolMetadataRepo.Storage storage  = AerodromePoolMetadataRepo._layoutStruct();
         AeroReserve memory aeroReserve;
         aeroReserve.router = AerodromeRouterAwareRepo._aerodromeRouter();
         aeroReserve.pool = IPool(address(ERC4626Repo._reserveAsset()));
@@ -396,7 +396,7 @@ contract AerodromeStandardExchangeOutTarget is
         // Calculate the amount of LP tokens needed to mint the requested amount of vault shares.
         uint256 amountIn =
             BetterMath._convertToAssetsUp(args.amountOut, vaultLpReserve, vaultTotalShares, decimalOffset);
-        amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layout(), vaultLpReserve, amountIn);
+        amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layoutStruct(), vaultLpReserve, amountIn);
         if (args.maxAmountIn < amountIn) {
             revert MaxAmountExceeded(args.maxAmountIn, amountIn);
         }
@@ -520,8 +520,8 @@ contract AerodromeStandardExchangeOutTarget is
             deadline: deadline
         });
 
-        // ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
-        // AerodromePoolMetadataRepo.Storage storage  = AerodromePoolMetadataRepo._layout();
+        // ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
+        // AerodromePoolMetadataRepo.Storage storage  = AerodromePoolMetadataRepo._layoutStruct();
         // IAerodromeRouter aerodromeRouter = AerodromeRouterAwareRepo._aerodromeRouter();
         // IPool pool = IPool(address(ERC4626Repo._reserveAsset()));
         AeroReserve memory aeroReserve;

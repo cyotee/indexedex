@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
-import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
+import {DETFSafeTransferLib} from "contracts/vaults/detf/core/DETFSafeTransferLib.sol";
 import {ProtocolNFTVaultRepo} from "contracts/vaults/protocol/ProtocolNFTVaultRepo.sol";
 
 /**
@@ -57,17 +54,9 @@ library ProtocolNFTVaultService {
      *      Separates calculation from transfer to reduce stack depth.
      */
     function _calcHarvestRewards(HarvestParams memory params) internal pure returns (HarvestResult memory result) {
-        // Early exit if no pending rewards
-        if (params.rewardPerShares <= params.paidPerShare) {
-            result.hasRewards = false;
-            result.rewards = 0;
-            return result;
-        }
-
-        // Calculate rewards
-        result.rewards = (params.effectiveShares * (params.rewardPerShares - params.paidPerShare)) / ONE_WAD;
-
-        result.hasRewards = result.rewards > 0;
+        (result.rewards, result.hasRewards) = DETFBondNFTMathLib._calcHarvestRewards(
+            params.effectiveShares, params.rewardPerShares, params.paidPerShare
+        );
     }
 
     /**
@@ -95,9 +84,7 @@ library ProtocolNFTVaultService {
      * @dev Safe ERC20 transfer without SafeERC20 library to avoid stack depth.
      */
     function _safeTransfer(IERC20 token, address to, uint256 amount) internal {
-        (bool success, bytes memory data) =
-            address(token).call(abi.encodeWithSelector(IERC20.transfer.selector, to, amount));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "Transfer failed");
+        DETFSafeTransferLib._safeTransfer(token, to, amount);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -108,13 +95,6 @@ library ProtocolNFTVaultService {
      * @dev Validates redemption caller. Returns true if valid.
      */
     function _validateRedeemCaller(RedeemParams memory params, address owner) internal pure returns (bool) {
-        if (owner == params.caller) {
-            return true;
-        }
-        // Allow Protocol DETF to redeem on behalf of holder to holder
-        if (params.caller == params.protocolDETF && params.recipient == owner) {
-            return true;
-        }
-        return false;
+        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.protocolDETF, owner);
     }
 }

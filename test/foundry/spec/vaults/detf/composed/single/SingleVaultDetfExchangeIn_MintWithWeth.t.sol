@@ -11,6 +11,7 @@ import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Act
 import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IWETH9.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
@@ -77,6 +78,26 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         assertEq(IERC20(address(detf)).balanceOf(detfAlice) - chirBefore, chirMinted, "alice chir delta");
         assertEq(wethBefore - wethToken.balanceOf(detfAlice), amountIn, "alice weth spent");
         assertGt(IERC20(detf.reservePool()).balanceOf(address(detf)), reserveBefore, "reserve pool funded");
+    }
+
+    function test_mintWithWeth_splitsMintAcrossUserFeeToAndBondVault() public {
+        _driveToMintEnabled(detf);
+
+        uint256 amountIn = 1e16;
+        address feeTo = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        uint256 aliceBefore = IERC20(address(detf)).balanceOf(detfAlice);
+        uint256 feeToBefore = IERC20(address(detf)).balanceOf(feeTo);
+        uint256 bondVaultBefore = IERC20(address(detf)).balanceOf(address(detf.protocolNFTVault()));
+
+        vm.startPrank(detfAlice);
+        wethToken.approve(address(detf), amountIn);
+        uint256 chirMinted = detf.mintWithWeth(amountIn, detfAlice, false);
+        vm.stopPrank();
+
+        assertGt(chirMinted, 0, "user chir minted");
+        assertEq(IERC20(address(detf)).balanceOf(detfAlice) - aliceBefore, chirMinted, "user received net chir");
+        assertGt(IERC20(address(detf)).balanceOf(feeTo), feeToBefore, "feeTo received chir");
+        assertGt(IERC20(address(detf)).balanceOf(address(detf.protocolNFTVault())), bondVaultBefore, "bond vault received chir");
     }
 
     function test_previewExchangeIn_chirToWeth_reverts_whenBurningNotAllowed() public {

@@ -103,7 +103,7 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         view
     {
         // indexSource.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         indexSource.token0 = ConstProdReserveVaultRepo._token0(constProd);
         indexSource.token1 = ConstProdReserveVaultRepo._token1(constProd);
         indexSource.totalSupply = IERC20(address(indexSource.pool)).totalSupply();
@@ -146,7 +146,7 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
     function _loadStrategyVault(AerodromeV1StrategyVault memory vault, IERC20 knownToken) internal view {
         vault.vaultLpReserve = ERC4626Repo._lastTotalAssets();
         vault.vaultTotalShares = ERC20Repo._totalSupply();
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         vault.knownTokenLastOwnedSourceReserve =
             ConstProdReserveVaultRepo._yieldReserveOfToken(constProd, address(knownToken));
         vault.opTokenLastOwnedSourceReserve = ConstProdReserveVaultRepo._yieldReserveOfToken(
@@ -278,7 +278,7 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         returns (uint256 sharesMinusFees)
     {
         uint256 vaultTotalShares = ERC20Repo._totalSupply();
-        ERC4626Repo.Storage storage erc4626Layout = ERC4626Repo._layout();
+        ERC4626Repo.Storage storage erc4626Layout = ERC4626Repo._layoutStruct();
         uint256 vaultLpReserve = ERC4626Repo._lastTotalAssets(erc4626Layout);
         uint8 decimalOffset = ERC4626Repo._decimalOffset(erc4626Layout);
         vaultFeeLP = BetterMath._convertToSharesDown(vaultFeeLP, vaultLpReserve, vaultTotalShares, decimalOffset);
@@ -407,7 +407,7 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
      * @return result CompoundResult with LP minted and fee amounts
      */
     function _claimAndCompoundFees(CompoundParams memory params) internal returns (CompoundResult memory result) {
-        AerodromeStandardExchangeRepo.Storage storage aeroRepo = AerodromeStandardExchangeRepo._layout();
+        AerodromeStandardExchangeRepo.Storage storage aeroRepo = AerodromeStandardExchangeRepo._layoutStruct();
         CompoundCalcs memory calcs;
 
         // Step 1: Claim fees from pool

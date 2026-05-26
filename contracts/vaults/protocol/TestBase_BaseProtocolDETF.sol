@@ -60,6 +60,7 @@ import {
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 
 import {IBaseProtocolDETFDFPkg, BaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg, ProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
@@ -136,7 +137,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
 
     // Packages
     IBaseProtocolDETFDFPkg internal protocolDETFDFPkg;
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultDFPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultDFPkg;
     IRICHIRDFPkg internal richirDFPkg;
     IERC20PermitMintBurnLockedOwnableDFPkg internal richTokenPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
@@ -236,7 +237,7 @@ contract TestBase_BaseProtocolDETF is TestBase_AerodromeStandardExchange {
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager))
         });
-        protocolNFTVaultDFPkg = IProtocolNFTVaultDFPkg(address(new ProtocolNFTVaultDFPkg(nftPkgInit)));
+        protocolNFTVaultDFPkg = IDetfSelfNftInventoryDFPkg(address(new ProtocolNFTVaultDFPkg(nftPkgInit)));
         vm.label(address(protocolNFTVaultDFPkg), "ProtocolNFTVaultDFPkg");
 
         // Deploy RICHIR package

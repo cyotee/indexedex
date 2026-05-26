@@ -224,7 +224,7 @@ Explicit test gaps:
 Correctness assessment:
 - Naming/typos:
   - File/contract name uses `Oralce` instead of `Oracle`.
-  - It implements `IVautlFeeOracleQueryAware` (`Vautl` typo).
+  - It implements `IVaultFeeOracleQueryAware` (`Vautl` typo).
   These do not directly change runtime behavior, but they increase integration risk (imports, tooling, and docs consistency).
 
 #### File: `contracts/interfaces/IVaultFeeOracleQuery.sol`
@@ -1530,10 +1530,10 @@ Notes:
 Tests:
 - Coverage: UNMAPPED (needs mapping to `test/` specs or add new tests)
 ---
-### File: `contracts/interfaces/IVautlFeeOracleQueryAware.sol`
+### File: `contracts/interfaces/IVaultFeeOracleQueryAware.sol`
 Kind: project
 Fingerprint: sha256[:12]=ec76f0582bdd bytes=268 mtime=2026-01-07T01:53:02
-Declares: interface IVautlFeeOracleQueryAware
+Declares: interface IVaultFeeOracleQueryAware
 External/Public API: vaultFeeOracleQuery()
 Imports: import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 Notes:
@@ -1644,9 +1644,9 @@ Tests:
 ### File: `contracts/interfaces/proxies/IStandardExchangeProxy.sol`
 Kind: project
 Fingerprint: sha256[:12]=731b406a87f2 bytes=1327 mtime=2026-01-07T01:53:02
-Declares: interface IStandardExchangeProxy is IERC4626PermitProxy, IBasicVault, IStandardVault, IStandardExchangeIn, IStandardExchangeOut, IVautlFeeOracleQueryAware
+Declares: interface IStandardExchangeProxy is IERC4626PermitProxy, IBasicVault, IStandardVault, IStandardExchangeIn, IStandardExchangeOut, IVaultFeeOracleQueryAware
 External/Public API: (none detected)
-Imports: import {IERC4626PermitProxy} from "@crane/contracts/interfaces/proxies/IERC4626PermitProxy.sol"; | import {IBasicVault} from "contracts/interfaces/IBasicVault.sol"; | import {IStandardVault} from "contracts/interfaces/IStandardVault.sol"; | import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol"; | import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol"; | import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQueryAware.sol";
+Imports: import {IERC4626PermitProxy} from "@crane/contracts/interfaces/proxies/IERC4626PermitProxy.sol"; | import {IBasicVault} from "contracts/interfaces/IBasicVault.sol"; | import {IStandardVault} from "contracts/interfaces/IStandardVault.sol"; | import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol"; | import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol"; | import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)
@@ -1755,9 +1755,9 @@ Tests:
 ### File: `contracts/oracles/fee/VaultFeeOralceQueryAwareFacet.sol`
 Kind: project
 Fingerprint: sha256[:12]=49ddf1109453 bytes=1684 mtime=2026-01-07T01:53:02
-Declares: contract VaultFeeOralceQueryAwareFacet is IVautlFeeOracleQueryAware, IFacet
+Declares: contract VaultFeeOralceQueryAwareFacet is IVaultFeeOracleQueryAware, IFacet
 External/Public API: facetName(); facetInterfaces(); facetFuncs(); facetMetadata(); vaultFeeOracleQuery()
-Imports: import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol"; | import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQueryAware.sol"; | import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+Imports: import {IFacet} from "@crane/contracts/interfaces/IFacet.sol"; | import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol"; | import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol"; | import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 Notes:
 - Correctness: UNREVIEWED (needs manual read-through)
 - Security: UNREVIEWED (check access control, external calls, reentrancy, accounting)

@@ -26,6 +26,7 @@ import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {EthereumProtocolDETFCommon} from "contracts/vaults/protocol/EthereumProtocolDETFCommon.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
@@ -54,46 +55,46 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
     }
 
     function syntheticPrice() external view returns (uint256) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
         if (!_isInitialized()) {
             return ONE_WAD;
         }
 
         PoolReserves memory reserves;
-        _loadPoolReserves(layout, reserves);
+        _loadPoolReserves(layoutStruct, reserves);
         return _calcSyntheticPrice(reserves);
     }
 
     function isMintingAllowed() external view returns (bool) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
         if (!_isInitialized()) {
             return false;
         }
 
         PoolReserves memory reserves;
-        _loadPoolReserves(layout, reserves);
+        _loadPoolReserves(layoutStruct, reserves);
         uint256 price = _calcSyntheticPrice(reserves);
-        return _isMintingAllowed(layout, price);
+        return _isMintingAllowed(layoutStruct, price);
     }
 
     function isBurningAllowed() external view returns (bool) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
         if (!_isInitialized()) {
             return false;
         }
 
         PoolReserves memory reserves;
-        _loadPoolReserves(layout, reserves);
+        _loadPoolReserves(layoutStruct, reserves);
         uint256 price = _calcSyntheticPrice(reserves);
-        return _isBurningAllowed(layout, price);
+        return _isBurningAllowed(layoutStruct, price);
     }
 
     function chirWethVault() external view returns (IStandardExchange chirWethVault_) {
-        chirWethVault_ = BaseProtocolDETFRepo._layout().chirWethVault;
+        chirWethVault_ = BaseProtocolDETFRepo._layoutStruct().chirWethVault;
     }
 
     function richChirVault() external view returns (IStandardExchange richChirVault_) {
-        richChirVault_ = BaseProtocolDETFRepo._layout().richChirVault;
+        richChirVault_ = BaseProtocolDETFRepo._layoutStruct().richChirVault;
     }
 
     function reservePool() external view returns (address reservePool_) {
@@ -101,15 +102,15 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
     }
 
     function protocolNFTVault() external view returns (IProtocolNFTVault protocolNFTVault_) {
-        protocolNFTVault_ = BaseProtocolDETFRepo._layout().protocolNFTVault;
+        protocolNFTVault_ = BaseProtocolDETFRepo._layoutStruct().protocolNFTVault;
     }
 
     function richToken() external view returns (IERC20 richToken_) {
-        richToken_ = BaseProtocolDETFRepo._layout().richToken;
+        richToken_ = BaseProtocolDETFRepo._layoutStruct().richToken;
     }
 
     function richirToken() external view returns (IERC20 richirToken_) {
-        richirToken_ = IERC20(address(BaseProtocolDETFRepo._layout().richirToken));
+        richirToken_ = IERC20(address(BaseProtocolDETFRepo._layoutStruct().richirToken));
     }
 
     function chirToken() external view returns (IERC20MintBurn chirToken_) {
@@ -117,31 +118,31 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
     }
 
     function protocolNFTId() external view returns (uint256 protocolNFTId_) {
-        protocolNFTId_ = BaseProtocolDETFRepo._layout().protocolNFTId;
+        protocolNFTId_ = BaseProtocolDETFRepo._layoutStruct().protocolNFTId;
     }
 
     function mintThreshold() external view returns (uint256 mintThreshold_) {
-        mintThreshold_ = BaseProtocolDETFRepo._layout().mintThreshold;
+        mintThreshold_ = BaseProtocolDETFRepo._layoutStruct().mintThreshold;
     }
 
     function burnThreshold() external view returns (uint256 burnThreshold_) {
-        burnThreshold_ = BaseProtocolDETFRepo._layout().burnThreshold;
+        burnThreshold_ = BaseProtocolDETFRepo._layoutStruct().burnThreshold;
     }
 
     function wethToken() external view returns (IERC20 wethToken_) {
-        wethToken_ = BaseProtocolDETFRepo._layout().wethToken;
+        wethToken_ = BaseProtocolDETFRepo._layoutStruct().wethToken;
     }
 
     function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 wethOut) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
         uint256 expectedChirWethVaultOut = _previewChirWethVaultOutRaw(lpAmount);
-        address poolAddr = IERC4626(address(layout.chirWethVault)).asset();
-        uint256 lpOut = IERC4626(address(layout.chirWethVault)).previewRedeem(expectedChirWethVaultOut);
-        wethOut = _previewWethOutFromUniV2Lp(poolAddr, lpOut, address(layout.wethToken));
+        address poolAddr = IERC4626(address(layoutStruct.chirWethVault)).asset();
+        uint256 lpOut = IERC4626(address(layoutStruct.chirWethVault)).previewRedeem(expectedChirWethVaultOut);
+        wethOut = _previewWethOutFromUniV2Lp(poolAddr, lpOut, address(layoutStruct.wethToken));
     }
 
     function previewBridgeRichir(uint256 targetChainId, uint256 richirAmount)
@@ -149,8 +150,8 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
         view
         returns (IProtocolDETF.BridgeQuote memory quote)
     {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
 
         if (
             address(bridgeLayout.messenger) == address(0)
@@ -173,9 +174,9 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
             revert BridgeRemoteTokenNotConfigured(targetChainId, IERC20(address(this)));
         }
 
-        (IERC20 remoteRichToken,) = bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId, layout.richToken);
+        (IERC20 remoteRichToken,) = bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId, layoutStruct.richToken);
         if (address(remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(targetChainId, layout.richToken);
+            revert BridgeRemoteTokenNotConfigured(targetChainId, layoutStruct.richToken);
         }
 
         if (richirAmount == 0) {
@@ -183,25 +184,25 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
         }
 
         quote.richirAmountIn = richirAmount;
-        quote.sharesBurned = layout.richirToken.convertToShares(richirAmount);
+        quote.sharesBurned = layoutStruct.richirToken.convertToShares(richirAmount);
         if (quote.sharesBurned == 0) {
             return quote;
         }
 
-        uint256 totalRichirShares = layout.richirToken.totalShares();
-        uint256 protocolNftBpt = layout.protocolNFTVault.originalSharesOf(layout.protocolNFTId);
+        uint256 totalRichirShares = layoutStruct.richirToken.totalShares();
+        uint256 protocolNftBpt = layoutStruct.protocolNFTVault.originalSharesOf(layoutStruct.protocolNFTId);
         quote.reserveSharesBurned = (quote.sharesBurned * protocolNftBpt) / totalRichirShares;
 
         (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _previewReservePoolExit(layout, quote.reserveSharesBurned);
+            _previewReservePoolExit(layoutStruct, quote.reserveSharesBurned);
 
-        quote.localRichirOut = _previewLocalRichirCompensation(layout, chirWethVaultSharesOut);
-        quote.richOut = layout.richChirVault.previewExchangeIn(
-            IERC20(address(layout.richChirVault)), richChirVaultSharesOut, layout.richToken
+        quote.localRichirOut = _previewLocalRichirCompensation(layoutStruct, chirWethVaultSharesOut);
+        quote.richOut = layoutStruct.richChirVault.previewExchangeIn(
+            IERC20(address(layoutStruct.richChirVault)), richChirVaultSharesOut, layoutStruct.richToken
         );
     }
 
-    function _previewReservePoolExit(BaseProtocolDETFRepo.Storage storage layout_, uint256 bptIn_)
+    function _previewReservePoolExit(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_)
         internal
         view
         returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
@@ -213,12 +214,12 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
         }
 
         chirWethVaultSharesOut_ =
-            (currentBalancesRaw[layout_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+            (currentBalancesRaw[layoutStruct_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
         richChirVaultSharesOut_ =
-            (currentBalancesRaw[layout_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+            (currentBalancesRaw[layoutStruct_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
     }
 
-    function _previewLocalRichirCompensation(BaseProtocolDETFRepo.Storage storage layout_, uint256 chirWethVaultShares_)
+    function _previewLocalRichirCompensation(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 chirWethVaultShares_)
         internal
         view
         returns (uint256 richirOut_)
@@ -228,7 +229,7 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
         }
 
         BridgeReservePoolBptPreview memory p =
-            _previewBridgeReservePoolBptOut(layout_, layout_.chirWethVaultIndex, chirWethVaultShares_);
+            _previewBridgeReservePoolBptOut(layoutStruct_, layoutStruct_.chirWethVaultIndex, chirWethVaultShares_);
 
         ReservePoolData memory resPoolData;
         _loadReservePoolData(resPoolData, new uint256[](0));
@@ -238,23 +239,24 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
             reservePool: address(resPoolData.reservePool),
             reservePoolSwapFee: resPoolData.reservePoolSwapFee,
             weightsArray: resPoolData.weightsArray,
-            chirWethVault: address(layout_.chirWethVault),
-            richChirVault: address(layout_.richChirVault),
+            chirWethVault: address(layoutStruct_.chirWethVault),
+            richChirVault: address(layoutStruct_.richChirVault),
             chirToken: address(this),
-            wethToken: address(layout_.wethToken),
+            wethToken: address(layoutStruct_.wethToken),
             poolBalsRaw: p.balancesRaw,
             chirIdx: p.chirIdx,
             richIdx: p.richIdx,
-            vaultIdx: layout_.chirWethVaultIndex,
+            vaultIdx: layoutStruct_.chirWethVaultIndex,
             sharesAdded: chirWethVaultShares_,
             poolSupply: p.poolSupply,
             bptAdded: p.bptOut,
-            newPosShares: layout_.protocolNFTVault.getPosition(layout_.protocolNFTId).originalShares + p.bptOut,
-            newTotShares: layout_.richirToken.totalShares() + p.bptOut
+            newPosShares: layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut,
+            newTotShares: layoutStruct_.richirToken.totalShares() + p.bptOut
         });
 
         richirOut_ = BaseProtocolDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
-        richirOut_ = richirOut_ - ((richirOut_ * PREVIEW_RICHIR_BUFFER_BPS) / PREVIEW_BUFFER_DENOMINATOR);
+        richirOut_ =
+            DETFPreviewLib._applyDiscountBps(richirOut_, PREVIEW_RICHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR);
     }
 
     function _previewBridgeReservePoolBptOut(
@@ -284,7 +286,7 @@ contract EthereumProtocolDETFBondingQueryTarget is EthereumProtocolDETFCommon {
             resPoolData.reservePoolSwapFee
         );
 
-        bptOut = bptOut - ((bptOut * PREVIEW_BPT_BUFFER_BPS) / PREVIEW_BPT_BUFFER_DENOMINATOR);
+        bptOut = DETFPreviewLib._applyDiscountBps(bptOut, PREVIEW_BPT_BUFFER_BPS, PREVIEW_BPT_BUFFER_DENOMINATOR);
 
         p_.balancesRaw = currentBalancesRaw;
         p_.bptOut = bptOut;

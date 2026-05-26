@@ -100,6 +100,7 @@ import {
 import {
     EthereumProtocolDETF_Pkg_FactoryService
 } from "contracts/vaults/protocol/EthereumProtocolDETF_Pkg_FactoryService.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
@@ -148,7 +149,7 @@ abstract contract ProtocolDETFIntegrationBase is TestBase_BalancerV3StandardExch
     IUniswapV2StandardExchangeDFPkg internal uniswapV2StandardExchangeDFPkg;
 
     IERC20PermitDFPkg internal richTokenPkg;
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
     IRICHIRDFPkg internal richirPkg;
     IEthereumProtocolDETFDFPkg internal protocolDETFDFPkg;
 

@@ -2,20 +2,14 @@
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
-import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
-
-/* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {ProtocolNFTVaultRepo} from "contracts/vaults/protocol/ProtocolNFTVaultRepo.sol";
-import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 
 /**
  * @title ProtocolNFTVaultCommon
@@ -59,11 +53,11 @@ abstract contract ProtocolNFTVaultCommon is IProtocolDETFErrors {
 
     /**
      * @notice Gets bond terms from the fee oracle via StandardVaultRepo.
-     * @dev Queries the fee oracle's 3-level fallback chain (vault → type → global).
+     * @dev Queries the fee oracle's 3-level fallback chain (vault -> type -> global).
      * @return terms The current bond terms
      */
     function _bondTerms() internal view returns (BondTerms memory terms) {
-        terms = StandardVaultRepo._feeOracle().bondTermsOfVault(address(this));
+        terms = DETFBondNFTMathLib._bondTerms(address(this));
     }
 
     /* ---------------------------------------------------------------------- */
@@ -76,12 +70,13 @@ abstract contract ProtocolNFTVaultCommon is IProtocolDETFErrors {
      */
     function _validateLockDuration(ProtocolNFTVaultRepo.Storage storage, uint256 lockDuration_) internal view {
         BondTerms memory terms = _bondTerms();
+        DETFBondNFTMathLib.LockDurationStatus status = DETFBondNFTMathLib._lockDurationStatus(terms, lockDuration_);
 
-        if (lockDuration_ < terms.minLockDuration) {
+        if (status == DETFBondNFTMathLib.LockDurationStatus.TooShort) {
             revert LockDurationTooShort(lockDuration_, terms.minLockDuration);
         }
 
-        if (lockDuration_ > terms.maxLockDuration) {
+        if (status == DETFBondNFTMathLib.LockDurationStatus.TooLong) {
             revert LockDurationTooLong(lockDuration_, terms.maxLockDuration);
         }
     }
@@ -96,31 +91,7 @@ abstract contract ProtocolNFTVaultCommon is IProtocolDETFErrors {
      * @return bonusMultiplier_ Multiplier scaled by 1e18 (1e18 = 1x = no bonus)
      */
     function _calcBonusMultiplier(uint256 lockDuration_) internal view returns (uint256 bonusMultiplier_) {
-        BondTerms memory terms = _bondTerms();
-
-        // Guard against division by zero
-        if (terms.maxLockDuration <= terms.minLockDuration) {
-            return ONE_WAD + terms.maxBonusPercentage;
-        }
-
-        // Normalize duration to 0-1 range (scaled by 1e18)
-        uint256 normalized =
-            ((lockDuration_ - terms.minLockDuration) * ONE_WAD) / (terms.maxLockDuration - terms.minLockDuration);
-
-        // Apply quadratic curve
-        uint256 curveFactor = (normalized * normalized) / ONE_WAD;
-
-        // Calculate bonus within min-max range
-        uint256 bonus;
-        if (terms.maxBonusPercentage >= terms.minBonusPercentage) {
-            bonus = terms.minBonusPercentage + ((terms.maxBonusPercentage - terms.minBonusPercentage) * curveFactor)
-                / ONE_WAD;
-        } else {
-            bonus = terms.maxBonusPercentage;
-        }
-
-        // Return 1 + bonus as multiplier
-        bonusMultiplier_ = ONE_WAD + bonus;
+        bonusMultiplier_ = DETFBondNFTMathLib._bonusMultiplierOfVault(address(this), lockDuration_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -133,13 +104,14 @@ abstract contract ProtocolNFTVaultCommon is IProtocolDETFErrors {
      * @return position The position data
      */
     function _getPosition(uint256 tokenId_) internal view returns (IProtocolNFTVault.Position memory position) {
-        ProtocolNFTVaultRepo.Storage storage layout = ProtocolNFTVaultRepo._layout();
-
-        position.originalShares = layout.originalSharesOf[tokenId_];
-        position.effectiveShares = layout.effectiveSharesOf[tokenId_];
-        position.bonusMultiplier = layout.bonusMultiplierOf[tokenId_];
-        position.unlockTime = layout.unlockTimeOf[tokenId_];
-        position.rewardDebt = layout.userRewardPerSharePaid[tokenId_];
+        ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
+        position = DETFBondNFTMathLib._position(
+            layoutStruct.originalSharesOf[tokenId_],
+            layoutStruct.effectiveSharesOf[tokenId_],
+            layoutStruct.bonusMultiplierOf[tokenId_],
+            layoutStruct.unlockTimeOf[tokenId_],
+            layoutStruct.userRewardPerSharePaid[tokenId_]
+        );
     }
 
     /**

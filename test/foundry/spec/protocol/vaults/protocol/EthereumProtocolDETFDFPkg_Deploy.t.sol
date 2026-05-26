@@ -69,6 +69,7 @@ import {
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
     BaseProtocolDETF_Component_FactoryService
@@ -116,7 +117,7 @@ contract EthereumProtocolDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExc
     IFacet internal uniswapV2StandardExchangeOutFacet;
     IUniswapV2StandardExchangeDFPkg internal uniswapV2StandardExchangeDFPkg;
 
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
     IRICHIRDFPkg internal richirPkg;
     IEthereumProtocolDETFDFPkg internal protocolDETFDFPkg;
 

@@ -90,7 +90,7 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     }
 
     function usageFeeOfVault(address vault) public view returns (uint256 usageFee_) {
-        VaultFeeOracleRepo.Storage storage feeOracle = VaultFeeOracleRepo._layout();
+        VaultFeeOracleRepo.Storage storage feeOracle = VaultFeeOracleRepo._layoutStruct();
         usageFee_ = VaultFeeOracleRepo._usageFeeOfVault(feeOracle, vault);
         if (usageFee_ == 0) {
             usageFee_ = VaultFeeOracleRepo._defaultUsageFeeOfTypeId(
@@ -132,7 +132,7 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     }
 
     function dexSwapFeeOfVault(address vault) public view returns (uint256 swapFee_) {
-        VaultFeeOracleRepo.Storage storage feeOracle = VaultFeeOracleRepo._layout();
+        VaultFeeOracleRepo.Storage storage feeOracle = VaultFeeOracleRepo._layoutStruct();
         swapFee_ = VaultFeeOracleRepo._dexSwapFeeOfVault(feeOracle, vault);
         if (swapFee_ == 0) {
             swapFee_ = VaultFeeOracleRepo._defaultDexSwapFeeOfTypeId(

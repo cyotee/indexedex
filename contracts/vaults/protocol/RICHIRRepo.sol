@@ -19,7 +19,7 @@ import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
  * @title RICHIRRepo
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Storage library for RICHIR rebasing token state.
- * @dev Follows the Crane Repo pattern with dual _layout() functions.
+ * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
  *
  *      RICHIR is a rebasing token where balanceOf() returns different values
  *      over time based on the current spot redemption value of underlying shares.
@@ -76,14 +76,14 @@ library RICHIRRepo {
     /*                           Layout Functions                             */
     /* ---------------------------------------------------------------------- */
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
-            layout_.slot := slot_
+            layoutStruct_.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -91,17 +91,17 @@ library RICHIRRepo {
     /* ---------------------------------------------------------------------- */
 
     function _initialize(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         IProtocolDETF protocolDETF_,
         IProtocolNFTVault nftVault_,
         IERC20 wethToken_,
         uint256 protocolNFTId_
     ) internal {
-        layout_.protocolDETF = protocolDETF_;
-        layout_.nftVault = nftVault_;
-        layout_.wethToken = wethToken_;
-        layout_.protocolNFTId = protocolNFTId_;
-        layout_.cachedRedemptionRate = 1e18; // Start at 1:1
+        layoutStruct_.protocolDETF = protocolDETF_;
+        layoutStruct_.nftVault = nftVault_;
+        layoutStruct_.wethToken = wethToken_;
+        layoutStruct_.protocolNFTId = protocolNFTId_;
+        layoutStruct_.cachedRedemptionRate = 1e18; // Start at 1:1
     }
 
     function _initialize(
@@ -110,108 +110,116 @@ library RICHIRRepo {
         IERC20 wethToken_,
         uint256 protocolNFTId_
     ) internal {
-        _initialize(_layout(), protocolDETF_, nftVault_, wethToken_, protocolNFTId_);
+        _initialize(_layoutStruct(), protocolDETF_, nftVault_, wethToken_, protocolNFTId_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Contract References                            */
     /* ---------------------------------------------------------------------- */
 
-    function _protocolDETF(Storage storage layout_) internal view returns (IProtocolDETF) {
-        return layout_.protocolDETF;
+    function _protocolDETF(Storage storage layoutStruct_) internal view returns (IProtocolDETF) {
+        return layoutStruct_.protocolDETF;
     }
 
     function _protocolDETF() internal view returns (IProtocolDETF) {
-        return _protocolDETF(_layout());
+        return _protocolDETF(_layoutStruct());
     }
 
-    function _nftVault(Storage storage layout_) internal view returns (IProtocolNFTVault) {
-        return layout_.nftVault;
+    function _setProtocolDETF(Storage storage layoutStruct_, IProtocolDETF protocolDETF_) internal {
+        layoutStruct_.protocolDETF = protocolDETF_;
+    }
+
+    function _setProtocolDETF(IProtocolDETF protocolDETF_) internal {
+        _setProtocolDETF(_layoutStruct(), protocolDETF_);
+    }
+
+    function _nftVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault) {
+        return layoutStruct_.nftVault;
     }
 
     function _nftVault() internal view returns (IProtocolNFTVault) {
-        return _nftVault(_layout());
+        return _nftVault(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.wethToken;
+    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.wethToken;
     }
 
     function _wethToken() internal view returns (IERC20) {
-        return _wethToken(_layout());
+        return _wethToken(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layout_) internal view returns (uint256) {
-        return layout_.protocolNFTId;
+    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.protocolNFTId;
     }
 
     function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layout());
+        return _protocolNFTId(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Share Accounting                               */
     /* ---------------------------------------------------------------------- */
 
-    function _totalShares(Storage storage layout_) internal view returns (uint256) {
-        return layout_.totalShares;
+    function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.totalShares;
     }
 
     function _totalShares() internal view returns (uint256) {
-        return _totalShares(_layout());
+        return _totalShares(_layoutStruct());
     }
 
-    function _setTotalShares(Storage storage layout_, uint256 amount_) internal {
-        layout_.totalShares = amount_;
+    function _setTotalShares(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.totalShares = amount_;
     }
 
     function _setTotalShares(uint256 amount_) internal {
-        _setTotalShares(_layout(), amount_);
+        _setTotalShares(_layoutStruct(), amount_);
     }
 
-    function _sharesOf(Storage storage layout_, address account_) internal view returns (uint256) {
-        return layout_.sharesOf[account_];
+    function _sharesOf(Storage storage layoutStruct_, address account_) internal view returns (uint256) {
+        return layoutStruct_.sharesOf[account_];
     }
 
     function _sharesOf(address account_) internal view returns (uint256) {
-        return _sharesOf(_layout(), account_);
+        return _sharesOf(_layoutStruct(), account_);
     }
 
-    function _setSharesOf(Storage storage layout_, address account_, uint256 shares_) internal {
-        layout_.sharesOf[account_] = shares_;
+    function _setSharesOf(Storage storage layoutStruct_, address account_, uint256 shares_) internal {
+        layoutStruct_.sharesOf[account_] = shares_;
     }
 
     function _setSharesOf(address account_, uint256 shares_) internal {
-        _setSharesOf(_layout(), account_, shares_);
+        _setSharesOf(_layoutStruct(), account_, shares_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Redemption Rate                                */
     /* ---------------------------------------------------------------------- */
 
-    function _cachedRedemptionRate(Storage storage layout_) internal view returns (uint256) {
-        return layout_.cachedRedemptionRate;
+    function _cachedRedemptionRate(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.cachedRedemptionRate;
     }
 
     function _cachedRedemptionRate() internal view returns (uint256) {
-        return _cachedRedemptionRate(_layout());
+        return _cachedRedemptionRate(_layoutStruct());
     }
 
-    function _setCachedRedemptionRate(Storage storage layout_, uint256 rate_) internal {
-        layout_.cachedRedemptionRate = rate_;
-        layout_.lastRateUpdateBlock = block.number;
+    function _setCachedRedemptionRate(Storage storage layoutStruct_, uint256 rate_) internal {
+        layoutStruct_.cachedRedemptionRate = rate_;
+        layoutStruct_.lastRateUpdateBlock = block.number;
     }
 
     function _setCachedRedemptionRate(uint256 rate_) internal {
-        _setCachedRedemptionRate(_layout(), rate_);
+        _setCachedRedemptionRate(_layoutStruct(), rate_);
     }
 
-    function _lastRateUpdateBlock(Storage storage layout_) internal view returns (uint256) {
-        return layout_.lastRateUpdateBlock;
+    function _lastRateUpdateBlock(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.lastRateUpdateBlock;
     }
 
     function _lastRateUpdateBlock() internal view returns (uint256) {
-        return _lastRateUpdateBlock(_layout());
+        return _lastRateUpdateBlock(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -222,41 +230,41 @@ library RICHIRRepo {
      * @notice Mints shares to an account.
      * @dev Only affects shares, not balanceOf (which is computed).
      */
-    function _mintShares(Storage storage layout_, address account_, uint256 shares_) internal {
-        layout_.sharesOf[account_] += shares_;
-        layout_.totalShares += shares_;
+    function _mintShares(Storage storage layoutStruct_, address account_, uint256 shares_) internal {
+        layoutStruct_.sharesOf[account_] += shares_;
+        layoutStruct_.totalShares += shares_;
     }
 
     function _mintShares(address account_, uint256 shares_) internal {
-        _mintShares(_layout(), account_, shares_);
+        _mintShares(_layoutStruct(), account_, shares_);
     }
 
     /**
      * @notice Burns shares from an account.
      * @dev Only affects shares, not balanceOf (which is computed).
      */
-    function _burnShares(Storage storage layout_, address account_, uint256 shares_) internal {
-        require(layout_.sharesOf[account_] >= shares_, "RICHIR: insufficient shares");
-        layout_.sharesOf[account_] -= shares_;
-        layout_.totalShares -= shares_;
+    function _burnShares(Storage storage layoutStruct_, address account_, uint256 shares_) internal {
+        require(layoutStruct_.sharesOf[account_] >= shares_, "RICHIR: insufficient shares");
+        layoutStruct_.sharesOf[account_] -= shares_;
+        layoutStruct_.totalShares -= shares_;
     }
 
     function _burnShares(address account_, uint256 shares_) internal {
-        _burnShares(_layout(), account_, shares_);
+        _burnShares(_layoutStruct(), account_, shares_);
     }
 
     /**
      * @notice Transfers shares between accounts.
      * @dev Used internally by ERC20 transfer functions.
      */
-    function _transferShares(Storage storage layout_, address from_, address to_, uint256 shares_) internal {
-        require(layout_.sharesOf[from_] >= shares_, "RICHIR: insufficient shares");
-        layout_.sharesOf[from_] -= shares_;
-        layout_.sharesOf[to_] += shares_;
+    function _transferShares(Storage storage layoutStruct_, address from_, address to_, uint256 shares_) internal {
+        require(layoutStruct_.sharesOf[from_] >= shares_, "RICHIR: insufficient shares");
+        layoutStruct_.sharesOf[from_] -= shares_;
+        layoutStruct_.sharesOf[to_] += shares_;
     }
 
     function _transferShares(address from_, address to_, uint256 shares_) internal {
-        _transferShares(_layout(), from_, to_, shares_);
+        _transferShares(_layoutStruct(), from_, to_, shares_);
     }
 
     /* ---------------------------------------------------------------------- */

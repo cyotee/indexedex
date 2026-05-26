@@ -77,18 +77,18 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         view
         returns (uint256 amountIn)
     {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
         ReservePoolState memory poolState;
-        _loadReservePoolState(layout, poolState);
+        _loadReservePoolState(layoutStruct, poolState);
 
-        uint256 dilutedPrice = _calcDilutedPrice(layout, poolState);
+        uint256 dilutedPrice = _calcDilutedPrice(layoutStruct, poolState);
 
         /* ------------------------------------------------------------------ */
         /*             Reserve Vault → DETF (Mint - exact output)             */
         /* ------------------------------------------------------------------ */
 
-        if (_isReserveVaultToken(layout, tokenIn) && _isSelfToken(tokenOut)) {
+        if (_isReserveVaultToken(layoutStruct, tokenIn) && _isSelfToken(tokenOut)) {
             if (!_isAbovePeg(dilutedPrice)) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
@@ -108,7 +108,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         /*             DETF → Reserve Vault (Burn - exact output)             */
         /* ------------------------------------------------------------------ */
 
-        if (_isSelfToken(tokenIn) && _isReserveVaultToken(layout, tokenOut)) {
+        if (_isSelfToken(tokenIn) && _isReserveVaultToken(layoutStruct, tokenOut)) {
             if (!_isBelowPeg(dilutedPrice)) {
                 revert PriceAbovePeg(dilutedPrice, ONE_WAD);
             }
@@ -128,7 +128,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         /*        Reserve Vault Constituent → DETF (ZapIn - exact output)     */
         /* ------------------------------------------------------------------ */
 
-        if (_isValidMintToken(layout, tokenIn) && _isSelfToken(tokenOut)) {
+        if (_isValidMintToken(layoutStruct, tokenIn) && _isSelfToken(tokenOut)) {
             if (!_isAbovePeg(dilutedPrice)) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
@@ -142,7 +142,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
                 amountOut
             );
 
-            IStandardExchange reserveVault = layout.reserveVault;
+            IStandardExchange reserveVault = layoutStruct.reserveVault;
             amountIn = reserveVault.previewExchangeOut(tokenIn, IERC20(address(reserveVault)), reserveNeeded);
             return amountIn;
         }
@@ -151,12 +151,12 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         /*        DETF → Reserve Vault Constituent (ZapOut - exact output)    */
         /* ------------------------------------------------------------------ */
 
-        if (_isSelfToken(tokenIn) && _isValidMintToken(layout, tokenOut)) {
+        if (_isSelfToken(tokenIn) && _isValidMintToken(layoutStruct, tokenOut)) {
             if (!_isBelowPeg(dilutedPrice)) {
                 revert PriceAbovePeg(dilutedPrice, ONE_WAD);
             }
 
-            IStandardExchange reserveVault = layout.reserveVault;
+            IStandardExchange reserveVault = layoutStruct.reserveVault;
             uint256 reserveNeeded = reserveVault.previewExchangeOut(IERC20(address(reserveVault)), tokenOut, amountOut);
 
             // Calculate DETF needed using WeightedMath
@@ -174,14 +174,14 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         /*                         DETF ↔ sRBT (1:1)                         */
         /* ------------------------------------------------------------------ */
 
-        if (_isSelfToken(tokenIn) && address(tokenOut) == address(layout.seigniorageToken)) {
+        if (_isSelfToken(tokenIn) && address(tokenOut) == address(layoutStruct.seigniorageToken)) {
             if (!_isAbovePeg(dilutedPrice)) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
             return amountOut;
         }
 
-        if (address(tokenIn) == address(layout.seigniorageToken) && _isSelfToken(tokenOut)) {
+        if (address(tokenIn) == address(layoutStruct.seigniorageToken) && _isSelfToken(tokenOut)) {
             if (dilutedPrice < ONE_WAD) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
@@ -211,12 +211,12 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             revert DeadlineExceeded(deadline, block.timestamp);
         }
 
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
         ReservePoolState memory poolState;
-        _loadReservePoolState(layout, poolState);
+        _loadReservePoolState(layoutStruct, poolState);
 
-        uint256 dilutedPrice = _calcDilutedPrice(layout, poolState);
+        uint256 dilutedPrice = _calcDilutedPrice(layoutStruct, poolState);
 
         ExchangeOutParams memory params = ExchangeOutParams({
             tokenIn: tokenIn,
@@ -229,24 +229,24 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             dilutedPrice: dilutedPrice
         });
 
-        if (_isReserveVaultToken(layout, tokenIn) && _isSelfToken(tokenOut)) {
-            return _executeReserveToDetfOut(layout, params);
+        if (_isReserveVaultToken(layoutStruct, tokenIn) && _isSelfToken(tokenOut)) {
+            return _executeReserveToDetfOut(layoutStruct, params);
         }
 
-        if (_isSelfToken(tokenIn) && _isReserveVaultToken(layout, tokenOut)) {
-            return _executeDetfToReserveOut(layout, params);
+        if (_isSelfToken(tokenIn) && _isReserveVaultToken(layoutStruct, tokenOut)) {
+            return _executeDetfToReserveOut(layoutStruct, params);
         }
 
-        if (_isValidMintToken(layout, tokenIn) && _isSelfToken(tokenOut)) {
-            return _executeZapInOut(layout, params);
+        if (_isValidMintToken(layoutStruct, tokenIn) && _isSelfToken(tokenOut)) {
+            return _executeZapInOut(layoutStruct, params);
         }
 
-        if (_isSelfToken(tokenIn) && _isValidMintToken(layout, tokenOut)) {
-            return _executeZapOutOut(layout, params);
+        if (_isSelfToken(tokenIn) && _isValidMintToken(layoutStruct, tokenOut)) {
+            return _executeZapOutOut(layoutStruct, params);
         }
 
         // DETF (RBT) -> sRBT (exact output, 1:1) when above peg.
-        if (_isSelfToken(tokenIn) && address(tokenOut) == address(layout.seigniorageToken)) {
+        if (_isSelfToken(tokenIn) && address(tokenOut) == address(layoutStruct.seigniorageToken)) {
             if (!_isAbovePeg(dilutedPrice)) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
@@ -261,12 +261,12 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             }
 
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
-            layout.seigniorageToken.mint(recipient, amountOut);
+            layoutStruct.seigniorageToken.mint(recipient, amountOut);
             return amountIn;
         }
 
         // sRBT -> DETF (RBT) (exact output, 1:1) when at-or-above peg.
-        if (address(tokenIn) == address(layout.seigniorageToken) && _isSelfToken(tokenOut)) {
+        if (address(tokenIn) == address(layoutStruct.seigniorageToken) && _isSelfToken(tokenOut)) {
             if (dilutedPrice < ONE_WAD) {
                 revert PriceBelowPeg(dilutedPrice, ONE_WAD);
             }
@@ -281,7 +281,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             }
 
             address burnFrom = pretransferred ? address(this) : msg.sender;
-            layout.seigniorageToken.burn(burnFrom, amountIn);
+            layoutStruct.seigniorageToken.burn(burnFrom, amountIn);
             ERC20Repo._mint(recipient, amountOut);
             return amountIn;
         }
@@ -293,7 +293,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
     /*                       Exchange Out Route Handlers                      */
     /* ---------------------------------------------------------------------- */
 
-    function _executeReserveToDetfOut(SeigniorageDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+    function _executeReserveToDetfOut(SeigniorageDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
         internal
         returns (uint256 amountIn_)
     {
@@ -314,7 +314,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         }
 
         // Calculate reduced fee
-        uint256 feeReductionPPM = layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+        uint256 feeReductionPPM = layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
         uint256 feeAdjusted =
             FixedPoint.ONE - BetterMath._percentageOfWAD(resPoolData.reservePoolSwapFee, feeReductionPPM);
 
@@ -342,13 +342,13 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
 
         // Execute mint with pool
         _executeMintExactWithPool(
-            layout_, resPoolData, sRbtData, currentRatedBalances, actualIn, p_.amountOut, p_.recipient
+            layoutStruct_, resPoolData, sRbtData, currentRatedBalances, actualIn, p_.amountOut, p_.recipient
         );
 
         _refundExcess(p_.tokenIn, p_.maxAmountIn, amountIn_, p_.pretransferred, msg.sender);
     }
 
-    function _executeDetfToReserveOut(SeigniorageDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+    function _executeDetfToReserveOut(SeigniorageDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
         internal
         returns (uint256 amountIn_)
     {
@@ -369,7 +369,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         }
 
         // Calculate reduced fee
-        uint256 feeReductionPPM = layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+        uint256 feeReductionPPM = layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
         uint256 feeAdjusted =
             FixedPoint.ONE - BetterMath._percentageOfWAD(resPoolData.reservePoolSwapFee, feeReductionPPM);
 
@@ -392,18 +392,18 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         _secureSelfBurn(msg.sender, amountIn_, p_.pretransferred);
 
         // Execute burn with pool
-        _executeBurnExactWithPool(layout_, resPoolData, currentRatedBalances, p_.amountOut, p_.recipient);
+        _executeBurnExactWithPool(layoutStruct_, resPoolData, currentRatedBalances, p_.amountOut, p_.recipient);
     }
 
-    function _executeZapInOut(SeigniorageDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+    function _executeZapInOut(SeigniorageDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
         internal
         returns (uint256 amountIn_)
     {
         // Calculate reserve needed
-        uint256 reserveNeeded = _calcReserveNeededForMint(layout_, p_.amountOut);
+        uint256 reserveNeeded = _calcReserveNeededForMint(layoutStruct_, p_.amountOut);
 
         // Get constituent amount needed from reserve vault
-        IStandardExchange reserveVault = layout_.reserveVault;
+        IStandardExchange reserveVault = layoutStruct_.reserveVault;
         amountIn_ = reserveVault.previewExchangeOut(p_.tokenIn, IERC20(address(reserveVault)), reserveNeeded);
 
         if (amountIn_ > p_.maxAmountIn) {
@@ -416,25 +416,25 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         }
 
         // Convert to reserve vault shares and execute mint
-        uint256 reserveReceived = _convertAndDeposit(layout_, p_.tokenIn, actualIn, reserveNeeded, p_.deadline);
+        uint256 reserveReceived = _convertAndDeposit(layoutStruct_, p_.tokenIn, actualIn, reserveNeeded, p_.deadline);
 
         // Execute mint with pool
-        _executeMintWithPoolForZap(layout_, reserveReceived, p_.amountOut, p_.recipient);
+        _executeMintWithPoolForZap(layoutStruct_, reserveReceived, p_.amountOut, p_.recipient);
 
         _refundExcess(p_.tokenIn, p_.maxAmountIn, amountIn_, p_.pretransferred, msg.sender);
     }
 
-    function _executeZapOutOut(SeigniorageDETFRepo.Storage storage layout_, ExchangeOutParams memory p_)
+    function _executeZapOutOut(SeigniorageDETFRepo.Storage storage layoutStruct_, ExchangeOutParams memory p_)
         internal
         returns (uint256 amountIn_)
     {
         // Calculate reserve vault needed for exact output
-        IStandardExchange reserveVault = layout_.reserveVault;
+        IStandardExchange reserveVault = layoutStruct_.reserveVault;
         uint256 reserveNeeded =
             reserveVault.previewExchangeOut(IERC20(address(reserveVault)), p_.tokenOut, p_.amountOut);
 
         // Calculate DETF needed for burn
-        amountIn_ = _calcDetfNeededForBurn(layout_, reserveNeeded);
+        amountIn_ = _calcDetfNeededForBurn(layoutStruct_, reserveNeeded);
 
         if (amountIn_ > p_.maxAmountIn) {
             revert MaxAmountExceeded(p_.maxAmountIn, amountIn_);
@@ -443,7 +443,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         _secureSelfBurn(msg.sender, amountIn_, p_.pretransferred);
 
         // Execute burn with pool to get reserve vault
-        _executeBurnWithPoolForZap(layout_, reserveNeeded, address(reserveVault));
+        _executeBurnWithPoolForZap(layoutStruct_, reserveNeeded, address(reserveVault));
 
         // Convert reserve vault to final output token
         IERC20(address(reserveVault)).safeTransfer(address(reserveVault), reserveNeeded);
@@ -460,7 +460,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
      * @notice Executes mint with pool interaction for exact output.
      */
     function _executeMintExactWithPool(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         ReservePoolData memory resPoolData_,
         SRBTData memory sRbtData_,
         uint256[] memory currentRatedBalances_,
@@ -482,13 +482,13 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         uint256[] memory paymentAmountsIn = new uint256[](2);
         paymentAmountsIn[resPoolData_.reserveVaultIndexInReservePool] = reserveAmount_;
 
-        layout_.balancerV3PrepayRouter
+        layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(
                 address(resPoolData_.reservePool), paymentAmountsIn, resPoolData_.expectedBpt, ""
             );
 
         // Calculate seigniorage
-        uint256 feeReductionPPM = layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+        uint256 feeReductionPPM = layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
         uint256 amountInReduced = FixedPoint.mulDown(
             reserveAmount_,
             FixedPoint.ONE - BetterMath._percentageOfWAD(resPoolData_.reservePoolSwapFee, feeReductionPPM)
@@ -507,7 +507,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
 
         // Mint sRBT if any
         if (srbt.sRBTToMint > 0) {
-            sRbtData_.seigniorageToken.mint(address(layout_.seigniorageNFTVault), srbt.sRBTToMint);
+            sRbtData_.seigniorageToken.mint(address(layoutStruct_.seigniorageNFTVault), srbt.sRBTToMint);
         }
     }
 
@@ -515,7 +515,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
      * @notice Executes burn with pool interaction for exact output.
      */
     function _executeBurnExactWithPool(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         ReservePoolData memory resPoolData_,
         uint256[] memory currentRatedBalances_,
         uint256 reserveAmount_,
@@ -537,25 +537,25 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         uint256[] memory minAmountsOut = new uint256[](2);
         minAmountsOut[resPoolData_.reserveVaultIndexInReservePool] = reserveAmount_;
 
-        layout_.balancerV3PrepayRouter
+        layoutStruct_.balancerV3PrepayRouter
             .prepayRemoveLiquidityProportional(
                 address(resPoolData_.reservePool), resPoolData_.expectedBpt, minAmountsOut, ""
             );
 
         // Transfer reserve vault to recipient
-        IERC20(address(layout_.reserveVault)).safeTransfer(recipient_, reserveAmount_);
+        IERC20(address(layoutStruct_.reserveVault)).safeTransfer(recipient_, reserveAmount_);
 
         // Redeposit unused tokens
-        _redepositUnusedTokens(layout_, resPoolData_);
+        _redepositUnusedTokens(layoutStruct_, resPoolData_);
     }
 
     /**
      * @notice Redeposits any unused reserve vault and self tokens back to the pool.
      */
-    function _redepositUnusedTokens(SeigniorageDETFRepo.Storage storage layout_, ReservePoolData memory resPoolData_)
+    function _redepositUnusedTokens(SeigniorageDETFRepo.Storage storage layoutStruct_, ReservePoolData memory resPoolData_)
         internal
     {
-        uint256 unusedReserveVault = IERC20(address(layout_.reserveVault)).balanceOf(address(this));
+        uint256 unusedReserveVault = IERC20(address(layoutStruct_.reserveVault)).balanceOf(address(this));
         uint256 unusedSelf = ERC20Repo._balanceOf(address(this));
 
         if (unusedReserveVault == 0 && unusedSelf == 0) {
@@ -576,7 +576,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         );
 
         if (expectedBpt > 0) {
-            layout_.balancerV3PrepayRouter
+            layoutStruct_.balancerV3PrepayRouter
                 .prepayAddLiquidityUnbalanced(address(resPoolData_.reservePool), unusedAmounts, expectedBpt, "");
         }
     }
@@ -588,7 +588,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
     /**
      * @notice Calculates reserve vault needed to mint exact DETF using pool math.
      */
-    function _calcReserveNeededForMint(SeigniorageDETFRepo.Storage storage layout_, uint256 detfAmount_)
+    function _calcReserveNeededForMint(SeigniorageDETFRepo.Storage storage layoutStruct_, uint256 detfAmount_)
         internal
         view
         returns (uint256 reserveNeeded_)
@@ -608,7 +608,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             revert PriceBelowPeg(rbtData.selfDilutedPrice, ONE_WAD);
         }
 
-        uint256 feeReductionPPM = layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+        uint256 feeReductionPPM = layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
         uint256 feeAdjusted =
             FixedPoint.ONE - BetterMath._percentageOfWAD(resPoolData.reservePoolSwapFee, feeReductionPPM);
 
@@ -626,13 +626,13 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
      * @notice Converts constituent to reserve vault and deposits to Balancer vault.
      */
     function _convertAndDeposit(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         IERC20 tokenIn_,
         uint256 actualIn_,
         uint256 reserveNeeded_,
         uint256 deadline_
     ) internal returns (uint256 reserveReceived_) {
-        IStandardExchange reserveVault = layout_.reserveVault;
+        IStandardExchange reserveVault = layoutStruct_.reserveVault;
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
 
         tokenIn_.safeTransfer(address(reserveVault), actualIn_);
@@ -645,7 +645,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
      * @notice Executes mint with pool for zap operations.
      */
     function _executeMintWithPoolForZap(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         uint256 reserveAmount_,
         uint256 detfAmount_,
         address recipient_
@@ -657,14 +657,14 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         _loadSRBTData(sRbtData, resPoolData);
 
         _executeMintExactWithPool(
-            layout_, resPoolData, sRbtData, currentRatedBalances, reserveAmount_, detfAmount_, recipient_
+            layoutStruct_, resPoolData, sRbtData, currentRatedBalances, reserveAmount_, detfAmount_, recipient_
         );
     }
 
     /**
      * @notice Calculates DETF needed for burn using pool math.
      */
-    function _calcDetfNeededForBurn(SeigniorageDETFRepo.Storage storage layout_, uint256 reserveAmount_)
+    function _calcDetfNeededForBurn(SeigniorageDETFRepo.Storage storage layoutStruct_, uint256 reserveAmount_)
         internal
         view
         returns (uint256 detfNeeded_)
@@ -684,7 +684,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
             revert PriceAbovePeg(rbtData.selfDilutedPrice, ONE_WAD);
         }
 
-        uint256 feeReductionPPM = layout_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
+        uint256 feeReductionPPM = layoutStruct_.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
         uint256 feeAdjusted =
             FixedPoint.ONE - BetterMath._percentageOfWAD(resPoolData.reservePoolSwapFee, feeReductionPPM);
 
@@ -702,13 +702,13 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
      * @notice Executes burn with pool for zap operations.
      */
     function _executeBurnWithPoolForZap(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         uint256 reserveAmount_,
         address recipient_
     ) internal {
         ReservePoolData memory resPoolData;
         uint256[] memory currentRatedBalances = _loadReservePoolData(resPoolData, new uint256[](0));
 
-        _executeBurnExactWithPool(layout_, resPoolData, currentRatedBalances, reserveAmount_, recipient_);
+        _executeBurnExactWithPool(layoutStruct_, resPoolData, currentRatedBalances, reserveAmount_, recipient_);
     }
 }

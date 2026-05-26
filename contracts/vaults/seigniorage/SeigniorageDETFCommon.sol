@@ -133,7 +133,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
         view
         returns (uint256[] memory)
     {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
         resPoolData_.balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         resPoolData_.reservePool = IWeightedPool(address(ERC4626Repo._reserveAsset()));
@@ -144,16 +144,16 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
         currentRatedBalances_ = resPoolData_.balV3Vault.getCurrentLiveBalances(address(resPoolData_.reservePool));
 
         // Cache indices for gas efficiency
-        resPoolData_.reserveVaultIndexInReservePool = layout.reserveVaultIndexInReservePool;
-        resPoolData_.selfIndexInReservePool = layout.selfIndexInReservePool;
+        resPoolData_.reserveVaultIndexInReservePool = layoutStruct.reserveVaultIndexInReservePool;
+        resPoolData_.selfIndexInReservePool = layoutStruct.selfIndexInReservePool;
 
         // Load balances
         resPoolData_.reserveVaultRatedBalance = currentRatedBalances_[resPoolData_.reserveVaultIndexInReservePool];
         resPoolData_.selfReservePoolRatedBalance = currentRatedBalances_[resPoolData_.selfIndexInReservePool];
 
         // Load weights (from storage - they never change)
-        resPoolData_.reserveVaultReservePoolWeight = layout.reserveVaultReservePoolWeight;
-        resPoolData_.selfReservePoolWeight = layout.selfReservePoolWeight;
+        resPoolData_.reserveVaultReservePoolWeight = layoutStruct.reserveVaultReservePoolWeight;
+        resPoolData_.selfReservePoolWeight = layoutStruct.selfReservePoolWeight;
 
         // Create weights array for pool math operations
         resPoolData_.weightsArray = new uint256[](2);
@@ -171,8 +171,8 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
      * @notice Loads DETF (RBT) token data.
      */
     function _loadRBTData(RBTData memory rbtData_) internal view {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
-        rbtData_.reserveVault = layout.reserveVault;
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
+        rbtData_.reserveVault = layoutStruct.reserveVault;
         rbtData_.selfTotalSupply = ERC20Repo._totalSupply();
     }
 
@@ -180,8 +180,8 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
      * @notice Loads seigniorage token (sRBT) data and calculates debt.
      */
     function _loadSRBTData(SRBTData memory sRbtData_, ReservePoolData memory resPoolData_) internal view {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
-        sRbtData_.seigniorageToken = layout.seigniorageToken;
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
+        sRbtData_.seigniorageToken = layoutStruct.seigniorageToken;
         sRbtData_.srbtTotalSupply = IERC20(address(sRbtData_.seigniorageToken)).totalSupply();
 
         // Calculate sRBT reserve vault debt using WeightedMath
@@ -216,10 +216,10 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
 
     /**
      * @notice Legacy: Loads the current state of the 80/20 reserve pool.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param state_ Memory struct to populate with pool state
      */
-    function _loadReservePoolState(SeigniorageDETFRepo.Storage storage layout_, ReservePoolState memory state_)
+    function _loadReservePoolState(SeigniorageDETFRepo.Storage storage layoutStruct_, ReservePoolState memory state_)
         internal
         view
     {
@@ -229,8 +229,8 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
         uint256[] memory balances = balV3Vault.getCurrentLiveBalances(address(pool));
         uint256[] memory weights = pool.getNormalizedWeights();
 
-        uint256 selfIndex = layout_.selfIndexInReservePool;
-        uint256 reserveVaultIndex = layout_.reserveVaultIndexInReservePool;
+        uint256 selfIndex = layoutStruct_.selfIndexInReservePool;
+        uint256 reserveVaultIndex = layoutStruct_.reserveVaultIndexInReservePool;
 
         state_.selfBalance = balances[selfIndex];
         state_.reserveVaultBalance = balances[reserveVaultIndex];
@@ -238,7 +238,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
         state_.reserveVaultWeight = weights[reserveVaultIndex];
         state_.swapFeePercentage = balV3Vault.getStaticSwapFeePercentage(address(pool));
         state_.selfTotalSupply = ERC20Repo._totalSupply();
-        state_.sRbtTotalSupply = IERC20(address(layout_.seigniorageToken)).totalSupply();
+        state_.sRbtTotalSupply = IERC20(address(layoutStruct_.seigniorageToken)).totalSupply();
 
         if (state_.sRbtTotalSupply > 0 && state_.selfBalance > 0) {
             uint256 sRbtAfterFee = FixedPoint.mulDown(state_.sRbtTotalSupply, FixedPoint.ONE - state_.swapFeePercentage);
@@ -253,7 +253,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
     }
 
     function _loadReservePoolState(ReservePoolState memory state_) internal view {
-        _loadReservePoolState(SeigniorageDETFRepo._layout(), state_);
+        _loadReservePoolState(SeigniorageDETFRepo._layoutStruct(), state_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -314,7 +314,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
     }
 
     function _calcDilutedPrice(ReservePoolState memory state_) internal pure returns (uint256) {
-        return _calcDilutedPrice(SeigniorageDETFRepo._layout(), state_);
+        return _calcDilutedPrice(SeigniorageDETFRepo._layoutStruct(), state_);
     }
 
     /**
@@ -345,12 +345,12 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
      *      The seigniorage is split between:
      *      - discountMargin: Fee reduction given to users (incentive)
      *      - profitMargin: Captured as seigniorage tokens for bond holders
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param calc_ Seigniorage calculation struct to populate
      * @param amountIn_ Amount of reserve tokens deposited
      */
     function _calcSeigniorage(
-        SeigniorageDETFRepo.Storage storage layout_,
+        SeigniorageDETFRepo.Storage storage layoutStruct_,
         SeigniorageCalc memory calc_,
         uint256 amountIn_
     ) internal view {
@@ -360,7 +360,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
 
         calc_.grossSeigniorage = amountIn_ - (amountIn_ * ONE_WAD / calc_.dilutedPrice);
 
-        uint256 reductionPPM = layout_._swapFeeReductionPercentagePPM();
+        uint256 reductionPPM = layoutStruct_._swapFeeReductionPercentagePPM();
         calc_.reducedFeePercent = reductionPPM;
 
         calc_.discountMargin = BetterMath._percentageOfWAD(calc_.grossSeigniorage, reductionPPM);
@@ -373,7 +373,7 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
     }
 
     function _calcSeigniorage(SeigniorageCalc memory calc_, uint256 amountIn_) internal view {
-        _calcSeigniorage(SeigniorageDETFRepo._layout(), calc_, amountIn_);
+        _calcSeigniorage(SeigniorageDETFRepo._layoutStruct(), calc_, amountIn_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -417,21 +417,21 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
 
     /**
      * @notice Checks if a token is valid for minting DETF (reserve vault token).
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param token_ Token to check
      * @return True if token is a valid reserve vault constituent
      */
-    function _isValidMintToken(SeigniorageDETFRepo.Storage storage layout_, IERC20 token_)
+    function _isValidMintToken(SeigniorageDETFRepo.Storage storage layoutStruct_, IERC20 token_)
         internal
         view
         returns (bool)
     {
         // Canonical mint token is the reserve vault's ERC4626 reserve asset.
-        return address(token_) == IERC4626(address(layout_.reserveVault)).asset();
+        return address(token_) == IERC4626(address(layoutStruct_.reserveVault)).asset();
     }
 
     function _isValidMintToken(IERC20 token_) internal view returns (bool) {
-        return _isValidMintToken(SeigniorageDETFRepo._layout(), token_);
+        return _isValidMintToken(SeigniorageDETFRepo._layoutStruct(), token_);
     }
 
     /**
@@ -445,20 +445,20 @@ abstract contract SeigniorageDETFCommon is BasicVaultCommon, ISeigniorageDETFErr
 
     /**
      * @notice Checks if the token is the reserve vault.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param token_ Token to check
      * @return True if token is the reserve vault
      */
-    function _isReserveVaultToken(SeigniorageDETFRepo.Storage storage layout_, IERC20 token_)
+    function _isReserveVaultToken(SeigniorageDETFRepo.Storage storage layoutStruct_, IERC20 token_)
         internal
         view
         returns (bool)
     {
-        return address(token_) == address(layout_.reserveVault);
+        return address(token_) == address(layoutStruct_.reserveVault);
     }
 
     function _isReserveVaultToken(IERC20 token_) internal view returns (bool) {
-        return _isReserveVaultToken(SeigniorageDETFRepo._layout(), token_);
+        return _isReserveVaultToken(SeigniorageDETFRepo._layoutStruct(), token_);
     }
 
     /* ---------------------------------------------------------------------- */

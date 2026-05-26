@@ -57,7 +57,7 @@ contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
 
     function _loadIndexSourceReserves(UnIV2IndexSourceReserves memory indexSource, IERC20 knownToken) internal view {
         // indexSource.pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         indexSource.token0 = constProd._token0();
         indexSource.token1 = constProd._token1();
         indexSource.totalSupply = indexSource.pool.totalSupply();
@@ -87,7 +87,7 @@ contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
     {
         vault.vaultLpReserve = ERC4626Repo._lastTotalAssets();
         vault.vaultTotalShares = ERC20Repo._totalSupply();
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         vault.knownTokenLastOwnedSourceReserve = constProd._yieldReserveOfToken(address(knownToken));
         vault.opTokenLastOwnedSourceReserve =
             constProd._yieldReserveOfToken(constProd._opposingToken(address(knownToken)));

@@ -33,6 +33,7 @@ import {
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
     IAerodromeStandardExchangeDFPkg
@@ -86,7 +87,7 @@ library BaseProtocolDETF_Component_FactoryService {
     /// @notice Package inputs for buildProtocolDETFPkgInit
     struct ProtocolDETFPkgs {
         IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg;
-        IProtocolNFTVaultDFPkg protocolNFTVaultPkg;
+        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
     }

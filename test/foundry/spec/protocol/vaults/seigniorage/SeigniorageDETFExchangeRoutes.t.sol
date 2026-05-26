@@ -152,7 +152,7 @@ contract ExchangeInHarness is SeigniorageDETFExchangeInTarget {
             seigniorageToken
         );
 
-        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layoutStruct();
         detfStorage._initialize(selfIndex, 0.8e18, reserveIndex, 0.2e18, ISeigniorageNFTVault(address(0)));
         ERC4626Repo._initialize(IERC20(reservePool), 18, 9);
     }
@@ -190,7 +190,7 @@ contract ExchangeOutHarness is SeigniorageDETFExchangeOutTarget {
             seigniorageToken
         );
 
-        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage detfStorage = SeigniorageDETFRepo._layoutStruct();
         detfStorage._initialize(selfIndex, 0.8e18, reserveIndex, 0.2e18, ISeigniorageNFTVault(address(0)));
         ERC4626Repo._initialize(IERC20(reservePool), 18, 9);
     }

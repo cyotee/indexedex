@@ -6,9 +6,7 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {IWeightedPool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool.sol";
 import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
-import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -30,10 +28,10 @@ import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
 import {BaseProtocolDETFCommon} from "contracts/vaults/protocol/BaseProtocolDETFCommon.sol";
+import {DETFBondLifecycleLib} from "contracts/vaults/detf/core/DETFBondLifecycleLib.sol";
 import {
     BalancerV38020WeightedPoolMath
 } from "contracts/protocols/dexes/balancer/v3/utils/BalancerV38020WeightedPoolMath.sol";
@@ -158,13 +156,13 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
     /// @notice Claim liquidity from the reserve pool and return WETH.
     function claimLiquidity(uint256 lpAmount, address recipient) external lock returns (uint256 extractedWeth) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        if (msg.sender != address(layout.protocolNFTVault)) {
+        if (msg.sender != address(layoutStruct.protocolNFTVault)) {
             revert NotNFTVault(msg.sender);
         }
 
@@ -186,13 +184,13 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
         uint256 minChirWethVaultOut = _calcMinChirWethVaultOutRaw(resPoolData, tokenInfo, balancesLiveScaled18, lpAmount);
         (IERC20 bpt, uint256 chirWethVaultOut) =
-            _exitReservePoolToChirWethVault(layout, resPoolData, lpAmount, minChirWethVaultOut);
-        (address poolAddr, uint256 lpOut) = _redeemChirWethVaultToAerodromeLp(layout.chirWethVault, chirWethVaultOut);
-        (uint256 chirAmount, uint256 wethAmount) = _burnAerodromeLpToChirWeth(layout, poolAddr, lpOut);
+            _exitReservePoolToChirWethVault(layoutStruct, resPoolData, lpAmount, minChirWethVaultOut);
+        (address poolAddr, uint256 lpOut) = _redeemChirWethVaultToAerodromeLp(layoutStruct.chirWethVault, chirWethVaultOut);
+        (uint256 chirAmount, uint256 wethAmount) = _burnAerodromeLpToChirWeth(layoutStruct, poolAddr, lpOut);
 
         // Send WETH to user.
         if (wethAmount > 0) {
-            layout.wethToken.safeTransfer(recipient, wethAmount);
+            layoutStruct.wethToken.safeTransfer(recipient, wethAmount);
         }
         extractedWeth = wethAmount;
 
@@ -200,7 +198,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         // - deposit CHIR into CHIR/WETH StandardExchange vault
         // - deposit resulting vault tokens into the Balancer reserve pool
         if (chirAmount > 0) {
-            _reinvestChir(layout, chirAmount);
+            _reinvestChir(layoutStruct, chirAmount);
         }
 
         // Keep BasicVault reserve views in-sync with actual BPT balance.
@@ -239,7 +237,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     }
 
     function _exitReservePoolToChirWethVault(
-        BaseProtocolDETFRepo.Storage storage layout,
+        BaseProtocolDETFRepo.Storage storage layoutStruct,
         ReservePoolData memory resPoolData,
         uint256 lpAmount,
         uint256 minChirWethVaultOut
@@ -248,14 +246,14 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         bpt = IERC20(address(ERC4626Repo._reserveAsset()));
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         bpt.forceApprove(address(balV3Vault), lpAmount);
-        bpt.forceApprove(address(layout.balancerV3PrepayRouter), lpAmount);
+        bpt.forceApprove(address(layoutStruct.balancerV3PrepayRouter), lpAmount);
 
         // Single-token exit: receive CHIR/WETH StandardExchange vault tokens only.
-        chirWethVaultOut = layout.balancerV3PrepayRouter
+        chirWethVaultOut = layoutStruct.balancerV3PrepayRouter
             .prepayRemoveLiquiditySingleTokenExactIn(
                 address(resPoolData.reservePool),
                 lpAmount,
-                IERC20(address(layout.chirWethVault)),
+                IERC20(address(layoutStruct.chirWethVault)),
                 minChirWethVaultOut,
                 ""
             );
@@ -269,7 +267,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         lpOut = IERC4626(address(chirWethVault_)).redeem(chirWethVaultOut, address(this), address(this));
     }
 
-    function _burnAerodromeLpToChirWeth(BaseProtocolDETFRepo.Storage storage layout, address poolAddr, uint256 lpOut)
+    function _burnAerodromeLpToChirWeth(BaseProtocolDETFRepo.Storage storage layoutStruct, address poolAddr, uint256 lpOut)
         internal
         returns (uint256 chirAmount, uint256 wethAmount)
     {
@@ -277,7 +275,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         IERC20(poolAddr).safeTransfer(address(pool), lpOut);
         (uint256 amount0, uint256 amount1) = pool.burn(address(this));
 
-        if (pool.token0() == address(layout.wethToken)) {
+        if (pool.token0() == address(layoutStruct.wethToken)) {
             wethAmount = amount0;
             chirAmount = amount1;
         } else {
@@ -286,20 +284,20 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         }
     }
 
-    function _reinvestChir(BaseProtocolDETFRepo.Storage storage layout, uint256 chirAmount) internal {
-        IERC20(address(this)).safeTransfer(address(layout.chirWethVault), chirAmount);
-        uint256 chirWethShares = layout.chirWethVault
+    function _reinvestChir(BaseProtocolDETFRepo.Storage storage layoutStruct, uint256 chirAmount) internal {
+        IERC20(address(this)).safeTransfer(address(layoutStruct.chirWethVault), chirAmount);
+        uint256 chirWethShares = layoutStruct.chirWethVault
             .exchangeIn(
                 IERC20(address(this)),
                 chirAmount,
-                IERC20(address(layout.chirWethVault)),
+                IERC20(address(layoutStruct.chirWethVault)),
                 0,
                 address(this),
                 true,
                 block.timestamp
             );
 
-        _addToReservePool(layout, layout.chirWethVaultIndex, chirWethShares, block.timestamp);
+        _addToReservePool(layoutStruct, layoutStruct.chirWethVaultIndex, chirWethShares, block.timestamp);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -307,27 +305,27 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     /* ---------------------------------------------------------------------- */
 
     function _depositWethToChirWethVaultViaBalancedLp(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 wethAmount_,
         address wethRefundRecipient_,
         bool wethRefundAsEth_,
         uint256 deadline_
     ) internal returns (uint256 vaultShares_) {
-        BalancedVaultDepositResult memory result_ = _mintAndAddBalancedChirWethLiquidity(layout_, wethAmount_, deadline_);
+        BalancedVaultDepositResult memory result_ = _mintAndAddBalancedChirWethLiquidity(layoutStruct_, wethAmount_, deadline_);
 
         if (result_.chirAmount > result_.chirUsed) {
             ERC20Repo._burn(address(this), result_.chirAmount - result_.chirUsed);
         }
 
         if (wethAmount_ > result_.wethUsed) {
-            _refundUnusedWeth(layout_, wethAmount_ - result_.wethUsed, wethRefundRecipient_, wethRefundAsEth_);
+            _refundUnusedWeth(layoutStruct_, wethAmount_ - result_.wethUsed, wethRefundRecipient_, wethRefundAsEth_);
         }
 
-        IERC20(result_.pool).safeTransfer(address(layout_.chirWethVault), result_.lpMinted);
-        vaultShares_ = layout_.chirWethVault.exchangeIn(
+        IERC20(result_.pool).safeTransfer(address(layoutStruct_.chirWethVault), result_.lpMinted);
+        vaultShares_ = layoutStruct_.chirWethVault.exchangeIn(
             IERC20(result_.pool),
             result_.lpMinted,
-            IERC20(address(layout_.chirWethVault)),
+            IERC20(address(layoutStruct_.chirWethVault)),
             0,
             address(this),
             true,
@@ -344,7 +342,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     }
 
     function _refundUnusedWeth(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 refundAmount_,
         address recipient_,
         bool refundAsEth_
@@ -354,11 +352,11 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         }
 
         if (!refundAsEth_) {
-            layout_.wethToken.safeTransfer(recipient_, refundAmount_);
+            layoutStruct_.wethToken.safeTransfer(recipient_, refundAmount_);
             return;
         }
 
-        IWETH(address(layout_.wethToken)).withdraw(refundAmount_);
+        IWETH(address(layoutStruct_.wethToken)).withdraw(refundAmount_);
         (bool success,) = recipient_.call{value: refundAmount_}("");
         if (!success) {
             revert EthRefundFailed(recipient_, refundAmount_);
@@ -366,23 +364,23 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     }
 
     function _collectBondInput(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         IERC20 tokenIn_,
         uint256 amountIn_,
         bool wethAsEth_
     ) internal {
-        if (!layout_._isAcceptedBondToken(address(tokenIn_))) {
+        if (!layoutStruct_._isAcceptedBondToken(address(tokenIn_))) {
             revert BondTokenNotSupported(tokenIn_);
         }
 
         if (wethAsEth_) {
-            if (!_isWethToken(layout_, tokenIn_)) {
+            if (!_isWethToken(layoutStruct_, tokenIn_)) {
                 revert InvalidEthBondRoute(tokenIn_);
             }
             if (msg.value != amountIn_) {
                 revert IncorrectEthValue(amountIn_, msg.value);
             }
-            IWETH(address(layout_.wethToken)).deposit{value: amountIn_}();
+            IWETH(address(layoutStruct_.wethToken)).deposit{value: amountIn_}();
             return;
         }
 
@@ -394,14 +392,14 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
     }
 
     function _mintAndAddBalancedChirWethLiquidity(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 wethAmount_,
         uint256 deadline_
     ) internal returns (BalancedVaultDepositResult memory result_) {
         deadline_;
 
         (ChirWethLiquidityQuote memory quote, uint256 chirAmount, uint256 wethUsed) =
-            _quoteBalancedChirWethDepositAmounts(layout_, wethAmount_);
+            _quoteBalancedChirWethDepositAmounts(layoutStruct_, wethAmount_);
         if (chirAmount == 0 || wethUsed == 0) {
             revert ZeroAmount();
         }
@@ -424,7 +422,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         internal
         returns (BalancedLiquidityResult memory result_)
     {
-        if (quote_.token0 == address(BaseProtocolDETFRepo._layout().wethToken)) {
+        if (quote_.token0 == address(BaseProtocolDETFRepo._layoutStruct().wethToken)) {
             IERC20(quote_.token0).safeTransfer(quote_.pool, wethUsed_);
             IERC20(quote_.token1).safeTransfer(quote_.pool, chirAmount_);
         } else {
@@ -452,44 +450,40 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
             revert ZeroAmount();
         }
 
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        if (recipient == address(0)) {
-            recipient = msg.sender;
-        }
+        _collectBondInput(layoutStruct, tokenIn, amountIn, wethAsEth);
 
-        _collectBondInput(layout, tokenIn, amountIn, wethAsEth);
-
-        if (_isWethToken(layout, tokenIn)) {
+        if (_isWethToken(layoutStruct, tokenIn)) {
             uint256 chirWethShares = _depositWethToChirWethVaultViaBalancedLp(
-                layout,
+                layoutStruct,
                 amountIn,
                 msg.sender,
                 wethAsEth,
                 deadline
             );
-            shares = _addToReservePool(layout, layout.chirWethVaultIndex, chirWethShares, deadline);
-        } else if (_isRichToken(layout, tokenIn)) {
-            layout.richToken.safeTransfer(address(layout.richChirVault), amountIn);
-            uint256 richChirShares = layout.richChirVault.exchangeIn(
-                layout.richToken,
+            shares = _addToReservePool(layoutStruct, layoutStruct.chirWethVaultIndex, chirWethShares, deadline);
+        } else if (_isRichToken(layoutStruct, tokenIn)) {
+            layoutStruct.richToken.safeTransfer(address(layoutStruct.richChirVault), amountIn);
+            uint256 richChirShares = layoutStruct.richChirVault.exchangeIn(
+                layoutStruct.richToken,
                 amountIn,
-                IERC20(address(layout.richChirVault)),
+                IERC20(address(layoutStruct.richChirVault)),
                 0,
                 address(this),
                 true,
                 deadline
             );
-            shares = _addToReservePool(layout, layout.richChirVaultIndex, richChirShares, deadline);
+            shares = _addToReservePool(layoutStruct, layoutStruct.richChirVaultIndex, richChirShares, deadline);
         } else {
             revert BondTokenNotSupported(tokenIn);
         }
 
-        tokenId = layout.protocolNFTVault.createPosition(shares, lockDuration, recipient);
+        tokenId = DETFBondLifecycleLib._createBondPosition(layoutStruct.protocolNFTVault, shares, lockDuration, recipient);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -498,25 +492,22 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
     /// @notice Captures the protocol NFT's accrued CHIR share into the reserve pool.
     function captureSeigniorage() external lock returns (uint256 bptReceived) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
         // Collect only the protocol NFT's accrued reward-token share.
-        uint256 chirBalance = layout.protocolNFTVault.reallocateProtocolRewards(address(this));
-        if (chirBalance == 0) {
-            revert NoSeigniorageToCapture();
-        }
+        uint256 chirBalance = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.protocolNFTVault);
 
         // Add CHIR to CHIR/WETH pool to get vault shares
-        IERC20(address(this)).safeTransfer(address(layout.chirWethVault), chirBalance);
-        uint256 chirWethShares = layout.chirWethVault
+        IERC20(address(this)).safeTransfer(address(layoutStruct.chirWethVault), chirBalance);
+        uint256 chirWethShares = layoutStruct.chirWethVault
             .exchangeIn(
                 IERC20(address(this)),
                 chirBalance,
-                IERC20(address(layout.chirWethVault)),
+                IERC20(address(layoutStruct.chirWethVault)),
                 0,
                 address(this),
                 true,
@@ -524,32 +515,39 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
             );
 
         // Add to reserve pool
-        bptReceived = _addToReservePool(layout, layout.chirWethVaultIndex, chirWethShares, block.timestamp);
+        bptReceived = _addToReservePool(layoutStruct, layoutStruct.chirWethVaultIndex, chirWethShares, block.timestamp);
 
-        // Add BPT to protocol-owned NFT
-        layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, bptReceived);
+        // Route reserve-pool compounding through the shared lifecycle helper.
+        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, bptReceived
+        );
     }
 
     /// @notice Sells a user bond NFT position to the protocol for RICHIR.
     function sellNFT(uint256 tokenId, address recipient) external lock returns (uint256 richirMinted) {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        (uint256 principalShares,) = layout.protocolNFTVault.sellPositionToProtocol(tokenId, msg.sender, recipient);
+        uint256 principalShares;
+        (principalShares, richirMinted) = DETFBondLifecycleLib._sellPositionToRichir(
+            layoutStruct.protocolNFTVault,
+            layoutStruct.richirToken,
+            tokenId,
+            msg.sender,
+            recipient
+        );
         if (principalShares == 0) {
             revert ZeroAmount();
         }
-
-        // Mint RICHIR to recipient - mintFromNFTSale handles share calculation
-        richirMinted = layout.richirToken.mintFromNFTSale(principalShares, recipient);
     }
 
     /// @notice Donates WETH or CHIR to the protocol-owned NFT.
     function donate(IERC20 token, uint256 amount, bool pretransferred) external lock {
-        BaseProtocolDETFRepo.Storage storage layout = BaseProtocolDETFRepo._layout();
+        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
 
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -560,7 +558,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         }
 
         // Only WETH or CHIR can be donated
-        if (!_isWethToken(layout, token) && !_isChirToken(token)) {
+        if (!_isWethToken(layoutStruct, token) && !_isChirToken(token)) {
             revert InvalidDonationToken(token);
         }
 
@@ -570,14 +568,14 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         }
 
         // If WETH, deposit to vault then add to reserve pool
-        if (_isWethToken(layout, token)) {
+        if (_isWethToken(layoutStruct, token)) {
             // 1. Deposit WETH into CHIR/WETH vault to get vault shares
-            token.safeTransfer(address(layout.chirWethVault), amount);
-            uint256 vaultShares = layout.chirWethVault
+            token.safeTransfer(address(layoutStruct.chirWethVault), amount);
+            uint256 vaultShares = layoutStruct.chirWethVault
                 .exchangeIn(
                     token,
                     amount,
-                    IERC20(address(layout.chirWethVault)),
+                    IERC20(address(layoutStruct.chirWethVault)),
                     0,
                     address(this), // Shares come to this contract
                     true,
@@ -585,12 +583,13 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
                 );
 
             // 2. Add vault shares to reserve pool (get BPT)
-            uint256 bptOut = _addToReservePool(layout, layout.chirWethVaultIndex, vaultShares, block.timestamp);
+            uint256 bptOut = _addToReservePool(layoutStruct, layoutStruct.chirWethVaultIndex, vaultShares, block.timestamp);
 
             // 3. Add BPT to protocol NFT position
             IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-            reservePoolToken.forceApprove(address(layout.protocolNFTVault), bptOut);
-            layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, bptOut);
+            DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+                reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, bptOut
+            );
         } else {
             // CHIR: burn to reduce supply
             ERC20Repo._burn(address(this), amount);
@@ -603,13 +602,13 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
     /**
      * @notice Adds vault shares to the 80/20 reserve pool.
-     * @param layout_ Storage layout
+     * @param layoutStruct_ Storage layoutStruct
      * @param vaultShares Amount of vault shares to add
      * @param deadline_ Transaction deadline
      * @return bptOut Amount of BPT received
      */
     function _addToReservePool(
-        BaseProtocolDETFRepo.Storage storage layout_,
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 tokenIndexIn_,
         uint256 vaultShares,
         uint256 deadline_
@@ -641,10 +640,10 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
 
         // Transfer vault shares to Balancer vault
         IERC20 reserveVaultToken;
-        if (tokenIndexIn_ == layout_.chirWethVaultIndex) {
-            reserveVaultToken = IERC20(address(layout_.chirWethVault));
-        } else if (tokenIndexIn_ == layout_.richChirVaultIndex) {
-            reserveVaultToken = IERC20(address(layout_.richChirVault));
+        if (tokenIndexIn_ == layoutStruct_.chirWethVaultIndex) {
+            reserveVaultToken = IERC20(address(layoutStruct_.chirWethVault));
+        } else if (tokenIndexIn_ == layoutStruct_.richChirVaultIndex) {
+            reserveVaultToken = IERC20(address(layoutStruct_.richChirVault));
         } else {
             revert BaseProtocolDETFRepo.TokenNotSupported();
         }
@@ -652,7 +651,7 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         reserveVaultToken.safeTransfer(address(resPoolData.balV3Vault), vaultShares);
 
         // Add liquidity
-        layout_.balancerV3PrepayRouter
+        layoutStruct_.balancerV3PrepayRouter
             .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut, "");
 
         // Keep BasicVault reserve views in-sync with actual BPT balance.

@@ -10,29 +10,29 @@ library UniswapV4PoolManagerAwareRepo {
         IPoolManager poolManager;
     }
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot_
+            layoutStruct.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, IPoolManager poolManager_) internal {
-        layout.poolManager = poolManager_;
+    function _initialize(Storage storage layoutStruct, IPoolManager poolManager_) internal {
+        layoutStruct.poolManager = poolManager_;
     }
 
     function _initialize(IPoolManager poolManager_) internal {
-        _initialize(_layout(), poolManager_);
+        _initialize(_layoutStruct(), poolManager_);
     }
 
-    function _poolManager(Storage storage layout) internal view returns (IPoolManager poolManager_) {
-        return layout.poolManager;
+    function _poolManager(Storage storage layoutStruct) internal view returns (IPoolManager poolManager_) {
+        return layoutStruct.poolManager;
     }
 
     function _poolManager() internal view returns (IPoolManager poolManager_) {
-        return _poolManager(_layout());
+        return _poolManager(_layoutStruct());
     }
 }

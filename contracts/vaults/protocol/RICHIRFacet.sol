@@ -14,6 +14,8 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {RICHIRTarget} from "contracts/vaults/protocol/RICHIRTarget.sol";
 
 /**
@@ -34,15 +36,17 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetInterfaces() external pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](3);
+        interfaces_ = new bytes4[](5);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IRICHIR).interfaceId;
+        interfaces_[3] = type(IStandardExchangeIn).interfaceId;
+        interfaces_[4] = type(IStandardExchangeOut).interfaceId;
     }
 
     /// @inheritdoc IFacet
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](21);
+        funcs_ = new bytes4[](26);
         // ERC20 functions
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
@@ -59,14 +63,19 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
         funcs_[10] = IRICHIR.totalShares.selector;
         funcs_[11] = IRICHIR.redemptionRate.selector;
         funcs_[12] = IRICHIR.protocolDETF.selector;
-        funcs_[13] = IRICHIR.protocolNFTId.selector;
-        funcs_[14] = IRICHIR.wethToken.selector;
-        funcs_[15] = IRICHIR.convertToShares.selector;
-        funcs_[16] = IRICHIR.convertToRichir.selector;
-        funcs_[17] = IRICHIR.previewRedeem.selector;
-        funcs_[18] = IRICHIR.mintFromNFTSale.selector;
-        funcs_[19] = IRICHIR.redeem.selector;
-        funcs_[20] = IRICHIR.burnShares.selector;
+        funcs_[13] = IRICHIR.setProtocolDETF.selector;
+        funcs_[14] = IRICHIR.protocolNFTId.selector;
+        funcs_[15] = IRICHIR.wethToken.selector;
+        funcs_[16] = IRICHIR.convertToShares.selector;
+        funcs_[17] = IRICHIR.convertToRichir.selector;
+        funcs_[18] = IRICHIR.previewRedeem.selector;
+        funcs_[19] = IRICHIR.mintFromNFTSale.selector;
+        funcs_[20] = IRICHIR.redeem.selector;
+        funcs_[21] = IRICHIR.burnShares.selector;
+        funcs_[22] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs_[23] = IStandardExchangeIn.exchangeIn.selector;
+        funcs_[24] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
     }
 
     /// @inheritdoc IFacet
@@ -77,12 +86,14 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
     {
         name_ = type(RICHIRFacet).name;
 
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](5);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IRICHIR).interfaceId;
+        interfaces[3] = type(IStandardExchangeIn).interfaceId;
+        interfaces[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions = new bytes4[](21);
+        functions = new bytes4[](26);
         functions[0] = IERC20.totalSupply.selector;
         functions[1] = IERC20.balanceOf.selector;
         functions[2] = IERC20.transfer.selector;
@@ -96,13 +107,18 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
         functions[10] = IRICHIR.totalShares.selector;
         functions[11] = IRICHIR.redemptionRate.selector;
         functions[12] = IRICHIR.protocolDETF.selector;
-        functions[13] = IRICHIR.protocolNFTId.selector;
-        functions[14] = IRICHIR.wethToken.selector;
-        functions[15] = IRICHIR.convertToShares.selector;
-        functions[16] = IRICHIR.convertToRichir.selector;
-        functions[17] = IRICHIR.previewRedeem.selector;
-        functions[18] = IRICHIR.mintFromNFTSale.selector;
-        functions[19] = IRICHIR.redeem.selector;
-        functions[20] = IRICHIR.burnShares.selector;
+        functions[13] = IRICHIR.setProtocolDETF.selector;
+        functions[14] = IRICHIR.protocolNFTId.selector;
+        functions[15] = IRICHIR.wethToken.selector;
+        functions[16] = IRICHIR.convertToShares.selector;
+        functions[17] = IRICHIR.convertToRichir.selector;
+        functions[18] = IRICHIR.previewRedeem.selector;
+        functions[19] = IRICHIR.mintFromNFTSale.selector;
+        functions[20] = IRICHIR.redeem.selector;
+        functions[21] = IRICHIR.burnShares.selector;
+        functions[22] = IStandardExchangeIn.previewExchangeIn.selector;
+        functions[23] = IStandardExchangeIn.exchangeIn.selector;
+        functions[24] = IStandardExchangeOut.previewExchangeOut.selector;
+        functions[25] = IStandardExchangeOut.exchangeOut.selector;
     }
 }

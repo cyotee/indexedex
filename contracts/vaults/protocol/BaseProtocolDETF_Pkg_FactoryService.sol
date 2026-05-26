@@ -22,6 +22,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {BaseProtocolDETFDFPkg, IBaseProtocolDETFDFPkg} from "contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol";
 import {ProtocolNFTVaultDFPkg, IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {RICHIRDFPkg, IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 
 /**
@@ -59,8 +60,8 @@ library BaseProtocolDETF_Pkg_FactoryService {
     function deployProtocolNFTVaultDFPkg(
         IVaultRegistryDeployment vaultRegistry,
         IProtocolNFTVaultDFPkg.PkgInit memory pkgInit
-    ) internal returns (IProtocolNFTVaultDFPkg instance) {
-        instance = IProtocolNFTVaultDFPkg(
+    ) internal returns (IDetfSelfNftInventoryDFPkg instance) {
+        instance = IDetfSelfNftInventoryDFPkg(
             address(
                 vaultRegistry.deployPkg(
                     type(ProtocolNFTVaultDFPkg).creationCode,

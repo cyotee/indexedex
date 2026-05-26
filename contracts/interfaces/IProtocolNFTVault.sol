@@ -13,6 +13,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol";
 
 /**
  * @title IProtocolNFTVault
@@ -27,7 +28,7 @@ import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
  *      The protocol-owned NFT has no unlock time and accumulates LP
  *      from sold user NFTs.
  */
-interface IProtocolNFTVault is IERC721 {
+interface IProtocolNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
     /* ---------------------------------------------------------------------- */
     /*                              Structs                                   */
     /* ---------------------------------------------------------------------- */

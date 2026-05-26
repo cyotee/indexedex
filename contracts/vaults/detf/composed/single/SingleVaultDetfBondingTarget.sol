@@ -31,6 +31,7 @@ import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
+import {DETFBondLifecycleLib} from "contracts/vaults/detf/core/DETFBondLifecycleLib.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {IUniswapV4StandardExchangePositionImport} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
 
@@ -126,19 +127,15 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ZeroAmount();
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
-        if (recipient == address(0)) {
-            recipient = msg.sender;
-        }
-
-        uint256 wethAmount = _collectBondInput(layout, tokenIn, amountIn, wethAsEth, deadline);
-        BondAssets memory assets = _bondFromWeth(layout, wethAmount, deadline);
+        uint256 wethAmount = _collectBondInput(layoutStruct, tokenIn, amountIn, wethAsEth, deadline);
+        BondAssets memory assets = _bondFromWeth(layoutStruct, wethAmount, deadline);
         shares = assets.bptOut;
-        tokenId = layout.protocolNFTVault.createPosition(shares, lockDuration, recipient);
-        ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+        tokenId = DETFBondLifecycleLib._createBondPosition(layoutStruct.protocolNFTVault, shares, lockDuration, recipient);
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
     }
 
     function bondWithPosition(
@@ -157,38 +154,35 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert DeadlineExceeded(deadline, block.timestamp);
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
-        }
-        if (recipient == address(0)) {
-            recipient = msg.sender;
         }
         if (msg.value != 0) {
             revert IncorrectEthValue(0, msg.value);
         }
 
-        uint256 vaultSharesIn = _collectVaultSharesFromPosition(layout, positionManager, positionTokenId, deadline);
+        uint256 vaultSharesIn = _collectVaultSharesFromPosition(layoutStruct, positionManager, positionTokenId, deadline);
         if (vaultSharesIn == 0) {
             revert ZeroAmount();
         }
 
-        BondAssets memory assets = _bondFromVaultShares(layout, vaultSharesIn);
+        BondAssets memory assets = _bondFromVaultShares(layoutStruct, vaultSharesIn);
         shares = assets.bptOut;
-        tokenId = layout.protocolNFTVault.createPosition(shares, lockDuration, recipient);
-        ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+        tokenId = DETFBondLifecycleLib._createBondPosition(layoutStruct.protocolNFTVault, shares, lockDuration, recipient);
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
     }
 
     function _collectVaultSharesFromPosition(
-        SingleVaultDetfRepo.Storage storage layout,
+        SingleVaultDetfRepo.Storage storage layoutStruct,
         IPositionManager positionManager,
         uint256 positionTokenId,
         uint256 deadline
     ) internal returns (uint256 vaultSharesIn_) {
         (PoolKey memory poolKey,) = positionManager.getPoolAndPositionInfo(positionTokenId);
         bytes32 poolKeyHash = abi.encode(poolKey)._hash();
-        if (poolKeyHash != layout._wethRichPoolKeyHash()) {
-            revert InvalidPositionPool(layout._wethRichPoolKeyHash(), poolKeyHash);
+        if (poolKeyHash != layoutStruct._wethRichPoolKeyHash()) {
+            revert InvalidPositionPool(layoutStruct._wethRichPoolKeyHash(), poolKeyHash);
         }
 
         address token0 = Currency.unwrap(poolKey.currency0);
@@ -200,8 +194,8 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert InvalidPositionCurrency(token1);
         }
 
-        if (IERC20(address(layout.wethRichVault)).totalSupply() == 0) {
-            return IUniswapV4StandardExchangePositionImport(address(layout.wethRichVault)).importPosition(
+        if (IERC20(address(layoutStruct.wethRichVault)).totalSupply() == 0) {
+            return IUniswapV4StandardExchangePositionImport(address(layoutStruct.wethRichVault)).importPosition(
                 positionManager, positionTokenId, 0, msg.sender, address(this), deadline
             );
         }
@@ -217,8 +211,8 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         uint256 token0Amount = token0Contract.balanceOf(address(this)) - token0Before;
         uint256 token1Amount = token1Contract.balanceOf(address(this)) - token1Before;
 
-        vaultSharesIn_ += _depositPositionTokenToVault(layout, token0Contract, token0Amount, deadline);
-        vaultSharesIn_ += _depositPositionTokenToVault(layout, token1Contract, token1Amount, deadline);
+        vaultSharesIn_ += _depositPositionTokenToVault(layoutStruct, token0Contract, token0Amount, deadline);
+        vaultSharesIn_ += _depositPositionTokenToVault(layoutStruct, token1Contract, token1Amount, deadline);
     }
 
     function _burnPositionToContract(
@@ -235,7 +229,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     }
 
     function _depositPositionTokenToVault(
-        SingleVaultDetfRepo.Storage storage layout,
+        SingleVaultDetfRepo.Storage storage layoutStruct,
         IERC20 token,
         uint256 amount,
         uint256 deadline
@@ -244,11 +238,11 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return 0;
         }
 
-        token.safeTransfer(address(layout.wethRichVault), amount);
-        vaultSharesOut_ = layout.wethRichVault.exchangeIn(
+        token.safeTransfer(address(layoutStruct.wethRichVault), amount);
+        vaultSharesOut_ = layoutStruct.wethRichVault.exchangeIn(
             token,
             amount,
-            IERC20(address(layout.wethRichVault)),
+            IERC20(address(layoutStruct.wethRichVault)),
             0,
             address(this),
             true,
@@ -257,22 +251,22 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     }
 
     function _collectBondInput(
-        SingleVaultDetfRepo.Storage storage layout,
+        SingleVaultDetfRepo.Storage storage layoutStruct,
         IERC20 tokenIn,
         uint256 amountIn,
         bool wethAsEth,
         uint256 deadline
     ) internal returns (uint256 wethAmount_) {
-        if (!layout._isAcceptedBondToken(address(tokenIn))) {
+        if (!layoutStruct._isAcceptedBondToken(address(tokenIn))) {
             revert BondTokenNotSupported(tokenIn);
         }
 
-        if (_isWethToken(layout, tokenIn)) {
+        if (_isWethToken(layoutStruct, tokenIn)) {
             if (wethAsEth) {
                 if (msg.value != amountIn) {
                     revert IncorrectEthValue(amountIn, msg.value);
                 }
-                IWETH(address(layout.wethToken)).deposit{value: amountIn}();
+                IWETH(address(layoutStruct.wethToken)).deposit{value: amountIn}();
             } else {
                 if (msg.value != 0) {
                     revert IncorrectEthValue(0, msg.value);
@@ -282,17 +276,17 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return amountIn;
         }
 
-        if (_isRichToken(layout, tokenIn)) {
+        if (_isRichToken(layoutStruct, tokenIn)) {
             if (msg.value != 0) {
                 revert IncorrectEthValue(0, msg.value);
             }
 
             tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-            tokenIn.safeTransfer(address(layout.wethRichVault), amountIn);
-            wethAmount_ = layout.wethRichVault.exchangeIn(
+            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), amountIn);
+            wethAmount_ = layoutStruct.wethRichVault.exchangeIn(
                 tokenIn,
                 amountIn,
-                layout.wethToken,
+                layoutStruct.wethToken,
                 0,
                 address(this),
                 true,
@@ -305,22 +299,22 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     }
 
     function captureSeigniorage() external lock returns (uint256 bptReceived_) {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        uint256 chirAmount = layout.protocolNFTVault.reallocateProtocolRewards(address(this));
-        if (chirAmount == 0) {
-            revert NoSeigniorageToCapture();
-        }
+        uint256 chirAmount = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.protocolNFTVault);
 
-        bptReceived_ = _addLiquidityToReservePool(layout, chirAmount, 0);
-        layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, bptReceived_);
+        bptReceived_ = _addLiquidityToReservePool(layoutStruct, chirAmount, 0);
+        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, bptReceived_
+        );
     }
 
     function sellNFT(uint256 tokenId, address recipient) external lock returns (uint256 richirMinted_) {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
@@ -328,21 +322,26 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             recipient = msg.sender;
         }
 
-        IRICHIR richir = layout._richirToken();
+        IRICHIR richir = layoutStruct._richirToken();
         if (address(richir) == address(0)) {
             revert InvalidToken(IERC20(address(0)));
         }
 
-        (uint256 principalShares,) = layout.protocolNFTVault.sellPositionToProtocol(tokenId, msg.sender, recipient);
+        uint256 principalShares;
+        (principalShares, richirMinted_) = DETFBondLifecycleLib._sellPositionToRichir(
+            layoutStruct.protocolNFTVault,
+            richir,
+            tokenId,
+            msg.sender,
+            recipient
+        );
         if (principalShares == 0) {
             revert ZeroAmount();
         }
-
-        richirMinted_ = richir.mintFromNFTSale(principalShares, recipient);
     }
 
     function donate(IERC20 token, uint256 amount, bool pretransferred) external lock {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
@@ -350,7 +349,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ZeroAmount();
         }
 
-        if (!_isWethToken(layout, token) && !_isChirToken(token)) {
+        if (!_isWethToken(layoutStruct, token) && !_isChirToken(token)) {
             revert InvalidDonationToken(token);
         }
 
@@ -363,16 +362,19 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return;
         }
 
-        BondAssets memory assets = _bondFromWeth(layout, amount, block.timestamp);
-        layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, assets.bptOut);
+        BondAssets memory assets = _bondFromWeth(layoutStruct, amount, block.timestamp);
+        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, assets.bptOut
+        );
     }
 
     function claimLiquidity(uint256 lpAmount, address recipient) external lock returns (uint256 extractedWeth_) {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
-        if (msg.sender != address(layout.protocolNFTVault)) {
+        if (msg.sender != address(layoutStruct.protocolNFTVault)) {
             revert NotNFTVault(msg.sender);
         }
         if (recipient == address(0)) {
@@ -382,10 +384,10 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return 0;
         }
 
-        (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layout, lpAmount);
-        _redepositChirToReservePool(layout, chirAmountOut);
-        extractedWeth_ = _redeemVaultSharesToWeth(layout, vaultSharesOut, recipient, block.timestamp);
-        ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+        (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, lpAmount);
+        _redepositChirToReservePool(layoutStruct, chirAmountOut);
+        extractedWeth_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, block.timestamp);
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
     }
 
     function bridgeRichir(IProtocolDETF.BridgeArgs calldata args)
@@ -400,12 +402,12 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ZeroAmount();
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layout();
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
         if (
             address(bridgeLayout.messenger) == address(0)
                 || address(bridgeLayout.standardBridge) == address(0)
@@ -430,32 +432,35 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         (execution.remoteRichToken, execution.bridgeMinGasLimit) =
-            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(args.targetChainId, layout.richToken);
+            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(args.targetChainId, layoutStruct.richToken);
         if (address(execution.remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(args.targetChainId, layout.richToken);
+            revert BridgeRemoteTokenNotConfigured(args.targetChainId, layoutStruct.richToken);
         }
 
-        uint256 richirBalanceBefore = layout._richirToken().balanceOf(address(this));
-        IERC20(address(layout._richirToken())).safeTransferFrom(msg.sender, address(this), args.richirAmount);
-        execution.actualRichirIn = layout._richirToken().balanceOf(address(this)) - richirBalanceBefore;
+        uint256 richirBalanceBefore = layoutStruct._richirToken().balanceOf(address(this));
+        IERC20(address(layoutStruct._richirToken())).safeTransferFrom(msg.sender, address(this), args.richirAmount);
+        execution.actualRichirIn = layoutStruct._richirToken().balanceOf(address(this)) - richirBalanceBefore;
         if (execution.actualRichirIn == 0) {
             revert ZeroAmount();
         }
 
-        execution.sharesBurned = layout._richirToken().convertToShares(execution.actualRichirIn);
-        execution.reserveSharesBurned = _previewRichirRedemptionBptIn(layout, execution.actualRichirIn);
+        execution.sharesBurned = layoutStruct._richirToken().convertToShares(execution.actualRichirIn);
+        execution.reserveSharesBurned = _previewRichirRedemptionBptIn(layoutStruct, execution.actualRichirIn);
 
-        IERC20(address(layout._richirToken())).safeTransfer(address(layout._richirToken()), execution.actualRichirIn);
-        layout._richirToken().burnShares(execution.actualRichirIn, address(0), true);
+        IERC20(address(layoutStruct._richirToken())).safeTransfer(address(layoutStruct._richirToken()), execution.actualRichirIn);
+        layoutStruct._richirToken().burnShares(execution.actualRichirIn, address(0), true);
 
         (execution.chirAmountOut, execution.vaultSharesOut) =
-            _exitReservePoolProportionalForBridge(layout, execution.reserveSharesBurned);
+            _exitReservePoolProportionalForBridge(layoutStruct, execution.reserveSharesBurned);
 
         if (execution.chirAmountOut > 0) {
-            execution.localBptOut = _addLiquidityToReservePool(layout, execution.chirAmountOut, 0);
+            execution.localBptOut = _addLiquidityToReservePool(layoutStruct, execution.chirAmountOut, 0);
             if (execution.localBptOut > 0) {
-                layout.protocolNFTVault.addToProtocolNFT(layout.protocolNFTId, execution.localBptOut);
-                localRichirOut = layout._richirToken().mintFromNFTSale(execution.localBptOut, msg.sender);
+                IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+                DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+                    reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, execution.localBptOut
+                );
+                localRichirOut = layoutStruct._richirToken().mintFromNFTSale(execution.localBptOut, msg.sender);
             }
         }
 
@@ -464,11 +469,11 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         if (execution.vaultSharesOut > 0) {
-            IERC20(address(layout.wethRichVault)).forceApprove(address(layout.wethRichVault), execution.vaultSharesOut);
-            richOut = layout.wethRichVault.exchangeIn(
-                IERC20(address(layout.wethRichVault)),
+            IERC20(address(layoutStruct.wethRichVault)).forceApprove(address(layoutStruct.wethRichVault), execution.vaultSharesOut);
+            richOut = layoutStruct.wethRichVault.exchangeIn(
+                IERC20(address(layoutStruct.wethRichVault)),
                 execution.vaultSharesOut,
-                layout.richToken,
+                layoutStruct.richToken,
                 0,
                 address(this),
                 false,
@@ -482,9 +487,9 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
 
         execution.senderNonce = SuperchainSenderNonceRepo._useNonce(address(this), args.targetChainId);
 
-        layout.richToken.forceApprove(address(bridgeLayout.standardBridge), richOut);
+        layoutStruct.richToken.forceApprove(address(bridgeLayout.standardBridge), richOut);
         bridgeLayout.standardBridge.bridgeERC20To(
-            address(layout.richToken),
+            address(layoutStruct.richToken),
             address(execution.remoteRichToken),
             execution.peer.relayer,
             richOut,
@@ -510,7 +515,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         );
         bridgeLayout.messenger.sendMessage(execution.peer.relayer, relayData, args.messageGasLimit);
 
-        ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
 
         emit BridgeInitiated(
             msg.sender,
@@ -530,7 +535,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         lock
         returns (uint256 richirOut)
     {
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         address expectedRelayer = ProtocolDETFSuperchainBridgeRepo._localRelayer();
 
         if (expectedRelayer == address(0)) {
@@ -541,29 +546,29 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         recipient = recipient == address(0) ? msg.sender : recipient;
-        richirOut = _receiveBridgedRichToRichir(layout, richAmount, recipient, deadline);
+        richirOut = _receiveBridgedRichToRichir(layoutStruct, richAmount, recipient, deadline);
 
         emit BridgeReceived(msg.sender, recipient, richAmount, richirOut);
     }
 
     function _receiveBridgedRichToRichir(
-        SingleVaultDetfRepo.Storage storage layout_,
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
         uint256 richAmount_,
         address recipient_,
         uint256 deadline_
     ) internal returns (uint256 richirOut_) {
-        uint256 actualIn = _secureTokenTransfer(layout_.richToken, richAmount_, false);
-        layout_.richToken.safeTransfer(address(layout_.wethRichVault), actualIn);
-        uint256 wethAmount = layout_.wethRichVault.exchangeIn(
-            layout_.richToken,
+        uint256 actualIn = _secureTokenTransfer(layoutStruct_.richToken, richAmount_, false);
+        layoutStruct_.richToken.safeTransfer(address(layoutStruct_.wethRichVault), actualIn);
+        uint256 wethAmount = layoutStruct_.wethRichVault.exchangeIn(
+            layoutStruct_.richToken,
             actualIn,
-            layout_.wethToken,
+            layoutStruct_.wethToken,
             0,
             address(this),
             true,
             deadline_
         );
 
-        richirOut_ = _mintRichirFromWeth(layout_, wethAmount, recipient_, deadline_);
+        richirOut_ = _mintRichirFromWeth(layoutStruct_, wethAmount, recipient_, deadline_);
     }
 }

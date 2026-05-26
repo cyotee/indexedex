@@ -63,7 +63,7 @@ string constant SVG_IMAGE_CLOSE = "</svg>";
  * @title SeigniorageNFTVaultRepo
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Storage library for Seigniorage NFT Vault state.
- * @dev Follows the Crane Repo pattern with dual _layout() functions.
+ * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
  *      Uses separate mappings for position data to match reference implementation.
  */
 library SeigniorageNFTVaultRepo {
@@ -114,14 +114,14 @@ library SeigniorageNFTVaultRepo {
     /*                           Layout Functions                             */
     /* ---------------------------------------------------------------------- */
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
-            layout_.slot := slot_
+            layoutStruct_.slot := slot_
         }
     }
 
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -129,7 +129,7 @@ library SeigniorageNFTVaultRepo {
     /* ---------------------------------------------------------------------- */
 
     function _initialize(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         ISeigniorageDETF detfToken_,
         IERC20 claimToken_,
         IERC20 lpToken_,
@@ -140,15 +140,15 @@ library SeigniorageNFTVaultRepo {
         // uint256 baseBonusMultiplier_,
         // uint256 maxBonusMultiplier_
     ) internal {
-        layout_.detfToken = detfToken_;
-        layout_.claimToken = claimToken_;
-        layout_.lpToken = lpToken_;
-        layout_.rewardToken = rewardToken_;
-        layout_.decimalOffset = decimalOffset_;
-        layout_.nextTokenId = 1;
-        // layout_.maxLockDuration = maxLockDuration_;
-        // layout_.baseBonusMultiplier = baseBonusMultiplier_;
-        // layout_.maxBonusMultiplier = maxBonusMultiplier_;
+        layoutStruct_.detfToken = detfToken_;
+        layoutStruct_.claimToken = claimToken_;
+        layoutStruct_.lpToken = lpToken_;
+        layoutStruct_.rewardToken = rewardToken_;
+        layoutStruct_.decimalOffset = decimalOffset_;
+        layoutStruct_.nextTokenId = 1;
+        // layoutStruct_.maxLockDuration = maxLockDuration_;
+        // layoutStruct_.baseBonusMultiplier = baseBonusMultiplier_;
+        // layoutStruct_.maxBonusMultiplier = maxBonusMultiplier_;
     }
 
     function _initialize(
@@ -162,7 +162,7 @@ library SeigniorageNFTVaultRepo {
         // uint256 maxBonusMultiplier_
     ) internal {
         _initialize(
-            _layout(),
+            _layoutStruct(),
             detfToken_,
             claimToken_,
             lpToken_,
@@ -178,201 +178,201 @@ library SeigniorageNFTVaultRepo {
     /*                            Token References                            */
     /* ---------------------------------------------------------------------- */
 
-    function _detfToken(Storage storage layout_) internal view returns (ISeigniorageDETF) {
-        return layout_.detfToken;
+    function _detfToken(Storage storage layoutStruct_) internal view returns (ISeigniorageDETF) {
+        return layoutStruct_.detfToken;
     }
 
     function _detfToken() internal view returns (ISeigniorageDETF) {
-        return _detfToken(_layout());
+        return _detfToken(_layoutStruct());
     }
 
-    function _claimToken(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.claimToken;
+    function _claimToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.claimToken;
     }
 
     function _claimToken() internal view returns (IERC20) {
-        return _claimToken(_layout());
+        return _claimToken(_layoutStruct());
     }
 
-    function _lpToken(Storage storage layout_) internal view returns (IERC20) {
-        return layout_.lpToken;
+    function _lpToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.lpToken;
     }
 
     function _lpToken() internal view returns (IERC20) {
-        return _lpToken(_layout());
+        return _lpToken(_layoutStruct());
     }
 
-    function _rewardToken(Storage storage layout_) internal view returns (IERC20MintBurn) {
-        return layout_.rewardToken;
+    function _rewardToken(Storage storage layoutStruct_) internal view returns (IERC20MintBurn) {
+        return layoutStruct_.rewardToken;
     }
 
     function _rewardToken() internal view returns (IERC20MintBurn) {
-        return _rewardToken(_layout());
+        return _rewardToken(_layoutStruct());
     }
 
-    function _decimalOffset(Storage storage layout_) internal view returns (uint8) {
-        return layout_.decimalOffset;
+    function _decimalOffset(Storage storage layoutStruct_) internal view returns (uint8) {
+        return layoutStruct_.decimalOffset;
     }
 
     function _decimalOffset() internal view returns (uint8) {
-        return _decimalOffset(_layout());
+        return _decimalOffset(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */
     /*                          Share Accounting                              */
     /* ---------------------------------------------------------------------- */
 
-    function _totalShares(Storage storage layout_) internal view returns (uint256) {
-        return layout_.totalShares;
+    function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.totalShares;
     }
 
     function _totalShares() internal view returns (uint256) {
-        return _totalShares(_layout());
+        return _totalShares(_layoutStruct());
     }
 
-    function _setTotalShares(Storage storage layout_, uint256 amount_) internal {
-        layout_.totalShares = amount_;
+    function _setTotalShares(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.totalShares = amount_;
     }
 
     function _setTotalShares(uint256 amount_) internal {
-        _setTotalShares(_layout(), amount_);
+        _setTotalShares(_layoutStruct(), amount_);
     }
 
-    function _originalSharesOf(Storage storage layout_, uint256 tokenId_) internal view returns (uint256) {
-        return layout_.originalSharesOf[tokenId_];
+    function _originalSharesOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+        return layoutStruct_.originalSharesOf[tokenId_];
     }
 
     function _originalSharesOf(uint256 tokenId_) internal view returns (uint256) {
-        return _originalSharesOf(_layout(), tokenId_);
+        return _originalSharesOf(_layoutStruct(), tokenId_);
     }
 
-    function _setOriginalSharesOf(Storage storage layout_, uint256 tokenId_, uint256 shares_) internal {
-        layout_.originalSharesOf[tokenId_] = shares_;
+    function _setOriginalSharesOf(Storage storage layoutStruct_, uint256 tokenId_, uint256 shares_) internal {
+        layoutStruct_.originalSharesOf[tokenId_] = shares_;
     }
 
     function _setOriginalSharesOf(uint256 tokenId_, uint256 shares_) internal {
-        _setOriginalSharesOf(_layout(), tokenId_, shares_);
+        _setOriginalSharesOf(_layoutStruct(), tokenId_, shares_);
     }
 
-    function _effectiveSharesOf(Storage storage layout_, uint256 tokenId_) internal view returns (uint256) {
-        return layout_.effectiveSharesOf[tokenId_];
+    function _effectiveSharesOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+        return layoutStruct_.effectiveSharesOf[tokenId_];
     }
 
     function _effectiveSharesOf(uint256 tokenId_) internal view returns (uint256) {
-        return _effectiveSharesOf(_layout(), tokenId_);
+        return _effectiveSharesOf(_layoutStruct(), tokenId_);
     }
 
-    function _setEffectiveSharesOf(Storage storage layout_, uint256 tokenId_, uint256 shares_) internal {
-        layout_.effectiveSharesOf[tokenId_] = shares_;
+    function _setEffectiveSharesOf(Storage storage layoutStruct_, uint256 tokenId_, uint256 shares_) internal {
+        layoutStruct_.effectiveSharesOf[tokenId_] = shares_;
     }
 
     function _setEffectiveSharesOf(uint256 tokenId_, uint256 shares_) internal {
-        _setEffectiveSharesOf(_layout(), tokenId_, shares_);
+        _setEffectiveSharesOf(_layoutStruct(), tokenId_, shares_);
     }
 
-    function _unlockTimeOf(Storage storage layout_, uint256 tokenId_) internal view returns (uint256) {
-        return layout_.unlockTimeOf[tokenId_];
+    function _unlockTimeOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+        return layoutStruct_.unlockTimeOf[tokenId_];
     }
 
     function _unlockTimeOf(uint256 tokenId_) internal view returns (uint256) {
-        return _unlockTimeOf(_layout(), tokenId_);
+        return _unlockTimeOf(_layoutStruct(), tokenId_);
     }
 
-    function _setUnlockTimeOf(Storage storage layout_, uint256 tokenId_, uint256 unlockTime_) internal {
-        layout_.unlockTimeOf[tokenId_] = unlockTime_;
+    function _setUnlockTimeOf(Storage storage layoutStruct_, uint256 tokenId_, uint256 unlockTime_) internal {
+        layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;
     }
 
     function _setUnlockTimeOf(uint256 tokenId_, uint256 unlockTime_) internal {
-        _setUnlockTimeOf(_layout(), tokenId_, unlockTime_);
+        _setUnlockTimeOf(_layoutStruct(), tokenId_, unlockTime_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                          Reward Accounting                             */
     /* ---------------------------------------------------------------------- */
 
-    function _rewardPerShares(Storage storage layout_) internal view returns (uint256) {
-        return layout_.rewardPerShares;
+    function _rewardPerShares(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.rewardPerShares;
     }
 
     function _rewardPerShares() internal view returns (uint256) {
-        return _rewardPerShares(_layout());
+        return _rewardPerShares(_layoutStruct());
     }
 
-    function _setRewardPerShares(Storage storage layout_, uint256 amount_) internal {
-        layout_.rewardPerShares = amount_;
+    function _setRewardPerShares(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.rewardPerShares = amount_;
     }
 
     function _setRewardPerShares(uint256 amount_) internal {
-        _setRewardPerShares(_layout(), amount_);
+        _setRewardPerShares(_layoutStruct(), amount_);
     }
 
-    function _lastRewardTokenBalance(Storage storage layout_) internal view returns (uint256) {
-        return layout_.lastRewardTokenBalance;
+    function _lastRewardTokenBalance(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.lastRewardTokenBalance;
     }
 
     function _lastRewardTokenBalance() internal view returns (uint256) {
-        return _lastRewardTokenBalance(_layout());
+        return _lastRewardTokenBalance(_layoutStruct());
     }
 
-    function _setLastRewardTokenBalance(Storage storage layout_, uint256 amount_) internal {
-        layout_.lastRewardTokenBalance = amount_;
+    function _setLastRewardTokenBalance(Storage storage layoutStruct_, uint256 amount_) internal {
+        layoutStruct_.lastRewardTokenBalance = amount_;
     }
 
     function _setLastRewardTokenBalance(uint256 amount_) internal {
-        _setLastRewardTokenBalance(_layout(), amount_);
+        _setLastRewardTokenBalance(_layoutStruct(), amount_);
     }
 
-    function _userRewardPerSharePaid(Storage storage layout_, uint256 tokenId_) internal view returns (uint256) {
-        return layout_.userRewardPerSharePaid[tokenId_];
+    function _userRewardPerSharePaid(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+        return layoutStruct_.userRewardPerSharePaid[tokenId_];
     }
 
     function _userRewardPerSharePaid(uint256 tokenId_) internal view returns (uint256) {
-        return _userRewardPerSharePaid(_layout(), tokenId_);
+        return _userRewardPerSharePaid(_layoutStruct(), tokenId_);
     }
 
-    function _setUserRewardPerSharePaid(Storage storage layout_, uint256 tokenId_, uint256 amount_) internal {
-        layout_.userRewardPerSharePaid[tokenId_] = amount_;
+    function _setUserRewardPerSharePaid(Storage storage layoutStruct_, uint256 tokenId_, uint256 amount_) internal {
+        layoutStruct_.userRewardPerSharePaid[tokenId_] = amount_;
     }
 
     function _setUserRewardPerSharePaid(uint256 tokenId_, uint256 amount_) internal {
-        _setUserRewardPerSharePaid(_layout(), tokenId_, amount_);
+        _setUserRewardPerSharePaid(_layoutStruct(), tokenId_, amount_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Position Management                            */
     /* ---------------------------------------------------------------------- */
 
-    function _nextTokenId(Storage storage layout_) internal view returns (uint256) {
-        return layout_.nextTokenId;
+    function _nextTokenId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.nextTokenId;
     }
 
     function _nextTokenId() internal view returns (uint256) {
-        return _nextTokenId(_layout());
+        return _nextTokenId(_layoutStruct());
     }
 
-    function _incrementNextTokenId(Storage storage layout_) internal returns (uint256 tokenId_) {
-        tokenId_ = layout_.nextTokenId;
-        layout_.nextTokenId = tokenId_ + 1;
+    function _incrementNextTokenId(Storage storage layoutStruct_) internal returns (uint256 tokenId_) {
+        tokenId_ = layoutStruct_.nextTokenId;
+        layoutStruct_.nextTokenId = tokenId_ + 1;
     }
 
     function _incrementNextTokenId() internal returns (uint256) {
-        return _incrementNextTokenId(_layout());
+        return _incrementNextTokenId(_layoutStruct());
     }
 
     function _createPosition(
-        Storage storage layout_,
+        Storage storage layoutStruct_,
         uint256 tokenId_,
         uint256 originalShares_,
         uint256 effectiveShares_,
         uint256 bonusMultiplier_,
         uint256 unlockTime_
     ) internal {
-        layout_.originalSharesOf[tokenId_] = originalShares_;
-        layout_.effectiveSharesOf[tokenId_] = effectiveShares_;
-        layout_.bonusMultiplierOf[tokenId_] = bonusMultiplier_;
-        layout_.unlockTimeOf[tokenId_] = unlockTime_;
-        layout_.userRewardPerSharePaid[tokenId_] = layout_.rewardPerShares;
-        layout_.totalShares += effectiveShares_;
+        layoutStruct_.originalSharesOf[tokenId_] = originalShares_;
+        layoutStruct_.effectiveSharesOf[tokenId_] = effectiveShares_;
+        layoutStruct_.bonusMultiplierOf[tokenId_] = bonusMultiplier_;
+        layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;
+        layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+        layoutStruct_.totalShares += effectiveShares_;
     }
 
     function _createPosition(
@@ -382,63 +382,63 @@ library SeigniorageNFTVaultRepo {
         uint256 bonusMultiplier_,
         uint256 unlockTime_
     ) internal {
-        _createPosition(_layout(), tokenId_, originalShares_, effectiveShares_, bonusMultiplier_, unlockTime_);
+        _createPosition(_layoutStruct(), tokenId_, originalShares_, effectiveShares_, bonusMultiplier_, unlockTime_);
     }
 
-    function _removePosition(Storage storage layout_, uint256 tokenId_) internal {
-        layout_.totalShares -= layout_.effectiveSharesOf[tokenId_];
-        delete layout_.originalSharesOf[tokenId_];
-        delete layout_.effectiveSharesOf[tokenId_];
-        delete layout_.bonusMultiplierOf[tokenId_];
-        delete layout_.unlockTimeOf[tokenId_];
-        delete layout_.userRewardPerSharePaid[tokenId_];
+    function _removePosition(Storage storage layoutStruct_, uint256 tokenId_) internal {
+        layoutStruct_.totalShares -= layoutStruct_.effectiveSharesOf[tokenId_];
+        delete layoutStruct_.originalSharesOf[tokenId_];
+        delete layoutStruct_.effectiveSharesOf[tokenId_];
+        delete layoutStruct_.bonusMultiplierOf[tokenId_];
+        delete layoutStruct_.unlockTimeOf[tokenId_];
+        delete layoutStruct_.userRewardPerSharePaid[tokenId_];
     }
 
-    function _bonusMultiplierOf(Storage storage layout_, uint256 tokenId_) internal view returns (uint256) {
-        return layout_.bonusMultiplierOf[tokenId_];
+    function _bonusMultiplierOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+        return layoutStruct_.bonusMultiplierOf[tokenId_];
     }
 
     function _bonusMultiplierOf(uint256 tokenId_) internal view returns (uint256) {
-        return _bonusMultiplierOf(_layout(), tokenId_);
+        return _bonusMultiplierOf(_layoutStruct(), tokenId_);
     }
 
     function _removePosition(uint256 tokenId_) internal {
-        _removePosition(_layout(), tokenId_);
+        _removePosition(_layoutStruct(), tokenId_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                         Bonus Configuration                            */
     /* ---------------------------------------------------------------------- */
 
-    // function _maxLockDuration(Storage storage layout_) internal view returns (uint256) {
-    //     return layout_.maxLockDuration;
+    // function _maxLockDuration(Storage storage layoutStruct_) internal view returns (uint256) {
+    //     return layoutStruct_.maxLockDuration;
     // }
 
     // function _maxLockDuration() internal view returns (uint256) {
-    //     return _maxLockDuration(_layout());
+    //     return _maxLockDuration(_layoutStruct());
     // }
 
-    // function _baseBonusMultiplier(Storage storage layout_) internal view returns (uint256) {
-    //     return layout_.baseBonusMultiplier;
+    // function _baseBonusMultiplier(Storage storage layoutStruct_) internal view returns (uint256) {
+    //     return layoutStruct_.baseBonusMultiplier;
     // }
 
     // function _baseBonusMultiplier() internal view returns (uint256) {
-    //     return _baseBonusMultiplier(_layout());
+    //     return _baseBonusMultiplier(_layoutStruct());
     // }
 
-    // function _maxBonusMultiplier(Storage storage layout_) internal view returns (uint256) {
-    //     return layout_.maxBonusMultiplier;
+    // function _maxBonusMultiplier(Storage storage layoutStruct_) internal view returns (uint256) {
+    //     return layoutStruct_.maxBonusMultiplier;
     // }
 
     // function _maxBonusMultiplier() internal view returns (uint256) {
-    //     return _maxBonusMultiplier(_layout());
+    //     return _maxBonusMultiplier(_layoutStruct());
     // }
 
     // TODO Move to Target contracts. Pull values from Vault Fee Oracle.
-    // function _calcBonusMultiplier(Storage storage layout_, uint256 lockDuration_) internal view returns (uint256) {
-    //     uint256 maxDuration = layout_.maxLockDuration;
-    //     uint256 base = layout_.baseBonusMultiplier;
-    //     uint256 maxBonus = layout_.maxBonusMultiplier;
+    // function _calcBonusMultiplier(Storage storage layoutStruct_, uint256 lockDuration_) internal view returns (uint256) {
+    //     uint256 maxDuration = layoutStruct_.maxLockDuration;
+    //     uint256 base = layoutStruct_.baseBonusMultiplier;
+    //     uint256 maxBonus = layoutStruct_.maxBonusMultiplier;
 
     //     if (lockDuration_ >= maxDuration) {
     //         return maxBonus;
@@ -452,7 +452,7 @@ library SeigniorageNFTVaultRepo {
     // }
 
     // function _calcBonusMultiplier(uint256 lockDuration_) internal view returns (uint256) {
-    //     return _calcBonusMultiplier(_layout(), lockDuration_);
+    //     return _calcBonusMultiplier(_layoutStruct(), lockDuration_);
     // }
 
     /* ---------------------------------------------------------------------- */
@@ -462,69 +462,69 @@ library SeigniorageNFTVaultRepo {
     /**
      * @notice Converts BPT amount to shares using a provided (pre-underwrite) BPT reserve.
      * @dev This avoids using the post-underwrite reserve, which would under-mint shares.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param bptOut_ Amount of BPT minted by the underwrite
      * @param bptReserveBefore_ DETF's BPT reserve before the mint
      * @return shares_ The number of base shares to allocate
      */
-    function _convertToSharesGivenReserve(Storage storage layout_, uint256 bptOut_, uint256 bptReserveBefore_)
+    function _convertToSharesGivenReserve(Storage storage layoutStruct_, uint256 bptOut_, uint256 bptReserveBefore_)
         internal
         view
         returns (uint256 shares_)
     {
-        uint256 totalShares_ = layout_.totalShares;
+        uint256 totalShares_ = layoutStruct_.totalShares;
 
         if (totalShares_ == 0 || bptReserveBefore_ == 0) {
             shares_ = bptOut_;
         } else {
-            shares_ = BetterMath._convertToSharesUp(bptOut_, bptReserveBefore_, totalShares_, layout_.decimalOffset);
+            shares_ = BetterMath._convertToSharesUp(bptOut_, bptReserveBefore_, totalShares_, layoutStruct_.decimalOffset);
         }
     }
 
     /**
      * @notice Converts LP token amount to shares using proportional math.
      * @dev Uses BetterMath._convertToSharesUp for proper decimal handling.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param lpAmount_ Amount of LP tokens (BPT) to convert
      * @return shares_ The number of shares to allocate
      */
-    function _convertToShares(Storage storage layout_, uint256 lpAmount_) internal view returns (uint256 shares_) {
-        uint256 totalLpReserve = IBasicVault(address(layout_.detfToken)).reserveOfToken(address(layout_.lpToken));
-        uint256 totalShares_ = layout_.totalShares;
+    function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_) internal view returns (uint256 shares_) {
+        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detfToken)).reserveOfToken(address(layoutStruct_.lpToken));
+        uint256 totalShares_ = layoutStruct_.totalShares;
 
         if (totalShares_ == 0 || totalLpReserve == 0) {
             // First deposit - shares = amount
             shares_ = lpAmount_;
         } else {
-            shares_ = BetterMath._convertToSharesUp(lpAmount_, totalLpReserve, totalShares_, layout_.decimalOffset);
+            shares_ = BetterMath._convertToSharesUp(lpAmount_, totalLpReserve, totalShares_, layoutStruct_.decimalOffset);
         }
     }
 
     function _convertToShares(uint256 lpAmount_) internal view returns (uint256) {
-        return _convertToShares(_layout(), lpAmount_);
+        return _convertToShares(_layoutStruct(), lpAmount_);
     }
 
     /**
      * @notice Converts shares back to LP token amount.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param shares_ Amount of shares to convert
      * @return lpAmount_ The equivalent LP token amount
      */
-    function _convertToAssets(Storage storage layout_, uint256 shares_) internal view returns (uint256 lpAmount_) {
-        uint256 totalLpReserve = IBasicVault(address(layout_.detfToken)).reserveOfToken(address(layout_.lpToken));
-        uint256 totalShares_ = layout_.totalShares;
+    function _convertToAssets(Storage storage layoutStruct_, uint256 shares_) internal view returns (uint256 lpAmount_) {
+        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detfToken)).reserveOfToken(address(layoutStruct_.lpToken));
+        uint256 totalShares_ = layoutStruct_.totalShares;
 
         if (totalShares_ == 0 || totalLpReserve == 0) {
             lpAmount_ = shares_;
         } else {
             lpAmount_ = BetterMath._convertToAssets(
-                shares_, totalLpReserve, totalShares_, layout_.decimalOffset, Math.Rounding.Floor
+                shares_, totalLpReserve, totalShares_, layoutStruct_.decimalOffset, Math.Rounding.Floor
             );
         }
     }
 
     function _convertToAssets(uint256 shares_) internal view returns (uint256) {
-        return _convertToAssets(_layout(), shares_);
+        return _convertToAssets(_layoutStruct(), shares_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -534,54 +534,54 @@ library SeigniorageNFTVaultRepo {
     /**
      * @notice Updates the global reward per share based on new reward deposits.
      * @dev Call this before any position modification.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      */
-    function _updateGlobalRewards(Storage storage layout_) internal {
-        uint256 totalShares_ = layout_.totalShares;
+    function _updateGlobalRewards(Storage storage layoutStruct_) internal {
+        uint256 totalShares_ = layoutStruct_.totalShares;
         if (totalShares_ == 0) {
             return;
         }
 
-        uint256 currentBalance = IERC20(address(layout_.rewardToken)).balanceOf(address(this));
-        uint256 lastBalance = layout_.lastRewardTokenBalance;
+        uint256 currentBalance = IERC20(address(layoutStruct_.rewardToken)).balanceOf(address(this));
+        uint256 lastBalance = layoutStruct_.lastRewardTokenBalance;
 
         if (currentBalance > lastBalance) {
             uint256 newRewards = currentBalance - lastBalance;
-            layout_.rewardPerShares += (newRewards * 1e18) / totalShares_;
-            layout_.lastRewardTokenBalance = currentBalance;
+            layoutStruct_.rewardPerShares += (newRewards * 1e18) / totalShares_;
+            layoutStruct_.lastRewardTokenBalance = currentBalance;
         }
     }
 
     function _updateGlobalRewards() internal {
-        _updateGlobalRewards(_layout());
+        _updateGlobalRewards(_layoutStruct());
     }
 
     /**
      * @notice Calculates pending rewards for a token ID.
-     * @param layout_ Storage layout reference
+     * @param layoutStruct_ Storage layoutStruct reference
      * @param tokenId_ The NFT token ID
      * @return pending_ Amount of pending reward tokens
      */
-    function _earned(Storage storage layout_, uint256 tokenId_) internal view returns (uint256 pending_) {
-        uint256 effectiveShares_ = layout_.effectiveSharesOf[tokenId_];
+    function _earned(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256 pending_) {
+        uint256 effectiveShares_ = layoutStruct_.effectiveSharesOf[tokenId_];
         if (effectiveShares_ == 0) {
             return 0;
         }
 
-        uint256 rewardPerShare = layout_.rewardPerShares;
+        uint256 rewardPerShare = layoutStruct_.rewardPerShares;
 
         // Include pending rewards not yet distributed
-        uint256 totalShares_ = layout_.totalShares;
+        uint256 totalShares_ = layoutStruct_.totalShares;
         if (totalShares_ > 0) {
-            uint256 currentBalance = IERC20(address(layout_.rewardToken)).balanceOf(address(this));
-            uint256 lastBalance = layout_.lastRewardTokenBalance;
+            uint256 currentBalance = IERC20(address(layoutStruct_.rewardToken)).balanceOf(address(this));
+            uint256 lastBalance = layoutStruct_.lastRewardTokenBalance;
             if (currentBalance > lastBalance) {
                 uint256 newRewards = currentBalance - lastBalance;
                 rewardPerShare += (newRewards * 1e18) / totalShares_;
             }
         }
 
-        uint256 paidPerShare = layout_.userRewardPerSharePaid[tokenId_];
+        uint256 paidPerShare = layoutStruct_.userRewardPerSharePaid[tokenId_];
         if (rewardPerShare <= paidPerShare) {
             return 0;
         }
@@ -590,33 +590,33 @@ library SeigniorageNFTVaultRepo {
     }
 
     function _earned(uint256 tokenId_) internal view returns (uint256) {
-        return _earned(_layout(), tokenId_);
+        return _earned(_layoutStruct(), tokenId_);
     }
 
     /* ---------------------------------------------------------------------- */
     /*                          NFT Metadata                                  */
     /* ---------------------------------------------------------------------- */
 
-    function _generateTokenURI(Storage storage layout_, uint256 tokenId_) internal view returns (string memory) {
-        string memory svg = _buildSVG(layout_, tokenId_);
-        string memory json = _buildJSON(layout_, tokenId_, svg);
+    function _generateTokenURI(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (string memory) {
+        string memory svg = _buildSVG(layoutStruct_, tokenId_);
+        string memory json = _buildJSON(layoutStruct_, tokenId_, svg);
 
         return string(abi.encodePacked(METADATA_JSON_PREFIX, Base64.encode(bytes(json))));
     }
 
     function _generateTokenURI(uint256 tokenId_) internal view returns (string memory) {
-        return _generateTokenURI(_layout(), tokenId_);
+        return _generateTokenURI(_layoutStruct(), tokenId_);
     }
 
-    function _buildSVG(Storage storage layout_, uint256 tokenId_) private view returns (string memory) {
+    function _buildSVG(Storage storage layoutStruct_, uint256 tokenId_) private view returns (string memory) {
         // Calculate values first to reduce stack pressure
-        uint256 unlockTime_ = layout_.unlockTimeOf[tokenId_];
+        uint256 unlockTime_ = layoutStruct_.unlockTimeOf[tokenId_];
         // Calculate unlock string
         string memory unlockStr =
             block.timestamp >= unlockTime_ ? "Unlocked" : _formatDuration(unlockTime_ - block.timestamp);
-        uint256 effectiveShares_ = layout_.effectiveSharesOf[tokenId_];
-        uint256 portionOfLpReserve = _convertToAssets(layout_, effectiveShares_);
-        uint256 claimAmount = layout_.detfToken.previewClaimLiquidity(portionOfLpReserve);
+        uint256 effectiveShares_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 portionOfLpReserve = _convertToAssets(layoutStruct_, effectiveShares_);
+        uint256 claimAmount = layoutStruct_.detfToken.previewClaimLiquidity(portionOfLpReserve);
 
         // Build SVG in parts to avoid stack-too-deep
         string memory part1 = string(
@@ -633,15 +633,15 @@ library SeigniorageNFTVaultRepo {
         string memory part2 = string(
             abi.encodePacked(
                 SVG_TOKEN_1_SYMBOL_PREFIX,
-                IERC20Metadata(address(layout_.claimToken)).safeSymbol(),
+                IERC20Metadata(address(layoutStruct_.claimToken)).safeSymbol(),
                 SVG_TOKEN_1_AMOUNT_PREFIX,
                 claimAmount.toString(),
                 SVG_TOKEN_2_SYMBOL_PREFIX,
-                IERC20Metadata(address(layout_.rewardToken)).safeSymbol()
+                IERC20Metadata(address(layoutStruct_.rewardToken)).safeSymbol()
             )
         );
 
-        uint256 pendingRewards = _earned(layout_, tokenId_);
+        uint256 pendingRewards = _earned(layoutStruct_, tokenId_);
         string memory part3 = string(
             abi.encodePacked(SVG_TOKEN_2_AMOUNT_PREFIX, pendingRewards.toString(), SVG_TEXT_CLOSE, SVG_IMAGE_CLOSE)
         );
@@ -649,16 +649,16 @@ library SeigniorageNFTVaultRepo {
         return string(abi.encodePacked(part1, part2, part3));
     }
 
-    function _buildJSON(Storage storage layout_, uint256 tokenId_, string memory svg_)
+    function _buildJSON(Storage storage layoutStruct_, uint256 tokenId_, string memory svg_)
         private
         view
         returns (string memory)
     {
         // Pre-calculate values to reduce stack pressure
-        uint256 originalShares_ = layout_.originalSharesOf[tokenId_];
-        uint256 effectiveShares_ = layout_.effectiveSharesOf[tokenId_];
-        uint256 unlockTime_ = layout_.unlockTimeOf[tokenId_];
-        uint256 pendingRewards = _earned(layout_, tokenId_);
+        uint256 originalShares_ = layoutStruct_.originalSharesOf[tokenId_];
+        uint256 effectiveShares_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 unlockTime_ = layoutStruct_.unlockTimeOf[tokenId_];
+        uint256 pendingRewards = _earned(layoutStruct_, tokenId_);
 
         // Build JSON in parts to avoid stack-too-deep
         string memory part1 = string(

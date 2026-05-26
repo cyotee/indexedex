@@ -37,6 +37,7 @@ claimliquidity
 CMLT
 Codehash
 collateralized
+constprodreserve
 contractlist
 contractlists
 cooldown
@@ -107,6 +108,7 @@ HUNDREDK
 HUNDREDM
 ICDI
 IDCDI
+IDETF
 IDLDAP
 IDXEX
 IERC
@@ -149,6 +151,8 @@ Muldiv
 mulmod
 Mult
 multicall
+NFTDF
+NFTID
 nohup
 nomicfoundation
 noncirculating
@@ -220,6 +224,7 @@ solmate
 SRBT
 SSLOAD
 SSTORE
+standardexchange
 STATICCALL
 stochasm
 Strat

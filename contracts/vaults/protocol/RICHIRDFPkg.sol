@@ -25,6 +25,8 @@ import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwn
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {RICHIRRepo} from "contracts/vaults/protocol/RICHIRRepo.sol";
 
 /**
@@ -126,12 +128,14 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](5);
+        interfaces = new bytes4[](7);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
         interfaces[3] = type(IERC5267).interfaceId;
         interfaces[4] = type(IRICHIR).interfaceId;
+        interfaces[5] = type(IStandardExchangeIn).interfaceId;
+        interfaces[6] = type(IStandardExchangeOut).interfaceId;
     }
 
     function packageMetadata()

@@ -41,7 +41,7 @@ contract CamelotV2StandardExchangeCommon is BasicVaultCommon {
         view
     {
         // indexSource.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         indexSource.token0 = ConstProdReserveVaultRepo._token0(constProd);
         indexSource.token1 = ConstProdReserveVaultRepo._token1(constProd);
         indexSource.totalSupply = indexSource.pool.totalSupply();
@@ -58,7 +58,7 @@ contract CamelotV2StandardExchangeCommon is BasicVaultCommon {
     function _loadStrategyVault(CamelotV2StrategyVault memory vault, IERC20 knownToken) internal view {
         vault.vaultLpReserve = ERC4626Repo._lastTotalAssets();
         vault.vaultTotalShares = ERC20Repo._totalSupply();
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         vault.knownTokenLastOwnedSourceReserve =
             ConstProdReserveVaultRepo._yieldReserveOfToken(constProd, address(knownToken));
         vault.opTokenLastOwnedSourceReserve = ConstProdReserveVaultRepo._yieldReserveOfToken(

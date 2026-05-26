@@ -45,23 +45,23 @@ contract CamelotV2StandardExchangeOutTarget is
         // Determine actual token route from provided tokens.
         // Intended supported routes.
         // 1. Pass-through Swap - Swap of token contained in the underlying pool for the opposing token contained in the underlying pool.
-        //    Implelemented in first branch.
+        //    Implemented in first branch.
         // 2. Pass-through ZapIn - Deposit as ZapIn of token contained in the underlying pool for the underlying pool token.
-        //    Implelemented in second branch.
+        //    Implemented in second branch.
         // 3. Underlying Pool Vault Deposit - Deposit of the underlying pool token into the vault.
-        //    Implelemented in third branch.
+        //    Implemented in third branch.
         // 4. ZapIn Vault Deposit - Deposit as ZapIn of the token contained in the underlying pool for the underlying pool token into the vault.
-        //    Implelemented in fourth branch.
+        //    Implemented in fourth branch.
         // 5. Underlying Pool Vault Withdrawal - Withdraw of the underlying pool token from the vault.
-        //    Implelemented in fifth branch.
+        //    Implemented in fifth branch.
         // 6. Pass-through ZapOut - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool as tokenIn.
-        //    Implelemented in sixth branch.
+        //    Implemented in sixth branch.
         // 7. ZapOut Vault Withdrawal - Withdraw as ZapOut of token contained in the underlying pool from the underlying pool token from the vault.
-        //    Implelemented in seventh branch.
+        //    Implemented in seventh branch.
 
         CamelotV2IndexSourceReserves memory indexSource;
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         /* ------------------------------------------------------------------ */
         /*                          Pass-through Swap                         */
@@ -370,7 +370,7 @@ contract CamelotV2StandardExchangeOutTarget is
 
         CamelotV2IndexSourceReserves memory indexSource;
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         /* ------------------------------------------------------------------ */
         /*                          Pass-through Swap                         */
@@ -583,7 +583,7 @@ contract CamelotV2StandardExchangeOutTarget is
 
             // Secure the payment of the tokenIn
             amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layout(),
+                ERC4626Repo._layoutStruct(),
                 vault.vaultLpReserve,
                 // uint256 amountTokenToDeposit,
                 amountIn

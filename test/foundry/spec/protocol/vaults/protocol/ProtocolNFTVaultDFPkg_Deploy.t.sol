@@ -22,6 +22,7 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
@@ -31,7 +32,7 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
     using BaseProtocolDETF_Facet_FactoryService for ICreate3FactoryProxy;
     using BaseProtocolDETF_Pkg_FactoryService for IVaultRegistryDeployment;
 
-    IProtocolNFTVaultDFPkg internal pkg;
+    IDetfSelfNftInventoryDFPkg internal pkg;
     ERC20PermitDFPkg internal erc20PermitPkg;
 
     function setUp() public override {

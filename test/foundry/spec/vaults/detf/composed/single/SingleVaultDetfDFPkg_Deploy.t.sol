@@ -71,6 +71,7 @@ import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Curren
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 
 contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
@@ -106,7 +107,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
     IRICHIRDFPkg internal richirDFPkg;
     IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
-    IProtocolNFTVaultDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
     PoolManager internal poolManager;
     ERC20PermitDFPkg internal erc20PermitPkg;

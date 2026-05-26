@@ -42,8 +42,8 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
     /* ---------------------------------------------------------------------- */
 
     function getRate() external view returns (uint256) {
-        StandardExchangeRateProviderRepo.Storage storage layout = StandardExchangeRateProviderRepo._layout();
-        uint256 totalShares = IERC20(address(layout.reserveVault)).totalSupply();
+        StandardExchangeRateProviderRepo.Storage storage layoutStruct = StandardExchangeRateProviderRepo._layout();
+        uint256 totalShares = IERC20(address(layoutStruct.reserveVault)).totalSupply();
 
         if (totalShares == 0) {
             return 0;
@@ -54,11 +54,11 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         // than 1e18 raw share units, so quoting 1e18 would effectively ask to
         // redeem non-existent shares and collapse to zero.
         uint256 quoteAmount = totalShares < ONE_WAD ? totalShares : ONE_WAD;
-        (bool success, uint256 out) = _safePreviewExchangeIn(layout.reserveVault, quoteAmount, layout.rateTarget);
+        (bool success, uint256 out) = _safePreviewExchangeIn(layoutStruct.reserveVault, quoteAmount, layoutStruct.rateTarget);
 
         for (uint256 i = 0; !success && quoteAmount > 1 && i < 18; ++i) {
             quoteAmount /= 2;
-            (success, out) = _safePreviewExchangeIn(layout.reserveVault, quoteAmount, layout.rateTarget);
+            (success, out) = _safePreviewExchangeIn(layoutStruct.reserveVault, quoteAmount, layoutStruct.rateTarget);
         }
 
         if (!success || quoteAmount == 0) {
@@ -74,7 +74,7 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
                 break;
             }
             (bool nextSuccess, uint256 nextOut) =
-                _safePreviewExchangeIn(layout.reserveVault, nextQuote, layout.rateTarget);
+                _safePreviewExchangeIn(layoutStruct.reserveVault, nextQuote, layoutStruct.rateTarget);
             if (!nextSuccess) {
                 break;
             }
@@ -86,7 +86,7 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             out = out._mulDiv(ONE_WAD, quoteAmount, Math.Rounding.Ceil);
         }
 
-        uint8 targetDecimals = layout.rateTargetDecimals;
+        uint8 targetDecimals = layoutStruct.rateTargetDecimals;
         if (targetDecimals == 18) {
             return out;
         }

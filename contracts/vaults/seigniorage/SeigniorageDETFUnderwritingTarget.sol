@@ -146,8 +146,8 @@ contract SeigniorageDETFUnderwritingTarget is
         uint256 reserveVaultWeight;
     }
 
-    function _syncLpReserve(SeigniorageDETFRepo.Storage storage layout) internal {
-        layout;
+    function _syncLpReserve(SeigniorageDETFRepo.Storage storage) internal {
+        // layoutStruct;
         ERC4626Repo._setLastTotalAssets(ERC4626Repo._reserveAsset().balanceOf(address(this)));
     }
 
@@ -167,14 +167,14 @@ contract SeigniorageDETFUnderwritingTarget is
             recipient = msg.sender;
         }
 
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
         UnderwriteData memory data;
 
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
-        IStandardExchange reserveVault = layout.reserveVault;
+        IStandardExchange reserveVault = layoutStruct.reserveVault;
 
         // Step 1: Convert input to reserve vault shares and transfer to Balancer vault
-        if (_isReserveVaultToken(layout, tokenIn)) {
+        if (_isReserveVaultToken(layoutStruct, tokenIn)) {
             // Input is reserve vault shares - transfer directly to Balancer vault
             if (pretransferred) {
                 tokenIn.safeTransfer(address(balV3Vault), amountIn);
@@ -182,7 +182,7 @@ contract SeigniorageDETFUnderwritingTarget is
                 tokenIn.safeTransferFrom(msg.sender, address(balV3Vault), amountIn);
             }
             data.reserveVaultAmountIn = amountIn;
-        } else if (_isValidMintToken(layout, tokenIn)) {
+        } else if (_isValidMintToken(layoutStruct, tokenIn)) {
             // Input is reserve vault constituent - exchange for reserve vault shares
             if (pretransferred) {
                 tokenIn.safeTransfer(address(reserveVault), amountIn);
@@ -200,10 +200,10 @@ contract SeigniorageDETFUnderwritingTarget is
         IWeightedPool reservePool_ = IWeightedPool(address(ERC4626Repo._reserveAsset()));
         (,, data.balancesRaw, data.currentRatedBalances) = balV3Vault.getPoolTokenInfo(address(reservePool_));
 
-        data.selfIndex = layout.selfIndexInReservePool;
-        data.reserveVaultIndex = layout.reserveVaultIndexInReservePool;
-        data.selfWeight = layout.selfReservePoolWeight;
-        data.reserveVaultWeight = layout.reserveVaultReservePoolWeight;
+        data.selfIndex = layoutStruct.selfIndexInReservePool;
+        data.reserveVaultIndex = layoutStruct.reserveVaultIndexInReservePool;
+        data.selfWeight = layoutStruct.selfReservePoolWeight;
+        data.reserveVaultWeight = layoutStruct.reserveVaultReservePoolWeight;
 
         data.weightsArray = new uint256[](2);
         data.weightsArray[data.reserveVaultIndex] = data.reserveVaultWeight;
@@ -266,13 +266,13 @@ contract SeigniorageDETFUnderwritingTarget is
         uint256 bptReserveBefore = ERC4626Repo._reserveAsset().balanceOf(address(this));
 
         // Step 5: Add liquidity to pool
-        _addLiquidityToPool(layout, reservePool_, reserveVault, data);
+        _addLiquidityToPool(layoutStruct, reservePool_, reserveVault, data);
 
         // Keep BasicVault reserve views in-sync with actual BPT balance.
-        _syncLpReserve(layout);
+        _syncLpReserve(layoutStruct);
 
         // Step 6: Credit NFT vault with BPT shares (DETF keeps the BPT)
-        tokenId = layout.seigniorageNFTVault.lockFromDetf(data.actualBptOut, bptReserveBefore, lockDuration, recipient);
+        tokenId = layoutStruct.seigniorageNFTVault.lockFromDetf(data.actualBptOut, bptReserveBefore, lockDuration, recipient);
     }
 
     /**
@@ -280,12 +280,12 @@ contract SeigniorageDETFUnderwritingTarget is
      *      Separated to reduce stack depth in underwrite function.
      */
     function _addLiquidityToPool(
-        SeigniorageDETFRepo.Storage storage layout,
+        SeigniorageDETFRepo.Storage storage layoutStruct,
         IWeightedPool reservePool_,
         IStandardExchange reserveVault,
         UnderwriteData memory data
     ) internal {
-        IBalancerV3StandardExchangeRouterPrepay prepayRouter = layout.balancerV3PrepayRouter;
+        IBalancerV3StandardExchangeRouterPrepay prepayRouter = layoutStruct.balancerV3PrepayRouter;
 
         if (SeigniorageDETFRepo._isReservePoolInitialized()) {
             data.actualBptOut = prepayRouter.prepayAddLiquidityUnbalanced(
@@ -318,14 +318,14 @@ contract SeigniorageDETFUnderwritingTarget is
         view
         returns (uint256 originalShares, uint256 effectiveShares, uint256 bonusMultiplier)
     {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
-        uint256 reserveVaultAmountIn = _previewReserveVaultAmount(layout, tokenIn, amountIn);
+        uint256 reserveVaultAmountIn = _previewReserveVaultAmount(layoutStruct, tokenIn, amountIn);
 
-        uint256 expectedBptOut = _previewBptOut(layout, reserveVaultAmountIn);
+        uint256 expectedBptOut = _previewBptOut(layoutStruct, reserveVaultAmountIn);
 
         uint256 bptReserveBefore = ERC4626Repo._reserveAsset().balanceOf(address(this));
-        uint256 totalSharesBefore = layout.seigniorageNFTVault.totalShares();
+        uint256 totalSharesBefore = layoutStruct.seigniorageNFTVault.totalShares();
 
         if (totalSharesBefore == 0 || bptReserveBefore == 0) {
             originalShares = expectedBptOut;
@@ -339,25 +339,25 @@ contract SeigniorageDETFUnderwritingTarget is
     /**
      * @dev Calculate reserve vault amount from input token.
      */
-    function _previewReserveVaultAmount(SeigniorageDETFRepo.Storage storage layout, IERC20 tokenIn, uint256 amountIn)
+    function _previewReserveVaultAmount(SeigniorageDETFRepo.Storage storage layoutStruct, IERC20 tokenIn, uint256 amountIn)
         internal
         view
         returns (uint256 reserveVaultAmountIn)
     {
-        if (_isReserveVaultToken(layout, tokenIn)) {
+        if (_isReserveVaultToken(layoutStruct, tokenIn)) {
             reserveVaultAmountIn = amountIn;
-        } else if (_isValidMintToken(layout, tokenIn)) {
+        } else if (_isValidMintToken(layoutStruct, tokenIn)) {
             reserveVaultAmountIn =
-                layout.reserveVault.previewExchangeIn(tokenIn, amountIn, IERC20(address(layout.reserveVault)));
+                layoutStruct.reserveVault.previewExchangeIn(tokenIn, amountIn, IERC20(address(layoutStruct.reserveVault)));
         } else {
-            revert InvalidRoute(address(tokenIn), address(layout.reserveVault));
+            revert InvalidRoute(address(tokenIn), address(layoutStruct.reserveVault));
         }
     }
 
     /**
      * @dev Calculate expected BPT out for given reserve vault amount.
      */
-    function _previewBptOut(SeigniorageDETFRepo.Storage storage layout, uint256 reserveVaultAmountIn)
+    function _previewBptOut(SeigniorageDETFRepo.Storage storage layoutStruct, uint256 reserveVaultAmountIn)
         internal
         view
         returns (uint256 bptOut)
@@ -368,19 +368,19 @@ contract SeigniorageDETFUnderwritingTarget is
         (,, uint256[] memory balancesRaw,) = balV3Vault.getPoolTokenInfo(reservePoolAddr);
         uint256 poolTotalSupply = balV3Vault.totalSupply(reservePoolAddr);
 
-        uint256 reserveVaultIndex = layout.reserveVaultIndexInReservePool;
-        uint256 selfIndex = layout.selfIndexInReservePool;
+        uint256 reserveVaultIndex = layoutStruct.reserveVaultIndexInReservePool;
+        uint256 selfIndex = layoutStruct.selfIndexInReservePool;
 
         uint256[] memory weightsArray = new uint256[](2);
-        weightsArray[reserveVaultIndex] = layout.reserveVaultReservePoolWeight;
-        weightsArray[selfIndex] = layout.selfReservePoolWeight;
+        weightsArray[reserveVaultIndex] = layoutStruct.reserveVaultReservePoolWeight;
+        weightsArray[selfIndex] = layoutStruct.selfReservePoolWeight;
 
         if (poolTotalSupply == 0) {
             // Mirror the initialize-path math used in `underwrite` so previews match actual init.
             (, TokenInfo[] memory tokenInfo,,) = balV3Vault.getPoolTokenInfo(reservePoolAddr);
             uint256 reserveVaultRate = tokenInfo[reserveVaultIndex].rateProvider.getRate();
 
-            uint256 weightRatio = layout.selfReservePoolWeight.divDown(layout.reserveVaultReservePoolWeight);
+            uint256 weightRatio = layoutStruct.selfReservePoolWeight.divDown(layoutStruct.reserveVaultReservePoolWeight);
             uint256 ratedReserveVaultAmount = reserveVaultAmountIn.mulDown(reserveVaultRate);
             uint256 initEquivRbtAmount = ratedReserveVaultAmount.mulUp(weightRatio);
 
@@ -410,8 +410,8 @@ contract SeigniorageDETFUnderwritingTarget is
      *      Uses quadratic curve between min/max bond terms.
      */
     function _calcBonusMultiplier(uint256 lockDuration) internal view returns (uint256 bonusMultiplier) {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
-        BondTerms memory terms = layout.feeOracle.bondTermsOfVault(address(layout.seigniorageNFTVault));
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
+        BondTerms memory terms = layoutStruct.feeOracle.bondTermsOfVault(address(layoutStruct.seigniorageNFTVault));
 
         // Expected invariant, but guard to avoid division-by-zero.
         if (terms.maxLockDuration <= terms.minLockDuration) {
@@ -449,8 +449,8 @@ contract SeigniorageDETFUnderwritingTarget is
      * @inheritdoc ISeigniorageDETFUnderwriting
      */
     function redeem(uint256 tokenId, address recipient) external lock returns (uint256 amountOut) {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
-        ISeigniorageNFTVault nftVault = layout.seigniorageNFTVault;
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
+        ISeigniorageNFTVault nftVault = layoutStruct.seigniorageNFTVault;
 
         // NFT vault will call claimLiquidity which handles the pool withdrawal
         amountOut = nftVault.unlock(tokenId, recipient);
@@ -460,8 +460,8 @@ contract SeigniorageDETFUnderwritingTarget is
      * @inheritdoc ISeigniorageDETFUnderwriting
      */
     function previewRedeem(uint256 tokenId) external view returns (uint256 amountOut) {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
-        ISeigniorageNFTVault nftVault = layout.seigniorageNFTVault;
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
+        ISeigniorageNFTVault nftVault = layoutStruct.seigniorageNFTVault;
 
         uint256 shares = nftVault.rewardSharesOf(tokenId);
         uint256 totalShares_ = nftVault.totalShares();
@@ -486,41 +486,41 @@ contract SeigniorageDETFUnderwritingTarget is
      *      to maintain pool balance.
      */
     function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 extractedLiquidity) {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
-        if (msg.sender != address(layout.seigniorageNFTVault)) {
+        if (msg.sender != address(layoutStruct.seigniorageNFTVault)) {
             revert NotNFTVault(msg.sender);
         }
 
         // Step 1 & 2: Remove liquidity from pool
-        (uint256 reserveVaultOut, uint256 selfOut) = _removeLiquidityFromPool(layout, lpAmount);
+        (uint256 reserveVaultOut, uint256 selfOut) = _removeLiquidityFromPool(layoutStruct, lpAmount);
 
         // Step 3: Exchange reserve vault for rate target and send to recipient
-        extractedLiquidity = _extractAndSendRateTarget(layout, reserveVaultOut, recipient);
+        extractedLiquidity = _extractAndSendRateTarget(layoutStruct, reserveVaultOut, recipient);
 
         // Step 4: Redeposit RBT back to pool to maintain balance
         if (selfOut > 0) {
-            _redepositRbtToPool(layout, selfOut);
+            _redepositRbtToPool(layoutStruct, selfOut);
         }
 
         // Keep BasicVault reserve views in-sync with actual BPT balance.
-        _syncLpReserve(layout);
+        _syncLpReserve(layoutStruct);
     }
 
     /**
      * @dev Internal function to remove liquidity from the Balancer pool.
      *      Returns the amounts of reserve vault and self tokens received.
      */
-    function _removeLiquidityFromPool(SeigniorageDETFRepo.Storage storage layout, uint256 lpAmount)
+    function _removeLiquidityFromPool(SeigniorageDETFRepo.Storage storage layoutStruct, uint256 lpAmount)
         internal
         returns (uint256 reserveVaultOut, uint256 selfOut)
     {
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         IWeightedPool reservePool_ = IWeightedPool(address(ERC4626Repo._reserveAsset()));
-        IStandardExchange reserveVault = layout.reserveVault;
+        IStandardExchange reserveVault = layoutStruct.reserveVault;
 
-        uint256 selfIndex = layout.selfIndexInReservePool;
-        uint256 reserveVaultIndex = layout.reserveVaultIndexInReservePool;
+        uint256 selfIndex = layoutStruct.selfIndexInReservePool;
+        uint256 reserveVaultIndex = layoutStruct.reserveVaultIndexInReservePool;
 
         // Calculate expected amounts from proportional exit
         uint256 poolTotalSupply = balV3Vault.totalSupply(address(reservePool_));
@@ -550,11 +550,11 @@ contract SeigniorageDETFUnderwritingTarget is
         // Approve exact `lpAmount` for the relevant contracts (no allowance accumulation).
         IERC20 bpt = IERC20(address(reservePool_));
         bpt.forceApprove(address(balV3Vault), lpAmount);
-        if (address(layout.balancerV3PrepayRouter) != address(0)) {
-            bpt.forceApprove(address(layout.balancerV3PrepayRouter), lpAmount);
+        if (address(layoutStruct.balancerV3PrepayRouter) != address(0)) {
+            bpt.forceApprove(address(layoutStruct.balancerV3PrepayRouter), lpAmount);
         }
 
-        uint256[] memory amountsOut = layout.balancerV3PrepayRouter
+        uint256[] memory amountsOut = layoutStruct.balancerV3PrepayRouter
             .prepayRemoveLiquidityProportional(address(reservePool_), lpAmount, expectedExitAmounts, "");
 
         // Verify received amounts
@@ -573,12 +573,12 @@ contract SeigniorageDETFUnderwritingTarget is
      * @dev Internal function to exchange reserve vault for rate target and send to recipient.
      */
     function _extractAndSendRateTarget(
-        SeigniorageDETFRepo.Storage storage layout,
+        SeigniorageDETFRepo.Storage storage layoutStruct,
         uint256 reserveVaultAmount,
         address recipient
     ) internal returns (uint256 rateTargetOut) {
-        IStandardExchange reserveVault = layout.reserveVault;
-        IERC20 rateTarget = layout.reserveVaultRateTarget;
+        IStandardExchange reserveVault = layoutStruct.reserveVault;
+        IERC20 rateTarget = layoutStruct.reserveVaultRateTarget;
 
         uint256 expectedOut =
             reserveVault.previewExchangeIn(IERC20(address(reserveVault)), reserveVaultAmount, rateTarget);
@@ -593,12 +593,12 @@ contract SeigniorageDETFUnderwritingTarget is
     /**
      * @dev Internal function to redeposit RBT back to the pool to maintain balance.
      */
-    function _redepositRbtToPool(SeigniorageDETFRepo.Storage storage layout, uint256 rbtAmount) internal {
+    function _redepositRbtToPool(SeigniorageDETFRepo.Storage storage layoutStruct, uint256 rbtAmount) internal {
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         IWeightedPool reservePool_ = IWeightedPool(address(ERC4626Repo._reserveAsset()));
 
-        uint256 selfIndex = layout.selfIndexInReservePool;
-        uint256 reserveVaultIndex = layout.reserveVaultIndexInReservePool;
+        uint256 selfIndex = layoutStruct.selfIndexInReservePool;
+        uint256 reserveVaultIndex = layoutStruct.reserveVaultIndexInReservePool;
 
         // Refresh pool state
         uint256[] memory currentBalances = balV3Vault.getCurrentLiveBalances(address(reservePool_));
@@ -606,8 +606,8 @@ contract SeigniorageDETFUnderwritingTarget is
         uint256 swapFee = balV3Vault.getStaticSwapFeePercentage(address(reservePool_));
 
         uint256[] memory weightsArray = new uint256[](2);
-        weightsArray[reserveVaultIndex] = layout.reserveVaultReservePoolWeight;
-        weightsArray[selfIndex] = layout.selfReservePoolWeight;
+        weightsArray[reserveVaultIndex] = layoutStruct.reserveVaultReservePoolWeight;
+        weightsArray[selfIndex] = layoutStruct.selfReservePoolWeight;
 
         uint256[] memory depositAmounts = new uint256[](2);
 
@@ -641,7 +641,7 @@ contract SeigniorageDETFUnderwritingTarget is
         // Transfer RBT to Balancer vault
         IERC20(address(this)).safeTransfer(address(balV3Vault), rbtToDeposit);
 
-        layout.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(address(reservePool_), depositAmounts, minBptOut, "");
+        layoutStruct.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(address(reservePool_), depositAmounts, minBptOut, "");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -655,13 +655,13 @@ contract SeigniorageDETFUnderwritingTarget is
      * @return liquidityOut Amount of rate target tokens that would be received
      */
     function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 liquidityOut) {
-        SeigniorageDETFRepo.Storage storage layout = SeigniorageDETFRepo._layout();
+        SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
 
         IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
         IWeightedPool reservePool_ = IWeightedPool(address(ERC4626Repo._reserveAsset()));
-        IStandardExchange reserveVault = layout.reserveVault;
+        IStandardExchange reserveVault = layoutStruct.reserveVault;
 
-        uint256 reserveVaultIndex = layout.reserveVaultIndexInReservePool;
+        uint256 reserveVaultIndex = layoutStruct.reserveVaultIndexInReservePool;
 
         // Calculate expected amounts from proportional exit using raw balances.
         // `getCurrentLiveBalances` returns balances scaled by token rates for yield-bearing tokens,
@@ -698,7 +698,7 @@ contract SeigniorageDETFUnderwritingTarget is
 
         // Preview exchange of reserve vault to rate target
         liquidityOut = reserveVault.previewExchangeIn(
-            IERC20(address(reserveVault)), reserveVaultOut, layout.reserveVaultRateTarget
+            IERC20(address(reserveVault)), reserveVaultOut, layoutStruct.reserveVaultRateTarget
         );
     }
 

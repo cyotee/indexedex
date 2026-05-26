@@ -41,7 +41,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             revert ZeroAmount();
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
@@ -49,77 +49,77 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             recipient = msg.sender;
         }
 
-        if ((_isWethToken(layout, tokenIn) && _isRichToken(layout, tokenOut)) || (_isRichToken(layout, tokenIn) && _isWethToken(layout, tokenOut))) {
+        if ((_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) || (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut))) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            tokenIn.safeTransfer(address(layout.wethRichVault), actualIn);
-            amountOut_ = layout.wethRichVault.exchangeIn(tokenIn, actualIn, tokenOut, minAmountOut, recipient, true, deadline);
+            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), actualIn);
+            amountOut_ = layoutStruct.wethRichVault.exchangeIn(tokenIn, actualIn, tokenOut, minAmountOut, recipient, true, deadline);
             return amountOut_;
         }
 
-        if (_isWethToken(layout, tokenIn) && _isRichirToken(tokenOut)) {
+        if (_isWethToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            amountOut_ = _mintRichirFromWeth(layout, actualIn, recipient, deadline);
+            amountOut_ = _mintRichirFromWeth(layoutStruct, actualIn, recipient, deadline);
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
             return amountOut_;
         }
 
-        if (_isRichToken(layout, tokenIn) && _isRichirToken(tokenOut)) {
+        if (_isRichToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            tokenIn.safeTransfer(address(layout.wethRichVault), actualIn);
-            uint256 wethAmount = layout.wethRichVault.exchangeIn(
+            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), actualIn);
+            uint256 wethAmount = layoutStruct.wethRichVault.exchangeIn(
                 tokenIn,
                 actualIn,
-                layout.wethToken,
+                layoutStruct.wethToken,
                 0,
                 address(this),
                 true,
                 deadline
             );
-            amountOut_ = _mintRichirFromWeth(layout, wethAmount, recipient, deadline);
+            amountOut_ = _mintRichirFromWeth(layoutStruct, wethAmount, recipient, deadline);
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
             return amountOut_;
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
+        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
-            if (!_isBurningAllowed(layout, reserveSpotPrice)) {
-                revert BurningNotAllowed(reserveSpotPrice, layout.burnThreshold);
+            if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
+                revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
             uint256 bptIn = _previewChirRedemptionBptIn(amountIn);
             ERC20Repo._burn(pretransferred ? address(this) : msg.sender, amountIn);
 
-            (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layout, bptIn);
-            _redepositChirToReservePool(layout, chirAmountOut);
-            amountOut_ = _redeemVaultSharesToWeth(layout, vaultSharesOut, recipient, deadline);
+            (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, bptIn);
+            _redepositChirToReservePool(layoutStruct, chirAmountOut);
+            amountOut_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, deadline);
 
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
             return amountOut_;
         }
 
-        if (_isRichirToken(tokenIn) && _isWethToken(layout, tokenOut)) {
+        if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            uint256 bptIn = _previewRichirRedemptionBptIn(layout, actualIn);
+            uint256 bptIn = _previewRichirRedemptionBptIn(layoutStruct, actualIn);
 
-            tokenIn.safeTransfer(address(layout._richirToken()), actualIn);
-            layout._richirToken().burnShares(actualIn, address(this), true);
+            tokenIn.safeTransfer(address(layoutStruct._richirToken()), actualIn);
+            layoutStruct._richirToken().burnShares(actualIn, address(this), true);
 
-            uint256 vaultSharesOut = _exitReservePoolToVaultShares(layout, bptIn);
-            amountOut_ = _redeemVaultSharesToWeth(layout, vaultSharesOut, recipient, deadline);
+            uint256 vaultSharesOut = _exitReservePoolToVaultShares(layoutStruct, bptIn);
+            amountOut_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, deadline);
 
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
             return amountOut_;
         }
 
@@ -135,36 +135,43 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             revert ZeroAmount();
         }
 
-        SingleVaultDetfRepo.Storage storage layout = SingleVaultDetfRepo._layout();
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
 
         uint256 reserveSpotPrice = _calcReserveSpotPrice();
-        if (!_isMintingAllowed(layout, reserveSpotPrice)) {
-            revert MintingNotAllowed(reserveSpotPrice, layout.mintThreshold);
+        if (!_isMintingAllowed(layoutStruct, reserveSpotPrice)) {
+            revert MintingNotAllowed(reserveSpotPrice, layoutStruct.mintThreshold);
         }
 
         if (recipient == address(0)) {
             recipient = msg.sender;
         }
 
-        uint256 actualIn = _secureTokenTransfer(layout.wethToken, wethAmount, pretransferred);
+        uint256 actualIn = _secureTokenTransfer(layoutStruct.wethToken, wethAmount, pretransferred);
 
-        IERC20(address(layout.wethToken)).safeTransfer(address(layout.wethRichVault), actualIn);
-        uint256 vaultShares = layout.wethRichVault.exchangeIn(
-            layout.wethToken,
+        IERC20(address(layoutStruct.wethToken)).safeTransfer(address(layoutStruct.wethRichVault), actualIn);
+        uint256 vaultShares = layoutStruct.wethRichVault.exchangeIn(
+            layoutStruct.wethToken,
             actualIn,
-            IERC20(address(layout.wethRichVault)),
+            IERC20(address(layoutStruct.wethRichVault)),
             0,
             address(this),
             true,
             block.timestamp
         );
 
-        chirMinted_ = _calcProportionalChirForVaultShares(layout, vaultShares);
-        _addLiquidityToReservePool(layout, 0, vaultShares);
+        MintSplit memory mintSplit = _splitMintedChir(layoutStruct, _calcProportionalChirForVaultShares(layoutStruct, vaultShares));
+        chirMinted_ = mintSplit.userChir;
+        _addLiquidityToReservePool(layoutStruct, 0, vaultShares);
+        if (mintSplit.feeToChir > 0) {
+            ERC20Repo._mint(address(layoutStruct._feeOracle().feeTo()), mintSplit.feeToChir);
+        }
+        if (mintSplit.bondRewardChir > 0) {
+            ERC20Repo._mint(address(layoutStruct.protocolNFTVault), mintSplit.bondRewardChir);
+        }
         ERC20Repo._mint(recipient, chirMinted_);
-        ERC4626Repo._setLastTotalAssets(IERC20(layout.reservePool).balanceOf(address(this)));
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
     }
 }

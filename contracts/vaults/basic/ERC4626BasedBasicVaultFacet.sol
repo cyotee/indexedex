@@ -56,7 +56,7 @@ contract ERC4626BasedBasicVaultFacet is IBasicVault, IFacet {
     }
 
     function reserveOfToken(address token) external view returns (uint256 reserve_) {
-        ERC4626Repo.Storage storage erc4626 = ERC4626Repo._layout();
+        ERC4626Repo.Storage storage erc4626 = ERC4626Repo._layoutStruct();
         if (token != address(ERC4626Repo._reserveAsset(erc4626))) {
             return 0;
         }

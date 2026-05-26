@@ -56,16 +56,16 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     {
         if (bptOut == 0) revert BaseSharesZero();
 
-        SeigniorageNFTVaultRepo.Storage storage layout = SeigniorageNFTVaultRepo._layout();
-        _validateLockDuration(layout, lockDuration);
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
+        _validateLockDuration(layoutStruct, lockDuration);
 
         uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration);
 
         // Update global rewards before creating position
-        SeigniorageNFTVaultRepo._updateGlobalRewards(layout);
+        SeigniorageNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
         // Convert BPT amount to shares using the DETF reserve *before* the mint.
-        uint256 originalShares = SeigniorageNFTVaultRepo._convertToSharesGivenReserve(layout, bptOut, bptReserveBefore);
+        uint256 originalShares = SeigniorageNFTVaultRepo._convertToSharesGivenReserve(layoutStruct, bptOut, bptReserveBefore);
 
         // Calculate bonus multiplier and effective shares
         uint256 effectiveShares = (originalShares * bonusMultiplier) / ONE_WAD;
@@ -75,7 +75,7 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
 
         // Create position with current reward debt
         SeigniorageNFTVaultRepo._createPosition(
-            layout, tokenId, originalShares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
+            layoutStruct, tokenId, originalShares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
         );
 
         emit NewLock(tokenId, recipient, originalShares, bonusMultiplier, block.timestamp + lockDuration);
@@ -116,37 +116,37 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     function unlock(uint256 tokenId, address recipient) external lock returns (uint256 lpAmount) {
         _validateUnlockCaller(tokenId, recipient);
 
-        SeigniorageNFTVaultRepo.Storage storage layout = SeigniorageNFTVaultRepo._layout();
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
 
-        uint256 unlockTime = SeigniorageNFTVaultRepo._unlockTimeOf(layout, tokenId);
+        uint256 unlockTime = SeigniorageNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
         if (block.timestamp < unlockTime) {
             revert LockDurationNotExpired(block.timestamp, unlockTime);
         }
 
         // Update and harvest rewards
-        SeigniorageNFTVaultRepo._updateGlobalRewards(layout);
-        uint256 rewards = _harvestRewardsInternal(layout, tokenId, recipient);
+        SeigniorageNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
         // Use the canonical share ledger (effectiveShares) for principal redemption.
-        uint256 shares = SeigniorageNFTVaultRepo._effectiveSharesOf(layout, tokenId);
+        uint256 shares = SeigniorageNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
 
         // Convert shares back to LP amount
-        lpAmount = SeigniorageNFTVaultRepo._convertToAssets(layout, shares);
+        lpAmount = SeigniorageNFTVaultRepo._convertToAssets(layoutStruct, shares);
 
         // Remove position and burn NFT
-        SeigniorageNFTVaultRepo._removePosition(layout, tokenId);
+        SeigniorageNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // If the DETF is unlocking on behalf of the bond holder (allowed by _validateUnlockCaller),
         // the ERC721 burn still requires approval. Grant a one-off approval so the burn can proceed.
-        if (msg.sender == address(layout.detfToken)) {
-            ERC721Repo.Storage storage nftLayout = ERC721Repo._layout();
+        if (msg.sender == address(layoutStruct.detfToken)) {
+            ERC721Repo.Storage storage nftLayout = ERC721Repo._layoutStruct();
             nftLayout.approvedForTokenId[tokenId] = msg.sender;
         }
         ERC721Repo._burn(tokenId);
 
         // Call DETF to claim liquidity from the 80/20 pool
         // DETF removes liquidity, extracts reserve vault as rate target, sends to recipient
-        lpAmount = layout.detfToken.claimLiquidity(lpAmount, recipient);
+        lpAmount = layoutStruct.detfToken.claimLiquidity(lpAmount, recipient);
 
         emit Unlock(tokenId, recipient, lpAmount, rewards);
     }
@@ -177,10 +177,10 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     function withdrawRewards(uint256 tokenId, address recipient) external lock returns (uint256 rewards) {
         _validateOwnership(tokenId);
 
-        SeigniorageNFTVaultRepo.Storage storage layout = SeigniorageNFTVaultRepo._layout();
-        SeigniorageNFTVaultRepo._updateGlobalRewards(layout);
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
+        SeigniorageNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
-        rewards = _harvestRewardsInternal(layout, tokenId, recipient);
+        rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
         emit RewardsClaimed(tokenId, recipient, rewards);
     }
 
@@ -188,13 +188,13 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
      * @dev Internal function to harvest rewards for a position.
      */
     function _harvestRewardsInternal(
-        SeigniorageNFTVaultRepo.Storage storage layout_,
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct_,
         uint256 tokenId_,
         address recipient_
     ) internal returns (uint256 rewards_) {
-        uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layout_, tokenId_);
-        uint256 rewardPerShare = layout_.rewardPerShares;
-        uint256 paidPerShare = SeigniorageNFTVaultRepo._userRewardPerSharePaid(layout_, tokenId_);
+        uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layoutStruct_, tokenId_);
+        uint256 rewardPerShare = layoutStruct_.rewardPerShares;
+        uint256 paidPerShare = SeigniorageNFTVaultRepo._userRewardPerSharePaid(layoutStruct_, tokenId_);
 
         if (rewardPerShare <= paidPerShare) {
             return 0;
@@ -205,9 +205,9 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
             return 0;
         }
 
-        SeigniorageNFTVaultRepo._setUserRewardPerSharePaid(layout_, tokenId_, rewardPerShare);
-        layout_.lastRewardTokenBalance -= rewards_;
-        IERC20(address(layout_.rewardToken)).safeTransfer(recipient_, rewards_);
+        SeigniorageNFTVaultRepo._setUserRewardPerSharePaid(layoutStruct_, tokenId_, rewardPerShare);
+        layoutStruct_.lastRewardTokenBalance -= rewards_;
+        IERC20(address(layoutStruct_.rewardToken)).safeTransfer(recipient_, rewards_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -229,21 +229,21 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
      * @return info The LockInfo struct
      */
     function lockInfoOf(uint256 tokenId) external view returns (LockInfo memory info) {
-        SeigniorageNFTVaultRepo.Storage storage layout = SeigniorageNFTVaultRepo._layout();
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
 
-        uint256 originalShares = SeigniorageNFTVaultRepo._originalSharesOf(layout, tokenId);
-        uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layout, tokenId);
-        uint256 bonusMultiplier = SeigniorageNFTVaultRepo._bonusMultiplierOf(layout, tokenId);
+        uint256 originalShares = SeigniorageNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
+        uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
+        uint256 bonusMultiplier = SeigniorageNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
 
         info.sharesAwarded = originalShares;
-        info.rewardPerShare = layout.rewardPerShares;
+        info.rewardPerShare = layoutStruct.rewardPerShares;
         // Return the multiplier used at lock-time (stable / exact), falling back for legacy positions.
         if (bonusMultiplier != 0) {
             info.bonusPercentage = bonusMultiplier;
         } else {
             info.bonusPercentage = originalShares > 0 ? (effectiveShares * ONE_WAD) / originalShares : ONE_WAD;
         }
-        info.unlockTime = SeigniorageNFTVaultRepo._unlockTimeOf(layout, tokenId);
+        info.unlockTime = SeigniorageNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
     }
 
     /**
@@ -306,13 +306,13 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     }
 
     function bonusPercentageOf(uint256 tokenId) external view returns (uint256) {
-        SeigniorageNFTVaultRepo.Storage storage layout = SeigniorageNFTVaultRepo._layout();
-        uint256 originalShares = SeigniorageNFTVaultRepo._originalSharesOf(layout, tokenId);
+        SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
+        uint256 originalShares = SeigniorageNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
         if (originalShares == 0) revert PositionNotFound(tokenId);
 
-        uint256 multiplier = SeigniorageNFTVaultRepo._bonusMultiplierOf(layout, tokenId);
+        uint256 multiplier = SeigniorageNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
         if (multiplier == 0) {
-            uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layout, tokenId);
+            uint256 effectiveShares = SeigniorageNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
             multiplier = (effectiveShares * ONE_WAD) / originalShares;
         }
         return multiplier > ONE_WAD ? multiplier - ONE_WAD : 0;

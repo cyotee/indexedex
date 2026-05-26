@@ -39,7 +39,7 @@ import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {IVautlFeeOracleQueryAware} from "contracts/interfaces/IVautlFeeOracleQueryAware.sol";
+import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol";
 import {
 
     // BondTerms,
@@ -450,7 +450,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
         interfaces[7] = type(IStandardVault).interfaceId;
         interfaces[8] = type(IStandardExchangeIn).interfaceId;
         interfaces[9] = type(IStandardExchangeOut).interfaceId;
-        interfaces[10] = type(IVautlFeeOracleQueryAware).interfaceId;
+        interfaces[10] = type(IVaultFeeOracleQueryAware).interfaceId;
         return interfaces;
     }
 

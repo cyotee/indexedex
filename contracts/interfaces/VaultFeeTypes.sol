@@ -23,7 +23,6 @@ enum VaultFeeType {
 struct BondTerms {
     uint256 minLockDuration;
     uint256 maxLockDuration;
-    // TODO Change to min and max bonus percentage
     uint256 minBonusPercentage;
     uint256 maxBonusPercentage;
 }

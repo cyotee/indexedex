@@ -70,7 +70,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
         UnIV2IndexSourceReserves memory indexSource;
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         // Ensure the pool reference is available before any calculations that
         // rely on the pool (e.g. _loadIndexSourceReserves). The pass-through
@@ -357,7 +357,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
         UnIV2IndexSourceReserves memory indexSource;
 
-        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layout();
+        ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
 
         // Initialize the pool reference early, before any branches that rely on it.
         // This is required for the pass-through swap path which calls _loadIndexSourceReserves.
@@ -560,7 +560,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
             // Secure the payment of the tokenIn
             amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layout(),
+                ERC4626Repo._layoutStruct(),
                 vault.vaultLpReserve,
                 // uint256 amountTokenToDeposit,
                 amountIn

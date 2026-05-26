@@ -7,6 +7,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 
 /**
  * @title IRICHIR
@@ -32,7 +34,7 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
  *
  *      This is designed as a redemption claim, not a composable DeFi primitive.
  */
-interface IRICHIR is IERC20, IERC20Metadata {
+interface IRICHIR is IERC20, IERC20Metadata, IStandardExchangeIn, IStandardExchangeOut {
     /* ---------------------------------------------------------------------- */
     /*                              View Functions                            */
     /* ---------------------------------------------------------------------- */
@@ -54,7 +56,7 @@ interface IRICHIR is IERC20, IERC20Metadata {
     function totalShares() external view returns (uint256 shares);
 
     /**
-     * @notice Returns the current redemption rate (WETH per share).
+    * @notice Returns the current redemption rate (configured common-token value per share).
      * @dev Calculated by simulating full unwinding:
      *      reserve LP -> vault tokens -> Aerodrome LP -> WETH
      * @return rate WETH value per share (1e18 precision)
@@ -68,14 +70,23 @@ interface IRICHIR is IERC20, IERC20Metadata {
     function protocolDETF() external view returns (address);
 
     /**
+     * @notice Sets the DETF contract used for pricing and redemption callbacks.
+     * @dev Owner-only deployment-time wiring hook for composed DETF deployments.
+     * @param detf The DETF contract
+     */
+    function setProtocolDETF(address detf) external;
+
+    /**
      * @notice Returns the protocol-owned NFT token ID held by this contract.
      * @return The protocol NFT token ID
      */
     function protocolNFTId() external view returns (uint256);
 
     /**
-     * @notice Returns the WETH token.
-     * @return The WETH token
+    * @notice Returns the configured common-token boundary.
+    * @dev The method name remains `wethToken()` for compatibility with existing callers.
+    *      Deployments may use any configured common token, not only WETH.
+    * @return The configured common token
      */
     function wethToken() external view returns (IERC20);
 
@@ -94,9 +105,9 @@ interface IRICHIR is IERC20, IERC20Metadata {
     function convertToRichir(uint256 shares) external view returns (uint256 richirAmount);
 
     /**
-     * @notice Preview WETH output for redeeming RICHIR.
+    * @notice Preview configured common-token output for redeeming RICHIR.
      * @param richirAmount Amount of RICHIR to redeem
-     * @return wethOut Amount of WETH that would be received
+    * @return wethOut Amount of configured common token that would be received
      */
     function previewRedeem(uint256 richirAmount) external view returns (uint256 wethOut);
 
@@ -119,22 +130,22 @@ interface IRICHIR is IERC20, IERC20Metadata {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Redeems RICHIR for WETH.
-     * @dev Always redeemable - no price gate. RICHIR represents a claim on the
-     *      protocol-owned NFT's BPT, and holders can exit at any time.
+    * @notice Redeems RICHIR for the configured common token.
+    * @dev Compatibility wrapper around the canonical `exchangeIn(RICHIR -> common token)` path.
+    *      Always redeemable - no price gate. RICHIR represents a claim on the
+    *      protocol-owned NFT's reserve-pool BPT, and holders can exit at any time.
      *
      *      Process:
-     *      1. Burn RICHIR shares
-     *      2. Exit reserve pool proportionally (get vault shares)
-     *      3. Unwind CHIR/WETH vault shares -> WETH
-     *      4. Unwind RICH/CHIR vault shares -> CHIR
-     *      5. Swap CHIR -> WETH via CHIR/WETH vault
-     *      6. Send total WETH to user
+    *      1. Convert apparent RICHIR amount to internal shares
+    *      2. Convert those shares into protocol-owned reserve-pool BPT claim
+    *      3. Burn the RICHIR shares atomically
+    *      4. Ask the DETF to claim/unwind that reserve-pool BPT into the configured common token
+    *      5. Send the common token to the user
      *
      * @param richirAmount Amount of RICHIR to redeem
-     * @param recipient Address to receive WETH
+    * @param recipient Address to receive the configured common token
      * @param pretransferred Whether RICHIR was already transferred
-     * @return wethOut Amount of WETH sent to recipient
+    * @return wethOut Amount of configured common token sent to recipient
      */
     function redeem(uint256 richirAmount, address recipient, bool pretransferred) external returns (uint256 wethOut);
 
