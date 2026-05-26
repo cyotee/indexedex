@@ -181,7 +181,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.totalSupply = IERC20(layoutStruct.reservePool).totalSupply();
         (, tokenInfo, balancesRaw,) = data.balancerVault.getPoolTokenInfo(address(data.reservePool));
 
-        uint256 reserveBptBalance = IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this));
+        uint256 reserveBptBalance = IERC20(layoutStruct.reservePool).balanceOf(address(this));
         if (reserveBptBalance == 0 || data.totalSupply == 0) {
             return 1e18;
         }
@@ -1038,7 +1038,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data_.chirWeight = layoutStruct_.chirWeight;
         data_.vaultTokenWeight = layoutStruct_.vaultTokenWeight;
         data_.reservePoolTotalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
-        data_.reservePoolBptHeld = IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this));
+        data_.reservePoolBptHeld = IERC20(layoutStruct_.reservePool).balanceOf(address(this));
 
         if (data_.reservePoolTotalSupply == 0 || data_.reservePoolBptHeld == 0) {
             revert ZeroAmount();

@@ -8,7 +8,9 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "forge test",
+    "test": "yarn test:default",
+    "test:default": "forge test",
+    "test:fork": "FOUNDRY_PROFILE=fork forge test",
     "compile": "clear && forge compile --sizes",
     "coverage": "forge coverage",
     "list": "task-master list",

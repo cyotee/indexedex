@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -220,19 +219,21 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
     }
 
     function reserveOfToken(address token_) external view returns (uint256 reserve_) {
-        if (token_ == address(ERC4626Repo._reserveAsset())) {
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
+        if (token_ == layoutStruct.reservePool) {
             return IERC20(token_).balanceOf(address(this));
         }
         return 0;
     }
 
     function reserves() external view returns (uint256[] memory reserves_) {
+        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         reserves_ = new uint256[](1);
-        reserves_[0] = IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this));
+        reserves_[0] = IERC20(layoutStruct.reservePool).balanceOf(address(this));
     }
 
     function vaultTokens() external view returns (address[] memory tokens_) {
         tokens_ = new address[](1);
-        tokens_[0] = address(ERC4626Repo._reserveAsset());
+        tokens_[0] = SingleVaultDetfRepo._layoutStruct().reservePool;
     }
 }

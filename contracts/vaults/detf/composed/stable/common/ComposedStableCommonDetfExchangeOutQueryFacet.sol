@@ -133,25 +133,6 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         amountIn = _previewMostLiquidUnwindSelection(tokenOut, amountOut).detfAmountIn;
     }
 
-    function _approvePermit2Spend(IERC20 token_, uint256 amount_) internal {
-        if (amount_ == 0) {
-            return;
-        }
-
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        if (
-            address(ComposedStableCommonDetfRepo._permit2(layoutStruct)) == address(0)
-                || address(ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct)) == address(0)
-        ) {
-            revert ExchangeOutNotAvailable();
-        }
-
-        token_.forceApprove(address(ComposedStableCommonDetfRepo._permit2(layoutStruct)), amount_);
-        ComposedStableCommonDetfRepo._permit2(layoutStruct).approve(
-            address(token_), address(ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct)), uint160(amount_), type(uint48).max
-        );
-    }
-
     function _executeReservePoolSwap(UnwindPreviewSelection memory selection_, uint256 maxAmountIn_, uint256 deadline_)
         internal
         returns (uint256 detfAmountIn_)
@@ -159,7 +140,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken(layoutStruct);
 
-        _approvePermit2Spend(detfToken, maxAmountIn_);
+        _approvePermit2Spend(detfToken, maxAmountIn_, true);
 
         detfAmountIn_ = ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct).swapSingleTokenExactOut(
             address(ComposedStableCommonDetfRepo._reservePool(layoutStruct)),
@@ -175,59 +156,6 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         );
     }
 
-    function _executeComposedPoolExit(
-        ComposedStableCommonDetfRepo.RouteConfig storage route_,
-        UnwindPreviewSelection memory selection_,
-        uint256 deadline_
-    ) internal returns (uint256 poolBptAmountIn_) {
-        IStandardExchangeOut poolExitPricer = IStandardExchangeOut(
-            address(
-                selection_.exitFromStablePool
-                    ? ComposedStableCommonDetfRepo._stablePoolExitPricer()
-                    : ComposedStableCommonDetfRepo._commonPoolExitPricer()
-            )
-        );
-
-        selection_.poolBptToken.safeTransfer(address(poolExitPricer), selection_.poolBptAmountOut);
-        poolBptAmountIn_ = poolExitPricer.exchangeOut(
-            selection_.poolBptToken,
-            selection_.poolBptAmountOut,
-            route_.vaultToken,
-            selection_.vaultTokenAmountOut,
-            address(this),
-            true,
-            deadline_
-        );
-    }
-
-    function _executeUnderlyingExit(
-        ComposedStableCommonDetfRepo.RouteConfig storage route_,
-        IERC20 tokenOut_,
-        uint256 amountOut_,
-        address recipient_,
-        uint256 deadline_
-    ) internal returns (uint256 vaultTokenAmountIn_) {
-        if (address(route_.vaultToken) == address(tokenOut_)) {
-            route_.vaultToken.safeTransfer(recipient_, amountOut_);
-            return amountOut_;
-        }
-
-        IStandardExchangeOut underlyingVault = IStandardExchangeOut(address(route_.underlyingVault));
-        vaultTokenAmountIn_ = underlyingVault.exchangeOut(
-            route_.vaultToken,
-            route_.vaultToken.balanceOf(address(this)),
-            tokenOut_,
-            amountOut_,
-            recipient_,
-            true,
-            deadline_
-        );
-
-        if (route_.vaultToken.balanceOf(address(this)) != 0) {
-            revert ExchangeOutNotAvailable();
-        }
-    }
-
     function _executeSelectedUnwind(
         UnwindPreviewSelection memory selection_,
         IERC20 tokenOut_,
@@ -240,8 +168,15 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             layoutStruct, selection_.routeIndex
         );
 
-        _executeComposedPoolExit(route, selection_, deadline_);
-        _executeUnderlyingExit(route, tokenOut_, amountOut_, recipient_, deadline_);
+        _executeComposedPoolExitExactOutShared(
+            selection_.exitFromStablePool,
+            selection_.poolBptToken,
+            selection_.poolBptAmountOut,
+            route.vaultToken,
+            selection_.vaultTokenAmountOut,
+            deadline_
+        );
+        _executeUnderlyingExitExactOutShared(route, tokenOut_, amountOut_, recipient_, deadline_);
     }
 
     function _executeExchangeOut(IStandardExchangeOut.OutArgs memory args_) internal returns (uint256 amountIn_) {

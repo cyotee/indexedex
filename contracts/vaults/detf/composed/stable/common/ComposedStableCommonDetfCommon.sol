@@ -31,6 +31,13 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
 
     uint256 internal constant ONE_WAD = 1e18;
 
+    struct ReservePoolQuoteContext {
+        WeightedPoolDynamicData dynamicData;
+        uint256[] weights;
+        uint256 tokenInIndex;
+        uint256 tokenOutIndex;
+    }
+
     struct RoutedPoolSelection {
         uint256 routeIndex;
         bool depositToStablePool;
@@ -54,6 +61,18 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
         uint256 poolBptAmountOut;
         uint256 vaultTokenAmountOut;
         uint256 tokenOutAmountOut;
+    }
+
+    struct ExactOutSelectionState {
+        uint256 bestLiquidity;
+        bool foundPath;
+        UnwindPreviewSelection selection;
+    }
+
+    struct ExactInSelectionState {
+        uint256 bestLiquidity;
+        bool foundPath;
+        ExactInUnwindSelection selection;
     }
 
     struct MintSplit {
@@ -256,6 +275,134 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
         actualIn_ = token_.balanceOf(address(this)) - balanceBefore;
     }
 
+    function _approvePermit2Spend(IERC20 token_, uint256 amount_, bool exactOut_) internal {
+        if (amount_ == 0) {
+            return;
+        }
+
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        if (
+            address(ComposedStableCommonDetfRepo._permit2(layoutStruct)) == address(0)
+                || address(ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct)) == address(0)
+        ) {
+            if (exactOut_) {
+                revert IStandardExchangeOut.ExchangeOutNotAvailable();
+            }
+
+            revert IStandardExchangeIn.ExchangeInNotAvailable();
+        }
+
+        token_.forceApprove(address(ComposedStableCommonDetfRepo._permit2(layoutStruct)), amount_);
+        ComposedStableCommonDetfRepo._permit2(layoutStruct).approve(
+            address(token_), address(ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct)), uint160(amount_), type(uint48).max
+        );
+    }
+
+    function _selectedPoolExitPricerIn(bool exitFromStablePool_) internal view returns (IStandardExchangeIn poolExitPricer_) {
+        poolExitPricer_ = exitFromStablePool_
+            ? ComposedStableCommonDetfRepo._stablePoolExitPricer()
+            : ComposedStableCommonDetfRepo._commonPoolExitPricer();
+    }
+
+    function _selectedPoolExitPricerOut(bool exitFromStablePool_) internal view returns (IStandardExchangeOut poolExitPricer_) {
+        poolExitPricer_ = IStandardExchangeOut(address(_selectedPoolExitPricerIn(exitFromStablePool_)));
+    }
+
+    function _executeComposedPoolExitExactInShared(
+        bool exitFromStablePool_,
+        IERC20 poolBptToken_,
+        uint256 poolBptAmountOut_,
+        IERC20 vaultToken_,
+        uint256 deadline_
+    ) internal returns (uint256 vaultTokenAmountOut_) {
+        IStandardExchangeIn poolExitPricer = _selectedPoolExitPricerIn(exitFromStablePool_);
+
+        poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+        vaultTokenAmountOut_ = poolExitPricer.exchangeIn(
+            poolBptToken_,
+            poolBptAmountOut_,
+            vaultToken_,
+            0,
+            address(this),
+            true,
+            deadline_
+        );
+    }
+
+    function _executeComposedPoolExitExactOutShared(
+        bool exitFromStablePool_,
+        IERC20 poolBptToken_,
+        uint256 poolBptAmountOut_,
+        IERC20 vaultToken_,
+        uint256 vaultTokenAmountOut_,
+        uint256 deadline_
+    ) internal returns (uint256 poolBptAmountIn_) {
+        IStandardExchangeOut poolExitPricer = _selectedPoolExitPricerOut(exitFromStablePool_);
+
+        poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+        poolBptAmountIn_ = poolExitPricer.exchangeOut(
+            poolBptToken_,
+            poolBptAmountOut_,
+            vaultToken_,
+            vaultTokenAmountOut_,
+            address(this),
+            true,
+            deadline_
+        );
+    }
+
+    function _executeUnderlyingExitExactInShared(
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        IERC20 tokenOut_,
+        uint256 vaultTokenAmountOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        if (address(route_.vaultToken) == address(tokenOut_)) {
+            route_.vaultToken.safeTransfer(recipient_, vaultTokenAmountOut_);
+            return vaultTokenAmountOut_;
+        }
+
+        route_.vaultToken.transfer(address(route_.underlyingVault), vaultTokenAmountOut_);
+        amountOut_ = route_.underlyingVault.exchangeIn(
+            route_.vaultToken,
+            vaultTokenAmountOut_,
+            tokenOut_,
+            0,
+            recipient_,
+            true,
+            deadline_
+        );
+    }
+
+    function _executeUnderlyingExitExactOutShared(
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        IERC20 tokenOut_,
+        uint256 amountOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 vaultTokenAmountIn_) {
+        if (address(route_.vaultToken) == address(tokenOut_)) {
+            route_.vaultToken.safeTransfer(recipient_, amountOut_);
+            return amountOut_;
+        }
+
+        IStandardExchangeOut underlyingVault = IStandardExchangeOut(address(route_.underlyingVault));
+        vaultTokenAmountIn_ = underlyingVault.exchangeOut(
+            route_.vaultToken,
+            route_.vaultToken.balanceOf(address(this)),
+            tokenOut_,
+            amountOut_,
+            recipient_,
+            true,
+            deadline_
+        );
+
+        if (route_.vaultToken.balanceOf(address(this)) != 0) {
+            revert IStandardExchangeOut.ExchangeOutNotAvailable();
+        }
+    }
+
     function _isMintingAllowed(uint256 syntheticPrice_) internal view returns (bool allowed_) {
         allowed_ = DETFThresholdPolicy._isMintingAllowed(ComposedStableCommonDetfRepo._mintThreshold(), syntheticPrice_);
     }
@@ -343,29 +490,18 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
             return 0;
         }
 
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        WeightedPoolDynamicData memory dynamicData = _weightedPoolDynamicData(layoutStruct._reservePool());
-        uint256[] memory weights = _weightedPoolWeights(layoutStruct._reservePool());
-
-        uint256 tokenInIndex = layoutStruct._detfIndex();
-        uint256 tokenOutIndex = exitFromStablePool_ ? layoutStruct._stablePoolBptIndex() : layoutStruct._commonPoolBptIndex();
-
-        if (
-            !dynamicData.isPoolInitialized || dynamicData.balancesLiveScaled18.length <= tokenInIndex
-                || dynamicData.balancesLiveScaled18.length <= tokenOutIndex || weights.length <= tokenInIndex
-                || weights.length <= tokenOutIndex || dynamicData.balancesLiveScaled18[tokenInIndex] == 0
-                || dynamicData.balancesLiveScaled18[tokenOutIndex] == 0
-        ) {
+        ReservePoolQuoteContext memory context_ = _reservePoolQuoteContext(exitFromStablePool_);
+        if (!_hasReservePoolQuoteLiquidity(context_)) {
             return 0;
         }
 
         amountOut_ = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
-            dynamicData.balancesLiveScaled18[tokenInIndex],
-            weights[tokenInIndex],
-            dynamicData.balancesLiveScaled18[tokenOutIndex],
-            weights[tokenOutIndex],
+            context_.dynamicData.balancesLiveScaled18[context_.tokenInIndex],
+            context_.weights[context_.tokenInIndex],
+            context_.dynamicData.balancesLiveScaled18[context_.tokenOutIndex],
+            context_.weights[context_.tokenOutIndex],
             detfAmountIn_,
-            dynamicData.staticSwapFeePercentage
+            context_.dynamicData.staticSwapFeePercentage
         );
     }
 
@@ -378,30 +514,95 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
             return 0;
         }
 
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        WeightedPoolDynamicData memory dynamicData = _weightedPoolDynamicData(layoutStruct._reservePool());
-        uint256[] memory weights = _weightedPoolWeights(layoutStruct._reservePool());
+        ReservePoolQuoteContext memory context_ = _reservePoolQuoteContext(exitFromStablePool_);
+        if (!_hasReservePoolQuoteLiquidity(context_)) {
+            return 0;
+        }
 
-        uint256 tokenInIndex = layoutStruct._detfIndex();
-        uint256 tokenOutIndex = exitFromStablePool_ ? layoutStruct._stablePoolBptIndex() : layoutStruct._commonPoolBptIndex();
-
-        if (
-            !dynamicData.isPoolInitialized || dynamicData.balancesLiveScaled18.length <= tokenInIndex
-                || dynamicData.balancesLiveScaled18.length <= tokenOutIndex || weights.length <= tokenInIndex
-                || weights.length <= tokenOutIndex || dynamicData.balancesLiveScaled18[tokenInIndex] == 0
-                || dynamicData.balancesLiveScaled18[tokenOutIndex] <= poolBptAmountOut_
-        ) {
+        if (context_.dynamicData.balancesLiveScaled18[context_.tokenOutIndex] <= poolBptAmountOut_) {
             return 0;
         }
 
         amountIn_ = BalancerV3WeightedPoolQuote.computeInGivenExactOutBeforeFee(
-            dynamicData.balancesLiveScaled18[tokenInIndex],
-            weights[tokenInIndex],
-            dynamicData.balancesLiveScaled18[tokenOutIndex],
-            weights[tokenOutIndex],
+            context_.dynamicData.balancesLiveScaled18[context_.tokenInIndex],
+            context_.weights[context_.tokenInIndex],
+            context_.dynamicData.balancesLiveScaled18[context_.tokenOutIndex],
+            context_.weights[context_.tokenOutIndex],
             poolBptAmountOut_,
-            dynamicData.staticSwapFeePercentage
+            context_.dynamicData.staticSwapFeePercentage
         );
+    }
+
+    function _reservePoolQuoteContext(bool exitFromStablePool_)
+        internal
+        view
+        returns (ReservePoolQuoteContext memory context_)
+    {
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        context_.dynamicData = _weightedPoolDynamicData(layoutStruct._reservePool());
+        context_.weights = _weightedPoolWeights(layoutStruct._reservePool());
+        context_.tokenInIndex = layoutStruct._detfIndex();
+        context_.tokenOutIndex = exitFromStablePool_ ? layoutStruct._stablePoolBptIndex() : layoutStruct._commonPoolBptIndex();
+    }
+
+    function _hasReservePoolQuoteLiquidity(ReservePoolQuoteContext memory context_)
+        internal
+        pure
+        returns (bool hasLiquidity_)
+    {
+        hasLiquidity_ = context_.dynamicData.isPoolInitialized
+            && context_.dynamicData.balancesLiveScaled18.length > context_.tokenInIndex
+            && context_.dynamicData.balancesLiveScaled18.length > context_.tokenOutIndex
+            && context_.weights.length > context_.tokenInIndex
+            && context_.weights.length > context_.tokenOutIndex
+            && context_.dynamicData.balancesLiveScaled18[context_.tokenInIndex] != 0
+            && context_.dynamicData.balancesLiveScaled18[context_.tokenOutIndex] != 0;
+    }
+
+    function _resolveUnwindRouteEligibility(ComposedStableCommonDetfRepo.RouteConfig storage route_, IERC20 tokenOut_)
+        internal
+        view
+        returns (bool eligible_, bool directVaultTokenExit_)
+    {
+        directVaultTokenExit_ = address(route_.vaultToken) == address(tokenOut_);
+        eligible_ = directVaultTokenExit_ || address(route_.baseToken) == address(tokenOut_);
+    }
+
+    function _resolveExactOutVaultTokenAmount(
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        IERC20 tokenOut_,
+        uint256 amountOut_,
+        bool directVaultTokenExit_
+    ) internal view returns (bool success_, uint256 vaultTokenAmountOut_) {
+        if (directVaultTokenExit_) {
+            return (true, amountOut_);
+        }
+
+        (bool hasVaultQuote, uint256 quotedVaultTokenAmountOut) = _tryPreviewExchangeOut(
+            address(route_.underlyingVault), route_.vaultToken, tokenOut_, amountOut_
+        );
+        if (!hasVaultQuote || quotedVaultTokenAmountOut == 0) {
+            return (false, 0);
+        }
+
+        return (true, quotedVaultTokenAmountOut);
+    }
+
+    function _unwindPoolLegContext(
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        bool exitFromStablePool_
+    ) internal view returns (uint256 liquidity_, IERC20 poolBptToken_, address poolExitPricer_) {
+        if (exitFromStablePool_) {
+            liquidity_ = _unratedLiquidity(layoutStruct_._stablePool(), route_.stablePoolTokenIndex);
+            poolBptToken_ = layoutStruct_._stablePoolBpt();
+            poolExitPricer_ = address(layoutStruct_._stablePoolExitPricer());
+            return (liquidity_, poolBptToken_, poolExitPricer_);
+        }
+
+        liquidity_ = _unratedLiquidity(layoutStruct_._commonPool(), route_.commonPoolTokenIndex);
+        poolBptToken_ = layoutStruct_._commonPoolBpt();
+        poolExitPricer_ = address(layoutStruct_._commonPoolExitPricer());
     }
 
     function _previewMostLiquidUnwindSelection(IERC20 tokenOut_, uint256 amountOut_)
@@ -411,58 +612,41 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     {
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         uint256 routeCount = layoutStruct._routeCount();
-        uint256 bestLiquidity;
-        bool foundPath;
+        ExactOutSelectionState memory state_;
 
         for (uint256 i = 0; i < routeCount; i++) {
             ComposedStableCommonDetfRepo.RouteConfig storage route = layoutStruct._routeAt(i);
-            bool directVaultTokenExit = address(route.vaultToken) == address(tokenOut_);
-            if (!directVaultTokenExit && address(route.baseToken) != address(tokenOut_)) {
+            (bool eligibleRoute, bool directVaultTokenExit) = _resolveUnwindRouteEligibility(route, tokenOut_);
+            if (!eligibleRoute) {
                 continue;
             }
 
-            uint256 vaultTokenAmountOut;
-            if (directVaultTokenExit) {
-                vaultTokenAmountOut = amountOut_;
-            } else {
-                (bool hasVaultQuote, uint256 quotedVaultTokenAmountOut) = _tryPreviewExchangeOut(
-                    address(route.underlyingVault), route.vaultToken, tokenOut_, amountOut_
-                );
-                if (!hasVaultQuote || quotedVaultTokenAmountOut == 0) {
-                    continue;
-                }
-
-                vaultTokenAmountOut = quotedVaultTokenAmountOut;
+            (bool hasVaultTokenAmountOut, uint256 vaultTokenAmountOut) =
+                _resolveExactOutVaultTokenAmount(route, tokenOut_, amountOut_, directVaultTokenExit);
+            if (!hasVaultTokenAmountOut) {
+                continue;
             }
 
             {
                 (uint256 stableLiquidity, UnwindPreviewSelection memory stableSelection) = _previewUnwindCandidate(
                     layoutStruct, route, vaultTokenAmountOut, true
                 );
-                if (stableSelection.detfAmountIn != 0 && stableLiquidity > bestLiquidity) {
-                    foundPath = true;
-                    bestLiquidity = stableLiquidity;
-                    stableSelection.routeIndex = i;
-                    selection_ = stableSelection;
-                }
+                state_ = _considerExactOutSelection(stableSelection, stableLiquidity, i, state_);
             }
 
             {
                 (uint256 commonLiquidity, UnwindPreviewSelection memory commonSelection) = _previewUnwindCandidate(
                     layoutStruct, route, vaultTokenAmountOut, false
                 );
-                if (commonSelection.detfAmountIn != 0 && commonLiquidity > bestLiquidity) {
-                    foundPath = true;
-                    bestLiquidity = commonLiquidity;
-                    commonSelection.routeIndex = i;
-                    selection_ = commonSelection;
-                }
+                state_ = _considerExactOutSelection(commonSelection, commonLiquidity, i, state_);
             }
         }
 
-        if (!foundPath) {
+        if (!state_.foundPath) {
             revert IStandardExchangeOut.ExchangeOutNotAvailable();
         }
+
+        selection_ = state_.selection;
     }
 
     function _previewUnwindCandidate(
@@ -473,22 +657,13 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     ) internal view returns (uint256 liquidity_, UnwindPreviewSelection memory selection_) {
         address poolExitPricer;
         IERC20 poolBptToken;
-        if (exitFromStablePool_) {
-            poolExitPricer = address(layoutStruct_._stablePoolExitPricer());
-            poolBptToken = layoutStruct_._stablePoolBpt();
-            liquidity_ = _unratedLiquidity(layoutStruct_._stablePool(), route_.stablePoolTokenIndex);
-        } else {
-            poolExitPricer = address(layoutStruct_._commonPoolExitPricer());
-            poolBptToken = layoutStruct_._commonPoolBpt();
-            liquidity_ = _unratedLiquidity(layoutStruct_._commonPool(), route_.commonPoolTokenIndex);
-        }
+        (liquidity_, poolBptToken, poolExitPricer) = _unwindPoolLegContext(layoutStruct_, route_, exitFromStablePool_);
         if (liquidity_ == 0) {
             return (0, selection_);
         }
 
-        (bool hasPoolQuote, uint256 poolBptAmountOut) = _tryPreviewExchangeOut(
-            poolExitPricer, poolBptToken, route_.vaultToken, vaultTokenAmountOut_
-        );
+        (bool hasPoolQuote, uint256 poolBptAmountOut) =
+            _previewPoolBptAmountOutForVaultToken(poolExitPricer, poolBptToken, route_.vaultToken, vaultTokenAmountOut_);
         if (!hasPoolQuote || poolBptAmountOut == 0) {
             return (0, selection_);
         }
@@ -512,15 +687,8 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
         bool directVaultTokenExit_
     ) internal view returns (uint256 liquidity_, ExactInUnwindSelection memory selection_) {
         address poolExitPricer;
-        if (exitFromStablePool_) {
-            liquidity_ = _unratedLiquidity(layoutStruct_._stablePool(), route_.stablePoolTokenIndex);
-            selection_.poolBptToken = layoutStruct_._stablePoolBpt();
-            poolExitPricer = address(layoutStruct_._stablePoolExitPricer());
-        } else {
-            liquidity_ = _unratedLiquidity(layoutStruct_._commonPool(), route_.commonPoolTokenIndex);
-            selection_.poolBptToken = layoutStruct_._commonPoolBpt();
-            poolExitPricer = address(layoutStruct_._commonPoolExitPricer());
-        }
+        (liquidity_, selection_.poolBptToken, poolExitPricer) =
+            _unwindPoolLegContext(layoutStruct_, route_, exitFromStablePool_);
         if (liquidity_ == 0) {
             return (0, selection_);
         }
@@ -531,28 +699,16 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
             return (0, selection_);
         }
 
-        (bool hasVaultQuote, uint256 vaultTokenAmountOut) = _tryPreviewExchangeIn(
-            poolExitPricer,
-            selection_.poolBptToken,
-            selection_.poolBptAmountOut,
-            route_.vaultToken
+        (bool hasVaultQuote, uint256 vaultTokenAmountOut) = _previewVaultTokenAmountOutFromPoolBpt(
+            poolExitPricer, selection_.poolBptToken, route_.vaultToken, selection_.poolBptAmountOut
         );
         if (!hasVaultQuote || vaultTokenAmountOut == 0) {
             return (0, selection_);
         }
 
         selection_.vaultTokenAmountOut = vaultTokenAmountOut;
-        if (directVaultTokenExit_) {
-            selection_.tokenOutAmountOut = vaultTokenAmountOut;
-            return (liquidity_, selection_);
-        }
-
-        (bool hasUnderlyingQuote, uint256 tokenOutAmountOut) = _tryPreviewExchangeIn(
-            address(route_.underlyingVault),
-            route_.vaultToken,
-            vaultTokenAmountOut,
-            tokenOut_
-        );
+        (bool hasUnderlyingQuote, uint256 tokenOutAmountOut) =
+            _previewUnderlyingTokenAmountOut(route_, tokenOut_, vaultTokenAmountOut, directVaultTokenExit_);
         if (!hasUnderlyingQuote || tokenOutAmountOut == 0) {
             return (0, selection_);
         }
@@ -567,13 +723,12 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     {
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         uint256 routeCount = layoutStruct._routeCount();
-        uint256 bestLiquidity;
-        bool foundPath;
+        ExactInSelectionState memory state_;
 
         for (uint256 i = 0; i < routeCount; i++) {
             ComposedStableCommonDetfRepo.RouteConfig storage route = layoutStruct._routeAt(i);
-            bool directVaultTokenExit = address(route.vaultToken) == address(tokenOut_);
-            if (!directVaultTokenExit && address(route.baseToken) != address(tokenOut_)) {
+            (bool eligibleRoute, bool directVaultTokenExit) = _resolveUnwindRouteEligibility(route, tokenOut_);
+            if (!eligibleRoute) {
                 continue;
             }
 
@@ -581,30 +736,87 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
                 (uint256 stableLiquidity, ExactInUnwindSelection memory stableSelection) = _previewExactInUnwindLeg(
                     layoutStruct, route, tokenOut_, detfAmountIn_, true, directVaultTokenExit
                 );
-                if (stableSelection.tokenOutAmountOut != 0 && stableLiquidity > bestLiquidity) {
-                    foundPath = true;
-                    bestLiquidity = stableLiquidity;
-                    stableSelection.routeIndex = i;
-                    selection_ = stableSelection;
-                }
+                state_ = _considerExactInSelection(stableSelection, stableLiquidity, i, state_);
             }
 
             {
                 (uint256 commonLiquidity, ExactInUnwindSelection memory commonSelection) = _previewExactInUnwindLeg(
                     layoutStruct, route, tokenOut_, detfAmountIn_, false, directVaultTokenExit
                 );
-                if (commonSelection.tokenOutAmountOut != 0 && commonLiquidity > bestLiquidity) {
-                    foundPath = true;
-                    bestLiquidity = commonLiquidity;
-                    commonSelection.routeIndex = i;
-                    selection_ = commonSelection;
-                }
+                state_ = _considerExactInSelection(commonSelection, commonLiquidity, i, state_);
             }
         }
 
-        if (!foundPath) {
+        if (!state_.foundPath) {
             revert IStandardExchangeIn.ExchangeInNotAvailable();
         }
+
+        selection_ = state_.selection;
+    }
+
+    function _considerExactOutSelection(
+        UnwindPreviewSelection memory candidate_,
+        uint256 candidateLiquidity_,
+        uint256 routeIndex_,
+        ExactOutSelectionState memory state_
+    ) internal pure returns (ExactOutSelectionState memory) {
+        if (candidate_.detfAmountIn == 0 || candidateLiquidity_ <= state_.bestLiquidity) {
+            return state_;
+        }
+
+        candidate_.routeIndex = routeIndex_;
+        state_.foundPath = true;
+        state_.bestLiquidity = candidateLiquidity_;
+        state_.selection = candidate_;
+        return state_;
+    }
+
+    function _considerExactInSelection(
+        ExactInUnwindSelection memory candidate_,
+        uint256 candidateLiquidity_,
+        uint256 routeIndex_,
+        ExactInSelectionState memory state_
+    ) internal pure returns (ExactInSelectionState memory) {
+        if (candidate_.tokenOutAmountOut == 0 || candidateLiquidity_ <= state_.bestLiquidity) {
+            return state_;
+        }
+
+        candidate_.routeIndex = routeIndex_;
+        state_.foundPath = true;
+        state_.bestLiquidity = candidateLiquidity_;
+        state_.selection = candidate_;
+        return state_;
+    }
+
+    function _previewPoolBptAmountOutForVaultToken(
+        address poolExitPricer_,
+        IERC20 poolBptToken_,
+        IERC20 vaultToken_,
+        uint256 vaultTokenAmountOut_
+    ) internal view returns (bool hasPoolQuote_, uint256 poolBptAmountOut_) {
+        return _tryPreviewExchangeOut(poolExitPricer_, poolBptToken_, vaultToken_, vaultTokenAmountOut_);
+    }
+
+    function _previewVaultTokenAmountOutFromPoolBpt(
+        address poolExitPricer_,
+        IERC20 poolBptToken_,
+        IERC20 vaultToken_,
+        uint256 poolBptAmountOut_
+    ) internal view returns (bool hasVaultQuote_, uint256 vaultTokenAmountOut_) {
+        return _tryPreviewExchangeIn(poolExitPricer_, poolBptToken_, poolBptAmountOut_, vaultToken_);
+    }
+
+    function _previewUnderlyingTokenAmountOut(
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        IERC20 tokenOut_,
+        uint256 vaultTokenAmountOut_,
+        bool directVaultTokenExit_
+    ) internal view returns (bool hasUnderlyingQuote_, uint256 tokenOutAmountOut_) {
+        if (directVaultTokenExit_) {
+            return (true, vaultTokenAmountOut_);
+        }
+
+        return _tryPreviewExchangeIn(address(route_.underlyingVault), route_.vaultToken, vaultTokenAmountOut_, tokenOut_);
     }
 
     function _mintDetf(address recipient_, uint256 amount_) internal {

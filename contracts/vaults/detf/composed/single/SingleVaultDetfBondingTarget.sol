@@ -26,8 +26,6 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
-import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
@@ -307,7 +305,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         uint256 chirAmount = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.protocolNFTVault);
 
         bptReceived_ = _addLiquidityToReservePool(layoutStruct, chirAmount, 0);
-        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        IERC20 reservePoolToken = IERC20(layoutStruct.reservePool);
         DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
             reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, bptReceived_
         );
@@ -363,7 +361,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         BondAssets memory assets = _bondFromWeth(layoutStruct, amount, block.timestamp);
-        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        IERC20 reservePoolToken = IERC20(layoutStruct.reservePool);
         DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
             reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, assets.bptOut
         );
@@ -456,7 +454,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         if (execution.chirAmountOut > 0) {
             execution.localBptOut = _addLiquidityToReservePool(layoutStruct, execution.chirAmountOut, 0);
             if (execution.localBptOut > 0) {
-                IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+                IERC20 reservePoolToken = IERC20(layoutStruct.reservePool);
                 DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
                     reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, execution.localBptOut
                 );
