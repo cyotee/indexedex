@@ -156,29 +156,6 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         );
     }
 
-    function _executeSelectedUnwind(
-        UnwindPreviewSelection memory selection_,
-        IERC20 tokenOut_,
-        uint256 amountOut_,
-        address recipient_,
-        uint256 deadline_
-    ) internal {
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(
-            layoutStruct, selection_.routeIndex
-        );
-
-        _executeComposedPoolExitExactOutShared(
-            selection_.exitFromStablePool,
-            selection_.poolBptToken,
-            selection_.poolBptAmountOut,
-            route.vaultToken,
-            selection_.vaultTokenAmountOut,
-            deadline_
-        );
-        _executeUnderlyingExitExactOutShared(route, tokenOut_, amountOut_, recipient_, deadline_);
-    }
-
     function _executeExchangeOut(IStandardExchangeOut.OutArgs memory args_) internal returns (uint256 amountIn_) {
         _requireReservePoolInitialized();
 
@@ -198,8 +175,21 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             revert SlippageExceeded(args_.maxAmountIn, amountIn_);
         }
 
-        _executeSelectedUnwind(
-            selection,
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(
+            layoutStruct, selection.routeIndex
+        );
+
+        _executeComposedPoolExitExactOutShared(
+            selection.exitFromStablePool,
+            selection.poolBptToken,
+            selection.poolBptAmountOut,
+            route.vaultToken,
+            selection.vaultTokenAmountOut,
+            args_.deadline
+        );
+        _executeUnderlyingExitExactOutShared(
+            route,
             args_.tokenOut,
             args_.amountOut,
             args_.recipient == address(0) ? msg.sender : args_.recipient,

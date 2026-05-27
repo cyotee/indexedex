@@ -308,6 +308,61 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
         poolExitPricer_ = IStandardExchangeOut(address(_selectedPoolExitPricerIn(exitFromStablePool_)));
     }
 
+    function _depositIntoReservePoolShared(
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
+        RoutedPoolSelection memory selection_,
+        uint256 poolBptOut_,
+        uint256 deadline_
+    ) internal returns (uint256 reservePoolBptOut_) {
+        IERC20 reservePoolToken = IERC20(address(ComposedStableCommonDetfRepo._reservePool(layoutStruct_)));
+        uint256 balanceBefore = reservePoolToken.balanceOf(address(this));
+
+        selection_.poolBptToken.transfer(
+            address(ComposedStableCommonDetfRepo._reservePoolEntryRouter(layoutStruct_)), poolBptOut_
+        );
+        ComposedStableCommonDetfRepo._reservePoolEntryRouter(layoutStruct_).exchangeIn(
+            selection_.poolBptToken,
+            poolBptOut_,
+            reservePoolToken,
+            0,
+            address(this),
+            true,
+            deadline_
+        );
+
+        reservePoolBptOut_ = reservePoolToken.balanceOf(address(this)) - balanceBefore;
+    }
+
+    function _executeRoutedEntryToPoolBptShared(
+        ComposedStableCommonDetfRepo.RouteConfig storage route_,
+        RoutedPoolSelection memory selection_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        uint256 deadline_
+    ) internal returns (uint256 poolBptOut_) {
+        tokenIn_.transfer(address(route_.underlyingVault), amountIn_);
+        uint256 vaultTokenOut = route_.underlyingVault.exchangeIn(
+            tokenIn_,
+            amountIn_,
+            route_.vaultToken,
+            0,
+            address(this),
+            true,
+            deadline_
+        );
+
+        route_.vaultToken.transfer(address(selection_.poolRouter), vaultTokenOut);
+        poolBptOut_ = selection_.poolRouter.exchangeIn(
+            route_.vaultToken,
+            vaultTokenOut,
+            selection_.poolBptToken,
+            0,
+            address(this),
+            true,
+            deadline_
+        );
+    }
+
     function _executeComposedPoolExitExactInShared(
         bool exitFromStablePool_,
         IERC20 poolBptToken_,

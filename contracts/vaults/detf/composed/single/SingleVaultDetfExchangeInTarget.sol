@@ -151,16 +151,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
 
         uint256 actualIn = _secureTokenTransfer(layoutStruct.wethToken, wethAmount, pretransferred);
 
-        IERC20(address(layoutStruct.wethToken)).safeTransfer(address(layoutStruct.wethRichVault), actualIn);
-        uint256 vaultShares = layoutStruct.wethRichVault.exchangeIn(
-            layoutStruct.wethToken,
-            actualIn,
-            IERC20(address(layoutStruct.wethRichVault)),
-            0,
-            address(this),
-            true,
-            block.timestamp
-        );
+        uint256 vaultShares = _depositWethIntoVaultShares(layoutStruct, actualIn, block.timestamp);
 
         MintSplit memory mintSplit = _splitMintedChir(layoutStruct, _calcProportionalChirForVaultShares(layoutStruct, vaultShares));
         chirMinted_ = mintSplit.userChir;

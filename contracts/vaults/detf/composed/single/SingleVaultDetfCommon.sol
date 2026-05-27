@@ -585,8 +585,20 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         address recipient_,
         uint256 deadline_
     ) internal returns (uint256 richirOut_) {
+        uint256 vaultShares = _depositWethIntoVaultShares(layoutStruct_, wethAmount_, deadline_);
+        uint256 bptOut = _addLiquidityToReservePool(layoutStruct_, 0, vaultShares);
+        layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, bptOut);
+        richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut, recipient_);
+        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct_.reservePool).balanceOf(address(this)));
+    }
+
+    function _depositWethIntoVaultShares(
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
+        uint256 wethAmount_,
+        uint256 deadline_
+    ) internal returns (uint256 vaultSharesOut_) {
         IERC20(address(layoutStruct_.wethToken)).safeTransfer(address(layoutStruct_.wethRichVault), wethAmount_);
-        uint256 vaultShares = layoutStruct_.wethRichVault.exchangeIn(
+        vaultSharesOut_ = layoutStruct_.wethRichVault.exchangeIn(
             layoutStruct_.wethToken,
             wethAmount_,
             IERC20(address(layoutStruct_.wethRichVault)),
@@ -595,10 +607,6 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             true,
             deadline_
         );
-        uint256 bptOut = _addLiquidityToReservePool(layoutStruct_, 0, vaultShares);
-        layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, bptOut);
-        richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut, recipient_);
-        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct_.reservePool).balanceOf(address(this)));
     }
 
     function _previewChirRedemptionBptIn(uint256 chirAmountIn_) internal view returns (uint256 bptIn_) {
@@ -1081,16 +1089,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         internal
         returns (BondAssets memory assets_)
     {
-        IERC20(address(layoutStruct_.wethToken)).safeTransfer(address(layoutStruct_.wethRichVault), wethAmount_);
-        assets_.vaultShares = layoutStruct_.wethRichVault.exchangeIn(
-            layoutStruct_.wethToken,
-            wethAmount_,
-            IERC20(address(layoutStruct_.wethRichVault)),
-            0,
-            address(this),
-            true,
-            deadline_
-        );
+        assets_.vaultShares = _depositWethIntoVaultShares(layoutStruct_, wethAmount_, deadline_);
         assets_.wethAmount = wethAmount_;
         assets_ = _bondFromVaultShares(layoutStruct_, assets_.vaultShares);
         assets_.wethAmount = wethAmount_;
