@@ -54,54 +54,23 @@ import {
 contract BaseProtocolDETFBondingQueryTarget is BaseProtocolDETFCommon {
     using BaseProtocolDETFRepo for BaseProtocolDETFRepo.Storage;
 
-    struct BridgeReservePoolBptPreview {
-        uint256[] balancesRaw;
-        uint256 bptOut;
-        uint256 poolSupply;
-        uint256 chirIdx;
-        uint256 richIdx;
-    }
-
     /* ---------------------------------------------------------------------- */
     /*                              View Functions                            */
     /* ---------------------------------------------------------------------- */
 
     function syntheticPrice() external view returns (uint256) {
         BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
-
-        if (!_isInitialized()) {
-            return ONE_WAD;
-        }
-
-        PoolReserves memory reserves;
-        _loadPoolReserves(layoutStruct, reserves);
-        return _calcSyntheticPrice(reserves);
+        return _currentSyntheticPrice(layoutStruct);
     }
 
     function isMintingAllowed() external view returns (bool) {
         BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
-
-        if (!_isInitialized()) {
-            return false;
-        }
-
-        PoolReserves memory reserves;
-        _loadPoolReserves(layoutStruct, reserves);
-        uint256 price = _calcSyntheticPrice(reserves);
-        return _isMintingAllowed(layoutStruct, price);
+        return _currentMintingAllowed(layoutStruct);
     }
 
     function isBurningAllowed() external view returns (bool) {
         BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
-
-        if (!_isInitialized()) {
-            return false;
-        }
-
-        PoolReserves memory reserves;
-        _loadPoolReserves(layoutStruct, reserves);
-        uint256 price = _calcSyntheticPrice(reserves);
-        return _isBurningAllowed(layoutStruct, price);
+        return _currentBurningAllowed(layoutStruct);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -158,14 +127,7 @@ contract BaseProtocolDETFBondingQueryTarget is BaseProtocolDETFCommon {
 
     function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 wethOut) {
         BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
-
-        if (!_isInitialized()) {
-            revert ReservePoolNotInitialized();
-        }
-
-        uint256 expectedChirWethVaultOut = _previewChirWethVaultOutRaw(lpAmount);
-        address poolAddr = IERC4626(address(layoutStruct.chirWethVault)).asset();
-        uint256 lpOut = IERC4626(address(layoutStruct.chirWethVault)).previewRedeem(expectedChirWethVaultOut);
+        (address poolAddr, uint256 lpOut) = _previewClaimLiquidityLpOut(layoutStruct, lpAmount);
         wethOut = _previewWethOutFromAerodromeLp(poolAddr, lpOut, address(layoutStruct.wethToken));
     }
 
@@ -174,180 +136,7 @@ contract BaseProtocolDETFBondingQueryTarget is BaseProtocolDETFCommon {
         view
         returns (IProtocolDETF.BridgeQuote memory quote)
     {
-        BaseProtocolDETFRepo.Storage storage layoutStruct = BaseProtocolDETFRepo._layoutStruct();
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
-
-        if (
-            address(bridgeLayout.messenger) == address(0)
-                || address(bridgeLayout.standardBridge) == address(0)
-                || address(bridgeLayout.bridgeTokenRegistry) == address(0)
-        ) {
-            revert BridgeConfigNotSet();
-        }
-
-        ProtocolDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId];
-        if (peer.relayer == address(0)) {
-            peer.relayer = bridgeLayout.defaultPeerRelayer;
-        }
-        if (peer.relayer == address(0)) {
-            revert BridgePeerNotConfigured(targetChainId);
-        }
-
-        IERC20 remoteDetf = bridgeLayout.bridgeTokenRegistry.getRemoteToken(targetChainId, IERC20(address(this)));
-        if (address(remoteDetf) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(targetChainId, IERC20(address(this)));
-        }
-
-        (IERC20 remoteRichToken,) = bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId, layoutStruct.richToken);
-        if (address(remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(targetChainId, layoutStruct.richToken);
-        }
-
-        if (richirAmount == 0) {
-            return quote;
-        }
-
-        quote.richirAmountIn = richirAmount;
-        quote.sharesBurned = layoutStruct.richirToken.convertToShares(richirAmount);
-        if (quote.sharesBurned == 0) {
-            return quote;
-        }
-
-        uint256 totalRichirShares = layoutStruct.richirToken.totalShares();
-        uint256 protocolNftBpt = layoutStruct.protocolNFTVault.originalSharesOf(layoutStruct.protocolNFTId);
-        quote.reserveSharesBurned = (quote.sharesBurned * protocolNftBpt) / totalRichirShares;
-
-        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
-            _previewReservePoolExit(layoutStruct, quote.reserveSharesBurned);
-
-        quote.localRichirOut = _previewLocalRichirCompensation(layoutStruct, chirWethVaultSharesOut);
-        quote.richOut = layoutStruct.richChirVault.previewExchangeIn(
-            IERC20(address(layoutStruct.richChirVault)), richChirVaultSharesOut, layoutStruct.richToken
-        );
-    }
-
-    function _previewReservePoolExit(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_)
-        internal
-        view
-        returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
-    {
-        ReservePoolData memory resPoolData;
-        uint256[] memory currentBalancesRaw = _loadReservePoolData(resPoolData, new uint256[](0));
-        if (resPoolData.resPoolTotalSupply == 0) {
-            return (0, 0);
-        }
-
-        chirWethVaultSharesOut_ =
-            (currentBalancesRaw[layoutStruct_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
-        richChirVaultSharesOut_ =
-            (currentBalancesRaw[layoutStruct_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
-    }
-
-    function _previewLocalRichirCompensation(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 chirWethVaultShares_)
-        internal
-        view
-        returns (uint256 richirOut_)
-    {
-        if (chirWethVaultShares_ == 0) {
-            return 0;
-        }
-
-        BridgeReservePoolBptPreview memory p =
-            _previewBridgeReservePoolBptOut(layoutStruct_, layoutStruct_.chirWethVaultIndex, chirWethVaultShares_);
-
-        ReservePoolData memory resPoolData;
-        _loadReservePoolData(resPoolData, new uint256[](0));
-
-        BaseProtocolDETFPreviewHelpers.RichirCalc memory calc = BaseProtocolDETFPreviewHelpers.RichirCalc({
-            balV3Vault: address(resPoolData.balV3Vault),
-            reservePool: address(resPoolData.reservePool),
-            reservePoolSwapFee: resPoolData.reservePoolSwapFee,
-            weightsArray: resPoolData.weightsArray,
-            chirWethVault: address(layoutStruct_.chirWethVault),
-            richChirVault: address(layoutStruct_.richChirVault),
-            chirToken: address(this),
-            wethToken: address(layoutStruct_.wethToken),
-            poolBalsRaw: p.balancesRaw,
-            chirIdx: p.chirIdx,
-            richIdx: p.richIdx,
-            vaultIdx: layoutStruct_.chirWethVaultIndex,
-            sharesAdded: chirWethVaultShares_,
-            poolSupply: p.poolSupply,
-            bptAdded: p.bptOut,
-            newPosShares: layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut,
-            newTotShares: layoutStruct_.richirToken.totalShares() + p.bptOut
-        });
-
-        richirOut_ = BaseProtocolDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
-        richirOut_ =
-            DETFPreviewLib._applyDiscountBps(richirOut_, PREVIEW_RICHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR);
-    }
-
-    function _previewBridgeReservePoolBptOut(
-        BaseProtocolDETFRepo.Storage storage,
-        uint256 vaultIndex_,
-        uint256 vaultShares_
-    ) internal view returns (BridgeReservePoolBptPreview memory p_) {
-        ReservePoolData memory resPoolData;
-        IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
-        address pool = address(ERC4626Repo._reserveAsset());
-        (, TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw,) = balV3Vault.getPoolTokenInfo(pool);
-
-        _loadReservePoolData(resPoolData, currentBalancesRaw);
-
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
-
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[vaultIndex_]);
-        uint256 bptOut = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            vaultIndex_,
-            amountInLiveScaled18,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
-        );
-
-        bptOut = DETFPreviewLib._applyDiscountBps(bptOut, PREVIEW_BPT_BUFFER_BPS, PREVIEW_BPT_BUFFER_DENOMINATOR);
-
-        p_.balancesRaw = currentBalancesRaw;
-        p_.bptOut = bptOut;
-        p_.poolSupply = resPoolData.resPoolTotalSupply;
-        p_.chirIdx = resPoolData.chirWethVaultIndex;
-        p_.richIdx = resPoolData.richChirVaultIndex;
-    }
-
-    function _previewChirWethVaultOutRaw(uint256 lpAmount) internal view returns (uint256 chirWethVaultOutRaw) {
-        ReservePoolData memory resPoolData;
-        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
-
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
-
-        uint256 expectedChirWethVaultOutScaled18 = BalancerV38020WeightedPoolMath.calcSingleOutGivenBptIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            resPoolData.chirWethVaultIndex,
-            lpAmount,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
-        );
-
-        uint256 chirWethRate = FixedPoint.ONE;
-        if (address(tokenInfo[resPoolData.chirWethVaultIndex].rateProvider) != address(0)) {
-            chirWethRate = tokenInfo[resPoolData.chirWethVaultIndex].rateProvider.getRate();
-        }
-
-        chirWethVaultOutRaw = FixedPoint.divDown(expectedChirWethVaultOutScaled18, chirWethRate);
-        if (chirWethVaultOutRaw > 0) {
-            unchecked {
-                chirWethVaultOutRaw = chirWethVaultOutRaw - 1;
-            }
-        }
+        quote = _previewBridgeRichirQuote(BaseProtocolDETFRepo._layoutStruct(), targetChainId, richirAmount);
     }
 
     function _previewWethOutFromAerodromeLp(address poolAddr, uint256 lpOut, address wethToken_)

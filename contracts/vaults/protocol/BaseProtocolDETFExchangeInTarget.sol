@@ -325,11 +325,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Secure RICH transfer
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
-        // Swap RICH -> CHIR using the RICH/CHIR Standard Exchange vault (Aerodrome router).
-        p_.tokenIn.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
-
-        uint256 chirOut = layoutStruct_.richChirVault
-            .exchangeIn(p_.tokenIn, actualIn, IERC20(address(this)), 0, address(this), true, p_.deadline);
+        uint256 chirOut = _swapRichToChirViaRichChirVault(layoutStruct_, p_.tokenIn, actualIn, p_.deadline);
 
         // Swap CHIR -> WETH using the CHIR/WETH Standard Exchange vault (Aerodrome router).
         IERC20(address(this)).safeTransfer(address(layoutStruct_.chirWethVault), chirOut);
@@ -542,6 +538,17 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         richToken.forceApprove(address(layoutStruct_.richChirVault), richIn_);
         vaultSharesOut_ =
             layoutStruct_.richChirVault.exchangeIn(richToken, richIn_, vaultToken, 0, address(this), false, deadline_);
+    }
+
+    function _swapRichToChirViaRichChirVault(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        IERC20 richToken_,
+        uint256 richIn_,
+        uint256 deadline_
+    ) internal returns (uint256 chirOut_) {
+        richToken_.safeTransfer(address(layoutStruct_.richChirVault), richIn_);
+        chirOut_ = layoutStruct_.richChirVault
+            .exchangeIn(richToken_, richIn_, IERC20(address(this)), 0, address(this), true, deadline_);
     }
 
     /**
@@ -767,18 +774,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Add LP shares to 80/20 reserve pool (get BPT)
         uint256 bptOut = _addToReservePoolForRichir(layoutStruct_, richChirShares, p_.deadline);
 
-        // Add BPT directly to protocol-owned NFT (no user NFT created)
-        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
-            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
-        );
-
-        // Mint RICHIR to recipient (1:1 with BPT added to protocol NFT)
-        amountOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
-
-        if (amountOut_ < p_.minAmountOut) {
-            revert SlippageExceeded(p_.minAmountOut, amountOut_);
-        }
+        amountOut_ = _finalizeRichirMintFromReservePoolBpt(layoutStruct_, bptOut, p_.recipient, p_.minAmountOut);
     }
 
     /**
@@ -796,39 +792,37 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 deadline_
     ) internal returns (uint256 bptOut_) {
         deadline_; // Silence unused variable warning
-        ReservePoolData memory resPoolData;
-        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
+        bptOut_ = _addSingleVaultSharesToReservePool(
+            layoutStruct_, IERC20(address(layoutStruct_.richChirVault)), layoutStruct_.richChirVaultIndex, vaultShares_
+        );
+    }
 
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
+    function _addSingleVaultSharesToReservePool(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        IERC20 vaultToken_,
+        uint256 vaultIndex_,
+        uint256 vaultShares_
+    ) internal returns (uint256 bptOut_) {
+        vaultToken_;
+        bptOut_ = _addSingleSidedVaultSharesToReservePool(layoutStruct_, vaultIndex_, vaultShares_);
+    }
 
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layoutStruct_.richChirVaultIndex]);
-
-        // Create deposit amounts array (single-sided deposit)
-        uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[layoutStruct_.richChirVaultIndex] = vaultShares_;
-
-        // Calculate expected BPT
-        bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            layoutStruct_.richChirVaultIndex,
-            amountInLiveScaled18,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
+    function _finalizeRichirMintFromReservePoolBpt(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        uint256 bptOut_,
+        address recipient_,
+        uint256 minAmountOut_
+    ) internal returns (uint256 amountOut_) {
+        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
+        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut_
         );
 
-        // Transfer vault shares to Balancer vault
-        IERC20(address(layoutStruct_.richChirVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
+        amountOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut_, recipient_);
 
-        // Add liquidity
-        layoutStruct_.balancerV3PrepayRouter
-            .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
-
-        // Keep BasicVault reserve views in-sync with actual BPT balance
-        ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
+        if (amountOut_ < minAmountOut_) {
+            revert SlippageExceeded(minAmountOut_, amountOut_);
+        }
     }
 
     /* ---------------------------------------------------------------------- */
@@ -939,18 +933,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Add LP shares to 80/20 reserve pool (get BPT)
         uint256 bptOut = _addToReservePoolForWethToRichir(layoutStruct_, chirWethShares, p_.deadline);
 
-        // Add BPT directly to protocol-owned NFT (no user NFT created)
-        IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
-            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
-        );
-
-        // Mint RICHIR to recipient (1:1 with BPT added to protocol NFT)
-        amountOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut, p_.recipient);
-
-        if (amountOut_ < p_.minAmountOut) {
-            revert SlippageExceeded(p_.minAmountOut, amountOut_);
-        }
+        amountOut_ = _finalizeRichirMintFromReservePoolBpt(layoutStruct_, bptOut, p_.recipient, p_.minAmountOut);
     }
 
     /**
@@ -968,39 +951,9 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         uint256 deadline_
     ) internal returns (uint256 bptOut_) {
         deadline_; // Silence unused variable warning
-        ReservePoolData memory resPoolData;
-        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
-
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
-
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[layoutStruct_.chirWethVaultIndex]);
-
-        // Create deposit amounts array (single-sided deposit)
-        uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[layoutStruct_.chirWethVaultIndex] = vaultShares_;
-
-        // Calculate expected BPT
-        bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            layoutStruct_.chirWethVaultIndex,
-            amountInLiveScaled18,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
+        bptOut_ = _addSingleVaultSharesToReservePool(
+            layoutStruct_, IERC20(address(layoutStruct_.chirWethVault)), layoutStruct_.chirWethVaultIndex, vaultShares_
         );
-
-        // Transfer vault shares to Balancer vault
-        IERC20(address(layoutStruct_.chirWethVault)).safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
-
-        // Add liquidity
-        layoutStruct_.balancerV3PrepayRouter
-            .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
-
-        // Keep BasicVault reserve views in-sync with actual BPT balance
-        ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
     }
 
     /* ---------------------------------------------------------------------- */
@@ -1078,18 +1031,7 @@ contract BaseProtocolDETFExchangeInTarget is BaseProtocolDETFCommon, ReentrancyL
         // Secure RICH transfer
         uint256 actualIn = _secureTokenTransfer(p_.tokenIn, p_.amountIn, p_.pretransferred);
 
-        // Step 1: RICH → CHIR via richChirVault
-        p_.tokenIn.safeTransfer(address(layoutStruct_.richChirVault), actualIn);
-        uint256 chirOut = layoutStruct_.richChirVault
-            .exchangeIn(
-                p_.tokenIn,
-                actualIn,
-                IERC20(address(this)), // CHIR
-                0, // No min on intermediate step
-                address(this),
-                true, // pretransferred
-                p_.deadline
-            );
+        uint256 chirOut = _swapRichToChirViaRichChirVault(layoutStruct_, p_.tokenIn, actualIn, p_.deadline);
 
         // Step 2: CHIR → WETH via chirWethVault
         IERC20(address(this)).safeTransfer(address(layoutStruct_.chirWethVault), chirOut);

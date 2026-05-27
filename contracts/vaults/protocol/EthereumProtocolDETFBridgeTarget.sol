@@ -136,11 +136,7 @@ contract EthereumProtocolDETFBridgeTarget is EthereumProtocolDETFCommon, Reentra
             execution.localBptOut =
                 _addToReservePool(layoutStruct, layoutStruct.chirWethVaultIndex, execution.chirWethVaultSharesOut);
             if (execution.localBptOut > 0) {
-                IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
-                DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
-                    reservePoolToken, layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, execution.localBptOut
-                );
-                localRichirOut = layoutStruct.richirToken.mintFromNFTSale(execution.localBptOut, msg.sender);
+                localRichirOut = _mintRichirAgainstProtocolNft(layoutStruct, execution.localBptOut, msg.sender);
             }
         }
 
@@ -253,12 +249,20 @@ contract EthereumProtocolDETFBridgeTarget is EthereumProtocolDETFCommon, Reentra
         );
 
         uint256 bptOut = _addToReservePool(layoutStruct_, layoutStruct_.richChirVaultIndex, richChirShares);
+        richirOut_ = _mintRichirAgainstProtocolNft(layoutStruct_, bptOut, recipient_);
+    }
+
+    function _mintRichirAgainstProtocolNft(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        uint256 bptOut_,
+        address recipient_
+    ) internal returns (uint256 richirOut_) {
         IERC20 reservePoolToken = IERC20(address(ERC4626Repo._reserveAsset()));
         DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
-            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut
+            reservePoolToken, layoutStruct_.protocolNFTVault, layoutStruct_.protocolNFTId, bptOut_
         );
 
-        richirOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut, recipient_);
+        richirOut_ = layoutStruct_.richirToken.mintFromNFTSale(bptOut_, recipient_);
     }
 
     function _calcRichirBridgeBptIn(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 richirAmount_)
@@ -300,37 +304,6 @@ contract EthereumProtocolDETFBridgeTarget is EthereumProtocolDETFCommon, Reentra
         internal
         returns (uint256 bptOut)
     {
-        ReservePoolData memory resPoolData;
-        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
-
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares, tokenInfo[tokenIndexIn_]);
-        uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[tokenIndexIn_] = vaultShares;
-
-        bptOut = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            tokenIndexIn_,
-            amountInLiveScaled18,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
-        );
-
-        IERC20 reserveVaultToken;
-        if (tokenIndexIn_ == layoutStruct_.chirWethVaultIndex) {
-            reserveVaultToken = IERC20(address(layoutStruct_.chirWethVault));
-        } else if (tokenIndexIn_ == layoutStruct_.richChirVaultIndex) {
-            reserveVaultToken = IERC20(address(layoutStruct_.richChirVault));
-        } else {
-            revert BaseProtocolDETFRepo.TokenNotSupported();
-        }
-
-        reserveVaultToken.safeTransfer(address(resPoolData.balV3Vault), vaultShares);
-        layoutStruct_.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut, "");
-        ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
+        bptOut = _addSingleSidedVaultSharesToReservePool(layoutStruct_, tokenIndexIn_, vaultShares);
     }
 }

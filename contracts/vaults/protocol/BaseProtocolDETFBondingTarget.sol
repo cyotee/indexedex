@@ -614,47 +614,6 @@ contract BaseProtocolDETFBondingTarget is BaseProtocolDETFCommon, ReentrancyLock
         uint256 deadline_
     ) internal returns (uint256 bptOut) {
         deadline_;
-        ReservePoolData memory resPoolData;
-        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
-
-        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-        }
-
-        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares, tokenInfo[tokenIndexIn_]);
-
-        // Create deposit amounts array (single-sided deposit)
-        uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[tokenIndexIn_] = vaultShares;
-
-        // Calculate expected BPT
-        bptOut = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-            balancesLiveScaled18,
-            resPoolData.weightsArray,
-            tokenIndexIn_,
-            amountInLiveScaled18,
-            resPoolData.resPoolTotalSupply,
-            resPoolData.reservePoolSwapFee
-        );
-
-        // Transfer vault shares to Balancer vault
-        IERC20 reserveVaultToken;
-        if (tokenIndexIn_ == layoutStruct_.chirWethVaultIndex) {
-            reserveVaultToken = IERC20(address(layoutStruct_.chirWethVault));
-        } else if (tokenIndexIn_ == layoutStruct_.richChirVaultIndex) {
-            reserveVaultToken = IERC20(address(layoutStruct_.richChirVault));
-        } else {
-            revert BaseProtocolDETFRepo.TokenNotSupported();
-        }
-
-        reserveVaultToken.safeTransfer(address(resPoolData.balV3Vault), vaultShares);
-
-        // Add liquidity
-        layoutStruct_.balancerV3PrepayRouter
-            .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut, "");
-
-        // Keep BasicVault reserve views in-sync with actual BPT balance.
-        ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
+        bptOut = _addSingleSidedVaultSharesToReservePool(layoutStruct_, tokenIndexIn_, vaultShares);
     }
 }

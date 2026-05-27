@@ -40,15 +40,20 @@ import {IPoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrom
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
+import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 import {
     BalancerV38020WeightedPoolMath
 } from "contracts/protocols/dexes/balancer/v3/utils/BalancerV38020WeightedPoolMath.sol";
 import {BaseProtocolDETFPreviewHelpers} from "contracts/vaults/protocol/BaseProtocolDETFPreviewHelpers.sol";
 import {
     PREVIEW_BUFFER_DENOMINATOR,
-    PREVIEW_RICHIR_BUFFER_BPS
+    PREVIEW_RICHIR_BUFFER_BPS,
+    PREVIEW_BPT_BUFFER_DENOMINATOR,
+    PREVIEW_BPT_BUFFER_BPS
 } from "contracts/constants/Indexedex_CONSTANTS.sol";
 import {AerodromeDualEmbeddedDETFCommon} from 'contracts/protocols/dexes/aerodrome/v1/vaults/exchange/standard/detf/dual/embedded/AerodromeDualEmbeddedDETFCommon.sol';
 
@@ -150,6 +155,14 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
         uint256 reserve1;
         uint256 totalSupply;
         bool stable;
+    }
+
+    struct BridgeReservePoolBptPreview {
+        uint256[] balancesRaw;
+        uint256 bptOut;
+        uint256 poolSupply;
+        uint256 chirIdx;
+        uint256 richIdx;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -316,6 +329,284 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
             // Direct mulDivDown: (balances[i] * bptIn) / totalSupply floored – matches Balancer's raw calc
             amountsOut[i] = BetterMath._mulDivDown(balances[i], bptIn, totalSupply);
         }
+    }
+
+    function _addSingleSidedVaultSharesToReservePool(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        uint256 tokenIndexIn_,
+        uint256 vaultShares_
+    ) internal returns (uint256 bptOut_) {
+        ReservePoolData memory resPoolData;
+        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
+
+        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
+        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
+            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
+        }
+
+        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[tokenIndexIn_]);
+        uint256[] memory amountsIn = new uint256[](2);
+        amountsIn[tokenIndexIn_] = vaultShares_;
+
+        bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
+            balancesLiveScaled18,
+            resPoolData.weightsArray,
+            tokenIndexIn_,
+            amountInLiveScaled18,
+            resPoolData.resPoolTotalSupply,
+            resPoolData.reservePoolSwapFee
+        );
+
+        IERC20 reserveVaultToken;
+        if (tokenIndexIn_ == layoutStruct_.chirWethVaultIndex) {
+            reserveVaultToken = IERC20(address(layoutStruct_.chirWethVault));
+        } else if (tokenIndexIn_ == layoutStruct_.richChirVaultIndex) {
+            reserveVaultToken = IERC20(address(layoutStruct_.richChirVault));
+        } else {
+            revert BaseProtocolDETFRepo.TokenNotSupported();
+        }
+
+        reserveVaultToken.safeTransfer(address(resPoolData.balV3Vault), vaultShares_);
+        layoutStruct_.balancerV3PrepayRouter
+            .prepayAddLiquidityUnbalanced(address(resPoolData.reservePool), amountsIn, bptOut_, "");
+
+        ERC4626Repo._setLastTotalAssets(IERC20(address(ERC4626Repo._reserveAsset())).balanceOf(address(this)));
+    }
+
+    function _previewBridgeRichirQuote(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 targetChainId_, uint256 richirAmount_)
+        internal
+        view
+        returns (IProtocolDETF.BridgeQuote memory quote_)
+    {
+        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
+
+        if (
+            address(bridgeLayout.messenger) == address(0)
+                || address(bridgeLayout.standardBridge) == address(0)
+                || address(bridgeLayout.bridgeTokenRegistry) == address(0)
+        ) {
+            revert BridgeConfigNotSet();
+        }
+
+        ProtocolDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId_];
+        if (peer.relayer == address(0)) {
+            peer.relayer = bridgeLayout.defaultPeerRelayer;
+        }
+        if (peer.relayer == address(0)) {
+            revert BridgePeerNotConfigured(targetChainId_);
+        }
+
+        IERC20 remoteDetf = bridgeLayout.bridgeTokenRegistry.getRemoteToken(targetChainId_, IERC20(address(this)));
+        if (address(remoteDetf) == address(0)) {
+            revert BridgeRemoteTokenNotConfigured(targetChainId_, IERC20(address(this)));
+        }
+
+        (IERC20 remoteRichToken,) =
+            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(targetChainId_, layoutStruct_.richToken);
+        if (address(remoteRichToken) == address(0)) {
+            revert BridgeRemoteTokenNotConfigured(targetChainId_, layoutStruct_.richToken);
+        }
+
+        if (richirAmount_ == 0) {
+            return quote_;
+        }
+
+        quote_.richirAmountIn = richirAmount_;
+        quote_.sharesBurned = layoutStruct_.richirToken.convertToShares(richirAmount_);
+        if (quote_.sharesBurned == 0) {
+            return quote_;
+        }
+
+        uint256 totalRichirShares = layoutStruct_.richirToken.totalShares();
+        uint256 protocolNftBpt = layoutStruct_.protocolNFTVault.originalSharesOf(layoutStruct_.protocolNFTId);
+        quote_.reserveSharesBurned = (quote_.sharesBurned * protocolNftBpt) / totalRichirShares;
+
+        (uint256 chirWethVaultSharesOut, uint256 richChirVaultSharesOut) =
+            _previewReservePoolExitForBridge(layoutStruct_, quote_.reserveSharesBurned);
+
+        quote_.localRichirOut = _previewLocalRichirCompensation(layoutStruct_, chirWethVaultSharesOut);
+        quote_.richOut = layoutStruct_.richChirVault.previewExchangeIn(
+            IERC20(address(layoutStruct_.richChirVault)), richChirVaultSharesOut, layoutStruct_.richToken
+        );
+    }
+
+
+    function _previewClaimLiquidityLpOut(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 lpAmount_)
+        internal
+        view
+        returns (address poolAddr_, uint256 lpOut_)
+    {
+        if (!_isInitialized()) {
+            revert IProtocolDETFErrors.ReservePoolNotInitialized();
+        }
+
+        uint256 expectedChirWethVaultOut = _previewChirWethVaultOutRaw(lpAmount_);
+        poolAddr_ = IERC4626(address(layoutStruct_.chirWethVault)).asset();
+        lpOut_ = IERC4626(address(layoutStruct_.chirWethVault)).previewRedeem(expectedChirWethVaultOut);
+    }
+
+    function _previewChirWethVaultOutRaw(uint256 lpAmount_) internal view returns (uint256 chirWethVaultOutRaw_) {
+        ReservePoolData memory resPoolData;
+        (TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw) = _loadReservePoolDataWithTokenInfo(resPoolData);
+
+        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
+        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
+            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
+        }
+
+        uint256 expectedChirWethVaultOutScaled18 = BalancerV38020WeightedPoolMath.calcSingleOutGivenBptIn(
+            balancesLiveScaled18,
+            resPoolData.weightsArray,
+            resPoolData.chirWethVaultIndex,
+            lpAmount_,
+            resPoolData.resPoolTotalSupply,
+            resPoolData.reservePoolSwapFee
+        );
+
+        uint256 chirWethRate = FixedPoint.ONE;
+        if (address(tokenInfo[resPoolData.chirWethVaultIndex].rateProvider) != address(0)) {
+            chirWethRate = tokenInfo[resPoolData.chirWethVaultIndex].rateProvider.getRate();
+        }
+
+        chirWethVaultOutRaw_ = FixedPoint.divDown(expectedChirWethVaultOutScaled18, chirWethRate);
+        if (chirWethVaultOutRaw_ > 0) {
+            unchecked {
+                chirWethVaultOutRaw_ = chirWethVaultOutRaw_ - 1;
+            }
+        }
+    }
+
+    function _currentSyntheticPrice(BaseProtocolDETFRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 syntheticPrice_)
+    {
+        if (!_isInitialized()) {
+            return ONE_WAD;
+        }
+
+        PoolReserves memory reserves;
+        _loadPoolReserves(layoutStruct_, reserves);
+        return _calcSyntheticPrice(reserves);
+    }
+
+    function _currentMintingAllowed(BaseProtocolDETFRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (bool allowed_)
+    {
+        if (!_isInitialized()) {
+            return false;
+        }
+
+        uint256 price = _currentSyntheticPrice(layoutStruct_);
+        return _isMintingAllowed(layoutStruct_, price);
+    }
+
+    function _currentBurningAllowed(BaseProtocolDETFRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (bool allowed_)
+    {
+        if (!_isInitialized()) {
+            return false;
+        }
+
+        uint256 price = _currentSyntheticPrice(layoutStruct_);
+        return _isBurningAllowed(layoutStruct_, price);
+    }
+
+    function _previewReservePoolExitForBridge(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 bptIn_)
+        internal
+        view
+        returns (uint256 chirWethVaultSharesOut_, uint256 richChirVaultSharesOut_)
+    {
+        ReservePoolData memory resPoolData;
+        uint256[] memory currentBalancesRaw = _loadReservePoolData(resPoolData, new uint256[](0));
+        if (resPoolData.resPoolTotalSupply == 0) {
+            return (0, 0);
+        }
+
+        chirWethVaultSharesOut_ =
+            (currentBalancesRaw[layoutStruct_.chirWethVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+        richChirVaultSharesOut_ =
+            (currentBalancesRaw[layoutStruct_.richChirVaultIndex] * bptIn_) / resPoolData.resPoolTotalSupply;
+    }
+
+    function _previewLocalRichirCompensation(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 chirWethVaultShares_)
+        internal
+        view
+        returns (uint256 richirOut_)
+    {
+        if (chirWethVaultShares_ == 0) {
+            return 0;
+        }
+
+        BridgeReservePoolBptPreview memory p_ =
+            _previewBridgeReservePoolBptOut(layoutStruct_, layoutStruct_.chirWethVaultIndex, chirWethVaultShares_);
+
+        ReservePoolData memory resPoolData;
+        _loadReservePoolData(resPoolData, new uint256[](0));
+
+        BaseProtocolDETFPreviewHelpers.RichirCalc memory calc = BaseProtocolDETFPreviewHelpers.RichirCalc({
+            balV3Vault: address(resPoolData.balV3Vault),
+            reservePool: address(resPoolData.reservePool),
+            reservePoolSwapFee: resPoolData.reservePoolSwapFee,
+            weightsArray: resPoolData.weightsArray,
+            chirWethVault: address(layoutStruct_.chirWethVault),
+            richChirVault: address(layoutStruct_.richChirVault),
+            chirToken: address(this),
+            wethToken: address(layoutStruct_.wethToken),
+            poolBalsRaw: p_.balancesRaw,
+            chirIdx: p_.chirIdx,
+            richIdx: p_.richIdx,
+            vaultIdx: layoutStruct_.chirWethVaultIndex,
+            sharesAdded: chirWethVaultShares_,
+            poolSupply: p_.poolSupply,
+            bptAdded: p_.bptOut,
+            newPosShares: layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p_.bptOut,
+            newTotShares: layoutStruct_.richirToken.totalShares() + p_.bptOut
+        });
+
+        richirOut_ = BaseProtocolDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
+        richirOut_ =
+            DETFPreviewLib._applyDiscountBps(richirOut_, PREVIEW_RICHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR);
+    }
+
+    function _previewBridgeReservePoolBptOut(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        uint256 vaultIndex_,
+        uint256 vaultShares_
+    ) internal view returns (BridgeReservePoolBptPreview memory p_) {
+        ReservePoolData memory resPoolData;
+        IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
+        address pool = address(ERC4626Repo._reserveAsset());
+        (, TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw,) = balV3Vault.getPoolTokenInfo(pool);
+
+        _loadReservePoolData(resPoolData, currentBalancesRaw);
+
+        uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
+        for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
+            balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
+        }
+
+        uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[vaultIndex_]);
+        uint256 bptOut = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
+            balancesLiveScaled18,
+            resPoolData.weightsArray,
+            vaultIndex_,
+            amountInLiveScaled18,
+            resPoolData.resPoolTotalSupply,
+            resPoolData.reservePoolSwapFee
+        );
+
+        bptOut = DETFPreviewLib._applyDiscountBps(bptOut, PREVIEW_BPT_BUFFER_BPS, PREVIEW_BPT_BUFFER_DENOMINATOR);
+
+        p_.balancesRaw = currentBalancesRaw;
+        p_.bptOut = bptOut;
+        p_.poolSupply = resPoolData.resPoolTotalSupply;
+        p_.chirIdx = resPoolData.chirWethVaultIndex;
+        p_.richIdx = resPoolData.richChirVaultIndex;
     }
 
     /**
