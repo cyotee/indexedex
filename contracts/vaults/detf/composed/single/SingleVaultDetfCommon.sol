@@ -322,6 +322,13 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         split_.userChir = remainingAfterFee - split_.bondRewardChir;
     }
 
+    function _splitMintedChirForVaultShares(
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
+        uint256 vaultShares_
+    ) internal view returns (MintSplit memory split_) {
+        split_ = _splitMintedChir(layoutStruct_, _calcProportionalChirForVaultShares(layoutStruct_, vaultShares_));
+    }
+
     function _tokenRate(TokenInfo memory tokenInfo_) internal view returns (uint256 rate_) {
         rate_ = FixedPoint.ONE;
         if (address(tokenInfo_.rateProvider) != address(0)) {
@@ -585,11 +592,52 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         address recipient_,
         uint256 deadline_
     ) internal returns (uint256 richirOut_) {
-        uint256 vaultShares = _depositWethIntoVaultShares(layoutStruct_, wethAmount_, deadline_);
-        uint256 bptOut = _addLiquidityToReservePool(layoutStruct_, 0, vaultShares);
-        layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, bptOut);
-        richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut, recipient_);
+        (, uint256 bptOut) = _depositWethIntoReservePool(layoutStruct_, wethAmount_, deadline_);
+        richirOut_ = _mintRichirFromReservePoolBpt(layoutStruct_, bptOut, recipient_);
+        _syncLastTotalAssetsFromReservePool(layoutStruct_);
+    }
+
+    function _mintRichirFromReservePoolBpt(
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
+        uint256 bptOut_,
+        address recipient_
+    ) internal returns (uint256 richirOut_) {
+        if (bptOut_ == 0) {
+            return 0;
+        }
+
+        layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, bptOut_);
+        richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut_, recipient_);
+    }
+
+    function _syncLastTotalAssetsFromReservePool(SingleVaultDetfRepo.Storage storage layoutStruct_) internal {
         ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct_.reservePool).balanceOf(address(this)));
+    }
+
+    function _depositWethIntoReservePool(
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
+        uint256 wethAmount_,
+        uint256 deadline_
+    ) internal returns (uint256 vaultSharesOut_, uint256 bptOut_) {
+        vaultSharesOut_ = _depositWethIntoVaultShares(layoutStruct_, wethAmount_, deadline_);
+        bptOut_ = _addLiquidityToReservePool(layoutStruct_, 0, vaultSharesOut_);
+    }
+
+    function _convertRichToWeth(
+        SingleVaultDetfRepo.Storage storage layoutStruct_,
+        uint256 richAmount_,
+        uint256 deadline_
+    ) internal returns (uint256 wethAmountOut_) {
+        layoutStruct_.richToken.safeTransfer(address(layoutStruct_.wethRichVault), richAmount_);
+        wethAmountOut_ = layoutStruct_.wethRichVault.exchangeIn(
+            layoutStruct_.richToken,
+            richAmount_,
+            layoutStruct_.wethToken,
+            0,
+            address(this),
+            true,
+            deadline_
+        );
     }
 
     function _depositWethIntoVaultShares(

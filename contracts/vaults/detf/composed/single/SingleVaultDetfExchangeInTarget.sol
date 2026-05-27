@@ -67,16 +67,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
 
         if (_isRichToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), actualIn);
-            uint256 wethAmount = layoutStruct.wethRichVault.exchangeIn(
-                tokenIn,
-                actualIn,
-                layoutStruct.wethToken,
-                0,
-                address(this),
-                true,
-                deadline
-            );
+            uint256 wethAmount = _convertRichToWeth(layoutStruct, actualIn, deadline);
             amountOut_ = _mintRichirFromWeth(layoutStruct, wethAmount, recipient, deadline);
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
@@ -101,7 +92,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
+            _syncLastTotalAssetsFromReservePool(layoutStruct);
             return amountOut_;
         }
 
@@ -119,7 +110,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
+            _syncLastTotalAssetsFromReservePool(layoutStruct);
             return amountOut_;
         }
 
@@ -151,11 +142,10 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
 
         uint256 actualIn = _secureTokenTransfer(layoutStruct.wethToken, wethAmount, pretransferred);
 
-        uint256 vaultShares = _depositWethIntoVaultShares(layoutStruct, actualIn, block.timestamp);
+        (uint256 vaultShares,) = _depositWethIntoReservePool(layoutStruct, actualIn, block.timestamp);
 
-        MintSplit memory mintSplit = _splitMintedChir(layoutStruct, _calcProportionalChirForVaultShares(layoutStruct, vaultShares));
+        MintSplit memory mintSplit = _splitMintedChirForVaultShares(layoutStruct, vaultShares);
         chirMinted_ = mintSplit.userChir;
-        _addLiquidityToReservePool(layoutStruct, 0, vaultShares);
         if (mintSplit.feeToChir > 0) {
             ERC20Repo._mint(address(layoutStruct._feeOracle().feeTo()), mintSplit.feeToChir);
         }
@@ -163,6 +153,6 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             ERC20Repo._mint(address(layoutStruct.protocolNFTVault), mintSplit.bondRewardChir);
         }
         ERC20Repo._mint(recipient, chirMinted_);
-        ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
+        _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 }

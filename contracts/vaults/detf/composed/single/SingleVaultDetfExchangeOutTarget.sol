@@ -77,7 +77,7 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
                 layoutStruct.wethToken.safeTransfer(msg.sender, wethOut - amountOut);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
+            _syncLastTotalAssetsFromReservePool(layoutStruct);
             return amountIn_;
         }
 
@@ -105,7 +105,7 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
                 layoutStruct.wethToken.safeTransfer(msg.sender, wethOut - amountOut);
             }
 
-            ERC4626Repo._setLastTotalAssets(IERC20(layoutStruct.reservePool).balanceOf(address(this)));
+            _syncLastTotalAssetsFromReservePool(layoutStruct);
             return actualIn;
         }
 

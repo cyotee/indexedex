@@ -138,7 +138,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
 
         uint256 vaultSharesOut =
             layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.wethToken, wethAmount_, IERC20(address(layoutStruct.wethRichVault)));
-        chirMinted_ = _splitMintedChir(layoutStruct, _calcProportionalChirForVaultShares(layoutStruct, vaultSharesOut)).userChir;
+        chirMinted_ = _splitMintedChirForVaultShares(layoutStruct, vaultSharesOut).userChir;
     }
 
     function previewClaimLiquidity(uint256 lpAmount_) external view returns (uint256 wethOut_) {

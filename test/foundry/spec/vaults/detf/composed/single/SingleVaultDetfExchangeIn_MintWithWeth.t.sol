@@ -100,6 +100,83 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         assertGt(IERC20(address(detf)).balanceOf(address(detf.protocolNFTVault())), bondVaultBefore, "bond vault received chir");
     }
 
+    function test_donate_weth_addsReserveSharesToProtocolNft() public {
+        uint256 amountIn = 1e16;
+        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
+        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+        uint256 richirBefore = detf.richirToken().balanceOf(detfAlice);
+
+        vm.startPrank(detfAlice);
+        wethToken.approve(address(detf), amountIn);
+        ISingleVaultDetfBonding(address(detf)).donate(wethToken, amountIn, false);
+        vm.stopPrank();
+
+        assertGt(
+            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            protocolSharesBefore,
+            "protocol nft funded by weth donation"
+        );
+        assertEq(detf.richirToken().balanceOf(detfAlice), richirBefore, "donation does not mint richir");
+    }
+
+    function test_donate_chir_burnsSupply_withoutAddingProtocolShares() public {
+        uint256 chirAmount = _mintChirFor(detfAlice, 1e16);
+        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
+        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+        uint256 totalSupplyBefore = IERC20(address(detf)).totalSupply();
+
+        vm.startPrank(detfAlice);
+        IERC20(address(detf)).approve(address(detf), chirAmount);
+        ISingleVaultDetfBonding(address(detf)).donate(IERC20(address(detf)), chirAmount, false);
+        vm.stopPrank();
+
+        assertEq(IERC20(address(detf)).balanceOf(detfAlice), 0, "alice chir donated");
+        assertEq(IERC20(address(detf)).totalSupply(), totalSupplyBefore - chirAmount, "chir supply burned");
+        assertEq(
+            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            protocolSharesBefore,
+            "chir donation does not add protocol reserve shares"
+        );
+    }
+
+    function test_captureSeigniorage_convertsProtocolRewardsIntoReserveShares() public {
+        _driveToMintEnabled(detf);
+
+        (IPositionManager positionManager, uint256 positionTokenId) = _createPosition(detfAlice, TEST_POSITION_LIQUIDITY);
+        vm.prank(detfAlice);
+        IERC721(address(positionManager)).approve(address(detf), positionTokenId);
+
+        vm.prank(detfAlice);
+        (uint256 tokenId,) = ISingleVaultDetfBonding(address(detf)).bondWithPosition(
+            positionManager,
+            positionTokenId,
+            MIN_LOCK_DURATION,
+            detfAlice,
+            block.timestamp + 1 hours
+        );
+
+        vm.prank(detfAlice);
+        ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
+
+        _mintChirFor(detfBob, 1e16);
+
+        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
+        uint256 protocolPendingBefore = detf.protocolNFTVault().pendingRewards(protocolNftId);
+        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+
+        assertGt(protocolPendingBefore, 0, "protocol nft should accrue pending chir rewards");
+
+        uint256 bptReceived = ISingleVaultDetfBonding(address(detf)).captureSeigniorage();
+
+        assertGt(bptReceived, 0, "seigniorage captured");
+        assertEq(
+            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            protocolSharesBefore + bptReceived,
+            "protocol nft receives captured reserve shares"
+        );
+        assertEq(detf.protocolNFTVault().pendingRewards(protocolNftId), 0, "capture consumes pending protocol rewards");
+    }
+
     function test_previewExchangeIn_chirToWeth_reverts_whenBurningNotAllowed() public {
         uint256 chirAmount = _mintChirFor(detfAlice, 1e16);
 

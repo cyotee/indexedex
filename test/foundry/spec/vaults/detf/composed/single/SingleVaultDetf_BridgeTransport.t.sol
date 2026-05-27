@@ -531,7 +531,6 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
         }
 
         IProtocolDETF.BridgeQuote memory quote = detf.previewBridgeRichir(TARGET_CHAIN_ID, bridgeAmount);
-
         vm.recordLogs();
         vm.startPrank(detfAlice);
         IERC20(address(detf.richirToken())).approve(address(detf), bridgeAmount);
@@ -553,6 +552,7 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
         assertGt(quote.sharesBurned, 0, "quote shares burned");
         assertGt(quote.reserveSharesBurned, 0, "quote reserve burned");
         assertGt(localRichirOut, 0, "local richir out");
+        assertGt(quote.localRichirOut, 0, "quoted local richir out");
         assertApproxEqAbs(richOut, quote.richOut, 1e14, "rich out matches quote");
 
         (ERC20BridgeInitiatedLog memory bridgeCall, bool foundBridgeCall) =
