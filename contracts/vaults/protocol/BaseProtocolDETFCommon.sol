@@ -41,6 +41,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {DETFBalancerScaleLib} from "contracts/vaults/detf/core/DETFBalancerScaleLib.sol";
 import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseProtocolDETFRepo} from "contracts/vaults/protocol/BaseProtocolDETFRepo.sol";
@@ -77,16 +78,7 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
     /* ---------------------------------------------------------------------- */
 
     function _toLiveScaled18(uint256 rawAmount_, TokenInfo memory info_) internal view returns (uint256 scaled18_) {
-        // NOTE: This helper is intentionally minimal: vault share tokens in this protocol are assumed 18 decimals.
-        // If a rateProvider exists, apply it to convert raw -> liveScaled18.
-        // If not, 1:1.
-        uint256 rate = FixedPoint.ONE;
-        if (address(info_.rateProvider) != address(0)) {
-            rate = info_.rateProvider.getRate();
-        }
-
-        // vault tokens use 18 decimals so no decimal scaling factor is applied here.
-        scaled18_ = rawAmount_.mulDown(rate);
+        scaled18_ = DETFBalancerScaleLib._toLiveScaled18(rawAmount_, info_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -574,6 +566,14 @@ abstract contract BaseProtocolDETFCommon is AerodromeDualEmbeddedDETFCommon {
     }
 
     function _previewBridgeReservePoolBptOut(
+        BaseProtocolDETFRepo.Storage storage layoutStruct_,
+        uint256 vaultIndex_,
+        uint256 vaultShares_
+    ) internal view returns (BridgeReservePoolBptPreview memory p_) {
+        return _previewReservePoolSingleInBptOut(layoutStruct_, vaultIndex_, vaultShares_);
+    }
+
+    function _previewReservePoolSingleInBptOut(
         BaseProtocolDETFRepo.Storage storage layoutStruct_,
         uint256 vaultIndex_,
         uint256 vaultShares_

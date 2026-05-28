@@ -825,6 +825,67 @@ Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard E
    - state-mutating mint, bond, and redeem tests third
    - invariant or fuzz coverage after the core deterministic behavior is stable
 
+## Cross-DETF Refactor Findings
+
+### Summary
+- A cross-DETF comparison was performed against the current Stable DETF, Single Vault DETF, and Protocol DETF implementations.
+- The result is that the composed-stable family does share meaningful architectural patterns with the other DETF families, but most remaining overlap is at the workflow and math-helper level rather than at the concrete contract level.
+- This confirms the existing PRD direction: the composed-stable family should remain a fresh implementation and should not be collapsed into another DETF family's concrete codepath.
+
+### Safe Reuse Boundaries
+- The composed-stable family may safely reuse generic Crane and IndexedEx primitives that are not DETF-family-specific, including:
+   - generic Balancer quote helpers and fixed-point math
+   - generic threshold-policy helpers
+   - generic fee-splitting and accounting libraries where the economic semantics are identical
+   - generic deployment, factory, package, and ERC standard infrastructure
+- The composed-stable family may also adopt the same workflow shape used in other DETFs where the behavior matches, for example:
+   - route user input into reserve-building inventory
+   - apply reserve-pool quote math and threshold gating
+   - split user versus protocol output after gross quote sizing
+   - keep preview and execution paths paired and behaviorally aligned
+
+### Unsafe Reuse Boundaries
+- The composed-stable family should not reuse another DETF family's concrete implementation contracts for any of the following surfaces, even if the file structure or function naming looks similar:
+   - synthetic price calculation
+   - reserve-pool composition and decomposition
+   - top-level mint orchestration
+   - top-level unwind orchestration
+   - bond NFT vault business logic
+   - rebasing-token pricing and redemption orchestration
+   - bridge-aware or protocol-NFT-specific reserve compensation logic from Protocol DETF
+- These surfaces are only superficially similar across DETF families. Their accounting invariants differ materially because the composed-stable reserve graph contains DETF token plus Stable Pool BPT plus Common Pool BPT, while the Single Vault and Protocol DETFs use different reserve assets and different unwind graphs.
+
+### Concrete Comparison Outcome
+- Stable DETF and composed-stable DETF share the strongest conceptual overlap in route selection and pool-leg selection, but composed-stable still needs its own reserve-owned unwind and pricing graph because it owns two composed pool legs plus the top-level reserve pool.
+- Single Vault DETF and composed-stable DETF share the clearest economic overlap in threshold-gated minting, post-quote user/protocol split semantics, and reserve-principal updates, but they do not share the same reserve inventory or redemption graph.
+- Protocol DETF and composed-stable DETF share the most obvious query-surface pattern for preview/execution parity, protocol-owned reserve accounting, and threshold-gated views, but Protocol DETF includes bridge and RICHIR-specific logic that should not be generalized into this family.
+
+### Implementation Guidance From This Comparison
+- If additional consolidation is pursued during implementation, it should target only low-level, policy-free helpers.
+- The best candidates for future shared extraction are:
+   - Balancer live-balance normalization and rate-application helpers
+   - low-level reserve-pool quote wrappers
+   - preview/execution consistency helpers that do not encode family-specific token semantics
+   - threshold-gating view plumbing where the logic is truly identical
+- The composed-stable DETF should continue to own its family-specific orchestration for:
+   - routing through underlying Standard Exchange vaults
+   - selecting Stable Pool versus Common Pool legs
+   - reserve-owned mint and unwind execution
+   - Bond NFT fee-skimming and protocol-NFT flows
+   - rebasing-token redemption-value construction
+
+### Future Shared-Library Candidates Checklist
+- [ ] Evaluate whether Balancer live-balance normalization plus rate-application can be extracted into a DETF-agnostic helper without importing family-specific storage or token assumptions.
+- [ ] Evaluate whether single-token reserve-pool quote wrappers can be shared across DETF families while keeping family-specific routing and accounting outside the helper.
+- [ ] Evaluate whether preview/execution consistency helpers can be shared for paired quote/execution surfaces without coupling to composed-stable token semantics.
+- [ ] Evaluate whether threshold-gating view plumbing can be shared wherever the implementation is identical and the only family-specific input is the computed synthetic price.
+- [ ] Reject any proposed shared extraction that pulls in family-specific reserve decomposition, bond NFT accounting, rebasing-token pricing, or protocol-owned reserve orchestration.
+- [ ] Require focused behavior tests around every future shared extraction so parity is proven locally before widening to broader DETF suites.
+
+### Product Decision
+- The composed-stable family remains a fresh DETF-family codepath.
+- Cross-DETF comparison should be used to identify safe helper-level reuse and test parity expectations, not to justify reusing another family's concrete implementation contracts.
+
 ## Non-Functional Requirements
 - Modular, upgradeable contracts (Diamond Pattern)
 - Deterministic deployment via CREATE3

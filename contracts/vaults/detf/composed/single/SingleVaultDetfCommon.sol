@@ -33,6 +33,7 @@ import {
 /* -------------------------------------------------------------------------- */
 
 import {DETFCommon} from "contracts/vaults/detf/DETFCommon.sol";
+import {DETFBalancerScaleLib} from "contracts/vaults/detf/core/DETFBalancerScaleLib.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/core/DETFUsageFeeLib.sol";
 import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
@@ -129,11 +130,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
     }
 
     function _toLiveScaled18(uint256 rawAmount_, TokenInfo memory info_) internal view returns (uint256 scaled18_) {
-        uint256 rate = FixedPoint.ONE;
-        if (address(info_.rateProvider) != address(0)) {
-            rate = info_.rateProvider.getRate();
-        }
-        scaled18_ = rawAmount_.mulDown(rate);
+        scaled18_ = DETFBalancerScaleLib._toLiveScaled18(rawAmount_, info_);
     }
 
     function _calcReserveSpotPrice() internal view returns (uint256 spotPrice_) {
