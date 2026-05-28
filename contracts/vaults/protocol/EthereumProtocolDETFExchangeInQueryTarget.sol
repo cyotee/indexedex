@@ -344,35 +344,14 @@ contract EthereumProtocolDETFExchangeInQueryTarget is EthereumProtocolDETFCommon
 		uint256 vaultIndex_,
 		uint256 vaultShares_
 	) internal view returns (ReservePoolBptPreview memory p_) {
-		ReservePoolData memory resPoolData;
-		IVault balV3Vault = BalancerV3VaultAwareRepo._balancerV3Vault();
-		address pool = address(ERC4626Repo._reserveAsset());
-		(, TokenInfo[] memory tokenInfo, uint256[] memory currentBalancesRaw,) = balV3Vault.getPoolTokenInfo(pool);
+		BridgeReservePoolBptPreview memory sharedPreview =
+			_previewReservePoolSingleInBptOut(BaseProtocolDETFRepo._layoutStruct(), vaultIndex_, vaultShares_);
 
-		_loadReservePoolData(resPoolData, currentBalancesRaw);
-
-		uint256[] memory balancesLiveScaled18 = new uint256[](currentBalancesRaw.length);
-		for (uint256 i = 0; i < currentBalancesRaw.length; ++i) {
-			balancesLiveScaled18[i] = _toLiveScaled18(currentBalancesRaw[i], tokenInfo[i]);
-		}
-
-		uint256 amountInLiveScaled18 = _toLiveScaled18(vaultShares_, tokenInfo[vaultIndex_]);
-		uint256 bptOut = BalancerV38020WeightedPoolMath.calcBptOutGivenSingleIn(
-			balancesLiveScaled18,
-			resPoolData.weightsArray,
-			vaultIndex_,
-			amountInLiveScaled18,
-			resPoolData.resPoolTotalSupply,
-			resPoolData.reservePoolSwapFee
-		);
-
-		bptOut = DETFPreviewLib._applyDiscountBps(bptOut, PREVIEW_BPT_BUFFER_BPS, PREVIEW_BPT_BUFFER_DENOMINATOR);
-
-		p_.balancesRaw = currentBalancesRaw;
-		p_.bptOut = bptOut;
-		p_.poolSupply = resPoolData.resPoolTotalSupply;
-		p_.chirIdx = resPoolData.chirWethVaultIndex;
-		p_.richIdx = resPoolData.richChirVaultIndex;
+		p_.balancesRaw = sharedPreview.balancesRaw;
+		p_.bptOut = sharedPreview.bptOut;
+		p_.poolSupply = sharedPreview.poolSupply;
+		p_.chirIdx = sharedPreview.chirIdx;
+		p_.richIdx = sharedPreview.richIdx;
 	}
 
 	function _previewWethToRich(BaseProtocolDETFRepo.Storage storage layoutStruct_, uint256 wethIn_)
