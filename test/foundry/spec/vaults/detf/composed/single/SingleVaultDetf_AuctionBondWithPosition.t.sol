@@ -72,11 +72,11 @@ import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
 import {
-    BaseProtocolDETF_Component_FactoryService
-} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
-import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
-import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+    BaseDualSelfCommonDETF_Component_FactoryService
+} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
+import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
@@ -143,9 +143,9 @@ contract AuctionUniswapV4LiquiditySeeder is IUnlockCallback {
 
 contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Pkg_FactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
+    using BaseDualSelfCommonDETF_Pkg_FactoryService for ICreate3FactoryProxy;
+    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
     using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
     using SingleVaultDetf_Pkg_FactoryService for IVaultRegistryDeployment;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
@@ -584,7 +584,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetfAuction_ERC721Facet"))
         );
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseProtocolDETF_Component_FactoryService
+        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
             .buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,

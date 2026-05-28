@@ -7,11 +7,11 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {IBaseProtocolDETFBonding} from "contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol";
+import {IBaseDualSelfCommonDETFBonding} from "contracts/vaults/protocol/BaseDualSelfCommonDETFBondingTarget.sol";
 import {
-    ProtocolDETFBaseCustomFixtureHelpers,
-    ProtocolDETFEthereumCustomFixtureHelpers
-} from "./ProtocolDETF_CustomFixtureHelpers.t.sol";
+    DualSelfCommonDETFBaseCustomFixtureHelpers,
+    DualSelfCommonDETFEthereumCustomFixtureHelpers
+} from "./DualSelfCommonDETF_CustomFixtureHelpers.t.sol";
 
 abstract contract ProtocolNFTVaultClaimChirTestBase is Test {
     uint256 internal constant BOND_AMOUNT = 1_000e18;
@@ -52,7 +52,7 @@ abstract contract ProtocolNFTVaultClaimChirTestBase is Test {
 
         vm.startPrank(user_);
         _wethToken().approve(address(detf_), amountIn_);
-        (tokenId_,) = IBaseProtocolDETFBonding(address(detf_)).bond(
+        (tokenId_,) = IBaseDualSelfCommonDETFBonding(address(detf_)).bond(
             _wethToken(), amountIn_, lockDuration_, user_, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
@@ -83,7 +83,7 @@ abstract contract ProtocolNFTVaultClaimChirTestBase is Test {
         returns (uint256 richirMinted_)
     {
         vm.prank(seller_);
-        richirMinted_ = IBaseProtocolDETFBonding(address(detf_)).sellNFT(tokenId_, seller_);
+        richirMinted_ = IBaseDualSelfCommonDETFBonding(address(detf_)).sellNFT(tokenId_, seller_);
     }
 
     function _assertProportional(uint256 lhsAmount_, uint256 lhsWeight_, uint256 rhsAmount_, uint256 rhsWeight_)
@@ -165,7 +165,7 @@ abstract contract ProtocolNFTVaultClaimChirTestBase is Test {
     }
 }
 
-contract ProtocolNFTVaultClaimChirBaseTest is ProtocolDETFBaseCustomFixtureHelpers, ProtocolNFTVaultClaimChirTestBase {
+contract ProtocolNFTVaultClaimChirBaseTest is DualSelfCommonDETFBaseCustomFixtureHelpers, ProtocolNFTVaultClaimChirTestBase {
     function _mintEnabledDetf() internal override returns (IProtocolDETF detf_) {
         detf_ = _deployMintEnabledDetf();
         _assertMintEnabled(detf_);
@@ -228,7 +228,7 @@ contract ProtocolNFTVaultClaimChirBaseTest is ProtocolDETFBaseCustomFixtureHelpe
         uint256 protocolPendingBefore = vault.pendingRewards(protocolTokenId);
         IProtocolNFTVault.Position memory protocolPositionBefore = vault.positionOf(protocolTokenId);
 
-        uint256 bptReceived = IBaseProtocolDETFBonding(address(customDetf)).captureSeigniorage();
+        uint256 bptReceived = IBaseDualSelfCommonDETFBonding(address(customDetf)).captureSeigniorage();
 
         IProtocolNFTVault.Position memory protocolPositionAfter = vault.positionOf(protocolTokenId);
 
@@ -243,7 +243,7 @@ contract ProtocolNFTVaultClaimChirBaseTest is ProtocolDETFBaseCustomFixtureHelpe
     }
 }
 
-contract ProtocolNFTVaultClaimChirEthereumTest is ProtocolDETFEthereumCustomFixtureHelpers, ProtocolNFTVaultClaimChirTestBase {
+contract ProtocolNFTVaultClaimChirEthereumTest is DualSelfCommonDETFEthereumCustomFixtureHelpers, ProtocolNFTVaultClaimChirTestBase {
     function _mintEnabledDetf() internal override returns (IProtocolDETF detf_) {
         detf_ = _deployMintEnabledEthereumDetf();
         _driveEthereumToMintEnabled(detf_);
@@ -306,7 +306,7 @@ contract ProtocolNFTVaultClaimChirEthereumTest is ProtocolDETFEthereumCustomFixt
         uint256 protocolPendingBefore = vault.pendingRewards(protocolTokenId);
         IProtocolNFTVault.Position memory protocolPositionBefore = vault.positionOf(protocolTokenId);
 
-        uint256 bptReceived = IBaseProtocolDETFBonding(address(customDetf)).captureSeigniorage();
+        uint256 bptReceived = IBaseDualSelfCommonDETFBonding(address(customDetf)).captureSeigniorage();
 
         IProtocolNFTVault.Position memory protocolPositionAfter = vault.positionOf(protocolTokenId);
 

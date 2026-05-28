@@ -74,7 +74,7 @@ import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleV
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {
     IStandardExchangeRateProviderDFPkg
@@ -325,8 +325,8 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
 
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
         Permit2AwareRepo._initialize(PERMIT2);
-        ProtocolDETFSuperchainBridgeRepo._initialize(
-            ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+        DualSelfCommonDETFSuperchainBridgeRepo._initialize(
+            DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig({
                 bridgeTokenRegistry: BRIDGE_TOKEN_REGISTRY,
                 standardBridge: STANDARD_BRIDGE,
                 messenger: BRIDGE_MESSENGER,

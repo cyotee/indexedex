@@ -24,13 +24,13 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
-import {BaseProtocolDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
-import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
-import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
 
 contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
-    using BaseProtocolDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
+    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
 
     IDetfSelfNftInventoryDFPkg internal pkg;
     ERC20PermitDFPkg internal erc20PermitPkg;
@@ -43,7 +43,7 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
         );
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
 
-        IProtocolNFTVaultDFPkg.PkgInit memory pkgInit = BaseProtocolDETF_Component_FactoryService.buildProtocolNFTVaultPkgInit(
+        IProtocolNFTVaultDFPkg.PkgInit memory pkgInit = BaseDualSelfCommonDETF_Component_FactoryService.buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
             erc4626StandardVaultFacet,

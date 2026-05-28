@@ -68,11 +68,11 @@ import {
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
-    BaseProtocolDETF_Component_FactoryService
-} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
-import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
-import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+    BaseDualSelfCommonDETF_Component_FactoryService
+} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
+import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
+import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
@@ -127,9 +127,9 @@ contract SingleVaultDetfUniswapV4LiquiditySeeder is IUnlockCallback {
 
 abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Pkg_FactoryService for ICreate3FactoryProxy;
-    using BaseProtocolDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
+    using BaseDualSelfCommonDETF_Pkg_FactoryService for ICreate3FactoryProxy;
+    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
     using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
     using SingleVaultDetf_Pkg_FactoryService for IVaultRegistryDeployment;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
@@ -206,7 +206,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         return _deploySingleVaultDetf(_emptyBridgeConfig());
     }
 
-    function _deploySingleVaultDetf(ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_)
+    function _deploySingleVaultDetf(DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_)
         internal
         returns (ISingleVaultDetf detf_)
     {
@@ -282,8 +282,8 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         );
     }
 
-    function _emptyBridgeConfig() internal pure returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory config_) {
-        config_ = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+    function _emptyBridgeConfig() internal pure returns (DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig memory config_) {
+        config_ = DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig({
             bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
             standardBridge: IStandardBridge(payable(address(0))),
             messenger: ICrossDomainMessenger(address(0)),
@@ -336,7 +336,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetf_ERC721Facet"))
         );
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseProtocolDETF_Component_FactoryService
+        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
             .buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,

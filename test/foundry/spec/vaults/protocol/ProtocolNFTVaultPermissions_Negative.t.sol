@@ -6,9 +6,9 @@ import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.s
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ProtocolNFTVaultCommon} from "contracts/vaults/protocol/ProtocolNFTVaultCommon.sol";
-import {ProtocolDETFIntegrationBase} from "test/foundry/spec/vaults/protocol/ProtocolDETF_IntegrationBase.t.sol";
+import {DualSelfCommonDETFIntegrationBase} from "test/foundry/spec/vaults/protocol/DualSelfCommonDETF_IntegrationBase.t.sol";
 
-contract ProtocolNFTVaultPermissions_Negative_Test is ProtocolDETFIntegrationBase {
+contract ProtocolNFTVaultPermissions_Negative_Test is DualSelfCommonDETFIntegrationBase {
     function test_createPosition_revertsForNonOwner() public {
         address attacker = makeAddr("attacker");
 

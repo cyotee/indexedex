@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
-import {ProtocolDETFIntegrationBase} from "test/foundry/spec/vaults/protocol/ProtocolDETF_IntegrationBase.t.sol";
+import {DualSelfCommonDETFIntegrationBase} from "test/foundry/spec/vaults/protocol/DualSelfCommonDETF_IntegrationBase.t.sol";
 
-contract RICHIRPermissions_Negative_Test is ProtocolDETFIntegrationBase {
+contract RICHIRPermissions_Negative_Test is DualSelfCommonDETFIntegrationBase {
     function test_mintFromNFTSale_revertsForNonOwner() public {
         address attacker = makeAddr("attacker");
 

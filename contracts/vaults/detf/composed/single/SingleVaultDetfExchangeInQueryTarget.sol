@@ -17,7 +17,7 @@ import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.so
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 
 contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
     using SingleVaultDetfRepo for SingleVaultDetfRepo.Storage;
@@ -157,7 +157,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         returns (IProtocolDETF.BridgeQuote memory quote_)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        ProtocolDETFSuperchainBridgeRepo.Storage storage bridgeLayout = ProtocolDETFSuperchainBridgeRepo._layoutStruct();
+        DualSelfCommonDETFSuperchainBridgeRepo.Storage storage bridgeLayout = DualSelfCommonDETFSuperchainBridgeRepo._layoutStruct();
 
         if (
             address(bridgeLayout.messenger) == address(0)
@@ -167,7 +167,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             revert BridgeConfigNotSet();
         }
 
-        ProtocolDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId_];
+        DualSelfCommonDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId_];
         if (peer.relayer == address(0)) {
             peer.relayer = bridgeLayout.defaultPeerRelayer;
         }

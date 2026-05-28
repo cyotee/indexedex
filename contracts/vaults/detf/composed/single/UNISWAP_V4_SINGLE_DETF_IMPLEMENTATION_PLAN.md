@@ -65,7 +65,7 @@ This is a product choice, not an implementation bug by itself.
 
 ### 3. Package-composition expectation
 
-`BaseProtocolDETFDFPkg` is responsible for composing major dependencies during deployment:
+`BaseDualSelfCommonDETFDFPkg` is responsible for composing major dependencies during deployment:
 
 - underlying Standard Exchange vault instances
 - Balancer rate providers
@@ -84,15 +84,15 @@ The production path should prefer package-owned composition. Externally supplied
 
 ### Existing DETF patterns
 
-- `contracts/vaults/protocol/BaseProtocolDETFDFPkg.sol`
-- `contracts/vaults/protocol/BaseProtocolDETFRepo.sol`
-- `contracts/vaults/protocol/BaseProtocolDETFCommon.sol`
-- `contracts/vaults/protocol/BaseProtocolDETFExchangeInTarget.sol`
-- `contracts/vaults/protocol/BaseProtocolDETFExchangeOutTarget.sol`
-- `contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFDFPkg.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFCommon.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFExchangeInTarget.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFExchangeOutTarget.sol`
+- `contracts/vaults/protocol/BaseDualSelfCommonDETFBondingTarget.sol`
 - `contracts/vaults/protocol/ProtocolNFTVaultTarget.sol`
 - `contracts/vaults/protocol/ProtocolNFTVaultRepo.sol`
-- `contracts/vaults/protocol/TestBase_BaseProtocolDETF.sol`
+- `contracts/vaults/protocol/TestBase_BaseDualSelfCommonDETF.sol`
 
 ### Uniswap V4 vault dependency
 
@@ -117,7 +117,7 @@ Create a new single-vault DETF slice with the normal Crane Facet/Target/Repo spl
 
 The new DETF should reuse the same ERC20-related facets as Protocol DETF for the CHIR token surface.
 
-At minimum, the package plan should assume reuse of the same token facet trio currently wired by `BaseProtocolDETFDFPkg`:
+At minimum, the package plan should assume reuse of the same token facet trio currently wired by `BaseDualSelfCommonDETFDFPkg`:
 
 - `erc20Facet`
 - `erc5267Facet`
@@ -227,7 +227,7 @@ Do not carry forward dual-vault fields that exist only to support the old `CHIR/
 `SingleVaultDetfDFPkg` should:
 
 - initialize `CHIR` using the same Protocol DETF token facet stack and token initialization flow
-- reuse the same ERC20-related facet inputs used by `BaseProtocolDETFDFPkg` for:
+- reuse the same ERC20-related facet inputs used by `BaseDualSelfCommonDETFDFPkg` for:
   - `erc20Facet`
   - `erc5267Facet`
   - `erc2612Facet`
@@ -246,7 +246,7 @@ Do not carry forward dual-vault fields that exist only to support the old `CHIR/
 
 Clarification from Protocol DETF comparison:
 
-- the preferred production implementation is package-owned composition, mirroring `BaseProtocolDETFDFPkg` in simplified form
+- the preferred production implementation is package-owned composition, mirroring `BaseDualSelfCommonDETFDFPkg` in simplified form
 - if test harnesses pass predeployed `wethRichVault`, `vaultRateProvider`, `reservePool`, or `protocolNFTVault`, document that as harness-only setup rather than the primary deployment flow
 - `RICHIR` and bridge deployment are only required if the project selects ABI compatibility mode
 
@@ -431,7 +431,7 @@ Even if product focuses on `CHIR -> RICH`, this route will simplify testability 
 
 ### 5. Bonding / NFT flow
 
-Bonding should preserve the same overall flow shape as `BaseProtocolDETFBondingTarget.bond(...)`:
+Bonding should preserve the same overall flow shape as `BaseDualSelfCommonDETFBondingTarget.bond(...)`:
 
 - collect an accepted bond token
 - convert the input into the reserve-entry asset mix required by this DETF
