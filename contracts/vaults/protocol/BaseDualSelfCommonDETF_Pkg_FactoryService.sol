@@ -24,6 +24,10 @@ import {BaseDualSelfCommonDETFDFPkg, IBaseDualSelfCommonDETFDFPkg} from "contrac
 import {ProtocolNFTVaultDFPkg, IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {RICHIRDFPkg, IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {
+    IRebasingDETFTokenDFPkg,
+    RebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 
 /**
  * @title BaseDualSelfCommonDETF_Pkg_FactoryService
@@ -71,6 +75,25 @@ library BaseDualSelfCommonDETF_Pkg_FactoryService {
             )
         );
         vm.label(address(instance), type(ProtocolNFTVaultDFPkg).name);
+    }
+
+    function deployRebasingDETFTokenDFPkg(
+        ICreate3FactoryProxy create3Factory,
+        IRebasingDETFTokenDFPkg.PkgInit memory pkgInit
+    )
+        internal
+        returns (IRebasingDETFTokenDFPkg instance)
+    {
+        instance = IRebasingDETFTokenDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(RebasingDETFTokenDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    abi.encode(type(RebasingDETFTokenDFPkg).name)._hash()
+                )
+            )
+        );
+        vm.label(address(instance), type(RebasingDETFTokenDFPkg).name);
     }
 
     function deployRICHIRDFPkg(ICreate3FactoryProxy create3Factory, IRICHIRDFPkg.PkgInit memory pkgInit)

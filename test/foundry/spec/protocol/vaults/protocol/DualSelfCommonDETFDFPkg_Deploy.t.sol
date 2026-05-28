@@ -59,7 +59,10 @@ import {IBaseDualSelfCommonDETFDFPkg, BaseDualSelfCommonDETFDFPkg} from "contrac
 import {BaseDualSelfCommonDETFRepo} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {
+    IRebasingDETFTokenDFPkg,
+    RebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 import {BaseDualSelfCommonDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
 import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
 import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
@@ -79,7 +82,7 @@ contract BaseDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardE
     IERC20 internal richToken;
 
     IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
-    IRICHIRDFPkg internal richirPkg;
+    IRebasingDETFTokenDFPkg internal richirPkg;
     IBaseDualSelfCommonDETFDFPkg internal protocolDETFDFPkg;
 
     IStandardExchangeProxy internal daiWethVault;
@@ -186,7 +189,7 @@ contract BaseDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardE
         IFacet protocolDETFBridgeFacet = create3Factory.deployBaseDualSelfCommonDETFBridgeFacet();
         IFacet protocolDETFBondingQueryFacet = create3Factory.deployBaseDualSelfCommonDETFBondingQueryFacet();
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
-        IFacet richirFacet = create3Factory.deployRICHIRFacet();
+        IFacet rebasingDetfTokenFacet = create3Factory.deployRebasingDETFTokenFacet();
         IFacet erc721Facet =
             IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("ProtocolDETF_ERC721Facet")));
         IFacet multiStepOwnableFacet = create3Factory.deployMultiStepOwnableFacet();
@@ -203,9 +206,17 @@ contract BaseDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardE
             IVaultRegistryDeployment(address(indexedexManager))
         );
 
-        // Deploy RICHIR package.
-        IRICHIRDFPkg.PkgInit memory richirPkgInit = BaseDualSelfCommonDETF_Component_FactoryService.buildRICHIRPkgInit(
-            erc20Facet, erc5267Facet, erc2612Facet, richirFacet, diamondPackageFactory
+        // Deploy rebasing DETF token package.
+        IRebasingDETFTokenDFPkg.PkgInit memory richirPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
+            .buildRebasingDetfTokenPkgInit(
+            BaseDualSelfCommonDETF_Component_FactoryService.RebasingDetfTokenFacets({
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiStepOwnableFacet: multiStepOwnableFacet,
+                rebasingDetfTokenFacet: rebasingDetfTokenFacet
+            }),
+            diamondPackageFactory
         );
 
         vm.startPrank(owner);
@@ -213,11 +224,13 @@ contract BaseDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardE
             IVaultRegistryDeployment(address(indexedexManager)).deployProtocolNFTVaultDFPkg(nftPkgInit);
         vm.stopPrank();
 
-        // NOTE: RICHIRDFPkg is NOT an IStandardVaultPkg, so it must NOT be deployed via VaultRegistryDeployment.
-        richirPkg = IRICHIRDFPkg(
+        // NOTE: RebasingDETFTokenDFPkg is NOT an IStandardVaultPkg, so it must NOT be deployed via VaultRegistryDeployment.
+        richirPkg = IRebasingDETFTokenDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(RICHIRDFPkg).creationCode, abi.encode(richirPkgInit), keccak256("ProtocolDETF_RICHIRDFPkg")
+                    type(RebasingDETFTokenDFPkg).creationCode,
+                    abi.encode(richirPkgInit),
+                    keccak256("ProtocolDETF_RebasingDETFTokenDFPkg")
                 )
             )
         );

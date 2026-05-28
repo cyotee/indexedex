@@ -29,6 +29,7 @@ import {BaseDualSelfCommonDETFBondingQueryFacet} from "contracts/vaults/protocol
 import {BaseDualSelfCommonDETFRichirRedeemFacet} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRichirRedeemFacet.sol";
 import {ProtocolNFTVaultFacet} from "contracts/vaults/protocol/ProtocolNFTVaultFacet.sol";
 import {RICHIRFacet} from "contracts/vaults/protocol/RICHIRFacet.sol";
+import {RebasingDETFTokenFacet} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenFacet.sol";
 import {ERC4626BasedBasicVaultFacet} from "contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol";
 import {ERC4626StandardVaultFacet} from "contracts/vaults/standard/ERC4626StandardVaultFacet.sol";
 
@@ -111,6 +112,14 @@ library BaseDualSelfCommonDETF_Facet_FactoryService {
         instance =
             create3Factory.deployFacet(type(RICHIRFacet).creationCode, abi.encode(type(RICHIRFacet).name)._hash());
         vm.label(address(instance), type(RICHIRFacet).name);
+    }
+
+    function deployRebasingDETFTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(
+            type(RebasingDETFTokenFacet).creationCode,
+            abi.encode(type(RebasingDETFTokenFacet).name)._hash()
+        );
+        vm.label(address(instance), type(RebasingDETFTokenFacet).name);
     }
 
     function deployERC4626BasedBasicVaultFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {

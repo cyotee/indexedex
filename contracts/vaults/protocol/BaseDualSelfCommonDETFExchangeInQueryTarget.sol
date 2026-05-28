@@ -19,6 +19,7 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -28,7 +29,6 @@ import {BaseDualSelfCommonDETFCommon} from "contracts/vaults/protocol/BaseDualSe
 import {
     BalancerV38020WeightedPoolMath
 } from "contracts/protocols/dexes/balancer/v3/utils/BalancerV38020WeightedPoolMath.sol";
-import {BaseDualSelfCommonDETFPreviewHelpers} from "contracts/vaults/protocol/BaseDualSelfCommonDETFPreviewHelpers.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {TokenInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {
@@ -398,28 +398,22 @@ contract BaseDualSelfCommonDETFExchangeInQueryTarget is BaseDualSelfCommonDETFCo
         ReservePoolData memory resPoolData;
         _loadReservePoolData(resPoolData, new uint256[](0));
 
-        // Group all computation variables into a struct to reduce stack pressure.
-        BaseDualSelfCommonDETFPreviewHelpers.RichirCalc memory calc = BaseDualSelfCommonDETFPreviewHelpers.RichirCalc({
-            balV3Vault: address(resPoolData.balV3Vault),
-            reservePool: address(resPoolData.reservePool),
-            reservePoolSwapFee: resPoolData.reservePoolSwapFee,
-            weightsArray: resPoolData.weightsArray,
-            chirWethVault: address(layoutStruct_.chirWethVault),
-            richChirVault: address(layoutStruct_.richChirVault),
-            chirToken: address(this),
-            wethToken: address(layoutStruct_.wethToken),
-            poolBalsRaw: p.balancesRaw,
-            chirIdx: p.chirIdx,
-            richIdx: p.richIdx,
-            vaultIdx: vaultIndex_,
-            sharesAdded: vaultShares,
-            poolSupply: p.poolSupply,
-            bptAdded: p.bptOut,
-            newPosShares: layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut,
-            newTotShares: layoutStruct_.richirToken.totalShares() + p.bptOut
-        });
+        uint256 newProtocolReserveBpt =
+            layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut;
+        uint256 newTotalRichirShares = layoutStruct_.richirToken.totalShares() + p.bptOut;
 
-        richirOut_ = BaseDualSelfCommonDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
+        if (newProtocolReserveBpt == 0 || newTotalRichirShares == 0) {
+            return 0;
+        }
+
+        uint256 newWethValue = IDETF(address(this)).previewRebasingDetfTokenEthValue(newProtocolReserveBpt);
+        if (newWethValue == 0) {
+            return 0;
+        }
+
+        // Mirror RebasingDETFTokenTarget.mintFromNFTSale: mint external shares 1:1 with BPT,
+        // then value them using the post-deposit redemption rate.
+        richirOut_ = (p.bptOut * newWethValue) / newTotalRichirShares;
 
         // Apply precision buffer to ensure preview never exceeds actual execution.
         // previewExchangeIn should underestimate (return ≤ actual).

@@ -33,7 +33,9 @@ import {
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IEthereumDualSelfCommonDETFDFPkg} from "contracts/vaults/protocol/EthereumDualSelfCommonDETFDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {
+    IRebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 import {
     IUniswapV2StandardExchangeDFPkg
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
@@ -73,7 +75,7 @@ library EthereumDualSelfCommonDETF_Component_FactoryService {
     struct EthereumDualSelfCommonDETFPkgs {
         IUniswapV2StandardExchangeDFPkg uniswapV2StandardExchangeDFPkg;
         IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
-        IRICHIRDFPkg richirPkg;
+        IRebasingDETFTokenDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
     }
 

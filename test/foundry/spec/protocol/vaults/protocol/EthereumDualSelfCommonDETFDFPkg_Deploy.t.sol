@@ -36,6 +36,7 @@ import {
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
 import {IERC20PermitDFPkg, ERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -70,7 +71,10 @@ import {
 import {BaseDualSelfCommonDETFRepo} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {
+    IRebasingDETFTokenDFPkg,
+    RebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 import {
     BaseDualSelfCommonDETF_Component_FactoryService
 } from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
@@ -93,6 +97,7 @@ import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/
 import {IBaseDualSelfCommonDETFBonding} from "contracts/vaults/protocol/BaseDualSelfCommonDETFBondingTarget.sol";
 
 contract EthereumDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
+    using AccessFacetFactoryService for ICreate3FactoryProxy;
     using EthereumDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
     using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
     using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
@@ -118,7 +123,7 @@ contract EthereumDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3Stand
     IUniswapV2StandardExchangeDFPkg internal uniswapV2StandardExchangeDFPkg;
 
     IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
-    IRICHIRDFPkg internal richirPkg;
+    IRebasingDETFTokenDFPkg internal richirPkg;
     IEthereumDualSelfCommonDETFDFPkg internal protocolDETFDFPkg;
 
     function setUp() public override {
@@ -250,7 +255,8 @@ contract EthereumDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3Stand
         IFacet protocolDETFBridgeFacet = create3Factory.deployEthereumDualSelfCommonDETFBridgeFacet();
         IFacet protocolDETFBondingQueryFacet = create3Factory.deployEthereumDualSelfCommonDETFBondingQueryFacet();
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
-        IFacet richirFacet = create3Factory.deployRICHIRFacet();
+        IFacet rebasingDetfTokenFacet = create3Factory.deployRebasingDETFTokenFacet();
+        IFacet multiStepOwnableFacet = create3Factory.deployMultiStepOwnableFacet();
         IFacet erc721Facet =
             IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("ProtocolDETF_ERC721Facet")));
 
@@ -263,11 +269,15 @@ contract EthereumDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3Stand
             IVaultRegistryDeployment(address(indexedexManager))
         );
 
-        IRICHIRDFPkg.PkgInit memory richirPkgInit = BaseDualSelfCommonDETF_Component_FactoryService.buildRICHIRPkgInit(
-            erc20Facet,
-            erc5267Facet,
-            erc2612Facet,
-            richirFacet,
+        IRebasingDETFTokenDFPkg.PkgInit memory richirPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
+            .buildRebasingDetfTokenPkgInit(
+            BaseDualSelfCommonDETF_Component_FactoryService.RebasingDetfTokenFacets({
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiStepOwnableFacet: multiStepOwnableFacet,
+                rebasingDetfTokenFacet: rebasingDetfTokenFacet
+            }),
             diamondPackageFactory
         );
 
@@ -275,12 +285,12 @@ contract EthereumDualSelfCommonDETFDFPkg_Deploy_Test is TestBase_BalancerV3Stand
         protocolNFTVaultPkg = IVaultRegistryDeployment(address(indexedexManager)).deployProtocolNFTVaultDFPkg(nftPkgInit);
         vm.stopPrank();
 
-        richirPkg = IRICHIRDFPkg(
+        richirPkg = IRebasingDETFTokenDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(RICHIRDFPkg).creationCode,
+                    type(RebasingDETFTokenDFPkg).creationCode,
                     abi.encode(richirPkgInit),
-                    keccak256("EthereumDualSelfCommonDETF_RICHIRDFPkg")
+                    keccak256("EthereumDualSelfCommonDETF_RebasingDETFTokenDFPkg")
                 )
             )
         );

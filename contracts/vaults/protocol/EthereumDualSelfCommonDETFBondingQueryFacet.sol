@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 
+import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {
     IBaseDualSelfCommonDETFBonding
@@ -23,7 +24,7 @@ contract EthereumDualSelfCommonDETFBondingQueryFacet is EthereumDualSelfCommonDE
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](16);
+        funcs_ = new bytes4[](20);
         funcs_[0] = IBaseDualSelfCommonDETFBonding.syntheticPrice.selector;
         funcs_[1] = IBaseDualSelfCommonDETFBonding.isMintingAllowed.selector;
         funcs_[2] = IBaseDualSelfCommonDETFBonding.isBurningAllowed.selector;
@@ -40,6 +41,10 @@ contract EthereumDualSelfCommonDETFBondingQueryFacet is EthereumDualSelfCommonDE
         funcs_[13] = IProtocolDETF.wethToken.selector;
         funcs_[14] = IProtocolDETF.previewClaimLiquidity.selector;
         funcs_[15] = IProtocolDETF.previewBridgeRichir.selector;
+        funcs_[16] = IDETF.bondNftVault.selector;
+        funcs_[17] = IDETF.rebasingDetfToken.selector;
+        funcs_[18] = IDETF.previewRebasingDetfTokenReserveBpt.selector;
+        funcs_[19] = IDETF.previewRebasingDetfTokenEthValue.selector;
     }
 
     function facetMetadata()
@@ -51,7 +56,7 @@ contract EthereumDualSelfCommonDETFBondingQueryFacet is EthereumDualSelfCommonDE
         interfaces = new bytes4[](2);
         interfaces[0] = type(IBaseDualSelfCommonDETFBonding).interfaceId;
         interfaces[1] = type(IProtocolDETF).interfaceId;
-        functions = new bytes4[](16);
+        functions = new bytes4[](20);
         functions[0] = IBaseDualSelfCommonDETFBonding.syntheticPrice.selector;
         functions[1] = IBaseDualSelfCommonDETFBonding.isMintingAllowed.selector;
         functions[2] = IBaseDualSelfCommonDETFBonding.isBurningAllowed.selector;
@@ -68,5 +73,9 @@ contract EthereumDualSelfCommonDETFBondingQueryFacet is EthereumDualSelfCommonDE
         functions[13] = IProtocolDETF.wethToken.selector;
         functions[14] = IProtocolDETF.previewClaimLiquidity.selector;
         functions[15] = IProtocolDETF.previewBridgeRichir.selector;
+        functions[16] = IDETF.bondNftVault.selector;
+        functions[17] = IDETF.rebasingDetfToken.selector;
+        functions[18] = IDETF.previewRebasingDetfTokenReserveBpt.selector;
+        functions[19] = IDETF.previewRebasingDetfTokenEthValue.selector;
     }
 }

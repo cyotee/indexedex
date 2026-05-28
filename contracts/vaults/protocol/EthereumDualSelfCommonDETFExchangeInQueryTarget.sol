@@ -18,6 +18,7 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseDualSelfCommonDETFRepo} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol";
@@ -25,7 +26,6 @@ import {EthereumDualSelfCommonDETFCommon} from "contracts/vaults/protocol/Ethere
 import {
 	BalancerV38020WeightedPoolMath
 } from "contracts/protocols/dexes/balancer/v3/utils/BalancerV38020WeightedPoolMath.sol";
-import {BaseDualSelfCommonDETFPreviewHelpers} from "contracts/vaults/protocol/BaseDualSelfCommonDETFPreviewHelpers.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {TokenInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {
@@ -309,27 +309,21 @@ contract EthereumDualSelfCommonDETFExchangeInQueryTarget is EthereumDualSelfComm
 		ReservePoolData memory resPoolData;
 		_loadReservePoolData(resPoolData, new uint256[](0));
 
-		BaseDualSelfCommonDETFPreviewHelpers.RichirCalc memory calc = BaseDualSelfCommonDETFPreviewHelpers.RichirCalc({
-			balV3Vault: address(resPoolData.balV3Vault),
-			reservePool: address(resPoolData.reservePool),
-			reservePoolSwapFee: resPoolData.reservePoolSwapFee,
-			weightsArray: resPoolData.weightsArray,
-			chirWethVault: address(layoutStruct_.chirWethVault),
-			richChirVault: address(layoutStruct_.richChirVault),
-			chirToken: address(this),
-			wethToken: address(layoutStruct_.wethToken),
-			poolBalsRaw: p.balancesRaw,
-			chirIdx: p.chirIdx,
-			richIdx: p.richIdx,
-			vaultIdx: vaultIndex_,
-			sharesAdded: vaultShares,
-			poolSupply: p.poolSupply,
-			bptAdded: p.bptOut,
-			newPosShares: layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut,
-			newTotShares: layoutStruct_.richirToken.totalShares() + p.bptOut
-		});
+		uint256 newProtocolReserveBpt =
+			layoutStruct_.protocolNFTVault.getPosition(layoutStruct_.protocolNFTId).originalShares + p.bptOut;
+		uint256 newTotalRichirShares = layoutStruct_.richirToken.totalShares() + p.bptOut;
 
-		richirOut_ = BaseDualSelfCommonDETFPreviewHelpers.computeRichirOutFromDeposit(calc);
+		if (newProtocolReserveBpt == 0 || newTotalRichirShares == 0) {
+			return 0;
+		}
+
+		uint256 newWethValue = IDETF(address(this)).previewRebasingDetfTokenEthValue(newProtocolReserveBpt);
+		if (newWethValue == 0) {
+			return 0;
+		}
+
+		// Mirror RebasingDETFTokenTarget.mintFromNFTSale against the post-deposit reserve value.
+		richirOut_ = (p.bptOut * newWethValue) / newTotalRichirShares;
 		richirOut_ = DETFPreviewLib._applyDiscountBps(richirOut_, PREVIEW_RICHIR_BUFFER_BPS, PREVIEW_BUFFER_DENOMINATOR);
 
 		if (_buildCompoundSim(vault_).compoundLP == 0) {

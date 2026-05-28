@@ -36,6 +36,9 @@ import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVault
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
+    IRebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
+import {
     IAerodromeStandardExchangeDFPkg
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
 import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
@@ -88,8 +91,16 @@ library BaseDualSelfCommonDETF_Component_FactoryService {
     struct ProtocolDETFPkgs {
         IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg;
         IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
-        IRICHIRDFPkg richirPkg;
+        IRebasingDETFTokenDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
+    }
+
+    struct RebasingDetfTokenFacets {
+        IFacet erc20Facet;
+        IFacet erc5267Facet;
+        IFacet erc2612Facet;
+        IFacet multiStepOwnableFacet;
+        IFacet rebasingDetfTokenFacet;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -148,6 +159,20 @@ library BaseDualSelfCommonDETF_Component_FactoryService {
             protocolNFTVaultFacet: protocolNFTVaultFacet,
             feeOracle: feeOracle,
             vaultRegistryDeployment: vaultRegistryDeployment
+        });
+    }
+
+    function buildRebasingDetfTokenPkgInit(
+        RebasingDetfTokenFacets memory facets,
+        IDiamondPackageCallBackFactory diamondFactory
+    ) internal pure returns (IRebasingDETFTokenDFPkg.PkgInit memory pkgInit) {
+        pkgInit = IRebasingDETFTokenDFPkg.PkgInit({
+            erc20Facet: facets.erc20Facet,
+            erc5267Facet: facets.erc5267Facet,
+            erc2612Facet: facets.erc2612Facet,
+            multiStepOwnableFacet: facets.multiStepOwnableFacet,
+            rebasingDetfTokenFacet: facets.rebasingDetfTokenFacet,
+            diamondFactory: diamondFactory
         });
     }
 

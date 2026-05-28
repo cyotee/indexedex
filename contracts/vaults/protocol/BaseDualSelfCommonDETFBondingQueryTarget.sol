@@ -26,6 +26,7 @@ import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {DETFPreviewLib} from "contracts/vaults/detf/core/DETFPreviewLib.sol";
 import {BaseDualSelfCommonDETFRepo} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol";
@@ -93,12 +94,20 @@ contract BaseDualSelfCommonDETFBondingQueryTarget is BaseDualSelfCommonDETFCommo
         protocolNFTVault_ = BaseDualSelfCommonDETFRepo._layoutStruct().protocolNFTVault;
     }
 
+    function bondNftVault() external view returns (address bondNftVault_) {
+        bondNftVault_ = address(BaseDualSelfCommonDETFRepo._layoutStruct().protocolNFTVault);
+    }
+
     function richToken() external view returns (IERC20 richToken_) {
         richToken_ = BaseDualSelfCommonDETFRepo._layoutStruct().richToken;
     }
 
     function richirToken() external view returns (IERC20 richirToken_) {
         richirToken_ = IERC20(address(BaseDualSelfCommonDETFRepo._layoutStruct().richirToken));
+    }
+
+    function rebasingDetfToken() external view returns (address rebasingDetfToken_) {
+        rebasingDetfToken_ = address(BaseDualSelfCommonDETFRepo._layoutStruct().richirToken);
     }
 
     function chirToken() external view returns (IERC20MintBurn chirToken_) {
@@ -129,6 +138,42 @@ contract BaseDualSelfCommonDETFBondingQueryTarget is BaseDualSelfCommonDETFCommo
         BaseDualSelfCommonDETFRepo.Storage storage layoutStruct = BaseDualSelfCommonDETFRepo._layoutStruct();
         (address poolAddr, uint256 lpOut) = _previewClaimLiquidityLpOut(layoutStruct, lpAmount);
         wethOut = _previewWethOutFromAerodromeLp(poolAddr, lpOut, address(layoutStruct.wethToken));
+    }
+
+    function previewRebasingDetfTokenReserveBpt(uint256 rebasingDetfAmount)
+        external
+        view
+        returns (uint256 reserveBptAmount)
+    {
+        if (rebasingDetfAmount == 0) {
+            return 0;
+        }
+
+        BaseDualSelfCommonDETFRepo.Storage storage layoutStruct = BaseDualSelfCommonDETFRepo._layoutStruct();
+        IRICHIR richirToken_ = layoutStruct.richirToken;
+        IProtocolNFTVault protocolNFTVault_ = layoutStruct.protocolNFTVault;
+
+        if (address(richirToken_) == address(0) || address(protocolNFTVault_) == address(0)) {
+            return 0;
+        }
+
+        uint256 richirShares = richirToken_.convertToShares(rebasingDetfAmount);
+        uint256 totalRichirShares = richirToken_.totalShares();
+        uint256 protocolReserveBpt = protocolNFTVault_.originalSharesOf(layoutStruct.protocolNFTId);
+
+        if (richirShares == 0 || totalRichirShares == 0 || protocolReserveBpt == 0) {
+            return 0;
+        }
+
+        reserveBptAmount = (richirShares * protocolReserveBpt) / totalRichirShares;
+    }
+
+    function previewRebasingDetfTokenEthValue(uint256 reserveBptAmount) external view returns (uint256 wethValue) {
+        if (reserveBptAmount == 0) {
+            return 0;
+        }
+
+        wethValue = IProtocolDETF(address(this)).previewClaimLiquidity(reserveBptAmount);
     }
 
     function previewBridgeRichir(uint256 targetChainId, uint256 richirAmount)

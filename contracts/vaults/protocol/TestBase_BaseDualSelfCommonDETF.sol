@@ -62,7 +62,10 @@ import {
 import {IBaseDualSelfCommonDETFDFPkg, BaseDualSelfCommonDETFDFPkg} from "contracts/vaults/protocol/BaseDualSelfCommonDETFDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg, ProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {
+    IRebasingDETFTokenDFPkg,
+    RebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 import {BaseDualSelfCommonDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
 import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
 import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
@@ -133,12 +136,12 @@ contract TestBase_BaseDualSelfCommonDETF is TestBase_AerodromeStandardExchange {
     IFacet internal protocolDETFBondingFacet;
     IFacet internal protocolDETFBridgeFacet;
     IFacet internal protocolNFTVaultFacet;
-    IFacet internal richirFacet;
+    IFacet internal rebasingDetfTokenFacet;
 
     // Packages
     IBaseDualSelfCommonDETFDFPkg internal protocolDETFDFPkg;
     IDetfSelfNftInventoryDFPkg internal protocolNFTVaultDFPkg;
-    IRICHIRDFPkg internal richirDFPkg;
+    IRebasingDETFTokenDFPkg internal richirDFPkg;
     IERC20PermitMintBurnLockedOwnableDFPkg internal richTokenPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
 
@@ -216,7 +219,7 @@ contract TestBase_BaseDualSelfCommonDETF is TestBase_AerodromeStandardExchange {
         protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
 
         // RICHIR facet
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingDetfTokenFacet = create3Factory.deployRebasingDETFTokenFacet();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -241,15 +244,19 @@ contract TestBase_BaseDualSelfCommonDETF is TestBase_AerodromeStandardExchange {
         vm.label(address(protocolNFTVaultDFPkg), "ProtocolNFTVaultDFPkg");
 
         // Deploy RICHIR package
-        IRICHIRDFPkg.PkgInit memory richirPkgInit = IRICHIRDFPkg.PkgInit({
-            erc20Facet: erc20Facet,
-            erc5267Facet: erc5267Facet,
-            erc2612Facet: erc2612Facet,
-            richirFacet: richirFacet,
-            diamondFactory: diamondPackageFactory
-        });
-        richirDFPkg = IRICHIRDFPkg(address(new RICHIRDFPkg(richirPkgInit)));
-        vm.label(address(richirDFPkg), "RICHIRDFPkg");
+        IRebasingDETFTokenDFPkg.PkgInit memory richirPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
+            .buildRebasingDetfTokenPkgInit(
+            BaseDualSelfCommonDETF_Component_FactoryService.RebasingDetfTokenFacets({
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiStepOwnableFacet: multiStepOwnableFacet,
+                rebasingDetfTokenFacet: rebasingDetfTokenFacet
+            }),
+            diamondPackageFactory
+        );
+        richirDFPkg = IRebasingDETFTokenDFPkg(address(new RebasingDETFTokenDFPkg(richirPkgInit)));
+        vm.label(address(richirDFPkg), "RebasingDETFTokenDFPkg");
     }
 
     /* ---------------------------------------------------------------------- */

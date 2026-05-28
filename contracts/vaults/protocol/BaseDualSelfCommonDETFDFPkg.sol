@@ -79,7 +79,10 @@ import {IBaseDualSelfCommonDETFRichirRedeem} from "contracts/interfaces/IBaseDua
 import {BaseDualSelfCommonDETFRepo} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRepo.sol";
 import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IDETF} from "contracts/interfaces/IDETF.sol";
+import {
+    IRebasingDETFTokenDFPkg
+} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {BaseDualSelfCommonDETFRichirRedeemFacet} from "contracts/vaults/protocol/BaseDualSelfCommonDETFRichirRedeemFacet.sol";
 import {
@@ -132,8 +135,8 @@ interface IBaseDualSelfCommonDETFDFPkg is IDiamondFactoryPackage {
         IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg;
         /// @notice Package used to deploy the shared Self NFT inventory vault during DETF init.
         IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
-        /// @notice Package used to deploy the RICHIR rebasing token during DETF init.
-        IRICHIRDFPkg richirPkg;
+        /// @notice Package used to deploy the rebasing DETF token during DETF init.
+        IRebasingDETFTokenDFPkg richirPkg;
 
         /// @notice Package used to deploy a StandardExchange-backed Balancer rate provider.
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
@@ -208,7 +211,7 @@ contract BaseDualSelfCommonDETFDFPkg is IBaseDualSelfCommonDETFDFPkg, IStandardV
 
     IAerodromeStandardExchangeDFPkg immutable AERODROME_STANDARD_EXCHANGE_DFPKG;
     IDetfSelfNftInventoryDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
-    IRICHIRDFPkg immutable RICHIR_PKG;
+    IRebasingDETFTokenDFPkg immutable RICHIR_PKG;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
 
     ISuperChainBridgeTokenRegistry immutable BRIDGE_TOKEN_REGISTRY;
@@ -666,7 +669,7 @@ contract BaseDualSelfCommonDETFDFPkg is IBaseDualSelfCommonDETFDFPkg, IStandardV
             protocolNFTId = IProtocolNFTVault(nftVault).initializeProtocolNFT();
 
             richir = RICHIR_PKG.deployToken(
-                IProtocolDETF(address(this)),
+                IDETF(address(this)),
                 IProtocolNFTVault(nftVault),
                 detfStorage.wethToken,
                 protocolNFTId,
