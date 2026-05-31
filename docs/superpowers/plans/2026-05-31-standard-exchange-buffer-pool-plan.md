@@ -1023,32 +1023,206 @@ The test uses **mocks** for the Balancer V3 Vault and the Standard Exchange Vaul
 
 - [ ] **Step 1: Write the failing test**
 
-(See `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol`. Build mocks `MockBalancerV3Vault` and `MockStandardExchange` that record calls and return scripted values. Assert: pre-seat issues exactly the 5 expected calls in order, updates `virtualTTA` and `hookSharesDelta` as specified, returns `true`.)
-
-The mock interfaces:
+Full test file (mocks observe call ordering via an instance counter; scripted return values let us drive the implementation without a live Standard Exchange Vault):
 
 ```solidity
+// test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {
+    PoolSwapParams, SwapKind, AddLiquidityKind, RemoveLiquidityKind,
+    AddLiquidityParams, RemoveLiquidityParams
+} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {StandardExchangeBufferPoolRepo as Repo} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+import {StandardExchangeBufferHookTarget} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol";
+
+/// @dev Records each Vault call in observation order so tests can assert sequencing.
 contract MockBalancerV3Vault {
-    bytes[] public calls;
+    enum Sel { SEND_TO, SETTLE, ADD_LIQUIDITY, REMOVE_LIQUIDITY }
+    Sel[] public observed;
+    bytes[] public payloads;
     uint256 public scriptedSettleReturn;
-    function sendTo(address, address, uint256) external { calls.push(msg.data); }
-    function settle(address, uint256) external returns (uint256) { calls.push(msg.data); return scriptedSettleReturn; }
-    function addLiquidity(bytes calldata p) external { calls.push(msg.data); }
-    function removeLiquidity(bytes calldata p) external { calls.push(msg.data); }
+
+    function setScriptedSettleReturn(uint256 v) external { scriptedSettleReturn = v; }
+
+    function sendTo(IERC20 token, address to, uint256 amount) external {
+        observed.push(Sel.SEND_TO);
+        payloads.push(abi.encode(token, to, amount));
+    }
+    function settle(IERC20 token, uint256 amountHint) external returns (uint256) {
+        observed.push(Sel.SETTLE);
+        payloads.push(abi.encode(token, amountHint));
+        return scriptedSettleReturn;
+    }
+    function addLiquidity(AddLiquidityParams memory p) external returns (uint256[] memory, uint256, bytes memory) {
+        observed.push(Sel.ADD_LIQUIDITY);
+        payloads.push(abi.encode(p));
+        return (p.maxAmountsIn, 0, "");
+    }
+    function removeLiquidity(RemoveLiquidityParams memory p) external returns (uint256, uint256[] memory, bytes memory) {
+        observed.push(Sel.REMOVE_LIQUIDITY);
+        payloads.push(abi.encode(p));
+        return (0, p.minAmountsOut, "");
+    }
+    function observedCount() external view returns (uint256) { return observed.length; }
 }
 
-contract MockStandardExchange {
+/// @dev Returns scripted values for previewExchangeOut and exchangeOut; no real token movement.
+contract MockStandardExchange is IStandardExchange {
+    uint256 public scriptedPreview;
     uint256 public scriptedAmountOut;
-    function previewExchangeOut(address, address, uint256) external view returns (uint256) { return scriptedAmountOut; }
-    function exchangeOut(address, uint256, address, uint256, address, bool, uint256) external returns (uint256) { return scriptedAmountOut; }
+    function setPreview(uint256 v) external { scriptedPreview = v; }
+    function setAmountOut(uint256 v) external { scriptedAmountOut = v; }
+
+    function previewExchangeIn(IERC20, uint256, IERC20) external pure returns (uint256) { return 0; }
+    function previewExchangeOut(IERC20, IERC20, uint256) external view returns (uint256) { return scriptedPreview; }
+    function exchangeIn(IERC20, uint256, IERC20, uint256, address, bool, uint256) external pure returns (uint256) { return 0; }
+    function exchangeOut(IERC20, uint256, IERC20, uint256, address, bool, uint256) external view returns (uint256) {
+        return scriptedAmountOut;
+    }
+}
+
+contract StaticRateProvider is IRateProvider {
+    uint256 public immutable RATE;
+    constructor(uint256 r) { RATE = r; }
+    function getRate() external view returns (uint256) { return RATE; }
+}
+
+/// @dev Test harness exposes _balancerV3Vault / _expectedFactory and lets the test set up repo storage.
+contract HookHarness is StandardExchangeBufferHookTarget {
+    address public immutable VAULT;
+    address public immutable FACTORY;
+    constructor(
+        address v, address f,
+        IERC20 tta, IERC20 sh, IStandardExchange sev, IRateProvider rp
+    ) {
+        VAULT = v; FACTORY = f;
+        Repo._initialize(tta, sh, sev, rp, 0, 1);
+    }
+    function _balancerV3Vault() internal view override returns (address) { return VAULT; }
+    function _expectedFactory() internal view override returns (address) { return FACTORY; }
+    function setVirtualTTA(uint256 v) external { Repo._setVirtualTTA(v); }
+    function setHookSharesDelta(int256 v) external { Repo._setHookSharesDelta(v); }
+}
+
+contract HookPreSeatTest is Test {
+    MockBalancerV3Vault vault;
+    MockStandardExchange seVault;
+    StaticRateProvider rp;
+    HookHarness hook;
+    IERC20 tta = IERC20(address(0xAAA));
+    IERC20 shares = IERC20(address(0xBBB));
+
+    function setUp() public {
+        vault = new MockBalancerV3Vault();
+        seVault = new MockStandardExchange();
+        rp = new StaticRateProvider(1e18);
+        hook = new HookHarness(address(vault), address(0xFAC), tta, shares, seVault, rp);
+        hook.setVirtualTTA(100e18);
+        hook.setHookSharesDelta(0);
+        // Mock token: any address returns code so safeERC20 doesn't revert. Use vm.etch to install no-op code.
+        vm.etch(address(shares), hex"60006000fd"); // trivial revert-free runtime stub
+        // approve() will revert without code; for the unit test we stub it via vm.mockCall.
+        vm.mockCall(address(shares), abi.encodeWithSelector(IERC20.approve.selector), abi.encode(true));
+    }
+
+    function _params(uint256 amountInScaled18, uint256[] memory bal) internal view returns (PoolSwapParams memory) {
+        return PoolSwapParams({
+            kind: SwapKind.EXACT_IN,
+            amountGivenScaled18: amountInScaled18,
+            balancesScaled18: bal,
+            indexIn: 1, // shares
+            indexOut: 0, // TTA
+            router: address(0),
+            userData: ""
+        });
+    }
+
+    function test_preSeat_executesFiveVaultCallsInOrder() public {
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        seVault.setPreview(9e18);
+        seVault.setAmountOut(9e18); // returns the requested Y_TTA_raw
+        vault.setScriptedSettleReturn(9e18);
+
+        vm.prank(address(vault));
+        bool ok = hook.onBeforeSwap(_params(10e18, bal), address(hook));
+        assertTrue(ok);
+
+        // Spec section 6.3 step 3 order: sendTo, settle, addLiquidity, removeLiquidity.
+        // (exchangeOut on seVault is between sendTo and settle; not a Vault call so not observed here.)
+        assertEq(vault.observedCount(), 4);
+        assertEq(uint256(vault.observed(0)), uint256(MockBalancerV3Vault.Sel.SEND_TO));
+        assertEq(uint256(vault.observed(1)), uint256(MockBalancerV3Vault.Sel.SETTLE));
+        assertEq(uint256(vault.observed(2)), uint256(MockBalancerV3Vault.Sel.ADD_LIQUIDITY));
+        assertEq(uint256(vault.observed(3)), uint256(MockBalancerV3Vault.Sel.REMOVE_LIQUIDITY));
+    }
+
+    function test_preSeat_updatesVirtualTTAAndHookSharesDelta() public {
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        // y_pre = 100e18; X_rated = 10e18; Y_TTA_scaled18 = 100*10/110 = 9.0909e18
+        uint256 expectedY = (100e18 * 10e18) / (100e18 + 10e18);
+        seVault.setPreview(expectedY);
+        seVault.setAmountOut(expectedY);
+        vault.setScriptedSettleReturn(expectedY);
+
+        vm.prank(address(vault));
+        hook.onBeforeSwap(_params(10e18, bal), address(hook));
+
+        assertEq(hook.virtualTTA(), 100e18 - expectedY);
+        assertEq(hook.hookSharesDelta(), -int256(expectedY)); // S == expectedY when rate == 1e18
+    }
+
+    function test_preSeat_revertsWhenDerivedYIsZero() public {
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        hook.setHookSharesDelta(int256(120e18)); // drives derived_y to 0
+        vm.expectRevert(IStandardExchangeBufferPool.PoolSharesSideExhausted.selector);
+        vm.prank(address(vault));
+        hook.onBeforeSwap(_params(10e18, bal), address(hook));
+    }
+
+    function test_preSeat_revertsWhenVirtualTTAIsZero() public {
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        hook.setVirtualTTA(0);
+        vm.expectRevert(IStandardExchangeBufferPool.PoolTTASideExhausted.selector);
+        vm.prank(address(vault));
+        hook.onBeforeSwap(_params(10e18, bal), address(hook));
+    }
+
+    function test_preSeat_TTAtoSharesIsNoOp() public {
+        // params.indexIn == 0 (TTA): should return true without observing any Vault calls.
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        PoolSwapParams memory p = PoolSwapParams({
+            kind: SwapKind.EXACT_IN, amountGivenScaled18: 10e18, balancesScaled18: bal,
+            indexIn: 0, indexOut: 1, router: address(0), userData: ""
+        });
+        vm.prank(address(vault));
+        bool ok = hook.onBeforeSwap(p, address(hook));
+        assertTrue(ok);
+        assertEq(vault.observedCount(), 0);
+    }
+
+    function test_preSeat_rejectsWrongCaller() public {
+        uint256[] memory bal = new uint256[](2); bal[0] = 0; bal[1] = 100e18;
+        vm.prank(address(0xDEAD));
+        bool ok = hook.onBeforeSwap(_params(10e18, bal), address(hook));
+        assertFalse(ok);
+    }
 }
 ```
 
-Test cases:
-- `test_preSeat_executesFiveVaultCallsInOrder()`: assert ordered: sendTo, exchangeOut, settle, addLiquidity, removeLiquidity (or whatever final ordering matches spec).
-- `test_preSeat_updatesVirtualTTAAndHookSharesDelta()`: verify post-state.
-- `test_preSeat_revertsIfRateProviderReturnsZero()`.
-- `test_preSeat_revertsIfDerivedYIsZero()` with `PoolSharesSideExhausted`.
+Notes for the implementer:
+- The mocks intentionally omit `exchangeIn` / `previewExchangeIn` returns (Task 9 covers those).
+- `vm.mockCall` for `IERC20.approve` keeps the test focused on the hook's call sequence rather than ERC20 plumbing.
+- If the project's `IStandardExchange` interface signature differs (different param names, additional methods), adjust the mock to match. Refer to `contracts/interfaces/IStandardExchange.sol` (and the `IStandardExchangeIn` / `IStandardExchangeOut` parents) for exact signatures.
 
 - [ ] **Step 2: Confirm tests fail.**
 
@@ -1152,9 +1326,142 @@ Implements step 6 of Section 6.2 of the spec. The reconcile:
 
 For `shares -> TTA` the after-swap body is a no-op (all reconciliation happened in pre-seat).
 
-- [ ] **Step 1: Failing test (mirror Task 8 with `exchangeIn` direction; assert ordered calls + state updates; assert no-op when `params.tokenIn == shareToken`).**
-- [ ] **Step 2: Confirm fail.**
-- [ ] **Step 3: Implement `onAfterSwap` per the spec.**
+- [ ] **Step 1: Write the failing test**
+
+Reuses `MockBalancerV3Vault`, `MockStandardExchange`, `StaticRateProvider`, `HookHarness` from Task 8 — extract them into `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol` during Task 9 Step 1 if you haven't already (refactor for reuse), then this test imports the shared mocks. Extend `MockStandardExchange` with scripted `exchangeIn` / `previewExchangeIn` returns.
+
+```solidity
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+import {Test} from "forge-std/Test.sol";
+import {AfterSwapParams, SwapKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {MockBalancerV3Vault, MockStandardExchange, StaticRateProvider, HookHarness} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol";
+
+contract HookPostSwapTest is Test {
+    MockBalancerV3Vault vault;
+    MockStandardExchange seVault;
+    StaticRateProvider rp;
+    HookHarness hook;
+    IERC20 tta = IERC20(address(0xAAA));
+    IERC20 shares = IERC20(address(0xBBB));
+
+    function setUp() public {
+        vault = new MockBalancerV3Vault();
+        seVault = new MockStandardExchange();
+        rp = new StaticRateProvider(1e18);
+        hook = new HookHarness(address(vault), address(0xFAC), tta, shares, seVault, rp);
+        hook.setVirtualTTA(100e18);
+        hook.setHookSharesDelta(0);
+        vm.etch(address(tta), hex"60006000fd");
+        vm.mockCall(address(tta), abi.encodeWithSelector(IERC20.approve.selector), abi.encode(true));
+    }
+
+    function _afterParams(uint256 amountIn, uint256 amountOut) internal view returns (AfterSwapParams memory) {
+        return AfterSwapParams({
+            kind: SwapKind.EXACT_IN,
+            tokenIn: tta, tokenOut: shares,
+            amountInScaled18: amountIn, amountOutScaled18: amountOut,
+            tokenInBalanceScaled18: amountIn, tokenOutBalanceScaled18: 100e18 - amountOut,
+            amountCalculatedScaled18: amountOut, amountCalculatedRaw: amountOut,
+            router: address(0), pool: address(hook), userData: ""
+        });
+    }
+
+    function test_postSwap_TTAin_executesFourVaultCallsInOrder() public {
+        // X = 10 TTA, Y' = 10 shares minted by exchangeIn (rate 1:1).
+        seVault.setAmountIn(10e18); // implementer adds setAmountIn / scriptedAmountIn alongside the exchangeOut script
+        vault.setScriptedSettleReturn(10e18);
+        vm.prank(address(vault));
+        (bool ok, uint256 returnedAmount) = hook.onAfterSwap(_afterParams(10e18, 9.090909090909090909e18));
+        assertTrue(ok);
+        assertEq(returnedAmount, 9.090909090909090909e18); // we do not adjust amounts; enableHookAdjustedAmounts=false
+        assertEq(vault.observedCount(), 4);
+        assertEq(uint256(vault.observed(0)), uint256(MockBalancerV3Vault.Sel.SEND_TO));        // TTA out to hook
+        assertEq(uint256(vault.observed(1)), uint256(MockBalancerV3Vault.Sel.SETTLE));         // shares in
+        assertEq(uint256(vault.observed(2)), uint256(MockBalancerV3Vault.Sel.REMOVE_LIQUIDITY)); // zero pool TTA
+        assertEq(uint256(vault.observed(3)), uint256(MockBalancerV3Vault.Sel.ADD_LIQUIDITY));    // donate shares
+    }
+
+    function test_postSwap_updatesState() public {
+        seVault.setAmountIn(10e18);
+        vault.setScriptedSettleReturn(10e18);
+        vm.prank(address(vault));
+        hook.onAfterSwap(_afterParams(10e18, 9.090909090909090909e18));
+        assertEq(hook.virtualTTA(), 100e18 + 10e18);
+        assertEq(hook.hookSharesDelta(), int256(10e18));
+    }
+
+    function test_postSwap_SharesInIsNoOp() public {
+        AfterSwapParams memory p = AfterSwapParams({
+            kind: SwapKind.EXACT_IN, tokenIn: shares, tokenOut: tta,
+            amountInScaled18: 10e18, amountOutScaled18: 9e18,
+            tokenInBalanceScaled18: 100e18, tokenOutBalanceScaled18: 0,
+            amountCalculatedScaled18: 9e18, amountCalculatedRaw: 9e18,
+            router: address(0), pool: address(hook), userData: ""
+        });
+        vm.prank(address(vault));
+        (bool ok, uint256 returned) = hook.onAfterSwap(p);
+        assertTrue(ok);
+        assertEq(returned, 9e18);
+        assertEq(vault.observedCount(), 0);
+    }
+}
+```
+
+- [ ] **Step 2: Confirm fails to compile (missing `setAmountIn` on the mock + `onAfterSwap` body still reverts as the stub).**
+
+- [ ] **Step 3: Implement `onAfterSwap`**
+
+Add to `StandardExchangeBufferHookTarget.sol`:
+
+```solidity
+function onAfterSwap(AfterSwapParams calldata params)
+    public override returns (bool, uint256)
+{
+    if (msg.sender != _balancerV3Vault()) return (false, params.amountCalculatedRaw);
+    if (params.pool != address(this)) return (false, params.amountCalculatedRaw);
+
+    uint256 ttaIdx = Repo._ttaIndex();
+    bool ttaIn = (address(params.tokenIn) == address(Repo._ttaToken()));
+    if (!ttaIn) {
+        // shares -> TTA already reconciled in pre-seat. No-op.
+        return (true, params.amountCalculatedRaw);
+    }
+
+    // TTA -> shares post-swap reconcile.
+    IVault vault = IVault(_balancerV3Vault());
+    IStandardExchange seVault = Repo._standardExchangeVault();
+    IERC20 ttaTok = Repo._ttaToken();
+    IERC20 shareTok = Repo._shareToken();
+
+    uint256 X_raw = params.amountInScaled18; // assumes 18-decimal TTA; see note in Task 8 about multi-decimal
+    // 1) drain TTA from Vault
+    vault.sendTo(ttaTok, address(this), X_raw);
+    // 2) exchange TTA -> shares, sent back to Vault
+    ttaTok.approve(address(seVault), X_raw);
+    uint256 Y_prime = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
+    if (Y_prime == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
+    // 3) settle shares credit
+    vault.settle(shareTok, Y_prime);
+    // 4) zero pool TTA balance
+    uint256[] memory remAmts = new uint256[](2); remAmts[ttaIdx] = X_raw;
+    vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM, ""));
+    // 5) donate Y' shares back into pool
+    uint256[] memory addAmts = new uint256[](2); addAmts[Repo._sharesIndex()] = Y_prime;
+    vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION, ""));
+    // 6) state update
+    Repo._setVirtualTTA(Repo._virtualTTA() + X_raw);
+    Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(Y_prime));
+
+    // enableHookAdjustedAmounts = false, so the Vault ignores the returned amount; pass it through unchanged.
+    return (true, params.amountCalculatedRaw);
+}
+```
+
 - [ ] **Step 4: Tests pass.**
 - [ ] **Step 5: Commit**
 
@@ -1172,9 +1479,112 @@ git commit -m "feat(pool): hook onAfterSwap reconcile for TTA->shares"
 
 Implements step 3 of Section 6.4. Reject non-PROPORTIONAL non-CUSTOM kinds (`AddLiquidityNotProportional`). For PROPORTIONAL with a TTA contribution: convert the LP's TTA into shares via `exchangeIn`, then donate + reconcile so the LP's effective contribution is shares-only. Update `hookSharesDelta += newlyMintedShares`.
 
-- [ ] **Step 1: Failing test.**
-- [ ] **Step 2: Confirm fail.**
-- [ ] **Step 3: Implement `onBeforeAddLiquidity`.**
+- [ ] **Step 1: Failing test**
+
+```solidity
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+import {Test} from "forge-std/Test.sol";
+import {AddLiquidityKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {MockBalancerV3Vault, MockStandardExchange, StaticRateProvider, HookHarness} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol";
+
+contract HookLPAddTest is Test {
+    MockBalancerV3Vault vault;
+    MockStandardExchange seVault;
+    StaticRateProvider rp;
+    HookHarness hook;
+    IERC20 tta = IERC20(address(0xAAA));
+    IERC20 shares = IERC20(address(0xBBB));
+
+    function setUp() public {
+        vault = new MockBalancerV3Vault();
+        seVault = new MockStandardExchange();
+        rp = new StaticRateProvider(1e18);
+        hook = new HookHarness(address(vault), address(0xFAC), tta, shares, seVault, rp);
+        hook.setVirtualTTA(100e18); hook.setHookSharesDelta(0);
+        vm.etch(address(tta), hex"60006000fd");
+        vm.mockCall(address(tta), abi.encodeWithSelector(IERC20.approve.selector), abi.encode(true));
+    }
+
+    function test_revertsForUnbalanced() public {
+        uint256[] memory max = new uint256[](2); max[0] = 10e18; max[1] = 10e18;
+        vm.expectRevert(IStandardExchangeBufferPool.AddLiquidityNotProportional.selector);
+        vm.prank(address(vault));
+        hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.UNBALANCED, max, 0, new uint256[](2), "");
+    }
+
+    function test_proportionalWithTTA_convertsAndReconciles() public {
+        // LP contributes 5 TTA + 5 shares; hook converts the 5 TTA -> 5 new shares (rate=1:1).
+        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 5e18;
+        seVault.setAmountIn(5e18); // exchangeIn returns 5 new shares
+        vault.setScriptedSettleReturn(5e18);
+        vm.prank(address(vault));
+        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
+        assertTrue(ok);
+        // After-state: hookSharesDelta += Y' = +5e18 (TTA conversion donates 5 shares back).
+        assertEq(hook.hookSharesDelta(), int256(5e18));
+        // The Vault saw: sendTo(TTA), settle(shares), removeLiquidity(CUSTOM zero-TTA), addLiquidity(DONATION shares).
+        assertEq(vault.observedCount(), 4);
+    }
+
+    function test_proportionalWithoutTTA_skipsConversion() public {
+        uint256[] memory max = new uint256[](2); max[0] = 0; max[1] = 5e18;
+        vm.prank(address(vault));
+        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
+        assertTrue(ok);
+        assertEq(hook.hookSharesDelta(), 0);
+        assertEq(vault.observedCount(), 0);
+    }
+}
+```
+
+- [ ] **Step 2: Confirm fails.**
+
+- [ ] **Step 3: Implement `onBeforeAddLiquidity`** in `StandardExchangeBufferHookTarget.sol`. Replace the stub with:
+
+```solidity
+function onBeforeAddLiquidity(
+    address /*router*/, address pool, AddLiquidityKind kind,
+    uint256[] memory maxAmountsInScaled18,
+    uint256 /*minBptAmountOut*/,
+    uint256[] memory /*balancesScaled18*/,
+    bytes memory /*userData*/
+) public override returns (bool) {
+    if (msg.sender != _balancerV3Vault()) return false;
+    if (pool != address(this)) return false;
+    if (kind != AddLiquidityKind.PROPORTIONAL && kind != AddLiquidityKind.CUSTOM) {
+        revert IStandardExchangeBufferPool.AddLiquidityNotProportional();
+    }
+    if (kind == AddLiquidityKind.CUSTOM) return true; // hook-internal reconcile path; nothing to do here.
+
+    uint256 ttaIdx = Repo._ttaIndex();
+    uint256 ttaIn = maxAmountsInScaled18[ttaIdx];
+    if (ttaIn == 0) return true; // shares-only contribution; nothing to convert.
+
+    // Mirror onAfterSwap's TTA->shares reconcile, sized to ttaIn.
+    IVault vault = IVault(_balancerV3Vault());
+    IStandardExchange seVault = Repo._standardExchangeVault();
+    IERC20 ttaTok = Repo._ttaToken();
+    IERC20 shareTok = Repo._shareToken();
+    vault.sendTo(ttaTok, address(this), ttaIn);
+    ttaTok.approve(address(seVault), ttaIn);
+    uint256 Y_prime = seVault.exchangeIn(ttaTok, ttaIn, shareTok, 0, address(vault), false, block.timestamp);
+    if (Y_prime == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(ttaIn);
+    vault.settle(shareTok, Y_prime);
+    uint256[] memory remAmts = new uint256[](2); remAmts[ttaIdx] = ttaIn;
+    vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM, ""));
+    uint256[] memory addAmts = new uint256[](2); addAmts[Repo._sharesIndex()] = Y_prime;
+    vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION, ""));
+
+    Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(Y_prime));
+    return true;
+}
+```
+
 - [ ] **Step 4: Pass.**
 - [ ] **Step 5: Commit**
 
@@ -1192,9 +1602,136 @@ git commit -m "feat(pool): hook onBeforeAddLiquidity converts LP TTA to shares"
 
 Implements step 5 of Section 6.4 and step 4 of Section 6.5. Read `_totalSupply()` from the pool (the hook calls `IERC20(address(this)).totalSupply()` since the Diamond exposes the BPT ERC20 surface), recover `T_pre` (= `totalSupply() - bptOut` for add, `+ bptIn` for remove), and update `virtualTTA` and `hookSharesDelta` proportionally per the spec's Section 5.5 table. `virtualTTA` is clamped at zero on remove (defensive).
 
-- [ ] **Step 1: Failing test (proportional add: virtualTTA + hookSharesDelta scale by `(T+bptOut)/T`; proportional remove: scale by `(T-bptIn)/T`; CP ratio preserved).**
-- [ ] **Step 2: Confirm fail.**
-- [ ] **Step 3: Implement both after-hooks.**
+- [ ] **Step 1: Failing test**
+
+The test only needs `MockBalancerV3Vault` (no Standard Exchange Vault calls here) and the harness, plus we mock `totalSupply()` via `vm.mockCall(address(hook), abi.encodeWithSelector(IERC20.totalSupply.selector), abi.encode(...))` since the BPT surface isn't on the harness yet.
+
+```solidity
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+import {Test} from "forge-std/Test.sol";
+import {AddLiquidityKind, RemoveLiquidityKind} from
+    "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {MockBalancerV3Vault, MockStandardExchange, StaticRateProvider, HookHarness} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol";
+
+contract HookLPProportionalTest is Test {
+    MockBalancerV3Vault vault;
+    MockStandardExchange seVault;
+    StaticRateProvider rp;
+    HookHarness hook;
+    IERC20 tta = IERC20(address(0xAAA));
+    IERC20 shares = IERC20(address(0xBBB));
+
+    function setUp() public {
+        vault = new MockBalancerV3Vault();
+        seVault = new MockStandardExchange();
+        rp = new StaticRateProvider(1e18);
+        hook = new HookHarness(address(vault), address(0xFAC), tta, shares, seVault, rp);
+        hook.setVirtualTTA(100e18);
+        hook.setHookSharesDelta(int256(20e18));
+    }
+
+    function _mockTotalSupply(uint256 v) internal {
+        vm.mockCall(address(hook), abi.encodeWithSelector(IERC20.totalSupply.selector), abi.encode(v));
+    }
+
+    function test_onAfterAddLiquidity_scalesProportionally() public {
+        // totalSupply() = 100 BPT post-mint; bptOut = 25 -> T_pre = 75.
+        _mockTotalSupply(100e18);
+        vm.prank(address(vault));
+        (bool ok, uint256[] memory adj) = hook.onAfterAddLiquidity(
+            address(0), address(hook), AddLiquidityKind.PROPORTIONAL,
+            new uint256[](2), new uint256[](2), 25e18, new uint256[](2), ""
+        );
+        assertTrue(ok);
+        assertEq(adj.length, 2);
+        // virtualTTA += 25 * 100 / 75 = 33.333...
+        assertApproxEqAbs(hook.virtualTTA(), 100e18 + (25e18 * 100e18) / 75e18, 1e9);
+        // hookSharesDelta += 25 * 20 / 75 = 6.666... (signed)
+        assertApproxEqAbs(hook.hookSharesDelta(), int256(20e18) + int256((25e18 * 20e18) / 75e18), 1e9);
+    }
+
+    function test_onAfterRemoveLiquidity_scalesProportionallyDown() public {
+        // totalSupply() = 75 BPT post-burn; bptIn = 25 -> T_pre = 100.
+        _mockTotalSupply(75e18);
+        vm.prank(address(vault));
+        (bool ok, uint256[] memory adj) = hook.onAfterRemoveLiquidity(
+            address(0), address(hook), RemoveLiquidityKind.PROPORTIONAL,
+            25e18, new uint256[](2), new uint256[](2), new uint256[](2), ""
+        );
+        assertTrue(ok);
+        assertEq(adj.length, 2);
+        // virtualTTA -= 25 * 100 / 100 = 25
+        assertApproxEqAbs(hook.virtualTTA(), 100e18 - 25e18, 1e9);
+        // hookSharesDelta -= 25 * 20 / 100 = 5
+        assertApproxEqAbs(hook.hookSharesDelta(), int256(20e18) - int256(5e18), 1e9);
+    }
+
+    function test_onAfterRemoveLiquidity_clampsVirtualTTAAtZero() public {
+        hook.setVirtualTTA(1); // tiny
+        _mockTotalSupply(1);   // bptIn = 100 -> T_pre = 101; proportional deduction would underflow
+        vm.prank(address(vault));
+        hook.onAfterRemoveLiquidity(
+            address(0), address(hook), RemoveLiquidityKind.PROPORTIONAL,
+            100e18, new uint256[](2), new uint256[](2), new uint256[](2), ""
+        );
+        assertEq(hook.virtualTTA(), 0); // clamped
+    }
+}
+```
+
+- [ ] **Step 2: Confirm fails.**
+
+- [ ] **Step 3: Implement both after-hooks** in `StandardExchangeBufferHookTarget.sol` (replace the stubs):
+
+```solidity
+function onAfterAddLiquidity(
+    address /*router*/, address pool, AddLiquidityKind /*kind*/,
+    uint256[] memory /*amountsInScaled18*/,
+    uint256[] memory amountsInRaw,
+    uint256 bptAmountOut,
+    uint256[] memory /*balancesScaled18*/,
+    bytes memory /*userData*/
+) public override returns (bool, uint256[] memory) {
+    if (msg.sender != _balancerV3Vault()) return (false, amountsInRaw);
+    if (pool != address(this)) return (false, amountsInRaw);
+    uint256 tPost = IERC20(address(this)).totalSupply();
+    uint256 tPre = tPost - bptAmountOut;
+    if (tPre == 0) return (true, amountsInRaw); // first-mint case handled by init
+    uint256 vtPre = Repo._virtualTTA();
+    int256 hPre = Repo._hookSharesDelta();
+    Repo._setVirtualTTA(vtPre + (bptAmountOut * vtPre) / tPre);
+    // Signed proportional scaling
+    int256 hAdd = (int256(bptAmountOut) * hPre) / int256(tPre);
+    Repo._setHookSharesDelta(hPre + hAdd);
+    return (true, amountsInRaw);
+}
+
+function onAfterRemoveLiquidity(
+    address /*router*/, address pool, RemoveLiquidityKind /*kind*/,
+    uint256 bptAmountIn,
+    uint256[] memory /*amountsOutScaled18*/,
+    uint256[] memory amountsOutRaw,
+    uint256[] memory /*balancesScaled18*/,
+    bytes memory /*userData*/
+) public override returns (bool, uint256[] memory) {
+    if (msg.sender != _balancerV3Vault()) return (false, amountsOutRaw);
+    if (pool != address(this)) return (false, amountsOutRaw);
+    uint256 tPost = IERC20(address(this)).totalSupply();
+    uint256 tPre = tPost + bptAmountIn;
+    if (tPre == 0) return (true, amountsOutRaw);
+    uint256 vtPre = Repo._virtualTTA();
+    int256 hPre = Repo._hookSharesDelta();
+    uint256 vtSub = (bptAmountIn * vtPre) / tPre;
+    Repo._setVirtualTTA(vtSub >= vtPre ? 0 : vtPre - vtSub); // defensive clamp
+    int256 hSub = (int256(bptAmountIn) * hPre) / int256(tPre);
+    Repo._setHookSharesDelta(hPre - hSub);
+    return (true, amountsOutRaw);
+}
+```
+
 - [ ] **Step 4: Pass.**
 - [ ] **Step 5: Commit**
 
@@ -1273,21 +1810,322 @@ git commit -m "feat(pool): hook facet + expectedFactory in repo"
 **Files:**
 - Create: `contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol`
 
-Mirror `BalancerV3ConstantProductPoolStandardVaultPkg.sol` (a peer-directory file) with these changes:
-- Add the three new facets: `StandardExchangeBufferPoolFacet`, `StandardExchangeBufferPoolLiquidityFacet`, `StandardExchangeHookFacet`. Remove the generic `BALANCER_V3_CONST_PROD_POOL_FACET`.
+Mirror the structure of `contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol`. Differences:
+- Three new facet slots in `PkgInit` and `facetCuts`: `bufferPoolFacet`, `poolLiquidityFacet`, `hookFacet`. Remove the generic `balancerV3ConstProdPoolFacet`.
 - `_liquidityManagement()` returns `LiquidityManagement(disableUnbalancedLiquidity: true, enableAddLiquidityCustom: true, enableRemoveLiquidityCustom: true, enableDonation: true)`.
-- `postDeploy`: register the pool with the Balancer V3 Vault, passing **`hooksContract = proxy`** (the pool's own address).
-- `initAccount`: in addition to the existing repos (Multi-asset basic vault, Standard vault, ERC20, EIP712, BalancerV3PoolRepo, BalancerV3AuthenticationRepo, BalancerV3VaultAwareRepo), also initialize `StandardExchangeBufferPoolRepo` with `(tta, shares, seVault, rateProvider, ttaIdx, sharesIdx, expectedFactory=address(this))`.
-- `PkgArgs` add `standardExchangeVault` and `rateProvider`.
-- `deployPool(IStandardExchange seVault, IERC20 tta, IERC20 shares, IRateProvider rp)` helper routes through `VAULT_REGISTRY.deployVault(this, abi.encode(PkgArgs(...)))`.
+- `postDeploy`: pass `hooksContract = proxy` (the pool's own address).
+- `initAccount`: in addition to the existing repos, also initialize `StandardExchangeBufferPoolRepo` with `(tta, shares, seVault, rateProvider, ttaIdx, sharesIdx, expectedFactory=address(this))`.
+- `PkgArgs` adds `standardExchangeVault` and `rateProvider`.
+- `deployPool(IStandardExchange, IERC20, IERC20, IRateProvider)` helper routes through `VAULT_REGISTRY.deployVault(this, abi.encode(PkgArgs(...)))`.
 
-Build a comprehensive test that deploys the DFPkg against a mock Balancer V3 Vault and asserts the registration call shape.
+- [ ] **Step 1: Write a failing integration test**
 
-- [ ] **Step 1: Write a failing integration test that deploys the DFPkg and asserts `Vault.registerPool` was called with the expected `TokenConfig[]`, `roleAccounts`, `swapFee`, `hooksContract == pool`, and `liquidityManagement` matching the spec.**
+The test deploys (1) a CREATE3 factory + Diamond Package Factory (use existing Crane fixtures), (2) the existing rate provider DFPkg + a rate provider instance, (3) all our facet instances, (4) the new DFPkg via `VaultRegistry.deployPkg`, (5) calls `deployPool` and asserts the resulting pool proxy passes basic interface checks and that the `BalancerV3VaultAware._balancerV3Vault()` getter returns the expected Vault address. Mock the Balancer V3 Vault as in earlier tasks; assert it observed exactly one `registerPool` call with the right shape (`TokenConfig[]` sorted [TTA, shares], `hooksContract == proxy`, `liquidityManagement` matching the spec).
 
-- [ ] **Step 2: Confirm test fails.**
+```solidity
+// test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg.t.sol
+// (sketch — full file follows existing test patterns; the key assertion block:)
+contract MockBalancerV3VaultWithRegister is MockBalancerV3Vault {
+    address public lastRegisteredPool;
+    TokenConfig[] public lastTokenConfig;
+    PoolRoleAccounts public lastRoleAccounts;
+    uint256 public lastSwapFee;
+    bool public lastProtocolFeeExempt;
+    address public lastHooksContract;
+    LiquidityManagement public lastLm;
+    function registerPool(
+        address pool, TokenConfig[] memory tokens, uint256 swapFee, uint32 /*pauseEnd*/,
+        bool protocolFeeExempt, PoolRoleAccounts memory ra, address hooks, LiquidityManagement memory lm
+    ) external {
+        lastRegisteredPool = pool;
+        for (uint256 i; i < tokens.length; ++i) lastTokenConfig.push(tokens[i]);
+        lastSwapFee = swapFee;
+        lastProtocolFeeExempt = protocolFeeExempt;
+        lastRoleAccounts = ra;
+        lastHooksContract = hooks;
+        lastLm = lm;
+    }
+}
 
-- [ ] **Step 3: Implement the DFPkg by copying `BalancerV3ConstantProductPoolStandardVaultPkg.sol` and applying the changes above.**
+function test_deployPool_registersWithExpectedShape() public {
+    address pool = pkg.deployPool(IStandardExchange(seVault), IERC20(tta), IERC20(shares), rateProvider);
+    assertEq(mockBalVault.lastRegisteredPool(), pool);
+    assertEq(mockBalVault.lastHooksContract(), pool);                  // hook == pool
+    assertTrue(mockBalVault.lastLm().disableUnbalancedLiquidity);
+    assertTrue(mockBalVault.lastLm().enableAddLiquidityCustom);
+    assertTrue(mockBalVault.lastLm().enableRemoveLiquidityCustom);
+    assertTrue(mockBalVault.lastLm().enableDonation);
+    // ... assert token order, types, rateProvider ...
+}
+```
+
+- [ ] **Step 2: Confirm test fails (DFPkg doesn't exist yet).**
+
+- [ ] **Step 3: Write the DFPkg**
+
+Skeleton follows `BalancerV3ConstantProductPoolStandardVaultPkg.sol` exactly, with these changes:
+
+```solidity
+// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity ^0.8.0;
+
+// (Same Crane / Balancer V3 / OpenZeppelin imports as the generic DFPkg, plus:)
+import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolLiquidity.sol";
+import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {StandardExchangeBufferPoolRepo} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+
+interface IStandardExchangeBufferPoolPkg is IDiamondFactoryPackage, IStandardVaultPkg {
+    struct PkgInit {
+        IFacet basicVaultFacet;
+        IFacet standardVaultFacet;
+        IFacet balancerV3VaultAwareFacet;
+        IFacet betterBalancerV3PoolTokenFacet;
+        IFacet defaultPoolInfoFacet;
+        IFacet standardSwapFeePercentageBoundsFacet;
+        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
+        IFacet balancerV3AuthenticationFacet;
+        IFacet bufferPoolFacet;        // NEW
+        IFacet poolLiquidityFacet;     // NEW
+        IFacet hookFacet;              // NEW
+        IVaultRegistryDeployment vaultRegistry;
+        IVaultFeeOracleQuery vaultFeeOracle;
+        IVault balancerV3Vault;
+        IDiamondPackageCallBackFactory diamondFactory;
+    }
+    struct PkgArgs {
+        IERC20 tta;
+        IERC20 shares;
+        IStandardExchange standardExchangeVault;
+        IRateProvider rateProvider;
+    }
+    function deployPool(IStandardExchange seVault, IERC20 tta, IERC20 shares, IRateProvider rp) external returns (address);
+}
+
+contract StandardExchangeBufferPoolStandardVaultPkg is
+    BalancerV3BasePoolFactory,
+    IStandardExchangeBufferPoolPkg
+{
+    using Address for address[];
+    using BetterEfficientHashLib for bytes;
+    using SafeERC20 for IERC20;
+
+    error NotCalledByRegistry(address);
+
+    uint256 private constant _MIN_SWAP_FEE_PERCENTAGE = 1e14; // 0.01%
+    uint256 private constant _MAX_SWAP_FEE_PERCENTAGE = 0.1e18; // 10%
+    uint256 private constant _MIN_INVARIANT_RATIO = 1e18; // identity (disableUnbalancedLiquidity = true)
+    uint256 private constant _MAX_INVARIANT_RATIO = 1e18;
+
+    // Same immutables as the generic DFPkg, plus the three new facets.
+    IFacet public immutable BASIC_VAULT_FACET;
+    IFacet public immutable STANDARD_VAULT_FACET;
+    IFacet public immutable BALANCER_V3_VAULT_AWARE_FACET;
+    IFacet public immutable BETTER_BALANCER_V3_POOL_TOKEN_FACET;
+    IFacet public immutable DEFAULT_POOL_INFO_FACET;
+    IFacet public immutable STANDARD_SWAP_FEE_PERCENTAGE_BOUNDS_FACET;
+    IFacet public immutable UNBALANCED_LIQUIDITY_INVARIANT_RATIO_BOUNDS_FACET;
+    IFacet public immutable BALANCER_V3_AUTHENTICATION_FACET;
+    IFacet public immutable BUFFER_POOL_FACET;
+    IFacet public immutable POOL_LIQUIDITY_FACET;
+    IFacet public immutable HOOK_FACET;
+    IVaultRegistryDeployment public immutable VAULT_REGISTRY;
+    IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE;
+    IVault public immutable BALANCER_V3_VAULT;
+    IDiamondPackageCallBackFactory public immutable DIAMOND_PACKAGE_FACTORY;
+
+    constructor(PkgInit memory init) {
+        BASIC_VAULT_FACET = init.basicVaultFacet;
+        STANDARD_VAULT_FACET = init.standardVaultFacet;
+        BALANCER_V3_VAULT_AWARE_FACET = init.balancerV3VaultAwareFacet;
+        BETTER_BALANCER_V3_POOL_TOKEN_FACET = init.betterBalancerV3PoolTokenFacet;
+        DEFAULT_POOL_INFO_FACET = init.defaultPoolInfoFacet;
+        STANDARD_SWAP_FEE_PERCENTAGE_BOUNDS_FACET = init.standardSwapFeePercentageBoundsFacet;
+        UNBALANCED_LIQUIDITY_INVARIANT_RATIO_BOUNDS_FACET = init.unbalancedLiquidityInvariantRatioBoundsFacet;
+        BALANCER_V3_AUTHENTICATION_FACET = init.balancerV3AuthenticationFacet;
+        BUFFER_POOL_FACET = init.bufferPoolFacet;
+        POOL_LIQUIDITY_FACET = init.poolLiquidityFacet;
+        HOOK_FACET = init.hookFacet;
+        VAULT_REGISTRY = init.vaultRegistry;
+        VAULT_FEE_ORACLE = init.vaultFeeOracle;
+        BALANCER_V3_VAULT = init.balancerV3Vault;
+        DIAMOND_PACKAGE_FACTORY = init.diamondFactory;
+        BalancerV3BasePoolFactoryRepo._initialize(365 days, address(VAULT_FEE_ORACLE.feeTo()));
+        BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
+        BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
+    }
+
+    function _diamondPkgFactory() internal view override returns (IDiamondPackageCallBackFactory) {
+        return DIAMOND_PACKAGE_FACTORY;
+    }
+    function _poolDFPkg() internal view override returns (IDiamondFactoryPackage) { return IDiamondFactoryPackage(this); }
+
+    /* ----- IStandardVaultPkg ----- */
+    function name() public pure returns (string memory) { return type(StandardExchangeBufferPoolStandardVaultPkg).name; }
+    function vaultFeeTypeIds() public pure returns (bytes32 v) {
+        return VaultTypeUtils._insertFeeTypeId(v, VaultFeeType.DEX, type(IStandardExchangeBufferPoolPkg).interfaceId);
+    }
+    function vaultTypes() public pure returns (bytes4[] memory) { return facetInterfaces(); }
+    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory) {
+        return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
+    }
+
+    /* ----- IDiamondFactoryPackage ----- */
+    function packageName() public pure returns (string memory) { return name(); }
+
+    function facetInterfaces() public pure returns (bytes4[] memory ifaces) {
+        ifaces = new bytes4[](15);
+        ifaces[0]  = type(IERC20).interfaceId;
+        ifaces[1]  = type(IERC20Metadata).interfaceId;
+        ifaces[2]  = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
+        ifaces[3]  = type(IERC20Permit).interfaceId;
+        ifaces[4]  = type(IERC5267).interfaceId;
+        ifaces[5]  = type(IBasicVault).interfaceId;
+        ifaces[6]  = type(IStandardVault).interfaceId;
+        ifaces[7]  = type(IBalancerV3VaultAware).interfaceId;
+        ifaces[8]  = type(IPoolInfo).interfaceId;
+        ifaces[9]  = type(IBasePool).interfaceId;
+        ifaces[10] = type(ISwapFeePercentageBounds).interfaceId;
+        ifaces[11] = type(IUnbalancedLiquidityInvariantRatioBounds).interfaceId;
+        ifaces[12] = type(IBalancerPoolToken).interfaceId;
+        ifaces[13] = type(IPoolLiquidity).interfaceId;
+        ifaces[14] = type(IHooks).interfaceId;
+        // (Optional: also include IStandardExchangeBufferPool.interfaceId — decide during impl)
+    }
+
+    function facetAddresses() public view returns (address[] memory addrs) {
+        addrs = new address[](11);
+        addrs[0]  = address(BASIC_VAULT_FACET);
+        addrs[1]  = address(STANDARD_VAULT_FACET);
+        addrs[2]  = address(BALANCER_V3_VAULT_AWARE_FACET);
+        addrs[3]  = address(BETTER_BALANCER_V3_POOL_TOKEN_FACET);
+        addrs[4]  = address(DEFAULT_POOL_INFO_FACET);
+        addrs[5]  = address(STANDARD_SWAP_FEE_PERCENTAGE_BOUNDS_FACET);
+        addrs[6]  = address(UNBALANCED_LIQUIDITY_INVARIANT_RATIO_BOUNDS_FACET);
+        addrs[7]  = address(BALANCER_V3_AUTHENTICATION_FACET);
+        addrs[8]  = address(BUFFER_POOL_FACET);
+        addrs[9]  = address(POOL_LIQUIDITY_FACET);
+        addrs[10] = address(HOOK_FACET);
+    }
+
+    function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+        address[] memory addrs = facetAddresses();
+        cuts = new IDiamond.FacetCut[](addrs.length);
+        for (uint256 i; i < addrs.length; ++i) {
+            cuts[i] = IDiamond.FacetCut({
+                facetAddress: addrs[i],
+                action: IDiamond.FacetCutAction.Add,
+                functionSelectors: IFacet(addrs[i]).facetFuncs()
+            });
+        }
+    }
+
+    function packageMetadata() public view returns (string memory n, bytes4[] memory i, address[] memory f) {
+        n = packageName(); i = facetInterfaces(); f = facetAddresses();
+    }
+    function diamondConfig() public view returns (DiamondConfig memory) {
+        return IDiamondFactoryPackage.DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
+    }
+
+    function calcSalt(bytes memory pkgArgs) public pure returns (bytes32) {
+        return abi.encode(pkgArgs)._hash();
+    }
+    function processArgs(bytes memory pkgArgs) public view returns (bytes memory) {
+        if (msg.sender != address(VAULT_REGISTRY)) revert NotCalledByRegistry(msg.sender);
+        return pkgArgs;
+    }
+    function updatePkg(address, bytes memory) public pure returns (bool) { return true; }
+
+    function initAccount(bytes memory initArgs) public {
+        PkgArgs memory a = abi.decode(initArgs, (PkgArgs));
+
+        BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
+
+        // Determine sorted order to know the indices.
+        (IERC20 tokA, IERC20 tokB) = address(a.tta) < address(a.shares) ? (a.tta, a.shares) : (a.shares, a.tta);
+        uint256 ttaIdx = tokA == a.tta ? 0 : 1;
+        uint256 sharesIdx = 1 - ttaIdx;
+
+        address[] memory tokens = new address[](2);
+        tokens[0] = address(tokA); tokens[1] = address(tokB);
+
+        MultiAssetBasicVaultRepo._initialize(tokens);
+        StandardVaultRepo._initialize(
+            VAULT_FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(),
+            abi.encode(tokens, address(a.standardExchangeVault), address(a.rateProvider))._hash()
+        );
+
+        string memory name_ = string.concat(
+            "BV3StdExchBuffer of (", IERC20Metadata(address(a.tta)).name(), " <-> ",
+            IERC20Metadata(address(a.shares)).name(), ")"
+        );
+        ERC20Repo._initialize(name_, "BPT", 18);
+        EIP712Repo._initialize(name_, "1");
+        BalancerV3PoolRepo._initialize(
+            _MIN_INVARIANT_RATIO, _MAX_INVARIANT_RATIO,
+            _MIN_SWAP_FEE_PERCENTAGE, _MAX_SWAP_FEE_PERCENTAGE,
+            tokens
+        );
+        BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
+
+        // The pool-specific repo (Task 12 added expectedFactory field).
+        StandardExchangeBufferPoolRepo._initialize(
+            a.tta, a.shares, a.standardExchangeVault, a.rateProvider, ttaIdx, sharesIdx /*, address(this)*/
+        );
+    }
+
+    function _roleAccounts() internal view returns (PoolRoleAccounts memory r) {
+        address feeTo_ = address(VAULT_FEE_ORACLE.feeTo());
+        r = PoolRoleAccounts({pauseManager: feeTo_, swapFeeManager: feeTo_, poolCreator: feeTo_});
+    }
+    function _liquidityManagement() internal pure returns (LiquidityManagement memory lm) {
+        lm = LiquidityManagement({
+            disableUnbalancedLiquidity: true,
+            enableAddLiquidityCustom: true,
+            enableRemoveLiquidityCustom: true,
+            enableDonation: true
+        });
+    }
+
+    function postDeploy(address proxy) public returns (bool) {
+        // TokenConfig array built from the sorted tokens with the correct rate provider on shares.
+        TokenConfig[] memory cfg = _buildTokenConfig(proxy);
+        _registerPoolWithBalV3Vault(
+            proxy,
+            cfg,
+            5e16,            // swap fee = 0.05% default; tune per deployment
+            false,
+            _roleAccounts(),
+            proxy,           // hooksContract == pool (HOOK_FACET lives in this Diamond)
+            _liquidityManagement()
+        );
+        return true;
+    }
+
+    function _buildTokenConfig(address proxy) internal view returns (TokenConfig[] memory cfg) {
+        cfg = new TokenConfig[](2);
+        // Read from StandardExchangeBufferPoolRepo on the proxy via low-level static call OR
+        // re-derive from the stored PkgArgs (preferred to avoid cross-diamond reads here).
+        // For simplicity in this slice, store the PkgArgs in a transient or per-proxy mapping during initAccount,
+        // and read here. (Implementation detail — pick the cleanest path during execution.)
+    }
+
+    function deployPool(IStandardExchange seVault, IERC20 tta, IERC20 shares, IRateProvider rp)
+        external returns (address pool)
+    {
+        pool = VAULT_REGISTRY.deployVault(
+            IStandardVaultPkg(address(this)),
+            abi.encode(PkgArgs({tta: tta, shares: shares, standardExchangeVault: seVault, rateProvider: rp}))
+        );
+    }
+}
+```
+
+*Implementation note: `_buildTokenConfig` is left partly TBD because there are two valid resolutions (transient per-proxy storage during initAccount vs. cross-diamond static call). Pick one and document the choice in a code comment.*
 
 - [ ] **Step 4: Tests pass.**
 
@@ -1304,12 +2142,124 @@ git commit -m "feat(pool): DFPkg composing pool + hook + liquidity facets"
 **Files:**
 - Create: `contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol`
 
-Library mirroring `BalancerV3ConstantProductPool_FactoryService.sol`. Add deploy helpers for each of the three new facets and the DFPkg. Add a `buildPkgInit` helper that packs the seven facets + immutables into the DFPkg's `PkgInit`.
+Mirror `contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol`.
 
-- [ ] **Step 1: Write the library.**
+- [ ] **Step 1: Write the library**
+
+```solidity
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {Vm} from "forge-std/Vm.sol";
+import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+
+import {
+    StandardExchangeBufferPoolFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolFacet.sol";
+import {
+    StandardExchangeBufferPoolLiquidityFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityFacet.sol";
+import {
+    StandardExchangeHookFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeHookFacet.sol";
+import {
+    StandardExchangeBufferPoolStandardVaultPkg,
+    IStandardExchangeBufferPoolPkg
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+
+library StandardExchangeBufferPool_FactoryService {
+    using BetterEfficientHashLib for bytes;
+    Vm constant vm = Vm(VM_ADDRESS);
+
+    function deployBufferPoolFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet i) {
+        i = create3Factory.deployFacet(
+            type(StandardExchangeBufferPoolFacet).creationCode,
+            abi.encode(type(StandardExchangeBufferPoolFacet).name)._hash()
+        );
+        vm.label(address(i), type(StandardExchangeBufferPoolFacet).name);
+    }
+
+    function deployPoolLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet i) {
+        i = create3Factory.deployFacet(
+            type(StandardExchangeBufferPoolLiquidityFacet).creationCode,
+            abi.encode(type(StandardExchangeBufferPoolLiquidityFacet).name)._hash()
+        );
+        vm.label(address(i), type(StandardExchangeBufferPoolLiquidityFacet).name);
+    }
+
+    function deployHookFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet i) {
+        i = create3Factory.deployFacet(
+            type(StandardExchangeHookFacet).creationCode,
+            abi.encode(type(StandardExchangeHookFacet).name)._hash()
+        );
+        vm.label(address(i), type(StandardExchangeHookFacet).name);
+    }
+
+    function deployPkg(
+        IVaultRegistryDeployment vaultRegistry,
+        IStandardExchangeBufferPoolPkg.PkgInit memory init
+    ) internal returns (IStandardExchangeBufferPoolPkg pkg) {
+        pkg = IStandardExchangeBufferPoolPkg(address(
+            vaultRegistry.deployPkg(
+                type(StandardExchangeBufferPoolStandardVaultPkg).creationCode,
+                abi.encode(init),
+                abi.encode(type(StandardExchangeBufferPoolStandardVaultPkg).name)._hash()
+            )
+        ));
+        vm.label(address(pkg), type(StandardExchangeBufferPoolStandardVaultPkg).name);
+    }
+
+    function buildPkgInit(
+        IFacet basicVaultFacet,
+        IFacet standardVaultFacet,
+        IFacet balancerV3VaultAwareFacet,
+        IFacet betterBalancerV3PoolTokenFacet,
+        IFacet defaultPoolInfoFacet,
+        IFacet standardSwapFeePercentageBoundsFacet,
+        IFacet unbalancedLiquidityInvariantRatioBoundsFacet,
+        IFacet balancerV3AuthenticationFacet,
+        IFacet bufferPoolFacet,
+        IFacet poolLiquidityFacet,
+        IFacet hookFacet,
+        IVaultRegistryDeployment vaultRegistry,
+        IVaultFeeOracleQuery vaultFeeOracle,
+        IVault balancerV3Vault,
+        IDiamondPackageCallBackFactory diamondFactory
+    ) internal pure returns (IStandardExchangeBufferPoolPkg.PkgInit memory init) {
+        init = IStandardExchangeBufferPoolPkg.PkgInit({
+            basicVaultFacet: basicVaultFacet,
+            standardVaultFacet: standardVaultFacet,
+            balancerV3VaultAwareFacet: balancerV3VaultAwareFacet,
+            betterBalancerV3PoolTokenFacet: betterBalancerV3PoolTokenFacet,
+            defaultPoolInfoFacet: defaultPoolInfoFacet,
+            standardSwapFeePercentageBoundsFacet: standardSwapFeePercentageBoundsFacet,
+            unbalancedLiquidityInvariantRatioBoundsFacet: unbalancedLiquidityInvariantRatioBoundsFacet,
+            balancerV3AuthenticationFacet: balancerV3AuthenticationFacet,
+            bufferPoolFacet: bufferPoolFacet,
+            poolLiquidityFacet: poolLiquidityFacet,
+            hookFacet: hookFacet,
+            vaultRegistry: vaultRegistry,
+            vaultFeeOracle: vaultFeeOracle,
+            balancerV3Vault: balancerV3Vault,
+            diamondFactory: diamondFactory
+        });
+    }
+}
+```
+
 - [ ] **Step 2: Build and commit.**
 
 ```
+forge build --skip test
+git add contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol
 git commit -m "feat(pool): CREATE3 factory service library"
 ```
 
@@ -1320,20 +2270,156 @@ git commit -m "feat(pool): CREATE3 factory service library"
 **Files:**
 - Create: `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol`
 
-Setup steps in `_setUp` (extend `TestBase_VaultComponents` if applicable, otherwise extend the Crane Balancer V3 vault test base):
-1. Deploy CREATE3 factory and Diamond Package Factory.
-2. Deploy a Balancer V3 Vault test harness (use Crane's `BalancerV3VaultTestBase` if present; otherwise the upstream `Vault` constructor).
-3. Deploy two test tokens (TTA, TTB) and a Standard Exchange Vault holding them.
-4. Deploy `StandardExchangeRateProviderDFPkg` and call `deployRateProvider` to get an `IRateProvider` for the (seVault, TTA) pair.
-5. Deploy our new pool DFPkg with the seven facets.
-6. Call `pkg.deployPool(seVault, TTA, shares, rateProvider)` to get a `pool` address.
-7. Initialize the pool with `s_init` shares (mint shares to the test alice; alice approves Vault; Router.initialize).
-8. Fund alice/bob with TTA, TTB, and shares for swaps and LP ops.
+The test base extends `TestBase_VaultComponents` (already in `contracts/vaults/`) and layers on:
+- A Balancer V3 Vault deployed via Crane's test fixtures.
+- A Standard Exchange Vault holding two test tokens (TTA, TTB).
+- Our new pool DFPkg deployed via the factory service from Task 14, with a pool instance initialized.
 
-Expose all relevant addresses as public state so behavior libraries can read them.
+- [ ] **Step 1: Implement the test base**
 
-- [ ] **Step 1: Implement the test base.**
-- [ ] **Step 2: Add a smoke test that deploys + initializes the pool and asserts `virtualTTA = s_init * 1e18` (rate is 1:1 at fresh seVault).**
+Look at `test/foundry/spec/protocol/dexes/balancer/v3/TestBase_StandardExchangeRouter.sol` for the existing pattern of Vault + Standard Exchange Vault setup; reuse it where possible.
+
+```solidity
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+
+import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {
+    DefaultPoolInfoFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
+import {
+    StandardSwapFeePercentageBoundsFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
+import {
+    StandardUnbalancedLiquidityInvariantRatioBoundsFacet
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
+import {
+    IStandardExchangeRateProviderDFPkg
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {
+    StandardExchangeBufferPool_FactoryService
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol";
+import {
+    IStandardExchangeBufferPoolPkg
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+import {
+    IStandardExchangeBufferPool
+} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+
+abstract contract TestBase_StandardExchangeBufferPool is TestBase_VaultComponents {
+    /* ----- Public state (read by behavior libraries) ----- */
+    IVault public bv3Vault;
+    IStandardExchange public seVault;
+    IERC20 public tta;
+    IERC20 public ttb;
+    IERC20 public shares;
+    IRateProvider public rateProvider;
+    IStandardExchangeBufferPoolPkg public bufferPoolPkg;
+    address public pool;
+    address public alice = address(0xA11CE);
+    address public bob   = address(0xB0B);
+
+    uint256 internal constant INITIAL_SHARES_RAW = 1_000e18;
+
+    function setUp() public virtual {
+        // 1) Crane test scaffolding (CREATE3, Diamond factory, vault registry, fee oracle).
+        _setUpVaultComponents(); // from TestBase_VaultComponents — sets create3Factory, diamondFactory, vaultRegistry, vaultFeeOracle
+
+        // 2) Balancer V3 Vault: deploy via existing Crane fixture or upstream constructor.
+        bv3Vault = _deployBalancerV3Vault();
+
+        // 3) Standard Exchange Vault with TTA + TTB.
+        (seVault, tta, ttb, shares) = _deployStandardExchangeVault();
+
+        // 4) Rate provider for (seVault, TTA).
+        rateProvider = _deployRateProvider(seVault, tta);
+
+        // 5) Buffer pool facets via the factory service library.
+        IFacet bufferPoolFacet     = StandardExchangeBufferPool_FactoryService.deployBufferPoolFacet(create3Factory);
+        IFacet poolLiquidityFacet  = StandardExchangeBufferPool_FactoryService.deployPoolLiquidityFacet(create3Factory);
+        IFacet hookFacet           = StandardExchangeBufferPool_FactoryService.deployHookFacet(create3Factory);
+        // Existing facets — deploy via their own factory services or reuse fixtures from TestBase_VaultComponents.
+        IFacet basicVaultFacet     = _deployFacet(type(BasicVaultFacet).creationCode, "BasicVaultFacet");
+        IFacet standardVaultFacet  = _deployFacet(type(StandardVaultFacet).creationCode, "StandardVaultFacet");
+        IFacet bv3VaultAwareFacet  = _deployFacet(type(BalancerV3VaultAwareFacet).creationCode, "BalancerV3VaultAwareFacet");
+        IFacet bv3PoolTokenFacet   = _deployFacet(type(BalancerV3PoolTokenFacet).creationCode, "BalancerV3PoolTokenFacet");
+        IFacet defaultPoolInfo     = _deployFacet(type(DefaultPoolInfoFacet).creationCode, "DefaultPoolInfoFacet");
+        IFacet swapFeeBounds       = _deployFacet(type(StandardSwapFeePercentageBoundsFacet).creationCode, "StandardSwapFeePercentageBoundsFacet");
+        IFacet ratioBounds         = _deployFacet(type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).creationCode, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet");
+        IFacet bv3AuthFacet        = _deployFacet(type(BalancerV3AuthenticationFacet).creationCode, "BalancerV3AuthenticationFacet");
+
+        // 6) DFPkg.
+        bufferPoolPkg = StandardExchangeBufferPool_FactoryService.deployPkg(
+            vaultRegistry,
+            StandardExchangeBufferPool_FactoryService.buildPkgInit(
+                basicVaultFacet, standardVaultFacet, bv3VaultAwareFacet, bv3PoolTokenFacet,
+                defaultPoolInfo, swapFeeBounds, ratioBounds, bv3AuthFacet,
+                bufferPoolFacet, poolLiquidityFacet, hookFacet,
+                vaultRegistry, vaultFeeOracle, bv3Vault, diamondFactory
+            )
+        );
+
+        // 7) Deploy the pool instance.
+        pool = bufferPoolPkg.deployPool(seVault, tta, shares, rateProvider);
+
+        // 8) Initialize pool with INITIAL_SHARES_RAW seed.
+        _mintSharesTo(alice, INITIAL_SHARES_RAW);
+        vm.startPrank(alice);
+        shares.approve(address(bv3Vault), type(uint256).max);
+        uint256[] memory amts = new uint256[](2);
+        // index 0 = whichever of (TTA, shares) sorts first by address.
+        if (address(tta) < address(shares)) { amts[0] = 0; amts[1] = INITIAL_SHARES_RAW; }
+        else                                 { amts[0] = INITIAL_SHARES_RAW; amts[1] = 0; }
+        // Use the Router or Vault.initialize (whichever the existing test base wires up).
+        _initializePool(pool, amts, address(alice));
+        vm.stopPrank();
+
+        // 9) Fund actors for swaps / LP ops.
+        deal(address(tta), alice, 10_000e18);
+        deal(address(tta), bob,   10_000e18);
+        _mintSharesTo(bob, 1_000e18);
+    }
+
+    /* ----- Helpers implemented by concrete test bases or inline by the implementer ----- */
+    function _deployBalancerV3Vault() internal virtual returns (IVault);
+    function _deployStandardExchangeVault()
+        internal virtual returns (IStandardExchange seVault_, IERC20 tta_, IERC20 ttb_, IERC20 shares_);
+    function _deployRateProvider(IStandardExchange seVault_, IERC20 tta_) internal virtual returns (IRateProvider);
+    function _deployFacet(bytes memory creationCode, string memory label) internal virtual returns (IFacet);
+    function _mintSharesTo(address to, uint256 amount) internal virtual;
+    function _initializePool(address pool_, uint256[] memory amounts, address to_) internal virtual;
+}
+```
+
+The abstract helper functions (`_deployBalancerV3Vault`, `_deployStandardExchangeVault`, etc.) are implemented by the concrete spec test contract or a sibling helper, depending on what `TestBase_VaultComponents` already provides. The implementer should:
+1. Grep `TestBase_VaultComponents` and its existing concrete subclasses to see what's available.
+2. Reuse what exists; only stub the gaps.
+
+- [ ] **Step 2: Add a smoke test**
+
+```solidity
+// test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol
+contract TestBaseSmoke is TestBase_StandardExchangeBufferPool {
+    function test_setup_initializesVirtualTTAToRatedShareSeed() public view {
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(pool);
+        // Rate is 1:1 at a fresh seVault, so virtualTTA == s_init.
+        assertEq(p.virtualTTA(), INITIAL_SHARES_RAW);
+        assertEq(p.hookSharesDelta(), 0);
+    }
+}
+```
+
 - [ ] **Step 3: Commit**
 
 ```
