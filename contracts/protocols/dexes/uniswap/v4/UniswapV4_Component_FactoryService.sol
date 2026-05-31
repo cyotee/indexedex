@@ -11,7 +11,10 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+import {UniswapV4StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
 import {UniswapV4StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
+import {UniswapV4StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol";
+import {UniswapV4StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
 import {UniswapV4StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol";
 import {
     IUniswapV4StandardExchangeDFPkg,
@@ -27,11 +30,45 @@ library UniswapV4_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
+        address executionDelegate = deployUniswapV4StandardExchangeInExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeInFacet).creationCode,
+            bytes.concat(type(UniswapV4StandardExchangeInFacet).creationCode, abi.encode(executionDelegate)),
             abi.encode(type(UniswapV4StandardExchangeInFacet).name)._hash()
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeInFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangeInExecutionDelegate(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (address instance)
+    {
+        instance = create3Factory.create3(
+            type(UniswapV4StandardExchangeInExecutionDelegate).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeInExecutionDelegate).name)._hash()
+        );
+        vm.label(instance, type(UniswapV4StandardExchangeInExecutionDelegate).name);
+    }
+
+    function deployUniswapV4StandardExchangeInQueryFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeInQueryFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeInQueryFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeInQueryFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangePositionImportFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangePositionImportFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangePositionImportFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangePositionImportFacet).name);
     }
 
     function deployUniswapV4StandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
@@ -68,6 +105,8 @@ library UniswapV4_Component_FactoryService {
         IFacet multiAssetBasicVaultFacet,
         IFacet multiAssetStandardVaultFacet,
         IFacet uniswapV4StandardExchangeInFacet,
+        IFacet uniswapV4StandardExchangeInQueryFacet,
+        IFacet uniswapV4StandardExchangePositionImportFacet,
         IFacet uniswapV4StandardExchangeOutFacet,
         IVaultFeeOracleQuery vaultFeeOracleQuery,
         IVaultRegistryDeployment vaultRegistryDeployment,
@@ -80,6 +119,8 @@ library UniswapV4_Component_FactoryService {
         pkgInit.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         pkgInit.uniswapV4StandardExchangeInFacet = uniswapV4StandardExchangeInFacet;
+        pkgInit.uniswapV4StandardExchangeInQueryFacet = uniswapV4StandardExchangeInQueryFacet;
+        pkgInit.uniswapV4StandardExchangePositionImportFacet = uniswapV4StandardExchangePositionImportFacet;
         pkgInit.uniswapV4StandardExchangeOutFacet = uniswapV4StandardExchangeOutFacet;
         pkgInit.vaultFeeOracleQuery = vaultFeeOracleQuery;
         pkgInit.vaultRegistryDeployment = vaultRegistryDeployment;

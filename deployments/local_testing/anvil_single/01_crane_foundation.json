@@ -1,0 +1,17 @@
+{
+  "chainId": 31337,
+  "create3Factory": "0x1bab8dB2f51742888dd2E36C358d8eFd7bF3A093",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "diamondCutFacet": "0x09345b98644473FCbd0Bb1d6f198a61bD20eb685",
+  "diamondPackageFactory": "0x0634FcDeC30a3dbe85eA5c1375dB2D319cde2fcd",
+  "erc20Facet": "0x69062E8BFAfF2294bA99c86c0368183BD8D3e77c",
+  "erc2612Facet": "0x81608B7cCbe05350221C38dD145A70daA1FF7860",
+  "erc4626BasicVaultFacet": "0xc9dB05D37DDf607F9ADaFDeAdbb240E622b53bAF",
+  "erc4626Facet": "0xCb31D17504abE77b3362EC59C9792FC345E08656",
+  "erc4626StandardVaultFacet": "0xbB58E5Ea782a845e86081494CE09Aa837Dd3768A",
+  "erc5267Facet": "0x7620a2765b57801323232f9ed60fE33DCbD1CAa3",
+  "multiStepOwnableFacet": "0x2f6dA3CF0Ac9e529E7A0791619d082432313BD6b",
+  "networkProfile": "local_testing",
+  "operableFacet": "0xDdE6C0cE7BD997d89327eBfe6E2c0835d516eDf0",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+}

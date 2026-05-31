@@ -16,9 +16,27 @@ import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuper
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
-import {ApprovedMessageSenderRegistryFactoryService} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryFactoryService.sol";
-import {SuperChainBridgeTokenRegistryFactoryService} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryFactoryService.sol";
-import {TokenTransferRelayerFactoryService} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerFactoryService.sol";
+import {
+    ApprovedMessageSenderRegistryFacet
+} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryFacet.sol";
+import {
+    IApprovedMessageSenderRegistryDFPkg,
+    ApprovedMessageSenderRegistryDFPkg
+} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryDFPkg.sol";
+import {
+    SuperChainBridgeTokenRegistryFacet
+} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryFacet.sol";
+import {
+    ISuperChainBridgeTokenRegistryDFPkg,
+    SuperChainBridgeTokenRegistryDFPkg
+} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryDFPkg.sol";
+import {
+    TokenTransferRelayerFacet
+} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerFacet.sol";
+import {
+    ITokenTransferRelayerDFPkg,
+    TokenTransferRelayerDFPkg
+} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerDFPkg.sol";
 
 import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 
@@ -34,7 +52,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
     IApprovedMessageSenderRegistry private approvedMessageSenderRegistry;
     ITokenTransferRelayer private tokenTransferRelayer;
 
-    function run() external {
+    function run() public {
         _loadConfig();
         _loadFactories();
 
@@ -87,50 +105,97 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
     }
 
     function _deployApprovedRegistry() internal returns (IApprovedMessageSenderRegistry registry) {
-        IFacet registryFacet = ApprovedMessageSenderRegistryFactoryService.deployApprovedMessageSenderRegistryFacet(create3Factory);
+        IFacet registryFacet = _deployFacet(
+            type(ApprovedMessageSenderRegistryFacet).creationCode, type(ApprovedMessageSenderRegistryFacet).name
+        );
         IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
         IFacet operableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IOperable).interfaceId);
 
-        registry = ApprovedMessageSenderRegistryFactoryService.deployApprovedMessageSenderRegistry(
-            diamondFactory,
-            ApprovedMessageSenderRegistryFactoryService.deployApprovedMessageSenderRegistryDFPkg(
-                create3Factory,
-                ownableFacet,
-                operableFacet,
-                registryFacet
-            ),
-            owner
+        IApprovedMessageSenderRegistryDFPkg.PkgInit memory pkgInitArgs = IApprovedMessageSenderRegistryDFPkg.PkgInit({
+            ownableFacet: ownableFacet,
+            operableFacet: operableFacet,
+            approvedMessageSenderRegistryFacet: registryFacet
+        });
+
+        IApprovedMessageSenderRegistryDFPkg dfpkg = IApprovedMessageSenderRegistryDFPkg(
+            _deployWithArgs(
+                type(ApprovedMessageSenderRegistryDFPkg).creationCode,
+                abi.encode(pkgInitArgs),
+                keccak256(abi.encode(type(ApprovedMessageSenderRegistryDFPkg).name, pkgInitArgs))
+            )
         );
+
+        IApprovedMessageSenderRegistryDFPkg.PkgArgs memory pkgArgs = IApprovedMessageSenderRegistryDFPkg.PkgArgs({
+            owner: owner
+        });
+
+        registry = IApprovedMessageSenderRegistry(diamondFactory.deploy(dfpkg, abi.encode(pkgArgs)));
     }
 
     function _deployBridgeRegistry() internal returns (ISuperChainBridgeTokenRegistry registry) {
         IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
         IFacet operableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IOperable).interfaceId);
 
-        registry = SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistry(
-            diamondFactory,
-            SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistryDFPkg(
-                create3Factory,
-                ownableFacet,
-                operableFacet,
-                SuperChainBridgeTokenRegistryFactoryService.deploySuperChainBridgeTokenRegistryFacet(create3Factory)
-            ),
-            owner
+        IFacet registryFacet = _deployFacet(
+            type(SuperChainBridgeTokenRegistryFacet).creationCode, type(SuperChainBridgeTokenRegistryFacet).name
         );
+
+        ISuperChainBridgeTokenRegistryDFPkg.PkgInit memory pkgInitArgs = ISuperChainBridgeTokenRegistryDFPkg.PkgInit({
+            ownableFacet: ownableFacet,
+            operableFacet: operableFacet,
+            superChainBridgeTokenRegistryFacet: registryFacet
+        });
+
+        ISuperChainBridgeTokenRegistryDFPkg dfpkg = ISuperChainBridgeTokenRegistryDFPkg(
+            _deployWithArgs(
+                type(SuperChainBridgeTokenRegistryDFPkg).creationCode,
+                abi.encode(pkgInitArgs),
+                keccak256(abi.encode(type(SuperChainBridgeTokenRegistryDFPkg).name, pkgInitArgs))
+            )
+        );
+
+        ISuperChainBridgeTokenRegistryDFPkg.PkgArgs memory pkgArgs = ISuperChainBridgeTokenRegistryDFPkg.PkgArgs({
+            owner: owner
+        });
+
+        registry = ISuperChainBridgeTokenRegistry(diamondFactory.deploy(dfpkg, abi.encode(pkgArgs)));
     }
 
     function _deployRelayer(IApprovedMessageSenderRegistry registry) internal returns (ITokenTransferRelayer relayer) {
-        relayer = TokenTransferRelayerFactoryService.deployTokenTransferRelayer(
-            diamondFactory,
-            TokenTransferRelayerFactoryService.deployTokenTransferRelayerDFPkg(
-                create3Factory,
-                IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId),
-                TokenTransferRelayerFactoryService.deployTokenTransferRelayerFacet(create3Factory),
-                _permit2()
-            ),
-            owner,
-            registry
+        IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
+        IFacet relayerFacet = _deployFacet(type(TokenTransferRelayerFacet).creationCode, type(TokenTransferRelayerFacet).name);
+
+        ITokenTransferRelayerDFPkg.PkgInit memory pkgInitArgs = ITokenTransferRelayerDFPkg.PkgInit({
+            ownableFacet: ownableFacet,
+            tokenTransferRelayerFacet: relayerFacet,
+            permit2: _permit2()
+        });
+
+        ITokenTransferRelayerDFPkg dfpkg = ITokenTransferRelayerDFPkg(
+            _deployWithArgs(
+                type(TokenTransferRelayerDFPkg).creationCode,
+                abi.encode(pkgInitArgs),
+                keccak256(abi.encode(type(TokenTransferRelayerDFPkg).name, pkgInitArgs))
+            )
         );
+
+        ITokenTransferRelayerDFPkg.PkgArgs memory pkgArgs = ITokenTransferRelayerDFPkg.PkgArgs({
+            owner: owner,
+            approvedMessageSenderRegistry: registry
+        });
+
+        relayer = ITokenTransferRelayer(diamondFactory.deploy(dfpkg, abi.encode(pkgArgs)));
+    }
+
+    function _deployFacet(bytes memory creationCode, string memory name) internal returns (IFacet facet) {
+        facet = IFacet(create3Factory.create3(creationCode, keccak256(abi.encode(name))));
+    }
+
+    function _deployWithArgs(bytes memory creationCode, bytes memory constructorArgs, bytes32 salt)
+        internal
+        returns (address deployed)
+    {
+        deployed = create3Factory.create3(bytes.concat(creationCode, constructorArgs), salt);
     }
 
     function _permit2() internal view returns (IPermit2 permit2_) {

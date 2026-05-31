@@ -96,11 +96,14 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
     IFacet private singleVaultDetfExchangeInFacet;
     IFacet private singleVaultDetfExchangeInQueryFacet;
+    IFacet private singleVaultDetfInfoFacet;
     IFacet private singleVaultDetfExchangeOutFacet;
     IFacet private singleVaultDetfBondingFacet;
     IFacet private protocolNFTVaultFacet;
     IFacet private richirFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
+    IFacet private uniswapV4StandardExchangeInQueryFacet;
+    IFacet private uniswapV4StandardExchangePositionImportFacet;
     IFacet private uniswapV4StandardExchangeOutFacet;
     IFacet private erc721Facet;
 
@@ -185,11 +188,14 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
         multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
         singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
         singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
+        singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
         richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
         erc721Facet = IFacet(
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetf_ERC721Facet"))
@@ -267,6 +273,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
                 multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet,
                 uniswapV4StandardExchangeInFacet,
+                uniswapV4StandardExchangeInQueryFacet,
+                uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
                 feeOracle,
                 vaultRegistry,
@@ -287,6 +295,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
                     multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                     exchangeInFacet: singleVaultDetfExchangeInFacet,
                     exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
+                    infoFacet: singleVaultDetfInfoFacet,
                     exchangeOutFacet: singleVaultDetfExchangeOutFacet,
                     bondingFacet: singleVaultDetfBondingFacet,
                     operableFacet: operableFacet

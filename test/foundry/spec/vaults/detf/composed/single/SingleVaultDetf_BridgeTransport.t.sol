@@ -78,12 +78,10 @@ import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
-import {
-    BaseDualSelfCommonDETF_Component_FactoryService
-} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
-import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
+import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
+import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
+import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
@@ -145,9 +143,9 @@ contract SingleVaultDetfForkLiquiditySeeder is IUnlockCallback {
 
 abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Pkg_FactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for IVaultRegistryDeployment;
     using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
     using SingleVaultDetf_Pkg_FactoryService for IVaultRegistryDeployment;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
@@ -167,12 +165,15 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
     IFacet internal multiAssetStandardVaultFacet;
     IFacet internal singleVaultDetfExchangeInFacet;
     IFacet internal singleVaultDetfExchangeInQueryFacet;
+    IFacet internal singleVaultDetfInfoFacet;
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
     IFacet internal richirFacet;
     IFacet internal protocolNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
+    IFacet internal uniswapV4StandardExchangeInQueryFacet;
+    IFacet internal uniswapV4StandardExchangePositionImportFacet;
     IFacet internal uniswapV4StandardExchangeOutFacet;
 
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
@@ -216,6 +217,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
 
         singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
         singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
+        singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
@@ -232,7 +234,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
         );
     }
 
-    function _deploySingleVaultDetf(DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_)
+    function _deploySingleVaultDetf(DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_)
         internal
         returns (ISingleVaultDetf detf_)
     {
@@ -245,6 +247,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 exchangeInFacet: singleVaultDetfExchangeInFacet,
                 exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
+                infoFacet: singleVaultDetfInfoFacet,
                 exchangeOutFacet: singleVaultDetfExchangeOutFacet,
                 bondingFacet: singleVaultDetfBondingFacet,
                 operableFacet: operableFacet
@@ -351,7 +354,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetfBridge_ERC721Facet"))
         );
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
+        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
@@ -368,6 +371,8 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
 
     function _deployUniswapV4StandardExchangePkg() internal {
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
@@ -378,6 +383,8 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
                 multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet,
                 uniswapV4StandardExchangeInFacet,
+                uniswapV4StandardExchangeInQueryFacet,
+                uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
                 indexedexManager,
                 indexedexManager,
@@ -508,7 +515,7 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
 
         bridgeRegistry = _deployBridgeRegistry(address(this));
         detf = _deploySingleVaultDetf(
-            DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig({
+            DetfSuperchainBridgeRepo.BridgeConfig({
                 bridgeTokenRegistry: bridgeRegistry,
                 standardBridge: IStandardBridge(payable(BASE_SEPOLIA.L2_STANDARD_BRIDGE)),
                 messenger: ICrossDomainMessenger(BASE_SEPOLIA.L2_CROSSDOMAIN_MESSENGER),

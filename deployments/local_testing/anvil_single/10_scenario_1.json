@@ -1,0 +1,13 @@
+{
+  "chainId": 31337,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "testTokenA": "0xE4D171d5d83418b78CA40cE6b58cb8BB5D49aF52",
+  "testTokenB": "0xed00db4F3029aCcE426de47ebbd7902F03aB6368",
+  "uniV2AbPool": "0xF6686f01E7a390494D15f7987aDeC6De3c9A4728",
+  "uniV2AbVault": "0x1eF0F50A8A8c00fc6874A8055f5fbFB5eADD7BCA",
+  "uniV2BWethPool": "0xA16FbA26338a1Fd1D06b69C98ADF7a47adcdca63",
+  "uniV2BWethVault": "0x11c07d411D8F0ed2bBd019187583Cb4fA0b4719e",
+  "weth": "0x16dd7197c06d84Bef179bAe78A1b20CCE7Fb1D23"
+}

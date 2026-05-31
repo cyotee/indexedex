@@ -17,6 +17,8 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
 
     PoolManager internal poolManager;
     IFacet internal uniswapV4StandardExchangeInFacet;
+    IFacet internal uniswapV4StandardExchangeInQueryFacet;
+    IFacet internal uniswapV4StandardExchangePositionImportFacet;
     IFacet internal uniswapV4StandardExchangeOutFacet;
     IUniswapV4StandardExchangeDFPkg internal uniswapV4StandardExchangeDFPkg;
 
@@ -26,6 +28,8 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
 
         poolManager = new PoolManager(address(this));
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
@@ -36,6 +40,8 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
                 multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet,
                 uniswapV4StandardExchangeInFacet,
+                uniswapV4StandardExchangeInQueryFacet,
+                uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
                 indexedexManager,
                 indexedexManager,

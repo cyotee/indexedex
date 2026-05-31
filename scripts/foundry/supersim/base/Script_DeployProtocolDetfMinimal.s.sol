@@ -19,7 +19,7 @@ contract Script_DeployProtocolDetfMinimal is DeploymentBase, Script_16_DeployPro
         _requireSupportedBaseSepoliaDeps();
     }
 
-    function run() external override {
+    function run() public override {
         string memory outDir = _localOutDir();
         vm.setEnv("OUT_DIR_OVERRIDE", outDir);
         vm.setEnv("NETWORK_PROFILE", "base_sepolia");

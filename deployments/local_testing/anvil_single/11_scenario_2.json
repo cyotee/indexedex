@@ -1,0 +1,13 @@
+{
+  "balUniAbWithB": "0x365F1A1dCB3491E9d529Eee5d3a745a7756B17EF",
+  "balUniBWethWithB": "0x3645dB6A00dCa9645f7fB62CF6B466A586383ddC",
+  "chainId": 31337,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "testTokenB": "0xed00db4F3029aCcE426de47ebbd7902F03aB6368",
+  "uniV2AbRpB": "0x56306b8CC66A33503b6a4eed66B6da58A4E4d05e",
+  "uniV2AbVault": "0x1eF0F50A8A8c00fc6874A8055f5fbFB5eADD7BCA",
+  "uniV2BWethRpB": "0x1e5E7e02c08e363440182D100531ec1E235B5E78",
+  "uniV2BWethVault": "0x11c07d411D8F0ed2bBd019187583Cb4fA0b4719e"
+}

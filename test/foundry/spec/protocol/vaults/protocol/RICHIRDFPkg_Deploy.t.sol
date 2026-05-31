@@ -17,11 +17,11 @@ import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 
 import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
-import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
+import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
 
 contract RICHIRDFPkg_Deploy_Test is TestBase_VaultComponents {
     using BetterEfficientHashLib for bytes;
-    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
+    using DetfFacetFactoryService for ICreate3FactoryProxy;
 
     IRICHIRDFPkg internal pkg;
     ERC20PermitDFPkg internal erc20PermitPkg;

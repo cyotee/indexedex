@@ -35,6 +35,7 @@ library SingleVaultDetf_Component_FactoryService {
         IFacet multiAssetStandardVaultFacet;
         IFacet exchangeInFacet;
         IFacet exchangeInQueryFacet;
+        IFacet infoFacet;
         IFacet exchangeOutFacet;
         IFacet bondingFacet;
         IFacet operableFacet;
@@ -73,6 +74,7 @@ library SingleVaultDetf_Component_FactoryService {
             multiAssetStandardVaultFacet: facets_.multiAssetStandardVaultFacet,
             singleVaultDetfExchangeInFacet: facets_.exchangeInFacet,
             singleVaultDetfExchangeInQueryFacet: facets_.exchangeInQueryFacet,
+            singleVaultDetfInfoFacet: facets_.infoFacet,
             singleVaultDetfExchangeOutFacet: facets_.exchangeOutFacet,
             singleVaultDetfBondingFacet: facets_.bondingFacet,
             operableFacet: facets_.operableFacet,

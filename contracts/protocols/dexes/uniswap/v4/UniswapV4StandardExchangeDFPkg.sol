@@ -51,6 +51,8 @@ interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
         IFacet uniswapV4StandardExchangeInFacet;
+        IFacet uniswapV4StandardExchangeInQueryFacet;
+        IFacet uniswapV4StandardExchangePositionImportFacet;
         IFacet uniswapV4StandardExchangeOutFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
@@ -75,6 +77,8 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_QUERY_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_POSITION_IMPORT_FACET;
     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
@@ -88,6 +92,8 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         UNISWAP_V4_STANDARD_EXCHANGE_IN_FACET = pkgInit.uniswapV4StandardExchangeInFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_IN_QUERY_FACET = pkgInit.uniswapV4StandardExchangeInQueryFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_POSITION_IMPORT_FACET = pkgInit.uniswapV4StandardExchangePositionImportFacet;
         UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET = pkgInit.uniswapV4StandardExchangeOutFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
@@ -128,7 +134,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetCuts() public view override returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](7);
+        facetCuts_ = new IDiamond.FacetCut[](9);
         facetCuts_[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
             action: IDiamond.FacetCutAction.Add,
@@ -160,6 +166,16 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
             functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_IN_FACET.facetFuncs()
         });
         facetCuts_[6] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_IN_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_IN_QUERY_FACET.facetFuncs()
+        });
+        facetCuts_[7] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_POSITION_IMPORT_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_POSITION_IMPORT_FACET.facetFuncs()
+        });
+        facetCuts_[8] = IDiamond.FacetCut({
             facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET.facetFuncs()
@@ -221,14 +237,16 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](7);
+        facetAddresses_ = new address[](9);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[5] = address(UNISWAP_V4_STANDARD_EXCHANGE_IN_FACET);
-        facetAddresses_[6] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET);
+        facetAddresses_[6] = address(UNISWAP_V4_STANDARD_EXCHANGE_IN_QUERY_FACET);
+        facetAddresses_[7] = address(UNISWAP_V4_STANDARD_EXCHANGE_POSITION_IMPORT_FACET);
+        facetAddresses_[8] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET);
     }
 
     function packageMetadata()

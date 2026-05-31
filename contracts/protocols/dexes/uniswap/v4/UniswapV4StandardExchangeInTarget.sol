@@ -6,28 +6,11 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
-import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
-import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
-import {UniswapV4ZapQuoter} from "@crane/contracts/protocols/dexes/uniswap/v4/utils/UniswapV4ZapQuoter.sol";
-import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
+import {Address} from "@crane/contracts/utils/Address.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
-import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
-import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
-import {PositionInfo} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/PositionInfoLibrary.sol";
-import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
-import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
-import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
-import {UniswapV4QuoteService} from "contracts/protocols/dexes/uniswap/v4/UniswapV4QuoteService.sol";
-import {UniswapV4StandardExchangeCommon} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol";
-import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
+import {UniswapV4StandardExchangeInBase} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 
 interface IUniswapV4StandardExchangePositionImport {
     function importPosition(
@@ -40,50 +23,13 @@ interface IUniswapV4StandardExchangePositionImport {
     ) external returns (uint256 sharesOut);
 }
 
-contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeCommon, ReentrancyLockModifiers, IStandardExchangeIn {
-    struct ZapInState {
-        address token0;
-        address token1;
-        bool zeroForOne;
-        uint256 totalSharesBefore;
-        uint256 reserve0Before;
-        uint256 reserve1Before;
-        ManagedTicks managedTicks;
-        ManagedLiquidityPlan plan;
-        uint256 balance0Before;
-        uint256 balance1Before;
-        uint256 amount0Used;
-        uint256 amount1Used;
-    }
+contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
+    using Address for address;
 
-    error UniswapV4ExchangeIn_DeadlineExceeded();
-    error UniswapV4ExchangeIn_SlippageExceeded();
-    error UniswapV4ExchangeIn_PositionImportUnavailable();
-    error UniswapV4ExchangeIn_InvalidImportedPool();
+    address immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE;
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        override
-        returns (uint256 amountOut)
-    {
-        address token0 = _token0();
-        address token1 = _token1();
-
-        if ((address(tokenIn) == token0 && address(tokenOut) == token1)
-            || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
-            return _quoteSwapIn(amountIn, address(tokenIn) == token0);
-        }
-
-        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
-            return _previewZapInDeposit(address(tokenIn), amountIn);
-        }
-
-        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
-            return _previewZapOutExactIn(address(tokenOut), amountIn);
-        }
-
-        revert ExchangeInNotAvailable();
+    constructor(address executionDelegate) {
+        UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE = executionDelegate;
     }
 
     function exchangeIn(
@@ -96,7 +42,6 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeCommon, R
         uint256 deadline
     )
         external
-        override
         lock
         returns (uint256 amountOut)
     {
@@ -115,510 +60,40 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeCommon, R
 
         if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            amountOut = _executeZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
+            amountOut = _delegateExecuteZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
             return amountOut;
         }
 
         if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            amountOut = _executeZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient, pretransferred);
+            amountOut = _delegateExecuteZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient);
             return amountOut;
         }
 
-        revert ExchangeInNotAvailable();
+        revert IStandardExchangeIn.ExchangeInNotAvailable();
     }
 
-    function importPosition(
-        IPositionManager positionManager,
-        uint256 positionTokenId,
-        uint256 minSharesOut,
-        address owner,
-        address recipient,
-        uint256 deadline
-    ) external lock returns (uint256 sharesOut) {
-        if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
-        if (IERC20(address(this)).totalSupply() != 0 || UniswapV4PositionRepo._isPositionCreated()) {
-            revert UniswapV4ExchangeIn_PositionImportUnavailable();
-        }
-
-        (PoolKey memory poolKey, PositionInfo info) = positionManager.getPoolAndPositionInfo(positionTokenId);
-        if (keccak256(abi.encode(poolKey)) != keccak256(abi.encode(_poolKey()))) {
-            revert UniswapV4ExchangeIn_InvalidImportedPool();
-        }
-
-        uint256 liquidity = positionManager.getPositionLiquidity(positionTokenId);
-        if (liquidity == 0) {
-            revert UniswapV4Exchange_ZeroAmount();
-        }
-
-        sharesOut = _quoteImportedPositionShares(info, uint128(liquidity));
-        if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-
-        IERC721(address(positionManager)).transferFrom(owner, address(this), positionTokenId);
-        UniswapV4PositionRepo._initializeImportedPosition(positionManager, positionTokenId, info.tickLower(), info.tickUpper());
-        _refreshStoredLiquidity();
-        _syncVaultReserves();
-        ERC20Repo._mint(recipient, sharesOut);
-    }
-
-    function _quoteImportedPositionShares(PositionInfo info, uint128 liquidity) internal view returns (uint256 sharesOut) {
-        (uint160 sqrtPriceX96, int24 currentTick,,) = _slot0();
-        (uint256 amount0Used, uint256 amount1Used) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96,
-            currentTick,
-            info.tickLower(),
-            info.tickUpper(),
-            liquidity
-        );
-
-        sharesOut = _quoteSharesOut(amount0Used, amount1Used, 0);
-    }
-
-    function _executeDirectSwapIn(address tokenIn, uint256 amountIn, address recipient) internal returns (uint256 amountOut) {
-        bool zeroForOne = tokenIn == _token0();
-        address tokenOut = zeroForOne ? _token1() : _token0();
-        uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
-
-        _executeUnlock(
-            OperationParams({
-                op: Operation.SwapExactIn,
-                zeroForOne: zeroForOne,
-                amountSpecified: amountIn,
-                tickLower: 0,
-                tickUpper: 0,
-                liquidity: 0,
-                salt: bytes32(0)
-            })
-        );
-
-        amountOut = IERC20(tokenOut).balanceOf(address(this)) - balanceBefore;
-        _transferCurrency(tokenOut, recipient, amountOut);
-    }
-
-    function _previewZapOutExactIn(address tokenOut, uint256 sharesBurned) internal view returns (uint256 amountOut) {
-        if (sharesBurned == 0) {
-            return 0;
-        }
-
-        uint256 totalShares = IERC20(address(this)).totalSupply();
-        if (totalShares == 0 || (!UniswapV4PositionRepo._isPositionCreated() && !UniswapV4PositionRepo._isImportedPosition())) {
-            return 0;
-        }
-
-        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
-    }
-
-    function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
+    function _delegateExecuteZapInDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
         internal
-        view
+        returns (uint256 sharesOut)
+    {
+        bytes memory result = UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
+            abi.encodeWithSignature(
+                "executeZapInDeposit(address,uint256,uint256,address)", tokenIn, amountIn, minSharesOut, recipient
+            )
+        );
+        return abi.decode(result, (uint256));
+    }
+
+    function _delegateExecuteZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
+        internal
         returns (uint256 amountOut)
     {
-        (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
-        if (tokenOut == _token0()) {
-            return amount0 + _quoteSwapIn(amount1, false);
-        }
-        return amount1 + _quoteSwapIn(amount0, true);
-    }
-
-    function _executeZapOutExactIn(
-        address tokenOut,
-        uint256 sharesBurned,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred
-    ) internal returns (uint256 amountOut) {
-        if (sharesBurned == 0) {
-            revert UniswapV4Exchange_ZeroAmount();
-        }
-
-        uint256 totalShares = IERC20(address(this)).totalSupply();
-        if (totalShares == 0) {
-            revert UniswapV4Exchange_ZeroAmount();
-        }
-
-        address token0 = _token0();
-        address token1 = _token1();
-        uint256 balance0Before = IERC20(token0).balanceOf(address(this));
-        uint256 balance1Before = IERC20(token1).balanceOf(address(this));
-
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares);
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares);
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares);
-
-        uint256 amount0 = IERC20(token0).balanceOf(address(this)) - balance0Before;
-        uint256 amount1 = IERC20(token1).balanceOf(address(this)) - balance1Before;
-
-        if (tokenOut == token0 && amount1 > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.SwapExactIn,
-                    zeroForOne: false,
-                    amountSpecified: amount1,
-                    tickLower: 0,
-                    tickUpper: 0,
-                    liquidity: 0,
-                    salt: bytes32(0)
-                })
-            );
-        } else if (tokenOut == token1 && amount0 > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.SwapExactIn,
-                    zeroForOne: true,
-                    amountSpecified: amount0,
-                    tickLower: 0,
-                    tickUpper: 0,
-                    liquidity: 0,
-                    salt: bytes32(0)
-                })
-            );
-        }
-
-        _refreshStoredLiquidity();
-        _syncVaultReserves();
-
-        amountOut = IERC20(tokenOut).balanceOf(address(this));
-        if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-
-        ERC20Repo._burn(address(this), sharesBurned);
-
-        _transferCurrency(tokenOut, recipient, amountOut);
-    }
-
-    function _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind kind, uint256 sharesBurned, uint256 totalShares)
-        internal
-    {
-        uint128 currentLiquidity = _currentLiquidity(kind);
-        if (currentLiquidity == 0) {
-            return;
-        }
-
-        uint128 liquidityToBurn = uint128((sharesBurned * currentLiquidity) / totalShares);
-        if (liquidityToBurn == 0) {
-            return;
-        }
-
-        if (UniswapV4PositionRepo._isImportedPosition()) {
-            if (kind != UniswapV4PositionRepo.PositionKind.Center) {
-                return;
-            }
-
-            bytes memory actions = abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR));
-            bytes[] memory params = new bytes[](2);
-            params[0] = abi.encode(
-                UniswapV4PositionRepo._importedPositionTokenId(), uint256(liquidityToBurn), uint128(0), uint128(0), bytes("")
-            );
-            params[1] = abi.encode(_currency0(), _currency1(), address(this));
-            UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
-            return;
-        }
-
-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
-        _executeUnlock(
-            OperationParams({
-                op: Operation.RemoveLiquidity,
-                zeroForOne: false,
-                amountSpecified: 0,
-                tickLower: tickLower,
-                tickUpper: tickUpper,
-                liquidity: liquidityToBurn,
-                salt: UniswapV4PositionRepo._salt(kind)
-            })
+        bytes memory result = UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
+            abi.encodeWithSignature(
+                "executeZapOutExactIn(address,uint256,uint256,address)", tokenOut, sharesBurned, minAmountOut, recipient
+            )
         );
-    }
-
-    function _previewZapInDeposit(address tokenIn, uint256 amountIn) internal view returns (uint256 sharesOut) {
-        if (amountIn == 0) {
-            return 0;
-        }
-
-        if (UniswapV4PositionRepo._isImportedPosition()) {
-            return _previewImportedPositionDeposit(tokenIn, amountIn);
-        }
-
-        bool initialDeposit = !UniswapV4PositionRepo._isPositionCreated();
-        ManagedTicks memory managedTicks = initialDeposit ? _deriveManagedTicks() : _managedTicks();
-
-        uint256 totalShares = IERC20(address(this)).totalSupply();
-        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-        UniswapV4ZapQuoter.ZapInQuote memory quote = UniswapV4QuoteService._quoteZapInDetail(
-            UniswapV4QuoteService.ZapInQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                tickLower: managedTicks.centerLower,
-                tickUpper: managedTicks.centerUpper,
-                zeroForOne: tokenIn == _token0(),
-                amountIn: amountIn,
-                totalShares: totalShares,
-                reserve0: reserve0,
-                reserve1: reserve1,
-                initialDeposit: initialDeposit || totalShares == 0
-            })
-        );
-
-        uint256 available0;
-        uint256 available1;
-        if (tokenIn == _token0()) {
-            available0 = amountIn - quote.swap.amountIn;
-            available1 = quote.swap.amountOut;
-        } else {
-            available0 = quote.swap.amountOut;
-            available1 = amountIn - quote.swap.amountIn;
-        }
-
-        (uint160 currentSqrtPriceX96, int24 currentTick,,) = _slot0();
-        uint160 priceForMint = quote.swapAmountIn > 0 ? quote.swap.sqrtPriceAfterX96 : currentSqrtPriceX96;
-        int24 tickForMint = quote.swapAmountIn > 0 ? quote.swap.tickAfter : currentTick;
-        ManagedLiquidityPlan memory plan =
-            _managedLiquidityPlanAtState(managedTicks, available0, available1, priceForMint, tickForMint);
-        return _quoteSharesOut(plan.amount0Used, plan.amount1Used, totalShares);
-    }
-
-    function _executeZapInDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
-        internal
-        returns (uint256 sharesOut)
-    {
-        if (amountIn == 0) {
-            revert UniswapV4Exchange_ZeroAmount();
-        }
-
-        if (UniswapV4PositionRepo._isImportedPosition()) {
-            return _executeImportedPositionDeposit(tokenIn, amountIn, minSharesOut, recipient);
-        }
-
-        ZapInState memory state;
-        state.token0 = _token0();
-        state.token1 = _token1();
-        state.zeroForOne = tokenIn == state.token0;
-        state.totalSharesBefore = IERC20(address(this)).totalSupply();
-        (state.reserve0Before, state.reserve1Before) = _totalVaultReserves();
-        state.managedTicks = _managedTicks();
-
-        uint256 swapPortion = UniswapV4QuoteService._quoteZapInSwapAmount(
-            UniswapV4QuoteService.ZapInQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                tickLower: state.managedTicks.centerLower,
-                tickUpper: state.managedTicks.centerUpper,
-                zeroForOne: state.zeroForOne,
-                amountIn: amountIn,
-                totalShares: state.totalSharesBefore,
-                reserve0: state.reserve0Before,
-                reserve1: state.reserve1Before,
-                initialDeposit: !UniswapV4PositionRepo._isPositionCreated() || state.totalSharesBefore == 0
-            })
-        );
-
-        if (swapPortion > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.SwapExactIn,
-                    zeroForOne: state.zeroForOne,
-                    amountSpecified: swapPortion,
-                    tickLower: 0,
-                    tickUpper: 0,
-                    liquidity: 0,
-                    salt: bytes32(0)
-                })
-            );
-        }
-
-        if (!UniswapV4PositionRepo._isPositionCreated()) {
-            UniswapV4PositionRepo._createPositionIfNeeded(
-                UniswapV4PositionRepo.PositionKind.Center,
-                state.managedTicks.centerLower,
-                state.managedTicks.centerUpper
-            );
-            UniswapV4PositionRepo._createPositionIfNeeded(
-                UniswapV4PositionRepo.PositionKind.LowerWing,
-                state.managedTicks.lowerWingLower,
-                state.managedTicks.lowerWingUpper
-            );
-            UniswapV4PositionRepo._createPositionIfNeeded(
-                UniswapV4PositionRepo.PositionKind.UpperWing,
-                state.managedTicks.upperWingLower,
-                state.managedTicks.upperWingUpper
-            );
-        }
-
-        uint256 available0 = IERC20(state.token0).balanceOf(address(this));
-        uint256 available1 = IERC20(state.token1).balanceOf(address(this));
-        state.plan = _managedLiquidityPlan(state.managedTicks, available0, available1);
-
-        state.balance0Before = IERC20(state.token0).balanceOf(address(this));
-        state.balance1Before = IERC20(state.token1).balanceOf(address(this));
-
-        if (state.plan.centerLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: state.managedTicks.centerLower,
-                    tickUpper: state.managedTicks.centerUpper,
-                    liquidity: state.plan.centerLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
-                })
-            );
-        }
-        if (state.plan.lowerWingLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: state.managedTicks.lowerWingLower,
-                    tickUpper: state.managedTicks.lowerWingUpper,
-                    liquidity: state.plan.lowerWingLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.LowerWing)
-                })
-            );
-        }
-        if (state.plan.upperWingLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: state.managedTicks.upperWingLower,
-                    tickUpper: state.managedTicks.upperWingUpper,
-                    liquidity: state.plan.upperWingLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.UpperWing)
-                })
-            );
-        }
-
-        state.amount0Used = state.balance0Before - IERC20(state.token0).balanceOf(address(this));
-        state.amount1Used = state.balance1Before - IERC20(state.token1).balanceOf(address(this));
-
-        _refreshStoredLiquidity();
-        _syncVaultReserves();
-
-        if (state.totalSharesBefore == 0) {
-            sharesOut = state.amount0Used + state.amount1Used;
-        } else {
-            sharesOut = ConstProdUtils._depositQuote(
-                state.amount0Used,
-                state.amount1Used,
-                state.totalSharesBefore,
-                state.reserve0Before,
-                state.reserve1Before
-            );
-        }
-
-        if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-
-        ERC20Repo._mint(recipient, sharesOut);
-
-        _refundRemainder(state.token0);
-        _refundRemainder(state.token1);
-    }
-
-    function _refundRemainder(address token) internal {
-        uint256 balance = IERC20(token).balanceOf(address(this));
-        if (balance > 0) {
-            _transferCurrency(token, msg.sender, balance);
-        }
-    }
-
-    function _previewImportedPositionDeposit(address tokenIn, uint256 amountIn) internal view returns (uint256 sharesOut) {
-        bool zeroForOne = tokenIn == _token0();
-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
-        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-        return UniswapV4QuoteService._quoteZapInShares(
-            UniswapV4QuoteService.ZapInQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                tickLower: tickLower,
-                tickUpper: tickUpper,
-                zeroForOne: zeroForOne,
-                amountIn: amountIn,
-                totalShares: IERC20(address(this)).totalSupply(),
-                reserve0: reserve0,
-                reserve1: reserve1,
-                initialDeposit: false
-            })
-        );
-    }
-
-    function _executeImportedPositionDeposit(address tokenIn, uint256 amountIn, uint256 minSharesOut, address recipient)
-        internal
-        returns (uint256 sharesOut)
-    {
-        bool zeroForOne = tokenIn == _token0();
-        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
-        (uint256 reserve0Before, uint256 reserve1Before) = _totalVaultReserves();
-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
-
-        uint256 swapPortion = UniswapV4QuoteService._quoteZapInSwapAmount(
-            UniswapV4QuoteService.ZapInQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                tickLower: tickLower,
-                tickUpper: tickUpper,
-                zeroForOne: zeroForOne,
-                amountIn: amountIn,
-                totalShares: totalSharesBefore,
-                reserve0: reserve0Before,
-                reserve1: reserve1Before,
-                initialDeposit: false
-            })
-        );
-
-        if (swapPortion > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.SwapExactIn,
-                    zeroForOne: zeroForOne,
-                    amountSpecified: swapPortion,
-                    tickLower: 0,
-                    tickUpper: 0,
-                    liquidity: 0,
-                    salt: bytes32(0)
-                })
-            );
-        }
-
-        uint256 balance0Before = IERC20(_token0()).balanceOf(address(this));
-        uint256 balance1Before = IERC20(_token1()).balanceOf(address(this));
-        (uint160 sqrtPriceX96,,,) = _slot0();
-        uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
-            sqrtPriceX96,
-            TickMath.getSqrtPriceAtTick(tickLower),
-            TickMath.getSqrtPriceAtTick(tickUpper),
-            balance0Before,
-            balance1Before
-        );
-
-        if (liquidity > 0) {
-            _increaseImportedPosition(liquidity, uint128(balance0Before), uint128(balance1Before));
-        }
-
-        uint256 amount0Used = balance0Before - IERC20(_token0()).balanceOf(address(this));
-        uint256 amount1Used = balance1Before - IERC20(_token1()).balanceOf(address(this));
-        sharesOut = _quoteSharesOut(amount0Used, amount1Used, totalSharesBefore);
-        if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
-
-        _refreshStoredLiquidity();
-        _syncVaultReserves();
-        ERC20Repo._mint(recipient, sharesOut);
-        _refundRemainder(_token0());
-        _refundRemainder(_token1());
-    }
-
-    function _increaseImportedPosition(uint128 liquidity, uint128 amount0Max, uint128 amount1Max) internal {
-        Permit2AwareRepo._permit2().approve(_token0(), address(UniswapV4PositionRepo._importedPositionManager()), type(uint160).max, type(uint48).max);
-        Permit2AwareRepo._permit2().approve(_token1(), address(UniswapV4PositionRepo._importedPositionManager()), type(uint160).max, type(uint48).max);
-        IERC20(_token0()).approve(address(UniswapV4PositionRepo._importedPositionManager()), amount0Max);
-        IERC20(_token1()).approve(address(UniswapV4PositionRepo._importedPositionManager()), amount1Max);
-
-        bytes memory actions = abi.encodePacked(uint8(Actions.INCREASE_LIQUIDITY), uint8(Actions.SETTLE_PAIR));
-        bytes[] memory params = new bytes[](2);
-        params[0] = abi.encode(UniswapV4PositionRepo._importedPositionTokenId(), uint256(liquidity), amount0Max, amount1Max, bytes(""));
-        params[1] = abi.encode(_currency0(), _currency1());
-        UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
-
-        IERC20(_token0()).approve(address(UniswapV4PositionRepo._importedPositionManager()), 0);
-        IERC20(_token1()).approve(address(UniswapV4PositionRepo._importedPositionManager()), 0);
+        return abi.decode(result, (uint256));
     }
 }

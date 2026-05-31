@@ -8,7 +8,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
@@ -25,13 +24,17 @@ import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 contract Script_26_TestProtocolDetfReserveBridge is Script {
     uint256 internal constant PROCESSOR_MIN_GAS_LIMIT = 500_000;
     uint256 internal constant PREPARE_RICH_CHUNK = 1e18;
+    uint256 internal constant PREPARE_RICH_MIN_CHUNK = 2e7;
+    uint256 internal constant BOND_LOCK_DURATION = 30 days;
+    uint256 internal constant PREPARE_DEADLINE_BUFFER = 1 hours;
 
     // Amounts for testing
     uint256 internal constant TEST_BRIDGE_AMOUNT = 1e18;
 
-    function run() external {
+    function run() public {
         string memory localDir = _requiredEnvString("OUT_DIR_OVERRIDE");
         string memory remoteDir = _requiredEnvString("REMOTE_OUT_DIR");
+        string memory bridgeTestPath = string.concat(localDir, "/26_bridge_test.json");
 
         address deployer;
         try vm.envAddress("SENDER") returns (address sender) {
@@ -57,12 +60,15 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
 
         // Log initial state
         _logInitialState(localConfig, remoteConfig, chainConfig, localChainId);
+        console2.log("Stage 23 local output path:", bridgeTestPath);
 
         if (privateKey != 0) {
             vm.startBroadcast(privateKey);
         } else {
             vm.startBroadcast(deployer);
         }
+
+        console2.log("Stage 23 progress: source-chain broadcast started");
 
         // Step 1: Convert local RICH into local RICHIR via the DETF route.
         _logSourceState(localConfig, deployer);
@@ -72,15 +78,20 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         _executeBridgeFlow(localConfig, chainConfig, deployer);
 
         vm.stopBroadcast();
+        console2.log("Stage 23 progress: source-chain broadcast finished");
 
         // Step 3: Simulate receive side on peer chain
+        console2.log("Stage 23 progress: simulating peer receive side");
         _simulateReceiveSide(remoteConfig, deployer, localChainId);
 
         // Step 4: Verify final balances
+        console2.log("Stage 23 progress: verifying final balances");
         _verifyBalances(localConfig, remoteConfig, chainConfig, localChainId);
 
         // Export test results
         _exportJson(localDir, localConfig, remoteConfig, chainConfig, localChainId);
+        console2.log("Stage 23 progress: bridge test manifest written");
+        console2.log("Bridge test manifest:", bridgeTestPath);
         _logResults(localConfig, remoteConfig, chainConfig, localChainId);
     }
 
@@ -108,7 +119,6 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
     struct PrepareRichirState {
         uint256 richirBalance;
         uint256 richBalance;
-        uint256 approvedAmount;
         uint256 totalRichSpent;
         uint256 totalRichirOut;
         uint256 chunkIndex;
@@ -205,7 +215,6 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         PrepareRichirState memory state = PrepareRichirState({
             richirBalance: config.richirToken.balanceOf(source),
             richBalance: config.richToken.balanceOf(source),
-            approvedAmount: 0,
             totalRichSpent: 0,
             totalRichirOut: 0,
             chunkIndex: 0,
@@ -220,11 +229,13 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         uint256 missingRichir = TEST_BRIDGE_AMOUNT - state.richirBalance;
         state.remainingRich = state.richBalance;
 
-        console2.log("=== Preparing RICHIR via RICH -> RICHIR ===");
+        console2.log("=== Preparing RICHIR via RICH bond bootstrap ===");
         console2.log("Missing RICHIR:", missingRichir);
         console2.log("Available RICH:", state.richBalance);
 
         require(state.richBalance != 0, "Source account has no RICH to convert into RICHIR");
+
+        _authorizeTokenForDetf(config.richToken, address(config.protocolDetf));
 
         while (state.richirBalance < TEST_BRIDGE_AMOUNT && state.remainingRich > 0) {
             _prepareRichirChunk(config, source, state);
@@ -242,34 +253,40 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         address source,
         PrepareRichirState memory state
     ) internal {
+        uint256 missingRichir = TEST_BRIDGE_AMOUNT - state.richirBalance;
         uint256 chunkIn = state.remainingRich > PREPARE_RICH_CHUNK ? PREPARE_RICH_CHUNK : state.remainingRich;
-        uint256 previewRichir = IStandardExchangeIn(address(config.protocolDetf)).previewExchangeIn(
-            config.richToken,
-            chunkIn,
-            config.richirToken
-        );
+        uint256 tokenId;
+        uint256 shares;
+        uint256 actualRichirOut;
 
-        state.chunkIndex += 1;
-        console2.log("Prepare chunk:", state.chunkIndex);
-        console2.log("  RICH in:", chunkIn);
-        console2.log("  Preview RICHIR out:", previewRichir);
-
-        if (state.approvedAmount < chunkIn) {
-            _authorizeTokenForDetf(config.richToken, address(config.protocolDetf));
-            state.approvedAmount = type(uint256).max;
+        if (chunkIn > missingRichir) {
+            chunkIn = missingRichir;
         }
 
-        uint256 actualRichirOut = IStandardExchangeIn(address(config.protocolDetf)).exchangeIn(
+        if (chunkIn < PREPARE_RICH_MIN_CHUNK) {
+            chunkIn = PREPARE_RICH_MIN_CHUNK;
+        }
+
+        state.chunkIndex += 1;
+
+        console2.log("Prepare chunk:", state.chunkIndex);
+        console2.log("  RICH bond in:", chunkIn);
+        console2.log("  Missing RICHIR before chunk:", missingRichir);
+
+        (tokenId, shares) = config.protocolDetf.bond(
             config.richToken,
             chunkIn,
-            config.richirToken,
-            0,
+            BOND_LOCK_DURATION,
             source,
             false,
-            block.timestamp + 1 hours
+            block.timestamp + PREPARE_DEADLINE_BUFFER
         );
 
-        console2.log("  Actual RICHIR out:", actualRichirOut);
+        console2.log("  Bond tokenId:", tokenId);
+        console2.log("  Bond shares:", shares);
+
+        actualRichirOut = config.protocolDetf.sellNFT(tokenId, source);
+        console2.log("  RICHIR out from sale:", actualRichirOut);
 
         state.totalRichSpent += chunkIn;
         state.totalRichirOut += actualRichirOut;

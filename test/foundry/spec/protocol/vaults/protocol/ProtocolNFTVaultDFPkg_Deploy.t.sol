@@ -24,13 +24,13 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
-import {BaseDualSelfCommonDETF_Component_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
+import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
+import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
+import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 
 contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
-    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for IVaultRegistryDeployment;
 
     IDetfSelfNftInventoryDFPkg internal pkg;
     ERC20PermitDFPkg internal erc20PermitPkg;
@@ -43,7 +43,7 @@ contract ProtocolNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
         );
         IFacet protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
 
-        IProtocolNFTVaultDFPkg.PkgInit memory pkgInit = BaseDualSelfCommonDETF_Component_FactoryService.buildProtocolNFTVaultPkgInit(
+        IProtocolNFTVaultDFPkg.PkgInit memory pkgInit = DetfComponentFactoryService.buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
             erc4626StandardVaultFacet,

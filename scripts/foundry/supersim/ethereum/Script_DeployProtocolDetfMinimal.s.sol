@@ -12,7 +12,7 @@ import {DeploymentBase} from "./DeploymentBase.sol";
 import {SuperSimManifestLib} from "../SuperSimManifestLib.sol";
 
 contract Script_DeployProtocolDetfMinimal is DeploymentBase, Script_16_DeployProtocolDETF {
-    function run() external override {
+    function run() public override {
         string memory outDir = _localOutDir();
         vm.setEnv("OUT_DIR_OVERRIDE", outDir);
         vm.setEnv("NETWORK_PROFILE", "ethereum_sepolia");

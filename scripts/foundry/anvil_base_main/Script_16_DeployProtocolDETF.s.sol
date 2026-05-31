@@ -30,6 +30,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
+import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -52,6 +53,9 @@ import {
 	UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
+import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
+import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
+import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {
 	SingleVaultDetf_Component_FactoryService
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Component_FactoryService.sol";
@@ -64,14 +68,10 @@ import {
 import {
 	ISingleVaultDetfDFPkg
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
-import {
-	BaseProtocolDETF_Component_FactoryService
-} from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
-import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
-import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
-import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 
 import {
 	SingleVaultDetfUniswapV4LiquiditySeeder
@@ -84,6 +84,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	using VaultComponentFactoryService for ICreate3FactoryProxy;
 	using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
 	using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
+	using DetfFacetFactoryService for ICreate3FactoryProxy;
 
 	uint256 private constant RICH_TOTAL_SUPPLY = 1_000_000_000e18;
 	uint256 private constant INITIAL_WETH_DEPOSIT = 10e18;
@@ -112,16 +113,19 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 	IFacet private singleVaultDetfExchangeInFacet;
 	IFacet private singleVaultDetfExchangeInQueryFacet;
+	IFacet private singleVaultDetfInfoFacet;
 	IFacet private singleVaultDetfExchangeOutFacet;
 	IFacet private singleVaultDetfBondingFacet;
 	IFacet private protocolNFTVaultFacet;
 	IFacet private richirFacet;
 	IFacet private uniswapV4StandardExchangeInFacet;
+	IFacet private uniswapV4StandardExchangeInQueryFacet;
+	IFacet private uniswapV4StandardExchangePositionImportFacet;
 	IFacet private uniswapV4StandardExchangeOutFacet;
 	IFacet private erc721Facet;
 
 	IERC20PermitDFPkg private richTokenPkg;
-	IProtocolNFTVaultDFPkg private protocolNFTVaultPkg;
+	IDetfSelfNftInventoryDFPkg private protocolNFTVaultPkg;
 	IRICHIRDFPkg private richirPkg;
 	IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
 	ISingleVaultDetfDFPkg private protocolDetfPkg;
@@ -217,12 +221,15 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 
 		singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
 		singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
+		singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
 		singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
 		singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
 
-		protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
-		richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
+		protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
+		richirFacet = create3Factory.deployRICHIRFacet();
 		uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+		uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+		uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
 		uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
 		erc721Facet = IFacet(
@@ -309,7 +316,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	}
 
 	function _deployPkgs() internal {
-		IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseProtocolDETF_Component_FactoryService
+		IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
 			.buildProtocolNFTVaultPkgInit(
 			erc721Facet,
 			erc4626BasicVaultFacet,
@@ -318,16 +325,16 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 			feeOracle,
 			vaultRegistry
 		);
-		protocolNFTVaultPkg = BaseProtocolDETF_Pkg_FactoryService.deployProtocolNFTVaultDFPkg(vaultRegistry, nftPkgInit);
+		protocolNFTVaultPkg = DetfPkgFactoryService.deployProtocolNFTVaultDFPkg(vaultRegistry, nftPkgInit);
 
-		IRICHIRDFPkg.PkgInit memory richirPkgInit = BaseProtocolDETF_Component_FactoryService.buildRICHIRPkgInit(
+		IRICHIRDFPkg.PkgInit memory richirPkgInit = DetfComponentFactoryService.buildRICHIRPkgInit(
 			erc20Facet,
 			erc5267Facet,
 			erc2612Facet,
 			richirFacet,
 			diamondPackageFactory
 		);
-		richirPkg = BaseProtocolDETF_Pkg_FactoryService.deployRICHIRDFPkg(create3Factory, richirPkgInit);
+		richirPkg = DetfPkgFactoryService.deployRICHIRDFPkg(create3Factory, richirPkgInit);
 
 		IUniswapV4StandardExchangeDFPkg.PkgInit memory uniswapV4PkgInit =
 			UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
@@ -337,6 +344,8 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				multiAssetBasicVaultFacet,
 				multiAssetStandardVaultFacet,
 				uniswapV4StandardExchangeInFacet,
+				uniswapV4StandardExchangeInQueryFacet,
+				uniswapV4StandardExchangePositionImportFacet,
 				uniswapV4StandardExchangeOutFacet,
 				feeOracle,
 				vaultRegistry,
@@ -357,12 +366,13 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
 				exchangeInFacet: singleVaultDetfExchangeInFacet,
 				exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
+				infoFacet: singleVaultDetfInfoFacet,
 				exchangeOutFacet: singleVaultDetfExchangeOutFacet,
 				bondingFacet: singleVaultDetfBondingFacet,
 				operableFacet: operableFacet
 			});
 
-		ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_ = _emptyBridgeConfig();
+		DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_ = _bridgePkgConfigOrEmpty();
 		SingleVaultDetf_Component_FactoryService.SingleVaultDetfInfra memory infra =
 			SingleVaultDetf_Component_FactoryService.SingleVaultDetfInfra({
 				feeOracle: feeOracle,
@@ -429,14 +439,50 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		});
 	}
 
-	function _emptyBridgeConfig() internal pure returns (ProtocolDETFSuperchainBridgeRepo.BridgeConfig memory config_) {
-		config_ = ProtocolDETFSuperchainBridgeRepo.BridgeConfig({
+	function _emptyBridgeConfig() internal pure returns (DetfSuperchainBridgeRepo.BridgeConfig memory config_) {
+		config_ = DetfSuperchainBridgeRepo.BridgeConfig({
 			bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
 			standardBridge: IStandardBridge(payable(address(0))),
 			messenger: ICrossDomainMessenger(address(0)),
 			localRelayer: address(0),
 			peerRelayer: address(0)
 		});
+	}
+
+	function _bridgePkgConfigOrEmpty() internal view returns (DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_) {
+		string memory remoteOutDir;
+		try vm.envString("REMOTE_OUT_DIR") returns (string memory envRemoteOutDir) {
+			if (bytes(envRemoteOutDir).length == 0) {
+				return _emptyBridgeConfig();
+			}
+			remoteOutDir = envRemoteOutDir;
+		} catch {
+			return _emptyBridgeConfig();
+		}
+
+		string memory localBridgeJson;
+		try vm.readFile(string.concat(_outDir(), "/24_superchain_bridge.json")) returns (string memory json) {
+			localBridgeJson = json;
+		} catch {
+			return _emptyBridgeConfig();
+		}
+
+		address bridgeRegistry = vm.parseJsonAddress(localBridgeJson, ".bridgeTokenRegistry");
+		address localRelayer = vm.parseJsonAddress(localBridgeJson, ".tokenTransferRelayer");
+		address peerRelayer = _readAddressFromDir(remoteOutDir, "24_superchain_bridge.json", "tokenTransferRelayer");
+
+		bridgeConfig_ = DetfSuperchainBridgeRepo.BridgeConfig({
+			bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(bridgeRegistry),
+			standardBridge: IStandardBridge(payable(BASE_SEPOLIA.L2_STANDARD_BRIDGE)),
+			messenger: ICrossDomainMessenger(BASE_SEPOLIA.L2_CROSSDOMAIN_MESSENGER),
+			localRelayer: localRelayer,
+			peerRelayer: peerRelayer
+		});
+	}
+
+	function _readAddressFromDir(string memory outDir, string memory file, string memory key) internal view returns (address) {
+		string memory json = vm.readFile(string.concat(outDir, "/", file));
+		return vm.parseJsonAddress(json, string.concat(".", key));
 	}
 
 	function _exportJson() internal {

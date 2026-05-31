@@ -27,10 +27,10 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/core/DETFBondLifecycleLib.sol";
-import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 import {IUniswapV4StandardExchangePositionImport} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
 
 interface ISingleVaultDetfBonding {
@@ -68,7 +68,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     using SingleVaultDetfRepo for SingleVaultDetfRepo.Storage;
 
     struct BridgeExecution {
-        DualSelfCommonDETFSuperchainBridgeRepo.PeerConfig peer;
+        DetfSuperchainBridgeRepo.PeerConfig peer;
         IERC20 remoteDetfToken;
         IERC20 remoteRichToken;
         uint256 bridgeMinGasLimit;
@@ -412,7 +412,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ReservePoolNotInitialized();
         }
 
-        DualSelfCommonDETFSuperchainBridgeRepo.Storage storage bridgeLayout = DualSelfCommonDETFSuperchainBridgeRepo._layoutStruct();
+        DetfSuperchainBridgeRepo.Storage storage bridgeLayout = DetfSuperchainBridgeRepo._layoutStruct();
         if (
             address(bridgeLayout.messenger) == address(0)
                 || address(bridgeLayout.standardBridge) == address(0)
@@ -425,7 +425,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
 
         execution.peer = bridgeLayout.peers[args.targetChainId];
         if (execution.peer.relayer == address(0)) {
-            execution.peer = DualSelfCommonDETFSuperchainBridgeRepo.PeerConfig({relayer: bridgeLayout.defaultPeerRelayer});
+            execution.peer = DetfSuperchainBridgeRepo.PeerConfig({relayer: bridgeLayout.defaultPeerRelayer});
         }
         if (execution.peer.relayer == address(0)) {
             revert BridgePeerNotConfigured(args.targetChainId);
@@ -535,7 +535,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         returns (uint256 richirOut)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        address expectedRelayer = DualSelfCommonDETFSuperchainBridgeRepo._localRelayer();
+        address expectedRelayer = DetfSuperchainBridgeRepo._localRelayer();
 
         if (expectedRelayer == address(0)) {
             revert BridgeConfigNotSet();

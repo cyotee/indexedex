@@ -10,6 +10,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {SingleVaultDetfBondingFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingFacet.sol";
 import {SingleVaultDetfExchangeInFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInFacet.sol";
 import {SingleVaultDetfExchangeInQueryFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInQueryFacet.sol";
+import {SingleVaultDetfInfoFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfInfoFacet.sol";
 import {SingleVaultDetfExchangeOutFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeOutFacet.sol";
 
 library SingleVaultDetf_Facet_FactoryService {
@@ -25,6 +26,11 @@ library SingleVaultDetf_Facet_FactoryService {
     function deploySingleVaultDetfExchangeInQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance_) {
         instance_ = create3Factory.deployFacet(type(SingleVaultDetfExchangeInQueryFacet).creationCode, abi.encode(type(SingleVaultDetfExchangeInQueryFacet).name)._hash());
         vm.label(address(instance_), type(SingleVaultDetfExchangeInQueryFacet).name);
+    }
+
+    function deploySingleVaultDetfInfoFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance_) {
+        instance_ = create3Factory.deployFacet(type(SingleVaultDetfInfoFacet).creationCode, abi.encode(type(SingleVaultDetfInfoFacet).name)._hash());
+        vm.label(address(instance_), type(SingleVaultDetfInfoFacet).name);
     }
 
     function deploySingleVaultDetfExchangeOutFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance_) {

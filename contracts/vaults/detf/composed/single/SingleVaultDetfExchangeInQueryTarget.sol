@@ -14,10 +14,9 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
-import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
-import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
 
 contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
     using SingleVaultDetfRepo for SingleVaultDetfRepo.Storage;
@@ -121,26 +120,6 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
-    function mintWithWeth(uint256 wethAmount_, address, bool) external view returns (uint256 chirMinted_) {
-        if (wethAmount_ == 0) {
-            revert ZeroAmount();
-        }
-
-        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        if (!_isInitialized()) {
-            revert ReservePoolNotInitialized();
-        }
-
-        uint256 reserveSpotPrice = _calcReserveSpotPrice();
-        if (!_isMintingAllowed(layoutStruct, reserveSpotPrice)) {
-            revert MintingNotAllowed(reserveSpotPrice, layoutStruct.mintThreshold);
-        }
-
-        uint256 vaultSharesOut =
-            layoutStruct.wethRichVault.previewExchangeIn(layoutStruct.wethToken, wethAmount_, IERC20(address(layoutStruct.wethRichVault)));
-        chirMinted_ = _splitMintedChirForVaultShares(layoutStruct, vaultSharesOut).userChir;
-    }
-
     function previewClaimLiquidity(uint256 lpAmount_) external view returns (uint256 wethOut_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
@@ -157,7 +136,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         returns (IProtocolDETF.BridgeQuote memory quote_)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        DualSelfCommonDETFSuperchainBridgeRepo.Storage storage bridgeLayout = DualSelfCommonDETFSuperchainBridgeRepo._layoutStruct();
+        DetfSuperchainBridgeRepo.Storage storage bridgeLayout = DetfSuperchainBridgeRepo._layoutStruct();
 
         if (
             address(bridgeLayout.messenger) == address(0)
@@ -167,7 +146,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             revert BridgeConfigNotSet();
         }
 
-        DualSelfCommonDETFSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId_];
+        DetfSuperchainBridgeRepo.PeerConfig memory peer = bridgeLayout.peers[targetChainId_];
         if (peer.relayer == address(0)) {
             peer.relayer = bridgeLayout.defaultPeerRelayer;
         }
@@ -218,22 +197,4 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         }
     }
 
-    function reserveOfToken(address token_) external view returns (uint256 reserve_) {
-        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        if (token_ == layoutStruct.reservePool) {
-            return IERC20(token_).balanceOf(address(this));
-        }
-        return 0;
-    }
-
-    function reserves() external view returns (uint256[] memory reserves_) {
-        SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        reserves_ = new uint256[](1);
-        reserves_[0] = IERC20(layoutStruct.reservePool).balanceOf(address(this));
-    }
-
-    function vaultTokens() external view returns (address[] memory tokens_) {
-        tokens_ = new address[](1);
-        tokens_[0] = SingleVaultDetfRepo._layoutStruct().reservePool;
-    }
 }

@@ -15,7 +15,7 @@ import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 contract Script_25_ConfigureProtocolDetfBridge is Script {
     uint32 internal constant BRIDGE_MIN_GAS_LIMIT = 250_000;
 
-    function run() external {
+    function run() public {
         string memory localDir = _requiredEnvString("OUT_DIR_OVERRIDE");
         string memory remoteDir = _requiredEnvString("REMOTE_OUT_DIR");
 

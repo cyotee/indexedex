@@ -32,7 +32,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
 
         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
         assertEq(interfaces.length, 8, "interface count");
-        assertEq(facets.length, 7, "facet count");
+        assertEq(facets.length, 9, "facet count");
 
         assertEq(facets[0], address(erc20Facet), "erc20 facet");
         assertEq(facets[1], address(erc5267Facet), "erc5267 facet");
@@ -40,7 +40,9 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(facets[3], address(multiAssetBasicVaultFacet), "basic vault facet");
         assertEq(facets[4], address(multiAssetStandardVaultFacet), "standard vault facet");
         assertEq(facets[5], address(uniswapV4StandardExchangeInFacet), "exchange in facet");
-        assertEq(facets[6], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
+        assertEq(facets[6], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
+        assertEq(facets[7], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
+        assertEq(facets[8], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
     }
 
     function test_deployVault_registersVaultAndInitializesConfig() public {

@@ -9,7 +9,6 @@ import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
-import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {SingleVaultDetfExchangeInQueryFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInQueryFacet.sol";
 import {SingleVaultDetf_Facet_FactoryService} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Facet_FactoryService.sol";
 
@@ -30,35 +29,17 @@ contract SingleVaultDetfExchangeInQueryFacet_IFacet_Test is CraneTest, TestBase_
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](4);
+        controlInterfaces = new bytes4[](3);
         controlInterfaces[0] = type(IStandardExchangeIn).interfaceId;
         controlInterfaces[1] = type(IStandardExchangeOut).interfaceId;
         controlInterfaces[2] = type(IProtocolDETF).interfaceId;
-        controlInterfaces[3] = type(ISingleVaultDetf).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](21);
+        controlFuncs = new bytes4[](4);
         controlFuncs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         controlFuncs[1] = IStandardExchangeOut.previewExchangeOut.selector;
-        controlFuncs[2] = IProtocolDETF.chirToken.selector;
-        controlFuncs[3] = IProtocolDETF.richToken.selector;
-        controlFuncs[4] = IProtocolDETF.richirToken.selector;
-        controlFuncs[5] = IProtocolDETF.wethToken.selector;
-        controlFuncs[6] = IProtocolDETF.protocolNFTVault.selector;
-        controlFuncs[7] = IProtocolDETF.chirWethVault.selector;
-        controlFuncs[8] = IProtocolDETF.richChirVault.selector;
-        controlFuncs[9] = IProtocolDETF.reservePool.selector;
-        controlFuncs[10] = IProtocolDETF.protocolNFTId.selector;
-        controlFuncs[11] = IProtocolDETF.syntheticPrice.selector;
-        controlFuncs[12] = IProtocolDETF.mintThreshold.selector;
-        controlFuncs[13] = IProtocolDETF.burnThreshold.selector;
-        controlFuncs[14] = IProtocolDETF.isMintingAllowed.selector;
-        controlFuncs[15] = IProtocolDETF.isBurningAllowed.selector;
-        controlFuncs[16] = ISingleVaultDetf.wethRichVault.selector;
-        controlFuncs[17] = ISingleVaultDetf.vaultRateProvider.selector;
-        controlFuncs[18] = ISingleVaultDetf.reservePoolIndexes.selector;
-        controlFuncs[19] = IProtocolDETF.previewClaimLiquidity.selector;
-        controlFuncs[20] = IProtocolDETF.previewBridgeRichir.selector;
+        controlFuncs[2] = IProtocolDETF.previewClaimLiquidity.selector;
+        controlFuncs[3] = IProtocolDETF.previewBridgeRichir.selector;
     }
 }

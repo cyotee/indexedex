@@ -42,12 +42,10 @@ import {
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
-import {
-    BaseDualSelfCommonDETF_Component_FactoryService
-} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Component_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Facet_FactoryService.sol";
-import {BaseDualSelfCommonDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseDualSelfCommonDETF_Pkg_FactoryService.sol";
-import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
+import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
+import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
+import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/ISuperChainBridgeTokenRegistry.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
@@ -76,9 +74,9 @@ import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVault
 
 contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Facet_FactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Pkg_FactoryService for ICreate3FactoryProxy;
-    using BaseDualSelfCommonDETF_Pkg_FactoryService for IVaultRegistryDeployment;
+    using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for IVaultRegistryDeployment;
     using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
     using SingleVaultDetf_Pkg_FactoryService for IVaultRegistryDeployment;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
@@ -95,12 +93,15 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
     IFacet internal multiAssetStandardVaultFacet;
     IFacet internal singleVaultDetfExchangeInFacet;
     IFacet internal singleVaultDetfExchangeInQueryFacet;
+    IFacet internal singleVaultDetfInfoFacet;
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
     IFacet internal richirFacet;
     IFacet internal protocolNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
+    IFacet internal uniswapV4StandardExchangeInQueryFacet;
+    IFacet internal uniswapV4StandardExchangePositionImportFacet;
     IFacet internal uniswapV4StandardExchangeOutFacet;
 
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
@@ -129,6 +130,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
 
         singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
         singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
+        singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
@@ -153,6 +155,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 exchangeInFacet: singleVaultDetfExchangeInFacet,
                 exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
+                infoFacet: singleVaultDetfInfoFacet,
                 exchangeOutFacet: singleVaultDetfExchangeOutFacet,
                 bondingFacet: singleVaultDetfBondingFacet,
                 operableFacet: operableFacet
@@ -191,7 +194,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
 
         assertEq(name_, "SingleVaultDetfDFPkg", "package name");
         assertEq(interfaces_.length, 10, "interface count");
-        assertEq(facets_.length, 9, "facet count");
+        assertEq(facets_.length, 10, "facet count");
 
         assertEq(facets_[0], address(erc20Facet), "erc20 facet");
         assertEq(facets_[1], address(erc5267Facet), "erc5267 facet");
@@ -200,8 +203,9 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         assertEq(facets_[4], address(multiAssetStandardVaultFacet), "multi asset standard facet");
         assertEq(facets_[5], address(singleVaultDetfExchangeInFacet), "exchange in facet");
         assertEq(facets_[6], address(singleVaultDetfExchangeInQueryFacet), "exchange in query facet");
-        assertEq(facets_[7], address(singleVaultDetfExchangeOutFacet), "exchange out facet");
-        assertEq(facets_[8], address(singleVaultDetfBondingFacet), "bonding facet");
+        assertEq(facets_[7], address(singleVaultDetfInfoFacet), "info facet");
+        assertEq(facets_[8], address(singleVaultDetfExchangeOutFacet), "exchange out facet");
+        assertEq(facets_[9], address(singleVaultDetfBondingFacet), "bonding facet");
     }
 
     function test_deployVault_registersVaultAndInitializesConfig() public {
@@ -314,7 +318,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         IFacet erc721Facet =
             IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetf_ERC721Facet")));
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = BaseDualSelfCommonDETF_Component_FactoryService
+        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildProtocolNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
@@ -331,6 +335,8 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
 
     function _deployUniswapV4StandardExchangePkg() internal {
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
+        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
+        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
@@ -341,6 +347,8 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
                 multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet,
                 uniswapV4StandardExchangeInFacet,
+                uniswapV4StandardExchangeInQueryFacet,
+                uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
                 indexedexManager,
                 indexedexManager,

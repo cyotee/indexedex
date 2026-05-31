@@ -74,7 +74,7 @@ import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleV
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
-import {DualSelfCommonDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/DualSelfCommonDETFSuperchainBridgeRepo.sol";
+import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {
     IStandardExchangeRateProviderDFPkg
@@ -95,6 +95,7 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
 
         IFacet singleVaultDetfExchangeInFacet;
         IFacet singleVaultDetfExchangeInQueryFacet;
+        IFacet singleVaultDetfInfoFacet;
         IFacet singleVaultDetfExchangeOutFacet;
         IFacet singleVaultDetfBondingFacet;
 
@@ -175,6 +176,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable SINGLE_VAULT_DETF_EXCHANGE_IN_FACET;
     IFacet immutable SINGLE_VAULT_DETF_EXCHANGE_IN_QUERY_FACET;
+    IFacet immutable SINGLE_VAULT_DETF_INFO_FACET;
     IFacet immutable SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET;
     IFacet immutable SINGLE_VAULT_DETF_BONDING_FACET;
     IFacet immutable OPERABLE_FACET;
@@ -210,6 +212,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         SINGLE_VAULT_DETF_EXCHANGE_IN_FACET = pkgInit.singleVaultDetfExchangeInFacet;
         SINGLE_VAULT_DETF_EXCHANGE_IN_QUERY_FACET = pkgInit.singleVaultDetfExchangeInQueryFacet;
+        SINGLE_VAULT_DETF_INFO_FACET = pkgInit.singleVaultDetfInfoFacet;
         SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET = pkgInit.singleVaultDetfExchangeOutFacet;
         SINGLE_VAULT_DETF_BONDING_FACET = pkgInit.singleVaultDetfBondingFacet;
         OPERABLE_FACET = pkgInit.operableFacet;
@@ -252,7 +255,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](9);
+        facetAddresses_ = new address[](10);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -260,8 +263,9 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[5] = address(SINGLE_VAULT_DETF_EXCHANGE_IN_FACET);
         facetAddresses_[6] = address(SINGLE_VAULT_DETF_EXCHANGE_IN_QUERY_FACET);
-        facetAddresses_[7] = address(SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET);
-        facetAddresses_[8] = address(SINGLE_VAULT_DETF_BONDING_FACET);
+        facetAddresses_[7] = address(SINGLE_VAULT_DETF_INFO_FACET);
+        facetAddresses_[8] = address(SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET);
+        facetAddresses_[9] = address(SINGLE_VAULT_DETF_BONDING_FACET);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
@@ -289,7 +293,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](9);
+        facetCuts_ = new IDiamond.FacetCut[](10);
         facetCuts_[0] = IDiamond.FacetCut(address(ERC20_FACET), IDiamond.FacetCutAction.Add, ERC20_FACET.facetFuncs());
         facetCuts_[1] = IDiamond.FacetCut(address(ERC5267_FACET), IDiamond.FacetCutAction.Add, ERC5267_FACET.facetFuncs());
         facetCuts_[2] = IDiamond.FacetCut(address(ERC2612_FACET), IDiamond.FacetCutAction.Add, ERC2612_FACET.facetFuncs());
@@ -297,8 +301,9 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         facetCuts_[4] = IDiamond.FacetCut(address(MULTI_ASSET_STANDARD_VAULT_FACET), IDiamond.FacetCutAction.Add, MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs());
         facetCuts_[5] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_EXCHANGE_IN_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_EXCHANGE_IN_FACET.facetFuncs());
         facetCuts_[6] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_EXCHANGE_IN_QUERY_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_EXCHANGE_IN_QUERY_FACET.facetFuncs());
-        facetCuts_[7] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET.facetFuncs());
-        facetCuts_[8] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_BONDING_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_BONDING_FACET.facetFuncs());
+        facetCuts_[7] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_INFO_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_INFO_FACET.facetFuncs());
+        facetCuts_[8] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_EXCHANGE_OUT_FACET.facetFuncs());
+        facetCuts_[9] = IDiamond.FacetCut(address(SINGLE_VAULT_DETF_BONDING_FACET), IDiamond.FacetCutAction.Add, SINGLE_VAULT_DETF_BONDING_FACET.facetFuncs());
     }
 
     function diamondConfig() public view returns (DiamondConfig memory config_) {
@@ -325,8 +330,8 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
 
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
         Permit2AwareRepo._initialize(PERMIT2);
-        DualSelfCommonDETFSuperchainBridgeRepo._initialize(
-            DualSelfCommonDETFSuperchainBridgeRepo.BridgeConfig({
+        DetfSuperchainBridgeRepo._initialize(
+            DetfSuperchainBridgeRepo.BridgeConfig({
                 bridgeTokenRegistry: BRIDGE_TOKEN_REGISTRY,
                 standardBridge: STANDARD_BRIDGE,
                 messenger: BRIDGE_MESSENGER,

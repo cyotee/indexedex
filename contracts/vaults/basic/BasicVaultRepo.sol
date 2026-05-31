@@ -29,82 +29,82 @@ library BasicVaultRepo {
 
     /* ------------------------------- Errors ------------------------------- */
 
-    // tag::_layout(bytes32)[]
+    // tag::_layoutStruct(bytes32)[]
     /**
      * @dev "Binds" this struct to a storage slot.
      * @param slot The first slot to use in the range of slots used by the struct.
-     * @return layout A struct from a Repo library bound to the provided slot.
+     * @return layoutStruct A struct from a Repo library bound to the provided slot.
      */
-    function _layout(bytes32 slot) internal pure returns (Storage storage layout) {
+    function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
         assembly {
-            layout.slot := slot
+            layoutStruct.slot := slot
         }
     }
-    // end::_layout(bytes32)[]
+    // end::_layoutStruct(bytes32)[]
 
-    function _layout() internal pure returns (Storage storage layout) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout, address[] memory tokens) internal {
-        layout.vaultTokens._add(tokens);
+    function _initialize(Storage storage layoutStruct, address[] memory tokens) internal {
+        layoutStruct.vaultTokens._add(tokens);
     }
 
     function _initialize(address[] memory tokens) internal {
-        _initialize(_layout(), tokens);
+        _initialize(_layoutStruct(), tokens);
     }
 
-    function _vaultTokens(Storage storage layout) internal view returns (address[] memory tokens_) {
-        return layout.vaultTokens._values();
+    function _vaultTokens(Storage storage layoutStruct) internal view returns (address[] memory tokens_) {
+        return layoutStruct.vaultTokens._values();
     }
 
     function _vaultTokens() internal view returns (address[] memory tokens_) {
-        return _vaultTokens(_layout());
+        return _vaultTokens(_layoutStruct());
     }
 
-    function _addVaultToken(Storage storage layout, address token) internal {
-        layout.vaultTokens._add(token);
+    function _addVaultToken(Storage storage layoutStruct, address token) internal {
+        layoutStruct.vaultTokens._add(token);
     }
 
     function _addVaultToken(address token) internal {
-        _addVaultToken(_layout(), token);
+        _addVaultToken(_layoutStruct(), token);
     }
 
-    function _addVaultTokens(Storage storage layout, address[] memory tokens) internal {
-        layout.vaultTokens._add(tokens);
+    function _addVaultTokens(Storage storage layoutStruct, address[] memory tokens) internal {
+        layoutStruct.vaultTokens._add(tokens);
     }
 
     function _addVaultTokens(address[] memory tokens) internal {
-        _addVaultTokens(_layout(), tokens);
+        _addVaultTokens(_layoutStruct(), tokens);
     }
 
-    function _reserveOfToken(Storage storage layout, address token) internal view returns (uint256 reserve_) {
-        return layout.reserveOfToken[address(token)];
+    function _reserveOfToken(Storage storage layoutStruct, address token) internal view returns (uint256 reserve_) {
+        return layoutStruct.reserveOfToken[address(token)];
     }
 
     function _reserveOfToken(address token) internal view returns (uint256 reserve_) {
-        return _reserveOfToken(_layout(), token);
+        return _reserveOfToken(_layoutStruct(), token);
     }
 
-    function _updateReserve(Storage storage layout, IERC20 token, uint256 newReserve) internal {
-        layout.reserveOfToken[address(token)] = newReserve;
+    function _updateReserve(Storage storage layoutStruct, IERC20 token, uint256 newReserve) internal {
+        layoutStruct.reserveOfToken[address(token)] = newReserve;
     }
 
     function _updateReserve(IERC20 token, uint256 newReserve) internal {
-        _updateReserve(_layout(), token, newReserve);
+        _updateReserve(_layoutStruct(), token, newReserve);
     }
 
-    function _reserves(Storage storage layout) internal view returns (uint256[] memory reserves_) {
-        uint256 tokenCount = layout.vaultTokens._length();
+    function _reserves(Storage storage layoutStruct) internal view returns (uint256[] memory reserves_) {
+        uint256 tokenCount = layoutStruct.vaultTokens._length();
         reserves_ = new uint256[](tokenCount);
         for (uint256 cursor = 0; cursor < tokenCount; ++cursor) {
-            address token = layout.vaultTokens._index(cursor);
-            reserves_[cursor] = layout.reserveOfToken[token];
+            address token = layoutStruct.vaultTokens._index(cursor);
+            reserves_[cursor] = layoutStruct.reserveOfToken[token];
         }
     }
 
     function _reserves() internal view returns (uint256[] memory reserves_) {
-        return _reserves(_layout());
+        return _reserves(_layoutStruct());
     }
 }
 // end::BasicVaultRepo[]

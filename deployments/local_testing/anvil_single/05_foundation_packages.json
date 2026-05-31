@@ -1,0 +1,13 @@
+{
+  "balancerV3ConstantProductPoolStandardVaultPkg": "0x28389281a44831E203EEdc63704F74efcB95aA78",
+  "balancerV3Vault": "0x43265fA19864E0fAE6101e46cA0aF301DbdBFD3A",
+  "chainId": 31337,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "permit2": "0xD787bCA0581396A6DB2996d348291A47E1169FA3",
+  "rateProviderPkg": "0x877E49029d1c05389869B5C762eB09eAE9BdD990",
+  "uniswapV2Factory": "0x55bcc0437dE26154D1D028D916c546dBC11f8A29",
+  "uniswapV2Router": "0x44B277343d907d686359fAcCC343020382393642",
+  "uniswapV2StandardExchangePkg": "0x711aE191545D62f231035136D6F8010dF5cf8518"
+}
