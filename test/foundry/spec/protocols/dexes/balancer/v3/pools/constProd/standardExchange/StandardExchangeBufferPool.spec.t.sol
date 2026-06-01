@@ -16,6 +16,10 @@ import {Behavior_StandardExchangeBufferPool_LP_AddProportional} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_AddProportional.sol";
 import {Behavior_StandardExchangeBufferPool_LP_RemoveProportional} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_RemoveProportional.sol";
+import {Behavior_StandardExchangeBufferPool_Clamping} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Clamping.sol";
+import {Behavior_StandardExchangeBufferPool_Errors} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Errors.sol";
 
 /**
  * @title StandardExchangeBufferPoolSpec
@@ -35,7 +39,9 @@ contract StandardExchangeBufferPoolSpec is
     Behavior_StandardExchangeBufferPool_Swap_TTAtoShares,
     Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
     Behavior_StandardExchangeBufferPool_LP_AddProportional,
-    Behavior_StandardExchangeBufferPool_LP_RemoveProportional
+    Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
+    Behavior_StandardExchangeBufferPool_Clamping,
+    Behavior_StandardExchangeBufferPool_Errors
 {
     /* ---------------------------------------------------------------------- */
     /*                       Behavior Hook Implementation                      */
@@ -47,7 +53,9 @@ contract StandardExchangeBufferPoolSpec is
         Behavior_StandardExchangeBufferPool_Swap_TTAtoShares,
         Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
         Behavior_StandardExchangeBufferPool_LP_AddProportional,
-        Behavior_StandardExchangeBufferPool_LP_RemoveProportional
+        Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
+        Behavior_StandardExchangeBufferPool_Clamping,
+        Behavior_StandardExchangeBufferPool_Errors
     ) returns (TestBase_StandardExchangeBufferPool) {
         return TestBase_StandardExchangeBufferPool(address(this));
     }
@@ -153,5 +161,33 @@ contract StandardExchangeBufferPoolSpec is
         uint256 bptIn = aliceBpt / 10;
         if (bptIn == 0) bptIn = 1e15;
         behavior_lpRemove_proportional(bptIn);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Clamping Tests                                  */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice TTA→shares swap reverts when hookSharesDelta is set to exhaust the shares side.
+    function test_clamping_sharesExhausted() public {
+        behavior_clamping_revertsWhenSharesSideExhausted();
+    }
+
+    /// @notice Shares→TTA swap reverts when virtualTTA is forced to zero.
+    function test_clamping_ttaExhausted() public {
+        behavior_clamping_revertsWhenTTASideExhausted();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                          Error Path Tests                               */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Direct onAddLiquidityCustom call with a non-hook router argument reverts.
+    function test_errors_customAddFromNonHook() public {
+        behavior_errors_customAddFromNonHookReverts();
+    }
+
+    /// @notice Direct onRemoveLiquidityCustom call with a non-hook router argument reverts.
+    function test_errors_customRemoveFromNonHook() public {
+        behavior_errors_customRemoveFromNonHookReverts();
     }
 }
