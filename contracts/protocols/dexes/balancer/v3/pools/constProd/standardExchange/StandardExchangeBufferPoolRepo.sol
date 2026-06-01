@@ -21,6 +21,10 @@ library StandardExchangeBufferPoolRepo {
         // Live state:
         uint256 virtualTTA;
         int256 hookSharesDelta;
+        // Transient-like pre-seat state (set in onBeforeSwap, cleared in onAfterSwap).
+        // pendingPreSeatS: number of shares drained from the pool during the pre-seat pass.
+        // Zero means no pre-seat is in flight.
+        uint256 pendingPreSeatS;
     }
 
     function _layout(bytes32 slot_) internal pure returns (Storage storage l) {
@@ -61,4 +65,7 @@ library StandardExchangeBufferPoolRepo {
 
     function _hookSharesDelta() internal view returns (int256) { return _layout().hookSharesDelta; }
     function _setHookSharesDelta(int256 v) internal { _layout().hookSharesDelta = v; }
+
+    function _pendingPreSeatS() internal view returns (uint256) { return _layout().pendingPreSeatS; }
+    function _setPendingPreSeatS(uint256 v) internal { _layout().pendingPreSeatS = v; }
 }

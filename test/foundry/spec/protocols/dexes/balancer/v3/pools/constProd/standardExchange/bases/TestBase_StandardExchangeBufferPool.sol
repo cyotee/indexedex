@@ -432,13 +432,44 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
      * @return amountOut Shares received by `user`.
      */
     function swapTTAforShares(address user, uint256 amountIn) public returns (uint256 amountOut) {
+        amountOut = _doSwapExactIn(user, tta, shares, amountIn);
+    }
+
+    /**
+     * @notice Execute an EXACT_IN shares→TTA swap through the Balancer V3 RouterMock.
+     * @dev Uses permit2 (already approved for all users during setUp via _approveForAllUsers).
+     *      Caller must hold at least `amountIn` SE vault shares. The router pulls via permit2.
+     *      The permit2 approval for the SE vault share token (seVault address) was set during
+     *      setUp() in _deploySeVault().
+     * @param user     Address performing the swap (pranked inside this call).
+     * @param amountIn Exact shares amount to swap in (raw units, same decimals as SE vault).
+     * @return amountOut TTA received by `user`.
+     */
+    function swapSharesForTTA(address user, uint256 amountIn) public returns (uint256 amountOut) {
+        amountOut = _doSwapExactIn(user, shares, tta, amountIn);
+    }
+
+    /**
+     * @dev Internal helper that executes an EXACT_IN single-token swap through the BV3 RouterMock.
+     *      Both token directions share this implementation to stay DRY.
+     *
+     * @param user      Address performing the swap (will be pranked).
+     * @param tokenIn   Token the user sells.
+     * @param tokenOut  Token the user receives.
+     * @param amountIn  Exact amount of tokenIn to swap.
+     * @return amountOut Amount of tokenOut received.
+     */
+    function _doSwapExactIn(
+        address user,
+        IERC20 tokenIn,
+        IERC20 tokenOut,
+        uint256 amountIn
+    ) internal returns (uint256 amountOut) {
         vm.startPrank(user);
-        // The standard Balancer V3 RouterMock pulls tokenIn via permit2.
-        // permit2 approval for DAI→router was set during setUp() _approveForAllUsers().
         amountOut = router.swapSingleTokenExactIn(
             bufferPool,
-            tta,
-            shares,
+            tokenIn,
+            tokenOut,
             amountIn,
             0,               // minAmountOut — no slippage guard in tests
             block.timestamp, // deadline
