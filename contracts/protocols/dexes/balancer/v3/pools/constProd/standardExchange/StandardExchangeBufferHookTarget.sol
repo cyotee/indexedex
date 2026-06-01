@@ -185,18 +185,36 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
         return true;
     }
 
-    /// @dev Active hook — implementation in Task 9.
+    /**
+     * @notice Hook executed after add-liquidity operations.
+     * @dev Scales virtualTTA and hookSharesDelta proportionally by the BPT minted.
+     *      If T_pre = 0 (first mint), returns early. Otherwise:
+     *      virtualTTA += bptAmountOut * virtualTTA_pre / T_pre
+     *      hookSharesDelta += bptAmountOut * hookSharesDelta_pre / T_pre (signed)
+     *      Returns (true, amountsInRaw) since enableHookAdjustedAmounts = false.
+     */
     function onAfterAddLiquidity(
-        address,
-        address,
-        AddLiquidityKind,
-        uint256[] memory,
-        uint256[] memory,
-        uint256,
-        uint256[] memory,
-        bytes memory
+        address /*router*/, address pool, AddLiquidityKind /*kind*/,
+        uint256[] memory /*amountsInScaled18*/,
+        uint256[] memory amountsInRaw,
+        uint256 bptAmountOut,
+        uint256[] memory /*balancesScaled18*/,
+        bytes memory /*userData*/
     ) external virtual override returns (bool, uint256[] memory) {
-        revert("unimplemented");
+        if (msg.sender != _balancerV3Vault()) return (false, amountsInRaw);
+        if (pool != address(this)) return (false, amountsInRaw);
+        uint256 tPost = IERC20(address(this)).totalSupply();
+        uint256 tPre = tPost - bptAmountOut;
+        if (tPre == 0) return (true, amountsInRaw); // first-mint case
+
+        uint256 vtPre = Repo._virtualTTA();
+        int256 hPre = Repo._hookSharesDelta();
+
+        Repo._setVirtualTTA(vtPre + (bptAmountOut * vtPre) / tPre);
+        int256 hAdd = (int256(bptAmountOut) * hPre) / int256(tPre);
+        Repo._setHookSharesDelta(hPre + hAdd);
+
+        return (true, amountsInRaw);
     }
 
     /// @dev Not used (shouldCallBeforeRemoveLiquidity = false). Returns false.
@@ -212,18 +230,39 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
         return false;
     }
 
-    /// @dev Active hook — implementation in Task 10.
+    /**
+     * @notice Hook executed after remove-liquidity operations.
+     * @dev Scales virtualTTA and hookSharesDelta proportionally by the BPT redeemed.
+     *      If T_pre = 0, returns early. Otherwise:
+     *      Deduction = bptAmountIn * virtualTTA_pre / T_pre
+     *      virtualTTA -= min(Deduction, virtualTTA_pre) [clamp at zero]
+     *      hookSharesDelta -= bptAmountIn * hookSharesDelta_pre / T_pre (signed)
+     *      Returns (true, amountsOutRaw) since enableHookAdjustedAmounts = false.
+     */
     function onAfterRemoveLiquidity(
-        address,
-        address,
-        RemoveLiquidityKind,
-        uint256,
-        uint256[] memory,
-        uint256[] memory,
-        uint256[] memory,
-        bytes memory
+        address /*router*/, address pool, RemoveLiquidityKind /*kind*/,
+        uint256 bptAmountIn,
+        uint256[] memory /*amountsOutScaled18*/,
+        uint256[] memory amountsOutRaw,
+        uint256[] memory /*balancesScaled18*/,
+        bytes memory /*userData*/
     ) external virtual override returns (bool, uint256[] memory) {
-        revert("unimplemented");
+        if (msg.sender != _balancerV3Vault()) return (false, amountsOutRaw);
+        if (pool != address(this)) return (false, amountsOutRaw);
+        uint256 tPost = IERC20(address(this)).totalSupply();
+        uint256 tPre = tPost + bptAmountIn;
+        if (tPre == 0) return (true, amountsOutRaw);
+
+        uint256 vtPre = Repo._virtualTTA();
+        int256 hPre = Repo._hookSharesDelta();
+
+        uint256 vtSub = (bptAmountIn * vtPre) / tPre;
+        Repo._setVirtualTTA(vtSub >= vtPre ? 0 : vtPre - vtSub);
+
+        int256 hSub = (int256(bptAmountIn) * hPre) / int256(tPre);
+        Repo._setHookSharesDelta(hPre - hSub);
+
+        return (true, amountsOutRaw);
     }
 
     /**
