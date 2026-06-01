@@ -125,6 +125,11 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
 
     IVault public bv3Vault;
 
+    /// @notice Exposes the internally-declared `alice` address from BaseTest to behavior libraries.
+    function getAlice() public view virtual returns (address) {
+        return alice;
+    }
+
     // Aerodrome infrastructure
     Forwarder internal aeroForwarder;
     Pool internal aeroPoolImpl;

@@ -5,6 +5,8 @@ import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
 import {Behavior_StandardExchangeBufferPool_Registration} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Registration.sol";
+import {Behavior_StandardExchangeBufferPool_Initialization} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Initialization.sol";
 
 /**
  * @title StandardExchangeBufferPoolSpec
@@ -19,13 +21,17 @@ import {Behavior_StandardExchangeBufferPool_Registration} from
  */
 contract StandardExchangeBufferPoolSpec is
     TestBase_StandardExchangeBufferPool,
-    Behavior_StandardExchangeBufferPool_Registration
+    Behavior_StandardExchangeBufferPool_Registration,
+    Behavior_StandardExchangeBufferPool_Initialization
 {
     /* ---------------------------------------------------------------------- */
     /*                       Behavior Hook Implementation                      */
     /* ---------------------------------------------------------------------- */
 
-    function _base() internal view override returns (TestBase_StandardExchangeBufferPool) {
+    function _base() internal view override(
+        Behavior_StandardExchangeBufferPool_Registration,
+        Behavior_StandardExchangeBufferPool_Initialization
+    ) returns (TestBase_StandardExchangeBufferPool) {
         return TestBase_StandardExchangeBufferPool(address(this));
     }
 
@@ -51,5 +57,39 @@ contract StandardExchangeBufferPoolSpec is
     /// @notice virtualTTA is seeded and hookSharesDelta is zero after initialization.
     function test_registration_initialStorage() public view {
         behavior_initialVirtualTTAAndHookSharesDelta();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Initialization Tests                            */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice virtualTTA equals the seeded shares amount times the rate, scaled to 18 decimals.
+    function test_init_virtualTTAMatchesSeed() public view {
+        behavior_init_virtualTTAMatchesSeed();
+    }
+
+    /// @notice hookSharesDelta is exactly zero immediately after initialization.
+    function test_init_hookSharesDeltaZero() public view {
+        behavior_init_hookSharesDeltaZero();
+    }
+
+    /// @notice BPT total supply is positive after initialization.
+    function test_init_bptSupplyPositive() public view {
+        behavior_init_bptSupplyPositive();
+    }
+
+    /// @notice Alice holds the entire BPT supply after initialization.
+    function test_init_aliceHoldsBPT() public view {
+        behavior_init_aliceHoldsBPT();
+    }
+
+    /// @notice Vault raw TTA balance for the pool is positive after initialization.
+    function test_init_poolActualTTAPositive() public view {
+        behavior_init_poolActualTTAPositive();
+    }
+
+    /// @notice Vault raw shares balance for the pool is positive after initialization.
+    function test_init_poolActualSharesPositive() public view {
+        behavior_init_poolActualSharesPositive();
     }
 }
