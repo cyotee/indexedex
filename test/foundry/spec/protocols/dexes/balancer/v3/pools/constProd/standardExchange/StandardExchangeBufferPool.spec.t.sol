@@ -7,6 +7,8 @@ import {Behavior_StandardExchangeBufferPool_Registration} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Registration.sol";
 import {Behavior_StandardExchangeBufferPool_Initialization} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Initialization.sol";
+import {Behavior_StandardExchangeBufferPool_Swap_TTAtoShares} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Swap_TTAtoShares.sol";
 
 /**
  * @title StandardExchangeBufferPoolSpec
@@ -22,7 +24,8 @@ import {Behavior_StandardExchangeBufferPool_Initialization} from
 contract StandardExchangeBufferPoolSpec is
     TestBase_StandardExchangeBufferPool,
     Behavior_StandardExchangeBufferPool_Registration,
-    Behavior_StandardExchangeBufferPool_Initialization
+    Behavior_StandardExchangeBufferPool_Initialization,
+    Behavior_StandardExchangeBufferPool_Swap_TTAtoShares
 {
     /* ---------------------------------------------------------------------- */
     /*                       Behavior Hook Implementation                      */
@@ -30,7 +33,8 @@ contract StandardExchangeBufferPoolSpec is
 
     function _base() internal view override(
         Behavior_StandardExchangeBufferPool_Registration,
-        Behavior_StandardExchangeBufferPool_Initialization
+        Behavior_StandardExchangeBufferPool_Initialization,
+        Behavior_StandardExchangeBufferPool_Swap_TTAtoShares
     ) returns (TestBase_StandardExchangeBufferPool) {
         return TestBase_StandardExchangeBufferPool(address(this));
     }
@@ -91,5 +95,14 @@ contract StandardExchangeBufferPoolSpec is
     /// @notice Vault raw shares balance for the pool is positive after initialization.
     function test_init_poolActualSharesPositive() public view {
         behavior_init_poolActualSharesPositive();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Swap TTA→Shares Tests                           */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice End-to-end TTA→shares EXACT_IN swap asserts spec section 6.2 post-state.
+    function test_swap_TTAtoShares_basic() public {
+        behavior_swap_TTAtoShares_endToEnd(10e18);
     }
 }

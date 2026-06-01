@@ -1,0 +1,156 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+import {TestBase_StandardExchangeBufferPool} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+
+/**
+ * @title Behavior_StandardExchangeBufferPool_Swap_TTAtoShares
+ * @notice Reusable behavior contract asserting spec section 6.2 post-state for a TTA→shares
+ *         EXACT_IN swap.
+ *
+ * @dev After a TTA→shares EXACT_IN swap of X TTA:
+ *      (a) User's TTA balance decreases by X; user's shares balance increases by Y_shares.
+ *      (b) BPT total supply is unchanged (no LP action).
+ *      (c) Pool's per-pool actual TTA balance returns to its pre-swap value (the hook's
+ *          onAfterSwap drains the X TTA via sendTo + exchangeIn + removeLiquidity).
+ *          NOTE: because _initPool seeds non-zero TTA, the invariant is
+ *          "post-swap actual TTA == pre-swap actual TTA" rather than "post-swap == 0".
+ *      (d) virtualTTA increases by exactly X (assumes 18-decimal TTA).
+ *      (e) hookSharesDelta increases by Y' (shares minted by the SE Vault during reconcile).
+ *          Y' is derived from the change in the pool's actual shares balance plus the shares
+ *          delivered to the user: Y' = (shrBalPost - shrBalPre) + Y_shares.
+ *      (f) Pool's actual shares balance changes by Y' - Y_shares (typically ≥ 0 because
+ *          the CP AMM delivers slightly fewer shares than the SE Vault mints).
+ */
+abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Abstract Hook                                   */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Implementors return the live test fixture so behavior functions
+    ///         can access all public state (bv3Vault, bufferPool, tta, shares, …).
+    function _base() internal view virtual returns (TestBase_StandardExchangeBufferPool);
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Behavior Assertions                             */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice Execute a TTA→shares EXACT_IN swap and assert all spec 6.2 invariants.
+     *
+     * @param amountIn Exact TTA amount to swap in (raw 18-decimal units).
+     *
+     * Pre-conditions:
+     *   - The pool must be initialized (setUp() complete).
+     *   - alice must hold at least `amountIn` TTA (minted below if not).
+     *   - alice's TTA has permit2 approval for the Balancer V3 RouterMock (set in setUp).
+     */
+    function behavior_swap_TTAtoShares_endToEnd(uint256 amountIn) public {
+        TestBase_StandardExchangeBufferPool tb = _base();
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(tb.bufferPool());
+
+        // Ensure alice holds enough TTA for the swap.
+        if (tb.tta().balanceOf(tb.getAlice()) < amountIn) {
+            tb.mintTTA(tb.getAlice(), amountIn);
+        }
+
+        // ------------------------------------------------------------------
+        // Pre-state snapshot
+        // ------------------------------------------------------------------
+        uint256 vtPre     = p.virtualTTA();
+        int256  hdPre     = p.hookSharesDelta();
+        uint256 ttaBalPre = _swapVaultRawBalance(tb, p.ttaIndex());
+        uint256 shrBalPre = _swapVaultRawBalance(tb, p.sharesIndex());
+        uint256 bptPre    = IERC20(tb.bufferPool()).totalSupply();
+        uint256 userTtaPre = tb.tta().balanceOf(tb.getAlice());
+        uint256 userShrPre = tb.shares().balanceOf(tb.getAlice());
+
+        // ------------------------------------------------------------------
+        // Execute the swap
+        // ------------------------------------------------------------------
+        uint256 amountOut = tb.swapTTAforShares(tb.getAlice(), amountIn);
+
+        // ------------------------------------------------------------------
+        // Post-state assertions
+        // ------------------------------------------------------------------
+
+        // (a) User balances moved as expected.
+        assertEq(
+            tb.tta().balanceOf(tb.getAlice()),
+            userTtaPre - amountIn,
+            "swap_TTAtoShares: user paid X TTA"
+        );
+        assertEq(
+            tb.shares().balanceOf(tb.getAlice()),
+            userShrPre + amountOut,
+            "swap_TTAtoShares: user received Y_shares"
+        );
+
+        // (b) BPT total supply unchanged.
+        assertEq(
+            IERC20(tb.bufferPool()).totalSupply(),
+            bptPre,
+            "swap_TTAtoShares: BPT supply unchanged"
+        );
+
+        // (c) Actual TTA balance returns to pre-swap value (hook drained X TTA).
+        assertEq(
+            _swapVaultRawBalance(tb, p.ttaIndex()),
+            ttaBalPre,
+            "swap_TTAtoShares: actual TTA returns to pre-swap value"
+        );
+
+        // (d) virtualTTA increased by exactly X (18-decimal TTA assumed).
+        assertEq(
+            p.virtualTTA(),
+            vtPre + amountIn,
+            "swap_TTAtoShares: virtualTTA += X"
+        );
+
+        // (e) hookSharesDelta increased by Y' (shares minted by the SE Vault).
+        //     Pool's actual shares balance after the swap:
+        //       shrBalPost = shrBalPre - amountOut + Y'
+        //     => Y' = shrBalPost - shrBalPre + amountOut
+        uint256 shrBalPost = _swapVaultRawBalance(tb, p.sharesIndex());
+        // Guard against underflow (shrBalPost + amountOut must be >= shrBalPre).
+        uint256 yPrime = shrBalPost + amountOut - shrBalPre;
+        assertEq(
+            p.hookSharesDelta(),
+            hdPre + int256(yPrime),
+            "swap_TTAtoShares: hookSharesDelta += Y'"
+        );
+
+        // (f) Pool's actual shares balance changed by Y' - Y_shares (>= 0 via CP slippage).
+        assertEq(
+            shrBalPost,
+            shrBalPre + yPrime - amountOut,
+            "swap_TTAtoShares: pool shares balance delta = Y' - Y_shares"
+        );
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                            Internal Helpers                             */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @dev Queries the Balancer V3 Vault for the raw balance of the token at the given
+     *      pool-token index.
+     *      Return layout: (tokens[], tokenInfo[], balancesRaw[], lastBalancesLiveScaled18[])
+     *      Named _swapVaultRawBalance to avoid the name-collision with the same helper in
+     *      Behavior_StandardExchangeBufferPool_Initialization._vaultRawBalance.
+     */
+    function _swapVaultRawBalance(TestBase_StandardExchangeBufferPool tb, uint256 tokenIndex)
+        internal
+        view
+        returns (uint256)
+    {
+        (,, uint256[] memory balancesRaw,) = tb.bv3Vault().getPoolTokenInfo(tb.bufferPool());
+        return balancesRaw[tokenIndex];
+    }
+}

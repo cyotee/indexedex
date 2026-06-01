@@ -411,6 +411,44 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     }
 
     /* ---------------------------------------------------------------------- */
+    /*                            Swap Helpers                                 */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice Mint `amount` TTA (DAI) to `recipient`.
+     * @dev Behaviors that need to top-up a user's TTA balance call this rather than
+     *      casting through the IERC20 interface (which lacks a `mint` selector).
+     */
+    function mintTTA(address recipient, uint256 amount) public {
+        dai.mint(recipient, amount);
+    }
+
+    /**
+     * @notice Execute an EXACT_IN TTA→shares swap through the Balancer V3 RouterMock.
+     * @dev Uses permit2 (already approved for all users during setUp via _approveForAllUsers).
+     *      Caller must hold at least `amountIn` TTA (DAI). The router pulls via permit2.
+     * @param user   Address performing the swap (pranked inside this call).
+     * @param amountIn  Exact TTA amount to swap in (18-decimal raw units).
+     * @return amountOut Shares received by `user`.
+     */
+    function swapTTAforShares(address user, uint256 amountIn) public returns (uint256 amountOut) {
+        vm.startPrank(user);
+        // The standard Balancer V3 RouterMock pulls tokenIn via permit2.
+        // permit2 approval for DAI→router was set during setUp() _approveForAllUsers().
+        amountOut = router.swapSingleTokenExactIn(
+            bufferPool,
+            tta,
+            shares,
+            amountIn,
+            0,               // minAmountOut — no slippage guard in tests
+            block.timestamp, // deadline
+            false,           // wethIsEth
+            bytes("")        // userData
+        );
+        vm.stopPrank();
+    }
+
+    /* ---------------------------------------------------------------------- */
     /*                           Pool Initialization                           */
     /* ---------------------------------------------------------------------- */
 
