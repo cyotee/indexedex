@@ -55,6 +55,13 @@ contract MockBalancerV3Vault {
     }
 
     function observedCount() external view returns (uint256) { return observed.length; }
+
+    /// @dev Stubs the static-swap-fee getter the hook reads in `onBeforeSwap`. Returns 0 by default
+    /// (no fee applied) so unit tests can compute exact CP math without fee adjustments. Override via
+    /// `setStaticSwapFee` if a non-zero fee is needed.
+    uint256 public scriptedStaticSwapFee;
+    function setStaticSwapFee(uint256 v) external { scriptedStaticSwapFee = v; }
+    function getStaticSwapFeePercentage(address) external view returns (uint256) { return scriptedStaticSwapFee; }
 }
 
 /// @dev Mock that implements IStandardExchange with scripted return values.

@@ -61,16 +61,19 @@ contract HookLPAddTest is Test {
         assertEq(vault.observedCount(), 0);
     }
 
-    function test_proportionalWithTTA_convertsAndReconciles() public {
+    function test_proportionalWithTTA_isPassThroughNoOp() public {
+        // Integration testing revealed the original "convert LP TTA -> shares in onBeforeAddLiquidity"
+        // design is infeasible: the Vault calls onBeforeAddLiquidity *before* pulling tokens from the LP,
+        // so sendTo(TTA, ...) would always overflow/fail. The hook now passes PROPORTIONAL through
+        // unchanged; the LP must supply real proportional amounts. virtualTTA/hookSharesDelta are
+        // scaled proportionally in onAfterAddLiquidity instead. See StandardExchangeBufferPool spec
+        // section 6.4 deviation note and `Behavior_LP_AddProportional` for the new semantics.
         uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 5e18;
-        seVault.setAmountIn(5e18); // exchangeIn returns 5 new shares
-        vault.setScriptedSettleReturn(5e18);
         vm.prank(address(vault));
         bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
         assertTrue(ok);
-        assertEq(hook.hookSharesDelta(), int256(5e18));
-        // 4 vault calls: sendTo, settle, removeLiquidity (custom remove of TTA), addLiquidity (donate shares)
-        assertEq(vault.observedCount(), 4);
+        assertEq(hook.hookSharesDelta(), 0); // no conversion, no state change
+        assertEq(vault.observedCount(), 0);  // no Vault calls
     }
 
     function test_rejectsWrongCaller() public {

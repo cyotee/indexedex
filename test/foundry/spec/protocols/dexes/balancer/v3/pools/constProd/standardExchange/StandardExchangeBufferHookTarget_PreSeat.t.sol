@@ -80,13 +80,14 @@ contract HookPreSeatTest is Test {
         assertEq(uint256(vault.observed(3)), uint256(MockBalancerV3Vault.Sel.REMOVE_LIQUIDITY));
     }
 
-    function test_preSeat_updatesVirtualTTAAndHookSharesDelta() public {
+    function test_preSeat_updatesHookSharesDeltaButDefersVirtualTTA() public {
+        // Task 19 hook revision: onBeforeSwap decrements hookSharesDelta immediately, but defers
+        // the virtualTTA decrement to onAfterSwap (via Repo.pendingPreSeatS) so the pool's onSwap
+        // computes amountOut using the original x. The test asserts the new contract.
         uint256[] memory bal = new uint256[](2);
         bal[0] = 0;
         bal[1] = 100e18;
-        // x = virtualTTA = 100e18, amountIn = 10e18
-        // y_pre = _derivedY = balancesScaled18[1] = 100e18 (hookSharesDelta=0, rate=1e18, decimals=18)
-        // Y_TTA_scaled18 = (x * amountIn) / (y_pre + amountIn) = (100e18 * 10e18) / (100e18 + 10e18)
+        // Mock returns scriptedStaticSwapFee = 0, so amountInPostFee == amountGivenScaled18.
         uint256 x_ = 100e18;
         uint256 a_ = 10e18;
         uint256 expectedY = (x_ * a_) / (x_ + a_);
@@ -97,9 +98,10 @@ contract HookPreSeatTest is Test {
         vm.prank(address(vault));
         hook.onBeforeSwap(_sharesInParams(10e18, bal), address(hook));
 
-        assertEq(hook.virtualTTA(), 100e18 - expectedY);
-        // S = previewExchangeOut = expectedY; hookSharesDelta = 0 - int256(expectedY)
-        assertEq(hook.hookSharesDelta(), -int256(expectedY));
+        // virtualTTA UNCHANGED in onBeforeSwap — applied in onAfterSwap via pendingPreSeatS.
+        assertEq(hook.virtualTTA(), 100e18, "virtualTTA deferred to onAfterSwap");
+        // hookSharesDelta -= S where S == previewExchangeOut return == expectedY here.
+        assertEq(hook.hookSharesDelta(), -int256(expectedY), "hookSharesDelta -= S");
     }
 
     function test_preSeat_revertsWhenDerivedYIsZero() public {
