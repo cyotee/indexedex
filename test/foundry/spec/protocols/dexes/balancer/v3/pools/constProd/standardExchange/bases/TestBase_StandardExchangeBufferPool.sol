@@ -132,6 +132,11 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         return alice;
     }
 
+    /// @notice Exposes the internally-declared `bob` address from BaseTest to behavior libraries and handlers.
+    function getBob() public view virtual returns (address) {
+        return bob;
+    }
+
     // Aerodrome infrastructure
     Forwarder internal aeroForwarder;
     Pool internal aeroPoolImpl;
