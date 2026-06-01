@@ -86,4 +86,12 @@ contract HookLPAddTest is Test {
         bool ok = hook.onBeforeAddLiquidity(address(0), address(0xBAD), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
         assertFalse(ok);
     }
+
+    function test_donationIsNoOp() public {
+        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 0;
+        vm.prank(address(vault));
+        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.DONATION, max, 0, new uint256[](2), "");
+        assertTrue(ok);
+        assertEq(vault.observedCount(), 0);
+    }
 }

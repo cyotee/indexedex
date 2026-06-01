@@ -151,10 +151,10 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
     ) external virtual override returns (bool) {
         if (msg.sender != _balancerV3Vault()) return false;
         if (pool != address(this)) return false;
-        if (kind != AddLiquidityKind.PROPORTIONAL && kind != AddLiquidityKind.CUSTOM) {
+        if (kind == AddLiquidityKind.UNBALANCED || kind == AddLiquidityKind.SINGLE_TOKEN_EXACT_OUT) {
             revert IStandardExchangeBufferPool.AddLiquidityNotProportional();
         }
-        if (kind == AddLiquidityKind.CUSTOM) return true; // hook's own reconcile path
+        if (kind == AddLiquidityKind.CUSTOM || kind == AddLiquidityKind.DONATION) return true; // hook's own reconcile path / vault donation
 
         uint256 ttaIdx = Repo._ttaIndex();
         uint256 sharesIdx = Repo._sharesIndex();
