@@ -20,6 +20,8 @@ import {Behavior_StandardExchangeBufferPool_Clamping} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Clamping.sol";
 import {Behavior_StandardExchangeBufferPool_Errors} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Errors.sol";
+import {Behavior_StandardExchangeBufferPool_Adversarial} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Adversarial.sol";
 
 /**
  * @title StandardExchangeBufferPoolSpec
@@ -41,7 +43,8 @@ contract StandardExchangeBufferPoolSpec is
     Behavior_StandardExchangeBufferPool_LP_AddProportional,
     Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
     Behavior_StandardExchangeBufferPool_Clamping,
-    Behavior_StandardExchangeBufferPool_Errors
+    Behavior_StandardExchangeBufferPool_Errors,
+    Behavior_StandardExchangeBufferPool_Adversarial
 {
     /* ---------------------------------------------------------------------- */
     /*                       Behavior Hook Implementation                      */
@@ -55,7 +58,8 @@ contract StandardExchangeBufferPoolSpec is
         Behavior_StandardExchangeBufferPool_LP_AddProportional,
         Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
         Behavior_StandardExchangeBufferPool_Clamping,
-        Behavior_StandardExchangeBufferPool_Errors
+        Behavior_StandardExchangeBufferPool_Errors,
+        Behavior_StandardExchangeBufferPool_Adversarial
     ) returns (TestBase_StandardExchangeBufferPool) {
         return TestBase_StandardExchangeBufferPool(address(this));
     }
@@ -189,5 +193,19 @@ contract StandardExchangeBufferPoolSpec is
     /// @notice Direct onRemoveLiquidityCustom call with a non-hook router argument reverts.
     function test_errors_customRemoveFromNonHook() public {
         behavior_errors_customRemoveFromNonHookReverts();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                       Adversarial Tests (§ 8.5)                         */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice A rate provider returning 0 causes the swap to revert without corrupting state.
+    function test_adversarial_rateProviderZero() public {
+        behavior_adversarial_rateProviderZero();
+    }
+
+    /// @notice A donation via router.donate() does not shift virtualTTA, hookSharesDelta, or BPT supply.
+    function test_adversarial_donationGriefing() public {
+        behavior_adversarial_donationGriefing();
     }
 }

@@ -524,6 +524,34 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     /* ---------------------------------------------------------------------- */
 
     /**
+     * @notice Execute a DONATION add-liquidity through the Balancer V3 RouterMock.
+     * @dev DONATION mints 0 BPT; it grows the pool's actual reserves (benefiting LPs) without
+     *      changing virtualTTA / hookSharesDelta / BPT supply. The caller must hold `amountsIn[i]`
+     *      for each token and have permit2 approved for the router (set in setUp for all users).
+     *
+     * @param user      Address performing the donation (pranked inside this call).
+     * @param ttaAmount TTA (DAI) amount to donate. Pass 0 to donate shares only.
+     * @param sharesAmount Shares amount to donate. Pass 0 to donate TTA only.
+     */
+    function donateLiquidity(
+        address user,
+        uint256 ttaAmount,
+        uint256 sharesAmount
+    ) public {
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+        uint256 ttaIdx    = p.ttaIndex();
+        uint256 sharesIdx = p.sharesIndex();
+
+        uint256[] memory amountsIn = new uint256[](2);
+        amountsIn[ttaIdx]    = ttaAmount;
+        amountsIn[sharesIdx] = sharesAmount;
+
+        vm.startPrank(user);
+        router.donate(bufferPool, amountsIn, false, bytes(""));
+        vm.stopPrank();
+    }
+
+    /**
      * @notice Execute an addLiquidityProportional through the Balancer V3 RouterMock.
      * @dev The BV3 Router pulls tokens via permit2 (approved for all users during setUp).
      *      Passing maxTta == 0 triggers the shares-only path in onBeforeAddLiquidity,
