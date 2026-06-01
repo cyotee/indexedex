@@ -101,39 +101,15 @@ library StandardExchangeBufferPool_FactoryService {
     /*                          Helper Functions                              */
     /* ---------------------------------------------------------------------- */
 
+    /**
+     * @notice Identity helper: returns the caller-assembled PkgInit unchanged.
+     * @dev Callers should build the PkgInit struct locally (field-by-field) to avoid
+     *      stack-too-deep errors, then pass it here if they want to go through a
+     *      FactoryService call-site for labelling / tracing.
+     */
     function buildBufferPoolPkgInit(
-        IFacet basicVaultFacet,
-        IFacet standardVaultFacet,
-        IFacet balancerV3VaultAwareFacet,
-        IFacet betterBalancerV3PoolTokenFacet,
-        IFacet defaultPoolInfoFacet,
-        IFacet standardSwapFeePercentageBoundsFacet,
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet,
-        IFacet balancerV3AuthenticationFacet,
-        IFacet bufferPoolFacet,
-        IFacet poolLiquidityFacet,
-        IFacet hookFacet,
-        IVaultRegistryDeployment vaultRegistry,
-        IVaultFeeOracleQuery vaultFeeOracle,
-        IVault balancerV3Vault,
-        IDiamondPackageCallBackFactory diamondFactory
-    ) internal pure returns (IStandardExchangeBufferPoolPkg.PkgInit memory pkgInit) {
-        pkgInit = IStandardExchangeBufferPoolPkg.PkgInit({
-            basicVaultFacet: basicVaultFacet,
-            standardVaultFacet: standardVaultFacet,
-            balancerV3VaultAwareFacet: balancerV3VaultAwareFacet,
-            betterBalancerV3PoolTokenFacet: betterBalancerV3PoolTokenFacet,
-            defaultPoolInfoFacet: defaultPoolInfoFacet,
-            standardSwapFeePercentageBoundsFacet: standardSwapFeePercentageBoundsFacet,
-            unbalancedLiquidityInvariantRatioBoundsFacet: unbalancedLiquidityInvariantRatioBoundsFacet,
-            balancerV3AuthenticationFacet: balancerV3AuthenticationFacet,
-            bufferPoolFacet: bufferPoolFacet,
-            poolLiquidityFacet: poolLiquidityFacet,
-            hookFacet: hookFacet,
-            vaultRegistry: vaultRegistry,
-            vaultFeeOracle: vaultFeeOracle,
-            balancerV3Vault: balancerV3Vault,
-            diamondFactory: diamondFactory
-        });
+        IStandardExchangeBufferPoolPkg.PkgInit memory pkgInit
+    ) internal pure returns (IStandardExchangeBufferPoolPkg.PkgInit memory) {
+        return pkgInit;
     }
 }
