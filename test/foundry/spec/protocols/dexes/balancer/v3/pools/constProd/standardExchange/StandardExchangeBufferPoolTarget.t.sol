@@ -24,7 +24,7 @@ contract PoolUnderTest is StandardExchangeBufferPoolTarget {
     constructor(IRateProvider rp, IERC20 shareTok) {
         StandardExchangeBufferPoolRepo._initialize(
             IERC20(address(0x1)), shareTok, IStandardExchange(address(0x3)),
-            rp, 0, 1
+            rp, 0, 1, address(0xFAC)
         );
     }
     function setVirtualTTA(uint256 v) external { StandardExchangeBufferPoolRepo._setVirtualTTA(v); }

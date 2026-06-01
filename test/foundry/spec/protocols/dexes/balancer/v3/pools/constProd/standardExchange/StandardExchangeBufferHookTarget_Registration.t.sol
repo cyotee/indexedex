@@ -23,7 +23,7 @@ contract HookHarness is StandardExchangeBufferHookTarget {
     address public immutable FACTORY;
     constructor(address v, address f, IERC20 tta, IERC20 sh, IStandardExchange sev, IRateProvider rp) {
         VAULT = v; FACTORY = f;
-        Repo._initialize(tta, sh, sev, rp, 0, 1);
+        Repo._initialize(tta, sh, sev, rp, 0, 1, f);
     }
     function _balancerV3Vault() internal view override returns (address) { return VAULT; }
     function _expectedFactory() internal view override returns (address) { return FACTORY; }

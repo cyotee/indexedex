@@ -15,9 +15,10 @@ contract StandardExchangeBufferPoolRepoHarness {
         IStandardExchange seVault,
         IRateProvider rp,
         uint256 ttaIdx,
-        uint256 sharesIdx
+        uint256 sharesIdx,
+        address expectedFactory_
     ) external {
-        StandardExchangeBufferPoolRepo._initialize(tta, shares, seVault, rp, ttaIdx, sharesIdx);
+        StandardExchangeBufferPoolRepo._initialize(tta, shares, seVault, rp, ttaIdx, sharesIdx, expectedFactory_);
     }
     function setVirtualTTA(uint256 v) external { StandardExchangeBufferPoolRepo._setVirtualTTA(v); }
     function getVirtualTTA() external view returns (uint256) { return StandardExchangeBufferPoolRepo._virtualTTA(); }
@@ -29,6 +30,7 @@ contract StandardExchangeBufferPoolRepoHarness {
     function getRP() external view returns (IRateProvider) { return StandardExchangeBufferPoolRepo._rateProvider(); }
     function getTtaIdx() external view returns (uint256) { return StandardExchangeBufferPoolRepo._ttaIndex(); }
     function getSharesIdx() external view returns (uint256) { return StandardExchangeBufferPoolRepo._sharesIndex(); }
+    function getExpectedFactory() external view returns (address) { return StandardExchangeBufferPoolRepo._expectedFactory(); }
 }
 
 contract StandardExchangeBufferPoolRepoTest is Test {
@@ -36,13 +38,14 @@ contract StandardExchangeBufferPoolRepoTest is Test {
     function setUp() public { harness = new StandardExchangeBufferPoolRepoHarness(); }
 
     function test_initialize_setsAllImmutables() public {
-        harness.init(IERC20(address(0x1)), IERC20(address(0x2)), IStandardExchange(address(0x3)), IRateProvider(address(0x4)), 0, 1);
+        harness.init(IERC20(address(0x1)), IERC20(address(0x2)), IStandardExchange(address(0x3)), IRateProvider(address(0x4)), 0, 1, address(0x5));
         assertEq(address(harness.getTTA()), address(0x1));
         assertEq(address(harness.getShares()), address(0x2));
         assertEq(address(harness.getSeVault()), address(0x3));
         assertEq(address(harness.getRP()), address(0x4));
         assertEq(harness.getTtaIdx(), 0);
         assertEq(harness.getSharesIdx(), 1);
+        assertEq(harness.getExpectedFactory(), address(0x5));
     }
 
     function test_virtualTTA_roundTrip() public {

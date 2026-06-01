@@ -17,6 +17,7 @@ library StandardExchangeBufferPoolRepo {
         IRateProvider rateProvider;
         uint256 ttaIndex;
         uint256 sharesIndex;
+        address expectedFactory;
         // Live state:
         uint256 virtualTTA;
         int256 hookSharesDelta;
@@ -33,7 +34,8 @@ library StandardExchangeBufferPoolRepo {
         IStandardExchange seVault,
         IRateProvider rp,
         uint256 ttaIdx,
-        uint256 sharesIdx
+        uint256 sharesIdx,
+        address expectedFactory_
     ) internal {
         Storage storage l = _layout();
         l.ttaToken = tta;
@@ -42,7 +44,10 @@ library StandardExchangeBufferPoolRepo {
         l.rateProvider = rp;
         l.ttaIndex = ttaIdx;
         l.sharesIndex = sharesIdx;
+        l.expectedFactory = expectedFactory_;
     }
+
+    function _expectedFactory() internal view returns (address) { return _layout().expectedFactory; }
 
     function _ttaToken() internal view returns (IERC20) { return _layout().ttaToken; }
     function _shareToken() internal view returns (IERC20) { return _layout().shareToken; }
