@@ -62,6 +62,8 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 
 /* Buffer Pool specific */
+import {IStandardExchangeBufferPool} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {
     IStandardExchangeBufferPoolPkg,
     StandardExchangeBufferPoolStandardVaultPkg
@@ -424,6 +426,39 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     }
 
     /**
+     * @notice Mint SE vault shares for `recipient` by going through the full Aerodrome → SE vault path.
+     * @dev Mints `daiAmount` DAI and an equal amount of USDC to `recipient`, adds liquidity to the
+     *      Aerodrome DAI/USDC pool, then deposits the resulting LP tokens into the SE vault.
+     *      The shares received are owned by `recipient`.  Permit2 approvals for the shares token
+     *      are already set for all users during setUp via _deploySeVault.
+     * @param recipient  Address that will receive SE vault shares.
+     * @param daiAmount  Amount of DAI (and USDC) to use for Aerodrome liquidity.
+     * @return sharesOut Number of SE vault shares minted to `recipient`.
+     */
+    function mintShares(address recipient, uint256 daiAmount) public returns (uint256 sharesOut) {
+        dai.mint(recipient, daiAmount);
+        usdc.mint(recipient, daiAmount);
+
+        vm.startPrank(recipient);
+        dai.approve(address(aeroRouter), daiAmount);
+        usdc.approve(address(aeroRouter), daiAmount);
+        (,, uint256 lpOut) = aeroRouter.addLiquidity(
+            address(dai),
+            address(usdc),
+            false,
+            daiAmount,
+            daiAmount,
+            1,
+            1,
+            recipient,
+            block.timestamp + 1 hours
+        );
+        IERC20(address(aeroDaiUsdcPool)).approve(address(seVault), lpOut);
+        sharesOut = seVault.deposit(lpOut, recipient);
+        vm.stopPrank();
+    }
+
+    /**
      * @notice Execute an EXACT_IN TTA→shares swap through the Balancer V3 RouterMock.
      * @dev Uses permit2 (already approved for all users during setUp via _approveForAllUsers).
      *      Caller must hold at least `amountIn` TTA (DAI). The router pulls via permit2.
@@ -476,6 +511,71 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
             false,           // wethIsEth
             bytes("")        // userData
         );
+        vm.stopPrank();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                       LP Add / Remove Helpers                           */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice Execute an addLiquidityProportional through the Balancer V3 RouterMock.
+     * @dev The BV3 Router pulls tokens via permit2 (approved for all users during setUp).
+     *      Passing maxTta == 0 triggers the shares-only path in onBeforeAddLiquidity,
+     *      which is a no-op that lets onAfterAddLiquidity do the proportional scaling.
+     *      Passing nonzero maxTta triggers TTA→shares conversion in onBeforeAddLiquidity.
+     *
+     * @param user     Address performing the operation (pranked inside this call).
+     * @param bptOut   Exact BPT amount to mint.
+     * @param maxTta   Maximum TTA the user is willing to contribute. Pass 0 for shares-only.
+     * @param maxSharesAmt Maximum shares the user is willing to contribute.
+     * @return amountsIn Token amounts actually consumed (indexed by pool token order).
+     */
+    function addLiquidityProportional(
+        address user,
+        uint256 bptOut,
+        uint256 maxTta,
+        uint256 maxSharesAmt
+    ) public returns (uint256[] memory amountsIn) {
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+        uint256 ttaIdx    = p.ttaIndex();
+        uint256 sharesIdx = p.sharesIndex();
+
+        uint256[] memory maxAmts = new uint256[](2);
+        maxAmts[ttaIdx]    = maxTta;
+        maxAmts[sharesIdx] = maxSharesAmt;
+
+        vm.startPrank(user);
+        amountsIn = router.addLiquidityProportional(bufferPool, maxAmts, bptOut, false, bytes(""));
+        vm.stopPrank();
+    }
+
+    /**
+     * @notice Execute a removeLiquidityProportional through the Balancer V3 RouterMock.
+     * @dev The BV3 Router burns BPT from `user` (permit2 approved for all users during setUp).
+     *
+     * @param user       Address performing the operation (pranked inside this call).
+     * @param bptIn      Exact BPT amount to burn.
+     * @param minTta     Minimum TTA the user is willing to accept (use 0 for tests).
+     * @param minSharesAmt Minimum shares the user is willing to accept (use 0 for tests).
+     * @return amountsOut Token amounts received (indexed by pool token order).
+     */
+    function removeLiquidityProportional(
+        address user,
+        uint256 bptIn,
+        uint256 minTta,
+        uint256 minSharesAmt
+    ) public returns (uint256[] memory amountsOut) {
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+        uint256 ttaIdx    = p.ttaIndex();
+        uint256 sharesIdx = p.sharesIndex();
+
+        uint256[] memory minAmts = new uint256[](2);
+        minAmts[ttaIdx]    = minTta;
+        minAmts[sharesIdx] = minSharesAmt;
+
+        vm.startPrank(user);
+        amountsOut = router.removeLiquidityProportional(bufferPool, bptIn, minAmts, false, bytes(""));
         vm.stopPrank();
     }
 

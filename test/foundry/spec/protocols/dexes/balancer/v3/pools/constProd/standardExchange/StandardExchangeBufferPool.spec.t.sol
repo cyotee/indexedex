@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
 import {Behavior_StandardExchangeBufferPool_Registration} from
@@ -11,6 +12,10 @@ import {Behavior_StandardExchangeBufferPool_Swap_TTAtoShares} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Swap_TTAtoShares.sol";
 import {Behavior_StandardExchangeBufferPool_Swap_SharesToTTA} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Swap_SharesToTTA.sol";
+import {Behavior_StandardExchangeBufferPool_LP_AddProportional} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_AddProportional.sol";
+import {Behavior_StandardExchangeBufferPool_LP_RemoveProportional} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_RemoveProportional.sol";
 
 /**
  * @title StandardExchangeBufferPoolSpec
@@ -28,7 +33,9 @@ contract StandardExchangeBufferPoolSpec is
     Behavior_StandardExchangeBufferPool_Registration,
     Behavior_StandardExchangeBufferPool_Initialization,
     Behavior_StandardExchangeBufferPool_Swap_TTAtoShares,
-    Behavior_StandardExchangeBufferPool_Swap_SharesToTTA
+    Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
+    Behavior_StandardExchangeBufferPool_LP_AddProportional,
+    Behavior_StandardExchangeBufferPool_LP_RemoveProportional
 {
     /* ---------------------------------------------------------------------- */
     /*                       Behavior Hook Implementation                      */
@@ -38,7 +45,9 @@ contract StandardExchangeBufferPoolSpec is
         Behavior_StandardExchangeBufferPool_Registration,
         Behavior_StandardExchangeBufferPool_Initialization,
         Behavior_StandardExchangeBufferPool_Swap_TTAtoShares,
-        Behavior_StandardExchangeBufferPool_Swap_SharesToTTA
+        Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
+        Behavior_StandardExchangeBufferPool_LP_AddProportional,
+        Behavior_StandardExchangeBufferPool_LP_RemoveProportional
     ) returns (TestBase_StandardExchangeBufferPool) {
         return TestBase_StandardExchangeBufferPool(address(this));
     }
@@ -117,5 +126,32 @@ contract StandardExchangeBufferPoolSpec is
     /// @notice End-to-end shares→TTA EXACT_IN swap asserts spec section 6.3 post-state.
     function test_swap_sharesToTTA_basic() public {
         behavior_swap_sharesToTTA_endToEnd(10e18);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    LP Add Proportional Tests                            */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Proportional add (shares-only) mints BPT and scales virtualTTA + hookSharesDelta.
+    /// @dev Uses a small bptOut (1% of alice's BPT) to stay within her shares balance.
+    function test_lpAdd_sharesOnly_basic() public {
+        // alice holds (totalSupply - 1e6) BPT after init; use 1% of her balance.
+        uint256 aliceBpt = IERC20(this.bufferPool()).balanceOf(this.getAlice());
+        uint256 bptOut = aliceBpt / 100;
+        if (bptOut == 0) bptOut = 1e15; // floor at 1e15 if balance is too small
+        behavior_lpAdd_proportional_sharesOnlyContribution(bptOut);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    LP Remove Proportional Tests                         */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Proportional remove burns BPT and scales virtualTTA + hookSharesDelta down.
+    /// @dev Uses 10% of alice's BPT so the pool retains enough liquidity after removal.
+    function test_lpRemove_basic() public {
+        uint256 aliceBpt = IERC20(this.bufferPool()).balanceOf(this.getAlice());
+        uint256 bptIn = aliceBpt / 10;
+        if (bptIn == 0) bptIn = 1e15;
+        behavior_lpRemove_proportional(bptIn);
     }
 }

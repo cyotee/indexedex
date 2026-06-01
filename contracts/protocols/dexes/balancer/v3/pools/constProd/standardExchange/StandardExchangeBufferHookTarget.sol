@@ -134,17 +134,15 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
      * @notice Hook executed before add-liquidity operations.
      * @dev Only PROPORTIONAL and CUSTOM add-liquidity kinds are permitted.
      *      CUSTOM is the hook's own reconcile path and is returned as a no-op.
-     *      PROPORTIONAL with no TTA contribution (maxAmountsInScaled18[ttaIdx] == 0) is also a no-op.
-     *      PROPORTIONAL with TTA contribution: drains the LP's TTA, deposits it into the Standard
-     *      Exchange Vault to mint shares, credits the minted shares to the Balancer Vault, then
-     *      adjusts the pool's per-pool balances accordingly (remove TTA side, add shares side).
-     *      Updates hookSharesDelta += Y' to track the hook's net shares inflow.
+     *      PROPORTIONAL: returns true without modification. The LP contributes both TTA and shares
+     *      proportionally; the vault pulls tokens from the LP after this hook returns. State scaling
+     *      (virtualTTA, hookSharesDelta) is handled in onAfterAddLiquidity.
      */
     function onBeforeAddLiquidity(
         address /*router*/,
         address pool,
         AddLiquidityKind kind,
-        uint256[] memory maxAmountsInScaled18,
+        uint256[] memory /*maxAmountsInScaled18*/,
         uint256 /*minBptAmountOut*/,
         uint256[] memory /*balancesScaled18*/,
         bytes memory /*userData*/
@@ -154,34 +152,15 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
         if (kind == AddLiquidityKind.UNBALANCED || kind == AddLiquidityKind.SINGLE_TOKEN_EXACT_OUT) {
             revert IStandardExchangeBufferPool.AddLiquidityNotProportional();
         }
-        if (kind == AddLiquidityKind.CUSTOM || kind == AddLiquidityKind.DONATION) return true; // hook's own reconcile path / vault donation
-
-        uint256 ttaIdx = Repo._ttaIndex();
-        uint256 sharesIdx = Repo._sharesIndex();
-        uint256 ttaIn = maxAmountsInScaled18[ttaIdx];
-        if (ttaIn == 0) return true; // shares-only contribution; nothing to convert
-
-        // Convert LP's TTA into shares via Standard Exchange Vault and reconcile pool balances.
-        IVault vault = IVault(_balancerV3Vault());
-        IStandardExchange seVault = Repo._standardExchangeVault();
-        IERC20 ttaTok = Repo._ttaToken();
-        IERC20 shareTok = Repo._shareToken();
-
-        vault.sendTo(ttaTok, address(this), ttaIn);
-        ttaTok.approve(address(seVault), ttaIn);
-        uint256 Y_prime = seVault.exchangeIn(ttaTok, ttaIn, shareTok, 0, address(vault), false, block.timestamp);
-        if (Y_prime == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(ttaIn);
-        vault.settle(shareTok, Y_prime);
-
-        uint256[] memory remAmts = new uint256[](2);
-        remAmts[ttaIdx] = ttaIn;
-        vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
-
-        uint256[] memory addAmts = new uint256[](2);
-        addAmts[sharesIdx] = Y_prime;
-        vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION));
-
-        Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(Y_prime));
+        // For PROPORTIONAL and CUSTOM/DONATION: no pre-add action needed.
+        // The LP contributes both TTA and shares proportionally; the vault pulls tokens from the LP
+        // after this hook returns. State scaling (virtualTTA, hookSharesDelta) is handled entirely
+        // in onAfterAddLiquidity.
+        //
+        // NOTE: A TTA-only contribution path (where the hook converts TTA→shares on behalf of the LP)
+        // cannot be implemented here because vault.sendTo would fail — the vault has not yet received
+        // any TTA from the LP at the time this hook runs. Such a path would require a CUSTOM
+        // add-liquidity kind where the LP pre-sends TTA to the hook before the vault call.
         return true;
     }
 
