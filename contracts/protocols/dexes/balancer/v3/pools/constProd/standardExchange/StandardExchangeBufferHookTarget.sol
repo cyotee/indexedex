@@ -327,11 +327,63 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
         });
     }
 
-    /// @dev Active hook — implementation in Task 11.
-    function onAfterSwap(AfterSwapParams calldata)
-        external virtual override returns (bool, uint256)
+    /**
+     * @notice Hook executed after each swap.
+     * @dev For TTA→shares swaps (tokenIn == ttaToken): performs the post-swap reconcile that
+     *      drains the TTA the swap added to the pool, deposits it into the Standard Exchange Vault
+     *      to mint shares, credits those shares to the Balancer Vault, then adjusts the pool's
+     *      per-pool balances accordingly.
+     *      For shares→TTA swaps (tokenIn == shareToken): no-op; reconciliation was done in onBeforeSwap.
+     *      Always returns the Vault-computed amount unchanged (enableHookAdjustedAmounts = false).
+     */
+    function onAfterSwap(AfterSwapParams calldata params)
+        public virtual override returns (bool, uint256)
     {
-        revert("unimplemented");
+        if (msg.sender != _balancerV3Vault()) return (false, params.amountCalculatedRaw);
+        if (params.pool != address(this)) return (false, params.amountCalculatedRaw);
+
+        bool ttaIn = (address(params.tokenIn) == address(Repo._ttaToken()));
+        if (!ttaIn) {
+            // shares->TTA already reconciled in pre-seat; nothing to do here.
+            return (true, params.amountCalculatedRaw);
+        }
+
+        // TTA->shares post-swap reconcile.
+        IVault vault = IVault(_balancerV3Vault());
+        IStandardExchange seVault = Repo._standardExchangeVault();
+        IERC20 ttaTok = Repo._ttaToken();
+        IERC20 shareTok = Repo._shareToken();
+
+        uint256 X_raw = params.amountInScaled18; // assumes 18-decimal TTA
+        uint256 ttaIdx = Repo._ttaIndex();
+        uint256 sharesIdx = Repo._sharesIndex();
+
+        // 1) Drain the X TTA the swap just added to the pool.
+        vault.sendTo(ttaTok, address(this), X_raw);
+
+        // 2) Approve Standard Exchange Vault for X TTA; deposit to mint Y' shares to Balancer Vault.
+        ttaTok.approve(address(seVault), X_raw);
+        uint256 Y_prime = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
+        if (Y_prime == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
+
+        // 3) Credit the Balancer Vault for the newly minted shares.
+        vault.settle(shareTok, Y_prime);
+
+        // 4) Decrement pool's per-pool TTA balance back to zero.
+        uint256[] memory remAmts = new uint256[](2);
+        remAmts[ttaIdx] = X_raw;
+        vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
+
+        // 5) Add the minted shares to the pool's per-pool shares balance.
+        uint256[] memory addAmts = new uint256[](2);
+        addAmts[sharesIdx] = Y_prime;
+        vault.addLiquidity(_buildAddLiquidityParams(address(this), addAmts, 0, AddLiquidityKind.DONATION));
+
+        // 6) Update state.
+        Repo._setVirtualTTA(Repo._virtualTTA() + X_raw);
+        Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(Y_prime));
+
+        return (true, params.amountCalculatedRaw);
     }
 
     /// @dev Not used (shouldCallComputeDynamicSwapFee = false). Returns (false, 0).
