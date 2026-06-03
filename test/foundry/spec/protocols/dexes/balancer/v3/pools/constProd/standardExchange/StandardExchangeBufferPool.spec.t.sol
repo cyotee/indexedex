@@ -16,6 +16,8 @@ import {Behavior_StandardExchangeBufferPool_LP_AddProportional} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_AddProportional.sol";
 import {Behavior_StandardExchangeBufferPool_LP_RemoveProportional} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_RemoveProportional.sol";
+import {Behavior_StandardExchangeBufferPool_LP_AddUnbalanced} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_AddUnbalanced.sol";
 import {Behavior_StandardExchangeBufferPool_Clamping} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Clamping.sol";
 import {Behavior_StandardExchangeBufferPool_Errors} from
@@ -42,6 +44,7 @@ contract StandardExchangeBufferPoolSpec is
     Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
     Behavior_StandardExchangeBufferPool_LP_AddProportional,
     Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
+    Behavior_StandardExchangeBufferPool_LP_AddUnbalanced,
     Behavior_StandardExchangeBufferPool_Clamping,
     Behavior_StandardExchangeBufferPool_Errors,
     Behavior_StandardExchangeBufferPool_Adversarial
@@ -57,6 +60,7 @@ contract StandardExchangeBufferPoolSpec is
         Behavior_StandardExchangeBufferPool_Swap_SharesToTTA,
         Behavior_StandardExchangeBufferPool_LP_AddProportional,
         Behavior_StandardExchangeBufferPool_LP_RemoveProportional,
+        Behavior_StandardExchangeBufferPool_LP_AddUnbalanced,
         Behavior_StandardExchangeBufferPool_Clamping,
         Behavior_StandardExchangeBufferPool_Errors,
         Behavior_StandardExchangeBufferPool_Adversarial
@@ -152,6 +156,25 @@ contract StandardExchangeBufferPoolSpec is
         uint256 bptOut = aliceBpt / 100;
         if (bptOut == 0) bptOut = 1e15; // floor at 1e15 if balance is too small
         behavior_lpAdd_proportional_sharesOnlyContribution(bptOut);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    LP Add Unbalanced Tests (Change 1)                   */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice Unbalanced add (shares only) mints BPT without changing virtualTTA.
+    /// @dev Shares-only unbalanced adds increase derived_y (the pool's BPT-visible invariant side)
+    ///      and produce positive bptAmountOut. virtualTTA stays unchanged because no TTA was added.
+    function test_lpAdd_unbalanced_sharesOnly_basic() public {
+        behavior_lpAdd_unbalanced_sharesOnly(10e18);
+    }
+
+    /// @notice Unbalanced add (both tokens, unequal amounts) mints BPT and grows virtualTTA by ttaIn.
+    /// @dev The shares contribution drives invariant growth (and BPT mint); the TTA contribution
+    ///      grows virtualTTA by the exact amount added (amountsInScaled18[ttaIdx]).
+    function test_lpAdd_unbalanced_bothTokens_basic() public {
+        // Contribute a small TTA and a different shares amount — deliberately unequal.
+        behavior_lpAdd_unbalanced_bothTokensUnequal(5e18, 10e18);
     }
 
     /* ---------------------------------------------------------------------- */

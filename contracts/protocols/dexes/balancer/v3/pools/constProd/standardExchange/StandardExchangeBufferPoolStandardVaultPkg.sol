@@ -383,7 +383,7 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
 
     function _liquidityManagement() internal pure returns (LiquidityManagement memory liquidityManagement) {
         liquidityManagement = LiquidityManagement({
-            disableUnbalancedLiquidity: true,
+            disableUnbalancedLiquidity: false,
             enableAddLiquidityCustom: true,
             enableRemoveLiquidityCustom: true,
             enableDonation: true

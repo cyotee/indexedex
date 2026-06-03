@@ -44,8 +44,10 @@ contract Handler_StandardExchangeBufferPool is Test {
     uint256 public ghost_totalSharesIn;
     /// @notice Cumulative TTA received from shares→TTA swaps.
     uint256 public ghost_totalTTAOut;
-    /// @notice Number of successful LP add operations.
+    /// @notice Number of successful LP add operations (proportional).
     uint256 public ghost_lpDepositCount;
+    /// @notice Number of successful LP add operations (unbalanced, Change 1).
+    uint256 public ghost_lpUnbalancedDepositCount;
     /// @notice Number of successful LP remove operations.
     uint256 public ghost_lpRemoveCount;
     /// @notice Number of successful TTA→shares swaps.
@@ -160,6 +162,32 @@ contract Handler_StandardExchangeBufferPool is Test {
             ghost_lpDepositCount++;
         } catch {
             // Ignore: ratio bounds or hook constraints may reject.
+        }
+    }
+
+    /**
+     * @notice Fuzz action: add liquidity unbalanced — shares only (Change 1).
+     * @dev Contributes only shares, exercising the new UNBALANCED code path in onAfterAddLiquidity.
+     *      Shares-only unbalanced adds increase derived_y (the pool's BPT-visible invariant side),
+     *      so they produce a positive bptAmountOut. TTA-only unbalanced adds cannot produce BPT
+     *      because computeInvariant reads virtualTTA from storage (not from balancesLiveScaled18),
+     *      so the invariant appears unchanged to the Vault's computeAddLiquidityUnbalanced.
+     *      Bounded to [1e15, 20e18] to stay within realistic pool depth.
+     */
+    function lp_add_unbalanced(uint256 sharesAmount, uint256 actorSeed) public {
+        address actor = _pickActor(actorSeed);
+
+        // Ensure the actor has sufficient shares.
+        uint256 cap = 20e18;
+        sharesAmount = bound(sharesAmount, 1e15, cap);
+        BASE.mintShares(actor, cap); // mint enough to guarantee sharesAmount is covered
+
+        try BASE.addLiquidityUnbalanced(actor, 0, sharesAmount) returns (uint256) {
+            ghost_lpUnbalancedDepositCount++;
+            // Count as a deposit for the noFreeValue invariant skip logic.
+            ghost_lpDepositCount++;
+        } catch {
+            // Pool math or invariant ratio bounds may reject — not an invariant violation.
         }
     }
 

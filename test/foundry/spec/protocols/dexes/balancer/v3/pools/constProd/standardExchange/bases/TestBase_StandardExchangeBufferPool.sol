@@ -618,6 +618,35 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     /* ---------------------------------------------------------------------- */
 
     /**
+     * @notice Execute an addLiquidityUnbalanced through the Balancer V3 RouterMock.
+     * @dev The router pulls exact token amounts from `user` via permit2. All users have
+     *      permit2 approvals for TTA and shares set during setUp. `user` must hold at least
+     *      `ttaIn` TTA and `sharesIn` shares before calling.
+     *
+     * @param user      Address performing the operation (pranked inside this call).
+     * @param ttaIn     Exact TTA amount to contribute. Pass 0 to skip TTA contribution.
+     * @param sharesIn  Exact shares amount to contribute. Pass 0 to skip shares contribution.
+     * @return bptOut   BPT minted to `user`.
+     */
+    function addLiquidityUnbalanced(
+        address user,
+        uint256 ttaIn,
+        uint256 sharesIn
+    ) public returns (uint256 bptOut) {
+        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+        uint256 ttaIdx    = p.ttaIndex();
+        uint256 sharesIdx = p.sharesIndex();
+
+        uint256[] memory exactAmountsIn = new uint256[](2);
+        exactAmountsIn[ttaIdx]    = ttaIn;
+        exactAmountsIn[sharesIdx] = sharesIn;
+
+        vm.startPrank(user);
+        bptOut = router.addLiquidityUnbalanced(bufferPool, exactAmountsIn, 0, false, bytes(""));
+        vm.stopPrank();
+    }
+
+    /**
      * @notice Execute a DONATION add-liquidity through the Balancer V3 RouterMock.
      * @dev DONATION mints 0 BPT; it grows the pool's actual reserves (benefiting LPs) without
      *      changing virtualTTA / hookSharesDelta / BPT supply. The caller must hold `amountsIn[i]`

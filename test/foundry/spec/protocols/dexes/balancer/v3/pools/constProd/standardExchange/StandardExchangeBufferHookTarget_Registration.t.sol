@@ -80,10 +80,11 @@ contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
 
     /**
      * @dev Build the LiquidityManagement struct that the pool was registered with.
+     *      Change 1: disableUnbalancedLiquidity is now false (unbalanced adds are permitted).
      */
     function _validLM() internal pure returns (LiquidityManagement memory) {
         return LiquidityManagement({
-            disableUnbalancedLiquidity: true,
+            disableUnbalancedLiquidity: false,
             enableAddLiquidityCustom: true,
             enableRemoveLiquidityCustom: true,
             enableDonation: true
@@ -160,15 +161,16 @@ contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
 
     /**
      * @notice onRegister returns false when LiquidityManagement flags don't match requirements.
-     *         Specifically, disableUnbalancedLiquidity = false should cause rejection.
+     *         Change 1: disableUnbalancedLiquidity must be false (unbalanced adds permitted).
+     *         Passing true should cause rejection.
      */
     function test_onRegister_rejectsBadLM() public {
         TokenConfig[] memory cfg = _validTokenConfigs();
         LiquidityManagement memory bad = _validLM();
-        bad.disableUnbalancedLiquidity = false;
+        bad.disableUnbalancedLiquidity = true; // wrong: must be false after Change 1
         vm.prank(address(bv3Vault));
         bool ok = IHooks(bufferPool).onRegister(address(bufferPoolPkg), bufferPool, cfg, bad);
-        assertFalse(ok, "onRegister should reject LM with disableUnbalancedLiquidity=false");
+        assertFalse(ok, "onRegister should reject LM with disableUnbalancedLiquidity=true");
     }
 
     /**

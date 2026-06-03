@@ -134,7 +134,10 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
      *        1. Attacker (bob) acquires TTA; permit2 approvals for bob are set in setUp.
      *        2. Attacker calls donateLiquidity (test-base helper wrapping router.donate).
      *        3. Balancer V3 processes DONATION kind → bptAmountOut == 0.
-     *        4. onAfterAddLiquidity: delta = (0 * vtPre) / tPre == 0 → no-op.
+     *        4. onAfterAddLiquidity: DONATION is a no-op for virtualTTA and hookSharesDelta.
+     *           The DONATION kind is used internally by the hook for swap reconciliation, so
+     *           incrementing virtualTTA on DONATION would double-count internal moves.
+     *           Externally-triggered DONATIONs therefore have no virtualTTA effect.
      *        5. Assert virtualTTA, hookSharesDelta, BPT supply all unchanged.
      *
      *      The donated TTA is credited to the pool's raw reserve, raising per-BPT value for
@@ -159,7 +162,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
         // Execute the donation via the test-base helper (router.donate with TTA only; shares = 0).
         tb.donateLiquidity(attacker, donationTTA, 0);
 
-        // Proportional scaling: delta = bptAmountOut * vtPre / tPre = 0 * vtPre / tPre == 0.
+        // DONATION is a no-op for virtualTTA (to avoid double-counting internal hook DONATIONs).
         assertEq(
             p.virtualTTA(),
             vtPre,
