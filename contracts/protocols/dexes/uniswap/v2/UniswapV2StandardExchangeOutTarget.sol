@@ -5,7 +5,13 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
-import {UNISWAP_PROTOCOL_FEE_SHARE, UNISWAP_FEE_DENOMINATOR} from "@crane/contracts/constants/Constants.sol";
+import {
+    UNISWAP_PROTOCOL_FEE_SHARE,
+    UNISWAP_FEE_DENOMINATOR,
+    UNISWAPV2_FEE_PERCENT,
+    UNISWAPV2_FEE_DENOMINATOR,
+    UNISWAPV2_PROTOCOL_FEE_SHARE
+} from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -114,11 +120,30 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(indexSource.pool)
         ) {
-            // No gas efficient way to calculate the the amount in for a ZapIn to target amount out.
-            // return 0;
-            revert RouteNotSupported(
-                address(tokenIn), address(tokenOut), IStandardExchangeOut.previewExchangeOut.selector
+            // Inverse of _quoteSwapDepositWithFee: given target LP amount out, find minimum
+            // amountIn of tokenIn required.  Uses closed-form binary search in ConstProdUtils.
+            _loadIndexSourceReserves(indexSource, tokenIn);
+            amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
+                // uint256 targetLP,
+                amountOut,
+                // uint256 lpTotalSupply,
+                indexSource.totalSupply,
+                // uint256 reserveIn,
+                indexSource.knownReserve,
+                // uint256 reserveOut,
+                indexSource.opposingReserve,
+                // uint256 feePercent,
+                indexSource.knownfeePercent,
+                // uint256 feeDenominator,
+                UNISWAPV2_FEE_DENOMINATOR,
+                // uint256 kLast,
+                indexSource.kLast,
+                // uint256 ownerFeeShare,
+                UNISWAPV2_PROTOCOL_FEE_SHARE,
+                // bool feeOn
+                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
             );
+            return amountIn;
         }
 
         /* ------------------------------------------------------------------ */
@@ -254,8 +279,50 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
-            // No gas efficient way to calculate the the amount in for a ZapIn to target amount out.
-            return 0;
+            // Two-step inverse:
+            //   Step 1: Convert target shares → target LP tokens using the post-deposit
+            //           inverse formula (mirrors exchangeIn Route 6 share accounting).
+            //   Step 2: Convert target LP → amountIn of tokenIn via ZapIn inverse.
+            _loadIndexSourceReserves(indexSource, tokenIn);
+            UniV2StrategyVault memory vault;
+            _loadStrategyVault(vault, tokenIn);
+            _calcVaultFee(indexSource, vault);
+            // Correct post-deposit inverse of:
+            //   shares = floor(LP * (S + 10^d) / (R_before + LP + 1))
+            // Solving for LP:
+            //   LP >= ceil(shares * (R_before + 1) / (S + 10^d - shares))
+            uint256 decimalUnit = 10 ** ERC4626Repo._decimalOffset();
+            if (amountOut >= vault.vaultTotalShares + decimalUnit) return 0;
+            uint256 lpTarget;
+            {
+                uint256 numerator = amountOut * (vault.vaultLpReserve + 1);
+                uint256 denominator = vault.vaultTotalShares + decimalUnit - amountOut;
+                lpTarget = numerator / denominator;
+                if (denominator > 0 && numerator % denominator != 0) {
+                    lpTarget += 1;
+                }
+            }
+            amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
+                // uint256 targetLP,
+                lpTarget,
+                // uint256 lpTotalSupply,
+                indexSource.totalSupply,
+                // uint256 reserveIn,
+                indexSource.knownReserve,
+                // uint256 reserveOut,
+                indexSource.opposingReserve,
+                // uint256 feePercent,
+                indexSource.knownfeePercent,
+                // uint256 feeDenominator,
+                UNISWAPV2_FEE_DENOMINATOR,
+                // uint256 kLast,
+                indexSource.kLast,
+                // uint256 ownerFeeShare,
+                UNISWAPV2_PROTOCOL_FEE_SHARE,
+                // bool feeOn
+                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+            );
+            return amountIn;
         }
 
         /* ------------------------------------------------------------------ */
@@ -422,7 +489,67 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(indexSource.pool)
         ) {
-            revert InvalidRoute(address(tokenIn), address(tokenOut));
+            // Compute amountIn required to ZapIn and receive at least amountOut LP tokens.
+            _loadIndexSourceReserves(indexSource, tokenIn);
+            amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
+                // uint256 targetLP,
+                amountOut,
+                // uint256 lpTotalSupply,
+                indexSource.totalSupply,
+                // uint256 reserveIn,
+                indexSource.knownReserve,
+                // uint256 reserveOut,
+                indexSource.opposingReserve,
+                // uint256 feePercent,
+                indexSource.knownfeePercent,
+                // uint256 feeDenominator,
+                UNISWAPV2_FEE_DENOMINATOR,
+                // uint256 kLast,
+                indexSource.kLast,
+                // uint256 ownerFeeShare,
+                UNISWAPV2_PROTOCOL_FEE_SHARE,
+                // bool feeOn
+                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+            );
+            // Slippage guard: caller must have approved at least amountIn.
+            if (amountIn > maxAmountIn) {
+                revert MaxAmountExceeded(maxAmountIn, amountIn);
+            }
+            // Secure tokenIn from the caller.
+            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            // Execute the swap/deposit (ZapIn).
+            uint256 lpOut = UniswapV2RouterAwareRepo._uniswapV2Router()
+                ._swapDeposit(
+                    // IUniswapV2Router router,
+                    // IUniswapV2Pair pool,
+                    indexSource.pool,
+                    // IERC20 tokenIn,
+                    tokenIn,
+                    // uint256 saleAmt,
+                    amountIn,
+                    // IERC20 opToken,
+                    IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
+                );
+            // Ensure the LP output meets the requested amountOut.
+            if (lpOut < amountOut) revert AmountOutNotMet(amountOut, lpOut);
+            // Transfer the LP tokens to the recipient.
+            IERC20(address(indexSource.pool))
+                .safeTransfer(
+                    recipient,
+                    lpOut
+                );
+            // Refund any excess pretransferred tokenIn.
+            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            // Verify the vault's stored LP reserve is still consistent.
+            {
+                UniV2StrategyVault memory vault2;
+                _loadStrategyVault(vault2, tokenIn);
+                uint256 poolBalance = indexSource.pool.balanceOf(address(this));
+                if (poolBalance != vault2.vaultLpReserve) {
+                    revert();
+                }
+            }
+            return amountIn;
         }
 
         /* ------------------------------------------------------------------ */
@@ -666,7 +793,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
-            revert InvalidRoute(address(tokenIn), address(tokenOut));
+            return _exchangeOut_zapInVaultDeposit(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
         }
 
         /* ------------------------------------------------------------------ */
@@ -760,5 +887,144 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         }
         // console.log("UniswapV2StandardExchangeOutFacet::exchangeOut: no branch matched, reverting with InvalidRoute");
         revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*               Internal helper — Route 6 exchangeOut body               */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @dev Extracted to avoid stack-too-deep in the main exchangeOut dispatcher.
+     *      Implements Route 6 (ZapIn Vault Deposit, exact-out variant):
+     *      caller supplies tokenIn, receives exactly amountOut vault shares.
+     */
+    function _exchangeOut_zapInVaultDeposit(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 amountIn) {
+        UnIV2IndexSourceReserves memory indexSource;
+        indexSource.pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
+
+        // Load reserves and vault state.
+        _loadIndexSourceReserves(indexSource, tokenIn);
+        UniV2StrategyVault memory vault;
+        _loadStrategyVault(vault, tokenIn);
+        // Mint vault fee shares (matches the In side's _calcAndMintVaultFee call).
+        _calcAndMintVaultFee(indexSource, vault);
+
+        // Step 1: ERC-4626 inverse (post-deposit accounting) — shares → LP.
+        //
+        // exchangeIn Route 6 computes shares as:
+        //   shares = floor(lpReceived * (S + 10^d) / (R_before + lpReceived + 1))
+        //
+        // Solving for the minimum lpReceived:
+        //   LP >= ceil(shares * (R_before + 1) / (S + 10^d - shares))
+        //
+        // Guard: amountOut must be < S + 10^d (otherwise denominator <= 0).
+        uint256 decimalUnit = 10 ** ERC4626Repo._decimalOffset();
+        require(amountOut < vault.vaultTotalShares + decimalUnit, "amountOut >= totalShares + decimalUnit");
+        uint256 lpTarget;
+        {
+            uint256 numerator = amountOut * (vault.vaultLpReserve + 1);
+            uint256 denominator = vault.vaultTotalShares + decimalUnit - amountOut;
+            lpTarget = numerator / denominator;
+            if (numerator % denominator != 0) {
+                lpTarget += 1;
+            }
+        }
+
+        // Step 2: ZapIn inverse — LP target → amountIn of tokenIn.
+        amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
+            // uint256 targetLP,
+            lpTarget,
+            // uint256 lpTotalSupply,
+            indexSource.totalSupply,
+            // uint256 reserveIn,
+            indexSource.knownReserve,
+            // uint256 reserveOut,
+            indexSource.opposingReserve,
+            // uint256 feePercent,
+            indexSource.knownfeePercent,
+            // uint256 feeDenominator,
+            UNISWAPV2_FEE_DENOMINATOR,
+            // uint256 kLast,
+            indexSource.kLast,
+            // uint256 ownerFeeShare,
+            UNISWAPV2_PROTOCOL_FEE_SHARE,
+            // bool feeOn
+            UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+        );
+
+        // Slippage guard.
+        if (amountIn > maxAmountIn) {
+            revert MaxAmountExceeded(maxAmountIn, amountIn);
+        }
+
+        // Secure tokenIn from the caller.
+        amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+
+        // Execute the ZapIn: swap + deposit, collecting LP tokens.
+        uint256 lpReceived = UniswapV2RouterAwareRepo._uniswapV2Router()
+            ._swapDeposit(
+                // IUniswapV2Router router,
+                // IUniswapV2Pair pool,
+                indexSource.pool,
+                // IERC20 tokenIn,
+                tokenIn,
+                // uint256 saleAmt,
+                amountIn,
+                // IERC20 opToken,
+                IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
+            );
+
+        // Update vault LP reserve.
+        vault.vaultLpReserve = indexSource.pool.balanceOf(address(this));
+        ERC4626Repo._setLastTotalAssets(vault.vaultLpReserve);
+
+        // Update owned reserve tracking (mirrors the In-side exchangeIn Route 6).
+        (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
+            // uint256 ownedLPAmount,
+            vault.vaultLpReserve,
+            // uint256 lpTotalSupply,
+            indexSource.totalSupply,
+            // uint256 totalReserveA,
+            indexSource.knownReserve,
+            // uint256 totalReserveB,
+            indexSource.opposingReserve,
+            // uint256 kLast,
+            indexSource.kLast,
+            // uint256 ownerFeeShare,
+            UNISWAPV2_PROTOCOL_FEE_SHARE,
+            // bool feeOn
+            UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+        );
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+
+        // Convert actual LP received → shares (floor, matching exchangeIn behaviour).
+        uint256 actualShares = BetterMath._convertToSharesDown(
+            // uint256 assets,
+            lpReceived,
+            // uint256 reserve,
+            vault.vaultLpReserve,
+            // uint256 totalShares
+            vault.vaultTotalShares,
+            ERC4626Repo._decimalOffset()
+        );
+
+        // Guard: actual shares must be at least the requested amountOut.
+        if (actualShares < amountOut) revert AmountOutNotMet(amountOut, actualShares);
+
+        // Mint exactly the requested amountOut to the recipient (not actualShares — the caller
+        // specified a target; any rounding surplus stays in the vault, benefiting all holders).
+        ERC20Repo._mint(recipient, amountOut);
+
+        // Refund any excess pretransferred tokenIn.
+        _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+
+        return amountIn;
     }
 }
