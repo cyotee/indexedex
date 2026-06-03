@@ -1,100 +1,103 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {Test} from "forge-std/Test.sol";
-import {AddLiquidityKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {AddLiquidityKind} from
+    "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
+
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
-import {MockBalancerV3Vault, MockStandardExchange, StaticRateProvider, HookHarness} from
-    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol";
 
-contract HookLPAddTest is Test {
-    MockBalancerV3Vault vault;
-    MockStandardExchange seVault;
-    StaticRateProvider rp;
-    HookHarness hook;
-    address ttaAddr = address(0xAAA);
-    address shareAddr = address(0xBBB);
-    IERC20 tta = IERC20(ttaAddr);
-    IERC20 shares = IERC20(shareAddr);
+import {TestBase_StandardExchangeBufferPool} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
 
-    function setUp() public {
-        vault = new MockBalancerV3Vault();
-        seVault = new MockStandardExchange();
-        rp = new StaticRateProvider(1e18);
-        vm.mockCall(shareAddr, abi.encodeWithSignature("decimals()"), abi.encode(uint8(18)));
-        vm.mockCall(ttaAddr, abi.encodeWithSelector(IERC20.approve.selector), abi.encode(true));
-        hook = new HookHarness(address(vault), address(0xFAC), tta, shares, seVault, rp);
-        hook.setVirtualTTA(100e18);
-        hook.setHookSharesDelta(0);
+/**
+ * @title HookLPAddTest
+ * @notice Error-path and access-control coverage for StandardExchangeBufferHookTarget.onBeforeAddLiquidity
+ *         and onAfterAddLiquidity that cannot be exercised through the Balancer V3 RouterMock.
+ *
+ * @dev Tests retired as integration-redundant:
+ *        - customIsNoOp      → behavior_errors_customAddFromNonHookReverts (spec runner)
+ *        - donationIsNoOp    → behavior_adversarial_donationGriefing (spec runner)
+ *        - proportionalWithoutTTA_skipsConversion → behavior_lpAdd_proportional_sharesOnlyContribution
+ *        - proportionalWithTTA_isPassThroughNoOp  → behavior_lpAdd_proportional_sharesOnlyContribution
+ *
+ *      Tests retained:
+ *        1. revertsForUnbalanced / revertsForSingleTokenExactOut — validates the hook's typed-revert
+ *           guard on disallowed kinds.  These cannot be reached via the router because
+ *           disableUnbalancedLiquidity=true at the Vault level blocks those call-kinds upstream;
+ *           the only way to exercise the hook guard is a direct call.  (Note: Change 1 of the
+ *           refactor plan will relax this guard — at that point these two tests will be updated
+ *           or deleted in the same PR that lands Change 1.)
+ *        2. rejectsWrongCaller  — onBeforeAddLiquidity returns false for non-Vault msg.sender.
+ *        3. rejectsWrongPool    — onBeforeAddLiquidity returns false when pool arg ≠ address(this).
+ */
+contract HookLPAddTest is TestBase_StandardExchangeBufferPool {
+
+    /* ---------------------------------------------------------------------- */
+    /*                              Shared Helpers                             */
+    /* ---------------------------------------------------------------------- */
+
+    function _maxAmounts() internal pure returns (uint256[] memory max) {
+        max = new uint256[](2);
+        max[0] = 5e18;
+        max[1] = 5e18;
     }
 
+    /* ---------------------------------------------------------------------- */
+    /*                         Disallowed-Kind Tests                           */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice UNBALANCED add-liquidity must revert with AddLiquidityNotProportional.
+    /// @dev Direct call as the real Vault (bv3Vault) to bypass the Vault-level
+    ///      disableUnbalancedLiquidity guard, exercising the hook's own kind check.
     function test_revertsForUnbalanced() public {
-        uint256[] memory max = new uint256[](2); max[0] = 10e18; max[1] = 10e18;
+        uint256[] memory max = new uint256[](2);
+        max[0] = 10e18;
+        max[1] = 10e18;
         vm.expectRevert(IStandardExchangeBufferPool.AddLiquidityNotProportional.selector);
-        vm.prank(address(vault));
-        hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.UNBALANCED, max, 0, new uint256[](2), "");
+        vm.prank(address(bv3Vault));
+        IHooks(bufferPool).onBeforeAddLiquidity(
+            address(0), bufferPool, AddLiquidityKind.UNBALANCED,
+            max, 0, new uint256[](2), ""
+        );
     }
 
+    /// @notice SINGLE_TOKEN_EXACT_OUT add-liquidity must revert with AddLiquidityNotProportional.
     function test_revertsForSingleTokenExactOut() public {
-        uint256[] memory max = new uint256[](2); max[0] = 10e18; max[1] = 0;
+        uint256[] memory max = new uint256[](2);
+        max[0] = 10e18;
+        max[1] = 0;
         vm.expectRevert(IStandardExchangeBufferPool.AddLiquidityNotProportional.selector);
-        vm.prank(address(vault));
-        hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.SINGLE_TOKEN_EXACT_OUT, max, 0, new uint256[](2), "");
+        vm.prank(address(bv3Vault));
+        IHooks(bufferPool).onBeforeAddLiquidity(
+            address(0), bufferPool, AddLiquidityKind.SINGLE_TOKEN_EXACT_OUT,
+            max, 0, new uint256[](2), ""
+        );
     }
 
-    function test_customIsNoOp() public {
-        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 0;
-        vm.prank(address(vault));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.CUSTOM, max, 0, new uint256[](2), "");
-        assertTrue(ok);
-        assertEq(vault.observedCount(), 0);
-    }
+    /* ---------------------------------------------------------------------- */
+    /*                         Access-Control Tests                            */
+    /* ---------------------------------------------------------------------- */
 
-    function test_proportionalWithoutTTA_skipsConversion() public {
-        uint256[] memory max = new uint256[](2); max[0] = 0; max[1] = 5e18;
-        vm.prank(address(vault));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
-        assertTrue(ok);
-        assertEq(hook.hookSharesDelta(), 0);
-        assertEq(vault.observedCount(), 0);
-    }
-
-    function test_proportionalWithTTA_isPassThroughNoOp() public {
-        // Integration testing revealed the original "convert LP TTA -> shares in onBeforeAddLiquidity"
-        // design is infeasible: the Vault calls onBeforeAddLiquidity *before* pulling tokens from the LP,
-        // so sendTo(TTA, ...) would always overflow/fail. The hook now passes PROPORTIONAL through
-        // unchanged; the LP must supply real proportional amounts. virtualTTA/hookSharesDelta are
-        // scaled proportionally in onAfterAddLiquidity instead. See StandardExchangeBufferPool spec
-        // section 6.4 deviation note and `Behavior_LP_AddProportional` for the new semantics.
-        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 5e18;
-        vm.prank(address(vault));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
-        assertTrue(ok);
-        assertEq(hook.hookSharesDelta(), 0); // no conversion, no state change
-        assertEq(vault.observedCount(), 0);  // no Vault calls
-    }
-
+    /// @notice onBeforeAddLiquidity must return false for any caller that is not the Vault.
     function test_rejectsWrongCaller() public {
-        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 5e18;
         vm.prank(address(0xDEAD));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
-        assertFalse(ok);
+        bool ok = IHooks(bufferPool).onBeforeAddLiquidity(
+            address(0), bufferPool, AddLiquidityKind.PROPORTIONAL,
+            _maxAmounts(), 0, new uint256[](2), ""
+        );
+        assertFalse(ok, "onBeforeAddLiquidity must return false for non-Vault caller");
     }
 
+    /// @notice onBeforeAddLiquidity must return false when the pool argument does not match
+    ///         the hook's own address (address(this) inside the Diamond).
     function test_rejectsWrongPool() public {
-        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 5e18;
-        vm.prank(address(vault));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(0xBAD), AddLiquidityKind.PROPORTIONAL, max, 0, new uint256[](2), "");
-        assertFalse(ok);
-    }
-
-    function test_donationIsNoOp() public {
-        uint256[] memory max = new uint256[](2); max[0] = 5e18; max[1] = 0;
-        vm.prank(address(vault));
-        bool ok = hook.onBeforeAddLiquidity(address(0), address(hook), AddLiquidityKind.DONATION, max, 0, new uint256[](2), "");
-        assertTrue(ok);
-        assertEq(vault.observedCount(), 0);
+        vm.prank(address(bv3Vault));
+        bool ok = IHooks(bufferPool).onBeforeAddLiquidity(
+            address(0), address(0xBAD), AddLiquidityKind.PROPORTIONAL,
+            _maxAmounts(), 0, new uint256[](2), ""
+        );
+        assertFalse(ok, "onBeforeAddLiquidity must return false when pool arg is wrong");
     }
 }
