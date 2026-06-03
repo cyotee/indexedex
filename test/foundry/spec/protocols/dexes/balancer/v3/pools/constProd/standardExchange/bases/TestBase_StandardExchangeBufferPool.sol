@@ -534,7 +534,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
      * @param daiAmount  Amount of DAI (and USDC) to use for Aerodrome liquidity.
      * @return sharesOut Number of SE vault shares minted to `recipient`.
      */
-    function mintShares(address recipient, uint256 daiAmount) public returns (uint256 sharesOut) {
+    function mintShares(address recipient, uint256 daiAmount) public virtual returns (uint256 sharesOut) {
         dai.mint(recipient, daiAmount);
         usdc.mint(recipient, daiAmount);
 
