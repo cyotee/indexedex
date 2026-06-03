@@ -62,9 +62,14 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_SharesToTTA is Test {
         // Ensure alice holds enough shares.  After _initPool alice has given all her shares
         // to the pool, so we first do a TTA→shares swap to acquire shares for this test.
         if (tb.shares().balanceOf(tb.getAlice()) < amountIn) {
-            // Estimate TTA needed: 2x the amountIn as a conservative upper bound so the
-            // resulting shares are at least amountIn (the CP pool may give slightly fewer).
-            uint256 ttaNeeded = amountIn * 2;
+            // Estimate TTA needed: the shares→TTA conversion rate tells us how much TTA
+            // one share is worth.  We ask for 4× that amount to cover CP slippage and any
+            // rate rounding, guaranteeing alice ends up with at least `amountIn` shares.
+            uint256 rate = p.rateProvider().getRate();
+            uint256 ttaPerShare = rate > 0 ? rate : 1e18; // TTA per 1e18 shares (WAD)
+            uint256 ttaNeeded = (amountIn * ttaPerShare / 1e18) * 4;
+            // Floor at amountIn * 4 (handles rate-provider returning near-zero during setup)
+            if (ttaNeeded < amountIn * 4) ttaNeeded = amountIn * 4;
             tb.mintTTA(tb.getAlice(), ttaNeeded);
             tb.swapTTAforShares(tb.getAlice(), ttaNeeded);
         }

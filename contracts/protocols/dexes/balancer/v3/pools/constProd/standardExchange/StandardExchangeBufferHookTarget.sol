@@ -102,7 +102,17 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
 
     /**
      * @notice Hook executed before pool initialization.
-     * @dev Seeds virtualTTA = s_init * rate / 1e18, and resets hookSharesDelta to 0.
+     * @dev Seeds virtualTTA from the shares-side scaled18 amount and resets hookSharesDelta to 0.
+     *
+     *      Balancer V3 passes `exactAmountsInScaled18` to this hook.  For a WITH_RATE share token
+     *      the scaled18 value is `rawShares * rate / 1e18`, which is already expressed in TTA-equivalent
+     *      units (i.e. the economic DAI value of the seeded shares).  Therefore virtualTTA is set
+     *      directly to `exactAmountsIn[sharesIdx]` — no further rate multiplication is needed.
+     *
+     *      Using the scaled18 amount also keeps virtualTTA consistent with Balancer's live-balance
+     *      accounting: after initialization `liveBalance[sharesIdx] == rawBalance * rate / 1e18`,
+     *      so `virtualTTA == liveBalance[sharesIdx]` immediately after the seed.
+     *
      *      Reverts if the rate provider returns zero or the resulting virtualTTA is zero.
      */
     function onBeforeInitialize(uint256[] memory exactAmountsIn, bytes memory)
@@ -110,11 +120,11 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
     {
         if (msg.sender != _balancerV3Vault()) return false;
         uint256 sharesIdx = Repo._sharesIndex();
-        uint256 sInitRaw = exactAmountsIn[sharesIdx];
         uint256 rate = Repo._rateProvider().getRate();
         if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
-        // Assumes 18-decimal share token; multi-decimal handling added if needed.
-        uint256 virtualInit = (sInitRaw * rate) / 1e18;
+        // exactAmountsIn is exactAmountsInScaled18 from Balancer. For WITH_RATE tokens,
+        // scaled18 = rawShares * rate / 1e18 — already in TTA-equivalent units.
+        uint256 virtualInit = exactAmountsIn[sharesIdx];
         if (virtualInit == 0) revert IStandardExchangeBufferPool.InitialInvariantTooSmall();
         Repo._setVirtualTTA(virtualInit);
         Repo._setHookSharesDelta(0);

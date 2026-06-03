@@ -43,7 +43,7 @@ contract TestBase_Smoke is TestBase_StandardExchangeBufferPool {
         assertEq(
             address(p.rateProvider()),
             address(seRateProvider),
-            "rateProvider must match the deployed ERC4626 rate provider"
+            "rateProvider must match the canonical StandardExchangeRateProviderDFPkg-deployed instance"
         );
     }
 
@@ -54,5 +54,13 @@ contract TestBase_Smoke is TestBase_StandardExchangeBufferPool {
             address(seVault),
             "standardExchangeVault must match the deployed SE vault"
         );
+    }
+
+    /// @notice Proves Change 2 idempotency: the pool's stored rate provider equals the canonical
+    ///         address returned by `seRateProviderPkg.deployRateProvider(seVault, tta)`.
+    function test_rateProviderIsCanonical() public view {
+        address fromPool = address(IStandardExchangeBufferPool(bufferPool).rateProvider());
+        address fromDFPkg = address(seRateProvider);
+        assertEq(fromPool, fromDFPkg, "pool RP must equal canonical RP for the (seVault, tta) pair");
     }
 }

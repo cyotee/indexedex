@@ -131,8 +131,9 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
 
     /**
      * @notice §8.3 I-5: No free value via swaps only — TTA extracted via shares→TTA swaps
-     *         does not exceed TTA contributed via TTA→shares swaps plus a per-swap rounding
-     *         allowance, but only when no LP operations have occurred in the current sequence.
+     *         does not exceed TTA contributed via TTA→shares swaps plus the TTA-equivalent
+     *         value of shares contributed (using the canonical rate provider), with a small
+     *         rounding allowance.  Only checked when no LP operations occurred in the sequence.
      *
      *         The handler's lp_add action freely mints TTA and shares to actors; this value
      *         is not tracked in ghost_totalTTAIn and would cause a spurious failure if LP
@@ -142,6 +143,9 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
      *
      *         When LP adds have occurred (ghost_lpDepositCount > 0) the invariant is skipped
      *         because the minted collateral makes the ghost-only accounting incomplete.
+     *
+     *         Shares are converted to TTA-equivalent using the pool's rate provider so the
+     *         invariant is correct regardless of the rate provider implementation.
      */
     function invariant_noFreeValue() public view {
         // Skip if any LP add occurred — free mints during lp_add break ghost accounting.
@@ -154,11 +158,17 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
         // Nothing happened: trivially satisfied.
         if (ttaIn == 0 && sharesIn == 0 && ttaOut == 0) return;
 
-        // Shares contributed * 1 (rate proxy = 1 DAI per share at init) plus TTA contributed
-        // must meet or exceed TTA extracted.  Small headroom for CP slippage / rounding.
+        // Convert shares contributed to TTA-equivalent using the current rate.
+        // rate = TTA per 1e18 shares (WAD).  Fall back to 1e18 if rate is zero.
+        uint256 rate = IStandardExchangeBufferPool(bufferPool).rateProvider().getRate();
+        if (rate == 0) rate = 1e18;
+        uint256 sharesInTTA = (sharesIn * rate) / 1e18;
+
+        // TTA contributed plus TTA-equivalent of shares contributed must meet or exceed
+        // TTA extracted.  1e18 headroom absorbs CP slippage and rounding artifacts.
         assertLe(
             ttaOut,
-            ttaIn + sharesIn + 1e18,
+            ttaIn + sharesInTTA + 1e18,
             "I-5: TTA extracted via swaps exceeds TTA + shares contributed (swap-only sequences)"
         );
     }

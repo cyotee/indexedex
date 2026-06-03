@@ -60,6 +60,13 @@ import {
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+import {
+    IStandardExchangeRateProviderDFPkg,
+    StandardExchangeRateProviderDFPkg
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {
+    StandardExchangeRateProviderFacet
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
 
 /* Buffer Pool specific */
 import {IStandardExchangeBufferPool} from
@@ -164,6 +171,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     IERC20 public ttb;
     IERC20 public shares;
     IRateProvider public seRateProvider;
+    IStandardExchangeRateProviderDFPkg public seRateProviderPkg;
 
     // Buffer pool facets
     IFacet internal multiAssetBasicVaultFacet;
@@ -250,14 +258,42 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     }
 
     /**
-     * @notice Deploys (or recovers) the rate provider for the SE vault.
-     * @dev The default uses the ERC4626-based rate provider helper supplied by Crane's
-     *      TestBase_BalancerV3Vault.  Subclasses that use a different underlying (e.g. a
-     *      non-ERC4626 SE vault) can override to deploy a different rate provider and assign
-     *      it to `seRateProvider`.
+     * @notice Deploys (or recovers) the canonical rate provider for the SE vault via
+     *         `StandardExchangeRateProviderDFPkg`.  The DFPkg is stored in `seRateProviderPkg`
+     *         and the deployed rate provider instance in `seRateProvider`.
+     * @dev Uses the same DFPkg the Buffer Pool Package calls internally (via its `RATE_PROVIDER_PKG`
+     *      immutable), so `seRateProvider` and the pool's stored rate provider are guaranteed to be
+     *      the same address (DPF idempotency).
      */
     function _deployRateProvider() internal virtual {
-        seRateProvider = deployERC4626RateProvider(IERC4626(address(seVault)));
+        // Deploy the rate provider facet.
+        IFacet rateProviderFacet = IFacet(
+            create3Factory.deployFacet(
+                type(StandardExchangeRateProviderFacet).creationCode,
+                keccak256("StandardExchangeRateProviderFacet")
+            )
+        );
+        vm.label(address(rateProviderFacet), "StandardExchangeRateProviderFacet");
+
+        // Deploy the rate provider DFPkg.
+        IStandardExchangeRateProviderDFPkg.PkgInit memory rpPkgInit = IStandardExchangeRateProviderDFPkg.PkgInit({
+            rateProviderFacet: rateProviderFacet,
+            diamondFactory: diamondPackageFactory
+        });
+        seRateProviderPkg = IStandardExchangeRateProviderDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    abi.encode(rpPkgInit),
+                    keccak256("StandardExchangeRateProviderDFPkg")
+                )
+            )
+        );
+        vm.label(address(seRateProviderPkg), "StandardExchangeRateProviderDFPkg");
+
+        // Deploy (or idempotently recover) the canonical rate provider for this (seVault, tta) pair.
+        seRateProvider = seRateProviderPkg.deployRateProvider(IStandardExchange(address(seVault)), tta);
+        vm.label(address(seRateProvider), "StandardExchangeRateProvider");
     }
 
     /**
@@ -272,9 +308,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
 
         bufferPool = bufferPoolPkg.deployPool(
             IStandardExchange(address(seVault)),
-            tta,
-            shares,
-            seRateProvider
+            tta
         );
         vm.label(bufferPool, "StandardExchangeBufferPool");
         approveForPool(IERC20(bufferPool));
@@ -466,6 +500,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;
         pkgInit.diamondFactory = diamondPackageFactory;
+        pkgInit.rateProviderPkg = seRateProviderPkg;
 
         vm.startPrank(owner);
         bufferPoolPkg = StandardExchangeBufferPool_FactoryService.deployBufferPoolPkg(

@@ -165,11 +165,22 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
 
     /**
      * @notice A positive hookSharesDelta reduces the effective shares depth (derivedY = y - delta).
-     *         With delta=20e18, derivedY=80e18, expected out = 80*10/(100+10) ≈ 7.2727e18.
+     *
+     *         hookSharesDelta is stored in RAW share units. _liftSharesToScaled18Rated converts it
+     *         to scaled18 using the rate provider before subtracting from balancesScaled18.
+     *         To produce derivedY = 80e18 from balancesScaled18 = 100e18, we need:
+     *           liftToScaled18(hookDeltaRaw) = 20e18
+     *           hookDeltaRaw = 20e18 * 1e18 / rate
+     *         This is rate-agnostic: regardless of what getRate() returns, derivedY = 80e18.
      */
     function test_onSwap_hookSharesDeltaShiftsDerivedY() public {
         _setVirtualTTA(100e18);
-        _setHookSharesDelta(int256(20e18));
+
+        // Compute the raw hookSharesDelta that corresponds to 20e18 scaled18 units at the
+        // current rate, so that liftToScaled18(hookDeltaRaw) = 20e18 regardless of rate.
+        uint256 rate = IStandardExchangeBufferPool(bufferPool).rateProvider().getRate();
+        uint256 hookDeltaRaw = rate > 0 ? (20e18 * 1e18) / rate : 20e18;
+        _setHookSharesDelta(int256(hookDeltaRaw));
 
         uint256 ttaIdx    = IStandardExchangeBufferPool(bufferPool).ttaIndex();
         uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
@@ -180,7 +191,7 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
         uint256 out = IBalancerV3Pool(bufferPool).onSwap(
             _buildSwapParams(SwapKind.EXACT_IN, ttaIdx, sharesIdx, 10e18, bal)
         );
-        // derivedY = 80, x = 100 → dy = 80*10/110 = 7.2727...
+        // derivedY = 100e18 - 20e18 = 80e18, x = 100e18 → dy = 80*10/110 = 7.2727...
         assertApproxEqAbs(out, 7.272727272727272727e18, 1e9);
     }
 

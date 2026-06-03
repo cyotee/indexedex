@@ -9,6 +9,9 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {
+    IStandardExchangeRateProviderDFPkg
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 import {
     IStandardExchangeBufferPoolPkg,
@@ -44,7 +47,8 @@ contract StandardExchangeBufferPoolPkg_Smoke is Test {
             vaultRegistry:                            IVaultRegistryDeployment(address(0xAA)),
             vaultFeeOracle:                           IVaultFeeOracleQuery(address(this)),
             balancerV3Vault:                          IVault(address(0xBB)),
-            diamondFactory:                           IDiamondPackageCallBackFactory(address(0xCC))
+            diamondFactory:                           IDiamondPackageCallBackFactory(address(0xCC)),
+            rateProviderPkg:                          IStandardExchangeRateProviderDFPkg(address(0xDD))
         });
 
         pkg = new StandardExchangeBufferPoolStandardVaultPkg(init);

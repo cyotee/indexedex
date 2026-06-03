@@ -85,6 +85,9 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {StandardExchangeBufferPoolRepo} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+import {
+    IStandardExchangeRateProviderDFPkg
+} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interface                                  */
@@ -107,21 +110,15 @@ interface IStandardExchangeBufferPoolPkg is IDiamondFactoryPackage, IStandardVau
         IVaultFeeOracleQuery vaultFeeOracle;
         IVault balancerV3Vault;
         IDiamondPackageCallBackFactory diamondFactory;
+        IStandardExchangeRateProviderDFPkg rateProviderPkg;
     }
 
     struct PkgArgs {
         IERC20 tta;
-        IERC20 shares;
         IStandardExchange standardExchangeVault;
-        IRateProvider rateProvider;
     }
 
-    function deployPool(
-        IStandardExchange seVault,
-        IERC20 tta,
-        IERC20 shares,
-        IRateProvider rp
-    ) external returns (address pool);
+    function deployPool(IStandardExchange seVault, IERC20 tta) external returns (address pool);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -154,6 +151,8 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
     IVault public immutable BALANCER_V3_VAULT;
     IDiamondPackageCallBackFactory public immutable DIAMOND_PACKAGE_FACTORY;
 
+    IStandardExchangeRateProviderDFPkg public immutable RATE_PROVIDER_PKG;
+
     IFacet public immutable BASIC_VAULT_FACET;
     IFacet public immutable STANDARD_VAULT_FACET;
     IFacet public immutable BALANCER_V3_VAULT_AWARE_FACET;
@@ -172,6 +171,7 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
         VAULT_REGISTRY = init.vaultRegistry;
         BALANCER_V3_VAULT = init.balancerV3Vault;
         DIAMOND_PACKAGE_FACTORY = init.diamondFactory;
+        RATE_PROVIDER_PKG = init.rateProviderPkg;
         BASIC_VAULT_FACET = init.basicVaultFacet;
         STANDARD_VAULT_FACET = init.standardVaultFacet;
         BALANCER_V3_VAULT_AWARE_FACET = init.balancerV3VaultAwareFacet;
@@ -307,8 +307,10 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
 
     function updatePkg(address expectedProxy, bytes memory pkgArgs) public virtual returns (bool) {
         PkgArgs memory a = abi.decode(pkgArgs, (PkgArgs));
+        IERC20 shares = IERC20(address(a.standardExchangeVault));
+        IRateProvider rp = RATE_PROVIDER_PKG.deployRateProvider(a.standardExchangeVault, a.tta);
         // Build the sorted TokenConfig array and store it for postDeploy.
-        TokenConfig[] memory tc = _buildTokenConfigs(a);
+        TokenConfig[] memory tc = _buildTokenConfigs(a.tta, shares, rp);
         BalancerV3BasePoolFactoryRepo._setTokenConfigs(expectedProxy, tc);
         // The hook lives in the same Diamond as the pool; store proxy address as the hooks contract.
         BalancerV3BasePoolFactoryRepo._setHooksContract(expectedProxy, expectedProxy);
@@ -318,16 +320,22 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory a = abi.decode(initArgs, (PkgArgs));
 
+        // Derive the share token from the SE vault address (the vault IS its own share token).
+        IERC20 shares = IERC20(address(a.standardExchangeVault));
+
+        // Deploy (or idempotently recover) the canonical rate provider for this (seVault, tta) pair.
+        IRateProvider rp = RATE_PROVIDER_PKG.deployRateProvider(a.standardExchangeVault, a.tta);
+
         // IMPORTANT: must be initialized on the proxy (storage), not just in the package constructor.
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
 
         // Determine sorted indices: lower address = index 0 (Balancer convention).
         (uint256 ttaIdx, uint256 sharesIdx) =
-            address(a.tta) < address(a.shares) ? (0, 1) : (1, 0);
+            address(a.tta) < address(shares) ? (0, 1) : (1, 0);
 
         address[] memory tokens = new address[](2);
         tokens[ttaIdx]    = address(a.tta);
-        tokens[sharesIdx] = address(a.shares);
+        tokens[sharesIdx] = address(shares);
 
         MultiAssetBasicVaultRepo._initialize(tokens);
 
@@ -335,14 +343,14 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
             VAULT_FEE_ORACLE,
             vaultFeeTypeIds(),
             vaultTypes(),
-            abi.encode(tokens, address(a.standardExchangeVault), address(a.rateProvider))._hash()
+            abi.encode(tokens, address(a.standardExchangeVault), address(rp))._hash()
         );
 
         string memory name_ = string.concat(
             "BV3StdExchBuffer of (",
             IERC20Metadata(address(a.tta)).name(),
             " <-> ",
-            IERC20Metadata(address(a.shares)).name(),
+            IERC20Metadata(address(shares)).name(),
             ")"
         );
 
@@ -359,9 +367,9 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
 
         StandardExchangeBufferPoolRepo._initialize(
             a.tta,
-            a.shares,
+            shares,
             a.standardExchangeVault,
-            a.rateProvider,
+            rp,
             ttaIdx,
             sharesIdx,
             address(SELF)
@@ -406,20 +414,24 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
     /*                              Internal helpers                           */
     /* ---------------------------------------------------------------------- */
 
-    function _buildTokenConfigs(PkgArgs memory a) internal pure returns (TokenConfig[] memory tc) {
+    function _buildTokenConfigs(
+        IERC20 tta,
+        IERC20 shares,
+        IRateProvider rp
+    ) internal pure returns (TokenConfig[] memory tc) {
         tc = new TokenConfig[](2);
         (uint256 ttaIdx, uint256 sharesIdx) =
-            address(a.tta) < address(a.shares) ? (0, 1) : (1, 0);
+            address(tta) < address(shares) ? (0, 1) : (1, 0);
         tc[ttaIdx] = TokenConfig({
-            token:         a.tta,
+            token:         tta,
             tokenType:     TokenType.STANDARD,
             rateProvider:  IRateProvider(address(0)),
             paysYieldFees: false
         });
         tc[sharesIdx] = TokenConfig({
-            token:         a.shares,
+            token:         shares,
             tokenType:     TokenType.WITH_RATE,
-            rateProvider:  a.rateProvider,
+            rateProvider:  rp,
             paysYieldFees: false
         });
     }
@@ -428,15 +440,10 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
     /*                              Public API                                 */
     /* ---------------------------------------------------------------------- */
 
-    function deployPool(
-        IStandardExchange seVault,
-        IERC20 tta,
-        IERC20 shares,
-        IRateProvider rp
-    ) external returns (address pool) {
+    function deployPool(IStandardExchange seVault, IERC20 tta) external returns (address pool) {
         pool = VAULT_REGISTRY.deployVault(
             IStandardVaultPkg(address(this)),
-            abi.encode(PkgArgs({tta: tta, shares: shares, standardExchangeVault: seVault, rateProvider: rp}))
+            abi.encode(PkgArgs({tta: tta, standardExchangeVault: seVault}))
         );
     }
 }
