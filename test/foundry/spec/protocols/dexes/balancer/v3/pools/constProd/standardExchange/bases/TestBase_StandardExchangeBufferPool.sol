@@ -190,8 +190,8 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         virtual
         override(TestBase_BalancerV3Vault, IndexedexTest)
     {
-        // 1. Deploy Balancer V3 Vault mock (also sets up permit2, CraneTest, etc.)
-        TestBase_BalancerV3Vault.setUp();
+        // 1. Deploy Balancer V3 Vault (also sets up permit2, CraneTest, etc.)
+        _deployVault();
 
         // 2. Deploy Indexedex manager infrastructure (create3Factory already init'd above via CraneTest)
         IndexedexTest.setUp();
@@ -199,25 +199,77 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         // 3. Record the BV3 vault reference for convenience.
         bv3Vault = IVault(address(vault));
 
-        // 4. Deploy Aerodrome infrastructure.
+        // 4. Deploy the Standard Exchange Vault (default: Aerodrome DAI/USDC).
+        _deploySEVault();
+
+        // 5. Deploy the rate provider for the SE vault (ERC4626-based).
+        _deployRateProvider();
+
+        // 6. Deploy buffer pool facets, package, and the pool itself.
+        _deployBufferPool();
+
+        // 7. Initialize the pool with initial liquidity (alice provides seed shares).
+        _initPool();
+
+        // 8. Fund actors with tokens for test use.
+        _fundActors();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                        Virtual Deployment Hooks                          */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice Deploys the Balancer V3 Vault and base test infrastructure.
+     * @dev Subclasses that need to override the Vault type (e.g. a real on-chain fork)
+     *      can override this hook.  The default calls the parent setUp() pair which
+     *      deploy the Crane VaultMock and router.
+     */
+    function _deployVault() internal virtual {
+        TestBase_BalancerV3Vault.setUp();
+    }
+
+    /**
+     * @notice Deploys the Standard Exchange Vault used as the pool's underlying.
+     * @dev The default implementation deploys an Aerodrome (volatile) DAI/USDC pool and wraps it
+     *      in an Aerodrome Standard Exchange Vault.  Subclasses (e.g. a Uniswap V2-backed variant)
+     *      override this hook to swap in a different SE vault without touching setUp().
+     *      Implementations MUST populate `seVault`, `tta`, `ttb`, and `shares`.
+     */
+    function _deploySEVault() internal virtual {
+        // Deploy Aerodrome infrastructure.
         _deployAerodromeInfrastructure();
 
-        // 5. Deploy SE vault facets and DFPkg, then the SE vault itself.
+        // Deploy SE vault facets and DFPkg, then the SE vault itself.
         _deploySeVaultFacets();
         _deploySeVaultPkg();
         _deploySeVault();
 
-        // 6. Seed liquidity into the Aerodrome pool so the SE vault has a non-zero rate.
+        // Seed liquidity into the Aerodrome pool so the SE vault has a non-zero rate.
         _seedAerodromeLiquidity();
+    }
 
-        // 7. Deploy the rate provider for the SE vault (ERC4626-based).
+    /**
+     * @notice Deploys (or recovers) the rate provider for the SE vault.
+     * @dev The default uses the ERC4626-based rate provider helper supplied by Crane's
+     *      TestBase_BalancerV3Vault.  Subclasses that use a different underlying (e.g. a
+     *      non-ERC4626 SE vault) can override to deploy a different rate provider and assign
+     *      it to `seRateProvider`.
+     */
+    function _deployRateProvider() internal virtual {
         seRateProvider = deployERC4626RateProvider(IERC4626(address(seVault)));
+    }
 
-        // 8. Deploy buffer pool facets and package.
+    /**
+     * @notice Deploys the buffer pool facets, package, and the pool diamond itself.
+     * @dev Registers the pool with the Balancer V3 Vault.  Subclasses can override to vary
+     *      construction args (e.g. different facet sets, different DFPkg) but typically the
+     *      default is sufficient.
+     */
+    function _deployBufferPool() internal virtual {
         _deployBufferPoolFacets();
         _deployBufferPoolPkg();
 
-        // 9. Deploy the pool and register it with BV3 vault.
         bufferPool = bufferPoolPkg.deployPool(
             IStandardExchange(address(seVault)),
             tta,
@@ -226,9 +278,16 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         );
         vm.label(bufferPool, "StandardExchangeBufferPool");
         approveForPool(IERC20(bufferPool));
+    }
 
-        // 10. Initialize the pool with initial liquidity (alice provides seed shares).
-        _initPool();
+    /**
+     * @notice Seeds actors with tokens after the pool is initialized.
+     * @dev The default is a no-op because individual behavior libraries call mintTTA /
+     *      mintShares as needed.  Subclasses can override to pre-fund actors for
+     *      scenarios where every test in the file needs a common starting balance.
+     */
+    function _fundActors() internal virtual {
+        // no-op by default
     }
 
     /* ---------------------------------------------------------------------- */
