@@ -5,11 +5,35 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+resolve_foundry_rpc_alias() {
+  local alias_name="$1"
+  local template
+  local resolved
+
+  template="$(cd "$REPO_ROOT" && forge config --json | jq -r --arg alias_name "$alias_name" '.rpc_endpoints[$alias_name] // empty')"
+  if [[ -z "$template" || "$template" == "null" ]]; then
+    echo "Foundry RPC alias not found: $alias_name" >&2
+    exit 1
+  fi
+
+  resolved="$(eval "printf '%s' \"$template\"")"
+  if [[ "$resolved" == *'${'* ]]; then
+    echo "Foundry RPC alias could not be fully resolved: $alias_name" >&2
+    exit 1
+  fi
+
+  echo "$resolved"
+}
+
 RPC_URL="${RPC_URL:-http://127.0.0.1:8545}"
 ANVIL_HOST="${ANVIL_HOST:-127.0.0.1}"
 ANVIL_PORT="${ANVIL_PORT:-8545}"
-ANVIL_CHAIN_ID="${ANVIL_CHAIN_ID:-31337}"
+ANVIL_CHAIN_ID="${ANVIL_CHAIN_ID:-11155111}"
+FOUNDRY_FORK_RPC_ALIAS="${FOUNDRY_FORK_RPC_ALIAS-ethereum_sepolia_alchemy}"
 ANVIL_FORK_URL="${ANVIL_FORK_URL:-}"
+if [[ -z "$ANVIL_FORK_URL" && -n "$FOUNDRY_FORK_RPC_ALIAS" ]]; then
+  ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
+fi
 ANVIL_FORK_BLOCK_NUMBER="${ANVIL_FORK_BLOCK_NUMBER:-}"
 ANVIL_LOG_DIR="${ANVIL_LOG_DIR:-$REPO_ROOT/deployments/local_testing/runtime}"
 OUT_DIR_OVERRIDE="${OUT_DIR_OVERRIDE:-deployments/local_testing/anvil_single}"
@@ -63,9 +87,14 @@ Environment:
                         Optional local deployer override; defaults to SENDER
   LOCAL_TESTING_OWNER     Optional local owner override; defaults to DEPLOYER_ADDRESS
   RPC_URL                 Defaults to http://127.0.0.1:8545
-  ANVIL_FORK_URL          Optional upstream RPC to fork from
-  ANVIL_FORK_BLOCK_NUMBER Optional fork block number when ANVIL_FORK_URL is set
+  ANVIL_CHAIN_ID          Defaults to 11155111 (Sepolia). Set to 31337 for pure local.
+  FOUNDRY_FORK_RPC_ALIAS  Foundry rpc_endpoints alias used to resolve the fork URL when
+                          ANVIL_FORK_URL is unset. Defaults to ethereum_sepolia_alchemy.
+                          Set to empty string to disable forking.
+  ANVIL_FORK_URL          Explicit upstream RPC to fork from. Overrides the alias lookup.
+  ANVIL_FORK_BLOCK_NUMBER Optional fork block number when forking is active
   OUT_DIR_OVERRIDE        Defaults to deployments/local_testing/anvil_single
+  SKIP_TOKENLIST_BUILD    Set to 1 to skip the post-deploy Token List aggregator
 EOF
 }
 
@@ -120,7 +149,11 @@ start_anvil() {
     fi
   fi
 
-  log_info "Starting Anvil at $RPC_URL"
+  if [[ -n "$ANVIL_FORK_URL" ]]; then
+    log_info "Starting Anvil at $RPC_URL (forking $FOUNDRY_FORK_RPC_ALIAS, chain id $ANVIL_CHAIN_ID)"
+  else
+    log_info "Starting Anvil at $RPC_URL (no fork, chain id $ANVIL_CHAIN_ID)"
+  fi
   nohup "${anvil_cmd[@]}" >"$ANVIL_LOG_DIR/anvil.log" 2>&1 &
   wait_for_rpc
 }
@@ -150,6 +183,27 @@ run_stage() {
     DEPLOYER_ADDRESS="$DEPLOYER_ADDRESS" \
     OWNER="$OWNER" \
     "${cmd[@]}"
+  )
+}
+
+run_aggregator() {
+  if [[ "${SKIP_TOKENLIST_BUILD:-0}" == "1" ]]; then
+    log_info "Skipping tokenlist build (SKIP_TOKENLIST_BUILD=1)"
+    return 0
+  fi
+  if [[ ! -d "$REPO_ROOT/scripts/node/node_modules" ]]; then
+    log_info "scripts/node/node_modules missing — run 'cd scripts/node && npm install' once before deploys"
+    return 0
+  fi
+  if [[ ! -d "$REPO_ROOT/deployments/local_testing/anvil_single/fragments" ]]; then
+    log_info "No fragments directory yet — skipping tokenlist build"
+    return 0
+  fi
+  log_info "Building token lists from fragments"
+  (
+    cd "$REPO_ROOT/scripts/node" \
+      && INDEXEDEX_REPO_ROOT="$REPO_ROOT" \
+         npm run --silent build-tokenlists -- --config "$REPO_ROOT/tokenlists.config.ts"
   )
 }
 
@@ -292,5 +346,7 @@ case "$COMMAND" in
       "scripts/foundry/local_testing/anvil_single/Script_12_DeployScenario3Overlay.s.sol"
     ;;
 esac
+
+run_aggregator
 
 log_info "Local testing command complete"

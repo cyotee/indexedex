@@ -121,9 +121,11 @@ Supported environment variables:
 - `RPC_URL`: defaults to `http://127.0.0.1:8545`
 - `ANVIL_HOST`: defaults to `127.0.0.1`
 - `ANVIL_PORT`: defaults to `8545`
-- `ANVIL_CHAIN_ID`: defaults to `31337`
-- `ANVIL_FORK_URL`: optional upstream RPC for forked Anvil runs
+- `ANVIL_CHAIN_ID`: defaults to `11155111` (Sepolia). Set to `31337` for a pure local devnet.
+- `FOUNDRY_FORK_RPC_ALIAS`: defaults to `ethereum_sepolia_alchemy`. The wrapper resolves this alias from `foundry.toml [rpc_endpoints]` (with environment variable substitution) to pick the fork URL. Set to an empty string to disable forking.
+- `ANVIL_FORK_URL`: explicit upstream RPC for the Anvil fork. When set, overrides the alias lookup.
 - `ANVIL_FORK_BLOCK_NUMBER`: optional fork block pin
+- `SKIP_TOKENLIST_BUILD`: set to `1` to skip the post-deploy Token List aggregator
 - `OUT_DIR_OVERRIDE`: defaults to `deployments/local_testing/anvil_single`
 - `NETWORK_PROFILE`: defaults to `local_testing`
 - `ANVIL_LOG_DIR`: defaults to `deployments/local_testing/runtime`
