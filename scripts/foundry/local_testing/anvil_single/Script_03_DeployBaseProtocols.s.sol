@@ -2,6 +2,7 @@
 pragma solidity ^0.8.30;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
+import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -93,6 +94,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
 
         if (_loadExistingProtocols()) {
             _exportJson();
+            _exportFragments();
             _logResults();
             return;
         }
@@ -105,7 +107,25 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         vm.stopBroadcast();
 
         _exportJson();
+        _exportFragments();
         _logResults();
+    }
+
+    function _exportFragments() internal {
+        if (localWeth == address(0)) return;
+
+        string[] memory tags = new string[](1);
+        tags[0] = "weth";
+
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: localWeth,
+            name: "Wrapped Ether",
+            symbol: "WETH9",
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry("tokens", "weth9", entry);
     }
 
     function _loadCraneFoundation() internal {

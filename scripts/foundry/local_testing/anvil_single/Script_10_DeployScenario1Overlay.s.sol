@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
+import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
@@ -59,6 +60,7 @@ contract Script_10_DeployScenario1Overlay is LocalTestingDeploymentBase {
         vm.stopBroadcast();
 
         _exportJson();
+        _exportFragments();
         _logResults();
     }
 
@@ -152,6 +154,41 @@ contract Script_10_DeployScenario1Overlay is LocalTestingDeploymentBase {
         json = vm.serializeUint("scenario1", "chainId", block.chainid);
         json = vm.serializeString("scenario1", "networkProfile", _networkProfile());
         _writeJson(json, ARTIFACT_FILE);
+    }
+
+    function _exportFragments() internal {
+        _writePoolFragment("uniV2AbPool", address(abPool), "Uniswap V2 TTA/TTB Pool", "UNI-V2-AB");
+        _writePoolFragment("uniV2BWethPool", address(bWethPool), "Uniswap V2 TTB/WETH Pool", "UNI-V2-BW");
+        _writeVaultFragment("uniV2AbVault", abVault, "Pachira Vault of (TTA / TTB)", "abUniV2Vault");
+        _writeVaultFragment("uniV2BWethVault", bWethVault, "Pachira Vault of (TTB / WETH)", "bwUniV2Vault");
+    }
+
+    function _writePoolFragment(string memory key, address poolAddr, string memory name, string memory symbol) internal {
+        if (poolAddr == address(0)) return;
+        string[] memory tags = new string[](0);
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: poolAddr,
+            name: name,
+            symbol: symbol,
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry("pools/uniV2", key, entry);
+    }
+
+    function _writeVaultFragment(string memory key, address vaultAddr, string memory name, string memory symbol) internal {
+        if (vaultAddr == address(0)) return;
+        string[] memory tags = new string[](0);
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: vaultAddr,
+            name: name,
+            symbol: symbol,
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry("vaults/strategy", key, entry);
     }
 
     function _logResults() internal view {

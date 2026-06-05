@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
+import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -51,6 +52,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
 
         if (_loadExistingAssets()) {
             _exportJson();
+            _exportFragments();
             _logResults();
             return;
         }
@@ -63,6 +65,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         vm.stopBroadcast();
 
         _exportJson();
+        _exportFragments();
         _logResults();
     }
 
@@ -211,6 +214,37 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         json = vm.serializeUint("foundationAssets", "chainId", block.chainid);
         json = vm.serializeString("foundationAssets", "networkProfile", _networkProfile());
         _writeJson(json, ARTIFACT_FILE);
+    }
+
+    function _exportFragments() internal {
+        _writeTokenFragment("tta", address(ttA), "Test Token A", "TTA", "testToken");
+        _writeTokenFragment("ttb", address(ttB), "Test Token B", "TTB", "testToken");
+        _writeTokenFragment("ttc", address(ttC), "Test Token C", "TTC", "testToken");
+        _writeTokenFragment("rich", richToken, "Rich Token", "RICH", "");
+    }
+
+    function _writeTokenFragment(
+        string memory key,
+        address tokenAddr,
+        string memory name,
+        string memory symbol,
+        string memory extraTag
+    ) internal {
+        if (tokenAddr == address(0)) return;
+
+        uint256 tagCount = bytes(extraTag).length > 0 ? 1 : 0;
+        string[] memory tags = new string[](tagCount);
+        if (tagCount == 1) tags[0] = extraTag;
+
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: tokenAddr,
+            name: name,
+            symbol: symbol,
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry("tokens", key, entry);
     }
 
     function _logResults() internal view {
