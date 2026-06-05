@@ -1,0 +1,8 @@
+{
+  "chainId": 11155111,
+  "address": "0x1111111111111111111111111111111111111111",
+  "name": "Test Token A",
+  "symbol": "TTA",
+  "decimals": 18,
+  "tags": ["testToken"]
+}

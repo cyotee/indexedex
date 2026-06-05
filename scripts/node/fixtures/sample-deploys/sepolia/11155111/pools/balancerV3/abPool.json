@@ -1,0 +1,13 @@
+{
+  "chainId": 11155111,
+  "address": "0x2222222222222222222222222222222222222222",
+  "name": "BV3ConstProd of (TTA / TTB)",
+  "symbol": "abBalancerV3ConstProdPool",
+  "decimals": 18,
+  "extensions": {
+    "composingAssets": [
+      "0x1111111111111111111111111111111111111111",
+      "0x3333333333333333333333333333333333333333"
+    ]
+  }
+}
