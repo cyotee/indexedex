@@ -5,6 +5,14 @@ import {
   resolveArtifactsChainId,
   type DeploymentEnvironment,
 } from './addressArtifacts'
+import {
+  byTag,
+  composeLists,
+  resolveLabel,
+  type ComposedStore,
+  type TokenInfo,
+} from './tokenlistCompose'
+import { getListRefs } from './tokenlistRegistry'
 
 export type Address = `0x${string}`
 
@@ -214,6 +222,21 @@ function getArtifactsOrNull(
   }
 }
 
+function toLegacyEntry(t: TokenInfo): TokenListEntry {
+  return {
+    chainId: t.chainId,
+    address: t.address as Address,
+    name: t.name,
+    symbol: t.symbol,
+    decimals: t.decimals,
+    display: resolveLabel(t),
+  }
+}
+
+function fromComposed(store: ComposedStore, tags: string[], chainId: number): TokenListEntry[] {
+  return byTag(store, tags, chainId).map(toLegacyEntry)
+}
+
 function getCached(
   chainId: number = CHAIN_ID_SEPOLIA,
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
@@ -230,40 +253,29 @@ function getCached(
   }
 
   const artifactsChainId = resolvedChainId
+  const store = composeLists(getListRefs(environment, artifactsChainId))
 
-  const baseTokens = withDisplay(filterChain(artifacts.tokenlists.tokens as TokenListEntry[], artifactsChainId))
-  const erc4626Tokens = withDisplay(filterChain(artifacts.tokenlists.erc4626 as TokenListEntry[], artifactsChainId))
+  const baseTokens = fromComposed(store, ['token'], artifactsChainId)
+  const erc4626Tokens = fromComposed(store, ['erc4626'], artifactsChainId)
+  const balancerPoolTokens = fromComposed(store, ['balancer', 'balV3'], artifactsChainId)
+  const uniV2PoolTokens = fromComposed(store, ['uniV2'], artifactsChainId)
+  const aerodromePoolTokens = fromComposed(store, ['aero'], artifactsChainId)
+  let strategyVaultTokens = fromComposed(store, ['strat'], artifactsChainId)
+  const protocolDetfTokensFromLists = fromComposed(store, ['detf'], artifactsChainId)
+
+  // seigniorage-detfs are not yet migrated to a Token List bucket; keep reading from the legacy artifact.
   const seigniorageDetfs = withDisplay(
     filterChain(((artifacts.tokenlists as any).seigniorageDetfs ?? []) as TokenListEntry[], artifactsChainId)
   )
-  const protocolDetfTokens = withDisplay(
-    filterChain(((artifacts.tokenlists as any).protocolDetf ?? []) as TokenListEntry[], artifactsChainId)
-  )
+
+  // Platform-derived augmentation: protocolDetf addresses from base_deployments.json
+  // are merged in so CHIR/RICH/RICHIR appear in the dropdown even when the list is empty.
   const platformProtocolDetfTokens = buildProtocolDetfEntriesFromPlatform(artifacts.platform, artifactsChainId)
-  const mergedProtocolDetfTokens = platformProtocolDetfTokens.length > 0
-    ? mergeUniqueBySymbolPreferFirst(
-        platformProtocolDetfTokens,
-        protocolDetfTokens
-      )
-    : protocolDetfTokens
-  let strategyVaultTokens = withDisplay(filterChain(artifacts.tokenlists.strategyVaults as TokenListEntry[], artifactsChainId))
-  const uniV2PoolTokens = withDisplay(filterChain(artifacts.tokenlists.uniV2Pools as TokenListEntry[], artifactsChainId))
-  const aerodromePoolTokens = withDisplay(
-    filterChain(((artifacts.tokenlists as any).aerodromePools ?? []) as TokenListEntry[], artifactsChainId)
-  )
-  const balancerPoolTokens = withDisplay(filterChain(artifacts.tokenlists.balancerPools as TokenListEntry[], artifactsChainId))
+  const protocolDetfTokens = platformProtocolDetfTokens.length > 0
+    ? mergeUniqueBySymbolPreferFirst(platformProtocolDetfTokens, protocolDetfTokensFromLists)
+    : protocolDetfTokensFromLists
 
-  const aerodromeStrategyVaultTokens = filterChain(
-    ((artifacts.tokenlists as any).aerodromeStrategyVaults ?? []) as TokenListEntry[],
-    artifactsChainId
-  )
-  if (aerodromeStrategyVaultTokens.length > 0) {
-    strategyVaultTokens = mergeUniqueByAddress(strategyVaultTokens, withDisplay(aerodromeStrategyVaultTokens))
-  }
-
-  // Anvil fork: the generated strategy-vaults tokenlist can be empty.
-  // Fall back to any known vault addresses embedded in platform/base_deployments.json.
-  // This keeps Swap/Batch-Swap pool dropdowns usable without additional script stages.
+  // Fallback for environments whose strategy-vaults list is empty: derive from platform.json keys.
   if (strategyVaultTokens.length === 0) {
     const platformDerivedVaults = buildStrategyVaultEntriesFromPlatform(artifacts.platform, artifactsChainId)
     if (platformDerivedVaults.length > 0) {
@@ -275,7 +287,7 @@ function getCached(
     baseTokens,
     erc4626Tokens,
     seigniorageDetfs,
-    protocolDetfTokens: mergedProtocolDetfTokens,
+    protocolDetfTokens,
     strategyVaultTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
