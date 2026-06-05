@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build-tokenlists": "tsx src/main.ts",
+    "migrate-legacy": "tsx src/migrateLegacy.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

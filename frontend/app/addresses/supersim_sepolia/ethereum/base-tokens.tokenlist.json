@@ -1,0 +1,89 @@
+{
+  "name": "Indexedex Base Tokens",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "tokens"
+  ],
+  "tags": {
+    "token": {
+      "name": "Token",
+      "description": "ERC20 token"
+    },
+    "testToken": {
+      "name": "Test Token",
+      "description": "Test ERC20"
+    },
+    "weth": {
+      "name": "WETH",
+      "description": "Wrapped Ether"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x1B4837D65f8A872d40d391523E6415612a362E7D",
+      "name": "Test Token A",
+      "symbol": "TTA",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x973a31323f69BBD4211e7176ddA4aFC04d345ef4",
+      "name": "Test Token B",
+      "symbol": "TTB",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xf601539472d09720df434a824871563F167fe9c6",
+      "name": "Test Token C",
+      "symbol": "TTC",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xfF8A88d1CFbb373B289c2abccDFd39e6A0fd4362",
+      "name": "Test Token A",
+      "symbol": "TTA",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x2717868B13FeE09F7C07038B6cD699395e6BFECa",
+      "name": "Test Token B",
+      "symbol": "TTB",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xA9A17cC95847d0911458F912bf4961c417Bf56C1",
+      "name": "Test Token C",
+      "symbol": "TTC",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    }
+  ]
+}

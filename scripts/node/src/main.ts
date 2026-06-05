@@ -50,6 +50,8 @@ async function main() {
         const previous = await loadPreviousList(outPath)
         const result = buildList({ bucket, fragments, previousList: previous, timestamp })
 
+        if (result.list.tokens.length === 0) continue
+
         if (!result.validation.valid) {
           failures++
           console.error(`[FAIL] ${env.environment}/${chain.chainDir}/${bucket.id}`)

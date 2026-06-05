@@ -1,0 +1,645 @@
+{
+  "name": "Indexedex Balancer V3 Pools",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "balancer",
+    "pool"
+  ],
+  "tags": {
+    "pool": {
+      "name": "Pool",
+      "description": "AMM pool"
+    },
+    "balancer": {
+      "name": "Balancer",
+      "description": "Balancer pool"
+    },
+    "balV3": {
+      "name": "Balancer V3",
+      "description": "Balancer V3 pool"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 31337,
+      "address": "0x60dB1C8466e4C746BB010da721daB7328db067cF",
+      "name": "BV3ConstProd of (Test Token A / Test Token B)",
+      "symbol": "abBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "abBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x04B8313F9777999D8a98B54F0D45121A50E12B6a",
+      "name": "BV3ConstProd of (Test Token A / Test Token C)",
+      "symbol": "acBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "acBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xa28b0Df86382A1D54E08D57367133451EC5bD149",
+      "name": "BV3ConstProd of (Test Token B / Test Token C)",
+      "symbol": "bcBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "bcBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xb2aeEd87ed237DcD19933F25a31E78a1e377573F",
+      "name": "BV3ConstProd of (Wrapped Ether / Test Token C)",
+      "symbol": "wethcBalancerV3Const",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "wethcBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x11192c66CEA24A3D8a6bCaF01433A380DDddC469",
+      "name": "BV3ConstProd of (Test Token A / Test Token B)",
+      "symbol": "abBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "abBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x121601BF458Eac2514Ebb5F2e53f25aa2Ed7E112",
+      "name": "BV3ConstProd of (Test Token A / Test Token C)",
+      "symbol": "acBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "acBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xDcf86803d8C807De6965610160c6596f93B00502",
+      "name": "BV3ConstProd of (Test Token B / Test Token C)",
+      "symbol": "bcBalancerV3ConstPro",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "bcBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xeda224aB3a99aF02B7FF8169F4d4bA2C25305922",
+      "name": "BV3ConstProd of (Wrapped Ether / Test Token C)",
+      "symbol": "wethcBalancerV3Const",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "wethcBalancerV3ConstProdPool"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xa4dd15072478ab2deA433d4cFd8c63A95deceC3B",
+      "name": "BV3ConstProd of (Pachira Vault of (TTA / TTB) via TTA/TTB / ",
+      "symbol": "uniAbVault_ttA_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAbVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTA / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x76eC4DD96c4F642a5699A73545C2d60A0bF162BA",
+      "name": "BV3ConstProd of (Pachira Vault of (TTA / TTB) via TTA/TTB / ",
+      "symbol": "uniAbVault_ttB_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAbVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTA / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x1C4527F25Cb46F3F21b3Cf427d4c845e3255B964",
+      "name": "BV3ConstProd of (Pachira Vault of (TTA / TTC) via TTA/TTC / ",
+      "symbol": "uniAcVault_ttA_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAcVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTA / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xf2be5F660308b846290Dc18f85f2D4fb02582236",
+      "name": "BV3ConstProd of (Pachira Vault of (TTA / TTC) via TTA/TTC / ",
+      "symbol": "uniAcVault_ttC_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTA / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xEC40Fd743230962e13bB6C09c425EdEf310CC538",
+      "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via TTB/TTC / ",
+      "symbol": "uniBcVault_ttB_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniBcVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTB / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xBE26e5FdFB756ff60bBDFAF31437AaF68330f2CB",
+      "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via TTB/TTC / ",
+      "symbol": "uniBcVault_ttC_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniBcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTB / T"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x6D0ee36855bAb1F53A9f246fb6805E2156633728",
+      "name": "BV3ConstProd of (Pachira Vault (TTA / TTB) via vAMM-TTA/TTB ",
+      "symbol": "aeroAbVault_ttA_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAbVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTA / TTB)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xd1875fbdb6ea0EebBC39e45D7ECAc29E40B8d4f6",
+      "name": "BV3ConstProd of (Pachira Vault (TTA / TTB) via vAMM-TTA/TTB ",
+      "symbol": "aeroAbVault_ttB_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAbVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTA / TTB)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x249584C4C9847b4F2bAf24a8180ea4d955E1592D",
+      "name": "BV3ConstProd of (Pachira Vault (TTA / TTC) via vAMM-TTA/TTC ",
+      "symbol": "aeroAcVault_ttA_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAcVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTA / TTC)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x06FcAf1f44D57fA3b0348c7c79E7d766da1f5200",
+      "name": "BV3ConstProd of (Pachira Vault (TTA / TTC) via vAMM-TTA/TTC ",
+      "symbol": "aeroAcVault_ttC_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTA / TTC)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xE1a4e3efE5a62674FdDF2BB3E666Dfa0B503Aa43",
+      "name": "BV3ConstProd of (Pachira Vault (TTB / TTC) via vAMM-TTB/TTC ",
+      "symbol": "aeroBcVault_ttB_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroBcVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTB / TTC)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xDadda9e4A313314A5051cF6F8C4C0e3eDDC1C31F",
+      "name": "BV3ConstProd of (Pachira Vault (TTB / TTC) via vAMM-TTB/TTC ",
+      "symbol": "aeroBcVault_ttC_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroBcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTB / TTC)"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x1281b56F06b9c27BB04a36e4078D8A8Ba4191d6E",
+      "name": "BV3ConstProd of (Wrapped Ether / Pachira Vault (WETH / TTC) ",
+      "symbol": "aeroWethcVault_weth_",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroWethcVault_weth_BalancerPool",
+        "fullName": "BV3ConstProd of (Wrapped Ether / Pachira V"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0xcBbf0CbA8DBfad5e77e7C46c86ACC023a74A93d3",
+      "name": "BV3ConstProd of (Pachira Vault (WETH / TTC) via vAMM-WETH/TT",
+      "symbol": "aeroWethcVault_ttc_B",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroWethcVault_ttc_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (WETH / TTC"
+      }
+    },
+    {
+      "chainId": 84532,
+      "address": "0x965ef8E40c653e2a478F9599f1A401C87b3B15BB",
+      "name": "Balancer 80 PACHIRA 20 PACHIRA",
+      "symbol": "protocolDetfReserveP",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "protocolDetfReservePool"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x4d1B2A1a3EFD107E3B02199E8260D95319AAd399",
+      "name": "BV3ConstProd of (Test Token A / Pachira Vault of (TTA / TTB)",
+      "symbol": "uniAbVault_ttA_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAbVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token A / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x7a0997217E93A3C0561f2BB325A87cB7dAad55Ad",
+      "name": "BV3ConstProd of (Test Token B / Pachira Vault of (TTA / TTB)",
+      "symbol": "uniAbVault_ttB_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAbVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token B / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x81A94784807Bc20759A043f8cd10f99aAa445193",
+      "name": "BV3ConstProd of (Test Token A / Pachira Vault of (TTA / TTC)",
+      "symbol": "uniAcVault_ttA_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAcVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token A / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x9e741872793c8F42A96358320328D713d043884E",
+      "name": "BV3ConstProd of (Pachira Vault of (TTA / TTC) via UNI-V2 / T",
+      "symbol": "uniAcVault_ttC_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniAcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTA / T"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x09d89FBb8c6ACD3518a9373482b9225e026107ef",
+      "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via UNI-V2 / T",
+      "symbol": "uniBcVault_ttB_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniBcVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTB / T"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x4BcC6b75DCaC5C917A38f3039DCb49Acf8dFEee2",
+      "name": "BV3ConstProd of (Pachira Vault of (TTB / TTC) via UNI-V2 / T",
+      "symbol": "uniBcVault_ttC_Balan",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniBcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (TTB / T"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x6709E6C132e0751C6D2D903018f523d9Be0ce762",
+      "name": "BV3ConstProd of (Test Token A / Pachira Vault (TTA / TTB) vi",
+      "symbol": "aeroAbVault_ttA_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAbVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token A / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xAdb88dd6B1a0c24c61EC1466939ab2004dFcba86",
+      "name": "BV3ConstProd of (Test Token B / Pachira Vault (TTA / TTB) vi",
+      "symbol": "aeroAbVault_ttB_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAbVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token B / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x01EBF0827E021Fb84634a626050b00aE2024235d",
+      "name": "BV3ConstProd of (Test Token A / Pachira Vault (TTA / TTC) vi",
+      "symbol": "aeroAcVault_ttA_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAcVault_ttA_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token A / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xa30ad0C0b4B2215E2E2bfba84FEB3988ebc50FBc",
+      "name": "BV3ConstProd of (Pachira Vault (TTA / TTC) via vAMM-TTA/TTC ",
+      "symbol": "aeroAcVault_ttC_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroAcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (TTA / TTC)"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xEEF0107A78C1E6461d44065Bf55FA23cCab14eC3",
+      "name": "BV3ConstProd of (Test Token B / Pachira Vault (TTB / TTC) vi",
+      "symbol": "aeroBcVault_ttB_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroBcVault_ttB_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token B / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x60f8AC1f25ED13F10A611BeF46828a826b5C86C4",
+      "name": "BV3ConstProd of (Test Token C / Pachira Vault (TTB / TTC) vi",
+      "symbol": "aeroBcVault_ttC_Bala",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroBcVault_ttC_BalancerPool",
+        "fullName": "BV3ConstProd of (Test Token C / Pachira Va"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0xDeE813C39B37DeD32018456dfaA013a6E993D232",
+      "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via UNI-V2 / ",
+      "symbol": "uniWethcVault_weth_B",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniWethcVault_weth_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (WETH / "
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x4392eF8956340F800017A3B7A29b656e9d83680A",
+      "name": "BV3ConstProd of (Pachira Vault of (WETH / TTC) via UNI-V2 / ",
+      "symbol": "uniWethcVault_ttc_Ba",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "uniWethcVault_ttc_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault of (WETH / "
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x5c7bc267affc36cE876229c5921e1F964AD78b11",
+      "name": "BV3ConstProd of (Wrapped Ether / Pachira Vault (WETH / TTC) ",
+      "symbol": "aeroWethcVault_weth_",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroWethcVault_weth_BalancerPool",
+        "fullName": "BV3ConstProd of (Wrapped Ether / Pachira V"
+      }
+    },
+    {
+      "chainId": 31337,
+      "address": "0x7eC394c10b02f48aBD0608a466b9d397d8EBE93f",
+      "name": "BV3ConstProd of (Pachira Vault (WETH / TTC) via vAMM-WETH/TT",
+      "symbol": "aeroWethcVault_ttc_B",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "balancer",
+        "balV3"
+      ],
+      "extensions": {
+        "fullSymbol": "aeroWethcVault_ttc_BalancerPool",
+        "fullName": "BV3ConstProd of (Pachira Vault (WETH / TTC"
+      }
+    }
+  ]
+}

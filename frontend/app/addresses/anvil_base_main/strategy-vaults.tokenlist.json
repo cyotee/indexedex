@@ -1,0 +1,113 @@
+{
+  "name": "Indexedex Strategy Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "strat": {
+      "name": "Strategy Vault",
+      "description": "Pachira strategy vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 31337,
+      "address": "0xfE42b49d5B9bf7a074F05797606407733e669507",
+      "name": "Pachira Vault (TTA / TTB) via vAMM-TTA/TTB",
+      "symbol": "aeroAbSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0x3A73F8d759aD0af443797d97ef63731E36cE3Fb0",
+      "name": "Pachira Vault (TTA / TTC) via vAMM-TTA/TTC",
+      "symbol": "aeroAcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0xd1bf15C81d10C5e1A2eE0026DE7Bd5669ddFb78a",
+      "name": "Pachira Vault (TTB / TTC) via vAMM-TTB/TTC",
+      "symbol": "aeroBcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0x53BbDbD9bc2637edCc3154Ad3EAA1B8f7A343236",
+      "name": "Pachira Vault (WETH / TTC) via vAMM-WETH/TTC",
+      "symbol": "aeroWethcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0xCF0B69ca3C3e9f862CE1cF3b55dcf055395f071E",
+      "name": "Pachira Vault of (TTA / TTB) via UNI-V2",
+      "symbol": "abSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0x7023e40daa269be28492d942CD7Cb639e30D7EA4",
+      "name": "Pachira Vault of (TTA / TTC) via UNI-V2",
+      "symbol": "acSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0x26e51F04427f13060aF55EFD2a22e21a6a54ceB0",
+      "name": "Pachira Vault of (TTB / TTC) via UNI-V2",
+      "symbol": "bcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 31337,
+      "address": "0x36750F8040a5824594FdaAd2074d020eb128cA54",
+      "name": "Pachira Vault of (WETH / TTC) via UNI-V2",
+      "symbol": "wethcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "name": "Indexedex Strategy Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "strat": {
+      "name": "Strategy Vault",
+      "description": "Pachira strategy vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 84532,
+      "address": "0xA7FF70C43E4AC58d254BE88b9e556Df9db8990Ff",
+      "name": "Pachira Vault (TTB / TTA) via vAMM-TTB/TTA",
+      "symbol": "aeroAbSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x5Ae3C5DDC163B378a166E82BFa7ce5b7587AFeA4",
+      "name": "Pachira Vault (TTA / TTC) via vAMM-TTA/TTC",
+      "symbol": "aeroAcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0xb238fA9C5535368352BB1926B820D74b6fd83071",
+      "name": "Pachira Vault (TTB / TTC) via vAMM-TTB/TTC",
+      "symbol": "aeroBcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x2dC4ad5F15057f4fbA46452489B43097ca006C5C",
+      "name": "Pachira Vault of (TTB / TTA) via TTB/TTA",
+      "symbol": "abSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x353F85e1f46FD25843b00A3d3f72D0d09d9b407E",
+      "name": "Pachira Vault of (TTA / TTC) via TTA/TTC",
+      "symbol": "acSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x7c99aa669CD36bfE5eA381aB9d2EdE419a558511",
+      "name": "Pachira Vault of (TTB / TTC) via TTB/TTC",
+      "symbol": "bcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    }
+  ]
+}

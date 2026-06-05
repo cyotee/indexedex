@@ -1,0 +1,58 @@
+{
+  "name": "Indexedex Protocol DETFs",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "detf"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "detf": {
+      "name": "Protocol DETF",
+      "description": "Protocol decentralized ETF"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x607Eb93ab1868A8B5Ae904bA063380505E4764F7",
+      "name": "Protocol DETF CHIR",
+      "symbol": "CHIR",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "detf"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xa8c661A809be3Ab7a4fe964C2AA5bD5b36810b5E",
+      "name": "Rich Token",
+      "symbol": "RICH",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "detf"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xaea8662dedC4D5C32653E9ae0310B705cBad549B",
+      "name": "RICHIR",
+      "symbol": "RICHIR",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "detf"
+      ]
+    }
+  ]
+}

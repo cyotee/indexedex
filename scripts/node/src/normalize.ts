@@ -2,6 +2,7 @@ import type { ManifestFragment, TokenInfo } from './types.js'
 
 const MAX_SYMBOL = 20
 const MAX_NAME = 60
+const MAX_EXT_STRING = 42
 
 export interface NormalizedToken {
   token: TokenInfo
@@ -16,7 +17,9 @@ export function normalizeFragmentToToken(f: ManifestFragment, tags: string[]): N
 
   let symbol = f.symbol
   if (symbol.length > MAX_SYMBOL) {
-    if (extensions['fullSymbol'] === undefined) extensions['fullSymbol'] = symbol
+    if (extensions['fullSymbol'] === undefined) {
+      extensions['fullSymbol'] = symbol.slice(0, MAX_EXT_STRING)
+    }
     symbol = symbol.slice(0, MAX_SYMBOL)
     symbolTruncated = true
   }
@@ -24,7 +27,9 @@ export function normalizeFragmentToToken(f: ManifestFragment, tags: string[]): N
 
   let name = f.name
   if (name.length > MAX_NAME) {
-    if (extensions['fullName'] === undefined) extensions['fullName'] = name
+    if (extensions['fullName'] === undefined) {
+      extensions['fullName'] = name.slice(0, MAX_EXT_STRING)
+    }
     name = name.slice(0, MAX_NAME)
     nameTruncated = true
   }

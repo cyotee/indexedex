@@ -1,0 +1,103 @@
+{
+  "name": "Indexedex Uniswap V2 Pools",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "uniswap",
+    "pool"
+  ],
+  "tags": {
+    "pool": {
+      "name": "Pool",
+      "description": "AMM pool"
+    },
+    "uniV2": {
+      "name": "Uniswap V2",
+      "description": "Uniswap V2 pool LP token"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x8359E6c5fD32570C488EEF3640249e522Fd4011a",
+      "name": "MockUniV2 Pair of TTA/TTB",
+      "symbol": "abUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x923261aD5bdD9Fef61c593A87511C1438781a720",
+      "name": "MockUniV2 Pair of TTA/TTC",
+      "symbol": "acUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xB32C02C68f3BF29787AE4088E263873e50593Fc8",
+      "name": "MockUniV2 Pair of TTB/TTC",
+      "symbol": "bcUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xBD8f53Fa32c92bd44C706776425a5E2460D60919",
+      "name": "MockUniV2 Pair of TTB/TTA",
+      "symbol": "abUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xDd741f35C09E081fB26aE16602A063558918a72D",
+      "name": "MockUniV2 Pair of TTC/TTA",
+      "symbol": "acUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xE5bFa4aDfc5f988A46C379fBa8c37B9Cbe1840db",
+      "name": "MockUniV2 Pair of TTB/TTC",
+      "symbol": "bcUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xD618875894E1aEbf3eb9e3671D0061e9B9D2Fcfb",
+      "name": "MockUniV2 Pair of WETH/TTC",
+      "symbol": "wethcUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    }
+  ]
+}

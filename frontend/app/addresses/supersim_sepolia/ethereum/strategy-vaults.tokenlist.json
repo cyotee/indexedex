@@ -1,0 +1,135 @@
+{
+  "name": "Indexedex Strategy Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "strat": {
+      "name": "Strategy Vault",
+      "description": "Pachira strategy vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x44c12709c72dd4b6120f26A2370acF2BBeA378A2",
+      "name": "Pachira Vault (TTA / TTB) via vAMM-TTA/TTB",
+      "symbol": "aeroAbSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xF84b2D2020492155BD5Dc3B2C8a152Bbbb78cd1E",
+      "name": "Pachira Vault (TTA / TTC) via vAMM-TTA/TTC",
+      "symbol": "aeroAcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x47238f5ab96C9C7BCe975bA8fdD27E7BAB0C1EA0",
+      "name": "Pachira Vault (TTB / TTC) via vAMM-TTB/TTC",
+      "symbol": "aeroBcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x3Ca53F789a81e45dc33c3CD6e976a27c1dF00984",
+      "name": "Pachira Vault of (TTA / TTB) via TTA/TTB",
+      "symbol": "abSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xA9C8B8116B69b20D75A13486669FE8B8D53CA6cC",
+      "name": "Pachira Vault of (TTA / TTC) via TTA/TTC",
+      "symbol": "acSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x2aB7beaD7eD9C93751340b6327c711CF56C7F0E8",
+      "name": "Pachira Vault of (TTB / TTC) via TTB/TTC",
+      "symbol": "bcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xbe02F5C674c6F078976C67A5ab217773B8a2eEd0",
+      "name": "Pachira Vault of (TTB / TTA) via TTB/TTA",
+      "symbol": "abSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xa2d0719497863e31973De9dc965d9696054653eA",
+      "name": "Pachira Vault of (TTC / TTA) via TTC/TTA",
+      "symbol": "acSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xebEcFED74482d729b93B7052351862bF780e8B66",
+      "name": "Pachira Vault of (TTB / TTC) via TTB/TTC",
+      "symbol": "bcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x866DF7957d6a9ecaED693aCD375d970A93d10Aa2",
+      "name": "Pachira Vault of (WETH / TTC) via WETH/TTC",
+      "symbol": "wethcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    }
+  ]
+}

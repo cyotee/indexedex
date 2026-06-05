@@ -1,0 +1,91 @@
+{
+  "name": "Indexedex Strategy Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "strat": {
+      "name": "Strategy Vault",
+      "description": "Pachira strategy vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0xb0eeEeE07590Bf0609a1c6b63De5a3028839a458",
+      "name": "Pachira Vault (TTA / TTB) via vAMM-TTA/TTB",
+      "symbol": "aeroAbSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xe5527f0603D02cA7cD14e22bECC7F2f35c96e654",
+      "name": "Pachira Vault (TTA / TTC) via vAMM-TTA/TTC",
+      "symbol": "aeroAcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x97EE78a3d07Be4c14994306be53b399af890Ad2c",
+      "name": "Pachira Vault (TTC / TTB) via vAMM-TTC/TTB",
+      "symbol": "aeroBcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x22d4A4D2eea56D8fD9AAdB1b1f0D93344f141163",
+      "name": "Pachira Vault of (TTA / TTB) via TTA/TTB",
+      "symbol": "abSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xA66739dAA389E5B079e8119B6F0ed0B7FB907462",
+      "name": "Pachira Vault of (TTA / TTC) via TTA/TTC",
+      "symbol": "acSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xDf9f815Bcf4CA180FEE72F5D96022694C09C6716",
+      "name": "Pachira Vault of (TTC / TTB) via TTC/TTB",
+      "symbol": "bcSV",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    }
+  ]
+}

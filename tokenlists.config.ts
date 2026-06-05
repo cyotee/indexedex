@@ -85,7 +85,7 @@ export const config: AggregatorConfig = {
       defaultTags: [],
       tagDefinitions: {
         vault: { name: 'Vault', description: 'Vault share token' },
-        erc4626: { name: 'ERC4626', description: 'ERC4626-compliant vault' },
+        erc4626: { name: 'ERC4626', description: 'ERC4626 compliant vault' },
       },
     },
     {

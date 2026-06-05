@@ -1,0 +1,92 @@
+{
+  "name": "Indexedex ERC4626 Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault",
+    "erc4626"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "erc4626": {
+      "name": "ERC4626",
+      "description": "ERC4626 compliant vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0xb5CFa72bcEf5D87b2A3d7e959686Bd1aDAdCe26e",
+      "name": " Crane ERC4626 of Test Token A",
+      "symbol": "ttaERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x57Ea5CAAbA317ab7083370B258f75C780F37feD7",
+      "name": " Crane ERC4626 of Test Token B",
+      "symbol": "ttbERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x941F0148711530b7824B126B64E707CE1A8111d0",
+      "name": " Crane ERC4626 of Test Token C",
+      "symbol": "ttcERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xAfD33d8F5Fdb373700919C33A27e87AD779896e3",
+      "name": " Crane ERC4626 of Test Token A",
+      "symbol": "ttaERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xc675A6B31a3f25B935556F54416e56E773280eC3",
+      "name": " Crane ERC4626 of Test Token B",
+      "symbol": "ttbERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x93Ec8390B6136D0D3948eab7B508ef75C24820d1",
+      "name": " Crane ERC4626 of Test Token C",
+      "symbol": "ttcERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    }
+  ]
+}

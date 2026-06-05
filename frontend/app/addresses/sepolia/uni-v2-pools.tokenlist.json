@@ -1,0 +1,59 @@
+{
+  "name": "Indexedex Uniswap V2 Pools",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "uniswap",
+    "pool"
+  ],
+  "tags": {
+    "pool": {
+      "name": "Pool",
+      "description": "AMM pool"
+    },
+    "uniV2": {
+      "name": "Uniswap V2",
+      "description": "Uniswap V2 pool LP token"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x07C03979911f2812A6764dCD9C5D3d873fdCEec3",
+      "name": "MockUniV2 Pair of TTA/TTB",
+      "symbol": "abUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x0E7C3571551F2192537BD71b636615F9B7C361ad",
+      "name": "MockUniV2 Pair of TTA/TTC",
+      "symbol": "acUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x43D09071aAD7ABfA404f738649c30094ae800949",
+      "name": "MockUniV2 Pair of TTC/TTB",
+      "symbol": "bcUniV2Pool",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    }
+  ]
+}

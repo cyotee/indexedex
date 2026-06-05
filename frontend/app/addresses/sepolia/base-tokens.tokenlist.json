@@ -1,0 +1,59 @@
+{
+  "name": "Indexedex Base Tokens",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "tokens"
+  ],
+  "tags": {
+    "token": {
+      "name": "Token",
+      "description": "ERC20 token"
+    },
+    "testToken": {
+      "name": "Test Token",
+      "description": "Test ERC20"
+    },
+    "weth": {
+      "name": "WETH",
+      "description": "Wrapped Ether"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x5Ce5eA23c3d7C1C8EDba9F4A44A9fff376275BF2",
+      "name": "Test Token A",
+      "symbol": "TTA",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xDe4071a0bcC669b2E3AB9182d0C3B26D3b75CCD2",
+      "name": "Test Token B",
+      "symbol": "TTB",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x6Fb1727CeF7C7a25dBC99EC50a2309777d54A258",
+      "name": "Test Token C",
+      "symbol": "TTC",
+      "decimals": 18,
+      "tags": [
+        "token"
+      ]
+    }
+  ]
+}
