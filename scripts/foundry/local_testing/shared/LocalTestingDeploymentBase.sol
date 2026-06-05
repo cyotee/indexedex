@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
+import {ManifestEntry, ManifestEntryLib} from "./ManifestEntry.sol";
 
 /// @title LocalTestingDeploymentBase
 /// @notice Shared base contract for local-testing deployment stages
@@ -86,6 +87,30 @@ abstract contract LocalTestingDeploymentBase is Script {
     function _writeJson(string memory json, string memory filename) internal {
         _ensureOutDir();
         vm.writeJson(json, _artifactPath(filename));
+    }
+
+    /// @notice Root directory for Token List fragment files emitted by deploy scripts.
+    /// @dev Lives under `_outDir()/fragments/` so legacy per-category JSONs at `_outDir()/`
+    ///      are not disturbed during the Phase 1 parallel-produce migration.
+    function _fragmentRoot() internal view returns (string memory) {
+        return string.concat(_outDir(), "/fragments");
+    }
+
+    /// @notice Write a single Token List fragment to deployments/<env>/<chain>/fragments/<typeDir>/<key>.json.
+    /// @param typeDir Directory bucket (e.g. "tokens", "pools/balancerV3", "vaults/strategy").
+    /// @param key    Stable identifier within the bucket (e.g. "tta", "abPool"); also the filename stem.
+    /// @param entry  Fragment payload. Extensions are not written from Solidity in Phase 1.
+    function _writeManifestEntry(
+        string memory typeDir,
+        string memory key,
+        ManifestEntry memory entry
+    ) internal {
+        string memory dir = string.concat(_fragmentRoot(), "/", typeDir);
+        vm.createDir(dir, true);
+
+        string memory path = string.concat(dir, "/", key, ".json");
+        string memory json = ManifestEntryLib.toJson(entry);
+        vm.writeFile(path, json);
     }
 
     function _logHeader(string memory stageName) internal pure {
