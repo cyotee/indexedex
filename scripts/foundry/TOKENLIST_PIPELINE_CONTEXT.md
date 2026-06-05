@@ -357,7 +357,7 @@ produces the same data the legacy path was producing — there was nothing to sh
 diff against meaningfully. Worth resurrecting only if a future change makes the
 two paths diverge.
 
-### Phase 3 — Cutover ✅ done
+### Phase 3 — UI switch-over ✅ done
 - `getCached()` rewired to compose lists + tag filter
 - Public API surface unchanged (no UI call sites needed editing)
 - Frontend `tsc --noEmit` clean
@@ -460,7 +460,7 @@ In `git log` order (newest first):
 22d716b99  feat(scripts/node): tokenlist aggregator package with TDD-tested modules
 ```
 
-Each commit is independently revertable. The aggregator package (oldest) is the
+Each commit is independently reversible. The aggregator package (oldest) is the
 foundation; reverting it cascades to the others. Reverting only the UI consumer
 commit (`95e62b2be`) puts the UI back on the legacy per-category JSON path while
 keeping the new producer/aggregator infrastructure available.
