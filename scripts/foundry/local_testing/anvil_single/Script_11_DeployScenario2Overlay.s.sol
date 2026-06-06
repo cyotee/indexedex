@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
+import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
@@ -49,6 +50,7 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
         vm.stopBroadcast();
 
         _exportJson();
+        _exportFragments();
         _logResults();
     }
 
@@ -140,6 +142,40 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
         json = vm.serializeUint("scenario2", "chainId", block.chainid);
         json = vm.serializeString("scenario2", "networkProfile", _networkProfile());
         _writeJson(json, ARTIFACT_FILE);
+    }
+
+    function _exportFragments() internal {
+        _writeBalancerPoolFragment(
+            "balUniAbWithB",
+            balUniAbWithB,
+            "Balancer TTB + UniV2 AB Vault",
+            "balUniAbB"
+        );
+        _writeBalancerPoolFragment(
+            "balUniBWethWithB",
+            balUniBWethWithB,
+            "Balancer TTB + UniV2 BWETH Vault",
+            "balUniBWethB"
+        );
+    }
+
+    function _writeBalancerPoolFragment(
+        string memory key,
+        address poolAddr,
+        string memory name,
+        string memory symbol
+    ) internal {
+        if (poolAddr == address(0)) return;
+        string[] memory tags = new string[](0);
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: poolAddr,
+            name: name,
+            symbol: symbol,
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry("pools/balancerV3", key, entry);
     }
 
     function _logResults() internal view {

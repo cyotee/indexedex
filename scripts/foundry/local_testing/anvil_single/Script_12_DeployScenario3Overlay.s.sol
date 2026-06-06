@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
+import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
@@ -181,6 +182,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         vm.stopBroadcast();
 
         _exportJson();
+        _exportFragments();
         _logResults();
     }
 
@@ -552,6 +554,62 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         json = vm.serializeUint("scenario3", "chainId", block.chainid);
         json = vm.serializeString("scenario3", "networkProfile", _networkProfile());
         _writeJson(json, ARTIFACT_FILE);
+    }
+
+    function _exportFragments() internal {
+        _writeFragment("tokens", "richir", richirToken, "Rich Reserve Token", "RICHIR", new string[](0));
+        _writeFragment(
+            "vaults/protocolDetf",
+            "protocolDetf",
+            protocolDetf,
+            "Protocol DETF CHIR",
+            "CHIR",
+            new string[](0)
+        );
+        _writeFragment(
+            "vaults/strategy",
+            "wethRichVault",
+            wethRichVault,
+            "WETH/RICH Strategy Vault",
+            "wethRichVlt",
+            new string[](0)
+        );
+        _writeFragment(
+            "pools/balancerV3",
+            "balancerWethDetfPool",
+            weightedPool,
+            "Balancer 80/20 WETH/DETF Pool",
+            "wethDetfBP",
+            new string[](0)
+        );
+        _writeFragment(
+            "pools/balancerV3",
+            "reservePool",
+            reservePool,
+            "DETF Reserve Pool",
+            "reserveBP",
+            new string[](0)
+        );
+    }
+
+    function _writeFragment(
+        string memory typeDir,
+        string memory key,
+        address addr,
+        string memory name,
+        string memory symbol,
+        string[] memory tags
+    ) internal {
+        if (addr == address(0)) return;
+        ManifestEntry memory entry = ManifestEntry({
+            chainId: block.chainid,
+            addr: addr,
+            name: name,
+            symbol: symbol,
+            decimals: 18,
+            tags: tags
+        });
+        _writeManifestEntry(typeDir, key, entry);
     }
 
     function _logResults() internal view {

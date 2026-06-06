@@ -114,8 +114,10 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
     function _exportFragments() internal {
         if (localWeth == address(0)) return;
 
-        string[] memory tags = new string[](1);
+        // wrapUnwrap tag drives the WETH (Wrap/Unwrap) entry in the Select Pool menu.
+        string[] memory tags = new string[](2);
         tags[0] = "weth";
+        tags[1] = "wrapUnwrap";
 
         ManifestEntry memory entry = ManifestEntry({
             chainId: block.chainid,
