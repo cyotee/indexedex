@@ -255,7 +255,9 @@ function getCached(
   }
 
   const artifactsChainId = resolvedChainId
-  const store = composeLists(getListRefs(environment, artifactsChainId))
+  // Token Lists are chain-keyed; the env layer no longer affects which lists
+  // feed the dropdowns. See frontend/app/lib/tokenlistRegistry.ts.
+  const store = composeLists(getListRefs(artifactsChainId))
 
   const baseTokens = fromComposed(store, ['token'], artifactsChainId)
   const erc4626Tokens = fromComposed(store, ['erc4626'], artifactsChainId)
@@ -578,13 +580,13 @@ function toPoolOption(token: TokenInfo, include: MenuListInclude): PoolOption {
   return { value: token.address as Address, label, type: include.type }
 }
 
-export function buildPoolOptionsForChain(
-  chainId: number,
-  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
-): PoolOption[] {
-  const resolvedChainId = resolveArtifactsChainId(chainId, environment)
+export function buildPoolOptionsForChain(chainId: number): PoolOption[] {
+  // Map Anvil/localhost chain ids (31337/1337) onto Sepolia so a pure-local devnet
+  // still sees the Sepolia chain's Token Lists. Forked Anvil (chain 11155111) passes
+  // through unchanged.
+  const resolvedChainId = resolveArtifactsChainId(chainId)
   if (resolvedChainId === null) return []
-  const refs = getListRefs(environment, resolvedChainId)
+  const refs = getListRefs(resolvedChainId)
   return buildOptionsFromMenu('pool-select', resolvedChainId, refs)
 }
 

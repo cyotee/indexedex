@@ -1,0 +1,59 @@
+{
+  "name": "Indexedex ERC4626 Vaults",
+  "timestamp": "2026-06-05T22:00:57.754Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault",
+    "erc4626"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "erc4626": {
+      "name": "ERC4626",
+      "description": "ERC4626 compliant vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 84532,
+      "address": "0x3b29E38E0914a76eC5fA61680Ec1e8BBc99a4651",
+      "name": " Crane ERC4626 of Test Token A",
+      "symbol": "ttaERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x24E32668E11E54092C8435Ca2Fa764759EB4B65d",
+      "name": " Crane ERC4626 of Test Token B",
+      "symbol": "ttbERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    },
+    {
+      "chainId": 84532,
+      "address": "0x8653448d1a94803F1b3347f866117246B2420dEF",
+      "name": " Crane ERC4626 of Test Token C",
+      "symbol": "ttcERC4626Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "erc4626"
+      ]
+    }
+  ]
+}

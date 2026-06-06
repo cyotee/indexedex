@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { readFragmentsForChain } from '../src/readFragments.js'
+import { readFragmentsForInput } from '../src/readFragments.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const FIXTURES = join(__dirname, '..', 'fixtures', 'sample-deploys')
+const FIXTURE_ROOT = join(__dirname, '..', 'fixtures', 'sample-deploys', 'sepolia', '11155111')
 
-describe('readFragmentsForChain', () => {
-  it('returns all fragments for the chain with sourceTypeDir attached', async () => {
-    const fragments = await readFragmentsForChain(FIXTURES, 'sepolia', '11155111')
+describe('readFragmentsForInput', () => {
+  it('returns all fragments under the input with sourceTypeDir attached', async () => {
+    const fragments = await readFragmentsForInput(FIXTURE_ROOT)
     expect(fragments).toHaveLength(2)
 
     const token = fragments.find((f) => f.symbol === 'TTA')!
@@ -23,8 +23,8 @@ describe('readFragmentsForChain', () => {
     ])
   })
 
-  it('returns empty array when the chain directory does not exist', async () => {
-    const fragments = await readFragmentsForChain(FIXTURES, 'sepolia', '999')
+  it('returns empty array when the input directory does not exist', async () => {
+    const fragments = await readFragmentsForInput(join(FIXTURE_ROOT, 'doesnotexist'))
     expect(fragments).toEqual([])
   })
 })

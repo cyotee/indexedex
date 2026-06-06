@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { readFragmentsForChain } from './readFragments.js'
+import { readFragmentsForInput } from './readFragments.js'
 import { buildList } from './buildList.js'
 import { loadPreviousList, writeList } from './writeList.js'
 import type { AggregatorConfig } from './types.js'
@@ -36,45 +36,39 @@ async function main() {
   let totalTokens = 0
   let failures = 0
 
-  for (const env of config.environments) {
-    for (const chain of env.chains) {
-      // chainDir names the chain's logical output folder; fragments live in a `/fragments`
-      // subdirectory of the input path (the Solidity helper writes there). Token Lists are
-      // emitted under outputRoot/<env>/<chainDir>/ so the UI registry can import them
-      // without a /fragments segment.
-      const fragments = await readFragmentsForChain(
-        join(repoRoot, config.inputRoot),
-        env.environment,
-        chain.chainDir + '/fragments'
-      )
+  for (const input of config.inputs) {
+    // Fragments live in a `fragments/` subdirectory of each input.
+    // Outputs are keyed by chain id only: outputRoot/chain/<chainId>/<bucket>.tokenlist.json.
+    const fragments = await readFragmentsForInput(
+      join(repoRoot, config.inputRoot, input.inputDir, 'fragments')
+    )
 
-      for (const bucket of config.buckets) {
-        const outDir = join(repoRoot, config.outputRoot, env.environment, chain.chainDir)
-        const outPath = join(outDir, `${bucket.id}.tokenlist.json`)
-        const previous = await loadPreviousList(outPath)
-        const result = buildList({ bucket, fragments, previousList: previous, timestamp })
+    for (const bucket of config.buckets) {
+      const outDir = join(repoRoot, config.outputRoot, 'chain', String(input.chainId))
+      const outPath = join(outDir, `${bucket.id}.tokenlist.json`)
+      const previous = await loadPreviousList(outPath)
+      const result = buildList({ bucket, fragments, previousList: previous, timestamp })
 
-        if (result.list.tokens.length === 0) continue
+      if (result.list.tokens.length === 0) continue
 
-        if (!result.validation.valid) {
-          failures++
-          console.error(`[FAIL] ${env.environment}/${chain.chainDir}/${bucket.id}`)
-          for (const e of result.validation.errors) console.error(`  - ${e}`)
-          continue
-        }
-
-        if (result.bump.bump === 'none' && previous !== null) {
-          console.log(`[SKIP] ${env.environment}/${chain.chainDir}/${bucket.id} unchanged`)
-          continue
-        }
-
-        await writeList(outPath, result.list)
-        totalLists++
-        totalTokens += result.list.tokens.length
-        console.log(
-          `[OK]   ${env.environment}/${chain.chainDir}/${bucket.id} ${formatVersion(result.list.version)} (${result.bump.bump}, ${result.list.tokens.length} tokens)`
-        )
+      if (!result.validation.valid) {
+        failures++
+        console.error(`[FAIL] chain/${input.chainId}/${bucket.id} (from ${input.inputDir})`)
+        for (const e of result.validation.errors) console.error(`  - ${e}`)
+        continue
       }
+
+      if (result.bump.bump === 'none' && previous !== null) {
+        console.log(`[SKIP] chain/${input.chainId}/${bucket.id} unchanged (from ${input.inputDir})`)
+        continue
+      }
+
+      await writeList(outPath, result.list)
+      totalLists++
+      totalTokens += result.list.tokens.length
+      console.log(
+        `[OK]   chain/${input.chainId}/${bucket.id} ${formatVersion(result.list.version)} (${result.bump.bump}, ${result.list.tokens.length} tokens) <- ${input.inputDir}`
+      )
     }
   }
 

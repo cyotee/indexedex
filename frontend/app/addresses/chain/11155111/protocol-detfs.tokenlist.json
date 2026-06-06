@@ -1,0 +1,24 @@
+{
+  "name": "Indexedex Protocol DETFs",
+  "timestamp": "2026-06-05T00:00:00.000Z",
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+  },
+  "keywords": [
+    "indexedex",
+    "detf"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "detf": {
+      "name": "Protocol DETF",
+      "description": "Protocol decentralized ETF"
+    }
+  },
+  "tokens": []
+}

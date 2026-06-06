@@ -24,20 +24,20 @@ export interface ListBucketConfig {
   tagDefinitions: Record<string, { name: string; description: string }>
 }
 
-export interface ChainEntry {
+export interface InputEntry {
+  /** Path under inputRoot containing a `fragments/` subdir. */
+  inputDir: string
+  /** Chain id that this input's fragments target. Output goes to chain/<chainId>/. */
   chainId: ChainId
-  chainDir: string
-}
-
-export interface EnvironmentEntry {
-  environment: string
-  chains: ChainEntry[]
 }
 
 export interface AggregatorConfig {
+  /** Root for fragment inputs. Typically "deployments". */
   inputRoot: string
+  /** Root for Token List outputs. Typically "frontend/app/addresses". */
   outputRoot: string
-  environments: EnvironmentEntry[]
+  /** Each input is a deploy directory mapped to a chain id. */
+  inputs: InputEntry[]
   buckets: ListBucketConfig[]
 }
 

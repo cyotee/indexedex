@@ -1,23 +1,16 @@
 import type { AggregatorConfig } from './scripts/node/src/types.js'
 
+// Map each deploy directory to the chain id its fragments target.
+// Outputs go to frontend/app/addresses/chain/<chainId>/<bucket>.tokenlist.json.
+// A given chain id can appear multiple times; later inputs override earlier ones
+// (last-writer-wins per (chainId, bucket)).
 export const config: AggregatorConfig = {
   inputRoot: 'deployments',
   outputRoot: 'frontend/app/addresses',
-  environments: [
-    {
-      environment: 'local_testing',
-      chains: [
-        { chainId: 31337, chainDir: 'anvil_single' },
-        { chainId: 11155111, chainDir: 'anvil_single' },
-      ],
-    },
-    {
-      environment: 'supersim_sepolia',
-      chains: [
-        { chainId: 11155111, chainDir: 'ethereum' },
-        { chainId: 84532, chainDir: 'base' },
-      ],
-    },
+  inputs: [
+    { inputDir: 'local_testing/anvil_single', chainId: 11155111 },
+    { inputDir: 'supersim_sepolia/ethereum', chainId: 11155111 },
+    { inputDir: 'supersim_sepolia/base', chainId: 84532 },
   ],
   buckets: [
     {
@@ -30,6 +23,7 @@ export const config: AggregatorConfig = {
         token: { name: 'Token', description: 'ERC20 token' },
         testToken: { name: 'Test Token', description: 'Test ERC20' },
         weth: { name: 'WETH', description: 'Wrapped Ether' },
+        wrapUnwrap: { name: 'Wrap Unwrap', description: 'Pool select wrap unwrap entry' },
       },
     },
     {
