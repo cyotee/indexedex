@@ -7,6 +7,17 @@ import {
   type DeploymentEnvironment,
 } from '../addresses'
 
+// Chain-keyed platform overrides. Imported eagerly so getAddressArtifacts can
+// surface them synchronously. Latest deploy to a chain populates these files;
+// they win over the env-keyed ARTIFACT_REGISTRY.platform when present.
+import chain11155111Platform from '../addresses/chain/11155111/platform.json'
+import chain84532Platform from '../addresses/chain/84532/platform.json'
+
+const CHAIN_PLATFORM_OVERRIDES: Record<number, unknown> = {
+  11155111: chain11155111Platform,
+  84532: chain84532Platform,
+}
+
 export {
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_SEPOLIA,
@@ -76,6 +87,14 @@ export function getAddressArtifacts(
   const bundle = getArtifactBundle(environment, resolved)
   if (!bundle) {
     throw new Error(`No deployment bundle is registered for environment ${environment} on chain ${resolved}.`)
+  }
+
+  // Prefer the chain-keyed platform override when available. Each next deploy
+  // to a chain refreshes chain/<chainId>/platform.json so the latest deploy
+  // wins regardless of which legacy env the rest of the bundle belongs to.
+  const override = CHAIN_PLATFORM_OVERRIDES[resolved]
+  if (override && typeof override === 'object') {
+    return { ...bundle, platform: override }
   }
 
   return bundle
