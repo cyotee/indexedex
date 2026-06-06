@@ -3702,6 +3702,31 @@ export default function SwapPage() {
         {lastEditedField === 'out' && previewExactOutError && (
           <div className="text-xs text-amber-300 mt-2">Quote error: {previewExactOutError.message}</div>
         )}
+        {/* Surface why a quote isn't appearing — explicit-approval users were
+            seeing the Swap button stay disabled with no visible reason because
+            buildExactInArgs returned valid:false and the simulation silently
+            never fired. */}
+        {lastEditedField === 'in' && previewExactInError && (
+          <div className="text-xs text-amber-300 mt-2">Quote error: {previewExactInError.message}</div>
+        )}
+        {lastEditedField === 'in' &&
+          !previewExactInError &&
+          !previewExactIn &&
+          !!exactAmountInField && (
+            <div className="text-xs text-gray-400 mt-2">
+              {!routerReady
+                ? '⏳ Router unavailable — see the warning above.'
+                : !builtExactIn.valid
+                  ? `⚠️ Cannot build a swap route from this selection. Missing: ${
+                      builtExactIn.missing && builtExactIn.missing.length > 0
+                        ? builtExactIn.missing.join(', ')
+                        : '(no matching route — check the Use Token In/Out Vault toggles)'
+                    }`
+                  : previewExactInPending
+                    ? '⏳ Simulating querySwapSingleTokenExactIn on the router…'
+                    : '⏳ Waiting for quote…'}
+            </div>
+          )}
       </div>
 
       {/* Route Info */}
