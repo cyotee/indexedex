@@ -7,15 +7,15 @@ export const config: AggregatorConfig = {
     {
       environment: 'local_testing',
       chains: [
-        { chainId: 31337, chainDir: 'anvil_single/fragments' },
-        { chainId: 11155111, chainDir: 'anvil_single/fragments' },
+        { chainId: 31337, chainDir: 'anvil_single' },
+        { chainId: 11155111, chainDir: 'anvil_single' },
       ],
     },
     {
       environment: 'supersim_sepolia',
       chains: [
-        { chainId: 11155111, chainDir: 'ethereum/fragments' },
-        { chainId: 84532, chainDir: 'base/fragments' },
+        { chainId: 11155111, chainDir: 'ethereum' },
+        { chainId: 84532, chainDir: 'base' },
       ],
     },
   ],

@@ -1,0 +1,48 @@
+{
+  "name": "Indexedex Uniswap V2 Pools",
+  "timestamp": "2026-06-06T00:32:37.057Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "uniswap",
+    "pool"
+  ],
+  "tags": {
+    "pool": {
+      "name": "Pool",
+      "description": "AMM pool"
+    },
+    "uniV2": {
+      "name": "Uniswap V2",
+      "description": "Uniswap V2 pool LP token"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x6435B47Db58df6bACe6511b6d1F16c9975ADe015",
+      "name": "Uniswap V2 TTA/TTB Pool",
+      "symbol": "UNI-V2-AB",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x4D2E95C0843107d1a5F5Be15c077ADeD307436a9",
+      "name": "Uniswap V2 TTB/WETH Pool",
+      "symbol": "UNI-V2-BW",
+      "decimals": 18,
+      "tags": [
+        "pool",
+        "uniV2"
+      ]
+    }
+  ]
+}

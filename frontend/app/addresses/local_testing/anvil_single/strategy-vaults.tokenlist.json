@@ -1,0 +1,47 @@
+{
+  "name": "Indexedex Strategy Vaults",
+  "timestamp": "2026-06-06T00:32:37.057Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": [
+    "indexedex",
+    "vault"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "strat": {
+      "name": "Strategy Vault",
+      "description": "Pachira strategy vault"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0x150982Dab1758C270cC20Cf2a7a319094eee45AF",
+      "name": "Pachira Vault of (TTA / TTB)",
+      "symbol": "abUniV2Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0x433C893B8b599a2183527aBCD32072C638e19d43",
+      "name": "Pachira Vault of (TTB / WETH)",
+      "symbol": "bwUniV2Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    }
+  ]
+}

@@ -59,7 +59,7 @@ export const CHAIN_ID_SEPOLIA = 11155111 as const
 export const CHAIN_ID_BASE_SEPOLIA = 84532 as const
 const CANONICAL_PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia'
+export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia' | 'local_testing'
 export type ChainRole = 'ethereum' | 'base'
 export type CanonicalArtifactChainId = typeof CHAIN_ID_SEPOLIA | typeof CHAIN_ID_BASE_SEPOLIA
 
@@ -214,9 +214,23 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       balancerPools: supersimBaseBalancerPoolsJson,
     }),
   },
+  local_testing: {
+    [CHAIN_ID_SEPOLIA]: buildBundle('local_testing', CHAIN_ID_SEPOLIA, 'ethereum', {
+      platform: {},
+      tokens: [],
+      erc4626: [],
+      seigniorageDetfs: [],
+      protocolDetf: [],
+      strategyVaults: [],
+      uniV2Pools: [],
+      aerodromePools: [],
+      aerodromeStrategyVaults: [],
+      balancerPools: [],
+    }),
+  },
 }
 
-export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = ['sepolia', 'public_sepolia', 'supersim_sepolia']
+export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = ['sepolia', 'public_sepolia', 'supersim_sepolia', 'local_testing']
 
 export function getArtifactBundle(
   environment: DeploymentEnvironment,

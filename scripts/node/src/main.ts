@@ -38,10 +38,14 @@ async function main() {
 
   for (const env of config.environments) {
     for (const chain of env.chains) {
+      // chainDir names the chain's logical output folder; fragments live in a `/fragments`
+      // subdirectory of the input path (the Solidity helper writes there). Token Lists are
+      // emitted under outputRoot/<env>/<chainDir>/ so the UI registry can import them
+      // without a /fragments segment.
       const fragments = await readFragmentsForChain(
         join(repoRoot, config.inputRoot),
         env.environment,
-        chain.chainDir
+        chain.chainDir + '/fragments'
       )
 
       for (const bucket of config.buckets) {
