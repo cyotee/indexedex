@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
-import { useReadContract, useWriteContract } from 'wagmi'
+import { useReadContract, useReadContracts, useWriteContract } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
 import { balancerV3StandardExchangeRouterExactInQueryFacetAbi } from '../generated'
 import { balancerV3StandardExchangeRouterExactOutQueryFacetAbi } from '../generated'
@@ -42,11 +42,18 @@ import {
   resolvePoolTypeForChain,
   getStrategyVaultTokensForChain,
   isStrategyVaultTokenForChain,
+  selectFromMenu,
   type PoolOption,
   type TokenOption,
   type Address
 } from '../lib/tokenlists'
 import { CHAIN_ID_SEPOLIA } from '../addresses'
+import {
+  resolveRoute,
+  type BalancerRouteName,
+  type RouteResolution,
+  type VaultRouteName,
+} from './lib/routeMatcher'
 
 // Helper functions - moved outside component to prevent re-creation
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000' as `0x${string}`
@@ -69,16 +76,10 @@ const SELECTOR_SWAP_EXACT_OUT_WITH_PERMIT = '0x5bc8b2f3' as `0x${string}`
 
 type PoolType = 'balancer' | 'vault' | undefined
 
-type VaultRouteAuto =
+type SwapRouteAuto =
   | null
-  | { kind: 'pending' }
-  | { kind: 'invalid'; validTokens: `0x${string}`[] }
-  | {
-      kind: 'ok'
-      route: 'Strategy Vault Withdrawal' | 'Strategy Vault Deposit' | 'Vault Pass-Through'
-      useTokenInVault: boolean
-      useTokenOutVault: boolean
-    }
+  | RouteResolution<VaultRouteName>
+  | RouteResolution<BalancerRouteName>
 
 type BuildArgsInput = {
   poolType: PoolType
@@ -776,18 +777,23 @@ export default function SwapPage() {
   }, [resolvedChainId, poolAddress])
 
   /* ---------------------------------------------------------------------- */
-  /*       Standard Exchange Vault — auto-flag the Use Token In/Out Vault   */
-  /*       checkboxes by reading IBasicVault.vaultTokens() from the pool.   */
+  /*    Standard Exchange Vault auto-flagging via the route matcher         */
   /* ---------------------------------------------------------------------- */
+  // Two pool shapes, one matcher:
+  //   pool == vault       -> IBasicVault.vaultTokens() on the pool itself
+  //   pool == balancer    -> IVault.getPoolTokens(pool) + lazy
+  //                          IBasicVault.vaultTokens() for any pool tokens that
+  //                          appear in the chain's strategy-vaults list.
+  // Reads are wagmi-cached per address (vaultTokens is immutable) so the
+  // multicall fires at most once per (chain, balancer pool) pair.
 
   // Reset the manual-toggle guard whenever the user picks a different pool.
-  // Without this, an unchecked flag on one pool would persist when the user
-  // switched to another vault pool where the auto-detected route is different.
   useEffect(() => {
     vaultFlagsManuallyToggled.current = false
   }, [poolAddress])
 
-  const { data: vaultTokensData } = useReadContract({
+  // ---- pool == vault: read vaultTokens() directly from the pool ----
+  const { data: vaultTokensOfPool } = useReadContract({
     address: poolAddress as `0x${string}` | undefined,
     abi: [
       {
@@ -802,48 +808,141 @@ export default function SwapPage() {
     query: { enabled: poolType === 'vault' && !!poolAddress },
   })
 
-  // Map (pool, tokenIn, tokenOut, vault.vaultTokens()) -> route + flag state.
-  // Exactly mirrors the three pool==vault branches in
-  // BalancerV3StandardExchangeRouterExactInSwapTarget.sol:
-  //   - line 307: Vault Pass-Through         (tokenIn,tokenOut both underlying)
-  //   - line 372: Strategy Vault Deposit      (tokenIn underlying, tokenOut == vault share)
-  //   - line 422: Strategy Vault Withdrawal   (tokenIn == vault share, tokenOut underlying)
-  // Anything else hits the router's InvalidRoute revert at line 810.
-  const vaultRouteAuto = useMemo((): VaultRouteAuto => {
-    if (poolType !== 'vault') return null
+  // ---- pool == balancer: getPoolTokens + lazy candidate vault reads ----
+  const balancerV3VaultAddress = useMemo(
+    () => normalizeAddress((platform as any)?.balancerV3Vault),
+    [platform]
+  )
+
+  const { data: balancerPoolTokens } = useReadContract({
+    address: balancerV3VaultAddress as `0x${string}` | undefined,
+    abi: [
+      {
+        inputs: [{ name: 'pool', type: 'address' }],
+        name: 'getPoolTokens',
+        outputs: [{ name: 'tokens', type: 'address[]' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
+    functionName: 'getPoolTokens',
+    args: [(poolAddress ?? ZERO_ADDR) as `0x${string}`],
+    query: {
+      enabled: poolType === 'balancer' && !!poolAddress && !!balancerV3VaultAddress,
+    },
+  })
+
+  // Known strategy vault addresses on the active chain — the matcher only needs
+  // to read vaultTokens() for those that ALSO show up in the pool's tokens, so
+  // we shrink the multicall list by the pool's token list.
+  const strategyVaultAddressSet = useMemo(() => {
+    const set = new Set<string>()
+    for (const { token } of selectFromMenu('vaults-page', resolvedChainId)) {
+      set.add(token.address.toLowerCase())
+    }
+    return set
+  }, [resolvedChainId])
+
+  const candidateVaultsInPool = useMemo<`0x${string}`[]>(() => {
+    if (poolType !== 'balancer' || !balancerPoolTokens) return []
+    return (balancerPoolTokens as readonly `0x${string}`[]).filter((t) =>
+      strategyVaultAddressSet.has(t.toLowerCase())
+    )
+  }, [poolType, balancerPoolTokens, strategyVaultAddressSet])
+
+  const { data: candidateVaultTokensMulticall } = useReadContracts({
+    contracts: candidateVaultsInPool.map((addr) => ({
+      address: addr,
+      abi: [
+        {
+          inputs: [],
+          name: 'vaultTokens',
+          outputs: [{ name: 'tokens_', type: 'address[]' }],
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      functionName: 'vaultTokens' as const,
+    })),
+    query: { enabled: candidateVaultsInPool.length > 0 },
+  })
+
+  // Build the matcher's underlyingByVault input. For pool==vault we seed it
+  // with [poolAddress -> vaultTokens(pool)]. For pool==balancer we seed it
+  // with the multicall result keyed by candidate vault address.
+  const underlyingByVault = useMemo(() => {
+    const map = new Map<string, readonly `0x${string}`[]>()
+    if (poolType === 'vault' && poolAddress && vaultTokensOfPool) {
+      map.set(poolAddress.toLowerCase(), vaultTokensOfPool as readonly `0x${string}`[])
+    }
+    if (poolType === 'balancer' && candidateVaultTokensMulticall) {
+      candidateVaultsInPool.forEach((vaultAddr, idx) => {
+        const res = candidateVaultTokensMulticall[idx]
+        if (res?.status === 'success' && Array.isArray(res.result)) {
+          map.set(vaultAddr.toLowerCase(), res.result as readonly `0x${string}`[])
+        }
+      })
+    }
+    return map
+  }, [poolType, poolAddress, vaultTokensOfPool, candidateVaultsInPool, candidateVaultTokensMulticall])
+
+  // Run the matcher.
+  const swapRouteAuto = useMemo<SwapRouteAuto>(() => {
+    if (poolType !== 'vault' && poolType !== 'balancer') return null
     if (!poolAddress || !tokenInAddress || !tokenOutAddress) return null
-    if (!vaultTokensData) return { kind: 'pending' }
-    const underlying = (vaultTokensData as readonly `0x${string}`[]).map((a) => a.toLowerCase())
-    if (underlying.length === 0) return { kind: 'pending' }
 
-    const vault = poolAddress.toLowerCase()
-    const t1 = tokenInAddress.toLowerCase()
-    const t2 = tokenOutAddress.toLowerCase()
-    const isUnderlying = (a: string) => underlying.indexOf(a) >= 0
+    const poolTokens: readonly `0x${string}`[] =
+      poolType === 'vault'
+        ? [poolAddress as `0x${string}`]
+        : ((balancerPoolTokens as readonly `0x${string}`[] | undefined) ?? [])
 
-    if (t1 === vault && t2 !== vault && isUnderlying(t2)) {
-      return { kind: 'ok', route: 'Strategy Vault Withdrawal', useTokenInVault: false, useTokenOutVault: true }
+    // For balancer pools, only declare ready when the multicall has settled
+    // for every candidate (so we don't flash an 'invalid' while a vault read
+    // is still pending).
+    if (poolType === 'balancer') {
+      if (!balancerPoolTokens) return { kind: 'pending' }
+      if (candidateVaultsInPool.length > 0 && !candidateVaultTokensMulticall) return { kind: 'pending' }
     }
-    if (t2 === vault && t1 !== vault && isUnderlying(t1)) {
-      return { kind: 'ok', route: 'Strategy Vault Deposit', useTokenInVault: true, useTokenOutVault: false }
-    }
-    if (t1 !== vault && t2 !== vault && isUnderlying(t1) && isUnderlying(t2)) {
-      return { kind: 'ok', route: 'Vault Pass-Through', useTokenInVault: true, useTokenOutVault: true }
-    }
-    return { kind: 'invalid', validTokens: underlying as `0x${string}`[] }
-  }, [poolType, poolAddress, tokenInAddress, tokenOutAddress, vaultTokensData])
 
-  // Apply the auto-detected flags. Skipped when the user has manually touched
-  // a checkbox (sticky per-pool), or when the route is pending / invalid.
+    return resolveRoute({
+      poolType,
+      poolAddress: poolAddress as `0x${string}`,
+      tokenIn: tokenInAddress as `0x${string}`,
+      tokenOut: tokenOutAddress as `0x${string}`,
+      poolTokens,
+      underlyingByVault,
+      selectedVaultIn: selectedVaultIn ? (selectedVaultIn as `0x${string}`) : null,
+      selectedVaultOut: selectedVaultOut ? (selectedVaultOut as `0x${string}`) : null,
+    })
+  }, [
+    poolType,
+    poolAddress,
+    tokenInAddress,
+    tokenOutAddress,
+    balancerPoolTokens,
+    candidateVaultsInPool,
+    candidateVaultTokensMulticall,
+    underlyingByVault,
+    selectedVaultIn,
+    selectedVaultOut,
+  ])
+
+  // Apply the resolved route. Skipped when the user has manually toggled a
+  // checkbox (sticky per-pool) or when the resolution is anything other than
+  // ok (pending/ambiguous/invalid stays visible in the UI hint but doesn't
+  // touch flag state).
   useEffect(() => {
     if (vaultFlagsManuallyToggled.current) return
-    if (!vaultRouteAuto || vaultRouteAuto.kind !== 'ok') return
-    if (!poolAddress) return
-    setUseTokenInVault(vaultRouteAuto.useTokenInVault)
-    setUseTokenOutVault(vaultRouteAuto.useTokenOutVault)
-    if (vaultRouteAuto.useTokenInVault) setSelectedVaultIn(poolAddress as `0x${string}`)
-    if (vaultRouteAuto.useTokenOutVault) setSelectedVaultOut(poolAddress as `0x${string}`)
-  }, [vaultRouteAuto, poolAddress])
+    if (!swapRouteAuto || swapRouteAuto.kind !== 'ok') return
+    setUseTokenInVault(swapRouteAuto.useTokenInVault)
+    setUseTokenOutVault(swapRouteAuto.useTokenOutVault)
+    if (swapRouteAuto.useTokenInVault && swapRouteAuto.tokenInVault) {
+      setSelectedVaultIn(swapRouteAuto.tokenInVault)
+    }
+    if (swapRouteAuto.useTokenOutVault && swapRouteAuto.tokenOutVault) {
+      setSelectedVaultOut(swapRouteAuto.tokenOutVault)
+    }
+  }, [swapRouteAuto])
 
   // Build final args for preview/execute (single source of truth)
   const builtExactIn = useMemo(() => buildExactInArgs({
@@ -3790,17 +3889,72 @@ export default function SwapPage() {
           </div>
         </div>
 
-      {/* Vault Selection */}
-      {vaultRouteAuto && vaultRouteAuto.kind === 'ok' && (
+      {/* Vault Selection — Standard Exchange Router auto-detection hint */}
+      {swapRouteAuto && swapRouteAuto.kind === 'pending' && (
+        <div className="text-xs text-gray-400 mb-2">⏳ Resolving route…</div>
+      )}
+      {swapRouteAuto && swapRouteAuto.kind === 'ok' && (
         <div className="text-xs text-emerald-300 mb-2">
-          Detected route: {vaultRouteAuto.route}. Vault flags set automatically — toggle a checkbox to override.
+          Detected route: {swapRouteAuto.route}. Vault flags set automatically — toggle a checkbox to override.
         </div>
       )}
-      {vaultRouteAuto && vaultRouteAuto.kind === 'invalid' && (
-        <div className="text-xs text-amber-300 mb-2">
-          ⚠️ Selected Token In / Token Out do not match a Standard Exchange Vault route for this pool.
-          Valid underlying tokens reported by the vault:
-          <code className="ml-1">{vaultRouteAuto.validTokens.join(', ')}</code>.
+      {swapRouteAuto && swapRouteAuto.kind === 'ambiguous' && (
+        <div className="text-xs text-amber-300 mb-2 space-y-1">
+          <div>
+            ⚠️ Ambiguous {swapRouteAuto.side === 'both' ? 'Token In and Token Out' : swapRouteAuto.side === 'in' ? 'Token In' : 'Token Out'} —
+            multiple Standard Exchange Vaults in this pool can wrap your selection. Pick one to clarify:
+          </div>
+          {swapRouteAuto.tokenInCandidates && (
+            <div>
+              <span className="mr-1">Token In via:</span>
+              {swapRouteAuto.tokenInCandidates.map((addr) => (
+                <button
+                  key={addr}
+                  onClick={() => setSelectedVaultIn(addr as `0x${string}`)}
+                  className="ml-1 px-2 py-0.5 bg-slate-700 hover:bg-slate-600 rounded text-emerald-200 font-mono"
+                >
+                  {addr.slice(0, 6)}…{addr.slice(-4)}
+                </button>
+              ))}
+            </div>
+          )}
+          {swapRouteAuto.tokenOutCandidates && (
+            <div>
+              <span className="mr-1">Token Out via:</span>
+              {swapRouteAuto.tokenOutCandidates.map((addr) => (
+                <button
+                  key={addr}
+                  onClick={() => setSelectedVaultOut(addr as `0x${string}`)}
+                  className="ml-1 px-2 py-0.5 bg-slate-700 hover:bg-slate-600 rounded text-emerald-200 font-mono"
+                >
+                  {addr.slice(0, 6)}…{addr.slice(-4)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {swapRouteAuto && swapRouteAuto.kind === 'invalid' && (
+        <div className="text-xs text-amber-300 mb-2 space-y-1">
+          <div>
+            ⚠️ Selected Token In / Token Out don&apos;t match any Standard Exchange Router route for this pool.
+          </div>
+          <div>
+            Pool tokens:{' '}
+            <code>{swapRouteAuto.poolTokens.map((t) => `${t.slice(0, 6)}…${t.slice(-4)}`).join(', ')}</code>
+          </div>
+          {Array.from(swapRouteAuto.underlyingByVault.entries()).length > 0 && (
+            <div>
+              Vault → underlying mappings considered:
+              <ul className="list-disc ml-5">
+                {Array.from(swapRouteAuto.underlyingByVault.entries()).map(([vault, underlying]) => (
+                  <li key={vault} className="font-mono">
+                    {vault.slice(0, 6)}…{vault.slice(-4)} → {underlying.map((u) => `${u.slice(0, 6)}…${u.slice(-4)}`).join(', ')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
       <div className="grid grid-cols-2 gap-4 mb-6">
