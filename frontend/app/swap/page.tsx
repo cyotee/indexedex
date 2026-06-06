@@ -1986,17 +1986,39 @@ export default function SwapPage() {
     setRouterSpendingLimit(amount.toString())
   }, [])
 
+  // Helper: surface a guard failure so the user actually sees it instead of
+  // a click that silently does nothing. setApprovalError alone is invisible
+  // because the error banner only renders when approvalState === 'error'.
+  const failApproval = useCallback((message: string) => {
+    setApprovalError(message)
+    setApprovalState('error')
+    setTimeout(() => {
+      setApprovalState('idle')
+      setApprovalError('')
+    }, 5000)
+  }, [])
+
   // Handler for issuing permit2 approval with custom limit
   const handleIssuePermit2Approval = useCallback(async () => {
-    if (useEthIn) return
-    if (!tokenInAddress || !address) return
+    if (useEthIn) {
+      failApproval('Token-to-Permit2 approval is not needed when paying in native ETH')
+      return
+    }
+    if (!tokenInAddress) {
+      failApproval('Select a Token In before issuing the Token to Permit2 approval')
+      return
+    }
+    if (!address) {
+      failApproval('Connect a wallet before issuing the Token to Permit2 approval')
+      return
+    }
     if (!publicClient) {
-      setApprovalError('RPC client unavailable')
+      failApproval('RPC client unavailable')
       return
     }
 
     if (!permit2Address) {
-      setApprovalError('Permit2 not deployed')
+      failApproval('Permit2 not deployed at the address recorded in platform.json')
       return
     }
 
@@ -2020,24 +2042,40 @@ export default function SwapPage() {
         setApprovalError('')
       }, 5000)
     }
-  }, [useEthIn, tokenInAddress, address, publicClient, permit2Address, permit2SpendingLimit, setTokenAllowance, refetchAllowance, MAX_UINT160])
+  }, [useEthIn, tokenInAddress, address, publicClient, permit2Address, permit2SpendingLimit, setTokenAllowance, refetchAllowance, MAX_UINT160, failApproval])
 
   // Handler for issuing router approval with custom limit
   const handleIssueRouterApproval = useCallback(async () => {
-    if (useEthIn) return
-    if (!tokenInAddress || !address) return
+    if (useEthIn) {
+      failApproval('Permit2-to-Router approval is not needed when paying in native ETH')
+      return
+    }
+    if (!tokenInAddress) {
+      failApproval('Select a Token In before issuing the Permit2 to Router approval')
+      return
+    }
+    if (!address) {
+      failApproval('Connect a wallet before issuing the Permit2 to Router approval')
+      return
+    }
     if (!publicClient) {
-      setApprovalError('RPC client unavailable')
+      failApproval('RPC client unavailable')
       return
     }
 
     if (!routerAddress || routerHasBytecode !== true) {
-      setApprovalError('Router not deployed')
+      failApproval(
+        routerBytecodeError
+          ? `Router not usable: ${routerBytecodeError}`
+          : 'Router not deployed at the address recorded in platform.json'
+      )
       return
     }
 
     if (rpcChainId !== null && rpcChainId !== resolvedChainId) {
-      setApprovalError(`RPC network mismatch (wallet chainId=${resolvedChainId}, rpc chainId=${rpcChainId})`)
+      failApproval(
+        `RPC network mismatch (wallet chainId=${resolvedChainId}, rpc chainId=${rpcChainId}) — switch your wallet to the right chain or restart the dev server`
+      )
       return
     }
 
@@ -2061,7 +2099,7 @@ export default function SwapPage() {
         setApprovalError('')
       }, 5000)
     }
-  }, [useEthIn, tokenInAddress, address, publicClient, routerSpendingLimit, exactAmountInField, routerAddress, routerHasBytecode, rpcChainId, resolvedChainId, setPermit2Allowance, refetchPermit2Allowance, MAX_UINT160])
+  }, [useEthIn, tokenInAddress, address, publicClient, routerSpendingLimit, exactAmountInField, routerAddress, routerHasBytecode, routerBytecodeError, rpcChainId, resolvedChainId, setPermit2Allowance, refetchPermit2Allowance, MAX_UINT160, failApproval])
 
   // Handler for getting accurate quote with signed permit (supports both Exact In and Exact Out)
   const handleGetAccurateQuote = useCallback(async () => {
