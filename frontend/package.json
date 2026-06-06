@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "node scripts/typecheck.mjs",
-    "check": "npm run lint && npm run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run typecheck && npm run test",
     "hooks": "npx wagmi generate"
   },
   "dependencies": {
@@ -43,6 +45,7 @@
     "supports-color": "^9.4.0",
     "tailwindcss": "^4.1.12",
     "typescript": "5.4.5",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.2",
+    "vitest": "^4.1.8"
   }
 }
