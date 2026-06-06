@@ -1411,6 +1411,12 @@ export default function SwapPage() {
       setStoredPermitSignature(null)
       setAccurateQuote(null)
       setAccurateQuoteError('')
+      // Stale signature -> stale Amount Out. Reset so the query-based preview
+      // useEffect re-runs and refills it with the read-only quote until the
+      // user re-signs.
+      setPreviewExactIn(null)
+      setPreviewExactOut(null)
+      lastCompletedPreviewKeyRef.current = null
     }
   }, [storedPermitSignature, activePermitIntentKey])
 
@@ -2555,6 +2561,18 @@ export default function SwapPage() {
       // For Exact In, result is amountOut
       // For Exact Out, result is amountIn (what you'll pay)
       setAccurateQuote(accurateResult)
+      // Propagate the accurate-swap simulation into the standard preview state
+      // so it surfaces as Amount Out and enables the Swap button without any
+      // separate UI path. In Signed mode this is the equivalent of the
+      // Explicit-mode useActualSwapSimulation auto-switch — both paths end up
+      // updating the same previewExactIn / previewExactOut state.
+      if (isExactIn) {
+        setPreviewExactIn(accurateResult)
+        setPreviewExactInError(null)
+      } else {
+        setPreviewExactOut(accurateResult)
+        setPreviewExactOutError(null)
+      }
       debugLog('[Accurate Quote] Got accurate quote:', accurateResult.toString(), isExactIn ? '(Exact In amountOut)' : '(Exact Out amountIn)')
     } catch (error) {
       debugError('[Accurate Quote] Failed:', error)
