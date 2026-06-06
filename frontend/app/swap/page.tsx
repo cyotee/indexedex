@@ -69,6 +69,17 @@ const SELECTOR_SWAP_EXACT_OUT_WITH_PERMIT = '0x5bc8b2f3' as `0x${string}`
 
 type PoolType = 'balancer' | 'vault' | undefined
 
+type VaultRouteAuto =
+  | null
+  | { kind: 'pending' }
+  | { kind: 'invalid'; validTokens: `0x${string}`[] }
+  | {
+      kind: 'ok'
+      route: 'Strategy Vault Withdrawal' | 'Strategy Vault Deposit' | 'Vault Pass-Through'
+      useTokenInVault: boolean
+      useTokenOutVault: boolean
+    }
+
 type BuildArgsInput = {
   poolType: PoolType
   poolAddress: `0x${string}` | null
@@ -548,6 +559,11 @@ export default function SwapPage() {
   const [useTokenOutVault, setUseTokenOutVault] = useState(false)
   const [selectedVaultIn, setSelectedVaultIn] = useState<`0x${string}` | ''>('')
   const [selectedVaultOut, setSelectedVaultOut] = useState<`0x${string}` | ''>('')
+  // Sticky guard for the Standard Exchange Vault auto-flag effect below. Set
+  // true the moment the user manually toggles either Use Token In/Out Vault
+  // checkbox so we don't keep clobbering their choice. Reset when the user
+  // switches to a different pool.
+  const vaultFlagsManuallyToggled = useRef(false)
 
   // Approval mode: 'explicit' = ERC20 -> Permit2 -> Router (current), 'signed' = Permit2 signature (gasless)
   const [approvalMode, setApprovalMode] = useState<'explicit' | 'signed'>('signed')
@@ -758,6 +774,76 @@ export default function SwapPage() {
   const poolType: PoolType = useMemo(() => {
     return resolvePoolTypeForChain(resolvedChainId, poolAddress)
   }, [resolvedChainId, poolAddress])
+
+  /* ---------------------------------------------------------------------- */
+  /*       Standard Exchange Vault — auto-flag the Use Token In/Out Vault   */
+  /*       checkboxes by reading IBasicVault.vaultTokens() from the pool.   */
+  /* ---------------------------------------------------------------------- */
+
+  // Reset the manual-toggle guard whenever the user picks a different pool.
+  // Without this, an unchecked flag on one pool would persist when the user
+  // switched to another vault pool where the auto-detected route is different.
+  useEffect(() => {
+    vaultFlagsManuallyToggled.current = false
+  }, [poolAddress])
+
+  const { data: vaultTokensData } = useReadContract({
+    address: poolAddress as `0x${string}` | undefined,
+    abi: [
+      {
+        inputs: [],
+        name: 'vaultTokens',
+        outputs: [{ name: 'tokens_', type: 'address[]' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
+    functionName: 'vaultTokens',
+    query: { enabled: poolType === 'vault' && !!poolAddress },
+  })
+
+  // Map (pool, tokenIn, tokenOut, vault.vaultTokens()) -> route + flag state.
+  // Exactly mirrors the three pool==vault branches in
+  // BalancerV3StandardExchangeRouterExactInSwapTarget.sol:
+  //   - line 307: Vault Pass-Through         (tokenIn,tokenOut both underlying)
+  //   - line 372: Strategy Vault Deposit      (tokenIn underlying, tokenOut == vault share)
+  //   - line 422: Strategy Vault Withdrawal   (tokenIn == vault share, tokenOut underlying)
+  // Anything else hits the router's InvalidRoute revert at line 810.
+  const vaultRouteAuto = useMemo((): VaultRouteAuto => {
+    if (poolType !== 'vault') return null
+    if (!poolAddress || !tokenInAddress || !tokenOutAddress) return null
+    if (!vaultTokensData) return { kind: 'pending' }
+    const underlying = (vaultTokensData as readonly `0x${string}`[]).map((a) => a.toLowerCase())
+    if (underlying.length === 0) return { kind: 'pending' }
+
+    const vault = poolAddress.toLowerCase()
+    const t1 = tokenInAddress.toLowerCase()
+    const t2 = tokenOutAddress.toLowerCase()
+    const isUnderlying = (a: string) => underlying.indexOf(a) >= 0
+
+    if (t1 === vault && t2 !== vault && isUnderlying(t2)) {
+      return { kind: 'ok', route: 'Strategy Vault Withdrawal', useTokenInVault: false, useTokenOutVault: true }
+    }
+    if (t2 === vault && t1 !== vault && isUnderlying(t1)) {
+      return { kind: 'ok', route: 'Strategy Vault Deposit', useTokenInVault: true, useTokenOutVault: false }
+    }
+    if (t1 !== vault && t2 !== vault && isUnderlying(t1) && isUnderlying(t2)) {
+      return { kind: 'ok', route: 'Vault Pass-Through', useTokenInVault: true, useTokenOutVault: true }
+    }
+    return { kind: 'invalid', validTokens: underlying as `0x${string}`[] }
+  }, [poolType, poolAddress, tokenInAddress, tokenOutAddress, vaultTokensData])
+
+  // Apply the auto-detected flags. Skipped when the user has manually touched
+  // a checkbox (sticky per-pool), or when the route is pending / invalid.
+  useEffect(() => {
+    if (vaultFlagsManuallyToggled.current) return
+    if (!vaultRouteAuto || vaultRouteAuto.kind !== 'ok') return
+    if (!poolAddress) return
+    setUseTokenInVault(vaultRouteAuto.useTokenInVault)
+    setUseTokenOutVault(vaultRouteAuto.useTokenOutVault)
+    if (vaultRouteAuto.useTokenInVault) setSelectedVaultIn(poolAddress as `0x${string}`)
+    if (vaultRouteAuto.useTokenOutVault) setSelectedVaultOut(poolAddress as `0x${string}`)
+  }, [vaultRouteAuto, poolAddress])
 
   // Build final args for preview/execute (single source of truth)
   const builtExactIn = useMemo(() => buildExactInArgs({
@@ -3705,13 +3791,28 @@ export default function SwapPage() {
         </div>
 
       {/* Vault Selection */}
+      {vaultRouteAuto && vaultRouteAuto.kind === 'ok' && (
+        <div className="text-xs text-emerald-300 mb-2">
+          Detected route: {vaultRouteAuto.route}. Vault flags set automatically — toggle a checkbox to override.
+        </div>
+      )}
+      {vaultRouteAuto && vaultRouteAuto.kind === 'invalid' && (
+        <div className="text-xs text-amber-300 mb-2">
+          ⚠️ Selected Token In / Token Out do not match a Standard Exchange Vault route for this pool.
+          Valid underlying tokens reported by the vault:
+          <code className="ml-1">{vaultRouteAuto.validTokens.join(', ')}</code>.
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
           <label className="flex items-center gap-2 text-sm text-gray-300 mb-2">
             <input
               type="checkbox"
               checked={useTokenInVault}
-              onChange={(e) => setUseTokenInVault(e.target.checked)}
+              onChange={(e) => {
+                vaultFlagsManuallyToggled.current = true
+                setUseTokenInVault(e.target.checked)
+              }}
             />
             Use Token In Vault
           </label>
@@ -3743,7 +3844,10 @@ export default function SwapPage() {
             <input
               type="checkbox"
               checked={useTokenOutVault}
-              onChange={(e) => setUseTokenOutVault(e.target.checked)}
+              onChange={(e) => {
+                vaultFlagsManuallyToggled.current = true
+                setUseTokenOutVault(e.target.checked)
+              }}
             />
             Use Token Out Vault
             </label>
