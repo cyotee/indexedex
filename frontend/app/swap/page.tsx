@@ -850,7 +850,7 @@ export default function SwapPage() {
   debugLog('[Final Args Builder ExactIn]', builtExactIn)
   debugLog('[Final Args Builder ExactOut]', builtExactOut)
 
-  const simulatePreviewExactIn = useCallback(
+  const simulateQueryExactIn = useCallback(
     async (args: NonNullable<BuildArgsOutput['args']>) => {
       if (!publicClient) throw new Error('RPC client unavailable')
       if (!routerAddress || routerHasBytecode !== true) {
@@ -871,7 +871,7 @@ export default function SwapPage() {
     [publicClient, routerAddress, routerHasBytecode]
   )
 
-  const simulatePreviewExactOut = useCallback(
+  const simulateQueryExactOut = useCallback(
     async (args: NonNullable<BuildArgsOutput['args']>) => {
       if (!publicClient) throw new Error('RPC client unavailable')
       if (!routerAddress || routerHasBytecode !== true) {
@@ -891,6 +891,116 @@ export default function SwapPage() {
     },
     [publicClient, routerAddress, routerHasBytecode]
   )
+
+  // Once all Explicit-mode approvals are issued (Token -> Permit2 and Permit2
+  // -> Router), simulate the actual swap function instead of the read-only
+  // query. The actual swap path threads through any Standard Exchange Vault
+  // hooks that call back into the router, which the query function may skip.
+  // simulateContract is RPC-side dry-run only — no state changes commit.
+  const simulateActualSwapExactIn = useCallback(
+    async (args: NonNullable<BuildArgsOutput['args']>) => {
+      if (!publicClient) throw new Error('RPC client unavailable')
+      if (!routerAddress || routerHasBytecode !== true) {
+        throw new Error('Swap preview unavailable: router is not deployed on this network')
+      }
+      if (!address) throw new Error('Connect a wallet to simulate the actual swap')
+
+      const [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn] = args
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
+
+      const { result } = await publicClient.simulateContract({
+        address: routerAddress,
+        abi: [
+          {
+            inputs: [
+              { name: 'pool', type: 'address' },
+              { name: 'tokenIn', type: 'address' },
+              { name: 'tokenInVault', type: 'address' },
+              { name: 'tokenOut', type: 'address' },
+              { name: 'tokenOutVault', type: 'address' },
+              { name: 'exactAmountIn', type: 'uint256' },
+              { name: 'minAmountOut', type: 'uint256' },
+              { name: 'deadline', type: 'uint256' },
+              { name: 'wethIsEth', type: 'bool' },
+              { name: 'userData', type: 'bytes' },
+            ],
+            name: 'swapSingleTokenExactIn',
+            outputs: [{ name: '', type: 'uint256' }],
+            stateMutability: 'payable',
+            type: 'function',
+          },
+        ] as const,
+        functionName: 'swapSingleTokenExactIn',
+        args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn, BigInt(0), deadline, useEthIn, '0x'] as const,
+        account: address,
+        value: useEthIn ? (exactAmountIn as bigint) : undefined,
+      } as const)
+
+      return result as bigint
+    },
+    [publicClient, routerAddress, routerHasBytecode, address, useEthIn]
+  )
+
+  const simulateActualSwapExactOut = useCallback(
+    async (args: NonNullable<BuildArgsOutput['args']>) => {
+      if (!publicClient) throw new Error('RPC client unavailable')
+      if (!routerAddress || routerHasBytecode !== true) {
+        throw new Error('Swap preview unavailable: router is not deployed on this network')
+      }
+      if (!address) throw new Error('Connect a wallet to simulate the actual swap')
+
+      const [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountOut] = args
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
+      // For simulation purposes pass an unbounded max-in. The actual swap path's
+      // slippage budget is enforced separately by maxIn when the user submits.
+      const maxAmountIn = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+
+      const { result } = await publicClient.simulateContract({
+        address: routerAddress,
+        abi: [
+          {
+            inputs: [
+              { name: 'pool', type: 'address' },
+              { name: 'tokenIn', type: 'address' },
+              { name: 'tokenInVault', type: 'address' },
+              { name: 'tokenOut', type: 'address' },
+              { name: 'tokenOutVault', type: 'address' },
+              { name: 'exactAmountOut', type: 'uint256' },
+              { name: 'maxAmountIn', type: 'uint256' },
+              { name: 'deadline', type: 'uint256' },
+              { name: 'wethIsEth', type: 'bool' },
+              { name: 'userData', type: 'bytes' },
+            ],
+            name: 'swapSingleTokenExactOut',
+            outputs: [{ name: '', type: 'uint256' }],
+            stateMutability: 'payable',
+            type: 'function',
+          },
+        ] as const,
+        functionName: 'swapSingleTokenExactOut',
+        args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountOut, maxAmountIn, deadline, useEthIn, '0x'] as const,
+        account: address,
+        value: useEthIn ? maxAmountIn : undefined,
+      } as const)
+
+      return result as bigint
+    },
+    [publicClient, routerAddress, routerHasBytecode, address, useEthIn]
+  )
+
+  // Switch between query and actual-swap simulation based on approval state.
+  // The preview useEffect / debounce machinery just sees these two callbacks
+  // and doesn't need to know which underlying function is being simulated.
+  // useActualSwapSimulation is updated by a later useEffect once needsApproval
+  // is computed (it lives below the simulation block in the render order).
+  const [useActualSwapSimulation, setUseActualSwapSimulation] = useState(false)
+
+  const simulatePreviewExactIn = useActualSwapSimulation
+    ? simulateActualSwapExactIn
+    : simulateQueryExactIn
+  const simulatePreviewExactOut = useActualSwapSimulation
+    ? simulateActualSwapExactOut
+    : simulateQueryExactOut
 
   const [previewExactIn, setPreviewExactIn] = useState<bigint | null>(null)
   const [previewExactOut, setPreviewExactOut] = useState<bigint | null>(null)
@@ -1664,6 +1774,18 @@ export default function SwapPage() {
     
     return needsAny
   }, [approvalMode, effectiveApprovalMode, needsTokenApproval, needsPermit2Approval, routePattern])
+
+  // Bridge from approval-state to the simulation-mode flag declared earlier in
+  // the render. In Explicit mode, switch the Amount Out preview from the
+  // router's read-only query function to a full simulation of the actual swap
+  // function as soon as both approvals (Token -> Permit2 and Permit2 -> Router)
+  // are in place. This is so Standard Exchange Vault hooks that re-enter the
+  // router are exercised during the preview.
+  useEffect(() => {
+    setUseActualSwapSimulation(
+      effectiveApprovalMode === 'explicit' && !needsApproval && !!address && !useEthIn
+    )
+  }, [effectiveApprovalMode, needsApproval, address, useEthIn])
 
   const showTokenToPermit2Controls = useMemo(() => {
     if (useEthIn) return false
@@ -3723,7 +3845,9 @@ export default function SwapPage() {
                         : '(no matching route — check the Use Token In/Out Vault toggles)'
                     }`
                   : previewExactInPending
-                    ? '⏳ Simulating querySwapSingleTokenExactIn on the router…'
+                    ? useActualSwapSimulation
+                      ? '⏳ Simulating swapSingleTokenExactIn on the router…'
+                      : '⏳ Simulating querySwapSingleTokenExactIn on the router…'
                     : '⏳ Waiting for quote…'}
             </div>
           )}

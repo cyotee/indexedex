@@ -32,24 +32,24 @@ export interface MenuConfig {
 
 export const MENU_CONFIG = {
   // The Select Pool dropdown on /swap and /batch-swap.
+  // Spec: Balancer V3 pools, Standard Exchange (strategy) Vaults, plus the
+  // WETH sentinel for wrap/unwrap. No ERC4626 vaults, no Protocol DETFs —
+  // those are not valid swap routes through the Standard Exchange Router.
   'pool-select': {
     fromLists: [
       { listId: 'base-tokens', includeTags: ['wrapUnwrap'], labelSuffix: 'Wrap/Unwrap', type: 'balancer' },
       { listId: 'balancer-v3-pools', type: 'balancer' },
       { listId: 'strategy-vaults', labelSuffix: 'Vault', type: 'vault' },
-      { listId: 'erc4626-vaults', labelSuffix: 'ERC4626', type: 'vault' },
-      { listId: 'protocol-detfs', labelSuffix: 'Protocol DETF', type: 'vault' },
     ],
   },
   // Token In / Token Out dropdowns on /swap, /batch-swap, /detf.
-  // Seigniorage DETFs deliberately excluded (they have their own picker on /detf).
+  // Spec: Tokens, ERC4626 Vaults, Standard Exchange Vaults; ETH and WETH9
+  // are added as sentinel prepends by the consumer. No LP tokens, no
+  // Protocol DETFs, no seigniorage DETFs in these menus.
   'token-select': {
     fromLists: [
       { listId: 'base-tokens', type: 'token' },
       { listId: 'erc4626-vaults', type: 'vault' },
-      { listId: 'protocol-detfs', type: 'vault' },
-      { listId: 'uni-v2-pools', type: 'lp' },
-      { listId: 'aerodrome-pools', type: 'lp' },
       { listId: 'strategy-vaults', type: 'vault' },
     ],
   },
