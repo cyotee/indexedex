@@ -207,6 +207,28 @@ run_aggregator() {
   )
 }
 
+# Merge every per-stage JSON the Solidity scripts wrote into a single chain-keyed
+# platform.json the UI can read for facade / router / weth / permit2 / vault
+# addresses. Latest values win on key collisions.
+synthesize_platform() {
+  if ! command -v jq >/dev/null 2>&1; then
+    log_info "jq missing — skipping chain platform synthesis"
+    return 0
+  fi
+  local in_dir="$REPO_ROOT/deployments/local_testing/anvil_single"
+  local stage_files=("$in_dir"/[0-9]*.json)
+  if [[ ! -e "${stage_files[0]}" ]]; then
+    log_info "No stage JSONs yet — skipping platform synthesis"
+    return 0
+  fi
+  local out="$REPO_ROOT/frontend/app/addresses/chain/$ANVIL_CHAIN_ID/platform.json"
+  mkdir -p "$(dirname "$out")"
+  log_info "Synthesizing chain platform -> $(realpath --relative-to="$REPO_ROOT" "$out" 2>/dev/null || echo "$out")"
+  jq -s --argjson cid "$ANVIL_CHAIN_ID" \
+    'reduce .[] as $f ({}; . + $f) | . + { chainId: $cid }' \
+    "${stage_files[@]}" > "$out"
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     foundation|packages|assets|scenario1|scenario2|scenario3|stage01|stage02|stage03|stage05|stage06|stage10|stage11|stage12)
@@ -348,5 +370,6 @@ case "$COMMAND" in
 esac
 
 run_aggregator
+synthesize_platform
 
 log_info "Local testing command complete"
