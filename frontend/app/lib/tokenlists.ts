@@ -11,8 +11,10 @@ import {
   resolveLabel,
   type ComposedStore,
   type TokenInfo,
+  type TokenListRef,
 } from './tokenlistCompose'
 import { getListRefs } from './tokenlistRegistry'
+import { MENU_CONFIG, type MenuId, type MenuListInclude } from './menuConfig'
 
 export type Address = `0x${string}`
 
@@ -260,28 +262,13 @@ function getCached(
   const balancerPoolTokens = fromComposed(store, ['balancer', 'balV3'], artifactsChainId)
   const uniV2PoolTokens = fromComposed(store, ['uniV2'], artifactsChainId)
   const aerodromePoolTokens = fromComposed(store, ['aero'], artifactsChainId)
-  let strategyVaultTokens = fromComposed(store, ['strat'], artifactsChainId)
-  const protocolDetfTokensFromLists = fromComposed(store, ['detf'], artifactsChainId)
+  const strategyVaultTokens = fromComposed(store, ['strat'], artifactsChainId)
+  const protocolDetfTokens = fromComposed(store, ['detf'], artifactsChainId)
 
   // seigniorage-detfs are not yet migrated to a Token List bucket; keep reading from the legacy artifact.
   const seigniorageDetfs = withDisplay(
     filterChain(((artifacts.tokenlists as any).seigniorageDetfs ?? []) as TokenListEntry[], artifactsChainId)
   )
-
-  // Platform-derived augmentation: protocolDetf addresses from base_deployments.json
-  // are merged in so CHIR/RICH/RICHIR appear in the dropdown even when the list is empty.
-  const platformProtocolDetfTokens = buildProtocolDetfEntriesFromPlatform(artifacts.platform, artifactsChainId)
-  const protocolDetfTokens = platformProtocolDetfTokens.length > 0
-    ? mergeUniqueBySymbolPreferFirst(platformProtocolDetfTokens, protocolDetfTokensFromLists)
-    : protocolDetfTokensFromLists
-
-  // Fallback for environments whose strategy-vaults list is empty: derive from platform.json keys.
-  if (strategyVaultTokens.length === 0) {
-    const platformDerivedVaults = buildStrategyVaultEntriesFromPlatform(artifacts.platform, artifactsChainId)
-    if (platformDerivedVaults.length > 0) {
-      strategyVaultTokens = mergeUniqueByAddress(strategyVaultTokens, platformDerivedVaults)
-    }
-  }
 
   const cached: TokenCache = {
     baseTokens,
@@ -554,41 +541,51 @@ export function buildPoolOptions(): PoolOption[] {
   return [...balancerOptions, ...vaultOptions, ...erc4626VaultOptions, ...protocolDetfOptions]
 }
 
+function buildOptionsFromMenu(
+  menuId: MenuId,
+  chainId: number,
+  refs: TokenListRef[]
+): PoolOption[] {
+  const refsById = new Map<string, TokenListRef>()
+  refs.forEach((r) => refsById.set(r.id, r))
+
+  const out: PoolOption[] = []
+  for (const include of MENU_CONFIG[menuId].fromLists) {
+    const ref = refsById.get(include.listId)
+    if (!ref) continue
+    for (const token of ref.list.tokens) {
+      if (token.chainId !== chainId) continue
+      if (!matchesIncludeTags(token, include)) continue
+      out.push(toPoolOption(token, include))
+    }
+  }
+  return out
+}
+
+function matchesIncludeTags(token: TokenInfo, include: MenuListInclude): boolean {
+  if (!include.includeTags || include.includeTags.length === 0) return true
+  const tags = token.tags
+  if (!tags || tags.length === 0) return false
+  for (const wanted of include.includeTags) {
+    if (tags.indexOf(wanted) >= 0) return true
+  }
+  return false
+}
+
+function toPoolOption(token: TokenInfo, include: MenuListInclude): PoolOption {
+  const base = resolveLabel(token)
+  const label = include.labelSuffix ? `${base} (${include.labelSuffix})` : base
+  return { value: token.address as Address, label, type: include.type }
+}
+
 export function buildPoolOptionsForChain(
   chainId: number,
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): PoolOption[] {
-  const { balancerPoolTokens, strategyVaultTokens, erc4626Tokens, protocolDetfTokens } = getCached(chainId, environment)
-  const platform = getArtifactsOrNull(chainId, environment)?.platform
-  const weth = resolvePlatformWethAddress(platform)
-
-  const specialOptions: PoolOption[] = []
-  // WETH sentinel pool: select this to do pure wrap/unwrap flows.
-  if (weth && !isZeroAddress(weth)) {
-    specialOptions.push({ value: weth, label: 'WETH (Wrap/Unwrap)', type: 'balancer' })
-  }
-
-  const balancerOptions: PoolOption[] = balancerPoolTokens.map((p) => ({
-    value: p.address,
-    label: p.display || p.name || p.symbol,
-    type: 'balancer',
-  }))
-  const vaultOptions: PoolOption[] = strategyVaultTokens.map((p) => ({
-    value: p.address,
-    label: `${p.display || p.name || p.symbol} (Vault)`,
-    type: 'vault',
-  }))
-  const erc4626VaultOptions: PoolOption[] = erc4626Tokens.map((p) => ({
-    value: p.address,
-    label: `${p.display || p.name || p.symbol} (ERC4626)`,
-    type: 'vault',
-  }))
-  const protocolDetfOptions: PoolOption[] = protocolDetfTokens.map((t) => ({
-    value: t.address,
-    label: `${t.display || t.name || t.symbol} (Protocol DETF)`,
-    type: 'vault',
-  }))
-  return [...specialOptions, ...balancerOptions, ...vaultOptions, ...erc4626VaultOptions, ...protocolDetfOptions]
+  const resolvedChainId = resolveArtifactsChainId(chainId, environment)
+  if (resolvedChainId === null) return []
+  const refs = getListRefs(environment, resolvedChainId)
+  return buildOptionsFromMenu('pool-select', resolvedChainId, refs)
 }
 
 export function buildTokenOptions(includeVaultShares: boolean = true, includeLpTokens: boolean = true): TokenOption[] {
