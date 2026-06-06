@@ -3838,6 +3838,23 @@ export default function SwapPage() {
         {/* Explicit Approval Mode - Show approval button */}
         {approvalMode === 'explicit' && (
           <div className="space-y-3">
+            {/* Router missing: the next-step approval can't render because there is
+                nothing to spend through. Surface it instead of silently hiding the button. */}
+            {!showTokenToPermit2Controls && !routerSpenderAddress && !useEthIn && (
+              <div className="p-3 bg-amber-700/30 border border-amber-600 rounded-lg text-amber-200 text-sm">
+                ⚠️ Swap router not deployed on this chain. Run
+                <code className="mx-1 px-1 bg-slate-900/50 rounded">scenario3</code>
+                (deploys <code>balancerV3StandardExchangeRouter</code>) before issuing the Permit2 → Router approval.
+              </div>
+            )}
+            {!showTokenToPermit2Controls && routerSpenderAddress && routerHasBytecode === false && (
+              <div className="p-3 bg-amber-700/30 border border-amber-600 rounded-lg text-amber-200 text-sm">
+                ⚠️ Swap router address {routerSpenderAddress} has no bytecode on this chain.
+                {routerBytecodeError ? ` (${routerBytecodeError})` : ''} Redeploy
+                <code className="mx-1 px-1 bg-slate-900/50 rounded">scenario3</code>
+                or restart Anvil with <code>--restart-anvil</code> and redeploy from foundation.
+              </div>
+            )}
             {showTokenToPermit2Controls && (
               <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
                 <button
