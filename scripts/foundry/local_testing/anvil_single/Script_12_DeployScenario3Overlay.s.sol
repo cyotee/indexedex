@@ -26,7 +26,6 @@ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libr
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
-import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -35,14 +34,8 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
-import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    BalancerV3StandardExchangeRouter_FactoryService
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
 import {
     IBalancerV3ConstantProductPoolStandardVaultPkg
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
@@ -88,8 +81,6 @@ import {SingleVaultDetfUniswapV4LiquiditySeeder} from "../../shared/SingleVaultD
 /// @notice Deploys Scenario 3: a Single Vault DETF and an outer Balancer WETH/DETF pool for local testing
 contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
-    using BalancerV3StandardExchangeRouter_FactoryService for ICreate3FactoryProxy;
-    using BalancerV3StandardExchangeRouter_FactoryService for IDiamondPackageCallBackFactory;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
@@ -171,7 +162,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
 
         vm.startBroadcast();
-        _deployBalancerStandardExchangeRouter();
         _deployWeightedPool8020FactoryIfNeeded();
         _deployFacets();
         _deployUniswapV4PoolInfra();
@@ -202,6 +192,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         permit2 = IPermit2(_readAddress(PROTOCOLS_BASE_FILE, "permit2"));
         weth = IWETH(_readAddress(PROTOCOLS_BASE_FILE, "weth"));
         balancerV3Vault = IBalancerVault(_readAddress(PROTOCOLS_BASE_FILE, "balancerV3Vault"));
+        balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(
+            _readAddress(PROTOCOLS_BASE_FILE, "balancerV3StandardExchangeRouter")
+        );
 
         rateProviderPkg = IStandardExchangeRateProviderDFPkg(_readAddress(FOUNDATION_PACKAGES_FILE, "rateProviderPkg"));
         balConstProdPkg = IBalancerV3ConstantProductPoolStandardVaultPkg(
@@ -213,6 +206,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         require(address(create3Factory) != address(0), "Create3Factory not found - run Script_01 first");
         require(address(vaultRegistry) != address(0), "IndexedexManager not found - run Script_02 first");
         require(address(balancerV3Vault) != address(0), "Balancer V3 vault not found - run Script_03 first");
+        require(address(balancerV3StandardExchangeRouter) != address(0), "Standard exchange router not found - run Script_03 first");
         require(address(rateProviderPkg) != address(0), "Rate provider pkg not found - run Script_05 first");
         require(address(balConstProdPkg) != address(0), "Balancer const-prod pkg not found - run Script_05 first");
         require(richToken != address(0), "RICH token not found - run Script_06 first");
@@ -221,20 +215,18 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     function _loadExistingScenario() internal returns (bool) {
         (address detf, bool hasDetf) = _readAddressSafe(ARTIFACT_FILE, "protocolDetf");
         (address outerPool, bool hasOuterPool) = _readAddressSafe(ARTIFACT_FILE, "balancerWethDetfPool");
-        (address prepayRouter, bool hasPrepayRouter) = _readAddressSafe(ARTIFACT_FILE, "balancerV3StandardExchangeRouter");
         (address poolManagerAddr, bool hasPoolManager) = _readAddressSafe(ARTIFACT_FILE, "poolManager");
 
-        if (!hasDetf || !hasOuterPool || !hasPrepayRouter || !hasPoolManager) {
+        if (!hasDetf || !hasOuterPool || !hasPoolManager) {
             return false;
         }
 
-        if (detf.code.length == 0 || outerPool.code.length == 0 || prepayRouter.code.length == 0 || poolManagerAddr.code.length == 0) {
+        if (detf.code.length == 0 || outerPool.code.length == 0 || poolManagerAddr.code.length == 0) {
             return false;
         }
 
         protocolDetf = detf;
         weightedPool = outerPool;
-        balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(prepayRouter);
         poolManager = IPoolManager(poolManagerAddr);
 
         (protocolNftVault, ) = _readAddressSafe(ARTIFACT_FILE, "protocolNftVault");
@@ -248,48 +240,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
 
         return true;
-    }
-
-    function _deployBalancerStandardExchangeRouter() internal {
-        (address existingRouter, bool hasExistingRouter) =
-            _readAddressSafe(ARTIFACT_FILE, "balancerV3StandardExchangeRouter");
-        if (hasExistingRouter && existingRouter != address(0) && existingRouter.code.length > 0) {
-            balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(existingRouter);
-            return;
-        }
-
-        IBalancerV3StandardExchangeRouterDFPkg.PkgInit memory pkgInit;
-        pkgInit.senderGuardFacet = IFacet(
-            create3Factory.deployFacet(
-                type(SenderGuardFacet).creationCode,
-                abi.encode(type(SenderGuardFacet).name, "LocalTesting")._hash()
-            )
-        );
-        pkgInit.balancerV3StandardExchangeRouterExactInQueryFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();
-        pkgInit.balancerV3StandardExchangeRouterExactInSwapFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterExactInSwapFacet();
-        pkgInit.balancerV3StandardExchangeRouterExactOutQueryFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterExactOutQueryFacet();
-        pkgInit.balancerV3StandardExchangeRouterExactOutSwapFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterExactOutSwapFacet();
-        pkgInit.balancerV3StandardExchangeBatchRouterExactInFacet =
-            create3Factory.deployBalancerV3StandardExchangeBatchRouterExactInFacet();
-        pkgInit.balancerV3StandardExchangeBatchRouterExactOutFacet =
-            create3Factory.deployBalancerV3StandardExchangeBatchRouterExactOutFacet();
-        pkgInit.balancerV3StandardExchangeRouterPrepayFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterPrepayFacet();
-        pkgInit.balancerV3StandardExchangeRouterPrepayHooksFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterPrepayHooksFacet();
-        pkgInit.balancerV3StandardExchangePermit2WitnessFacet =
-            create3Factory.deployBalancerV3StandardExchangeRouterPermit2WitnessFacet();
-        pkgInit.balancerV3Vault = balancerV3Vault;
-        pkgInit.permit2 = permit2;
-        pkgInit.weth = weth;
-
-        IBalancerV3StandardExchangeRouterDFPkg routerPkg =
-            create3Factory.deployBalancerV3StandardExchangeRouterDFPkg(pkgInit);
-        balancerV3StandardExchangeRouter = diamondPackageFactory.deployBalancerV3StandardExchangeRouter(routerPkg);
     }
 
     function _deployWeightedPool8020FactoryIfNeeded() internal {
@@ -535,7 +485,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     function _exportJson() internal {
         string memory json;
         json = vm.serializeAddress("scenario3", "richToken", richToken);
-        json = vm.serializeAddress("scenario3", "balancerV3StandardExchangeRouter", address(balancerV3StandardExchangeRouter));
         json = vm.serializeAddress("scenario3", "weightedPool8020Factory", address(weightedPool8020Factory));
         json = vm.serializeAddress("scenario3", "protocolDetfPkg", address(protocolDetfPkg));
         json = vm.serializeAddress("scenario3", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
@@ -614,7 +563,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     function _logResults() internal view {
         _logString("Artifact:", ARTIFACT_FILE);
-        _logAddress("Balancer Standard Exchange Router:", address(balancerV3StandardExchangeRouter));
         _logAddress("WeightedPool8020Factory:", address(weightedPool8020Factory));
         _logAddress("Single Vault DETF:", protocolDetf);
         _logAddress("Protocol NFT Vault:", protocolNftVault);

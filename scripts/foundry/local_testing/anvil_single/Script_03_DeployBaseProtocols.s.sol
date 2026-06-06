@@ -20,6 +20,7 @@ import {UniV2Factory} from "@crane/contracts/protocols/dexes/uniswap/v2/stubs/Un
 import {UniV2Router02} from "@crane/contracts/protocols/dexes/uniswap/v2/stubs/UniV2Router02.sol";
 
 import {IWETH} from "@crane/contracts/external/balancer/v3/interfaces/contracts/solidity-utils/misc/IWETH.sol";
+import {IWETH as ICraneWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
 import {IAuthorizer} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IAuthorizer.sol";
 import {IProtocolFeeController} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IProtocolFeeController.sol";
@@ -50,11 +51,23 @@ import {BatchSwapFacet} from "@crane/contracts/protocols/dexes/balancer/v3/route
 import {BufferRouterFacet} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/BufferRouterFacet.sol";
 import {CompositeLiquidityERC4626Facet} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/CompositeLiquidityERC4626Facet.sol";
 import {CompositeLiquidityNestedFacet} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/CompositeLiquidityNestedFacet.sol";
+import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
+import {
+    IBalancerV3StandardExchangeRouterDFPkg
+} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {
+    IBalancerV3StandardExchangeRouterProxy
+} from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
+import {
+    BalancerV3StandardExchangeRouter_FactoryService
+} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
 
 /// @title Script_03_DeployBaseProtocols
 /// @notice Deploys local WETH, local Permit2, local Uniswap V2 core, and Balancer V3 core for local testing
 contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
+    using BalancerV3StandardExchangeRouter_FactoryService for ICreate3FactoryProxy;
+    using BalancerV3StandardExchangeRouter_FactoryService for IDiamondPackageCallBackFactory;
 
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant ARTIFACT_FILE = "03_protocols_base.json";
@@ -82,6 +95,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
     address private balancerBatchRouter;
     address private balancerBufferRouter;
     address private balancerCompositeLiquidityRouter;
+    IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
 
     IBalancerV3VaultDFPkg private vaultPkg;
     IBalancerV3RouterDFPkg private routerPkg;
@@ -148,9 +162,11 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         (address uniswapV2RouterAddr, bool hasUniswapRouter) = _readAddressSafe(ARTIFACT_FILE, "uniswapV2Router");
         (address balancerVaultAddr, bool hasBalancerVault) = _readAddressSafe(ARTIFACT_FILE, "balancerV3Vault");
         (address balancerRouterAddr, bool hasBalancerRouter) = _readAddressSafe(ARTIFACT_FILE, "balancerV3Router");
+        (address standardExchangeRouterAddr, bool hasStandardExchangeRouter) =
+            _readAddressSafe(ARTIFACT_FILE, "balancerV3StandardExchangeRouter");
 
         bool hasRequired = hasLocalWeth && hasLocalPermit2 && hasUniswapFactory && hasUniswapRouter && hasBalancerVault
-            && hasBalancerRouter;
+            && hasBalancerRouter && hasStandardExchangeRouter;
 
         if (!hasRequired) {
             return false;
@@ -159,7 +175,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         if (
             localWethAddr.code.length == 0 || localPermit2Addr.code.length == 0 || uniswapV2FactoryAddr.code.length == 0
                 || uniswapV2RouterAddr.code.length == 0 || balancerVaultAddr.code.length == 0
-                || balancerRouterAddr.code.length == 0
+                || balancerRouterAddr.code.length == 0 || standardExchangeRouterAddr.code.length == 0
         ) {
             return false;
         }
@@ -170,6 +186,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         uniswapV2Router = uniswapV2RouterAddr;
         balancerVault = balancerVaultAddr;
         balancerRouter = balancerRouterAddr;
+        balancerV3StandardExchangeRouter = IBalancerV3StandardExchangeRouterProxy(standardExchangeRouterAddr);
 
         (balancerAuthorizer, ) = _readAddressSafe(ARTIFACT_FILE, "balancerV3Authorizer");
         (balancerProtocolFeeController, ) = _readAddressSafe(ARTIFACT_FILE, "balancerV3ProtocolFeeController");
@@ -231,6 +248,44 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         balancerCompositeLiquidityRouter = balancerRouter;
         balancerVaultAdmin = balancerVault;
         balancerVaultExtension = balancerVault;
+
+        _deployBalancerStandardExchangeRouter();
+    }
+
+    function _deployBalancerStandardExchangeRouter() internal {
+        IBalancerV3StandardExchangeRouterDFPkg.PkgInit memory pkgInit;
+        pkgInit.senderGuardFacet = IFacet(
+            create3Factory.deployFacet(
+                type(SenderGuardFacet).creationCode,
+                abi.encode(type(SenderGuardFacet).name, "LocalTesting")._hash()
+            )
+        );
+        pkgInit.balancerV3StandardExchangeRouterExactInQueryFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();
+        pkgInit.balancerV3StandardExchangeRouterExactInSwapFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterExactInSwapFacet();
+        pkgInit.balancerV3StandardExchangeRouterExactOutQueryFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterExactOutQueryFacet();
+        pkgInit.balancerV3StandardExchangeRouterExactOutSwapFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterExactOutSwapFacet();
+        pkgInit.balancerV3StandardExchangeBatchRouterExactInFacet =
+            create3Factory.deployBalancerV3StandardExchangeBatchRouterExactInFacet();
+        pkgInit.balancerV3StandardExchangeBatchRouterExactOutFacet =
+            create3Factory.deployBalancerV3StandardExchangeBatchRouterExactOutFacet();
+        pkgInit.balancerV3StandardExchangeRouterPrepayFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterPrepayFacet();
+        pkgInit.balancerV3StandardExchangeRouterPrepayHooksFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterPrepayHooksFacet();
+        pkgInit.balancerV3StandardExchangePermit2WitnessFacet =
+            create3Factory.deployBalancerV3StandardExchangeRouterPermit2WitnessFacet();
+        pkgInit.balancerV3Vault = IVault(payable(balancerVault));
+        pkgInit.permit2 = IPermit2(localPermit2);
+        pkgInit.weth = ICraneWETH(localWeth);
+
+        IBalancerV3StandardExchangeRouterDFPkg standardExchangeRouterPkg =
+            create3Factory.deployBalancerV3StandardExchangeRouterDFPkg(pkgInit);
+        balancerV3StandardExchangeRouter =
+            diamondPackageFactory.deployBalancerV3StandardExchangeRouter(standardExchangeRouterPkg);
     }
 
     function _salt(string memory name) internal pure returns (bytes32) {
@@ -346,6 +401,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         json = vm.serializeAddress("protocolsBase", "balancerV3BatchRouter", balancerBatchRouter);
         json = vm.serializeAddress("protocolsBase", "balancerV3BufferRouter", balancerBufferRouter);
         json = vm.serializeAddress("protocolsBase", "balancerV3CompositeLiquidityRouter", balancerCompositeLiquidityRouter);
+        json = vm.serializeAddress("protocolsBase", "balancerV3StandardExchangeRouter", address(balancerV3StandardExchangeRouter));
         json = vm.serializeAddress("protocolsBase", "owner", owner);
         json = vm.serializeAddress("protocolsBase", "deployer", deployer);
         json = vm.serializeUint("protocolsBase", "chainId", block.chainid);
@@ -362,6 +418,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         _logAddress("Balancer Authorizer:", balancerAuthorizer);
         _logAddress("Balancer Vault:", balancerVault);
         _logAddress("Balancer Router:", balancerRouter);
+        _logAddress("Balancer Standard Exchange Router:", address(balancerV3StandardExchangeRouter));
         _logUint("ChainId:", block.chainid);
         _logComplete("Stage 03");
     }
