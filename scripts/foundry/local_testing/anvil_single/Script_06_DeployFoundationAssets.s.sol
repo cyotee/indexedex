@@ -26,6 +26,9 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant ARTIFACT_FILE = "06_foundation_assets.json";
     uint256 internal constant RICH_TOTAL_SUPPLY = 1_000_000_000e18;
+    // Test-token starting supply minted to the deployer so they can swap immediately
+    // after a fresh deploy. Stays under the facade's 10M per-mint cap.
+    uint256 internal constant DEPLOYER_TEST_TOKEN_BALANCE = 1_000_000e18;
 
     ICreate3FactoryProxy private create3Factory;
     IDiamondPackageCallBackFactory private diamondPackageFactory;
@@ -61,6 +64,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
 
         _deployTestTokens();
         _deployRichToken();
+        _mintTestSupplyToDeployer();
 
         vm.stopBroadcast();
 
@@ -199,6 +203,15 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
                 })
             )
         );
+    }
+
+    /// @notice Mint a starting supply of every mintable test token to the deployer wallet
+    ///         so the UI's swap, batch-swap, and vault flows have funds to test with
+    ///         after a single `scenario1` / `scenario2` / `scenario3` deploy.
+    function _mintTestSupplyToDeployer() internal {
+        erc20MinterFacade.mintToken(ttA, DEPLOYER_TEST_TOKEN_BALANCE, deployer);
+        erc20MinterFacade.mintToken(ttB, DEPLOYER_TEST_TOKEN_BALANCE, deployer);
+        erc20MinterFacade.mintToken(ttC, DEPLOYER_TEST_TOKEN_BALANCE, deployer);
     }
 
     function _exportJson() internal {
