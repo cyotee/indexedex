@@ -121,6 +121,29 @@ kill_anvil() {
   fi
 }
 
+# A fresh Anvil has none of the contracts from earlier deploys. The numbered
+# stage JSONs (01_*.json … 12_*.json) hold the addresses from whichever Anvil
+# wrote them; if we leave them in place across restarts, synthesize_platform
+# will publish stale addresses for stages the user hasn't redeployed yet and
+# the UI will think contracts exist at addresses with 0x bytecode.
+purge_stage_artifacts() {
+  local dir="$REPO_ROOT/deployments/local_testing/anvil_single"
+  if [[ ! -d "$dir" ]]; then
+    return 0
+  fi
+  local files=("$dir"/[0-9]*.json)
+  if [[ ! -e "${files[0]}" ]]; then
+    return 0
+  fi
+  log_info "Purging stale stage JSONs in deployments/local_testing/anvil_single/"
+  rm -f "${files[@]}"
+  # Fragments tree is rebuilt by each stage too — clear it so the aggregator
+  # doesn't emit Token Lists for tokens that no longer exist on chain.
+  if [[ -d "$dir/fragments" ]]; then
+    rm -rf "$dir/fragments"
+  fi
+}
+
 wait_for_rpc() {
   local attempts=0
   until cast block-number --rpc-url "$RPC_URL" >/dev/null 2>&1; do
@@ -275,6 +298,7 @@ fi
 
 if [[ "$RESTART_ANVIL" -eq 1 ]]; then
   kill_anvil
+  purge_stage_artifacts
 fi
 
 start_anvil
