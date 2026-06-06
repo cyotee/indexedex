@@ -314,10 +314,21 @@ cd frontend && npm run check
 
 The UI reads `NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT` to decide which env's
 Token Lists to use as the default. Supported values: `sepolia`,
-`public_sepolia`, `supersim_sepolia`. Default is `supersim_sepolia`.
+`public_sepolia`, `supersim_sepolia`, `local_testing`. Default is
+`supersim_sepolia` — which means a fresh `local_testing.sh` deploy will NOT
+show up in the dropdowns until you switch the env.
+
+For local development against `local_testing.sh` deploys:
 
 ```bash
-NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=sepolia npm run dev
+cd frontend
+NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=local_testing npm run dev:fresh
+```
+
+Or persist it for your shell by creating `frontend/.env.local`:
+
+```bash
+echo 'NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=local_testing' > frontend/.env.local
 ```
 
 The dropdowns will read from `frontend/app/addresses/<env>/<chain>/<bucket>.tokenlist.json`
