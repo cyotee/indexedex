@@ -14,16 +14,8 @@ import {
   isSupportedChainId,
   resolveArtifactsChainId,
 } from '../lib/addressArtifacts'
-import {
-  getBaseTokensForChain,
-  getErc4626TokensForChain,
-  getProtocolDetfTokensForChain,
-  getSeigniorageDetfsForChain,
-  getStrategyVaultTokensForChain,
-  getUniV2PoolTokensForChain,
-  getAerodromePoolTokensForChain,
-  getBalancerPoolTokensForChain,
-} from '../lib/tokenlists'
+import { selectFromMenu } from '../lib/tokenlists'
+import { resolveLabel } from '../lib/tokenlistCompose'
 import type { TokenListEntry } from '../lib/tokenlists'
 
 interface TokenInfo {
@@ -65,33 +57,22 @@ export default function TokenInfoPage() {
     return wagmiPublicClient ?? null
   }, [wagmiPublicClient])
 
+  // Fed by the 'token-info' menu — all chain-keyed buckets merged by address.
   const allTokens = useMemo(() => {
     const merged = new Map<string, TokenListEntry>()
-
-    const baseTokens = getBaseTokensForChain(resolvedChainId, environment)
-    const erc4626Tokens = getErc4626TokensForChain(resolvedChainId, environment)
-    const seigniorageDetfs = getSeigniorageDetfsForChain(resolvedChainId, environment)
-    const protocolTokens = getProtocolDetfTokensForChain(resolvedChainId, environment)
-    const strategyVaultTokens = getStrategyVaultTokensForChain(resolvedChainId, environment)
-    const uniV2PoolTokens = getUniV2PoolTokensForChain(resolvedChainId, environment)
-    const aerodromePoolTokens = getAerodromePoolTokensForChain(resolvedChainId, environment)
-    const balancerPoolTokens = getBalancerPoolTokensForChain(resolvedChainId, environment)
-
-    for (const t of [
-      ...baseTokens,
-      ...erc4626Tokens,
-      ...seigniorageDetfs,
-      ...protocolTokens,
-      ...strategyVaultTokens,
-      ...uniV2PoolTokens,
-      ...aerodromePoolTokens,
-      ...balancerPoolTokens,
-    ]) {
-      merged.set(t.address.toLowerCase(), t)
+    for (const { token } of selectFromMenu('token-info', resolvedChainId)) {
+      const entry: TokenListEntry = {
+        chainId: token.chainId,
+        address: token.address as `0x${string}`,
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals,
+        display: resolveLabel(token),
+      }
+      merged.set(entry.address.toLowerCase(), entry)
     }
-
     return Array.from(merged.values())
-  }, [environment, resolvedChainId])
+  }, [resolvedChainId])
 
   // Fetch all token information using generic hooks
   const fetchAllTokenInfo = useCallback(async () => {

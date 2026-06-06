@@ -543,22 +543,28 @@ export function buildPoolOptions(): PoolOption[] {
   return [...balancerOptions, ...vaultOptions, ...erc4626VaultOptions, ...protocolDetfOptions]
 }
 
-function buildOptionsFromMenu(
+/** Generic walk of a menu config against the active chain's lists. Yields each
+ *  matching token paired with the include row that admitted it, so consumers can
+ *  shape PoolOption / TokenOption / etc. as needed. */
+export function selectFromMenu(
   menuId: MenuId,
-  chainId: number,
-  refs: TokenListRef[]
-): PoolOption[] {
+  chainId: number
+): Array<{ token: TokenInfo; include: MenuListInclude }> {
+  const resolvedChainId = resolveArtifactsChainId(chainId)
+  if (resolvedChainId === null) return []
+  const refs = getListRefs(resolvedChainId)
+
   const refsById = new Map<string, TokenListRef>()
   refs.forEach((r) => refsById.set(r.id, r))
 
-  const out: PoolOption[] = []
+  const out: Array<{ token: TokenInfo; include: MenuListInclude }> = []
   for (const include of MENU_CONFIG[menuId].fromLists) {
     const ref = refsById.get(include.listId)
     if (!ref) continue
     for (const token of ref.list.tokens) {
-      if (token.chainId !== chainId) continue
+      if (token.chainId !== resolvedChainId) continue
       if (!matchesIncludeTags(token, include)) continue
-      out.push(toPoolOption(token, include))
+      out.push({ token, include })
     }
   }
   return out
@@ -574,20 +580,20 @@ function matchesIncludeTags(token: TokenInfo, include: MenuListInclude): boolean
   return false
 }
 
-function toPoolOption(token: TokenInfo, include: MenuListInclude): PoolOption {
+function labelFor(token: TokenInfo, include: MenuListInclude): string {
   const base = resolveLabel(token)
-  const label = include.labelSuffix ? `${base} (${include.labelSuffix})` : base
-  return { value: token.address as Address, label, type: include.type }
+  return include.labelSuffix ? `${base} (${include.labelSuffix})` : base
 }
 
 export function buildPoolOptionsForChain(chainId: number): PoolOption[] {
   // Map Anvil/localhost chain ids (31337/1337) onto Sepolia so a pure-local devnet
   // still sees the Sepolia chain's Token Lists. Forked Anvil (chain 11155111) passes
   // through unchanged.
-  const resolvedChainId = resolveArtifactsChainId(chainId)
-  if (resolvedChainId === null) return []
-  const refs = getListRefs(resolvedChainId)
-  return buildOptionsFromMenu('pool-select', resolvedChainId, refs)
+  return selectFromMenu('pool-select', chainId).map(({ token, include }) => ({
+    value: token.address as Address,
+    label: labelFor(token, include),
+    type: include.type as PoolOption['type'],
+  }))
 }
 
 export function buildTokenOptions(includeVaultShares: boolean = true, includeLpTokens: boolean = true): TokenOption[] {
@@ -621,30 +627,32 @@ export function buildTokenOptionsForChain(
   chainId: number,
   includeVaultShares: boolean = true,
   includeLpTokens: boolean = true,
-  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _legacyEnvironment?: unknown
 ): TokenOption[] {
+  const resolvedChainId = resolveArtifactsChainId(chainId) ?? chainId
   const opts: TokenOption[] = []
-  const {
-    baseTokens,
-    erc4626Tokens,
-    protocolDetfTokens,
-    uniV2PoolTokens,
-    aerodromePoolTokens,
-    strategyVaultTokens,
-  } = getCached(chainId, environment)
-  const platform = getArtifactsOrNull(chainId, environment)?.platform
 
-  opts.push({ value: 'ETH', label: 'ETH', chainId, type: 'token' })
-  if (resolvePlatformWethAddress(platform)) {
-    opts.push({ value: 'WETH9', label: 'WETH9', chainId, type: 'token' })
+  // ETH and WETH9 sentinels stay as prepends — they are UI modes, not Token List entries.
+  opts.push({ value: 'ETH', label: 'ETH', chainId: resolvedChainId, type: 'token' })
+  // WETH9 sentinel: any base-tokens entry tagged 'weth' qualifies for the wrap/unwrap UI.
+  const wethEntry = selectFromMenu('token-select', chainId).find(
+    ({ token }) => (token.tags ?? []).indexOf('weth') >= 0,
+  )
+  if (wethEntry) {
+    opts.push({ value: 'WETH9', label: 'WETH9', chainId: resolvedChainId, type: 'token' })
   }
 
-  for (const t of baseTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'token' })
-  for (const t of erc4626Tokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
-  for (const t of protocolDetfTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
-  if (includeLpTokens) for (const t of uniV2PoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'lp' })
-  if (includeLpTokens) for (const t of aerodromePoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'lp' })
-  if (includeVaultShares) for (const t of strategyVaultTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
+  for (const { token, include } of selectFromMenu('token-select', chainId)) {
+    if (!includeVaultShares && include.type === 'vault' && include.listId === 'strategy-vaults') continue
+    if (!includeLpTokens && include.type === 'lp') continue
+    opts.push({
+      value: token.address as Address,
+      label: labelFor(token, include),
+      chainId: resolvedChainId,
+      type: include.type as TokenOptionType,
+    })
+  }
 
   return opts
 }

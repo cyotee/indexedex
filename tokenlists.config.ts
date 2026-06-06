@@ -93,5 +93,16 @@ export const config: AggregatorConfig = {
         detf: { name: 'Protocol DETF', description: 'Protocol decentralized ETF' },
       },
     },
+    {
+      id: 'seigniorage-detfs',
+      name: 'Indexedex Seigniorage DETFs',
+      keywords: ['indexedex', 'detf', 'seigniorage'],
+      includeTypeDirs: ['vaults/seigniorageDetf'],
+      defaultTags: [],
+      tagDefinitions: {
+        vault: { name: 'Vault', description: 'Vault share token' },
+        sdetf: { name: 'Seigniorage DETF', description: 'Seigniorage decentralized ETF' },
+      },
+    },
   ],
 }

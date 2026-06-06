@@ -9,10 +9,11 @@ import {
   buildTokenOptionsForChain,
   getTokenDecimalsByAddressForChain,
   resolveTokenAddressFromOptionForChain,
+  selectFromMenu,
   type Address,
   type TokenOption,
-  getSeigniorageDetfsForChain,
 } from '../lib/tokenlists'
+import { resolveLabel } from '../lib/tokenlistCompose'
 import { resolveAppChain } from '../lib/runtimeChains'
 import { useSelectedNetwork } from '../lib/networkSelection'
 
@@ -243,9 +244,12 @@ export default function DetfPageClient() {
   const activeChain = useMemo(() => resolveAppChain(resolvedChainId), [resolvedChainId])
   const { address, isConnected } = useAccount()
 
+  // DETF picker — fed by the 'seigniorage-detfs-page' menu config.
   const detfOptions = useMemo(() => {
-    const detfs = getSeigniorageDetfsForChain(resolvedChainId)
-    return detfs.map((t) => ({ value: t.address, label: t.name || t.symbol }))
+    return selectFromMenu('seigniorage-detfs-page', resolvedChainId).map(({ token }) => ({
+      value: token.address as `0x${string}`,
+      label: resolveLabel(token),
+    }))
   }, [resolvedChainId])
 
   const [selectedDetf, setSelectedDetf] = useState<Address | ''>('')

@@ -1,6 +1,6 @@
 // Menu definitions for UI dropdowns. Each menu names a sequence of Token List
 // inclusions; the consumer (tokenlists.ts) resolves those lists against the
-// active (env, chain) registry and renders one option per matching token.
+// active chain id and renders one option per matching token.
 //
 // Adding a new menu = add an entry here.
 // Adding a new source for an existing menu = add a row to fromLists.
@@ -8,7 +8,12 @@
 // No platform-derived fallbacks. If an entry should appear in a menu, it must
 // be present in one of the listed Token Lists.
 
-import type { PoolOption } from './tokenlists'
+/**
+ * Discriminator carried on each rendered option. Used by downstream code to
+ * route swap / batch / vault logic. Superset of PoolOption['type'] and
+ * TokenOption['type'].
+ */
+export type OptionType = 'token' | 'lp' | 'vault' | 'balancer'
 
 export interface MenuListInclude {
   /** Matches TokenListRef.id in tokenlistRegistry.ts. */
@@ -17,8 +22,8 @@ export interface MenuListInclude {
   includeTags?: string[]
   /** Appended to the rendered label in parentheses (e.g. "Vault" -> "Foo (Vault)"). */
   labelSuffix?: string
-  /** PoolOption discriminator. Routes to swap/batch logic downstream. */
-  type: NonNullable<PoolOption['type']>
+  /** Routing discriminator. */
+  type: OptionType
 }
 
 export interface MenuConfig {
@@ -26,6 +31,7 @@ export interface MenuConfig {
 }
 
 export const MENU_CONFIG = {
+  // The Select Pool dropdown on /swap and /batch-swap.
   'pool-select': {
     fromLists: [
       { listId: 'base-tokens', includeTags: ['wrapUnwrap'], labelSuffix: 'Wrap/Unwrap', type: 'balancer' },
@@ -33,6 +39,43 @@ export const MENU_CONFIG = {
       { listId: 'strategy-vaults', labelSuffix: 'Vault', type: 'vault' },
       { listId: 'erc4626-vaults', labelSuffix: 'ERC4626', type: 'vault' },
       { listId: 'protocol-detfs', labelSuffix: 'Protocol DETF', type: 'vault' },
+    ],
+  },
+  // Token In / Token Out dropdowns on /swap, /batch-swap, /detf.
+  // Seigniorage DETFs deliberately excluded (they have their own picker on /detf).
+  'token-select': {
+    fromLists: [
+      { listId: 'base-tokens', type: 'token' },
+      { listId: 'erc4626-vaults', type: 'vault' },
+      { listId: 'protocol-detfs', type: 'vault' },
+      { listId: 'uni-v2-pools', type: 'lp' },
+      { listId: 'aerodrome-pools', type: 'lp' },
+      { listId: 'strategy-vaults', type: 'vault' },
+    ],
+  },
+  // Vault selector on /vaults — only Pachira strategy vaults.
+  'vaults-page': {
+    fromLists: [
+      { listId: 'strategy-vaults', type: 'vault' },
+    ],
+  },
+  // DETF picker on /detf — only seigniorage DETFs.
+  'seigniorage-detfs-page': {
+    fromLists: [
+      { listId: 'seigniorage-detfs', type: 'vault' },
+    ],
+  },
+  // /token-info — every chain-keyed token bucket merged into one balance grid.
+  'token-info': {
+    fromLists: [
+      { listId: 'base-tokens', type: 'token' },
+      { listId: 'erc4626-vaults', type: 'vault' },
+      { listId: 'seigniorage-detfs', type: 'vault' },
+      { listId: 'protocol-detfs', type: 'vault' },
+      { listId: 'strategy-vaults', type: 'vault' },
+      { listId: 'uni-v2-pools', type: 'lp' },
+      { listId: 'aerodrome-pools', type: 'lp' },
+      { listId: 'balancer-v3-pools', type: 'balancer' },
     ],
   },
 } satisfies Record<string, MenuConfig>

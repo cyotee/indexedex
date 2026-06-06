@@ -6,6 +6,7 @@ import ethBalancerV3Pools from '../addresses/chain/11155111/balancer-v3-pools.to
 import ethUniV2Pools from '../addresses/chain/11155111/uni-v2-pools.tokenlist.json'
 import ethStrategyVaults from '../addresses/chain/11155111/strategy-vaults.tokenlist.json'
 import ethProtocolDetfs from '../addresses/chain/11155111/protocol-detfs.tokenlist.json'
+import ethSeigniorageDetfs from '../addresses/chain/11155111/seigniorage-detfs.tokenlist.json'
 
 // Chain 84532 — Base Sepolia.
 import baseBaseTokens from '../addresses/chain/84532/base-tokens.tokenlist.json'
@@ -15,6 +16,7 @@ import baseAerodromePools from '../addresses/chain/84532/aerodrome-pools.tokenli
 import baseStrategyVaults from '../addresses/chain/84532/strategy-vaults.tokenlist.json'
 import baseErc4626Vaults from '../addresses/chain/84532/erc4626-vaults.tokenlist.json'
 import baseProtocolDetfs from '../addresses/chain/84532/protocol-detfs.tokenlist.json'
+import baseSeigniorageDetfs from '../addresses/chain/84532/seigniorage-detfs.tokenlist.json'
 
 const ref = (id: string, list: unknown, priority = 50): TokenListRef => ({
   id,
@@ -35,6 +37,7 @@ export const LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('uni-v2-pools', ethUniV2Pools),
     ref('strategy-vaults', ethStrategyVaults),
     ref('protocol-detfs', ethProtocolDetfs),
+    ref('seigniorage-detfs', ethSeigniorageDetfs),
   ],
   84532: [
     ref('base-tokens', baseBaseTokens),
@@ -44,6 +47,7 @@ export const LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('strategy-vaults', baseStrategyVaults),
     ref('erc4626-vaults', baseErc4626Vaults),
     ref('protocol-detfs', baseProtocolDetfs),
+    ref('seigniorage-detfs', baseSeigniorageDetfs),
   ],
 }
 

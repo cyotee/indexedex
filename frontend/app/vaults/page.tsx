@@ -7,7 +7,8 @@ import { createUseReadContract } from 'wagmi/codegen'
 import DebugPanel from '../components/DebugPanel'
 
 // Token list helpers
-import { getStrategyVaultTokensForChain } from '../lib/tokenlists'
+import { selectFromMenu } from '../lib/tokenlists'
+import { resolveLabel } from '../lib/tokenlistCompose'
 import { useSelectedNetwork } from '../lib/networkSelection'
 
 // Define the interfaces we'll be using
@@ -195,11 +196,11 @@ export default function VaultsPage() {
   const resolvedChainId = selectedChainId || 11155111
   const [selectedVault, setSelectedVault] = useState<string>('')
 
-  // Get vault options from token list (strategy vault share tokens)
+  // Get vault options from the 'vaults-page' menu config (strategy-vaults bucket).
   const vaultOptions = useMemo(() => {
-    return getStrategyVaultTokensForChain(resolvedChainId).map((t) => ({
-      label: t.display || t.name || t.symbol,
-      value: t.address as `0x${string}`
+    return selectFromMenu('vaults-page', resolvedChainId).map(({ token }) => ({
+      label: resolveLabel(token),
+      value: token.address as `0x${string}`,
     }))
   }, [resolvedChainId])
 
