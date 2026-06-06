@@ -1,0 +1,38 @@
+{
+  "name": "Indexedex Balancer V3 Pools",
+  "timestamp": "2026-06-05T00:00:00.000Z",
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+  },
+  "keywords": [
+    "indexedex",
+    "balancer",
+    "pool"
+  ],
+  "tags": {
+    "pool": {
+      "name": "Pool",
+      "description": "AMM pool"
+    },
+    "balancer": {
+      "name": "Balancer",
+      "description": "Balancer pool"
+    },
+    "balV3": {
+      "name": "Balancer V3",
+      "description": "Balancer V3 pool"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 999999,
+      "address": "0x0000000000000000000000000000000000000001",
+      "name": "stub",
+      "symbol": "stub",
+      "decimals": 18,
+      "tags": ["pool", "balancer", "balV3"]
+    }
+  ]
+}

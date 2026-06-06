@@ -36,11 +36,14 @@ import publicEthErc4626Vaults from '../addresses/public_sepolia/ethereum/erc4626
 import publicEthProtocolDetfs from '../addresses/public_sepolia/ethereum/protocol-detfs.tokenlist.json'
 
 // local_testing / anvil_single
-// Only buckets that the staged Solidity scripts currently emit fragments for are
-// imported. Add more imports here when migrating additional scripts.
+// Buckets the staged Solidity scripts emit fragments for. balancer-v3-pools and
+// protocol-detfs ship as minimal stubs (chainId 999999) until Scenarios 2/3 are
+// redeployed; the chain filter in buildOptionsFromMenu excludes them in the meantime.
 import localTestingBaseTokens from '../addresses/local_testing/anvil_single/base-tokens.tokenlist.json'
 import localTestingUniV2Pools from '../addresses/local_testing/anvil_single/uni-v2-pools.tokenlist.json'
 import localTestingStrategyVaults from '../addresses/local_testing/anvil_single/strategy-vaults.tokenlist.json'
+import localTestingBalancerV3Pools from '../addresses/local_testing/anvil_single/balancer-v3-pools.tokenlist.json'
+import localTestingProtocolDetfs from '../addresses/local_testing/anvil_single/protocol-detfs.tokenlist.json'
 
 // public_sepolia / base
 import publicBaseBaseTokens from '../addresses/public_sepolia/base/base-tokens.tokenlist.json'
@@ -95,6 +98,8 @@ export const LIST_REGISTRY: Partial<Record<DeploymentEnvironment, ChainRegistry>
       ref('base-tokens', localTestingBaseTokens),
       ref('uni-v2-pools', localTestingUniV2Pools),
       ref('strategy-vaults', localTestingStrategyVaults),
+      ref('balancer-v3-pools', localTestingBalancerV3Pools),
+      ref('protocol-detfs', localTestingProtocolDetfs),
     ],
   },
   public_sepolia: {
