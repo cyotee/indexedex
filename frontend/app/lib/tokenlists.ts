@@ -595,7 +595,6 @@ export function buildTokenOptions(includeVaultShares: boolean = true, includeLpT
   const {
     baseTokens,
     erc4626Tokens,
-    seigniorageDetfs,
     protocolDetfTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
@@ -610,7 +609,6 @@ export function buildTokenOptions(includeVaultShares: boolean = true, includeLpT
 
   for (const t of baseTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'token' })
   for (const t of erc4626Tokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'vault' })
-  for (const t of seigniorageDetfs) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'vault' })
   for (const t of protocolDetfTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'vault' })
   if (includeLpTokens) for (const t of uniV2PoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'lp' })
   if (includeLpTokens) for (const t of aerodromePoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'lp' })
@@ -629,7 +627,6 @@ export function buildTokenOptionsForChain(
   const {
     baseTokens,
     erc4626Tokens,
-    seigniorageDetfs,
     protocolDetfTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
@@ -644,7 +641,6 @@ export function buildTokenOptionsForChain(
 
   for (const t of baseTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'token' })
   for (const t of erc4626Tokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
-  for (const t of seigniorageDetfs) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
   for (const t of protocolDetfTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'vault' })
   if (includeLpTokens) for (const t of uniV2PoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'lp' })
   if (includeLpTokens) for (const t of aerodromePoolTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId, type: 'lp' })
