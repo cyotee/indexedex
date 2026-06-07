@@ -793,6 +793,10 @@ export default function SwapPage() {
   }, [poolAddress])
 
   // ---- pool == vault: read vaultTokens() directly from the pool ----
+  // MultiAsset vault.vaultTokens() reports every token it will accept for
+  // exchange, EXCLUDING the vault share itself (the vault always accepts
+  // its own share). The matcher uses this set to validate the non-vault
+  // side of each route.
   const { data: vaultTokensOfPool } = useReadContract({
     address: poolAddress as `0x${string}` | undefined,
     abi: [
@@ -867,9 +871,9 @@ export default function SwapPage() {
     query: { enabled: candidateVaultsInPool.length > 0 },
   })
 
-  // Build the matcher's underlyingByVault input. For pool==vault we seed it
-  // with [poolAddress -> vaultTokens(pool)]. For pool==balancer we seed it
-  // with the multicall result keyed by candidate vault address.
+  // Build the matcher's underlyingByVault input. For pool==vault we seed
+  // [poolAddress -> vaultTokens(pool)]. For pool==balancer we seed each
+  // candidate vault address -> its vaultTokens() result from the multicall.
   const underlyingByVault = useMemo(() => {
     const map = new Map<string, readonly `0x${string}`[]>()
     if (poolType === 'vault' && poolAddress && vaultTokensOfPool) {

@@ -111,11 +111,14 @@ describe('disambiguate', () => {
 /* -------------------------------------------------------------------------- */
 
 describe('resolveRoute (pool == vault)', () => {
+  // MultiAsset vault.vaultTokens() reports every accepted exchange token
+  // EXCEPT the vault share itself (the vault is always assumed to accept
+  // itself). The matcher validates the non-vault side against this list.
   const vaultUnderlying = new Map<string, readonly Address[]>([
     [A.poolVault.toLowerCase(), [A.TTA, A.TTB]],
   ])
 
-  it('returns pending when vaultTokens() has not loaded yet', () => {
+  it('pending when vaultTokens() has not loaded yet', () => {
     expect(
       resolveRoute({
         poolType: 'vault',
@@ -123,12 +126,12 @@ describe('resolveRoute (pool == vault)', () => {
         tokenIn: A.TTA,
         tokenOut: A.TTB,
         poolTokens: [A.poolVault],
-        underlyingByVault: emptyMap, // not seeded yet
+        underlyingByVault: emptyMap,
       })
     ).toEqual({ kind: 'pending' })
   })
 
-  it('Strategy Vault Withdrawal: tokenIn is the vault share, tokenOut is an underlying', () => {
+  it('Strategy Vault Withdrawal: tokenIn == vault share, tokenOut in vaultTokens()', () => {
     const result = resolveRoute({
       poolType: 'vault',
       poolAddress: A.poolVault,
@@ -146,7 +149,7 @@ describe('resolveRoute (pool == vault)', () => {
     })
   })
 
-  it('Strategy Vault Deposit: tokenIn is underlying, tokenOut is the vault share', () => {
+  it('Strategy Vault Deposit: tokenIn in vaultTokens(), tokenOut == vault share', () => {
     const result = resolveRoute({
       poolType: 'vault',
       poolAddress: A.poolVault,
@@ -164,7 +167,7 @@ describe('resolveRoute (pool == vault)', () => {
     })
   })
 
-  it('Vault Pass-Through: both tokens are underlying', () => {
+  it('Vault Pass-Through: both tokens in vaultTokens(), neither is the vault share', () => {
     const result = resolveRoute({
       poolType: 'vault',
       poolAddress: A.poolVault,
@@ -183,7 +186,7 @@ describe('resolveRoute (pool == vault)', () => {
     })
   })
 
-  it('invalid when one of the tokens is not underlying', () => {
+  it('invalid when one of the tokens is not in vaultTokens() and is not the vault itself', () => {
     const result = resolveRoute({
       poolType: 'vault',
       poolAddress: A.poolVault,
@@ -193,6 +196,32 @@ describe('resolveRoute (pool == vault)', () => {
       underlyingByVault: vaultUnderlying,
     })
     expect(result.kind).toBe('invalid')
+  })
+
+  it('invalid when both tokenIn AND tokenOut equal the vault share', () => {
+    const result = resolveRoute({
+      poolType: 'vault',
+      poolAddress: A.poolVault,
+      tokenIn: A.poolVault,
+      tokenOut: A.poolVault,
+      poolTokens: [A.poolVault],
+      underlyingByVault: vaultUnderlying,
+    })
+    expect(result.kind).toBe('invalid')
+  })
+
+  it('case-insensitive vault address comparison', () => {
+    const lower = A.poolVault.toLowerCase() as Address
+    const upper = A.poolVault.toUpperCase() as Address
+    const result = resolveRoute({
+      poolType: 'vault',
+      poolAddress: lower,
+      tokenIn: upper,
+      tokenOut: A.TTA,
+      poolTokens: [lower],
+      underlyingByVault: new Map<string, readonly Address[]>([[lower, [A.TTA, A.TTB]]]),
+    })
+    expect(result).toMatchObject({ kind: 'ok', route: 'Strategy Vault Withdrawal' })
   })
 })
 

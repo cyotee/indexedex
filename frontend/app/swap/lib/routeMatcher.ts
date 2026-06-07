@@ -148,16 +148,30 @@ export function resolveRoute(
 function resolveVaultPool(input: ResolveRouteInput): RouteResolution<VaultRouteName> {
   const { poolAddress, tokenIn, tokenOut, underlyingByVault } = input
 
+  // The vault's IMultiAssetBasicVault.vaultTokens() now reports every token
+  // it will accept for exchange, EXCLUDING the vault share itself (a vault is
+  // always assumed to accept its own share). So the matcher validates:
+  //
+  //   tokenIn == vault, tokenOut in vaultTokens()  -> Strategy Vault Withdrawal
+  //   tokenIn in vaultTokens(), tokenOut == vault  -> Strategy Vault Deposit
+  //   tokenIn in vaultTokens(), tokenOut in vaultTokens()  -> Vault Pass-Through
+  //   tokenIn == vault && tokenOut == vault   -> invalid (vault for itself)
+  //   anything else  -> invalid (vault won't accept one of the sides)
+
   const underlying = underlyingByVault.get(poolAddress.toLowerCase())
   if (!underlying) return { kind: 'pending' }
 
   const vault = poolAddress.toLowerCase()
   const t1 = tokenIn.toLowerCase()
   const t2 = tokenOut.toLowerCase()
-  const inUnderlying = (addr: string) => underlying.some((u) => u.toLowerCase() === addr)
+  const inIsVault = t1 === vault
+  const outIsVault = t2 === vault
+  const isUnderlying = (addr: string) => underlying.some((u) => u.toLowerCase() === addr)
 
-  // Strategy Vault Withdrawal: tokenIn == vault share, tokenOut == underlying
-  if (t1 === vault && t2 !== vault && inUnderlying(t2)) {
+  if (inIsVault && outIsVault) {
+    return { kind: 'invalid', poolTokens: [poolAddress], underlyingByVault }
+  }
+  if (inIsVault && isUnderlying(t2)) {
     return {
       kind: 'ok',
       route: 'Strategy Vault Withdrawal',
@@ -167,8 +181,7 @@ function resolveVaultPool(input: ResolveRouteInput): RouteResolution<VaultRouteN
       tokenOutVault: poolAddress,
     }
   }
-  // Strategy Vault Deposit: tokenIn == underlying, tokenOut == vault share
-  if (t2 === vault && t1 !== vault && inUnderlying(t1)) {
+  if (outIsVault && isUnderlying(t1)) {
     return {
       kind: 'ok',
       route: 'Strategy Vault Deposit',
@@ -178,8 +191,7 @@ function resolveVaultPool(input: ResolveRouteInput): RouteResolution<VaultRouteN
       tokenOutVault: null,
     }
   }
-  // Vault Pass-Through: both tokens are underlying
-  if (t1 !== vault && t2 !== vault && inUnderlying(t1) && inUnderlying(t2)) {
+  if (!inIsVault && !outIsVault && isUnderlying(t1) && isUnderlying(t2)) {
     return {
       kind: 'ok',
       route: 'Vault Pass-Through',
@@ -189,11 +201,7 @@ function resolveVaultPool(input: ResolveRouteInput): RouteResolution<VaultRouteN
       tokenOutVault: poolAddress,
     }
   }
-  return {
-    kind: 'invalid',
-    poolTokens: [poolAddress],
-    underlyingByVault,
-  }
+  return { kind: 'invalid', poolTokens: [poolAddress], underlyingByVault }
 }
 
 /* --------------------------- pool == Balancer -------------------------- */
