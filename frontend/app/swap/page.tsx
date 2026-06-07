@@ -890,6 +890,10 @@ export default function SwapPage() {
   const swapRouteAuto = useMemo<SwapRouteAuto>(() => {
     if (poolType !== 'vault' && poolType !== 'balancer') return null
     if (!poolAddress || !tokenInAddress || !tokenOutAddress) return null
+    // WETH wrap/unwrap is a sentinel route handled by buildExactInArgs directly;
+    // the WETH9 contract is not a Balancer pool so getPoolTokens reverts and the
+    // matcher would otherwise stay pending forever. Skip it.
+    if (isWethSentinelWrapUnwrapFlow) return null
 
     const poolTokens: readonly `0x${string}`[] =
       poolType === 'vault'
@@ -919,6 +923,7 @@ export default function SwapPage() {
     poolAddress,
     tokenInAddress,
     tokenOutAddress,
+    isWethSentinelWrapUnwrapFlow,
     balancerPoolTokens,
     candidateVaultsInPool,
     candidateVaultTokensMulticall,
