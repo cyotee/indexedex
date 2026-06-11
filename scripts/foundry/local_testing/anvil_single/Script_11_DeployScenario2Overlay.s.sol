@@ -13,8 +13,11 @@ import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/bala
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_11_DeployScenario2Overlay
-/// @notice Deploys Scenario 2: rate providers and Balancer const-prod pools on top of Scenario 1 UniV2 vaults
+/// @notice Deploys Scenario 2: rate providers and Balancer const-prod pools on top of Scenario 1 UniV2 vaults.
+///         - Pool 1 pairs TTA with the UniV2 TTA/TTB vault token rated in TTB.
+///         - Pool 2 pairs TTB with the UniV2 TTB/WETH vault token rated in WETH.
 contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
+    string internal constant PROTOCOLS_BASE_FILE = "03_protocols_base.json";
     string internal constant FOUNDATION_PACKAGES_FILE = "05_foundation_packages.json";
     string internal constant FOUNDATION_ASSETS_FILE = "06_foundation_assets.json";
     string internal constant SCENARIO_1_FILE = "10_scenario_1.json";
@@ -23,13 +26,15 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
     IStandardExchangeRateProviderDFPkg private rateProviderPkg;
     IBalancerV3ConstantProductPoolStandardVaultPkg private balConstProdPkg;
 
+    address private ttA;
     address private ttB;
+    address private weth;
     address private abVault;
     address private bWethVault;
 
     address private uniAbRpB;
-    address private uniBWethRpB;
-    address private balUniAbWithB;
+    address private uniBWethRpWeth;
+    address private balUniAbWithA;
     address private balUniBWethWithB;
 
     function run() external {
@@ -59,20 +64,24 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
         balConstProdPkg = IBalancerV3ConstantProductPoolStandardVaultPkg(
             _readAddress(FOUNDATION_PACKAGES_FILE, "balancerV3ConstantProductPoolStandardVaultPkg")
         );
+        ttA = _readAddress(FOUNDATION_ASSETS_FILE, "testTokenA");
         ttB = _readAddress(FOUNDATION_ASSETS_FILE, "testTokenB");
+        weth = _readAddress(PROTOCOLS_BASE_FILE, "weth");
         abVault = _readAddress(SCENARIO_1_FILE, "uniV2AbVault");
         bWethVault = _readAddress(SCENARIO_1_FILE, "uniV2BWethVault");
 
         require(address(rateProviderPkg) != address(0), "Rate provider pkg not found - run Script_05 first");
         require(address(balConstProdPkg) != address(0), "Balancer const-prod pkg not found - run Script_05 first");
+        require(ttA != address(0), "Test Token A not found - run Script_06 first");
         require(ttB != address(0), "Test Token B not found - run Script_06 first");
+        require(weth != address(0), "WETH not found - run Script_03 first");
         require(abVault != address(0) && bWethVault != address(0), "Scenario 1 vaults not found - run Script_10 first");
     }
 
     function _loadExistingScenario() internal returns (bool) {
         (address abRp, bool hasAbRp) = _readAddressSafe(ARTIFACT_FILE, "uniV2AbRpB");
-        (address bWethRp, bool hasBWethRp) = _readAddressSafe(ARTIFACT_FILE, "uniV2BWethRpB");
-        (address abPool, bool hasAbPool) = _readAddressSafe(ARTIFACT_FILE, "balUniAbWithB");
+        (address bWethRp, bool hasBWethRp) = _readAddressSafe(ARTIFACT_FILE, "uniV2BWethRpWeth");
+        (address abPool, bool hasAbPool) = _readAddressSafe(ARTIFACT_FILE, "balUniAbWithA");
         (address bWethPool, bool hasBWethPool) = _readAddressSafe(ARTIFACT_FILE, "balUniBWethWithB");
 
         if (!hasAbRp || !hasBWethRp || !hasAbPool || !hasBWethPool) {
@@ -84,8 +93,8 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
         }
 
         uniAbRpB = abRp;
-        uniBWethRpB = bWethRp;
-        balUniAbWithB = abPool;
+        uniBWethRpWeth = bWethRp;
+        balUniAbWithA = abPool;
         balUniBWethWithB = bWethPool;
         return true;
     }
@@ -110,7 +119,7 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
 
     function _deployRateProviders() internal {
         uniAbRpB = address(rateProviderPkg.deployRateProvider(IStandardExchange(abVault), IERC20(ttB)));
-        uniBWethRpB = address(rateProviderPkg.deployRateProvider(IStandardExchange(bWethVault), IERC20(ttB)));
+        uniBWethRpWeth = address(rateProviderPkg.deployRateProvider(IStandardExchange(bWethVault), IERC20(weth)));
     }
 
     function _deployPool(address underlyingToken, address vaultToken, address vaultTokenRateProvider)
@@ -124,18 +133,20 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
     }
 
     function _deployPools() internal {
-        balUniAbWithB = _deployPool(ttB, abVault, uniAbRpB);
-        balUniBWethWithB = _deployPool(ttB, bWethVault, uniBWethRpB);
+        balUniAbWithA = _deployPool(ttA, abVault, uniAbRpB);
+        balUniBWethWithB = _deployPool(ttB, bWethVault, uniBWethRpWeth);
     }
 
     function _exportJson() internal {
         string memory json;
+        json = vm.serializeAddress("scenario2", "testTokenA", ttA);
         json = vm.serializeAddress("scenario2", "testTokenB", ttB);
+        json = vm.serializeAddress("scenario2", "weth", weth);
         json = vm.serializeAddress("scenario2", "uniV2AbVault", abVault);
         json = vm.serializeAddress("scenario2", "uniV2BWethVault", bWethVault);
         json = vm.serializeAddress("scenario2", "uniV2AbRpB", uniAbRpB);
-        json = vm.serializeAddress("scenario2", "uniV2BWethRpB", uniBWethRpB);
-        json = vm.serializeAddress("scenario2", "balUniAbWithB", balUniAbWithB);
+        json = vm.serializeAddress("scenario2", "uniV2BWethRpWeth", uniBWethRpWeth);
+        json = vm.serializeAddress("scenario2", "balUniAbWithA", balUniAbWithA);
         json = vm.serializeAddress("scenario2", "balUniBWethWithB", balUniBWethWithB);
         json = vm.serializeAddress("scenario2", "owner", owner);
         json = vm.serializeAddress("scenario2", "deployer", deployer);
@@ -146,10 +157,10 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
 
     function _exportFragments() internal {
         _writeBalancerPoolFragment(
-            "balUniAbWithB",
-            balUniAbWithB,
-            "Balancer TTB + UniV2 AB Vault",
-            "balUniAbB"
+            "balUniAbWithA",
+            balUniAbWithA,
+            "Balancer TTA + UniV2 AB Vault",
+            "balUniAbA"
         );
         _writeBalancerPoolFragment(
             "balUniBWethWithB",
@@ -181,8 +192,8 @@ contract Script_11_DeployScenario2Overlay is LocalTestingDeploymentBase {
     function _logResults() internal view {
         _logString("Artifact:", ARTIFACT_FILE);
         _logAddress("UniV2 A/B Rate Provider targeting TTB:", uniAbRpB);
-        _logAddress("UniV2 B/WETH Rate Provider targeting TTB:", uniBWethRpB);
-        _logAddress("Balancer Pool TTB + UniV2 A/B Vault:", balUniAbWithB);
+        _logAddress("UniV2 B/WETH Rate Provider targeting WETH:", uniBWethRpWeth);
+        _logAddress("Balancer Pool TTA + UniV2 A/B Vault:", balUniAbWithA);
         _logAddress("Balancer Pool TTB + UniV2 B/WETH Vault:", balUniBWethWithB);
         _logComplete("Stage 11");
     }

@@ -1,0 +1,10 @@
+{
+  "chainId": 11155111,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "feeCollector": "0xBa00abeB5f5F223798C3bBeAd02957B54369E0Fa",
+  "indexedexManager": "0xD145FCd75c0C152a8edcAF6d9Dc993Fb7c7049d1",
+  "networkProfile": "local_testing",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "vaultFeeOracle": "0xD145FCd75c0C152a8edcAF6d9Dc993Fb7c7049d1",
+  "vaultRegistry": "0xD145FCd75c0C152a8edcAF6d9Dc993Fb7c7049d1"
+}
