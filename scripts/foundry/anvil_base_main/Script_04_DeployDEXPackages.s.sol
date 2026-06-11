@@ -73,6 +73,8 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
     IFacet private erc4626Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
+    IFacet private multiAssetBasicVaultFacet;
+    IFacet private multiAssetStandardVaultFacet;
 
     // Deployed packages
     IUniswapV2StandardExchangeDFPkg private uniV2Pkg;
@@ -116,6 +118,8 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         erc4626Facet = IFacet(_readAddress("02_shared_facets.json", "erc4626Facet"));
         erc4626BasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626BasicVaultFacet"));
         erc4626StandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626StandardVaultFacet"));
+        multiAssetBasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "multiAssetBasicVaultFacet"));
+        multiAssetStandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "multiAssetStandardVaultFacet"));
 
         // Load core proxies
         indexedexManager = IIndexedexManagerProxy(_readAddress("03_core_proxies.json", "indexedexManager"));
@@ -131,8 +135,8 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
                 erc2612Facet,
                 erc5267Facet,
                 erc4626Facet,
-                erc4626BasicVaultFacet,
-                erc4626StandardVaultFacet,
+                multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
                 indexedexManager,
@@ -155,8 +159,10 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
             erc2612Facet,
             erc5267Facet,
             erc4626Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            // erc4626BasicVaultFacet,
+            multiAssetBasicVaultFacet,
+            // erc4626StandardVaultFacet,
+            multiAssetStandardVaultFacet,
             create3Factory.deployAerodromeStandardExchangeInFacet(),
             create3Factory.deployAerodromeStandardExchangeOutFacet(),
             indexedexManager,
@@ -180,8 +186,10 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         init.erc2612Facet = erc2612Facet;
         init.erc5267Facet = erc5267Facet;
         init.erc4626Facet = erc4626Facet;
-        init.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
-        init.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        // init.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
+        // init.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init.camelotV2StandardExchangeInFacet = create3Factory.deployCamelotV2StandardExchangeInFacet();
         init.camelotV2StandardExchangeOutFacet = create3Factory.deployCamelotV2StandardExchangeOutFacet();
         init.vaultFeeOracleQuery = indexedexManager;

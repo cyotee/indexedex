@@ -5,6 +5,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# shellcheck source=lib/sanitize_dev_accounts.sh
+source "$SCRIPT_DIR/lib/sanitize_dev_accounts.sh"
+
 resolve_foundry_rpc_alias() {
   local alias_name="$1"
   local template
@@ -179,6 +182,9 @@ start_anvil() {
   fi
   nohup "${anvil_cmd[@]}" >"$ANVIL_LOG_DIR/anvil.log" 2>&1 &
   wait_for_rpc
+  if [[ -n "$ANVIL_FORK_URL" ]]; then
+    sanitize_dev_accounts "$RPC_URL"
+  fi
 }
 
 run_stage() {

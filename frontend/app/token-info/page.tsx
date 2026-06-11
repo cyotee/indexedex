@@ -1,63 +1,38 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount, useConnection, useConnectorClient, usePublicClient, useWalletClient } from 'wagmi'
+import { useMemo } from 'react'
+import { useAccount, useBalance, useReadContract, useReadContracts } from 'wagmi'
 import { erc20Abi, formatUnits } from 'viem'
-import { debugError, debugLog, debugWarn } from '../lib/debug'
-import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
+import { debugWarn } from '../lib/debug'
 import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
 import { useSelectedNetwork } from '../lib/networkSelection'
 
 import {
   CHAIN_ID_SEPOLIA,
   getAddressArtifacts,
-  isSupportedChainId,
-  resolveArtifactsChainId,
 } from '../lib/addressArtifacts'
 import { selectFromMenu } from '../lib/tokenlists'
 import { resolveLabel } from '../lib/tokenlistCompose'
 import type { TokenListEntry } from '../lib/tokenlists'
 
-interface TokenInfo {
-  address: string
-  name: string
-  symbol: string
-  decimals: number
-  balance: string
-}
-
 export default function TokenInfoPage() {
-  const { address, chainId: accountChainId, isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
   const { environment } = useDeploymentEnvironment()
   const { selectedChainId } = useSelectedNetwork()
-  const connection = useConnection()
-  const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
-  const browserChainId = useBrowserChainId(isConnected)
-  const { data: connectorClient } = useConnectorClient()
-  const { data: walletClient } = useWalletClient()
-  const attachedWalletChainId = isConnected
-    ? (accountChainId ?? connection.chainId ?? walletClient?.chain?.id ?? connectorClient?.chain?.id ?? connectedWalletChainId ?? browserChainId)
-    : undefined
-  const resolvedWalletChainId = attachedWalletChainId !== undefined
-    ? resolveArtifactsChainId(attachedWalletChainId, environment, selectedChainId)
-    : null
   const resolvedChainId = selectedChainId ?? CHAIN_ID_SEPOLIA
-  const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })
-  const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)
+
   const artifacts = useMemo(() => {
     return getAddressArtifacts(resolvedChainId, environment)
   }, [environment, resolvedChainId])
   const platform = artifacts?.platform
-  const [ethBalance, setEthBalance] = useState<string>('0')
-  const [wethBalance, setWethBalance] = useState<string>('0')
-  const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const wethAddress =
+    platform?.weth9 && platform.weth9 !== '0x0000000000000000000000000000000000000000'
+      ? (platform.weth9 as `0x${string}`)
+      : undefined
 
-  const publicClient = useMemo(() => {
-    return wagmiPublicClient ?? null
-  }, [wagmiPublicClient])
-
-  // Fed by the 'token-info' menu — all chain-keyed buckets merged by address.
+  // Fed by the 'token-info' menu — every chain-keyed Token List bucket merged
+  // by address. The Token List supplies name/symbol/decimals, so the only
+  // on-chain read we need per row is balanceOf.
   const allTokens = useMemo(() => {
     const merged = new Map<string, TokenListEntry>()
     for (const { token } of selectFromMenu('token-info', resolvedChainId)) {
@@ -74,187 +49,74 @@ export default function TokenInfoPage() {
     return Array.from(merged.values())
   }, [resolvedChainId])
 
-  // Fetch all token information using generic hooks
-  const fetchAllTokenInfo = useCallback(async () => {
-    if (!publicClient) return
+  const {
+    data: ethBalanceData,
+    refetch: refetchEth,
+  } = useBalance({
+    address,
+    chainId: resolvedChainId,
+    query: { enabled: !!address },
+  })
 
-    debugLog('[Token Info] Refresh All button clicked!')
-    debugLog('[Token Info] Current state:', {
-      address,
-      publicClient: !!publicClient,
-      allTokens: allTokens.length
-    })
-    
-    if (!address) {
-      debugLog('[Token Info] Missing required values - address:', !!address, 'publicClient:', !!publicClient)
-      return
-    }
-    
-    setIsLoading(true)
-    const infos: TokenInfo[] = []
-    
-    try {
-      debugLog('[Token Info] Fetching ETH balance for address:', address)
-      // Fetch ETH balance
-      const ethBalance = await publicClient.getBalance({ address: address as `0x${string}` })
-      debugLog('[Token Info] ETH balance result:', ethBalance.toString())
-      setEthBalance(formatUnits(ethBalance, 18))
+  const {
+    data: wethBalanceRaw,
+    refetch: refetchWeth,
+  } = useReadContract({
+    address: wethAddress,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    chainId: resolvedChainId,
+    query: { enabled: !!address && !!wethAddress },
+  })
 
-      // Fetch WETH balance (useful to distinguish "received WETH" vs "received ETH")
-      if (platform?.weth9 && platform.weth9 !== '0x0000000000000000000000000000000000000000') {
-        try {
-          const rawWethBal = await publicClient.readContract({
-            address: platform.weth9 as `0x${string}`,
-            abi: erc20Abi,
-            functionName: 'balanceOf',
-            args: [address as `0x${string}`]
-          })
-          setWethBalance(formatUnits(rawWethBal, 18))
-        } catch (error) {
-          debugWarn('[Token Info] Failed to fetch WETH balance:', error)
-        }
+  const {
+    data: balanceResults,
+    refetch: refetchAll,
+  } = useReadContracts({
+    contracts: allTokens.map((t) => ({
+      address: t.address,
+      abi: erc20Abi,
+      functionName: 'balanceOf' as const,
+      args: [address ?? '0x0000000000000000000000000000000000000000'] as const,
+      chainId: resolvedChainId,
+    })),
+    query: { enabled: !!address && allTokens.length > 0 },
+  })
+
+  const ethBalance = ethBalanceData ? formatUnits(ethBalanceData.value, 18) : '0'
+  const wethBalance =
+    typeof wethBalanceRaw === 'bigint' ? formatUnits(wethBalanceRaw, 18) : '0'
+
+  const rows = useMemo(() => {
+    return allTokens.map((entry, idx) => {
+      const result = balanceResults?.[idx]
+      let balance: string
+      if (!result) {
+        balance = '—'
+      } else if (result.status === 'failure') {
+        debugWarn('[Token Info] balanceOf failed', {
+          address: entry.address,
+          error: (result as { error?: unknown }).error,
+        })
+        balance = 'Not deployed'
+      } else {
+        balance = formatUnits(result.result as bigint, entry.decimals)
       }
-      
-      // Fetch token information for each address
-      debugLog('[Token Info] Starting to fetch info for', allTokens.length, 'tokens')
-      for (const tokenEntry of allTokens) {
-        const tokenAddress = tokenEntry.address
-        try {
-          debugLog('[Token Info] Fetching info for token:', tokenAddress)
-          const bytecode = await publicClient.getBytecode({ address: tokenAddress as `0x${string}` })
-          if (!bytecode || bytecode === '0x') {
-            infos.push({
-              address: tokenAddress,
-              name: tokenEntry.name,
-              symbol: tokenEntry.symbol,
-              decimals: tokenEntry.decimals,
-              balance: 'Not deployed',
-            })
-            continue
-          }
-
-          const [nameRes, symbolRes, decimalsRes, balanceRes] = await Promise.allSettled([
-            publicClient.readContract({
-              address: tokenAddress as `0x${string}`,
-              abi: erc20Abi,
-              functionName: 'name',
-            }),
-            publicClient.readContract({
-              address: tokenAddress as `0x${string}`,
-              abi: erc20Abi,
-              functionName: 'symbol',
-            }),
-            publicClient.readContract({
-              address: tokenAddress as `0x${string}`,
-              abi: erc20Abi,
-              functionName: 'decimals',
-            }),
-            publicClient.readContract({
-              address: tokenAddress as `0x${string}`,
-              abi: erc20Abi,
-              functionName: 'balanceOf',
-              args: [address as `0x${string}`],
-            }),
-          ])
-
-          const name = nameRes.status === 'fulfilled' ? String(nameRes.value) : tokenEntry.name
-          const symbol = symbolRes.status === 'fulfilled' ? String(symbolRes.value) : tokenEntry.symbol
-          const decimals =
-            decimalsRes.status === 'fulfilled' && typeof decimalsRes.value === 'number'
-              ? decimalsRes.value
-              : tokenEntry.decimals
-
-          const rawBalance = balanceRes.status === 'fulfilled' ? balanceRes.value : BigInt(0)
-          
-          const tokenInfo = {
-            address: tokenAddress,
-            name,
-            symbol,
-            decimals,
-            balance: formatUnits(rawBalance, decimals)
-          }
-          
-          debugLog('[Token Info] Token fetch result:', {
-            address: tokenAddress,
-            name: tokenInfo.name,
-            symbol: tokenInfo.symbol,
-            balance: tokenInfo.balance
-          })
-          
-          infos.push(tokenInfo)
-          
-        } catch (error) {
-          debugWarn(`Failed to fetch token info for ${tokenAddress}:`, error)
-          // Add error entry
-          infos.push({
-            address: tokenAddress,
-            name: 'Error',
-            symbol: 'Error',
-            decimals: 18,
-            balance: 'Error'
-          })
-        }
+      return {
+        address: entry.address,
+        name: entry.name,
+        symbol: entry.symbol,
+        balance,
       }
-      
-      debugLog('[Token Info] All tokens fetched successfully. Total tokens:', infos.length)
-      setTokenInfos(infos)
-      
-    } catch (error) {
-      debugError('[Token Info] Failed to fetch token information:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [address, publicClient, allTokens, platform?.weth9])
-
-  // Refresh ETH balance only
-  const refreshEthBalance = useCallback(async () => {
-    if (!publicClient) return
-
-    debugLog('[Token Info] Refresh ETH button clicked!')
-    debugLog('[Token Info] ETH refresh state:', {
-      address,
-      publicClient: !!publicClient
     })
-    
-    if (!address) {
-      debugLog('[Token Info] ETH refresh - missing required values')
-      return
-    }
-    
-    try {
-      debugLog('[Token Info] Fetching ETH balance for address:', address)
-      const ethBalance = await publicClient.getBalance({ address: address as `0x${string}` })
-      debugLog('[Token Info] ETH balance result:', ethBalance.toString())
-      setEthBalance(formatUnits(ethBalance, 18))
-    } catch (error) {
-      debugError('[Token Info] Failed to refresh ETH balance:', error)
-    }
-  }, [address, publicClient])
+  }, [allTokens, balanceResults])
 
-  // Refresh WETH balance only
-  const refreshWethBalance = useCallback(async () => {
-    if (!publicClient) return
-
-    if (!address) return
-    if (!platform?.weth9 || platform.weth9 === '0x0000000000000000000000000000000000000000') return
-
-    try {
-      const rawWethBal = await publicClient.readContract({
-        address: platform.weth9 as `0x${string}`,
-        abi: erc20Abi,
-        functionName: 'balanceOf',
-        args: [address as `0x${string}`]
-      })
-      setWethBalance(formatUnits(rawWethBal, 18))
-    } catch (error) {
-      debugError('[Token Info] Failed to refresh WETH balance:', error)
-    }
-  }, [address, publicClient, platform?.weth9])
-
-  // Initial fetch
-  useEffect(() => {
-    fetchAllTokenInfo()
-  }, [fetchAllTokenInfo])
+  const refreshAll = () => {
+    refetchEth()
+    refetchWeth()
+    refetchAll()
+  }
 
   if (!isConnected) {
     return (
@@ -278,23 +140,10 @@ export default function TokenInfoPage() {
     )
   }
 
-  if (isUnsupportedChain) {
-    debugWarn('[Token Info] Unsupported wallet chain; falling back to environment chain', {
-      walletChainId: attachedWalletChainId,
-      resolvedChainId,
-      environment,
-    })
-  }
-
   return (
     <div className="container mx-auto px-4 max-w-6xl">
       <h1 className="text-3xl font-bold text-white text-center py-8">Token Information</h1>
-      {isUnsupportedChain && (
-        <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-          Wallet chainId {String(attachedWalletChainId ?? '(unknown)')} is not mapped for {environment}. Showing addresses from chain {resolvedChainId} instead.
-        </div>
-      )}
-      
+
       {/* ETH + WETH Balances */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-slate-700/50 rounded-lg">
@@ -303,14 +152,12 @@ export default function TokenInfoPage() {
               <div className="text-sm text-blue-300 font-medium">ETH Balance</div>
               <div className="text-lg text-white">{ethBalance} ETH</div>
             </div>
-            <div>
-              <button
-                onClick={refreshEthBalance}
-                className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-              >
-                Refresh ETH
-              </button>
-            </div>
+            <button
+              onClick={() => refetchEth()}
+              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+            >
+              Refresh ETH
+            </button>
           </div>
         </div>
 
@@ -319,17 +166,19 @@ export default function TokenInfoPage() {
             <div>
               <div className="text-sm text-emerald-300 font-medium">WETH Balance</div>
               <div className="text-lg text-white">{wethBalance} WETH</div>
-              {platform?.weth9 ? <div className="text-xs text-gray-400 break-all">{platform.weth9}</div> : null}
+              {wethAddress ? (
+                <div className="text-xs text-gray-400 break-all">{wethAddress}</div>
+              ) : null}
             </div>
             <div className="space-x-2">
               <button
-                onClick={refreshWethBalance}
+                onClick={() => refetchWeth()}
                 className="px-3 py-1 bg-emerald-600 text-white rounded-md text-sm hover:bg-emerald-700"
               >
                 Refresh WETH
               </button>
               <button
-                onClick={fetchAllTokenInfo}
+                onClick={refreshAll}
                 className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
               >
                 Refresh All
@@ -338,17 +187,8 @@ export default function TokenInfoPage() {
           </div>
         </div>
       </div>
-      
-      {/* Loading State */}
-      {isLoading && (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Loading token information...</p>
-        </div>
-      )}
-      
-      {/* Token Table */}
-      {!isLoading && tokenInfos.length > 0 && (
+
+      {rows.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full bg-slate-700/50 rounded-lg">
             <thead>
@@ -359,7 +199,7 @@ export default function TokenInfoPage() {
               </tr>
             </thead>
             <tbody>
-              {tokenInfos.map((token, index) => (
+              {rows.map((token) => (
                 <tr key={token.address} className="border-b border-slate-600/50">
                   <td className="p-4">
                     <div>
@@ -374,10 +214,10 @@ export default function TokenInfoPage() {
                   </td>
                   <td className="p-4">
                     <div className="text-white">
-                      {token.balance === 'Error' ? (
-                        <span className="text-red-400">Error</span>
-                      ) : token.balance === 'Not deployed' ? (
+                      {token.balance === 'Not deployed' ? (
                         <span className="text-amber-300">Not deployed</span>
+                      ) : token.balance === '—' ? (
+                        <span className="text-gray-500">—</span>
                       ) : (
                         `${token.balance} ${token.symbol}`
                       )}
@@ -389,7 +229,6 @@ export default function TokenInfoPage() {
           </table>
         </div>
       )}
-      
     </div>
   )
 }

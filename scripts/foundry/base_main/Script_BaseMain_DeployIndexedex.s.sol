@@ -239,7 +239,7 @@ contract Script_BaseMain_DeployIndexedex is Script {
             IVaultRegistryDeployment(address(indexedexManager)),
             create3Factory.deployERC20Facet(),
             create3Factory.deployERC2612Facet(),
-            create3Factory.deployERCC5267Facet(),
+            create3Factory.deployERC5267Facet(),
             create3Factory.deployERC4626Facet(),
             create3Factory.deployERC4626BasedBasicVaultFacet(),
             create3Factory.deployERC4626StandardVaultFacet(),

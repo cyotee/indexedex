@@ -42,7 +42,7 @@ library VaultComponentFactoryService {
         vm.label(address(instance), type(ERC2612Facet).name);
     }
 
-    function deployERCC5267Facet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+    function deployERC5267Facet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance =
             create3Factory.deployFacet(type(ERC5267Facet).creationCode, abi.encode(type(ERC5267Facet).name)._hash());
         vm.label(address(instance), type(ERC5267Facet).name);

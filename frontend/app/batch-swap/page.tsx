@@ -21,7 +21,6 @@ import {
   useWriteBalancerV3StandardExchangeBatchRouterExactInFacetSwapExactInWithPermit,
   useWriteBalancerV3StandardExchangeBatchRouterExactOutFacetSwapExactOut,
   useWriteBalancerV3StandardExchangeBatchRouterExactOutFacetSwapExactOutWithPermit,
-  useReadBetterPermit2Allowance
 } from '../generated'
 
 // Import addresses from the new structure
@@ -110,6 +109,33 @@ function getPathTokenOut(path: SwapPath): string {
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000' as `0x${string}`
 const MAX_UINT160 = (BigInt(1) << BigInt(160)) - BigInt(1)
 const MAX_UINT256 = (BigInt(1) << BigInt(256)) - BigInt(1)
+
+// Permit2 AllowanceTransfer.InsufficientAllowance(uint256).
+const PERMIT2_INSUFFICIENT_ALLOWANCE_SELECTOR = '0xf96fb071'
+// Balancer V3 Vault.VaultIsNotUnlocked() — raised when batch router callbacks
+// re-enter the Vault (sendTo / settle / swap) inside querySwap*'s callback,
+// because VaultQueryFacet._queryCallback currently doesn't open the transient
+// unlock context. We can't fix that from the frontend, so when approvals are
+// in place we route the preview through the actual swapExactIn(Out) function
+// (which goes through Vault.unlock() properly) instead.
+const VAULT_IS_NOT_UNLOCKED_SELECTOR = '0xc09ba736'
+
+function translateBatchPreviewError(err: unknown): Error {
+  const message = err instanceof Error ? err.message : String(err)
+  if (
+    message.includes(PERMIT2_INSUFFICIENT_ALLOWANCE_SELECTOR) ||
+    message.includes('InsufficientAllowance')
+  ) {
+    return new Error('Permit2 → Router approval missing or insufficient. Issue the Permit2 → Router approval before the preview can simulate the full swap.')
+  }
+  if (
+    message.includes(VAULT_IS_NOT_UNLOCKED_SELECTOR) ||
+    message.includes('VaultIsNotUnlocked')
+  ) {
+    return new Error('Preview unavailable: the Balancer Vault query path does not open an unlock context for Strategy Vault steps. Issue both approvals and the preview will switch to a real swap simulation.')
+  }
+  return err instanceof Error ? err : new Error(message)
+}
 
 const PERMIT2_TOKEN_PERMISSIONS_TYPE = [
   { name: 'token', type: 'address' },
@@ -432,6 +458,15 @@ export default function BatchSwapPage() {
   const [permit2SpendingLimit, setPermit2SpendingLimit] = useState(MAX_UINT256.toString())
   const [routerSpendingLimit, setRouterSpendingLimit] = useState(MAX_UINT256.toString())
 
+  // When true, the fast preview path simulates the real swapExactIn(Out) instead
+  // of querySwapExactIn(Out). Required because Crane's VaultQueryFacet._queryCallback
+  // doesn't open the transient unlock context (TODO in the contract), so the batch
+  // router callback reverts with VaultIsNotUnlocked the moment it tries vault.sendTo /
+  // settle / swap. The actual swap path runs through vault.unlock() properly. Flipped
+  // on once Explicit-mode approvals are in place; in Signed mode the user signs the
+  // permit through the "Get Accurate Quote" flow instead.
+  const [useActualBatchSwapSimulation, setUseActualBatchSwapSimulation] = useState(false)
+
   // Permit2 nonce bitmap for signed mode (word position 0)
   const { data: permit2NonceBitmap, refetch: refetchPermit2Nonce } = useReadContract({
     address: platform.permit2 as `0x${string}`,
@@ -586,12 +621,53 @@ export default function BatchSwapPage() {
     query: { enabled: !!tokenInAddress && !!address, staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnReconnect: true }
   })
 
-  // Permit2 allowance check (permit2 -> batch router)
-  const { data: permit2Allowance, refetch: refetchPermit2Allowance } = useReadBetterPermit2Allowance({
+  // Permit2 allowance check (permit2 -> batch router).
+  //
+  // IMPORTANT: read from `platform.permit2` (the Permit2 the user actually
+  // approved against — see handleIssueRouterPermit2Approval below), NOT from
+  // the wagmi-generated useReadBetterPermit2Allowance hook. That generated
+  // hook hardcodes the canonical mainnet Permit2 address
+  // (0x000000000022D473030F116dDEE9F6B43aC78BA3) which on a Sepolia fork is a
+  // different contract than our locally-deployed Permit2 at platform.permit2.
+  // Reading from the canonical one returns 0 forever and the Router prompt
+  // never clears even after a successful approval.
+  const { data: permit2Allowance, refetch: refetchPermit2Allowance } = useReadContract({
+    address: (platform?.permit2 ?? ZERO_ADDR) as `0x${string}`,
+    abi: [
+      {
+        inputs: [
+          { name: 'owner', type: 'address' },
+          { name: 'token', type: 'address' },
+          { name: 'spender', type: 'address' },
+        ],
+        name: 'allowance',
+        outputs: [
+          { name: 'amount', type: 'uint160' },
+          { name: 'expiration', type: 'uint48' },
+          { name: 'nonce', type: 'uint48' },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
+    functionName: 'allowance',
     args: [address as `0x${string}`, tokenInAddress as `0x${string}`, batchRouterSpenderAddress as `0x${string}`],
     scopeKey: `permit2Allowance:${tokenInAddress}:${address}:${approvalState}`,
-    query: { enabled: !!tokenInAddress && !!address && !!batchRouterSpenderAddress, staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnReconnect: true }
+    query: { enabled: !!platform?.permit2 && !!tokenInAddress && !!address && !!batchRouterSpenderAddress, staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnReconnect: true },
   })
+
+  // Switching approval mode flips which approvals matter (Signed needs only
+  // Token -> Permit2; Explicit needs both). Refresh both reads on mode change
+  // so the gates re-evaluate against current on-chain state — same fix as
+  // /swap. Without this, a stale "everything approved" snapshot from Signed
+  // mode can briefly let the swap simulation fire on Explicit before the
+  // Permit2 -> Router gap is detected.
+  useEffect(() => {
+    void refetchAllowance()
+    void refetchPermit2Allowance()
+    // refetch fns are stable; only re-run on the mode flip itself.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [approvalMode])
 
   // Generic write contract hook for approvals
   const { writeContract: writeContract, writeContractAsync } = useWriteContract()
@@ -846,18 +922,23 @@ export default function BatchSwapPage() {
     return expiration <= nowSec
   }, [permit2Allowance])
 
+  // Whether the Permit2 -> Router allowance is missing/insufficient/expired.
+  // This is independent of the Token -> Permit2 state (those are two separate
+  // on-chain approvals); the UI chooses which prompt to surface first based on
+  // logical order, not by collapsing both into one flag.
+  //
+  // "Allowance unknown" defaults to TRUE so a brief load/refetch window can't
+  // collapse `needsApproval` to false and let the page sail past the gate —
+  // mirrors the /swap page fix for the same shape of bug.
   const previewNeedsPermit2Approval = useMemo(() => {
     if (!isValid) return false
     if (!hasTokenApprovalRequirement || approvalCheckAmount <= BigInt(0)) return false
-    if (tokenAllowance === undefined || tokenAllowance === null) return false
-    if (tokenAllowance < approvalCheckAmount) return false
-    if (!permit2Allowance) return false
+    if (!permit2Allowance) return true
     return permit2Allowance[0] < approvalCheckAmount || permit2AllowanceExpired
   }, [
     isValid,
     hasTokenApprovalRequirement,
     approvalCheckAmount,
-    tokenAllowance,
     permit2Allowance,
     permit2AllowanceExpired,
   ])
@@ -901,31 +982,40 @@ export default function BatchSwapPage() {
       if (!batchRouterAddress) throw new Error('Batch router address unavailable for this chain')
       if (!address) throw new Error('Wallet not connected')
 
-      if (hasEthInput) {
+      // Native-ETH input or Explicit-mode-with-approvals: simulate the real swap.
+      // The actual swap path goes through Vault.unlock() so Strategy-Vault steps
+      // settle correctly. See useActualBatchSwapSimulation comment above.
+      if (hasEthInput || useActualBatchSwapSimulation) {
         const deadlineTimestamp = BigInt(Math.floor(Date.now() / 1000) + deadline)
+        try {
+          const { result } = await publicClient.simulateContract({
+            address: batchRouterAddress,
+            abi: balancerV3StandardExchangeBatchRouterExactInFacetAbi,
+            functionName: 'swapExactIn',
+            args: [previewPaths, deadlineTimestamp, wethIsEth, '0x'],
+            account: address,
+            value: nativeExactInValue(previewPaths),
+          } as const)
+          return result[0] as bigint[]
+        } catch (err) {
+          throw translateBatchPreviewError(err)
+        }
+      }
+
+      try {
         const { result } = await publicClient.simulateContract({
           address: batchRouterAddress,
           abi: balancerV3StandardExchangeBatchRouterExactInFacetAbi,
-          functionName: 'swapExactIn',
-          args: [previewPaths, deadlineTimestamp, wethIsEth, '0x'],
-          account: address,
-          value: nativeExactInValue(previewPaths),
+          functionName: 'querySwapExactIn',
+          args: [previewPaths, address, '0x'],
+          account: ZERO_ADDR,
         } as const)
-
         return result[0] as bigint[]
+      } catch (err) {
+        throw translateBatchPreviewError(err)
       }
-
-      const { result } = await publicClient.simulateContract({
-        address: batchRouterAddress,
-        abi: balancerV3StandardExchangeBatchRouterExactInFacetAbi,
-        functionName: 'querySwapExactIn',
-        args: [previewPaths, address, '0x'],
-        account: ZERO_ADDR,
-      } as const)
-
-      return result[0] as bigint[]
     },
-    [publicClient, batchRouterAddress, address, hasEthInput, deadline, wethIsEth, nativeExactInValue]
+    [publicClient, batchRouterAddress, address, hasEthInput, useActualBatchSwapSimulation, deadline, wethIsEth, nativeExactInValue]
   )
 
   const simulatePreviewExactOut = useCallback(
@@ -934,31 +1024,37 @@ export default function BatchSwapPage() {
       if (!batchRouterAddress) throw new Error('Batch router address unavailable for this chain')
       if (!address) throw new Error('Wallet not connected')
 
-      if (hasEthInput) {
+      if (hasEthInput || useActualBatchSwapSimulation) {
         const deadlineTimestamp = BigInt(Math.floor(Date.now() / 1000) + deadline)
+        try {
+          const { result } = await publicClient.simulateContract({
+            address: batchRouterAddress,
+            abi: balancerV3StandardExchangeBatchRouterExactOutFacetAbi,
+            functionName: 'swapExactOut',
+            args: [previewPaths, deadlineTimestamp, wethIsEth, '0x'],
+            account: address,
+            value: nativeExactOutValue(previewPaths),
+          } as const)
+          return result[0] as bigint[]
+        } catch (err) {
+          throw translateBatchPreviewError(err)
+        }
+      }
+
+      try {
         const { result } = await publicClient.simulateContract({
           address: batchRouterAddress,
           abi: balancerV3StandardExchangeBatchRouterExactOutFacetAbi,
-          functionName: 'swapExactOut',
-          args: [previewPaths, deadlineTimestamp, wethIsEth, '0x'],
-          account: address,
-          value: nativeExactOutValue(previewPaths),
+          functionName: 'querySwapExactOut',
+          args: [previewPaths, address, '0x'],
+          account: ZERO_ADDR,
         } as const)
-
         return result[0] as bigint[]
+      } catch (err) {
+        throw translateBatchPreviewError(err)
       }
-
-      const { result } = await publicClient.simulateContract({
-        address: batchRouterAddress,
-        abi: balancerV3StandardExchangeBatchRouterExactOutFacetAbi,
-        functionName: 'querySwapExactOut',
-        args: [previewPaths, address, '0x'],
-        account: ZERO_ADDR,
-      } as const)
-
-      return result[0] as bigint[]
     },
-    [publicClient, batchRouterAddress, address, hasEthInput, deadline, wethIsEth, nativeExactOutValue]
+    [publicClient, batchRouterAddress, address, hasEthInput, useActualBatchSwapSimulation, deadline, wethIsEth, nativeExactOutValue]
   )
 
   useEffect(() => {
@@ -1095,9 +1191,12 @@ export default function BatchSwapPage() {
     setStoredBatchPermitPayload(null)
   }, [paths, swapMode, slippage, effectiveApprovalMode, hasEthInput, address, resolvedChainId, batchRouterSpenderAddress])
 
-  // Check if token approval is needed
+  // Check if token approval is needed. Same loading-window guard as /swap and
+  // previewNeedsPermit2Approval above: "unknown" defaults to TRUE so we never
+  // briefly look like everything is approved while data is still in flight.
   const needsTokenApproval = useMemo(() => {
-    if (!approvalCheckAmount || tokenAllowance === undefined || tokenAllowance === null) return false
+    if (!approvalCheckAmount || approvalCheckAmount <= BigInt(0)) return false
+    if (tokenAllowance === undefined || tokenAllowance === null) return true
     return tokenAllowance < approvalCheckAmount
   }, [approvalCheckAmount, tokenAllowance])
 
@@ -1110,6 +1209,17 @@ export default function BatchSwapPage() {
       ? needsTokenApproval
       : needsTokenApproval || needsPermit2Approval
   }, [effectiveApprovalMode, needsTokenApproval, needsPermit2Approval])
+
+  // Flip the preview into "simulate the real swapExactIn(Out)" mode once
+  // Explicit-mode approvals are in place. Same shape as /swap's
+  // useActualSwapSimulation effect. Without this, the query path runs and
+  // hits VaultQueryFacet._queryCallback's missing unlock context —
+  // VaultIsNotUnlocked.
+  useEffect(() => {
+    setUseActualBatchSwapSimulation(
+      effectiveApprovalMode === 'explicit' && !needsApproval && !!address && !hasEthInput
+    )
+  }, [effectiveApprovalMode, needsApproval, address, hasEthInput])
 
   const showTokenToPermit2Prompt = useMemo(() => {
     if (!approvalPath?.tokenIn) return false
@@ -1132,13 +1242,26 @@ export default function BatchSwapPage() {
     accuratePreviewError,
   ])
 
+  // Show the Permit2 -> Router approval button whenever that allowance is
+  // missing — matching /swap's behavior where the button renders directly off
+  // needsPermit2Approval. We still hide it until Token -> Permit2 is satisfied
+  // so the two prompts surface in logical order rather than stacked.
   const showPermit2RouterPrompt = useMemo(() => {
     if (!approvalPath?.tokenIn) return false
-    if (previewNeedsPermit2Approval && approvalState === 'approving') return true
+    if (showTokenToPermit2Prompt) return false
+    if (effectiveApprovalMode !== 'explicit') return false
+    if (needsPermit2Approval) return true
     if (previewBlockedMessage.includes('Issue Permit2 -> Router approval first')) return true
     if (previewError.includes('Issue Permit2 -> Router approval first')) return true
     return false
-  }, [approvalPath, previewNeedsPermit2Approval, approvalState, previewBlockedMessage, previewError])
+  }, [
+    approvalPath,
+    showTokenToPermit2Prompt,
+    effectiveApprovalMode,
+    needsPermit2Approval,
+    previewBlockedMessage,
+    previewError,
+  ])
 
   const setTokenAllowance = useCallback(async (token: `0x${string}`, spender: `0x${string}`, amount: bigint) => {
     if (!publicClient) throw new Error('RPC client unavailable')
@@ -1212,6 +1335,11 @@ export default function BatchSwapPage() {
         tokenOk = (refreshed.data ?? tokenAllowance ?? BigInt(0)) >= amount
         if (tokenOk) break
       }
+      // Refetch the Permit2 -> Router allowance too. Even though this step only
+      // sets Token -> Permit2, the next stage of the workflow gates on the
+      // Permit2 -> Router prompt — which reads `permit2Allowance` — so we want
+      // the freshest value before transitioning state.
+      await refetchPermit2Allowance()
       setAllowancesReady(tokenOk)
       if (!tokenOk) {
         debugLog('[Batch Permit2 Approval] Warning: token allowance verification still stale after receipt')
@@ -1227,7 +1355,7 @@ export default function BatchSwapPage() {
         setApprovalError('')
       }, 5000)
     }
-  }, [tokenInAddress, address, publicClient, permit2SpendingLimit, setTokenAllowance, platform.permit2, refetchAllowance, tokenAllowance])
+  }, [tokenInAddress, address, publicClient, permit2SpendingLimit, setTokenAllowance, platform.permit2, refetchAllowance, refetchPermit2Allowance, tokenAllowance])
 
   const handleIssueRouterPermit2Approval = useCallback(async () => {
     if (!tokenInAddress || !address || !approvalCheckAmount || !batchRouterSpenderAddress) return

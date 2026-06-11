@@ -182,8 +182,8 @@ abstract contract TestBase_StandardExchangeBufferPool_UniswapV2 is TestBase_Stan
         pkgInit.erc2612Facet                      = erc2612Facet;
         pkgInit.erc5267Facet                      = erc5267Facet;
         pkgInit.erc4626Facet                      = erc4626Facet;
-        pkgInit.erc4626BasicVaultFacet            = erc4626BasicVaultFacet;
-        pkgInit.erc4626StandardVaultFacet         = erc4626StandardVaultFacet;
+        pkgInit.multiAssetBasicVaultFacet            = multiAssetBasicVaultFacet;
+        pkgInit.multiAssetStandardVaultFacet         = multiAssetStandardVaultFacet;
         pkgInit.uniswapV2StandardExchangeInFacet  = v2ExchangeInFacet;
         pkgInit.uniswapV2StandardExchangeOutFacet = v2ExchangeOutFacet;
         pkgInit.vaultFeeOracleQuery               = indexedexManager;

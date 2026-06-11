@@ -60,6 +60,20 @@ const ZERO_ADDR = '0x0000000000000000000000000000000000000000' as `0x${string}`
 const MAX_UINT160 = (BigInt(1) << BigInt(160)) - BigInt(1)
 const SELECTOR_SWAP_EXACT_IN_WITH_PERMIT = '0x7585dc3d' as `0x${string}`
 const SELECTOR_SWAP_EXACT_OUT_WITH_PERMIT = '0x5bc8b2f3' as `0x${string}`
+// Permit2 AllowanceTransfer.InsufficientAllowance(uint256) — emitted when the
+// router tries `permit2.transferFrom(user, router, ...)` and the user hasn't
+// issued the Permit2 -> Router approval (Explicit-mode step 2).
+const PERMIT2_INSUFFICIENT_ALLOWANCE_SELECTOR = '0xf96fb071'
+
+function translatePermit2AllowanceError(err: unknown): Error {
+  const message = err instanceof Error ? err.message : String(err)
+  if (message.includes(PERMIT2_INSUFFICIENT_ALLOWANCE_SELECTOR) || message.includes('InsufficientAllowance')) {
+    return new Error(
+      'Permit2 → Router approval missing or insufficient. In Explicit mode you must issue both Token → Permit2 and Permit2 → Router approvals before the quote can simulate the full swap. Click "Issue Approval" to proceed.'
+    )
+  }
+  return err instanceof Error ? err : new Error(message)
+}
 
 // function prettyLabel(key: string): string {
 //   let label = key
@@ -667,14 +681,17 @@ export default function SwapPage() {
   // ETH<->WETH wrap/unwrap is implemented in the router as a special-case that is ONLY
   // triggered when the caller selects the WETH sentinel pool (pool == WETH).
   // The UI should not auto-select that pool; users choose the pool explicitly.
+  const isWethSentinelPool = useMemo(() => {
+    if (!weth9Address || !rawPoolAddress) return false
+    return rawPoolAddress.toLowerCase() === weth9Address.toLowerCase()
+  }, [weth9Address, rawPoolAddress])
+
   const isWethSentinelWrapUnwrapFlow = useMemo(() => {
-    if (!weth9Address) return false
-    if (!rawPoolAddress) return false
-    if (!tokenInAddress || !tokenOutAddress) return false
+    if (!isWethSentinelPool) return false
+    if (!weth9Address || !tokenInAddress || !tokenOutAddress) return false
     const bothWeth = tokenInAddress.toLowerCase() === weth9Address.toLowerCase() && tokenOutAddress.toLowerCase() === weth9Address.toLowerCase()
-    const selectedWethPool = rawPoolAddress.toLowerCase() === weth9Address.toLowerCase()
-    return selectedWethPool && bothWeth && (useEthIn || useEthOut)
-  }, [weth9Address, rawPoolAddress, tokenInAddress, tokenOutAddress, useEthIn, useEthOut])
+    return bothWeth && (useEthIn || useEthOut)
+  }, [isWethSentinelPool, weth9Address, tokenInAddress, tokenOutAddress, useEthIn, useEthOut])
 
   const effectiveUseTokenInVault = useMemo(
     () => (isWethSentinelWrapUnwrapFlow ? false : useTokenInVault),
@@ -1102,35 +1119,38 @@ export default function SwapPage() {
       const [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn] = args
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
 
-      const { result } = await publicClient.simulateContract({
-        address: routerAddress,
-        abi: [
-          {
-            inputs: [
-              { name: 'pool', type: 'address' },
-              { name: 'tokenIn', type: 'address' },
-              { name: 'tokenInVault', type: 'address' },
-              { name: 'tokenOut', type: 'address' },
-              { name: 'tokenOutVault', type: 'address' },
-              { name: 'exactAmountIn', type: 'uint256' },
-              { name: 'minAmountOut', type: 'uint256' },
-              { name: 'deadline', type: 'uint256' },
-              { name: 'wethIsEth', type: 'bool' },
-              { name: 'userData', type: 'bytes' },
-            ],
-            name: 'swapSingleTokenExactIn',
-            outputs: [{ name: '', type: 'uint256' }],
-            stateMutability: 'payable',
-            type: 'function',
-          },
-        ] as const,
-        functionName: 'swapSingleTokenExactIn',
-        args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn, BigInt(0), deadline, useEthIn, '0x'] as const,
-        account: address,
-        value: useEthIn ? (exactAmountIn as bigint) : undefined,
-      } as const)
-
-      return result as bigint
+      try {
+        const { result } = await publicClient.simulateContract({
+          address: routerAddress,
+          abi: [
+            {
+              inputs: [
+                { name: 'pool', type: 'address' },
+                { name: 'tokenIn', type: 'address' },
+                { name: 'tokenInVault', type: 'address' },
+                { name: 'tokenOut', type: 'address' },
+                { name: 'tokenOutVault', type: 'address' },
+                { name: 'exactAmountIn', type: 'uint256' },
+                { name: 'minAmountOut', type: 'uint256' },
+                { name: 'deadline', type: 'uint256' },
+                { name: 'wethIsEth', type: 'bool' },
+                { name: 'userData', type: 'bytes' },
+              ],
+              name: 'swapSingleTokenExactIn',
+              outputs: [{ name: '', type: 'uint256' }],
+              stateMutability: 'payable',
+              type: 'function',
+            },
+          ] as const,
+          functionName: 'swapSingleTokenExactIn',
+          args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountIn, BigInt(0), deadline, useEthIn, '0x'] as const,
+          account: address,
+          value: useEthIn ? (exactAmountIn as bigint) : undefined,
+        } as const)
+        return result as bigint
+      } catch (err) {
+        throw translatePermit2AllowanceError(err)
+      }
     },
     [publicClient, routerAddress, routerHasBytecode, address, useEthIn]
   )
@@ -1149,35 +1169,38 @@ export default function SwapPage() {
       // slippage budget is enforced separately by maxIn when the user submits.
       const maxAmountIn = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
 
-      const { result } = await publicClient.simulateContract({
-        address: routerAddress,
-        abi: [
-          {
-            inputs: [
-              { name: 'pool', type: 'address' },
-              { name: 'tokenIn', type: 'address' },
-              { name: 'tokenInVault', type: 'address' },
-              { name: 'tokenOut', type: 'address' },
-              { name: 'tokenOutVault', type: 'address' },
-              { name: 'exactAmountOut', type: 'uint256' },
-              { name: 'maxAmountIn', type: 'uint256' },
-              { name: 'deadline', type: 'uint256' },
-              { name: 'wethIsEth', type: 'bool' },
-              { name: 'userData', type: 'bytes' },
-            ],
-            name: 'swapSingleTokenExactOut',
-            outputs: [{ name: '', type: 'uint256' }],
-            stateMutability: 'payable',
-            type: 'function',
-          },
-        ] as const,
-        functionName: 'swapSingleTokenExactOut',
-        args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountOut, maxAmountIn, deadline, useEthIn, '0x'] as const,
-        account: address,
-        value: useEthIn ? maxAmountIn : undefined,
-      } as const)
-
-      return result as bigint
+      try {
+        const { result } = await publicClient.simulateContract({
+          address: routerAddress,
+          abi: [
+            {
+              inputs: [
+                { name: 'pool', type: 'address' },
+                { name: 'tokenIn', type: 'address' },
+                { name: 'tokenInVault', type: 'address' },
+                { name: 'tokenOut', type: 'address' },
+                { name: 'tokenOutVault', type: 'address' },
+                { name: 'exactAmountOut', type: 'uint256' },
+                { name: 'maxAmountIn', type: 'uint256' },
+                { name: 'deadline', type: 'uint256' },
+                { name: 'wethIsEth', type: 'bool' },
+                { name: 'userData', type: 'bytes' },
+              ],
+              name: 'swapSingleTokenExactOut',
+              outputs: [{ name: '', type: 'uint256' }],
+              stateMutability: 'payable',
+              type: 'function',
+            },
+          ] as const,
+          functionName: 'swapSingleTokenExactOut',
+          args: [pool, tokenIn, tokenInVault, tokenOut, tokenOutVault, exactAmountOut, maxAmountIn, deadline, useEthIn, '0x'] as const,
+          account: address,
+          value: useEthIn ? maxAmountIn : undefined,
+        } as const)
+        return result as bigint
+      } catch (err) {
+        throw translatePermit2AllowanceError(err)
+      }
     },
     [publicClient, routerAddress, routerHasBytecode, address, useEthIn]
   )
@@ -1914,40 +1937,43 @@ export default function SwapPage() {
     return entered > previewed ? entered : previewed
   }, [useEthIn, exactAmountInField, maxIn])
 
-  // Separate approval checks for each step
+  // Separate approval checks for each step.
+  // When allowance data hasn't loaded yet we conservatively report "needs approval".
+  // This prevents the preview useEffect (and its useActualSwapSimulation gate) from
+  // briefly thinking approvals are satisfied and firing a real swapSingleTokenExactIn
+  // simulation before the Permit2->Router allowance is even known — which would
+  // surface to the user as a raw InsufficientAllowance (0xf96fb071) revert.
   const needsTokenApproval = useMemo(() => {
     if (useEthIn) return false
     if (!effectiveAmountIn || effectiveAmountIn <= BigInt(0)) return false
-    if (tokenAllowance === undefined || tokenAllowance === null) return false
-    
-    // No buffer needed - exact amount is sufficient
+    if (tokenAllowance === undefined || tokenAllowance === null) return true
+
     const sufficient = tokenAllowance >= effectiveAmountIn
-    
+
     debugLog('[Token Approval Check]', {
       effectiveAmountIn: effectiveAmountIn.toString(),
       tokenAllowance: tokenAllowance.toString(),
       sufficient,
       needsApproval: !sufficient
     })
-    
+
     return !sufficient
   }, [useEthIn, effectiveAmountIn, tokenAllowance])
 
   const needsPermit2Approval = useMemo(() => {
     if (useEthIn) return false
     if (!effectiveAmountIn || effectiveAmountIn <= BigInt(0)) return false
-    if (permit2Allowance === undefined || permit2Allowance === null) return false
-    
-    // No buffer needed - exact amount is sufficient
+    if (permit2Allowance === undefined || permit2Allowance === null) return true
+
     const sufficient = permit2Allowance[0] >= effectiveAmountIn
-    
+
     debugLog('[Permit2 Approval Check]', {
       effectiveAmountIn: effectiveAmountIn.toString(),
       permit2Allowance: permit2Allowance[0].toString(),
       sufficient,
       needsApproval: !sufficient
     })
-    
+
     return !sufficient
   }, [useEthIn, effectiveAmountIn, permit2Allowance])
 
@@ -1986,6 +2012,20 @@ export default function SwapPage() {
       effectiveApprovalMode === 'explicit' && !needsApproval && !!address && !useEthIn
     )
   }, [effectiveApprovalMode, needsApproval, address, useEthIn])
+
+  // Switching approval mode flips which approvals are required, but the cached
+  // preview key + cached allowance reads don't update on their own. Refetch both
+  // allowances and drop the last-completed preview marker so the simulation path
+  // is re-chosen with current on-chain state — otherwise a Signed-mode session
+  // that never set the Permit2->Router allowance leaves Explicit mode firing a
+  // real swap simulation that reverts with InsufficientAllowance.
+  useEffect(() => {
+    lastCompletedPreviewKeyRef.current = null
+    void refetchAllowance()
+    void refetchPermit2Allowance()
+    // Intentionally only re-run on mode change; refetch fns are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [approvalMode])
 
   const showTokenToPermit2Controls = useMemo(() => {
     if (useEthIn) return false
@@ -3797,16 +3837,12 @@ export default function SwapPage() {
                 setTokenIn(next)
 
                 // ETH handling UX:
-                // - Selecting ETH should always enable "Use ETH".
-                // - Selecting WETH9 should preserve the user's "Use ETH" choice.
+                // - Selecting ETH means "I'm paying with native ETH" -> enable "Use ETH".
+                // - Selecting WETH9 means "I'm paying with the WETH token directly".
+                //   Reset useEthIn so a leftover toggle from a prior ETH selection doesn't
+                //   silently flip the WETH-sentinel pool into the wrap branch.
                 // - Selecting any other token must disable "Use ETH".
-                if (next === 'ETH') {
-                  setUseEthIn(true)
-                } else if (next === 'WETH9') {
-                  // preserve existing toggle
-                } else {
-                  setUseEthIn(false)
-                }
+                setUseEthIn(next === 'ETH')
               }}
             className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-3"
             >
@@ -3823,6 +3859,14 @@ export default function SwapPage() {
                 const checked = e.target.checked
                 if (checked) {
                   setUseEthIn(true)
+                  // For the WETH sentinel pool, wrap and unwrap are mutually exclusive
+                  // (the router runs at most one of them per call). Auto-clear the
+                  // opposite side so a leftover toggle can't silently force the wrong
+                  // branch — see BalancerV3StandardExchangeRouterExactInSwapTarget.sol
+                  // around the address(this).balance check.
+                  if (isWethSentinelPool) {
+                    setUseEthOut(false)
+                  }
 
                   // "Use ETH" means we treat WETH9 as the onchain token but pay in native ETH.
                   // Ensure the selected token is compatible with this behavior.
@@ -3852,16 +3896,11 @@ export default function SwapPage() {
               setTokenOut(next)
 
               // ETH handling UX:
-              // - Selecting ETH should always enable "Use ETH".
-              // - Selecting WETH9 should preserve the user's "Use ETH" choice (so WETH9 can be unwrapped to ETH).
+              // - Selecting ETH means "I want native ETH back" -> enable "Use ETH".
+              // - Selecting WETH9 means "I want the WETH token back". Reset useEthOut so a
+              //   leftover toggle from a prior ETH selection doesn't keep the unwrap path on.
               // - Selecting any other token must disable "Use ETH".
-              if (next === 'ETH') {
-                setUseEthOut(true)
-              } else if (next === 'WETH9') {
-                // preserve existing toggle
-              } else {
-                setUseEthOut(false)
-              }
+              setUseEthOut(next === 'ETH')
             }}
             className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-3"
           >
@@ -3878,6 +3917,11 @@ export default function SwapPage() {
                 const checked = e.target.checked
                 if (checked) {
                   setUseEthOut(true)
+                  // Mirror of the Use-ETH-In handler: wrap and unwrap are mutually
+                  // exclusive for the WETH sentinel pool. See router contract.
+                  if (isWethSentinelPool) {
+                    setUseEthIn(false)
+                  }
 
                   // "Use ETH" on output means we unwrap WETH9 to native ETH.
                   // Ensure tokenOut is compatible (WETH9 or ETH).

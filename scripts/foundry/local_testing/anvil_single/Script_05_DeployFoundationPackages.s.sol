@@ -49,6 +49,8 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
     IFacet private erc4626Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
+    IFacet private multiAssetBasicVaultFacet;
+    IFacet private multiAssetStandardVaultFacet;
 
     IPermit2 private permit2;
     IUniswapV2Factory private uniswapV2Factory;
@@ -95,6 +97,8 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
         erc4626Facet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc4626Facet"));
         erc4626BasicVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc4626BasicVaultFacet"));
         erc4626StandardVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc4626StandardVaultFacet"));
+        multiAssetBasicVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetBasicVaultFacet"));
+        multiAssetStandardVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetStandardVaultFacet"));
 
         permit2 = IPermit2(_readAddress(PROTOCOLS_BASE_FILE, "permit2"));
         uniswapV2Factory = IUniswapV2Factory(_readAddress(PROTOCOLS_BASE_FILE, "uniswapV2Factory"));
@@ -128,8 +132,8 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
                 erc2612Facet,
                 erc5267Facet,
                 erc4626Facet,
-                erc4626BasicVaultFacet,
-                erc4626StandardVaultFacet,
+                multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
                 indexedexManager,
@@ -150,8 +154,8 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
     }
 
     function _deployBalancerV3ConstantProductPoolPkg() internal {
-        IFacet multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
-        IFacet multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
+        // IFacet multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+        // IFacet multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
         IFacet balancerV3VaultAwareFacet = create3Factory.deployBalancerV3VaultAwareFacet();
         IFacet balancerV3PoolTokenFacet = create3Factory.deployBalancerV3PoolTokenFacet();
         IFacet balancerV3AuthenticationFacet = create3Factory.deployBalancerV3AuthenticationFacet();

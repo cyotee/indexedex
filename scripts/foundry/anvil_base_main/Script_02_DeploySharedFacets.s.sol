@@ -54,7 +54,7 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
         // ERC20/Token facets
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
 
         // ERC4626 vault facets
         erc4626Facet = create3Factory.deployERC4626Facet();

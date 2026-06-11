@@ -21,6 +21,8 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
     IFacet private erc4626Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
+	IFacet private multiAssetBasicVaultFacet;
+	IFacet private multiAssetStandardVaultFacet;
     IFacet private multiStepOwnableFacet;
     IFacet private operableFacet;
     IFacet private diamondCutFacet;
@@ -49,11 +51,13 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
     function _deploySharedFacets() internal {
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
 
         erc4626Facet = create3Factory.deployERC4626Facet();
         erc4626BasicVaultFacet = create3Factory.deployERC4626BasedBasicVaultFacet();
         erc4626StandardVaultFacet = create3Factory.deployERC4626StandardVaultFacet();
+		multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+		multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
 
         multiStepOwnableFacet = create3Factory.deployMultiStepOwnableFacet();
         operableFacet = create3Factory.deployOperableFacet();
@@ -69,6 +73,8 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
         json = vm.serializeAddress("facets", "erc4626Facet", address(erc4626Facet));
         json = vm.serializeAddress("facets", "erc4626BasicVaultFacet", address(erc4626BasicVaultFacet));
         json = vm.serializeAddress("facets", "erc4626StandardVaultFacet", address(erc4626StandardVaultFacet));
+        json = vm.serializeAddress("facets", "multiAssetBasicVaultFacet", address(multiAssetBasicVaultFacet));
+        json = vm.serializeAddress("facets", "multiAssetStandardVaultFacet", address(multiAssetStandardVaultFacet));
         json = vm.serializeAddress("facets", "multiStepOwnableFacet", address(multiStepOwnableFacet));
         json = vm.serializeAddress("facets", "operableFacet", address(operableFacet));
         json = vm.serializeAddress("facets", "diamondCutFacet", address(diamondCutFacet));
@@ -82,6 +88,8 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
         _logAddress("ERC4626Facet:", address(erc4626Facet));
         _logAddress("ERC4626BasicVaultFacet:", address(erc4626BasicVaultFacet));
         _logAddress("ERC4626StandardVaultFacet:", address(erc4626StandardVaultFacet));
+        _logAddress("MultiAssetBasicVaultFacet:", address(multiAssetBasicVaultFacet));
+        _logAddress("MultiAssetStandardVaultFacet:", address(multiAssetStandardVaultFacet));
         _logAddress("MultiStepOwnableFacet:", address(multiStepOwnableFacet));
         _logAddress("OperableFacet:", address(operableFacet));
         _logAddress("DiamondCutFacet:", address(diamondCutFacet));

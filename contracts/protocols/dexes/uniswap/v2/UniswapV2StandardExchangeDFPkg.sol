@@ -19,6 +19,7 @@ import {IUniswapV2Router} from "@crane/contracts/interfaces/protocols/dexes/unis
 import {IUniswapV2Factory} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Factory.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+import {BetterMath} from '@crane/contracts/utils/math/BetterMath.sol';
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
@@ -52,6 +53,7 @@ import {
 } from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {MultiAssetBasicVaultRepo} from 'contracts/vaults/basic/MultiAssetBasicVaultRepo.sol';
 import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultRepo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
@@ -62,8 +64,10 @@ interface IUniswapV2StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet erc5267Facet;
         IFacet erc2612Facet;
         IFacet erc4626Facet;
-        IFacet erc4626BasicVaultFacet;
-        IFacet erc4626StandardVaultFacet;
+        // IFacet erc4626BasicVaultFacet;
+        IFacet multiAssetBasicVaultFacet;
+        // IFacet erc4626StandardVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
         IFacet uniswapV2StandardExchangeInFacet;
         IFacet uniswapV2StandardExchangeOutFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
@@ -111,6 +115,7 @@ interface IUniswapV2StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
 }
 
 contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
+    using BetterMath for uint256;
     using BetterEfficientHashLib for bytes;
     using BetterSafeERC20 for IERC20;
     using BetterSafeERC20 for IERC20Metadata;
@@ -122,8 +127,10 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
     IFacet immutable ERC5267_FACET;
     IFacet immutable ERC2612_FACET;
     IFacet immutable ERC4626_FACET;
-    IFacet immutable ERC4626_BASIC_VAULT_FACET;
-    IFacet immutable ERC4626_STANDARD_VAULT_FACET;
+    // IFacet immutable ERC4626_BASIC_VAULT_FACET;
+    IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
+    // IFacet immutable ERC4626_STANDARD_VAULT_FACET;
+    IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET;
     IFacet immutable UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
@@ -138,8 +145,10 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         ERC5267_FACET = pkgInit.erc5267Facet;
         ERC2612_FACET = pkgInit.erc2612Facet;
         ERC4626_FACET = pkgInit.erc4626Facet;
-        ERC4626_BASIC_VAULT_FACET = pkgInit.erc4626BasicVaultFacet;
-        ERC4626_STANDARD_VAULT_FACET = pkgInit.erc4626StandardVaultFacet;
+        // ERC4626_BASIC_VAULT_FACET = pkgInit.erc4626BasicVaultFacet;
+        MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
+        // ERC4626_STANDARD_VAULT_FACET = pkgInit.erc4626StandardVaultFacet;
+        MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET = pkgInit.uniswapV2StandardExchangeInFacet;
         UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET = pkgInit.uniswapV2StandardExchangeOutFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
@@ -251,7 +260,8 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
             // For no deposit, expectedLP = 0
             if (tokenAAmount > 0 && tokenBAmount > 0) {
                 // Approximate: sqrt(a * b) for new pair
-                result.expectedLP = _sqrt(tokenAAmount * tokenBAmount);
+                // result.expectedLP = _sqrt(tokenAAmount * tokenBAmount);
+                result.expectedLP = (tokenAAmount * tokenBAmount)._sqrt();
                 // Subtract minimum liquidity (1000) if this is a new pair
                 if (result.expectedLP > 1000) {
                     result.expectedLP -= 1000;
@@ -279,7 +289,8 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         // Calculate expected LP tokens
         uint256 totalSupply = IERC20(address(pair)).totalSupply();
         if (totalSupply == 0) {
-            result.expectedLP = _sqrt(result.proportionalA * result.proportionalB);
+            // result.expectedLP = _sqrt(result.proportionalA * result.proportionalB);
+            result.expectedLP = (result.proportionalA * result.proportionalB)._sqrt();
             if (result.expectedLP > 1000) {
                 result.expectedLP -= 1000;
             } else {
@@ -376,19 +387,19 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         return ((amountB * reserveA) / reserveB, amountB);
     }
 
-    /**
-     * @dev Integer square root using Babylonian method.
-     */
-    function _sqrt(uint256 x) internal pure returns (uint256) {
-        if (x == 0) return 0;
-        uint256 z = (x + 1) / 2;
-        uint256 y = x;
-        while (z < y) {
-            y = z;
-            z = (x / z + z) / 2;
-        }
-        return y;
-    }
+    // /**
+    //  * @dev Integer square root using Babylonian method.
+    //  */
+    // function _sqrt(uint256 x) internal pure returns (uint256) {
+    //     if (x == 0) return 0;
+    //     uint256 z = (x + 1) / 2;
+    //     uint256 y = x;
+    //     while (z < y) {
+    //         y = z;
+    //         z = (x / z + z) / 2;
+    //     }
+    //     return y;
+    // }
 
     /* -------------------------------------------------------------------------- */
     /*                              IStandardVaultPkg                             */
@@ -424,8 +435,10 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(ERC4626_FACET);
-        facetAddresses_[4] = address(ERC4626_BASIC_VAULT_FACET);
-        facetAddresses_[5] = address(ERC4626_STANDARD_VAULT_FACET);
+        // facetAddresses_[4] = address(ERC4626_BASIC_VAULT_FACET);
+        facetAddresses_[4] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        // facetAddresses_[5] = address(ERC4626_STANDARD_VAULT_FACET);
+        facetAddresses_[5] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[6] = address(UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET);
         facetAddresses_[7] = address(UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET);
         return facetAddresses_;
@@ -493,21 +506,37 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
             // bytes4[] functionSelectors;
             functionSelectors: ERC4626_FACET.facetFuncs()
         });
+        // facetCuts_[4] = IDiamond.FacetCut({
+        //     // address facetAddress;
+        //     facetAddress: address(ERC4626_BASIC_VAULT_FACET),
+        //     // FacetCutAction action;
+        //     action: IDiamond.FacetCutAction.Add,
+        //     // bytes4[] functionSelectors;
+        //     functionSelectors: ERC4626_BASIC_VAULT_FACET.facetFuncs()
+        // });
         facetCuts_[4] = IDiamond.FacetCut({
             // address facetAddress;
-            facetAddress: address(ERC4626_BASIC_VAULT_FACET),
+            facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             // FacetCutAction action;
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
-            functionSelectors: ERC4626_BASIC_VAULT_FACET.facetFuncs()
+            functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
         });
+        // facetCuts_[3] = IDiamond.FacetCut({
+        //     // address facetAddress;
+        //     facetAddress: address(ERC4626_FACET),
+        //     // FacetCutAction action;
+        //     action: IDiamond.FacetCutAction.Add,
+        //     // bytes4[] functionSelectors;
+        //     functionSelectors: ERC4626_FACET.facetFuncs()
+        // });
         facetCuts_[5] = IDiamond.FacetCut({
             // address facetAddress;
-            facetAddress: address(ERC4626_STANDARD_VAULT_FACET),
+            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
             // FacetCutAction action;
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
-            functionSelectors: ERC4626_STANDARD_VAULT_FACET.facetFuncs()
+            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
         facetCuts_[6] = IDiamond.FacetCut({
             // address facetAddress;
@@ -589,8 +618,11 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
             // uint8 decimalOffset
             9
         );
-        address[] memory vaultTokens = new address[](1);
+        address[] memory vaultTokens = new address[](3);
         vaultTokens[0] = address(decodedArgs.reserveAsset);
+        vaultTokens[1] = address(token0);
+        vaultTokens[2] = address(token1);
+        MultiAssetBasicVaultRepo._initialize(vaultTokens);
         bytes32 contentsId = abi.encode(vaultTokens)._hash();
         StandardVaultRepo._initialize(
             // IVaultFeeOracleQuery feeOracle,

@@ -49,7 +49,7 @@ contract Script_02_DeploySharedFacets is DeploymentBase {
     function _deploySharedFacets() internal {
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
 
         erc4626Facet = create3Factory.deployERC4626Facet();
         erc4626BasicVaultFacet = create3Factory.deployERC4626BasedBasicVaultFacet();

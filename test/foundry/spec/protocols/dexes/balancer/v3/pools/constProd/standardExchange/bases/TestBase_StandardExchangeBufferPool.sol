@@ -372,10 +372,12 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     function _deploySeVaultFacets() internal virtual {
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
         erc4626Facet = create3Factory.deployERC4626Facet();
         erc4626BasicVaultFacet = create3Factory.deployERC4626BasedBasicVaultFacet();
+        multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
         erc4626StandardVaultFacet = create3Factory.deployERC4626StandardVaultFacet();
+        multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
         aeroExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
         aeroExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
     }
@@ -454,8 +456,8 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     /* ---------------------------------------------------------------------- */
 
     function _deployBufferPoolFacets() internal virtual {
-        multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
-        multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
+        // multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+        // multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
         balancerV3VaultAwareFacet = create3Factory.deployBalancerV3VaultAwareFacet();
         betterBalancerV3PoolTokenFacet = create3Factory.deployBalancerV3PoolTokenFacet();
         balancerV3AuthenticationFacet = create3Factory.deployBalancerV3AuthenticationFacet();

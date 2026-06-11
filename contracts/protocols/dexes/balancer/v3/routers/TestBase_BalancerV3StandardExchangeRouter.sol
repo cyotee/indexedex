@@ -655,7 +655,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
     function _deployVaultFacets() internal virtual {
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
         erc4626Facet = create3Factory.deployERC4626Facet();
         erc4626BasicVaultFacet = create3Factory.deployERC4626BasedBasicVaultFacet();
         erc4626StandardVaultFacet = create3Factory.deployERC4626StandardVaultFacet();

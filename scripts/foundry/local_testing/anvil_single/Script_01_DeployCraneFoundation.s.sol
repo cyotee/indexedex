@@ -31,6 +31,8 @@ contract Script_01_DeployCraneFoundation is LocalTestingDeploymentBase {
     IFacet private erc4626Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
+	IFacet private multiAssetBasicVaultFacet;
+	IFacet private multiAssetStandardVaultFacet;
     IFacet private multiStepOwnableFacet;
     IFacet private operableFacet;
     IFacet private diamondCutFacet;
@@ -60,11 +62,13 @@ contract Script_01_DeployCraneFoundation is LocalTestingDeploymentBase {
     function _deploySharedFacets() internal {
         erc20Facet = create3Factory.deployERC20Facet();
         erc2612Facet = create3Factory.deployERC2612Facet();
-        erc5267Facet = create3Factory.deployERCC5267Facet();
+        erc5267Facet = create3Factory.deployERC5267Facet();
 
         erc4626Facet = create3Factory.deployERC4626Facet();
         erc4626BasicVaultFacet = create3Factory.deployERC4626BasedBasicVaultFacet();
         erc4626StandardVaultFacet = create3Factory.deployERC4626StandardVaultFacet();
+		multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+		multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
 
         multiStepOwnableFacet = create3Factory.deployMultiStepOwnableFacet();
         operableFacet = create3Factory.deployOperableFacet();
@@ -132,6 +136,8 @@ contract Script_01_DeployCraneFoundation is LocalTestingDeploymentBase {
         json = vm.serializeAddress("craneFoundation", "erc4626Facet", address(erc4626Facet));
         json = vm.serializeAddress("craneFoundation", "erc4626BasicVaultFacet", address(erc4626BasicVaultFacet));
         json = vm.serializeAddress("craneFoundation", "erc4626StandardVaultFacet", address(erc4626StandardVaultFacet));
+        json = vm.serializeAddress("craneFoundation", "multiAssetBasicVaultFacet", address(multiAssetBasicVaultFacet));
+        json = vm.serializeAddress("craneFoundation", "multiAssetStandardVaultFacet", address(multiAssetStandardVaultFacet));
         json = vm.serializeAddress("craneFoundation", "multiStepOwnableFacet", address(multiStepOwnableFacet));
         json = vm.serializeAddress("craneFoundation", "operableFacet", address(operableFacet));
         json = vm.serializeAddress("craneFoundation", "diamondCutFacet", address(diamondCutFacet));

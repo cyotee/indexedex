@@ -16,10 +16,13 @@ import {TestBase_StandardExchangeBufferPool} from
  * @dev After a TTA→shares EXACT_IN swap of X TTA:
  *      (a) User's TTA balance decreases by X; user's shares balance increases by Y_shares.
  *      (b) BPT total supply is unchanged (no LP action).
- *      (c) Pool's per-pool actual TTA balance returns to its pre-swap value (the hook's
- *          onAfterSwap drains the X TTA via sendTo + exchangeIn + removeLiquidity).
- *          NOTE: because _initPool seeds non-zero TTA, the invariant is
- *          "post-swap actual TTA == pre-swap actual TTA" rather than "post-swap == 0".
+ *      (c) Pool's per-pool actual TTA balance lies in [ttaBalPre, ttaBalPre + X].
+ *          Under the "eventual zero TTA" invariant, the hook drains X TTA from the Vault and
+ *          deposits it into the SE Vault via `exchangeOut`, which may consume less than X (the
+ *          difference `X - X_used` is the `ttaSurplus` that stays in the pool). For SE Vaults
+ *          whose `exchangeOut` matches the CP price exactly, ttaSurplus == 0 and the post-swap
+ *          balance equals ttaBalPre; for SE Vaults that price shares lower than the CP, the
+ *          surplus sits in the pool until a future swap or sweep drains it.
  *      (d) virtualTTA increases by exactly X (assumes 18-decimal TTA).
  *      (e) hookSharesDelta increases by Y' (shares minted by the SE Vault during reconcile).
  *          Y' is derived from the change in the pool's actual shares balance plus the shares
@@ -99,11 +102,20 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
             "swap_TTAtoShares: BPT supply unchanged"
         );
 
-        // (c) Actual TTA balance returns to pre-swap value (hook drained X TTA).
-        assertEq(
-            _swapVaultRawBalance(tb, p.ttaIndex()),
+        // (c) Actual TTA balance lies in [ttaBalPre, ttaBalPre + amountIn].
+        //     "Eventual zero TTA" allows the hook's `exchangeOut`-based reconcile to leave a
+        //     `ttaSurplus = amountIn - X_used` in the pool when the SE Vault's price is below
+        //     the CP price.  The surplus drains on subsequent activity.
+        uint256 ttaBalPost = _swapVaultRawBalance(tb, p.ttaIndex());
+        assertGe(
+            ttaBalPost,
             ttaBalPre,
-            "swap_TTAtoShares: actual TTA returns to pre-swap value"
+            "swap_TTAtoShares: actual TTA must not fall below pre-swap value"
+        );
+        assertLe(
+            ttaBalPost,
+            ttaBalPre + amountIn,
+            "swap_TTAtoShares: actual TTA must not exceed pre-swap value + amountIn"
         );
 
         // (d) virtualTTA increased by exactly X (18-decimal TTA assumed).

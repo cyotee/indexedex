@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 // Crane IERC20 imported below
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {
     TestBase_BalancerV3StandardExchangeRouter
 } from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
@@ -257,46 +255,66 @@ contract BalancerV3StandardExchangeRouter_VaultDeposit_Test is TestBase_Balancer
     /*                          ExactOut Deposit Tests                        */
     /* ---------------------------------------------------------------------- */
 
-    function test_vaultDeposit_exactOut_notSupported() public {
-        // ExactOut deposit (specifying exact shares to receive) is not supported
-        // for the Aerodrome vault because it doesn't implement previewExchangeOut
-        // for single-token deposits (ZapIn). The vault reverts with RouteNotSupported.
+    function test_vaultDeposit_exactOut_supported() public {
+        // ExactOut deposit (Route 6: ZapIn for exact shares) is supported by the Aerodrome
+        // SE Vault via the closed-form ERC-4626 inverse + binary-search ZapIn inverse landed
+        // in commit f4215bc0c.  This test verifies the end-to-end path through the
+        // BV3 Standard Exchange Router.
 
-        // Mint DAI to alice
-        dai.mint(alice, DEPOSIT_AMOUNT * 2);
+        // Mint DAI generously so the router has enough to fund both the seeding deposit
+        // (needed to bring totalShares above the Route 6 cap) and the ExactOut deposit.
+        dai.mint(alice, DEPOSIT_AMOUNT * 100);
 
         vm.startPrank(alice);
-
-        // Approve
         dai.approve(address(permit2), type(uint256).max);
         permit2.approve(address(dai), address(seRouter), type(uint160).max, type(uint48).max);
 
-        uint256 exactSharesWanted = 1000e18;
-
-        // Expect RouteNotSupported error from the vault's previewExchangeOut
-        // The vault doesn't support calculating input for exact output on ZapIn deposits
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IStandardExchangeErrors.RouteNotSupported.selector,
-                address(dai), // tokenIn
-                address(daiUsdcVault), // tokenOut (vault shares)
-                IStandardExchangeOut.previewExchangeOut.selector // function selector
-            )
+        // Seed: ExactIn deposit to bring totalShares above the Route 6 cap
+        // (Route 6 requires args.amountOut < totalShares + decimalUnit).
+        uint256 seededShares = seRouter.swapSingleTokenExactIn(
+            address(daiUsdcVault),
+            IERC20(address(dai)),
+            daiUsdcVault,
+            IERC20(address(daiUsdcVault)),
+            _noVault(),
+            DEPOSIT_AMOUNT * 10,
+            1,
+            _deadline(),
+            false,
+            ""
         );
-        seRouter.swapSingleTokenExactOut(
-            address(daiUsdcVault), // pool
-            IERC20(address(dai)), // tokenIn
-            daiUsdcVault, // tokenInVault
-            IERC20(address(daiUsdcVault)), // tokenOut (vault shares)
-            _noVault(), // tokenOutVault
-            exactSharesWanted, // exactAmountOut
-            DEPOSIT_AMOUNT * 2, // maxAmountIn
+
+        // Request well below the cap to leave headroom for the binary-search inversion.
+        uint256 exactSharesWanted = seededShares / 10;
+
+        uint256 daiBalBefore = dai.balanceOf(alice);
+        uint256 shareBalBefore = IERC20(address(daiUsdcVault)).balanceOf(alice);
+
+        uint256 daiSpent = seRouter.swapSingleTokenExactOut(
+            address(daiUsdcVault),
+            IERC20(address(dai)),
+            daiUsdcVault,
+            IERC20(address(daiUsdcVault)),
+            _noVault(),
+            exactSharesWanted,
+            DEPOSIT_AMOUNT * 10,
             _deadline(),
             false,
             ""
         );
 
         vm.stopPrank();
+
+        uint256 daiBalAfter = dai.balanceOf(alice);
+        uint256 shareBalAfter = IERC20(address(daiUsdcVault)).balanceOf(alice);
+
+        assertEq(daiBalBefore - daiBalAfter, daiSpent, "DAI delta must match returned spend");
+        assertGt(daiSpent, 0, "Must spend some DAI to mint shares");
+        assertGe(
+            shareBalAfter - shareBalBefore,
+            exactSharesWanted,
+            "Alice must receive at least exactSharesWanted"
+        );
     }
 
     /* ---------------------------------------------------------------------- */

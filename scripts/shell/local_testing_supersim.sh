@@ -5,6 +5,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# shellcheck source=lib/sanitize_dev_accounts.sh
+source "$SCRIPT_DIR/lib/sanitize_dev_accounts.sh"
+
 ETHEREUM_SEPOLIA_CONSTANTS_FILE="$REPO_ROOT/lib/daosys/lib/crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol"
 BASE_SEPOLIA_CONSTANTS_FILE="$REPO_ROOT/lib/daosys/lib/crane/contracts/constants/networks/BASE_SEPOLIA.sol"
 
@@ -704,6 +707,8 @@ fi
 start_supersim_if_needed
 wait_for_rpc "$SUPERSIM_ETHEREUM_RPC_URL" "SuperSim Ethereum"
 wait_for_rpc "$SUPERSIM_BASE_RPC_URL" "SuperSim Base"
+sanitize_dev_accounts "$SUPERSIM_ETHEREUM_RPC_URL"
+sanitize_dev_accounts "$SUPERSIM_BASE_RPC_URL"
 prepare_broadcast_identity
 
 cd "$REPO_ROOT"

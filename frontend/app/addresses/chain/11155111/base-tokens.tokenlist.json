@@ -1,10 +1,10 @@
 {
   "name": "Indexedex Base Tokens",
-  "timestamp": "2026-06-06T01:11:30.691Z",
+  "timestamp": "2026-06-10T07:05:19.632Z",
   "version": {
-    "major": 1,
-    "minor": 0,
-    "patch": 1
+    "major": 11,
+    "minor": 1,
+    "patch": 0
   },
   "keywords": [
     "indexedex",
@@ -22,12 +22,16 @@
     "weth": {
       "name": "WETH",
       "description": "Wrapped Ether"
+    },
+    "wrapUnwrap": {
+      "name": "Wrap Unwrap",
+      "description": "Pool select wrap unwrap entry"
     }
   },
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0x502925B295D9759911CdB100A4329B79E89C639d",
+      "address": "0xA4D89d9f35E89c5b6a3c4e92a8a81B72b964BA73",
       "name": "Rich Token",
       "symbol": "RICH",
       "decimals": 18,
@@ -38,7 +42,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x7dC6e7915b9BD9e72B0C4565E57975156c733BFB",
+      "address": "0xB3fcA8FAbdC098aFD883A9D8FEf7d6503b8844cF",
       "name": "Test Token A",
       "symbol": "TTA",
       "decimals": 18,
@@ -49,7 +53,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0xc02c30cDbf6d67d47c763023C9816b931345bA15",
+      "address": "0x1FE4bA5741c53f4d2744872ddE4e2AEcd853f476",
       "name": "Test Token B",
       "symbol": "TTB",
       "decimals": 18,
@@ -60,7 +64,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0xB7b7f37f4E42B01433C72309ADF0120D40278dCd",
+      "address": "0xafEE441aF5D2F666FD565E05F9a47416612A2972",
       "name": "Test Token C",
       "symbol": "TTC",
       "decimals": 18,
@@ -71,7 +75,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x0C517BeA9799CAB65FA14aB79BF865C7b9c2D779",
+      "address": "0x21e6cc08590008F53eEa0368C7da7C5B3c6Da417",
       "name": "Wrapped Ether",
       "symbol": "WETH9",
       "decimals": 18,

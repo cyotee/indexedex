@@ -1,8 +1,8 @@
 {
   "name": "Indexedex Strategy Vaults",
-  "timestamp": "2026-06-06T00:32:37.057Z",
+  "timestamp": "2026-06-07T23:08:41.392Z",
   "version": {
-    "major": 1,
+    "major": 2,
     "minor": 0,
     "patch": 0
   },
@@ -23,7 +23,7 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0x150982Dab1758C270cC20Cf2a7a319094eee45AF",
+      "address": "0x1E5191CF288A3a728CFAfA41DaCeC5072c8522e5",
       "name": "Pachira Vault of (TTA / TTB)",
       "symbol": "abUniV2Vault",
       "decimals": 18,
@@ -34,7 +34,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x433C893B8b599a2183527aBCD32072C638e19d43",
+      "address": "0x16eB6f8cB97e1BDf71B85FA2c0975b1759233C6d",
       "name": "Pachira Vault of (TTB / WETH)",
       "symbol": "bwUniV2Vault",
       "decimals": 18,

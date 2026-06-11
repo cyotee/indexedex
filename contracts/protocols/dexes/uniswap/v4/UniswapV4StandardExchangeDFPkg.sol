@@ -118,15 +118,16 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](8);
+        interfaces = new bytes4[](9);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
-        interfaces[2] = type(IERC5267).interfaceId;
-        interfaces[3] = type(IERC20Permit).interfaceId;
-        interfaces[4] = type(IStandardVault).interfaceId;
-        interfaces[5] = type(IStandardExchangeIn).interfaceId;
-        interfaces[6] = type(IStandardExchangeOut).interfaceId;
-        interfaces[7] = type(IUniswapV4StandardExchangePositionImport).interfaceId;
+        interfaces[2] = type(IERC20).interfaceId ^ type(IERC20Metadata).interfaceId;
+        interfaces[3] = type(IERC5267).interfaceId;
+        interfaces[4] = type(IERC20Permit).interfaceId;
+        interfaces[5] = type(IStandardVault).interfaceId;
+        interfaces[6] = type(IStandardExchangeIn).interfaceId;
+        interfaces[7] = type(IStandardExchangeOut).interfaceId;
+        interfaces[8] = type(IUniswapV4StandardExchangePositionImport).interfaceId;
     }
 
     function packageName() public pure override returns (string memory) {

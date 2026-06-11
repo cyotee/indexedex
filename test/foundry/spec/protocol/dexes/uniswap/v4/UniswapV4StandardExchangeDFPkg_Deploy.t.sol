@@ -31,7 +31,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
             UniswapV4StandardExchangeDFPkg(address(uniswapV4StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 8, "interface count");
+        assertEq(interfaces.length, 9, "interface count");
         assertEq(facets.length, 9, "facet count");
 
         assertEq(facets[0], address(erc20Facet), "erc20 facet");
@@ -70,7 +70,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(config.tokens.length, 2, "config token count");
         assertEq(config.tokens[0], expectedTokens[0], "config token0");
         assertEq(config.tokens[1], expectedTokens[1], "config token1");
-        assertEq(config.vaultTypes.length, 8, "vault types count");
+        assertEq(config.vaultTypes.length, 9, "vault types count");
         assertEq(config.contentsId, indexedexManager.calcContentsId(expectedTokens), "contents id");
 
         assertEq(IERC20Metadata(vault).symbol(), "UV4X", "symbol");

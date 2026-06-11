@@ -78,8 +78,10 @@ library UniswapV2_Component_FactoryService {
         IFacet erc2612Facet,
         IFacet erc5267Facet,
         IFacet erc4626Facet,
-        IFacet erc4626BasicVaultFacet,
-        IFacet erc4626StandardVaultFacet,
+        // IFacet erc4626BasicVaultFacet,
+        IFacet multiAssetBasicVaultFacet,
+        // IFacet erc4626StandardVaultFacet,
+        IFacet multiAssetStandardVaultFacet,
         IFacet uniswapV2StandardExchangeInFacet,
         IFacet uniswapV2StandardExchangeOutFacet,
         IVaultFeeOracleQuery vaultFeeOracleQuery,
@@ -93,8 +95,10 @@ library UniswapV2_Component_FactoryService {
             pkgInit.erc2612Facet = erc2612Facet;
             pkgInit.erc5267Facet = erc5267Facet;
             pkgInit.erc4626Facet = erc4626Facet;
-            pkgInit.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
-            pkgInit.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+            // pkgInit.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
+            pkgInit.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+            // pkgInit.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+            pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
             pkgInit.uniswapV2StandardExchangeInFacet = uniswapV2StandardExchangeInFacet;
             pkgInit.uniswapV2StandardExchangeOutFacet = uniswapV2StandardExchangeOutFacet;
             pkgInit.vaultFeeOracleQuery = vaultFeeOracleQuery;

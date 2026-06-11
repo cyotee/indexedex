@@ -229,6 +229,92 @@ Add two new test artifacts:
 
 ---
 
+## Change 6 — Audit + fix `UniswapV2StandardExchangeOutTarget` In/Out invariant gaps
+
+### Current behavior (the bug)
+
+When integrating the Buffer Pool with the Uniswap V2 Standard Exchange Vault, `BalanceNotSettled` is hit on TTA → shares swaps. Investigation pinned the root cause to a real bug in the V2 SE vault: `UniswapV2StandardExchangeOutTarget` does not implement `previewExchangeOut` / `exchangeOut` for at least Route 6 (ZapIn Vault Deposit). Specifically:
+
+- `previewExchangeOut` Route 6 (lines 253–259): silently returns `0` with the comment "No gas efficient way to calculate the the amount in for a ZapIn to target amount out."
+- `exchangeOut` Route 6 (lines 665–670): explicitly reverts `InvalidRoute(tokenIn, tokenOut)`.
+
+The corresponding In side (`UniswapV2StandardExchangeInTarget`) fully implements Route 6 forward direction. So the same route is functional via `exchangeIn` but broken via `exchangeOut` — the In/Out invariant is violated.
+
+This violates the design invariant that exchangeIn and exchangeOut for the same route and same conditions must be inverse-consistent (i.e. if `previewExchangeIn(tokenIn, X, tokenOut) → Y`, then `previewExchangeOut(tokenIn, tokenOut, Y)` must return X within rounding tolerance).
+
+### Target behavior
+
+Every route the vault advertises (Routes 1–7) must implement both `previewExchangeIn` / `exchangeIn` AND `previewExchangeOut` / `exchangeOut` such that the In/Out functions are inverse-consistent. Specifically the audit must:
+
+1. For each of the 7 routes, inspect the `previewExchangeOut` / `exchangeOut` implementations in `UniswapV2StandardExchangeOutTarget.sol`.
+2. Identify any route that returns `0`, reverts `InvalidRoute`, or computes a value inconsistent with the matching `previewExchangeIn` / `exchangeIn` in `UniswapV2StandardExchangeInTarget.sol`.
+3. Implement a correct closed-form (or sufficiently-accurate iterative) inverse for any missing/broken route.
+4. Add In/Out invariant tests proving the round-trip consistency for every route.
+
+### Why the dev's "no gas efficient way" comment is wrong (Route 6 example)
+
+The forward path is `X DAI → optimal-swap-split → LP minted → vault shares`. The reverse — "for target Y shares, what X DAI is needed?" — admits a closed-form solution that requires no square root:
+
+1. `LP_target = _convertToAssetsUp(Y_shares, vault.vaultLpReserve, vault.vaultTotalShares, decimalOffset)` (ERC4626 inverse).
+2. From the ratio-preserving LP-add constraint and V2's mint formula:
+   - `Y'_swap = LP_target · r0 / (f · T)` (DAI swapped through the pair, where `f = 0.997`, `T` is pair LP supply)
+   - `amount0_LP = (r0 + Y'_swap) · LP_target / T`
+   - `X_required = amount0_LP + Y'_swap`
+3. Round X up to favor the pool (caller supplies at-least-enough DAI).
+
+Roughly 4 multiplications + 3 divisions. Cheaper than the forward direction (which needs a square root).
+
+### Implementation
+
+1. **`@crane` or indexedex local `ConstProdUtils`** — add `_quoteZapInToTargetLPWithFee(targetLP, T, r0, r1, feeNumerator, feeDenominator, kLast, ownerFeeShare, feeOn)` returning `amountIn_DAI`. Mirror the `kLast` / protocol-fee mint accounting that `_quoteSwapDepositWithFee` performs on the In side.
+
+2. **`UniswapV2StandardExchangeOutTarget.previewExchangeOut`** Route 6 — replace the `return 0` stub:
+   ```solidity
+   uint256 LP_target = BetterMath._convertToAssetsUp(amountOut, vault.vaultLpReserve, vault.vaultTotalShares, ERC4626Repo._decimalOffset());
+   amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(LP_target, indexSource.totalSupply, indexSource.knownReserve, indexSource.opposingReserve, indexSource.knownfeePercent, UNISWAPV2_FEE_DENOMINATOR, indexSource.kLast, UNISWAPV2_PROTOCOL_FEE_SHARE, feeOn);
+   return amountIn;
+   ```
+
+3. **`UniswapV2StandardExchangeOutTarget.exchangeOut`** Route 6 — replace the `revert InvalidRoute(...)` stub:
+   - Compute `amountIn` via the same inverse formula.
+   - `if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);`
+   - Secure `amountIn` of `tokenIn` from the caller (`_secureTokenTransfer` honoring `pretransferred`).
+   - Run the actual `_swapDeposit` + `_setLastTotalAssets` + `_convertToSharesDown` + `_mint` sequence, identical to `exchangeIn` Route 6 lines 766–836 but with the pre-computed `amountIn`.
+   - Assert the actual minted shares `>= amountOut` (otherwise revert; this guards against rounding errors that would let the caller receive fewer shares than requested).
+   - Return `amountIn` actually consumed.
+
+4. **Audit the other 6 routes** (1, 2, 3, 4, 5, 7) for similar gaps. For each route, check that the Out side has a working implementation. Where it punts (`return 0` / `revert InvalidRoute`), derive the closed-form inverse and implement.
+
+   Likely candidates needing review based on the spec test names (which only cover slippage and execVsPreview on the In side for most routes):
+   - Route 2 (Pass-through ZapIn): forward is `_swapDeposit` (DAI → LP); reverse "X LP target → ? DAI" admits similar inverse to Route 6 without the ERC4626 step.
+   - Route 4 (Underlying Pool Vault Deposit): forward is LP → shares via ERC4626; reverse is a straightforward `_convertToAssetsUp`. Likely already implemented; verify.
+   - Route 5 (Underlying Pool Vault Withdrawal): forward is shares → LP via ERC4626; reverse is `_convertToSharesUp`. Likely already implemented; verify.
+   - The pass-through swap (Route 1) and pass-through ZapOut (Route 3) should also have closed-form reverses; verify the implementations exist and are correct.
+
+### Tests
+
+In `test/foundry/spec/protocol/dexes/uniswap/v2/`:
+
+For each route `N` in 1..7, add a test contract `UniswapV2StandardExchange_RouteN_InOutInvariant.t.sol` (or one combined file) with:
+
+- `test_routeN_previewInOutInverse_forward` — `previewExchangeIn(tokenIn, X, tokenOut) → Y`; `previewExchangeOut(tokenIn, tokenOut, Y) → X'`; assert `|X − X'| <= 1 wei`. Repeat across a small set of `(X, reserve_state)` cases.
+- `test_routeN_previewInOutInverse_reverse` — symmetric: `previewExchangeOut(tokenIn, tokenOut, Y) → X`; `previewExchangeIn(tokenIn, X, tokenOut) → Y'`; assert `|Y − Y'| <= 1 wei`.
+- `test_routeN_exchangeOut_matchesPreview` — `previewExchangeOut → X`; `exchangeOut(tokenIn, maxIn=X, tokenOut, Y)` returns `X` consumed (within 1 wei) and the recipient receives at least `Y` of `tokenOut`.
+- `test_routeN_exchangeOut_revertsWhenMaxInsufficient` — `exchangeOut(..., maxAmountIn = X − 1)` reverts.
+- Fuzz: `testFuzz_routeN_inOutInvariant` over 100 random `(X, reserve_state)` combinations.
+
+### Spec/doc updates
+
+- Add a section in the V2 SE Vault docs (or a NatSpec block on each Route) explicitly stating "exchangeIn and exchangeOut MUST be inverse-consistent for this route" with the round-trip assertion.
+
+### Risk
+
+- The closed-form derivation has to mirror the In side's `_calcVaultFee` / `_calcAndMintVaultFee` accounting exactly. If the In side mints fee shares before computing `_convertToSharesDown`, the Out side must mint fee shares before computing `_convertToAssetsUp` — otherwise the round-trip closes off by the fee-share delta. Verify by reading the In side code carefully.
+- Some routes may genuinely have asymmetric forward/reverse math (e.g., where the forward path uses up-front information that the reverse can't reconstruct without iteration). For those, document the trade-off explicitly and use a binary-search inverse with a tight tolerance rather than reverting.
+- Fixing the V2 SE vault Out side closes the In/Out invariant gap but **does not directly fix the Buffer Pool's `BalanceNotSettled`**. The Buffer Pool's rate provider asks the Route 7 question (`previewExchangeIn(seVault, X, rateTarget)`) while the hook executes Route 6 forward (`exchangeIn(rateTarget, X, seVault)`). These are different economic queries on a CP curve and may still produce different rates even after the vault Out side is fixed. After Change 6 lands, re-run the V2 spec runner to determine whether the BalanceNotSettled persists. If it does, follow up with a Buffer Pool design change to use exchangeOut (with a target shares amount) instead of exchangeIn for the TTA → shares hook reconcile path — that way the hook tells the SE vault exactly how many shares to mint, and the V2 vault uses the now-correct Route 6 exchangeOut implementation to compute and consume the required X DAI.
+
+---
+
 ## Change 5 — Eliminate all hand-rolled mocks from Buffer Pool tests
 
 ### Current behavior

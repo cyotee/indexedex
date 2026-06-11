@@ -79,8 +79,10 @@ library Aerodrome_Component_FactoryService {
         IFacet erc2612Facet;
         IFacet erc5267Facet;
         IFacet erc4626Facet;
-        IFacet erc4626BasicVaultFacet;
-        IFacet erc4626StandardVaultFacet;
+        // IFacet erc4626BasicVaultFacet;
+        IFacet multiAssetBasicVaultFacet;
+        // IFacet erc4626StandardVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
         IFacet aerodromeStandardExchangeInFacet;
         IFacet aerodromeStandardExchangeOutFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
@@ -96,8 +98,10 @@ library Aerodrome_Component_FactoryService {
         IFacet erc2612Facet,
         IFacet erc5267Facet,
         IFacet erc4626Facet,
-        IFacet erc4626BasicVaultFacet,
-        IFacet erc4626StandardVaultFacet,
+        // IFacet erc4626BasicVaultFacet,
+        // IFacet erc4626StandardVaultFacet,
+        IFacet multiAssetBasicVaultFacet,
+        IFacet multiAssetStandardVaultFacet,
         IFacet aerodromeStandardExchangeInFacet,
         IFacet aerodromeStandardExchangeOutFacet,
         IVaultFeeOracleQuery vaultFeeOracleQuery,
@@ -112,8 +116,10 @@ library Aerodrome_Component_FactoryService {
         params.erc2612Facet = erc2612Facet;
         params.erc5267Facet = erc5267Facet;
         params.erc4626Facet = erc4626Facet;
-        params.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
-        params.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        // params.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
+        params.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        // params.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        params.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         params.aerodromeStandardExchangeInFacet = aerodromeStandardExchangeInFacet;
         params.aerodromeStandardExchangeOutFacet = aerodromeStandardExchangeOutFacet;
         params.vaultFeeOracleQuery = vaultFeeOracleQuery;
@@ -136,8 +142,10 @@ library Aerodrome_Component_FactoryService {
         pkgInit.erc2612Facet = params.erc2612Facet;
         pkgInit.erc5267Facet = params.erc5267Facet;
         pkgInit.erc4626Facet = params.erc4626Facet;
-        pkgInit.erc4626BasicVaultFacet = params.erc4626BasicVaultFacet;
-        pkgInit.erc4626StandardVaultFacet = params.erc4626StandardVaultFacet;
+        // pkgInit.erc4626BasicVaultFacet = params.erc4626BasicVaultFacet;
+        pkgInit.multiAssetBasicVaultFacet = params.multiAssetBasicVaultFacet;
+        // pkgInit.erc4626StandardVaultFacet = params.erc4626StandardVaultFacet;
+        pkgInit.multiAssetStandardVaultFacet = params.multiAssetStandardVaultFacet;
         pkgInit.aerodromeStandardExchangeInFacet = params.aerodromeStandardExchangeInFacet;
         pkgInit.aerodromeStandardExchangeOutFacet = params.aerodromeStandardExchangeOutFacet;
         pkgInit.vaultFeeOracleQuery = params.vaultFeeOracleQuery;

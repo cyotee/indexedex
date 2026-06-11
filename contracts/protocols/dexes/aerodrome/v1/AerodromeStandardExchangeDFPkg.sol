@@ -58,6 +58,7 @@ import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultR
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+import {MultiAssetBasicVaultRepo} from 'contracts/vaults/basic/MultiAssetBasicVaultRepo.sol';
 
 interface IAerodromeStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
 
@@ -76,8 +77,10 @@ interface IAerodromeStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet erc5267Facet;
         IFacet erc2612Facet;
         IFacet erc4626Facet;
-        IFacet erc4626BasicVaultFacet;
-        IFacet erc4626StandardVaultFacet;
+        // IFacet erc4626BasicVaultFacet;
+        IFacet multiAssetBasicVaultFacet;
+        // IFacet erc4626StandardVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
         IFacet aerodromeStandardExchangeInFacet;
         IFacet aerodromeStandardExchangeOutFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
@@ -123,8 +126,10 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
     IFacet immutable ERC5267_FACET;
     IFacet immutable ERC2612_FACET;
     IFacet immutable ERC4626_FACET;
-    IFacet immutable ERC4626_BASIC_VAULT_FACET;
-    IFacet immutable ERC4626_STANDARD_VAULT_FACET;
+    // IFacet immutable ERC4626_BASIC_VAULT_FACET;
+    IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
+    // IFacet immutable ERC4626_STANDARD_VAULT_FACET;
+    IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable AERODROME_STANDARD_EXCHANGE_IN_FACET;
     IFacet immutable AERODROME_STANDARD_EXCHANGE_OUT_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
@@ -139,8 +144,10 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         ERC5267_FACET = pkgInit.erc5267Facet;
         ERC2612_FACET = pkgInit.erc2612Facet;
         ERC4626_FACET = pkgInit.erc4626Facet;
-        ERC4626_BASIC_VAULT_FACET = pkgInit.erc4626BasicVaultFacet;
-        ERC4626_STANDARD_VAULT_FACET = pkgInit.erc4626StandardVaultFacet;
+        // ERC4626_BASIC_VAULT_FACET = pkgInit.erc4626BasicVaultFacet;
+        MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
+        // ERC4626_STANDARD_VAULT_FACET = pkgInit.erc4626StandardVaultFacet;
+        MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         AERODROME_STANDARD_EXCHANGE_IN_FACET = pkgInit.aerodromeStandardExchangeInFacet;
         AERODROME_STANDARD_EXCHANGE_OUT_FACET = pkgInit.aerodromeStandardExchangeOutFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
@@ -396,8 +403,10 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(ERC4626_FACET);
-        facetAddresses_[4] = address(ERC4626_BASIC_VAULT_FACET);
-        facetAddresses_[5] = address(ERC4626_STANDARD_VAULT_FACET);
+        // facetAddresses_[4] = address(ERC4626_BASIC_VAULT_FACET);
+        facetAddresses_[4] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        // facetAddresses_[5] = address(ERC4626_STANDARD_VAULT_FACET);
+        facetAddresses_[5] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[6] = address(AERODROME_STANDARD_EXCHANGE_IN_FACET);
         facetAddresses_[7] = address(AERODROME_STANDARD_EXCHANGE_OUT_FACET);
         return facetAddresses_;
@@ -465,21 +474,37 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
             // bytes4[] functionSelectors;
             functionSelectors: ERC4626_FACET.facetFuncs()
         });
+        // facetCuts_[4] = IDiamond.FacetCut({
+        //     // address facetAddress;
+        //     facetAddress: address(ERC4626_BASIC_VAULT_FACET),
+        //     // FacetCutAction action;
+        //     action: IDiamond.FacetCutAction.Add,
+        //     // bytes4[] functionSelectors;
+        //     functionSelectors: ERC4626_BASIC_VAULT_FACET.facetFuncs()
+        // });
         facetCuts_[4] = IDiamond.FacetCut({
             // address facetAddress;
-            facetAddress: address(ERC4626_BASIC_VAULT_FACET),
+            facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             // FacetCutAction action;
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
-            functionSelectors: ERC4626_BASIC_VAULT_FACET.facetFuncs()
+            functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
         });
+        // facetCuts_[3] = IDiamond.FacetCut({
+        //     // address facetAddress;
+        //     facetAddress: address(ERC4626_FACET),
+        //     // FacetCutAction action;
+        //     action: IDiamond.FacetCutAction.Add,
+        //     // bytes4[] functionSelectors;
+        //     functionSelectors: ERC4626_FACET.facetFuncs()
+        // });
         facetCuts_[5] = IDiamond.FacetCut({
             // address facetAddress;
-            facetAddress: address(ERC4626_STANDARD_VAULT_FACET),
+            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
             // FacetCutAction action;
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
-            functionSelectors: ERC4626_STANDARD_VAULT_FACET.facetFuncs()
+            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
         facetCuts_[6] = IDiamond.FacetCut({
             // address facetAddress;
@@ -569,8 +594,11 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
             // uint8 decimalOffset
             0
         );
-        address[] memory vaultTokens = new address[](1);
+        address[] memory vaultTokens = new address[](3);
         vaultTokens[0] = address(decodedArgs.reserveAsset);
+        vaultTokens[1] = address(token0);
+        vaultTokens[2] = address(token1);
+        MultiAssetBasicVaultRepo._initialize(vaultTokens);
         bytes32 contentsId = abi.encode(vaultTokens)._hash();
         StandardVaultRepo._initialize(
             // IVaultFeeOracleQuery feeOracle,
