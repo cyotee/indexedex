@@ -198,13 +198,40 @@ abstract contract TestBase_StandardExchangeBufferPool_Comparative is
     function ABS_TOL_() public pure returns (uint256) { return ABS_TOL; }
     function REL_TOL_() public pure returns (uint256) { return REL_TOL; }
 
-    /// @dev Force both pools to the same static swap fee so swap outputs compare on the curve alone.
-    ///      The mock's manualSetStaticSwapFeePercentage still validates against each pool's swap-fee
-    ///      bounds (min == 1e12), so 0 is rejected; the shared minimum is used on BOTH pools instead.
-    uint256 internal constant EQUALIZED_SWAP_FEE = 1e12; // 0.0001% — the shared min bound
-
+    /// @dev Equalize swap fees by setting the REFERENCE pool's static fee to the buffer pool's
+    ///      NATIVE fee, leaving the buffer pool untouched.
+    ///
+    ///      Rationale: the buffer pool's `onAfterSwap` hook deposits the swapped token back into the
+    ///      SE vault via `exchangeOut`, whose max-in guard is sized against the (fee-reduced) swap
+    ///      amount. Forcing the buffer pool's fee toward zero removes that cushion, and the V2
+    ///      single-sided ZapIn price impact then pushes the required deposit over the cap
+    ///      (`MaxAmountExceeded`). Keeping the buffer pool in its native fee regime and matching the
+    ///      reference pool to it gives an identical fee on both pools — which is all the comparison
+    ///      requires — without breaking the hook's tested path.
     function _equalizeFees() internal virtual {
-        vault.manualSetStaticSwapFeePercentage(bufferPool, EQUALIZED_SWAP_FEE);
-        vault.manualSetStaticSwapFeePercentage(referencePool, EQUALIZED_SWAP_FEE);
+        uint256 bufferFee = vault.getStaticSwapFeePercentage(bufferPool);
+        vault.manualSetStaticSwapFeePercentage(referencePool, bufferFee);
+    }
+
+    /* --------------------------- Underlying rate move --------------------------- */
+
+    /// @dev Trade DAI->USDC on the underlying Uniswap V2 pair to shift per-LP value, moving the
+    ///      rate the shared `seRateProvider` reports (seen by BOTH pools). Returns rate before/after.
+    function tradeUnderlyingV2(uint256 daiIn) public returns (uint256 rateBefore, uint256 rateAfter) {
+        rateBefore = seRateProvider.getRate();
+
+        address trader = makeAddr("v2RateTrader");
+        dai.mint(trader, daiIn);
+
+        address[] memory path = new address[](2);
+        path[0] = address(dai);
+        path[1] = address(usdc);
+
+        vm.startPrank(trader);
+        dai.approve(address(uniV2Router), daiIn);
+        uniV2Router.swapExactTokensForTokens(daiIn, 1, path, trader, block.timestamp + 1 hours);
+        vm.stopPrank();
+
+        rateAfter = seRateProvider.getRate();
     }
 }
