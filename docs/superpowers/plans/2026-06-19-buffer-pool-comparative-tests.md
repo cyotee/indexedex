@@ -74,8 +74,8 @@ enum TokenType { STANDARD, WITH_RATE }
 - [x] Task 1 — Comparative base scaffold + reference pool deployment (compiles, registered)
 - [x] Task 2 — Matched init + fee equalization + init live-balance match test
 - [x] Task 3 — Behavior library + reference swap helper + initial-rate swap comparison (both directions)
-- [ ] Task 4 — `tradeUnderlyingV2` + after-rate-change swap comparison (both directions)
-- [ ] Task 5 — Spot-price / getRate after rate change
+- [x] Task 4 — `tradeUnderlyingV2` + after-rate-change swap comparison (both directions)
+- [x] Task 5 — Spot-price / getRate after rate change
 - [ ] Task 6 — Full build + spec run green + final commit
 
 **Resume point / notes:**
