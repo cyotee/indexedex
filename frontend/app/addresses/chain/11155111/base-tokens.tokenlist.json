@@ -1,8 +1,8 @@
 {
   "name": "Indexedex Base Tokens",
-  "timestamp": "2026-06-11T00:38:17.949Z",
+  "timestamp": "2026-06-16T15:32:18.690Z",
   "version": {
-    "major": 12,
+    "major": 21,
     "minor": 1,
     "patch": 0
   },
@@ -31,7 +31,7 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0xA4D89d9f35E89c5b6a3c4e92a8a81B72b964BA73",
+      "address": "0x738AA67FD784d5F9d31Ae083525205fAc7e1DaA0",
       "name": "Rich Token",
       "symbol": "RICH",
       "decimals": 18,
@@ -42,7 +42,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0xB3fcA8FAbdC098aFD883A9D8FEf7d6503b8844cF",
+      "address": "0x43583eEd7Ea0AbC5BAe12EBD77765b4003E30000",
       "name": "Test Token A",
       "symbol": "TTA",
       "decimals": 18,
@@ -53,7 +53,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x1FE4bA5741c53f4d2744872ddE4e2AEcd853f476",
+      "address": "0x0A325f8794aD3c46787856ea9a2B10157FCaB2a1",
       "name": "Test Token B",
       "symbol": "TTB",
       "decimals": 18,
@@ -64,7 +64,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0xafEE441aF5D2F666FD565E05F9a47416612A2972",
+      "address": "0x3C8a0A5DCB6141aa474082FE040E151bCd38EAe5",
       "name": "Test Token C",
       "symbol": "TTC",
       "decimals": 18,
@@ -75,7 +75,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x21e6cc08590008F53eEa0368C7da7C5B3c6Da417",
+      "address": "0x58deBa345d2744d5a3735020b4C49307B4D75704",
       "name": "Wrapped Ether",
       "symbol": "WETH9",
       "decimals": 18,

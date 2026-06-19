@@ -511,7 +511,7 @@ export type PoolOption = {
 export type TokenOptionType = 'token' | 'lp' | 'vault'
 
 export type TokenOption = {
-  value: Address | 'ETH' | 'WETH9'
+  value: Address | 'ETH'
   label: string
   chainId: number
   type: TokenOptionType
@@ -606,12 +606,9 @@ export function buildTokenOptions(includeVaultShares: boolean = true, includeLpT
     aerodromePoolTokens,
     strategyVaultTokens,
   } = getCached()
-  const platform = getAddressArtifacts(CHAIN_ID_SEPOLIA).platform
-  // ETH and WETH
+  // ETH sentinel stays as a prepend — native gas is not an ERC20 and cannot
+  // come from a Token List. WETH9 surfaces naturally from base-tokens below.
   opts.push({ value: 'ETH', label: 'ETH', chainId: CHAIN_ID_SEPOLIA, type: 'token' })
-  if (resolvePlatformWethAddress(platform)) {
-    opts.push({ value: 'WETH9', label: 'WETH9', chainId: CHAIN_ID_SEPOLIA, type: 'token' })
-  }
 
   for (const t of baseTokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'token' })
   for (const t of erc4626Tokens) opts.push({ value: t.address, label: t.display || t.symbol, chainId: CHAIN_ID_SEPOLIA, type: 'vault' })
@@ -633,15 +630,9 @@ export function buildTokenOptionsForChain(
   const resolvedChainId = resolveArtifactsChainId(chainId) ?? chainId
   const opts: TokenOption[] = []
 
-  // ETH and WETH9 sentinels stay as prepends — they are UI modes, not Token List entries.
+  // ETH sentinel stays as a prepend — native gas is not an ERC20 and cannot
+  // come from a Token List. WETH9 surfaces naturally from base-tokens below.
   opts.push({ value: 'ETH', label: 'ETH', chainId: resolvedChainId, type: 'token' })
-  // WETH9 sentinel: any base-tokens entry tagged 'weth' qualifies for the wrap/unwrap UI.
-  const wethEntry = selectFromMenu('token-select', chainId).find(
-    ({ token }) => (token.tags ?? []).indexOf('weth') >= 0,
-  )
-  if (wethEntry) {
-    opts.push({ value: 'WETH9', label: 'WETH9', chainId: resolvedChainId, type: 'token' })
-  }
 
   for (const { token, include } of selectFromMenu('token-select', chainId)) {
     if (!includeVaultShares && include.type === 'vault' && include.listId === 'strategy-vaults') continue
@@ -659,24 +650,28 @@ export function buildTokenOptionsForChain(
 
 export function resolveTokenAddressFromOption(value: TokenOption['value']): Address | null {
   if (value === 'ETH') return null
-  if (value === 'WETH9') {
-    const platform = getAddressArtifacts(CHAIN_ID_SEPOLIA).platform
-    return resolvePlatformWethAddress(platform)
-  }
   return value as Address
 }
 
 export function resolveTokenAddressFromOptionForChain(
   chainId: number,
   value: TokenOption['value'],
-  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): Address | null {
   if (value === 'ETH') return null
-  if (value === 'WETH9') {
-    const platform = getArtifactsOrNull(chainId, environment)?.platform
-    return resolvePlatformWethAddress(platform)
-  }
   return value as Address
+}
+
+/** Resolve the WETH9 address for a chain straight from the platform artifact.
+ *  Used by swap/batch-swap to detect wrap/unwrap routes — the WETH9 dropdown
+ *  entry now flows through tokenIn/tokenOut as a regular hex address. */
+export function getWeth9AddressForChain(
+  chainId: number,
+  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
+): Address | null {
+  const platform = getArtifactsOrNull(chainId, environment)?.platform
+  return resolvePlatformWethAddress(platform)
 }
 
 export function resolvePoolType(address?: string | null): PoolOption['type'] | undefined {

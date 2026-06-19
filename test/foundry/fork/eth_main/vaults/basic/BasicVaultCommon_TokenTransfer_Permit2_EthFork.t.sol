@@ -16,12 +16,11 @@ import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 /* -------------------------------------------------------------------------- */
 
 contract TestBase_EthereumFork is Test {
-    uint256 internal constant ETH_CHAIN_ID = 1;
+    uint256 internal constant ETH_CHAIN_ID = ETHEREUM_MAIN.CHAIN_ID;
 
-    // Pinned fork block for determinism.
-    // NOTE: Base mainnet uses 40_446_736 in its fork fixtures; Ethereum mainnet block numbers
-    // are different. Keep this comfortably below current mainnet head.
-    uint256 internal constant DEFAULT_FORK_BLOCK = 20_000_000;
+    // Pinned fork block from Crane constants for determinism and cached state.
+    // Using the library DEFAULT ensures all required deployments (incl. Aave) are included.
+    uint256 internal constant DEFAULT_FORK_BLOCK = ETHEREUM_MAIN.DEFAULT_FORK_BLOCK;
 
     string internal constant ETH_RPC_ENDPOINT = "ethereum_mainnet_infura";
 
@@ -39,6 +38,17 @@ contract TestBase_EthereumFork is Test {
         }
 
         assertEq(block.chainid, ETH_CHAIN_ID, "Fork should be on Ethereum mainnet (chainid 1)");
+    }
+
+    /**
+     * @notice Label key Ethereum addresses (extend as needed for Aave etc).
+     */
+    function _labelEthereumMainAddresses() internal virtual {
+        vm.label(ETHEREUM_MAIN.WETH9, "WETH9");
+        // Aave V3
+        vm.label(ETHEREUM_MAIN.AAVE_V3_POOL_ADDRESSES_PROVIDER, "AAVE_V3_POOL_ADDRESSES_PROVIDER");
+        vm.label(ETHEREUM_MAIN.AAVE_V3_POOL, "AAVE_V3_POOL");
+        vm.label(ETHEREUM_MAIN.AAVE_V3_STATIC_A_TOKEN_FACTORY, "AAVE_V3_STATIC_A_TOKEN_FACTORY");
     }
 
     function _getForkBlock() internal view returns (uint256 blockNumber) {

@@ -28,6 +28,7 @@ import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOS
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
+  getWeth9AddressForChain,
   resolveTokenAddressFromOptionForChain,
   resolvePoolTypeForChain,
   getTokenDecimalsByAddressForChain,
@@ -286,7 +287,7 @@ export default function BatchSwapPage() {
   )
   const filteredTokenOptions = tokenOptions
   const weth9Address = useMemo(
-    () => resolveTokenAddressFromOptionForChain(resolvedChainId, 'WETH9'),
+    () => getWeth9AddressForChain(resolvedChainId),
     [resolvedChainId]
   )
 
@@ -321,10 +322,8 @@ export default function BatchSwapPage() {
         const nextTokenAddr = getBoundaryTokenAddress(step.tokenOut)
 
         const prevIsWethBoundary = prevTokenKey === 'ETH'
-          || prevTokenKey === 'WETH9'
           || (!!prevTokenAddr && prevTokenAddr.toLowerCase() === weth9Address.toLowerCase())
         const nextIsWethBoundary = step.tokenOut === 'ETH'
-          || step.tokenOut === 'WETH9'
           || (!!nextTokenAddr && nextTokenAddr.toLowerCase() === weth9Address.toLowerCase())
 
         // Batch mode already handles native ETH <-> WETH at settlement boundaries.

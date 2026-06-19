@@ -29,10 +29,10 @@ contract TestBase_BaseFork is Test {
     /* ---------------------------------------------------------------------- */
 
     /// @notice Base mainnet chain ID
-    uint256 internal constant BASE_CHAIN_ID = 8453;
+    uint256 internal constant BASE_CHAIN_ID = BASE_MAIN.CHAIN_ID;
 
-    /// @notice Default fork block (pinned for deterministic tests)
-    uint256 internal constant DEFAULT_FORK_BLOCK = 40_446_736;
+    /// @notice Default fork block from Crane constants (pinned for deterministic tests and cached state)
+    uint256 internal constant DEFAULT_FORK_BLOCK = BASE_MAIN.DEFAULT_FORK_BLOCK;
 
     /// @notice RPC endpoint name configured in foundry.toml
     string internal constant BASE_RPC_ENDPOINT = 'base_mainnet_alchemy';
@@ -146,6 +146,11 @@ contract TestBase_BaseFork is Test {
         vm.label(BASE_MAIN.BALANCER_V3_WEIGHTED_POOL_FACTORY, 'BALANCER_V3_WEIGHTED_POOL_FACTORY');
         vm.label(BASE_MAIN.BALANCER_V3_STABLE_POOL_FACTORY, 'BALANCER_V3_STABLE_POOL_FACTORY');
         vm.label(BASE_MAIN.BALANCER_V3_COMPOSITE_LIQUIDITY_ROUTER, 'BALANCER_V3_COMPOSITE_LIQUIDITY_ROUTER');
+
+        // Aave V3 (for fork tests using live Aave/Stata)
+        vm.label(BASE_MAIN.AAVE_V3_POOL_ADDRESSES_PROVIDER, 'AAVE_V3_POOL_ADDRESSES_PROVIDER');
+        vm.label(BASE_MAIN.AAVE_V3_POOL, 'AAVE_V3_POOL');
+        vm.label(BASE_MAIN.AAVE_V3_STATIC_A_TOKEN_FACTORY, 'AAVE_V3_STATIC_A_TOKEN_FACTORY');
     }
 
     /* ---------------------------------------------------------------------- */
@@ -165,6 +170,11 @@ contract TestBase_BaseFork is Test {
         _assertHasCode(BASE_MAIN.BALANCER_V3_VAULT, 'BALANCER_V3_VAULT');
         _assertHasCode(BASE_MAIN.BALANCER_V3_ROUTER, 'BALANCER_V3_ROUTER');
         _assertHasCode(BASE_MAIN.BALANCER_V3_WEIGHTED_POOL_FACTORY, 'BALANCER_V3_WEIGHTED_POOL_FACTORY');
+
+        // Aave V3 (used by Stata fork tests)
+        _assertHasCode(BASE_MAIN.AAVE_V3_POOL_ADDRESSES_PROVIDER, 'AAVE_V3_POOL_ADDRESSES_PROVIDER');
+        _assertHasCode(BASE_MAIN.AAVE_V3_POOL, 'AAVE_V3_POOL');
+        _assertHasCode(BASE_MAIN.AAVE_V3_STATIC_A_TOKEN_FACTORY, 'AAVE_V3_STATIC_A_TOKEN_FACTORY');
     }
 
     /* ---------------------------------------------------------------------- */

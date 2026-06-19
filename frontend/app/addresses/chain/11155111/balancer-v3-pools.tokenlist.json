@@ -1,9 +1,9 @@
 {
   "name": "Indexedex Balancer V3 Pools",
-  "timestamp": "2026-06-11T00:59:19.648Z",
+  "timestamp": "2026-06-11T18:59:21.687Z",
   "version": {
-    "major": 0,
-    "minor": 1,
+    "major": 2,
+    "minor": 0,
     "patch": 0
   },
   "keywords": [
@@ -28,7 +28,7 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0x2821F40a91D12Ab7735F84305751038CEA58BE3A",
+      "address": "0xcf7B0732112CB23c4aC86C344FeB8B9a01Fa3A54",
       "name": "Balancer TTA + UniV2 AB Vault",
       "symbol": "balUniAbA",
       "decimals": 18,
@@ -40,7 +40,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x696Eb415a19C01f64A782bE11CF7658dfDA65d1C",
+      "address": "0xdFe4093c3592437c483333D4F6d7Dc61365475B0",
       "name": "Balancer TTB + UniV2 BWETH Vault",
       "symbol": "balUniBWethB",
       "decimals": 18,

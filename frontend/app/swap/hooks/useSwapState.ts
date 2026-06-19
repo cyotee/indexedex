@@ -7,6 +7,7 @@ import { usePreferredBrowserChainId } from '../../lib/browserChain'
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
+  getWeth9AddressForChain,
   resolveTokenAddressFromOptionForChain,
   getTokenDecimalsByAddressForChain,
   resolvePoolTypeForChain,
@@ -127,7 +128,7 @@ export function useSwapState(): SwapState {
   const platform = artifacts?.platform
 
   const weth9Address = useMemo(() => {
-    const addr = resolveTokenAddressFromOptionForChain(resolvedChainId, 'WETH9')
+    const addr = getWeth9AddressForChain(resolvedChainId)
     if (!addr || addr === '0x0000000000000000000000000000000000000000') return null
     return addr
   }, [resolvedChainId])

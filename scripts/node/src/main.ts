@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url'
 import { readFragmentsForInput } from './readFragments.js'
 import { buildList } from './buildList.js'
 import { loadPreviousList, writeList } from './writeList.js'
+import { generateRegistryFiles } from './generateRegistry.js'
 import type { AggregatorConfig } from './types.js'
 
 async function loadConfig(configPath: string): Promise<AggregatorConfig> {
@@ -73,6 +74,12 @@ async function main() {
   }
 
   console.log(`\nWrote ${totalLists} list(s), ${totalTokens} token(s) total, ${failures} failure(s).`)
+
+  const registry = await generateRegistryFiles(repoRoot)
+  console.log(
+    `Generated ${registry.registryPath} and ${registry.overridesPath} for ${registry.chainIds.length} chain(s): ${registry.chainIds.join(', ')}`
+  )
+
   if (failures > 0) process.exit(1)
 }
 

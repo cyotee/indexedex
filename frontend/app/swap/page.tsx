@@ -37,6 +37,7 @@ import {
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
+  getWeth9AddressForChain,
   resolveTokenAddressFromOptionForChain,
   getTokenDecimalsByAddressForChain,
   resolvePoolTypeForChain,
@@ -509,10 +510,21 @@ export default function SwapPage() {
   }, [routerAddress, routerHasBytecode, rpcChainId, resolvedChainId])
 
   const weth9Address = useMemo(() => {
-    const addr = resolveTokenAddressFromOptionForChain(resolvedChainId, 'WETH9')
+    const addr = getWeth9AddressForChain(resolvedChainId)
     if (!addr || addr === '0x0000000000000000000000000000000000000000') return null
     return addr
   }, [resolvedChainId])
+
+  // Compare a dropdown token value against the resolved WETH9 hex address.
+  // The dropdown now emits WETH9 as its hex address (sourced from the Token
+  // List), so wrap/unwrap detection is a case-insensitive address match.
+  const isWethValue = useCallback(
+    (value: string): boolean => {
+      if (!weth9Address) return false
+      return value.toLowerCase() === weth9Address.toLowerCase()
+    },
+    [weth9Address],
+  )
 
 
   // Pool/token/vault options must be chain-aware and update on chain switch
@@ -598,7 +610,7 @@ export default function SwapPage() {
     if (selectedPool && !validPoolValues.has(selectedPool.toLowerCase())) {
       const preserveWethPoolSelection =
         !!weth9Address &&
-        (tokenIn === 'ETH' || tokenIn === 'WETH9' || tokenOut === 'ETH' || tokenOut === 'WETH9' || useEthIn || useEthOut) &&
+        (tokenIn === 'ETH' || isWethValue(tokenIn) || tokenOut === 'ETH' || isWethValue(tokenOut) || useEthIn || useEthOut) &&
         validPoolValues.has(weth9Address.toLowerCase())
 
       setSelectedPool(preserveWethPoolSelection ? (weth9Address as Address) : '')
@@ -625,6 +637,7 @@ export default function SwapPage() {
     }
   }, [
     filteredVaultOptions,
+    isWethValue,
     poolOptions,
     selectedPool,
     selectedVaultIn,
@@ -3870,8 +3883,8 @@ export default function SwapPage() {
 
                   // "Use ETH" means we treat WETH9 as the onchain token but pay in native ETH.
                   // Ensure the selected token is compatible with this behavior.
-                  if (tokenIn !== 'ETH' && tokenIn !== 'WETH9') {
-                    setTokenIn(weth9Address ? 'WETH9' : '')
+                  if (tokenIn !== 'ETH' && !isWethValue(tokenIn)) {
+                    setTokenIn(weth9Address ?? '')
                   }
                   return
                 }
@@ -3879,7 +3892,7 @@ export default function SwapPage() {
                 // If the user unchecks while ETH is selected, fall back to WETH9 if available.
                 setUseEthIn(false)
                 if (tokenIn === 'ETH') {
-                  setTokenIn(weth9Address ? 'WETH9' : '')
+                  setTokenIn(weth9Address ?? '')
                 }
               }}
             />
@@ -3925,15 +3938,15 @@ export default function SwapPage() {
 
                   // "Use ETH" on output means we unwrap WETH9 to native ETH.
                   // Ensure tokenOut is compatible (WETH9 or ETH).
-                  if (tokenOut !== 'ETH' && tokenOut !== 'WETH9') {
-                    setTokenOut(weth9Address ? 'WETH9' : '')
+                  if (tokenOut !== 'ETH' && !isWethValue(tokenOut)) {
+                    setTokenOut(weth9Address ?? '')
                   }
                   return
                 }
 
                 setUseEthOut(false)
                 if (tokenOut === 'ETH') {
-                  setTokenOut(weth9Address ? 'WETH9' : '')
+                  setTokenOut(weth9Address ?? '')
                 }
               }}
             />

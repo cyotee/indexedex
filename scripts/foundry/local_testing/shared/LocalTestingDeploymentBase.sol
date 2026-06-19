@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
+import {IERC20Metadata} from "@crane/contracts/tokens/ERC20/IERC20Metadata.sol";
 import {ManifestEntry, ManifestEntryLib} from "./ManifestEntry.sol";
 
 /// @title LocalTestingDeploymentBase
@@ -100,17 +101,82 @@ abstract contract LocalTestingDeploymentBase is Script {
     /// @param typeDir Directory bucket (e.g. "tokens", "pools/balancerV3", "vaults/strategy").
     /// @param key    Stable identifier within the bucket (e.g. "tta", "abPool"); also the filename stem.
     /// @param entry  Fragment payload. Extensions are not written from Solidity in Phase 1.
+    /// @dev    Fragment metadata is reconciled with on-chain state before
+    ///         emission:
+    ///         - `name` falls back to `IERC20Metadata.name()` when empty.
+    ///         - `symbol` falls back to `IERC20Metadata.symbol()` when empty.
+    ///         - `decimals` is always taken from `IERC20Metadata.decimals()`,
+    ///           ignoring whatever the caller put in the struct.
+    ///         Any failure to resolve a required value reverts with a clear
+    ///         message so the aggregator never receives a fragment that
+    ///         would fail Token List schema validation downstream.
     function _writeManifestEntry(
         string memory typeDir,
         string memory key,
         ManifestEntry memory entry
     ) internal {
+        require(entry.addr != address(0), "ManifestEntry: zero address");
+
+        if (bytes(entry.name).length == 0) {
+            entry.name = _resolveTokenName(entry.addr);
+        }
+        if (bytes(entry.symbol).length == 0) {
+            entry.symbol = _resolveTokenSymbol(entry.addr);
+        }
+        entry.decimals = _resolveTokenDecimals(entry.addr);
+
         string memory dir = string.concat(_fragmentRoot(), "/", typeDir);
         vm.createDir(dir, true);
 
         string memory path = string.concat(dir, "/", key, ".json");
         string memory json = ManifestEntryLib.toJson(entry);
         vm.writeFile(path, json);
+    }
+
+    /// @notice Read `name()` from a deployed token contract.
+    /// @dev    Used as the fallback when a deploy script passes an empty
+    ///         `ManifestEntry.name`. Reverts rather than emitting an empty
+    ///         name, since the aggregator's Token List schema requires a
+    ///         non-empty name.
+    function _resolveTokenName(address token) internal view returns (string memory) {
+        try IERC20Metadata(token).name() returns (string memory onChainName) {
+            require(
+                bytes(onChainName).length > 0,
+                "ManifestEntry: empty name and on-chain name() returned empty"
+            );
+            return onChainName;
+        } catch {
+            revert("ManifestEntry: empty name and token does not implement IERC20Metadata.name()");
+        }
+    }
+
+    /// @notice Read `symbol()` from a deployed token contract.
+    /// @dev    Used as the fallback when a deploy script passes an empty
+    ///         `ManifestEntry.symbol`. Same revert semantics as
+    ///         `_resolveTokenName`.
+    function _resolveTokenSymbol(address token) internal view returns (string memory) {
+        try IERC20Metadata(token).symbol() returns (string memory onChainSymbol) {
+            require(
+                bytes(onChainSymbol).length > 0,
+                "ManifestEntry: empty symbol and on-chain symbol() returned empty"
+            );
+            return onChainSymbol;
+        } catch {
+            revert("ManifestEntry: empty symbol and token does not implement IERC20Metadata.symbol()");
+        }
+    }
+
+    /// @notice Read `decimals()` from a deployed token contract.
+    /// @dev    Always consulted by `_writeManifestEntry`; the script-provided
+    ///         `ManifestEntry.decimals` field is ignored. Reverts if the token
+    ///         does not implement `IERC20Metadata.decimals()` so that the
+    ///         fragment is never emitted with an unverified value.
+    function _resolveTokenDecimals(address token) internal view returns (uint8) {
+        try IERC20Metadata(token).decimals() returns (uint8 onChainDecimals) {
+            return onChainDecimals;
+        } catch {
+            revert("ManifestEntry: token does not implement IERC20Metadata.decimals()");
+        }
     }
 
     function _logHeader(string memory stageName) internal pure {

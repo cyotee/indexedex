@@ -225,6 +225,7 @@ SRBT
 SSLOAD
 SSTORE
 standardexchange
+Stata
 STATICCALL
 stochasm
 Strat

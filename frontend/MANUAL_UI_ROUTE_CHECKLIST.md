@@ -66,219 +66,214 @@ These routes were detected from `frontend/app/**/page.tsx`.
 
 | Check | Pass | Fail | Notes |
 |---|:--:|:--:|---|
-| Page loads and token selectors populate | [ ]  | [ ] | |
-| Pool dropdown shows expected pools | [ ]  | [ ] | |
-| Pool dropdown includes `WETH (Wrap/Unwrap)` option | [ ]  | [ ] | |
+| Page loads and token selectors populate | [X]  | [ ] | |
+| Pool dropdown shows expected pools | [X]  | [ ] | |
+| Pool dropdown includes `WETH (Wrap/Unwrap)` option | [X]  | [ ] | |
 |--------------------------------------------------------------|
-| Preview exact in WETH wrap `(ETH -> WETH)` | [ ]  | [ ] | |
-| Wraps exact in WETH wrap `(ETH -> WETH)` | [ ]  | [ ] | |
-| Previews exact out WETH wrap `(ETH -> WETH)` | [ ]  | [ ] | |
-| Wraps exact out WETH wrap `(ETH -> WETH)` | [ ]  | [ ] | |
+| Explicit Preview exact in WETH wrap `(ETH -> WETH)` | [X]  | [ ] | |
+| Explicit Wraps exact in WETH wrap `(ETH -> WETH)` | [X]  | [ ] | |
+| Explicit Previews exact out WETH wrap `(ETH -> WETH)` | [X]  | [ ] | |
+| Explicit Wraps exact out WETH wrap `(ETH -> WETH)` | [X]  | [ ] | |
 |--------------------------------------------------------------|
-| Preview exact in WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Wraps exact in WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Preview exact out WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Wraps exact out WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
+| Signed Preview exact in WETH unwrap `(WETH -> ETH)` | [X]  | [ ] | |
+| Signed Wraps exact in WETH unwrap `(WETH -> ETH)` | [X]  | [ ] | |
+| Signed Preview exact out WETH unwrap `(WETH -> ETH)` | [X]  | [ ] | |
+| Signed Wraps exact out WETH unwrap `(WETH -> ETH)` | [X]  | [ ] | |
 |--------------------------------------------------------------|
-| Signed Preview exact in WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Signed Wraps exact in WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Signed Preview exact out WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-| Signed Wraps exact out WETH unwrap `(WETH -> ETH)` | [ ]  | [ ] | |
-|--------------------------------------------------------------|
-| Previews exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
-| Swap exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 → ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact out `(ERC20 → ERC20)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH → ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(ETH → ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ETH → ERC20)` | [ ]  | [ ] | |
-| Swap exact out `(ETH → ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ETH → ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ETH → ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ETH → ERC20)` | [ ]  | [ ] | |
+| SExplicit wap exact out `(ETH → ERC20)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH → ERC20)` | [NA] | [ ] | |
 | Signed Swap exact in `(ETH → ERC20)` | [NA] | [ ] | |
 | Signed Previews exact out `(ETH → ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ETH → ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
-| Swap exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
+| Explicit Swap exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 → ETH)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
 | Signed Swap exact out `(ERC20 → ETH)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 → Vault)` | [NA] | [ ] |  |
-| Swap exact out `(ERC20 → Vault)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 → Vault)` | [NA] | [ ] |  |
+| Explicit Swap exact out `(ERC20 → Vault)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 → Vault)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 → Vault)` | [NA] | [ ] |  |
 | Signed Swap exact out `(ERC20 → Vault)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(Vault → ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(Vault → ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(Vault → ERC20)` | [NA] | [ ] | |
-| Swap exact out `(Vault → ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(Vault → ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(Vault → ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(Vault → ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(Vault → ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(Vault → ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(Vault → ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(Vault → ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(Vault → ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH → Vault)` | [ ]  | [ ] | |
-| Swap exact in `(ETH → Vault)` | [ ]  | [ ] | |
-| Previews exact out `(ETH → Vault)` | [NA] | [ ] | |
-| Swap exact out `(ETH → Vault)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ETH → Vault)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ETH → Vault)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ETH → Vault)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ETH → Vault)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH → Vault)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ETH → Vault)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ETH → Vault)` | [NA] | [ ] | |
 | Signed Swap exact out `(ETH → Vault)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(Vault → ETH)` | [ ]  | [ ] | 
-| Swap exact in `(Vault → ETH)` | [ ]  | [ ] | 
-| Previews exact out `(Vault → ETH)` | [NA] | [ ] | 
-| Swap exact out `(Vault → ETH)` | [NA] | [ ] | 
+| Explicit Previews exact in `(Vault → ETH)` | [ ]  | [ ] | 
+| Explicit Swap exact in `(Vault → ETH)` | [ ]  | [ ] | 
+| Explicit Previews exact out `(Vault → ETH)` | [NA] | [ ] | 
+| Explicit Swap exact out `(Vault → ETH)` | [NA] | [ ] | 
 |--------------------------------------------------------------|
 | Signed Previews exact in `(Vault → ETH)` | [ ]  | [ ] | 
 | Signed Swap exact in `(Vault → ETH)` | [ ]  | [ ] | 
 | Signed Previews exact out `(Vault → ETH)` | [NA] | [ ] | 
 | Signed Swap exact out `(Vault → ETH)` | [NA] | [ ] | 
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
-| Swap exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Swap exact out `(ERC20 -> ERC20 via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
-| Swap exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
-| Previews exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
-| Swap exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
 | Signed Swap exact out `(ETH -> ERC20 via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
-| Swap exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
+| Explicit Swap exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
 | Signed Swap exact out `(ERC20 -> ETH via vault)` | [ ]  | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
-| Swap exact in E`(RC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in E`(RC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ETH -> Vault -> Swap -> ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ETH -> Vault -> Swap -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> Vault -> Swap -> ETH)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Vault -> Swap -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in E`(RC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
-| Swap exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
-| Previews exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ETH -> Swap -> Vault -> ERC20)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ETH -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
-| Swap exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
-| Previews exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
+| Explicit Swap exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
 | Signed Swap exact in `(ERC20 -> Swap -> Vault -> ETH)` | [ ]  | [ ] | |
 | Signed Previews exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
-| Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
-| Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
+| Explicit Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(RC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
 | Signed Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
 | Signed Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
-| Swap exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
-| Previews exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
-| Swap exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
+| Explicit Swap exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
+| Explicit Previews exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
+| SExplicit wap exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
 | Signed Swap exact in `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [ ] | [ ] | |
 | Signed Previews exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 | Signed Swap exact out `(ETH -> Vault -> Swap -> Vault -> ERC20)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
-| Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
-| Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
-| Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
+| Explicit Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
+| Explicit Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
 | Signed Swap exact in `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
 | Signed Previews exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 | Signed Swap exact out `(ERC20 -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
-| Previews exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
-| Swap exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
-| Previews exact out `(ETH -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
-| Swap exact out `(ETH -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Previews exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
+| Explicit Swap exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
+| Explicit Previews exact out `(ETH -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
+| Explicit Swap exact out `(ETH -> Vault -> Swap -> Vault -> ETH)` | [NA] | [ ] | |
 |--------------------------------------------------------------|
 | Signed Previews exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
 | Signed Swap exact in `(ETH -> Vault -> Swap -> Vault -> ETH)` | [ ] | [ ] | |
@@ -293,18 +288,18 @@ These routes were detected from `frontend/app/**/page.tsx`.
 |:--:|:--:|:--:|:--:|
 | Page loads | [ ] | [ ] | |
 | Can add/remove swap rows/steps | [ ] | [ ] | |
-| Batch `(ERC20 -> ERC20 -> ERC20) | [X] | [ ] | |
-| Batch `(ETH -> ERC20 -> ERC20) | [X] | [ ] | |
-| Batch `(ERC20 -> ERC20 -> ETH) | [x] | [ ] | |
-| Batch `(ERC20 -> Vault Deposit -> ERC20) | [x] | [ ] | |
-| Batch `(ERC20 -> ERC20 -> Vault Deposit) | [x] | [ ] | |
-| Batch `(ETH -> Vault Deposit -> ERC20) | [x] | [ ] | |
-| Batch `(ETH -> ERC20 -> Vault Deposit) | [x] | [ ] | |
-| Batch `(ERC20 -> Vault Withdrawal -> ERC20) | [x] | [ ] | |
-| Batch `(Vault Withdrawal -> ERC20 -> ERC20) | [x] | [ ] | |
-| Batch `(ETH -> Vault Withdrawal -> ERC20) | [x] | [ ] | |
-| Batch `(Vault Withdrawal -> ERC20 -> ETH) | [x] | [ ] | |
-| Batch `(ERC20 -> Vault Withdrawal -> ETH) | [x] | [ ] | |
+| Batch `(ERC20 -> ERC20 -> ERC20) | [ ] | [ ] | |
+| Batch `(ETH -> ERC20 -> ERC20) | [ ] | [ ] | |
+| Batch `(ERC20 -> ERC20 -> ETH) | [ ] | [ ] | |
+| Batch `(ERC20 -> Vault Deposit -> ERC20) | [ ] | [ ] | |
+| Batch `(ERC20 -> ERC20 -> Vault Deposit) | [ ] | [ ] | |
+| Batch `(ETH -> Vault Deposit -> ERC20) | [ ] | [ ] | |
+| Batch `(ETH -> ERC20 -> Vault Deposit) | [ ] | [ ] | |
+| Batch `(ERC20 -> Vault Withdrawal -> ERC20) | [ ] | [ ] | |
+| Batch `(Vault Withdrawal -> ERC20 -> ERC20) | [ ] | [ ] | |
+| Batch `(ETH -> Vault Withdrawal -> ERC20) | [ ] | [ ] | |
+| Batch `(Vault Withdrawal -> ERC20 -> ETH) | [ ] | [ ] | |
+| Batch `(ERC20 -> Vault Withdrawal -> ETH) | [ ] | [ ] | |
 | Batch quote updates sensibly | [ ] | [ ] | |
 | Batch execution succeeds for a small batch | [ ] | [ ] | |
 | Partial failure is handled (clear error message + no broken state) | [ ] | [ ] | |

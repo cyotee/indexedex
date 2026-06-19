@@ -21,7 +21,7 @@ import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
 import {SqrtPriceMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/SqrtPriceMath.sol";
 import {Position} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Position.sol";
-import {SafeCast} from "@crane/contracts/external/openzeppelin/utils/math/SafeCast.sol";
+import {SafeCast} from "@crane/contracts/external/openzeppelin-contracts/utils/math/SafeCast.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 
 /* -------------------------------------------------------------------------- */
