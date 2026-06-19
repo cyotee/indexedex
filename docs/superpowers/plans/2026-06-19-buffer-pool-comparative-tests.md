@@ -72,7 +72,7 @@ enum TokenType { STANDARD, WITH_RATE }
 ## Progress log (update after each task)
 
 - [x] Task 1 — Comparative base scaffold + reference pool deployment (compiles, registered)
-- [ ] Task 2 — Matched init + fee equalization + init live-balance match test
+- [x] Task 2 — Matched init + fee equalization + init live-balance match test
 - [ ] Task 3 — Behavior library + reference swap helper + initial-rate swap comparison (both directions)
 - [ ] Task 4 — `tradeUnderlyingV2` + after-rate-change swap comparison (both directions)
 - [ ] Task 5 — Spot-price / getRate after rate change
@@ -82,6 +82,8 @@ enum TokenType { STANDARD, WITH_RATE }
 - Working on branch `test/buffer-pool-comparative` (branched off `main`; main had unrelated uncommitted changes left untouched).
 - Verification command is `forge test --match-path ...`, NOT `forge build`: `forge build` fails at the end on a pre-existing `solar` lint "file not found" error in unrelated crane launchpad files (`contracts/external/solady/...`). Compilation itself succeeds; lint is a post-compile gate. `forge test` does not run that linter.
 - Task 1 base compiled successfully (confirmed via sibling-spec `forge test` reporting "compilation skipped" after a full `forge build` compile pass).
+- Task 2 DEVIATION from plan §6: `vault.manualSetStaticSwapFeePercentage(pool, 0)` reverts `SwapFeePercentageTooLow()` — the mock setter DOES validate against the pool's min-fee bound (1e12). Used the documented fallback: both pools set to the shared minimum `1e12` (new constant `EQUALIZED_SWAP_FEE`). `test_compare_init_liveBalancesMatch` PASS — matched effective reserves (virtualTTA + rate-scaled shares) confirmed equal across both pools.
+- Compile is slow (~200s for the comparative tree). Run tests in the background and wait for the monitor.
 
 **Open items resolved during research (no longer risks):**
 - Fee setter: `vault.manualSetStaticSwapFeePercentage(pool, value)` (IVaultMainMock, bypasses bounds/auth) — confirmed.
