@@ -51,7 +51,7 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     function lockFromDetf(uint256 bptOut, uint256 bptReserveBefore, uint256 lockDuration, address recipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 tokenId)
     {
         if (bptOut == 0) revert BaseSharesZero();
@@ -113,7 +113,7 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
      * @dev Calls DETF.claimLiquidity() to extract value from the 80/20 pool.
      *      The DETF handles pool withdrawal and sends rate target tokens to recipient.
      */
-    function unlock(uint256 tokenId, address recipient) external lock returns (uint256 lpAmount) {
+    function unlock(uint256 tokenId, address recipient) external nonReentrant returns (uint256 lpAmount) {
         _validateUnlockCaller(tokenId, recipient);
 
         SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();
@@ -174,7 +174,7 @@ contract SeigniorageNFTVaultTarget is SeigniorageNFTVaultCommon, ReentrancyLockM
     /**
      * @inheritdoc ISeigniorageNFTVault
      */
-    function withdrawRewards(uint256 tokenId, address recipient) external lock returns (uint256 rewards) {
+    function withdrawRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
         _validateOwnership(tokenId);
 
         SeigniorageNFTVaultRepo.Storage storage layoutStruct = SeigniorageNFTVaultRepo._layoutStruct();

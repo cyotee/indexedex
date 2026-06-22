@@ -23,7 +23,7 @@ contract UniswapV4StandardExchangePositionImportTarget is UniswapV4StandardExcha
         address owner,
         address recipient,
         uint256 deadline
-    ) external lock returns (uint256 sharesOut) {
+    ) external nonReentrant returns (uint256 sharesOut) {
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
         if (IERC20(address(this)).totalSupply() != 0 || UniswapV4PositionRepo._isPositionCreated()) {
             revert UniswapV4ExchangeIn_PositionImportUnavailable();

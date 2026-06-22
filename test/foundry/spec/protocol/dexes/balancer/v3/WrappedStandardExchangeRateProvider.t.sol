@@ -135,6 +135,7 @@ contract WrappedStandardExchangeRateProvider_Test is TestBase_UniswapV2StandardE
 
         bytes memory encodedArgs = abi.encode(args);
         address expected = diamondPackageFactory.calcAddress(IDiamondFactoryPackage(address(erc4626PermitPkg)), encodedArgs);
+        // Deploy instance using factory (the IERC4626PermitDFPkg interface does not expose deploy; concrete does in this case).
         address deployed = diamondPackageFactory.deploy(IDiamondFactoryPackage(address(erc4626PermitPkg)), encodedArgs);
 
         assertEq(deployed, expected, "wrapper deployment address mismatch");

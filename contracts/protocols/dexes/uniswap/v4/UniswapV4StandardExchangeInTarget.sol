@@ -9,7 +9,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Address} from "@crane/contracts/utils/Address.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {UniswapV4StandardExchangeInBase} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 
 interface IUniswapV4StandardExchangePositionImport {
@@ -42,7 +42,7 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         uint256 deadline
     )
         external
-        lock
+        nonReentrant
         returns (uint256 amountOut)
     {
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();

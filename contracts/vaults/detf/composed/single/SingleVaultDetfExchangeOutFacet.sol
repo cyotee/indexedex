@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {SingleVaultDetfExchangeOutTarget} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeOutTarget.sol";
 
 contract SingleVaultDetfExchangeOutFacet is SingleVaultDetfExchangeOutTarget, IFacet {

@@ -311,7 +311,8 @@ contract BalancerV3StandardExchangeRouter_Prepay_LockedCaller_Test is TestBase_B
 
     function _deployRouterFacets() internal override {
         super._deployRouterFacets();
-        harnessFacet = IFacet(address(new BalancerV3StandardExchangeRouterTestHarnessFacet()));
+        harnessFacet = IFacet(create3Factory.deployFacet(type(BalancerV3StandardExchangeRouterTestHarnessFacet).creationCode, keccak256(abi.encode(type(BalancerV3StandardExchangeRouterTestHarnessFacet).name))));
+        vm.label(address(harnessFacet), "BalancerV3StandardExchangeRouterTestHarnessFacet");
     }
 
     function _deployRouterPackage() internal override {
@@ -331,7 +332,13 @@ contract BalancerV3StandardExchangeRouter_Prepay_LockedCaller_Test is TestBase_B
         pkgInit.weth = IWETH(address(weth));
 
         seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(
-            address(new BalancerV3StandardExchangeRouterDFPkg_WithHarness(pkgInit))
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(BalancerV3StandardExchangeRouterDFPkg_WithHarness).creationCode,
+                    abi.encode(pkgInit),
+                    keccak256(abi.encode(type(BalancerV3StandardExchangeRouterDFPkg_WithHarness).name))
+                )
+            )
         );
     }
 

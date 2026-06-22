@@ -11,7 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
     UniswapV2StandardExchangeOutTarget
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol";

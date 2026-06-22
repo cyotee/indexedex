@@ -22,7 +22,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 tokenId)
     {
         if (shares == 0) revert BaseSharesZero();
@@ -51,7 +51,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
 
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
         external
-        lock
+        nonReentrant
         returns (uint256 wethOut)
     {
         if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {

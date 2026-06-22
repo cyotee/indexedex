@@ -15,7 +15,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 import {SlipstreamStandardExchangeCommon} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol";
@@ -68,7 +68,7 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external override lock returns (uint256 amountIn) {
+    ) external override nonReentrant returns (uint256 amountIn) {
         if (deadline < block.timestamp) revert SlipstreamExchangeOut_DeadlineExceeded();
 
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();

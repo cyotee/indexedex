@@ -160,7 +160,7 @@ contract SeigniorageDETFUnderwritingTarget is
      */
     function underwrite(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool pretransferred)
         external
-        lock
+        nonReentrant
         returns (uint256 tokenId)
     {
         if (recipient == address(0)) {
@@ -448,7 +448,7 @@ contract SeigniorageDETFUnderwritingTarget is
     /**
      * @inheritdoc ISeigniorageDETFUnderwriting
      */
-    function redeem(uint256 tokenId, address recipient) external lock returns (uint256 amountOut) {
+    function redeem(uint256 tokenId, address recipient) external nonReentrant returns (uint256 amountOut) {
         SeigniorageDETFRepo.Storage storage layoutStruct = SeigniorageDETFRepo._layoutStruct();
         ISeigniorageNFTVault nftVault = layoutStruct.seigniorageNFTVault;
 

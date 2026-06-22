@@ -1,7 +1,8 @@
 forge-std/=lib/daosys/lib/crane/lib/forge-std/src/
 
-@crane/=lib/daosys/lib/crane/
-contracts/solady/=lib/daosys/lib/crane/contracts/external/solady/
-contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/daosys/lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/
-tests/=lib/daosys/lib/crane/test/foundry/spec/protocols/lending/aave/v4/
-battlechain-lib/=lib/daosys/lib/crane/lib/battlechain-lib/src/
+@crane/=lib/crane/
+contracts/solady/=lib/crane/contracts/external/solady/
+contracts/external/solady/=lib/crane/contracts/external/solady/
+contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/
+tests/=lib/crane/test/foundry/spec/protocols/lending/aave/v4/
+battlechain-lib/=lib/crane/lib/battlechain-lib/src/

@@ -248,7 +248,7 @@ contract AerodromeStandardExchangeInTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut) {
         ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         IAerodromeRouter aerodromeRouter = AerodromeRouterAwareRepo._aerodromeRouter();
         IPool pool = IPool(address(ERC4626Repo._reserveAsset()));

@@ -11,7 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     CamelotV2StandardExchangeInTarget
 } from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol";

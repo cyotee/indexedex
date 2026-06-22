@@ -44,7 +44,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         }
     }
 
-    function claimLiquidity(uint256 lpAmount, address recipient) external lock returns (uint256 extractedWeth) {
+    function claimLiquidity(uint256 lpAmount, address recipient) external nonReentrant returns (uint256 extractedWeth) {
         if (lpAmount == 0) {
             revert ZeroAmount();
         }
@@ -209,7 +209,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

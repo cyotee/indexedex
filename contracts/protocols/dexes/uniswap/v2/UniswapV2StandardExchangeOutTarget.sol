@@ -34,7 +34,7 @@ import {UniswapV2Utils} from "@crane/contracts/utils/math/UniswapV2Utils.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultRepo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {
@@ -399,7 +399,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

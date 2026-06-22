@@ -59,7 +59,7 @@ ignored_error_codes = [
     5667
 ]
 solc = "0.8.35"
-ignored_warnings_from = ["lib/daosys/lib/crane/"]
+ignored_warnings_from = ["lib/crane/"]
 sizes = true
 optimizer = true
 optimizer_runs = 1
@@ -93,7 +93,12 @@ ignore = [
     "lib/daosys/lib/crane/",
     "contracts/vaults/basic/BasicVaultErrors.sol",
     "contracts/vaults/seigniorage/nft/SeigniorageBondNFTFacet.sol",
-    "test/foundry/fork/sepolia/protocol/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol"
+    "test/foundry/fork/sepolia/protocol/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol",
+    "lib/daosys/lib/crane/test/foundry/fork/ethereum/protocols/staking/liquity/v2/gov/VotingPower.t.sol",
+    "lib/daosys/lib/crane/contracts/protocols/tokens/stable/frax/Common/Ownable.sol",
+    "lib/daosys/lib/crane/contracts/protocols/lending/aave/v3.6/dependencies/openzeppelin/contracts/AccessControl.sol",
+    "lib/daosys/lib/crane/contracts/protocols/tokens/stable/frax/Governance/AccessControl.sol",
+    "lib/daosys/lib/crane/test/foundry/spec/protocols/staking/liquity/v2/gov/BribeInitiativeAllocate.t.sol"
 ]
 
 [rpc_endpoints]

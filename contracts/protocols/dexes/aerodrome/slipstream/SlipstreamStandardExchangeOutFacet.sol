@@ -11,7 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
     SlipstreamStandardExchangeOutTarget
 } from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutTarget.sol";

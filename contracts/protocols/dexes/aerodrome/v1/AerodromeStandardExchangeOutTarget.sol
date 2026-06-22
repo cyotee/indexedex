@@ -587,7 +587,7 @@ contract AerodromeStandardExchangeOutTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         OutArgs memory args = OutArgs({
             tokenIn: tokenIn,
             maxAmountIn: maxAmountIn,

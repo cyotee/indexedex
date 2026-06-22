@@ -210,7 +210,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
      */
     function swapSingleTokenExactInHook(StandardExchangeSwapSingleTokenHookParams calldata params)
         public
-        lock
+        nonReentrant
         onlyBalancerV3Vault
         returns (uint256 amountCalculated)
     {

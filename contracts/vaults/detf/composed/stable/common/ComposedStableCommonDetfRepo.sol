@@ -6,7 +6,7 @@ import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IStablePool} from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-stable/IStablePool.sol';
 import {IWeightedPool} from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-weighted/IWeightedPool.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
-import {IStandardExchangeIn} from 'contracts/vaults/standard/exchange/IStandardExchangeIn.sol';
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';

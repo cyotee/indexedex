@@ -65,7 +65,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 tokenId)
     {
         if (shares == 0) revert BaseSharesZero();
@@ -93,7 +93,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     }
 
     /// @notice Mints and records the protocol-owned NFT (once).
-    function initializeProtocolNFT() external onlyOwner lock returns (uint256 tokenId) {
+    function initializeProtocolNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
         ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();
 
         tokenId = ProtocolNFTVaultRepo._protocolNFTId(layoutStruct);
@@ -114,7 +114,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     //  */
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
         external
-        lock
+        nonReentrant
         returns (uint256 wethOut)
     {
         if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {
@@ -175,7 +175,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     // /**
     //  * @inheritdoc IProtocolNFTVault
     //  */
-    function claimRewards(uint256 tokenId, address recipient) external lock returns (uint256 rewards) {
+    function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
         // Validate ownership
         address owner = ERC721Repo._ownerOf(tokenId);
         if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender)) {
@@ -243,7 +243,7 @@ contract ProtocolNFTVaultTarget is ProtocolNFTVaultCommon, ReentrancyLockModifie
     function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 principalShares, uint256 rewardsClaimed)
     {
         ProtocolNFTVaultRepo.Storage storage layoutStruct = ProtocolNFTVaultRepo._layoutStruct();

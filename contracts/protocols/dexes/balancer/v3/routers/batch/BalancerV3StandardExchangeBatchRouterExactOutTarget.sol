@@ -234,7 +234,7 @@ contract BalancerV3StandardExchangeBatchRouterExactOutTarget is
 
     function swapExactOutHook(SESwapExactOutHookParams calldata params)
         external
-        lock
+        nonReentrant
         onlyBalancerV3Vault
         returns (uint256[] memory pathAmountsIn, address[] memory tokensIn, uint256[] memory amountsIn)
     {
@@ -589,7 +589,7 @@ contract BalancerV3StandardExchangeBatchRouterExactOutTarget is
 
     function querySwapExactOutHook(SESwapExactOutHookParams calldata params)
         external
-        lock
+        nonReentrant
         onlyBalancerV3Vault
         returns (uint256[] memory pathAmountsIn, address[] memory tokensIn, uint256[] memory amountsIn)
     {

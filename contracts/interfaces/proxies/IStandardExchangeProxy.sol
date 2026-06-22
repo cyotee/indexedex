@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import {IERC4626PermitProxy} from "@crane/contracts/interfaces/proxies/IERC4626PermitProxy.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IVaultFeeOracleQueryAware} from "contracts/interfaces/IVaultFeeOracleQueryAware.sol";
 
 /**

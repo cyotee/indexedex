@@ -59,8 +59,8 @@ import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAcc
 
 import "contracts/constants/Indexedex_CONSTANTS.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {ISeigniorageDETF} from "contracts/interfaces/ISeigniorageDETF.sol";
 import {ISeigniorageNFTVault} from "contracts/interfaces/ISeigniorageNFTVault.sol";

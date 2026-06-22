@@ -14,8 +14,8 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {RICHIRTarget} from "contracts/vaults/protocol/RICHIRTarget.sol";
 
 /**

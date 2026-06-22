@@ -250,7 +250,13 @@ contract BalancerV3StandardExchangeRouter_PrepayAuth_Test is TestBase_BalancerV3
 
     function _deployRouterFacets() internal override {
         super._deployRouterFacets();
-        harnessFacet = IFacet(address(new PrepayAuthHarnessFacet()));
+        harnessFacet = IFacet(
+            create3Factory.deployFacet(
+                type(PrepayAuthHarnessFacet).creationCode,
+                keccak256(abi.encode(type(PrepayAuthHarnessFacet).name))
+            )
+        );
+        vm.label(address(harnessFacet), "PrepayAuthHarnessFacet");
     }
 
     function _deployRouterPackage() internal override {
@@ -269,7 +275,18 @@ contract BalancerV3StandardExchangeRouter_PrepayAuth_Test is TestBase_BalancerV3
         p.permit2 = permit2;
         p.weth = IWETH(address(weth));
 
-        seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(address(new PrepayAuthDFPkg(p)));
+        // Deploy via CREATE3 per standards (no raw `new` for DFPkgs, even harnesses for test).
+        bytes32 pkgSalt = keccak256(abi.encode(type(PrepayAuthDFPkg).name));
+        seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(PrepayAuthDFPkg).creationCode,
+                    abi.encode(p),
+                    pkgSalt
+                )
+            )
+        );
+        vm.label(address(seRouterDFPkg), "PrepayAuthDFPkg");
     }
 
     function setUp() public override {

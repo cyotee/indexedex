@@ -335,7 +335,13 @@ contract BalancerV3Fork_Prepay_LockedCaller_Test is TestBase_BalancerV3Fork_Stra
         pkgInit.weth = IWETH(address(weth));
 
         seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(
-            address(new BalancerV3StandardExchangeRouterDFPkg_WithHarness(pkgInit))
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(BalancerV3StandardExchangeRouterDFPkg_WithHarness).creationCode,
+                    abi.encode(pkgInit),
+                    keccak256(abi.encode(type(BalancerV3StandardExchangeRouterDFPkg_WithHarness).name))
+                )
+            )
         );
     }
 

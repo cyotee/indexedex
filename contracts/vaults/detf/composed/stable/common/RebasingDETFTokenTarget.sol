@@ -146,7 +146,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
 
     function redeem(uint256 richirAmount, address recipient, bool pretransferred)
         external
-        lock
+        nonReentrant
         returns (uint256 wethOut)
     {
         if (richirAmount == 0) revert ZeroAmount();
@@ -164,7 +164,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -188,7 +188,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -226,7 +226,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
     function burnShares(uint256 richirAmount, address owner, bool pretransferred)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 sharesBurned)
     {
         if (richirAmount == 0) revert ZeroAmount();

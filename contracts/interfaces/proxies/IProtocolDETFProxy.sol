@@ -16,8 +16,8 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 

@@ -35,7 +35,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 tokenId)
     {
         if (shares == 0) revert BaseSharesZero();
@@ -56,7 +56,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         emit NewLock(tokenId, recipient, shares, bonusMultiplier, block.timestamp + lockDuration);
     }
 
-    function initializeProtocolNFT() external onlyOwner lock returns (uint256 tokenId) {
+    function initializeProtocolNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
         tokenId = ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId(layoutStruct);
@@ -71,7 +71,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
         external
-        lock
+        nonReentrant
         returns (uint256 wethOut)
     {
         if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {
@@ -122,7 +122,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         emit IProtocolNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }
 
-    function claimRewards(uint256 tokenId, address recipient) external lock returns (uint256 rewards) {
+    function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
         address owner = ERC721Repo._ownerOf(tokenId);
         if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender)) {
             revert NotBondHolder(owner, msg.sender);
@@ -183,7 +183,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
         external
         onlyOwner
-        lock
+        nonReentrant
         returns (uint256 principalShares, uint256 rewardsClaimed)
     {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();

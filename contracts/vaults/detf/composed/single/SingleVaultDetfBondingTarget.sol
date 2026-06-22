@@ -115,7 +115,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
         external
         payable
-        lock
+        nonReentrant
         returns (uint256 tokenId, uint256 shares)
     {
         if (block.timestamp > deadline) {
@@ -144,7 +144,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     )
         external
         payable
-        lock
+        nonReentrant
         returns (uint256 tokenId, uint256 shares)
     {
         if (block.timestamp > deadline) {
@@ -309,7 +309,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         revert BondTokenNotSupported(tokenIn);
     }
 
-    function captureSeigniorage() external lock returns (uint256 bptReceived_) {
+    function captureSeigniorage() external nonReentrant returns (uint256 bptReceived_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -321,7 +321,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _addReservePoolBptToProtocolNft(layoutStruct, bptReceived_);
     }
 
-    function sellNFT(uint256 tokenId, address recipient) external lock returns (uint256 richirMinted_) {
+    function sellNFT(uint256 tokenId, address recipient) external nonReentrant returns (uint256 richirMinted_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -348,7 +348,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
     }
 
-    function donate(IERC20 token, uint256 amount, bool pretransferred) external lock {
+    function donate(IERC20 token, uint256 amount, bool pretransferred) external nonReentrant {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -374,7 +374,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _addReservePoolBptToProtocolNft(layoutStruct, assets.bptOut);
     }
 
-    function claimLiquidity(uint256 lpAmount, address recipient) external lock returns (uint256 extractedWeth_) {
+    function claimLiquidity(uint256 lpAmount, address recipient) external nonReentrant returns (uint256 extractedWeth_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -397,7 +397,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
 
     function bridgeRichir(IProtocolDETF.BridgeArgs calldata args)
         external
-        lock
+        nonReentrant
         returns (uint256 localRichirOut, uint256 richOut)
     {
         if (block.timestamp > args.deadline) {
@@ -531,7 +531,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
 
     function receiveBridgedRich(address recipient, uint256 richAmount, uint256 deadline)
         external
-        lock
+        nonReentrant
         returns (uint256 richirOut)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();

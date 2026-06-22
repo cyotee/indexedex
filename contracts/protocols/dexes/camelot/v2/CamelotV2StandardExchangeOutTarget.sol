@@ -6,7 +6,7 @@ import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/
 import {ICamelotFactory} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotFactory.sol";
 import {ICamelotV2Router} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotV2Router.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
@@ -345,7 +345,7 @@ contract CamelotV2StandardExchangeOutTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

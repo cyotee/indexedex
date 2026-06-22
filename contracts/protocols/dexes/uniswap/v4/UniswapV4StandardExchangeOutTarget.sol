@@ -14,7 +14,7 @@ import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Act
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
 import {UniswapV4StandardExchangeCommon} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol";
 
@@ -66,7 +66,7 @@ contract UniswapV4StandardExchangeOutTarget is UniswapV4StandardExchangeCommon, 
     )
         external
         override
-        lock
+        nonReentrant
         returns (uint256 amountIn)
     {
         if (deadline < block.timestamp) revert UniswapV4ExchangeOut_DeadlineExceeded();

@@ -30,7 +30,7 @@ import {
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISeigniorageNFTVault} from "contracts/interfaces/ISeigniorageNFTVault.sol";
 import {
     IBalancerV3StandardExchangeRouterPrepay
@@ -206,7 +206,7 @@ contract SeigniorageDETFExchangeOutTarget is SeigniorageDETFCommon, ReentrancyLo
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountIn) {
+    ) external nonReentrant returns (uint256 amountIn) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

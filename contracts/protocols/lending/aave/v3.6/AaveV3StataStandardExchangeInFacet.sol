@@ -11,7 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {AaveV3StataStandardExchangeInTarget} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol";
 
 // tag::AaveV3StataStandardExchangeInFacet[]

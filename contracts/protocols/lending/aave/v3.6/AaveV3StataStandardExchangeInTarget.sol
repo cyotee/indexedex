@@ -22,7 +22,7 @@ import {IAToken} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/I
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {AaveV3StataStandardExchangeCommon} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol";
 import {IAaveV3StataStandardVault} from "contracts/interfaces/IAaveV3StataStandardVault.sol";

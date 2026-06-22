@@ -5,8 +5,19 @@ If PROGRESS.md exists in the project root, read it for cross-session context bef
 
 ## Required Reading
 
-**Before working on this codebase, you MUST also read the Crane framework documentation:**
-- `lib/daosys/lib/crane/CLAUDE.md` - Contains essential patterns for Repos, Facets, Targets, and the Diamond architecture that IndexedEx builds upon.
+**You MUST read in this order:**
+
+1. Crane materials (Crane is independent):
+   - `lib/daosys/lib/crane/AGENTS.md`
+   - The Crane skills (in `lib/daosys/lib/crane/.claude/skills/`), especially:
+     - `crane-deployment` — CREATE3, DFPkgs, FactoryService, proxy creation.
+     - `crane-architecture` — core patterns, DFPkg.
+     - `crane-testing` — `CraneTest`, factory bootstrap, TestBases.
+   - Crane docs under `lib/daosys/lib/crane/docs/` (especially `docs/deployment/`).
+
+2. This file (IndexedEx AGENTS.md) — explains how IndexedEx layers on Crane.
+
+See also `CLAUDE.md` (points back to this file).
 
 ## Project Overview
 
@@ -61,25 +72,28 @@ forge script scripts/foundry/UI_Dev_Anvil.s.sol --rpc-url http://127.0.0.1:8545 
 2. **Packages (DFPkg)**: Bundle related facets together (e.g., `FeeCollectorDFPkg`, `IndexedexManagerDFPkg`)
 3. **Proxies**: Diamond proxy instances that users interact with (e.g., `IFeeCollectorProxy`, `IIndexedexManagerProxy`)
 
-## Critical: CREATE3 Factory Deployment
+## Critical: CREATE3 Factory Deployment (Crane Foundation)
 
-**NEVER use `new` to deploy contracts.** All deployments must go through the CREATE3 factory system for deterministic cross-chain addresses.
+**NEVER use `new` to deploy contracts.** All deployments go through Crane's CREATE3 factory system. See the `crane-deployment` skill (in the Crane submodule) for the full detailed patterns, code examples, anti-patterns, and test setup.
 
+High-level reminder:
 ```solidity
-// WRONG - will break tests and CI
+// WRONG
 MyContract c = new MyContract();
 
-// CORRECT - use factory service pattern
-myFacet = factory.deployFacet(
+// CORRECT (via FactoryService or directly on create3Factory)
+myFacet = create3Factory.deployFacet(
     type(MyFacet).creationCode,
     abi.encode(type(MyFacet).name)._hash()
 );
 ```
 
-FactoryService libraries encapsulate deployment logic:
-- `contracts/fee/collector/FeeCollectorFactoryService.sol`
-- `contracts/manager/IndexedexManagerFactoryService.sol`
-- `contracts/protocols/dexes/*/...FactoryService.sol`
+FactoryService libraries (Crane + IndexedEx):
+- Crane core: `AccessFacetFactoryService`, `IntrospectionFacetFactoryService` (in Crane).
+- IndexedEx core: `IndexedexManagerFactoryService`, `FeeCollectorFactoryService`, `VaultComponentFactoryService`.
+- Protocol: `*_Component_FactoryService.sol` (e.g. `CamelotV2_Component_FactoryService`).
+
+**Always start with the Crane `crane-deployment` skill + `CraneTest` / `InitDevService`.**
 
 ## Key Import Remappings
 
@@ -96,23 +110,21 @@ Update both `remappings.txt` and `foundry.toml` when adding new libraries.
 
 ## Test Patterns
 
-Tests inherit from base classes in Crane:
-- `CraneTest` - base test with factory setup
-- `TestBase_IFacet` - for testing individual facets
+**See `crane-testing` skill + `crane-deployment` skill first.**
 
-IndexedEx-specific test base:
-- `contracts/test/IndexedexTest.sol` - sets up core infrastructure (owner, facets, packages, proxies)
+- Inherit `CraneTest` (provides `create3Factory` + `diamondPackageFactory` via `InitDevService`).
+- Then `IndexedexTest` (builds the core manager, fee collector, etc. using Crane factories + registers the manager as operator).
+- Then `TestBase_VaultComponents` (deploys shared vault facets via Crane factories + `VaultComponentFactoryService`).
+- Then protocol TestBases (e.g. `TestBase_CamelotV2StandardExchange`).
 
-Protocol-specific test bases:
-- `contracts/protocols/dexes/uniswap/v2/TestBase_UniswapV2StandardExchange.sol`
+Protocol test base examples (follow these exactly):
 - `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol`
+- `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol`
 - `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol`
-- `contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol`
 
-IFacet tests must implement:
-- `facetTestInstance()` - return the facet under test
-- `controlFacetInterfaces()` - expected interface IDs
-- `controlFacetFuncs()` - expected function selectors
+**Key rule in IndexedEx**: Facets use the Crane path (`create3Factory`). Vault/StandardExchange *DFPkgs* use the manager/registry path. See the section below.
+
+IFacet / behavior tests implement the usual virtuals (`facetTestInstance()`, etc.).
 
 ## Project Structure
 
@@ -142,12 +154,11 @@ contracts/
 
 ## Protocol Integration Pattern
 
-Each DEX integration follows this structure:
-- `*StandardExchangeInFacet.sol` - swap token in logic
-- `*StandardExchangeOutFacet.sol` - swap token out logic
-- `*StandardExchangeCommon.sol` - shared utilities
-- `*_Component_FactoryService.sol` - CREATE3 deployment helpers
-- `TestBase_*StandardExchange.sol` - test base class
+Each DEX/lending integration follows this structure (see `crane-deployment` for Crane base + the Component_FactoryService for the IndexedEx manager path):
+- `*StandardExchangeInFacet.sol` / `...OutFacet.sol` / Marker — deployed via `create3Factory` (Crane).
+- `*_Component_FactoryService.sol` — provides the typed `deploy*Facet` (on create3Factory) and `deploy*DFPkg` (on indexedexManager) helpers.
+- `TestBase_*StandardExchange.sol` — correct test setup (follow these).
+- The DFPkg itself and instance creation go through the VaultRegistry path on the manager (see Deployment section above).
 
 ## Permit2 Witness Canonical Source (Balancer Router)
 
@@ -170,94 +181,71 @@ Practical rules:
 - Use EIP-712 typed-data signatures (`signTypedData`), not `signMessage`.
 - In signed mode, if quote-time signature is missing/expired, re-sign at swap click and execute `*WithPermit` paths.
 
-## Vault Deployment Pattern
+## Deployment in IndexedEx (Crane + Registry Layer)
 
-**All vault packages and instances MUST be deployed through the IndexedexManager proxy.**
+**Foundational mechanics come from Crane.** Read the Crane `crane-deployment` skill first for facets, DFPkgs, FactoryService, and `CraneTest` bootstrap.
 
-### Why?
+IndexedEx adds a registry layer **only** for vault-style packages (StandardExchangeDFPkgs, DETF pkgs, etc.). Core foundation packages (IndexedexManagerDFPkg, FeeCollectorDFPkg) use the direct Crane path.
 
-1. **Deterministic addresses** - CREATE3 ensures same addresses across chains
-2. **Registry tracking** - Vaults are indexed by type, token, and package for discovery
-3. **Fee oracle integration** - Vault fees configured through centralized oracle
-4. **Access control** - Package deployment requires owner/operator permissions
+### Two Paths
 
-### Deployment Flow
+**1. Pure Crane path (facets + generic packages)**
+- Facets: `create3Factory.deployXXXFacet()` (or via `*FactoryService`).
+- Generic DFPkgs: `create3Factory.deployPackageWithArgs(...)`.
+- Instances: `diamondPackageFactory.deploy(pkg, args)` or package helper.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ Step 1: Deploy Facets via CREATE3Factory                            │
-│   factory.deployFacet(type(MyFacet).creationCode, salt)             │
-└─────────────────────────────────────────────────────────────────────┘
-                                    ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│ Step 2: Deploy Vault DFPkg via IndexedexManager                     │
-│   indexedexManager.deployPkg(creationCode, initArgs, salt)          │
-│   → Package registers with VaultRegistryVaultPackageRepo            │
-│   → Indexed by vault types and fee configuration                    │
-└─────────────────────────────────────────────────────────────────────┘
-                                    ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│ Step 3: Deploy Vault Instances via DFPkg                            │
-│   myVaultPkg.deployVault(poolOrAsset)                               │
-│   → Internally calls indexedexManager.deployVault(pkg, args)        │
-│   → Vault registers with VaultRegistryVaultRepo                     │
-│   → Indexed by token, type, package for efficient queries           │
-└─────────────────────────────────────────────────────────────────────┘
-```
+See `IndexedexTest` for how the core manager + feeCollector are created this way.
 
-### Anti-Pattern: Direct Factory Deployment
+**2. IndexedEx vault package path (the one that trips people up)**
+- Facets (In/Out/Marker, vault components): still pure Crane via `create3Factory` + `VaultComponentFactoryService` / `XXX_Component_FactoryService`.
+- DFPkg for the vault package: **must** go through the manager:
+  ```solidity
+  vm.prank(owner);
+  myVaultDFPkg = indexedexManager.deployCamelotV2StandardExchangeDFPkg(pkgInit);
+  // (or deployAaveV3Stata..., deployAerodrome..., etc.)
+  ```
+  This calls `IVaultRegistryDeployment.deployPkg(...)`, which does CREATE3 + registers in `VaultRegistryVaultPackageRepo`.
+- Instance: `myVaultDFPkg.deployVault(asset)`.
+  The DFPkg calls the registry's `deployVault`, which does the actual `diamondPackageFactory` step + registers the resulting vault.
+
+See concrete examples:
+- `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol`
+- `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol`
+
+### Why the registry path for vault packages?
+
+- Discovery via `indexedexManager.vaultsOfToken(...)` / `vaultsOfType(...)`.
+- Authorization (`_onlyOwnerOrOperatorOrPkg` in `VaultRegistryDeploymentTarget`).
+- Consistent fee oracle + manager wiring.
+
+### Anti-Patterns (these are the errors the other agent made)
 
 ```solidity
-// WRONG - bypasses registry, breaks indexing
-address vault = diamondFactory.deploy(myPkg, pkgArgs);
-
-// CORRECT - goes through IndexedexManager
-address vault = myVaultPkg.deployVault(pool);
-// or
-address vault = indexedexManager.deployVault(myPkg, pkgArgs);
+// WRONG
+SomeFacet f = new SomeFacet();
+SomeDFPkg p = new SomeDFPkg(init);
+address v = diamondPackageFactory.deploy(IDiamondFactoryPackage(myVaultPkg), args);
+create3Factory.deployPackageWithArgs(...); // for a registered vault DFPkg
 ```
+
+**Always**:
+- Use the factories from `CraneTest` / `IndexedexTest`.
+- For vault DFPkgs, use the typed `indexedexManager.deploy*DFPkg(...)` (requires `vm.prank(owner)`).
+- Let the DFPkg's `deployVault(...)` (or manager) create instances.
 
 ### Vault DFPkg Requirements
 
-Every vault DFPkg must implement `IStandardVaultPkg`:
+Every vault DFPkg must implement `IStandardVaultPkg`.
 
-```solidity
-interface IStandardVaultPkg is IDiamondFactoryPackage {
-    function vaultDeclaration() external view returns (VaultPkgDeclaration memory);
-}
+**Additionally (Crane rule)**: `PkgInit` and `PkgArgs` structs **must** be defined inside the package's interface (`interface IMyVaultDFPkg { struct PkgInit ... }`), never inside the contract.
 
-struct VaultPkgDeclaration {
-    string name;           // Package name for registry
-    bytes4[] feeTypeIds;   // Fee types this vault uses
-    bytes4[] vaultTypeIds; // Interface IDs the vault implements
-}
-```
-
-### Registry Queries
-
-Once deployed, vaults can be discovered via:
-
-```solidity
-// All vaults accepting a token
-address[] memory vaults = indexedexManager.vaultsOfToken(tokenAddress);
-
-// All vaults of a specific type
-address[] memory vaults = indexedexManager.vaultsOfType(IStandardExchange.interfaceId);
-
-// Vaults accepting token AND implementing type
-address[] memory vaults = indexedexManager.vaultsOfTokenOfTypeId(typeId, token);
-```
+This is a very common error. Full explanation and correct vs. incorrect examples are in the Crane `crane-architecture` skill → `references/dfpkg-pattern.md`.
 
 ### Key Files
 
-| File | Purpose |
-|------|---------|
-| `contracts/interfaces/IVaultRegistryDeployment.sol` | Deployment interface |
-| `contracts/registries/vault/VaultRegistryDeploymentTarget.sol` | Deployment logic |
-| `contracts/registries/vault/VaultRegistryVaultPackageRepo.sol` | Package tracking |
-| `contracts/registries/vault/VaultRegistryVaultRepo.sol` | Vault tracking |
-| `contracts/manager/IndexedexManagerDFPkg.sol` | Manager composition |
-| `contracts/test/IndexedexTest.sol` | Test setup example |
+See the table in the original "Vault Deployment Pattern" area and the files listed in `contracts/registries/vault/` and protocol `*_Component_FactoryService.sol` files.
+
+Consult the Crane `crane-deployment` skill for the underlying mechanics, then follow the patterns in IndexedEx's good TestBases.
 
 ## Submodules
 

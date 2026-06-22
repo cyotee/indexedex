@@ -301,7 +301,8 @@ contract BalancerV3StandardExchangeRouter_TransientState_Test is TestBase_Balanc
 
     function _deployRouterFacets() internal override {
         super._deployRouterFacets();
-        harnessFacet = IFacet(address(new TransientStateHarnessFacet()));
+        harnessFacet = IFacet(create3Factory.deployFacet(type(TransientStateHarnessFacet).creationCode, keccak256(abi.encode(type(TransientStateHarnessFacet).name))));
+        vm.label(address(harnessFacet), "TransientStateHarnessFacet");
     }
 
     function _deployRouterPackage() internal override {
@@ -320,7 +321,18 @@ contract BalancerV3StandardExchangeRouter_TransientState_Test is TestBase_Balanc
         p.permit2 = permit2;
         p.weth = IWETH(address(weth));
 
-        seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(address(new TransientStateDFPkg(p)));
+        // Deploy via CREATE3 per standards (no raw `new` for DFPkgs, even harnesses for test).
+        bytes32 pkgSalt = keccak256(abi.encode(type(TransientStateDFPkg).name));
+        seRouterDFPkg = IBalancerV3StandardExchangeRouterDFPkg(
+            address(
+                create3Factory.deployPackageWithArgs(
+                    type(TransientStateDFPkg).creationCode,
+                    abi.encode(p),
+                    pkgSalt
+                )
+            )
+        );
+        vm.label(address(seRouterDFPkg), "TransientStateDFPkg");
     }
 
     function setUp() public override {

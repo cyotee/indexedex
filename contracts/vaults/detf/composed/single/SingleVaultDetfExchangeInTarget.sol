@@ -16,7 +16,7 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 
@@ -32,7 +32,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external lock returns (uint256 amountOut_) {
+    ) external nonReentrant returns (uint256 amountOut_) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -119,7 +119,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
 
     function mintWithWeth(uint256 wethAmount, address recipient, bool pretransferred)
         external
-        lock
+        nonReentrant
         returns (uint256 chirMinted_)
     {
         if (wethAmount == 0) {

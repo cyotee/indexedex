@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurnProxy} from "@crane/contracts/interfaces/proxies/IERC20MintBurnProxy.sol";
-import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISeigniorageDETFErrors} from "contracts/interfaces/ISeigniorageDETFErrors.sol";
 import {ISeigniorageNFTVault} from "contracts/interfaces/ISeigniorageNFTVault.sol";
 import {
