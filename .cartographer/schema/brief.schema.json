@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cartographer Brief Packet",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "kind",
+    "mode",
+    "snapshot",
+    "anchor",
+    "budget",
+    "readFirst",
+    "impact",
+    "omissions"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "cartographer.brief.v1"
+    },
+    "kind": {
+      "const": "brief"
+    },
+    "mode": {
+      "enum": [
+        "planning",
+        "implementation",
+        "review",
+        "prd"
+      ]
+    },
+    "snapshot": {
+      "type": "object"
+    },
+    "anchor": {
+      "type": "object"
+    },
+    "budget": {
+      "type": "object"
+    },
+    "readFirst": {
+      "type": "array"
+    },
+    "impact": {
+      "type": "array"
+    },
+    "omissions": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

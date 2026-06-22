@@ -22,6 +22,7 @@ betterconsole
 bignumber
 Boba
 bootstrapper
+borrowable
 browserslist
 bstr
 calced
@@ -263,6 +264,7 @@ unbond
 ungated
 UNISWAPV
 unstaked
+unwindable
 uqdiv
 usedapp
 viem

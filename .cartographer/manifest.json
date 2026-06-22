@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "cartographer.graph.v2",
+  "root": "/Users/cyotee/Development/github-cyotee/indexedex",
+  "generatedAt": "2026-06-21T17:38:26.306Z",
+  "scanner": {
+    "name": "cartographer",
+    "version": "0.1.0"
+  },
+  "git": {
+    "commit": "495ea8b897f418c1dcb8bac71884796dc22a144d",
+    "dirty": true,
+    "trackedFiles": 2583,
+    "untrackedFiles": 1,
+    "modifiedFiles": 1,
+    "deletedFiles": 0
+  },
+  "totals": {
+    "files": 2351,
+    "packages": 4,
+    "nodes": 3070,
+    "edges": 3554,
+    "findings": 0
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    "**/node_modules/**",
+    "dist/**",
+    "**/dist/**",
+    ".git/**",
+    ".bun-tmp/**",
+    ".claude/**",
+    ".cartographer/**",
+    "docs/codegraph/**",
+    "supabase/.temp/**",
+    "supabase/.branches/**",
+    "e2e/playwright-report/**",
+    "e2e/test-results/**",
+    "e2e/reports/**",
+    "specs/states/**",
+    "**/states/**",
+    "*_TTrace_*",
+    "*.st",
+    "*.fp",
+    "specs/tla2tools.jar"
+  ],
+  "defaultProvenance": {
+    "source": "syntax",
+    "confidence": "parser-backed",
+    "freshness": "fresh",
+    "snapshotCommit": "495ea8b897f418c1dcb8bac71884796dc22a144d",
+    "scannerVersion": "0.1.0"
+  }
+}

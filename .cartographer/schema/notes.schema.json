@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cartographer Notes",
+  "type": "object",
+  "required": [
+    "id",
+    "targetNodeId",
+    "kind",
+    "summary",
+    "evidence",
+    "author",
+    "confidence",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "targetNodeId": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "purpose",
+        "invariant",
+        "edit-warning",
+        "workflow",
+        "test-guidance",
+        "generated-ownership",
+        "iac-link",
+        "risk"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array"
+    },
+    "author": {
+      "type": "object"
+    },
+    "confidence": {
+      "enum": [
+        "agent-inferred",
+        "human-reviewed"
+      ]
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "accepted",
+        "stale",
+        "retired"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

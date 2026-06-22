@@ -16,16 +16,17 @@ IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-25
 
 IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-2535) with CREATE3 deterministic deployments. It provides upgradeable vault strategies with integrated cross-protocol orchestration.
 
-**Stack**: Solidity 0.8.30, Foundry, Next.js 14, Wagmi/Viem, Balancer V3, Aerodrome, Uniswap V2, Camelot V2
+**Stack**: Solidity 0.8.30, Foundry, Next.js 14, Wagmi/Viem, Balancer V3 (incl. Standard Exchange Buffer Pool), Aerodrome V1 + Slipstream, Uniswap V2 + V4, Camelot V2, Aave V3 Stata (ERC-4626).
 
 **Structure**:
-- `contracts/` - Smart contracts (manager, registries, vaults, protocols)
-- `frontend/` - Next.js React application
-- `scripts/` - Deployment scripts (Foundry + shell)
-- `test/foundry/` - Spec tests (mocks) and fork tests (Base mainnet)
+- `contracts/` - Smart contracts (manager, registries, oracles/fee, vaults, protocols/dexes + protocols/lending)
+- `frontend/` - Next.js React app (list-driven, chain-keyed; swap auto-routes through Standard Exchange Vaults)
+- `scripts/foundry/<env>/` - Staged deploy scripts (`Script_00..Script_99`); `scripts/node/` - Token List aggregator
+- `test/foundry/` - Spec tests (mocks/invariant/comparative) and fork tests (Base mainnet)
 - `lib/daosys/lib/crane/` - Crane framework (Diamond + Factory infrastructure)
+- `.cartographer/` - Code-graph artifacts (`graph.sqlite`); query with `cartographer brief`/`slice`/`impact`
 
-For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md).
+For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md) (refreshed 2026-06-21 from the Cartographer graph).
 
 ## Build & Test Commands
 
