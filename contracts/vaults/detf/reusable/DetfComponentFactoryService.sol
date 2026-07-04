@@ -14,7 +14,7 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
     IRebasingDETFTokenDFPkg
@@ -29,19 +29,19 @@ library DetfComponentFactoryService {
         IFacet rebasingDetfTokenFacet;
     }
 
-    function buildProtocolNFTVaultPkgInit(
+    function buildDETFNFTVaultPkgInit(
         IFacet erc721Facet,
         IFacet erc4626BasicVaultFacet,
         IFacet erc4626StandardVaultFacet,
-        IFacet protocolNFTVaultFacet,
+        IFacet detfNFTVaultFacet,
         IVaultFeeOracleQuery feeOracle,
         IVaultRegistryDeployment vaultRegistryDeployment
-    ) internal pure returns (IProtocolNFTVaultDFPkg.PkgInit memory pkgInit) {
-        pkgInit = IProtocolNFTVaultDFPkg.PkgInit({
+    ) internal pure returns (IDETFNFTVaultDFPkg.PkgInit memory pkgInit) {
+        pkgInit = IDETFNFTVaultDFPkg.PkgInit({
             erc721Facet: erc721Facet,
             erc4626BasicVaultFacet: erc4626BasicVaultFacet,
             erc4626StandardVaultFacet: erc4626StandardVaultFacet,
-            protocolNFTVaultFacet: protocolNFTVaultFacet,
+            detfNFTVaultFacet: detfNFTVaultFacet,
             feeOracle: feeOracle,
             vaultRegistryDeployment: vaultRegistryDeployment
         });

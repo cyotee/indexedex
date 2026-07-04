@@ -18,13 +18,13 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 
 contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
-    function chirToken() external view returns (IERC20MintBurn) {
+    function detfToken() external view returns (IERC20MintBurn) {
         return IERC20MintBurn(address(this));
     }
 
@@ -40,8 +40,8 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
         return SingleVaultDetfRepo._wethToken();
     }
 
-    function protocolNFTVault() external view returns (IProtocolNFTVault) {
-        return SingleVaultDetfRepo._protocolNFTVault();
+    function detfNFTVault() external view returns (IDETFNFTVault) {
+        return SingleVaultDetfRepo._detfNFTVault();
     }
 
     function chirWethVault() external view returns (IStandardExchange) {
@@ -56,8 +56,8 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
         return SingleVaultDetfRepo._reservePool();
     }
 
-    function protocolNFTId() external view returns (uint256) {
-        return SingleVaultDetfRepo._protocolNFTId();
+    function detfNFTId() external view returns (uint256) {
+        return SingleVaultDetfRepo._detfNFTId();
     }
 
     function syntheticPrice() public view returns (uint256) {
@@ -88,9 +88,9 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
         return SingleVaultDetfRepo._vaultRateProvider();
     }
 
-    function reservePoolIndexes() external view returns (uint256 chirIndex_, uint256 vaultTokenIndex_) {
+    function reservePoolIndexes() external view returns (uint256 detfIndex_, uint256 vaultTokenIndex_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
-        chirIndex_ = layoutStruct.chirIndex;
+        detfIndex_ = layoutStruct.detfIndex;
         vaultTokenIndex_ = layoutStruct.vaultTokenIndex;
     }
 }

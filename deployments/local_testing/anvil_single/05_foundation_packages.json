@@ -1,13 +1,13 @@
 {
-  "balancerV3ConstantProductPoolStandardVaultPkg": "0xc52Dc57AC74bD5437Bc5E71ff900F83b9aF7A941",
-  "balancerV3Vault": "0x84e5E617d38f5f3917D7A48332182997A209E13a",
+  "balancerV3ConstantProductPoolStandardVaultPkg": "0x2D4d63D54440fE3D26b4D6C054AA2094CD1ED62A",
+  "balancerV3Vault": "0xDe978A4AA95261915E04638844bE20935EbaF6ac",
   "chainId": 11155111,
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "networkProfile": "local_testing",
   "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "permit2": "0x91F0A7d37B5cED54a7FbEcC894679aBAAe8bEDA9",
-  "rateProviderPkg": "0xA9a10fd335A009Aa38C4BCe4E936FB1FBbF28BdA",
-  "uniswapV2Factory": "0xc442B4F3cb7bFd05c3C362544B305F1E8D76E83e",
-  "uniswapV2Router": "0x3914Cb7fd4515c1c42e2a6b9412447a80D5286bb",
-  "uniswapV2StandardExchangePkg": "0xBE84A9db0a34949e8d847c2265096DBDd8d18E61"
+  "permit2": "0xcee7bBF1F747d56b365aD0D0b6738Ba65Bd56c99",
+  "rateProviderPkg": "0xC5B1A40F275331A66C202e364C1Bb480977B2601",
+  "uniswapV2Factory": "0x1Ddfe0a3953e95AD3Fa8Bc3D55cC685b2E037089",
+  "uniswapV2Router": "0x9d6D0Df5e5881B964E8fBc1C89765e40848F4464",
+  "uniswapV2StandardExchangePkg": "0x2E286B9dFDcC048e73af3bC370a414dc46090321"
 }

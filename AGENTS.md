@@ -7,17 +7,22 @@ If PROGRESS.md exists in the project root, read it for cross-session context bef
 
 **You MUST read in this order:**
 
-1. Crane materials (Crane is independent):
-   - `lib/daosys/lib/crane/AGENTS.md`
-   - The Crane skills (in `lib/daosys/lib/crane/.claude/skills/`), especially:
+1. Crane materials (Crane lives at `lib/crane/`):
+   - `lib/crane/AGENTS.md`
+   - **Canonical Crane skills** in `lib/crane/.claude/skills/` (source of truth; do not rely on stale copies elsewhere):
      - `crane-deployment` — CREATE3, DFPkgs, FactoryService, proxy creation.
      - `crane-architecture` — core patterns, DFPkg.
-     - `crane-testing` — `CraneTest`, factory bootstrap, TestBases.
-   - Crane docs under `lib/daosys/lib/crane/docs/` (especially `docs/deployment/`).
+     - `crane-testing` — `CraneTest`, factory bootstrap, TestBases, **production-first testing**.
+   - Crane docs under `lib/crane/docs/` (especially `docs/deployment/` and `docs/development/testing.md`).
 
 2. This file (IndexedEx AGENTS.md) — explains how IndexedEx layers on Crane.
 
-See also `CLAUDE.md` (points back to this file).
+3. IndexedEx testing skill (after Crane testing):
+   - `.claude/skills/indexedex-testing/` — `IndexedexTest`, vault registry deploy path, gold TestBases, when mocks are forbidden.
+
+**Skill source of truth:** Crane skills are authored under `lib/crane/.claude/skills/`. After editing them in Crane, run `./scripts/sync-crane-skills.sh` to refresh IndexedEx `.claude/skills/` and `.opencode/skills/` copies. Prefer reading the Crane path when in doubt.
+
+See also `CLAUDE.md` / `Claude.md` (points back to this file).
 
 ## Project Overview
 
@@ -27,14 +32,15 @@ IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-25
 
 IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-2535) with CREATE3 deterministic deployments. It provides upgradeable vault strategies with integrated cross-protocol orchestration.
 
-**Stack**: Solidity 0.8.30, Foundry, Next.js 14, Wagmi/Viem, Balancer V3 (incl. Standard Exchange Buffer Pool), Aerodrome V1 + Slipstream, Uniswap V2 + V4, Camelot V2, Aave V3 Stata (ERC-4626).
+**Stack**: Solidity (see `foundry.toml` `solc`; currently 0.8.35), Foundry, Next.js 14, Wagmi/Viem, Balancer V3 (incl. Standard Exchange Buffer Pool), Aerodrome V1 + Slipstream, Uniswap V2 + V4, Camelot V2, Aave V3 Stata (ERC-4626).
 
 **Structure**:
-- `contracts/` - Smart contracts (manager, registries, oracles/fee, vaults, protocols/dexes + protocols/lending)
+- `contracts/` - Smart contracts (manager, registries, oracles/fee, vaults, protocols/dexes + protocols/lending) + TestBases next to features
 - `frontend/` - Next.js React app (list-driven, chain-keyed; swap auto-routes through Standard Exchange Vaults)
 - `scripts/foundry/<env>/` - Staged deploy scripts (`Script_00..Script_99`); `scripts/node/` - Token List aggregator
-- `test/foundry/` - Spec tests (mocks/invariant/comparative) and fork tests (Base mainnet)
-- `lib/daosys/lib/crane/` - Crane framework (Diamond + Factory infrastructure)
+- `test/foundry/spec/` - Hermetic / unit / integration / invariant / comparative specs
+- `test/foundry/fork/` - Fork tests against live networks (e.g. Base mainnet)
+- `lib/crane/` - Crane framework (Diamond + Factory infrastructure)
 - `.cartographer/` - Code-graph artifacts (`graph.sqlite`); query with `cartographer brief`/`slice`/`impact`
 
 For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md) (refreshed 2026-06-21 from the Cartographer graph).
@@ -98,29 +104,51 @@ FactoryService libraries (Crane + IndexedEx):
 ## Key Import Remappings
 
 ```
-@crane/          -> lib/daosys/lib/crane/
-@solady/         -> lib/daosys/lib/crane/lib/solady/src/
-@openzeppelin/   -> lib/daosys/lib/crane/lib/openzeppelin-contracts/
-@balancer-labs/  -> lib/daosys/lib/crane/lib/balancer-v3-monorepo/pkg/...
-forge-std/       -> lib/daosys/lib/crane/lib/forge-std/src/
-permit2/         -> lib/daosys/lib/crane/lib/permit2/
+@crane/          -> lib/crane/
+forge-std/       -> lib/crane/lib/forge-std/src/
 ```
 
-Update both `remappings.txt` and `foundry.toml` when adding new libraries.
+Other libs are remapped under `lib/crane/` as well. Prefer the live `remappings.txt` / `foundry.toml` over this summary. Update both when adding new libraries.
+
+## Testing Philosophy: Production-First
+
+**Prefer production code and production deploy paths in tests. Do not invent mocks for the subject under test.**
+
+Ladder (use the highest step that fits):
+
+1. **Real production contracts**, deployed the same way as production (CREATE3 + FactoryService + DFPkg + IndexedEx vault registry where applicable).
+2. **Existing TestBase chains** (`CraneTest` → `IndexedexTest` → `TestBase_VaultComponents` → protocol TestBase). Search for a TestBase before writing setup from scratch.
+3. **External protocols**: Crane **protocol ports** under `lib/crane/contracts/protocols/.../stubs/` (real protocol implementations for hermetic deploy) **or** fork bases under `test/foundry/fork/` with live addresses. Do not invent interface mocks when a TestBase already deploys the protocol.
+4. **Test-only doubles outside the SUT** are OK when they implement real interfaces and only add controllability (e.g. mintable ERC20, reentrancy ERC20).
+5. **`vm.mockCall` / fake contracts** only for: isolating a pure unit with no deploy path, a failure mode production cannot express cheaply, or a documented third-party oracle/VRF harness — **and the SUT remains real production code**.
+
+**Never mock**: facets, DFPkgs, vaults, IndexedexManager, fee oracle, vault registry, or Standard Exchange packages under test. Prefer real SE vaults over `MockStandardExchange` for new work.
+
+Generic Foundry skills that demo `MockOracle` / `new MyContract()` are **subordinate** to `crane-testing` + `indexedex-testing`.
+
+### Terminology (do not conflate)
+
+| Term | Meaning in this monorepo |
+|------|---------------------------|
+| **Protocol port (`*/stubs/`)** | Real/protocol-faithful implementation used for hermetic local deploy (e.g. Camelot factory/router under Crane) — **not** a fake |
+| **Mintable / harness stub** | ERC20 (or similar) with mint or reentrancy hooks for test control |
+| **Mock / test double** | Canned behavior replacing a dependency; last resort for non-SUT only |
+| **Handler** | Fuzz/invariant harness wrapping a real SUT; not a substitute for production deploy |
 
 ## Test Patterns
 
-**See `crane-testing` skill + `crane-deployment` skill first.**
+**See `crane-testing` (under `lib/crane/`) + `indexedex-testing` + `crane-deployment` first.**
 
 - Inherit `CraneTest` (provides `create3Factory` + `diamondPackageFactory` via `InitDevService`).
 - Then `IndexedexTest` (builds the core manager, fee collector, etc. using Crane factories + registers the manager as operator).
 - Then `TestBase_VaultComponents` (deploys shared vault facets via Crane factories + `VaultComponentFactoryService`).
 - Then protocol TestBases (e.g. `TestBase_CamelotV2StandardExchange`).
 
-Protocol test base examples (follow these exactly):
+Protocol / vault gold TestBases (follow these exactly):
 - `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol`
 - `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol`
 - `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol`
+- `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` (fork + full factory/registry path)
 
 **Key rule in IndexedEx**: Facets use the Crane path (`create3Factory`). Vault/StandardExchange *DFPkgs* use the manager/registry path. See the section below.
 
@@ -148,7 +176,7 @@ contracts/
 
 ## Solidity Version & Compiler Settings
 
-- Solidity: `0.8.30`
+- Solidity: follow `foundry.toml` (`solc`; currently `0.8.35`)
 - Optimizer: enabled, max runs (`4294967295`)
 - FFI: enabled (required for some tests)
 
@@ -218,20 +246,27 @@ See concrete examples:
 - Authorization (`_onlyOwnerOrOperatorOrPkg` in `VaultRegistryDeploymentTarget`).
 - Consistent fee oracle + manager wiring.
 
-### Anti-Patterns (these are the errors the other agent made)
+### Anti-Patterns
 
 ```solidity
-// WRONG
+// WRONG — bypass CREATE3 / factories
 SomeFacet f = new SomeFacet();
 SomeDFPkg p = new SomeDFPkg(init);
+
+// WRONG — deploy registered vault DFPkg outside the manager registry path
 address v = diamondPackageFactory.deploy(IDiamondFactoryPackage(myVaultPkg), args);
 create3Factory.deployPackageWithArgs(...); // for a registered vault DFPkg
+
+// WRONG — mock the subject under test (vault, SE, manager, registry, facets)
+MockStandardExchange se = new MockStandardExchange(...);
+vm.mockCall(address(vault), abi.encodeWithSelector(...), abi.encode(...));
 ```
 
 **Always**:
 - Use the factories from `CraneTest` / `IndexedexTest`.
 - For vault DFPkgs, use the typed `indexedexManager.deploy*DFPkg(...)` (requires `vm.prank(owner)`).
 - Let the DFPkg's `deployVault(...)` (or manager) create instances.
+- Prefer real Standard Exchange vaults and protocol TestBases over mocks for new tests.
 
 ### Vault DFPkg Requirements
 
@@ -247,9 +282,9 @@ See the table in the original "Vault Deployment Pattern" area and the files list
 
 Consult the Crane `crane-deployment` skill for the underlying mechanics, then follow the patterns in IndexedEx's good TestBases.
 
-## Submodules
+## Submodules / Crane dependency
 
-The main dependency is `lib/daosys` which contains the Crane framework. Initialize with:
+Crane is vendored at **`lib/crane/`** (see `@crane/` remapping). Initialize nested deps with:
 ```bash
 git submodule update --init --recursive
 ```
@@ -317,7 +352,7 @@ This is useful for:
 
 ### Submodule-Aware Worktree Scripts
 
-Due to nested submodules (indexedex → daosys → crane), standard `git worktree` commands can fail. Use these scripts instead:
+Due to nested submodules under `lib/crane/`, standard `git worktree` commands can fail. Use these scripts instead:
 
 ```bash
 # Create worktree with proper submodule initialization
@@ -349,7 +384,7 @@ find .git/modules -name "*.lock" -delete
 git worktree prune
 
 # Manual submodule copy (if all else fails)
-cp -R /path/to/main/lib/daosys /path/to/worktree/lib/daosys
+cp -R /path/to/main/lib/crane /path/to/worktree/lib/crane
 ```
 
 ## Librarian (Documentation Search)

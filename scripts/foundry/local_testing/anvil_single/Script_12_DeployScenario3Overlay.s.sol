@@ -65,7 +65,7 @@ import {
     ISingleVaultDetfDFPkg
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 
@@ -126,7 +126,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private singleVaultDetfInfoFacet;
     IFacet private singleVaultDetfExchangeOutFacet;
     IFacet private singleVaultDetfBondingFacet;
-    IFacet private protocolNFTVaultFacet;
+    IFacet private detfNFTVaultFacet;
     IFacet private richirFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
     IFacet private uniswapV4StandardExchangeInQueryFacet;
@@ -134,7 +134,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private uniswapV4StandardExchangeOutFacet;
     IFacet private erc721Facet;
 
-    IDetfSelfNftInventoryDFPkg private protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
     IRICHIRDFPkg private richirPkg;
     IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
     ISingleVaultDetfDFPkg private protocolDetfPkg;
@@ -156,7 +156,11 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         _logHeader("Stage 12: Deploy Scenario 3 Overlay");
 
         if (_loadExistingScenario()) {
+            // Re-emit JSON + fragments so the tokenlist aggregator and chain
+            // platform synthesis always see the Single Vault DETF (CHIR) even
+            // when the on-chain instance was already deployed.
             _exportJson();
+            _exportFragments();
             _logResults();
             return;
         }
@@ -233,10 +237,34 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         (richirToken, ) = _readAddressSafe(ARTIFACT_FILE, "richirToken");
         (reservePool, ) = _readAddressSafe(ARTIFACT_FILE, "reservePool");
         (wethRichVault, ) = _readAddressSafe(ARTIFACT_FILE, "wethRichVault");
+
+        // Reload package + factory addresses so resume re-exports do not clobber
+        // non-zero artifact fields with zero-initialized storage.
         (address weightedPoolFactoryAddr, bool hasWeightedPoolFactory) =
             _readAddressSafe(ARTIFACT_FILE, "weightedPool8020Factory");
         if (hasWeightedPoolFactory && weightedPoolFactoryAddr != address(0) && weightedPoolFactoryAddr.code.length > 0) {
             weightedPool8020Factory = IWeightedPool8020Factory(weightedPoolFactoryAddr);
+        }
+
+        (address detfPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "protocolDetfPkg");
+        if (detfPkgAddr != address(0)) {
+            protocolDetfPkg = ISingleVaultDetfDFPkg(detfPkgAddr);
+        }
+        (address nftPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "detfNFTVaultPkg");
+        if (nftPkgAddr != address(0)) {
+            detfNFTVaultPkg = IDetfSelfNftInventoryDFPkg(nftPkgAddr);
+        }
+        (address richirPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "richirPkg");
+        if (richirPkgAddr != address(0)) {
+            richirPkg = IRICHIRDFPkg(richirPkgAddr);
+        }
+        (address wethRichVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "wethRichVaultPkg");
+        if (wethRichVaultPkgAddr != address(0)) {
+            wethRichVaultPkg = IUniswapV4StandardExchangeDFPkg(wethRichVaultPkgAddr);
+        }
+        (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
+        if (seederAddr != address(0) && seederAddr.code.length > 0) {
+            liquiditySeeder = SingleVaultDetfUniswapV4LiquiditySeeder(seederAddr);
         }
 
         return true;
@@ -268,7 +296,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
 
-        protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
+        detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         richirFacet = create3Factory.deployRICHIRFacet();
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
@@ -334,15 +362,15 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     }
 
     function _deployPkgs() internal {
-        protocolNFTVaultPkg = IDetfSelfNftInventoryDFPkg(
+        detfNFTVaultPkg = IDetfSelfNftInventoryDFPkg(
             address(
-                DetfPkgFactoryService.deployProtocolNFTVaultDFPkg(
+                DetfPkgFactoryService.deployDETFNFTVaultDFPkg(
                     vaultRegistry,
-                    DetfComponentFactoryService.buildProtocolNFTVaultPkgInit(
+                    DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
                         erc721Facet,
                         erc4626BasicVaultFacet,
                         erc4626StandardVaultFacet,
-                        protocolNFTVaultFacet,
+                        detfNFTVaultFacet,
                         feeOracle,
                         vaultRegistry
                     )
@@ -411,7 +439,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                     localRelayer: bridgeConfig.localRelayer,
                     peerRelayer: bridgeConfig.peerRelayer,
                     wethRichVaultPkg: wethRichVaultPkg,
-                    protocolNFTVaultPkg: protocolNFTVaultPkg,
+                    detfNFTVaultPkg: detfNFTVaultPkg,
                     richirPkg: richirPkg,
                     rateProviderPkg: rateProviderPkg,
                     diamondFactory: diamondPackageFactory
@@ -437,7 +465,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         );
 
         IProtocolDETF detf = IProtocolDETF(protocolDetf);
-        protocolNftVault = address(detf.protocolNFTVault());
+        protocolNftVault = address(detf.detfNFTVault());
         richirToken = address(detf.richirToken());
         reservePool = detf.reservePool();
         wethRichVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
@@ -487,7 +515,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         json = vm.serializeAddress("scenario3", "richToken", richToken);
         json = vm.serializeAddress("scenario3", "weightedPool8020Factory", address(weightedPool8020Factory));
         json = vm.serializeAddress("scenario3", "protocolDetfPkg", address(protocolDetfPkg));
-        json = vm.serializeAddress("scenario3", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
+        json = vm.serializeAddress("scenario3", "detfNFTVaultPkg", address(detfNFTVaultPkg));
         json = vm.serializeAddress("scenario3", "richirPkg", address(richirPkg));
         json = vm.serializeAddress("scenario3", "wethRichVaultPkg", address(wethRichVaultPkg));
         json = vm.serializeAddress("scenario3", "poolManager", address(poolManager));
@@ -511,7 +539,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             "vaults/protocolDetf",
             "protocolDetf",
             protocolDetf,
-            "Protocol DETF CHIR",
+            "Single Vault DETF CHIR",
             "CHIR",
             new string[](0)
         );

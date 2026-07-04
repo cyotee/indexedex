@@ -8,7 +8,7 @@ import {IWeightedPool} from '@crane/contracts/external/balancer/v3/interfaces/co
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 
 library ComposedStableCommonDetfRepo {
@@ -29,7 +29,7 @@ library ComposedStableCommonDetfRepo {
 
     struct Storage {
         IWeightedPool reservePool;
-        IProtocolNFTVault bondNftVault;
+        IDETFNFTVault bondNftVault;
         IRICHIR rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;
@@ -64,7 +64,7 @@ library ComposedStableCommonDetfRepo {
     function _initializePricing(
         Storage storage layoutStruct_,
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IRICHIR rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
@@ -149,7 +149,7 @@ library ComposedStableCommonDetfRepo {
 
     function _initializePricing(
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IRICHIR rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
@@ -186,11 +186,11 @@ library ComposedStableCommonDetfRepo {
         return _reservePool(_layoutStruct());
     }
 
-    function _bondNftVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault bondNftVault_) {
+    function _bondNftVault(Storage storage layoutStruct_) internal view returns (IDETFNFTVault bondNftVault_) {
         return layoutStruct_.bondNftVault;
     }
 
-    function _bondNftVault() internal view returns (IProtocolNFTVault bondNftVault_) {
+    function _bondNftVault() internal view returns (IDETFNFTVault bondNftVault_) {
         return _bondNftVault(_layoutStruct());
     }
 

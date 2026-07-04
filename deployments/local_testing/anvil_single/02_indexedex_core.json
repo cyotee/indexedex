@@ -1,10 +1,10 @@
 {
   "chainId": 11155111,
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "feeCollector": "0xC7fBc7C1f8D61cF5c9a5Aff1Be27BC8c341Fd745",
-  "indexedexManager": "0x067cdf6301918034EA1D477139D4fb9E4a80c19D",
+  "feeCollector": "0xafd0aFD604F74e8C556f3D1a4fba88437b2Ee672",
+  "indexedexManager": "0x7683fE1041c1D4E487A5802a6581f1BC84B7D50c",
   "networkProfile": "local_testing",
   "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "vaultFeeOracle": "0x067cdf6301918034EA1D477139D4fb9E4a80c19D",
-  "vaultRegistry": "0x067cdf6301918034EA1D477139D4fb9E4a80c19D"
+  "vaultFeeOracle": "0x7683fE1041c1D4E487A5802a6581f1BC84B7D50c",
+  "vaultRegistry": "0x7683fE1041c1D4E487A5802a6581f1BC84B7D50c"
 }

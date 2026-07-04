@@ -49,7 +49,7 @@ import {
 import "contracts/constants/Indexedex_CONSTANTS.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -118,7 +118,7 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         address peerRelayer;
         
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
-        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
+        IDetfSelfNftInventoryDFPkg detfNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;
@@ -162,10 +162,10 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         IStandardExchange wethRichVault;
         IRateProvider vaultRateProvider;
         address reservePool;
-        IProtocolNFTVault protocolNFTVault;
-        uint256 protocolNFTId;
+        IDETFNFTVault detfNFTVault;
+        uint256 detfNFTId;
         IRICHIR richirToken;
-        uint256 chirIndex;
+        uint256 detfIndex;
         uint256 vaultTokenIndex;
     }
 
@@ -228,7 +228,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         LOCAL_RELAYER = pkgInit.localRelayer;
         PEER_RELAYER = pkgInit.peerRelayer;
         WETH_RICH_VAULT_PKG = pkgInit.wethRichVaultPkg;
-        PROTOCOL_NFT_VAULT_PKG = pkgInit.protocolNFTVaultPkg;
+        PROTOCOL_NFT_VAULT_PKG = pkgInit.detfNFTVaultPkg;
         RICHIR_PKG = pkgInit.richirPkg;
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
         WETH_TOKEN = pkgInit.wethToken;
@@ -398,12 +398,12 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         );
         SingleVaultDetfRepo._initializeReservePool(
             derived.reservePool,
-            derived.chirIndex,
+            derived.detfIndex,
             derived.vaultTokenIndex,
             _EIGHTY,
             _TWENTY,
-            derived.protocolNFTVault,
-            derived.protocolNFTId
+            derived.detfNFTVault,
+            derived.detfNFTId
         );
         SingleVaultDetfRepo._setRichirToken(derived.richirToken);
     }
@@ -418,7 +418,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         );
         deployment_.reservePool = _createReservePool(deployment_.wethRichVault, deployment_.vaultRateProvider);
 
-        deployment_.protocolNFTVault = IProtocolNFTVault(
+        deployment_.detfNFTVault = IDETFNFTVault(
             PROTOCOL_NFT_VAULT_PKG.deployVault(
                 string.concat("Protocol NFT Vault of ", ERC20Repo._name()),
                 string.concat("pNFT-", ERC20Repo._symbol()),
@@ -429,17 +429,17 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
                 address(this)
             )
         );
-        deployment_.protocolNFTId = deployment_.protocolNFTVault.initializeProtocolNFT();
+        deployment_.detfNFTId = deployment_.detfNFTVault.initializeDETFNFT();
         deployment_.richirToken = IRICHIR(
             RICHIR_PKG.deployToken(
                 IProtocolDETF(address(this)),
-                deployment_.protocolNFTVault,
+                deployment_.detfNFTVault,
                 WETH_TOKEN,
-                deployment_.protocolNFTId,
+                deployment_.detfNFTId,
                 address(this)
             )
         );
-        (deployment_.chirIndex, deployment_.vaultTokenIndex) = address(this) < address(deployment_.wethRichVault)
+        (deployment_.detfIndex, deployment_.vaultTokenIndex) = address(this) < address(deployment_.wethRichVault)
             ? (0, 1)
             : (1, 0);
     }

@@ -206,15 +206,28 @@ Expected manifest: `11_scenario_2.json`
 - `06`: foundation assets
 - `12`: Scenario 3 overlay
 
-Scenario 3 deploys:
+Scenario 3 deploys the **Single Vault DETF** from
+`contracts/vaults/detf/composed/single` (not the older standardExchange/single DETF):
 
-- custom Balancer standard-exchange router with prepay hooks
 - local `WeightedPool8020Factory`
-- Single Vault DETF instance for the RICH/WETH graph
+- Uniswap V4 PoolManager + WETH/RICH liquidity seed for the DETF reserve path
+- Single Vault DETF instance (CHIR) for the RICH/WETH graph
 - Protocol NFT Vault and RICHIR dependencies for that DETF
-- outer Balancer pool pairing WETH with the Single Vault DETF token
+- outer Balancer constant-product pool pairing WETH with the Single Vault DETF token
 
 Expected manifest: `12_scenario_3.json`
+
+UI wiring for the Staking page:
+
+- Stage 12 writes a `fragments/vaults/protocolDetf/protocolDetf.json` fragment
+  (symbol `CHIR`) and stage JSON keys `protocolDetf`, `richToken`, `richirToken`, etc.
+- The shell wrapper merges stage JSONs into
+  `frontend/app/addresses/chain/<chainId>/platform.json` and runs the tokenlist
+  aggregator so `protocol-detfs.tokenlist.json` includes CHIR.
+- Staking resolves CHIR from that token list, with `platform.protocolDetf` as a
+  fallback when the list is temporarily empty.
+
+Prerequisite: run `foundation` (stages 01–03) once before `scenario3`.
 
 ### Scenario 4
 

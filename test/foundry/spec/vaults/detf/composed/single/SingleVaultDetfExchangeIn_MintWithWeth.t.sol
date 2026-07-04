@@ -61,21 +61,21 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         detf.mintWithWeth(amountIn, detfAlice, false);
     }
 
-    function test_mintWithWeth_mintsChir_whenMintingAllowed() public {
+    function test_mintWithWeth_mintsDetf_whenMintingAllowed() public {
         _driveToMintEnabled(detf);
 
         uint256 amountIn = 1e16;
         uint256 wethBefore = wethToken.balanceOf(detfAlice);
-        uint256 chirBefore = IERC20(address(detf)).balanceOf(detfAlice);
+        uint256 detfBefore = IERC20(address(detf)).balanceOf(detfAlice);
         uint256 reserveBefore = IERC20(detf.reservePool()).balanceOf(address(detf));
 
         vm.startPrank(detfAlice);
         wethToken.approve(address(detf), amountIn);
-        uint256 chirMinted = detf.mintWithWeth(amountIn, detfAlice, false);
+        uint256 detfMinted = detf.mintWithWeth(amountIn, detfAlice, false);
         vm.stopPrank();
 
-        assertGt(chirMinted, 0, "chir minted");
-        assertEq(IERC20(address(detf)).balanceOf(detfAlice) - chirBefore, chirMinted, "alice chir delta");
+        assertGt(detfMinted, 0, "detf minted");
+        assertEq(IERC20(address(detf)).balanceOf(detfAlice) - detfBefore, detfMinted, "alice detf delta");
         assertEq(wethBefore - wethToken.balanceOf(detfAlice), amountIn, "alice weth spent");
         assertGt(IERC20(detf.reservePool()).balanceOf(address(detf)), reserveBefore, "reserve pool funded");
     }
@@ -87,23 +87,23 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         address feeTo = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
         uint256 aliceBefore = IERC20(address(detf)).balanceOf(detfAlice);
         uint256 feeToBefore = IERC20(address(detf)).balanceOf(feeTo);
-        uint256 bondVaultBefore = IERC20(address(detf)).balanceOf(address(detf.protocolNFTVault()));
+        uint256 bondVaultBefore = IERC20(address(detf)).balanceOf(address(detf.detfNFTVault()));
 
         vm.startPrank(detfAlice);
         wethToken.approve(address(detf), amountIn);
-        uint256 chirMinted = detf.mintWithWeth(amountIn, detfAlice, false);
+        uint256 detfMinted = detf.mintWithWeth(amountIn, detfAlice, false);
         vm.stopPrank();
 
-        assertGt(chirMinted, 0, "user chir minted");
-        assertEq(IERC20(address(detf)).balanceOf(detfAlice) - aliceBefore, chirMinted, "user received net chir");
-        assertGt(IERC20(address(detf)).balanceOf(feeTo), feeToBefore, "feeTo received chir");
-        assertGt(IERC20(address(detf)).balanceOf(address(detf.protocolNFTVault())), bondVaultBefore, "bond vault received chir");
+        assertGt(detfMinted, 0, "user detf minted");
+        assertEq(IERC20(address(detf)).balanceOf(detfAlice) - aliceBefore, detfMinted, "user received net detf");
+        assertGt(IERC20(address(detf)).balanceOf(feeTo), feeToBefore, "feeTo received detf");
+        assertGt(IERC20(address(detf)).balanceOf(address(detf.detfNFTVault())), bondVaultBefore, "bond vault received detf");
     }
 
     function test_donate_weth_addsReserveSharesToProtocolNft() public {
         uint256 amountIn = 1e16;
-        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
-        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
         uint256 richirBefore = detf.richirToken().balanceOf(detfAlice);
 
         vm.startPrank(detfAlice);
@@ -112,30 +112,30 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         vm.stopPrank();
 
         assertGt(
-            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(protocolNftId),
             protocolSharesBefore,
             "protocol nft funded by weth donation"
         );
         assertEq(detf.richirToken().balanceOf(detfAlice), richirBefore, "donation does not mint richir");
     }
 
-    function test_donate_chir_burnsSupply_withoutAddingProtocolShares() public {
-        uint256 chirAmount = _mintChirFor(detfAlice, 1e16);
-        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
-        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+    function test_donate_detf_burnsSupply_withoutAddingProtocolShares() public {
+        uint256 detfAmount = _mintDetfFor(detfAlice, 1e16);
+        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
         uint256 totalSupplyBefore = IERC20(address(detf)).totalSupply();
 
         vm.startPrank(detfAlice);
-        IERC20(address(detf)).approve(address(detf), chirAmount);
-        ISingleVaultDetfBonding(address(detf)).donate(IERC20(address(detf)), chirAmount, false);
+        IERC20(address(detf)).approve(address(detf), detfAmount);
+        ISingleVaultDetfBonding(address(detf)).donate(IERC20(address(detf)), detfAmount, false);
         vm.stopPrank();
 
-        assertEq(IERC20(address(detf)).balanceOf(detfAlice), 0, "alice chir donated");
-        assertEq(IERC20(address(detf)).totalSupply(), totalSupplyBefore - chirAmount, "chir supply burned");
+        assertEq(IERC20(address(detf)).balanceOf(detfAlice), 0, "alice detf donated");
+        assertEq(IERC20(address(detf)).totalSupply(), totalSupplyBefore - detfAmount, "detf supply burned");
         assertEq(
-            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(protocolNftId),
             protocolSharesBefore,
-            "chir donation does not add protocol reserve shares"
+            "detf donation does not add protocol reserve shares"
         );
     }
 
@@ -158,34 +158,34 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         vm.prank(detfAlice);
         ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
 
-        _mintChirFor(detfBob, 1e16);
+        _mintDetfFor(detfBob, 1e16);
 
-        uint256 protocolNftId = detf.protocolNFTVault().protocolNFTId();
-        uint256 protocolPendingBefore = detf.protocolNFTVault().pendingRewards(protocolNftId);
-        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(protocolNftId);
+        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolPendingBefore = detf.detfNFTVault().pendingRewards(protocolNftId);
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
 
-        assertGt(protocolPendingBefore, 0, "protocol nft should accrue pending chir rewards");
+        assertGt(protocolPendingBefore, 0, "protocol nft should accrue pending detf rewards");
 
         uint256 bptReceived = ISingleVaultDetfBonding(address(detf)).captureSeigniorage();
 
         assertGt(bptReceived, 0, "seigniorage captured");
         assertEq(
-            detf.protocolNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(protocolNftId),
             protocolSharesBefore + bptReceived,
             "protocol nft receives captured reserve shares"
         );
-        assertEq(detf.protocolNFTVault().pendingRewards(protocolNftId), 0, "capture consumes pending protocol rewards");
+        assertEq(detf.detfNFTVault().pendingRewards(protocolNftId), 0, "capture consumes pending protocol rewards");
     }
 
-    function test_previewExchangeIn_chirToWeth_reverts_whenBurningNotAllowed() public {
-        uint256 chirAmount = _mintChirFor(detfAlice, 1e16);
+    function test_previewExchangeIn_detfToWeth_reverts_whenBurningNotAllowed() public {
+        uint256 detfAmount = _mintDetfFor(detfAlice, 1e16);
 
         vm.expectRevert();
-        IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(detf)), chirAmount, wethToken);
+        IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(detf)), detfAmount, wethToken);
     }
 
-    function test_previewExchangeOut_chirToWeth_reverts_whenBurningNotAllowed() public {
-        _mintChirFor(detfAlice, 1e16);
+    function test_previewExchangeOut_detfToWeth_reverts_whenBurningNotAllowed() public {
+        _mintDetfFor(detfAlice, 1e16);
 
         vm.expectRevert();
         IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(detf)), wethToken, 1e15);
@@ -243,16 +243,16 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
     }
 
-    function test_exchangeIn_chirToWeth_reverts_whenBurningNotAllowed() public {
+    function test_exchangeIn_detfToWeth_reverts_whenBurningNotAllowed() public {
         _driveToMintEnabled(detf);
-        uint256 chirAmount = _mintChirFor(detfAlice, 1e16);
+        uint256 detfAmount = _mintDetfFor(detfAlice, 1e16);
 
         vm.startPrank(detfAlice);
-        IERC20(address(detf)).approve(address(detf), chirAmount);
+        IERC20(address(detf)).approve(address(detf), detfAmount);
         vm.expectRevert();
         IStandardExchangeIn(address(detf)).exchangeIn(
             IERC20(address(detf)),
-            chirAmount,
+            detfAmount,
             wethToken,
             0,
             detfAlice,
@@ -347,12 +347,12 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         );
     }
 
-    function _mintChirFor(address actor_, uint256 wethAmount_) internal returns (uint256 chirMinted_) {
+    function _mintDetfFor(address actor_, uint256 wethAmount_) internal returns (uint256 detfMinted_) {
         _driveToMintEnabled(detf);
 
         vm.startPrank(actor_);
         wethToken.approve(address(detf), wethAmount_);
-        chirMinted_ = detf.mintWithWeth(wethAmount_, actor_, false);
+        detfMinted_ = detf.mintWithWeth(wethAmount_, actor_, false);
         vm.stopPrank();
     }
 

@@ -1,43 +1,57 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import { type ReactNode } from 'react'
 
 import { Providers } from './providers'
 import { Header } from './components/layout/Header'
+import { Footer } from './components/layout/Footer'
+import { LaunchBanner } from './components/ui/LaunchBanner'
+import { AppShell } from './components/ui/AppShell'
+import { getBrand, getDefaultBrandId } from './lib/brand'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
+
+const defaultBrand = getBrand(getDefaultBrandId())
 
 export const metadata: Metadata = {
-  title: 'Pachira - Composed Indexed Liquidity',
-  description: 'DeFi protocol for composed indexed liquidity',
+  title: defaultBrand.title,
+  description: defaultBrand.description,
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${jetbrains.variable} ${inter.className}`}>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function(){
                 try {
+                  var locked = ${JSON.stringify(process.env.NEXT_PUBLIC_BRAND_LOCKED === 'true')};
+                  var def = ${JSON.stringify(getDefaultBrandId())};
                   var saved = localStorage.getItem('style-theme');
-                  var theme = saved === 'current' ? 'current' : 'pachira';
+                  var theme = locked ? def
+                    : (saved === 'indexedex' || saved === 'current') ? 'indexedex'
+                    : (saved === 'pachira' ? 'pachira' : def);
                   document.documentElement.setAttribute('data-theme', theme);
+                  document.documentElement.setAttribute('data-brand', theme);
                 } catch (e) {
-                  document.documentElement.setAttribute('data-theme', 'pachira');
+                  document.documentElement.setAttribute('data-theme', ${JSON.stringify(getDefaultBrandId())});
                 }
               })();
             `,
           }}
         />
         <Providers>
-          <div className="min-h-screen bg-gray-900">
+          <div className="min-h-screen flex flex-col bg-[var(--surface-0,#0a0a0a)]">
+            <LaunchBanner />
             <Header />
-            <main className="py-8">
-              {children}
+            <main className="flex-1 py-6 md:py-8">
+              <AppShell wide>{children}</AppShell>
             </main>
+            <Footer />
           </div>
         </Providers>
       </body>

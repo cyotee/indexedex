@@ -11,7 +11,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
@@ -57,7 +57,7 @@ contract RICHIRDFPkg_Deploy_Test is TestBase_VaultComponents {
         address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth")));
 
         address tokenAddr = pkg.deployToken(
-            IProtocolDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
+            IProtocolDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
         );
 
         assertGt(tokenAddr.code.length, 0, "RICHIR proxy not deployed");
@@ -68,13 +68,13 @@ contract RICHIRDFPkg_Deploy_Test is TestBase_VaultComponents {
         address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth2")));
 
         address tokenAddr1 = pkg.deployToken(
-            IProtocolDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
+            IProtocolDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
         );
 
         // Same protocolDETF => same optionalSalt => deterministic address collision.
         // The factory returns the existing deployment instead of reverting.
         address tokenAddr2 = pkg.deployToken(
-            IProtocolDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
+            IProtocolDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
         );
 
         assertEq(tokenAddr2, tokenAddr1, "expected existing deployment");

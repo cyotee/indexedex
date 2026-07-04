@@ -16,7 +16,7 @@ import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.so
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {RebasingDETFTokenRepo} from 'contracts/vaults/detf/composed/stable/common/RebasingDETFTokenRepo.sol';
 
 contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRICHIR {
@@ -67,8 +67,8 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
         RebasingDETFTokenRepo._setDetf(IDETF(detf_));
     }
 
-    function protocolNFTId() external view returns (uint256) {
-        return RebasingDETFTokenRepo._protocolNFTId();
+    function detfNFTId() external view returns (uint256) {
+        return RebasingDETFTokenRepo._detfNFTId();
     }
 
     function wethToken() external view returns (IERC20) {
@@ -429,7 +429,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
             return ONE_WAD;
         }
 
-        IProtocolNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.protocolNFTId);
+        IDETFNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.detfNFTId);
         if (position.originalShares == 0) {
             return ONE_WAD;
         }

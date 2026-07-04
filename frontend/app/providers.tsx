@@ -17,6 +17,7 @@ import {
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from './lib/networkSelection';
+import { BrandProvider } from './lib/brandContext';
 
 const queryClient = new QueryClient();
 const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545';
@@ -25,7 +26,9 @@ const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ?? sepolia.rpcUrls
 const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSepolia.rpcUrls.default.http[0];
 
 function isLocalSepoliaEnvironment(environment: string): boolean {
-  return environment === 'supersim_sepolia';
+  // Both supersim and single-chain local_testing point sepolia/base-sepolia
+  // wallet reads at the local Anvil/SuperSim RPC endpoints.
+  return environment === 'supersim_sepolia' || environment === 'local_testing';
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -81,11 +84,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <DeploymentEnvironmentContext.Provider value={{ environment, setEnvironment }}>
       <NetworkSelectionContext.Provider value={{ selectedChainId, setSelectedChainId }}>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
-        </WagmiProvider>
+        <BrandProvider>
+          <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
+          </WagmiProvider>
+        </BrandProvider>
       </NetworkSelectionContext.Provider>
     </DeploymentEnvironmentContext.Provider>
   );

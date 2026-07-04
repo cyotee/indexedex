@@ -12,15 +12,15 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 
 /**
  * @title IProtocolDETF
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Interface for Protocol DETF (CHIR token) with integrated fee distribution.
+ * @notice Interface for Protocol DETF with integrated fee distribution.
  * @dev Implements a DETF with:
- *      - CHIR: Mintable/burnable ERC20 (the DETF token)
+ *      - DETF token: Mintable/burnable ERC20 (this contract)
  *      - RICH: Static supply ERC20 (reward token)
  *      - RICHIR: Rebasing ERC20 redeemable for WETH
  *      - Reserve pool: 80/20 Balancer V3 weighted pool
@@ -55,10 +55,10 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Returns the CHIR token (this contract).
-     * @return The CHIR token (Protocol DETF token)
+     * @notice Returns the DETF token (this contract).
+     * @return The DETF token
      */
-    function chirToken() external view returns (IERC20MintBurn);
+    function detfToken() external view returns (IERC20MintBurn);
 
     /**
      * @notice Returns the RICH token (static supply reward token).
@@ -82,17 +82,17 @@ interface IProtocolDETF {
      * @notice Returns the NFT vault that manages bond positions.
      * @return The NFT vault contract
      */
-    function protocolNFTVault() external view returns (IProtocolNFTVault);
+    function detfNFTVault() external view returns (IDETFNFTVault);
 
     /**
-     * @notice Returns the CHIR/WETH Standard Exchange Vault.
-     * @return The CHIR/WETH vault
+     * @notice Returns the primary WETH-side Standard Exchange vault (legacy dual-vault surface).
+     * @return The WETH-side vault
      */
     function chirWethVault() external view returns (IStandardExchange);
 
     /**
-     * @notice Returns the RICH/CHIR Standard Exchange Vault.
-     * @return The RICH/CHIR vault
+     * @notice Returns the RICH-side Standard Exchange vault (legacy dual-vault surface).
+     * @return The RICH-side vault
      */
     function richChirVault() external view returns (IStandardExchange);
 
@@ -107,7 +107,7 @@ interface IProtocolDETF {
      * @dev This NFT has no unlock time and accumulates LP from sold user NFTs.
      * @return The protocol NFT token ID
      */
-    function protocolNFTId() external view returns (uint256);
+    function detfNFTId() external view returns (uint256);
 
     /* ---------------------------------------------------------------------- */
     /*                          Price Oracle                                  */
@@ -152,17 +152,17 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Mints CHIR by depositing WETH.
+     * @notice Mints DETF tokens by depositing WETH.
         * @dev Only allowed when syntheticPrice is below the lower deadband bound.
-     *      WETH is paired with minted CHIR, LPed, vaulted, and added to reserve.
+     *      WETH is paired with minted DETF, LPed, vaulted, and added to reserve.
      * @param wethAmount Amount of WETH to deposit
-     * @param recipient Address to receive CHIR
+     * @param recipient Address to receive DETF tokens
      * @param pretransferred Whether WETH was already transferred
-     * @return chirMinted Amount of CHIR minted to recipient
+     * @return detfMinted Amount of DETF minted to recipient
      */
     function mintWithWeth(uint256 wethAmount, address recipient, bool pretransferred)
         external
-        returns (uint256 chirMinted);
+        returns (uint256 detfMinted);
 
     /* ---------------------------------------------------------------------- */
     /*                          Bonding Operations                            */
@@ -204,8 +204,8 @@ interface IProtocolDETF {
 
     /**
         * @notice Captures seigniorage when the synthetic price is above peg.
-     * @dev Compounds only the protocol NFT's accrued CHIR reward share into reserve-backed LP.
-     * @return seigniorageCaptured Amount of CHIR minted as seigniorage
+     * @dev Compounds only the protocol NFT's accrued DETF reward share into reserve-backed LP.
+     * @return seigniorageCaptured Amount of DETF minted as seigniorage
      */
     function captureSeigniorage() external returns (uint256 seigniorageCaptured);
 
@@ -229,9 +229,9 @@ interface IProtocolDETF {
 
     /**
      * @notice Accepts fee donations from FeeCollector.
-     * @dev WETH: Single-sided deposit to CHIR/WETH vault, unbalanced to reserve.
-     *      CHIR: Simply burned.
-     * @param token Token to donate (WETH or CHIR only)
+     * @dev WETH: Single-sided deposit into the WETH-side vault path, unbalanced to reserve.
+     *      DETF token: Simply burned.
+     * @param token Token to donate (WETH or DETF token only)
      * @param amount Amount to donate
      * @param pretransferred Whether tokens were already transferred
      */
@@ -296,7 +296,7 @@ interface IProtocolDETF {
      * @notice Withdraws pending reward-token rewards for a bond position.
      * @param tokenId The NFT token ID
      * @param recipient Address to receive the rewards
-     * @return rewards Amount of reward-token rewards withdrawn. For Protocol DETF deployments this is CHIR.
+     * @return rewards Amount of reward-token rewards withdrawn (DETF token for Protocol DETF deployments).
      */
     function withdrawRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 }

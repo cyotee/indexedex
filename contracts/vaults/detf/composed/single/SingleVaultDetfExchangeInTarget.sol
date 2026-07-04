@@ -75,17 +75,17 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             return amountOut_;
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
-            uint256 bptIn = _previewChirRedemptionBptIn(amountIn);
+            uint256 bptIn = _previewDetfRedemptionBptIn(amountIn);
             ERC20Repo._burn(pretransferred ? address(this) : msg.sender, amountIn);
 
-            (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, bptIn);
-            _redepositChirToReservePool(layoutStruct, chirAmountOut);
+            (uint256 detfAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, bptIn);
+            _redepositDetfToReservePool(layoutStruct, detfAmountOut);
             amountOut_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, deadline);
 
             if (amountOut_ < minAmountOut) {
@@ -120,7 +120,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
     function mintWithWeth(uint256 wethAmount, address recipient, bool pretransferred)
         external
         nonReentrant
-        returns (uint256 chirMinted_)
+        returns (uint256 detfMinted_)
     {
         if (wethAmount == 0) {
             revert ZeroAmount();
@@ -144,15 +144,15 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
 
         (uint256 vaultShares,) = _depositWethIntoReservePool(layoutStruct, actualIn, block.timestamp);
 
-        MintSplit memory mintSplit = _splitMintedChirForVaultShares(layoutStruct, vaultShares);
-        chirMinted_ = mintSplit.userChir;
-        if (mintSplit.feeToChir > 0) {
-            ERC20Repo._mint(address(layoutStruct._feeOracle().feeTo()), mintSplit.feeToChir);
+        MintSplit memory mintSplit = _splitMintedDetfForVaultShares(layoutStruct, vaultShares);
+        detfMinted_ = mintSplit.userDetf;
+        if (mintSplit.feeToDetf > 0) {
+            ERC20Repo._mint(address(layoutStruct._feeOracle().feeTo()), mintSplit.feeToDetf);
         }
-        if (mintSplit.bondRewardChir > 0) {
-            ERC20Repo._mint(address(layoutStruct.protocolNFTVault), mintSplit.bondRewardChir);
+        if (mintSplit.bondRewardDetf > 0) {
+            ERC20Repo._mint(address(layoutStruct.detfNFTVault), mintSplit.bondRewardDetf);
         }
-        ERC20Repo._mint(recipient, chirMinted_);
+        ERC20Repo._mint(recipient, detfMinted_);
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 }

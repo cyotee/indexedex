@@ -13,7 +13,7 @@ import {
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol';
 
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
@@ -168,7 +168,7 @@ contract ComposedStableCommonDetfBurnExchangeInHarness is ComposedStableCommonDe
     ) external {
         ComposedStableCommonDetfRepo._initializePricing(
             reservePool_,
-            IProtocolNFTVault(address(0)),
+            IDETFNFTVault(address(0)),
             IRICHIR(address(0)),
             detfToken_,
             stablePoolBpt_,

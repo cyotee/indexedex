@@ -5,7 +5,7 @@ import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {Math} from '@crane/contracts/utils/Math.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 
 library RebasingDETFTokenRepo {
     using Math for uint256;
@@ -17,9 +17,9 @@ library RebasingDETFTokenRepo {
 
     struct Storage {
         IDETF detf;
-        IProtocolNFTVault nftVault;
+        IDETFNFTVault nftVault;
         IERC20 wethToken;
-        uint256 protocolNFTId;
+        uint256 detfNFTId;
         uint256 totalShares;
         mapping(address account => uint256 shares) sharesOf;
         uint256 cachedRedemptionRate;
@@ -47,19 +47,19 @@ library RebasingDETFTokenRepo {
     function _initialize(
         Storage storage layoutStruct_,
         IDETF detf_,
-        IProtocolNFTVault nftVault_,
+        IDETFNFTVault nftVault_,
         IERC20 wethToken_,
-        uint256 protocolNFTId_
+        uint256 detfNFTId_
     ) internal {
         layoutStruct_.detf = detf_;
         layoutStruct_.nftVault = nftVault_;
         layoutStruct_.wethToken = wethToken_;
-        layoutStruct_.protocolNFTId = protocolNFTId_;
+        layoutStruct_.detfNFTId = detfNFTId_;
         layoutStruct_.cachedRedemptionRate = 1e18;
     }
 
-    function _initialize(IDETF detf_, IProtocolNFTVault nftVault_, IERC20 wethToken_, uint256 protocolNFTId_) internal {
-        _initialize(_layoutStruct(), detf_, nftVault_, wethToken_, protocolNFTId_);
+    function _initialize(IDETF detf_, IDETFNFTVault nftVault_, IERC20 wethToken_, uint256 detfNFTId_) internal {
+        _initialize(_layoutStruct(), detf_, nftVault_, wethToken_, detfNFTId_);
     }
 
     function _detf(Storage storage layoutStruct_) internal view returns (IDETF) {
@@ -78,11 +78,11 @@ library RebasingDETFTokenRepo {
         _setDetf(_layoutStruct(), detf_);
     }
 
-    function _nftVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault) {
+    function _nftVault(Storage storage layoutStruct_) internal view returns (IDETFNFTVault) {
         return layoutStruct_.nftVault;
     }
 
-    function _nftVault() internal view returns (IProtocolNFTVault) {
+    function _nftVault() internal view returns (IDETFNFTVault) {
         return _nftVault(_layoutStruct());
     }
 
@@ -94,12 +94,12 @@ library RebasingDETFTokenRepo {
         return _wethToken(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
-        return layoutStruct_.protocolNFTId;
+    function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.detfNFTId;
     }
 
-    function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layoutStruct());
+    function _detfNFTId() internal view returns (uint256) {
+        return _detfNFTId(_layoutStruct());
     }
 
     function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {

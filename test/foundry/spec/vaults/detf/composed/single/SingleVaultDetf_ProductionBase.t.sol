@@ -37,7 +37,7 @@ import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superch
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -72,7 +72,7 @@ import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfCo
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 contract SingleVaultDetfUniswapV4LiquiditySeeder is IUnlockCallback {
@@ -151,7 +151,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
     IFacet internal richirFacet;
-    IFacet internal protocolNFTVaultFacet;
+    IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
     IFacet internal uniswapV4StandardExchangePositionImportFacet;
@@ -161,7 +161,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     IRICHIRDFPkg internal richirDFPkg;
     IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
-    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
     PoolManager internal poolManager;
     SingleVaultDetfUniswapV4LiquiditySeeder internal liquiditySeeder;
@@ -182,7 +182,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
 
         _deployWeightedPool8020Factory();
         _deployStandardExchangeRateProviderPkg();
-        _deployProtocolNFTVaultPkg();
+        _deployDETFNFTVaultPkg();
         _deployUniswapV4StandardExchangePkg();
 
         singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
@@ -242,7 +242,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
                 localRelayer: bridgeConfig_.localRelayer,
                 peerRelayer: bridgeConfig_.peerRelayer,
                 wethRichVaultPkg: wethRichVaultPkg,
-                protocolNFTVaultPkg: protocolNFTVaultPkg,
+                detfNFTVaultPkg: detfNFTVaultPkg,
                 richirPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
@@ -333,24 +333,24 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         vm.label(address(rateProviderPkg), "SingleVaultDetf_StandardExchangeRateProviderDFPkg");
     }
 
-    function _deployProtocolNFTVaultPkg() internal {
-        protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
+    function _deployDETFNFTVaultPkg() internal {
+        detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         IFacet erc721Facet = IFacet(
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetf_ERC721Facet"))
         );
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
-            .buildProtocolNFTVaultPkgInit(
+        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+            .buildDETFNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
             erc4626StandardVaultFacet,
-            protocolNFTVaultFacet,
+            detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
         );
 
         vm.startPrank(owner);
-        protocolNFTVaultPkg = IVaultRegistryDeployment(address(indexedexManager)).deployProtocolNFTVaultDFPkg(nftPkgInit);
+        detfNFTVaultPkg = IVaultRegistryDeployment(address(indexedexManager)).deployDETFNFTVaultDFPkg(nftPkgInit);
         vm.stopPrank();
     }
 

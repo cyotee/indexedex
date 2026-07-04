@@ -59,6 +59,6 @@ library DETFBondLifecycleLib {
         uint256 bptAmount_
     ) internal {
         reservePoolToken_.forceApprove(address(vault_), bptAmount_);
-        vault_.addToProtocolNFT(protocolNftId_, bptAmount_);
+        vault_.addToDETFNFT(protocolNftId_, bptAmount_);
     }
 }

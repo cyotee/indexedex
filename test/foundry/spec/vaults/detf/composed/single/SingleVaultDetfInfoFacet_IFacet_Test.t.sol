@@ -35,15 +35,15 @@ contract SingleVaultDetfInfoFacet_IFacet_Test is CraneTest, TestBase_IFacet {
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
         controlFuncs = new bytes4[](17);
-        controlFuncs[0] = IProtocolDETF.chirToken.selector;
+        controlFuncs[0] = IProtocolDETF.detfToken.selector;
         controlFuncs[1] = IProtocolDETF.richToken.selector;
         controlFuncs[2] = IProtocolDETF.richirToken.selector;
         controlFuncs[3] = IProtocolDETF.wethToken.selector;
-        controlFuncs[4] = IProtocolDETF.protocolNFTVault.selector;
+        controlFuncs[4] = IProtocolDETF.detfNFTVault.selector;
         controlFuncs[5] = IProtocolDETF.chirWethVault.selector;
         controlFuncs[6] = IProtocolDETF.richChirVault.selector;
         controlFuncs[7] = IProtocolDETF.reservePool.selector;
-        controlFuncs[8] = IProtocolDETF.protocolNFTId.selector;
+        controlFuncs[8] = IProtocolDETF.detfNFTId.selector;
         controlFuncs[9] = IProtocolDETF.syntheticPrice.selector;
         controlFuncs[10] = IProtocolDETF.mintThreshold.selector;
         controlFuncs[11] = IProtocolDETF.burnThreshold.selector;

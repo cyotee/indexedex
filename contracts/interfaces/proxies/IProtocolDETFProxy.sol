@@ -24,7 +24,7 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 /**
  * @title IProtocolDETFProxy
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Unified proxy interface for Protocol DETF (CHIR token).
+ * @notice Unified proxy interface for Protocol DETF.
  * @dev Combines all interfaces that the Protocol DETF Diamond implements.
  */
 interface IProtocolDETFProxy is

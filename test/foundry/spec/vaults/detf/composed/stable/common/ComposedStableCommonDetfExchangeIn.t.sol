@@ -14,7 +14,7 @@ import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
@@ -117,11 +117,11 @@ contract MockMintBondNFTVault {
     uint256 public lastProtocolTokenId;
     uint256 public lastProtocolShares;
 
-    function protocolNFTId() external pure returns (uint256) {
+    function detfNFTId() external pure returns (uint256) {
         return protocolTokenId;
     }
 
-    function addToProtocolNFT(uint256 tokenId, uint256 shares) external {
+    function addToDETFNFT(uint256 tokenId, uint256 shares) external {
         lastProtocolTokenId = tokenId;
         lastProtocolShares = shares;
     }
@@ -149,7 +149,7 @@ contract ComposedStableCommonDetfExchangeInHarness is ComposedStableCommonDetfEx
 
     function initializeHarness(
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
@@ -321,7 +321,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
 
         harness.initializeHarness(
             IWeightedPool(address(reservePoolBpt)),
-            IProtocolNFTVault(address(bondNFTVault)),
+            IDETFNFTVault(address(bondNFTVault)),
             detfToken,
             stablePoolBpt,
             commonPoolBpt,

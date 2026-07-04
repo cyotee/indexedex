@@ -53,9 +53,9 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         mapping(uint256 tokenId => uint256 unlockTime) unlockTimeOf;
         mapping(uint256 tokenId => uint256) userRewardPerSharePaid;
         uint256 nextTokenId;
-        uint256 protocolNFTId;
+        uint256 detfNFTId;
         uint256 feeRecipientNFTId;
-        bool protocolNFTSold;
+        bool detfNFTSold;
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -89,12 +89,12 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         _initialize(_layoutStruct(), protocolDETF_, lpToken_, rewardToken_, decimalOffset_);
     }
 
-    function _setProtocolNFTId(Storage storage layoutStruct_, uint256 tokenId_) internal {
-        layoutStruct_.protocolNFTId = tokenId_;
+    function _setDETFNFTId(Storage storage layoutStruct_, uint256 tokenId_) internal {
+        layoutStruct_.detfNFTId = tokenId_;
     }
 
-    function _setProtocolNFTId(uint256 tokenId_) internal {
-        _setProtocolNFTId(_layoutStruct(), tokenId_);
+    function _setDETFNFTId(uint256 tokenId_) internal {
+        _setDETFNFTId(_layoutStruct(), tokenId_);
     }
 
     function _setFeeRecipientNFTId(Storage storage layoutStruct_, uint256 tokenId_) internal {
@@ -137,12 +137,12 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         return _decimalOffset(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
-        return layoutStruct_.protocolNFTId;
+    function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.detfNFTId;
     }
 
-    function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layoutStruct());
+    function _detfNFTId() internal view returns (uint256) {
+        return _detfNFTId(_layoutStruct());
     }
 
     function _feeRecipientNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
@@ -161,20 +161,20 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         return _deploymentTimestamp(_layoutStruct());
     }
 
-    function _setProtocolNFTSold(Storage storage layoutStruct_, bool sold_) internal {
-        layoutStruct_.protocolNFTSold = sold_;
+    function _setDETFNFTSold(Storage storage layoutStruct_, bool sold_) internal {
+        layoutStruct_.detfNFTSold = sold_;
     }
 
-    function _setProtocolNFTSold(bool sold_) internal {
-        _setProtocolNFTSold(_layoutStruct(), sold_);
+    function _setDETFNFTSold(bool sold_) internal {
+        _setDETFNFTSold(_layoutStruct(), sold_);
     }
 
-    function _protocolNFTSold(Storage storage layoutStruct_) internal view returns (bool) {
-        return layoutStruct_.protocolNFTSold;
+    function _detfNFTSold(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.detfNFTSold;
     }
 
-    function _protocolNFTSold() internal view returns (bool) {
-        return _protocolNFTSold(_layoutStruct());
+    function _detfNFTSold() internal view returns (bool) {
+        return _detfNFTSold(_layoutStruct());
     }
 
     function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {
@@ -411,7 +411,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         string memory svg = string.concat(CSCD_BOND_SVG_IMAGE_PREFIX, CSCD_BOND_SVG_IMAGE_TOKEN_ID_PREFIX, tokenId_.toString());
 
         string memory unlockStr;
-        if (tokenId_ == layoutStruct_.protocolNFTId) {
+        if (tokenId_ == layoutStruct_.detfNFTId) {
             unlockStr = "Protocol (No Lock)";
         } else {
             uint256 unlockTime_ = layoutStruct_.unlockTimeOf[tokenId_];

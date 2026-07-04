@@ -37,10 +37,16 @@ interface IStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage {
 
     struct PkgArgs {
         IStandardExchange reserveVault;
+        /// @dev Optional share subject for rate quotes; address(0) → vault address (self-share SE vaults).
+        IERC20 rateSubject;
         IERC20 rateTarget;
     }
 
     function deployRateProvider(IStandardExchange reserveVault, IERC20 rateTarget)
+        external
+        returns (IRateProvider rateProviderAddress);
+
+    function deployRateProvider(IStandardExchange reserveVault, IERC20 rateSubject, IERC20 rateTarget)
         external
         returns (IRateProvider rateProviderAddress);
 }
@@ -62,8 +68,18 @@ contract StandardExchangeRateProviderDFPkg is IStandardExchangeRateProviderDFPkg
         external
         returns (IRateProvider rateProviderAddress)
     {
+        return deployRateProvider(reserveVault, IERC20(address(0)), rateTarget);
+    }
+
+    function deployRateProvider(IStandardExchange reserveVault, IERC20 rateSubject, IERC20 rateTarget)
+        public
+        returns (IRateProvider rateProviderAddress)
+    {
         return IRateProvider(
-            DIAMOND_FACTORY.deploy(this, abi.encode(PkgArgs({reserveVault: reserveVault, rateTarget: rateTarget})))
+            DIAMOND_FACTORY.deploy(
+                this,
+                abi.encode(PkgArgs({reserveVault: reserveVault, rateSubject: rateSubject, rateTarget: rateTarget}))
+            )
         );
     }
 
@@ -121,7 +137,9 @@ contract StandardExchangeRateProviderDFPkg is IStandardExchangeRateProviderDFPkg
 
         uint8 targetDecimals = IERC20Metadata(address(decoded.rateTarget)).safeDecimals();
 
-        StandardExchangeRateProviderRepo._initialize(decoded.reserveVault, decoded.rateTarget, targetDecimals);
+        StandardExchangeRateProviderRepo._initialize(
+            decoded.reserveVault, decoded.rateSubject, decoded.rateTarget, targetDecimals
+        );
     }
 
     function postDeploy(address) public pure returns (bool) {

@@ -8,7 +8,7 @@ import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol'
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
 import {
@@ -148,7 +148,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         nftVault = makeAddr('nftVault');
 
         token = IRICHIR(
-            pkg.deployToken(IDETF(address(detf)), IProtocolNFTVault(nftVault), IERC20(address(weth)), PROTOCOL_NFT_ID, owner)
+            pkg.deployToken(IDETF(address(detf)), IDETFNFTVault(nftVault), IERC20(address(weth)), PROTOCOL_NFT_ID, owner)
         );
 
         _mockPosition(10);
@@ -283,7 +283,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
     }
 
     function _mockPosition(uint256 originalShares_) internal {
-        IProtocolNFTVault.Position memory position = IProtocolNFTVault.Position({
+        IDETFNFTVault.Position memory position = IDETFNFTVault.Position({
             originalShares: originalShares_,
             effectiveShares: originalShares_,
             bonusMultiplier: 1e18,
@@ -293,7 +293,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
 
         vm.mockCall(
             nftVault,
-            abi.encodeWithSelector(IProtocolNFTVault.getPosition.selector, PROTOCOL_NFT_ID),
+            abi.encodeWithSelector(IDETFNFTVault.getPosition.selector, PROTOCOL_NFT_ID),
             abi.encode(position)
         );
     }

@@ -73,12 +73,12 @@ Order functions by visibility:
 
 | Pattern | Usage | Example |
 |---------|-------|---------|
-| `_layout()` | Storage access | `_layout()`, `_layout(bytes32 slot_)` |
+| `_layoutStruct()` | Storage access | `_layoutStruct()`, `_layoutStruct(bytes32 slot_)` |
 | `_initialize()` | Storage setup | `_initialize(address owner_)` |
 | `_functionName()` | Internal Repo functions | `_isOperator()`, `_setOperator()` |
 | `_onlyXxx()` | Guard functions in Repos | `_onlyOwner()`, `_onlyOperator()` |
 | `onlyXxx` | Modifiers | `onlyOwner`, `onlyOperator` |
-| `layout` | Storage parameter name | `Storage storage layout` |
+| `layoutStruct` | Storage parameter name | `Storage storage layoutStruct` |
 | `param_` | Function parameters | `owner_`, `slot_`, `name_` |
 
 ### Parameter Trailing Underscore

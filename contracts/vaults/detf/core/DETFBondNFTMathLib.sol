@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 
@@ -56,8 +56,8 @@ library DETFBondNFTMathLib {
         uint256 bonusMultiplier_,
         uint256 unlockTime_,
         uint256 rewardDebt_
-    ) internal pure returns (IProtocolNFTVault.Position memory position_) {
-        position_ = IProtocolNFTVault.Position({
+    ) internal pure returns (IDETFNFTVault.Position memory position_) {
+        position_ = IDETFNFTVault.Position({
             originalShares: originalShares_,
             effectiveShares: effectiveShares_,
             bonusMultiplier: bonusMultiplier_,

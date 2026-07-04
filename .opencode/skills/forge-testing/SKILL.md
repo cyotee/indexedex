@@ -1,22 +1,30 @@
 ---
 name: forge-testing
-description: Write and run Solidity tests with Foundry. Use when writing unit tests, integration tests, or debugging test failures. Covers test structure, assertions, cheatcodes, and running tests with forge test.
+description: Foundry cheatcodes, assertions, and forge test CLI. Use for vm.prank, expectRevert, verbosity, and general Foundry mechanics. For Crane/IndexedEx protocol and Diamond tests, prefer crane-testing and production-first deploy paths over mocks.
 ---
 
 # Forge Testing
 
 Write native Solidity tests using Foundry's testing framework.
 
+## Crane / IndexedEx note (read first)
+
+In this monorepo, **prefer production contracts and factory/TestBase deploy paths**. Do not invent mocks for facets, DFPkgs, vaults, or managers.
+
+- **Crane:** use `crane-testing` + inherit `CraneTest` (not `new` for production Crane contracts).
+- **IndexedEx:** use `indexedex-testing` + `IndexedexTest` / protocol TestBases.
+- This skill covers **Foundry mechanics** (cheatcodes, asserts, CLI). Its generic `new MyContract()` / mock examples are **not** the preferred pattern for Crane or IndexedEx features.
+
 ## When to Use
 
-- Writing unit tests for smart contracts
-- Testing access control and permissions
-- Verifying event emissions
-- Testing revert conditions
-- Debugging failing tests
-- Setting up test fixtures and state
+- Foundry cheatcodes, assertions, verbosity, CLI filters
+- Debugging failing tests with traces
+- Fork/select fork mechanics (combined with project TestBases)
+- Not the primary skill for Diamond/DFPkg/vault test design — use `crane-testing` / `indexedex-testing`
 
-## Quick Start
+## Quick Start (generic Foundry)
+
+For Crane work, replace `new MyContract()` with factory/TestBase setup from `crane-testing`.
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -29,6 +37,7 @@ contract MyContractTest is Test {
     MyContract public target;
 
     function setUp() public {
+        // Generic example only. Crane: inherit CraneTest + factories.
         target = new MyContract();
     }
 

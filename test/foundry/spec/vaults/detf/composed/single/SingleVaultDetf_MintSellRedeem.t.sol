@@ -13,7 +13,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
@@ -69,18 +69,18 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
             block.timestamp + 1 hours
         );
 
-        IProtocolNFTVault protocolNFTVault = detf.protocolNFTVault();
-        uint256 protocolId = protocolNFTVault.protocolNFTId();
-        uint256 protocolPrincipalBefore = protocolNFTVault.originalSharesOf(protocolId);
+        IDETFNFTVault detfNFTVault = detf.detfNFTVault();
+        uint256 protocolId = detfNFTVault.detfNFTId();
+        uint256 protocolPrincipalBefore = detfNFTVault.originalSharesOf(protocolId);
         IRICHIR richirToken = IRICHIR(address(detf.richirToken()));
         uint256 richirSharesBefore = richirToken.sharesOf(detfAlice);
 
         vm.prank(detfAlice);
         uint256 richirMinted = ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
 
-        assertEq(protocolNFTVault.originalSharesOf(protocolId), protocolPrincipalBefore + shares, "protocol nft principal");
+        assertEq(detfNFTVault.originalSharesOf(protocolId), protocolPrincipalBefore + shares, "protocol nft principal");
         assertEq(richirToken.sharesOf(detfAlice), richirSharesBefore + shares, "richir shares minted");
-        assertEq(protocolNFTVault.ownerOf(tokenId), address(0), "sold nft burned");
+        assertEq(detfNFTVault.ownerOf(tokenId), address(0), "sold nft burned");
         assertGt(richirMinted, 0, "richir minted");
         assertEq(richirMinted, richirToken.balanceOf(detfAlice), "richir balance amount");
     }
@@ -104,14 +104,14 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
 
         vm.warp(block.timestamp + MIN_LOCK_DURATION + 1);
 
-        IProtocolNFTVault protocolNFTVault = detf.protocolNFTVault();
+        IDETFNFTVault detfNFTVault = detf.detfNFTVault();
         uint256 wethBefore = wethToken.balanceOf(detfAlice);
         vm.prank(detfAlice);
-        uint256 wethOut = protocolNFTVault.redeemPosition(tokenId, detfAlice, block.timestamp + 1 hours);
+        uint256 wethOut = detfNFTVault.redeemPosition(tokenId, detfAlice, block.timestamp + 1 hours);
 
         assertGt(wethOut, 0, "weth redeemed");
         assertEq(wethToken.balanceOf(detfAlice) - wethBefore, wethOut, "alice weth out");
-        assertEq(protocolNFTVault.ownerOf(tokenId), address(0), "bond nft burned on redeem");
+        assertEq(detfNFTVault.ownerOf(tokenId), address(0), "bond nft burned on redeem");
     }
 
     function test_claimLiquidity_revertsWhenNotProtocolNftVault() public {
@@ -144,7 +144,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         assertGt(richirOut, 0, "richir minted");
         assertLe(previewOut, richirOut, "preview remains conservative");
         assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
-        assertGt(detf.protocolNFTVault().originalSharesOf(detf.protocolNFTVault().protocolNFTId()), 0, "protocol nft funded");
+        assertGt(detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId()), 0, "protocol nft funded");
     }
 
     function test_exchangeIn_richToRichir_previewIsConservative() public {
@@ -154,7 +154,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         vm.prank(detfAlice);
         richToken.approve(address(detf), amountIn);
 
-        uint256 protocolSharesBefore = detf.protocolNFTVault().originalSharesOf(detf.protocolNFTVault().protocolNFTId());
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId());
         uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(richToken, amountIn, richirToken);
 
         vm.prank(detfAlice);
@@ -173,7 +173,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         assertLe(previewOut, richirOut, "preview remains conservative");
         assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
         assertGt(
-            detf.protocolNFTVault().originalSharesOf(detf.protocolNFTVault().protocolNFTId()),
+            detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId()),
             protocolSharesBefore,
             "protocol nft funded"
         );

@@ -24,7 +24,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
  * @title ISingleVaultDetf
  * @notice Single-vault DETF surface for the Uniswap V4-composed DETF.
  * @dev Extends the existing Protocol DETF interface to remain compatible with
- *      ProtocolNFTVault, while adding explicit single-vault getters.
+ *      DETFNFTVault, while adding explicit single-vault getters.
  */
 interface ISingleVaultDetf is IProtocolDETF {
     /**
@@ -39,10 +39,10 @@ interface ISingleVaultDetf is IProtocolDETF {
 
     /**
      * @notice Returns the token ordering used by the reserve pool.
-     * @return chirIndex_ Index of CHIR in the reserve pool token list.
+     * @return detfIndex_ Index of the DETF token in the reserve pool token list.
      * @return vaultTokenIndex_ Index of the WETH/RICH vault share token in the reserve pool token list.
      */
-    function reservePoolIndexes() external view returns (uint256 chirIndex_, uint256 vaultTokenIndex_);
+    function reservePoolIndexes() external view returns (uint256 detfIndex_, uint256 vaultTokenIndex_);
 
     /**
      * @notice Returns the accepted bond tokens for the single-vault bond path.

@@ -275,8 +275,8 @@ export default function CreatePage() {
     const [lastNewVault, setLastNewVault] = useState<string>('')
     useWatchVaultRegistryDeploymentFacetNewVaultEvent({
         onLogs: (logs) => {
-            const last = logs[logs.length - 1]
-            const v = (last?.args as any)?.vault as string | undefined
+            const last = logs[logs.length - 1] as { args?: { vault?: string } } | undefined
+            const v = last?.args?.vault
             if (v) setLastNewVault(v)
         }
     })

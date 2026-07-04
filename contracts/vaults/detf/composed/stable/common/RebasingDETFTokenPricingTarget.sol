@@ -28,7 +28,7 @@ import {Math} from '@crane/contracts/utils/Math.sol';
 /* -------------------------------------------------------------------------- */
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -47,13 +47,13 @@ contract RebasingDETFTokenPricingTarget is IDETF {
         bondNftVault_ = address(ComposedStableCommonDetfRepo._bondNftVault());
     }
 
-    function protocolNFTId() external view returns (uint256 protocolNFTId_) {
-        IProtocolNFTVault bondNftVault_ = ComposedStableCommonDetfRepo._bondNftVault();
+    function detfNFTId() external view returns (uint256 detfNFTId_) {
+        IDETFNFTVault bondNftVault_ = ComposedStableCommonDetfRepo._bondNftVault();
         if (address(bondNftVault_) == address(0) || !_isContract(address(bondNftVault_))) {
             return 0;
         }
 
-        protocolNFTId_ = bondNftVault_.protocolNFTId();
+        detfNFTId_ = bondNftVault_.detfNFTId();
     }
 
     function rebasingDetfToken() external view returns (address rebasingDetfToken_) {
@@ -73,7 +73,7 @@ contract RebasingDETFTokenPricingTarget is IDETF {
             return 0;
         }
 
-        IProtocolNFTVault bondNftVault_ = ComposedStableCommonDetfRepo._bondNftVault();
+        IDETFNFTVault bondNftVault_ = ComposedStableCommonDetfRepo._bondNftVault();
         IRICHIR rebasingDetfToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken();
 
         if (address(bondNftVault_) == address(0) || address(rebasingDetfToken_) == address(0)) {
@@ -82,7 +82,7 @@ contract RebasingDETFTokenPricingTarget is IDETF {
 
         uint256 richirShares = rebasingDetfToken_.convertToShares(rebasingDetfAmount);
         uint256 totalRichirShares = rebasingDetfToken_.totalShares();
-        uint256 protocolReserveBpt = bondNftVault_.originalSharesOf(bondNftVault_.protocolNFTId());
+        uint256 protocolReserveBpt = bondNftVault_.originalSharesOf(bondNftVault_.detfNFTId());
 
         if (richirShares == 0 || totalRichirShares == 0 || protocolReserveBpt == 0) {
             return 0;

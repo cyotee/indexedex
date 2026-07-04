@@ -1,0 +1,93 @@
+/** Minimal ABI for Vault Registry vault + package query facets (manager diamond). */
+export const vaultRegistryQueryAbi = [
+  {
+    type: 'function',
+    name: 'vaults',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'vaults_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'isVault',
+    stateMutability: 'view',
+    inputs: [{ name: 'vault', type: 'address' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultTokens',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'tokens_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfToken',
+    stateMutability: 'view',
+    inputs: [{ name: 'token', type: 'address' }],
+    outputs: [{ name: 'vaultsOfToken_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfTokens',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokens_', type: 'address[]' }],
+    outputs: [{ name: 'vaultsOfTokens_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfType',
+    stateMutability: 'view',
+    inputs: [{ name: 'vaultTypeId', type: 'bytes4' }],
+    outputs: [{ name: '', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfTypeOfToken',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'vaultTypeId', type: 'bytes4' },
+      { name: 'token', type: 'address' },
+    ],
+    outputs: [{ name: 'vaults_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfPackage',
+    stateMutability: 'view',
+    inputs: [{ name: 'pkg', type: 'address' }],
+    outputs: [{ name: 'vaults_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultsOfPkgOfToken',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'pkg', type: 'address' },
+      { name: 'token', type: 'address' },
+    ],
+    outputs: [{ name: 'vaults_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultTypeIds',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'vaultTypeIds', type: 'bytes4[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultPackages',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'pkgs_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'packageName',
+    stateMutability: 'view',
+    inputs: [{ name: 'pkg', type: 'address' }],
+    outputs: [{ name: 'pkgName_', type: 'string' }],
+  },
+] as const

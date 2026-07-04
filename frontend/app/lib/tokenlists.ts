@@ -166,7 +166,7 @@ function buildProtocolDetfEntriesFromPlatform(platform: unknown, chainId: number
     entries.push({
       chainId,
       address: protocolDetf,
-      name: 'Protocol DETF CHIR',
+      name: 'Single Vault DETF CHIR',
       symbol: 'CHIR',
       decimals: 18,
     })
@@ -265,7 +265,18 @@ function getCached(
   const uniV2PoolTokens = fromComposed(store, ['uniV2'], artifactsChainId)
   const aerodromePoolTokens = fromComposed(store, ['aero'], artifactsChainId)
   const strategyVaultTokens = fromComposed(store, ['strat'], artifactsChainId)
-  const protocolDetfTokens = fromComposed(store, ['detf'], artifactsChainId)
+
+  // Prefer chain Token Lists (fragments → protocol-detfs.tokenlist.json). Fall back
+  // to platform.protocolDetf from local_testing / stage JSON synthesis so Staking
+  // works as soon as Scenario 3 (Single Vault DETF) writes 12_scenario_3.json.
+  const protocolDetfFromLists = fromComposed(store, ['detf'], artifactsChainId)
+  const protocolDetfFromPlatform = buildProtocolDetfEntriesFromPlatform(
+    artifacts.platform,
+    artifactsChainId
+  ).filter((t) => t.symbol === 'CHIR')
+  const protocolDetfTokens = withDisplay(
+    mergeUniqueByAddress(protocolDetfFromLists, protocolDetfFromPlatform)
+  )
 
   // seigniorage-detfs are not yet migrated to a Token List bucket; keep reading from the legacy artifact.
   const seigniorageDetfs = withDisplay(
@@ -624,7 +635,6 @@ export function buildTokenOptionsForChain(
   chainId: number,
   includeVaultShares: boolean = true,
   includeLpTokens: boolean = true,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _legacyEnvironment?: unknown
 ): TokenOption[] {
   const resolvedChainId = resolveArtifactsChainId(chainId) ?? chainId
@@ -656,7 +666,6 @@ export function resolveTokenAddressFromOption(value: TokenOption['value']): Addr
 export function resolveTokenAddressFromOptionForChain(
   chainId: number,
   value: TokenOption['value'],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): Address | null {
   if (value === 'ETH') return null

@@ -75,7 +75,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         uint256 actualRichirIn;
         uint256 sharesBurned;
         uint256 reserveSharesBurned;
-        uint256 chirAmountOut;
+        uint256 detfAmountOut;
         uint256 vaultSharesOut;
         uint256 localBptOut;
         uint256 senderNonce;
@@ -176,7 +176,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         address recipient
     ) internal returns (uint256 tokenId_, uint256 shares_) {
         shares_ = assets.bptOut;
-        tokenId_ = DETFBondLifecycleLib._createBondPosition(layoutStruct.protocolNFTVault, shares_, lockDuration, recipient);
+        tokenId_ = DETFBondLifecycleLib._createBondPosition(layoutStruct.detfNFTVault, shares_, lockDuration, recipient);
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 
@@ -189,7 +189,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
-            IERC20(layoutStruct.reservePool), layoutStruct.protocolNFTVault, layoutStruct.protocolNFTId, bptAmount
+            IERC20(layoutStruct.reservePool), layoutStruct.detfNFTVault, layoutStruct.detfNFTId, bptAmount
         );
     }
 
@@ -315,9 +315,9 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ReservePoolNotInitialized();
         }
 
-        uint256 chirAmount = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.protocolNFTVault);
+        uint256 detfAmount = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.detfNFTVault);
 
-        bptReceived_ = _addLiquidityToReservePool(layoutStruct, chirAmount, 0);
+        bptReceived_ = _addLiquidityToReservePool(layoutStruct, detfAmount, 0);
         _addReservePoolBptToProtocolNft(layoutStruct, bptReceived_);
     }
 
@@ -337,7 +337,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
 
         uint256 principalShares;
         (principalShares, richirMinted_) = DETFBondLifecycleLib._sellPositionToRichir(
-            layoutStruct.protocolNFTVault,
+            layoutStruct.detfNFTVault,
             richir,
             tokenId,
             msg.sender,
@@ -357,7 +357,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ZeroAmount();
         }
 
-        if (!_isWethToken(layoutStruct, token) && !_isChirToken(token)) {
+        if (!_isWethToken(layoutStruct, token) && !_isDetfToken(token)) {
             revert InvalidDonationToken(token);
         }
 
@@ -365,7 +365,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             token.safeTransferFrom(msg.sender, address(this), amount);
         }
 
-        if (_isChirToken(token)) {
+        if (_isDetfToken(token)) {
             ERC20Repo._burn(address(this), amount);
             return;
         }
@@ -379,7 +379,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
-        if (msg.sender != address(layoutStruct.protocolNFTVault)) {
+        if (msg.sender != address(layoutStruct.detfNFTVault)) {
             revert NotNFTVault(msg.sender);
         }
         if (recipient == address(0)) {
@@ -389,8 +389,8 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return 0;
         }
 
-        (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, lpAmount);
-        _redepositChirToReservePool(layoutStruct, chirAmountOut);
+        (uint256 detfAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, lpAmount);
+        _redepositDetfToReservePool(layoutStruct, detfAmountOut);
         extractedWeth_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, block.timestamp);
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
@@ -455,11 +455,11 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         IERC20(address(layoutStruct._richirToken())).safeTransfer(address(layoutStruct._richirToken()), execution.actualRichirIn);
         layoutStruct._richirToken().burnShares(execution.actualRichirIn, address(0), true);
 
-        (execution.chirAmountOut, execution.vaultSharesOut) =
+        (execution.detfAmountOut, execution.vaultSharesOut) =
             _exitReservePoolProportionalForBridge(layoutStruct, execution.reserveSharesBurned);
 
-        if (execution.chirAmountOut > 0) {
-            execution.localBptOut = _addLiquidityToReservePool(layoutStruct, execution.chirAmountOut, 0);
+        if (execution.detfAmountOut > 0) {
+            execution.localBptOut = _addLiquidityToReservePool(layoutStruct, execution.detfAmountOut, 0);
             localRichirOut = _mintRichirFromReservePoolBpt(layoutStruct, execution.localBptOut, msg.sender);
         }
 

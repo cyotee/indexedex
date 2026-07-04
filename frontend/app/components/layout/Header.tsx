@@ -9,6 +9,7 @@ import { baseSepolia, sepolia } from 'wagmi/chains';
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '../../lib/addressArtifacts';
 import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment';
 import { useSelectedNetwork } from '../../lib/networkSelection';
+import { useBrand } from '../../lib/brandContext';
 
 type HeaderChainOption = 'ethereum' | 'base';
 
@@ -337,6 +338,7 @@ async function inspectSwitchContext(
 }
 
 export function Header() {
+  const { brand, brandId, locked: brandLocked, toggleBrand } = useBrand();
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { connectAsync, connectors, status, error } = useConnect();
@@ -370,7 +372,6 @@ export function Header() {
     };
   }, []);
 
-  const [styleTheme, setStyleTheme] = useState<string>('pachira')
   const [chainSwitchError, setChainSwitchError] = useState<string>('');
   const [chainSwitchDebug, setChainSwitchDebug] = useState<string>('');
   const [isPromptingWalletSwitch, setIsPromptingWalletSwitch] = useState(false);
@@ -387,14 +388,6 @@ export function Header() {
     && chainId !== CHAIN_ID_ANVIL
     && chainId !== CHAIN_ID_LOCALHOST;
   const selectedTargetChain = chainOptions[selectedChainOption];
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('style-theme')
-      const theme = saved === 'current' ? 'current' : 'pachira'
-      setStyleTheme(theme)
-    } catch {}
-  }, [])
 
   useEffect(() => {
     if (!chainSwitchNotice) return
@@ -463,17 +456,6 @@ export function Header() {
       browserEthereum.removeListener?.('chainChanged', handleChainChanged)
     }
   }, [chainOptions])
-
-  function toggleTheme() {
-    const next = styleTheme === 'pachira' ? 'current' : 'pachira'
-    setStyleTheme(next)
-    try {
-      localStorage.setItem('style-theme', next)
-    } catch {}
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', next)
-    }
-  }
 
   async function requestWalletChainSwitch(target: SwitchableChain, priorDebug?: string) {
     const context = await inspectSwitchContext(activeConnector, connectorId, address)
@@ -762,15 +744,25 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 py-2 justify-between items-center flex-wrap gap-2">
           <div className="flex items-center flex-wrap">
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <Image src="/logo.svg" alt="Pachira" width={120} height={32} priority />
+            <Link href="/" className="flex items-center flex-shrink-0 gap-2 brand-logo-link">
+              <Image
+                src={brand.logoSrc}
+                alt={brand.logoAlt}
+                width={brandId === 'indexedex' ? 36 : 120}
+                height={brandId === 'indexedex' ? 36 : 32}
+                priority
+                className="brand-logo rounded-md object-contain"
+              />
+              <span className="hidden sm:inline text-sm font-semibold text-[var(--text-primary,#EDEDED)] tracking-tight">
+                {brand.name}
+              </span>
             </Link>
-            <nav className="ml-4 lg:ml-10 flex flex-wrap gap-x-2 gap-y-1">
+            <nav className="ml-4 lg:ml-10 flex flex-wrap gap-x-1 gap-y-1 items-center">
                 <Link
-                    href="/create"
+                    href="/earn"
                     className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
                 >
-                Create
+                Earn
                 </Link>
                 <Link
                     href="/swap"
@@ -779,60 +771,26 @@ export function Header() {
                 Swap
                 </Link>
                 <Link
-                    href="/batch-swap"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
-                Batch Swap
-                </Link>
-                <Link
-                    href="/vaults"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
-                Vaults
-                </Link>
-                <Link
                     href="/portfolio"
                     className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
                 >
                 Portfolio
                 </Link>
                 <Link
-                  href="/detfs"
-                  className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
-                DETFs
-                </Link>
-                <Link
-                  href="/staking"
-                  className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
-                Staking
-                </Link>
-                <Link
-                    href="/insights"
+                    href="/token"
                     className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
                 >
-                Insights
+                Token
                 </Link>
-                <Link
-                    href="/pools"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
-                Pools
-                </Link>
-                <Link
-                    href="/admin"
-                    className="text-blue-300 hover:text-blue-200 px-3 py-2 text-sm font-medium transition-colors"
-                >
-                Admin
-                </Link>
-              {/* Testnet Dropdown */}
+              {/* More: power routes demoted from primary nav */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsTestnetDropdownOpen(!isTestnetDropdownOpen)}
-                  className="text-orange-300 hover:text-orange-200 px-3 py-2 text-sm font-medium transition-colors flex items-center"
+                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors flex items-center"
+                  aria-expanded={isTestnetDropdownOpen}
+                  aria-haspopup="menu"
                 >
-                  Testnet
+                  More
                   <svg
                     className={`ml-1 w-4 h-4 transition-transform ${isTestnetDropdownOpen ? 'rotate-180' : ''}`}
                     fill="none"
@@ -844,22 +802,15 @@ export function Header() {
                 </button>
                 
                 {isTestnetDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-gray-700 rounded-md shadow-lg z-50 border border-gray-600">
+                  <div className="absolute top-full left-0 mt-1 w-52 bg-gray-700 rounded-md shadow-lg z-50 border border-gray-600">
                     <div className="py-1">
-                      <Link
-                        href="/mint"
-                        className="block px-4 py-2 text-sm text-yellow-300 hover:text-yellow-200 hover:bg-gray-600 transition-colors"
-                        onClick={() => setIsTestnetDropdownOpen(false)}
-                      >
-                        Mint Test Tokens
-                      </Link>
-                      <Link
-                        href="/token-info"
-                            className="block px-4 py-2 text-sm text-yellow-300 hover:text-yellow-200 hover:bg-gray-600 transition-colors"
-                        onClick={() => setIsTestnetDropdownOpen(false)}
-                      >
-                        Token Info
-                      </Link>
+                      <Link href="/batch-swap" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Batch Swap</Link>
+                      <Link href="/create" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Create</Link>
+                      <Link href="/insights" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Insights</Link>
+                      <Link href="/staking" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>DETF workspace</Link>
+                      <Link href="/mint" className="block px-4 py-2 text-sm text-yellow-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>
+                      <Link href="/token-info" className="block px-4 py-2 text-sm text-yellow-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Token Info</Link>
+                      <Link href="/admin" className="block px-4 py-2 text-sm text-blue-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Admin</Link>
                     </div>
                   </div>
                 )}
@@ -912,14 +863,23 @@ export function Header() {
                 </div>
               ) : null}
             </div>
-            <button
-              onClick={toggleTheme}
-              className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600"
-              aria-label="Toggle style theme"
-              title="Toggle style theme"
-            >
-              Style: {styleTheme === 'pachira' ? 'Pachira' : 'Current'}
-            </button>
+            {!brandLocked ? (
+              <button
+                onClick={toggleBrand}
+                className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600"
+                aria-label="Switch brand theme"
+                title="Same layout — Pachira (green) or IndexedEx (dark blue)"
+              >
+                Brand: {brandId === 'pachira' ? 'Pachira' : 'IndexedEx'}
+              </button>
+            ) : (
+              <span
+                className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-300"
+                title="Brand locked for this deploy"
+              >
+                {brand.name}
+              </span>
+            )}
             {isConnected ? (
               <button
                 onClick={() => disconnect()}

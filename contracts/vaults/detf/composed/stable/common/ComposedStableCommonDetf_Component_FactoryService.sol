@@ -11,7 +11,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
@@ -42,7 +42,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
 
     struct ComposedStableCommonDetfPricingConfig {
         IWeightedPool reservePool;
-        IProtocolNFTVault bondNftVault;
+        IDETFNFTVault bondNftVault;
         IRICHIR rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;

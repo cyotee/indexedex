@@ -264,6 +264,7 @@ export function SwapForm({
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-300 mb-1">Pool / Strategy</label>
         <select
+          data-testid="swap-pool-select"
           value={selectedPool}
           onChange={(e) => setSelectedPool(e.target.value)}
           className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
@@ -301,6 +302,7 @@ export function SwapForm({
             {filteredVaultOptions.length > 0 && (
               <label className="flex items-center gap-1 text-xs text-gray-400 cursor-pointer">
                 <input
+                  data-testid="swap-deposit-vault-toggle"
                   type="checkbox"
                   checked={useTokenInVault}
                   onChange={(e) => setUseTokenInVault(e.target.checked)}
@@ -314,12 +316,14 @@ export function SwapForm({
         
         {!useEthIn && (
           <select
+            data-testid="swap-token-in-select"
             value={tokenIn}
             onChange={(e) => setTokenIn(e.target.value as TokenOption['value'] | '')}
             className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white mb-2"
           >
             <option value="">Select token...</option>
-            {tokenOptions.filter(t => t.type !== 'vault').map((token) => (
+            {/* Include vault share tokens — required for deposit/withdraw routes */}
+            {tokenOptions.map((token) => (
               <option key={token.value} value={token.value}>
                 {token.label}
               </option>
@@ -329,6 +333,7 @@ export function SwapForm({
         
         {useTokenInVault && filteredVaultOptions.length > 0 && (
           <select
+            data-testid="swap-vault-in-select"
             value={selectedVaultIn}
             onChange={(e) => setSelectedVaultIn(e.target.value)}
             className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white mb-2"
@@ -344,6 +349,7 @@ export function SwapForm({
         
         <div className="flex gap-2">
           <input
+            data-testid="swap-amount-in"
             type="number"
             placeholder="0.0"
             value={amountIn}
@@ -403,6 +409,7 @@ export function SwapForm({
             {filteredVaultOptions.length > 0 && (
               <label className="flex items-center gap-1 text-xs text-gray-400 cursor-pointer">
                 <input
+                  data-testid="swap-withdraw-vault-toggle"
                   type="checkbox"
                   checked={useTokenOutVault}
                   onChange={(e) => setUseTokenOutVault(e.target.checked)}
@@ -416,12 +423,13 @@ export function SwapForm({
         
         {!useEthOut && (
           <select
+            data-testid="swap-token-out-select"
             value={tokenOut}
             onChange={(e) => setTokenOut(e.target.value as TokenOption['value'] | '')}
             className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white mb-2"
           >
             <option value="">Select token...</option>
-            {tokenOptions.filter(t => t.type !== 'vault').map((token) => (
+            {tokenOptions.map((token) => (
               <option key={token.value} value={token.value}>
                 {token.label}
               </option>
@@ -431,6 +439,7 @@ export function SwapForm({
         
         {useTokenOutVault && filteredVaultOptions.length > 0 && (
           <select
+            data-testid="swap-vault-out-select"
             value={selectedVaultOut}
             onChange={(e) => setSelectedVaultOut(e.target.value)}
             className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white mb-2"
@@ -446,6 +455,7 @@ export function SwapForm({
         
         <div className="flex gap-2">
           <input
+            data-testid="swap-amount-out"
             type="number"
             placeholder="0.0"
             value={amountOut}
@@ -479,7 +489,7 @@ export function SwapForm({
 
       {/* Route Info */}
       {routePattern && (
-        <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+        <div data-testid="swap-route-pattern" className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600">
           <div className="text-sm text-gray-300">
             <span className="font-medium">Route:</span> {routePattern}
           </div>
@@ -504,6 +514,7 @@ export function SwapForm({
             {needsTokenApproval && (
               <div>
                 <button
+                  data-testid="swap-approve-permit2"
                   onClick={handleIssuePermit2Approval}
                   disabled={approvalState === 'approving'}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
@@ -539,6 +550,7 @@ export function SwapForm({
             {needsPermit2Approval && (
               <div>
                 <button
+                  data-testid="swap-approve-router"
                   onClick={handleIssueRouterApproval}
                   disabled={approvalState === 'approving'}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
@@ -577,6 +589,7 @@ export function SwapForm({
       <div className="space-y-3">
         {/* Preview Button */}
         <button
+          data-testid="swap-preview"
           onClick={handlePreview}
           disabled={!ready || previewPending}
           className="w-full px-4 py-3 bg-slate-600 text-white rounded-lg font-medium hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -617,6 +630,7 @@ export function SwapForm({
 
         {/* Swap Button */}
         <button
+          data-testid="swap-submit"
           onClick={handleSwap}
           disabled={!ready || swapPending || (approvalMode === 'explicit' && approvalState !== 'success' && !needsTokenApproval && !needsPermit2Approval)}
           className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"

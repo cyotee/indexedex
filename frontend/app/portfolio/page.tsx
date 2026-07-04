@@ -929,11 +929,18 @@ export default function PortfolioPage() {
 
   if (!isConnected) {
     return (
-      <div className="container mx-auto px-4">
-        <div className="text-center pt-10 pb-6">
-          <h1 className="text-3xl font-bold text-white">Portfolio</h1>
-          <p className="text-gray-300 mt-2">Connect your wallet to view your vault tokens and bond NFTs.</p>
-        </div>
+      <div className="max-w-3xl mx-auto text-center pt-10 pb-6">
+        <h1 className="text-3xl font-semibold text-[var(--text-primary,#EDEDED)]">Portfolio</h1>
+        <p className="text-[var(--text-muted,#9aa3b2)] mt-2">
+          Connect your wallet to view vault tokens and bond NFTs.
+        </p>
+        <p className="text-sm text-[var(--text-muted,#9aa3b2)] mt-4">
+          No positions yet. The index is empty — you can fix that on{' '}
+          <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
+            Earn
+          </a>
+          .
+        </p>
       </div>
     )
   }
@@ -950,25 +957,30 @@ export default function PortfolioPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl">
-      <div className="flex items-center justify-between py-8">
+    <div className="max-w-6xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 py-4 mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Portfolio</h1>
-          <p className="text-gray-300 mt-2">Vault share tokens + Seigniorage and Protocol DETF bond NFTs.</p>
+          <h1 className="text-3xl font-semibold text-[var(--text-primary,#EDEDED)]">Portfolio</h1>
+          <p className="text-[var(--text-muted,#9aa3b2)] mt-2">
+            Vault shares and DETF bond NFTs.{' '}
+            <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
+              Browse Earn
+            </a>
+          </p>
         </div>
         <button
           onClick={refresh}
           disabled={!address || !publicClient || isLoading}
-          className="px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+          className="px-4 py-2 rounded-lg bg-[var(--accent,#4FD44B)] text-black font-medium hover:brightness-110 disabled:opacity-50"
         >
           {isLoading ? 'Refreshing…' : 'Refresh'}
         </button>
       </div>
 
       {/* Vault share tokens */}
-      <div className="mb-8 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-        <h2 className="text-xl font-semibold text-white">Strategy Vault Shares</h2>
-        <p className="text-sm text-gray-300 mt-1">Non-zero balances from the chain tokenlist.</p>
+      <div className="mb-8 p-5 rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]">
+        <h2 className="text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Strategy Vault Shares</h2>
+        <p className="text-sm text-[var(--text-muted,#9aa3b2)] mt-1">Non-zero balances from the chain tokenlist. Manage via Earn detail.</p>
 
         {strategyVaultBalances.length === 0 ? (
           <div className="text-gray-400 mt-4 text-sm">No strategy vault share balances found.</div>
@@ -980,6 +992,7 @@ export default function PortfolioPage() {
                   <th className="py-2">Token</th>
                   <th className="py-2">Address</th>
                   <th className="py-2">Balance</th>
+                  <th className="py-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -991,6 +1004,14 @@ export default function PortfolioPage() {
                     </td>
                     <td className="py-2 text-green-300">
                       {formatUnits(row.balance, row.token.decimals)} {row.token.symbol}
+                    </td>
+                    <td className="py-2">
+                      <a
+                        href={`/earn/${row.token.address}`}
+                        className="text-sm text-[var(--accent,#4FD44B)] hover:underline"
+                      >
+                        Manage
+                      </a>
                     </td>
                   </tr>
                 ))}

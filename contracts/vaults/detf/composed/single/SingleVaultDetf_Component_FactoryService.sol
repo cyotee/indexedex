@@ -55,7 +55,7 @@ library SingleVaultDetf_Component_FactoryService {
         address localRelayer;
         address peerRelayer;
         IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
-        IDetfSelfNftInventoryDFPkg protocolNFTVaultPkg;
+        IDetfSelfNftInventoryDFPkg detfNFTVaultPkg;
         IRICHIRDFPkg richirPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;
@@ -91,7 +91,7 @@ library SingleVaultDetf_Component_FactoryService {
             localRelayer: infra_.localRelayer,
             peerRelayer: infra_.peerRelayer,
             wethRichVaultPkg: infra_.wethRichVaultPkg,
-            protocolNFTVaultPkg: infra_.protocolNFTVaultPkg,
+            detfNFTVaultPkg: infra_.detfNFTVaultPkg,
             richirPkg: infra_.richirPkg,
             rateProviderPkg: infra_.rateProviderPkg,
             diamondFactory: infra_.diamondFactory

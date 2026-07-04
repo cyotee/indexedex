@@ -26,7 +26,7 @@ ignored_error_codes = [
 # block_gas_limit = "9223372036854775807"
 # evm_version = 'prague'
 solc = "0.8.35"
-ignored_warnings_from = ["lib/daosys/lib/crane/"]
+ignored_warnings_from = ["lib/crane/"]
 # Print the sizes of the compiled contracts
 sizes = true
 # Enables or disables the optimizer
@@ -90,15 +90,15 @@ exclude_lints = [
     "named-struct-fields"
 ]
 ignore = [
-    "lib/daosys/lib/crane/",
+    "lib/crane/",
     "contracts/vaults/basic/BasicVaultErrors.sol",
     "contracts/vaults/seigniorage/nft/SeigniorageBondNFTFacet.sol",
     "test/foundry/fork/sepolia/protocol/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol",
-    "lib/daosys/lib/crane/test/foundry/fork/ethereum/protocols/staking/liquity/v2/gov/VotingPower.t.sol",
-    "lib/daosys/lib/crane/contracts/protocols/tokens/stable/frax/Common/Ownable.sol",
-    "lib/daosys/lib/crane/contracts/protocols/lending/aave/v3.6/dependencies/openzeppelin/contracts/AccessControl.sol",
-    "lib/daosys/lib/crane/contracts/protocols/tokens/stable/frax/Governance/AccessControl.sol",
-    "lib/daosys/lib/crane/test/foundry/spec/protocols/staking/liquity/v2/gov/BribeInitiativeAllocate.t.sol"
+    "lib/crane/test/foundry/fork/ethereum/protocols/staking/liquity/v2/gov/VotingPower.t.sol",
+    "lib/crane/contracts/protocols/tokens/stable/frax/Common/Ownable.sol",
+    "lib/crane/contracts/protocols/lending/aave/v3.6/dependencies/openzeppelin/contracts/AccessControl.sol",
+    "lib/crane/contracts/protocols/tokens/stable/frax/Governance/AccessControl.sol",
+    "lib/crane/test/foundry/spec/protocols/staking/liquity/v2/gov/BribeInitiativeAllocate.t.sol"
 ]
 
 [rpc_endpoints]

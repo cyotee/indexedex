@@ -33,6 +33,7 @@ const erc20ApproveAbi = [
 ] as const
 
 export default function StakingPageClient() {
+  // DETF workspace (mint / bond / sell). Primary discovery is /earn; this page remains for full flows.
   const chain = useChainResolution(CHAIN_ID_SEPOLIA)
   const publicClient = usePublicClient({ chainId: chain.dataChainId }) as PublicClient | undefined
   const { writeContractAsync, isPending: isWritePending } = useWriteContract()
@@ -50,15 +51,31 @@ export default function StakingPageClient() {
     permit2?: `0x${string}`
   }
 
+  // Single Vault DETF (composed/single CHIR) from tokenlists + platform.protocolDetf
+  // written by local_testing Scenario 3 (Script_12).
   const detfs = useMemo(() => getProtocolDetfsForChain(chain.dataChainId, chain.environment), [chain.dataChainId, chain.environment])
-  const detfOptions = useMemo(() => detfs.map((token) => ({ value: token.address, label: token.name || token.symbol })), [detfs])
-  const [selectedDetf, setSelectedDetf] = useState<Address | ''>(() => detfs[0]?.address ?? '')
+  const detfOptions = useMemo(
+    () =>
+      detfs.map((token) => ({
+        value: token.address,
+        label: token.display || token.name || token.symbol,
+      })),
+    [detfs],
+  )
+  const preferredDetf = useMemo((): Address | '' => {
+    const platformDetf = platform.protocolDetf
+    if (platformDetf && detfs.some((d) => d.address.toLowerCase() === platformDetf.toLowerCase())) {
+      return platformDetf as Address
+    }
+    return detfs[0]?.address ?? ''
+  }, [detfs, platform.protocolDetf])
+  const [selectedDetf, setSelectedDetf] = useState<Address | ''>(() => preferredDetf)
   const [status, setStatus] = useState('')
 
   useEffect(() => {
-    setSelectedDetf(detfs[0]?.address ?? '')
+    setSelectedDetf(preferredDetf)
     setStatus('')
-  }, [chain.dataChainId, chain.environment, detfs])
+  }, [chain.dataChainId, chain.environment, preferredDetf])
 
   useEffect(() => {
     if (detfs.length === 0) {
@@ -71,9 +88,9 @@ export default function StakingPageClient() {
         return current
       }
 
-      return detfs[0]?.address ?? ''
+      return preferredDetf
     })
-  }, [detfs])
+  }, [detfs, preferredDetf])
 
   const detfAddress = selectedDetf ? (selectedDetf as `0x${string}`) : undefined
   const stakingReads = useStakingContractReads({
@@ -178,9 +195,19 @@ export default function StakingPageClient() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 text-gray-100 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold">Staking</h1>
+      <div className="mb-4 rounded-lg border border-[var(--border-accent,rgba(79,212,75,0.35))] bg-[var(--accent-muted,#1A3721)] px-3 py-2 text-sm">
+        Looking for the product catalog?{' '}
+        <a href="/earn?type=detf" className="text-[var(--accent,#4FD44B)] hover:underline">
+          Browse Earn
+        </a>
+        . This page is the full DETF mint / bond / sell workspace.
+      </div>
+      <h1 className="text-2xl font-semibold">DETF workspace</h1>
       <p className="mt-2 text-sm text-gray-300">
-        Protocol DETF (CHIR): bond with WETH or RICH to mint NFT positions, mint CHIR through the Standard Exchange Router, or burn CHIR back through the same router path.
+        Single Vault DETF (CHIR): bond with WETH or RICH to mint NFT positions, mint CHIR through the Standard Exchange
+        Router, or burn CHIR back through the same router path. Local deploys use{' '}
+        <code className="text-gray-100">local_testing.sh scenario3</code> (Script_12) and feed this page via the
+        protocol-detfs token list and chain platform.json.
       </p>
 
       <WalletStatusBanner
@@ -195,7 +222,19 @@ export default function StakingPageClient() {
 
       {detfOptions.length === 0 ? (
         <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800 p-4">
-          <p className="text-sm text-gray-200">No Protocol DETF found for this chain. Run Stage 16 and then re-export tokenlists.</p>
+          <p className="text-sm text-gray-200">
+            No Single Vault DETF (CHIR) found for this chain. Deploy local Scenario 3, then rebuild token lists:
+          </p>
+          <pre className="mt-3 overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-300">
+{`DEV_ADDRESS=<anvil-account> bash scripts/shell/local_testing.sh foundation
+DEV_ADDRESS=<anvil-account> bash scripts/shell/local_testing.sh scenario3`}
+          </pre>
+          <p className="mt-3 text-xs text-gray-400">
+            Scenario 3 writes <code className="text-gray-300">protocolDetf</code> into{' '}
+            <code className="text-gray-300">12_scenario_3.json</code> and a{' '}
+            <code className="text-gray-300">vaults/protocolDetf</code> fragment. The shell wrapper synthesizes
+            chain platform.json and runs the tokenlist aggregator so Staking can discover CHIR.
+          </p>
         </div>
       ) : (
         <div className="mt-6 space-y-4">

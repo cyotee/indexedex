@@ -64,7 +64,7 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
         funcs_[11] = IRICHIR.redemptionRate.selector;
         funcs_[12] = IRICHIR.protocolDETF.selector;
         funcs_[13] = IRICHIR.setProtocolDETF.selector;
-        funcs_[14] = IRICHIR.protocolNFTId.selector;
+        funcs_[14] = IRICHIR.detfNFTId.selector;
         funcs_[15] = IRICHIR.wethToken.selector;
         funcs_[16] = IRICHIR.convertToShares.selector;
         funcs_[17] = IRICHIR.convertToRichir.selector;
@@ -108,7 +108,7 @@ contract RICHIRFacet is RICHIRTarget, IFacet {
         functions[11] = IRICHIR.redemptionRate.selector;
         functions[12] = IRICHIR.protocolDETF.selector;
         functions[13] = IRICHIR.setProtocolDETF.selector;
-        functions[14] = IRICHIR.protocolNFTId.selector;
+        functions[14] = IRICHIR.detfNFTId.selector;
         functions[15] = IRICHIR.wethToken.selector;
         functions[16] = IRICHIR.convertToShares.selector;
         functions[17] = IRICHIR.convertToRichir.selector;

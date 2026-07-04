@@ -17,7 +17,7 @@ library MyFeatureRepo {
         mapping(address => UInt256Set) userTokenIds;
     }
 
-    function _layout() internal pure returns (Storage storage s) {
+    function _layoutStruct() internal pure returns (Storage storage s) {
         bytes32 slot = STORAGE_SLOT;
         assembly { s.slot := slot }
     }
@@ -31,23 +31,23 @@ library MyFeatureRepo {
     using AddressSetRepo for AddressSet;
 
     function _addAllowed(address addr) internal returns (bool) {
-        return _layout().allowedAddresses._add(addr);
+        return _layoutStruct().allowedAddresses._add(addr);
     }
 
     function _removeAllowed(address addr) internal returns (bool) {
-        return _layout().allowedAddresses._remove(addr);
+        return _layoutStruct().allowedAddresses._remove(addr);
     }
 
     function _isAllowed(address addr) internal view returns (bool) {
-        return _layout().allowedAddresses._contains(addr);
+        return _layoutStruct().allowedAddresses._contains(addr);
     }
 
     function _getAllowed() internal view returns (address[] memory) {
-        return _layout().allowedAddresses._asArray();
+        return _layoutStruct().allowedAddresses._asArray();
     }
 
     function _getAllowedCount() internal view returns (uint256) {
-        return _layout().allowedAddresses._length();
+        return _layoutStruct().allowedAddresses._length();
     }
 }
 ```
@@ -66,7 +66,7 @@ contract MyFacet {
         bool hasMore
     ) {
         return AddressSetRepo._getPage(
-            MyFeatureRepo._layout().allowedAddresses,
+            MyFeatureRepo._layoutStruct().allowedAddresses,
             pageIndex,
             pageSize
         );
@@ -333,7 +333,7 @@ uint256 constant SECONDS_PER_YEAR = 31536000;
 
 ```solidity
 function test_setOperations() public {
-    AddressSet storage set = MyRepo._layout().addresses;
+    AddressSet storage set = MyRepo._layoutStruct().addresses;
 
     // Add and verify
     set._add(alice);

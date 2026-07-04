@@ -28,15 +28,15 @@ contract SingleVaultDetfInfoFacet is SingleVaultDetfInfoTarget, IFacet {
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
         funcs_ = new bytes4[](17);
-        funcs_[0] = IProtocolDETF.chirToken.selector;
+        funcs_[0] = IProtocolDETF.detfToken.selector;
         funcs_[1] = IProtocolDETF.richToken.selector;
         funcs_[2] = IProtocolDETF.richirToken.selector;
         funcs_[3] = IProtocolDETF.wethToken.selector;
-        funcs_[4] = IProtocolDETF.protocolNFTVault.selector;
+        funcs_[4] = IProtocolDETF.detfNFTVault.selector;
         funcs_[5] = IProtocolDETF.chirWethVault.selector;
         funcs_[6] = IProtocolDETF.richChirVault.selector;
         funcs_[7] = IProtocolDETF.reservePool.selector;
-        funcs_[8] = IProtocolDETF.protocolNFTId.selector;
+        funcs_[8] = IProtocolDETF.detfNFTId.selector;
         funcs_[9] = IProtocolDETF.syntheticPrice.selector;
         funcs_[10] = IProtocolDETF.mintThreshold.selector;
         funcs_[11] = IProtocolDETF.burnThreshold.selector;
@@ -57,15 +57,15 @@ contract SingleVaultDetfInfoFacet is SingleVaultDetfInfoTarget, IFacet {
         interfaces_[0] = type(IProtocolDETF).interfaceId;
         interfaces_[1] = type(ISingleVaultDetf).interfaceId;
         functions_ = new bytes4[](17);
-        functions_[0] = IProtocolDETF.chirToken.selector;
+        functions_[0] = IProtocolDETF.detfToken.selector;
         functions_[1] = IProtocolDETF.richToken.selector;
         functions_[2] = IProtocolDETF.richirToken.selector;
         functions_[3] = IProtocolDETF.wethToken.selector;
-        functions_[4] = IProtocolDETF.protocolNFTVault.selector;
+        functions_[4] = IProtocolDETF.detfNFTVault.selector;
         functions_[5] = IProtocolDETF.chirWethVault.selector;
         functions_[6] = IProtocolDETF.richChirVault.selector;
         functions_[7] = IProtocolDETF.reservePool.selector;
-        functions_[8] = IProtocolDETF.protocolNFTId.selector;
+        functions_[8] = IProtocolDETF.detfNFTId.selector;
         functions_[9] = IProtocolDETF.syntheticPrice.selector;
         functions_[10] = IProtocolDETF.mintThreshold.selector;
         functions_[11] = IProtocolDETF.burnThreshold.selector;

@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
-import {BaseTest} from "lib/daosys/lib/crane/test/foundry/spec/protocols/lending/aave/3.6/extensions/stata-token/TestBase.sol";
+import {BaseTest} from "lib/crane/test/foundry/spec/protocols/lending/aave/3.6/extensions/stata-token/TestBase.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 

@@ -57,7 +57,7 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[11] = IRICHIR.redemptionRate.selector;
         controlFuncs[12] = IRICHIR.protocolDETF.selector;
         controlFuncs[13] = IRICHIR.setProtocolDETF.selector;
-        controlFuncs[14] = IRICHIR.protocolNFTId.selector;
+        controlFuncs[14] = IRICHIR.detfNFTId.selector;
         controlFuncs[15] = IRICHIR.wethToken.selector;
         controlFuncs[16] = IRICHIR.convertToShares.selector;
         controlFuncs[17] = IRICHIR.convertToRichir.selector;

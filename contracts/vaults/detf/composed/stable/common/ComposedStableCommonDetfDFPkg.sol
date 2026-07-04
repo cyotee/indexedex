@@ -14,7 +14,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IBasicVault} from 'contracts/interfaces/IBasicVault.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
@@ -43,7 +43,7 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
 
     struct PkgArgs {
         IWeightedPool reservePool;
-        IProtocolNFTVault bondNftVault;
+        IDETFNFTVault bondNftVault;
         IRICHIR rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;

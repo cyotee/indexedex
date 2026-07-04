@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeProxy} from 'contracts/interfaces/proxies/IStandardExchangeProxy.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -58,13 +58,13 @@ contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, I
         uint256 reservePoolBptOut_,
         uint256 protocolDetfOut_
     ) internal {
-        IProtocolNFTVault bondNftVault = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_);
+        IDETFNFTVault bondNftVault = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_);
         if (address(bondNftVault) == address(0)) {
             revert ExchangeInNotAvailable();
         }
 
         if (reservePoolBptOut_ > 0) {
-            bondNftVault.addToProtocolNFT(bondNftVault.protocolNFTId(), reservePoolBptOut_);
+            bondNftVault.addToDETFNFT(bondNftVault.detfNFTId(), reservePoolBptOut_);
         }
 
         if (protocolDetfOut_ > 0) {

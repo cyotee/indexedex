@@ -66,7 +66,7 @@ Commands:
   assets          Run stage 06 foundation assets
   scenario1       Run the Scenario 1 overlay on top of the current foundation
   scenario2       Run the Scenario 2 overlay on top of Scenario 1 outputs
-  scenario3       Run the Scenario 3 overlay for Single Vault DETF bring-up
+  scenario3       Run Scenario 3: Single Vault DETF (composed/single CHIR) + outer pool
   stage01         Run only Script_01_DeployCraneFoundation
   stage02         Run only Script_02_DeployIndexedexCore
   stage03         Run only Script_03_DeployBaseProtocols
@@ -399,7 +399,9 @@ case "$COMMAND" in
     ;;
 esac
 
-run_aggregator
+# Platform first so chain/<id>/platform.json exists before the aggregator
+# regenerates chainPlatformOverrides.generated.ts (imports platform.json).
 synthesize_platform
+run_aggregator
 
 log_info "Local testing command complete"

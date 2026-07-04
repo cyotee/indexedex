@@ -20,7 +20,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {ProtocolNFTVaultDFPkg, IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {RICHIRDFPkg, IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {
@@ -33,20 +33,20 @@ library DetfPkgFactoryService {
 
     Vm constant vm = Vm(VM_ADDRESS);
 
-    function deployProtocolNFTVaultDFPkg(
+    function deployDETFNFTVaultDFPkg(
         IVaultRegistryDeployment vaultRegistry,
-        IProtocolNFTVaultDFPkg.PkgInit memory pkgInit
+        IDETFNFTVaultDFPkg.PkgInit memory pkgInit
     ) internal returns (IDetfSelfNftInventoryDFPkg instance) {
         instance = IDetfSelfNftInventoryDFPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(ProtocolNFTVaultDFPkg).creationCode,
+                    type(DETFNFTVaultDFPkg).creationCode,
                     abi.encode(pkgInit),
-                    abi.encode(type(ProtocolNFTVaultDFPkg).name)._hash()
+                    abi.encode(type(DETFNFTVaultDFPkg).name)._hash()
                 )
             )
         );
-        vm.label(address(instance), type(ProtocolNFTVaultDFPkg).name);
+        vm.label(address(instance), type(DETFNFTVaultDFPkg).name);
     }
 
     function deployRebasingDETFTokenDFPkg(

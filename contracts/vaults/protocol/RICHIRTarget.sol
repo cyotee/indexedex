@@ -20,7 +20,7 @@ import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiSt
 
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {RICHIRRepo} from "contracts/vaults/protocol/RICHIRRepo.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -133,8 +133,8 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     /**
      * @inheritdoc IRICHIR
      */
-    function protocolNFTId() external view returns (uint256) {
-        return RICHIRRepo._layoutStruct().protocolNFTId;
+    function detfNFTId() external view returns (uint256) {
+        return RICHIRRepo._layoutStruct().detfNFTId;
     }
 
     /**
@@ -533,7 +533,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         }
 
         // Get protocol-owned NFT position
-        IProtocolNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.protocolNFTId);
+        IDETFNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.detfNFTId);
         if (position.originalShares == 0) {
             return ONE_WAD;
         }

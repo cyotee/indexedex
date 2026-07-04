@@ -17,7 +17,7 @@ import {
 /**
  * @title VaultFeeOracle_BondTermsFallback_Test
  * @notice US-IDXEX-040.1: Tests documenting the Vault Fee Oracle's 3-level bond terms fallback hierarchy.
- * @notice US-IDXEX-040.2: Tests proving ProtocolNFTVaultTarget always delegates to the oracle.
+ * @notice US-IDXEX-040.2: Tests proving DETFNFTVaultTarget always delegates to the oracle.
  *
  * @dev The fee oracle resolves bond terms via a sentinel-based fallback chain:
  *
@@ -405,7 +405,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
         assertEq(after_.maxBonusPercentage, 3e17);
     }
 
-    /// @notice ProtocolNFTVaultCommon._bondTerms() has different hardcoded values than the oracle.
+    /// @notice DETFNFTVaultCommon._bondTerms() has different hardcoded values than the oracle.
     /// @dev If the vault ever used the base class fallback instead of the oracle, the values
     ///      would be: minLock=7d, maxLock=365d, minBonus=0, maxBonus=1e18 (100%).
     ///      This test documents that bondTermsOfVault returns oracle values (30d, 180d, 5%, 10%),
@@ -419,7 +419,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
         assertEq(terms.minBonusPercentage, 5e16, "Should be oracle's 5%, not base class 0");
         assertEq(terms.maxBonusPercentage, 1e17, "Should be oracle's 10%, not base class 100% (1e18)");
 
-        // Verify these are NOT the ProtocolNFTVaultCommon base class values:
+        // Verify these are NOT the DETFNFTVaultCommon base class values:
         assertTrue(terms.minLockDuration != 7 days, "Must differ from base class minLock");
         assertTrue(terms.maxLockDuration != 365 days, "Must differ from base class maxLock");
         assertTrue(terms.maxBonusPercentage != 1e18, "Must differ from base class maxBonus (100%)");

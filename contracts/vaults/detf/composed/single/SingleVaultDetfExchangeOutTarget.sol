@@ -47,7 +47,7 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
             return actualIn;
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
@@ -56,7 +56,7 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
             uint256 vaultSharesNeeded =
                 layoutStruct.wethRichVault.previewExchangeOut(IERC20(address(layoutStruct.wethRichVault)), layoutStruct.wethToken, amountOut);
             uint256 bptIn = _previewBptInForProportionalVaultTokenOut(layoutStruct, vaultSharesNeeded);
-            amountIn_ = _previewChirRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
+            amountIn_ = _previewDetfRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
 
             if (amountIn_ > maxAmountIn) {
                 revert SlippageExceeded(maxAmountIn, amountIn_);
@@ -64,8 +64,8 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
 
             ERC20Repo._burn(pretransferred ? address(this) : msg.sender, amountIn_);
 
-            (uint256 chirAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, bptIn);
-            _redepositChirToReservePool(layoutStruct, chirAmountOut);
+            (uint256 detfAmountOut, uint256 vaultSharesOut) = _exitReservePoolProportionalForBridge(layoutStruct, bptIn);
+            _redepositDetfToReservePool(layoutStruct, detfAmountOut);
             uint256 wethOut = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, address(this), deadline);
 
             if (wethOut < amountOut) {

@@ -59,7 +59,7 @@ import {
 } from "contracts/vaults/protocol/BaseProtocolDETF_Component_FactoryService.sol";
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
 import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
@@ -102,7 +102,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     IFacet private singleVaultDetfInfoFacet;
     IFacet private singleVaultDetfExchangeOutFacet;
     IFacet private singleVaultDetfBondingFacet;
-    IFacet private protocolNFTVaultFacet;
+    IFacet private detfNFTVaultFacet;
     IFacet private richirFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
     IFacet private uniswapV4StandardExchangeInQueryFacet;
@@ -110,7 +110,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     IFacet private uniswapV4StandardExchangeOutFacet;
     IFacet private erc721Facet;
 
-    IProtocolNFTVaultDFPkg private protocolNFTVaultPkg;
+    IDETFNFTVaultDFPkg private detfNFTVaultPkg;
     IRICHIRDFPkg private richirPkg;
     IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
     ISingleVaultDetfDFPkg private protocolDetfPkg;
@@ -195,7 +195,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
-        protocolNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployProtocolNFTVaultFacet(create3Factory);
+        detfNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployDETFNFTVaultFacet(create3Factory);
         richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
@@ -247,13 +247,13 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     }
 
     function _deployPkgs() internal {
-        protocolNFTVaultPkg = BaseProtocolDETF_Pkg_FactoryService.deployProtocolNFTVaultDFPkg(
+        detfNFTVaultPkg = BaseProtocolDETF_Pkg_FactoryService.deployDETFNFTVaultDFPkg(
             vaultRegistry,
-            BaseProtocolDETF_Component_FactoryService.buildProtocolNFTVaultPkgInit(
+            BaseProtocolDETF_Component_FactoryService.buildDETFNFTVaultPkgInit(
                 erc721Facet,
                 erc4626BasicVaultFacet,
                 erc4626StandardVaultFacet,
-                protocolNFTVaultFacet,
+                detfNFTVaultFacet,
                 feeOracle,
                 vaultRegistry
             )
@@ -320,7 +320,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
                     localRelayer: bridgeConfig_.localRelayer,
                     peerRelayer: bridgeConfig_.peerRelayer,
                     wethRichVaultPkg: wethRichVaultPkg,
-                    protocolNFTVaultPkg: protocolNFTVaultPkg,
+                    detfNFTVaultPkg: detfNFTVaultPkg,
                     richirPkg: richirPkg,
                     rateProviderPkg: rateProviderPkg,
                     diamondFactory: diamondPackageFactory
@@ -346,7 +346,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         );
 
         IProtocolDETF detf = IProtocolDETF(protocolDetf);
-        protocolNftVault = address(detf.protocolNFTVault());
+        protocolNftVault = address(detf.detfNFTVault());
         richirToken = address(detf.richirToken());
         reservePool = detf.reservePool();
         chirWethVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
@@ -395,7 +395,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         json = vm.serializeAddress("", "demoWeth", demoWeth);
         json = vm.serializeAddress("", "richToken", richToken);
         json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
-        json = vm.serializeAddress("", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
+        json = vm.serializeAddress("", "detfNFTVaultPkg", address(detfNFTVaultPkg));
         json = vm.serializeAddress("", "richirPkg", address(richirPkg));
         json = vm.serializeAddress("", "wethRichVaultPkg", address(wethRichVaultPkg));
         json = vm.serializeAddress("", "poolManager", address(poolManager));

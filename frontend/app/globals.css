@@ -57,32 +57,59 @@
   --t-selectedBg: #1A3721;
   --t-textSubtle: #E9FAC8;
   --t-error: #E6386A;
+
+  /* Semantic redesign tokens */
+  --surface-0: #0a0a0a;
+  --surface-1: #14171f;
+  --surface-2: #1c2030;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(79, 212, 75, 0.45);
+  --text-primary: #EDEDED;
+  --text-muted: #9aa3b2;
+  --accent: #4FD44B;
+  --accent-muted: #1A3721;
+  --danger: #E6386A;
 }
 
-/* Theme: Current (preserve today's look; rely on Tailwind defaults for scales) */
+/* Theme: IndexedEx — dark blue brand (same layout as Pachira) */
+[data-theme="indexedex"],
+/* Legacy alias: older localStorage value `current` */
 [data-theme="current"] {
-  --t-background: #0a0a0a;
-  --t-foreground: #ededed;
-  /* Use Tailwind defaults for the rest by matching typical dark defaults */
-  --t-gray-900: #0a0a0a;
-  --t-gray-800: #1f2937;
-  --t-gray-700: #374151;
-  --t-gray-600: #4b5563;
-  --t-gray-500: #6b7280;
-  --t-gray-400: #9ca3af;
-  --t-gray-300: #d1d5db;
-  --t-slate-700: #334155;
-  --t-slate-600: #475569;
-  --t-blue-600: #2563eb;
-  --t-yellow-600: #ca8a04;
-  --t-orange-600: #ea580c;
-  --t-green-600: #16a34a;
-  --t-green-300: #86efac;
-  --t-primary: #0a0a0a;
-  --t-primary-light: #1f2937;
-  --t-selectedBg: #0f172a;
-  --t-textSubtle: #d1d5db;
-  --t-error: #ef4444;
+  --t-background: #070b14;
+  --t-foreground: #e8eef8;
+  --t-gray-900: #070b14;
+  --t-gray-800: #0f1729;
+  --t-gray-700: #1a2744;
+  --t-gray-600: #243556;
+  --t-gray-500: #5b6b8c;
+  --t-gray-400: #8b9bb8;
+  --t-gray-300: #c5d0e6;
+  --t-slate-700: #1a2744;
+  --t-slate-600: #243556;
+  --t-blue-600: #3b82f6;
+  --t-blue-500: #60a5fa;
+  --t-blue-400: #93c5fd;
+  --t-blue-300: #bfdbfe;
+  --t-yellow-600: #fbbf24;
+  --t-orange-600: #fb923c;
+  --t-green-600: #38bdf8;
+  --t-green-300: #bae6fd;
+  --t-primary: #0a1222;
+  --t-primary-light: #152238;
+  --t-selectedBg: #0c2348;
+  --t-textSubtle: #93c5fd;
+  --t-error: #f87171;
+
+  --surface-0: #070b14;
+  --surface-1: #0f1729;
+  --surface-2: #152238;
+  --border-subtle: rgba(147, 197, 253, 0.12);
+  --border-accent: rgba(59, 130, 246, 0.55);
+  --text-primary: #e8eef8;
+  --text-muted: #8b9bb8;
+  --accent: #3b82f6;
+  --accent-muted: #0c2348;
+  --danger: #f87171;
 }
 
 body {
@@ -138,14 +165,68 @@ body {
   box-shadow: 0 0 0 1px rgba(79, 212, 75, 0.18) inset, 0 0 14px rgba(79, 212, 75, 0.12);
 }
 
-/* Green text tone for Pachira theme */
+/* Soft green accents for Pachira — keep body text readable (not full lime wash) */
 [data-theme="pachira"] {
-  --t-foreground: #E9FAC8;
+  --t-foreground: #EDEDED;
 }
 
-[data-theme="pachira"] .text-white { color: #E9FAC8 !important; }
-[data-theme="pachira"] .text-gray-300 { color: #B6FFC0 !important; }
-[data-theme="pachira"] .text-gray-400 { color: #A6F5B0 !important; }
-[data-theme="pachira"] .text-gray-200 { color: #CCFFD5 !important; }
-[data-theme="pachira"] .text-blue-300 { color: #86efac !important; }
-[data-theme="pachira"] .text-blue-600 { color: #22c55e !important; }
+[data-theme="pachira"] .text-blue-300 { color: #86efac; }
+[data-theme="pachira"] .text-blue-600 { color: #22c55e; }
+[data-theme="pachira"] .text-green-300 { color: #86efac; }
+
+/* IndexedEx: map common green utility classes used in Header/nav to blue */
+[data-theme="indexedex"] .text-green-300,
+[data-theme="current"] .text-green-300 {
+  color: #93c5fd !important;
+}
+[data-theme="indexedex"] .text-green-600,
+[data-theme="current"] .text-green-600 {
+  color: #3b82f6 !important;
+}
+[data-theme="indexedex"] .bg-green-600,
+[data-theme="current"] .bg-green-600 {
+  background-color: #2563eb !important;
+}
+[data-theme="indexedex"] .hover\:bg-green-700:hover,
+[data-theme="current"] .hover\:bg-green-700:hover {
+  background-color: #1d4ed8 !important;
+}
+[data-theme="indexedex"] .border.border-gray-700,
+[data-theme="indexedex"] .border.border-gray-600,
+[data-theme="current"] .border.border-gray-700,
+[data-theme="current"] .border.border-gray-600 {
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.12) inset, 0 0 12px rgba(37, 99, 235, 0.1);
+}
+[data-theme="indexedex"] .text-blue-300,
+[data-theme="current"] .text-blue-300 {
+  color: #93c5fd;
+}
+[data-theme="indexedex"] .text-blue-600,
+[data-theme="current"] .text-blue-600 {
+  color: #3b82f6;
+}
+
+/* Subtle blue wash (no green wave asset) */
+[data-theme="indexedex"] body::after,
+[data-theme="current"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(59, 130, 246, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(37, 99, 235, 0.08), transparent 50%);
+  opacity: 1;
+}
+
+/* IndexedEx uses a dedicated logo asset; no hue-shift needed.
+   Keep a light filter off so PNG/JPG marks render cleanly. */
+[data-theme="indexedex"] .brand-logo,
+[data-theme="current"] .brand-logo {
+  filter: none;
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}

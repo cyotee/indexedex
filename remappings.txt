@@ -1,4 +1,4 @@
-forge-std/=lib/daosys/lib/crane/lib/forge-std/src/
+forge-std/=lib/crane/lib/forge-std/src/
 
 @crane/=lib/crane/
 contracts/solady/=lib/crane/contracts/external/solady/

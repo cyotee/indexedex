@@ -109,54 +109,54 @@ library MyFeatureRepo {
 
     /* ------ Layout Functions ------ */
 
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
-        assembly { layout_.slot := slot_ }
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct) {
+        assembly { layoutStruct.slot := slot_ }
     }
 
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
 
     /* ------ Initialization ------ */
 
-    function _initialize(Storage storage layout_, uint256 value_) internal {
-        layout_.value = value_;
+    function _initialize(Storage storage layoutStruct, uint256 value_) internal {
+        layoutStruct.value = value_;
     }
 
     function _initialize(uint256 value_) internal {
-        _initialize(_layout(), value_);
+        _initialize(_layoutStruct(), value_);
     }
 
     /* ------ Getters ------ */
 
-    function _getValue(Storage storage layout_) internal view returns (uint256) {
-        return layout_.value;
+    function _getValue(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.value;
     }
 
     function _getValue() internal view returns (uint256) {
-        return _getValue(_layout());
+        return _getValue(_layoutStruct());
     }
 
     /* ------ Setters ------ */
 
-    function _setValue(Storage storage layout_, uint256 value_) internal {
-        layout_.value = value_;
+    function _setValue(Storage storage layoutStruct, uint256 value_) internal {
+        layoutStruct.value = value_;
     }
 
     function _setValue(uint256 value_) internal {
-        _setValue(_layout(), value_);
+        _setValue(_layoutStruct(), value_);
     }
 
     /* ------ Guards ------ */
 
-    function _onlyOperator(Storage storage layout_) internal view {
-        if (!layout_.operators[msg.sender]) {
+    function _onlyOperator(Storage storage layoutStruct) internal view {
+        if (!layoutStruct.operators[msg.sender]) {
             revert IMyFeature.NotOperator(msg.sender);
         }
     }
 
     function _onlyOperator() internal view {
-        _onlyOperator(_layout());
+        _onlyOperator(_layoutStruct());
     }
 }
 ```

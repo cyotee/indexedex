@@ -69,7 +69,7 @@ import {
 	ISingleVaultDetfDFPkg
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 
@@ -116,7 +116,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private singleVaultDetfInfoFacet;
 	IFacet private singleVaultDetfExchangeOutFacet;
 	IFacet private singleVaultDetfBondingFacet;
-	IFacet private protocolNFTVaultFacet;
+	IFacet private detfNFTVaultFacet;
 	IFacet private richirFacet;
 	IFacet private uniswapV4StandardExchangeInFacet;
 	IFacet private uniswapV4StandardExchangeInQueryFacet;
@@ -125,7 +125,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	IFacet private erc721Facet;
 
 	IERC20PermitDFPkg private richTokenPkg;
-	IDetfSelfNftInventoryDFPkg private protocolNFTVaultPkg;
+	IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
 	IRICHIRDFPkg private richirPkg;
 	IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
 	ISingleVaultDetfDFPkg private protocolDetfPkg;
@@ -225,7 +225,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
 		singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
 
-		protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
+		detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
 		richirFacet = create3Factory.deployRICHIRFacet();
 		uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
 		uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
@@ -316,16 +316,16 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 	}
 
 	function _deployPkgs() internal {
-		IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
-			.buildProtocolNFTVaultPkgInit(
+		IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+			.buildDETFNFTVaultPkgInit(
 			erc721Facet,
 			erc4626BasicVaultFacet,
 			erc4626StandardVaultFacet,
-			protocolNFTVaultFacet,
+			detfNFTVaultFacet,
 			feeOracle,
 			vaultRegistry
 		);
-		protocolNFTVaultPkg = DetfPkgFactoryService.deployProtocolNFTVaultDFPkg(vaultRegistry, nftPkgInit);
+		detfNFTVaultPkg = DetfPkgFactoryService.deployDETFNFTVaultDFPkg(vaultRegistry, nftPkgInit);
 
 		IRICHIRDFPkg.PkgInit memory richirPkgInit = DetfComponentFactoryService.buildRICHIRPkgInit(
 			erc20Facet,
@@ -388,7 +388,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 				localRelayer: bridgeConfig_.localRelayer,
 				peerRelayer: bridgeConfig_.peerRelayer,
 				wethRichVaultPkg: wethRichVaultPkg,
-				protocolNFTVaultPkg: protocolNFTVaultPkg,
+				detfNFTVaultPkg: detfNFTVaultPkg,
 				richirPkg: richirPkg,
 				rateProviderPkg: rateProviderPkg,
 				diamondFactory: diamondPackageFactory
@@ -415,13 +415,13 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		vm.label(protocolDetf, "SingleVaultDetf(CHIR)");
 
 		IProtocolDETF detf = IProtocolDETF(protocolDetf);
-		protocolNftVault = address(detf.protocolNFTVault());
+		protocolNftVault = address(detf.detfNFTVault());
 		richirToken = address(detf.richirToken());
 		reservePool = detf.reservePool();
 		chirWethVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
 		richChirVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
 
-		vm.label(protocolNftVault, "ProtocolNFTVault");
+		vm.label(protocolNftVault, "DETFNFTVault");
 		vm.label(richirToken, "RICHIR");
 		vm.label(reservePool, "CHIR Reserve Pool");
 		vm.label(chirWethVault, "WETH/RICH Vault");
@@ -491,7 +491,7 @@ contract Script_16_DeployProtocolDETF is DeploymentBase {
 		json = vm.serializeAddress("", "richToken", richToken);
 		json = vm.serializeAddress("", "richTokenPkg", address(richTokenPkg));
 		json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
-		json = vm.serializeAddress("", "protocolNFTVaultPkg", address(protocolNFTVaultPkg));
+		json = vm.serializeAddress("", "detfNFTVaultPkg", address(detfNFTVaultPkg));
 		json = vm.serializeAddress("", "richirPkg", address(richirPkg));
 		json = vm.serializeAddress("", "wethRichVaultPkg", address(wethRichVaultPkg));
 		json = vm.serializeAddress("", "poolManager", address(poolManager));

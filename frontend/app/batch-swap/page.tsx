@@ -2117,6 +2117,7 @@ export default function BatchSwapPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Token In</label>
                 <select
+                  data-testid={`batch-path-${pathIndex}-token-in`}
                   value={path.tokenIn}
                   onChange={(e) => updatePath(path.id, { tokenIn: e.target.value })}
                   className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-2"
@@ -2149,6 +2150,7 @@ export default function BatchSwapPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">Exact Amount In</label>
                     <input
+                      data-testid={`batch-path-${pathIndex}-amount-in`}
                       type="number"
                       value={path.exactAmountIn || ''}
                       onChange={(e) => updatePath(path.id, { exactAmountIn: e.target.value })}
@@ -2318,6 +2320,7 @@ export default function BatchSwapPage() {
                     <div>
                       <label className="block text-xs font-medium text-gray-300 mb-1">Pool</label>
                       <select
+                        data-testid={`batch-path-${pathIndex}-step-${stepIndex}-pool`}
                         value={step.pool}
                         onChange={(e) => updateStep(path.id, step.id, { pool: e.target.value })}
                         className="w-full rounded border border-slate-600 bg-slate-700 text-white p-2 text-sm"
@@ -2332,6 +2335,7 @@ export default function BatchSwapPage() {
                     <div>
                       <label className="block text-xs font-medium text-gray-300 mb-1">Token Out</label>
                       <select
+                        data-testid={`batch-path-${pathIndex}-step-${stepIndex}-token-out`}
                         value={step.tokenOut}
                         onChange={(e) => updateStep(path.id, step.id, { tokenOut: e.target.value })}
                         className="w-full rounded border border-slate-600 bg-slate-700 text-white p-2 text-sm"
@@ -2514,6 +2518,7 @@ export default function BatchSwapPage() {
           
           {/* Execute Button */}
           <button
+            data-testid="batch-execute"
             onClick={executeBatchSwap}
             disabled={!isValid || needsApproval}
             className="px-8 py-3 bg-blue-600 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700"

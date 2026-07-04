@@ -11,7 +11,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardVaultPkg} from 'contracts/interfaces/IStandardVaultPkg.sol';
@@ -92,7 +92,7 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
         return ComposedStableCommonDetf_Component_FactoryService.buildPkgArgs(
             ComposedStableCommonDetf_Component_FactoryService.ComposedStableCommonDetfPricingConfig({
                 reservePool: reservePool_,
-                bondNftVault: IProtocolNFTVault(makeAddr('bondNftVault')),
+                bondNftVault: IDETFNFTVault(makeAddr('bondNftVault')),
                 rebasingDetfToken: IRICHIR(makeAddr('rebasingDetfToken')),
                 detfToken: IERC20(makeAddr('detfToken')),
                 stablePoolBpt: IERC20(makeAddr('stablePoolBpt')),
@@ -128,7 +128,7 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
         assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(vault), 'vault registered');
         assertTrue(IComposedStableCommonDetfBonding(vault).isAcceptedBondToken(IERC20(makeAddr('detfToken'))) == false, 'bonding facet deployed');
         assertEq(IDETF(vault).bondNftVault(), address(pkgArgs.bondNftVault), 'bond nft vault initialized');
-        assertEq(IDETF(vault).protocolNFTId(), 0, 'protocol nft id defaults to zero without initialized bond nft');
+        assertEq(IDETF(vault).detfNFTId(), 0, 'protocol nft id defaults to zero without initialized bond nft');
         assertEq(IDETF(vault).reservePool(), address(reservePool), 'reserve pool initialized');
         assertEq(IDETF(vault).rebasingDetfToken(), address(pkgArgs.rebasingDetfToken), 'rebasing token initialized');
     }

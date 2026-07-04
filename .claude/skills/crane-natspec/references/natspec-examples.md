@@ -134,37 +134,37 @@ library OperableRepo {
 
     /* ------ Layout Functions ------ */
 
-    // tag::_layout_parameterized[]
+    // tag::_layoutStruct_parameterized[]
     /// @notice Returns storage at a custom slot
     /// @param slot_ The storage slot
-    /// @return layout_ The storage struct reference
-    function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
-        assembly { layout_.slot := slot_ }
+    /// @return layoutStruct The storage struct reference
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct) {
+        assembly { layoutStruct.slot := slot_ }
     }
-    // end::_layout_parameterized[]
+    // end::_layoutStruct_parameterized[]
 
-    // tag::_layout_default[]
+    // tag::_layoutStruct_default[]
     /// @notice Returns storage at the default slot
     /// @return The storage struct reference
-    function _layout() internal pure returns (Storage storage) {
-        return _layout(STORAGE_SLOT);
+    function _layoutStruct() internal pure returns (Storage storage layoutStruct) {
+        return _layoutStruct(STORAGE_SLOT);
     }
-    // end::_layout_default[]
+    // end::_layoutStruct_default[]
 
     /* ------ Guard Functions ------ */
 
     // tag::_onlyOperator[]
     /// @notice Reverts if caller is not an operator
-    /// @param layout_ The storage struct
-    function _onlyOperator(Storage storage layout_) internal view {
-        if (!_isOperator(layout_, msg.sender) && !_isFunctionOperator(layout_, msg.sig, msg.sender)) {
+    /// @param layoutStruct The storage struct
+    function _onlyOperator(Storage storage layoutStruct) internal view {
+        if (!_isOperator(layoutStruct, msg.sender) && !_isFunctionOperator(layoutStruct, msg.sig, msg.sender)) {
             revert IOperable.NotOperator(msg.sender);
         }
     }
 
     /// @notice Reverts if caller is not an operator (default slot)
     function _onlyOperator() internal view {
-        _onlyOperator(_layout());
+        _onlyOperator(_layoutStruct());
     }
     // end::_onlyOperator[]
 }

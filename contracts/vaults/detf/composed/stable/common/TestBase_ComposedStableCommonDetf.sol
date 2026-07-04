@@ -9,7 +9,7 @@ import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
@@ -95,7 +95,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
     IComposedStableCommonDetfBondNFTVaultDFPkg internal bondNFTVaultPkg;
     IRebasingDETFTokenDFPkg internal rebasingDetfTokenPkg;
 
-    IProtocolNFTVault internal bondNFTVault;
+    IDETFNFTVault internal bondNFTVault;
     IRICHIR internal rebasingDetfToken;
 
     address internal detfOwner;
@@ -150,7 +150,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
         );
 
         vm.startPrank(owner);
-        bondNFTVault = IProtocolNFTVault(
+        bondNFTVault = IDETFNFTVault(
             bondNFTVaultPkg.deployVault(
                 'Composed Stable Bond NFT Vault',
                 'csBOND',
@@ -163,14 +163,14 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
         );
         vm.stopPrank();
 
-        assertEq(bondNFTVault.protocolNFTId(), 0, 'protocol nft initialized first at deploy');
+        assertEq(bondNFTVault.detfNFTId(), 0, 'protocol nft initialized first at deploy');
         assertEq(address(bondNFTVault.rewardToken()), address(detfToken), 'bond vault reward token initialized to detf');
         assertGt(IComposedStableCommonDetfBondNFTVault(address(bondNFTVault)).feeRecipientNFTId(), 0, 'fee recipient nft initialized at deploy');
 
         vm.startPrank(owner);
         rebasingDetfToken = IRICHIR(
             rebasingDetfTokenPkg.deployToken(
-                IDETF(address(protocolDETF)), bondNFTVault, IERC20(address(wethToken)), bondNFTVault.protocolNFTId(), owner
+                IDETF(address(protocolDETF)), bondNFTVault, IERC20(address(wethToken)), bondNFTVault.detfNFTId(), owner
             )
         );
         vm.stopPrank();

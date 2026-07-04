@@ -10,7 +10,7 @@ import {IERC5267} from '@crane/contracts/interfaces/IERC5267.sol';
 import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
@@ -57,18 +57,18 @@ contract RebasingDETFTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
     function test_deployToken_success() public {
         IERC20 weth = IERC20(makeAddr('weth'));
 
-        address tokenAddr = pkg.deployToken(IDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), weth, 7, owner);
+        address tokenAddr = pkg.deployToken(IDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), weth, 7, owner);
 
         assertGt(tokenAddr.code.length, 0, 'rebasing token proxy not deployed');
         assertEq(IRICHIR(tokenAddr).protocolDETF(), address(0xBEEF), 'detf mismatch');
-        assertEq(IRICHIR(tokenAddr).protocolNFTId(), 7, 'protocol nft id mismatch');
+        assertEq(IRICHIR(tokenAddr).detfNFTId(), 7, 'protocol nft id mismatch');
     }
 
     function test_deployToken_returnsExisting_onDuplicateSalt() public {
         IERC20 weth = IERC20(makeAddr('weth'));
 
-        address tokenAddr1 = pkg.deployToken(IDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), weth, 7, owner);
-        address tokenAddr2 = pkg.deployToken(IDETF(address(0xBEEF)), IProtocolNFTVault(address(0xCAFE)), weth, 7, owner);
+        address tokenAddr1 = pkg.deployToken(IDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), weth, 7, owner);
+        address tokenAddr2 = pkg.deployToken(IDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), weth, 7, owner);
 
         assertEq(tokenAddr2, tokenAddr1, 'expected existing deployment');
         assertGt(tokenAddr2.code.length, 0, 'rebasing token proxy missing');

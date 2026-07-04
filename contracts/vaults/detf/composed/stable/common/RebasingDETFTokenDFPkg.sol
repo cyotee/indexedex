@@ -16,7 +16,7 @@ import {EIP712Repo} from '@crane/contracts/utils/cryptography/EIP712/EIP712Repo.
 import {MultiStepOwnableRepo} from '@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
@@ -34,18 +34,18 @@ interface IRebasingDETFTokenDFPkg is IDiamondFactoryPackage {
 
     struct PkgArgs {
         IDETF detf;
-        IProtocolNFTVault nftVault;
+        IDETFNFTVault nftVault;
         IERC20 wethToken;
-        uint256 protocolNFTId;
+        uint256 detfNFTId;
         address owner;
         bytes32 optionalSalt;
     }
 
     function deployToken(
         IDETF detf,
-        IProtocolNFTVault nftVault,
+        IDETFNFTVault nftVault,
         IERC20 wethToken,
-        uint256 protocolNFTId,
+        uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress);
 }
@@ -71,9 +71,9 @@ contract RebasingDETFTokenDFPkg is IRebasingDETFTokenDFPkg {
 
     function deployToken(
         IDETF detf,
-        IProtocolNFTVault nftVault,
+        IDETFNFTVault nftVault,
         IERC20 wethToken,
-        uint256 protocolNFTId,
+        uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress) {
         return address(
@@ -84,7 +84,7 @@ contract RebasingDETFTokenDFPkg is IRebasingDETFTokenDFPkg {
                         detf: detf,
                         nftVault: nftVault,
                         wethToken: wethToken,
-                        protocolNFTId: protocolNFTId,
+                        detfNFTId: detfNFTId,
                         owner: owner,
                         optionalSalt: abi.encode(address(detf))._hash()
                     })
@@ -173,7 +173,7 @@ contract RebasingDETFTokenDFPkg is IRebasingDETFTokenDFPkg {
         MultiStepOwnableRepo._initialize(args.owner, 1 days);
         ERC20Repo._initialize('RebasingDETFToken', 'RDETF', 18);
         EIP712Repo._initialize('RebasingDETFToken', '1');
-        RebasingDETFTokenRepo._initialize(args.detf, args.nftVault, args.wethToken, args.protocolNFTId);
+        RebasingDETFTokenRepo._initialize(args.detf, args.nftVault, args.wethToken, args.detfNFTId);
     }
 
     function postDeploy(address) public pure returns (bool) {

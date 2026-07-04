@@ -40,7 +40,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[11] = IRICHIR.redemptionRate.selector;
         funcs_[12] = IRICHIR.protocolDETF.selector;
         funcs_[13] = IRICHIR.setProtocolDETF.selector;
-        funcs_[14] = IRICHIR.protocolNFTId.selector;
+        funcs_[14] = IRICHIR.detfNFTId.selector;
         funcs_[15] = IRICHIR.wethToken.selector;
         funcs_[16] = IRICHIR.convertToShares.selector;
         funcs_[17] = IRICHIR.convertToRichir.selector;
@@ -83,7 +83,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[11] = IRICHIR.redemptionRate.selector;
         functions_[12] = IRICHIR.protocolDETF.selector;
         functions_[13] = IRICHIR.setProtocolDETF.selector;
-        functions_[14] = IRICHIR.protocolNFTId.selector;
+        functions_[14] = IRICHIR.detfNFTId.selector;
         functions_[15] = IRICHIR.wethToken.selector;
         functions_[16] = IRICHIR.convertToShares.selector;
         functions_[17] = IRICHIR.convertToRichir.selector;

@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
 import { useReadContract, useReadContracts, useWriteContract } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
@@ -22,6 +23,7 @@ import { usePreferredBrowserChainId } from '../lib/browserChain'
 
 import { hasBytecode, isZeroAddress } from '../lib/onchain'
 import { useSelectedNetwork } from '../lib/networkSelection'
+import { parseLaunchQuery } from '../lib/earn/launchQuery'
 
 import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '../lib/permit2-signature'
 
@@ -354,7 +356,7 @@ function buildExactOutArgs(input: BuildExactOutArgsInput): BuildArgsOutput {
 }
 // Address/decimals now resolved via token list helpers
 
-export default function SwapPage() {
+function SwapPageInner() {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
   const { selectedChainId } = useSelectedNetwork()
@@ -576,6 +578,24 @@ export default function SwapPage() {
   const [selectedPool, setSelectedPool] = useState<'' | Address>('')
   const [tokenIn, setTokenIn] = useState('')
   const [tokenOut, setTokenOut] = useState('')
+  const searchParams = useSearchParams()
+  const launchApplied = useRef(false)
+  useEffect(() => {
+    if (launchApplied.current) return
+    const launch = parseLaunchQuery({
+      launch: searchParams.get('launch'),
+      tokenOut: searchParams.get('tokenOut'),
+      tokenIn: searchParams.get('tokenIn'),
+    })
+    if (launch.tokenOut) {
+      setTokenOut(launch.tokenOut)
+      launchApplied.current = true
+    }
+    if (launch.tokenIn) {
+      setTokenIn(launch.tokenIn)
+      launchApplied.current = true
+    }
+  }, [searchParams])
   const [amountIn, setAmountIn] = useState('')
   const [amountOut, setAmountOut] = useState('')
   const [lastEditedField, setLastEditedField] = useState<'in' | 'out'>('in')
@@ -3828,6 +3848,7 @@ export default function SwapPage() {
           Select Pool ({poolOptions.length} pools available)
         </label>
           <select
+          data-testid="swap-pool-select"
           value={selectedPool} 
           onChange={(e) => setSelectedPool((e.target.value || '') as '' | Address)}
           className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-3"
@@ -3844,6 +3865,7 @@ export default function SwapPage() {
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">Token In</label>
             <select
+              data-testid="swap-token-in-select"
               value={tokenIn}
               onChange={(e) => {
                 const next = e.target.value
@@ -3903,6 +3925,7 @@ export default function SwapPage() {
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">Token Out</label>
               <select
+            data-testid="swap-token-out-select"
             value={tokenOut}
             onChange={(e) => {
               const next = e.target.value
@@ -4027,6 +4050,7 @@ export default function SwapPage() {
         <div>
           <label className="flex items-center gap-2 text-sm text-gray-300 mb-2">
             <input
+              data-testid="swap-deposit-vault-toggle"
               type="checkbox"
               checked={useTokenInVault}
               onChange={(e) => {
@@ -4038,6 +4062,7 @@ export default function SwapPage() {
           </label>
           {useTokenInVault && (
             <select
+              data-testid="swap-vault-in-select"
               value={selectedVaultIn}
               onChange={(e) => {
                 const selectedValue = e.target.value
@@ -4062,6 +4087,7 @@ export default function SwapPage() {
         <div>
           <label className="flex items-center gap-2 text-sm text-gray-300 mb-2">
             <input
+              data-testid="swap-withdraw-vault-toggle"
               type="checkbox"
               checked={useTokenOutVault}
               onChange={(e) => {
@@ -4073,6 +4099,7 @@ export default function SwapPage() {
             </label>
           {useTokenOutVault && (
               <select
+                data-testid="swap-vault-out-select"
                 value={selectedVaultOut}
               onChange={(e) => setSelectedVaultOut(e.target.value as `0x${string}`)}
               className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-3"
@@ -4092,6 +4119,7 @@ export default function SwapPage() {
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-300 mb-2">Amount In</label>
               <input
+          data-testid="swap-amount-in"
           type="number"
           value={amountInDisplay}
           onChange={(e) => {
@@ -4152,6 +4180,7 @@ export default function SwapPage() {
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-300 mb-2">Amount Out</label>
         <input
+          data-testid="swap-amount-out"
           type="number"
           value={amountOutDisplay}
           onChange={(e) => {
@@ -4197,7 +4226,7 @@ export default function SwapPage() {
 
       {/* Route Info */}
       {routePattern && (
-        <div className="mb-6 p-4 bg-slate-700/50 rounded-lg">
+        <div data-testid="swap-route-pattern" className="mb-6 p-4 bg-slate-700/50 rounded-lg">
           <div className="text-sm text-blue-300 font-medium">Route: {routePattern}</div>
           <div className="text-xs text-gray-400 mt-1">
             {getRouteDescription()}
@@ -4295,6 +4324,7 @@ export default function SwapPage() {
             {showTokenToPermit2Controls && (
               <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
                 <button
+                  data-testid="swap-approve-permit2"
                   onClick={handleIssuePermit2Approval}
                   disabled={approvalState === 'approving'}
                   className="w-full py-2 px-4 bg-purple-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
@@ -4349,6 +4379,7 @@ export default function SwapPage() {
             {showTokenToPermit2Controls && (
               <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
                 <button
+                  data-testid="swap-approve-permit2"
                   onClick={handleIssuePermit2Approval}
                   disabled={approvalState === 'approving'}
                   className="w-full py-2 px-4 bg-blue-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
@@ -4381,6 +4412,7 @@ export default function SwapPage() {
             {needsPermit2Approval && (
               <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
                 <button
+                  data-testid="swap-approve-router"
                   onClick={handleIssueRouterApproval}
                   disabled={approvalState === 'approving'}
                   className="w-full py-2 px-4 bg-blue-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
@@ -4464,7 +4496,22 @@ export default function SwapPage() {
           </div>
         </DebugPanel>
         
+        {/* Auto-quote runs on input change; this button re-triggers simulation for e2e/manual refresh. */}
         <button
+          data-testid="swap-preview"
+          type="button"
+          onClick={() => {
+            lastCompletedPreviewKeyRef.current = null
+            handlePreview()
+          }}
+          disabled={!ready && !builtExactIn.valid && !builtExactOut.valid}
+          className="w-full py-2 px-4 bg-slate-600 text-white rounded-md disabled:opacity-50 text-sm"
+        >
+          {previewExactInPending || previewExactOutPending ? 'Refreshing quote…' : 'Refresh Quote'}
+        </button>
+
+        <button
+          data-testid="swap-submit"
           onClick={handleSwap}
           disabled={!ready || !(lastEditedField === 'in' ? !!previewExactIn : !!previewExactOut)}
           className="w-full py-3 px-4 bg-blue-600 text-black rounded-md disabled:opacity-50"
@@ -4543,5 +4590,13 @@ export default function SwapPage() {
         )
       }
     </div>
+  )
+}
+
+export default function SwapPage() {
+  return (
+    <Suspense fallback={<div className="text-sm text-gray-400 py-8">Loading swap…</div>}>
+      <SwapPageInner />
+    </Suspense>
   )
 }

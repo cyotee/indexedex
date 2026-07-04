@@ -8,7 +8,7 @@ import {
 } from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-weighted/IWeightedPool.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IWeightedPool} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -17,7 +17,7 @@ import {RebasingDETFTokenPricingTarget} from 'contracts/vaults/detf/composed/sta
 contract RebasingDETFTokenPricingHarness is RebasingDETFTokenPricingTarget {
     function initializePricing(
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IRICHIR rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
@@ -50,7 +50,7 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
     RebasingDETFTokenPricingHarness internal pricingHarness;
 
     IWeightedPool internal reservePool;
-    IProtocolNFTVault internal bondNftVault;
+    IDETFNFTVault internal bondNftVault;
     IRICHIR internal rebasingDetfToken;
     IERC20 internal detfToken;
     IERC20 internal stablePoolBpt;
@@ -63,7 +63,7 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
         pricingHarness = new RebasingDETFTokenPricingHarness();
 
         reservePool = IWeightedPool(makeAddr('reservePool'));
-        bondNftVault = IProtocolNFTVault(makeAddr('bondNftVault'));
+        bondNftVault = IDETFNFTVault(makeAddr('bondNftVault'));
         rebasingDetfToken = IRICHIR(makeAddr('rebasingDetfToken'));
         detfToken = IERC20(makeAddr('detfToken'));
         stablePoolBpt = IERC20(makeAddr('stablePoolBpt'));
@@ -120,11 +120,11 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
 
     function mockProtocolReserveBpt(uint256 protocolNftId_, uint256 reserveBptAmount_) internal {
         vm.mockCall(
-            address(bondNftVault), abi.encodeWithSelector(IProtocolNFTVault.protocolNFTId.selector), abi.encode(protocolNftId_)
+            address(bondNftVault), abi.encodeWithSelector(IDETFNFTVault.detfNFTId.selector), abi.encode(protocolNftId_)
         );
         vm.mockCall(
             address(bondNftVault),
-            abi.encodeWithSelector(IProtocolNFTVault.originalSharesOf.selector, protocolNftId_),
+            abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, protocolNftId_),
             abi.encode(reserveBptAmount_)
         );
     }

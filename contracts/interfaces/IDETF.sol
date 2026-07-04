@@ -15,9 +15,9 @@ interface IDETF {
 
     /**
      * @notice Returns the protocol-owned Bond NFT token id used for rebasing reserve accounting.
-     * @return protocolNFTId_ The protocol-owned NFT token id.
+     * @return detfNFTId_ The protocol-owned NFT token id.
      */
-    function protocolNFTId() external view returns (uint256 protocolNFTId_);
+    function detfNFTId() external view returns (uint256 detfNFTId_);
 
     /**
      * @notice Returns the rebasing DETF token associated with this DETF.

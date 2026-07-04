@@ -9,7 +9,7 @@ import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiSt
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol";
@@ -30,7 +30,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         uint256 indexed tokenId, address indexed recipient, uint256 shares, uint256 bonusMultiplier, uint256 unlockTime
     );
 
-    event ProtocolNFTSaleMarked(uint256 indexed tokenId);
+    event DETFNFTSaleMarked(uint256 indexed tokenId);
 
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
@@ -56,16 +56,16 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         emit NewLock(tokenId, recipient, shares, bonusMultiplier, block.timestamp + lockDuration);
     }
 
-    function initializeProtocolNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
+    function initializeDETFNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
-        tokenId = ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId(layoutStruct);
+        tokenId = ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId(layoutStruct);
         if (ERC721Repo._ownerOf(tokenId) != address(0)) {
             return tokenId;
         }
 
         tokenId = ERC721Repo._mint(address(this));
-        ComposedStableCommonDetfBondNFTVaultRepo._setProtocolNFTId(layoutStruct, tokenId);
+        ComposedStableCommonDetfBondNFTVaultRepo._setDETFNFTId(layoutStruct, tokenId);
         ComposedStableCommonDetfBondNFTVaultRepo._createPosition(layoutStruct, tokenId, 0, 0, ONE_WAD, 0);
     }
 
@@ -94,8 +94,8 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
             }
         }
 
-        if (_isProtocolNFT(tokenId)) {
-            revert ProtocolNFTRestricted(tokenId);
+        if (_isDETFNFT(tokenId)) {
+            revert DETFNFTRestricted(tokenId);
         }
 
         {
@@ -119,7 +119,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
         wethOut = layoutStruct.protocolDETF.claimLiquidity(lpAmount, recipient);
 
-        emit IProtocolNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
+        emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }
 
     function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
@@ -132,7 +132,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
         rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
-        emit IProtocolNFTVault.RewardsClaimed(tokenId, recipient, rewards);
+        emit IDETFNFTVault.RewardsClaimed(tokenId, recipient, rewards);
     }
 
     function _harvestRewardsInternal(
@@ -160,9 +160,9 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultService._executeHarvestTransfer(layoutStruct_, tokenId_, recipient_, rewards_);
     }
 
-    function addToProtocolNFT(uint256 tokenId, uint256 shares) external onlyOwner {
-        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId()) {
-            revert ProtocolNFTRestricted(tokenId);
+    function addToDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
+        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId()) {
+            revert DETFNFTRestricted(tokenId);
         }
 
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
@@ -188,8 +188,8 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
-        if (_isProtocolNFT(tokenId)) {
-            revert ProtocolNFTRestricted(tokenId);
+        if (_isDETFNFT(tokenId)) {
+            revert DETFNFTRestricted(tokenId);
         }
 
         address owner = ERC721Repo._ownerOf(tokenId);
@@ -210,23 +210,23 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);
 
         ComposedStableCommonDetfBondNFTVaultRepo._removePosition(layoutStruct, tokenId);
-        ComposedStableCommonDetfBondNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.protocolNFTId, principalShares);
+        ComposedStableCommonDetfBondNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.detfNFTId, principalShares);
 
         ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
         ERC721Repo._burn(tokenId);
     }
 
-    function markProtocolNFTSold(uint256 tokenId) external onlyOwner {
-        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId()) {
-            revert ProtocolNFTRestricted(tokenId);
+    function markDETFNFTSold(uint256 tokenId) external onlyOwner {
+        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId()) {
+            revert DETFNFTRestricted(tokenId);
         }
 
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
-        ComposedStableCommonDetfBondNFTVaultRepo._setProtocolNFTSold(layoutStruct, true);
-        emit ProtocolNFTSaleMarked(tokenId);
+        ComposedStableCommonDetfBondNFTVaultRepo._setDETFNFTSold(layoutStruct, true);
+        emit DETFNFTSaleMarked(tokenId);
     }
 
-    function getPosition(uint256 tokenId) external view returns (IProtocolNFTVault.Position memory) {
+    function getPosition(uint256 tokenId) external view returns (IDETFNFTVault.Position memory) {
         return _getPosition(tokenId);
     }
 
@@ -267,8 +267,8 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._protocolDETF();
     }
 
-    function protocolNFTSold() external view returns (bool) {
-        return ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTSold();
+    function detfNFTSold() external view returns (bool) {
+        return ComposedStableCommonDetfBondNFTVaultRepo._detfNFTSold();
     }
 
     function lpToken() external view returns (IERC20) {
@@ -279,8 +279,8 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._rewardToken();
     }
 
-    function protocolNFTId() external view returns (uint256) {
-        return ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId();
+    function detfNFTId() external view returns (uint256) {
+        return ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId();
     }
 
     function feeRecipientNFTId() external view returns (uint256) {
@@ -291,7 +291,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._deploymentTimestamp();
     }
 
-    function positionOf(uint256 tokenId) external view returns (IProtocolNFTVault.Position memory position) {
+    function positionOf(uint256 tokenId) external view returns (IDETFNFTVault.Position memory position) {
         return _getPosition(tokenId);
     }
 
@@ -327,11 +327,11 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
             revert NotAuthorized(msg.sender);
         }
 
-        uint256 protocolTokenId = layoutStruct.protocolNFTId;
+        uint256 protocolTokenId = layoutStruct.detfNFTId;
         ComposedStableCommonDetfBondNFTVaultRepo._updateGlobalRewards(layoutStruct);
         amount = _harvestRewardsInternal(layoutStruct, protocolTokenId, recipient);
 
-        emit IProtocolNFTVault.ProtocolRewardsReallocated(recipient, amount);
+        emit IDETFNFTVault.ProtocolRewardsReallocated(recipient, amount);
     }
 
     function balanceOf(address owner) public view returns (uint256 balance) {

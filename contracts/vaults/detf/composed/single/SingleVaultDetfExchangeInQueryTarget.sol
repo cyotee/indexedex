@@ -64,13 +64,13 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.richToken);
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
-            uint256 bptIn = _previewChirRedemptionBptIn(amountIn);
+            uint256 bptIn = _previewDetfRedemptionBptIn(amountIn);
             (, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, bptIn);
             return layoutStruct.wethRichVault.previewExchangeIn(IERC20(address(layoutStruct.wethRichVault)), vaultSharesOut, layoutStruct.wethToken);
         }
@@ -102,7 +102,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
             return layoutStruct.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
         }
 
-        if (_isChirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
@@ -110,7 +110,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
 
             uint256 vaultSharesNeeded =
                 layoutStruct.wethRichVault.previewExchangeOut(IERC20(address(layoutStruct.wethRichVault)), layoutStruct.wethToken, amountOut);
-            return _previewChirRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
+            return _previewDetfRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
         }
 
         if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
@@ -175,16 +175,16 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
         }
 
         uint256 totalRichirShares = layoutStruct._richirToken().totalShares();
-        uint256 protocolNftBpt = layoutStruct.protocolNFTVault.originalSharesOf(layoutStruct.protocolNFTId);
+        uint256 protocolNftBpt = layoutStruct.detfNFTVault.originalSharesOf(layoutStruct.detfNFTId);
         if (totalRichirShares == 0 || protocolNftBpt == 0) {
             return quote_;
         }
 
         quote_.reserveSharesBurned = quote_.sharesBurned * protocolNftBpt / totalRichirShares;
-        (uint256 chirAmountOut, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, quote_.reserveSharesBurned);
+        (uint256 detfAmountOut, uint256 vaultSharesOut) = _previewReservePoolExitProportional(layoutStruct, quote_.reserveSharesBurned);
 
-        if (chirAmountOut > 0) {
-            uint256 localBptOut = _previewBptOutForAddLiquidity(layoutStruct, chirAmountOut, 0);
+        if (detfAmountOut > 0) {
+            uint256 localBptOut = _previewBptOutForAddLiquidity(layoutStruct, detfAmountOut, 0);
             quote_.localRichirOut = _previewRichirMintForBpt(layoutStruct, localBptOut);
         }
 

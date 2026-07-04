@@ -1,5 +1,6 @@
-import DetfsPageClient from './DetfsPageClient'
+import { redirect } from 'next/navigation'
 
-export default function DetfsPage() {
-  return <DetfsPageClient />
+/** Legacy DETFs catalog → unified Earn. */
+export default function DetfsRedirectPage() {
+  redirect('/earn?type=detf')
 }

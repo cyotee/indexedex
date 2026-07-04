@@ -39,13 +39,13 @@ interface IProtocolDETFErrors {
     /// @notice Token is not an accepted bond token
     error BondTokenNotSupported(IERC20 token);
 
-    /// @notice Token is not CHIR
-    error NotChirToken(IERC20 token);
+    /// @notice Token is not the DETF token
+    error NotDetfToken(IERC20 token);
 
     /// @notice Token is not RICHIR
     error NotRichirToken(IERC20 token);
 
-    /// @notice Only WETH or CHIR allowed for donation
+    /// @notice Only WETH or the DETF token allowed for donation
     error InvalidDonationToken(IERC20 token);
 
     /* ---------------------------------------------------------------------- */
@@ -81,7 +81,7 @@ interface IProtocolDETFErrors {
     error NotNFTOwner(uint256 tokenId, address caller, address owner);
 
     /// @notice Cannot modify protocol-owned NFT
-    error ProtocolNFTRestricted(uint256 tokenId);
+    error DETFNFTRestricted(uint256 tokenId);
 
     /// @notice Lock duration out of bounds
     error InvalidLockDuration(uint256 duration, uint256 minDuration, uint256 maxDuration);
@@ -119,9 +119,9 @@ interface IProtocolDETFErrors {
 
     /// @notice Invalid reserve pool vault indices
     /// @dev Both indices must be 0 or 1, and they must be different
-    /// @param chirWethVaultIndex The index for CHIR/WETH vault in the reserve pool
-    /// @param richChirVaultIndex The index for RICH/CHIR vault in the reserve pool
-    error InvalidReservePoolIndices(uint256 chirWethVaultIndex, uint256 richChirVaultIndex);
+    /// @param detfIndex The reserve-pool index of the DETF token
+    /// @param vaultTokenIndex The reserve-pool index of the vault share token
+    error InvalidReservePoolIndices(uint256 detfIndex, uint256 vaultTokenIndex);
 
     /// @notice The requested bridge peer is not configured.
     error BridgePeerNotConfigured(uint256 targetChainId);

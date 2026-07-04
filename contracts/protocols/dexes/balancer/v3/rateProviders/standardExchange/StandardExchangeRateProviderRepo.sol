@@ -18,6 +18,8 @@ library StandardExchangeRateProviderRepo {
 
     struct Storage {
         IStandardExchange reserveVault;
+        /// @dev Share / subject token for totalSupply + preview tokenIn. Defaults to vault address.
+        IERC20 rateSubject;
         IERC20 rateTarget;
         uint8 rateTargetDecimals;
     }
@@ -38,13 +40,42 @@ library StandardExchangeRateProviderRepo {
         IERC20 rateTarget_,
         uint8 rateTargetDecimals_
     ) internal {
+        _initialize(layout_, reserveVault_, IERC20(address(0)), rateTarget_, rateTargetDecimals_);
+    }
+
+    function _initialize(
+        Storage storage layout_,
+        IStandardExchange reserveVault_,
+        IERC20 rateSubject_,
+        IERC20 rateTarget_,
+        uint8 rateTargetDecimals_
+    ) internal {
         layout_.reserveVault = reserveVault_;
+        layout_.rateSubject =
+            address(rateSubject_) == address(0) ? IERC20(address(reserveVault_)) : rateSubject_;
         layout_.rateTarget = rateTarget_;
         layout_.rateTargetDecimals = rateTargetDecimals_;
     }
 
     function _initialize(IStandardExchange reserveVault_, IERC20 rateTarget_, uint8 rateTargetDecimals_) internal {
-        _initialize(_layout(), reserveVault_, rateTarget_, rateTargetDecimals_);
+        _initialize(_layout(), reserveVault_, IERC20(address(0)), rateTarget_, rateTargetDecimals_);
+    }
+
+    function _initialize(
+        IStandardExchange reserveVault_,
+        IERC20 rateSubject_,
+        IERC20 rateTarget_,
+        uint8 rateTargetDecimals_
+    ) internal {
+        _initialize(_layout(), reserveVault_, rateSubject_, rateTarget_, rateTargetDecimals_);
+    }
+
+    function _rateSubject(Storage storage layout_) internal view returns (IERC20) {
+        return layout_.rateSubject;
+    }
+
+    function _rateSubject() internal view returns (IERC20) {
+        return _rateSubject(_layout());
     }
 
     function _reserveVault(Storage storage layout_) internal view returns (IStandardExchange) {

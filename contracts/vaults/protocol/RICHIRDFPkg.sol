@@ -23,7 +23,7 @@ import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwn
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -46,11 +46,11 @@ interface IRICHIRDFPkg is IDiamondFactoryPackage {
         /// @notice The Protocol DETF contract (CHIR)
         IProtocolDETF protocolDETF;
         /// @notice The Protocol NFT Vault contract
-        IProtocolNFTVault nftVault;
+        IDETFNFTVault nftVault;
         /// @notice The WETH token
         IERC20 wethToken;
         /// @notice The protocol-owned NFT token ID
-        uint256 protocolNFTId;
+        uint256 detfNFTId;
         /// @notice Owner address (typically the DETF contract)
         address owner;
         /// @notice Optional salt for deterministic deployment
@@ -59,9 +59,9 @@ interface IRICHIRDFPkg is IDiamondFactoryPackage {
 
     function deployToken(
         IProtocolDETF protocolDETF,
-        IProtocolNFTVault nftVault,
+        IDETFNFTVault nftVault,
         IERC20 wethToken,
-        uint256 protocolNFTId,
+        uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress);
 }
@@ -90,9 +90,9 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
 
     function deployToken(
         IProtocolDETF protocolDETF,
-        IProtocolNFTVault nftVault,
+        IDETFNFTVault nftVault,
         IERC20 wethToken,
-        uint256 protocolNFTId,
+        uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress) {
         return address(
@@ -103,7 +103,7 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
                         protocolDETF: protocolDETF,
                         nftVault: nftVault,
                         wethToken: wethToken,
-                        protocolNFTId: protocolNFTId,
+                        detfNFTId: detfNFTId,
                         owner: owner,
                         optionalSalt: abi.encode(address(protocolDETF))._hash()
                     })
@@ -197,7 +197,7 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
         EIP712Repo._initialize("RICHIR", "1");
 
         // Initialize RICHIR storage
-        RICHIRRepo._initialize(args.protocolDETF, args.nftVault, args.wethToken, args.protocolNFTId);
+        RICHIRRepo._initialize(args.protocolDETF, args.nftVault, args.wethToken, args.detfNFTId);
     }
 
     function postDeploy(address) public pure returns (bool) {

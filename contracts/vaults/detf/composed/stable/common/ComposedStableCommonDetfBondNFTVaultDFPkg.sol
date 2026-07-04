@@ -17,7 +17,7 @@ import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
@@ -134,7 +134,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
         interfaces = new bytes4[](6);
         interfaces[0] = type(IERC721).interfaceId;
         interfaces[1] = type(IERC721Metadata).interfaceId;
-        interfaces[2] = type(IProtocolNFTVault).interfaceId;
+        interfaces[2] = type(IDETFNFTVault).interfaceId;
         interfaces[3] = type(IBasicVault).interfaceId;
         interfaces[4] = type(IStandardVault).interfaceId;
         interfaces[5] = type(IMultiStepOwnable).interfaceId;
@@ -233,7 +233,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
 
         {
             uint256 protocolTokenId = ERC721Repo._mint(address(this));
-            ComposedStableCommonDetfBondNFTVaultRepo._setProtocolNFTId(protocolTokenId);
+            ComposedStableCommonDetfBondNFTVaultRepo._setDETFNFTId(protocolTokenId);
             ComposedStableCommonDetfBondNFTVaultRepo._createPosition(protocolTokenId, 0, 0, 1e18, 0);
 
             IFeeCollectorProxy feeRecipient = VAULT_FEE_ORACLE_QUERY.feeTo();
@@ -255,7 +255,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
 
     function vaultFeeTypeIds() public pure returns (bytes32 vaultFeeTypeIds_) {
         vaultFeeTypeIds_ =
-            VaultTypeUtils._insertFeeTypeId(vaultFeeTypeIds_, VaultFeeType.BOND, type(IProtocolNFTVault).interfaceId);
+            VaultTypeUtils._insertFeeTypeId(vaultFeeTypeIds_, VaultFeeType.BOND, type(IDETFNFTVault).interfaceId);
     }
 
     function vaultTypes() public pure returns (bytes4[] memory typeIDs) {

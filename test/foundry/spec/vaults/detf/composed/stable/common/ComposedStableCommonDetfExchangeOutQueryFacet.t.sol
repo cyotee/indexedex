@@ -13,7 +13,7 @@ import {
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol';
 
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeErrors} from 'contracts/interfaces/IStandardExchangeErrors.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
@@ -239,7 +239,7 @@ contract ComposedStableCommonDetfExchangeOutQueryHarness is ComposedStableCommon
 
     function initializePricingHarness(
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IRICHIR rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
@@ -399,7 +399,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     ) internal {
         harness_.initializePricingHarness(
             IWeightedPool(address(reservePoolToken)),
-            IProtocolNFTVault(bondVaultCaller),
+            IDETFNFTVault(bondVaultCaller),
             IRICHIR(rebasingTokenCaller),
             detfToken,
             stablePoolBpt,

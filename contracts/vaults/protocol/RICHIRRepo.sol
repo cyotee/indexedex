@@ -13,7 +13,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 
 /**
  * @title RICHIRRepo
@@ -51,13 +51,13 @@ library RICHIRRepo {
         IProtocolDETF protocolDETF;
 
         /// @notice The Protocol NFT Vault contract
-        IProtocolNFTVault nftVault;
+        IDETFNFTVault nftVault;
 
         /// @notice The WETH token
         IERC20 wethToken;
 
         /// @notice The protocol-owned NFT token ID held by this contract
-        uint256 protocolNFTId;
+        uint256 detfNFTId;
 
         /// @notice Total underlying shares (scaled by SHARE_SCALE for internal precision)
         uint256 totalShares;
@@ -93,24 +93,24 @@ library RICHIRRepo {
     function _initialize(
         Storage storage layoutStruct_,
         IProtocolDETF protocolDETF_,
-        IProtocolNFTVault nftVault_,
+        IDETFNFTVault nftVault_,
         IERC20 wethToken_,
-        uint256 protocolNFTId_
+        uint256 detfNFTId_
     ) internal {
         layoutStruct_.protocolDETF = protocolDETF_;
         layoutStruct_.nftVault = nftVault_;
         layoutStruct_.wethToken = wethToken_;
-        layoutStruct_.protocolNFTId = protocolNFTId_;
+        layoutStruct_.detfNFTId = detfNFTId_;
         layoutStruct_.cachedRedemptionRate = 1e18; // Start at 1:1
     }
 
     function _initialize(
         IProtocolDETF protocolDETF_,
-        IProtocolNFTVault nftVault_,
+        IDETFNFTVault nftVault_,
         IERC20 wethToken_,
-        uint256 protocolNFTId_
+        uint256 detfNFTId_
     ) internal {
-        _initialize(_layoutStruct(), protocolDETF_, nftVault_, wethToken_, protocolNFTId_);
+        _initialize(_layoutStruct(), protocolDETF_, nftVault_, wethToken_, detfNFTId_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -133,11 +133,11 @@ library RICHIRRepo {
         _setProtocolDETF(_layoutStruct(), protocolDETF_);
     }
 
-    function _nftVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault) {
+    function _nftVault(Storage storage layoutStruct_) internal view returns (IDETFNFTVault) {
         return layoutStruct_.nftVault;
     }
 
-    function _nftVault() internal view returns (IProtocolNFTVault) {
+    function _nftVault() internal view returns (IDETFNFTVault) {
         return _nftVault(_layoutStruct());
     }
 
@@ -149,12 +149,12 @@ library RICHIRRepo {
         return _wethToken(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
-        return layoutStruct_.protocolNFTId;
+    function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.detfNFTId;
     }
 
-    function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layoutStruct());
+    function _detfNFTId() internal view returns (uint256) {
+        return _detfNFTId(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */

@@ -27,7 +27,7 @@ contract RebasingDETFTokenPricingFacet is RebasingDETFTokenPricingTarget, IFacet
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
         funcs_ = new bytes4[](10);
         funcs_[0] = IDETF.bondNftVault.selector;
-        funcs_[1] = IDETF.protocolNFTId.selector;
+        funcs_[1] = IDETF.detfNFTId.selector;
         funcs_[2] = IDETF.rebasingDetfToken.selector;
         funcs_[3] = IDETF.reservePool.selector;
         funcs_[4] = IDETF.previewRebasingDetfTokenReserveBpt.selector;
@@ -50,7 +50,7 @@ contract RebasingDETFTokenPricingFacet is RebasingDETFTokenPricingTarget, IFacet
 
         functions_ = new bytes4[](10);
         functions_[0] = IDETF.bondNftVault.selector;
-        functions_[1] = IDETF.protocolNFTId.selector;
+        functions_[1] = IDETF.detfNFTId.selector;
         functions_[2] = IDETF.rebasingDetfToken.selector;
         functions_[3] = IDETF.reservePool.selector;
         functions_[4] = IDETF.previewRebasingDetfTokenReserveBpt.selector;

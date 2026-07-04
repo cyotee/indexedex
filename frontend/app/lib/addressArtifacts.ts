@@ -30,7 +30,7 @@ export const CHAIN_ID_LOCALHOST = 1337
 export const CHAIN_ID_BASE = 8453
 
 function isLocalSepoliaEnvironment(environment: DeploymentEnvironment): boolean {
-  return environment === 'supersim_sepolia'
+  return environment === 'supersim_sepolia' || environment === 'local_testing'
 }
 
 let defaultDeploymentEnvironment: DeploymentEnvironment =

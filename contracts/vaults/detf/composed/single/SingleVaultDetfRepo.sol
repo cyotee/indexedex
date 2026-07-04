@@ -19,7 +19,7 @@ import {AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSet
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -39,16 +39,16 @@ library SingleVaultDetfRepo {
         IRICHIR richirToken;
         IERC20 wethToken;
         IStandardExchange wethRichVault;
-        IProtocolNFTVault protocolNFTVault;
+        IDETFNFTVault detfNFTVault;
         IVaultFeeOracleQuery feeOracle;
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
         IRateProvider vaultRateProvider;
         address reservePool;
         bytes32 wethRichPoolKeyHash;
-        uint256 protocolNFTId;
-        uint256 chirIndex;
+        uint256 detfNFTId;
+        uint256 detfIndex;
         uint256 vaultTokenIndex;
-        uint256 chirWeight;
+        uint256 detfWeight;
         uint256 vaultTokenWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
@@ -129,45 +129,45 @@ library SingleVaultDetfRepo {
     function _initializeReservePool(
         Storage storage layoutStruct_,
         address reservePool_,
-        uint256 chirIndex_,
+        uint256 detfIndex_,
         uint256 vaultTokenIndex_,
-        uint256 chirWeight_,
+        uint256 detfWeight_,
         uint256 vaultTokenWeight_,
-        IProtocolNFTVault protocolNFTVault_,
-        uint256 protocolNFTId_
+        IDETFNFTVault detfNFTVault_,
+        uint256 detfNFTId_
     ) internal {
-        if (chirIndex_ > 1 || vaultTokenIndex_ > 1 || chirIndex_ == vaultTokenIndex_) {
-            revert IProtocolDETFErrors.InvalidReservePoolIndices(chirIndex_, vaultTokenIndex_);
+        if (detfIndex_ > 1 || vaultTokenIndex_ > 1 || detfIndex_ == vaultTokenIndex_) {
+            revert IProtocolDETFErrors.InvalidReservePoolIndices(detfIndex_, vaultTokenIndex_);
         }
 
         layoutStruct_.reservePool = reservePool_;
-        layoutStruct_.chirIndex = chirIndex_;
+        layoutStruct_.detfIndex = detfIndex_;
         layoutStruct_.vaultTokenIndex = vaultTokenIndex_;
-        layoutStruct_.chirWeight = chirWeight_;
+        layoutStruct_.detfWeight = detfWeight_;
         layoutStruct_.vaultTokenWeight = vaultTokenWeight_;
-        layoutStruct_.protocolNFTVault = protocolNFTVault_;
-        layoutStruct_.protocolNFTId = protocolNFTId_;
+        layoutStruct_.detfNFTVault = detfNFTVault_;
+        layoutStruct_.detfNFTId = detfNFTId_;
         layoutStruct_.isReservePoolInitialized = true;
     }
 
     function _initializeReservePool(
         address reservePool_,
-        uint256 chirIndex_,
+        uint256 detfIndex_,
         uint256 vaultTokenIndex_,
-        uint256 chirWeight_,
+        uint256 detfWeight_,
         uint256 vaultTokenWeight_,
-        IProtocolNFTVault protocolNFTVault_,
-        uint256 protocolNFTId_
+        IDETFNFTVault detfNFTVault_,
+        uint256 detfNFTId_
     ) internal {
         _initializeReservePool(
             _layoutStruct(),
             reservePool_,
-            chirIndex_,
+            detfIndex_,
             vaultTokenIndex_,
-            chirWeight_,
+            detfWeight_,
             vaultTokenWeight_,
-            protocolNFTVault_,
-            protocolNFTId_
+            detfNFTVault_,
+            detfNFTId_
         );
     }
 
@@ -211,20 +211,20 @@ library SingleVaultDetfRepo {
         return _feeOracle(_layoutStruct());
     }
 
-    function _protocolNFTVault(Storage storage layoutStruct_) internal view returns (IProtocolNFTVault) {
-        return layoutStruct_.protocolNFTVault;
+    function _detfNFTVault(Storage storage layoutStruct_) internal view returns (IDETFNFTVault) {
+        return layoutStruct_.detfNFTVault;
     }
 
-    function _protocolNFTVault() internal view returns (IProtocolNFTVault) {
-        return _protocolNFTVault(_layoutStruct());
+    function _detfNFTVault() internal view returns (IDETFNFTVault) {
+        return _detfNFTVault(_layoutStruct());
     }
 
-    function _protocolNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
-        return layoutStruct_.protocolNFTId;
+    function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.detfNFTId;
     }
 
-    function _protocolNFTId() internal view returns (uint256) {
-        return _protocolNFTId(_layoutStruct());
+    function _detfNFTId() internal view returns (uint256) {
+        return _detfNFTId(_layoutStruct());
     }
 
     function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {

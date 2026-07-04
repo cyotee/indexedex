@@ -34,7 +34,7 @@ contract RebasingDETFTokenPricingFacet_IFacet_Test is CraneTest, TestBase_IFacet
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
         controlFuncs = new bytes4[](10);
         controlFuncs[0] = IDETF.bondNftVault.selector;
-        controlFuncs[1] = IDETF.protocolNFTId.selector;
+        controlFuncs[1] = IDETF.detfNFTId.selector;
         controlFuncs[2] = IDETF.rebasingDetfToken.selector;
         controlFuncs[3] = IDETF.reservePool.selector;
         controlFuncs[4] = IDETF.previewRebasingDetfTokenReserveBpt.selector;

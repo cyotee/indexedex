@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
@@ -18,8 +18,8 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IProtocolDETFErr
     error NotBondHolder(address owner, address caller);
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);
-    error ProtocolNFTCannotBeUnlocked(uint256 tokenId);
-    error ProtocolNFTSold();
+    error DETFNFTCannotBeUnlocked(uint256 tokenId);
+    error DETFNFTSold();
 
     struct LockInfo {
         uint256 sharesAwarded;
@@ -52,7 +52,7 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IProtocolDETFErr
         bonusMultiplier_ = DETFBondNFTMathLib._bonusMultiplierOfVault(address(this), lockDuration_);
     }
 
-    function _getPosition(uint256 tokenId_) internal view returns (IProtocolNFTVault.Position memory position) {
+    function _getPosition(uint256 tokenId_) internal view returns (IDETFNFTVault.Position memory position) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
         position = DETFBondNFTMathLib._position(
             layoutStruct.originalSharesOf[tokenId_],
@@ -63,8 +63,8 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IProtocolDETFErr
         );
     }
 
-    function _isProtocolNFT(uint256 tokenId_) internal view returns (bool) {
-        return tokenId_ == ComposedStableCommonDetfBondNFTVaultRepo._protocolNFTId();
+    function _isDETFNFT(uint256 tokenId_) internal view returns (bool) {
+        return tokenId_ == ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId();
     }
 
     function _isFeeRecipientNFT(uint256 tokenId_) internal view returns (bool) {

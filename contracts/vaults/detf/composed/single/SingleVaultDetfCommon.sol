@@ -38,7 +38,7 @@ import {DETFUsageFeeLib} from "contracts/vaults/detf/core/DETFUsageFeeLib.sol";
 import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
@@ -58,16 +58,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         IVault balancerVault;
         IWeightedPool reservePool;
         uint256 reservePoolSwapFee;
-        uint256 chirIndex;
+        uint256 detfIndex;
         uint256 vaultTokenIndex;
         uint256[] weightsArray;
         uint256 totalSupply;
     }
 
-    struct BondAssets {
+    struct BondAssets { 
         uint256 wethAmount;
         uint256 vaultShares;
-        uint256 chirAmount;
+        uint256 detfAmount;
         uint256 bptOut;
     }
 
@@ -75,25 +75,25 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         IVault balancerVault;
         IWeightedPool reservePool;
         uint256 reservePoolSwapFee;
-        uint256 chirIndex;
+        uint256 detfIndex;
         uint256 vaultTokenIndex;
-        uint256 chirWeight;
+        uint256 detfWeight;
         uint256 vaultTokenWeight;
         uint256 reservePoolTotalSupply;
         uint256 reservePoolBptHeld;
         uint256[] balancesRaw;
         TokenInfo[] tokenInfo;
-        uint256 ownedChirBalance;
+        uint256 ownedDetfBalance;
         uint256 ownedReserveVaultBalance;
         uint256 reserveVaultRate;
         uint256 ownedReserveVaultRatedBalance;
     }
 
     struct MintSplit {
-        uint256 grossChir;
-        uint256 userChir;
-        uint256 feeToChir;
-        uint256 bondRewardChir;
+        uint256 grossDetf;
+        uint256 userDetf;
+        uint256 feeToDetf;
+        uint256 bondRewardDetf;
     }
 
     function _isInitialized() internal view returns (bool) {
@@ -108,7 +108,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         return address(token_) == address(layoutStruct_.richToken);
     }
 
-    function _isChirToken(IERC20 token_) internal view returns (bool) {
+    function _isDetfToken(IERC20 token_) internal view returns (bool) {
         return address(token_) == address(this);
     }
 
@@ -121,7 +121,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data_.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data_.reservePool = IWeightedPool(layoutStruct.reservePool);
         data_.reservePoolSwapFee = data_.balancerVault.getStaticSwapFeePercentage(address(data_.reservePool));
-        data_.chirIndex = layoutStruct.chirIndex;
+        data_.detfIndex = layoutStruct.detfIndex;
         data_.vaultTokenIndex = layoutStruct.vaultTokenIndex;
         data_.weightsArray = data_.reservePool.getNormalizedWeights();
         data_.totalSupply = IERC20(layoutStruct.reservePool).totalSupply();
@@ -141,24 +141,24 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data.reservePool = IWeightedPool(layoutStruct.reservePool);
         data.reservePoolSwapFee = data.balancerVault.getStaticSwapFeePercentage(address(data.reservePool));
-        data.chirIndex = layoutStruct.chirIndex;
+        data.detfIndex = layoutStruct.detfIndex;
         data.vaultTokenIndex = layoutStruct.vaultTokenIndex;
         data.weightsArray = data.reservePool.getNormalizedWeights();
         data.totalSupply = IERC20(layoutStruct.reservePool).totalSupply();
         (, tokenInfo, balancesRaw,) = data.balancerVault.getPoolTokenInfo(address(data.reservePool));
 
-        uint256 chirBalanceScaled18 = _toLiveScaled18(balancesRaw[data.chirIndex], tokenInfo[data.chirIndex]);
+        uint256 detfBalanceScaled18 = _toLiveScaled18(balancesRaw[data.detfIndex], tokenInfo[data.detfIndex]);
         uint256 vaultBalanceScaled18 = _toLiveScaled18(balancesRaw[data.vaultTokenIndex], tokenInfo[data.vaultTokenIndex]);
 
-        if (chirBalanceScaled18 == 0 || vaultBalanceScaled18 == 0) {
-            revert PoolImbalanced(vaultBalanceScaled18, chirBalanceScaled18);
+        if (detfBalanceScaled18 == 0 || vaultBalanceScaled18 == 0) {
+            revert PoolImbalanced(vaultBalanceScaled18, detfBalanceScaled18);
         }
 
         spotPrice_ = BalancerV38020WeightedPoolMath.priceFromReserves(
             vaultBalanceScaled18,
-            chirBalanceScaled18,
+            detfBalanceScaled18,
             layoutStruct.vaultTokenWeight,
-            layoutStruct.chirWeight
+            layoutStruct.detfWeight
         );
     }
 
@@ -183,14 +183,14 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             return 1e18;
         }
 
-        uint256 ownedChir = balancesRaw[layoutStruct.chirIndex] * reserveBptBalance / data.totalSupply;
+        uint256 ownedDetf = balancesRaw[layoutStruct.detfIndex] * reserveBptBalance / data.totalSupply;
         uint256 ownedVaultShares = balancesRaw[layoutStruct.vaultTokenIndex] * reserveBptBalance / data.totalSupply;
         uint256 vaultRate = FixedPoint.ONE;
         if (address(tokenInfo[layoutStruct.vaultTokenIndex].rateProvider) != address(0)) {
             vaultRate = tokenInfo[layoutStruct.vaultTokenIndex].rateProvider.getRate();
         }
 
-        uint256 totalReserveValue = ownedChir + ownedVaultShares.mulDown(vaultRate);
+        uint256 totalReserveValue = ownedDetf + ownedVaultShares.mulDown(vaultRate);
 
         syntheticPrice_ = totalReserveValue.divDown(totalSupply);
     }
@@ -213,37 +213,37 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         actualIn_ = token_.balanceOf(address(this)) - balBefore;
     }
 
-    function _calcProportionalChirForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
+    function _calcProportionalDetfForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
         internal
         view
-        returns (uint256 chirAmount_)
+        returns (uint256 detfAmount_)
     {
         if (IERC20(layoutStruct_.reservePool).totalSupply() == 0) {
-            chirAmount_ = _calcInitialPeggedChirForVaultShares(layoutStruct_, vaultShares_);
-            if (chirAmount_ == 0) {
-                chirAmount_ = vaultShares_;
+            detfAmount_ = _calcInitialPeggedDetfForVaultShares(layoutStruct_, vaultShares_);
+            if (detfAmount_ == 0) {
+                detfAmount_ = vaultShares_;
             }
-            return chirAmount_;
+            return detfAmount_;
         }
 
         uint256[] memory balancesRaw;
         (, , balancesRaw,) = BalancerV3VaultAwareRepo._balancerV3Vault().getPoolTokenInfo(layoutStruct_.reservePool);
 
-        if (balancesRaw[layoutStruct_.chirIndex] == 0 || balancesRaw[layoutStruct_.vaultTokenIndex] == 0) {
-            chirAmount_ = _calcInitialPeggedChirForVaultShares(layoutStruct_, vaultShares_);
+        if (balancesRaw[layoutStruct_.detfIndex] == 0 || balancesRaw[layoutStruct_.vaultTokenIndex] == 0) {
+            detfAmount_ = _calcInitialPeggedDetfForVaultShares(layoutStruct_, vaultShares_);
         } else {
-            chirAmount_ = _quoteChirOutForVaultShares(layoutStruct_, vaultShares_);
+            detfAmount_ = _quoteDetfOutForVaultShares(layoutStruct_, vaultShares_);
         }
 
-        if (chirAmount_ == 0) {
-            chirAmount_ = vaultShares_;
+        if (detfAmount_ == 0) {
+            detfAmount_ = vaultShares_;
         }
     }
 
-    function _calcInitialPeggedChirForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
+    function _calcInitialPeggedDetfForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
         internal
         view
-        returns (uint256 chirAmount_)
+        returns (uint256 detfAmount_)
     {
         uint256 vaultRate = FixedPoint.ONE;
         if (address(layoutStruct_.vaultRateProvider) != address(0)) {
@@ -251,13 +251,13 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         }
 
         uint256 vaultValue = vaultShares_.mulDown(vaultRate);
-        chirAmount_ = vaultValue.mulDivUp(layoutStruct_.chirWeight, layoutStruct_.vaultTokenWeight);
+        detfAmount_ = vaultValue.mulDivUp(layoutStruct_.detfWeight, layoutStruct_.vaultTokenWeight);
     }
 
-    function _quoteChirOutForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
+    function _quoteDetfOutForVaultShares(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 vaultShares_)
         internal
         view
-        returns (uint256 chirAmount_)
+        returns (uint256 detfAmount_)
     {
         IVault balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         TokenInfo[] memory tokenInfo;
@@ -265,16 +265,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         (, tokenInfo, balancesRaw,) = balancerVault.getPoolTokenInfo(layoutStruct_.reservePool);
 
         uint256 boostedVaultShares = vaultShares_ + vaultShares_.mulDown(_seigniorageIncentivePercentage(layoutStruct_));
-        uint256 chirOutScaled18 = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
+        uint256 detfOutScaled18 = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
             _toLiveScaled18(balancesRaw[layoutStruct_.vaultTokenIndex], tokenInfo[layoutStruct_.vaultTokenIndex]),
             layoutStruct_.vaultTokenWeight,
-            _toLiveScaled18(balancesRaw[layoutStruct_.chirIndex], tokenInfo[layoutStruct_.chirIndex]),
-            layoutStruct_.chirWeight,
+            _toLiveScaled18(balancesRaw[layoutStruct_.detfIndex], tokenInfo[layoutStruct_.detfIndex]),
+            layoutStruct_.detfWeight,
             _toLiveScaled18(boostedVaultShares, tokenInfo[layoutStruct_.vaultTokenIndex]),
             balancerVault.getStaticSwapFeePercentage(layoutStruct_.reservePool)
         );
 
-        chirAmount_ = chirOutScaled18.divDown(_tokenRate(tokenInfo[layoutStruct_.chirIndex]));
+        detfAmount_ = detfOutScaled18.divDown(_tokenRate(tokenInfo[layoutStruct_.detfIndex]));
     }
 
     function _seigniorageIncentivePercentage(SingleVaultDetfRepo.Storage storage layoutStruct_)
@@ -301,29 +301,29 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         percentage_ = layoutStruct_._feeOracle().usageFeeOfVault(address(this));
     }
 
-    function _splitMintedChir(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 grossChir_)
+    function _splitMintedDetf(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 grossDetf_)
         internal
         view
         returns (MintSplit memory split_)
     {
-        split_.grossChir = grossChir_;
-        if (grossChir_ == 0) {
+        split_.grossDetf = grossDetf_;
+        if (grossDetf_ == 0) {
             return split_;
         }
 
-        (uint256 remainingAfterFee, uint256 feeToChir) =
-            DETFUsageFeeLib._splitUsageFee(grossChir_, _usageFeePercentage(layoutStruct_));
-        split_.feeToChir = feeToChir;
+        (uint256 remainingAfterFee, uint256 feeToDetf) =
+            DETFUsageFeeLib._splitUsageFee(grossDetf_, _usageFeePercentage(layoutStruct_));
+        split_.feeToDetf = feeToDetf;
         uint256 halfIncentive = _seigniorageIncentivePercentage(layoutStruct_) / 2;
-        split_.bondRewardChir = remainingAfterFee.mulDown(halfIncentive);
-        split_.userChir = remainingAfterFee - split_.bondRewardChir;
+        split_.bondRewardDetf = remainingAfterFee.mulDown(halfIncentive);
+        split_.userDetf = remainingAfterFee - split_.bondRewardDetf;
     }
 
-    function _splitMintedChirForVaultShares(
+    function _splitMintedDetfForVaultShares(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
         uint256 vaultShares_
     ) internal view returns (MintSplit memory split_) {
-        split_ = _splitMintedChir(layoutStruct_, _calcProportionalChirForVaultShares(layoutStruct_, vaultShares_));
+        split_ = _splitMintedDetf(layoutStruct_, _calcProportionalDetfForVaultShares(layoutStruct_, vaultShares_));
     }
 
     function _tokenRate(TokenInfo memory tokenInfo_) internal view returns (uint256 rate_) {
@@ -335,7 +335,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
     function _addLiquidityToReservePool(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 chirAmount_,
+        uint256 detfAmount_,
         uint256 vaultShares_
     ) internal returns (uint256 bptOut_) {
         address balancerVault = address(BalancerV3VaultAwareRepo._balancerV3Vault());
@@ -347,17 +347,17 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             if (address(this) < address(layoutStruct_.wethRichVault)) {
                 tokens[0] = IERC20(address(this));
                 tokens[1] = IERC20(address(layoutStruct_.wethRichVault));
-                exactAmountsIn[0] = chirAmount_;
+                exactAmountsIn[0] = detfAmount_;
                 exactAmountsIn[1] = vaultShares_;
             } else {
                 tokens[0] = IERC20(address(layoutStruct_.wethRichVault));
                 tokens[1] = IERC20(address(this));
                 exactAmountsIn[0] = vaultShares_;
-                exactAmountsIn[1] = chirAmount_;
+                exactAmountsIn[1] = detfAmount_;
             }
 
-            if (chirAmount_ != 0) {
-                IERC20(address(this)).safeTransfer(balancerVault, chirAmount_);
+            if (detfAmount_ != 0) {
+                IERC20(address(this)).safeTransfer(balancerVault, detfAmount_);
             }
             if (vaultShares_ != 0) {
                 IERC20(address(layoutStruct_.wethRichVault)).safeTransfer(balancerVault, vaultShares_);
@@ -366,16 +366,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             return layoutStruct_.balancerV3PrepayRouter.prepayInitialize(layoutStruct_.reservePool, tokens, exactAmountsIn, 0, "");
         }
 
-        if ((chirAmount_ == 0) != (vaultShares_ == 0)) {
-            return _addLiquidityToReservePoolSingleSided(layoutStruct_, chirAmount_, vaultShares_);
+        if ((detfAmount_ == 0) != (vaultShares_ == 0)) {
+            return _addLiquidityToReservePoolSingleSided(layoutStruct_, detfAmount_, vaultShares_);
         }
 
         uint256[] memory amountsIn = new uint256[](2);
-        amountsIn[layoutStruct_.chirIndex] = chirAmount_;
+        amountsIn[layoutStruct_.detfIndex] = detfAmount_;
         amountsIn[layoutStruct_.vaultTokenIndex] = vaultShares_;
 
-        if (chirAmount_ != 0) {
-            IERC20(address(this)).safeTransfer(balancerVault, chirAmount_);
+        if (detfAmount_ != 0) {
+            IERC20(address(this)).safeTransfer(balancerVault, detfAmount_);
         }
         if (vaultShares_ != 0) {
             IERC20(address(layoutStruct_.wethRichVault)).safeTransfer(balancerVault, vaultShares_);
@@ -386,13 +386,13 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
     function _addLiquidityToReservePoolSingleSided(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 chirAmount_,
+        uint256 detfAmount_,
         uint256 vaultShares_
     ) internal returns (uint256 bptOut_) {
-        bool depositChir = chirAmount_ != 0;
-        uint256 tokenIndex = depositChir ? layoutStruct_.chirIndex : layoutStruct_.vaultTokenIndex;
-        IERC20 depositToken = depositChir ? IERC20(address(this)) : IERC20(address(layoutStruct_.wethRichVault));
-        uint256 remainingRaw = depositChir ? chirAmount_ : vaultShares_;
+        bool depositDetf = detfAmount_ != 0;
+        uint256 tokenIndex = depositDetf ? layoutStruct_.detfIndex : layoutStruct_.vaultTokenIndex;
+        IERC20 depositToken = depositDetf ? IERC20(address(this)) : IERC20(address(layoutStruct_.wethRichVault));
+        uint256 remainingRaw = depositDetf ? detfAmount_ : vaultShares_;
         IVault balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         IWeightedPool reservePool_ = IWeightedPool(layoutStruct_.reservePool);
         uint256[] memory weightsArray = reservePool_.getNormalizedWeights();
@@ -454,15 +454,15 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
     function _previewBptOutForAddLiquidity(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 chirAmount_,
+        uint256 detfAmount_,
         uint256 vaultShares_
     ) internal view returns (uint256 bptOut_) {
         if (IERC20(layoutStruct_.reservePool).totalSupply() == 0) {
-            return chirAmount_ + vaultShares_;
+            return detfAmount_ + vaultShares_;
         }
 
-        if ((chirAmount_ == 0) != (vaultShares_ == 0)) {
-            return _previewBptOutForSingleSidedAddLiquidity(layoutStruct_, chirAmount_, vaultShares_);
+        if ((detfAmount_ == 0) != (vaultShares_ == 0)) {
+            return _previewBptOutForSingleSidedAddLiquidity(layoutStruct_, detfAmount_, vaultShares_);
         }
 
         ReservePoolData memory data;
@@ -471,7 +471,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data.reservePool = IWeightedPool(layoutStruct_.reservePool);
         data.reservePoolSwapFee = data.balancerVault.getStaticSwapFeePercentage(address(data.reservePool));
-        data.chirIndex = layoutStruct_.chirIndex;
+        data.detfIndex = layoutStruct_.detfIndex;
         data.vaultTokenIndex = layoutStruct_.vaultTokenIndex;
         data.weightsArray = data.reservePool.getNormalizedWeights();
         data.totalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
@@ -483,7 +483,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             balancesLiveScaled18[i] = _toLiveScaled18(balancesRaw[i], tokenInfo[i]);
         }
 
-        amountsInScaled18[layoutStruct_.chirIndex] = _toLiveScaled18(chirAmount_, tokenInfo[layoutStruct_.chirIndex]);
+        amountsInScaled18[layoutStruct_.detfIndex] = _toLiveScaled18(detfAmount_, tokenInfo[layoutStruct_.detfIndex]);
         amountsInScaled18[layoutStruct_.vaultTokenIndex] = _toLiveScaled18(vaultShares_, tokenInfo[layoutStruct_.vaultTokenIndex]);
 
         bptOut_ = BalancerV38020WeightedPoolMath.calcBptOutGivenUnbalancedIn(
@@ -497,7 +497,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
     function _previewBptOutForSingleSidedAddLiquidity(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 chirAmount_,
+        uint256 detfAmount_,
         uint256 vaultShares_
     ) internal view returns (uint256 bptOut_) {
         ReservePoolData memory data;
@@ -506,16 +506,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data.reservePool = IWeightedPool(layoutStruct_.reservePool);
         data.reservePoolSwapFee = data.balancerVault.getStaticSwapFeePercentage(address(data.reservePool));
-        data.chirIndex = layoutStruct_.chirIndex;
+        data.detfIndex = layoutStruct_.detfIndex;
         data.vaultTokenIndex = layoutStruct_.vaultTokenIndex;
         data.weightsArray = data.reservePool.getNormalizedWeights();
         data.totalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
         (, tokenInfo, balancesRaw,) = data.balancerVault.getPoolTokenInfo(address(data.reservePool));
 
-        bool depositChir = chirAmount_ != 0;
-        uint256 tokenIndex = depositChir ? layoutStruct_.chirIndex : layoutStruct_.vaultTokenIndex;
-        uint256 remainingScaled18 = depositChir
-            ? _toLiveScaled18(chirAmount_, tokenInfo[tokenIndex])
+        bool depositDetf = detfAmount_ != 0;
+        uint256 tokenIndex = depositDetf ? layoutStruct_.detfIndex : layoutStruct_.vaultTokenIndex;
+        uint256 remainingScaled18 = depositDetf
+            ? _toLiveScaled18(detfAmount_, tokenInfo[tokenIndex])
             : _toLiveScaled18(vaultShares_, tokenInfo[tokenIndex]);
 
         uint256[] memory balancesLiveScaled18 = new uint256[](balancesRaw.length);
@@ -566,7 +566,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             return bptOut_;
         }
 
-        uint256 protocolBptAfter = layoutStruct_.protocolNFTVault.originalSharesOf(layoutStruct_.protocolNFTId) + bptOut_;
+        uint256 protocolBptAfter = layoutStruct_.detfNFTVault.originalSharesOf(layoutStruct_.detfNFTId) + bptOut_;
         uint256 wethValueAfter = IStandardExchange(address(this)).previewExchangeIn(
             IERC20(layoutStruct_.reservePool),
             protocolBptAfter,
@@ -603,7 +603,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             return 0;
         }
 
-        layoutStruct_.protocolNFTVault.addToProtocolNFT(layoutStruct_.protocolNFTId, bptOut_);
+        layoutStruct_.detfNFTVault.addToDETFNFT(layoutStruct_.detfNFTId, bptOut_);
         richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut_, recipient_);
     }
 
@@ -654,8 +654,8 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         );
     }
 
-    function _previewChirRedemptionBptIn(uint256 chirAmountIn_) internal view returns (uint256 bptIn_) {
-        uint256 vaultSharesTarget = _previewVaultSharesTargetForChirIn(SingleVaultDetfRepo._layoutStruct(), chirAmountIn_);
+    function _previewDetfRedemptionBptIn(uint256 detfAmountIn_) internal view returns (uint256 bptIn_) {
+        uint256 vaultSharesTarget = _previewVaultSharesTargetForDetfIn(SingleVaultDetfRepo._layoutStruct(), detfAmountIn_);
         bptIn_ = _previewBptInForProportionalVaultTokenOut(SingleVaultDetfRepo._layoutStruct(), vaultSharesTarget);
     }
 
@@ -667,7 +667,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         IRICHIR richir = layoutStruct_._richirToken();
         uint256 richirShares = richir.convertToShares(richirAmount_);
         uint256 totalRichirShares = richir.totalShares();
-        uint256 protocolNftBpt = layoutStruct_.protocolNFTVault.originalSharesOf(layoutStruct_.protocolNFTId);
+        uint256 protocolNftBpt = layoutStruct_.detfNFTVault.originalSharesOf(layoutStruct_.detfNFTId);
 
         if (richirShares == 0 || totalRichirShares == 0 || protocolNftBpt == 0) {
             revert ZeroAmount();
@@ -682,7 +682,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
     function _previewReservePoolExitProportional(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 bptIn_)
         internal
         view
-        returns (uint256 chirAmountOut_, uint256 vaultSharesOut_)
+        returns (uint256 detfAmountOut_, uint256 vaultSharesOut_)
     {
         if (bptIn_ == 0) {
             return (0, 0);
@@ -694,27 +694,27 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             return (0, 0);
         }
 
-        chirAmountOut_ = balancesRaw[layoutStruct_.chirIndex] * bptIn_ / data.totalSupply;
+        detfAmountOut_ = balancesRaw[layoutStruct_.detfIndex] * bptIn_ / data.totalSupply;
         vaultSharesOut_ = balancesRaw[layoutStruct_.vaultTokenIndex] * bptIn_ / data.totalSupply;
     }
 
-    function _previewVaultSharesTargetForChirIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 chirAmountIn_)
+    function _previewVaultSharesTargetForDetfIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 detfAmountIn_)
         internal
         view
         returns (uint256 vaultSharesTarget_)
     {
-        if (chirAmountIn_ == 0) {
+        if (detfAmountIn_ == 0) {
             return 0;
         }
 
         BurnQuoteData memory data = _loadBurnQuoteData(layoutStruct_);
-        uint256 effectiveChirIn = _effectiveChirBurnInput(layoutStruct_, chirAmountIn_);
+        uint256 effectiveDetfIn = _effectiveDetfBurnInput(layoutStruct_, detfAmountIn_);
         uint256 vaultTokensOutRated = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
-            data.ownedChirBalance,
-            data.chirWeight,
+            data.ownedDetfBalance,
+            data.detfWeight,
             data.ownedReserveVaultRatedBalance,
             data.vaultTokenWeight,
-            effectiveChirIn,
+            effectiveDetfIn,
             data.reservePoolSwapFee
         );
 
@@ -724,27 +724,27 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         }
     }
 
-    function _previewChirRedemptionAmountForVaultSharesOut(
+    function _previewDetfRedemptionAmountForVaultSharesOut(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
         uint256 vaultSharesOut_
-    ) internal view returns (uint256 chirAmountIn_) {
+    ) internal view returns (uint256 detfAmountIn_) {
         if (vaultSharesOut_ == 0) {
             return 0;
         }
 
         BurnQuoteData memory data = _loadBurnQuoteData(layoutStruct_);
         uint256 vaultTokensOutRated = vaultSharesOut_.mulDown(data.reserveVaultRate);
-        uint256 effectiveChirIn = BalancerV3WeightedPoolQuote.computeInGivenExactOutBeforeFee(
-            data.ownedChirBalance,
-            data.chirWeight,
+        uint256 effectiveDetfIn = BalancerV3WeightedPoolQuote.computeInGivenExactOutBeforeFee(
+            data.ownedDetfBalance,
+            data.detfWeight,
             data.ownedReserveVaultRatedBalance,
             data.vaultTokenWeight,
             vaultTokensOutRated,
             data.reservePoolSwapFee
         );
 
-        chirAmountIn_ = _rawChirBurnInputFromEffective(layoutStruct_, effectiveChirIn);
-        if (chirAmountIn_ == 0) {
+        detfAmountIn_ = _rawDetfBurnInputFromEffective(layoutStruct_, effectiveDetfIn);
+        if (detfAmountIn_ == 0) {
             revert ZeroAmount();
         }
     }
@@ -789,7 +789,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data.reservePool = IWeightedPool(layoutStruct_.reservePool);
         data.reservePoolSwapFee = data.balancerVault.getStaticSwapFeePercentage(address(data.reservePool));
-        data.chirIndex = layoutStruct_.chirIndex;
+        data.detfIndex = layoutStruct_.detfIndex;
         data.vaultTokenIndex = layoutStruct_.vaultTokenIndex;
         data.weightsArray = data.reservePool.getNormalizedWeights();
         data.totalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
@@ -847,7 +847,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data.reservePool = IWeightedPool(layoutStruct_.reservePool);
         data.reservePoolSwapFee = data.balancerVault.getStaticSwapFeePercentage(address(data.reservePool));
-        data.chirIndex = layoutStruct_.chirIndex;
+        data.detfIndex = layoutStruct_.detfIndex;
         data.vaultTokenIndex = layoutStruct_.vaultTokenIndex;
         data.weightsArray = data.reservePool.getNormalizedWeights();
         data.totalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
@@ -896,20 +896,20 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         bptIn_ = finalOut < vaultOutScaled18 ? low + 1 : low;
     }
 
-    function _previewChirRedemptionAmountForBptIn(uint256 bptIn_) internal view returns (uint256 chirAmountIn_) {
+    function _previewDetfRedemptionAmountForBptIn(uint256 bptIn_) internal view returns (uint256 detfAmountIn_) {
         if (bptIn_ == 0) {
             return 0;
         }
 
-        (uint256 chirAmountOut, uint256 vaultSharesOut) =
+        (uint256 detfAmountOut, uint256 vaultSharesOut) =
             _previewReservePoolExitProportional(SingleVaultDetfRepo._layoutStruct(), bptIn_);
         if (vaultSharesOut == 0) {
             revert ZeroAmount();
         }
 
-        chirAmountIn_ = _previewChirRedemptionAmountForVaultSharesOut(SingleVaultDetfRepo._layoutStruct(), vaultSharesOut);
-        if (chirAmountIn_ < chirAmountOut) {
-            chirAmountIn_ = chirAmountOut;
+        detfAmountIn_ = _previewDetfRedemptionAmountForVaultSharesOut(SingleVaultDetfRepo._layoutStruct(), vaultSharesOut);
+        if (detfAmountIn_ < detfAmountOut) {
+            detfAmountIn_ = detfAmountOut;
         }
     }
 
@@ -924,7 +924,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
         IRICHIR richir = layoutStruct_._richirToken();
         uint256 totalRichirShares = richir.totalShares();
-        uint256 protocolNftBpt = layoutStruct_.protocolNFTVault.originalSharesOf(layoutStruct_.protocolNFTId);
+        uint256 protocolNftBpt = layoutStruct_.detfNFTVault.originalSharesOf(layoutStruct_.detfNFTId);
         uint256 maxBptIn = IERC20(layoutStruct_.reservePool).totalSupply().mulDown(BALANCER_MAX_OUT_RATIO);
         if (protocolNftBpt < maxBptIn) {
             maxBptIn = protocolNftBpt;
@@ -1037,14 +1037,14 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
 
     function _exitReservePoolProportionalForBridge(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 bptIn_)
         internal
-        returns (uint256 chirAmountOut_, uint256 vaultSharesOut_)
+        returns (uint256 detfAmountOut_, uint256 vaultSharesOut_)
     {
         IERC20 reservePoolToken = IERC20(layoutStruct_.reservePool);
         reservePoolToken.forceApprove(address(layoutStruct_.balancerV3PrepayRouter), bptIn_);
         uint256[] memory minAmountsOut = new uint256[](2);
         uint256[] memory amountsOut =
             layoutStruct_.balancerV3PrepayRouter.prepayRemoveLiquidityProportional(layoutStruct_.reservePool, bptIn_, minAmountsOut, "");
-        chirAmountOut_ = amountsOut[layoutStruct_.chirIndex];
+        detfAmountOut_ = amountsOut[layoutStruct_.detfIndex];
         vaultSharesOut_ = amountsOut[layoutStruct_.vaultTokenIndex];
     }
 
@@ -1067,15 +1067,15 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         );
     }
 
-    function _redepositChirToReservePool(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 chirAmount_)
+    function _redepositDetfToReservePool(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 detfAmount_)
         internal
         returns (uint256 bptOut_)
     {
-        if (chirAmount_ == 0) {
+        if (detfAmount_ == 0) {
             return 0;
         }
 
-        bptOut_ = _addLiquidityToReservePool(layoutStruct_, chirAmount_, 0);
+        bptOut_ = _addLiquidityToReservePool(layoutStruct_, detfAmount_, 0);
     }
 
     function _loadBurnQuoteData(SingleVaultDetfRepo.Storage storage layoutStruct_)
@@ -1086,9 +1086,9 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data_.balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         data_.reservePool = IWeightedPool(layoutStruct_.reservePool);
         data_.reservePoolSwapFee = data_.balancerVault.getStaticSwapFeePercentage(address(data_.reservePool));
-        data_.chirIndex = layoutStruct_.chirIndex;
+        data_.detfIndex = layoutStruct_.detfIndex;
         data_.vaultTokenIndex = layoutStruct_.vaultTokenIndex;
-        data_.chirWeight = layoutStruct_.chirWeight;
+        data_.detfWeight = layoutStruct_.detfWeight;
         data_.vaultTokenWeight = layoutStruct_.vaultTokenWeight;
         data_.reservePoolTotalSupply = IERC20(layoutStruct_.reservePool).totalSupply();
         data_.reservePoolBptHeld = IERC20(layoutStruct_.reservePool).balanceOf(address(this));
@@ -1098,8 +1098,8 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         }
 
         (, data_.tokenInfo, data_.balancesRaw,) = data_.balancerVault.getPoolTokenInfo(address(data_.reservePool));
-        data_.ownedChirBalance = BetterMath._mulDivDown(
-            data_.balancesRaw[data_.chirIndex], data_.reservePoolBptHeld, data_.reservePoolTotalSupply
+        data_.ownedDetfBalance = BetterMath._mulDivDown(
+            data_.balancesRaw[data_.detfIndex], data_.reservePoolBptHeld, data_.reservePoolTotalSupply
         );
         data_.ownedReserveVaultBalance = BetterMath._mulDivDown(
             data_.balancesRaw[data_.vaultTokenIndex], data_.reservePoolBptHeld, data_.reservePoolTotalSupply
@@ -1107,27 +1107,27 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         data_.reserveVaultRate = _tokenRate(data_.tokenInfo[data_.vaultTokenIndex]);
         data_.ownedReserveVaultRatedBalance = data_.ownedReserveVaultBalance.mulDown(data_.reserveVaultRate);
 
-        if (data_.ownedChirBalance == 0 || data_.ownedReserveVaultBalance == 0 || data_.ownedReserveVaultRatedBalance == 0) {
+        if (data_.ownedDetfBalance == 0 || data_.ownedReserveVaultBalance == 0 || data_.ownedReserveVaultRatedBalance == 0) {
             revert ZeroAmount();
         }
     }
 
-    function _effectiveChirBurnInput(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 chirAmountIn_)
+    function _effectiveDetfBurnInput(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 detfAmountIn_)
         internal
         view
-        returns (uint256 effectiveChirIn_)
+        returns (uint256 effectiveDetfIn_)
     {
         uint256 halfIncentive = _seigniorageIncentivePercentage(layoutStruct_) / 2;
-        effectiveChirIn_ = chirAmountIn_ + chirAmountIn_.mulDown(halfIncentive);
+        effectiveDetfIn_ = detfAmountIn_ + detfAmountIn_.mulDown(halfIncentive);
     }
 
-    function _rawChirBurnInputFromEffective(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 effectiveChirIn_)
+    function _rawDetfBurnInputFromEffective(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 effectiveDetfIn_)
         internal
         view
-        returns (uint256 chirAmountIn_)
+        returns (uint256 detfAmountIn_)
     {
         uint256 halfIncentive = _seigniorageIncentivePercentage(layoutStruct_) / 2;
-        chirAmountIn_ = effectiveChirIn_.mulDivUp(FixedPoint.ONE, FixedPoint.ONE + halfIncentive);
+        detfAmountIn_ = effectiveDetfIn_.mulDivUp(FixedPoint.ONE, FixedPoint.ONE + halfIncentive);
     }
 
     function _bondFromWeth(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 wethAmount_, uint256 deadline_)
@@ -1145,9 +1145,9 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         returns (BondAssets memory assets_)
     {
         assets_.vaultShares = vaultShares_;
-        assets_.chirAmount = _calcProportionalChirForVaultShares(layoutStruct_, assets_.vaultShares);
-        ERC20Repo._mint(address(this), assets_.chirAmount);
-        assets_.bptOut = _addLiquidityToReservePool(layoutStruct_, assets_.chirAmount, assets_.vaultShares);
+        assets_.detfAmount = _calcProportionalDetfForVaultShares(layoutStruct_, assets_.vaultShares);
+        ERC20Repo._mint(address(this), assets_.detfAmount);
+        assets_.bptOut = _addLiquidityToReservePool(layoutStruct_, assets_.detfAmount, assets_.vaultShares);
     }
 
 }

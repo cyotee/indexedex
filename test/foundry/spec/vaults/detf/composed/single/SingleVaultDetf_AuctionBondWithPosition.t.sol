@@ -39,7 +39,7 @@ import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superch
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -76,7 +76,7 @@ import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfCo
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IProtocolNFTVaultDFPkg} from "contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
@@ -176,7 +176,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
     IFacet internal richirFacet;
-    IFacet internal protocolNFTVaultFacet;
+    IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
     IFacet internal uniswapV4StandardExchangePositionImportFacet;
@@ -187,11 +187,11 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     IRICHIRDFPkg internal richirDFPkg;
     IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
-    IDetfSelfNftInventoryDFPkg internal protocolNFTVaultPkg;
+    IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
 
     ISingleVaultDetf internal detf;
-    IProtocolNFTVault internal protocolNFTVault;
+    IDETFNFTVault internal detfNFTVault;
     ContinuousClearingAuction internal auction;
     IPositionManager internal positionManager;
     AuctionUniswapV4LiquiditySeeder internal liquiditySeeder;
@@ -219,7 +219,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
 
         _deployWeightedPool8020Factory();
         _deployStandardExchangeRateProviderPkg();
-        _deployProtocolNFTVaultPkg();
+        _deployDETFNFTVaultPkg();
         _deployUniswapV4StandardExchangePkg();
 
         singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
@@ -270,7 +270,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
                 localRelayer: address(0),
                 peerRelayer: address(0),
                 wethRichVaultPkg: wethRichVaultPkg,
-                protocolNFTVaultPkg: protocolNFTVaultPkg,
+                detfNFTVaultPkg: detfNFTVaultPkg,
                 richirPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
@@ -296,7 +296,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         );
         vm.stopPrank();
 
-        protocolNFTVault = detf.protocolNFTVault();
+        detfNFTVault = detf.detfNFTVault();
         liquiditySeeder = new AuctionUniswapV4LiquiditySeeder(poolManager);
         PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(wethToken), bytes32("ETH"));
         positionManager = IPositionManager(
@@ -428,7 +428,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         assertGt(IERC20(address(detf.wethRichVault())).totalSupply(), 0, "vault bootstrapped from imported position");
         assertGt(shares, 0, "bond minted reserve shares");
         assertEq(shares, IERC20(detf.reservePool()).balanceOf(address(detf)), "bond shares backed by reserve pool");
-        assertTrue(createdTokenId != detf.protocolNFTId(), "user bond nft distinct from protocol nft");
+        assertTrue(createdTokenId != detf.detfNFTId(), "user bond nft distinct from protocol nft");
         assertEq(
             IERC721(address(positionManager)).ownerOf(positionTokenId),
             address(detf.wethRichVault()),
@@ -436,8 +436,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         );
 
         {
-            IProtocolNFTVault.Position memory position = protocolNFTVault.getPosition(createdTokenId);
-            assertEq(protocolNFTVault.ownerOf(createdTokenId), auctionBob, "bond recipient");
+            IDETFNFTVault.Position memory position = detfNFTVault.getPosition(createdTokenId);
+            assertEq(detfNFTVault.ownerOf(createdTokenId), auctionBob, "bond recipient");
             assertEq(position.originalShares, shares, "created bond shares");
             assertEq(position.unlockTime, block.timestamp + MIN_LOCK_DURATION, "lock duration");
         }
@@ -581,24 +581,24 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         vm.label(address(rateProviderPkg), "SingleVaultDetfAuction_StandardExchangeRateProviderDFPkg");
     }
 
-    function _deployProtocolNFTVaultPkg() internal {
-        protocolNFTVaultFacet = create3Factory.deployProtocolNFTVaultFacet();
+    function _deployDETFNFTVaultPkg() internal {
+        detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         IFacet erc721Facet = IFacet(
             create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SingleVaultDetfAuction_ERC721Facet"))
         );
 
-        IProtocolNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
-            .buildProtocolNFTVaultPkgInit(
+        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+            .buildDETFNFTVaultPkgInit(
             erc721Facet,
             erc4626BasicVaultFacet,
             erc4626StandardVaultFacet,
-            protocolNFTVaultFacet,
+            detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
         );
 
         vm.startPrank(owner);
-        protocolNFTVaultPkg = IVaultRegistryDeployment(address(indexedexManager)).deployProtocolNFTVaultDFPkg(nftPkgInit);
+        detfNFTVaultPkg = IVaultRegistryDeployment(address(indexedexManager)).deployDETFNFTVaultDFPkg(nftPkgInit);
         vm.stopPrank();
     }
 

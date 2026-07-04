@@ -1,8 +1,8 @@
 {
   "name": "Indexedex Balancer V3 Pools",
-  "timestamp": "2026-06-11T18:59:21.687Z",
+  "timestamp": "2026-07-11T08:31:52.025Z",
   "version": {
-    "major": 2,
+    "major": 3,
     "minor": 0,
     "patch": 0
   },
@@ -28,9 +28,9 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0xcf7B0732112CB23c4aC86C344FeB8B9a01Fa3A54",
-      "name": "Balancer TTA + UniV2 AB Vault",
-      "symbol": "balUniAbA",
+      "address": "0xF06D2500C258F46B8d3cc13f4Cd2A7654AF73D0f",
+      "name": "Balancer 80/20 WETH/DETF Pool",
+      "symbol": "wethDetfBP",
       "decimals": 18,
       "tags": [
         "pool",
@@ -40,9 +40,9 @@
     },
     {
       "chainId": 11155111,
-      "address": "0xdFe4093c3592437c483333D4F6d7Dc61365475B0",
-      "name": "Balancer TTB + UniV2 BWETH Vault",
-      "symbol": "balUniBWethB",
+      "address": "0xC2220E04f35527c45CD8007038Eb9E94513b8B17",
+      "name": "DETF Reserve Pool",
+      "symbol": "reserveBP",
       "decimals": 18,
       "tags": [
         "pool",

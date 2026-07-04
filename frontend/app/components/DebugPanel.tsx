@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { isDebugLabEnabled } from '../lib/lab'
 
 interface DebugPanelProps {
   title?: string
@@ -10,6 +11,11 @@ interface DebugPanelProps {
 
 export default function DebugPanel({ title = 'Debug Information', children, className = '' }: DebugPanelProps) {
   const [isOpen, setIsOpen] = useState(false)
+
+  // Hidden by default in production-oriented builds (NEXT_PUBLIC_SHOW_DEBUG !== 'true')
+  if (!isDebugLabEnabled()) {
+    return null
+  }
 
   return (
     <div className={`mt-6 bg-slate-700/30 rounded-lg ${className}`}>

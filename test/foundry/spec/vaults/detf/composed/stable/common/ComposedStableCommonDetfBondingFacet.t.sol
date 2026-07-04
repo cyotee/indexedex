@@ -16,7 +16,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
@@ -194,7 +194,7 @@ contract ComposedStableCommonDetfBondingHarness is ComposedStableCommonDetfBondi
 
     function initializeHarness(
         IWeightedPool reservePool_,
-        IProtocolNFTVault bondNftVault_,
+        IDETFNFTVault bondNftVault_,
         IRICHIR rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
@@ -352,7 +352,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
 
         harness.initializeHarness(
             IWeightedPool(address(reservePoolToken)),
-            IProtocolNFTVault(address(bondNFTVault)),
+            IDETFNFTVault(address(bondNFTVault)),
             IRICHIR(address(rebasingDetfToken)),
             detfToken,
             stablePoolBpt,
@@ -443,7 +443,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         ComposedStableCommonDetfBondingHarness unconfiguredHarness = new ComposedStableCommonDetfBondingHarness();
         unconfiguredHarness.initializeHarness(
             IWeightedPool(address(reservePoolToken)),
-            IProtocolNFTVault(address(bondNFTVault)),
+            IDETFNFTVault(address(bondNFTVault)),
             IRICHIR(address(0)),
             detfToken,
             stablePoolBpt,

@@ -68,7 +68,7 @@ import {
 import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
 import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
-import {IProtocolNFTVault} from 'contracts/interfaces/IProtocolNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 
 contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3StandardExchangeRouter {
     using CastingHelpers for address[];
@@ -97,7 +97,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     IRebasingDETFTokenDFPkg internal rebasingDetfTokenPkg;
 
     IERC20 internal detfToken;
-    IProtocolNFTVault internal bondNFTVault;
+    IDETFNFTVault internal bondNFTVault;
     IRICHIR internal rebasingDetfToken;
     IProtocolDETF internal protocolDETF;
 
@@ -120,6 +120,15 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         string symbol;
         address poolCreator;
         string label;
+    }
+
+    /// @dev Overridable so nested matrix fixtures can open burn for rate-provider quotes.
+    function _composedMintThreshold() internal pure virtual returns (uint256) {
+        return 1e18;
+    }
+
+    function _composedBurnThreshold() internal pure virtual returns (uint256) {
+        return 0;
     }
 
     function setUp() public override {
@@ -188,8 +197,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     detfIndex: detfIndex,
                     stablePoolBptIndex: stablePoolBptIndex,
                     commonPoolBptIndex: commonPoolBptIndex,
-                    mintThreshold: 1e18,
-                    burnThreshold: 0,
+                    mintThreshold: _composedMintThreshold(),
+                    burnThreshold: _composedBurnThreshold(),
                     routes: routes
                 })
             );
@@ -210,7 +219,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     function test_deployVault_surfacesRealCompanionReferences() public view {
         assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(deployedDetfVault), 'vault registered');
         assertEq(IDETF(deployedDetfVault).bondNftVault(), address(bondNFTVault), 'bond vault wired');
-        assertEq(IDETF(deployedDetfVault).protocolNFTId(), bondNFTVault.protocolNFTId(), 'protocol nft id surfaced');
+        assertEq(IDETF(deployedDetfVault).detfNFTId(), bondNFTVault.detfNFTId(), 'protocol nft id surfaced');
         assertEq(IDETF(deployedDetfVault).rebasingDetfToken(), address(rebasingDetfToken), 'rebasing token wired');
         assertEq(IDETF(deployedDetfVault).reservePool(), address(reservePool), 'reserve pool wired');
     }
@@ -240,13 +249,13 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         IComposedStableCommonDetfBondNFTVault deployedBondVault =
             IComposedStableCommonDetfBondNFTVault(IDETF(deployedDetfVault).bondNftVault());
         IRICHIR deployedRebasingToken = IRICHIR(IDETF(deployedDetfVault).rebasingDetfToken());
-        uint256 protocolNftId = deployedBondVault.protocolNFTId();
+        uint256 protocolNftId = deployedBondVault.detfNFTId();
         uint256 feeRecipientNftId = deployedBondVault.feeRecipientNFTId();
 
         assertEq(deployedBondVault.ownerOf(protocolNftId), address(deployedBondVault), 'protocol nft initialized');
         assertTrue(deployedBondVault.ownerOf(feeRecipientNftId) != address(0), 'fee recipient nft minted');
         assertEq(address(deployedBondVault.rewardToken()), address(detfToken), 'bond vault reward token wired');
-        assertEq(deployedRebasingToken.protocolNFTId(), protocolNftId, 'rebasing token protocol nft');
+        assertEq(deployedRebasingToken.detfNFTId(), protocolNftId, 'rebasing token protocol nft');
         assertEq(address(deployedRebasingToken.wethToken()), address(weth), 'rebasing common token wired');
     }
 
@@ -294,7 +303,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
 
         uint256 amountIn = 1_000e18;
         uint256 lockDuration = 30 days;
-        uint256 protocolSharesBefore = bondNFTVault.originalSharesOf(bondNFTVault.protocolNFTId());
+        uint256 protocolSharesBefore = bondNFTVault.originalSharesOf(bondNFTVault.detfNFTId());
         uint256 wethBefore = weth.balanceOf(alice);
 
         vm.startPrank(alice);
@@ -320,7 +329,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
 
         assertGt(richirMinted, 0, 'richir minted');
         assertGt(redeemPreview, 0, 'richir redeem preview');
-        assertGt(bondNFTVault.originalSharesOf(bondNFTVault.protocolNFTId()), protocolSharesBefore, 'protocol nft absorbed principal');
+        assertGt(bondNFTVault.originalSharesOf(bondNFTVault.detfNFTId()), protocolSharesBefore, 'protocol nft absorbed principal');
         assertEq(rebasingDetfToken.balanceOf(alice), richirMinted, 'alice richir balance');
 
         vm.prank(alice);
@@ -445,7 +454,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         );
 
         vm.startPrank(owner);
-        bondNFTVault = IProtocolNFTVault(
+        bondNFTVault = IDETFNFTVault(
             bondNFTVaultPkg.deployVault(
                 'Composed Stable Bond NFT Vault',
                 'csBOND',
@@ -456,7 +465,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                 owner
             )
         );
-        bondNFTVault.initializeProtocolNFT();
+        bondNFTVault.initializeDETFNFT();
         vm.stopPrank();
 
         vm.startPrank(owner);
@@ -465,7 +474,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                 IDETF(address(protocolDETF)),
                 bondNFTVault,
                 weth,
-                bondNFTVault.protocolNFTId(),
+                bondNFTVault.detfNFTId(),
                 owner
             )
         );

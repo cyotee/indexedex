@@ -80,7 +80,7 @@ interface IRICHIR is IERC20, IERC20Metadata, IStandardExchangeIn, IStandardExcha
      * @notice Returns the protocol-owned NFT token ID held by this contract.
      * @return The protocol NFT token ID
      */
-    function protocolNFTId() external view returns (uint256);
+    function detfNFTId() external view returns (uint256);
 
     /**
     * @notice Returns the configured common-token boundary.

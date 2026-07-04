@@ -8,7 +8,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolNFTVault} from "contracts/interfaces/IProtocolNFTVault.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
@@ -114,22 +114,22 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy_Test is TestBase_Vault
         );
         vm.stopPrank();
 
-        assertEq(address(IProtocolNFTVault(vault).lpToken()), address(lpToken), "lp token initialized");
-        assertEq(address(IProtocolNFTVault(vault).rewardToken()), address(detfToken), "reward token initialized to detf");
-        assertEq(address(IProtocolNFTVault(vault).protocolDETF()), address(protocolDETF), "protocol detf initialized");
+        assertEq(address(IDETFNFTVault(vault).lpToken()), address(lpToken), "lp token initialized");
+        assertEq(address(IDETFNFTVault(vault).rewardToken()), address(detfToken), "reward token initialized to detf");
+        assertEq(address(IDETFNFTVault(vault).protocolDETF()), address(protocolDETF), "protocol detf initialized");
 
         IComposedStableCommonDetfBondNFTVault bondVault = IComposedStableCommonDetfBondNFTVault(vault);
-        uint256 protocolTokenId = bondVault.protocolNFTId();
+        uint256 protocolTokenId = bondVault.detfNFTId();
         uint256 feeRecipientTokenId = bondVault.feeRecipientNFTId();
 
-        assertEq(IProtocolNFTVault(vault).ownerOf(protocolTokenId), vault, "protocol nft owner");
+        assertEq(IDETFNFTVault(vault).ownerOf(protocolTokenId), vault, "protocol nft owner");
         assertEq(
-            IProtocolNFTVault(vault).ownerOf(feeRecipientTokenId),
+            IDETFNFTVault(vault).ownerOf(feeRecipientTokenId),
             address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()),
             "fee recipient nft owner"
         );
         assertGt(feeRecipientTokenId, protocolTokenId, "special nft mint order");
-        assertEq(bondVault.deploymentTimestamp(), IProtocolNFTVault(vault).unlockTimeOf(feeRecipientTokenId), "fee recipient unlock time");
+        assertEq(bondVault.deploymentTimestamp(), IDETFNFTVault(vault).unlockTimeOf(feeRecipientTokenId), "fee recipient unlock time");
     }
 
     function test_packageMetadata_matchesExpectedFacets() public view {

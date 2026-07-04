@@ -16,7 +16,7 @@ import {SeigniorageBondNFTCommon} from 'contracts/vaults/seigniorage/nft/Seignio
 contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockModifiers, MultiStepOwnableModifiers, ISeigniorageBondNFT {
 
     // /**
-    //  * @inheritdoc IProtocolNFTVault
+    //  * @inheritdoc IDETFNFTVault
     //  * @dev Only the owner (Protocol DETF) can call this function.
     //  */
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
@@ -76,7 +76,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
 
         // Cannot redeem protocol NFT normally
         if (_isDETFOwnedNFT(tokenId)) {
-            revert IProtocolDETFErrors.ProtocolNFTRestricted(tokenId);
+            revert IProtocolDETFErrors.DETFNFTRestricted(tokenId);
         }
 
         // Check lock expiry
@@ -92,8 +92,8 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
         _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
         // // Get BPT amount (LP) from the canonical share ledger (effectiveShares)
-        // uint256 lpAmount = ProtocolNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
-        // ProtocolNFTVaultRepo._removePosition(layoutStruct, tokenId);
+        // uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
+        // DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // // Grant approval for burn if DETF is calling
         // if (msg.sender == address(layoutStruct.protocolDETF)) {
@@ -105,7 +105,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
         // // delegate to ProtocolDETF, which custody-holds BPT and executes the pool unwind.
         // wethOut = layoutStruct.protocolDETF.claimLiquidity(lpAmount, recipient);
 
-        // emit IProtocolNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
+        // emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }
 
 }
