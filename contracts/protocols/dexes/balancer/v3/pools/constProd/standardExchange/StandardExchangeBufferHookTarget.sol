@@ -17,7 +17,6 @@ import {
 } from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 
@@ -25,6 +24,8 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {StandardExchangeBufferPoolRepo as Repo} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
+import {StandardExchangeBufferPoolCommon} from
+    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.sol";
 
 /**
  * @title StandardExchangeBufferHookTarget
@@ -33,7 +34,7 @@ import {StandardExchangeBufferPoolRepo as Repo} from
  *      for the facet (Task 12) to provide. This slice covers registration + initialization.
  *      Swap and LP hooks are filled in by Tasks 8-11.
  */
-abstract contract StandardExchangeBufferHookTarget is IHooks {
+abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPoolCommon, IHooks {
 
     /* ----- Virtual hooks (resolved by the facet) ----- */
 
@@ -102,7 +103,8 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
 
     /**
      * @notice Hook executed before pool initialization.
-     * @dev Seeds virtualTTA from the shares-side scaled18 amount and resets hookSharesDelta to 0.
+     * @dev Seeds virtualTTA from the shares-side scaled18 amount, resets hookSharesDelta to 0,
+     *      and captures the Vault-reported share rate as baselineRate for effective weight computation.
      *
      *      Balancer V3 passes `exactAmountsInScaled18` to this hook.  For a WITH_RATE share token
      *      the scaled18 value is `rawShares * rate / 1e18`, which is already expressed in TTA-equivalent
@@ -113,20 +115,27 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
      *      accounting: after initialization `liveBalance[sharesIdx] == rawBalance * rate / 1e18`,
      *      so `virtualTTA == liveBalance[sharesIdx]` immediately after the seed.
      *
-     *      Reverts if the rate provider returns zero or the resulting virtualTTA is zero.
+     *      baselineRate is anchored to the rate at initialization time, making the seeded inventory
+     *      the equilibrium point for effective weight computation: when currentRate == baselineRate,
+     *      the weights are exactly 50/50.
+     *
+     *      Reverts if the Vault-reported rate is zero or the resulting virtualTTA is zero.
      */
     function onBeforeInitialize(uint256[] memory exactAmountsIn, bytes memory)
         external virtual override returns (bool)
     {
         if (msg.sender != _balancerV3Vault()) return false;
         uint256 sharesIdx = Repo._sharesIndex();
-        uint256 rate = Repo._rateProvider().getRate();
-        if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
+        // Read the rate the Vault itself just applied (reverts RateProviderZero on 0).
+        (uint256 rate, ) = _vaultSharesRateAndScale();
         // exactAmountsIn is exactAmountsInScaled18 from Balancer. For WITH_RATE tokens,
         // scaled18 = rawShares * rate / 1e18 — already in TTA-equivalent units.
         uint256 virtualInit = exactAmountsIn[sharesIdx];
         if (virtualInit == 0) revert IStandardExchangeBufferPool.InitialInvariantTooSmall();
         Repo._setVirtualTTA(virtualInit);
+        // Anchor for effective weights: weights are 50/50 at this rate, so the seeded
+        // inventory is the equilibrium point and the pool quotes NAV immediately.
+        Repo._setBaselineRate(rate);
         Repo._setHookSharesDelta(0);
         return true;
     }
@@ -526,91 +535,7 @@ abstract contract StandardExchangeBufferHookTarget is IHooks {
         Repo._setPendingPreSeatS(drainAmount);
     }
 
-    /**
-     * @dev Returns the effective shares-side depth used in AMM math, derived from the live balance
-     *      minus the hook's accumulated reshuffling offset (hookSharesDelta).
-     *      Mirrors StandardExchangeBufferPoolTarget._derivedY.
-     */
-    function _derivedY(uint256[] memory balancesLiveScaled18) internal view returns (uint256) {
-        uint256 sharesIdx = Repo._sharesIndex();
-        int256 h = Repo._hookSharesDelta();
-        uint256 actualSharesScaled = balancesLiveScaled18[sharesIdx];
-        if (h <= 0) {
-            // Negative delta means hook added shares — effective depth is larger.
-            uint256 add = _liftSharesToScaled18Rated(uint256(-h));
-            unchecked { return actualSharesScaled + add; }
-        }
-        // Positive delta means hook removed shares from the effective pool side.
-        uint256 sub = _liftSharesToScaled18Rated(uint256(h));
-        if (sub >= actualSharesScaled) return 0;
-        unchecked { return actualSharesScaled - sub; }
-    }
 
-    /**
-     * @dev Converts a raw shares amount to scaled18+rated units, matching Vault's balancesLiveScaled18.
-     *      Mirrors StandardExchangeBufferPoolTarget._liftSharesToScaled18Rated.
-     */
-    function _liftSharesToScaled18Rated(uint256 rawShares) internal view returns (uint256) {
-        if (rawShares == 0) return 0;
-        uint256 rate = Repo._rateProvider().getRate();
-        if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
-        uint8 decimals = IERC20Metadata(address(Repo._shareToken())).decimals();
-        uint256 scaleFactor = 10 ** (uint256(18) - uint256(decimals));
-        return Math.mulDiv(rawShares * scaleFactor, rate, 1e18);
-    }
-
-    /**
-     * @dev Computes the exact raw shares amount that Balancer V3 will charge as `amountInRaw`
-     *      when given `desiredRaw` as `maxAmountsIn[sharesIdx]` for an addLiquidity DONATION (or
-     *      any kind that re-derives amountInRaw from scaled).
-     *
-     *      Balancer V3 applies this round-trip (see Vault.sol:528 and 683):
-     *        scaled       = floor(desiredRaw * scaleFactor * rate / 1e18)
-     *        amountInRaw  = ceil (scaled * 1e18 / (scaleFactor * rate))
-     *
-     *      For tokens where `scaleFactor * rate` does not divide cleanly into the scaled-18 grid
-     *      (e.g. a rate provider returning a value far below 1e18, as for the V2 SE Vault with
-     *      its decimal-offset shares), `amountInRaw < desiredRaw` — the hook's `settle` credit
-     *      and the DONATION debit therefore differ unless we anticipate the round-trip and
-     *      either (a) cap the `settle` hint to the same value Balancer will derive, or
-     *      (b) bump `hookSharesDelta` by `amountInRaw` instead of `desiredRaw`.
-     *
-     *      For tokens with `rate == 1e18` (typical ERC4626 wrappers like the Aerodrome SE Vault)
-     *      this is an identity function.
-     */
-    function _bv3SharesDonationRaw(uint256 desiredRaw) internal view returns (uint256) {
-        if (desiredRaw == 0) return 0;
-        uint256 rate = Repo._rateProvider().getRate();
-        if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
-        uint8 decimals = IERC20Metadata(address(Repo._shareToken())).decimals();
-        uint256 denom = (10 ** (uint256(18) - uint256(decimals))) * rate;
-        uint256 scaled = (desiredRaw * denom) / 1e18;
-        return Math.mulDiv(scaled, 1e18, denom, Math.Rounding.Ceil);
-    }
-
-    /**
-     * @dev Computes the exact raw shares amount that Balancer V3 will return as `amountOutRaw`
-     *      when given `sRaw` as `minAmountsOut[sharesIdx]` for a removeLiquidity CUSTOM with
-     *      the buffer-pool's passthrough `onRemoveLiquidityCustom`.
-     *
-     *      Balancer V3 applies this round-trip (see Vault.sol:764 and 915):
-     *        scaled        = ceil (sRaw * scaleFactor * rate / 1e18)   (toScaled18ApplyRateRoundUp)
-     *        amountOutRaw  = floor(scaled * 1e18 / (scaleFactor * rate))
-     *
-     *      For rate providers returning rate < 1e18, the ceil-then-floor pair overshoots:
-     *      `amountOutRaw > sRaw` by up to `1e18 / (scaleFactor * rate)` wei.  Aligning the
-     *      hook's pre-seat drain amount with this projected output is what keeps the Vault
-     *      delta accounting balanced — see `_preSeatShares` step 1.
-     */
-    function _bv3SharesRemoveOutRaw(uint256 sRaw) internal view returns (uint256) {
-        if (sRaw == 0) return 0;
-        uint256 rate = Repo._rateProvider().getRate();
-        if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
-        uint8 decimals = IERC20Metadata(address(Repo._shareToken())).decimals();
-        uint256 denom = (10 ** (uint256(18) - uint256(decimals))) * rate;
-        uint256 scaled = Math.mulDiv(sRaw, denom, 1e18, Math.Rounding.Ceil);
-        return (scaled * 1e18) / denom;
-    }
 
     /**
      * @dev Builds an AddLiquidityParams struct for calling vault.addLiquidity.

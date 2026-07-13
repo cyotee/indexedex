@@ -232,4 +232,18 @@ contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
         vm.store(bufferPool, bytes32(uint256(repoSlot) + 7), bytes32(vtPre));
         vm.store(bufferPool, bytes32(uint256(repoSlot) + 8), bytes32(uint256(hsdPre)));
     }
+
+    /**
+     * @notice onBeforeInitialize captures the Vault-reported share rate as baselineRate.
+     * @dev The pool is already initialized, so calling onBeforeInitialize again will overwrite
+     *      baselineRate. We assert that the stored baselineRate matches the rate the Vault
+     *      reports for the shares token.
+     */
+    function test_onBeforeInitialize_capturesBaselineRateFromVault() public view {
+        (, uint256[] memory rates) = bv3Vault.getPoolTokenRates(bufferPool);
+        uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
+        uint256 baseline = IStandardExchangeBufferPool(bufferPool).baselineRate();
+        assertGt(baseline, 0, "baselineRate not set");
+        assertEq(baseline, rates[sharesIdx], "baselineRate != vault rate at init");
+    }
 }
