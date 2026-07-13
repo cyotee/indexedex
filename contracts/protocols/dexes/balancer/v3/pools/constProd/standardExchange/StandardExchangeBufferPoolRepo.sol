@@ -25,6 +25,11 @@ library StandardExchangeBufferPoolRepo {
         // pendingPreSeatS: number of shares drained from the pool during the pre-seat pass.
         // Zero means no pre-seat is in flight.
         uint256 pendingPreSeatS;
+        // Rate reported by the Vault for the share token at pool initialization.
+        // Effective weights are computed from currentRate / baselineRate, so the
+        // pool's seeded inventory is its equilibrium point regardless of where the
+        // rate provider's absolute scale sits.
+        uint256 baselineRate;
     }
 
     function _layout(bytes32 slot_) internal pure returns (Storage storage l) {
@@ -68,4 +73,7 @@ library StandardExchangeBufferPoolRepo {
 
     function _pendingPreSeatS() internal view returns (uint256) { return _layout().pendingPreSeatS; }
     function _setPendingPreSeatS(uint256 v) internal { _layout().pendingPreSeatS = v; }
+
+    function _baselineRate() internal view returns (uint256) { return _layout().baselineRate; }
+    function _setBaselineRate(uint256 v) internal { _layout().baselineRate = v; }
 }

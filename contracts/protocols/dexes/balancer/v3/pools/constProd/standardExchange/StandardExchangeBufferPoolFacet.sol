@@ -26,6 +26,7 @@ contract StandardExchangeBufferPoolFacet is StandardExchangeBufferPoolTarget, IF
     function rateProvider() external view returns (IRateProvider) { return StandardExchangeBufferPoolRepo._rateProvider(); }
     function ttaIndex() external view returns (uint256) { return StandardExchangeBufferPoolRepo._ttaIndex(); }
     function sharesIndex() external view returns (uint256) { return StandardExchangeBufferPoolRepo._sharesIndex(); }
+    function baselineRate() external view returns (uint256) { return StandardExchangeBufferPoolRepo._baselineRate(); }
 
     /* ----- IFacet ----- */
 
@@ -38,7 +39,7 @@ contract StandardExchangeBufferPoolFacet is StandardExchangeBufferPoolTarget, IF
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](11);
+        funcs = new bytes4[](12);
         funcs[0] = IBalancerV3Pool.computeInvariant.selector;
         funcs[1] = IBalancerV3Pool.computeBalance.selector;
         funcs[2] = IBalancerV3Pool.onSwap.selector;
@@ -50,6 +51,7 @@ contract StandardExchangeBufferPoolFacet is StandardExchangeBufferPoolTarget, IF
         funcs[8] = this.rateProvider.selector;
         funcs[9] = this.ttaIndex.selector;
         funcs[10] = this.sharesIndex.selector;
+        funcs[11] = this.baselineRate.selector;
     }
 
     function facetMetadata() external pure returns (string memory n, bytes4[] memory i, bytes4[] memory f) {

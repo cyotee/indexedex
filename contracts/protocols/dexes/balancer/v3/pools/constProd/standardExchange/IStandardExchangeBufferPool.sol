@@ -18,6 +18,7 @@ interface IStandardExchangeBufferPool {
     error AddLiquidityNotProportional();
     error InitialInvariantTooSmall();
     error InvalidPoolRegistration();
+    error EffectiveWeightOutOfBounds(uint256 wTta, uint256 wShares);
 
     /* ----- Views (storage getters) ----- */
     function virtualTTA() external view returns (uint256);
@@ -28,4 +29,5 @@ interface IStandardExchangeBufferPool {
     function rateProvider() external view returns (IRateProvider);
     function ttaIndex() external view returns (uint256);
     function sharesIndex() external view returns (uint256);
+    function baselineRate() external view returns (uint256);
 }
