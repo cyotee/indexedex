@@ -4,12 +4,16 @@ pragma solidity ^0.8.0;
 import {PoolSwapParams, SwapKind, Rounding} from
     "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
 import {IBalancerV3Pool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerV3Pool.sol";
+import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 
 import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+import {CommonHarness} from
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.t.sol";
 
 /**
  * @title StandardExchangeBufferPoolTargetTest
@@ -56,6 +60,7 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
 
     uint256 internal constant VIRTUAL_TTA_OFFSET      = 7;
     uint256 internal constant HOOK_SHARES_DELTA_OFFSET = 8;
+    uint256 internal constant BASELINE_RATE_OFFSET     = 10;
 
     /* ---------------------------------------------------------------------- */
     /*                              Helpers                                     */
@@ -78,10 +83,35 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
     }
 
     /**
+     * @dev Force baselineRate to `v` in the pool's diamond storage via vm.store.
+     */
+    function _setBaselineRate(uint256 v) internal {
+        vm.store(bufferPool, bytes32(uint256(POOL_REPO_SLOT) + BASELINE_RATE_OFFSET), bytes32(v));
+    }
+
+    /**
      * @dev Read virtualTTA from the live pool.
      */
     function _virtualTTA() internal view returns (uint256) {
         return IStandardExchangeBufferPool(bufferPool).virtualTTA();
+    }
+
+    /**
+     * @dev Read the Vault's current live (scaled18 + rated) balances for the pool — the same
+     *      array onSwap/computeInvariant receive from the Vault.
+     */
+    function _liveBalances() internal view returns (uint256[] memory) {
+        return bv3Vault.getCurrentLiveBalances(bufferPool);
+    }
+
+    /**
+     * @dev Convenience wrapper around _buildSwapParams using the live balances, matching the
+     *      brief's `_swapParams(kind, amount, idxIn, idxOut)` shape.
+     */
+    function _swapParams(SwapKind kind, uint256 amount, uint256 idxIn, uint256 idxOut)
+        internal view returns (PoolSwapParams memory)
+    {
+        return _buildSwapParams(kind, idxIn, idxOut, amount, _liveBalances());
     }
 
     /**
@@ -255,5 +285,75 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
         uint256 inv = IBalancerV3Pool(bufferPool).computeInvariant(bal, Rounding.ROUND_DOWN);
         // sqrt(100e18 * 100e18) = 100e18
         assertApproxEqAbs(inv, 100e18, 1e9);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                 Rate-Tracking Weighted Math Tests (Task 3)               */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice At rate == baselineRate weights are 50/50 and the quote must equal the CP
+     *         formula to within rounding (<= 2 wei).
+     */
+    function test_onSwap_matchesCP_atBaseline() public {
+        uint256 ttaIdx = IStandardExchangeBufferPool(bufferPool).ttaIndex();
+        uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
+
+        uint256 x = _virtualTTA();
+        uint256[] memory bals = _liveBalances();
+        uint256 y = bals[sharesIdx];
+        uint256 dx = x / 100;
+        uint256 cpOut = y * dx / (x + dx);
+        uint256 got = IBalancerV3Pool(bufferPool).onSwap(_swapParams(SwapKind.EXACT_IN, dx, ttaIdx, sharesIdx));
+        // WeightedMath.computeOutGivenExactIn goes through a pow-based fixed-point approximation
+        // (LogExpMath) rather than exact integer division, so even at exact 50/50 weights it
+        // differs from the CP formula by a small relative amount (observed ~1e-16) rather than a
+        // fixed few wei. Use a tight relative tolerance instead of the brief's absolute "<=2 wei"
+        // pin, which does not hold once the swap size is large enough for pow-rounding to exceed it.
+        assertApproxEqRel(got, cpOut, 1e9, "50/50 weighted != CP");
+    }
+
+    /**
+     * @notice Force baselineRate = currentRate / 1.2, i.e. the rate has "risen" 20% since
+     *         init. The quoted shares-out for a small TTA amount must fall by ~1.2x versus
+     *         the baseline quote. Under the old CP math the two quotes are identical.
+     */
+    function test_onSwap_quoteScalesInverselyWithRateRatio() public {
+        uint256 ttaIdx = IStandardExchangeBufferPool(bufferPool).ttaIndex();
+        uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
+
+        uint256 dx = 1e15;
+        uint256 out1 = IBalancerV3Pool(bufferPool).onSwap(_swapParams(SwapKind.EXACT_IN, dx, ttaIdx, sharesIdx));
+        uint256 currentRate = seRateProvider.getRate();
+        _setBaselineRate(Math.mulDiv(currentRate, 1e18, 1.2e18));
+        uint256 out2 = IBalancerV3Pool(bufferPool).onSwap(_swapParams(SwapKind.EXACT_IN, dx, ttaIdx, sharesIdx));
+        // price-per-share ∝ rate/baseline ⇒ shares-out ∝ baseline/rate
+        // (0.5% tolerance for finite trade size)
+        assertApproxEqRel(out2, Math.mulDiv(out1, 1e18, 1.2e18), 0.005e18, "quote did not track rate ratio");
+    }
+
+    /**
+     * @notice Invariant equals WeightedMath.computeInvariantDown over [virtualTTA, derivedY]
+     *         with the effective weights for the forced rate ratio.
+     */
+    function test_computeInvariant_usesEffectiveWeights() public {
+        uint256 ttaIdx = IStandardExchangeBufferPool(bufferPool).ttaIndex();
+        uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
+
+        uint256 currentRate = seRateProvider.getRate();
+        _setBaselineRate(Math.mulDiv(currentRate, 1e18, 1.2e18));
+        (uint256 wTta, uint256 wShares) = new CommonHarness().effectiveWeights(1.2e18, 1e18);
+
+        uint256[] memory bals = _liveBalances();
+        uint256[] memory weights = new uint256[](2);
+        uint256[] memory balances = new uint256[](2);
+        weights[ttaIdx] = wTta;
+        weights[sharesIdx] = wShares;
+        balances[ttaIdx] = _virtualTTA();
+        balances[sharesIdx] = bals[sharesIdx]; // hookSharesDelta is 0 here, so derivedY == live
+        uint256 expected = WeightedMath.computeInvariantDown(weights, balances);
+
+        uint256 got = IBalancerV3Pool(bufferPool).computeInvariant(bals, Rounding.ROUND_DOWN);
+        assertApproxEqRel(got, expected, 1e6);
     }
 }

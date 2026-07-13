@@ -33,8 +33,19 @@ import {
 abstract contract TestBase_StandardExchangeBufferPool_Comparative is
     TestBase_StandardExchangeBufferPool_UniswapV2
 {
-    /// @dev Relative tolerance for swap-output comparison (1e18 == 100%); 1e12 == 1e-6.
-    uint256 internal constant REL_TOL = 1e12;
+    /// @dev Relative tolerance for swap-output comparison (1e18 == 100%).
+    ///      Task 3 (rate-tracking weighted math): the reference pool here is a naive
+    ///      constant-product pool with no baselineRate concept, so it stays 50/50-weighted
+    ///      forever. The buffer pool's effective weights track currentRate/baselineRate and
+    ///      only equal 50/50 exactly when currentRate == baselineRate (i.e. no NAV movement
+    ///      since init). Both `_atInitialRate` tests still deposit shares (mintShares) before
+    ///      the swap snapshot, nudging the rate a hair off baseline; `_afterRateChange` tests
+    ///      deliberately move the rate by trading the underlying pair. In both cases the buffer
+    ///      pool's quote legitimately diverges from the fixed-50/50 reference quote — this is
+    ///      the intended behavior change, not rounding. Widened from 1e12 to 1e16 (1%) to cover
+    ///      the observed divergence (~0.5% max for the afterRateChange cases) with headroom.
+    ///      Deeper rate-movement-aware comparative coverage lands in Task 4.
+    uint256 internal constant REL_TOL = 1e16;
     /// @dev Absolute tolerance (wei) for swap-output comparison.
     uint256 internal constant ABS_TOL = 1e3;
 

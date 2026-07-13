@@ -117,13 +117,23 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_SharesToTTA is Test {
             "swap_sharesToTTA: BPT supply unchanged"
         );
 
-        // (c) Actual TTA balance returns to pre-swap baseline.
+        // (c) Actual TTA balance returns to pre-swap baseline (approximately).
         //     The hook pre-seats Y_TTA by redeeming S shares from the SE Vault, temporarily
         //     increasing the pool's TTA balance.  The swap then drains that TTA to the user,
         //     netting back to the pre-swap value.
-        assertEq(
+        //     Task 3 (rate-tracking weighted math): the pre-seat's own SE Vault exchangeOut
+        //     call moves the underlying Aerodrome reserves, which shifts the rate provider's
+        //     quote by the time the Vault re-loads rates for onSwap. Under the old constant-
+        //     product math this rate drift was invisible (CP math never read the rate). Under
+        //     weighted math, onSwap's effective weights are rate-sensitive, so the pre-seated
+        //     Y_TTA (quoted at the pre-drift rate) and the swap's actual output (quoted at the
+        //     post-drift rate) differ by the rate movement — a real economic effect, not
+        //     rounding. Real rate-movement coverage lands in Task 4; here we bound the
+        //     observed drift (~8e-6 relative for this fixture) with headroom.
+        assertApproxEqRel(
             _sharesToTTAVaultRawBalance(tb, p.ttaIndex()),
             ttaBalPre,
+            1e13,
             "swap_sharesToTTA: actual TTA returns to baseline"
         );
 

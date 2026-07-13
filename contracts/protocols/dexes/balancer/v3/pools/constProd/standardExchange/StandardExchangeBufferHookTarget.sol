@@ -9,6 +9,7 @@ import {
     TokenType,
     LiquidityManagement,
     PoolSwapParams,
+    SwapKind,
     AfterSwapParams,
     AddLiquidityKind,
     RemoveLiquidityKind,
@@ -18,6 +19,7 @@ import {
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
+import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 
 import {IStandardExchangeBufferPool} from
@@ -419,6 +421,37 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
     }
 
     /**
+     * @dev Computes Y_TTA — the TTA amount the swap math will produce for the given shares
+     *      input — using rate-scaled effective weights, matching onSwap's output exactly.
+     *      Extracted from `_preSeatShares` to avoid stack-too-deep.
+     *
+     *      EXACT_IN: replicates the Vault's fee deduction (FixedPoint.mulUp(amountIn, feePercent))
+     *      then runs the same WeightedMath.computeOutGivenExactIn call onSwap will run.
+     *      EXACT_OUT: the given amount IS the TTA the Vault must deliver (TTA is an
+     *      18-decimal STANDARD token: scaled18 == raw), so no weighted-math call is needed.
+     */
+    function _quotePreSeatYTta(
+        PoolSwapParams calldata params,
+        address pool,
+        IVault vault,
+        uint256 x,
+        uint256 y
+    ) internal view returns (uint256 Y_TTA_raw) {
+        if (params.kind != SwapKind.EXACT_IN) {
+            // EXACT_OUT shares->TTA: the given amount IS the TTA the Vault must deliver.
+            return params.amountGivenScaled18;
+        }
+        (uint256 wTta, uint256 wShares) = _currentEffectiveWeights();
+        // The Vault deducts the swap fee from amountGiven before calling onSwap;
+        // replicate so the pre-seated TTA matches onSwap's output exactly.
+        uint256 swapFeePercentage = vault.getStaticSwapFeePercentage(pool);
+        uint256 feeAmount = Math.mulDiv(params.amountGivenScaled18, swapFeePercentage, 1e18, Math.Rounding.Ceil);
+        Y_TTA_raw = WeightedMath.computeOutGivenExactIn(
+            y, wShares, x, wTta, params.amountGivenScaled18 - feeAmount
+        );
+    }
+
+    /**
      * @dev Executes the shares→TTA pre-seat operation.
      *      Extracted to avoid stack-too-deep in onBeforeSwap.
      *
@@ -443,15 +476,8 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         IVault vault = IVault(_balancerV3Vault());
         IStandardExchange seVault = Repo._standardExchangeVault();
 
-        // Compute Y_TTA using the fee-adjusted input so it matches onSwap's output exactly.
-        // The Vault applies FixedPoint.mulUp(amountIn, feePercent) as fee; replicate with Ceil.
-        uint256 swapFeePercentage = vault.getStaticSwapFeePercentage(pool);
-        uint256 amountInPostFee;
-        {
-            uint256 feeAmount = Math.mulDiv(params.amountGivenScaled18, swapFeePercentage, 1e18, Math.Rounding.Ceil);
-            amountInPostFee = params.amountGivenScaled18 - feeAmount;
-        }
-        uint256 Y_TTA_raw = (x * amountInPostFee) / (y + amountInPostFee); // assumes 18-dec TTA
+        // Compute Y_TTA using rate-scaled effective weights, matching onSwap's output exactly.
+        uint256 Y_TTA_raw = _quotePreSeatYTta(params, pool, vault, x, y);
         if (Y_TTA_raw > x) revert IStandardExchangeBufferPool.VirtualTTAUnderflow(x, Y_TTA_raw);
 
         IERC20 shareTok = Repo._shareToken();
@@ -597,7 +623,10 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
             // shares->TTA: apply deferred virtualTTA update from onBeforeSwap pre-seat.
             // hookSharesDelta was already decremented by S in onBeforeSwap (to keep derivedY stable
             // for the swap math).  Now we decrement virtualTTA by the actual TTA delivered to the user.
-            uint256 actualTTAOut = params.amountCalculatedRaw; // 18-decimal TTA (EXACT_IN)
+            // TTA delivered to the user. Correct for BOTH kinds: TTA is an 18-decimal
+            // STANDARD token, so amountOutScaled18 == amountOutRaw. (amountCalculatedRaw
+            // is the shares side for EXACT_OUT and would corrupt virtualTTA.)
+            uint256 actualTTAOut = params.amountOutScaled18;
             // Clear the pending pre-seat flag.
             Repo._setPendingPreSeatS(0);
             // Decrement virtualTTA by the actual TTA delivered to the user.

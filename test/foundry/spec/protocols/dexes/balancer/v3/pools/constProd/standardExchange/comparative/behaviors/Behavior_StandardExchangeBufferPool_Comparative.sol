@@ -52,8 +52,13 @@ abstract contract Behavior_StandardExchangeBufferPool_Comparative is Test {
 
     function _assertClose(uint256 a, uint256 b, string memory label) internal {
         // Tolerances are read from the base via public getters (ABS_TOL/REL_TOL are internal const).
-        assertApproxEqAbs(a, b, _base().ABS_TOL_(), label);
-        if (b > _base().ABS_TOL_()) {
+        // For small values (<= ABS_TOL) use the absolute bound (relative comparison is meaningless
+        // near zero). For larger values use the relative bound only — asserting BOTH unconditionally
+        // was incorrect: outputs routinely exceed ABS_TOL (e.g. decimal-offset SE vault shares scale
+        // into the billions/trillions of raw units) well before the relative divergence is a problem.
+        if (b <= _base().ABS_TOL_()) {
+            assertApproxEqAbs(a, b, _base().ABS_TOL_(), label);
+        } else {
             assertApproxEqRel(a, b, _base().REL_TOL_(), label);
         }
     }
