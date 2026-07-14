@@ -124,6 +124,24 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
         }
     }
 
+    /// Regression: TTA->shares through the full path after an upward NAV shift used to
+    /// revert PostSwapDepositFailed (exchangeOut needed more TTA than the user paid).
+    /// This stresses the maximum reachable rate drift in this fixture: a large direct V2
+    /// trade (bigger than _shiftRateUp's default 10%-of-balance trade) pushes the rate close
+    /// to (but inside) the effective-weight guard bound, then a swap sized to ~29% of
+    /// virtualTTA is pushed through the buffer pool — the largest dx that stays clear of the
+    /// weight guard at this drift. Under the old exact-mint (exchangeOut) reconcile this
+    /// combination was the closest reachable approximation of a PostSwapDepositFailed
+    /// revert (see task-5-report.md for why an exact repro could not be forced within the
+    /// weight bound); under the new best-effort (exchangeIn) reconcile it must succeed.
+    function test_ttaToShares_afterUpwardNavShift_succeeds() public {
+        _swapThroughV2Pair(tta, ttb, 950_000_000e18);
+        uint256 vt = IStandardExchangeBufferPool(bufferPool).virtualTTA();
+        uint256 dx = (vt * 29) / 100;
+        uint256 sharesReceived = _swapThroughBalancerVault(tta, shareToken(), dx);
+        assertGt(sharesReceived, 0);
+    }
+
     /// @notice No free lunch: a round trip after a rate shift returns strictly less than paid.
     function test_roundTrip_afterRateShift_losesFees() public {
         _shiftRateUp();

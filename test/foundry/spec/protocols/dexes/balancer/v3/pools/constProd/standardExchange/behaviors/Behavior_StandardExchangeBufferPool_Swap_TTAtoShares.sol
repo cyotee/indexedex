@@ -13,22 +13,25 @@ import {TestBase_StandardExchangeBufferPool} from
  * @notice Reusable behavior contract asserting spec section 6.2 post-state for a TTA→shares
  *         EXACT_IN swap.
  *
- * @dev After a TTA→shares EXACT_IN swap of X TTA:
+ * @dev After a TTA→shares EXACT_IN swap of X TTA, post Task 5's best-effort reconcile
+ *      (`_reconcileTTAToShares` deposits the FULL X into the SE Vault via `exchangeIn` — there
+ *      is no exact-mint target and therefore no `ttaSurplus` leg):
  *      (a) User's TTA balance decreases by X; user's shares balance increases by Y_shares.
  *      (b) BPT total supply is unchanged (no LP action).
- *      (c) Pool's per-pool actual TTA balance lies in [ttaBalPre, ttaBalPre + X].
- *          Under the "eventual zero TTA" invariant, the hook drains X TTA from the Vault and
- *          deposits it into the SE Vault via `exchangeOut`, which may consume less than X (the
- *          difference `X - X_used` is the `ttaSurplus` that stays in the pool). For SE Vaults
- *          whose `exchangeOut` matches the CP price exactly, ttaSurplus == 0 and the post-swap
- *          balance equals ttaBalPre; for SE Vaults that price shares lower than the CP, the
- *          surplus sits in the pool until a future swap or sweep drains it.
+ *      (c) Pool's per-pool actual TTA balance is UNCHANGED (equals ttaBalPre exactly).
+ *          The hook drains all X TTA from the Vault, deposits all of it into the SE Vault via
+ *          `exchangeIn` (no partial consumption / no surplus leg), and CUSTOM-removes exactly
+ *          X TTA from the pool's balance — net zero change, for any amount the SE Vault mints.
  *      (d) virtualTTA increases by exactly X (assumes 18-decimal TTA).
- *      (e) hookSharesDelta increases by Y' (shares minted by the SE Vault during reconcile).
- *          Y' is derived from the change in the pool's actual shares balance plus the shares
+ *      (e) hookSharesDelta increases by Y' = `_bv3SharesDonationRaw(minted)`, the round-trip
+ *          -capped raw shares actually donated into the pool (`minted` is whatever `exchangeIn`
+ *          affords for X at NAV — no longer tied to the swap's quoted `Y_shares`). Y' is
+ *          derived from the change in the pool's actual shares balance plus the shares
  *          delivered to the user: Y' = (shrBalPost - shrBalPre) + Y_shares.
- *      (f) Pool's actual shares balance changes by Y' - Y_shares (typically ≥ 0 because
- *          the CP AMM delivers slightly fewer shares than the SE Vault mints).
+ *      (f) Pool's actual shares balance changes by Y' - Y_shares (may be negative now: since
+ *          `minted` is best-effort rather than pinned to `Y_shares`, Y' can be smaller than
+ *          Y_shares when the SE Vault's post-shift price yields fewer shares per X than the
+ *          buffer pool's CP quote delivered to the user).
  */
 abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
 
@@ -102,20 +105,15 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
             "swap_TTAtoShares: BPT supply unchanged"
         );
 
-        // (c) Actual TTA balance lies in [ttaBalPre, ttaBalPre + amountIn].
-        //     "Eventual zero TTA" allows the hook's `exchangeOut`-based reconcile to leave a
-        //     `ttaSurplus = amountIn - X_used` in the pool when the SE Vault's price is below
-        //     the CP price.  The surplus drains on subsequent activity.
+        // (c) Actual TTA balance is UNCHANGED. The best-effort reconcile drains ALL of
+        //     amountIn from the Vault, deposits all of it via `exchangeIn` (no partial
+        //     consumption), and CUSTOM-removes exactly amountIn from the pool's balance --
+        //     net zero, regardless of how many shares the SE Vault mints for it.
         uint256 ttaBalPost = _swapVaultRawBalance(tb, p.ttaIndex());
-        assertGe(
+        assertEq(
             ttaBalPost,
             ttaBalPre,
-            "swap_TTAtoShares: actual TTA must not fall below pre-swap value"
-        );
-        assertLe(
-            ttaBalPost,
-            ttaBalPre + amountIn,
-            "swap_TTAtoShares: actual TTA must not exceed pre-swap value + amountIn"
+            "swap_TTAtoShares: actual TTA balance unchanged (no ttaSurplus leg)"
         );
 
         // (d) virtualTTA increased by exactly X (18-decimal TTA assumed).
@@ -125,23 +123,29 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
             "swap_TTAtoShares: virtualTTA += X"
         );
 
-        // (e) hookSharesDelta increased by Y' (shares minted by the SE Vault).
-        //     Pool's actual shares balance after the swap:
+        // (e) hookSharesDelta increased by Y' = _bv3SharesDonationRaw(minted), the round-trip
+        //     -capped raw shares actually donated into the pool by the reconcile. `minted` is
+        //     whatever `exchangeIn` affords for amountIn at NAV -- no longer pinned to the
+        //     swap's quoted amountOut. Pool's actual shares balance after the swap:
         //       shrBalPost = shrBalPre - amountOut + Y'
         //     => Y' = shrBalPost - shrBalPre + amountOut
+        //     Computed with signed arithmetic: Y' can now be smaller than amountOut (see (f)),
+        //     so the intermediate difference is not guaranteed non-negative.
         uint256 shrBalPost = _swapVaultRawBalance(tb, p.sharesIndex());
-        // Guard against underflow (shrBalPost + amountOut must be >= shrBalPre).
-        uint256 yPrime = shrBalPost + amountOut - shrBalPre;
+        int256 yPrime = int256(shrBalPost) - int256(shrBalPre) + int256(amountOut);
         assertEq(
             p.hookSharesDelta(),
-            hdPre + int256(yPrime),
+            hdPre + yPrime,
             "swap_TTAtoShares: hookSharesDelta += Y'"
         );
 
-        // (f) Pool's actual shares balance changed by Y' - Y_shares (>= 0 via CP slippage).
+        // (f) Pool's actual shares balance changed by Y' - Y_shares. This may now be negative:
+        //     since `minted` is best-effort rather than pinned to Y_shares, Y' can be smaller
+        //     than amountOut when the SE Vault's post-shift price yields fewer shares per X
+        //     than the buffer pool's CP quote delivered to the user.
         assertEq(
-            shrBalPost,
-            shrBalPre + yPrime - amountOut,
+            int256(shrBalPost),
+            int256(shrBalPre) + yPrime - int256(amountOut),
             "swap_TTAtoShares: pool shares balance delta = Y' - Y_shares"
         );
     }
