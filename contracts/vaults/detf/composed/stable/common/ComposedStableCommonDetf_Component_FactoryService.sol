@@ -9,7 +9,7 @@ import {IStablePool} from '@crane/contracts/external/balancer/v3/interfaces/cont
 import {IWeightedPool} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
@@ -43,11 +43,11 @@ library ComposedStableCommonDetf_Component_FactoryService {
     struct ComposedStableCommonDetfPricingConfig {
         IWeightedPool reservePool;
         IDETFNFTVault bondNftVault;
-        IRICHIR rebasingDetfToken;
+        IRebasingClaimToken rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;
         IERC20 commonPoolBpt;
-        IERC20 wethToken;
+        IERC20 rateAsset;
         IStandardExchangeIn stablePoolExitPricer;
         IStandardExchangeIn commonPoolExitPricer;
         IPermit2 permit2;
@@ -117,7 +117,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
             detfToken: config_.detfToken,
             stablePoolBpt: config_.stablePoolBpt,
             commonPoolBpt: config_.commonPoolBpt,
-            wethToken: config_.wethToken,
+            rateAsset: config_.rateAsset,
             stablePoolExitPricer: config_.stablePoolExitPricer,
             commonPoolExitPricer: config_.commonPoolExitPricer,
             permit2: config_.permit2,

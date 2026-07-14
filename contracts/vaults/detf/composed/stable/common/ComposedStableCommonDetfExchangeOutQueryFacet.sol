@@ -87,7 +87,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             extractedWeth += ComposedStableCommonDetfRepo._stablePoolExitPricer(layoutStruct).exchangeIn(
                 stablePoolBpt,
                 stablePoolBptAmount,
-                ComposedStableCommonDetfRepo._wethToken(layoutStruct),
+                ComposedStableCommonDetfRepo._rateAsset(layoutStruct),
                 0,
                 payoutRecipient,
                 false,
@@ -101,7 +101,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             extractedWeth += ComposedStableCommonDetfRepo._commonPoolExitPricer(layoutStruct).exchangeIn(
                 commonPoolBpt,
                 commonPoolBptAmount,
-                ComposedStableCommonDetfRepo._wethToken(layoutStruct),
+                ComposedStableCommonDetfRepo._rateAsset(layoutStruct),
                 0,
                 payoutRecipient,
                 false,

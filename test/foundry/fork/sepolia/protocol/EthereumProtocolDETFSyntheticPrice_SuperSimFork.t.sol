@@ -66,15 +66,15 @@
 //         address detf;
 //         address rich;
 //         address richir;
-//         address chirWethVault;
-//         address richChirVault;
+//         address underlyingVault;
+//         address underlyingVault;
 //         address reservePool;
 //         address chirWethPair;
 //         address richChirPair;
-//         uint256 chirWethVaultIndex;
-//         uint256 richChirVaultIndex;
-//         uint256 chirWethVaultWeight;
-//         uint256 richChirVaultWeight;
+//         uint256 underlyingVaultIndex;
+//         uint256 underlyingVaultIndex;
+//         uint256 underlyingVaultWeight;
+//         uint256 underlyingVaultWeight;
 //         uint256 chirWethLpTotalSupply;
 //         uint256 richChirLpTotalSupply;
 //         uint256 chirInWethPool;
@@ -132,16 +132,16 @@
 //         console.log("syntheticPriceFacetName:", syntheticPriceFacetName);
 //         console.log("rich:", state.rich);
 //         console.log("richir:", state.richir);
-//         console.log("chirWethVault:", state.chirWethVault);
-//         console.log("richChirVault:", state.richChirVault);
+//         console.log("underlyingVault:", state.underlyingVault);
+//         console.log("underlyingVault:", state.underlyingVault);
 //         console.log("reservePool:", state.reservePool);
 //         console.log("chirWethPair:", state.chirWethPair);
 //         console.log("richChirPair:", state.richChirPair);
 
-//         emit log_named_uint("chirWethVaultIndex", state.chirWethVaultIndex);
-//         emit log_named_uint("richChirVaultIndex", state.richChirVaultIndex);
-//         emit log_named_uint("chirWethVaultWeight", state.chirWethVaultWeight);
-//         emit log_named_uint("richChirVaultWeight", state.richChirVaultWeight);
+//         emit log_named_uint("underlyingVaultIndex", state.underlyingVaultIndex);
+//         emit log_named_uint("underlyingVaultIndex", state.underlyingVaultIndex);
+//         emit log_named_uint("underlyingVaultWeight", state.underlyingVaultWeight);
+//         emit log_named_uint("underlyingVaultWeight", state.underlyingVaultWeight);
 //         emit log_named_uint("chirWethLpTotalSupply", state.chirWethLpTotalSupply);
 //         emit log_named_uint("richChirLpTotalSupply", state.richChirLpTotalSupply);
 //         emit log_named_uint("chirInWethPool", state.chirInWethPool);
@@ -174,20 +174,20 @@
 
 //     function _loadDebugState() internal view returns (SyntheticPriceDebugState memory state) {
 //         IProtocolDETF detf = IProtocolDETF(SUPERSIM_ETHEREUM_PROTOCOL_DETF);
-//         IStandardExchange chirWethVault = detf.chirWethVault();
-//         IStandardExchange richChirVault = detf.richChirVault();
+//         IStandardExchange underlyingVault = detf.underlyingVault();
+//         IStandardExchange underlyingVault = detf.underlyingVault();
 //         IWeightedPool reservePool = IWeightedPool(detf.reservePool());
 
 //         state.detf = address(detf);
-//         state.rich = address(detf.richToken());
-//         state.richir = address(detf.richirToken());
-//         state.chirWethVault = address(chirWethVault);
-//         state.richChirVault = address(richChirVault);
+//         state.rich = address(detf.pairToken());
+//         state.richir = address(detf.rebasingClaimToken());
+//         state.underlyingVault = address(underlyingVault);
+//         state.underlyingVault = address(underlyingVault);
 //         state.reservePool = address(reservePool);
 
-//         _loadReservePoolWeights(state, reservePool, address(chirWethVault), address(richChirVault));
+//         _loadReservePoolWeights(state, reservePool, address(underlyingVault), address(underlyingVault));
 
-//         IUniswapV2Pair chirWethPair = IUniswapV2Pair(address(IERC4626(address(chirWethVault)).asset()));
+//         IUniswapV2Pair chirWethPair = IUniswapV2Pair(address(IERC4626(address(underlyingVault)).asset()));
 //         state.chirWethPair = address(chirWethPair);
 //         state.chirWethLpTotalSupply = IERC20(address(chirWethPair)).totalSupply();
 
@@ -200,7 +200,7 @@
 //             state.wethReserve = reserve0;
 //         }
 
-//         IUniswapV2Pair richChirPair = IUniswapV2Pair(address(IERC4626(address(richChirVault)).asset()));
+//         IUniswapV2Pair richChirPair = IUniswapV2Pair(address(IERC4626(address(underlyingVault)).asset()));
 //         state.richChirPair = address(richChirPair);
 //         state.richChirLpTotalSupply = IERC20(address(richChirPair)).totalSupply();
 
@@ -252,8 +252,8 @@
 //     function _loadReservePoolWeights(
 //         SyntheticPriceDebugState memory state,
 //         IWeightedPool reservePool,
-//         address chirWethVault,
-//         address richChirVault
+//         address underlyingVault,
+//         address underlyingVault
 //     ) internal view {
 //         address[] memory tokens = _tokensFromWeightedPool(reservePool);
 //         uint256[] memory weights = reservePool.getNormalizedWeights();
@@ -262,20 +262,20 @@
 //         bool foundRichChir;
 
 //         for (uint256 i = 0; i < tokens.length; i++) {
-//             if (tokens[i] == chirWethVault) {
-//                 state.chirWethVaultIndex = i;
-//                 state.chirWethVaultWeight = weights[i];
+//             if (tokens[i] == underlyingVault) {
+//                 state.underlyingVaultIndex = i;
+//                 state.underlyingVaultWeight = weights[i];
 //                 foundChirWeth = true;
 //             }
-//             if (tokens[i] == richChirVault) {
-//                 state.richChirVaultIndex = i;
-//                 state.richChirVaultWeight = weights[i];
+//             if (tokens[i] == underlyingVault) {
+//                 state.underlyingVaultIndex = i;
+//                 state.underlyingVaultWeight = weights[i];
 //                 foundRichChir = true;
 //             }
 //         }
 
-//         require(foundChirWeth, "chirWethVault missing from reserve pool");
-//         require(foundRichChir, "richChirVault missing from reserve pool");
+//         require(foundChirWeth, "underlyingVault missing from reserve pool");
+//         require(foundRichChir, "underlyingVault missing from reserve pool");
 //     }
 
 //     function _tokensFromWeightedPool(IWeightedPool reservePool) internal view returns (address[] memory tokens_) {

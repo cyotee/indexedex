@@ -36,6 +36,6 @@ contract SingleVaultDetfExchangeInFacet_IFacet_Test is CraneTest, TestBase_IFace
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
         controlFuncs = new bytes4[](2);
         controlFuncs[0] = IStandardExchangeIn.exchangeIn.selector;
-        controlFuncs[1] = IProtocolDETF.mintWithWeth.selector;
+        controlFuncs[1] = IProtocolDETF.mintWithRateAsset.selector;
     }
 }

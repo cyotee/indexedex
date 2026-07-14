@@ -8,7 +8,7 @@ import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3
 import {TestBase_IFacet} from '@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol';
 import {CraneTest} from '@crane/contracts/test/CraneTest.sol';
 
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {
@@ -36,7 +36,7 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlInterfaces = new bytes4[](5);
         controlInterfaces[0] = type(IERC20).interfaceId;
         controlInterfaces[1] = type(IERC20Metadata).interfaceId;
-        controlInterfaces[2] = type(IRICHIR).interfaceId;
+        controlInterfaces[2] = type(IRebasingClaimToken).interfaceId;
         controlInterfaces[3] = type(IStandardExchangeIn).interfaceId;
         controlInterfaces[4] = type(IStandardExchangeOut).interfaceId;
     }
@@ -52,19 +52,19 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[6] = IERC20Metadata.name.selector;
         controlFuncs[7] = IERC20Metadata.symbol.selector;
         controlFuncs[8] = IERC20Metadata.decimals.selector;
-        controlFuncs[9] = IRICHIR.sharesOf.selector;
-        controlFuncs[10] = IRICHIR.totalShares.selector;
-        controlFuncs[11] = IRICHIR.redemptionRate.selector;
-        controlFuncs[12] = IRICHIR.protocolDETF.selector;
-        controlFuncs[13] = IRICHIR.setProtocolDETF.selector;
-        controlFuncs[14] = IRICHIR.detfNFTId.selector;
-        controlFuncs[15] = IRICHIR.wethToken.selector;
-        controlFuncs[16] = IRICHIR.convertToShares.selector;
-        controlFuncs[17] = IRICHIR.convertToRichir.selector;
-        controlFuncs[18] = IRICHIR.previewRedeem.selector;
-        controlFuncs[19] = IRICHIR.mintFromNFTSale.selector;
-        controlFuncs[20] = IRICHIR.redeem.selector;
-        controlFuncs[21] = IRICHIR.burnShares.selector;
+        controlFuncs[9] = IRebasingClaimToken.sharesOf.selector;
+        controlFuncs[10] = IRebasingClaimToken.totalShares.selector;
+        controlFuncs[11] = IRebasingClaimToken.redemptionRate.selector;
+        controlFuncs[12] = IRebasingClaimToken.protocolDETF.selector;
+        controlFuncs[13] = IRebasingClaimToken.setProtocolDETF.selector;
+        controlFuncs[14] = IRebasingClaimToken.detfNFTId.selector;
+        controlFuncs[15] = IRebasingClaimToken.rateAsset.selector;
+        controlFuncs[16] = IRebasingClaimToken.convertToShares.selector;
+        controlFuncs[17] = IRebasingClaimToken.convertToClaim.selector;
+        controlFuncs[18] = IRebasingClaimToken.previewRedeem.selector;
+        controlFuncs[19] = IRebasingClaimToken.mintFromNFTSale.selector;
+        controlFuncs[20] = IRebasingClaimToken.redeem.selector;
+        controlFuncs[21] = IRebasingClaimToken.burnShares.selector;
         controlFuncs[22] = IStandardExchangeIn.previewExchangeIn.selector;
         controlFuncs[23] = IStandardExchangeIn.exchangeIn.selector;
         controlFuncs[24] = IStandardExchangeOut.previewExchangeOut.selector;

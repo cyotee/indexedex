@@ -12,7 +12,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardVaultPkg} from 'contracts/interfaces/IStandardVaultPkg.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
@@ -93,11 +93,11 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
             ComposedStableCommonDetf_Component_FactoryService.ComposedStableCommonDetfPricingConfig({
                 reservePool: reservePool_,
                 bondNftVault: IDETFNFTVault(makeAddr('bondNftVault')),
-                rebasingDetfToken: IRICHIR(makeAddr('rebasingDetfToken')),
+                rebasingDetfToken: IRebasingClaimToken(makeAddr('rebasingDetfToken')),
                 detfToken: IERC20(makeAddr('detfToken')),
                 stablePoolBpt: IERC20(makeAddr('stablePoolBpt')),
                 commonPoolBpt: IERC20(makeAddr('commonPoolBpt')),
-                wethToken: IERC20(makeAddr('wethToken')),
+                rateAsset: IERC20(makeAddr('rateAsset')),
                 stablePoolExitPricer: IStandardExchangeIn(makeAddr('stablePricer')),
                 commonPoolExitPricer: IStandardExchangeIn(makeAddr('commonPricer')),
                 permit2: IPermit2(makeAddr('permit2')),

@@ -18,7 +18,7 @@ import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol'
 import {IStandardExchangeErrors} from 'contracts/interfaces/IStandardExchangeErrors.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -240,11 +240,11 @@ contract ComposedStableCommonDetfExchangeOutQueryHarness is ComposedStableCommon
     function initializePricingHarness(
         IWeightedPool reservePool_,
         IDETFNFTVault bondNftVault_,
-        IRICHIR rebasingDetfToken_,
+        IRebasingClaimToken rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStandardExchangeIn stablePoolExitPricer_,
         IStandardExchangeIn commonPoolExitPricer_
     ) external {
@@ -255,7 +255,7 @@ contract ComposedStableCommonDetfExchangeOutQueryHarness is ComposedStableCommon
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             stablePoolExitPricer_,
             commonPoolExitPricer_,
             0,
@@ -372,7 +372,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     address internal rebasingTokenCaller;
 
     MockQueryToken internal detfToken;
-    MockQueryToken internal wethToken;
+    MockQueryToken internal rateAsset;
     MockQueryToken internal commonToken;
     MockQueryToken internal otherToken;
     MockQueryToken internal routeAVaultToken;
@@ -400,11 +400,11 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         harness_.initializePricingHarness(
             IWeightedPool(address(reservePoolToken)),
             IDETFNFTVault(bondVaultCaller),
-            IRICHIR(rebasingTokenCaller),
+            IRebasingClaimToken(rebasingTokenCaller),
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             stablePoolExitPricer,
             commonPoolExitPricer
         );
@@ -441,7 +441,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         rebasingTokenCaller = makeAddr('rebasingTokenCaller');
 
         detfToken = new MockQueryToken('DETF', 'DETF', 18);
-        wethToken = new MockQueryToken('WETH', 'WETH', 18);
+        rateAsset = new MockQueryToken('WETH', 'WETH', 18);
         commonToken = new MockQueryToken('COMMON', 'COMMON', 18);
         otherToken = new MockQueryToken('OTHER', 'OTHER', 18);
         routeAVaultToken = new MockQueryToken('Vault A', 'vA', 18);
@@ -470,11 +470,11 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
 
         stablePoolExitPricer.setRate(stablePoolBpt, routeAVaultToken, 5, 3);
         stablePoolExitPricer.setRate(stablePoolBpt, routeBVaultToken, 3, 1);
-        stablePoolExitPricer.setRate(stablePoolBpt, wethToken, 2, 1);
+        stablePoolExitPricer.setRate(stablePoolBpt, rateAsset, 2, 1);
 
         commonPoolExitPricer.setRate(commonPoolBpt, routeAVaultToken, 4, 3);
         commonPoolExitPricer.setRate(commonPoolBpt, routeBVaultToken, 1, 1);
-        commonPoolExitPricer.setRate(commonPoolBpt, wethToken, 3, 1);
+        commonPoolExitPricer.setRate(commonPoolBpt, rateAsset, 3, 1);
     }
 
     function test_claimLiquidity_revertsWhenCallerUnauthorized() public {
@@ -508,7 +508,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         uint256 wethOut = harness.claimLiquidity(3e18, recipient);
 
         assertEq(wethOut, 5e18);
-        assertEq(wethToken.balanceOf(recipient), 5e18);
+        assertEq(rateAsset.balanceOf(recipient), 5e18);
         assertEq(detfToken.balanceOf(address(harness)), 0);
         assertEq(stablePoolBpt.balanceOf(address(harness)), 0);
         assertEq(commonPoolBpt.balanceOf(address(harness)), 0);

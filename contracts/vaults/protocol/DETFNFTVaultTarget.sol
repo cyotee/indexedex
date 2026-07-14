@@ -284,7 +284,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
 
     /**
      * @notice Marks the protocol NFT as sold.
-     * @dev Called when RICHIR is minted against this position.
+     * @dev Called when rebasing claim token is minted against this position.
      */
     function markDETFNFTSold(uint256 tokenId) external onlyOwner {
         if (tokenId != DETFNFTVaultRepo._detfNFTId()) {

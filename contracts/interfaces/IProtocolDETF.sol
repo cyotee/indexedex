@@ -21,9 +21,11 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
  * @notice Interface for Protocol DETF with integrated fee distribution.
  * @dev Implements a DETF with:
  *      - DETF token: Mintable/burnable ERC20 (this contract)
- *      - RICH: Static supply ERC20 (reward token)
- *      - RICHIR: Rebasing ERC20 redeemable for WETH
+ *      - pairToken: Static-supply ERC20 (non-rateAsset vault token)
+ *      - rebasingClaimToken: Rebasing ERC20 redeemable for rateAsset
  *      - Reserve pool: 80/20 Balancer V3 weighted pool
+ *      - rateAsset: Rate Provider target / mint-bond-redeem settlement ("new money")
+ *      - underlyingVault: Any IStandardExchange that processes rateAsset
  *
  *      Uses a fully diluted, backing-derived synthetic spot price to gate
  *      asymmetric operations with a deadband around peg:
@@ -34,20 +36,20 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 interface IProtocolDETF {
     struct BridgeArgs {
         uint256 targetChainId;
-        uint256 richirAmount;
+        uint256 rebasingClaimAmount;
         address recipient;
-        uint256 minLocalRichirOut;
-        uint256 minRichOut;
+        uint256 minLocalRebasingClaimOut;
+        uint256 minPairOut;
         uint32 messageGasLimit;
         uint256 deadline;
     }
 
     struct BridgeQuote {
-        uint256 richirAmountIn;
+        uint256 rebasingClaimAmountIn;
         uint256 sharesBurned;
         uint256 reserveSharesBurned;
-        uint256 localRichirOut;
-        uint256 richOut;
+        uint256 localRebasingClaimOut;
+        uint256 pairOut;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -56,56 +58,42 @@ interface IProtocolDETF {
 
     /**
      * @notice Returns the DETF token (this contract).
-     * @return The DETF token
      */
     function detfToken() external view returns (IERC20MintBurn);
 
     /**
-     * @notice Returns the RICH token (static supply reward token).
-     * @return The RICH token
+     * @notice Returns the pair token (vault-declared asset that is not rateAsset).
      */
-    function richToken() external view returns (IERC20);
+    function pairToken() external view returns (IERC20);
 
     /**
-     * @notice Returns the RICHIR token (rebasing redemption token).
-     * @return The RICHIR token
+     * @notice Returns the rebasing claim token.
      */
-    function richirToken() external view returns (IERC20);
+    function rebasingClaimToken() external view returns (IERC20);
 
     /**
-     * @notice Returns the WETH token (chain's wrapped gas token).
-     * @return The WETH token
+     * @notice Returns the rate asset (Rate Provider target / settlement token).
      */
-    function wethToken() external view returns (IERC20);
+    function rateAsset() external view returns (IERC20);
 
     /**
      * @notice Returns the NFT vault that manages bond positions.
-     * @return The NFT vault contract
      */
     function detfNFTVault() external view returns (IDETFNFTVault);
 
     /**
-     * @notice Returns the primary WETH-side Standard Exchange vault (legacy dual-vault surface).
-     * @return The WETH-side vault
+     * @notice Returns the underlying Standard Exchange vault.
      */
-    function chirWethVault() external view returns (IStandardExchange);
-
-    /**
-     * @notice Returns the RICH-side Standard Exchange vault (legacy dual-vault surface).
-     * @return The RICH-side vault
-     */
-    function richChirVault() external view returns (IStandardExchange);
+    function underlyingVault() external view returns (IStandardExchange);
 
     /**
      * @notice Returns the reserve pool (Balancer 80/20 pool) address.
-     * @return The reserve pool contract
      */
     function reservePool() external view returns (address);
 
     /**
      * @notice Returns the protocol-owned NFT token ID.
      * @dev This NFT has no unlock time and accumulates LP from sold user NFTs.
-     * @return The protocol NFT token ID
      */
     function detfNFTId() external view returns (uint256);
 
@@ -114,36 +102,32 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Calculates the synthetic spot price quoted as RICH per 1 WETH.
+     * @notice Calculates the synthetic spot price of the DETF vs rateAsset backing.
      * @dev Derived from the protocol-owned reserve backing and weighted-pool spot-price math.
-        *      `1e18` represents peg, values above peg favor minting, and values below peg favor burning.
+     *      `1e18` represents peg, values above peg favor minting, and values below peg favor burning.
      * @return syntheticPrice The synthetic price (1e18 = peg)
      */
     function syntheticPrice() external view returns (uint256);
 
     /**
      * @notice Returns the upper deadband bound.
-        * @dev Minting is allowed only when the synthetic price is above this bound.
-     * @return threshold The upper deadband bound (e.g., 1.005e18)
+     * @dev Minting is allowed only when the synthetic price is above this bound.
      */
     function mintThreshold() external view returns (uint256);
 
     /**
      * @notice Returns the lower deadband bound.
-        * @dev Burning is allowed only when the synthetic price is below this bound.
-     * @return threshold The lower deadband bound (e.g., 0.995e18)
+     * @dev Burning is allowed only when the synthetic price is below this bound.
      */
     function burnThreshold() external view returns (uint256);
 
     /**
      * @notice Checks if minting is currently allowed.
-        * @return allowed True if syntheticPrice is above `mintThreshold()`
      */
     function isMintingAllowed() external view returns (bool allowed);
 
     /**
      * @notice Checks if burning/redemption is currently allowed.
-        * @return allowed True if syntheticPrice is below `burnThreshold()`
      */
     function isBurningAllowed() external view returns (bool allowed);
 
@@ -152,15 +136,14 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Mints DETF tokens by depositing WETH.
-        * @dev Only allowed when syntheticPrice is below the lower deadband bound.
-     *      WETH is paired with minted DETF, LPed, vaulted, and added to reserve.
-     * @param wethAmount Amount of WETH to deposit
+     * @notice Mints DETF tokens by depositing rateAsset.
+     * @dev Only allowed when synthetic price is outside the mint deadband policy.
+     * @param rateAssetAmount Amount of rateAsset to deposit
      * @param recipient Address to receive DETF tokens
-     * @param pretransferred Whether WETH was already transferred
+     * @param pretransferred Whether rateAsset was already transferred
      * @return detfMinted Amount of DETF minted to recipient
      */
-    function mintWithWeth(uint256 wethAmount, address recipient, bool pretransferred)
+    function mintWithRateAsset(uint256 rateAssetAmount, address recipient, bool pretransferred)
         external
         returns (uint256 detfMinted);
 
@@ -170,32 +153,27 @@ interface IProtocolDETF {
 
     /**
      * @notice Returns the accepted bond-token set for the unified bond route.
-     * @return tokens The accepted bond tokens.
      */
     function acceptedBondTokens() external view returns (address[] memory tokens);
 
     /**
      * @notice Returns whether a token is accepted by the unified bond route.
-     * @param token The candidate bond token.
-     * @return isAccepted True if the token is supported.
      */
     function isAcceptedBondToken(IERC20 token) external view returns (bool isAccepted);
 
     /**
-     * @notice Bonds an accepted token to receive an NFT position.
-     * @dev WETH can be supplied as native ETH when `wethAsEth` is true.
+     * @notice Bonds an accepted ERC20 token to receive an NFT position.
+     * @dev ERC20-only; does not accept bare native ETH.
      * @param tokenIn Accepted bond token to route.
      * @param amountIn Amount of tokenIn to bond.
      * @param lockDuration Duration to lock the position in seconds.
      * @param recipient Address to receive the NFT.
-     * @param wethAsEth If true, wrap `msg.value` into WETH before bonding.
      * @param deadline Transaction deadline.
      * @return tokenId The minted NFT token ID.
      * @return shares The underlying share amount.
      */
-    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
         external
-        payable
         returns (uint256 tokenId, uint256 shares);
 
     /* ---------------------------------------------------------------------- */
@@ -203,9 +181,8 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-        * @notice Captures seigniorage when the synthetic price is above peg.
+     * @notice Captures seigniorage when the synthetic price is above peg.
      * @dev Compounds only the protocol NFT's accrued DETF reward share into reserve-backed LP.
-     * @return seigniorageCaptured Amount of DETF minted as seigniorage
      */
     function captureSeigniorage() external returns (uint256 seigniorageCaptured);
 
@@ -214,14 +191,11 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Sells an NFT to the protocol for RICHIR.
+     * @notice Sells an NFT to the protocol for rebasing claim tokens.
      * @dev NFT's LP shares transferred to protocol-owned NFT.
-     *      User receives RICHIR tokens proportional to position value.
-     * @param tokenId The NFT token ID to sell
-     * @param recipient Address to receive RICHIR
-     * @return richirMinted Amount of RICHIR minted to recipient
+     *      User receives rebasing claim tokens proportional to position value.
      */
-    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 richirMinted);
+    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted);
 
     /* ---------------------------------------------------------------------- */
     /*                          Fee Donation                                  */
@@ -229,9 +203,9 @@ interface IProtocolDETF {
 
     /**
      * @notice Accepts fee donations from FeeCollector.
-     * @dev WETH: Single-sided deposit into the WETH-side vault path, unbalanced to reserve.
+     * @dev rateAsset: Single-sided deposit into the underlying vault path, unbalanced to reserve.
      *      DETF token: Simply burned.
-     * @param token Token to donate (WETH or DETF token only)
+     * @param token Token to donate (rateAsset or DETF token only)
      * @param amount Amount to donate
      * @param pretransferred Whether tokens were already transferred
      */
@@ -242,19 +216,16 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Previews the amount of WETH returned from claiming LP (single-sided exit).
+     * @notice Previews the amount of rateAsset returned from claiming LP (single-sided exit).
      * @param lpAmount Amount of BPT (LP shares) to preview
-     * @return wethOut Amount of WETH that would be received
+     * @return rateAssetOut Amount of rateAsset that would be received
      */
-    function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 wethOut);
+    function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 rateAssetOut);
 
     /**
-     * @notice Previews the source-chain bridge accounting for a RICHIR bridge.
-     * @param targetChainId Destination chain ID.
-     * @param richirAmount Apparent RICHIR amount to bridge.
-     * @return quote Bridge accounting preview.
+     * @notice Previews the source-chain bridge accounting for a rebasing-claim bridge.
      */
-    function previewBridgeRichir(uint256 targetChainId, uint256 richirAmount)
+    function previewBridgeRebasingClaim(uint256 targetChainId, uint256 rebasingClaimAmount)
         external
         view
         returns (BridgeQuote memory quote);
@@ -263,30 +234,23 @@ interface IProtocolDETF {
      * @notice Claims liquidity from the 80/20 pool (called by NFT vault on unlock).
      * @param lpAmount Amount of BPT (LP shares) to claim
      * @param recipient Address to receive the extracted value
-     * @return extractedWeth Amount of WETH sent to recipient
+     * @return extractedRateAsset Amount of rateAsset sent to recipient
      */
-    function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 extractedWeth);
+    function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 extractedRateAsset);
 
     /**
-     * @notice Bridges the RICH-side value of a RICHIR position to another DETF instance.
-     * @param args Bridge execution arguments.
-     * @return localRichirOut Compensating local RICHIR minted to the caller.
-     * @return richOut Raw RICH bridged to the destination relayer.
+     * @notice Bridges the pair-side value of a rebasing-claim position to another DETF instance.
      */
-    function bridgeRichir(BridgeArgs calldata args)
+    function bridgeRebasingClaim(BridgeArgs calldata args)
         external
-        returns (uint256 localRichirOut, uint256 richOut);
+        returns (uint256 localRebasingClaimOut, uint256 pairOut);
 
     /**
-     * @notice Finalizes bridged RICH into destination-chain RICHIR.
-     * @param recipient Address receiving destination RICHIR.
-     * @param richAmount Bridged RICH amount to convert.
-     * @param deadline Execution deadline for the destination conversion.
-     * @return richirOut Destination RICHIR minted.
+     * @notice Finalizes bridged pair token into destination-chain rebasing claim tokens.
      */
-    function receiveBridgedRich(address recipient, uint256 richAmount, uint256 deadline)
+    function receiveBridgedPair(address recipient, uint256 pairAmount, uint256 deadline)
         external
-        returns (uint256 richirOut);
+        returns (uint256 rebasingClaimOut);
 
     /* ---------------------------------------------------------------------- */
     /*                           Reward Operations                            */
@@ -294,9 +258,6 @@ interface IProtocolDETF {
 
     /**
      * @notice Withdraws pending reward-token rewards for a bond position.
-     * @param tokenId The NFT token ID
-     * @param recipient Address to receive the rewards
-     * @return rewards Amount of reward-token rewards withdrawn (DETF token for Protocol DETF deployments).
      */
     function withdrawRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 }

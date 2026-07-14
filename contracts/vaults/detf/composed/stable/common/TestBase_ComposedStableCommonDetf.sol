@@ -10,7 +10,7 @@ import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
 import {
@@ -86,7 +86,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
 
     MockComposedStableCommonERC20 internal lpToken;
     MockComposedStableCommonERC20 internal detfToken;
-    MockComposedStableCommonERC20 internal wethToken;
+    MockComposedStableCommonERC20 internal rateAsset;
 
     IFacet internal erc721Facet;
     IFacet internal bondNFTVaultFacet;
@@ -96,7 +96,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
     IRebasingDETFTokenDFPkg internal rebasingDetfTokenPkg;
 
     IDETFNFTVault internal bondNFTVault;
-    IRICHIR internal rebasingDetfToken;
+    IRebasingClaimToken internal rebasingDetfToken;
 
     address internal detfOwner;
     IProtocolDETF internal protocolDETF;
@@ -109,7 +109,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
 
         lpToken = new MockComposedStableCommonERC20('Reserve BPT', 'rBPT', 18);
         detfToken = new MockComposedStableCommonERC20('DETF Token', 'DETF', 18);
-        wethToken = new MockComposedStableCommonERC20('Wrapped Ether', 'WETH', 18);
+        rateAsset = new MockComposedStableCommonERC20('Wrapped Ether', 'WETH', 18);
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
@@ -168,9 +168,9 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
         assertGt(IComposedStableCommonDetfBondNFTVault(address(bondNFTVault)).feeRecipientNFTId(), 0, 'fee recipient nft initialized at deploy');
 
         vm.startPrank(owner);
-        rebasingDetfToken = IRICHIR(
+        rebasingDetfToken = IRebasingClaimToken(
             rebasingDetfTokenPkg.deployToken(
-                IDETF(address(protocolDETF)), bondNFTVault, IERC20(address(wethToken)), bondNFTVault.detfNFTId(), owner
+                IDETF(address(protocolDETF)), bondNFTVault, IERC20(address(rateAsset)), bondNFTVault.detfNFTId(), owner
             )
         );
         vm.stopPrank();

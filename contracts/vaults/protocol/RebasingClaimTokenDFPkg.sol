@@ -24,21 +24,21 @@ import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwn
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {RICHIRRepo} from "contracts/vaults/protocol/RICHIRRepo.sol";
+import {RebasingClaimTokenRepo} from "contracts/vaults/protocol/RebasingClaimTokenRepo.sol";
 
 /**
- * @title IRICHIRDFPkg
- * @notice Interface for RICHIR Diamond Factory Package.
+ * @title IRebasingClaimTokenDFPkg
+ * @notice Interface for rebasing claim token Diamond Factory Package.
  */
-interface IRICHIRDFPkg is IDiamondFactoryPackage {
+interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
     struct PkgInit {
         IFacet erc20Facet;
         IFacet erc5267Facet;
         IFacet erc2612Facet;
-        IFacet richirFacet;
+        IFacet rebasingClaimTokenFacet;
         IDiamondPackageCallBackFactory diamondFactory;
     }
 
@@ -48,7 +48,7 @@ interface IRICHIRDFPkg is IDiamondFactoryPackage {
         /// @notice The Protocol NFT Vault contract
         IDETFNFTVault nftVault;
         /// @notice The WETH token
-        IERC20 wethToken;
+        IERC20 rateAsset;
         /// @notice The protocol-owned NFT token ID
         uint256 detfNFTId;
         /// @notice Owner address (typically the DETF contract)
@@ -60,38 +60,38 @@ interface IRICHIRDFPkg is IDiamondFactoryPackage {
     function deployToken(
         IProtocolDETF protocolDETF,
         IDETFNFTVault nftVault,
-        IERC20 wethToken,
+        IERC20 rateAsset,
         uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress);
 }
 
 /**
- * @title RICHIRDFPkg
+ * @title RebasingClaimTokenDFPkg
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Diamond Factory Package for deploying RICHIR rebasing token.
+ * @notice Diamond Factory Package for deploying rebasing claim token rebasing token.
  */
-contract RICHIRDFPkg is IRICHIRDFPkg {
+contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
     using BetterEfficientHashLib for bytes;
 
     IFacet immutable ERC20_FACET;
     IFacet immutable ERC5267_FACET;
     IFacet immutable ERC2612_FACET;
-    IFacet immutable RICHIR_FACET;
+    IFacet immutable REBASING_CLAIM_TOKEN_FACET;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     constructor(PkgInit memory pkgInit) {
         ERC20_FACET = pkgInit.erc20Facet;
         ERC5267_FACET = pkgInit.erc5267Facet;
         ERC2612_FACET = pkgInit.erc2612Facet;
-        RICHIR_FACET = pkgInit.richirFacet;
+        REBASING_CLAIM_TOKEN_FACET = pkgInit.rebasingClaimTokenFacet;
         DIAMOND_FACTORY = pkgInit.diamondFactory;
     }
 
     function deployToken(
         IProtocolDETF protocolDETF,
         IDETFNFTVault nftVault,
-        IERC20 wethToken,
+        IERC20 rateAsset,
         uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress) {
@@ -102,7 +102,7 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
                     PkgArgs({
                         protocolDETF: protocolDETF,
                         nftVault: nftVault,
-                        wethToken: wethToken,
+                        rateAsset: rateAsset,
                         detfNFTId: detfNFTId,
                         owner: owner,
                         optionalSalt: abi.encode(address(protocolDETF))._hash()
@@ -117,14 +117,14 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
     /* ---------------------------------------------------------------------- */
 
     function packageName() public pure returns (string memory name_) {
-        return type(RICHIRDFPkg).name;
+        return type(RebasingClaimTokenDFPkg).name;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
         facetAddresses_ = new address[](3);
         facetAddresses_[0] = address(ERC5267_FACET);
         facetAddresses_[1] = address(ERC2612_FACET);
-        facetAddresses_[2] = address(RICHIR_FACET);
+        facetAddresses_[2] = address(REBASING_CLAIM_TOKEN_FACET);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
@@ -133,7 +133,7 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
         interfaces[3] = type(IERC5267).interfaceId;
-        interfaces[4] = type(IRICHIR).interfaceId;
+        interfaces[4] = type(IRebasingClaimToken).interfaceId;
         interfaces[5] = type(IStandardExchangeIn).interfaceId;
         interfaces[6] = type(IStandardExchangeOut).interfaceId;
     }
@@ -162,9 +162,9 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
             functionSelectors: ERC2612_FACET.facetFuncs()
         });
         facetCuts_[2] = IDiamond.FacetCut({
-            facetAddress: address(RICHIR_FACET),
+            facetAddress: address(REBASING_CLAIM_TOKEN_FACET),
             action: IDiamond.FacetCutAction.Add,
-            functionSelectors: RICHIR_FACET.facetFuncs()
+            functionSelectors: REBASING_CLAIM_TOKEN_FACET.facetFuncs()
         });
     }
 
@@ -191,13 +191,13 @@ contract RICHIRDFPkg is IRICHIRDFPkg {
         MultiStepOwnableRepo._initialize(args.owner, 1 days);
 
         // Initialize ERC20 metadata
-        ERC20Repo._initialize("RICHIR", "RICHIR", 18);
+        ERC20Repo._initialize("RebasingClaim", "RebasingClaim", 18);
 
         // Initialize EIP712
-        EIP712Repo._initialize("RICHIR", "1");
+        EIP712Repo._initialize("RebasingClaim", "1");
 
-        // Initialize RICHIR storage
-        RICHIRRepo._initialize(args.protocolDETF, args.nftVault, args.wethToken, args.detfNFTId);
+        // Initialize rebasing claim token storage
+        RebasingClaimTokenRepo._initialize(args.protocolDETF, args.nftVault, args.rateAsset, args.detfNFTId);
     }
 
     function postDeploy(address) public pure returns (bool) {

@@ -77,7 +77,7 @@ import {
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
@@ -157,8 +157,8 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
 
     uint256 internal constant TEST_TOKEN_TOTAL_SUPPLY = 10_000_000e18;
 
-    IERC20 internal wethToken;
-    IERC20 internal richToken;
+    IERC20 internal rateAsset;
+    IERC20 internal pairToken;
     address internal richRemoteToken;
 
     IFacet internal multiAssetBasicVaultFacet;
@@ -169,7 +169,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
-    IFacet internal richirFacet;
+    IFacet internal rebasingClaimTokenFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
@@ -177,8 +177,8 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
     IFacet internal uniswapV4StandardExchangeOutFacet;
 
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
-    IRICHIRDFPkg internal richirDFPkg;
-    IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg internal richirDFPkg;
+    IUniswapV4StandardExchangeDFPkg internal underlyingVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
@@ -194,9 +194,9 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
         TestBase_BalancerV3StandardExchangeRouter.setUp();
 
         _deployTestTokenPkg();
-        wethToken = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfBridge_WETH"));
+        rateAsset = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfBridge_WETH"));
         richRemoteToken = makeAddr("ethereumSepoliaRich");
-        richToken = IERC20(
+        pairToken = IERC20(
             IOptimismMintableERC20Factory(BASE_SEPOLIA.OPTIMISM_MINTABLE_ERC20_FACTORY).createOptimismMintableERC20(
                 richRemoteToken,
                 "RICH Base Sepolia",
@@ -221,14 +221,14 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
 
-        richirDFPkg = create3Factory.deployRICHIRDFPkg(
-            IRICHIRDFPkg.PkgInit({
+        richirDFPkg = create3Factory.deployRebasingClaimTokenDFPkg(
+            IRebasingClaimTokenDFPkg.PkgInit({
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
-                richirFacet: richirFacet,
+                rebasingClaimTokenFacet: rebasingClaimTokenFacet,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -258,7 +258,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
                 feeOracle: indexedexManager,
                 vaultRegistryDeployment: indexedexManager,
                 permit2: permit2,
-                wethToken: wethToken,
+                rateAsset: rateAsset,
                 balancerV3Vault: IBalancerVault(address(vault)),
                 balancerV3PrepayRouter: seRouter,
                 weightedPool8020Factory: weightedPool8020Factory,
@@ -267,9 +267,9 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
                 messenger: bridgeConfig_.messenger,
                 localRelayer: bridgeConfig_.localRelayer,
                 peerRelayer: bridgeConfig_.peerRelayer,
-                wethRichVaultPkg: wethRichVaultPkg,
+                underlyingVaultPkg: underlyingVaultPkg,
                 detfNFTVaultPkg: detfNFTVaultPkg,
-                richirPkg: richirDFPkg,
+                rebasingClaimTokenPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
             });
@@ -282,7 +282,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
             "SVDETF",
-            richToken,
+            pairToken,
             10_000e18,
             1_000e18,
             _buildPoolKey(),
@@ -376,7 +376,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
-        wethRichVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
+        underlyingVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
             erc20Facet.buildArgsUniswapV4StandardExchangePkgInit(
                 erc5267Facet,
                 erc2612Facet,
@@ -396,9 +396,9 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
     }
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
-        (address token0, address token1) = address(wethToken) < address(richToken)
-            ? (address(wethToken), address(richToken))
-            : (address(richToken), address(wethToken));
+        (address token0, address token1) = address(rateAsset) < address(pairToken)
+            ? (address(rateAsset), address(pairToken))
+            : (address(pairToken), address(rateAsset));
 
         poolKey_ = PoolKey({
             currency0: Currency.wrap(token0),
@@ -414,7 +414,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
 
         poolManager.initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
         _fundWeth(address(liquiditySeeder), 100_000 ether);
-        deal(address(richToken), address(liquiditySeeder), 100_000 ether, true);
+        deal(address(pairToken), address(liquiditySeeder), 100_000 ether, true);
         liquiditySeeder.addLiquidity(
             poolKey,
             -60,
@@ -461,7 +461,7 @@ abstract contract SingleVaultDetfBridgeForkBase is TestBase_BalancerV3StandardEx
     }
 
     function _fundWeth(address recipient_, uint256 amount_) internal {
-        wethToken.transfer(recipient_, amount_);
+        rateAsset.transfer(recipient_, amount_);
     }
 }
 
@@ -525,29 +525,29 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
         );
 
         bridgeRegistry.setRemoteToken(TARGET_CHAIN_ID, IERC20(address(detf)), remoteDetf, 0);
-        bridgeRegistry.setRemoteToken(TARGET_CHAIN_ID, richToken, IERC20(richRemoteToken), BRIDGE_MIN_GAS_LIMIT);
+        bridgeRegistry.setRemoteToken(TARGET_CHAIN_ID, pairToken, IERC20(richRemoteToken), BRIDGE_MIN_GAS_LIMIT);
 
         _fundWeth(detfAlice, 10_000e18);
     }
 
-    function test_previewBridgeRichir_matchesExecution_withRealBaseSepoliaBridge() public {
-        uint256 richirMinted = _mintRichirFromBondSale(5_000e18);
-        uint256 bridgeAmount = richirMinted / 2;
+    function test_previewBridgeRebasingClaim_matchesExecution_withRealBaseSepoliaBridge() public {
+        uint256 rebasingClaimMinted = _mintRichirFromBondSale(5_000e18);
+        uint256 bridgeAmount = rebasingClaimMinted / 2;
         if (bridgeAmount == 0) {
-            bridgeAmount = richirMinted;
+            bridgeAmount = rebasingClaimMinted;
         }
 
-        IProtocolDETF.BridgeQuote memory quote = detf.previewBridgeRichir(TARGET_CHAIN_ID, bridgeAmount);
+        IProtocolDETF.BridgeQuote memory quote = detf.previewBridgeRebasingClaim(TARGET_CHAIN_ID, bridgeAmount);
         vm.recordLogs();
         vm.startPrank(detfAlice);
-        IERC20(address(detf.richirToken())).approve(address(detf), bridgeAmount);
-        (uint256 localRichirOut, uint256 richOut) = detf.bridgeRichir(
+        IERC20(address(detf.rebasingClaimToken())).approve(address(detf), bridgeAmount);
+        (uint256 localRebasingClaimOut, uint256 pairOut) = detf.bridgeRebasingClaim(
             IProtocolDETF.BridgeArgs({
                 targetChainId: TARGET_CHAIN_ID,
-                richirAmount: bridgeAmount,
+                rebasingClaimAmount: bridgeAmount,
                 recipient: recipient,
-                minLocalRichirOut: 0,
-                minRichOut: 0,
+                minLocalRebasingClaimOut: 0,
+                minPairOut: 0,
                 messageGasLimit: MESSAGE_GAS_LIMIT,
                 deadline: block.timestamp + 1 hours
             })
@@ -555,20 +555,20 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
         vm.stopPrank();
         Vm.Log[] memory logs = vm.getRecordedLogs();
 
-        assertEq(quote.richirAmountIn, bridgeAmount, "quote amount in");
+        assertEq(quote.rebasingClaimAmountIn, bridgeAmount, "quote amount in");
         assertGt(quote.sharesBurned, 0, "quote shares burned");
         assertGt(quote.reserveSharesBurned, 0, "quote reserve burned");
-        assertGt(localRichirOut, 0, "local richir out");
-        assertGt(quote.localRichirOut, 0, "quoted local richir out");
-        assertApproxEqAbs(richOut, quote.richOut, 1e14, "rich out matches quote");
+        assertGt(localRebasingClaimOut, 0, "local richir out");
+        assertGt(quote.localRebasingClaimOut, 0, "quoted local richir out");
+        assertApproxEqAbs(pairOut, quote.pairOut, 1e14, "rich out matches quote");
 
         (ERC20BridgeInitiatedLog memory bridgeCall, bool foundBridgeCall) =
             _findERC20BridgeInitiatedLog(logs, BASE_SEPOLIA.L2_STANDARD_BRIDGE, address(detf), peerRelayer);
         assertTrue(foundBridgeCall, "bridge event missing");
-        assertEq(bridgeCall.localToken, address(richToken), "bridge local token");
+        assertEq(bridgeCall.localToken, address(pairToken), "bridge local token");
         assertEq(bridgeCall.remoteToken, richRemoteToken, "bridge remote token");
         assertEq(bridgeCall.to, peerRelayer, "bridge recipient");
-        assertEq(bridgeCall.amount, richOut, "bridge amount");
+        assertEq(bridgeCall.amount, pairOut, "bridge amount");
 
         (SentMessageLog memory bridgeMessage, bool foundBridgeMessage) = _findSentMessageLog(
             logs,
@@ -593,48 +593,46 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
         assertEq(bytes4(relayMessage.message), ITokenTransferRelayer.relayTokenTransfer.selector, "relay selector");
     }
 
-    function test_receiveBridgedRich_reverts_forNonRelayer() public {
+    function test_receiveBridgedPair_reverts_forNonRelayer() public {
         vm.expectRevert(
             abi.encodeWithSelector(IProtocolDETFErrors.NotBridgeRelayer.selector, detfAlice, localRelayer)
         );
         vm.prank(detfAlice);
-        detf.receiveBridgedRich(recipient, 1e18, block.timestamp + 1 hours);
+        detf.receiveBridgedPair(recipient, 1e18, block.timestamp + 1 hours);
     }
 
-    function test_receiveBridgedRich_pullsRichFromRelayer_andMintsRichir() public {
+    function test_receiveBridgedPair_pullsRichFromRelayer_andMintsRichir() public {
         _mintRichirFromBondSale(5_000e18);
 
-        uint256 richAmount = 100e18;
+        uint256 pairAmount = 100e18;
         uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(
-            richToken,
-            richAmount,
-            IERC20(address(detf.richirToken()))
+            pairToken,
+            pairAmount,
+            IERC20(address(detf.rebasingClaimToken()))
         );
 
-        deal(address(richToken), localRelayer, richAmount, true);
+        deal(address(pairToken), localRelayer, pairAmount, true);
         vm.startPrank(localRelayer);
-        richToken.approve(address(detf), richAmount);
-        uint256 richirOut = detf.receiveBridgedRich(recipient, richAmount, block.timestamp + 1 hours);
+        pairToken.approve(address(detf), pairAmount);
+        uint256 rebasingClaimOut = detf.receiveBridgedPair(recipient, pairAmount, block.timestamp + 1 hours);
         vm.stopPrank();
 
-        assertGt(richirOut, 0, "richir out");
-        assertGe(richirOut, previewOut, "preview lower bound");
-        assertEq(richToken.balanceOf(localRelayer), 0, "relayer rich spent");
-        assertEq(detf.richirToken().balanceOf(recipient), richirOut, "recipient richir balance");
+        assertGt(rebasingClaimOut, 0, "richir out");
+        assertGe(rebasingClaimOut, previewOut, "preview lower bound");
+        assertEq(pairToken.balanceOf(localRelayer), 0, "relayer rich spent");
+        assertEq(detf.rebasingClaimToken().balanceOf(recipient), rebasingClaimOut, "recipient richir balance");
     }
 
-    function _mintRichirFromBondSale(uint256 wethAmount_) internal returns (uint256 richirMinted_) {
+    function _mintRichirFromBondSale(uint256 wethAmount_) internal returns (uint256 rebasingClaimMinted_) {
         vm.startPrank(detfAlice);
-        wethToken.approve(address(detf), wethAmount_);
+        rateAsset.approve(address(detf), wethAmount_);
         (uint256 tokenId,) = ISingleVaultDetfBonding(address(detf)).bond(
-            wethToken,
+            rateAsset,
             wethAmount_,
             MIN_LOCK_DURATION,
-            detfAlice,
-            false,
-            block.timestamp + 1 hours
+            detfAlice, block.timestamp + 1 hours
         );
-        richirMinted_ = ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
+        rebasingClaimMinted_ = ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
         vm.stopPrank();
     }
 

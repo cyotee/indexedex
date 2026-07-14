@@ -37,7 +37,7 @@ contract Script_DeployRichToken is Script {
     IFacet private erc2612Facet;
     IFacet private erc5267Facet;
     IERC20PermitDFPkg private erc20PermitPkg;
-    IERC20 private richToken;
+    IERC20 private pairToken;
 
     function run() external {
         _loadConfig();
@@ -134,7 +134,7 @@ contract Script_DeployRichToken is Script {
     }
 
     function _deployToken() internal {
-        richToken = IERC20(
+        pairToken = IERC20(
             diamondPackageFactory.deploy(
                 IDiamondFactoryPackage(address(erc20PermitPkg)),
                 abi.encode(
@@ -150,7 +150,7 @@ contract Script_DeployRichToken is Script {
             )
         );
 
-        vm.label(address(richToken), TOKEN_SYMBOL);
+        vm.label(address(pairToken), TOKEN_SYMBOL);
     }
 
     function _exportJson() internal {
@@ -166,7 +166,7 @@ contract Script_DeployRichToken is Script {
         json = vm.serializeAddress("", "erc2612Facet", address(erc2612Facet));
         json = vm.serializeAddress("", "erc5267Facet", address(erc5267Facet));
         json = vm.serializeAddress("", "erc20PermitPkg", address(erc20PermitPkg));
-        json = vm.serializeAddress("", "richToken", address(richToken));
+        json = vm.serializeAddress("", "pairToken", address(pairToken));
         json = vm.serializeString("", "name", TOKEN_NAME);
         json = vm.serializeString("", "symbol", TOKEN_SYMBOL);
         json = vm.serializeUint("", "decimals", TOKEN_DECIMALS);
@@ -185,6 +185,6 @@ contract Script_DeployRichToken is Script {
         console2.log("ERC2612Facet:", address(erc2612Facet));
         console2.log("ERC5267Facet:", address(erc5267Facet));
         console2.log("ERC20PermitDFPkg:", address(erc20PermitPkg));
-        console2.log("RICH token:", address(richToken));
+        console2.log("RICH token:", address(pairToken));
     }
 }

@@ -96,7 +96,7 @@ library DETFNFTVaultRepo {
         uint256 nextTokenId;
         /// @notice Protocol-owned NFT token ID (has no unlock time)
         uint256 detfNFTId;
-        /// @notice Whether the protocol NFT has been sold (backing RICHIR)
+        /// @notice Whether the protocol NFT has been sold (backing rebasing claim token)
         bool detfNFTSold;
     }
 

@@ -39,12 +39,12 @@ uint256 constant BALANCER_V3_FEE_DENOMINATOR = 1e18; // WAD scale
 /* -------------------------- Preview Buffer BPS ---------------------------- */
 // Precision buffer constants for preview calculations.
 // These account for rounding differences between pure math and on-chain execution.
-// Actual divergence ~0.34% for RICHIR, ~0.0000000000021% for BPT.
+// Actual divergence ~0.34% for rebasing claim token, ~0.0000000000021% for BPT.
 
 uint256 constant PREVIEW_BUFFER_DENOMINATOR = 100_000; // Basis points denominator (100_000 = 100%)
-// Reduce RICHIR buffer for empirical tuning — we will search for the minimal
+// Reduce rebasing claim token buffer for empirical tuning — we will search for the minimal
 // buffer that keeps previews conservative under tests.
-uint256 constant PREVIEW_RICHIR_BUFFER_BPS = 350; // 0.35% buffer for RICHIR preview (was 400)
+uint256 constant PREVIEW_REBASING_CLAIM_BUFFER_BPS = 350; // 0.35% buffer for rebasing claim token preview (was 400)
 uint256 constant PREVIEW_WETH_CHIR_BUFFER_BPS = 100; // 0.10% buffer for WETH→CHIR preview
 
 // BPT uses a higher precision denominator due to minimal rounding divergence

@@ -50,7 +50,7 @@ import "contracts/constants/Indexedex_CONSTANTS.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -59,7 +59,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/ISuperChainBridgeTokenRegistry.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
@@ -117,30 +117,30 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         address localRelayer;
         address peerRelayer;
         
-        IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
+        IUniswapV4StandardExchangeDFPkg underlyingVaultPkg;
         IDetfSelfNftInventoryDFPkg detfNFTVaultPkg;
-        IRICHIRDFPkg richirPkg;
+        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;
-        IERC20 wethToken;
+        IERC20 rateAsset;
     }
 
     struct PkgArgs {
         string name;
         string symbol;
-        IERC20 richToken;
-        uint256 richInitialDepositAmount;
-        uint256 wethInitialDepositAmount;
-        PoolKey wethRichPoolKey;
-        uint24 wethRichWidthMultiplier;
+        IERC20 pairToken;
+        uint256 pairInitialDepositAmount;
+        uint256 rateAssetInitialDepositAmount;
+        PoolKey underlyingPoolKey;
+        uint24 underlyingWidthMultiplier;
     }
 
     function deployVault(
         string memory name,
         string memory symbol,
-        IERC20 richToken,
-        PoolKey memory wethRichPoolKey,
-        uint24 wethRichWidthMultiplier
+        IERC20 pairToken,
+        PoolKey memory underlyingPoolKey,
+        uint24 underlyingWidthMultiplier
     ) external returns (address vault);
 }
 
@@ -154,17 +154,17 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     uint256 private constant _TWENTY = 20e16;
 
     struct DeploymentConfig {
-        PoolKey wethRichPoolKey;
-        uint24 wethRichWidthMultiplier;
+        PoolKey underlyingPoolKey;
+        uint24 underlyingWidthMultiplier;
     }
 
     struct DerivedDeployment {
-        IStandardExchange wethRichVault;
+        IStandardExchange underlyingVault;
         IRateProvider vaultRateProvider;
         address reservePool;
         IDETFNFTVault detfNFTVault;
         uint256 detfNFTId;
-        IRICHIR richirToken;
+        IRebasingClaimToken rebasingClaimToken;
         uint256 detfIndex;
         uint256 vaultTokenIndex;
     }
@@ -191,11 +191,11 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     ICrossDomainMessenger immutable BRIDGE_MESSENGER;
     address immutable LOCAL_RELAYER;
     address immutable PEER_RELAYER;
-    IUniswapV4StandardExchangeDFPkg immutable WETH_RICH_VAULT_PKG;
+    IUniswapV4StandardExchangeDFPkg immutable UNDERLYING_VAULT_PKG;
     IDetfSelfNftInventoryDFPkg immutable PROTOCOL_NFT_VAULT_PKG;
-    IRICHIRDFPkg immutable RICHIR_PKG;
+    IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
-    IERC20 immutable WETH_TOKEN;
+    IERC20 immutable RATE_ASSET;
 
     function _deploymentConfigLayout() internal pure returns (DeploymentConfig storage layout_) {
         bytes32 slot_ = _DEPLOYMENT_CONFIG_SLOT;
@@ -227,11 +227,11 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         BRIDGE_MESSENGER = pkgInit.messenger;
         LOCAL_RELAYER = pkgInit.localRelayer;
         PEER_RELAYER = pkgInit.peerRelayer;
-        WETH_RICH_VAULT_PKG = pkgInit.wethRichVaultPkg;
+        UNDERLYING_VAULT_PKG = pkgInit.underlyingVaultPkg;
         PROTOCOL_NFT_VAULT_PKG = pkgInit.detfNFTVaultPkg;
-        RICHIR_PKG = pkgInit.richirPkg;
+        REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
-        WETH_TOKEN = pkgInit.wethToken;
+        RATE_ASSET = pkgInit.rateAsset;
     }
 
     function name() public pure returns (string memory) {
@@ -349,13 +349,13 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         SingleVaultDetfRepo._initialize(
             VAULT_FEE_ORACLE_QUERY,
             BALANCER_V3_PREPAY_ROUTER,
-            args.richToken,
-            WETH_TOKEN,
+            args.pairToken,
+            RATE_ASSET,
             1005e15,
             995e15
         );
-        _deploymentConfigLayout().wethRichPoolKey = args.wethRichPoolKey;
-        _deploymentConfigLayout().wethRichWidthMultiplier = args.wethRichWidthMultiplier;
+        _deploymentConfigLayout().underlyingPoolKey = args.underlyingPoolKey;
+        _deploymentConfigLayout().underlyingWidthMultiplier = args.underlyingWidthMultiplier;
 
         MultiStepOwnableRepo._initialize(address(this), 1 days);
     }
@@ -373,14 +373,14 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     function _postDeployProxyContext() internal {
         DeploymentConfig storage deployCfg = _deploymentConfigLayout();
         PkgArgs memory args;
-        args.wethRichPoolKey = deployCfg.wethRichPoolKey;
-        args.wethRichWidthMultiplier = deployCfg.wethRichWidthMultiplier;
+        args.underlyingPoolKey = deployCfg.underlyingPoolKey;
+        args.underlyingWidthMultiplier = deployCfg.underlyingWidthMultiplier;
         DerivedDeployment memory derived = _deployOwnedComposition(args);
 
         {
             address[] memory contents = new address[](3);
             contents[0] = address(this);
-            contents[1] = address(derived.wethRichVault);
+            contents[1] = address(derived.underlyingVault);
             contents[2] = derived.reservePool;
             MultiAssetBasicVaultRepo._initialize(contents);
             StandardVaultRepo._initialize(
@@ -392,9 +392,9 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         }
 
         SingleVaultDetfRepo._initializeDependencies(
-            derived.wethRichVault,
+            derived.underlyingVault,
             derived.vaultRateProvider,
-            abi.encode(args.wethRichPoolKey)._hash()
+            abi.encode(args.underlyingPoolKey)._hash()
         );
         SingleVaultDetfRepo._initializeReservePool(
             derived.reservePool,
@@ -405,18 +405,18 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
             derived.detfNFTVault,
             derived.detfNFTId
         );
-        SingleVaultDetfRepo._setRichirToken(derived.richirToken);
+        SingleVaultDetfRepo._setRebasingClaimToken(derived.rebasingClaimToken);
     }
 
     function _deployOwnedComposition(PkgArgs memory args) internal returns (DerivedDeployment memory deployment_) {
-        deployment_.wethRichVault = IStandardExchange(
-            WETH_RICH_VAULT_PKG.deployVault(args.wethRichPoolKey, args.wethRichWidthMultiplier)
+        deployment_.underlyingVault = IStandardExchange(
+            UNDERLYING_VAULT_PKG.deployVault(args.underlyingPoolKey, args.underlyingWidthMultiplier)
         );
         deployment_.vaultRateProvider = RATE_PROVIDER_PKG.deployRateProvider(
-            deployment_.wethRichVault,
-            WETH_TOKEN
+            deployment_.underlyingVault,
+            RATE_ASSET
         );
-        deployment_.reservePool = _createReservePool(deployment_.wethRichVault, deployment_.vaultRateProvider);
+        deployment_.reservePool = _createReservePool(deployment_.underlyingVault, deployment_.vaultRateProvider);
 
         deployment_.detfNFTVault = IDETFNFTVault(
             PROTOCOL_NFT_VAULT_PKG.deployVault(
@@ -430,21 +430,21 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
             )
         );
         deployment_.detfNFTId = deployment_.detfNFTVault.initializeDETFNFT();
-        deployment_.richirToken = IRICHIR(
-            RICHIR_PKG.deployToken(
+        deployment_.rebasingClaimToken = IRebasingClaimToken(
+            REBASING_CLAIM_TOKEN_PKG.deployToken(
                 IProtocolDETF(address(this)),
                 deployment_.detfNFTVault,
-                WETH_TOKEN,
+                RATE_ASSET,
                 deployment_.detfNFTId,
                 address(this)
             )
         );
-        (deployment_.detfIndex, deployment_.vaultTokenIndex) = address(this) < address(deployment_.wethRichVault)
+        (deployment_.detfIndex, deployment_.vaultTokenIndex) = address(this) < address(deployment_.underlyingVault)
             ? (0, 1)
             : (1, 0);
     }
 
-    function _createReservePool(IStandardExchange wethRichVault_, IRateProvider vaultRateProvider_)
+    function _createReservePool(IStandardExchange underlyingVault_, IRateProvider vaultRateProvider_)
         internal
         returns (address reservePool_)
     {
@@ -456,7 +456,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         });
 
         TokenConfig memory lowWeightTokenConfig = TokenConfig({
-            token: OZIERC20(address(wethRichVault_)),
+            token: OZIERC20(address(underlyingVault_)),
             tokenType: TokenType.WITH_RATE,
             rateProvider: vaultRateProvider_,
             paysYieldFees: false
@@ -487,9 +487,9 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     function deployVault(
         string memory name_,
         string memory symbol_,
-        IERC20 richToken_,
-        PoolKey memory wethRichPoolKey_,
-        uint24 wethRichWidthMultiplier_
+        IERC20 pairToken_,
+        PoolKey memory underlyingPoolKey_,
+        uint24 underlyingWidthMultiplier_
     ) external returns (address vault_) {
         vault_ = VAULT_REGISTRY_DEPLOYMENT.deployVault(
             ISingleVaultDetfDFPkg(address(this)),
@@ -497,11 +497,11 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
                 PkgArgs({
                     name: name_,
                     symbol: symbol_,
-                    richToken: richToken_,
-                    richInitialDepositAmount: 0,
-                    wethInitialDepositAmount: 0,
-                    wethRichPoolKey: wethRichPoolKey_,
-                    wethRichWidthMultiplier: wethRichWidthMultiplier_
+                    pairToken: pairToken_,
+                    pairInitialDepositAmount: 0,
+                    rateAssetInitialDepositAmount: 0,
+                    underlyingPoolKey: underlyingPoolKey_,
+                    underlyingWidthMultiplier: underlyingWidthMultiplier_
                 })
             )
         );

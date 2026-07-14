@@ -24,7 +24,7 @@ import {IWeightedPool} from '@crane/contracts/interfaces/protocols/dexes/balance
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IStandardVaultPkg} from 'contracts/interfaces/IStandardVaultPkg.sol';
@@ -98,7 +98,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
 
     IERC20 internal detfToken;
     IDETFNFTVault internal bondNFTVault;
-    IRICHIR internal rebasingDetfToken;
+    IRebasingClaimToken internal rebasingDetfToken;
     IProtocolDETF internal protocolDETF;
 
     StablePoolFactory internal stablePoolFactory;
@@ -186,7 +186,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     detfToken: IERC20(address(detfToken)),
                     stablePoolBpt: IERC20(address(stablePool)),
                     commonPoolBpt: IERC20(address(commonPool)),
-                    wethToken: weth,
+                    rateAsset: weth,
                     stablePoolExitPricer: stablePoolAdapter,
                     commonPoolExitPricer: commonPoolAdapter,
                     permit2: IPermit2(address(permit2)),
@@ -248,7 +248,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     function test_deployVault_preservesCompanionSpecialPositionState() public view {
         IComposedStableCommonDetfBondNFTVault deployedBondVault =
             IComposedStableCommonDetfBondNFTVault(IDETF(deployedDetfVault).bondNftVault());
-        IRICHIR deployedRebasingToken = IRICHIR(IDETF(deployedDetfVault).rebasingDetfToken());
+        IRebasingClaimToken deployedRebasingToken = IRebasingClaimToken(IDETF(deployedDetfVault).rebasingDetfToken());
         uint256 protocolNftId = deployedBondVault.detfNFTId();
         uint256 feeRecipientNftId = deployedBondVault.feeRecipientNFTId();
 
@@ -256,7 +256,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         assertTrue(deployedBondVault.ownerOf(feeRecipientNftId) != address(0), 'fee recipient nft minted');
         assertEq(address(deployedBondVault.rewardToken()), address(detfToken), 'bond vault reward token wired');
         assertEq(deployedRebasingToken.detfNFTId(), protocolNftId, 'rebasing token protocol nft');
-        assertEq(address(deployedRebasingToken.wethToken()), address(weth), 'rebasing common token wired');
+        assertEq(address(deployedRebasingToken.rateAsset()), address(weth), 'rebasing common token wired');
     }
 
     function test_deployVault_zeroAmountPricingQueriesShortCircuitSafely() public view {
@@ -312,9 +312,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
             dai,
             amountIn,
             lockDuration,
-            alice,
-            false,
-            block.timestamp + 1
+            alice, block.timestamp + 1
         );
         vm.stopPrank();
 
@@ -323,17 +321,17 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         assertEq(bondNFTVault.originalSharesOf(tokenId), shares, 'bond position tracked');
 
         vm.prank(alice);
-        uint256 richirMinted = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId, alice);
+        uint256 rebasingClaimMinted = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId, alice);
 
-        uint256 redeemPreview = rebasingDetfToken.previewRedeem(richirMinted);
+        uint256 redeemPreview = rebasingDetfToken.previewRedeem(rebasingClaimMinted);
 
-        assertGt(richirMinted, 0, 'richir minted');
+        assertGt(rebasingClaimMinted, 0, 'richir minted');
         assertGt(redeemPreview, 0, 'richir redeem preview');
         assertGt(bondNFTVault.originalSharesOf(bondNFTVault.detfNFTId()), protocolSharesBefore, 'protocol nft absorbed principal');
-        assertEq(rebasingDetfToken.balanceOf(alice), richirMinted, 'alice richir balance');
+        assertEq(rebasingDetfToken.balanceOf(alice), rebasingClaimMinted, 'alice richir balance');
 
         vm.prank(alice);
-        uint256 wethOut = rebasingDetfToken.redeem(richirMinted, alice, false);
+        uint256 wethOut = rebasingDetfToken.redeem(rebasingClaimMinted, alice, false);
 
         assertGe(wethOut, redeemPreview, 'redeem meets preview');
         assertEq(rebasingDetfToken.balanceOf(alice), 0, 'richir burned on redeem');
@@ -469,7 +467,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         vm.stopPrank();
 
         vm.startPrank(owner);
-        rebasingDetfToken = IRICHIR(
+        rebasingDetfToken = IRebasingClaimToken(
             rebasingDetfTokenPkg.deployToken(
                 IDETF(address(protocolDETF)),
                 bondNFTVault,

@@ -21,7 +21,7 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {ISingleVaultDetfDFPkg} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
@@ -45,7 +45,7 @@ library SingleVaultDetf_Component_FactoryService {
         IVaultFeeOracleQuery feeOracle;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
-        IERC20 wethToken;
+        IERC20 rateAsset;
         IBalancerVault balancerV3Vault;
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
         IWeightedPool8020Factory weightedPool8020Factory;
@@ -54,9 +54,9 @@ library SingleVaultDetf_Component_FactoryService {
         ICrossDomainMessenger messenger;
         address localRelayer;
         address peerRelayer;
-        IUniswapV4StandardExchangeDFPkg wethRichVaultPkg;
+        IUniswapV4StandardExchangeDFPkg underlyingVaultPkg;
         IDetfSelfNftInventoryDFPkg detfNFTVaultPkg;
-        IRICHIRDFPkg richirPkg;
+        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDiamondPackageCallBackFactory diamondFactory;
     }
@@ -81,7 +81,7 @@ library SingleVaultDetf_Component_FactoryService {
             feeOracle: infra_.feeOracle,
             vaultRegistryDeployment: infra_.vaultRegistryDeployment,
             permit2: infra_.permit2,
-            wethToken: infra_.wethToken,
+            rateAsset: infra_.rateAsset,
             balancerV3Vault: infra_.balancerV3Vault,
             balancerV3PrepayRouter: infra_.balancerV3PrepayRouter,
             weightedPool8020Factory: infra_.weightedPool8020Factory,
@@ -90,9 +90,9 @@ library SingleVaultDetf_Component_FactoryService {
             messenger: infra_.messenger,
             localRelayer: infra_.localRelayer,
             peerRelayer: infra_.peerRelayer,
-            wethRichVaultPkg: infra_.wethRichVaultPkg,
+            underlyingVaultPkg: infra_.underlyingVaultPkg,
             detfNFTVaultPkg: infra_.detfNFTVaultPkg,
-            richirPkg: infra_.richirPkg,
+            rebasingClaimTokenPkg: infra_.rebasingClaimTokenPkg,
             rateProviderPkg: infra_.rateProviderPkg,
             diamondFactory: infra_.diamondFactory
         });
@@ -101,20 +101,20 @@ library SingleVaultDetf_Component_FactoryService {
     function buildPkgArgs(
         string memory name_,
         string memory symbol_,
-        IERC20 richToken_,
-        uint256 richInitialDepositAmount_,
-        uint256 wethInitialDepositAmount_,
-        PoolKey memory wethRichPoolKey_,
-        uint24 wethRichWidthMultiplier_
+        IERC20 pairToken_,
+        uint256 pairInitialDepositAmount_,
+        uint256 rateAssetInitialDepositAmount_,
+        PoolKey memory underlyingPoolKey_,
+        uint24 underlyingWidthMultiplier_
     ) internal pure returns (ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs_) {
         pkgArgs_ = ISingleVaultDetfDFPkg.PkgArgs({
             name: name_,
             symbol: symbol_,
-            richToken: richToken_,
-            richInitialDepositAmount: richInitialDepositAmount_,
-            wethInitialDepositAmount: wethInitialDepositAmount_,
-            wethRichPoolKey: wethRichPoolKey_,
-            wethRichWidthMultiplier: wethRichWidthMultiplier_
+            pairToken: pairToken_,
+            pairInitialDepositAmount: pairInitialDepositAmount_,
+            rateAssetInitialDepositAmount: rateAssetInitialDepositAmount_,
+            underlyingPoolKey: underlyingPoolKey_,
+            underlyingWidthMultiplier: underlyingWidthMultiplier_
         });
     }
 }

@@ -99,14 +99,14 @@ contract RICHIRRedemptionTest is Test {
     /* ---------------------------------------------------------------------- */
 
     function test_redemption_sharesToWeth() public pure {
-        uint256 richirAmount = 100e18;
+        uint256 rebasingClaimAmount = 100e18;
         uint256 redemptionRate = 12e17; // 1.2
 
         // Convert RICHIR balance to shares
-        uint256 shares = _balanceToShares(richirAmount, redemptionRate);
+        uint256 shares = _balanceToShares(rebasingClaimAmount, redemptionRate);
 
         // Shares should be less than balance (rate > 1)
-        assertTrue(shares < richirAmount, "Shares should be less than balance");
+        assertTrue(shares < rebasingClaimAmount, "Shares should be less than balance");
         assertApproxEqRel(shares, 833e17, 1e15, "Shares should be ~83.3");
     }
 

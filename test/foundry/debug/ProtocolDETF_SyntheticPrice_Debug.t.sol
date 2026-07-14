@@ -57,7 +57,7 @@ contract ProtocolDETFSyntheticPriceDebugTest is ProtocolDETFIntegrationBase {
         console.log("CHIR totalSupply (e18):", IERC20(address(detf)).totalSupply() / 1e18);
         console.log("Reserve pool totalSupply (e18):", IERC20(address(reservePool)).totalSupply() / 1e18);
         console.log("DETF reserve BPT balance (e18):", IERC20(address(reservePool)).balanceOf(address(detf)) / 1e18);
-        console.log("DETF chirWethVault shares (e18):", IERC20(address(chirWethVault)).balanceOf(address(detf)) / 1e18);
-        console.log("DETF richChirVault shares (e18):", IERC20(address(richChirVault)).balanceOf(address(detf)) / 1e18);
+        console.log("DETF underlyingVault shares (e18):", IERC20(address(underlyingVault)).balanceOf(address(detf)) / 1e18);
+        console.log("DETF underlyingVault shares (e18):", IERC20(address(underlyingVault)).balanceOf(address(detf)) / 1e18);
     }
 }

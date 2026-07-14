@@ -66,7 +66,7 @@ import {
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 
 import {
@@ -127,7 +127,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private singleVaultDetfExchangeOutFacet;
     IFacet private singleVaultDetfBondingFacet;
     IFacet private detfNFTVaultFacet;
-    IFacet private richirFacet;
+    IFacet private rebasingClaimTokenFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
     IFacet private uniswapV4StandardExchangeInQueryFacet;
     IFacet private uniswapV4StandardExchangePositionImportFacet;
@@ -135,18 +135,18 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
-    IRICHIRDFPkg private richirPkg;
-    IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
+    IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
     ISingleVaultDetfDFPkg private protocolDetfPkg;
     IPoolManager private poolManager;
     SingleVaultDetfUniswapV4LiquiditySeeder private liquiditySeeder;
 
-    address private richToken;
+    address private pairToken;
     address private protocolDetf;
     address private protocolNftVault;
-    address private richirToken;
+    address private rebasingClaimToken;
     address private reservePool;
-    address private wethRichVault;
+    address private underlyingVault;
     address private weightedPool;
 
     function run() external {
@@ -205,7 +205,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             _readAddress(FOUNDATION_PACKAGES_FILE, "balancerV3ConstantProductPoolStandardVaultPkg")
         );
 
-        richToken = _readAddress(FOUNDATION_ASSETS_FILE, "richToken");
+        pairToken = _readAddress(FOUNDATION_ASSETS_FILE, "pairToken");
 
         require(address(create3Factory) != address(0), "Create3Factory not found - run Script_01 first");
         require(address(vaultRegistry) != address(0), "IndexedexManager not found - run Script_02 first");
@@ -213,7 +213,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         require(address(balancerV3StandardExchangeRouter) != address(0), "Standard exchange router not found - run Script_03 first");
         require(address(rateProviderPkg) != address(0), "Rate provider pkg not found - run Script_05 first");
         require(address(balConstProdPkg) != address(0), "Balancer const-prod pkg not found - run Script_05 first");
-        require(richToken != address(0), "RICH token not found - run Script_06 first");
+        require(pairToken != address(0), "RICH token not found - run Script_06 first");
     }
 
     function _loadExistingScenario() internal returns (bool) {
@@ -234,9 +234,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         poolManager = IPoolManager(poolManagerAddr);
 
         (protocolNftVault, ) = _readAddressSafe(ARTIFACT_FILE, "protocolNftVault");
-        (richirToken, ) = _readAddressSafe(ARTIFACT_FILE, "richirToken");
+        (rebasingClaimToken, ) = _readAddressSafe(ARTIFACT_FILE, "rebasingClaimToken");
         (reservePool, ) = _readAddressSafe(ARTIFACT_FILE, "reservePool");
-        (wethRichVault, ) = _readAddressSafe(ARTIFACT_FILE, "wethRichVault");
+        (underlyingVault, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVault");
 
         // Reload package + factory addresses so resume re-exports do not clobber
         // non-zero artifact fields with zero-initialized storage.
@@ -254,13 +254,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         if (nftPkgAddr != address(0)) {
             detfNFTVaultPkg = IDetfSelfNftInventoryDFPkg(nftPkgAddr);
         }
-        (address richirPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "richirPkg");
-        if (richirPkgAddr != address(0)) {
-            richirPkg = IRICHIRDFPkg(richirPkgAddr);
+        (address rebasingClaimTokenPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "rebasingClaimTokenPkg");
+        if (rebasingClaimTokenPkgAddr != address(0)) {
+            rebasingClaimTokenPkg = IRebasingClaimTokenDFPkg(rebasingClaimTokenPkgAddr);
         }
-        (address wethRichVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "wethRichVaultPkg");
-        if (wethRichVaultPkgAddr != address(0)) {
-            wethRichVaultPkg = IUniswapV4StandardExchangeDFPkg(wethRichVaultPkgAddr);
+        (address underlyingVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVaultPkg");
+        if (underlyingVaultPkgAddr != address(0)) {
+            underlyingVaultPkg = IUniswapV4StandardExchangeDFPkg(underlyingVaultPkgAddr);
         }
         (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (seederAddr != address(0) && seederAddr.code.length > 0) {
@@ -297,7 +297,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
 
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
@@ -345,7 +345,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         weth.deposit{value: INITIAL_WETH_DEPOSIT}();
         IERC20(address(weth)).transfer(address(liquiditySeeder), INITIAL_WETH_DEPOSIT);
-        IERC20(richToken).transfer(address(liquiditySeeder), INITIAL_RICH_DEPOSIT);
+        IERC20(pairToken).transfer(address(liquiditySeeder), INITIAL_RICH_DEPOSIT);
 
         liquiditySeeder.addLiquidity(
             poolKey,
@@ -378,18 +378,18 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        richirPkg = DetfPkgFactoryService.deployRICHIRDFPkg(
+        rebasingClaimTokenPkg = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
             create3Factory,
             DetfComponentFactoryService.buildRICHIRPkgInit(
                 erc20Facet,
                 erc5267Facet,
                 erc2612Facet,
-                richirFacet,
+                rebasingClaimTokenFacet,
                 diamondPackageFactory
             )
         );
 
-        wethRichVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
+        underlyingVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
             vaultRegistry,
             UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
                 erc20Facet,
@@ -429,7 +429,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                     feeOracle: feeOracle,
                     vaultRegistryDeployment: vaultRegistry,
                     permit2: permit2,
-                    wethToken: IERC20(address(weth)),
+                    rateAsset: IERC20(address(weth)),
                     balancerV3Vault: balancerV3Vault,
                     balancerV3PrepayRouter: balancerV3StandardExchangeRouter,
                     weightedPool8020Factory: weightedPool8020Factory,
@@ -438,9 +438,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                     messenger: bridgeConfig.messenger,
                     localRelayer: bridgeConfig.localRelayer,
                     peerRelayer: bridgeConfig.peerRelayer,
-                    wethRichVaultPkg: wethRichVaultPkg,
+                    underlyingVaultPkg: underlyingVaultPkg,
                     detfNFTVaultPkg: detfNFTVaultPkg,
-                    richirPkg: richirPkg,
+                    rebasingClaimTokenPkg: rebasingClaimTokenPkg,
                     rateProviderPkg: rateProviderPkg,
                     diamondFactory: diamondPackageFactory
                 })
@@ -455,7 +455,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 SingleVaultDetf_Component_FactoryService.buildPkgArgs(
                     "Single Vault DETF CHIR",
                     "CHIR",
-                    IERC20(richToken),
+                    IERC20(pairToken),
                     INITIAL_RICH_DEPOSIT,
                     INITIAL_WETH_DEPOSIT,
                     _buildPoolKey(),
@@ -466,9 +466,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         IProtocolDETF detf = IProtocolDETF(protocolDetf);
         protocolNftVault = address(detf.detfNFTVault());
-        richirToken = address(detf.richirToken());
+        rebasingClaimToken = address(detf.rebasingClaimToken());
         reservePool = detf.reservePool();
-        wethRichVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
+        underlyingVault = address(ISingleVaultDetf(protocolDetf).underlyingVault());
     }
 
     function _deployOuterPool() internal {
@@ -489,7 +489,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey) {
         (address token0, address token1) =
-            address(weth) < richToken ? (address(weth), richToken) : (richToken, address(weth));
+            address(weth) < pairToken ? (address(weth), pairToken) : (pairToken, address(weth));
 
         poolKey = PoolKey({
             currency0: Currency.wrap(token0),
@@ -512,19 +512,19 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     function _exportJson() internal {
         string memory json;
-        json = vm.serializeAddress("scenario3", "richToken", richToken);
+        json = vm.serializeAddress("scenario3", "pairToken", pairToken);
         json = vm.serializeAddress("scenario3", "weightedPool8020Factory", address(weightedPool8020Factory));
         json = vm.serializeAddress("scenario3", "protocolDetfPkg", address(protocolDetfPkg));
         json = vm.serializeAddress("scenario3", "detfNFTVaultPkg", address(detfNFTVaultPkg));
-        json = vm.serializeAddress("scenario3", "richirPkg", address(richirPkg));
-        json = vm.serializeAddress("scenario3", "wethRichVaultPkg", address(wethRichVaultPkg));
+        json = vm.serializeAddress("scenario3", "rebasingClaimTokenPkg", address(rebasingClaimTokenPkg));
+        json = vm.serializeAddress("scenario3", "underlyingVaultPkg", address(underlyingVaultPkg));
         json = vm.serializeAddress("scenario3", "poolManager", address(poolManager));
         json = vm.serializeAddress("scenario3", "liquiditySeeder", address(liquiditySeeder));
         json = vm.serializeAddress("scenario3", "protocolDetf", protocolDetf);
         json = vm.serializeAddress("scenario3", "protocolNftVault", protocolNftVault);
-        json = vm.serializeAddress("scenario3", "richirToken", richirToken);
+        json = vm.serializeAddress("scenario3", "rebasingClaimToken", rebasingClaimToken);
         json = vm.serializeAddress("scenario3", "reservePool", reservePool);
-        json = vm.serializeAddress("scenario3", "wethRichVault", wethRichVault);
+        json = vm.serializeAddress("scenario3", "underlyingVault", underlyingVault);
         json = vm.serializeAddress("scenario3", "balancerWethDetfPool", weightedPool);
         json = vm.serializeAddress("scenario3", "owner", owner);
         json = vm.serializeAddress("scenario3", "deployer", deployer);
@@ -534,7 +534,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     }
 
     function _exportFragments() internal {
-        _writeFragment("tokens", "richir", richirToken, "Rich Reserve Token", "RICHIR", new string[](0));
+        _writeFragment("tokens", "richir", rebasingClaimToken, "Rich Reserve Token", "RICHIR", new string[](0));
         _writeFragment(
             "vaults/protocolDetf",
             "protocolDetf",
@@ -545,8 +545,8 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         );
         _writeFragment(
             "vaults/strategy",
-            "wethRichVault",
-            wethRichVault,
+            "underlyingVault",
+            underlyingVault,
             "WETH/RICH Strategy Vault",
             "wethRichVlt",
             new string[](0)
@@ -594,9 +594,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         _logAddress("WeightedPool8020Factory:", address(weightedPool8020Factory));
         _logAddress("Single Vault DETF:", protocolDetf);
         _logAddress("Protocol NFT Vault:", protocolNftVault);
-        _logAddress("RICHIR:", richirToken);
+        _logAddress("RICHIR:", rebasingClaimToken);
         _logAddress("Reserve Pool:", reservePool);
-        _logAddress("WETH/RICH Vault:", wethRichVault);
+        _logAddress("WETH/RICH Vault:", underlyingVault);
         _logAddress("Balancer WETH/DETF Pool:", weightedPool);
         _logComplete("Stage 12");
     }

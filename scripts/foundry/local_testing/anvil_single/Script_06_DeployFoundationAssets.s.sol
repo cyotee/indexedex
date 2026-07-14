@@ -44,8 +44,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
     IERC20MintBurn private ttC;
     IERC20MinterFacade private erc20MinterFacade;
 
-    IERC20PermitDFPkg private richTokenPkg;
-    address private richToken;
+    IERC20PermitDFPkg private pairTokenPkg;
+    address private pairToken;
 
     function run() external {
         _loadConfig();
@@ -95,8 +95,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         (address tokenB, bool hasB) = _readAddressSafe(ARTIFACT_FILE, "testTokenB");
         (address tokenC, bool hasC) = _readAddressSafe(ARTIFACT_FILE, "testTokenC");
         (address facade, bool hasFacade) = _readAddressSafe(ARTIFACT_FILE, "erc20MinterFacade");
-        (address richTokenPkgAddr, bool hasRichPkg) = _readAddressSafe(ARTIFACT_FILE, "richTokenPkg");
-        (address richTokenAddr, bool hasRichToken) = _readAddressSafe(ARTIFACT_FILE, "richToken");
+        (address pairTokenPkgAddr, bool hasRichPkg) = _readAddressSafe(ARTIFACT_FILE, "pairTokenPkg");
+        (address pairTokenAddr, bool hasRichToken) = _readAddressSafe(ARTIFACT_FILE, "pairToken");
 
         bool hasRequired = hasA && hasB && hasC && hasFacade && hasRichPkg && hasRichToken;
         if (!hasRequired) {
@@ -105,7 +105,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
 
         if (
             tokenA.code.length == 0 || tokenB.code.length == 0 || tokenC.code.length == 0 || facade.code.length == 0
-                || richTokenPkgAddr.code.length == 0 || richTokenAddr.code.length == 0
+                || pairTokenPkgAddr.code.length == 0 || pairTokenAddr.code.length == 0
         ) {
             return false;
         }
@@ -114,8 +114,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         ttB = IERC20MintBurn(tokenB);
         ttC = IERC20MintBurn(tokenC);
         erc20MinterFacade = IERC20MinterFacade(facade);
-        richTokenPkg = IERC20PermitDFPkg(richTokenPkgAddr);
-        richToken = richTokenAddr;
+        pairTokenPkg = IERC20PermitDFPkg(pairTokenPkgAddr);
+        pairToken = pairTokenAddr;
         return true;
     }
 
@@ -174,7 +174,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
     }
 
     function _deployRichToken() internal {
-        richTokenPkg = IERC20PermitDFPkg(
+        pairTokenPkg = IERC20PermitDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
                     type(ERC20PermitDFPkg).creationCode,
@@ -190,8 +190,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
             )
         );
 
-        richToken = diamondPackageFactory.deploy(
-            IDiamondFactoryPackage(address(richTokenPkg)),
+        pairToken = diamondPackageFactory.deploy(
+            IDiamondFactoryPackage(address(pairTokenPkg)),
             abi.encode(
                 IERC20PermitDFPkg.PkgArgs({
                     name: "Rich Token",
@@ -220,8 +220,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         json = vm.serializeAddress("foundationAssets", "testTokenB", address(ttB));
         json = vm.serializeAddress("foundationAssets", "testTokenC", address(ttC));
         json = vm.serializeAddress("foundationAssets", "erc20MinterFacade", address(erc20MinterFacade));
-        json = vm.serializeAddress("foundationAssets", "richTokenPkg", address(richTokenPkg));
-        json = vm.serializeAddress("foundationAssets", "richToken", richToken);
+        json = vm.serializeAddress("foundationAssets", "pairTokenPkg", address(pairTokenPkg));
+        json = vm.serializeAddress("foundationAssets", "pairToken", pairToken);
         json = vm.serializeAddress("foundationAssets", "owner", owner);
         json = vm.serializeAddress("foundationAssets", "deployer", deployer);
         json = vm.serializeUint("foundationAssets", "chainId", block.chainid);
@@ -233,7 +233,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         _writeTokenFragment("tta", address(ttA), "Test Token A", "TTA", "testToken");
         _writeTokenFragment("ttb", address(ttB), "Test Token B", "TTB", "testToken");
         _writeTokenFragment("ttc", address(ttC), "Test Token C", "TTC", "testToken");
-        _writeTokenFragment("rich", richToken, "Rich Token", "RICH", "");
+        _writeTokenFragment("rich", pairToken, "Rich Token", "RICH", "");
     }
 
     function _writeTokenFragment(
@@ -266,8 +266,8 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
         _logAddress("Test Token B:", address(ttB));
         _logAddress("Test Token C:", address(ttC));
         _logAddress("ERC20 Minter Facade:", address(erc20MinterFacade));
-        _logAddress("RICH Token Pkg:", address(richTokenPkg));
-        _logAddress("RICH Token:", richToken);
+        _logAddress("RICH Token Pkg:", address(pairTokenPkg));
+        _logAddress("RICH Token:", pairToken);
         _logUint("ChainId:", block.chainid);
         _logComplete("Stage 06");
     }

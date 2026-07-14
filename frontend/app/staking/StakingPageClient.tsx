@@ -41,8 +41,8 @@ export default function StakingPageClient() {
   const artifacts = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment), [chain.dataChainId, chain.environment])
   const platform = artifacts.platform as {
     protocolDetf?: string
-    richToken?: string
-    richirToken?: string
+    pairToken?: string
+    rebasingClaimToken?: string
     weth?: string
     weth9?: string
     protocolNftVault?: string
@@ -129,17 +129,16 @@ export default function StakingPageClient() {
     await waitForReceiptAndRefresh(hash as `0x${string}`, 'Approval')
   }, [writeContractAsync, chain.targetChain, chain.address, waitForReceiptAndRefresh])
 
-  const handleBondWithWeth = useCallback(async (amount: bigint, lockSeconds: bigint, wethAsEth: boolean) => {
+  const handleBondWithWeth = useCallback(async (amount: bigint, lockSeconds: bigint, _wethAsEth?: boolean) => {
+    // DETF bond surface is ERC20-only (rateAsset); ignore native ETH flag.
     if (!detfAddress || !chain.address || !stakingReads.effectiveWethToken) return
     if (!chain.walletMatchesDataChain) {
       setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
       return
     }
 
-    if (!wethAsEth) {
-      await approveToken(stakingReads.effectiveWethToken, detfAddress, amount)
-    }
-    setStatus(wethAsEth ? 'Bonding with native ETH…' : 'Bonding with WETH…')
+    await approveToken(stakingReads.effectiveWethToken, detfAddress, amount)
+    setStatus('Bonding with rate asset…')
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
     const hash = await writeContractAsync({
       chain: chain.targetChain,
@@ -147,10 +146,9 @@ export default function StakingPageClient() {
       address: detfAddress,
       abi: protocolDetfAbi,
       functionName: 'bond',
-      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, wethAsEth, deadline],
-      value: wethAsEth ? amount : undefined,
+      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, deadline],
     })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, wethAsEth ? 'Bond ETH' : 'Bond WETH')
+    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond rate asset')
   }, [detfAddress, chain, stakingReads.effectiveWethToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
   const handleBondWithRich = useCallback(async (amount: bigint, lockSeconds: bigint) => {
@@ -161,7 +159,7 @@ export default function StakingPageClient() {
     }
 
     await approveToken(stakingReads.effectiveRichToken, detfAddress, amount)
-    setStatus('Bonding with RICH…')
+    setStatus('Bonding with pair token…')
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
     const hash = await writeContractAsync({
       chain: chain.targetChain,
@@ -169,9 +167,9 @@ export default function StakingPageClient() {
       address: detfAddress,
       abi: protocolDetfAbi,
       functionName: 'bond',
-      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, false, deadline],
+      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, deadline],
     })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond RICH')
+    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond pair token')
   }, [detfAddress, chain, stakingReads.effectiveRichToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
   const handleSellNft = useCallback(async (tokenId: bigint) => {
@@ -256,11 +254,11 @@ DEV_ADDRESS=<anvil-account> bash scripts/shell/local_testing.sh scenario3`}
               </div>
               <div>
                 <div className="text-xs text-gray-400">RICH</div>
-                <div className="break-all text-sm text-gray-100">{stakingReads.richTokenAddress}</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.pairTokenAddress}</div>
               </div>
               <div>
                 <div className="text-xs text-gray-400">RICHIR</div>
-                <div className="break-all text-sm text-gray-100">{stakingReads.richirTokenAddress}</div>
+                <div className="break-all text-sm text-gray-100">{stakingReads.rebasingClaimTokenAddress}</div>
               </div>
               <div>
                 <div className="text-xs text-gray-400">NFT Vault</div>
@@ -358,8 +356,8 @@ DEV_ADDRESS=<anvil-account> bash scripts/shell/local_testing.sh scenario3`}
             routerHasBytecode={routerHasBytecode}
             routerBytecodeError={routerBytecodeError}
             detfAddress={detfAddress}
-            richTokenAddress={stakingReads.richTokenAddress}
-            richirTokenAddress={stakingReads.richirTokenAddress}
+            pairTokenAddress={stakingReads.pairTokenAddress}
+            rebasingClaimTokenAddress={stakingReads.rebasingClaimTokenAddress}
             reservePoolAddress={stakingReads.reservePoolAddress}
             nftVaultAddress={stakingReads.nftVaultAddress}
             status={status}

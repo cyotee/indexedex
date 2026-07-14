@@ -50,37 +50,37 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         _fundRich(detfBob, 2_000_000e18);
     }
 
-    function test_mintWithWeth_reverts_whenMintingNotAllowed() public {
+    function test_mintWithRateAsset_reverts_whenMintingNotAllowed() public {
         uint256 amountIn = 1e18;
 
         vm.prank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
+        rateAsset.approve(address(detf), amountIn);
 
         vm.expectRevert();
         vm.prank(detfAlice);
-        detf.mintWithWeth(amountIn, detfAlice, false);
+        detf.mintWithRateAsset(amountIn, detfAlice, false);
     }
 
-    function test_mintWithWeth_mintsDetf_whenMintingAllowed() public {
+    function test_mintWithRateAsset_mintsDetf_whenMintingAllowed() public {
         _driveToMintEnabled(detf);
 
         uint256 amountIn = 1e16;
-        uint256 wethBefore = wethToken.balanceOf(detfAlice);
+        uint256 wethBefore = rateAsset.balanceOf(detfAlice);
         uint256 detfBefore = IERC20(address(detf)).balanceOf(detfAlice);
         uint256 reserveBefore = IERC20(detf.reservePool()).balanceOf(address(detf));
 
         vm.startPrank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
-        uint256 detfMinted = detf.mintWithWeth(amountIn, detfAlice, false);
+        rateAsset.approve(address(detf), amountIn);
+        uint256 detfMinted = detf.mintWithRateAsset(amountIn, detfAlice, false);
         vm.stopPrank();
 
         assertGt(detfMinted, 0, "detf minted");
         assertEq(IERC20(address(detf)).balanceOf(detfAlice) - detfBefore, detfMinted, "alice detf delta");
-        assertEq(wethBefore - wethToken.balanceOf(detfAlice), amountIn, "alice weth spent");
+        assertEq(wethBefore - rateAsset.balanceOf(detfAlice), amountIn, "alice weth spent");
         assertGt(IERC20(detf.reservePool()).balanceOf(address(detf)), reserveBefore, "reserve pool funded");
     }
 
-    function test_mintWithWeth_splitsMintAcrossUserFeeToAndBondVault() public {
+    function test_mintWithRateAsset_splitsMintAcrossUserFeeToAndBondVault() public {
         _driveToMintEnabled(detf);
 
         uint256 amountIn = 1e16;
@@ -90,8 +90,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         uint256 bondVaultBefore = IERC20(address(detf)).balanceOf(address(detf.detfNFTVault()));
 
         vm.startPrank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
-        uint256 detfMinted = detf.mintWithWeth(amountIn, detfAlice, false);
+        rateAsset.approve(address(detf), amountIn);
+        uint256 detfMinted = detf.mintWithRateAsset(amountIn, detfAlice, false);
         vm.stopPrank();
 
         assertGt(detfMinted, 0, "user detf minted");
@@ -104,11 +104,11 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         uint256 amountIn = 1e16;
         uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
         uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
-        uint256 richirBefore = detf.richirToken().balanceOf(detfAlice);
+        uint256 richirBefore = detf.rebasingClaimToken().balanceOf(detfAlice);
 
         vm.startPrank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
-        ISingleVaultDetfBonding(address(detf)).donate(wethToken, amountIn, false);
+        rateAsset.approve(address(detf), amountIn);
+        ISingleVaultDetfBonding(address(detf)).donate(rateAsset, amountIn, false);
         vm.stopPrank();
 
         assertGt(
@@ -116,7 +116,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
             protocolSharesBefore,
             "protocol nft funded by weth donation"
         );
-        assertEq(detf.richirToken().balanceOf(detfAlice), richirBefore, "donation does not mint richir");
+        assertEq(detf.rebasingClaimToken().balanceOf(detfAlice), richirBefore, "donation does not mint richir");
     }
 
     function test_donate_detf_burnsSupply_withoutAddingProtocolShares() public {
@@ -181,30 +181,30 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         uint256 detfAmount = _mintDetfFor(detfAlice, 1e16);
 
         vm.expectRevert();
-        IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(detf)), detfAmount, wethToken);
+        IStandardExchangeIn(address(detf)).previewExchangeIn(IERC20(address(detf)), detfAmount, rateAsset);
     }
 
     function test_previewExchangeOut_detfToWeth_reverts_whenBurningNotAllowed() public {
         _mintDetfFor(detfAlice, 1e16);
 
         vm.expectRevert();
-        IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(detf)), wethToken, 1e15);
+        IStandardExchangeOut(address(detf)).previewExchangeOut(IERC20(address(detf)), rateAsset, 1e15);
     }
 
     function test_exchangeIn_wethToRichir_previewIsConservative() public {
         uint256 amountIn = 100e18;
-        IERC20 richirToken = IERC20(address(detf.richirToken()));
+        IERC20 rebasingClaimToken = IERC20(address(detf.rebasingClaimToken()));
 
         vm.prank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
+        rateAsset.approve(address(detf), amountIn);
 
-        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(wethToken, amountIn, richirToken);
+        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(rateAsset, amountIn, rebasingClaimToken);
 
         vm.prank(detfAlice);
-        uint256 richirOut = IStandardExchangeIn(address(detf)).exchangeIn(
-            wethToken,
+        uint256 rebasingClaimOut = IStandardExchangeIn(address(detf)).exchangeIn(
+            rateAsset,
             amountIn,
-            richirToken,
+            rebasingClaimToken,
             0,
             detfAlice,
             false,
@@ -212,25 +212,25 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         );
 
         assertGt(previewOut, 0, "preview nonzero");
-        assertGt(richirOut, 0, "richir minted");
-        assertLe(previewOut, richirOut, "preview remains conservative");
-        assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
+        assertGt(rebasingClaimOut, 0, "richir minted");
+        assertLe(previewOut, rebasingClaimOut, "preview remains conservative");
+        assertEq(detf.rebasingClaimToken().balanceOf(detfAlice), rebasingClaimOut, "alice richir balance");
     }
 
     function test_exchangeIn_richToRichir_previewIsConservative() public {
         uint256 amountIn = 100e18;
-        IERC20 richirToken = IERC20(address(detf.richirToken()));
+        IERC20 rebasingClaimToken = IERC20(address(detf.rebasingClaimToken()));
 
         vm.prank(detfAlice);
-        richToken.approve(address(detf), amountIn);
+        pairToken.approve(address(detf), amountIn);
 
-        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(richToken, amountIn, richirToken);
+        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(pairToken, amountIn, rebasingClaimToken);
 
         vm.prank(detfAlice);
-        uint256 richirOut = IStandardExchangeIn(address(detf)).exchangeIn(
-            richToken,
+        uint256 rebasingClaimOut = IStandardExchangeIn(address(detf)).exchangeIn(
+            pairToken,
             amountIn,
-            richirToken,
+            rebasingClaimToken,
             0,
             detfAlice,
             false,
@@ -238,9 +238,9 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         );
 
         assertGt(previewOut, 0, "preview nonzero");
-        assertGt(richirOut, 0, "richir minted");
-        assertLe(previewOut, richirOut, "preview remains conservative");
-        assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
+        assertGt(rebasingClaimOut, 0, "richir minted");
+        assertLe(previewOut, rebasingClaimOut, "preview remains conservative");
+        assertEq(detf.rebasingClaimToken().balanceOf(detfAlice), rebasingClaimOut, "alice richir balance");
     }
 
     function test_exchangeIn_detfToWeth_reverts_whenBurningNotAllowed() public {
@@ -253,7 +253,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         IStandardExchangeIn(address(detf)).exchangeIn(
             IERC20(address(detf)),
             detfAmount,
-            wethToken,
+            rateAsset,
             0,
             detfAlice,
             false,
@@ -291,7 +291,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
     }
 
     function _createPosition(address owner_, uint128 liquidity_) internal returns (IPositionManager positionManager_, uint256 tokenId_) {
-        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(wethToken), bytes32("ETH"));
+        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(rateAsset), bytes32("ETH"));
         positionManager_ = IPositionManager(
             address(
                 new PositionManager(
@@ -299,7 +299,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
                     IAllowanceTransfer(address(permit2)),
                     100_000,
                     descriptor,
-                    IWETH9(address(wethToken))
+                    IWETH9(address(rateAsset))
                 )
             )
         );
@@ -310,8 +310,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         _fundRich(owner_, 1_000e18);
 
         vm.startPrank(owner_);
-        _approvePositionManager(address(wethToken), positionManager_);
-        _approvePositionManager(address(richToken), positionManager_);
+        _approvePositionManager(address(rateAsset), positionManager_);
+        _approvePositionManager(address(pairToken), positionManager_);
 
         bytes memory actions = abi.encodePacked(
             uint8(Actions.MINT_POSITION),
@@ -333,7 +333,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         params[2] = abi.encode(_buildPoolKey().currency1);
 
         positionManager_.modifyLiquidities(abi.encode(actions, params), block.timestamp + 1 hours);
-        IERC721(address(positionManager_)).approve(address(detf.wethRichVault()), tokenId_);
+        IERC721(address(positionManager_)).approve(address(detf.underlyingVault()), tokenId_);
         vm.stopPrank();
     }
 
@@ -351,8 +351,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         _driveToMintEnabled(detf);
 
         vm.startPrank(actor_);
-        wethToken.approve(address(detf), wethAmount_);
-        detfMinted_ = detf.mintWithWeth(wethAmount_, actor_, false);
+        rateAsset.approve(address(detf), wethAmount_);
+        detfMinted_ = detf.mintWithRateAsset(wethAmount_, actor_, false);
         vm.stopPrank();
     }
 
@@ -379,11 +379,11 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
             for (uint256 i = 0; i < steps.length; ++i) {
                 _fundRich(detfBob, steps[i]);
                 vm.startPrank(detfBob);
-                richToken.approve(address(detf_), type(uint256).max);
+                pairToken.approve(address(detf_), type(uint256).max);
                 IStandardExchangeIn(address(detf_)).exchangeIn(
-                    richToken,
+                    pairToken,
                     steps[i],
-                    wethToken,
+                    rateAsset,
                     0,
                     detfBob,
                     false,

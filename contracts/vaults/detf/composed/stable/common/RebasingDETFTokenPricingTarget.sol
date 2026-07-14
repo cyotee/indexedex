@@ -29,7 +29,7 @@ import {Math} from '@crane/contracts/utils/Math.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 
@@ -74,21 +74,21 @@ contract RebasingDETFTokenPricingTarget is IDETF {
         }
 
         IDETFNFTVault bondNftVault_ = ComposedStableCommonDetfRepo._bondNftVault();
-        IRICHIR rebasingDetfToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken();
+        IRebasingClaimToken rebasingDetfToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken();
 
         if (address(bondNftVault_) == address(0) || address(rebasingDetfToken_) == address(0)) {
             return 0;
         }
 
-        uint256 richirShares = rebasingDetfToken_.convertToShares(rebasingDetfAmount);
-        uint256 totalRichirShares = rebasingDetfToken_.totalShares();
+        uint256 rebasingClaimShares = rebasingDetfToken_.convertToShares(rebasingDetfAmount);
+        uint256 totalRebasingClaimShares = rebasingDetfToken_.totalShares();
         uint256 protocolReserveBpt = bondNftVault_.originalSharesOf(bondNftVault_.detfNFTId());
 
-        if (richirShares == 0 || totalRichirShares == 0 || protocolReserveBpt == 0) {
+        if (rebasingClaimShares == 0 || totalRebasingClaimShares == 0 || protocolReserveBpt == 0) {
             return 0;
         }
 
-        reserveBptAmount = Math.mulDiv(richirShares, protocolReserveBpt, totalRichirShares);
+        reserveBptAmount = Math.mulDiv(rebasingClaimShares, protocolReserveBpt, totalRebasingClaimShares);
     }
 
     function previewRebasingDetfTokenEthValue(uint256 reserveBptAmount) external view returns (uint256 wethValue) {
@@ -114,16 +114,16 @@ contract RebasingDETFTokenPricingTarget is IDETF {
 
     function previewStablePoolBptEthValue(uint256 stablePoolBptAmount) public view returns (uint256 wethValue) {
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        IERC20 wethToken = layoutStruct._wethToken();
+        IERC20 rateAsset = layoutStruct._rateAsset();
         IStandardExchangeIn stablePoolExitPricer = layoutStruct._stablePoolExitPricer();
         IStablePool stablePool = layoutStruct._stablePool();
 
-        if (stablePoolBptAmount == 0 || address(wethToken) == address(0)) {
+        if (stablePoolBptAmount == 0 || address(rateAsset) == address(0)) {
             return 0;
         }
 
         if (address(stablePool) != address(0)) {
-            wethValue = _previewStablePoolSingleTokenExit(stablePool, stablePoolBptAmount, wethToken);
+            wethValue = _previewStablePoolSingleTokenExit(stablePool, stablePoolBptAmount, rateAsset);
             if (wethValue != 0 || address(stablePoolExitPricer) == address(0)) {
                 return wethValue;
             }
@@ -133,7 +133,7 @@ contract RebasingDETFTokenPricingTarget is IDETF {
             return 0;
         }
 
-        try stablePoolExitPricer.previewExchangeIn(layoutStruct._stablePoolBpt(), stablePoolBptAmount, wethToken) returns (
+        try stablePoolExitPricer.previewExchangeIn(layoutStruct._stablePoolBpt(), stablePoolBptAmount, rateAsset) returns (
             uint256 wethValue_
         ) {
             return wethValue_;
@@ -144,16 +144,16 @@ contract RebasingDETFTokenPricingTarget is IDETF {
 
     function previewCommonPoolBptEthValue(uint256 commonPoolBptAmount) public view returns (uint256 wethValue) {
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        IERC20 wethToken = layoutStruct._wethToken();
+        IERC20 rateAsset = layoutStruct._rateAsset();
         IStandardExchangeIn commonPoolExitPricer = layoutStruct._commonPoolExitPricer();
         IStablePool commonPool = layoutStruct._commonPool();
 
-        if (commonPoolBptAmount == 0 || address(wethToken) == address(0)) {
+        if (commonPoolBptAmount == 0 || address(rateAsset) == address(0)) {
             return 0;
         }
 
         if (address(commonPool) != address(0)) {
-            wethValue = _previewStablePoolSingleTokenExit(commonPool, commonPoolBptAmount, wethToken);
+            wethValue = _previewStablePoolSingleTokenExit(commonPool, commonPoolBptAmount, rateAsset);
             if (wethValue != 0 || address(commonPoolExitPricer) == address(0)) {
                 return wethValue;
             }
@@ -163,7 +163,7 @@ contract RebasingDETFTokenPricingTarget is IDETF {
             return 0;
         }
 
-        try commonPoolExitPricer.previewExchangeIn(layoutStruct._commonPoolBpt(), commonPoolBptAmount, wethToken) returns (
+        try commonPoolExitPricer.previewExchangeIn(layoutStruct._commonPoolBpt(), commonPoolBptAmount, rateAsset) returns (
             uint256 wethValue_
         ) {
             return wethValue_;

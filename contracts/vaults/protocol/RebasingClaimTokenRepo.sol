@@ -16,12 +16,12 @@ import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 
 /**
- * @title RICHIRRepo
+ * @title RebasingClaimTokenRepo
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Storage library for RICHIR rebasing token state.
+ * @notice Storage library for rebasing claim token rebasing token state.
  * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
  *
- *      RICHIR is a rebasing token where balanceOf() returns different values
+ *      rebasing claim token is a rebasing token where balanceOf() returns different values
  *      over time based on the current spot redemption value of underlying shares.
  *
  *      Storage model:
@@ -30,7 +30,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
  *      - balanceOf(user): Computed live as sharesOf * redemptionRate
  *      - totalSupply(): Computed live as totalShares * redemptionRate
  */
-library RICHIRRepo {
+library RebasingClaimTokenRepo {
     using Math for uint256;
 
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.protocol.richir");
@@ -54,7 +54,7 @@ library RICHIRRepo {
         IDETFNFTVault nftVault;
 
         /// @notice The WETH token
-        IERC20 wethToken;
+        IERC20 rateAsset;
 
         /// @notice The protocol-owned NFT token ID held by this contract
         uint256 detfNFTId;
@@ -94,12 +94,12 @@ library RICHIRRepo {
         Storage storage layoutStruct_,
         IProtocolDETF protocolDETF_,
         IDETFNFTVault nftVault_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         uint256 detfNFTId_
     ) internal {
         layoutStruct_.protocolDETF = protocolDETF_;
         layoutStruct_.nftVault = nftVault_;
-        layoutStruct_.wethToken = wethToken_;
+        layoutStruct_.rateAsset = rateAsset_;
         layoutStruct_.detfNFTId = detfNFTId_;
         layoutStruct_.cachedRedemptionRate = 1e18; // Start at 1:1
     }
@@ -107,10 +107,10 @@ library RICHIRRepo {
     function _initialize(
         IProtocolDETF protocolDETF_,
         IDETFNFTVault nftVault_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         uint256 detfNFTId_
     ) internal {
-        _initialize(_layoutStruct(), protocolDETF_, nftVault_, wethToken_, detfNFTId_);
+        _initialize(_layoutStruct(), protocolDETF_, nftVault_, rateAsset_, detfNFTId_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -141,12 +141,12 @@ library RICHIRRepo {
         return _nftVault(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {
-        return layoutStruct_.wethToken;
+    function _rateAsset(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.rateAsset;
     }
 
-    function _wethToken() internal view returns (IERC20) {
-        return _wethToken(_layoutStruct());
+    function _rateAsset() internal view returns (IERC20) {
+        return _rateAsset(_layoutStruct());
     }
 
     function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
@@ -244,7 +244,7 @@ library RICHIRRepo {
      * @dev Only affects shares, not balanceOf (which is computed).
      */
     function _burnShares(Storage storage layoutStruct_, address account_, uint256 shares_) internal {
-        require(layoutStruct_.sharesOf[account_] >= shares_, "RICHIR: insufficient shares");
+        require(layoutStruct_.sharesOf[account_] >= shares_, "RebasingClaim: insufficient shares");
         layoutStruct_.sharesOf[account_] -= shares_;
         layoutStruct_.totalShares -= shares_;
     }
@@ -258,7 +258,7 @@ library RICHIRRepo {
      * @dev Used internally by ERC20 transfer functions.
      */
     function _transferShares(Storage storage layoutStruct_, address from_, address to_, uint256 shares_) internal {
-        require(layoutStruct_.sharesOf[from_] >= shares_, "RICHIR: insufficient shares");
+        require(layoutStruct_.sharesOf[from_] >= shares_, "RebasingClaim: insufficient shares");
         layoutStruct_.sharesOf[from_] -= shares_;
         layoutStruct_.sharesOf[to_] += shares_;
     }
@@ -286,7 +286,7 @@ library RICHIRRepo {
     }
 
     /**
-     * @notice Calculates the RICHIR balance from shares.
+     * @notice Calculates the rebasing claim token balance from shares.
      * @dev balance = internalShares * redemptionRate / SHARE_UNIT
      */
     function _sharesToBalance(uint256 internalShares_, uint256 redemptionRate_) internal pure returns (uint256) {
@@ -294,7 +294,7 @@ library RICHIRRepo {
     }
 
     /**
-     * @notice Calculates shares from RICHIR balance.
+     * @notice Calculates shares from rebasing claim token balance.
      * @dev internalShares = balance * SHARE_UNIT / redemptionRate
      */
     function _balanceToShares(uint256 balance_, uint256 redemptionRate_) internal pure returns (uint256) {

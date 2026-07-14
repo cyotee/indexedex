@@ -24,7 +24,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `chirWethVault.previewExchangeIn`, `richChirVault.previewExchangeIn`
+- External Calls: `underlyingVault.previewExchangeIn`, `underlyingVault.previewExchangeIn`
 - Inputs: `tokenIn=CHIR`, `tokenOut=WETH`; requires reserve pool initialized and burning allowed
 - Outputs: pessimistic WETH out
 - Execution Outline: compute synthetic price; enforce burning allowed; compute proportional BPT-in; compute proportional vault shares out; preview unwind vault shares to WETH via downstream vault preview calls
@@ -50,7 +50,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `richChirVault.previewExchangeIn`, `chirWethVault.previewExchangeIn`
+- External Calls: `underlyingVault.previewExchangeIn`, `underlyingVault.previewExchangeIn`
 - Inputs: `tokenIn=RICH`, `tokenOut=CHIR`; requires minting allowed
 - Outputs: CHIR out from wrapper route (multi-hop then mint)
 - Execution Outline: preview RICH->CHIR via richChir vault; preview CHIR->WETH via chirWeth vault; compute mint output from WETH and add discount
@@ -63,7 +63,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `richirToken.redemptionRate()`
+- External Calls: `rebasingClaimToken.redemptionRate()`
 - Inputs: `tokenIn=RICHIR`, `tokenOut=WETH`
 - Outputs: WETH out as linear `amountIn * redemptionRate / 1e18`
 - Execution Outline: read redemption rate; compute linear redemption
@@ -92,7 +92,7 @@ Repo-wide invariants applied: see PROMPT.md
 - External Calls: same as Route 05
 - Inputs: `tokenIn=WETH`, `tokenOut=RICHIR`
 - Outputs: conservative RICHIR out (buffered)
-- Execution Outline: same as Route 05 but uses `chirWethVault` index
+- Execution Outline: same as Route 05 but uses `underlyingVault` index
 - Invariants: preview <= execute
 - Failure Modes: `ReservePoolNotInitialized`
 - Tests Required: preview <= execute; fuzz buffers

@@ -9,7 +9,7 @@ import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.so
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
 import {
     ComposedStableCommonDetf_Component_FactoryService
@@ -91,8 +91,8 @@ contract MockRebasingDETF {
         return rebasingValue;
     }
 
-    function previewRebasingDetfTokenReserveBpt(uint256 richirAmount) external view returns (uint256) {
-        return richirAmount * reserveBptPerRichir / 1 ether;
+    function previewRebasingDetfTokenReserveBpt(uint256 rebasingClaimAmount) external view returns (uint256) {
+        return rebasingClaimAmount * reserveBptPerRichir / 1 ether;
     }
 
     function previewClaimLiquidity(uint256 reserveBptAmount) external view returns (uint256) {
@@ -116,7 +116,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
 
     IFacet internal rebasingDetfTokenFacet;
     IRebasingDETFTokenDFPkg internal pkg;
-    IRICHIR internal token;
+    IRebasingClaimToken internal token;
 
     MockRebasingWETH internal weth;
     MockRebasingDETF internal detf;
@@ -147,7 +147,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         detf = new MockRebasingDETF(weth);
         nftVault = makeAddr('nftVault');
 
-        token = IRICHIR(
+        token = IRebasingClaimToken(
             pkg.deployToken(IDETF(address(detf)), IDETFNFTVault(nftVault), IERC20(address(weth)), PROTOCOL_NFT_ID, owner)
         );
 

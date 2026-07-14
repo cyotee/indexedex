@@ -12,12 +12,12 @@ import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 
 /**
- * @title IRICHIRProxy
+ * @title IRebasingClaimTokenProxy
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Unified proxy interface for RICHIR rebasing token.
- * @dev Combines all interfaces that the RICHIR Diamond implements.
+ * @notice Unified proxy interface for rebasing claim token rebasing token.
+ * @dev Combines all interfaces that the rebasing claim token Diamond implements.
  */
-interface IRICHIRProxy is IRICHIR, IERC20Permit, IERC5267 {}
+interface IRebasingClaimTokenProxy is IRebasingClaimToken, IERC20Permit, IERC5267 {}

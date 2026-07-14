@@ -36,25 +36,25 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
             recipient = msg.sender;
         }
 
-        if ((_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) || (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut))) {
-            amountIn_ = layoutStruct.wethRichVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
+        if ((_isRateAsset(layoutStruct, tokenIn) && _isPairToken(layoutStruct, tokenOut)) || (_isPairToken(layoutStruct, tokenIn) && _isRateAsset(layoutStruct, tokenOut))) {
+            amountIn_ = layoutStruct.underlyingVault.previewExchangeOut(tokenIn, tokenOut, amountOut);
             if (amountIn_ > maxAmountIn) {
                 revert SlippageExceeded(maxAmountIn, amountIn_);
             }
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn_, pretransferred);
-            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), actualIn);
-            layoutStruct.wethRichVault.exchangeOut(tokenIn, actualIn, tokenOut, amountOut, recipient, true, deadline);
+            tokenIn.safeTransfer(address(layoutStruct.underlyingVault), actualIn);
+            layoutStruct.underlyingVault.exchangeOut(tokenIn, actualIn, tokenOut, amountOut, recipient, true, deadline);
             return actualIn;
         }
 
-        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isRateAsset(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
             }
 
             uint256 vaultSharesNeeded =
-                layoutStruct.wethRichVault.previewExchangeOut(IERC20(address(layoutStruct.wethRichVault)), layoutStruct.wethToken, amountOut);
+                layoutStruct.underlyingVault.previewExchangeOut(IERC20(address(layoutStruct.underlyingVault)), layoutStruct.rateAsset, amountOut);
             uint256 bptIn = _previewBptInForProportionalVaultTokenOut(layoutStruct, vaultSharesNeeded);
             amountIn_ = _previewDetfRedemptionAmountForVaultSharesOut(layoutStruct, vaultSharesNeeded);
 
@@ -72,26 +72,26 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
                 revert SlippageExceeded(amountOut, wethOut);
             }
 
-            layoutStruct.wethToken.safeTransfer(recipient, amountOut);
+            layoutStruct.rateAsset.safeTransfer(recipient, amountOut);
             if (wethOut > amountOut) {
-                layoutStruct.wethToken.safeTransfer(msg.sender, wethOut - amountOut);
+                layoutStruct.rateAsset.safeTransfer(msg.sender, wethOut - amountOut);
             }
 
             _syncLastTotalAssetsFromReservePool(layoutStruct);
             return amountIn_;
         }
 
-        if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
-            amountIn_ = _previewRichirToWethExact(layoutStruct, amountOut);
+        if (_isRebasingClaimToken(tokenIn) && _isRateAsset(layoutStruct, tokenOut)) {
+            amountIn_ = _previewRebasingClaimToRateAssetExact(layoutStruct, amountOut);
             if (amountIn_ > maxAmountIn) {
                 revert SlippageExceeded(maxAmountIn, amountIn_);
             }
 
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn_, pretransferred);
-            uint256 bptIn = _previewRichirRedemptionBptIn(layoutStruct, actualIn);
+            uint256 bptIn = _previewRebasingClaimRedemptionBptIn(layoutStruct, actualIn);
 
-            tokenIn.safeTransfer(address(layoutStruct._richirToken()), actualIn);
-            layoutStruct._richirToken().burnShares(actualIn, address(this), true);
+            tokenIn.safeTransfer(address(layoutStruct._rebasingClaimToken()), actualIn);
+            layoutStruct._rebasingClaimToken().burnShares(actualIn, address(this), true);
 
             uint256 vaultSharesOut = _exitReservePoolToVaultShares(layoutStruct, bptIn);
             uint256 wethOut = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, address(this), deadline);
@@ -100,9 +100,9 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
                 revert SlippageExceeded(amountOut, wethOut);
             }
 
-            layoutStruct.wethToken.safeTransfer(recipient, amountOut);
+            layoutStruct.rateAsset.safeTransfer(recipient, amountOut);
             if (wethOut > amountOut) {
-                layoutStruct.wethToken.safeTransfer(msg.sender, wethOut - amountOut);
+                layoutStruct.rateAsset.safeTransfer(msg.sender, wethOut - amountOut);
             }
 
             _syncLastTotalAssetsFromReservePool(layoutStruct);

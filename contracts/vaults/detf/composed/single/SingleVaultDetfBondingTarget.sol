@@ -7,7 +7,6 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
-import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
@@ -25,7 +24,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
@@ -36,10 +35,9 @@ import {IUniswapV4StandardExchangePositionImport} from "contracts/protocols/dexe
 interface ISingleVaultDetfBonding {
     function acceptedBondTokens() external view returns (address[] memory tokens);
     function isAcceptedBondToken(IERC20 token) external view returns (bool isAccepted);
-    function setRichirToken(IRICHIR richirToken) external;
-    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
+    function setRebasingClaimToken(IRebasingClaimToken rebasingClaimToken) external;
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
         external
-        payable
         returns (uint256 tokenId, uint256 shares);
     function bondWithPosition(
         IPositionManager positionManager,
@@ -49,17 +47,16 @@ interface ISingleVaultDetfBonding {
         uint256 deadline
     )
         external
-        payable
         returns (uint256 tokenId, uint256 shares);
     function captureSeigniorage() external returns (uint256 bptReceived);
-    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 richirMinted);
+    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted);
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
-    function bridgeRichir(IProtocolDETF.BridgeArgs calldata args)
+    function bridgeRebasingClaim(IProtocolDETF.BridgeArgs calldata args)
         external
-        returns (uint256 localRichirOut, uint256 richOut);
-    function receiveBridgedRich(address recipient, uint256 richAmount, uint256 deadline)
+        returns (uint256 localRebasingClaimOut, uint256 pairOut);
+    function receiveBridgedPair(address recipient, uint256 pairAmount, uint256 deadline)
         external
-        returns (uint256 richirOut);
+        returns (uint256 rebasingClaimOut);
 }
 
 contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockModifiers {
@@ -70,9 +67,9 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     struct BridgeExecution {
         DetfSuperchainBridgeRepo.PeerConfig peer;
         IERC20 remoteDetfToken;
-        IERC20 remoteRichToken;
+        IERC20 remotePairToken;
         uint256 bridgeMinGasLimit;
-        uint256 actualRichirIn;
+        uint256 actualRebasingClaimIn;
         uint256 sharesBurned;
         uint256 reserveSharesBurned;
         uint256 detfAmountOut;
@@ -89,15 +86,15 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         address indexed sender,
         uint256 indexed targetChainId,
         address indexed recipient,
-        uint256 richirAmountIn,
+        uint256 rebasingClaimAmountIn,
         uint256 sharesBurned,
         uint256 reserveSharesBurned,
-        uint256 localRichirOut,
-        uint256 richOut,
+        uint256 localRebasingClaimOut,
+        uint256 pairOut,
         uint256 nonce
     );
 
-    event BridgeReceived(address indexed relayer, address indexed recipient, uint256 richAmount, uint256 richirOut);
+    event BridgeReceived(address indexed relayer, address indexed recipient, uint256 pairAmount, uint256 rebasingClaimOut);
 
     function acceptedBondTokens() external view returns (address[] memory tokens_) {
         return SingleVaultDetfRepo._acceptedBondTokens();
@@ -107,14 +104,13 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         return SingleVaultDetfRepo._isAcceptedBondToken(address(token));
     }
 
-    function setRichirToken(IRICHIR richirToken_) external {
+    function setRebasingClaimToken(IRebasingClaimToken rebasingClaimToken_) external {
         MultiStepOwnableRepo._onlyOwner();
-        SingleVaultDetfRepo._setRichirToken(richirToken_);
+        SingleVaultDetfRepo._setRebasingClaimToken(rebasingClaimToken_);
     }
 
-    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
         external
-        payable
         nonReentrant
         returns (uint256 tokenId, uint256 shares)
     {
@@ -129,9 +125,9 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
         }
-        uint256 wethAmount = _collectBondInput(layoutStruct, tokenIn, amountIn, wethAsEth, deadline);
+        uint256 rateAssetAmount = _collectBondInput(layoutStruct, tokenIn, amountIn, deadline);
         (tokenId, shares) = _createBondPositionFromBondAssets(
-            layoutStruct, _bondFromWeth(layoutStruct, wethAmount, deadline), lockDuration, recipient
+            layoutStruct, _bondFromRateAsset(layoutStruct, rateAssetAmount, deadline), lockDuration, recipient
         );
     }
 
@@ -143,7 +139,6 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         uint256 deadline
     )
         external
-        payable
         nonReentrant
         returns (uint256 tokenId, uint256 shares)
     {
@@ -154,9 +149,6 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
-        }
-        if (msg.value != 0) {
-            revert IncorrectEthValue(0, msg.value);
         }
 
         uint256 vaultSharesIn = _collectVaultSharesFromPosition(layoutStruct, positionManager, positionTokenId, deadline);
@@ -201,8 +193,8 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
     ) internal returns (uint256 vaultSharesIn_) {
         (PoolKey memory poolKey,) = positionManager.getPoolAndPositionInfo(positionTokenId);
         bytes32 poolKeyHash = abi.encode(poolKey)._hash();
-        if (poolKeyHash != layoutStruct._wethRichPoolKeyHash()) {
-            revert InvalidPositionPool(layoutStruct._wethRichPoolKeyHash(), poolKeyHash);
+        if (poolKeyHash != layoutStruct._underlyingPoolKeyHash()) {
+            revert InvalidPositionPool(layoutStruct._underlyingPoolKeyHash(), poolKeyHash);
         }
 
         address token0 = Currency.unwrap(poolKey.currency0);
@@ -214,8 +206,8 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert InvalidPositionCurrency(token1);
         }
 
-        if (IERC20(address(layoutStruct.wethRichVault)).totalSupply() == 0) {
-            return IUniswapV4StandardExchangePositionImport(address(layoutStruct.wethRichVault)).importPosition(
+        if (IERC20(address(layoutStruct.underlyingVault)).totalSupply() == 0) {
+            return IUniswapV4StandardExchangePositionImport(address(layoutStruct.underlyingVault)).importPosition(
                 positionManager, positionTokenId, 0, msg.sender, address(this), deadline
             );
         }
@@ -258,11 +250,11 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return 0;
         }
 
-        token.safeTransfer(address(layoutStruct.wethRichVault), amount);
-        vaultSharesOut_ = layoutStruct.wethRichVault.exchangeIn(
+        token.safeTransfer(address(layoutStruct.underlyingVault), amount);
+        vaultSharesOut_ = layoutStruct.underlyingVault.exchangeIn(
             token,
             amount,
-            IERC20(address(layoutStruct.wethRichVault)),
+            IERC20(address(layoutStruct.underlyingVault)),
             0,
             address(this),
             true,
@@ -274,36 +266,21 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         SingleVaultDetfRepo.Storage storage layoutStruct,
         IERC20 tokenIn,
         uint256 amountIn,
-        bool wethAsEth,
         uint256 deadline
-    ) internal returns (uint256 wethAmount_) {
+    ) internal returns (uint256 rateAssetAmount_) {
         if (!layoutStruct._isAcceptedBondToken(address(tokenIn))) {
             revert BondTokenNotSupported(tokenIn);
         }
 
-        if (_isWethToken(layoutStruct, tokenIn)) {
-            if (wethAsEth) {
-                if (msg.value != amountIn) {
-                    revert IncorrectEthValue(amountIn, msg.value);
-                }
-                IWETH(address(layoutStruct.wethToken)).deposit{value: amountIn}();
-            } else {
-                if (msg.value != 0) {
-                    revert IncorrectEthValue(0, msg.value);
-                }
-                tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-            }
+        if (_isRateAsset(layoutStruct, tokenIn)) {
+            tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
             return amountIn;
         }
 
-        if (_isRichToken(layoutStruct, tokenIn)) {
-            if (msg.value != 0) {
-                revert IncorrectEthValue(0, msg.value);
-            }
-
+        if (_isPairToken(layoutStruct, tokenIn)) {
             tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-            wethAmount_ = _convertRichToWeth(layoutStruct, amountIn, deadline);
-            return wethAmount_;
+            rateAssetAmount_ = _convertPairToRateAsset(layoutStruct, amountIn, deadline);
+            return rateAssetAmount_;
         }
 
         revert BondTokenNotSupported(tokenIn);
@@ -321,7 +298,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _addReservePoolBptToProtocolNft(layoutStruct, bptReceived_);
     }
 
-    function sellNFT(uint256 tokenId, address recipient) external nonReentrant returns (uint256 richirMinted_) {
+    function sellNFT(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rebasingClaimMinted_) {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         if (!_isInitialized()) {
             revert ReservePoolNotInitialized();
@@ -330,13 +307,13 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             recipient = msg.sender;
         }
 
-        IRICHIR richir = layoutStruct._richirToken();
+        IRebasingClaimToken richir = layoutStruct._rebasingClaimToken();
         if (address(richir) == address(0)) {
             revert InvalidToken(IERC20(address(0)));
         }
 
         uint256 principalShares;
-        (principalShares, richirMinted_) = DETFBondLifecycleLib._sellPositionToRichir(
+        (principalShares, rebasingClaimMinted_) = DETFBondLifecycleLib._sellPositionToRebasingClaim(
             layoutStruct.detfNFTVault,
             richir,
             tokenId,
@@ -357,7 +334,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ZeroAmount();
         }
 
-        if (!_isWethToken(layoutStruct, token) && !_isDetfToken(token)) {
+        if (!_isRateAsset(layoutStruct, token) && !_isDetfToken(token)) {
             revert InvalidDonationToken(token);
         }
 
@@ -370,7 +347,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return;
         }
 
-        BondAssets memory assets = _bondFromWeth(layoutStruct, amount, block.timestamp);
+        BondAssets memory assets = _bondFromRateAsset(layoutStruct, amount, block.timestamp);
         _addReservePoolBptToProtocolNft(layoutStruct, assets.bptOut);
     }
 
@@ -395,15 +372,15 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 
-    function bridgeRichir(IProtocolDETF.BridgeArgs calldata args)
+    function bridgeRebasingClaim(IProtocolDETF.BridgeArgs calldata args)
         external
         nonReentrant
-        returns (uint256 localRichirOut, uint256 richOut)
+        returns (uint256 localRebasingClaimOut, uint256 pairOut)
     {
         if (block.timestamp > args.deadline) {
             revert DeadlineExceeded(args.deadline, block.timestamp);
         }
-        if (args.richirAmount == 0) {
+        if (args.rebasingClaimAmount == 0) {
             revert ZeroAmount();
         }
 
@@ -436,43 +413,43 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert BridgeRemoteTokenNotConfigured(args.targetChainId, IERC20(address(this)));
         }
 
-        (execution.remoteRichToken, execution.bridgeMinGasLimit) =
-            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(args.targetChainId, layoutStruct.richToken);
-        if (address(execution.remoteRichToken) == address(0)) {
-            revert BridgeRemoteTokenNotConfigured(args.targetChainId, layoutStruct.richToken);
+        (execution.remotePairToken, execution.bridgeMinGasLimit) =
+            bridgeLayout.bridgeTokenRegistry.getRemoteTokenAndLimit(args.targetChainId, layoutStruct.pairToken);
+        if (address(execution.remotePairToken) == address(0)) {
+            revert BridgeRemoteTokenNotConfigured(args.targetChainId, layoutStruct.pairToken);
         }
 
-        uint256 richirBalanceBefore = layoutStruct._richirToken().balanceOf(address(this));
-        IERC20(address(layoutStruct._richirToken())).safeTransferFrom(msg.sender, address(this), args.richirAmount);
-        execution.actualRichirIn = layoutStruct._richirToken().balanceOf(address(this)) - richirBalanceBefore;
-        if (execution.actualRichirIn == 0) {
+        uint256 rebasingClaimBalanceBefore = layoutStruct._rebasingClaimToken().balanceOf(address(this));
+        IERC20(address(layoutStruct._rebasingClaimToken())).safeTransferFrom(msg.sender, address(this), args.rebasingClaimAmount);
+        execution.actualRebasingClaimIn = layoutStruct._rebasingClaimToken().balanceOf(address(this)) - rebasingClaimBalanceBefore;
+        if (execution.actualRebasingClaimIn == 0) {
             revert ZeroAmount();
         }
 
-        execution.sharesBurned = layoutStruct._richirToken().convertToShares(execution.actualRichirIn);
-        execution.reserveSharesBurned = _previewRichirRedemptionBptIn(layoutStruct, execution.actualRichirIn);
+        execution.sharesBurned = layoutStruct._rebasingClaimToken().convertToShares(execution.actualRebasingClaimIn);
+        execution.reserveSharesBurned = _previewRebasingClaimRedemptionBptIn(layoutStruct, execution.actualRebasingClaimIn);
 
-        IERC20(address(layoutStruct._richirToken())).safeTransfer(address(layoutStruct._richirToken()), execution.actualRichirIn);
-        layoutStruct._richirToken().burnShares(execution.actualRichirIn, address(0), true);
+        IERC20(address(layoutStruct._rebasingClaimToken())).safeTransfer(address(layoutStruct._rebasingClaimToken()), execution.actualRebasingClaimIn);
+        layoutStruct._rebasingClaimToken().burnShares(execution.actualRebasingClaimIn, address(0), true);
 
         (execution.detfAmountOut, execution.vaultSharesOut) =
             _exitReservePoolProportionalForBridge(layoutStruct, execution.reserveSharesBurned);
 
         if (execution.detfAmountOut > 0) {
             execution.localBptOut = _addLiquidityToReservePool(layoutStruct, execution.detfAmountOut, 0);
-            localRichirOut = _mintRichirFromReservePoolBpt(layoutStruct, execution.localBptOut, msg.sender);
+            localRebasingClaimOut = _mintRebasingClaimFromReservePoolBpt(layoutStruct, execution.localBptOut, msg.sender);
         }
 
-        if (localRichirOut < args.minLocalRichirOut) {
-            revert SlippageExceeded(args.minLocalRichirOut, localRichirOut);
+        if (localRebasingClaimOut < args.minLocalRebasingClaimOut) {
+            revert SlippageExceeded(args.minLocalRebasingClaimOut, localRebasingClaimOut);
         }
 
         if (execution.vaultSharesOut > 0) {
-            IERC20(address(layoutStruct.wethRichVault)).forceApprove(address(layoutStruct.wethRichVault), execution.vaultSharesOut);
-            richOut = layoutStruct.wethRichVault.exchangeIn(
-                IERC20(address(layoutStruct.wethRichVault)),
+            IERC20(address(layoutStruct.underlyingVault)).forceApprove(address(layoutStruct.underlyingVault), execution.vaultSharesOut);
+            pairOut = layoutStruct.underlyingVault.exchangeIn(
+                IERC20(address(layoutStruct.underlyingVault)),
                 execution.vaultSharesOut,
-                layoutStruct.richToken,
+                layoutStruct.pairToken,
                 0,
                 address(this),
                 false,
@@ -480,32 +457,32 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             );
         }
 
-        if (richOut < args.minRichOut) {
-            revert SlippageExceeded(args.minRichOut, richOut);
+        if (pairOut < args.minPairOut) {
+            revert SlippageExceeded(args.minPairOut, pairOut);
         }
 
         execution.senderNonce = SuperchainSenderNonceRepo._useNonce(address(this), args.targetChainId);
 
-        layoutStruct.richToken.forceApprove(address(bridgeLayout.standardBridge), richOut);
+        layoutStruct.pairToken.forceApprove(address(bridgeLayout.standardBridge), pairOut);
         bridgeLayout.standardBridge.bridgeERC20To(
-            address(layoutStruct.richToken),
-            address(execution.remoteRichToken),
+            address(layoutStruct.pairToken),
+            address(execution.remotePairToken),
             execution.peer.relayer,
-            richOut,
+            pairOut,
             uint32(execution.bridgeMinGasLimit),
             bytes("")
         );
 
         bytes memory receiveData = abi.encodeCall(
-            IProtocolDETF.receiveBridgedRich,
-            (args.recipient == address(0) ? msg.sender : args.recipient, richOut, args.deadline)
+            IProtocolDETF.receiveBridgedPair,
+            (args.recipient == address(0) ? msg.sender : args.recipient, pairOut, args.deadline)
         );
         bytes memory relayData = abi.encodeCall(
             ITokenTransferRelayer.relayTokenTransfer,
             (
                 address(execution.remoteDetfToken),
-                execution.remoteRichToken,
-                richOut,
+                execution.remotePairToken,
+                pairOut,
                 execution.senderNonce,
                 false,
                 false,
@@ -520,19 +497,19 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             msg.sender,
             args.targetChainId,
             args.recipient == address(0) ? msg.sender : args.recipient,
-            execution.actualRichirIn,
+            execution.actualRebasingClaimIn,
             execution.sharesBurned,
             execution.reserveSharesBurned,
-            localRichirOut,
-            richOut,
+            localRebasingClaimOut,
+            pairOut,
             execution.senderNonce
         );
     }
 
-    function receiveBridgedRich(address recipient, uint256 richAmount, uint256 deadline)
+    function receiveBridgedPair(address recipient, uint256 pairAmount, uint256 deadline)
         external
         nonReentrant
-        returns (uint256 richirOut)
+        returns (uint256 rebasingClaimOut)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         address expectedRelayer = DetfSuperchainBridgeRepo._localRelayer();
@@ -545,20 +522,20 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         recipient = recipient == address(0) ? msg.sender : recipient;
-        richirOut = _receiveBridgedRichToRichir(layoutStruct, richAmount, recipient, deadline);
+        rebasingClaimOut = _receiveBridgedPairToRichir(layoutStruct, pairAmount, recipient, deadline);
 
-        emit BridgeReceived(msg.sender, recipient, richAmount, richirOut);
+        emit BridgeReceived(msg.sender, recipient, pairAmount, rebasingClaimOut);
     }
 
-    function _receiveBridgedRichToRichir(
+    function _receiveBridgedPairToRichir(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 richAmount_,
+        uint256 pairAmount_,
         address recipient_,
         uint256 deadline_
-    ) internal returns (uint256 richirOut_) {
-        uint256 actualIn = _secureTokenTransfer(layoutStruct_.richToken, richAmount_, false);
-        uint256 wethAmount = _convertRichToWeth(layoutStruct_, actualIn, deadline_);
+    ) internal returns (uint256 rebasingClaimOut_) {
+        uint256 actualIn = _secureTokenTransfer(layoutStruct_.pairToken, pairAmount_, false);
+        uint256 wethAmount = _convertPairToRateAsset(layoutStruct_, actualIn, deadline_);
 
-        richirOut_ = _mintRichirFromWeth(layoutStruct_, wethAmount, recipient_, deadline_);
+        rebasingClaimOut_ = _mintRebasingClaimFromRateAsset(layoutStruct_, wethAmount, recipient_, deadline_);
     }
 }

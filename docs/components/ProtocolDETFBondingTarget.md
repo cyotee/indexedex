@@ -13,10 +13,10 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: PkgOnly / InternalOnly (restricted to `protocolNFTVault` caller)
   - State Writes: Balancer reserve pool via router, `ERC4626Repo._setLastTotalAssets`
-  - External Calls: Balancer prepay router remove single token exact-in; `IERC4626(chirWethVault).redeem/previewRedeem` (indirect), Aerodrome pool `burn`; `chirWethVault.exchangeIn`; Balancer prepay router add-liquidity
+  - External Calls: Balancer prepay router remove single token exact-in; `IERC4626(underlyingVault).redeem/previewRedeem` (indirect), Aerodrome pool `burn`; `underlyingVault.exchangeIn`; Balancer prepay router add-liquidity
   - Inputs: `lpAmount` (BPT) to exit, `recipient` defaults to msg.sender if zero
   - Outputs: extracted WETH amount
-  - Execution Outline: verify initialized; require caller is protocol NFT vault; compute conservative min vault token out; single-token exit into `chirWethVault` shares; redeem to Aerodrome LP; burn LP to CHIR+WETH; transfer WETH to recipient; reinvest CHIR by depositing into `chirWethVault` then adding resulting shares back to reserve pool; sync reserve view
+  - Execution Outline: verify initialized; require caller is protocol NFT vault; compute conservative min vault token out; single-token exit into `underlyingVault` shares; redeem to Aerodrome LP; burn LP to CHIR+WETH; transfer WETH to recipient; reinvest CHIR by depositing into `underlyingVault` then adding resulting shares back to reserve pool; sync reserve view
   - Invariants: only NFT vault may extract liquidity; CHIR portion is reinvested; min-out math uses Balancer rates and leaves 1 wei slack
   - Failure Modes: `NotNFTVault`, `ReservePoolNotInitialized`, downstream reverts
   - Tests Required: access control; extractedWeth correctness; reinvest path leaves no stray LP; reserve view sync; previewClaimLiquidity (query target) conservative vs execute
@@ -26,7 +26,7 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: Permissionless
   - State Writes: reserve pool via router, ProtocolNFTVault position state
-  - External Calls: `weth.transferFrom`, `chirWethVault.exchangeIn`, Balancer prepay add-liquidity, `protocolNFTVault.createPosition`
+  - External Calls: `weth.transferFrom`, `underlyingVault.exchangeIn`, Balancer prepay add-liquidity, `protocolNFTVault.createPosition`
   - Inputs: `amountIn>0`, lockDuration bounds enforced by NFT vault, `deadline>=now`
   - Outputs: `(tokenId, shares)`
   - Execution Outline: deadline/amount/init; pull WETH; deposit to chirWeth vault -> shares; single-sided add to reserve pool -> BPT; create NFT position with BPT shares
@@ -39,8 +39,8 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: Permissionless
   - State Writes: reserve pool, ProtocolNFTVault position
-  - External Calls: `rich.transferFrom`, `richChirVault.exchangeIn`, Balancer add-liquidity, `protocolNFTVault.createPosition`
-  - Inputs/Outputs/Outline: same as Route 02 but using RICH -> `richChirVault` path
+  - External Calls: `rich.transferFrom`, `underlyingVault.exchangeIn`, Balancer add-liquidity, `protocolNFTVault.createPosition`
+  - Inputs/Outputs/Outline: same as Route 02 but using RICH -> `underlyingVault` path
   - Invariants: same
   - Failure Modes: same
   - Tests Required: same
@@ -50,7 +50,7 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: Permissionless (but requires NFT vault to have approved CHIR transfer)
   - State Writes: reserve pool, protocol NFT position
-  - External Calls: `transferFrom(protocolNFTVault)` for CHIR, `chirWethVault.exchangeIn`, Balancer add-liquidity, `protocolNFTVault.addToProtocolNFT`
+  - External Calls: `transferFrom(protocolNFTVault)` for CHIR, `underlyingVault.exchangeIn`, Balancer add-liquidity, `protocolNFTVault.addToProtocolNFT`
   - Inputs: none
   - Outputs: BPT received
   - Execution Outline: require initialized; read CHIR balance held by protocol NFT vault; pull CHIR; deposit CHIR to chirWeth vault -> shares; add to reserve pool -> BPT; add BPT to protocol NFT
@@ -63,7 +63,7 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: Permissionless (position authority enforced in NFT vault)
   - State Writes: NFT vault position state, RICHIR supply
-  - External Calls: `protocolNFTVault.sellPositionToProtocol`, `richirToken.mintFromNFTSale`
+  - External Calls: `protocolNFTVault.sellPositionToProtocol`, `rebasingClaimToken.mintFromNFTSale`
   - Inputs: `tokenId`, recipient defaulting
   - Outputs: RICHIR minted
   - Execution Outline: require initialized; call NFT vault to sell position; get principal shares moved to protocol-owned position; use `BetterMath._convertToSharesDown(principalShares)` to calculate RICHIR shares; mint RICHIR to recipient; return RICHIR minted
@@ -76,7 +76,7 @@ Routes:
   - Entry Context: Proxy -> delegatecall Target
   - Auth: Permissionless
   - State Writes: reserve pool + protocol NFT position (WETH path) OR CHIR supply (burn path)
-  - External Calls: if WETH: `chirWethVault.exchangeIn` + Balancer add-liquidity + `protocolNFTVault.addToProtocolNFT`; if CHIR: `ERC20Repo._burn`
+  - External Calls: if WETH: `underlyingVault.exchangeIn` + Balancer add-liquidity + `protocolNFTVault.addToProtocolNFT`; if CHIR: `ERC20Repo._burn`
   - Inputs: token must be WETH or CHIR; amount>0
   - Outputs: none
   - Execution Outline: require initialized; pull token if needed; if WETH: deposit to chirWeth vault -> shares, add to reserve pool -> BPT, add to protocol NFT; if CHIR: divide amount in half, burn half, transfer remaining half to Protocol DETF NFT as reward for bond holders

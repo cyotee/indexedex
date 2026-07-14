@@ -7,7 +7,7 @@ import {IStablePool} from '@crane/contracts/external/balancer/v3/interfaces/cont
 import {IWeightedPool} from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-weighted/IWeightedPool.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 
@@ -30,11 +30,11 @@ library ComposedStableCommonDetfRepo {
     struct Storage {
         IWeightedPool reservePool;
         IDETFNFTVault bondNftVault;
-        IRICHIR rebasingDetfToken;
+        IRebasingClaimToken rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;
         IERC20 commonPoolBpt;
-        IERC20 wethToken;
+        IERC20 rateAsset;
         IStandardExchangeIn stablePoolExitPricer;
         IStandardExchangeIn commonPoolExitPricer;
         uint256 detfIndex;
@@ -65,11 +65,11 @@ library ComposedStableCommonDetfRepo {
         Storage storage layoutStruct_,
         IWeightedPool reservePool_,
         IDETFNFTVault bondNftVault_,
-        IRICHIR rebasingDetfToken_,
+        IRebasingClaimToken rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStandardExchangeIn stablePoolExitPricer_,
         IStandardExchangeIn commonPoolExitPricer_,
         uint256 detfIndex_,
@@ -87,7 +87,7 @@ library ComposedStableCommonDetfRepo {
         layoutStruct_.detfToken = detfToken_;
         layoutStruct_.stablePoolBpt = stablePoolBpt_;
         layoutStruct_.commonPoolBpt = commonPoolBpt_;
-        layoutStruct_.wethToken = wethToken_;
+        layoutStruct_.rateAsset = rateAsset_;
         layoutStruct_.stablePoolExitPricer = stablePoolExitPricer_;
         layoutStruct_.commonPoolExitPricer = commonPoolExitPricer_;
         layoutStruct_.detfIndex = detfIndex_;
@@ -150,11 +150,11 @@ library ComposedStableCommonDetfRepo {
     function _initializePricing(
         IWeightedPool reservePool_,
         IDETFNFTVault bondNftVault_,
-        IRICHIR rebasingDetfToken_,
+        IRebasingClaimToken rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStandardExchangeIn stablePoolExitPricer_,
         IStandardExchangeIn commonPoolExitPricer_,
         uint256 detfIndex_,
@@ -169,7 +169,7 @@ library ComposedStableCommonDetfRepo {
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             stablePoolExitPricer_,
             commonPoolExitPricer_,
             detfIndex_,
@@ -194,11 +194,11 @@ library ComposedStableCommonDetfRepo {
         return _bondNftVault(_layoutStruct());
     }
 
-    function _rebasingDetfToken(Storage storage layoutStruct_) internal view returns (IRICHIR rebasingDetfToken_) {
+    function _rebasingDetfToken(Storage storage layoutStruct_) internal view returns (IRebasingClaimToken rebasingDetfToken_) {
         return layoutStruct_.rebasingDetfToken;
     }
 
-    function _rebasingDetfToken() internal view returns (IRICHIR rebasingDetfToken_) {
+    function _rebasingDetfToken() internal view returns (IRebasingClaimToken rebasingDetfToken_) {
         return _rebasingDetfToken(_layoutStruct());
     }
 
@@ -226,12 +226,12 @@ library ComposedStableCommonDetfRepo {
         return _commonPoolBpt(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20 wethToken_) {
-        return layoutStruct_.wethToken;
+    function _rateAsset(Storage storage layoutStruct_) internal view returns (IERC20 rateAsset_) {
+        return layoutStruct_.rateAsset;
     }
 
-    function _wethToken() internal view returns (IERC20 wethToken_) {
-        return _wethToken(_layoutStruct());
+    function _rateAsset() internal view returns (IERC20 rateAsset_) {
+        return _rateAsset(_layoutStruct());
     }
 
     function _stablePoolExitPricer(Storage storage layoutStruct_) internal view returns (IStandardExchangeIn stablePoolExitPricer_) {

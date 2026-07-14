@@ -172,24 +172,24 @@ function buildProtocolDetfEntriesFromPlatform(platform: unknown, chainId: number
     })
   }
 
-  const richToken = record.richToken
-  if (isHexAddress(richToken) && !isZeroAddress(richToken)) {
+  const pairToken = record.pairToken ?? record.richToken
+  if (isHexAddress(pairToken) && !isZeroAddress(pairToken)) {
     entries.push({
       chainId,
-      address: richToken,
-      name: 'Rich Token',
-      symbol: 'RICH',
+      address: pairToken,
+      name: 'Pair Token',
+      symbol: 'PAIR',
       decimals: 18,
     })
   }
 
-  const richirToken = record.richirToken
-  if (isHexAddress(richirToken) && !isZeroAddress(richirToken)) {
+  const rebasingClaimToken = record.rebasingClaimToken ?? record.richirToken
+  if (isHexAddress(rebasingClaimToken) && !isZeroAddress(rebasingClaimToken)) {
     entries.push({
       chainId,
-      address: richirToken,
-      name: 'RICHIR',
-      symbol: 'RICHIR',
+      address: rebasingClaimToken,
+      name: 'Rebasing Claim',
+      symbol: 'rCLAIM',
       decimals: 18,
     })
   }

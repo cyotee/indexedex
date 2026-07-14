@@ -40,9 +40,9 @@ contract DETFNFTVaultTest is Test {
         uint256 effectiveShares = (originalShares * bonusMultiplier) / ONE_WAD;
 
         // RICHIR minted = effective shares (rebasing will adjust value)
-        uint256 richirMinted = effectiveShares;
+        uint256 rebasingClaimMinted = effectiveShares;
 
-        assertEq(richirMinted, 150e18, "RICHIR should equal effective shares");
+        assertEq(rebasingClaimMinted, 150e18, "RICHIR should equal effective shares");
     }
 
     function test_sellNFT_transferToDETFNFT() public pure {

@@ -28,28 +28,24 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
         return IERC20MintBurn(address(this));
     }
 
-    function richToken() external view returns (IERC20) {
-        return SingleVaultDetfRepo._richToken();
+    function pairToken() external view returns (IERC20) {
+        return SingleVaultDetfRepo._pairToken();
     }
 
-    function richirToken() external view returns (IERC20) {
-        return IERC20(address(SingleVaultDetfRepo._richirToken()));
+    function rebasingClaimToken() external view returns (IERC20) {
+        return IERC20(address(SingleVaultDetfRepo._rebasingClaimToken()));
     }
 
-    function wethToken() external view returns (IERC20) {
-        return SingleVaultDetfRepo._wethToken();
+    function rateAsset() external view returns (IERC20) {
+        return SingleVaultDetfRepo._rateAsset();
     }
 
     function detfNFTVault() external view returns (IDETFNFTVault) {
         return SingleVaultDetfRepo._detfNFTVault();
     }
 
-    function chirWethVault() external view returns (IStandardExchange) {
-        return SingleVaultDetfRepo._wethRichVault();
-    }
-
-    function richChirVault() external view returns (IStandardExchange) {
-        return SingleVaultDetfRepo._wethRichVault();
+    function underlyingVault() external view returns (IStandardExchange) {
+        return SingleVaultDetfRepo._underlyingVault();
     }
 
     function reservePool() external view returns (address) {
@@ -78,10 +74,6 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
 
     function isBurningAllowed() external view returns (bool allowed_) {
         return _isBurningAllowed(SingleVaultDetfRepo._layoutStruct(), _calcReserveSpotPrice());
-    }
-
-    function wethRichVault() external view returns (IStandardExchange) {
-        return SingleVaultDetfRepo._wethRichVault();
     }
 
     function vaultRateProvider() external view returns (IRateProvider) {

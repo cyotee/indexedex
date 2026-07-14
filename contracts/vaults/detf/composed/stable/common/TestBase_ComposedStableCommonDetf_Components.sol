@@ -9,7 +9,7 @@ import {
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IWeightedPool} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {RebasingDETFTokenPricingTarget} from 'contracts/vaults/detf/composed/stable/common/RebasingDETFTokenPricingTarget.sol';
@@ -18,11 +18,11 @@ contract RebasingDETFTokenPricingHarness is RebasingDETFTokenPricingTarget {
     function initializePricing(
         IWeightedPool reservePool_,
         IDETFNFTVault bondNftVault_,
-        IRICHIR rebasingDetfToken_,
+        IRebasingClaimToken rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStandardExchangeIn stablePoolExitPricer_,
         IStandardExchangeIn commonPoolExitPricer_,
         uint256 detfIndex_,
@@ -36,7 +36,7 @@ contract RebasingDETFTokenPricingHarness is RebasingDETFTokenPricingTarget {
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             stablePoolExitPricer_,
             commonPoolExitPricer_,
             detfIndex_,
@@ -51,11 +51,11 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
 
     IWeightedPool internal reservePool;
     IDETFNFTVault internal bondNftVault;
-    IRICHIR internal rebasingDetfToken;
+    IRebasingClaimToken internal rebasingDetfToken;
     IERC20 internal detfToken;
     IERC20 internal stablePoolBpt;
     IERC20 internal commonPoolBpt;
-    IERC20 internal wethToken;
+    IERC20 internal rateAsset;
     IStandardExchangeIn internal stablePoolExitPricer;
     IStandardExchangeIn internal commonPoolExitPricer;
 
@@ -64,11 +64,11 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
 
         reservePool = IWeightedPool(makeAddr('reservePool'));
         bondNftVault = IDETFNFTVault(makeAddr('bondNftVault'));
-        rebasingDetfToken = IRICHIR(makeAddr('rebasingDetfToken'));
+        rebasingDetfToken = IRebasingClaimToken(makeAddr('rebasingDetfToken'));
         detfToken = IERC20(makeAddr('detfToken'));
         stablePoolBpt = IERC20(makeAddr('stablePoolBpt'));
         commonPoolBpt = IERC20(makeAddr('commonPoolBpt'));
-        wethToken = IERC20(makeAddr('wethToken'));
+        rateAsset = IERC20(makeAddr('rateAsset'));
         stablePoolExitPricer = IStandardExchangeIn(makeAddr('stablePoolExitPricer'));
         commonPoolExitPricer = IStandardExchangeIn(makeAddr('commonPoolExitPricer'));
 
@@ -79,7 +79,7 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             stablePoolExitPricer,
             commonPoolExitPricer,
             0,
@@ -129,19 +129,19 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
         );
     }
 
-    function mockRebasingShareQuote(uint256 richirAmount_, uint256 richirShares_, uint256 totalRichirShares_) internal {
+    function mockRebasingShareQuote(uint256 rebasingClaimAmount_, uint256 rebasingClaimShares_, uint256 totalRebasingClaimShares_) internal {
         vm.mockCall(
-            address(rebasingDetfToken), abi.encodeWithSelector(IRICHIR.convertToShares.selector, richirAmount_), abi.encode(richirShares_)
+            address(rebasingDetfToken), abi.encodeWithSelector(IRebasingClaimToken.convertToShares.selector, rebasingClaimAmount_), abi.encode(rebasingClaimShares_)
         );
         vm.mockCall(
-            address(rebasingDetfToken), abi.encodeWithSelector(IRICHIR.totalShares.selector), abi.encode(totalRichirShares_)
+            address(rebasingDetfToken), abi.encodeWithSelector(IRebasingClaimToken.totalShares.selector), abi.encode(totalRebasingClaimShares_)
         );
     }
 
     function mockStablePoolEthQuote(uint256 bptAmount_, uint256 wethValue_) internal {
         vm.mockCall(
             address(stablePoolExitPricer),
-            abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector, stablePoolBpt, bptAmount_, wethToken),
+            abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector, stablePoolBpt, bptAmount_, rateAsset),
             abi.encode(wethValue_)
         );
     }
@@ -149,7 +149,7 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
     function mockCommonPoolEthQuote(uint256 bptAmount_, uint256 wethValue_) internal {
         vm.mockCall(
             address(commonPoolExitPricer),
-            abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector, commonPoolBpt, bptAmount_, wethToken),
+            abi.encodeWithSelector(IStandardExchangeIn.previewExchangeIn.selector, commonPoolBpt, bptAmount_, rateAsset),
             abi.encode(wethValue_)
         );
     }

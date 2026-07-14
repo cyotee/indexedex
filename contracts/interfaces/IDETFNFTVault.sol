@@ -179,13 +179,13 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
     /* ---------------------------------------------------------------------- */
-    /*                         Bond NFT → RICHIR Sale                         */
+    /*                         Bond NFT → rebasing claim sale                         */
     /* ---------------------------------------------------------------------- */
 
     /**
      * @notice Sells a user bond NFT position into the protocol-owned position.
      * @dev Intended to be called by the Protocol DETF (owner) when a user invokes
-     *      the canonical Bond NFT → RICHIR route.
+     *      the canonical Bond NFT → rebasing claim token route.
      *
      *      Semantics (per TASK.md):
     *      - Harvest pending reward-token rewards and send them to `rewardsRecipient`.
@@ -217,7 +217,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     /**
      * @notice Marks the protocol NFT as sold.
-     * @dev Called when RICHIR is minted against this position.
+     * @dev Called when rebasing claim token is minted against this position.
      *      After this, no more LP can be added to the protocol NFT.
      * @param tokenId The protocol NFT token ID
      */

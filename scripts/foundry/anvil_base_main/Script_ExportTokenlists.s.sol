@@ -601,8 +601,8 @@ contract Script_ExportTokenlists is DeploymentBase {
 
     function _exportProtocolDetf(string memory chainIdStr) internal {
         (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "protocolDetf");
-        (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "richToken");
-        (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "richirToken");
+        (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "pairToken");
+        (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "rebasingClaimToken");
 
         if (!(okChir && okRich && okRichir)) {
             _writeEmptyTokenlist("anvil_base_main-protocol-detf.tokenlist.json");

@@ -15,7 +15,7 @@ import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IBasicVault} from 'contracts/interfaces/IBasicVault.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IStandardVault} from 'contracts/interfaces/IStandardVault.sol';
@@ -44,11 +44,11 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
     struct PkgArgs {
         IWeightedPool reservePool;
         IDETFNFTVault bondNftVault;
-        IRICHIR rebasingDetfToken;
+        IRebasingClaimToken rebasingDetfToken;
         IERC20 detfToken;
         IERC20 stablePoolBpt;
         IERC20 commonPoolBpt;
-        IERC20 wethToken;
+        IERC20 rateAsset;
         IStandardExchangeIn stablePoolExitPricer;
         IStandardExchangeIn commonPoolExitPricer;
         IPermit2 permit2;
@@ -211,7 +211,7 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
             args.detfToken,
             args.stablePoolBpt,
             args.commonPoolBpt,
-            args.wethToken,
+            args.rateAsset,
             args.stablePoolExitPricer,
             args.commonPoolExitPricer,
             args.detfIndex,

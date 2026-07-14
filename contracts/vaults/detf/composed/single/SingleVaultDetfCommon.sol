@@ -39,7 +39,7 @@ import {DETFThresholdPolicy} from "contracts/vaults/detf/core/DETFThresholdPolic
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     BalancerV38020WeightedPoolMath
@@ -100,20 +100,20 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         return SingleVaultDetfRepo._layoutStruct().isReservePoolInitialized;
     }
 
-    function _isWethToken(SingleVaultDetfRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(layoutStruct_.wethToken);
+    function _isRateAsset(SingleVaultDetfRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(layoutStruct_.rateAsset);
     }
 
-    function _isRichToken(SingleVaultDetfRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(layoutStruct_.richToken);
+    function _isPairToken(SingleVaultDetfRepo.Storage storage layoutStruct_, IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(layoutStruct_.pairToken);
     }
 
     function _isDetfToken(IERC20 token_) internal view returns (bool) {
         return address(token_) == address(this);
     }
 
-    function _isRichirToken(IERC20 token_) internal view returns (bool) {
-        return address(token_) == address(SingleVaultDetfRepo._richirToken());
+    function _isRebasingClaimToken(IERC20 token_) internal view returns (bool) {
+        return address(token_) == address(SingleVaultDetfRepo._rebasingClaimToken());
     }
 
     function _loadReservePoolData(ReservePoolData memory data_) internal view returns (uint256[] memory balancesRaw_) {
@@ -344,13 +344,13 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             IERC20[] memory tokens = new IERC20[](2);
             uint256[] memory exactAmountsIn = new uint256[](2);
 
-            if (address(this) < address(layoutStruct_.wethRichVault)) {
+            if (address(this) < address(layoutStruct_.underlyingVault)) {
                 tokens[0] = IERC20(address(this));
-                tokens[1] = IERC20(address(layoutStruct_.wethRichVault));
+                tokens[1] = IERC20(address(layoutStruct_.underlyingVault));
                 exactAmountsIn[0] = detfAmount_;
                 exactAmountsIn[1] = vaultShares_;
             } else {
-                tokens[0] = IERC20(address(layoutStruct_.wethRichVault));
+                tokens[0] = IERC20(address(layoutStruct_.underlyingVault));
                 tokens[1] = IERC20(address(this));
                 exactAmountsIn[0] = vaultShares_;
                 exactAmountsIn[1] = detfAmount_;
@@ -360,7 +360,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
                 IERC20(address(this)).safeTransfer(balancerVault, detfAmount_);
             }
             if (vaultShares_ != 0) {
-                IERC20(address(layoutStruct_.wethRichVault)).safeTransfer(balancerVault, vaultShares_);
+                IERC20(address(layoutStruct_.underlyingVault)).safeTransfer(balancerVault, vaultShares_);
             }
 
             return layoutStruct_.balancerV3PrepayRouter.prepayInitialize(layoutStruct_.reservePool, tokens, exactAmountsIn, 0, "");
@@ -378,7 +378,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             IERC20(address(this)).safeTransfer(balancerVault, detfAmount_);
         }
         if (vaultShares_ != 0) {
-            IERC20(address(layoutStruct_.wethRichVault)).safeTransfer(balancerVault, vaultShares_);
+            IERC20(address(layoutStruct_.underlyingVault)).safeTransfer(balancerVault, vaultShares_);
         }
 
         bptOut_ = layoutStruct_.balancerV3PrepayRouter.prepayAddLiquidityUnbalanced(layoutStruct_.reservePool, amountsIn, 0, "");
@@ -391,7 +391,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
     ) internal returns (uint256 bptOut_) {
         bool depositDetf = detfAmount_ != 0;
         uint256 tokenIndex = depositDetf ? layoutStruct_.detfIndex : layoutStruct_.vaultTokenIndex;
-        IERC20 depositToken = depositDetf ? IERC20(address(this)) : IERC20(address(layoutStruct_.wethRichVault));
+        IERC20 depositToken = depositDetf ? IERC20(address(this)) : IERC20(address(layoutStruct_.underlyingVault));
         uint256 remainingRaw = depositDetf ? detfAmount_ : vaultShares_;
         IVault balancerVault = BalancerV3VaultAwareRepo._balancerV3Vault();
         IWeightedPool reservePool_ = IWeightedPool(layoutStruct_.reservePool);
@@ -551,16 +551,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         }
     }
 
-    function _previewRichirMintForBpt(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 bptOut_)
+    function _previewRebasingClaimMintForBpt(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 bptOut_)
         internal
         view
-        returns (uint256 richirOut_)
+        returns (uint256 rebasingClaimOut_)
     {
         if (bptOut_ == 0) {
             return 0;
         }
 
-        IRICHIR richir = layoutStruct_._richirToken();
+        IRebasingClaimToken richir = layoutStruct_._rebasingClaimToken();
         uint256 totalSharesAfter = richir.totalShares() + bptOut_;
         if (totalSharesAfter == 0) {
             return bptOut_;
@@ -570,7 +570,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         uint256 wethValueAfter = IStandardExchange(address(this)).previewExchangeIn(
             IERC20(layoutStruct_.reservePool),
             protocolBptAfter,
-            layoutStruct_.wethToken
+            layoutStruct_.rateAsset
         );
         if (wethValueAfter == 0) {
             return bptOut_;
@@ -580,31 +580,31 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         if (rateAfter == 0) {
             rateAfter = 1;
         }
-        richirOut_ = bptOut_ * rateAfter / FixedPoint.ONE;
+        rebasingClaimOut_ = bptOut_ * rateAfter / FixedPoint.ONE;
     }
 
-    function _mintRichirFromWeth(
+    function _mintRebasingClaimFromRateAsset(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
         uint256 wethAmount_,
         address recipient_,
         uint256 deadline_
-    ) internal returns (uint256 richirOut_) {
+    ) internal returns (uint256 rebasingClaimOut_) {
         (, uint256 bptOut) = _depositWethIntoReservePool(layoutStruct_, wethAmount_, deadline_);
-        richirOut_ = _mintRichirFromReservePoolBpt(layoutStruct_, bptOut, recipient_);
+        rebasingClaimOut_ = _mintRebasingClaimFromReservePoolBpt(layoutStruct_, bptOut, recipient_);
         _syncLastTotalAssetsFromReservePool(layoutStruct_);
     }
 
-    function _mintRichirFromReservePoolBpt(
+    function _mintRebasingClaimFromReservePoolBpt(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
         uint256 bptOut_,
         address recipient_
-    ) internal returns (uint256 richirOut_) {
+    ) internal returns (uint256 rebasingClaimOut_) {
         if (bptOut_ == 0) {
             return 0;
         }
 
         layoutStruct_.detfNFTVault.addToDETFNFT(layoutStruct_.detfNFTId, bptOut_);
-        richirOut_ = layoutStruct_._richirToken().mintFromNFTSale(bptOut_, recipient_);
+        rebasingClaimOut_ = layoutStruct_._rebasingClaimToken().mintFromNFTSale(bptOut_, recipient_);
     }
 
     function _syncLastTotalAssetsFromReservePool(SingleVaultDetfRepo.Storage storage layoutStruct_) internal {
@@ -620,16 +620,16 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         bptOut_ = _addLiquidityToReservePool(layoutStruct_, 0, vaultSharesOut_);
     }
 
-    function _convertRichToWeth(
+    function _convertPairToRateAsset(
         SingleVaultDetfRepo.Storage storage layoutStruct_,
-        uint256 richAmount_,
+        uint256 pairAmount_,
         uint256 deadline_
     ) internal returns (uint256 wethAmountOut_) {
-        layoutStruct_.richToken.safeTransfer(address(layoutStruct_.wethRichVault), richAmount_);
-        wethAmountOut_ = layoutStruct_.wethRichVault.exchangeIn(
-            layoutStruct_.richToken,
-            richAmount_,
-            layoutStruct_.wethToken,
+        layoutStruct_.pairToken.safeTransfer(address(layoutStruct_.underlyingVault), pairAmount_);
+        wethAmountOut_ = layoutStruct_.underlyingVault.exchangeIn(
+            layoutStruct_.pairToken,
+            pairAmount_,
+            layoutStruct_.rateAsset,
             0,
             address(this),
             true,
@@ -642,11 +642,11 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         uint256 wethAmount_,
         uint256 deadline_
     ) internal returns (uint256 vaultSharesOut_) {
-        IERC20(address(layoutStruct_.wethToken)).safeTransfer(address(layoutStruct_.wethRichVault), wethAmount_);
-        vaultSharesOut_ = layoutStruct_.wethRichVault.exchangeIn(
-            layoutStruct_.wethToken,
+        IERC20(address(layoutStruct_.rateAsset)).safeTransfer(address(layoutStruct_.underlyingVault), wethAmount_);
+        vaultSharesOut_ = layoutStruct_.underlyingVault.exchangeIn(
+            layoutStruct_.rateAsset,
             wethAmount_,
-            IERC20(address(layoutStruct_.wethRichVault)),
+            IERC20(address(layoutStruct_.underlyingVault)),
             0,
             address(this),
             true,
@@ -659,21 +659,21 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         bptIn_ = _previewBptInForProportionalVaultTokenOut(SingleVaultDetfRepo._layoutStruct(), vaultSharesTarget);
     }
 
-    function _previewRichirRedemptionBptIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 richirAmount_)
+    function _previewRebasingClaimRedemptionBptIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 rebasingClaimAmount_)
         internal
         view
         returns (uint256 bptIn_)
     {
-        IRICHIR richir = layoutStruct_._richirToken();
-        uint256 richirShares = richir.convertToShares(richirAmount_);
-        uint256 totalRichirShares = richir.totalShares();
+        IRebasingClaimToken richir = layoutStruct_._rebasingClaimToken();
+        uint256 rebasingClaimShares = richir.convertToShares(rebasingClaimAmount_);
+        uint256 totalRebasingClaimShares = richir.totalShares();
         uint256 protocolNftBpt = layoutStruct_.detfNFTVault.originalSharesOf(layoutStruct_.detfNFTId);
 
-        if (richirShares == 0 || totalRichirShares == 0 || protocolNftBpt == 0) {
+        if (rebasingClaimShares == 0 || totalRebasingClaimShares == 0 || protocolNftBpt == 0) {
             revert ZeroAmount();
         }
 
-        bptIn_ = richirShares * protocolNftBpt / totalRichirShares;
+        bptIn_ = rebasingClaimShares * protocolNftBpt / totalRebasingClaimShares;
         if (bptIn_ == 0) {
             revert ZeroAmount();
         }
@@ -913,34 +913,34 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         }
     }
 
-    function _previewRichirToWethExact(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 exactWethOut_)
+    function _previewRebasingClaimToRateAssetExact(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 exactWethOut_)
         internal
         view
-        returns (uint256 richirAmountIn_)
+        returns (uint256 rebasingClaimAmountIn_)
     {
         if (exactWethOut_ == 0) {
             return 0;
         }
 
-        IRICHIR richir = layoutStruct_._richirToken();
-        uint256 totalRichirShares = richir.totalShares();
+        IRebasingClaimToken richir = layoutStruct_._rebasingClaimToken();
+        uint256 totalRebasingClaimShares = richir.totalShares();
         uint256 protocolNftBpt = layoutStruct_.detfNFTVault.originalSharesOf(layoutStruct_.detfNFTId);
         uint256 maxBptIn = IERC20(layoutStruct_.reservePool).totalSupply().mulDown(BALANCER_MAX_OUT_RATIO);
         if (protocolNftBpt < maxBptIn) {
             maxBptIn = protocolNftBpt;
         }
-        if (totalRichirShares == 0 || protocolNftBpt == 0 || maxBptIn == 0) {
+        if (totalRebasingClaimShares == 0 || protocolNftBpt == 0 || maxBptIn == 0) {
             revert ZeroAmount();
         }
 
-        uint256 maxRichirShares = maxBptIn * totalRichirShares / protocolNftBpt;
-        uint256 maxRichirAmount = richir.convertToRichir(maxRichirShares);
-        if (maxRichirAmount == 0) {
+        uint256 maxRebasingClaimShares = maxBptIn * totalRebasingClaimShares / protocolNftBpt;
+        uint256 maxRebasingClaimAmount = richir.convertToClaim(maxRebasingClaimShares);
+        if (maxRebasingClaimAmount == 0) {
             revert ZeroAmount();
         }
 
         uint256 low = 0;
-        uint256 high = exactWethOut_ > maxRichirAmount ? maxRichirAmount : exactWethOut_;
+        uint256 high = exactWethOut_ > maxRebasingClaimAmount ? maxRebasingClaimAmount : exactWethOut_;
         uint256 wethOutAtHigh = _previewWethOutForRichirIn(layoutStruct_, high);
         if (wethOutAtHigh == 0) {
             revert ZeroAmount();
@@ -949,12 +949,12 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         uint256 iterations;
         while (wethOutAtHigh < exactWethOut_ && iterations < MAX_BINARY_SEARCH_ITERATIONS) {
             low = high;
-            if (high == maxRichirAmount) {
+            if (high == maxRebasingClaimAmount) {
                 break;
             }
             high *= 2;
-            if (high > maxRichirAmount) {
-                high = maxRichirAmount;
+            if (high > maxRebasingClaimAmount) {
+                high = maxRebasingClaimAmount;
             }
             wethOutAtHigh = _previewWethOutForRichirIn(layoutStruct_, high);
             ++iterations;
@@ -976,36 +976,36 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             ++iterations;
         }
 
-        richirAmountIn_ = low;
-        uint256 wethOutAtQuote = _previewWethOutForRichirIn(layoutStruct_, richirAmountIn_);
+        rebasingClaimAmountIn_ = low;
+        uint256 wethOutAtQuote = _previewWethOutForRichirIn(layoutStruct_, rebasingClaimAmountIn_);
         if (wethOutAtQuote < exactWethOut_) {
-            if (richirAmountIn_ == maxRichirAmount) {
+            if (rebasingClaimAmountIn_ == maxRebasingClaimAmount) {
                 revert ZeroAmount();
             }
-            richirAmountIn_ += 1;
+            rebasingClaimAmountIn_ += 1;
         }
 
-        uint256 buffer = richirAmountIn_ / 10_000;
+        uint256 buffer = rebasingClaimAmountIn_ / 10_000;
         if (buffer == 0) {
             buffer = 1;
         }
-        richirAmountIn_ += buffer;
-        if (richirAmountIn_ > maxRichirAmount) {
-            richirAmountIn_ = maxRichirAmount;
+        rebasingClaimAmountIn_ += buffer;
+        if (rebasingClaimAmountIn_ > maxRebasingClaimAmount) {
+            rebasingClaimAmountIn_ = maxRebasingClaimAmount;
         }
     }
 
-    function _previewWethOutForRichirIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 richirAmountIn_)
+    function _previewWethOutForRichirIn(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 rebasingClaimAmountIn_)
         internal
         view
         returns (uint256 wethOut_)
     {
-        uint256 bptIn = _previewRichirRedemptionBptIn(layoutStruct_, richirAmountIn_);
+        uint256 bptIn = _previewRebasingClaimRedemptionBptIn(layoutStruct_, rebasingClaimAmountIn_);
         uint256 vaultSharesOut = _previewVaultTokenOutForBptIn(layoutStruct_, bptIn);
-        wethOut_ = layoutStruct_.wethRichVault.previewExchangeIn(
-            IERC20(address(layoutStruct_.wethRichVault)),
+        wethOut_ = layoutStruct_.underlyingVault.previewExchangeIn(
+            IERC20(address(layoutStruct_.underlyingVault)),
             vaultSharesOut,
-            layoutStruct_.wethToken
+            layoutStruct_.rateAsset
         );
     }
 
@@ -1027,7 +1027,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
             vaultSharesOut_ += layoutStruct_.balancerV3PrepayRouter.prepayRemoveLiquiditySingleTokenExactIn(
                 layoutStruct_.reservePool,
                 chunkBptIn,
-                IERC20(address(layoutStruct_.wethRichVault)),
+                IERC20(address(layoutStruct_.underlyingVault)),
                 0,
                 ""
             );
@@ -1054,12 +1054,12 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         address recipient_,
         uint256 deadline_
     ) internal returns (uint256 wethOut_) {
-        IERC20 vaultToken = IERC20(address(layoutStruct_.wethRichVault));
-        vaultToken.forceApprove(address(layoutStruct_.wethRichVault), vaultSharesIn_);
-        wethOut_ = layoutStruct_.wethRichVault.exchangeIn(
+        IERC20 vaultToken = IERC20(address(layoutStruct_.underlyingVault));
+        vaultToken.forceApprove(address(layoutStruct_.underlyingVault), vaultSharesIn_);
+        wethOut_ = layoutStruct_.underlyingVault.exchangeIn(
             vaultToken,
             vaultSharesIn_,
-            layoutStruct_.wethToken,
+            layoutStruct_.rateAsset,
             0,
             recipient_,
             false,
@@ -1130,7 +1130,7 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         detfAmountIn_ = effectiveDetfIn_.mulDivUp(FixedPoint.ONE, FixedPoint.ONE + halfIncentive);
     }
 
-    function _bondFromWeth(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 wethAmount_, uint256 deadline_)
+    function _bondFromRateAsset(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 wethAmount_, uint256 deadline_)
         internal
         returns (BondAssets memory assets_)
     {

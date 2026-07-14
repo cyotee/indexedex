@@ -61,7 +61,7 @@ if (minChirWethVaultOut > 0) {
 **Query Implementation:**
 ```solidity
 // Line 157-181 - _previewChirWethVaultOutRaw does NOT apply slack
-chirWethVaultOutRaw = FixedPoint.divDown(expectedChirWethVaultOutScaled18, chirWethRate);
+underlyingVaultOutRaw = FixedPoint.divDown(expectedChirWethVaultOutScaled18, chirWethRate);
 ```
 
 **Issue:** Query returns exact calculated value without the 1 wei slack, making it NON-CONSERVATIVE compared to execution. Per the global policy: "views must be conservative relative to execution."
@@ -81,7 +81,7 @@ chirWethVaultOutRaw = FixedPoint.divDown(expectedChirWethVaultOutScaled18, chirW
 
 **Implementation:**
 ```solidity
-richirMinted = layout.richirToken.mintFromNFTSale(principalShares, recipient);
+rebasingClaimMinted = layout.rebasingClaimToken.mintFromNFTSale(principalShares, recipient);
 ```
 
 **Issue:** Implementation passes `principalShares` directly without the `BetterMath._convertToSharesDown()` conversion step specified in requirements.
@@ -135,8 +135,8 @@ IERC20(address(this)).safeTransferFrom(address(layout.protocolNFTVault), address
 3. Calculate WETH from lpOut
 
 **Execution Path:**
-1. Exit reserve pool via Balancer router → chirWethVaultOut
-2. `IERC4626.redeem(chirWethVaultOut, ...)` → lpOut (ACTUAL redemption)
+1. Exit reserve pool via Balancer router → underlyingVaultOut
+2. `IERC4626.redeem(underlyingVaultOut, ...)` → lpOut (ACTUAL redemption)
 3. Burn LP in Aerodrome → get CHIR + WETH
 4. Return WETH
 
@@ -166,8 +166,8 @@ IERC20(address(this)).safeTransferFrom(address(layout.protocolNFTVault), address
 
 2. **previewClaimLiquidity() function:** Add 1-wei slack to match execution behavior:
    ```solidity
-   if (chirWethVaultOutRaw > 0) {
-       unchecked { chirWethVaultOutRaw--; }
+   if (underlyingVaultOutRaw > 0) {
+       unchecked { underlyingVaultOutRaw--; }
    }
    ```
 

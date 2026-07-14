@@ -36,7 +36,7 @@ Routes:
   - Tests Required: boundary tests around thresholds
 
 - Route ID: TGT-ProtocolDETFBondingQuery-03
-  - Selector / Function: protocol getters (`chirWethVault()`, `richChirVault()`, `reservePool()`, `protocolNFTVault()`, `richToken()`, `richirToken()`, `chirToken()`, `protocolNFTId()`, `mintThreshold()`, `burnThreshold()`, `wethToken()`)
+  - Selector / Function: protocol getters (`underlyingVault()`, `underlyingVault()`, `reservePool()`, `protocolNFTVault()`, `pairToken()`, `rebasingClaimToken()`, `chirToken()`, `protocolNFTId()`, `mintThreshold()`, `burnThreshold()`, `wethToken()`)
   - Entry Context: Proxy -> delegatecall Target; view-only
   - Auth: Permissionless
   - State Writes: None

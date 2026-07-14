@@ -20,7 +20,7 @@ contract SingleVaultDetfExchangeInFacet is SingleVaultDetfExchangeInTarget, IFac
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
         funcs_ = new bytes4[](2);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
-        funcs_[1] = IProtocolDETF.mintWithWeth.selector;
+        funcs_[1] = IProtocolDETF.mintWithRateAsset.selector;
     }
 
     function facetMetadata()
@@ -34,6 +34,6 @@ contract SingleVaultDetfExchangeInFacet is SingleVaultDetfExchangeInTarget, IFac
         interfaces_[1] = type(IProtocolDETF).interfaceId;
         functions_ = new bytes4[](2);
         functions_[0] = IStandardExchangeIn.exchangeIn.selector;
-        functions_[1] = IProtocolDETF.mintWithWeth.selector;
+        functions_[1] = IProtocolDETF.mintWithRateAsset.selector;
     }
 }

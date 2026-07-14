@@ -18,7 +18,7 @@ import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 /// @dev This script:
 ///      1. Reads deployed DETF and bridge configuration
 ///      2. Converts local RICH into local RICHIR through the DETF exchange facet
-///      3. Executes bridgeRichir() on source chain
+///      3. Executes bridgeRebasingClaim() on source chain
 ///      4. Simulates cross-chain receive on destination chain
 ///      5. Verifies token balances
 contract Script_26_TestProtocolDetfReserveBridge is Script {
@@ -74,7 +74,7 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         _logSourceState(localConfig, deployer);
         _prepareRichirBalance(localConfig, deployer);
 
-        // Step 2: Execute bridgeRichir from local to peer chain
+        // Step 2: Execute bridgeRebasingClaim from local to peer chain
         _executeBridgeFlow(localConfig, chainConfig, deployer);
 
         vm.stopBroadcast();
@@ -97,16 +97,16 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
 
     struct LocalConfig {
         IProtocolDETF protocolDetf;
-        IERC20 richToken;
-        IERC20 richirToken;
+        IERC20 pairToken;
+        IERC20 rebasingClaimToken;
         address bridgeTokenRegistry;
         address localRelayer;
     }
 
     struct RemoteConfig {
         IProtocolDETF protocolDetf;
-        IERC20 richToken;
-        IERC20 richirToken;
+        IERC20 pairToken;
+        IERC20 rebasingClaimToken;
         address peerRelayer;
     }
 
@@ -129,8 +129,8 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         string memory detfJson = vm.readFile(string.concat(localDir, "/16_protocol_detf.json"));
 
         config.protocolDetf = IProtocolDETF(vm.parseJsonAddress(detfJson, ".protocolDetf"));
-        config.richToken = IERC20(vm.parseJsonAddress(detfJson, ".richToken"));
-        config.richirToken = IERC20(vm.parseJsonAddress(detfJson, ".richirToken"));
+        config.pairToken = IERC20(vm.parseJsonAddress(detfJson, ".pairToken"));
+        config.rebasingClaimToken = IERC20(vm.parseJsonAddress(detfJson, ".rebasingClaimToken"));
 
         // Try to read bridge config if available
         string memory bridgeJson;
@@ -148,8 +148,8 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         string memory detfJson = vm.readFile(string.concat(remoteDir, "/16_protocol_detf.json"));
 
         config.protocolDetf = IProtocolDETF(vm.parseJsonAddress(detfJson, ".protocolDetf"));
-        config.richToken = IERC20(vm.parseJsonAddress(detfJson, ".richToken"));
-        config.richirToken = IERC20(vm.parseJsonAddress(detfJson, ".richirToken"));
+        config.pairToken = IERC20(vm.parseJsonAddress(detfJson, ".pairToken"));
+        config.rebasingClaimToken = IERC20(vm.parseJsonAddress(detfJson, ".rebasingClaimToken"));
 
         // Try to read bridge config if available
         string memory bridgeJson;
@@ -184,8 +184,8 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
     function _logSourceState(LocalConfig memory config, address source) internal view {
         console2.log("=== Bridge Source State ===");
         console2.log("Source account:", source);
-        console2.log("Source RICHIR balance:", config.richirToken.balanceOf(source));
-        console2.log("Source RICH balance:", config.richToken.balanceOf(source));
+        console2.log("Source RICHIR balance:", config.rebasingClaimToken.balanceOf(source));
+        console2.log("Source RICH balance:", config.pairToken.balanceOf(source));
     }
 
     function _permit2() internal view returns (IPermit2 permit2) {
@@ -213,8 +213,8 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
 
     function _prepareRichirBalance(LocalConfig memory config, address source) internal {
         PrepareRichirState memory state = PrepareRichirState({
-            richirBalance: config.richirToken.balanceOf(source),
-            richBalance: config.richToken.balanceOf(source),
+            richirBalance: config.rebasingClaimToken.balanceOf(source),
+            richBalance: config.pairToken.balanceOf(source),
             totalRichSpent: 0,
             totalRichirOut: 0,
             chunkIndex: 0,
@@ -235,7 +235,7 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
 
         require(state.richBalance != 0, "Source account has no RICH to convert into RICHIR");
 
-        _authorizeTokenForDetf(config.richToken, address(config.protocolDetf));
+        _authorizeTokenForDetf(config.pairToken, address(config.protocolDetf));
 
         while (state.richirBalance < TEST_BRIDGE_AMOUNT && state.remainingRich > 0) {
             _prepareRichirChunk(config, source, state);
@@ -274,12 +274,10 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         console2.log("  Missing RICHIR before chunk:", missingRichir);
 
         (tokenId, shares) = config.protocolDetf.bond(
-            config.richToken,
+            config.pairToken,
             chunkIn,
             BOND_LOCK_DURATION,
-            source,
-            false,
-            block.timestamp + PREPARE_DEADLINE_BUFFER
+            source, block.timestamp + PREPARE_DEADLINE_BUFFER
         );
 
         console2.log("  Bond tokenId:", tokenId);
@@ -291,7 +289,7 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         state.totalRichSpent += chunkIn;
         state.totalRichirOut += actualRichirOut;
         state.remainingRich -= chunkIn;
-        state.richirBalance = config.richirToken.balanceOf(source);
+        state.richirBalance = config.rebasingClaimToken.balanceOf(source);
 
         console2.log("  Source RICHIR after chunk:", state.richirBalance);
     }
@@ -305,11 +303,11 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         console2.log("Source chain:", block.chainid);
         console2.log("Peer chain:", chainConfig.peerChainId);
 
-        uint256 sourceRichirBefore = config.richirToken.balanceOf(source);
-        uint256 sourceRichBefore = config.richToken.balanceOf(source);
+        uint256 sourceRichirBefore = config.rebasingClaimToken.balanceOf(source);
+        uint256 sourceRichBefore = config.pairToken.balanceOf(source);
 
         // Get bridge quote
-        IProtocolDETF.BridgeQuote memory quote = config.protocolDetf.previewBridgeRichir(
+        IProtocolDETF.BridgeQuote memory quote = config.protocolDetf.previewBridgeRebasingClaim(
             chainConfig.peerChainId,
             TEST_BRIDGE_AMOUNT
         );
@@ -317,49 +315,49 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         console2.log("Bridge quote:");
         console2.log("  sharesBurned:", quote.sharesBurned);
         console2.log("  reserveSharesBurned:", quote.reserveSharesBurned);
-        console2.log("  localRichirOut:", quote.localRichirOut);
-        console2.log("  richOut:", quote.richOut);
+        console2.log("  localRebasingClaimOut:", quote.localRebasingClaimOut);
+        console2.log("  pairOut:", quote.pairOut);
 
         if (sourceRichirBefore < TEST_BRIDGE_AMOUNT) {
-            console2.log("Skipping live bridgeRichir call: source has insufficient RICHIR");
+            console2.log("Skipping live bridgeRebasingClaim call: source has insufficient RICHIR");
             console2.log("  required:", TEST_BRIDGE_AMOUNT);
             console2.log("  available:", sourceRichirBefore);
             _simulateBridgeFlow(source, source, quote);
             return;
         }
 
-        uint256 allowanceBefore = config.richirToken.allowance(source, address(config.protocolDetf));
+        uint256 allowanceBefore = config.rebasingClaimToken.allowance(source, address(config.protocolDetf));
         console2.log("Allowance before:", allowanceBefore);
 
         if (allowanceBefore < TEST_BRIDGE_AMOUNT) {
-            _authorizeTokenForDetf(config.richirToken, address(config.protocolDetf));
+            _authorizeTokenForDetf(config.rebasingClaimToken, address(config.protocolDetf));
         }
 
-        // Execute bridgeRichir
-        try config.protocolDetf.bridgeRichir(
+        // Execute bridgeRebasingClaim
+        try config.protocolDetf.bridgeRebasingClaim(
             IProtocolDETF.BridgeArgs({
                 targetChainId: chainConfig.peerChainId,
-                richirAmount: TEST_BRIDGE_AMOUNT,
+                rebasingClaimAmount: TEST_BRIDGE_AMOUNT,
                 recipient: source,
-                minLocalRichirOut: quote.localRichirOut,
-                minRichOut: quote.richOut,
+                minLocalRebasingClaimOut: quote.localRebasingClaimOut,
+                minPairOut: quote.pairOut,
                 messageGasLimit: uint32(PROCESSOR_MIN_GAS_LIMIT),
                 deadline: block.timestamp + 3600
             })
-        ) returns (uint256 localRichirOut, uint256 richOut) {
+        ) returns (uint256 localRebasingClaimOut, uint256 pairOut) {
             console2.log("Bridge succeeded!");
-            console2.log("  localRichirOut:", localRichirOut);
-            console2.log("  richOut:", richOut);
+            console2.log("  localRebasingClaimOut:", localRebasingClaimOut);
+            console2.log("  pairOut:", pairOut);
         } catch {
-            console2.log("bridgeRichir call failed after balance/allowance checks");
+            console2.log("bridgeRebasingClaim call failed after balance/allowance checks");
             console2.log("Simulating bridge flow for testing purposes...");
 
             // Simulate the bridge flow for testing
             _simulateBridgeFlow(source, source, quote);
         }
 
-        uint256 sourceRichirAfter = config.richirToken.balanceOf(source);
-        uint256 sourceRichAfter = config.richToken.balanceOf(source);
+        uint256 sourceRichirAfter = config.rebasingClaimToken.balanceOf(source);
+        uint256 sourceRichAfter = config.pairToken.balanceOf(source);
 
         console2.log("Source RICHIR delta:", int256(sourceRichirAfter) - int256(sourceRichirBefore));
         console2.log("Source RICH delta:", int256(sourceRichAfter) - int256(sourceRichBefore));
@@ -379,11 +377,11 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
 
         // Local: source loses bridged RICHIR and receives local compensation.
 
-        console2.log("  Source burns RICHIR:", quote.richirAmountIn);
-        console2.log("  Source receives local RICHIR:", quote.localRichirOut);
+        console2.log("  Source burns RICHIR:", quote.rebasingClaimAmountIn);
+        console2.log("  Source receives local RICHIR:", quote.localRebasingClaimOut);
         console2.log("  RICH bridged to peer recipient:", recipient);
         console2.log("  Source account:", source);
-        console2.log("  RICH bridged to peer amount:", quote.richOut);
+        console2.log("  RICH bridged to peer amount:", quote.pairOut);
     }
 
     function _simulateReceiveSide(RemoteConfig memory remoteConfig, address recipient, uint256 localChainId) internal {
@@ -399,16 +397,16 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         // In a real SuperSim setup, the cross-chain message would be relayed
         // For testing, we simulate the receive side directly
 
-        if (address(remoteConfig.richirToken).code.length == 0) {
+        if (address(remoteConfig.rebasingClaimToken).code.length == 0) {
             console2.log("Peer RICHIR token address has no code on selected peer chain; skipping peer balance inspection");
-            console2.log("Peer RICHIR:", address(remoteConfig.richirToken));
+            console2.log("Peer RICHIR:", address(remoteConfig.rebasingClaimToken));
             return;
         }
 
-        uint256 recipientRichirBefore = remoteConfig.richirToken.balanceOf(recipient);
-        uint256 recipientRichBefore = remoteConfig.richToken.balanceOf(recipient);
+        uint256 recipientRichirBefore = remoteConfig.rebasingClaimToken.balanceOf(recipient);
+        uint256 recipientRichBefore = remoteConfig.pairToken.balanceOf(recipient);
 
-        // Simulate receiveBridgedRich - in production this is called by the relayer
+        // Simulate receiveBridgedPair - in production this is called by the relayer
         // For SuperSim testing, we directly simulate the effect
         console2.log("Recipient RICHIR before:", recipientRichirBefore);
         console2.log("Recipient RICH before:", recipientRichBefore);
@@ -434,13 +432,13 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         // Log final state for verification
         console2.log("Source chain final state:");
         console2.log("  Protocol DETeF:", address(localConfig.protocolDetf));
-        console2.log("  RICH token:", address(localConfig.richToken));
-        console2.log("  RICHIR token:", address(localConfig.richirToken));
+        console2.log("  RICH token:", address(localConfig.pairToken));
+        console2.log("  RICHIR token:", address(localConfig.rebasingClaimToken));
 
         console2.log("Dest chain final state:");
         console2.log("  Protocol DETeF:", address(remoteConfig.protocolDetf));
-        console2.log("  RICH token:", address(remoteConfig.richToken));
-        console2.log("  RICHIR token:", address(remoteConfig.richirToken));
+        console2.log("  RICH token:", address(remoteConfig.pairToken));
+        console2.log("  RICHIR token:", address(remoteConfig.rebasingClaimToken));
 
         console2.log("Bridge configuration:");
         console2.log("  Local chain:", localChainId);
@@ -461,8 +459,8 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         json = vm.serializeUint("", "peerChainId", chainConfig.peerChainId);
         json = vm.serializeAddress("", "localProtocolDetf", address(localConfig.protocolDetf));
         json = vm.serializeAddress("", "peerProtocolDetf", address(remoteConfig.protocolDetf));
-        json = vm.serializeAddress("", "localRichToken", address(localConfig.richToken));
-        json = vm.serializeAddress("", "peerRichToken", address(remoteConfig.richToken));
+        json = vm.serializeAddress("", "localRichToken", address(localConfig.pairToken));
+        json = vm.serializeAddress("", "peerRichToken", address(remoteConfig.pairToken));
         json = vm.serializeString("", "testResult", "completed");
 
         SuperSimManifestLib.writeJson(vm, localDir, "26_bridge_test.json", json);
@@ -479,10 +477,10 @@ contract Script_26_TestProtocolDetfReserveBridge is Script {
         console2.log("Peer chain:", chainConfig.peerChainId);
         console2.log("Local DETF:", address(localConfig.protocolDetf));
         console2.log("Peer DETF:", address(remoteConfig.protocolDetf));
-        console2.log("Local RICH:", address(localConfig.richToken));
-        console2.log("Peer RICH:", address(remoteConfig.richToken));
-        console2.log("Local RICHIR:", address(localConfig.richirToken));
-        console2.log("Peer RICHIR:", address(remoteConfig.richirToken));
+        console2.log("Local RICH:", address(localConfig.pairToken));
+        console2.log("Peer RICH:", address(remoteConfig.pairToken));
+        console2.log("Local RICHIR:", address(localConfig.rebasingClaimToken));
+        console2.log("Peer RICHIR:", address(remoteConfig.rebasingClaimToken));
     }
 
     function _logResults(

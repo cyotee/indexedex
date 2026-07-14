@@ -1,9 +1,10 @@
 'use client'
 
 export const protocolDetfAbi = [
-  { type: 'function', name: 'richToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'richirToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
-  { type: 'function', name: 'wethToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { type: 'function', name: 'pairToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { type: 'function', name: 'rebasingClaimToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { type: 'function', name: 'rateAsset', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { type: 'function', name: 'underlyingVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'protocolNFTVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'syntheticPrice', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'uint256' }] },
@@ -40,13 +41,12 @@ export const protocolDetfAbi = [
   {
     type: 'function',
     name: 'bond',
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
     inputs: [
       { name: 'tokenIn', type: 'address' },
       { name: 'amountIn', type: 'uint256' },
       { name: 'lockDuration', type: 'uint256' },
       { name: 'recipient', type: 'address' },
-      { name: 'wethAsEth', type: 'bool' },
       { name: 'deadline', type: 'uint256' },
     ],
     outputs: [
@@ -62,7 +62,18 @@ export const protocolDetfAbi = [
       { name: 'tokenId', type: 'uint256' },
       { name: 'recipient', type: 'address' },
     ],
-    outputs: [{ name: 'richirMinted', type: 'uint256' }],
+    outputs: [{ name: 'rebasingClaimMinted', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'mintWithRateAsset',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'rateAssetAmount', type: 'uint256' },
+      { name: 'recipient', type: 'address' },
+      { name: 'pretransferred', type: 'bool' },
+    ],
+    outputs: [{ name: 'detfMinted', type: 'uint256' }],
   },
 ] as const
 

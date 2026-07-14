@@ -15,7 +15,7 @@ import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
@@ -153,7 +153,7 @@ contract ComposedStableCommonDetfExchangeInHarness is ComposedStableCommonDetfEx
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStablePool stablePool_,
         IStablePool commonPool_,
         IStandardExchangeIn reservePoolEntryRouter_,
@@ -163,11 +163,11 @@ contract ComposedStableCommonDetfExchangeInHarness is ComposedStableCommonDetfEx
         ComposedStableCommonDetfRepo._initializePricing(
             reservePool_,
             bondNftVault_,
-            IRICHIR(address(0)),
+            IRebasingClaimToken(address(0)),
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             IStandardExchangeIn(address(0)),
             IStandardExchangeIn(address(0)),
             0,
@@ -257,7 +257,7 @@ contract ComposedStableCommonDetfExchangeInHarness is ComposedStableCommonDetfEx
 
 contract ComposedStableCommonDetfExchangeIn_Test is Test {
     MockMintableToken internal detfToken;
-    MockMintableToken internal wethToken;
+    MockMintableToken internal rateAsset;
     MockMintableToken internal commonToken;
     MockMintableToken internal routeAVaultToken;
     MockMintableToken internal routeBVaultToken;
@@ -280,7 +280,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
 
     function setUp() public {
         detfToken = new MockMintableToken('DETF', 'DETF', 18);
-        wethToken = new MockMintableToken('WETH', 'WETH', 18);
+        rateAsset = new MockMintableToken('WETH', 'WETH', 18);
         commonToken = new MockMintableToken('COMMON', 'COMMON', 18);
         routeAVaultToken = new MockMintableToken('Vault A', 'vA', 18);
         routeBVaultToken = new MockMintableToken('Vault B', 'vB', 18);
@@ -325,7 +325,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             IStablePool(makeAddr('stablePool')),
             IStablePool(makeAddr('commonPool')),
             reservePoolRouter,

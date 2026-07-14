@@ -20,7 +20,7 @@ import {AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSet
 /* -------------------------------------------------------------------------- */
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {
@@ -35,16 +35,16 @@ library SingleVaultDetfRepo {
 
     struct Storage {
         bool isReservePoolInitialized;
-        IERC20 richToken;
-        IRICHIR richirToken;
-        IERC20 wethToken;
-        IStandardExchange wethRichVault;
+        IERC20 pairToken;
+        IRebasingClaimToken rebasingClaimToken;
+        IERC20 rateAsset;
+        IStandardExchange underlyingVault;
         IDETFNFTVault detfNFTVault;
         IVaultFeeOracleQuery feeOracle;
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter;
         IRateProvider vaultRateProvider;
         address reservePool;
-        bytes32 wethRichPoolKeyHash;
+        bytes32 underlyingPoolKeyHash;
         uint256 detfNFTId;
         uint256 detfIndex;
         uint256 vaultTokenIndex;
@@ -69,61 +69,61 @@ library SingleVaultDetfRepo {
         Storage storage layoutStruct_,
         IVaultFeeOracleQuery feeOracle_,
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter_,
-        IERC20 richToken_,
-        IERC20 wethToken_,
+        IERC20 pairToken_,
+        IERC20 rateAsset_,
         uint256 mintThreshold_,
         uint256 burnThreshold_
     ) internal {
         layoutStruct_.feeOracle = feeOracle_;
         layoutStruct_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
-        layoutStruct_.richToken = richToken_;
-        layoutStruct_.wethToken = wethToken_;
+        layoutStruct_.pairToken = pairToken_;
+        layoutStruct_.rateAsset = rateAsset_;
         layoutStruct_.mintThreshold = mintThreshold_;
         layoutStruct_.burnThreshold = burnThreshold_;
-        layoutStruct_.acceptedBondTokens._add(address(wethToken_));
-        layoutStruct_.acceptedBondTokens._add(address(richToken_));
+        layoutStruct_.acceptedBondTokens._add(address(rateAsset_));
+        layoutStruct_.acceptedBondTokens._add(address(pairToken_));
     }
 
     function _initialize(
         IVaultFeeOracleQuery feeOracle_,
         IBalancerV3StandardExchangeRouterPrepay balancerV3PrepayRouter_,
-        IERC20 richToken_,
-        IERC20 wethToken_,
+        IERC20 pairToken_,
+        IERC20 rateAsset_,
         uint256 mintThreshold_,
         uint256 burnThreshold_
     ) internal {
-        _initialize(_layoutStruct(), feeOracle_, balancerV3PrepayRouter_, richToken_, wethToken_, mintThreshold_, burnThreshold_);
+        _initialize(_layoutStruct(), feeOracle_, balancerV3PrepayRouter_, pairToken_, rateAsset_, mintThreshold_, burnThreshold_);
     }
 
     function _initializeDependencies(
         Storage storage layoutStruct_,
-        IStandardExchange wethRichVault_,
+        IStandardExchange underlyingVault_,
         IRateProvider vaultRateProvider_,
-        bytes32 wethRichPoolKeyHash_
+        bytes32 underlyingPoolKeyHash_
     ) internal {
-        layoutStruct_.wethRichVault = wethRichVault_;
+        layoutStruct_.underlyingVault = underlyingVault_;
         layoutStruct_.vaultRateProvider = vaultRateProvider_;
-        layoutStruct_.wethRichPoolKeyHash = wethRichPoolKeyHash_;
+        layoutStruct_.underlyingPoolKeyHash = underlyingPoolKeyHash_;
     }
 
     function _initializeDependencies(
-        IStandardExchange wethRichVault_,
+        IStandardExchange underlyingVault_,
         IRateProvider vaultRateProvider_,
-        bytes32 wethRichPoolKeyHash_
+        bytes32 underlyingPoolKeyHash_
     ) internal {
-        _initializeDependencies(_layoutStruct(), wethRichVault_, vaultRateProvider_, wethRichPoolKeyHash_);
+        _initializeDependencies(_layoutStruct(), underlyingVault_, vaultRateProvider_, underlyingPoolKeyHash_);
     }
 
     function _initializeDependencies(
         Storage storage layoutStruct_,
-        IStandardExchange wethRichVault_,
+        IStandardExchange underlyingVault_,
         IRateProvider vaultRateProvider_
     ) internal {
-        _initializeDependencies(layoutStruct_, wethRichVault_, vaultRateProvider_, layoutStruct_.wethRichPoolKeyHash);
+        _initializeDependencies(layoutStruct_, underlyingVault_, vaultRateProvider_, layoutStruct_.underlyingPoolKeyHash);
     }
 
-    function _initializeDependencies(IStandardExchange wethRichVault_, IRateProvider vaultRateProvider_) internal {
-        _initializeDependencies(_layoutStruct(), wethRichVault_, vaultRateProvider_);
+    function _initializeDependencies(IStandardExchange underlyingVault_, IRateProvider vaultRateProvider_) internal {
+        _initializeDependencies(_layoutStruct(), underlyingVault_, vaultRateProvider_);
     }
 
     function _initializeReservePool(
@@ -187,12 +187,12 @@ library SingleVaultDetfRepo {
         return _isAcceptedBondToken(_layoutStruct(), token_);
     }
 
-    function _wethRichVault(Storage storage layoutStruct_) internal view returns (IStandardExchange) {
-        return layoutStruct_.wethRichVault;
+    function _underlyingVault(Storage storage layoutStruct_) internal view returns (IStandardExchange) {
+        return layoutStruct_.underlyingVault;
     }
 
-    function _wethRichVault() internal view returns (IStandardExchange) {
-        return _wethRichVault(_layoutStruct());
+    function _underlyingVault() internal view returns (IStandardExchange) {
+        return _underlyingVault(_layoutStruct());
     }
 
     function _vaultRateProvider(Storage storage layoutStruct_) internal view returns (IRateProvider) {
@@ -227,36 +227,36 @@ library SingleVaultDetfRepo {
         return _detfNFTId(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {
-        return layoutStruct_.wethToken;
+    function _rateAsset(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.rateAsset;
     }
 
-    function _wethToken() internal view returns (IERC20) {
-        return _wethToken(_layoutStruct());
+    function _rateAsset() internal view returns (IERC20) {
+        return _rateAsset(_layoutStruct());
     }
 
-    function _richToken(Storage storage layoutStruct_) internal view returns (IERC20) {
-        return layoutStruct_.richToken;
+    function _pairToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.pairToken;
     }
 
-    function _richToken() internal view returns (IERC20) {
-        return _richToken(_layoutStruct());
+    function _pairToken() internal view returns (IERC20) {
+        return _pairToken(_layoutStruct());
     }
 
-    function _richirToken(Storage storage layoutStruct_) internal view returns (IRICHIR) {
-        return layoutStruct_.richirToken;
+    function _rebasingClaimToken(Storage storage layoutStruct_) internal view returns (IRebasingClaimToken) {
+        return layoutStruct_.rebasingClaimToken;
     }
 
-    function _richirToken() internal view returns (IRICHIR) {
-        return _richirToken(_layoutStruct());
+    function _rebasingClaimToken() internal view returns (IRebasingClaimToken) {
+        return _rebasingClaimToken(_layoutStruct());
     }
 
-    function _setRichirToken(Storage storage layoutStruct_, IRICHIR richirToken_) internal {
-        layoutStruct_.richirToken = richirToken_;
+    function _setRebasingClaimToken(Storage storage layoutStruct_, IRebasingClaimToken rebasingClaimToken_) internal {
+        layoutStruct_.rebasingClaimToken = rebasingClaimToken_;
     }
 
-    function _setRichirToken(IRICHIR richirToken_) internal {
-        _setRichirToken(_layoutStruct(), richirToken_);
+    function _setRebasingClaimToken(IRebasingClaimToken rebasingClaimToken_) internal {
+        _setRebasingClaimToken(_layoutStruct(), rebasingClaimToken_);
     }
 
     function _reservePool(Storage storage layoutStruct_) internal view returns (address) {
@@ -267,11 +267,11 @@ library SingleVaultDetfRepo {
         return _reservePool(_layoutStruct());
     }
 
-    function _wethRichPoolKeyHash(Storage storage layoutStruct_) internal view returns (bytes32 poolKeyHash_) {
-        return layoutStruct_.wethRichPoolKeyHash;
+    function _underlyingPoolKeyHash(Storage storage layoutStruct_) internal view returns (bytes32 poolKeyHash_) {
+        return layoutStruct_.underlyingPoolKeyHash;
     }
 
-    function _wethRichPoolKeyHash() internal view returns (bytes32 poolKeyHash_) {
-        return _wethRichPoolKeyHash(_layoutStruct());
+    function _underlyingPoolKeyHash() internal view returns (bytes32 poolKeyHash_) {
+        return _underlyingPoolKeyHash(_layoutStruct());
     }
 }

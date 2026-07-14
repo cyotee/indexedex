@@ -11,7 +11,7 @@
 ## Routes
 
 ### Route ID: TGT-RICHIR-01
-- Selector / Function: ERC20 views (`totalSupply()`, `balanceOf(address)`, `sharesOf(address)`, `totalShares()`, `redemptionRate()`, `convertToShares(uint256)`, `convertToRichir(uint256)`, `previewRedeem(uint256)`)
+- Selector / Function: ERC20 views (`totalSupply()`, `balanceOf(address)`, `sharesOf(address)`, `totalShares()`, `redemptionRate()`, `convertToShares(uint256)`, `convertToClaim(uint256)`, `previewRedeem(uint256)`)
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
@@ -54,7 +54,7 @@ Repo-wide invariants (copy from PROMPT.md):
 - State Writes: `RICHIRRepo` (mint shares, totalShares)
 - External Calls: none
 - Inputs: `lpShares>0`; recipient
-- Outputs: `richirMinted` (computed at current rate)
+- Outputs: `rebasingClaimMinted` (computed at current rate)
 - Events: `IRICHIR.Minted`, ERC20 `Transfer` (mint)
 - Invariants: shares minted 1:1 with lpShares; balance minted scales with current rate
 - Failure Modes: `ZeroAmount`
@@ -66,26 +66,26 @@ Repo-wide invariants (copy from PROMPT.md):
 - Auth: Permissionless
 - State Writes: `RICHIRRepo` (transfer shares to ProtocolDETF)
 - External Calls: `protocolDETF.exchangeIn` (tokenIn=RICHIR, tokenOut=WETH); reentrancy protected by `lock`
-- Inputs: `richirAmount>0`; recipient defaults to msg.sender if address(0); `pretransferred` flag passed to exchangeIn
+- Inputs: `rebasingClaimAmount>0`; recipient defaults to msg.sender if address(0); `pretransferred` flag passed to exchangeIn
 - Outputs: `wethOut` (via exchangeIn return)
 - Events: `IRICHIR.Redeemed` (via downstream)
-- Execution Outline: forward RICHIR shares to ProtocolDETF via `protocolDETF.exchangeIn(tokenIn=RICHIR, amountIn=richirAmount, tokenOut=WETH, recipient=recipient, pretransferred=pretransferred, minAmountOut=0)`; ProtocolDETF handles burn, seigniorage logic, and returns WETH amount
+- Execution Outline: forward RICHIR shares to ProtocolDETF via `protocolDETF.exchangeIn(tokenIn=RICHIR, amountIn=rebasingClaimAmount, tokenOut=WETH, recipient=recipient, pretransferred=pretransferred, minAmountOut=0)`; ProtocolDETF handles burn, seigniorage logic, and returns WETH amount
 - Invariants: RICHIR is forwarded to ProtocolDETF for processing; WETH returned directly to recipient by ProtocolDETF
 - Failure Modes: `ZeroAmount`, downstream ProtocolDETF exchangeIn reverts (e.g., slippage if minAmountOut>0)
 - Tests Required: redeem forwards correctly to ProtocolDETF; pretransferred flag behavior; recipient default; reentrancy guard
 
 ### Route ID: TGT-RICHIR-05
-- Selector / Function: `burnShares(uint256 richirAmount)`
+- Selector / Function: `burnShares(uint256 rebasingClaimAmount)`
 - Entry Context: Proxy -> delegatecall Target; called by ProtocolDETF after transferring RICHIR to this contract
 - Auth: OwnerOnly (ProtocolDETF)
 - State Writes: `RICHIRRepo` (burn shares from `address(this)`)
 - External Calls: none; reentrancy protected by `lock`
-- Inputs: `richirAmount>0`
+- Inputs: `rebasingClaimAmount>0`
 - Outputs: `sharesBurned`
 - Events: ERC20 `Transfer` (burn from address(this))
-- Execution Outline: ProtocolDETF transfers RICHIR to RICHIR contract; calls `burnShares(richirAmount)`; RICHIR computes shares via `_balanceToShares(richirAmount, rate)`; burns shares from `address(this)` (its own balance)
+- Execution Outline: ProtocolDETF transfers RICHIR to RICHIR contract; calls `burnShares(rebasingClaimAmount)`; RICHIR computes shares via `_balanceToShares(rebasingClaimAmount, rate)`; burns shares from `address(this)` (its own balance)
 - Invariants: burns the transferred RICHIR balance; sharesBurned computed at current rate; no WETH transfer
-- Failure Modes: `ZeroAmount`, `InsufficientBalance` (if transferred balance < richirAmount)
+- Failure Modes: `ZeroAmount`, `InsufficientBalance` (if transferred balance < rebasingClaimAmount)
 - Tests Required: only owner; verifies balance burned matches transferred amount; sharesBurned rounding
 
 ## postDeploy() / Post-deploy behavior

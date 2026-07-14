@@ -12,8 +12,8 @@ interface StakingDebugPanelProps {
   routerHasBytecode: boolean | null
   routerBytecodeError: string
   detfAddress: `0x${string}` | undefined
-  richTokenAddress: string
-  richirTokenAddress: string
+  pairTokenAddress: string
+  rebasingClaimTokenAddress: string
   reservePoolAddress: string
   nftVaultAddress: string
   status: string
@@ -28,8 +28,8 @@ export default function StakingDebugPanel({
   routerHasBytecode,
   routerBytecodeError,
   detfAddress,
-  richTokenAddress,
-  richirTokenAddress,
+  pairTokenAddress,
+  rebasingClaimTokenAddress,
   reservePoolAddress,
   nftVaultAddress,
   status,
@@ -44,8 +44,8 @@ export default function StakingDebugPanel({
         <div>Router: {routerAddress ?? '—'} | bytecode: {String(routerHasBytecode)}</div>
         {routerBytecodeError ? <div>Router error: {routerBytecodeError}</div> : null}
         <div>CHIR: {detfAddress ?? '—'}</div>
-        <div>RICH: {richTokenAddress}</div>
-        <div>RICHIR: {richirTokenAddress}</div>
+        <div>RICH: {pairTokenAddress}</div>
+        <div>RICHIR: {rebasingClaimTokenAddress}</div>
         <div>NFT Vault: {nftVaultAddress}</div>
         <div>Reserve Pool: {reservePoolAddress}</div>
         <div>Status: {status || '—'}</div>

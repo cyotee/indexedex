@@ -15,7 +15,7 @@ import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPer
 
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -162,18 +162,18 @@ contract ComposedStableCommonDetfBurnExchangeInHarness is ComposedStableCommonDe
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStandardExchangeIn stablePoolExitPricer_,
         IStandardExchangeIn commonPoolExitPricer_
     ) external {
         ComposedStableCommonDetfRepo._initializePricing(
             reservePool_,
             IDETFNFTVault(address(0)),
-            IRICHIR(address(0)),
+            IRebasingClaimToken(address(0)),
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             stablePoolExitPricer_,
             commonPoolExitPricer_,
             0,
@@ -285,7 +285,7 @@ contract ComposedStableCommonDetfBurnExchangeInHarness is ComposedStableCommonDe
 
 contract ComposedStableCommonDetfBurnExchangeIn_Test is Test {
     BurnInMockToken internal detfToken;
-    BurnInMockToken internal wethToken;
+    BurnInMockToken internal rateAsset;
     BurnInMockToken internal commonToken;
     BurnInMockToken internal routeAVaultToken;
     BurnInMockToken internal routeBVaultToken;
@@ -306,7 +306,7 @@ contract ComposedStableCommonDetfBurnExchangeIn_Test is Test {
 
     function setUp() public {
         detfToken = new BurnInMockToken('DETF', 'DETF', 18);
-        wethToken = new BurnInMockToken('WETH', 'WETH', 18);
+        rateAsset = new BurnInMockToken('WETH', 'WETH', 18);
         commonToken = new BurnInMockToken('COMMON', 'COMMON', 18);
         routeAVaultToken = new BurnInMockToken('Vault A', 'vA', 18);
         routeBVaultToken = new BurnInMockToken('Vault B', 'vB', 18);
@@ -329,7 +329,7 @@ contract ComposedStableCommonDetfBurnExchangeIn_Test is Test {
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             stablePoolExitPricer,
             commonPoolExitPricer
         );

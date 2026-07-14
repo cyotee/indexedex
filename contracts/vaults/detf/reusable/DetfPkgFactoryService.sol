@@ -22,7 +22,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {RICHIRDFPkg, IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {RebasingClaimTokenDFPkg, IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {
     IRebasingDETFTokenDFPkg,
     RebasingDETFTokenDFPkg
@@ -65,19 +65,19 @@ library DetfPkgFactoryService {
         vm.label(address(instance), type(RebasingDETFTokenDFPkg).name);
     }
 
-    function deployRICHIRDFPkg(ICreate3FactoryProxy create3Factory, IRICHIRDFPkg.PkgInit memory pkgInit)
+    function deployRebasingClaimTokenDFPkg(ICreate3FactoryProxy create3Factory, IRebasingClaimTokenDFPkg.PkgInit memory pkgInit)
         internal
-        returns (IRICHIRDFPkg instance)
+        returns (IRebasingClaimTokenDFPkg instance)
     {
-        instance = IRICHIRDFPkg(
+        instance = IRebasingClaimTokenDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(RICHIRDFPkg).creationCode,
+                    type(RebasingClaimTokenDFPkg).creationCode,
                     abi.encode(pkgInit),
-                    abi.encode(type(RICHIRDFPkg).name)._hash()
+                    abi.encode(type(RebasingClaimTokenDFPkg).name)._hash()
                 )
             )
         );
-        vm.label(address(instance), type(RICHIRDFPkg).name);
+        vm.label(address(instance), type(RebasingClaimTokenDFPkg).name);
     }
 }

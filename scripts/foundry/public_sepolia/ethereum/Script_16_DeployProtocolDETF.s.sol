@@ -60,7 +60,7 @@ import {
 import {BaseProtocolDETF_Facet_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Facet_FactoryService.sol";
 import {BaseProtocolDETF_Pkg_FactoryService} from "contracts/vaults/protocol/BaseProtocolDETF_Pkg_FactoryService.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {ProtocolDETFSuperchainBridgeRepo} from "contracts/vaults/protocol/ProtocolDETFSuperchainBridgeRepo.sol";
 
 import {
@@ -103,7 +103,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     IFacet private singleVaultDetfExchangeOutFacet;
     IFacet private singleVaultDetfBondingFacet;
     IFacet private detfNFTVaultFacet;
-    IFacet private richirFacet;
+    IFacet private rebasingClaimTokenFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
     IFacet private uniswapV4StandardExchangeInQueryFacet;
     IFacet private uniswapV4StandardExchangePositionImportFacet;
@@ -111,21 +111,21 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     IFacet private erc721Facet;
 
     IDETFNFTVaultDFPkg private detfNFTVaultPkg;
-    IRICHIRDFPkg private richirPkg;
-    IUniswapV4StandardExchangeDFPkg private wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
+    IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
     ISingleVaultDetfDFPkg private protocolDetfPkg;
 
     IPoolManager private poolManager;
     SingleVaultDetfUniswapV4LiquiditySeeder private liquiditySeeder;
 
     address private demoWeth;
-    address private richToken;
+    address private pairToken;
     address private protocolDetf;
     address private protocolNftVault;
-    address private richirToken;
+    address private rebasingClaimToken;
     address private reservePool;
-    address private chirWethVault;
-    address private richChirVault;
+    address private underlyingVault;
+    address private underlyingVault;
 
     function run() external virtual {
         _setup();
@@ -165,7 +165,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         rateProviderPkg = IStandardExchangeRateProviderDFPkg(_readAddress("04_balancer_v3.json", "rateProviderPkg"));
         erc20MinterFacade = IERC20MinterFacade(_readAddress("07_test_tokens.json", "erc20MinterFacade"));
         demoWeth = _readAddress("07_test_tokens.json", "demoWeth");
-        richToken = _readAddress("07_test_tokens.json", "richToken");
+        pairToken = _readAddress("07_test_tokens.json", "pairToken");
 
         (address weightedPoolFactoryAddr, bool wpExists) = _readAddressSafe("15_seigniorage_detfs.json", "weightedPool8020Factory");
         if (wpExists && weightedPoolFactoryAddr != address(0)) {
@@ -196,7 +196,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         detfNFTVaultFacet = BaseProtocolDETF_Facet_FactoryService.deployDETFNFTVaultFacet(create3Factory);
-        richirFacet = BaseProtocolDETF_Facet_FactoryService.deployRICHIRFacet(create3Factory);
+        rebasingClaimTokenFacet = BaseProtocolDETF_Facet_FactoryService.deployRebasingClaimTokenFacet(create3Factory);
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
@@ -230,7 +230,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
         PoolManager(address(poolManager)).initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
 
         IERC20(demoWeth).transfer(address(liquiditySeeder), INITIAL_DEMO_WETH_DEPOSIT);
-        IERC20(richToken).transfer(address(liquiditySeeder), INITIAL_RICH_DEPOSIT);
+        IERC20(pairToken).transfer(address(liquiditySeeder), INITIAL_RICH_DEPOSIT);
 
         liquiditySeeder.addLiquidity(
             poolKey,
@@ -259,18 +259,18 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
             )
         );
 
-        richirPkg = BaseProtocolDETF_Pkg_FactoryService.deployRICHIRDFPkg(
+        rebasingClaimTokenPkg = BaseProtocolDETF_Pkg_FactoryService.deployRebasingClaimTokenDFPkg(
             create3Factory,
             BaseProtocolDETF_Component_FactoryService.buildRICHIRPkgInit(
                 erc20Facet,
                 erc5267Facet,
                 erc2612Facet,
-                richirFacet,
+                rebasingClaimTokenFacet,
                 diamondPackageFactory
             )
         );
 
-        wethRichVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
+        underlyingVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
             vaultRegistry,
             UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
                 erc20Facet,
@@ -310,7 +310,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
                     feeOracle: feeOracle,
                     vaultRegistryDeployment: vaultRegistry,
                     permit2: permit2,
-                    wethToken: IERC20(demoWeth),
+                    rateAsset: IERC20(demoWeth),
                     balancerV3Vault: balancerV3Vault,
                     balancerV3PrepayRouter: balancerV3StandardExchangeRouter,
                     weightedPool8020Factory: weightedPool8020Factory,
@@ -319,9 +319,9 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
                     messenger: bridgeConfig_.messenger,
                     localRelayer: bridgeConfig_.localRelayer,
                     peerRelayer: bridgeConfig_.peerRelayer,
-                    wethRichVaultPkg: wethRichVaultPkg,
+                    underlyingVaultPkg: underlyingVaultPkg,
                     detfNFTVaultPkg: detfNFTVaultPkg,
-                    richirPkg: richirPkg,
+                    rebasingClaimTokenPkg: rebasingClaimTokenPkg,
                     rateProviderPkg: rateProviderPkg,
                     diamondFactory: diamondPackageFactory
                 })
@@ -336,7 +336,7 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
                 SingleVaultDetf_Component_FactoryService.buildPkgArgs(
                     "Protocol DETF CHIR",
                     "CHIR",
-                    IERC20(richToken),
+                    IERC20(pairToken),
                     INITIAL_RICH_DEPOSIT,
                     INITIAL_DEMO_WETH_DEPOSIT,
                     _buildPoolKey(),
@@ -347,14 +347,14 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
 
         IProtocolDETF detf = IProtocolDETF(protocolDetf);
         protocolNftVault = address(detf.detfNFTVault());
-        richirToken = address(detf.richirToken());
+        rebasingClaimToken = address(detf.rebasingClaimToken());
         reservePool = detf.reservePool();
-        chirWethVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
-        richChirVault = address(ISingleVaultDetf(protocolDetf).wethRichVault());
+        underlyingVault = address(ISingleVaultDetf(protocolDetf).underlyingVault());
+        underlyingVault = address(ISingleVaultDetf(protocolDetf).underlyingVault());
     }
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
-        (address token0, address token1) = demoWeth < richToken ? (demoWeth, richToken) : (richToken, demoWeth);
+        (address token0, address token1) = demoWeth < pairToken ? (demoWeth, pairToken) : (pairToken, demoWeth);
 
         poolKey_ = PoolKey({
             currency0: Currency.wrap(token0),
@@ -393,27 +393,27 @@ contract Script_16_DeployProtocolDETF is AnvilDeploymentBase {
     function _exportJson() internal {
         string memory json;
         json = vm.serializeAddress("", "demoWeth", demoWeth);
-        json = vm.serializeAddress("", "richToken", richToken);
+        json = vm.serializeAddress("", "pairToken", pairToken);
         json = vm.serializeAddress("", "protocolDetfPkg", address(protocolDetfPkg));
         json = vm.serializeAddress("", "detfNFTVaultPkg", address(detfNFTVaultPkg));
-        json = vm.serializeAddress("", "richirPkg", address(richirPkg));
-        json = vm.serializeAddress("", "wethRichVaultPkg", address(wethRichVaultPkg));
+        json = vm.serializeAddress("", "rebasingClaimTokenPkg", address(rebasingClaimTokenPkg));
+        json = vm.serializeAddress("", "underlyingVaultPkg", address(underlyingVaultPkg));
         json = vm.serializeAddress("", "poolManager", address(poolManager));
         json = vm.serializeAddress("", "protocolDetf", protocolDetf);
         json = vm.serializeAddress("", "protocolNftVault", protocolNftVault);
-        json = vm.serializeAddress("", "richirToken", richirToken);
+        json = vm.serializeAddress("", "rebasingClaimToken", rebasingClaimToken);
         json = vm.serializeAddress("", "reservePool", reservePool);
-        json = vm.serializeAddress("", "chirWethVault", chirWethVault);
-        json = vm.serializeAddress("", "richChirVault", richChirVault);
+        json = vm.serializeAddress("", "underlyingVault", underlyingVault);
+        json = vm.serializeAddress("", "underlyingVault", underlyingVault);
         _writeJson(json, "16_protocol_detf.json");
     }
 
     function _logResults() internal view {
         _logAddress("DemoWETH:", demoWeth);
-        _logAddress("RICH:", richToken);
+        _logAddress("RICH:", pairToken);
         _logAddress("Single Vault DETF (CHIR):", protocolDetf);
         _logAddress("Protocol NFT Vault:", protocolNftVault);
-        _logAddress("RICHIR:", richirToken);
+        _logAddress("RICHIR:", rebasingClaimToken);
         _logAddress("Reserve Pool:", reservePool);
         _logComplete("Stage 16 (Public Sepolia - DemoWETH)");
     }

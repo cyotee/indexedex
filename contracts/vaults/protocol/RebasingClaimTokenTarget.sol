@@ -18,19 +18,19 @@ import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiSt
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
-import {RICHIRRepo} from "contracts/vaults/protocol/RICHIRRepo.sol";
+import {RebasingClaimTokenRepo} from "contracts/vaults/protocol/RebasingClaimTokenRepo.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
 /**
- * @title RICHIRTarget
+ * @title RebasingClaimTokenTarget
  * @author cyotee doge <not_cyotee@proton.me>
- * @notice Implementation of RICHIR rebasing token.
- * @dev RICHIR is a rebasing ERC20 token that:
+ * @notice Implementation of rebasing claim token rebasing token.
+ * @dev rebasing claim token is a rebasing ERC20 token that:
  *      - Is minted when the protocol-owned NFT is sold
  *      - Has balanceOf() that changes over time based on redemption rate
  *      - Can be redeemed for WETH when synthetic price is below burn threshold
@@ -41,9 +41,9 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
  *      - balanceOf(user): Computed live as sharesOf * redemptionRate / 1e18
  *      - totalSupply(): Computed live as totalShares * redemptionRate / 1e18
  */
-contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRICHIR {
+contract RebasingClaimTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
     using BetterSafeERC20 for IERC20;
-    using RICHIRRepo for RICHIRRepo.Storage;
+    using RebasingClaimTokenRepo for RebasingClaimTokenRepo.Storage;
 
     /* ---------------------------------------------------------------------- */
     /*                              Events                                    */
@@ -59,14 +59,14 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @notice Returns the name of the token.
      */
     function name() external pure returns (string memory) {
-        return "RICHIR";
+        return "RebasingClaim";
     }
 
     /**
      * @notice Returns the symbol of the token.
      */
     function symbol() external pure returns (string memory) {
-        return "RICHIR";
+        return "RebasingClaim";
     }
 
     /**
@@ -80,9 +80,9 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @notice Returns the total supply (computed from totalShares * redemptionRate).
      */
     function totalSupply() external view returns (uint256) {
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        return RICHIRRepo._sharesToBalance(layoutStruct.totalShares, rate);
+        return RebasingClaimTokenRepo._sharesToBalance(layoutStruct.totalShares, rate);
     }
 
     /**
@@ -90,86 +90,86 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @dev This value changes over time as the redemption rate changes.
      */
     function balanceOf(address account) external view returns (uint256) {
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        return RICHIRRepo._sharesToBalance(layoutStruct.sharesOf[account], rate);
+        return RebasingClaimTokenRepo._sharesToBalance(layoutStruct.sharesOf[account], rate);
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function sharesOf(address account) external view returns (uint256) {
-        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._sharesOf(account));
+        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._sharesOf(account));
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function totalShares() external view returns (uint256) {
-        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._totalShares());
+        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._totalShares());
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function redemptionRate() external view returns (uint256) {
-        return _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
+        return _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function protocolDETF() external view returns (address) {
-        return address(RICHIRRepo._layoutStruct().protocolDETF);
+        return address(RebasingClaimTokenRepo._layoutStruct().protocolDETF);
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function setProtocolDETF(address detf_) external onlyOwner {
-        RICHIRRepo._setProtocolDETF(IProtocolDETF(detf_));
+        RebasingClaimTokenRepo._setProtocolDETF(IProtocolDETF(detf_));
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
     function detfNFTId() external view returns (uint256) {
-        return RICHIRRepo._layoutStruct().detfNFTId;
+        return RebasingClaimTokenRepo._layoutStruct().detfNFTId;
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
-    function wethToken() external view returns (IERC20) {
-        return RICHIRRepo._layoutStruct().wethToken;
+    function rateAsset() external view returns (IERC20) {
+        return RebasingClaimTokenRepo._layoutStruct().rateAsset;
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
-    function convertToShares(uint256 richirAmount) external view returns (uint256 shares) {
-        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
-        return RICHIRRepo._internalSharesToExternal(RICHIRRepo._balanceToShares(richirAmount, rate));
+    function convertToShares(uint256 rebasingClaimAmount) external view returns (uint256 shares) {
+        uint256 rate = _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
+        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate));
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
-    function convertToRichir(uint256 shares) external view returns (uint256 richirAmount) {
-        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
-        uint256 internalShares = RICHIRRepo._externalSharesToInternal(shares);
-        return RICHIRRepo._sharesToBalance(internalShares, rate);
+    function convertToClaim(uint256 shares) external view returns (uint256 rebasingClaimAmount) {
+        uint256 rate = _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
+        uint256 internalShares = RebasingClaimTokenRepo._externalSharesToInternal(shares);
+        return RebasingClaimTokenRepo._sharesToBalance(internalShares, rate);
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
-    function previewRedeem(uint256 richirAmount) external view returns (uint256 wethOut) {
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+    function previewRedeem(uint256 rebasingClaimAmount) external view returns (uint256 wethOut) {
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        uint256 shares = RICHIRRepo._balanceToShares(richirAmount, rate);
+        uint256 shares = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate);
         // WETH out equals the share value at current rate
-        wethOut = RICHIRRepo._sharesToBalance(shares, rate);
+        wethOut = RebasingClaimTokenRepo._sharesToBalance(shares, rate);
     }
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
@@ -183,14 +183,14 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         if (address(tokenIn) != address(this)) {
             revert InvalidToken(tokenIn);
         }
-        if (address(tokenOut) != address(RICHIRRepo._layoutStruct().wethToken)) {
+        if (address(tokenOut) != address(RebasingClaimTokenRepo._layoutStruct().rateAsset)) {
             revert InvalidToken(tokenOut);
         }
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        uint256 shares = RICHIRRepo._balanceToShares(amountIn, rate);
-        amountOut = RICHIRRepo._sharesToBalance(shares, rate);
+        uint256 shares = RebasingClaimTokenRepo._balanceToShares(amountIn, rate);
+        amountOut = RebasingClaimTokenRepo._sharesToBalance(shares, rate);
     }
 
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
@@ -204,11 +204,11 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         if (address(tokenIn) != address(this)) {
             revert InvalidToken(tokenIn);
         }
-        if (address(tokenOut) != address(RICHIRRepo._layoutStruct().wethToken)) {
+        if (address(tokenOut) != address(RebasingClaimTokenRepo._layoutStruct().rateAsset)) {
             revert InvalidToken(tokenOut);
         }
 
-        uint256 rate = _getCurrentRedemptionRate(RICHIRRepo._layoutStruct());
+        uint256 rate = _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
         if (rate == 0) {
             revert IStandardExchangeOut.ExchangeOutNotAvailable();
         }
@@ -261,23 +261,23 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         if (from == address(0)) revert ZeroAmount();
         if (to == address(0)) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
 
         // Convert balance to shares
-        uint256 shares = RICHIRRepo._balanceToShares(amount, rate);
+        uint256 shares = RebasingClaimTokenRepo._balanceToShares(amount, rate);
         if (shares == 0) revert ZeroAmount();
 
         // Check sender has enough shares
         if (layoutStruct.sharesOf[from] < shares) {
             revert InsufficientBalance(
-                RICHIRRepo._internalSharesToExternal(shares),
-                RICHIRRepo._internalSharesToExternal(layoutStruct.sharesOf[from])
+                RebasingClaimTokenRepo._internalSharesToExternal(shares),
+                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct.sharesOf[from])
             );
         }
 
         // Transfer shares
-        RICHIRRepo._transferShares(layoutStruct, from, to, shares);
+        RebasingClaimTokenRepo._transferShares(layoutStruct, from, to, shares);
 
         emit IERC20Events.Transfer(from, to, amount);
     }
@@ -287,24 +287,24 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      * @dev Only callable by the Protocol DETF owner.
      */
-    function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 richirMinted) {
+    function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 rebasingClaimMinted) {
         if (lpShares == 0) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
-        uint256 internalShares = RICHIRRepo._externalSharesToInternal(lpShares);
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+        uint256 internalShares = RebasingClaimTokenRepo._externalSharesToInternal(lpShares);
 
         // Mint shares with internal precision while preserving 18-decimal external units.
-        RICHIRRepo._mintShares(layoutStruct, recipient, internalShares);
+        RebasingClaimTokenRepo._mintShares(layoutStruct, recipient, internalShares);
 
         // Calculate balance for return value and event
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        richirMinted = RICHIRRepo._sharesToBalance(internalShares, rate);
+        rebasingClaimMinted = RebasingClaimTokenRepo._sharesToBalance(internalShares, rate);
 
-        emit IRICHIR.Minted(recipient, lpShares, lpShares, richirMinted);
-        emit IERC20Events.Transfer(address(0), recipient, richirMinted);
+        emit IRebasingClaimToken.Minted(recipient, lpShares, lpShares, rebasingClaimMinted);
+        emit IERC20Events.Transfer(address(0), recipient, rebasingClaimMinted);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -312,17 +312,17 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      */
-    function redeem(uint256 richirAmount, address recipient, bool pretransferred)
+    function redeem(uint256 rebasingClaimAmount, address recipient, bool pretransferred)
         external
         nonReentrant
         returns (uint256 wethOut)
     {
-        if (richirAmount == 0) revert ZeroAmount();
+        if (rebasingClaimAmount == 0) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
-        uint256 actualIn = _secureTokenTransfer(IERC20(address(this)), richirAmount, pretransferred);
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+        uint256 actualIn = _secureTokenTransfer(IERC20(address(this)), rebasingClaimAmount, pretransferred);
         wethOut = _executeRedeem(layoutStruct, actualIn, recipient == address(0) ? msg.sender : recipient);
     }
 
@@ -343,8 +343,8 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
             revert InvalidToken(tokenIn);
         }
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
-        if (address(tokenOut) != address(layoutStruct.wethToken)) {
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+        if (address(tokenOut) != address(layoutStruct.rateAsset)) {
             revert InvalidToken(tokenOut);
         }
 
@@ -372,8 +372,8 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
             revert InvalidToken(tokenIn);
         }
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
-        if (address(tokenOut) != address(layoutStruct.wethToken)) {
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+        if (address(tokenOut) != address(layoutStruct.rateAsset)) {
             revert InvalidToken(tokenOut);
         }
 
@@ -405,20 +405,20 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     }
 
     /**
-     * @inheritdoc IRICHIR
+     * @inheritdoc IRebasingClaimToken
      * @dev Only callable by the Protocol DETF owner.
      */
-    function burnShares(uint256 richirAmount, address owner, bool pretransferred)
+    function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)
         external
         onlyOwner
         nonReentrant
         returns (uint256 sharesBurned)
     {
-        if (richirAmount == 0) revert ZeroAmount();
+        if (rebasingClaimAmount == 0) revert ZeroAmount();
 
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        uint256 internalSharesBurned = RICHIRRepo._balanceToShares(richirAmount, rate);
+        uint256 internalSharesBurned = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate);
 
         // Handle transfer if not pretransferred
         address burnFrom = owner;
@@ -429,17 +429,17 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         // Check owner has enough shares
         if (layoutStruct.sharesOf[burnFrom] < internalSharesBurned) {
             revert InsufficientBalance(
-                RICHIRRepo._internalSharesToExternal(internalSharesBurned),
-                RICHIRRepo._internalSharesToExternal(layoutStruct.sharesOf[burnFrom])
+                RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned),
+                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct.sharesOf[burnFrom])
             );
         }
 
         // Burn shares (no WETH transfer - caller handles that)
-        RICHIRRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
+        RebasingClaimTokenRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
 
-        sharesBurned = RICHIRRepo._internalSharesToExternal(internalSharesBurned);
+        sharesBurned = RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned);
 
-        emit IERC20Events.Transfer(burnFrom, address(0), richirAmount);
+        emit IERC20Events.Transfer(burnFrom, address(0), rebasingClaimAmount);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -451,13 +451,13 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
      * @dev Can be called by anyone to refresh the rate.
      */
     function updateRedemptionRate() external {
-        RICHIRRepo.Storage storage layoutStruct = RICHIRRepo._layoutStruct();
+        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 oldRate = layoutStruct.cachedRedemptionRate;
         uint256 newRate = _calcCurrentRedemptionRate(layoutStruct);
 
         if (newRate != oldRate) {
-            RICHIRRepo._setCachedRedemptionRate(layoutStruct, newRate);
-            emit IRICHIR.RedemptionRateUpdated(oldRate, newRate);
+            RebasingClaimTokenRepo._setCachedRedemptionRate(layoutStruct, newRate);
+            emit IRebasingClaimToken.RedemptionRateUpdated(oldRate, newRate);
         }
     }
 
@@ -471,7 +471,7 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
     /**
      * @dev Gets the current redemption rate, updating cache if stale.
      */
-    function _getCurrentRedemptionRate(RICHIRRepo.Storage storage layoutStruct_) internal view returns (uint256) {
+    function _getCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256) {
         // If rate was updated this block, use cached value
         if (layoutStruct_.lastRateUpdateBlock == block.number) {
             return layoutStruct_.cachedRedemptionRate;
@@ -481,28 +481,28 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         return _calcCurrentRedemptionRate(layoutStruct_);
     }
 
-    function _executeRedeem(RICHIRRepo.Storage storage layoutStruct_, uint256 richirAmount_, address recipient_)
+    function _executeRedeem(RebasingClaimTokenRepo.Storage storage layoutStruct_, uint256 rebasingClaimAmount_, address recipient_)
         internal
         returns (uint256 wethOut_)
     {
         uint256 rate = _getCurrentRedemptionRate(layoutStruct_);
-        uint256 shares = RICHIRRepo._balanceToShares(richirAmount_, rate);
+        uint256 shares = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount_, rate);
 
         if (layoutStruct_.sharesOf[address(this)] < shares) {
             revert InsufficientBalance(
-                RICHIRRepo._internalSharesToExternal(shares),
-                RICHIRRepo._internalSharesToExternal(layoutStruct_.sharesOf[address(this)])
+                RebasingClaimTokenRepo._internalSharesToExternal(shares),
+                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct_.sharesOf[address(this)])
             );
         }
 
-        RICHIRRepo._burnShares(layoutStruct_, address(this), shares);
-        wethOut_ = RICHIRRepo._sharesToBalance(shares, rate);
-        layoutStruct_.wethToken.safeTransfer(recipient_, wethOut_);
+        RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
+        wethOut_ = RebasingClaimTokenRepo._sharesToBalance(shares, rate);
+        layoutStruct_.rateAsset.safeTransfer(recipient_, wethOut_);
 
-        emit IRICHIR.Redeemed(
-            msg.sender, recipient_, richirAmount_, RICHIRRepo._internalSharesToExternal(shares), wethOut_
+        emit IRebasingClaimToken.Redeemed(
+            msg.sender, recipient_, rebasingClaimAmount_, RebasingClaimTokenRepo._internalSharesToExternal(shares), wethOut_
         );
-        emit IERC20Events.Transfer(address(this), address(0), richirAmount_);
+        emit IERC20Events.Transfer(address(this), address(0), rebasingClaimAmount_);
     }
 
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
@@ -522,11 +522,11 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
 
     /**
      * @dev Calculates the current redemption rate based on protocol-owned NFT value.
-     * @dev Rate = (WETH value of protocol NFT's BPT) / totalRICHIRShares
-     *      This allows RICHIR to rebase based on the underlying LP value.
+     * @dev Rate = (WETH value of protocol NFT's BPT) / totalRebasingClaimShares
+     *      This allows rebasing claim token to rebase based on the underlying LP value.
      * @return rate The redemption rate (1e18 = 1:1)
      */
-    function _calcCurrentRedemptionRate(RICHIRRepo.Storage storage layoutStruct_) internal view returns (uint256 rate) {
+    function _calcCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256 rate) {
         uint256 totalShares_ = layoutStruct_.totalShares;
         if (totalShares_ == 0) {
             return ONE_WAD;
@@ -543,15 +543,15 @@ contract RICHIRTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStep
         uint256 wethValue = IStandardExchangeIn(address(layoutStruct_.protocolDETF)).previewExchangeIn(
             bpt,
             position.originalShares,
-            layoutStruct_.wethToken
+            layoutStruct_.rateAsset
         );
         if (wethValue == 0) {
             return ONE_WAD;
         }
 
-        // Rate = total WETH value / total RICHIR shares
-        // This means 1 RICHIR share = (wethValue / totalShares) WETH
-        rate = Math.mulDiv(wethValue, RICHIRRepo._shareUnit(), totalShares_);
+        // Rate = total WETH value / total rebasing claim token shares
+        // This means 1 rebasing claim token share = (wethValue / totalShares) WETH
+        rate = Math.mulDiv(wethValue, RebasingClaimTokenRepo._shareUnit(), totalShares_);
 
         // Ensure rate never goes to 0 (minimum 1 wei per share)
         if (rate == 0) {

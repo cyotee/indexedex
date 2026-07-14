@@ -43,7 +43,7 @@ contract Script_05_CreateBridgeTokens is SharedDeploymentBase {
         ttbL1 = _readAddressFrom(ethereumOutDir, "07_test_tokens.json", "testTokenB");
         ttcL1 = _readAddressFrom(ethereumOutDir, "07_test_tokens.json", "testTokenC");
         demoWethL1 = _readAddressFrom(ethereumOutDir, "07_test_tokens.json", "demoWeth");
-        richL1 = _readAddressFrom(ethereumOutDir, "07_test_tokens.json", "richToken");
+        richL1 = _readAddressFrom(ethereumOutDir, "07_test_tokens.json", "pairToken");
     }
 
     function _createBridgeTokens() internal {
@@ -77,7 +77,7 @@ contract Script_05_CreateBridgeTokens is SharedDeploymentBase {
         );
         richL2 = _createOrReuseToken(
             "05_bridge_tokens.json",
-            "richToken",
+            "pairToken",
             richL1,
             BridgeTokenPlanning.wrappedName("Rich Token"),
             BridgeTokenPlanning.wrappedSymbol("RICH")
@@ -107,7 +107,7 @@ contract Script_05_CreateBridgeTokens is SharedDeploymentBase {
         json = vm.serializeAddress("bridgeTokens", "testTokenB", ttbL2);
         json = vm.serializeAddress("bridgeTokens", "testTokenC", ttcL2);
         json = vm.serializeAddress("bridgeTokens", "demoWeth", demoWethL2);
-        json = vm.serializeAddress("bridgeTokens", "richToken", richL2);
+        json = vm.serializeAddress("bridgeTokens", "pairToken", richL2);
         json = vm.serializeAddress("bridgeTokens", "l2StandardBridge", BASE_SEPOLIA.L2_STANDARD_BRIDGE);
         json = vm.serializeAddress("bridgeTokens", "optimismMintableErc20Factory", BASE_SEPOLIA.OPTIMISM_MINTABLE_ERC20_FACTORY);
         _writeJsonTo(_baseOutDir(), "05_bridge_tokens.json", json);

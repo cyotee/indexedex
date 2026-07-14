@@ -11,7 +11,7 @@ import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.s
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
@@ -60,8 +60,8 @@ contract RebasingDETFTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
         address tokenAddr = pkg.deployToken(IDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), weth, 7, owner);
 
         assertGt(tokenAddr.code.length, 0, 'rebasing token proxy not deployed');
-        assertEq(IRICHIR(tokenAddr).protocolDETF(), address(0xBEEF), 'detf mismatch');
-        assertEq(IRICHIR(tokenAddr).detfNFTId(), 7, 'protocol nft id mismatch');
+        assertEq(IRebasingClaimToken(tokenAddr).protocolDETF(), address(0xBEEF), 'detf mismatch');
+        assertEq(IRebasingClaimToken(tokenAddr).detfNFTId(), 7, 'protocol nft id mismatch');
     }
 
     function test_deployToken_returnsExisting_onDuplicateSalt() public {
@@ -83,7 +83,7 @@ contract RebasingDETFTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
         assertEq(interfaces[2], type(IERC20Permit).interfaceId, 'missing IERC20Permit');
         assertEq(interfaces[3], type(IERC5267).interfaceId, 'missing IERC5267');
         assertEq(interfaces[4], type(IMultiStepOwnable).interfaceId, 'missing IMultiStepOwnable');
-        assertEq(interfaces[5], type(IRICHIR).interfaceId, 'missing IRICHIR');
+        assertEq(interfaces[5], type(IRebasingClaimToken).interfaceId, 'missing IRebasingClaimToken');
         assertEq(interfaces[6], type(IStandardExchangeIn).interfaceId, 'missing IStandardExchangeIn');
         assertEq(interfaces[7], type(IStandardExchangeOut).interfaceId, 'missing IStandardExchangeOut');
     }

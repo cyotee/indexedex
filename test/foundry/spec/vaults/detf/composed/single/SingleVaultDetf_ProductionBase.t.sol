@@ -66,7 +66,7 @@ import {
 import {
     SingleVaultDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
@@ -139,8 +139,8 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
 
     uint256 internal constant TEST_TOKEN_TOTAL_SUPPLY = 10_000_000e18;
 
-    IERC20 internal wethToken;
-    IERC20 internal richToken;
+    IERC20 internal rateAsset;
+    IERC20 internal pairToken;
 
     IFacet internal multiAssetBasicVaultFacet;
     IFacet internal multiAssetStandardVaultFacet;
@@ -150,7 +150,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
-    IFacet internal richirFacet;
+    IFacet internal rebasingClaimTokenFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
@@ -158,8 +158,8 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     IFacet internal uniswapV4StandardExchangeOutFacet;
 
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
-    IRICHIRDFPkg internal richirDFPkg;
-    IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg internal richirDFPkg;
+    IUniswapV4StandardExchangeDFPkg internal underlyingVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
@@ -171,8 +171,8 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         super.setUp();
 
         _deployTestTokenPkg();
-        wethToken = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetf_WETH"));
-        richToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetf_RICH"));
+        rateAsset = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetf_WETH"));
+        pairToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetf_RICH"));
         poolManager = new PoolManager(address(this));
         liquiditySeeder = new SingleVaultDetfUniswapV4LiquiditySeeder(poolManager);
         multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
@@ -191,14 +191,14 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
 
-        richirDFPkg = create3Factory.deployRICHIRDFPkg(
-            IRICHIRDFPkg.PkgInit({
+        richirDFPkg = create3Factory.deployRebasingClaimTokenDFPkg(
+            IRebasingClaimTokenDFPkg.PkgInit({
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
-                richirFacet: richirFacet,
+                rebasingClaimTokenFacet: rebasingClaimTokenFacet,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -232,7 +232,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
                 feeOracle: indexedexManager,
                 vaultRegistryDeployment: indexedexManager,
                 permit2: permit2,
-                wethToken: wethToken,
+                rateAsset: rateAsset,
                 balancerV3Vault: IBalancerVault(address(vault)),
                 balancerV3PrepayRouter: seRouter,
                 weightedPool8020Factory: weightedPool8020Factory,
@@ -241,9 +241,9 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
                 messenger: bridgeConfig_.messenger,
                 localRelayer: bridgeConfig_.localRelayer,
                 peerRelayer: bridgeConfig_.peerRelayer,
-                wethRichVaultPkg: wethRichVaultPkg,
+                underlyingVaultPkg: underlyingVaultPkg,
                 detfNFTVaultPkg: detfNFTVaultPkg,
-                richirPkg: richirDFPkg,
+                rebasingClaimTokenPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
             });
@@ -256,7 +256,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
             "SVDETF",
-            richToken,
+            pairToken,
             10_000e18,
             1_000e18,
             _buildPoolKey(),
@@ -361,7 +361,7 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
-        wethRichVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
+        underlyingVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
             erc20Facet.buildArgsUniswapV4StandardExchangePkgInit(
                 erc5267Facet,
                 erc2612Facet,
@@ -381,9 +381,9 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     }
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
-        (address token0, address token1) = address(wethToken) < address(richToken)
-            ? (address(wethToken), address(richToken))
-            : (address(richToken), address(wethToken));
+        (address token0, address token1) = address(rateAsset) < address(pairToken)
+            ? (address(rateAsset), address(pairToken))
+            : (address(pairToken), address(rateAsset));
 
         poolKey_ = PoolKey({
             currency0: Currency.wrap(token0),
@@ -446,10 +446,10 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
     }
 
     function _fundWeth(address recipient_, uint256 amount_) internal {
-        wethToken.transfer(recipient_, amount_);
+        rateAsset.transfer(recipient_, amount_);
     }
 
     function _fundRich(address recipient_, uint256 amount_) internal {
-        richToken.transfer(recipient_, amount_);
+        pairToken.transfer(recipient_, amount_);
     }
 }

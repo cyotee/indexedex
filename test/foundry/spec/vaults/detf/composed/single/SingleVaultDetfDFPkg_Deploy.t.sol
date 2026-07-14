@@ -13,7 +13,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
@@ -41,7 +41,7 @@ import {
     SingleVaultDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
@@ -86,8 +86,8 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
 
     uint256 internal constant TEST_TOKEN_TOTAL_SUPPLY = 10_000_000e18;
 
-    IERC20 internal wethToken;
-    IERC20 internal richToken;
+    IERC20 internal rateAsset;
+    IERC20 internal pairToken;
 
     IFacet internal multiAssetBasicVaultFacet;
     IFacet internal multiAssetStandardVaultFacet;
@@ -97,7 +97,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
-    IFacet internal richirFacet;
+    IFacet internal rebasingClaimTokenFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
@@ -105,8 +105,8 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
     IFacet internal uniswapV4StandardExchangeOutFacet;
 
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
-    IRICHIRDFPkg internal richirDFPkg;
-    IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg internal richirDFPkg;
+    IUniswapV4StandardExchangeDFPkg internal underlyingVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
@@ -117,8 +117,8 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         super.setUp();
 
         _deployTestTokenPkg();
-        wethToken = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfDeploy_WETH"));
-        richToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetfDeploy_RICH"));
+        rateAsset = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfDeploy_WETH"));
+        pairToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetfDeploy_RICH"));
         poolManager = new PoolManager(address(this));
         multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
         multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
@@ -134,14 +134,14 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
 
-        richirDFPkg = create3Factory.deployRICHIRDFPkg(
-            IRICHIRDFPkg.PkgInit({
+        richirDFPkg = create3Factory.deployRebasingClaimTokenDFPkg(
+            IRebasingClaimTokenDFPkg.PkgInit({
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
-                richirFacet: richirFacet,
+                rebasingClaimTokenFacet: rebasingClaimTokenFacet,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -166,7 +166,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
                 feeOracle: indexedexManager,
                 vaultRegistryDeployment: indexedexManager,
                 permit2: permit2,
-                wethToken: wethToken,
+                rateAsset: rateAsset,
                 balancerV3Vault: IBalancerVault(address(vault)),
                 balancerV3PrepayRouter: seRouter,
                 weightedPool8020Factory: weightedPool8020Factory,
@@ -175,9 +175,9 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
                 messenger: ICrossDomainMessenger(address(0)),
                 localRelayer: address(0),
                 peerRelayer: address(0),
-                wethRichVaultPkg: wethRichVaultPkg,
+                underlyingVaultPkg: underlyingVaultPkg,
                 detfNFTVaultPkg: detfNFTVaultPkg,
-                richirPkg: richirDFPkg,
+                rebasingClaimTokenPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
             });
@@ -212,7 +212,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
             "SVDETF",
-            richToken,
+            pairToken,
             10_000e18,
             1_000e18,
             _buildPoolKey(),
@@ -234,7 +234,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         address derivedReservePool = detf.reservePool();
         address[] memory expectedTokens = new address[](3);
         expectedTokens[0] = detfAddr;
-        expectedTokens[1] = address(detf.wethRichVault());
+        expectedTokens[1] = address(detf.underlyingVault());
         expectedTokens[2] = derivedReservePool;
 
         IStandardVault.VaultConfig memory config = IStandardVault(detfAddr).vaultConfig();
@@ -247,32 +247,32 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
 
         assertEq(IERC20Metadata(detfAddr).name(), "Single Vault DETF", "name");
         assertEq(IERC20Metadata(detfAddr).symbol(), "SVDETF", "symbol");
-        assertEq(address(detf.richToken()), address(richToken), "rich token");
-        assertEq(address(detf.wethToken()), address(wethToken), "weth token");
-        assertTrue(indexedexManager.isVault(address(detf.wethRichVault())), "weth/rich vault registered");
+        assertEq(address(detf.pairToken()), address(pairToken), "rich token");
+        assertEq(address(detf.rateAsset()), address(rateAsset), "weth token");
+        assertTrue(indexedexManager.isVault(address(detf.underlyingVault())), "weth/rich vault registered");
         assertTrue(indexedexManager.isVault(address(detf.detfNFTVault())), "protocol nft vault registered");
-        assertEq(indexedexManager.vaultsOfPackage(address(wethRichVaultPkg)).length, 1, "weth/rich vault pkg count");
+        assertEq(indexedexManager.vaultsOfPackage(address(underlyingVaultPkg)).length, 1, "weth/rich vault pkg count");
         assertEq(indexedexManager.vaultsOfPackage(address(detfNFTVaultPkg)).length, 1, "protocol nft vault pkg count");
         assertTrue(address(detf.vaultRateProvider()) != address(0), "rate provider deployed");
         assertTrue(detf.reservePool() != address(0), "reserve pool deployed");
         assertEq(detf.detfNFTId(), detf.detfNFTVault().detfNFTId(), "protocol nft id");
-        assertTrue(address(detf.richirToken()) != address(0), "richir token");
+        assertTrue(address(detf.rebasingClaimToken()) != address(0), "richir token");
 
-        IRICHIR richirToken_ = IRICHIR(address(detf.richirToken()));
-        assertEq(richirToken_.protocolDETF(), detfAddr, "richir protocol detf");
-        assertEq(address(richirToken_.wethToken()), address(wethToken), "richir weth token");
-        assertEq(richirToken_.detfNFTId(), detf.detfNFTId(), "richir protocol nft id");
+        IRebasingClaimToken rebasingClaimToken_ = IRebasingClaimToken(address(detf.rebasingClaimToken()));
+        assertEq(rebasingClaimToken_.protocolDETF(), detfAddr, "richir protocol detf");
+        assertEq(address(rebasingClaimToken_.rateAsset()), address(rateAsset), "richir weth token");
+        assertEq(rebasingClaimToken_.detfNFTId(), detf.detfNFTId(), "richir protocol nft id");
 
         (uint256 detfIndex_, uint256 vaultTokenIndex_) = detf.reservePoolIndexes();
-        uint256 expectedDetfIndex = detfAddr < address(detf.wethRichVault()) ? 0 : 1;
+        uint256 expectedDetfIndex = detfAddr < address(detf.underlyingVault()) ? 0 : 1;
         uint256 expectedVaultTokenIndex = expectedDetfIndex == 0 ? 1 : 0;
         assertEq(detfIndex_, expectedDetfIndex, "detf index");
         assertEq(vaultTokenIndex_, expectedVaultTokenIndex, "vault token index");
 
         assertEq(detf.mintThreshold(), 1005e15, "mint threshold");
         assertEq(detf.burnThreshold(), 995e15, "burn threshold");
-        assertTrue(detf.isAcceptedBondToken(wethToken), "weth accepted");
-        assertTrue(detf.isAcceptedBondToken(richToken), "rich accepted");
+        assertTrue(detf.isAcceptedBondToken(rateAsset), "weth accepted");
+        assertTrue(detf.isAcceptedBondToken(pairToken), "rich accepted");
     }
 
     function _deployWeightedPool8020Factory() internal {
@@ -340,7 +340,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
-        wethRichVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
+        underlyingVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
             erc20Facet.buildArgsUniswapV4StandardExchangePkgInit(
                 erc5267Facet,
                 erc2612Facet,
@@ -363,7 +363,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
             "SVDETF",
-            richToken,
+            pairToken,
             1,
             1,
             _buildPoolKey(),
@@ -375,9 +375,9 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
     }
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
-        (address token0, address token1) = address(wethToken) < address(richToken)
-            ? (address(wethToken), address(richToken))
-            : (address(richToken), address(wethToken));
+        (address token0, address token1) = address(rateAsset) < address(pairToken)
+            ? (address(rateAsset), address(pairToken))
+            : (address(pairToken), address(rateAsset));
 
         poolKey_ = PoolKey({
             currency0: Currency.wrap(token0),

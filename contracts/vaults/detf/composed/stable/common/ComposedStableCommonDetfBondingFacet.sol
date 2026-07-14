@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
-import {IWETH} from '@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
 
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
@@ -89,25 +88,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         }
     }
 
-    function _collectBondInput(IERC20 tokenIn_, uint256 amountIn_, bool wethAsEth_) internal returns (uint256 actualIn_) {
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-
-        if (wethAsEth_) {
-            if (address(tokenIn_) != address(ComposedStableCommonDetfRepo._wethToken(layoutStruct))) {
-                revert InvalidEthBondRoute(tokenIn_);
-            }
-            if (msg.value != amountIn_) {
-                revert IncorrectEthValue(amountIn_, msg.value);
-            }
-
-            IWETH(address(ComposedStableCommonDetfRepo._wethToken(layoutStruct))).deposit{value: amountIn_}();
-            return amountIn_;
-        }
-
-        if (msg.value != 0) {
-            revert IncorrectEthValue(0, msg.value);
-        }
-
+    function _collectBondInput(IERC20 tokenIn_, uint256 amountIn_) internal returns (uint256 actualIn_) {
         actualIn_ = _secureTokenTransfer(tokenIn_, amountIn_, false);
     }
 
@@ -115,19 +96,17 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
         IERC20 tokenIn_,
         uint256 amountIn_,
-        bool wethAsEth_,
         uint256 deadline_
     ) internal returns (uint256 grossShares_) {
         RoutedPoolSelection memory selection = _selectRoutingPath(tokenIn_);
         ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(layoutStruct_, selection.routeIndex);
-        uint256 actualIn = _collectBondInput(tokenIn_, amountIn_, wethAsEth_);
+        uint256 actualIn = _collectBondInput(tokenIn_, amountIn_);
         uint256 poolBptOut = _executeRoutedEntryToPoolBptShared(route, selection, tokenIn_, actualIn, deadline_);
         grossShares_ = _depositIntoReservePoolShared(layoutStruct_, selection, poolBptOut, deadline_);
     }
 
-    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, bool wethAsEth, uint256 deadline)
+    function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
         external
-        payable
         returns (uint256 tokenId, uint256 shares)
     {
         if (block.timestamp > deadline) {
@@ -144,7 +123,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
             revert BondTokenNotSupported(tokenIn);
         }
 
-        uint256 grossShares = _executeBondRoute(layoutStruct, tokenIn, amountIn, wethAsEth, deadline);
+        uint256 grossShares = _executeBondRoute(layoutStruct, tokenIn, amountIn, deadline);
         (tokenId, shares) = _creditBondShares(
             layoutStruct,
             grossShares,
@@ -153,7 +132,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         );
     }
 
-    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 richirMinted_) {
+    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted_) {
         _requireReservePoolInitialized();
 
         if (recipient == address(0)) {
@@ -161,7 +140,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         }
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        IRICHIR richir = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
+        IRebasingClaimToken richir = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
         if (address(richir) == address(0)) {
             revert InvalidToken(IERC20(address(0)));
         }
@@ -173,7 +152,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
             revert ZeroAmount();
         }
 
-        richirMinted_ = richir.mintFromNFTSale(principalShares, recipient);
+        rebasingClaimMinted_ = richir.mintFromNFTSale(principalShares, recipient);
     }
 
     function facetName() external pure returns (string memory name_) {

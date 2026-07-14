@@ -56,7 +56,7 @@ Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard E
 - [x] The focused unwind helpers and Foundry harness setup were refactored to stay compile-safe under Solc 0.8.35 without enabling `viaIR`, including reduced stack pressure in shared unwind selection helpers and smaller test-harness initialization surfaces.
 - [x] The fresh rebasing-token exchange surface now supports canonical `exchangeIn(...)` and `exchangeOut(...)` redemptions to the configured common-token boundary, while retaining compatibility `previewRedeem(...)` and `redeem(...)` wrappers.
 - [x] The top-level DETF now exposes shared `previewClaimLiquidity(...)` and `claimLiquidity(...)` reserve-unwind helpers for protocol-owned reserve exits used by rebasing redemption.
-- [x] Legacy protocol `RICHIR` compatibility has been updated to satisfy the expanded shared `IRICHIR` interface, removing the repo-wide compile blocker introduced by the new standard exchange surface.
+- [x] Legacy protocol `RICHIR` compatibility has been updated to satisfy the expanded shared `IRebasingClaimToken` interface, removing the repo-wide compile blocker introduced by the new standard exchange surface.
 - [x] Focused rebasing validation now covers the rebasing token exchange surface across behavior, facet metadata, and package deploy wiring.
 - [x] A first fresh composed-stable bonding facet has been added and wired into the top-level DETF package.
 - [x] Focused bonding validation now covers accepted bond-token discovery, reserve-building bond entry, and sale-to-protocol rebasing mint orchestration (`ComposedStableCommonDetfBondingFacet.t.sol`: `5 passed, 0 failed`).
@@ -504,7 +504,7 @@ Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard E
 ### Canonical Contract Shape
 - The rebasing token contract should be named `RebasingDETFToken`.
 - The package should be named `RebasingDETFTokenDFPkg`.
-- The first implementation should remain `IRICHIR` compatible at the callable-surface level unless we later decide to introduce a dedicated `IRebasingDETFToken` alias.
+- The first implementation should remain `IRebasingClaimToken` compatible at the callable-surface level unless we later decide to introduce a dedicated `IRebasingDETFToken` alias.
 - The initial goal is to reimplement the token with new naming, not to change its external rebasing semantics.
 - The DETF should also expose a dedicated ETH-pricing interface for rebasing support so the rebasing token does not own pool-decomposition logic directly.
 - The canonical DETF-side pricing interface should be named `IDETF`.
@@ -620,7 +620,7 @@ Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard E
 
 ### Deployment Wiring
 - Each composed stable DETF instance should deploy exactly one dedicated rebasing token instance.
-- Initialization inputs should mirror the current `RICHIRDFPkg.PkgArgs` shape, but for `RebasingDETFTokenDFPkg`:
+- Initialization inputs should mirror the current `RebasingClaimTokenDFPkg.PkgArgs` shape, but for `RebasingDETFTokenDFPkg`:
    - owning composed stable DETF proxy
    - composed stable Bond NFT vault
    - WETH token
@@ -630,7 +630,7 @@ Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard E
 
 ### Planned Implementation Delta Versus Existing `RICHIR`
 - Keep behaviorally unchanged:
-   - `IRICHIR`-compatible interface semantics
+   - `IRebasingClaimToken`-compatible interface semantics
    - shares-based accounting model
    - mint-from-NFT-sale semantics
    - redemption-rate caching strategy

@@ -36,14 +36,14 @@ contract SingleVaultDetfBondingFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs = new bytes4[](11);
         controlFuncs[0] = ISingleVaultDetfBonding.acceptedBondTokens.selector;
         controlFuncs[1] = ISingleVaultDetfBonding.isAcceptedBondToken.selector;
-        controlFuncs[2] = ISingleVaultDetfBonding.setRichirToken.selector;
+        controlFuncs[2] = ISingleVaultDetfBonding.setRebasingClaimToken.selector;
         controlFuncs[3] = ISingleVaultDetfBonding.bond.selector;
         controlFuncs[4] = ISingleVaultDetfBonding.bondWithPosition.selector;
         controlFuncs[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         controlFuncs[6] = ISingleVaultDetfBonding.sellNFT.selector;
         controlFuncs[7] = ISingleVaultDetfBonding.donate.selector;
         controlFuncs[8] = IProtocolDETF.claimLiquidity.selector;
-        controlFuncs[9] = IProtocolDETF.bridgeRichir.selector;
-        controlFuncs[10] = IProtocolDETF.receiveBridgedRich.selector;
+        controlFuncs[9] = IProtocolDETF.bridgeRebasingClaim.selector;
+        controlFuncs[10] = IProtocolDETF.receiveBridgedPair.selector;
     }
 }

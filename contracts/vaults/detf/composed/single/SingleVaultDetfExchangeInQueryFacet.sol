@@ -33,7 +33,7 @@ contract SingleVaultDetfExchangeInQueryFacet is SingleVaultDetfExchangeInQueryTa
         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[1] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        funcs_[3] = IProtocolDETF.previewBridgeRichir.selector;
+        funcs_[3] = IProtocolDETF.previewBridgeRebasingClaim.selector;
     }
 
     function facetMetadata()
@@ -50,6 +50,6 @@ contract SingleVaultDetfExchangeInQueryFacet is SingleVaultDetfExchangeInQueryTa
         functions_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         functions_[1] = IStandardExchangeOut.previewExchangeOut.selector;
         functions_[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        functions_[3] = IProtocolDETF.previewBridgeRichir.selector;
+        functions_[3] = IProtocolDETF.previewBridgeRebasingClaim.selector;
     }
 }

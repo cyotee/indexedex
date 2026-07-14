@@ -18,7 +18,7 @@ library RebasingDETFTokenRepo {
     struct Storage {
         IDETF detf;
         IDETFNFTVault nftVault;
-        IERC20 wethToken;
+        IERC20 rateAsset;
         uint256 detfNFTId;
         uint256 totalShares;
         mapping(address account => uint256 shares) sharesOf;
@@ -48,18 +48,18 @@ library RebasingDETFTokenRepo {
         Storage storage layoutStruct_,
         IDETF detf_,
         IDETFNFTVault nftVault_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         uint256 detfNFTId_
     ) internal {
         layoutStruct_.detf = detf_;
         layoutStruct_.nftVault = nftVault_;
-        layoutStruct_.wethToken = wethToken_;
+        layoutStruct_.rateAsset = rateAsset_;
         layoutStruct_.detfNFTId = detfNFTId_;
         layoutStruct_.cachedRedemptionRate = 1e18;
     }
 
-    function _initialize(IDETF detf_, IDETFNFTVault nftVault_, IERC20 wethToken_, uint256 detfNFTId_) internal {
-        _initialize(_layoutStruct(), detf_, nftVault_, wethToken_, detfNFTId_);
+    function _initialize(IDETF detf_, IDETFNFTVault nftVault_, IERC20 rateAsset_, uint256 detfNFTId_) internal {
+        _initialize(_layoutStruct(), detf_, nftVault_, rateAsset_, detfNFTId_);
     }
 
     function _detf(Storage storage layoutStruct_) internal view returns (IDETF) {
@@ -86,12 +86,12 @@ library RebasingDETFTokenRepo {
         return _nftVault(_layoutStruct());
     }
 
-    function _wethToken(Storage storage layoutStruct_) internal view returns (IERC20) {
-        return layoutStruct_.wethToken;
+    function _rateAsset(Storage storage layoutStruct_) internal view returns (IERC20) {
+        return layoutStruct_.rateAsset;
     }
 
-    function _wethToken() internal view returns (IERC20) {
-        return _wethToken(_layoutStruct());
+    function _rateAsset() internal view returns (IERC20) {
+        return _rateAsset(_layoutStruct());
     }
 
     function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {

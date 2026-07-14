@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol";
 
 library DETFBondLifecycleLib {
@@ -24,16 +24,16 @@ library DETFBondLifecycleLib {
         tokenId_ = vault_.createPosition(shares_, lockDuration_, recipient_);
     }
 
-    function _sellPositionToRichir(
+    function _sellPositionToRebasingClaim(
         IDetfSelfNftInventoryPolicy vault_,
-        IRICHIR richirToken_,
+        IRebasingClaimToken rebasingClaimToken_,
         uint256 tokenId_,
         address seller_,
         address recipient_
-    ) internal returns (uint256 principalShares_, uint256 richirMinted_) {
+    ) internal returns (uint256 principalShares_, uint256 rebasingClaimMinted_) {
         principalShares_ = _sellPositionToProtocol(vault_, tokenId_, seller_, recipient_);
 
-        richirMinted_ = richirToken_.mintFromNFTSale(principalShares_, recipient_);
+        rebasingClaimMinted_ = rebasingClaimToken_.mintFromNFTSale(principalShares_, recipient_);
     }
 
     function _sellPositionToProtocol(

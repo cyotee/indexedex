@@ -24,8 +24,8 @@ contract Script_20_DeployFoundation is LocalTestingSuperSimBase, Script_DeployPr
         json = vm.serializeString("", "outDir", outDir);
         json = vm.serializeString("", "frontendDir", _frontendOutDir(_chainRole()));
         json = vm.serializeAddress("", "protocolDetf", vm.parseJsonAddress(detfJson, ".protocolDetf"));
-        json = vm.serializeAddress("", "richToken", vm.parseJsonAddress(detfJson, ".richToken"));
-        json = vm.serializeAddress("", "richirToken", vm.parseJsonAddress(detfJson, ".richirToken"));
+        json = vm.serializeAddress("", "pairToken", vm.parseJsonAddress(detfJson, ".pairToken"));
+        json = vm.serializeAddress("", "rebasingClaimToken", vm.parseJsonAddress(detfJson, ".rebasingClaimToken"));
 
         SuperSimManifestLib.writeJson(vm, outDir, "20_foundation.json", json);
     }

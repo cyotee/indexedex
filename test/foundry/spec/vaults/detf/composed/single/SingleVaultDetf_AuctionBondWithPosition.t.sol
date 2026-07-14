@@ -77,7 +77,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetF
 import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {
@@ -164,8 +164,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
 
     uint256 internal constant TEST_TOKEN_TOTAL_SUPPLY = 10_000_000e18;
 
-    IERC20 internal wethToken;
-    IERC20 internal richToken;
+    IERC20 internal rateAsset;
+    IERC20 internal pairToken;
 
     IFacet internal multiAssetBasicVaultFacet;
     IFacet internal multiAssetStandardVaultFacet;
@@ -175,7 +175,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     IFacet internal singleVaultDetfExchangeOutFacet;
     IFacet internal singleVaultDetfBondingFacet;
     IFacet internal operableFacet;
-    IFacet internal richirFacet;
+    IFacet internal rebasingClaimTokenFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
@@ -184,8 +184,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
 
     PoolManager internal poolManager;
     ISingleVaultDetfDFPkg internal singleVaultDetfDFPkg;
-    IRICHIRDFPkg internal richirDFPkg;
-    IUniswapV4StandardExchangeDFPkg internal wethRichVaultPkg;
+    IRebasingClaimTokenDFPkg internal richirDFPkg;
+    IUniswapV4StandardExchangeDFPkg internal underlyingVaultPkg;
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IDetfSelfNftInventoryDFPkg internal detfNFTVaultPkg;
     IWeightedPool8020Factory internal weightedPool8020Factory;
@@ -211,8 +211,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         fundsRecipient = makeAddr("fundsRecipient");
 
         _deployTestTokenPkg();
-        wethToken = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfAuction_WETH"));
-        richToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetfAuction_RICH"));
+        rateAsset = _deployTestToken("Wrapped Ether", "WETH", keccak256("SingleVaultDetfAuction_WETH"));
+        pairToken = _deployTestToken("Rich Token", "RICH", keccak256("SingleVaultDetfAuction_RICH"));
         poolManager = new PoolManager(address(this));
         multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
         multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
@@ -228,14 +228,14 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
         singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
         operableFacet = create3Factory.deployOperableFacet();
-        richirFacet = create3Factory.deployRICHIRFacet();
+        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
 
-        richirDFPkg = create3Factory.deployRICHIRDFPkg(
-            IRICHIRDFPkg.PkgInit({
+        richirDFPkg = create3Factory.deployRebasingClaimTokenDFPkg(
+            IRebasingClaimTokenDFPkg.PkgInit({
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
-                richirFacet: richirFacet,
+                rebasingClaimTokenFacet: rebasingClaimTokenFacet,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -260,7 +260,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
                 feeOracle: indexedexManager,
                 vaultRegistryDeployment: indexedexManager,
                 permit2: permit2,
-                wethToken: wethToken,
+                rateAsset: rateAsset,
                 balancerV3Vault: IBalancerVault(address(vault)),
                 balancerV3PrepayRouter: seRouter,
                 weightedPool8020Factory: weightedPool8020Factory,
@@ -269,9 +269,9 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
                 messenger: ICrossDomainMessenger(address(0)),
                 localRelayer: address(0),
                 peerRelayer: address(0),
-                wethRichVaultPkg: wethRichVaultPkg,
+                underlyingVaultPkg: underlyingVaultPkg,
                 detfNFTVaultPkg: detfNFTVaultPkg,
-                richirPkg: richirDFPkg,
+                rebasingClaimTokenPkg: richirDFPkg,
                 rateProviderPkg: rateProviderPkg,
                 diamondFactory: diamondPackageFactory
             });
@@ -284,7 +284,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
             "SVDETF",
-            richToken,
+            pairToken,
             10_000e18,
             1_000e18,
             _buildPoolKey(),
@@ -298,7 +298,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
 
         detfNFTVault = detf.detfNFTVault();
         liquiditySeeder = new AuctionUniswapV4LiquiditySeeder(poolManager);
-        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(wethToken), bytes32("ETH"));
+        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(rateAsset), bytes32("ETH"));
         positionManager = IPositionManager(
             address(
                 new PositionManager(
@@ -306,7 +306,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
                     IAllowanceTransfer(address(permit2)),
                     100_000,
                     descriptor,
-                    IWETH9(address(wethToken))
+                    IWETH9(address(rateAsset))
                 )
             )
         );
@@ -345,7 +345,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
             )
         });
 
-        auction = new ContinuousClearingAuction(address(richToken), TOTAL_SUPPLY, params);
+        auction = new ContinuousClearingAuction(address(pairToken), TOTAL_SUPPLY, params);
     _fundRich(address(auction), TOTAL_SUPPLY);
         auction.onTokensReceived();
     }
@@ -353,7 +353,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     function test_auctionLifecycle_canBootstrapDetfBondingFromPostAuctionPosition() public {
         assertTrue(indexedexManager.isVault(address(detf)), "detf deployed through package");
         assertEq(indexedexManager.vaultsOfPackage(address(singleVaultDetfDFPkg)).length, 1, "package vault registered");
-        assertEq(IERC20(address(detf.wethRichVault())).totalSupply(), 0, "weth/rich vault starts empty");
+        assertEq(IERC20(address(detf.underlyingVault())).totalSupply(), 0, "weth/rich vault starts empty");
 
         uint256 maxPrice = FLOOR_PRICE + TICK_SPACING;
         uint128 aliceBidAmount = inputAmountForTokens(uint128(TOTAL_SUPPLY / 2), maxPrice);
@@ -391,8 +391,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
 
         vm.roll(auction.claimBlock());
 
-        uint256 aliceTokenBalanceBefore = richToken.balanceOf(auctionAlice);
-        uint256 bobTokenBalanceBefore = richToken.balanceOf(auctionBob);
+        uint256 aliceTokenBalanceBefore = pairToken.balanceOf(auctionAlice);
+        uint256 bobTokenBalanceBefore = pairToken.balanceOf(auctionBob);
 
         vm.prank(auctionAlice);
         auction.claimTokens(aliceBidId);
@@ -400,8 +400,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         vm.prank(auctionBob);
         auction.claimTokens(bobBidId);
 
-        assertGt(richToken.balanceOf(auctionAlice) - aliceTokenBalanceBefore, 0, "alice claimed sold token");
-        assertGt(richToken.balanceOf(auctionBob) - bobTokenBalanceBefore, 0, "bob claimed sold token");
+        assertGt(pairToken.balanceOf(auctionAlice) - aliceTokenBalanceBefore, 0, "alice claimed sold token");
+        assertGt(pairToken.balanceOf(auctionBob) - bobTokenBalanceBefore, 0, "bob claimed sold token");
 
         LBPInitializationParams memory lbpParams = auction.lbpInitializationParams();
         assertEq(lbpParams.tokensSold, auction.totalCleared(), "lbp tokens sold");
@@ -425,13 +425,13 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
             IPositionManager(address(positionManager)), positionTokenId, MIN_LOCK_DURATION, auctionBob, block.timestamp
         );
 
-        assertGt(IERC20(address(detf.wethRichVault())).totalSupply(), 0, "vault bootstrapped from imported position");
+        assertGt(IERC20(address(detf.underlyingVault())).totalSupply(), 0, "vault bootstrapped from imported position");
         assertGt(shares, 0, "bond minted reserve shares");
         assertEq(shares, IERC20(detf.reservePool()).balanceOf(address(detf)), "bond shares backed by reserve pool");
         assertTrue(createdTokenId != detf.detfNFTId(), "user bond nft distinct from protocol nft");
         assertEq(
             IERC721(address(positionManager)).ownerOf(positionTokenId),
-            address(detf.wethRichVault()),
+            address(detf.underlyingVault()),
             "vault owns imported auction position"
         );
 
@@ -458,8 +458,8 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         _fundWeth(owner_, lbpParams_.currencyRaised);
 
         vm.startPrank(owner_);
-        _approvePositionManager(address(wethToken), positionManager);
-        _approvePositionManager(address(richToken), positionManager);
+        _approvePositionManager(address(rateAsset), positionManager);
+        _approvePositionManager(address(pairToken), positionManager);
 
         bytes memory actions = abi.encodePacked(
             uint8(Actions.MINT_POSITION), uint8(Actions.CLOSE_CURRENCY), uint8(Actions.CLOSE_CURRENCY)
@@ -479,7 +479,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         params[2] = abi.encode(_buildPoolKey().currency1);
 
         positionManager.modifyLiquidities(abi.encode(actions, params), block.timestamp + 1 hours);
-        IERC721(address(positionManager)).approve(address(detf.wethRichVault()), tokenId_);
+        IERC721(address(positionManager)).approve(address(detf.underlyingVault()), tokenId_);
         vm.stopPrank();
     }
 
@@ -491,9 +491,9 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     }
 
     function _buildPoolKey() internal view returns (PoolKey memory poolKey_) {
-        (address token0, address token1) = address(wethToken) < address(richToken)
-            ? (address(wethToken), address(richToken))
-            : (address(richToken), address(wethToken));
+        (address token0, address token1) = address(rateAsset) < address(pairToken)
+            ? (address(rateAsset), address(pairToken))
+            : (address(pairToken), address(rateAsset));
 
         poolKey_ = PoolKey({
             currency0: Currency.wrap(token0),
@@ -536,11 +536,11 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
     }
 
     function _fundWeth(address recipient_, uint256 amount_) internal {
-        wethToken.transfer(recipient_, amount_);
+        rateAsset.transfer(recipient_, amount_);
     }
 
     function _fundRich(address recipient_, uint256 amount_) internal {
-        richToken.transfer(recipient_, amount_);
+        pairToken.transfer(recipient_, amount_);
     }
 
     function _deployWeightedPool8020Factory() internal {
@@ -609,7 +609,7 @@ contract SingleVaultDetf_AuctionBondWithPosition_Test is TestBase_BalancerV3Stan
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
 
         vm.startPrank(owner);
-        wethRichVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
+        underlyingVaultPkg = indexedexManager.deployUniswapV4StandardExchangeDFPkg(
             erc20Facet.buildArgsUniswapV4StandardExchangePkgInit(
                 erc5267Facet,
                 erc2612Facet,

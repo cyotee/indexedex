@@ -30,11 +30,11 @@ interface IProtocolDETFErrors {
     /// @notice Invalid token for the operation
     error InvalidToken(IERC20 token);
 
-    /// @notice Token is not WETH
-    error NotWethToken(IERC20 token);
+    /// @notice Token is not the rate asset
+    error NotRateAsset(IERC20 token);
 
-    /// @notice Token is not RICH
-    error NotRichToken(IERC20 token);
+    /// @notice Token is not the pair token
+    error NotPairToken(IERC20 token);
 
     /// @notice Token is not an accepted bond token
     error BondTokenNotSupported(IERC20 token);
@@ -42,10 +42,10 @@ interface IProtocolDETFErrors {
     /// @notice Token is not the DETF token
     error NotDetfToken(IERC20 token);
 
-    /// @notice Token is not RICHIR
-    error NotRichirToken(IERC20 token);
+    /// @notice Token is not the rebasing claim token
+    error NotRebasingClaimToken(IERC20 token);
 
-    /// @notice Only WETH or the DETF token allowed for donation
+    /// @notice Only rateAsset or the DETF token allowed for donation
     error InvalidDonationToken(IERC20 token);
 
     /* ---------------------------------------------------------------------- */
@@ -113,9 +113,9 @@ interface IProtocolDETFErrors {
     error NoSeigniorageToCapture();
 
     /// @notice Pool is extremely imbalanced, synthetic price cannot be calculated
-    /// @param syntheticWethValue The synthetic WETH value from zap-out calculation (0 if failed)
-    /// @param syntheticRichValue The synthetic RICH value from zap-out calculation (0 if failed)
-    error PoolImbalanced(uint256 syntheticWethValue, uint256 syntheticRichValue);
+    /// @param syntheticRateAssetValue The synthetic rateAsset value from zap-out calculation (0 if failed)
+    /// @param syntheticPairValue The synthetic pair-token value from zap-out calculation (0 if failed)
+    error PoolImbalanced(uint256 syntheticRateAssetValue, uint256 syntheticPairValue);
 
     /// @notice Invalid reserve pool vault indices
     /// @dev Both indices must be 0 or 1, and they must be different
@@ -139,12 +139,12 @@ interface IProtocolDETFErrors {
     error NotBridgeRelayer(address caller, address expectedRelayer);
 
     /* ---------------------------------------------------------------------- */
-    /*                          RICHIR Errors                                 */
+    /*                     Rebasing claim token Errors                        */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice RICHIR redemption not allowed (synthetic price too high)
+    /// @notice Rebasing claim redemption not allowed (synthetic price too high)
     error RedemptionNotAllowed(uint256 syntheticPrice, uint256 burnThreshold);
 
-    /// @notice Cannot transfer RICHIR to AMM pools or lending protocols
-    error RICHIRTransferRestricted(address to);
+    /// @notice Cannot transfer rebasing claim tokens to AMM pools or lending protocols
+    error RebasingClaimTransferRestricted(address to);
 }

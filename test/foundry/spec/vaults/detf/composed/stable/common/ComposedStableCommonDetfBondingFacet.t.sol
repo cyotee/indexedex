@@ -17,7 +17,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IRICHIR} from 'contracts/interfaces/IRICHIR.sol';
+import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IFeeCollectorProxy} from 'contracts/interfaces/proxies/IFeeCollectorProxy.sol';
@@ -168,10 +168,10 @@ contract MockRebasingDetfToken {
     uint256 public lastLpShares;
     address public lastRecipient;
 
-    function mintFromNFTSale(uint256 lpShares, address recipient) external returns (uint256 richirMinted) {
+    function mintFromNFTSale(uint256 lpShares, address recipient) external returns (uint256 rebasingClaimMinted) {
         lastLpShares = lpShares;
         lastRecipient = recipient;
-        richirMinted = lpShares * mintMultiplier;
+        rebasingClaimMinted = lpShares * mintMultiplier;
     }
 }
 
@@ -195,11 +195,11 @@ contract ComposedStableCommonDetfBondingHarness is ComposedStableCommonDetfBondi
     function initializeHarness(
         IWeightedPool reservePool_,
         IDETFNFTVault bondNftVault_,
-        IRICHIR rebasingDetfToken_,
+        IRebasingClaimToken rebasingDetfToken_,
         IERC20 detfToken_,
         IERC20 stablePoolBpt_,
         IERC20 commonPoolBpt_,
-        IERC20 wethToken_,
+        IERC20 rateAsset_,
         IStablePool stablePool_,
         IStablePool commonPool_,
         IStandardExchangeIn reservePoolEntryRouter_,
@@ -213,7 +213,7 @@ contract ComposedStableCommonDetfBondingHarness is ComposedStableCommonDetfBondi
             detfToken_,
             stablePoolBpt_,
             commonPoolBpt_,
-            wethToken_,
+            rateAsset_,
             IStandardExchangeIn(address(0)),
             IStandardExchangeIn(address(0)),
             0,
@@ -293,7 +293,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
     MockBondToken internal stablePoolBpt;
     MockBondToken internal commonPoolBpt;
     MockBondToken internal reservePoolToken;
-    MockBondToken internal wethToken;
+    MockBondToken internal rateAsset;
 
     MockBondExchange internal routeAUnderlying;
     MockBondExchange internal routeBUnderlying;
@@ -316,7 +316,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         stablePoolBpt = new MockBondToken('Stable Pool BPT', 'sBPT', 18);
         commonPoolBpt = new MockBondToken('Common Pool BPT', 'cBPT', 18);
         reservePoolToken = new MockBondToken('Reserve Pool', 'rBPT', 18);
-        wethToken = new MockBondToken('WETH', 'WETH', 18);
+        rateAsset = new MockBondToken('WETH', 'WETH', 18);
 
         routeAUnderlying = new MockBondExchange(routeAVaultToken, 2, 1);
         routeBUnderlying = new MockBondExchange(routeBVaultToken, 3, 1);
@@ -353,11 +353,11 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         harness.initializeHarness(
             IWeightedPool(address(reservePoolToken)),
             IDETFNFTVault(address(bondNFTVault)),
-            IRICHIR(address(rebasingDetfToken)),
+            IRebasingClaimToken(address(rebasingDetfToken)),
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             stablePool,
             commonPool,
             reservePoolEntryRouter,
@@ -399,7 +399,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         commonToken.mint(address(this), 2e18);
         commonToken.approve(address(harness), 2e18);
 
-        (uint256 tokenId, uint256 shares) = harness.bond(commonToken, 2e18, 7 days, address(0), false, block.timestamp + 1);
+        (uint256 tokenId, uint256 shares) = harness.bond(commonToken, 2e18, 7 days, address(0), block.timestamp + 1);
 
         assertEq(tokenId, 1);
         assertEq(shares, 117e17);
@@ -412,15 +412,15 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
 
     function test_bond_revertsForUnsupportedToken() public {
         vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.BondTokenNotSupported.selector, detfToken));
-        harness.bond(detfToken, 1e18, 7 days, address(this), false, block.timestamp + 1);
+        harness.bond(detfToken, 1e18, 7 days, address(this), block.timestamp + 1);
     }
 
     function test_sellNFT_movesPrincipalIntoProtocolAndMintsRebasingDetf() public {
         bondNFTVault.setNextPrincipalShares(7e18);
 
-        uint256 richirMinted = harness.sellNFT(11, address(0));
+        uint256 rebasingClaimMinted = harness.sellNFT(11, address(0));
 
-        assertEq(richirMinted, 14e18);
+        assertEq(rebasingClaimMinted, 14e18);
         assertEq(bondNFTVault.lastSoldTokenId(), 11);
         assertEq(bondNFTVault.lastSeller(), address(this));
         assertEq(bondNFTVault.lastRewardsRecipient(), address(this));
@@ -444,11 +444,11 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         unconfiguredHarness.initializeHarness(
             IWeightedPool(address(reservePoolToken)),
             IDETFNFTVault(address(bondNFTVault)),
-            IRICHIR(address(0)),
+            IRebasingClaimToken(address(0)),
             detfToken,
             stablePoolBpt,
             commonPoolBpt,
-            wethToken,
+            rateAsset,
             stablePool,
             commonPool,
             reservePoolEntryRouter,

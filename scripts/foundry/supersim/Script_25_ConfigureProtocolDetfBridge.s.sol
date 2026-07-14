@@ -53,8 +53,8 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
         );
         localConfig.bridgeTokenRegistry.setRemoteToken(
             chainConfig.peerChainId,
-            IERC20(localConfig.richToken),
-            IERC20(remoteConfig.richToken),
+            IERC20(localConfig.pairToken),
+            IERC20(remoteConfig.pairToken),
             BRIDGE_MIN_GAS_LIMIT
         );
         localConfig.approvedRegistry.approveSender(localConfig.protocolDetf, remoteConfig.protocolDetf);
@@ -70,13 +70,13 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
         IApprovedMessageSenderRegistry approvedRegistry;
         address localRelayer;
         address protocolDetf;
-        address richToken;
+        address pairToken;
     }
 
     struct RemoteConfig {
         address peerRelayer;
         address protocolDetf;
-        address richToken;
+        address pairToken;
     }
 
     struct ChainBridgeConfig {
@@ -92,7 +92,7 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
             IApprovedMessageSenderRegistry(vm.parseJsonAddress(bridgeJson, ".approvedMessageSenderRegistry"));
         config.localRelayer = vm.parseJsonAddress(bridgeJson, ".tokenTransferRelayer");
         config.protocolDetf = vm.parseJsonAddress(detfJson, ".protocolDetf");
-        config.richToken = vm.parseJsonAddress(detfJson, ".richToken");
+        config.pairToken = vm.parseJsonAddress(detfJson, ".pairToken");
     }
 
     function _readRemoteConfig(string memory remoteDir) internal view returns (RemoteConfig memory config) {
@@ -101,7 +101,7 @@ contract Script_25_ConfigureProtocolDetfBridge is Script {
 
         config.peerRelayer = vm.parseJsonAddress(bridgeJson, ".tokenTransferRelayer");
         config.protocolDetf = vm.parseJsonAddress(detfJson, ".protocolDetf");
-        config.richToken = vm.parseJsonAddress(detfJson, ".richToken");
+        config.pairToken = vm.parseJsonAddress(detfJson, ".pairToken");
     }
 
     function _chainBridgeConfig() internal view returns (ChainBridgeConfig memory config) {

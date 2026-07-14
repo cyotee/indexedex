@@ -74,12 +74,12 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `richChirVault.previewExchangeOut`
+- External Calls: `underlyingVault.previewExchangeOut`
 - Inputs: `tokenIn=RICH`, `tokenOut=CHIR`, `amountOut>0`
 - Outputs: required RICH in (rounded up)
 - Execution Outline:
   1. Validate deadline, amount > 0, tokens (RICH → CHIR).
-  2. Delegate to `richChirVault.previewExchangeOut(RICH, CHIR, amountOut)` to get required RICH.
+  2. Delegate to `underlyingVault.previewExchangeOut(RICH, CHIR, amountOut)` to get required RICH.
   3. Return required RICH.
 - Invariants: exact-out inequality must hold: `previewIn >= executeIn` on same state
 - Failure Modes: downstream reverts
@@ -129,13 +129,13 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `richChirVault.previewExchangeOut`, `chirWethVault.previewExchangeOut`
+- External Calls: `underlyingVault.previewExchangeOut`, `underlyingVault.previewExchangeOut`
 - Inputs: `tokenIn=WETH`, `tokenOut=RICH`, `amountOut>0`
 - Outputs: required WETH in (rounded up)
 - Execution Outline:
   1. Validate deadline.
-  2. Call `richChirVault.previewExchangeOut(CHIR, RICH, amountOut)` → get required CHIR.
-  3. Call `chirWethVault.previewExchangeOut(WETH, CHIR, requiredCHIR)` → get required WETH.
+  2. Call `underlyingVault.previewExchangeOut(CHIR, RICH, amountOut)` → get required CHIR.
+  3. Call `underlyingVault.previewExchangeOut(WETH, CHIR, requiredCHIR)` → get required WETH.
   4. Return required WETH.
 - Invariants: exact-out inequality must hold: `previewIn >= executeIn` on same state
 - Failure Modes: downstream reverts
@@ -146,13 +146,13 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; view-only
 - Auth: Permissionless
 - State Writes: None
-- External Calls: `richChirVault.previewExchangeOut`, `chirWethVault.previewExchangeOut`
+- External Calls: `underlyingVault.previewExchangeOut`, `underlyingVault.previewExchangeOut`
 - Inputs: `tokenIn=RICH`, `tokenOut=WETH`, `amountOut>0`
 - Outputs: required RICH in (rounded up)
 - Execution Outline:
   1. Validate deadline.
-  2. Call `chirWethVault.previewExchangeOut(CHIR, WETH, amountOut)` → get required CHIR.
-  3. Call `richChirVault.previewExchangeOut(RICH, CHIR, requiredCHIR)` → get required RICH.
+  2. Call `underlyingVault.previewExchangeOut(CHIR, WETH, amountOut)` → get required CHIR.
+  3. Call `underlyingVault.previewExchangeOut(RICH, CHIR, requiredCHIR)` → get required RICH.
   4. Return required RICH.
 - Invariants: exact-out inequality must hold: `previewIn >= executeIn` on same state
 - Failure Modes: downstream reverts
@@ -163,7 +163,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; permissionless entrypoint
 - Auth: Permissionless
 - State Writes: `ERC20Repo` (mint/burn), reserve pool via router, `ERC4626Repo._setLastTotalAssets`
-- External Calls: downstream vault `exchangeIn/exchangeOut`, Balancer prepay router, `richirToken.burnShares`, `richirToken.mintFromNFTSale`, `protocolNFTVault.addToProtocolNFT`, ERC20 transfers; reentrancy protected by `lock`
+- External Calls: downstream vault `exchangeIn/exchangeOut`, Balancer prepay router, `rebasingClaimToken.burnShares`, `rebasingClaimToken.mintFromNFTSale`, `protocolNFTVault.addToProtocolNFT`, ERC20 transfers; reentrancy protected by `lock`
 - Inputs: exact-out parameters with `maxAmountIn` enforced
 - Outputs: `amountIn` actually used
 - Execution Outline: validate deadline; compute synthetic price; dispatch to the corresponding exact-out route handler; enforce `maxAmountIn`; perform required transfers/mints/burns; for RICHIR->WETH exact-out route, refund excess WETH produced

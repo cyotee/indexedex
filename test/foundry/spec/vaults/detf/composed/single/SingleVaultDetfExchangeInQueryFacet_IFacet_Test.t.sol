@@ -40,6 +40,6 @@ contract SingleVaultDetfExchangeInQueryFacet_IFacet_Test is CraneTest, TestBase_
         controlFuncs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         controlFuncs[1] = IStandardExchangeOut.previewExchangeOut.selector;
         controlFuncs[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        controlFuncs[3] = IProtocolDETF.previewBridgeRichir.selector;
+        controlFuncs[3] = IProtocolDETF.previewBridgeRebasingClaim.selector;
     }
 }

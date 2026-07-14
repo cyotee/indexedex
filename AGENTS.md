@@ -22,11 +22,36 @@ If PROGRESS.md exists in the project root, read it for cross-session context bef
 
 **Skill source of truth:** Crane skills are authored under `lib/crane/.claude/skills/`. After editing them in Crane, run `./scripts/sync-crane-skills.sh` to refresh IndexedEx `.claude/skills/` and `.opencode/skills/` copies. Prefer reading the Crane path when in doubt.
 
+**Bankr skills:** Vendored from [BankrBot/skills](https://github.com/BankrBot/skills) at `lib/bankr-skills/`. Synced into `.claude/skills/`, `.opencode/skills/`, and `.grok/skills/` so Claude Code, OpenCode, and Grok Build can use them. External catalog stubs are expanded from their upstream sources (EthSkills, Base skills, Uniswap AI). Refresh with:
+```bash
+./scripts/sync-bankr-skills.sh                # re-copy from lib/bankr-skills
+./scripts/sync-bankr-skills.sh --expand-stubs # re-fetch external stub content, then sync
+./scripts/sync-bankr-skills.sh --refresh      # re-clone Bankr + expand stubs + sync
+```
+`zapper` remains a placeholder (no published skill package upstream).
+
 See also `CLAUDE.md` / `Claude.md` (points back to this file).
 
 ## Project Overview
 
 IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-2535). It provides upgradeable vault strategies with integrated cross-protocol orchestration across Uniswap V2, Camelot V2, Aerodrome, and Balancer V3.
+
+## DETF / vault role naming (mandatory)
+
+Use **role names**, never product token brands, in contracts, interfaces, storage fields, NatSpec, and tests:
+
+| Role | Name | Meaning |
+|------|------|---------|
+| Rate Provider target / mint-bond-redeem settlement | `rateAsset` | “New money”; must be in underlying vault `tokens()` |
+| Other vault-declared token(s) | `pairToken` | Not the rateAsset |
+| Underlying SE vault | `underlyingVault` | Any `IStandardExchange` |
+| Rebasing claim token | `rebasingClaimToken` / `IRebasingClaimToken` | Claim on protocol reserve BPT |
+
+**Anti-patterns (do not reintroduce):** `RICH`, `RICHIR`, `richToken`, `wethRichVault`, `mintWithWeth`, `wethAsEth` on generic DETF surfaces.
+
+**WETH rule:** Use `weth` / `WETH` only in code that is *actually* WETH-specific (e.g. `WETHAwareRepo`). DETF packages that accept a configurable rate asset must not name roles after WETH.
+
+See `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
 
 ## Codebase Overview
 
@@ -41,6 +66,7 @@ IndexedEx is modular DeFi vault infrastructure using the Diamond Pattern (EIP-25
 - `test/foundry/spec/` - Hermetic / unit / integration / invariant / comparative specs
 - `test/foundry/fork/` - Fork tests against live networks (e.g. Base mainnet)
 - `lib/crane/` - Crane framework (Diamond + Factory infrastructure)
+- `lib/bankr-skills/` - Vendored [BankrBot/skills](https://github.com/BankrBot/skills) packages (synced to agent skill dirs)
 - `.cartographer/` - Code-graph artifacts (`graph.sqlite`); query with `cartographer brief`/`slice`/`impact`
 
 For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md) (refreshed 2026-06-21 from the Cartographer graph).

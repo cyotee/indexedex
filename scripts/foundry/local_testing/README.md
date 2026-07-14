@@ -220,7 +220,7 @@ Expected manifest: `12_scenario_3.json`
 UI wiring for the Staking page:
 
 - Stage 12 writes a `fragments/vaults/protocolDetf/protocolDetf.json` fragment
-  (symbol `CHIR`) and stage JSON keys `protocolDetf`, `richToken`, `richirToken`, etc.
+  (symbol `CHIR`) and stage JSON keys `protocolDetf`, `pairToken`, `rebasingClaimToken`, etc.
 - The shell wrapper merges stage JSONs into
   `frontend/app/addresses/chain/<chainId>/platform.json` and runs the tokenlist
   aggregator so `protocol-detfs.tokenlist.json` includes CHIR.

@@ -30,7 +30,7 @@ contract Script_17_BridgeTokensToBase is SharedDeploymentBase {
     uint256 private ttbAmount;
     uint256 private ttcAmount;
     uint256 private demoWethAmount;
-    uint256 private richAmount;
+    uint256 private pairAmount;
 
     function run() external {
         _setupShared();
@@ -69,7 +69,7 @@ contract Script_17_BridgeTokensToBase is SharedDeploymentBase {
         ttbAmount = BridgeTokenPlanning.bridgeAmountTTB();
         ttcAmount = BridgeTokenPlanning.bridgeAmountTTC();
         demoWethAmount = BridgeTokenPlanning.bridgeAmountDemoWeth();
-        richAmount = IERC20(richL1).balanceOf(deployer) / 2;
+        pairAmount = IERC20(richL1).balanceOf(deployer) / 2;
     }
 
     function _topUpMintableBalances() internal {
@@ -78,7 +78,7 @@ contract Script_17_BridgeTokensToBase is SharedDeploymentBase {
         _ensureMintableBalance(ttcL1, ttcAmount);
         _ensureMintableBalance(demoWethL1, demoWethAmount);
 
-        require(IERC20(richL1).balanceOf(deployer) >= richAmount, "Insufficient RICH balance for bridge");
+        require(IERC20(richL1).balanceOf(deployer) >= pairAmount, "Insufficient RICH balance for bridge");
     }
 
     function _ensureMintableBalance(address token, uint256 amount) internal {
@@ -95,7 +95,7 @@ contract Script_17_BridgeTokensToBase is SharedDeploymentBase {
         _bridgeToken(ttbL1, ttbL2, ttbAmount);
         _bridgeToken(ttcL1, ttcL2, ttcAmount);
         _bridgeToken(demoWethL1, demoWethL2, demoWethAmount);
-        _bridgeToken(richL1, richL2, richAmount);
+        _bridgeToken(richL1, richL2, pairAmount);
     }
 
     function _bridgeToken(address l1Token, address l2Token, uint256 amount) internal {
@@ -115,7 +115,7 @@ contract Script_17_BridgeTokensToBase is SharedDeploymentBase {
         json = vm.serializeUint("bridgePlan", "ttbAmount", ttbAmount);
         json = vm.serializeUint("bridgePlan", "ttcAmount", ttcAmount);
         json = vm.serializeUint("bridgePlan", "demoWethAmount", demoWethAmount);
-        json = vm.serializeUint("bridgePlan", "richAmount", richAmount);
+        json = vm.serializeUint("bridgePlan", "pairAmount", pairAmount);
         json = vm.serializeAddress("bridgePlan", "ttaL1Token", ttaL1);
         json = vm.serializeAddress("bridgePlan", "ttaL2Token", ttaL2);
         json = vm.serializeAddress("bridgePlan", "ttbL1Token", ttbL1);

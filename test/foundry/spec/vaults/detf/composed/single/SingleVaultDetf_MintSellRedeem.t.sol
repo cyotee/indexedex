@@ -14,7 +14,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {
@@ -44,15 +44,15 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         _fundRich(detfAlice, 10_000e18);
     }
 
-    function test_mintWithWeth_revertsWhileBootstrapReserveRemainsInProtocolNft() public {
+    function test_mintWithRateAsset_revertsWhileBootstrapReserveRemainsInProtocolNft() public {
         uint256 amountIn = 1e18;
 
         vm.prank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
+        rateAsset.approve(address(detf), amountIn);
 
         vm.expectRevert();
         vm.prank(detfAlice);
-        detf.mintWithWeth(amountIn, detfAlice, false);
+        detf.mintWithRateAsset(amountIn, detfAlice, false);
     }
 
     function test_sellNFT_transfersPrincipalShares_burnsNFT_mintsRichir() public {
@@ -72,17 +72,17 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         IDETFNFTVault detfNFTVault = detf.detfNFTVault();
         uint256 protocolId = detfNFTVault.detfNFTId();
         uint256 protocolPrincipalBefore = detfNFTVault.originalSharesOf(protocolId);
-        IRICHIR richirToken = IRICHIR(address(detf.richirToken()));
-        uint256 richirSharesBefore = richirToken.sharesOf(detfAlice);
+        IRebasingClaimToken rebasingClaimToken = IRebasingClaimToken(address(detf.rebasingClaimToken()));
+        uint256 rebasingClaimSharesBefore = rebasingClaimToken.sharesOf(detfAlice);
 
         vm.prank(detfAlice);
-        uint256 richirMinted = ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
+        uint256 rebasingClaimMinted = ISingleVaultDetfBonding(address(detf)).sellNFT(tokenId, detfAlice);
 
         assertEq(detfNFTVault.originalSharesOf(protocolId), protocolPrincipalBefore + shares, "protocol nft principal");
-        assertEq(richirToken.sharesOf(detfAlice), richirSharesBefore + shares, "richir shares minted");
+        assertEq(rebasingClaimToken.sharesOf(detfAlice), rebasingClaimSharesBefore + shares, "richir shares minted");
         assertEq(detfNFTVault.ownerOf(tokenId), address(0), "sold nft burned");
-        assertGt(richirMinted, 0, "richir minted");
-        assertEq(richirMinted, richirToken.balanceOf(detfAlice), "richir balance amount");
+        assertGt(rebasingClaimMinted, 0, "richir minted");
+        assertEq(rebasingClaimMinted, rebasingClaimToken.balanceOf(detfAlice), "richir balance amount");
     }
 
     function test_redeemPosition_unwindsThroughProtocolNftVault() public {
@@ -105,12 +105,12 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         vm.warp(block.timestamp + MIN_LOCK_DURATION + 1);
 
         IDETFNFTVault detfNFTVault = detf.detfNFTVault();
-        uint256 wethBefore = wethToken.balanceOf(detfAlice);
+        uint256 wethBefore = rateAsset.balanceOf(detfAlice);
         vm.prank(detfAlice);
         uint256 wethOut = detfNFTVault.redeemPosition(tokenId, detfAlice, block.timestamp + 1 hours);
 
         assertGt(wethOut, 0, "weth redeemed");
-        assertEq(wethToken.balanceOf(detfAlice) - wethBefore, wethOut, "alice weth out");
+        assertEq(rateAsset.balanceOf(detfAlice) - wethBefore, wethOut, "alice weth out");
         assertEq(detfNFTVault.ownerOf(tokenId), address(0), "bond nft burned on redeem");
     }
 
@@ -122,18 +122,18 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
 
     function test_exchangeIn_wethToRichir_previewIsConservative() public {
         uint256 amountIn = 100e18;
-        IERC20 richirToken = IERC20(address(detf.richirToken()));
+        IERC20 rebasingClaimToken = IERC20(address(detf.rebasingClaimToken()));
 
         vm.prank(detfAlice);
-        wethToken.approve(address(detf), amountIn);
+        rateAsset.approve(address(detf), amountIn);
 
-        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(wethToken, amountIn, richirToken);
+        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(rateAsset, amountIn, rebasingClaimToken);
 
         vm.prank(detfAlice);
-        uint256 richirOut = IStandardExchangeIn(address(detf)).exchangeIn(
-            wethToken,
+        uint256 rebasingClaimOut = IStandardExchangeIn(address(detf)).exchangeIn(
+            rateAsset,
             amountIn,
-            richirToken,
+            rebasingClaimToken,
             0,
             detfAlice,
             false,
@@ -141,27 +141,27 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         );
 
         assertGt(previewOut, 0, "preview nonzero");
-        assertGt(richirOut, 0, "richir minted");
-        assertLe(previewOut, richirOut, "preview remains conservative");
-        assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
+        assertGt(rebasingClaimOut, 0, "richir minted");
+        assertLe(previewOut, rebasingClaimOut, "preview remains conservative");
+        assertEq(detf.rebasingClaimToken().balanceOf(detfAlice), rebasingClaimOut, "alice richir balance");
         assertGt(detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId()), 0, "protocol nft funded");
     }
 
     function test_exchangeIn_richToRichir_previewIsConservative() public {
         uint256 amountIn = 100e18;
-        IERC20 richirToken = IERC20(address(detf.richirToken()));
+        IERC20 rebasingClaimToken = IERC20(address(detf.rebasingClaimToken()));
 
         vm.prank(detfAlice);
-        richToken.approve(address(detf), amountIn);
+        pairToken.approve(address(detf), amountIn);
 
         uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId());
-        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(richToken, amountIn, richirToken);
+        uint256 previewOut = IStandardExchangeIn(address(detf)).previewExchangeIn(pairToken, amountIn, rebasingClaimToken);
 
         vm.prank(detfAlice);
-        uint256 richirOut = IStandardExchangeIn(address(detf)).exchangeIn(
-            richToken,
+        uint256 rebasingClaimOut = IStandardExchangeIn(address(detf)).exchangeIn(
+            pairToken,
             amountIn,
-            richirToken,
+            rebasingClaimToken,
             0,
             detfAlice,
             false,
@@ -169,9 +169,9 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         );
 
         assertGt(previewOut, 0, "preview nonzero");
-        assertGt(richirOut, 0, "richir minted");
-        assertLe(previewOut, richirOut, "preview remains conservative");
-        assertEq(detf.richirToken().balanceOf(detfAlice), richirOut, "alice richir balance");
+        assertGt(rebasingClaimOut, 0, "richir minted");
+        assertLe(previewOut, rebasingClaimOut, "preview remains conservative");
+        assertEq(detf.rebasingClaimToken().balanceOf(detfAlice), rebasingClaimOut, "alice richir balance");
         assertGt(
             detf.detfNFTVault().originalSharesOf(detf.detfNFTVault().detfNFTId()),
             protocolSharesBefore,
@@ -208,7 +208,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
     }
 
     function _createPosition(address owner_, uint128 liquidity_) internal returns (IPositionManager positionManager_, uint256 tokenId_) {
-        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(wethToken), bytes32("ETH"));
+        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(rateAsset), bytes32("ETH"));
         positionManager_ = IPositionManager(
             address(
                 new PositionManager(
@@ -216,7 +216,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
                     IAllowanceTransfer(address(permit2)),
                     100_000,
                     descriptor,
-                    IWETH9(address(wethToken))
+                    IWETH9(address(rateAsset))
                 )
             )
         );
@@ -230,8 +230,8 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         _fundRich(owner_, 10_000e18);
 
         vm.startPrank(owner_);
-        _approvePositionManager(address(wethToken), positionManager_);
-        _approvePositionManager(address(richToken), positionManager_);
+        _approvePositionManager(address(rateAsset), positionManager_);
+        _approvePositionManager(address(pairToken), positionManager_);
 
         bytes memory actions = abi.encodePacked(
             uint8(Actions.MINT_POSITION), uint8(Actions.CLOSE_CURRENCY), uint8(Actions.CLOSE_CURRENCY)
@@ -251,7 +251,7 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
         params[2] = abi.encode(_buildPoolKey().currency1);
 
         positionManager_.modifyLiquidities(abi.encode(actions, params), block.timestamp + 1 hours);
-        IERC721(address(positionManager_)).approve(address(detf.wethRichVault()), tokenId_);
+        IERC721(address(positionManager_)).approve(address(detf.underlyingVault()), tokenId_);
         vm.stopPrank();
 
         assertEq(IERC721(address(positionManager_)).ownerOf(tokenId_), owner_, "bootstrap position owner");

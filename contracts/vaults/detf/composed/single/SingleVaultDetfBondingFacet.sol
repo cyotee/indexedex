@@ -31,15 +31,15 @@ contract SingleVaultDetfBondingFacet is SingleVaultDetfBondingTarget, IFacet {
         funcs_ = new bytes4[](11);
         funcs_[0] = ISingleVaultDetfBonding.acceptedBondTokens.selector;
         funcs_[1] = ISingleVaultDetfBonding.isAcceptedBondToken.selector;
-        funcs_[2] = ISingleVaultDetfBonding.setRichirToken.selector;
+        funcs_[2] = ISingleVaultDetfBonding.setRebasingClaimToken.selector;
         funcs_[3] = ISingleVaultDetfBonding.bond.selector;
         funcs_[4] = ISingleVaultDetfBonding.bondWithPosition.selector;
         funcs_[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         funcs_[6] = ISingleVaultDetfBonding.sellNFT.selector;
         funcs_[7] = ISingleVaultDetfBonding.donate.selector;
         funcs_[8] = IProtocolDETF.claimLiquidity.selector;
-        funcs_[9] = IProtocolDETF.bridgeRichir.selector;
-        funcs_[10] = IProtocolDETF.receiveBridgedRich.selector;
+        funcs_[9] = IProtocolDETF.bridgeRebasingClaim.selector;
+        funcs_[10] = IProtocolDETF.receiveBridgedPair.selector;
     }
 
     function facetMetadata()
@@ -53,14 +53,14 @@ contract SingleVaultDetfBondingFacet is SingleVaultDetfBondingTarget, IFacet {
         functions_ = new bytes4[](11);
         functions_[0] = ISingleVaultDetfBonding.acceptedBondTokens.selector;
         functions_[1] = ISingleVaultDetfBonding.isAcceptedBondToken.selector;
-        functions_[2] = ISingleVaultDetfBonding.setRichirToken.selector;
+        functions_[2] = ISingleVaultDetfBonding.setRebasingClaimToken.selector;
         functions_[3] = ISingleVaultDetfBonding.bond.selector;
         functions_[4] = ISingleVaultDetfBonding.bondWithPosition.selector;
         functions_[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         functions_[6] = ISingleVaultDetfBonding.sellNFT.selector;
         functions_[7] = ISingleVaultDetfBonding.donate.selector;
         functions_[8] = IProtocolDETF.claimLiquidity.selector;
-        functions_[9] = IProtocolDETF.bridgeRichir.selector;
-        functions_[10] = IProtocolDETF.receiveBridgedRich.selector;
+        functions_[9] = IProtocolDETF.bridgeRebasingClaim.selector;
+        functions_[10] = IProtocolDETF.receiveBridgedPair.selector;
     }
 }

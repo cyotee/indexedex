@@ -21,7 +21,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {DETFNFTVaultFacet} from "contracts/vaults/protocol/DETFNFTVaultFacet.sol";
-import {RICHIRFacet} from "contracts/vaults/protocol/RICHIRFacet.sol";
+import {RebasingClaimTokenFacet} from "contracts/vaults/protocol/RebasingClaimTokenFacet.sol";
 import {RebasingDETFTokenFacet} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenFacet.sol";
 import {ERC4626BasedBasicVaultFacet} from "contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol";
 import {ERC4626StandardVaultFacet} from "contracts/vaults/standard/ERC4626StandardVaultFacet.sol";
@@ -39,9 +39,9 @@ library DetfFacetFactoryService {
         vm.label(address(instance), type(DETFNFTVaultFacet).name);
     }
 
-    function deployRICHIRFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(type(RICHIRFacet).creationCode, abi.encode(type(RICHIRFacet).name)._hash());
-        vm.label(address(instance), type(RICHIRFacet).name);
+    function deployRebasingClaimTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(type(RebasingClaimTokenFacet).creationCode, abi.encode(type(RebasingClaimTokenFacet).name)._hash());
+        vm.label(address(instance), type(RebasingClaimTokenFacet).name);
     }
 
     function deployRebasingDETFTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {

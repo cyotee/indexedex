@@ -37,7 +37,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
     IERC20MintBurn private ttB;
     IERC20MintBurn private ttC;
     IERC20MintBurn private demoWeth;
-    IERC20 private richToken;
+    IERC20 private pairToken;
     IERC20MinterFacade private erc20MinterFacade;
 
     function run() external {
@@ -112,7 +112,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         IERC20PermitDFPkg.PkgInit memory richPkgInit =
             IERC20PermitDFPkg.PkgInit({erc20Facet: erc20Facet, erc5267Facet: erc5267Facet, erc2612Facet: erc2612Facet});
 
-        IERC20PermitDFPkg richTokenPkg = IERC20PermitDFPkg(
+        IERC20PermitDFPkg pairTokenPkg = IERC20PermitDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
                     type(ERC20PermitDFPkg).creationCode,
@@ -131,7 +131,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
             optionalSalt: keccak256(abi.encodePacked("DemoRichToken"))
         });
 
-        richToken = IERC20(diamondPackageFactory.deploy(IDiamondFactoryPackage(address(richTokenPkg)), abi.encode(richArgs)));
+        pairToken = IERC20(diamondPackageFactory.deploy(IDiamondFactoryPackage(address(pairTokenPkg)), abi.encode(richArgs)));
 
         _deployAndAuthorizeERC20MinterFacade();
     }
@@ -141,14 +141,14 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         (address tokenB, bool hasB) = _readAddressSafe("07_test_tokens.json", "testTokenB");
         (address tokenC, bool hasC) = _readAddressSafe("07_test_tokens.json", "testTokenC");
         (address demoWethAddr, bool hasDemoWeth) = _readAddressSafe("07_test_tokens.json", "demoWeth");
-        (address richTokenAddr, bool hasRich) = _readAddressSafe("07_test_tokens.json", "richToken");
+        (address pairTokenAddr, bool hasRich) = _readAddressSafe("07_test_tokens.json", "pairToken");
 
         if (!hasA || !hasB || !hasC || !hasDemoWeth || !hasRich) {
             return false;
         }
         if (
             tokenA.code.length == 0 || tokenB.code.length == 0 || tokenC.code.length == 0
-                || demoWethAddr.code.length == 0 || richTokenAddr.code.length == 0
+                || demoWethAddr.code.length == 0 || pairTokenAddr.code.length == 0
         ) {
             return false;
         }
@@ -157,7 +157,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         ttB = IERC20MintBurn(tokenB);
         ttC = IERC20MintBurn(tokenC);
         demoWeth = IERC20MintBurn(demoWethAddr);
-        richToken = IERC20(richTokenAddr);
+        pairToken = IERC20(pairTokenAddr);
 
         (address facade, bool hasFacade) = _readAddressSafe("07_test_tokens.json", "erc20MinterFacade");
         if (hasFacade && facade.code.length > 0) {
@@ -205,7 +205,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         json = vm.serializeAddress("tokens", "testTokenB", address(ttB));
         json = vm.serializeAddress("tokens", "testTokenC", address(ttC));
         json = vm.serializeAddress("tokens", "demoWeth", address(demoWeth));
-        json = vm.serializeAddress("tokens", "richToken", address(richToken));
+        json = vm.serializeAddress("tokens", "pairToken", address(pairToken));
         json = vm.serializeAddress("tokens", "erc20MinterFacade", address(erc20MinterFacade));
         _writeJson(json, "07_test_tokens.json");
     }
@@ -215,7 +215,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
         _logAddress("Test Token B (TTB):", address(ttB));
         _logAddress("Test Token C (TTC):", address(ttC));
         _logAddress("DemoWETH:", address(demoWeth));
-        _logAddress("RICH:", address(richToken));
+        _logAddress("RICH:", address(pairToken));
         _logAddress("ERC20 Minter Facade:", address(erc20MinterFacade));
         _logComplete("Stage 7");
     }

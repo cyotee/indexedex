@@ -8,10 +8,15 @@ import { protocolDetfAbi } from '../protocolDetfAbi'
 
 type PlatformAddresses = {
   protocolDetf?: string
+  /** @deprecated prefer pairToken */
   richToken?: string
+  pairToken?: string
+  /** @deprecated prefer rebasingClaimToken */
   richirToken?: string
+  rebasingClaimToken?: string
   weth?: string
   weth9?: string
+  rateAsset?: string
   protocolNftVault?: string
   reservePool?: string
 }
@@ -26,9 +31,9 @@ type UseStakingContractReadsParams = {
 export function useStakingContractReads({ detfAddress, dataChainId, platform, address }: UseStakingContractReadsParams) {
   const hasDetfAddress = !!detfAddress
 
-  const { data: richToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'richToken', args: [], query: { enabled: hasDetfAddress } })
-  const { data: richirToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'richirToken', args: [], query: { enabled: hasDetfAddress } })
-  const { data: wethToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'wethToken', args: [], query: { enabled: hasDetfAddress } })
+  const { data: pairToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'pairToken', args: [], query: { enabled: hasDetfAddress } })
+  const { data: rebasingClaimToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'rebasingClaimToken', args: [], query: { enabled: hasDetfAddress } })
+  const { data: rateAsset } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'rateAsset', args: [], query: { enabled: hasDetfAddress } })
   const { data: nftVault } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'protocolNFTVault', args: [], query: { enabled: hasDetfAddress } })
   const { data: reservePool } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'reservePool', args: [], query: { enabled: hasDetfAddress } })
   const { data: syntheticPrice, error: syntheticPriceError, refetch: refetchSyntheticPrice } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'syntheticPrice', args: [], query: { enabled: hasDetfAddress } })
@@ -37,34 +42,42 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
   const { data: isMintingAllowed, refetch: refetchIsMintingAllowed } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'isMintingAllowed', args: [], query: { enabled: hasDetfAddress } })
   const { data: isBurningAllowed, refetch: refetchIsBurningAllowed } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'isBurningAllowed', args: [], query: { enabled: hasDetfAddress } })
 
-  const effectiveRichToken = (richToken && richToken !== zeroAddress ? richToken : platform.richToken) as `0x${string}` | undefined
-  const effectiveRichirToken = (richirToken && richirToken !== zeroAddress ? richirToken : platform.richirToken) as `0x${string}` | undefined
-  const platformWethToken = platform.weth9 ?? platform.weth
-  const effectiveWethToken = (wethToken && wethToken !== zeroAddress ? wethToken : platformWethToken) as `0x${string}` | undefined
+  const platformPairToken = platform.pairToken ?? platform.richToken
+  const platformClaimToken = platform.rebasingClaimToken ?? platform.richirToken
+  const platformRateAsset = platform.rateAsset ?? platform.weth9 ?? platform.weth
 
-  const { data: richDecimals } = useReadContract({ chainId: dataChainId, address: effectiveRichToken, abi: erc20Abi, functionName: 'decimals', args: [], query: { enabled: !!effectiveRichToken && effectiveRichToken !== zeroAddress } })
-  const { data: wethDecimals } = useReadContract({ chainId: dataChainId, address: effectiveWethToken, abi: erc20Abi, functionName: 'decimals', args: [], query: { enabled: !!effectiveWethToken && effectiveWethToken !== zeroAddress } })
-  const { data: richBalance, refetch: refetchRichBalance } = useReadContract({
+  const effectivePairToken = (pairToken && pairToken !== zeroAddress ? pairToken : platformPairToken) as `0x${string}` | undefined
+  const effectiveRebasingClaimToken = (rebasingClaimToken && rebasingClaimToken !== zeroAddress ? rebasingClaimToken : platformClaimToken) as `0x${string}` | undefined
+  const effectiveRateAsset = (rateAsset && rateAsset !== zeroAddress ? rateAsset : platformRateAsset) as `0x${string}` | undefined
+
+  // Legacy aliases for existing UI bindings
+  const effectiveRichToken = effectivePairToken
+  const effectiveRichirToken = effectiveRebasingClaimToken
+  const effectiveWethToken = effectiveRateAsset
+
+  const { data: pairDecimals } = useReadContract({ chainId: dataChainId, address: effectivePairToken, abi: erc20Abi, functionName: 'decimals', args: [], query: { enabled: !!effectivePairToken && effectivePairToken !== zeroAddress } })
+  const { data: rateAssetDecimals } = useReadContract({ chainId: dataChainId, address: effectiveRateAsset, abi: erc20Abi, functionName: 'decimals', args: [], query: { enabled: !!effectiveRateAsset && effectiveRateAsset !== zeroAddress } })
+  const { data: pairBalance, refetch: refetchPairBalance } = useReadContract({
     chainId: dataChainId,
-    address: effectiveRichToken,
+    address: effectivePairToken,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!effectiveRichToken && !!address,
+      enabled: !!effectivePairToken && !!address,
       refetchInterval: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
     },
   })
-  const { data: wethBalance, refetch: refetchWethBalance } = useReadContract({
+  const { data: rateAssetBalance, refetch: refetchRateAssetBalance } = useReadContract({
     chainId: dataChainId,
-    address: effectiveWethToken,
+    address: effectiveRateAsset,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!effectiveWethToken && !!address,
+      enabled: !!effectiveRateAsset && !!address,
       refetchInterval: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
@@ -84,8 +97,10 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
     },
   })
 
-  const richDec = Number(richDecimals ?? 18)
-  const wethDec = Number(wethDecimals ?? 18)
+  const pairDec = Number(pairDecimals ?? 18)
+  const rateAssetDec = Number(rateAssetDecimals ?? 18)
+  const richDec = pairDec
+  const wethDec = rateAssetDec
   const syntheticPriceDisplay = syntheticPrice !== undefined ? formatUnits(syntheticPrice, 18) : null
   const mintThresholdDisplay = mintThreshold !== undefined ? formatUnits(mintThreshold, 18) : null
   const burnThresholdDisplay = burnThreshold !== undefined ? formatUnits(burnThreshold, 18) : null
@@ -100,8 +115,10 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
   const syntheticPriceStatus = !hasDetfAddress ? '—' : syntheticPriceError ? 'Unavailable: read reverted on current pool state.' : syntheticPriceDisplay ?? '—'
   const mintThresholdStatus = !hasDetfAddress ? '—' : mintThresholdError ? 'Unavailable' : mintThresholdDisplay ?? '—'
   const burnThresholdStatus = !hasDetfAddress ? '—' : burnThresholdError ? 'Unavailable' : burnThresholdDisplay ?? '—'
-  const richTokenAddress = hasDetfAddress ? (effectiveRichToken ?? '—') : (platform.richToken ?? '—')
-  const richirTokenAddress = hasDetfAddress ? (effectiveRichirToken ?? '—') : (platform.richirToken ?? '—')
+  const pairTokenAddress = hasDetfAddress ? (effectivePairToken ?? '—') : (platformPairToken ?? '—')
+  const rebasingClaimTokenAddress = hasDetfAddress ? (effectiveRebasingClaimToken ?? '—') : (platformClaimToken ?? '—')
+  const richTokenAddress = pairTokenAddress
+  const richirTokenAddress = rebasingClaimTokenAddress
   const nftVaultAddress = hasDetfAddress ? (nftVault ?? platform.protocolNftVault ?? '—') : (platform.protocolNftVault ?? '—')
   const reservePoolAddress = hasDetfAddress ? (reservePool ?? platform.reservePool ?? '—') : (platform.reservePool ?? '—')
 
@@ -112,16 +129,20 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
       refetchBurnThreshold(),
       refetchIsMintingAllowed(),
       refetchIsBurningAllowed(),
-      refetchRichBalance(),
-      refetchWethBalance(),
+      refetchPairBalance(),
+      refetchRateAssetBalance(),
       refetchChirBalance(),
     ])
-  }, [refetchSyntheticPrice, refetchMintThreshold, refetchBurnThreshold, refetchIsMintingAllowed, refetchIsBurningAllowed, refetchRichBalance, refetchWethBalance, refetchChirBalance])
+  }, [refetchSyntheticPrice, refetchMintThreshold, refetchBurnThreshold, refetchIsMintingAllowed, refetchIsBurningAllowed, refetchPairBalance, refetchRateAssetBalance, refetchChirBalance])
 
   const stakingState = useMemo(() => ({
-    richToken,
-    richirToken,
-    wethToken,
+    pairToken,
+    rebasingClaimToken,
+    rateAsset,
+    // legacy aliases
+    richToken: pairToken,
+    richirToken: rebasingClaimToken,
+    wethToken: rateAsset,
     nftVault,
     reservePool,
     syntheticPrice,
@@ -132,13 +153,22 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
     burnThresholdError,
     isMintingAllowed,
     isBurningAllowed,
-    richDecimals,
-    wethDecimals,
-    richBalance,
-    wethBalance,
+    pairDecimals,
+    rateAssetDecimals,
+    richDecimals: pairDecimals,
+    wethDecimals: rateAssetDecimals,
+    pairBalance,
+    rateAssetBalance,
+    richBalance: pairBalance,
+    wethBalance: rateAssetBalance,
     chirBalance,
+    pairDec,
+    rateAssetDec,
     richDec,
     wethDec,
+    effectivePairToken,
+    effectiveRebasingClaimToken,
+    effectiveRateAsset,
     effectiveRichToken,
     effectiveRichirToken,
     effectiveWethToken,
@@ -151,15 +181,17 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
     mintingAllowedNow,
     burningAllowedNow,
     availabilityMismatch,
+    pairTokenAddress,
+    rebasingClaimTokenAddress,
     richTokenAddress,
     richirTokenAddress,
     nftVaultAddress,
     reservePoolAddress,
     refreshDetfState,
   }), [
-    richToken,
-    richirToken,
-    wethToken,
+    pairToken,
+    rebasingClaimToken,
+    rateAsset,
     nftVault,
     reservePool,
     syntheticPrice,
@@ -170,13 +202,16 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
     burnThresholdError,
     isMintingAllowed,
     isBurningAllowed,
-    richDecimals,
-    wethDecimals,
-    richBalance,
-    wethBalance,
+    pairDecimals,
+    rateAssetDecimals,
+    pairBalance,
+    rateAssetBalance,
     chirBalance,
-    richDec,
-    wethDec,
+    pairDec,
+    rateAssetDec,
+    effectivePairToken,
+    effectiveRebasingClaimToken,
+    effectiveRateAsset,
     effectiveRichToken,
     effectiveRichirToken,
     effectiveWethToken,
@@ -189,6 +224,8 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
     mintingAllowedNow,
     burningAllowedNow,
     availabilityMismatch,
+    pairTokenAddress,
+    rebasingClaimTokenAddress,
     richTokenAddress,
     richirTokenAddress,
     nftVaultAddress,
@@ -198,5 +235,3 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
 
   return stakingState
 }
-
-export default useStakingContractReads

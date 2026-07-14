@@ -102,7 +102,7 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[1] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "testTokenB"), "Test Token B", "TTB");
         entries[2] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "testTokenC"), "Test Token C", "TTC");
         entries[3] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "demoWeth"), "DemoWETH", "DemoWETH");
-        entries[4] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "richToken"), "RICH Token", "RICH");
+        entries[4] = _tokenlistEntry(chainIdStr, _readAddress("07_test_tokens.json", "pairToken"), "RICH Token", "RICH");
         _writeTokenlist(_uiTokenlistFilename("tokens.tokenlist.json"), entries);
     }
 
@@ -185,8 +185,8 @@ contract Script_ExportTokenlists is DeploymentBase {
 
     function _exportProtocolDetf(string memory chainIdStr) internal {
         (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "protocolDetf");
-        (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "richToken");
-        (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "richirToken");
+        (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "pairToken");
+        (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "rebasingClaimToken");
         if (!(okChir && okRich && okRichir) || chir == address(0) || rich == address(0) || richir == address(0)) {
             _exportEmptyTokenlist(_uiTokenlistFilename("protocol-detf.tokenlist.json"));
             return;

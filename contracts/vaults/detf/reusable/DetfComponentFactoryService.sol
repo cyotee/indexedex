@@ -15,7 +15,7 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
-import {IRICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {
     IRebasingDETFTokenDFPkg
 } from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol";
@@ -65,14 +65,14 @@ library DetfComponentFactoryService {
         IFacet erc20Facet,
         IFacet erc5267Facet,
         IFacet erc2612Facet,
-        IFacet richirFacet,
+        IFacet rebasingClaimTokenFacet,
         IDiamondPackageCallBackFactory diamondFactory
-    ) internal pure returns (IRICHIRDFPkg.PkgInit memory pkgInit) {
-        pkgInit = IRICHIRDFPkg.PkgInit({
+    ) internal pure returns (IRebasingClaimTokenDFPkg.PkgInit memory pkgInit) {
+        pkgInit = IRebasingClaimTokenDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
-            richirFacet: richirFacet,
+            rebasingClaimTokenFacet: rebasingClaimTokenFacet,
             diamondFactory: diamondFactory
         });
     }

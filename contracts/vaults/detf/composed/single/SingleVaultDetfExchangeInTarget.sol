@@ -49,33 +49,33 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             recipient = msg.sender;
         }
 
-        if ((_isWethToken(layoutStruct, tokenIn) && _isRichToken(layoutStruct, tokenOut)) || (_isRichToken(layoutStruct, tokenIn) && _isWethToken(layoutStruct, tokenOut))) {
+        if ((_isRateAsset(layoutStruct, tokenIn) && _isPairToken(layoutStruct, tokenOut)) || (_isPairToken(layoutStruct, tokenIn) && _isRateAsset(layoutStruct, tokenOut))) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            tokenIn.safeTransfer(address(layoutStruct.wethRichVault), actualIn);
-            amountOut_ = layoutStruct.wethRichVault.exchangeIn(tokenIn, actualIn, tokenOut, minAmountOut, recipient, true, deadline);
+            tokenIn.safeTransfer(address(layoutStruct.underlyingVault), actualIn);
+            amountOut_ = layoutStruct.underlyingVault.exchangeIn(tokenIn, actualIn, tokenOut, minAmountOut, recipient, true, deadline);
             return amountOut_;
         }
 
-        if (_isWethToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
+        if (_isRateAsset(layoutStruct, tokenIn) && _isRebasingClaimToken(tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            amountOut_ = _mintRichirFromWeth(layoutStruct, actualIn, recipient, deadline);
+            amountOut_ = _mintRebasingClaimFromRateAsset(layoutStruct, actualIn, recipient, deadline);
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
             return amountOut_;
         }
 
-        if (_isRichToken(layoutStruct, tokenIn) && _isRichirToken(tokenOut)) {
+        if (_isPairToken(layoutStruct, tokenIn) && _isRebasingClaimToken(tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            uint256 wethAmount = _convertRichToWeth(layoutStruct, actualIn, deadline);
-            amountOut_ = _mintRichirFromWeth(layoutStruct, wethAmount, recipient, deadline);
+            uint256 wethAmount = _convertPairToRateAsset(layoutStruct, actualIn, deadline);
+            amountOut_ = _mintRebasingClaimFromRateAsset(layoutStruct, wethAmount, recipient, deadline);
             if (amountOut_ < minAmountOut) {
                 revert SlippageExceeded(minAmountOut, amountOut_);
             }
             return amountOut_;
         }
 
-        if (_isDetfToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isDetfToken(tokenIn) && _isRateAsset(layoutStruct, tokenOut)) {
             uint256 reserveSpotPrice = _calcReserveSpotPrice();
             if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
                 revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
@@ -96,12 +96,12 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             return amountOut_;
         }
 
-        if (_isRichirToken(tokenIn) && _isWethToken(layoutStruct, tokenOut)) {
+        if (_isRebasingClaimToken(tokenIn) && _isRateAsset(layoutStruct, tokenOut)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            uint256 bptIn = _previewRichirRedemptionBptIn(layoutStruct, actualIn);
+            uint256 bptIn = _previewRebasingClaimRedemptionBptIn(layoutStruct, actualIn);
 
-            tokenIn.safeTransfer(address(layoutStruct._richirToken()), actualIn);
-            layoutStruct._richirToken().burnShares(actualIn, address(this), true);
+            tokenIn.safeTransfer(address(layoutStruct._rebasingClaimToken()), actualIn);
+            layoutStruct._rebasingClaimToken().burnShares(actualIn, address(this), true);
 
             uint256 vaultSharesOut = _exitReservePoolToVaultShares(layoutStruct, bptIn);
             amountOut_ = _redeemVaultSharesToWeth(layoutStruct, vaultSharesOut, recipient, deadline);
@@ -117,7 +117,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
         revert IStandardExchangeIn.ExchangeInNotAvailable();
     }
 
-    function mintWithWeth(uint256 wethAmount, address recipient, bool pretransferred)
+    function mintWithRateAsset(uint256 wethAmount, address recipient, bool pretransferred)
         external
         nonReentrant
         returns (uint256 detfMinted_)
@@ -140,7 +140,7 @@ contract SingleVaultDetfExchangeInTarget is SingleVaultDetfCommon, ReentrancyLoc
             recipient = msg.sender;
         }
 
-        uint256 actualIn = _secureTokenTransfer(layoutStruct.wethToken, wethAmount, pretransferred);
+        uint256 actualIn = _secureTokenTransfer(layoutStruct.rateAsset, wethAmount, pretransferred);
 
         (uint256 vaultShares,) = _depositWethIntoReservePool(layoutStruct, actualIn, block.timestamp);
 

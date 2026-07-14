@@ -24,7 +24,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target; permissionless entrypoint
 - Auth: Permissionless
 - State Writes: `ProtocolDETFRepo` (reads config), `ERC20Repo` (mints/burns), `ERC4626Repo` (reserve tracking via downstream calls)
-- External Calls: StandardExchange vaults (`chirWethVault`, `richChirVault`), `protocolNFTVault.addToProtocolNFT`, ERC20 transfers; reentrancy protected by `lock`
+- External Calls: StandardExchange vaults (`underlyingVault`, `underlyingVault`), `protocolNFTVault.addToProtocolNFT`, ERC20 transfers; reentrancy protected by `lock`
 - Inputs: `tokenIn=WETH`, `tokenOut=CHIR`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced
 - Outputs: `amountOut` = CHIR minted to `recipient` (includes discount incentive)
 - Events: ERC20 `Transfer` (mint), any downstream vault events, NFT vault events
@@ -87,7 +87,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: None (simple transfer)
-- External Calls: `richChirVault.exchangeIn`; reentrancy protected by `lock`
+- External Calls: `underlyingVault.exchangeIn`; reentrancy protected by `lock`
 - Inputs: `tokenIn=RICH`, `tokenOut=CHIR`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced
 - Outputs: `amountOut` CHIR sent to recipient
 - Events: downstream vault events
@@ -106,7 +106,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: `RICHIRRepo` (burn shares), Balancer reserve pool, protocol NFT position, `ERC4626Repo`
-- External Calls: `richirToken.burnShares`, StandardExchange vaults, Balancer prepay router, Aerodrome pools; reentrancy protected by `lock`
+- External Calls: `rebasingClaimToken.burnShares`, StandardExchange vaults, Balancer prepay router, Aerodrome pools; reentrancy protected by `lock`
 - Inputs: `tokenIn=RICHIR`, `tokenOut=WETH`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced
 - Outputs: WETH transferred to recipient
 - Events: RICHIR burn events, downstream vault/router/NFT events
@@ -133,7 +133,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: Balancer reserve pool, protocol NFT position, RICHIR shares via `mintFromNFTSale`, `ERC4626Repo._setLastTotalAssets`
-- External Calls: `richChirVault.exchangeIn`, `chirWethVault.exchangeIn`, Balancer prepay router, `protocolNFTVault.addToProtocolNFT`, `richirToken.mintFromNFTSale`; reentrancy protected by `lock`
+- External Calls: `underlyingVault.exchangeIn`, `underlyingVault.exchangeIn`, Balancer prepay router, `protocolNFTVault.addToProtocolNFT`, `rebasingClaimToken.mintFromNFTSale`; reentrancy protected by `lock`
 - Inputs: `tokenIn=RICH`, `tokenOut=RICHIR`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced
 - Outputs: `amountOut` RICHIR minted to recipient
 - Events: downstream vault/router/NFT events + RICHIR mint
@@ -156,7 +156,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: Balancer reserve pool, protocol NFT position, RICHIR shares via `mintFromNFTSale`, `ERC4626Repo._setLastTotalAssets`
-- External Calls: `chirWethVault.exchangeIn`, Balancer prepay router, `protocolNFTVault.addToProtocolNFT`, `richirToken.mintFromNFTSale`; reentrancy protected by `lock`
+- External Calls: `underlyingVault.exchangeIn`, Balancer prepay router, `protocolNFTVault.addToProtocolNFT`, `rebasingClaimToken.mintFromNFTSale`; reentrancy protected by `lock`
 - Inputs: `tokenIn=WETH`, `tokenOut=RICHIR`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced
 - Outputs: `amountOut` RICHIR minted to recipient
 - Events: downstream + RICHIR mint
@@ -177,7 +177,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: none (simple swap)
-- External Calls: `chirWethVault.exchangeIn`, `richChirVault.exchangeIn`; reentrancy protected by `lock`
+- External Calls: `underlyingVault.exchangeIn`, `underlyingVault.exchangeIn`; reentrancy protected by `lock`
 - Inputs: `tokenIn=WETH`, `tokenOut=RICH`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced on final hop
 - Outputs: RICH sent to recipient
 - Events: downstream vault events
@@ -195,7 +195,7 @@ Repo-wide invariants applied: see PROMPT.md
 - Entry Context: Proxy -> delegatecall Target
 - Auth: Permissionless
 - State Writes: none (simple swap)
-- External Calls: `richChirVault.exchangeIn`, `chirWethVault.exchangeIn`; reentrancy protected by `lock`
+- External Calls: `underlyingVault.exchangeIn`, `underlyingVault.exchangeIn`; reentrancy protected by `lock`
 - Inputs: `tokenIn=RICH`, `tokenOut=WETH`, `amountIn>0`, `deadline>=now`, `minAmountOut` enforced on final hop
 - Outputs: WETH sent to recipient
 - Events: downstream vault events
@@ -215,7 +215,7 @@ Repo-wide invariants applied: see PROMPT.md
 
 I reviewed the implementation at `contracts/vaults/protocol/ProtocolDETFExchangeInTarget.sol` against the requirements in this document. Below are the issues and mismatches I found (ordered by severity).
 
-- Critical: mint path does not deposit reserve backing before minting to user — The spec requires that WETH deposits are converted to vault shares, those vault shares are deposited into the Balancer reserve pool (unbalanced add) and BPT added to the protocol NFT before any CHIR is minted to the user. In the implementation (`_executeMintWithWeth`), WETH is deposited into `chirWethVault` (getting vault shares) but those vault shares are NOT added to the reserve pool; instead CHIR is minted directly to the protocol NFT and to the user (ERC20Repo._mint). This breaks the invariant "backing deposit happens before minting to user" and allows minting without the required reserve-side backing (see `contracts/vaults/protocol/ProtocolDETFExchangeInTarget.sol::_executeMintWithWeth`).
+- Critical: mint path does not deposit reserve backing before minting to user — The spec requires that WETH deposits are converted to vault shares, those vault shares are deposited into the Balancer reserve pool (unbalanced add) and BPT added to the protocol NFT before any CHIR is minted to the user. In the implementation (`_executeMintWithWeth`), WETH is deposited into `underlyingVault` (getting vault shares) but those vault shares are NOT added to the reserve pool; instead CHIR is minted directly to the protocol NFT and to the user (ERC20Repo._mint). This breaks the invariant "backing deposit happens before minting to user" and allows minting without the required reserve-side backing (see `contracts/vaults/protocol/ProtocolDETFExchangeInTarget.sol::_executeMintWithWeth`).
 
 - Critical: protocol backing minted as CHIR instead of BPT — The requirements describe a flow where the protocol position receives BPT from the reserve-pool deposit and (separately) receives a seigniorage CHIR reward. In the implementation the code mints CHIR directly to `protocolNFTVault` (line where `ERC20Repo._mint(address(layout_.protocolNFTVault), calc.seigniorageTokens)` is used) but does not produce BPT for the protocol NFT in the mint flow. This both violates the reserve-backed invariant and changes accounting for the protocol position.
 
@@ -251,10 +251,10 @@ Add a new internal function to handle unbalanced deposit of CHIR/WETH vault shar
 ```solidity
 function _unbalancedDepositChirWethAndAddToProtocolNFT(
     ProtocolDETFRepo.Storage storage layout_,
-    uint256 chirWethVaultShares_
+    uint256 underlyingVaultShares_
 ) internal {
-    // Mirror _unbalancedDepositAndAddToProtocolNFT but use chirWethVaultIndex
-    // 1. Build amounts array with chirWethVaultShares_ at chirWethVaultIndex
+    // Mirror _unbalancedDepositAndAddToProtocolNFT but use underlyingVaultIndex
+    // 1. Build amounts array with underlyingVaultShares_ at underlyingVaultIndex
     // 2. Transfer vault shares to Balancer vault
     // 3. Call prepayAddLiquidityUnbalanced
     // 4. Add resulting BPT to protocol NFT via protocolNFTVault.addToProtocolNFT
@@ -270,14 +270,14 @@ Current (broken) flow:
 1. Secure WETH transfer
 2. Calculate base mint amount
 3. Check minAmountOut (too early!)
-4. Deposit WETH → chirWethVault (gets shares)
+4. Deposit WETH → underlyingVault (gets shares)
 5. Mint CHIR seigniorage to protocol NFT
 6. Mint CHIR to user
 
 Required flow:
 1. Secure WETH transfer
 2. Calculate base mint amount
-3. Deposit WETH → chirWethVault (gets shares)
+3. Deposit WETH → underlyingVault (gets shares)
 4. **Deposit vault shares to Balancer reserve pool (unbalanced) → get BPT**
 5. **Add BPT to protocol NFT** (reserve backing)
 6. Calculate seigniorage (discountMargin + seigniorageTokens)
@@ -289,31 +289,31 @@ Changes to make:
 - Move the minAmountOut check to AFTER computing `userMintAmount = amountOut_ + calc.discountMargin`
 - Insert call to new helper after vault deposit, before CHIR minting:
   ```solidity
-  // After: layout_.chirWethVault.exchangeIn(...)
+  // After: layout_.underlyingVault.exchangeIn(...)
   // Add:
   if (chirWethShares > 0) {
       _unbalancedDepositChirWethAndAddToProtocolNFT(layout_, chirWethShares);
   }
   ```
 
-Note: Need to capture the vault shares received from the chirWethVault deposit. Currently the code doesn't capture the return value.
+Note: Need to capture the vault shares received from the underlyingVault deposit. Currently the code doesn't capture the return value.
 
-### Step 3: Capture vault shares from chirWethVault deposit
+### Step 3: Capture vault shares from underlyingVault deposit
 Current code (lines 221-225):
 ```solidity
-p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-layout_.chirWethVault
+p_.tokenIn.safeTransfer(address(layout_.underlyingVault), actualIn);
+layout_.underlyingVault
     .exchangeIn(
-        p_.tokenIn, actualIn, IERC20(address(layout_.chirWethVault)), 0, address(this), true, p_.deadline
+        p_.tokenIn, actualIn, IERC20(address(layout_.underlyingVault)), 0, address(this), true, p_.deadline
     );
 ```
 
 Change to:
 ```solidity
-p_.tokenIn.safeTransfer(address(layout_.chirWethVault), actualIn);
-uint256 chirWethShares = layout_.chirWethVault
+p_.tokenIn.safeTransfer(address(layout_.underlyingVault), actualIn);
+uint256 chirWethShares = layout_.underlyingVault
     .exchangeIn(
-        p_.tokenIn, actualIn, IERC20(address(layout_.chirWethVault)), 0, address(this), true, p_.deadline
+        p_.tokenIn, actualIn, IERC20(address(layout_.underlyingVault)), 0, address(this), true, p_.deadline
     );
 ```
 
@@ -335,8 +335,8 @@ if (userMintAmount < p_.minAmountOut) {
 
 ### Step 5: Verify `_executeRichToChir` works correctly
 This function (lines 249-284) calls `_executeMintWithWeth` internally. With the fix, it will now:
-1. Swap RICH → CHIR via richChirVault
-2. Swap CHIR → WETH via chirWethVault
+1. Swap RICH → CHIR via underlyingVault
+2. Swap CHIR → WETH via underlyingVault
 3. Call `_executeMintWithWeth` with the WETH output
 
 The internal `_executeMintWithWeth` will now properly deposit backing. No changes needed here, but verify the flow.

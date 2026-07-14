@@ -12,45 +12,45 @@ import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20
 
 import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRICHIR} from "contracts/interfaces/IRICHIR.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 
-import {IRICHIRDFPkg, RICHIRDFPkg} from "contracts/vaults/protocol/RICHIRDFPkg.sol";
+import {IRebasingClaimTokenDFPkg, RebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
 
-contract RICHIRDFPkg_Deploy_Test is TestBase_VaultComponents {
+contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
     using BetterEfficientHashLib for bytes;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
 
-    IRICHIRDFPkg internal pkg;
+    IRebasingClaimTokenDFPkg internal pkg;
     ERC20PermitDFPkg internal erc20PermitPkg;
 
     function setUp() public override {
         super.setUp();
 
-        IFacet richirFacet = create3Factory.deployRICHIRFacet();
+        IFacet rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
 
-        IRICHIRDFPkg.PkgInit memory pkgInit = IRICHIRDFPkg.PkgInit({
+        IRebasingClaimTokenDFPkg.PkgInit memory pkgInit = IRebasingClaimTokenDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
-            richirFacet: richirFacet,
+            rebasingClaimTokenFacet: rebasingClaimTokenFacet,
             diamondFactory: diamondPackageFactory
         });
 
-        // NOTE: RICHIRDFPkg is NOT an IStandardVaultPkg, so it must NOT be deployed via VaultRegistryDeployment.
-        pkg = IRICHIRDFPkg(
+        // NOTE: RebasingClaimTokenDFPkg is NOT an IStandardVaultPkg, so it must NOT be deployed via VaultRegistryDeployment.
+        pkg = IRebasingClaimTokenDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(RICHIRDFPkg).creationCode, abi.encode(pkgInit), abi.encode(type(RICHIRDFPkg).name)._hash()
+                    type(RebasingClaimTokenDFPkg).creationCode, abi.encode(pkgInit), abi.encode(type(RebasingClaimTokenDFPkg).name)._hash()
                 )
             )
         );
 
         erc20PermitPkg = _deployTestTokenPkg();
 
-        assertGt(address(pkg).code.length, 0, "RICHIRDFPkg not deployed");
+        assertGt(address(pkg).code.length, 0, "RebasingClaimTokenDFPkg not deployed");
     }
 
     function test_deployToken_success() public {
@@ -61,7 +61,7 @@ contract RICHIRDFPkg_Deploy_Test is TestBase_VaultComponents {
         );
 
         assertGt(tokenAddr.code.length, 0, "RICHIR proxy not deployed");
-        assertEq(IRICHIR(tokenAddr).protocolDETF(), address(0xBEEF), "protocolDETF mismatch");
+        assertEq(IRebasingClaimToken(tokenAddr).protocolDETF(), address(0xBEEF), "protocolDETF mismatch");
     }
 
     function test_deployToken_returnsExisting_onDuplicateSalt() public {
