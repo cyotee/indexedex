@@ -234,6 +234,31 @@ abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_Standard
         );
     }
 
+    /// @dev Full-path EXACT_OUT swap through the Balancer V3 RouterMock (this contract as user).
+    ///      Mirrors `_swapThroughBalancerVault` but requests an exact output amount, funding
+    ///      this contract with a generous `maxAmountIn` of `tokenIn` up front (the router only
+    ///      pulls what the swap actually consumes).
+    function _swapThroughBalancerVaultExactOut(
+        IERC20 tokenIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn
+    ) internal returns (uint256 amountIn) {
+        _fundSelfWith(tokenIn, maxAmountIn);
+        tokenIn.approve(address(permit2), type(uint256).max);
+        permit2.approve(address(tokenIn), address(router), type(uint160).max, type(uint48).max);
+        amountIn = router.swapSingleTokenExactOut(
+            bufferPool,
+            tokenIn,
+            tokenOut,
+            amountOut,
+            maxAmountIn,
+            block.timestamp,
+            false,
+            bytes("")
+        );
+    }
+
     /// @dev Ensures this test contract holds at least `amount` of `token`, minting via the
     ///      appropriate path: TTA / counterAsset are ERC20TestTokens with a direct `mint()`
     ///      entry point; the share token is minted via the full V2-addLiquidity -> SE-vault-deposit

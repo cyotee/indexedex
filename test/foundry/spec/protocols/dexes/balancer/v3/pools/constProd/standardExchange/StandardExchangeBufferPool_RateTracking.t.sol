@@ -142,6 +142,62 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
         assertGt(sharesReceived, 0);
     }
 
+    /// @notice EXACT_OUT full-path regression: request `sharesOut` close to (but safely under)
+    ///         30% of the pool's shares-side live balance (`WeightedMath._MAX_OUT_RATIO`). This is
+    ///         the lever the Task 5 reviewer flagged as untested: `onSwap` supports EXACT_OUT via
+    ///         `computeInGivenExactOut`, whose required TTA input diverges non-linearly as the
+    ///         requested shares approach the out-ratio ceiling — orthogonal to the rate-drift /
+    ///         weight-guard lever the original Task 5 analysis exercised. `onAfterSwap` still calls
+    ///         `_reconcileTTAToShares(params.amountInScaled18)` for this swap kind, so the
+    ///         best-effort reconcile must handle whatever (possibly large) X_raw the Vault quotes.
+    ///         No rate shift: isolates the pure out-ratio lever.
+    function test_ttaToSharesExactOut_nearMaxOutRatio_succeeds() public {
+        uint256[] memory bal = bv3Vault.getCurrentLiveBalances(bufferPool);
+        uint256 sharesLiveScaled18 = bal[_sharesIdx()];
+
+        // Convert the 30%-of-live-balance ceiling (scaled18) back to RAW shares so it can be
+        // passed as `exactAmountOut` to the router (which expects raw token units).
+        (uint256[] memory scalingFactors, uint256[] memory rates) = bv3Vault.getPoolTokenRates(bufferPool);
+        uint256 denom = scalingFactors[_sharesIdx()] * rates[_sharesIdx()];
+        uint256 maxOutRatioScaled18 = Math.mulDiv(sharesLiveScaled18, 30, 100);
+        uint256 maxOutRatioRaw = Math.mulDiv(maxOutRatioScaled18, 1e18, denom);
+
+        // 95% of the 30% ceiling: close to, but safely under, the guard.
+        uint256 sharesOut = (maxOutRatioRaw * 95) / 100;
+        assertGt(sharesOut, 0, "sharesOut must be nonzero to be a meaningful regression");
+
+        uint256 userSharesBefore = shareToken().balanceOf(address(this));
+        uint256 amountIn = _swapThroughBalancerVaultExactOut(tta, shareToken(), sharesOut, type(uint128).max);
+        uint256 userSharesAfter = shareToken().balanceOf(address(this));
+
+        assertGt(amountIn, 0, "swap reported zero TTA in");
+        assertEq(userSharesAfter - userSharesBefore, sharesOut, "user did not receive exactly sharesOut");
+    }
+
+    /// @notice Same EXACT_OUT near-max-out-ratio scenario, but combined with a moderate in-bounds
+    ///         upward rate shift — exercises both levers (out-ratio + rate drift) together.
+    function test_ttaToSharesExactOut_nearMaxOutRatio_withRateShift_succeeds() public {
+        _shiftRateUp();
+
+        uint256[] memory bal = bv3Vault.getCurrentLiveBalances(bufferPool);
+        uint256 sharesLiveScaled18 = bal[_sharesIdx()];
+
+        (uint256[] memory scalingFactors, uint256[] memory rates) = bv3Vault.getPoolTokenRates(bufferPool);
+        uint256 denom = scalingFactors[_sharesIdx()] * rates[_sharesIdx()];
+        uint256 maxOutRatioScaled18 = Math.mulDiv(sharesLiveScaled18, 30, 100);
+        uint256 maxOutRatioRaw = Math.mulDiv(maxOutRatioScaled18, 1e18, denom);
+
+        uint256 sharesOut = (maxOutRatioRaw * 95) / 100;
+        assertGt(sharesOut, 0, "sharesOut must be nonzero to be a meaningful regression");
+
+        uint256 userSharesBefore = shareToken().balanceOf(address(this));
+        uint256 amountIn = _swapThroughBalancerVaultExactOut(tta, shareToken(), sharesOut, type(uint128).max);
+        uint256 userSharesAfter = shareToken().balanceOf(address(this));
+
+        assertGt(amountIn, 0, "swap reported zero TTA in");
+        assertEq(userSharesAfter - userSharesBefore, sharesOut, "user did not receive exactly sharesOut");
+    }
+
     /// @notice No free lunch: a round trip after a rate shift returns strictly less than paid.
     function test_roundTrip_afterRateShift_losesFees() public {
         _shiftRateUp();
