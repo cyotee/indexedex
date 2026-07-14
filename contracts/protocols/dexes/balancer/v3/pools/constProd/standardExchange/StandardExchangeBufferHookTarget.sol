@@ -189,7 +189,7 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
      *      UNBALANCED / SINGLE_TOKEN_EXACT_OUT: increments virtualTTA by the actual TTA scaled18
      *        contributed (amountsInScaled18[ttaIdx]). hookSharesDelta is NOT mutated for the shares
      *        contribution — derived_y (= actualShares - hookSharesDelta) grows naturally as the LP's
-     *        shares are credited to the pool's balance, keeping the CP product consistent.
+     *        shares are credited to the pool's balance, keeping the weighted invariant consistent.
      *        This also means unbalanced TTA adds leave physical TTA sitting in the pool between
      *        operations ("eventual zero TTA" semantics); subsequent TTA→shares swaps or an explicit
      *        sweep will drain it to the Standard Exchange Vault.
@@ -425,9 +425,10 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
      *      Extracted to avoid stack-too-deep in onBeforeSwap.
      *
      *      Algorithm:
-     *      1. Compute Y_TTA (fee-adjusted): the TTA amount the CP formula will produce for the
-     *         given shares input. The swap fee is subtracted from the scaled18 input to match
-     *         what onSwap will see (the Vault deducts fees before calling onSwap).
+     *      1. Compute Y_TTA (fee-adjusted): the TTA amount the weighted formula (rate-scaled
+     *         effective weights) will produce for the given shares input. The swap fee is
+     *         subtracted from the scaled18 input to match what onSwap will see (the Vault
+     *         deducts fees before calling onSwap).
      *      2. Query how many shares S are needed to redeem Y_TTA from the SE Vault.
      *      3. Drain S shares from the Balancer Vault to this hook; exchange for Y_TTA via seVault.
      *      4. Settle + DONATE the Y_TTA into the pool so the swap has real TTA to deliver.

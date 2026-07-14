@@ -140,7 +140,8 @@ contract StandardExchangeBufferPoolStandardVaultPkg is
 
     uint256 private constant _MIN_SWAP_FEE_PERCENTAGE = 1e14; // 0.01%
     uint256 private constant _MAX_SWAP_FEE_PERCENTAGE = 0.1e18; // 10%
-    // Buffer pool is constant-product: invariant ratio bounds are fixed at 1.0 (no rebalancing).
+    // Buffer pool invariant ratio bounds are fixed at 1.0 (no rebalancing) regardless of the
+    // rate-scaled effective weights used by the weighted swap/invariant math.
     uint256 private constant _MIN_INVARIANT_RATIO = 1e18;
     uint256 private constant _MAX_INVARIANT_RATIO = 1e18;
 
