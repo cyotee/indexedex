@@ -235,9 +235,10 @@ contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
 
     /**
      * @notice onBeforeInitialize captures the Vault-reported share rate as baselineRate.
-     * @dev The pool is already initialized, so calling onBeforeInitialize again will overwrite
-     *      baselineRate. We assert that the stored baselineRate matches the rate the Vault
-     *      reports for the shares token.
+     * @dev This is a view test that reads the baselineRate stored during the fixture's genuine
+     *      router.initialize(...) call in setUp, relying on that real initialization path rather
+     *      than re-invoking the hook (which would corrupt shared state). We assert that the
+     *      stored baselineRate matches the rate the Vault reports for the shares token.
      */
     function test_onBeforeInitialize_capturesBaselineRateFromVault() public view {
         (, uint256[] memory rates) = bv3Vault.getPoolTokenRates(bufferPool);

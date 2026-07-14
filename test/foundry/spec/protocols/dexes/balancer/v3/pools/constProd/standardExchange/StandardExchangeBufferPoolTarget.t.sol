@@ -48,6 +48,7 @@ import {CommonHarness} from
  *        offset 7  virtualTTA         ← VIRTUAL_TTA_OFFSET
  *        offset 8  hookSharesDelta    ← HOOK_SHARES_DELTA_OFFSET
  *        offset 9  pendingPreSeatS
+ *        offset 10 baselineRate       ← BASELINE_RATE_OFFSET
  */
 contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBufferPool {
 
@@ -305,11 +306,11 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
         uint256 dx = x / 100;
         uint256 cpOut = y * dx / (x + dx);
         uint256 got = IBalancerV3Pool(bufferPool).onSwap(_swapParams(SwapKind.EXACT_IN, dx, ttaIdx, sharesIdx));
-        // WeightedMath.computeOutGivenExactIn goes through a pow-based fixed-point approximation
-        // (LogExpMath) rather than exact integer division, so even at exact 50/50 weights it
-        // differs from the CP formula by a small relative amount (observed ~1e-16) rather than a
-        // fixed few wei. Use a tight relative tolerance instead of the brief's absolute "<=2 wei"
-        // pin, which does not hold once the swap size is large enough for pow-rounding to exceed it.
+        // FixedPoint.powUp/powDown special-case exponent 1e18 (the 50/50 case) to identity,
+        // bypassing LogExpMath entirely. The small divergence comes from 18-decimal fixed-point
+        // rounding of `base = balanceIn.divUp(balanceIn + amountIn)` and complement rounding
+        // inside WeightedMath vs the reference's exact integer division. Use a tight relative
+        // tolerance instead of an absolute "<=2 wei" bound to handle larger swap sizes.
         assertApproxEqRel(got, cpOut, 1e9, "50/50 weighted != CP");
     }
 

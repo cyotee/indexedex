@@ -31,7 +31,7 @@ import {TestBase_StandardExchangeBufferPool} from
  *      (f) Pool's actual shares balance changes by Y' - Y_shares (may be negative now: since
  *          `minted` is best-effort rather than pinned to `Y_shares`, Y' can be smaller than
  *          Y_shares when the SE Vault's post-shift price yields fewer shares per X than the
- *          buffer pool's CP quote delivered to the user).
+ *          buffer pool's weighted quote delivered to the user).
  */
 abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
 
@@ -142,7 +142,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
         // (f) Pool's actual shares balance changed by Y' - Y_shares. This may now be negative:
         //     since `minted` is best-effort rather than pinned to Y_shares, Y' can be smaller
         //     than amountOut when the SE Vault's post-shift price yields fewer shares per X
-        //     than the buffer pool's CP quote delivered to the user.
+        //     than the buffer pool's weighted quote delivered to the user.
         assertEq(
             int256(shrBalPost),
             int256(shrBalPre) + yPrime - int256(amountOut),
