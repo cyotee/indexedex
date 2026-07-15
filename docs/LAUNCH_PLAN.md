@@ -1,6 +1,6 @@
 # IndexedEx / DualLiquidityLinked DETF — Launch Plan
 
-**Status:** Living document — research + decisions as of 2026-07-13  
+**Status:** Living document — research + decisions as of 2026-07-14  
 **Owner discussion:** In progress (not frozen)  
 **Primary product surface:** DualLiquidityLinked DETF + strategy vaults + agent portfolio tooling
 
@@ -16,7 +16,7 @@
 | **RICHAI** | **Bankr** on Base (agent launchpad) | Agent/social traction; **fee-distribution token** alongside RICH |
 | **Optional later** | Second **RICH CCA on Ethereum** | Additional capital only if needed — **not** day-1 |
 
-Canonical economic home of the token contract is **Ethereum**. Day-1 sale liquidity and agent markets concentrate on **Base**. **Launch order:** Base **CCA for RICH first**, then **RICHAI on Bankr** staggered ~1–3 days into the CCA window (see §1.3c).
+Canonical economic home of the token contract is **Ethereum**. Day-1 sale liquidity and agent markets concentrate on **Base**. **Launch order:** Base **CCA for RICH first and fully clear**, then **RICHAI on Bankr after CCA ends** (see §1.3c).
 
 ### 1.2 Fee architecture (decided)
 
@@ -62,51 +62,55 @@ Other vaults / DETFs
 |-------|----------|
 | Supply sold | **10%** = **100M RICH** |
 | Quote asset | **ETH** |
-| Pricing / floor offset | **Definable at deploy-script run time** — independent CCA price discovery (not tied to RICHAI/WETH) |
-| Prior ideas (superseded) | ~~Floor = 0.5 × Bankr listing~~ (instant arb); ~~floor from observed RICHAI/WETH before CCA~~ (RICHAI no longer prices the auction) |
+| Pricing / floor offset | **Independent of RICHAI** — must set initial/floor price for realistic **fully diluted mcap** expectations (workshop still open; see §7) |
+| Prior ideas (superseded) | ~~Floor = 0.5 × Bankr listing~~; ~~floor from RICHAI/WETH before CCA~~; ~~mid-CCA RICHAI stagger~~ |
 | Duration | **~5 days** public clearing |
-| Participation | **Open** — anyone + agents; advertise to Bankr agents (incl. via mid-CCA RICHAI launch) |
+| Supply curve | **Back-loaded** over the window (more supply later in clearing) |
+| Participation | **Open** — anyone + agents; market CCA during auction; RICHAI **after** CCA ends |
 | Proceeds recipient | **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** |
 | Proceeds split | From that wallet: **~15 ETH (~$20k)** founder ops; **remainder → liquidity** |
 | Bridge | **Canonical ETH→Base** for CCA tranche |
 
-### 1.3c Launch market structure (CCA first → RICHAI staggered)
+### 1.3c Launch market structure (CCA first → RICHAI after CCA ends)
 
-**Sequence decision (2026-07-13):** **RICH Base CCA first**, then **RICHAI Bankr** on a light stagger (typically **1–3 days into the CCA window**, or soon after CCA opens). Same-day dual launch is optional theater; full simultaneous T0 is **not** preferred (messaging load + two price discoveries).
+**Sequence decision (2026-07-14):** **RICH Base CCA first and fully clear**, then launch **RICHAI on Bankr after the CCA ends**. Mid-CCA and same-T0 dual launch are **not** preferred — capital raise gets undivided attention.
 
-**Why CCA first:**
+**Why CCA first / RICHAI after:**
 
 | Rationale | Notes |
 |-----------|--------|
 | **Capital raise stands alone** | CCA does transparent price discovery; does not need a Bankr book to set floor. |
+| **No auction attention split** | Bankr/meme flow does not compete with CCA bidding during the ~5 days. |
 | **~$100 RICHAI buy is symbolic** | Cannot seed a serious RICH/RICHAI pool or produce a reliable reference spot. |
-| **Agent discovery** | RICHAI announcement (Bankr social loop) is the moment to teach agents that **RICH exists**, how to bid CCA, and that **agents can buy both**. |
+| **Agent discovery still works** | Post-CCA RICHAI announcement teaches agents that **RICH exists**, where to buy it (post-CCA Uni / secondary), and that **agents can buy both**. |
 | **Avoids pricing theater** | Day-1 dual seed at “aligned spot” with dust RICHAI would invent a premium/depth that arb would erase. |
 
 **RICHAI buy budget (decided):** **~$100 worth of ETH** — protocol ops/demo inventory only. **Not** LP seed depth. Optional after Bankr LP exists; skip if not needed for demo.
 
-**RICH/RICHAI pool seed:** **Deferred** until both markets exist and inventory is intentional (CCA proceeds / 30% reserve / later size). **Not** a day-1 launch step.
+**30% RICH liquidity reserve:** **Size seed at post-CCA runtime only** from actual raise + market conditions — no preset % of the 300M committed in advance.
 
-**Messaging (RICHAI launch):**
+**RICH/RICHAI pool seed:** **Deferred** until both markets exist and inventory is intentional (CCA proceeds / runtime-sized slice of 30% / later). **Not** a pre-CCA step.
 
-1. Lead with **IndexedEx** + **RICH Base CCA** (bid URL / how agents participate).  
-2. State **RICH** role: L1-canonical capital + fee-distribution + preferred DETF economic leg.  
+**CCA floor / initial price (open workshop):** Because CCA runs **before** RICHAI, floor cannot be derived from a Bankr print. Define independently so implied **fully diluted market cap** is a realistic expectation. Return before deploy (see §7).
+
+**Messaging (RICHAI launch — post-CCA):**
+
+1. Lead with **IndexedEx** + **RICH** (capital + fee-distribution; post-CCA market / Uni v4).  
+2. State **RICH** role: L1-canonical capital + completed Base CCA + preferred DETF economic leg.  
 3. State **RICHAI** role: agent-native fee-distribution + Bankr surface.  
-4. Emphasize **agents can buy both** (CCA for RICH; Bankr/Uni for RICHAI).  
+4. Emphasize **agents can buy both** (RICH secondary/Uni; RICHAI Bankr/Uni).  
 5. Cross-link Gitlawb Ads + product docs; do **not** frame RICHAI as the capital raise.
-
-**Risk to watch:** Mid-CCA RICHAI can pull attention from the auction. Mitigate by putting **CCA bid instructions first** in Bankr metadata / first posts / Gitlawb tips.
 
 **Operational sequence (decided):**
 
 1. Deploy RICH on ETH (1B); allocate CCA / team / liquidity buckets.  
 2. Bridge CCA tranche to Base via canonical bridge.  
-3. Configure and **open Base CCA** (ETH quote; floor = runtime script offset; ~5 days).  
-4. Market CCA hard (docs, agents, Gitlawb tips): capital raise + DualLiquidityLinked fee-make + agent participation.  
-5. **1–3 days into CCA** (or soon after open): launch **RICHAI** on Bankr; metadata + campaign copy **lead with RICH / CCA**; agents can buy both.  
-6. Optional: **~$100 ETH** buy of RICHAI for protocol wallet (demo only).  
-7. CCA proceeds → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest liquidity).  
-8. Post-CCA: seed DualLiquidityLinked / vault graph; later **RICH/RICHAI** (or other) LP only with real size.
+3. Set CCA floor/initial price for realistic FDV optics; **back-loaded** supply over ~5 days; open Base CCA (ETH quote).  
+4. Market CCA hard (docs, agents, Gitlawb small test): capital raise + DualLiquidityLinked fee-make + agent participation.  
+5. CCA clears → proceeds → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest liquidity).  
+6. Post-auction: seed Uni v4 / DualLiquidityLinked / vault graph — **size from runtime** (proceeds + chosen slice of 30%).  
+7. **After CCA ends:** launch **RICHAI** on Bankr; fee recipient = **same proceeds wallet**; metadata **leads with RICH + IndexedEx**; agents can buy both.  
+8. Optional: **~$100 ETH** buy of RICHAI for protocol wallet (demo only).
 
 ### 1.4 Agent value proposition
 
@@ -132,11 +136,11 @@ Immediate benefits to agents (and agent operators):
 
 **How we use it (working plan):**
 
-1. **Primary (Phase 2):** RICH / IndexedEx sponsored tips **as CCA opens** — bid path, fee-make, product links.  
-2. **Secondary (Phase 3, mid-CCA):** RICHAI / dual fee-token tips; always **point back to live CCA** so agents do not treat Bankr as the raise.  
-3. **Cross-promote on Bankr:** Bankr launch metadata, X/agent prompts, and Bankr campaign copy **lead with RICH + CCA**, then RICHAI; **reference Gitlawb Ads** (and vice versa).  
-4. **Budget:** From founder ops / marketing slice of CCA proceeds or pre-launch ops wallet — **size still open** (see §7). Do **not** park ad spend authority in a Bankr agent wallet; fund from protocol-controlled address (same discipline as treasury).  
-5. **Creative themes (draft tips):** vault/DETF outsourcing for agents · invited arb · fee tokens via DualLiquidityLinked `donation` make · **RICH Base CCA first** (ETH quote, how to bid) · RICHAI on Bankr · **agents can buy both** · link to agent docs / factory.
+1. **Primary (Phase 2):** RICH / IndexedEx sponsored tips **during CCA** — bid path, fee-make, product links.  
+2. **Secondary (Phase 3, post-CCA):** RICHAI / dual fee-token tips; always **point to RICH market + product**, not Bankr-as-raise.  
+3. **Cross-promote on Bankr:** Bankr launch metadata, X/agent prompts **lead with RICH + IndexedEx**, then RICHAI; **reference Gitlawb Ads** (and vice versa).  
+4. **Budget (decided):** **Small test first** (low hundreds USDC); scale only if agents respond. Fund from protocol-controlled address (not Bankr agent wallets).  
+5. **Creative (decided):** Draft tip copy **later**; landings = **docs + CCA URL (Phase 2) + Bankr when live (Phase 3)**. Themes: vault/DETF outsourcing · invited arb · fee-make · **RICH CCA** · RICHAI · **agents can buy both**.
 
 **Anti-pattern:** Treating Gitlawb Ads as the capital raise. It is **attention + agent discovery** only; capital raise remains Base CCA for RICH.
 
@@ -214,7 +218,7 @@ Immediate benefits to agents (and agent operators):
 | **DETF as fee sink** for all other vaults/DETFs | **Strong** — especially with **`donation` buyback-and-make**. Requires fee-oracle / `feeTo` wiring + donation routing. Not “guaranteed yield.” |
 | Both tokens as DualLiquidityLinked **reserve legs** | Still **risky** for pricing math — fee-distribution role ≠ both must be in the weighted reserve. Prefer DETF reserve in **WETH + RICH** (or protocol design choice) while RICHAI is distribution/claim/side market. |
 | Optional second CCA on Ethereum later | **Sensible** — don’t compete two CCAs on day 1; use L1 CCA only if Base raise underdelivers or expansion needs L1 depth. |
-| Simultaneous RICH CCA + RICHAI Bankr | High messaging load if same T0. **Decided:** CCA first, RICHAI **1–3 days later** (mid-CCA window) so agents learn RICH exists and can buy both. |
+| Simultaneous / mid-CCA RICHAI | High messaging load; competes with auction. **Decided (2026-07-14):** CCA **fully ends**, then RICHAI — agents still learn RICH exists and can buy both. |
 
 ### 2.4 Agent thesis — research judgment
 
@@ -249,7 +253,7 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 | RICHAI Bankr Base | Fee recipient → protocol-controlled path. |
 | Optional ETH CCA later | L1 holdback of 1B supply. |
 
-**Still recommended:** RICH as primary **reserve / common or linked** leg inside DualLiquidityLinked; RICHAI agent + secondary fee narrative unless later dual-reserve.
+**Reserve legs (decided 2026-07-14):** DualLiquidityLinked day-1 reserve includes **WETH + RICH + RICHAI**. Eng must design weighted reserve / donation routing for all three (not RICH-only).
 **Local testing gap (related):** Scenario3 registers Balancer pools without `initialize()` — production launch checklist must include **seed/init liquidity** for every public pool or quotes revert (`PoolNotInitialized`). Tracked separately in UI test plan; still a launch blocker.
 
 ---
@@ -264,10 +268,10 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
    Ethereum:  deploy RICH (canonical supply control, treasury, optional later CCA)
         │ bridge (chosen standard)
         ▼
-   Base:      RICH (bridged) ──► CCA sale (FIRST) ──► Uni v4 seed
+   Base:      RICH (bridged) ──► CCA sale (FIRST, ~5d back-loaded) ──► Uni v4 seed
                          │
-                         └── ~1–3d later ──► RICHAI (Bankr) agent market
-              DualLiquidityLinked DETF + strategy vaults (product home for fees)
+                         └── after CCA ends ──► RICHAI (Bankr) agent market
+              DualLiquidityLinked DETF (WETH + RICH + RICHAI reserve) + strategy vaults
    ```
 
 2. **Token roles (public one-pager)**  
@@ -300,11 +304,12 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
    |-------|------|--------------------|
    | Total supply | **1B** | Decided |
    | % of **total** supply for Base CCA | **10%** | **Decided** → **100,000,000 RICH**; keep L1 reserve for optional ETH CCA |
-   | Floor price | **Script-param offset** (independent of RICHAI) | Definable when deploy script runs |
+   | Floor / initial price | **Independent; FDV workshop open** | Must imply realistic fully diluted mcap (see §7) |
    | Duration | **~5 days** | Peer Aztec ~4–5d; soft-decided |
+   | Supply curve | **Back-loaded** | Decided |
    | Quote asset | **ETH** | Confirmed Bankr-aligned |
    | Proceeds split | **~15 ETH ops; rest liquidity** | Decided |
-   | Sequence vs RICHAI | **CCA first** | RICHAI ~1–3d into CCA |
+   | Sequence vs RICHAI | **CCA fully first** | RICHAI **after CCA ends** |
    | L1 treasury / team vest | ☐ | Transparent; no surprise unlocks |
    | Optional ETH CCA | **Later only** | Trigger if capital gap or L1 market demand |
 
@@ -312,10 +317,10 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 
    | Param | Open | Notes |
    |-------|------|-------|
-   | Timing | **Mid-CCA** (~1–3d after CCA open) | Decided direction |
-   | Fee recipient | ☐ | Protocol distribution contract / multisig |
-   | Metadata | ☐ | **Lead with RICH + live CCA bid path**; dual fee-token; agents can buy both |
-   | Protocol RICHAI buy | **~\$100 ETH** optional | Demo only; not LP seed |
+   | Timing | **After CCA ends** | Decided |
+   | Fee recipient | **Same as CCA proceeds** `0xeD1…6D5` | Decided; re-route later if needed |
+   | Metadata | ☐ | **Lead with RICH + IndexedEx**; dual fee-token; agents can buy both |
+   | Protocol RICHAI buy | **~$100 ETH** optional | Demo only; not LP seed |
    | Partner key vs 85/15 | ☐ | Prefer controlled fee routing into same fee system as RICH if possible |
    | Relation to DETF fees | ☐ | Document how Bankr trading fees vs protocol vault fees both support holders |
 
@@ -333,8 +338,9 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 
 - Treating Bankr launch as the capital raise (it is not).  
 - Pricing CCA floor off a dust RICHAI print / day-1 dual seed theater.  
-- Same-T0 dual launch without a clear primary CTA (capital raise = CCA).  
-- Using RICH and RICHAI as interchangeable legs in DualLiquidityLinked without a math redesign.  
+- Launching RICHAI **during** CCA (attention split) or same-T0 dual launch.  
+- Setting CCA floor/FDV with no realistic fully diluted mcap story.  
+- DualLiquidityLinked **WETH + RICH + RICHAI** reserve without explicit weights, donation routing, and share accounting.  
 - Launching tokens before factory/registry deploys are **mainnet-ready and seeded**.  
 - Overclaiming “agents will manage billions” before one public demo vault has real deposits.
 
@@ -356,27 +362,25 @@ Phase 1 — Soft product launch (testnet / limited mainnet)
   [ ] Public demo: deploy vault, deposit, show arb surface, show fee flow into DETF
   [ ] Agent onboarding guide + Bankr-friendly scripts
 
-Phase 2 — RICH: Ethereum deploy → Base bridge → Base CCA (FIRST)
+Phase 2 — RICH: Ethereum deploy → Base bridge → Base CCA (FIRST; fully clear)
   [ ] Deploy RICH on Ethereum (canonical)
   [ ] Bridge CCA tranche to Base
-  [ ] Configure Base CCA (supply, floor = runtime offset independent of RICHAI, ~5d, ETH quote)
-  [ ] **Open CCA** and market hard: fee-token + DETF utility + agent bid path (not pure FDV)
-  [ ] **Gitlawb Ads:** fund RICH / IndexedEx sponsored-tip campaign (CCA window + product links)
-  [ ] Hold remaining L1 RICH for treasury + optional future ETH CCA
+  [ ] Configure Base CCA: **back-loaded** supply, ~5d, ETH quote, **independent floor** (FDV workshop)
+  [ ] **Open + clear CCA**; market hard: fee-token + DETF utility + agent bid path
+  [ ] **Gitlawb Ads:** small USDC test campaign (CCA window + product links)
+  [ ] Post-auction: seed Uni v4 / DualLiquidityLinked / vault graph — **size at runtime** from proceeds + 30% slice as needed
+  [ ] Hold remaining L1 RICH (incl. most of 30% + **58% dry**) for treasury / later ETH CCA / ecosystem
 
-Phase 3 — RICHAI Bankr (Base) — STAGGER mid-CCA (~1–3 days after CCA open)
-  [ ] Deploy RICHAI; fee recipient = protocol distribution path
-  [ ] Metadata + launch posts **lead with RICH + live CCA** (how agents bid); dual fee-token story
-  [ ] Emphasize **agents can buy both** (RICH via CCA; RICHAI via Bankr/Uni)
-  [ ] Optional: **~\$100 ETH** buy of RICHAI for protocol demo wallet (not LP seed)
+Phase 3 — RICHAI Bankr (Base) — AFTER CCA ends
+  [ ] Deploy RICHAI; fee recipient = **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (same as CCA proceeds)
+  [ ] Metadata + launch posts **lead with RICH + IndexedEx**; dual fee-token; agents can buy both
+  [ ] Optional: **~$100 ETH** buy of RICHAI for protocol demo wallet (not LP seed)
   [ ] Agent campaigns: vaults, arb, hold fee tokens
-  [ ] **Bankr campaign copy references Gitlawb Ads** (and Gitlawb tips point back to Bankr RICHAI + CCA)
-  [ ] **Gitlawb Ads:** RICHAI / dual fee-token tips; CCA bid still primary CTA
+  [ ] **Bankr campaign copy references Gitlawb Ads** (and Gitlawb tips point to RICH market + RICHAI)
+  [ ] **Gitlawb Ads:** RICHAI / dual fee-token tips (scale only if Phase 2 test worked)
 
-Phase 4 — Post-CCA liquidity + flywheel
-  [ ] Post-auction: seed DualLiquidityLinked / vault graph with proceeds + Base RICH
-  [ ] Later (optional): RICH/RICHAI or other dual LP only with **real** size — not day-1 dust seed
-  [ ] Fees → DETF → donation → underlying vaults → pool make (live, measurable)
+Phase 4 — Flywheel
+  [ ] DualLiquidityLinked reserve live: **WETH + RICH + RICHAI**; donation make measurable
   [ ] Agents deposit; arb volume; fee-make TVL dashboards
   [ ] Optional Phase 5: Ethereum CCA for additional RICH supply if capital needed
 ```
@@ -393,22 +397,29 @@ Phase 4 — Post-CCA liquidity + flywheel
 | 2026-07-11 | **Optional additional RICH CCA on Ethereum later** if more capital needed | **Decided** (deferred) |
 | 2026-07-11 | **DualLiquidityLinked DETF is fee sink** for other strategy vaults and DETFs | **Decided** (direction) |
 | 2026-07-11 | **Both RICH and RICHAI are fee-distribution tokens** | **Decided** (direction) |
-| 2026-07-11 | Prefer RICH as DETF reserve economic leg; RICHAI primarily distribution + agent market | Suggested |
+| 2026-07-11 | Prefer RICH as DETF reserve economic leg; RICHAI primarily distribution only | **Superseded** 2026-07-14 (all three in reserve) |
+| 2026-07-14 | DualLiquidityLinked day-1 reserve legs: **WETH + RICH + RICHAI** | **Decided** |
 | 2026-07-11 | Product / agent / CCA / Bankr day-1 liquidity home: **Base**; RICH canonical: **Ethereum** | **Decided** |
 | 2026-07-11 | **RICH total supply = 1,000,000,000** | **Decided** |
 | 2026-07-11 | Fee “distribution” = DETF **`donation`** → underlying vaults → pool liquidity = **buyback-and-make** | **Decided** |
 | 2026-07-11 | **Base CCA sells 10% of RICH** (100M of 1B); rest held for treasury / ecosystem / optional later ETH CCA | **Decided** |
-| 2026-07-12 | Remaining supply: **30% liquidity**, **2% team**, **10% CCA**, **58% unallocated** | **Decided** (58% use TBD) |
+| 2026-07-12 | Remaining supply: **30% liquidity**, **2% team**, **10% CCA**, **58% unallocated** | **Decided** |
+| 2026-07-14 | **58% residual hold dry** (treasury / later ETH CCA / ecosystem) — no public sub-buckets yet | **Decided** |
 | 2026-07-12 | **Team = 2%** (20M); vest = Bankr schedule (2y / 30d cliff) | **Decided** |
 | 2026-07-11 | CCA **quote asset = ETH** | **Decided** |
 | 2026-07-12 | CCA floor offset **definable at deploy-script runtime** (not hard-coded ½ Bankr) | **Decided** |
-| 2026-07-13 | CCA floor **independent of RICHAI/WETH** — auction discovers price; RICHAI does not set CCA floor | **Decided** (supersedes 2026-07-12 “align CCA to RICHAI spot”) |
+| 2026-07-13 | CCA floor **independent of RICHAI/WETH** — RICHAI does not set CCA floor | **Decided** |
+| 2026-07-14 | CCA floor/initial price → **FDV workshop** (realistic fully diluted mcap); numbers not locked yet | **Open** (return before deploy) |
 | 2026-07-11 | **Hold 30% RICH** for potential immediate liquidity with other tokens | **Decided** |
+| 2026-07-14 | **30% seed sizing at post-CCA runtime only** (from raise + market conditions) | **Decided** |
 | 2026-07-12 | ~~Must buy RICHAI before CCA; seed RICH/RICHAI + CCA aligned to RICHAI/WETH spot~~ | **Superseded** 2026-07-13 |
-| 2026-07-13 | **Launch order: RICH Base CCA first → RICHAI Bankr staggered ~1–3 days into CCA** (not same T0) | **Decided** |
-| 2026-07-13 | **RICHAI buy budget ~\$100 ETH** — symbolic/demo only; **not** day-1 LP seed | **Decided** |
+| 2026-07-13 | ~~RICHAI mid-CCA (~1–3 days into CCA)~~ | **Superseded** 2026-07-14 |
+| 2026-07-14 | **Launch order: RICH Base CCA fully clears → then RICHAI Bankr** | **Decided** |
+| 2026-07-14 | CCA supply curve **back-loaded** over ~5-day window | **Decided** |
+| 2026-07-13 | **RICHAI buy budget ~$100 ETH** — symbolic/demo only; **not** day-1 LP seed | **Decided** |
 | 2026-07-13 | **Day-1 RICH/RICHAI pool seed deferred** until real inventory (post-CCA / later) | **Decided** |
-| 2026-07-13 | RICHAI launch messaging **leads with RICH + CCA**; emphasize agents can buy both | **Decided** |
+| 2026-07-13/14 | RICHAI launch messaging **leads with RICH + IndexedEx**; emphasize agents can buy both | **Decided** |
+| 2026-07-14 | Bankr RICHAI fee recipient = **same as CCA proceeds** `0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5` | **Decided** |
 | 2026-07-11 | CCA duration peer **~4–5 days** (Aztec); working pick **5 days** open clearing | **Suggested / soft-decided** |
 | 2026-07-11 | Open bidding (humans + agents); market CCA to **Bankr agents** | **Decided** |
 | 2026-07-11 | Proceeds: **~15 ETH (~$20k)** founder ops; **rest → liquidity** | **Decided** |
@@ -417,7 +428,9 @@ Phase 4 — Post-CCA liquidity + flywheel
 | 2026-07-11 | Cross-pool arb allowed as discovery; **not** designed as forced drain of locked Bankr LP | **Decided** |
 | 2026-07-11 | All vault fees → RICH/RICHAI DETF; convert to WETH/RICH/RICHAI then donate; **donation permissionless** | **Decided** |
 | 2026-07-12 | External third-token pairing deferred; **omit from launch materials** | **Decided** |
-| 2026-07-13 | **Gitlawb Ads** ([ads.gitlawb.com](https://ads.gitlawb.com/)) as launch distribution channel for RICH + RICHAI; **reference Gitlawb Ads in Bankr campaign** (cross-promote) | **Decided** (direction; budget/creative still open) |
+| 2026-07-13 | **Gitlawb Ads** as launch distribution; Bankr campaign cross-references Gitlawb | **Decided** (direction) |
+| 2026-07-14 | Gitlawb budget: **small test first** (low hundreds USDC); creative draft later; landings = docs + CCA + Bankr when live | **Decided** |
+| 2026-07-14 | Tickers locked **RICH** + **RICHAI**; formal **audit + calendar still open** | **Decided** (partial) |
 
 ---
 
@@ -425,28 +438,26 @@ Phase 4 — Post-CCA liquidity + flywheel
 
 ### Locked / decided (summary)
 
-- RICH 1B: **10% CCA**, **30% liquidity**, **2% team**, **58% unallocated**  
-- Team vest = Bankr (2y / 30d cliff)  
-- ETH quote; CCA floor **offset = deploy-script param**, **independent of RICHAI**  
-- **Sequence:** **CCA first** → **RICHAI ~1–3 days into CCA** (stagger; not same T0)  
-- **RICHAI buy ~\$100 ETH** (demo only); **no day-1 RICH/RICHAI seed**  
-- RICHAI announcement **leads with RICH + CCA**; agents can buy both  
-- CCA proceeds → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest LP)  
+- RICH 1B: **10% CCA**, **30% liquidity**, **2% team**, **58% unallocated (hold dry)**  
+- Team vest = Bankr (2y / 30d cliff); tickers **RICH** + **RICHAI**  
+- ETH quote; CCA floor **independent of RICHAI**; supply curve **back-loaded** ~5d  
+- **Sequence:** **CCA fully clears** → **then RICHAI Bankr**  
+- **30% seed:** size **at post-CCA runtime only**  
+- DualLiquidityLinked reserve: **WETH + RICH + RICHAI**  
+- **RICHAI buy ~$100 ETH** (demo only); **no day-1 dual seed theater**  
+- RICHAI messaging **leads with RICH + IndexedEx**; agents can buy both  
+- CCA proceeds + Bankr fee recipient → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest LP)  
 - Open agents+humans; canonical bridge; donation fee path  
-- **Gitlawb Ads** for RICH/RICHAI launch attention; Bankr campaign **references** Gitlawb Ads  
+- **Gitlawb:** small USDC test first; creative later; landings = docs + CCA + Bankr when live  
 
 ### Still open
 
-1. **Exact stagger** within 1–3 days (calendar day of RICHAI vs CCA open hour)?  
-2. **How much of the 30%** for post-CCA / later dual-token seed vs held back?  
-3. **Default script offset** (still free at runtime)?  
-4. **CCA supply curve** within the 5 days?  
-5. **Bankr fee recipient** for RICHAI (same as proceeds wallet?)?  
-6. **DualLiquidityLinked** roles for RICH / RICHAI / WETH?  
-7. Brand / naming / audit / calendar?  
-8. Use of the **58%** residual?  
-9. **Gitlawb Ads budget** (USDC tip fund size, campaign count; Phase 2 CCA-first then Phase 3 dual)?  
-10. **Gitlawb Ads creative** — final tip copy set + landing URLs (docs, **CCA primary**, Bankr ticker, demo vault)?
+1. **CCA floor / initial price → realistic FDV workshop** — pick floor and implied fully diluted mcap before deploy (CCA runs before RICHAI, so no Bankr reference).  
+2. **Audit scope** — token + product path; required before CCA?  
+3. **Launch calendar** — target window / month.  
+4. **DualLiquidityLinked weights** among WETH / RICH / RICHAI + donation routing details.  
+5. **Bankr metadata final copy** + partner key vs 85/15.  
+6. **Exact Gitlawb tip copy** when URLs exist (budget approach already locked).
 
 ## 8. Sources (research)
 
@@ -518,13 +529,14 @@ Sources: [Tokenomist standard allocation](https://insights.unlocks.app/tokenunlo
 - Base agent plugin / buy flow: purchase Bankr launches with **`ETH` or `USDC`** via swap (`fromAsset` ETH or USDC).  
 - Live BankrCoin pools are commonly **BNKR/WETH**.  
 - **Conclusion:** User is **correct that ETH is the natural quote** for Bankr-aligned markets. CCA **quote asset = ETH** is consistent. USDC is also possible on Bankr buys but not required.  
-- **Launch planning update (2026-07-13):** Creator vest still locked, but **day-1 does not depend on buying RICHAI for seed**. Optional **~\$100 ETH** buy for demo only. CCA runs **first** and discovers its own price.
+- **Launch planning update (2026-07-14):** Creator vest still locked; optional **~$100 ETH** RICHAI buy for demo only. CCA runs **first and fully clears**; RICHAI **after**. Floor set independently for realistic FDV (workshop open).
 
 **Bankr creator unlock (team vest mirror)**
 
 - **15%** of Bankr token supply to creator.  
 - **2 years total** vesting, **30-day cliff**, then continuous until fully unlocked at **2 years** (cliff inside the 2y window).  
-- **RICH team vest:** same schedule (**2%** of RICH = 20M decided).
+- **RICH team vest:** same schedule (**2%** of RICH = 20M decided).  
+- **RICHAI Bankr fee recipient:** same as CCA proceeds wallet.
 
 **CCA duration peers**
 
@@ -533,13 +545,13 @@ Sources: [Tokenomist standard allocation](https://insights.unlocks.app/tokenunlo
 | **Aztec CCA** | Public bidding **~4–5 calendar days** (reported Dec 2–6, 2025) plus earlier registration / pre-bid window |
 | CCA product | Duration is a **configurable parameter** (no single mandated default) |
 
-**Recommendation for this launch:** **5 days** open continuous clearing (enough for agent discovery + mid-CCA Bankr RICHAI loop; shorter than multi-week LBPs; matches Aztec peer). Optional short pre-bid / marketing window before clearing starts.
+**Recommendation for this launch:** **5 days** open continuous clearing, **back-loaded** supply (more tokens later in the window). RICHAI launches **after** clearing ends. Optional short pre-bid / marketing window before clearing starts.
 
-**Pricing / arb / sequence (updated 2026-07-13)**
+**Pricing / arb / sequence (updated 2026-07-14)**
 
-- **Superseded:** half Bankr list (instant arb); **buy RICHAI first** then align CCA + RICH/RICHAI to RICHAI/WETH spot.  
-- **Current:** **CCA first** (floor = deploy-script offset; independent price discovery) → **RICHAI staggered ~1–3 days** into CCA → optional **~\$100 ETH** RICHAI buy (not seed) → **RICH/RICHAI LP deferred** until real size.  
-- **30% RICH reserve** backs post-CCA / DETF / later dual pools — not day-1 dual seed against dust RICHAI.
+- **Superseded:** half Bankr list; buy RICHAI first for spot; mid-CCA RICHAI stagger.  
+- **Current:** set independent CCA floor/FDV → **back-loaded CCA** (~5d) → post-CCA seed **sized at runtime** → **RICHAI after CCA ends** → optional **~$100 ETH** RICHAI buy → dual LP only with real size.  
+- **30% RICH reserve:** not pre-committed %; size when settling post-CCA.
 ### 2.7 Addendum — donation / buyback-and-make (2026-07-11)
 
 **Mechanism (decided):**
@@ -573,4 +585,4 @@ Sources: [Tokenomist standard allocation](https://insights.unlocks.app/tokenunlo
 
 ---
 
-*Last updated: 2026-07-13 — CCA-first sequence; RICHAI staggered mid-CCA (~1–3d); ~$100 RICHAI buy (demo only); day-1 dual seed deferred; Gitlawb Ads still open on budget/creative.*
+*Last updated: 2026-07-14 — Open Q batch closed: CCA fully first then RICHAI; back-loaded CCA; 30% runtime seed; WETH+RICH+RICHAI reserve; 58% dry; Gitlawb small test; FDV floor workshop still open.*
