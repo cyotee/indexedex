@@ -26,10 +26,18 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 
 import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultRepo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 
 // abstract
 contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
+    /// @dev Separate frame to avoid stack-too-deep in exchangeIn/Out dispatchers.
+    function _requireNotDisabled() internal view {
+        if (IVaultRegistryDisableQuery(address(StandardVaultRepo._feeOracle())).isDisabled(address(this))) {
+            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
+        }
+    }
     using ERC20Repo for ERC20Repo.Storage;
     using BetterSafeERC20 for IERC20;
     using ERC4626Repo for ERC4626Repo.Storage;

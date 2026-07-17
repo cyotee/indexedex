@@ -400,6 +400,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountIn) {
+        _requireNotDisabled();
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }

@@ -85,18 +85,26 @@ contract Script_03_DeployCoreProxies is DeploymentBase {
         IFacet vaultRegistryVaultPackageQueryFacet = create3Factory.deployVaultRegistryVaultPackageQueryFacet();
         IFacet vaultRegistryVaultQueryFacet = create3Factory.deployVaultRegistryVaultQueryFacet();
 
+        IFacet vaultRegistryDisableQueryFacet = create3Factory.deployVaultRegistryDisableQueryFacet();
+
+        IFacet vaultRegistryDisableManagerFacet = create3Factory.deployVaultRegistryDisableManagerFacet();
+
         IIndexedexManagerDFPkg indexedexManagerDFPkg = create3Factory.deployIndexedexManagerDFPkg(
-            diamondCutFacet,
-            multiStepOwnableFacet,
-            vaultFeeOracleQueryFacet,
-            vaultFeeOracleManagerFacet,
-            operableFacet,
-            vaultRegistryDeploymentFacet,
-            vaultRegistryVaultManagerFacet,
-            vaultRegistryVaultPackageManagerFacet,
-            vaultRegistryVaultPackageQueryFacet,
-            vaultRegistryVaultQueryFacet
-        );
+            IIndexedexManagerDFPkg.PkgInit({
+                diamondCutFacet: diamondCutFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet,
+                vaultFeeQueryFacet: vaultFeeOracleQueryFacet,
+                vaultFeeManagerFacet: vaultFeeOracleManagerFacet,
+                operableFacet: operableFacet,
+                vaultRegistryDeploymentFacet: vaultRegistryDeploymentFacet,
+                vaultRegistryVaultManagerFacet: vaultRegistryVaultManagerFacet,
+                vaultRegistryVaultPackageManagerFacet: vaultRegistryVaultPackageManagerFacet,
+                vaultRegistryVaultPackageQueryFacet: vaultRegistryVaultPackageQueryFacet,
+                vaultRegistryVaultQueryFacet: vaultRegistryVaultQueryFacet,
+                vaultRegistryDisableQueryFacet: vaultRegistryDisableQueryFacet,
+                vaultRegistryDisableManagerFacet: vaultRegistryDisableManagerFacet
+            })
+            );
 
         indexedexManager = diamondPackageFactory.deployIndexedexManager(
             create3Factory,

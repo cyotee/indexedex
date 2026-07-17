@@ -20,10 +20,12 @@ import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwn
 /* -------------------------------------------------------------------------- */
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {VaultRegistryVaultRepo} from "contracts/registries/vault/VaultRegistryVaultRepo.sol";
 import {VaultRegistryVaultPackageRepo} from "contracts/registries/vault/VaultRegistryVaultPackageRepo.sol";
+import {VaultRegistryDisableRepo} from "contracts/registries/vault/VaultRegistryDisableRepo.sol";
 
 contract VaultRegistryDeploymentTarget is OperableModifiers, IVaultRegistryDeployment {
     /* -------------------------------------------------------------------------- */
@@ -56,6 +58,9 @@ contract VaultRegistryDeploymentTarget is OperableModifiers, IVaultRegistryDeplo
 
         if (!VaultRegistryVaultPackageRepo._isPkg(address(pkg))) {
             revert PkgNotRegistered(address(pkg));
+        }
+        if (VaultRegistryDisableRepo._isPackageDisabled(address(pkg))) {
+            revert IVaultRegistryDisableQuery.DisabledPackage(address(pkg));
         }
         vault = DiamondPackageFactoryAwareRepo._diamondPackageFactory()
             .deploy(IDiamondFactoryPackage(address(pkg)), pkgArgs);

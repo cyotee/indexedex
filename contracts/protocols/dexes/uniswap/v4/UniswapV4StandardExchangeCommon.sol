@@ -29,6 +29,8 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 /* -------------------------------------------------------------------------- */
 
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {UniswapV4PoolManagerAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolManagerAwareRepo.sol";
 import {UniswapV4PoolKeyAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolKeyAwareRepo.sol";
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
@@ -38,6 +40,13 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     using BetterSafeERC20 for IERC20;
     using BalanceDeltaLibrary for BalanceDelta;
     using CurrencyLibrary for Currency;
+
+    /// @dev Separate frame to avoid stack-too-deep in exchangeIn/Out dispatchers.
+    function _requireNotDisabled() internal view {
+        if (IVaultRegistryDisableQuery(address(StandardVaultRepo._feeOracle())).isDisabled(address(this))) {
+            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
+        }
+    }
     using SafeCast for int256;
     using SafeCast for uint256;
 

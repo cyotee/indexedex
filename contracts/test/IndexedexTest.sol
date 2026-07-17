@@ -59,6 +59,10 @@ contract IndexedexTest is CraneTest {
 
     IFacet vaultRegistryVaultQueryFacet;
 
+    IFacet vaultRegistryDisableQueryFacet;
+
+    IFacet vaultRegistryDisableManagerFacet;
+
     IIndexedexManagerDFPkg indexedexManagerDFPkg;
 
     IIndexedexManagerProxy indexedexManager;
@@ -103,32 +107,29 @@ contract IndexedexTest is CraneTest {
             vm.label(address(vaultRegistryVaultPackageQueryFacet), "vaultRegistryVaultPackageQueryFacet");
             vaultRegistryVaultQueryFacet = create3Factory.deployVaultRegistryVaultQueryFacet();
             vm.label(address(vaultRegistryVaultQueryFacet), "vaultRegistryVaultQueryFacet");
+            vaultRegistryDisableQueryFacet = create3Factory.deployVaultRegistryDisableQueryFacet();
+            vm.label(address(vaultRegistryDisableQueryFacet), "vaultRegistryDisableQueryFacet");
+            vaultRegistryDisableManagerFacet = create3Factory.deployVaultRegistryDisableManagerFacet();
+            vm.label(address(vaultRegistryDisableManagerFacet), "vaultRegistryDisableManagerFacet");
             // deploy operableFacet and include it in the manager package so operator tests use the real operable implementation
             IFacet operableFacet = create3Factory.deployOperableFacet();
             vm.label(address(operableFacet), "operableFacet");
 
             indexedexManagerDFPkg = create3Factory.deployIndexedexManagerDFPkg(
-                // ICreate3FactoryProxy create3Factory,
-                // IFacet diamondCutFacet,
-                diamondCutFacet,
-                // IFacet multiStepOwnableFacet,
-                multiStepOwnableFacet,
-                // IFacet vaultFeeOracleQueryFacet,
-                vaultFeeOracleQueryFacet,
-                // IFacet vaultFeeOracleManagerFacet,
-                vaultFeeOracleManagerFacet,
-                // IFacet operableFacet,
-                operableFacet,
-                // IFacet vaultRegistryDeploymentFacet,
-                vaultRegistryDeploymentFacet,
-                // IFacet vaultRegistryVaultManagerFacet,
-                vaultRegistryVaultManagerFacet,
-                // IFacet vaultRegistryVaultPackageManagerFacet,
-                vaultRegistryVaultPackageManagerFacet,
-                // IFacet vaultRegistryVaultPackageQueryFacet,
-                vaultRegistryVaultPackageQueryFacet,
-                // IFacet vaultRegistryVaultQueryFacet
-                vaultRegistryVaultQueryFacet
+                IIndexedexManagerDFPkg.PkgInit({
+                    diamondCutFacet: diamondCutFacet,
+                    multiStepOwnableFacet: multiStepOwnableFacet,
+                    vaultFeeQueryFacet: vaultFeeOracleQueryFacet,
+                    vaultFeeManagerFacet: vaultFeeOracleManagerFacet,
+                    operableFacet: operableFacet,
+                    vaultRegistryDeploymentFacet: vaultRegistryDeploymentFacet,
+                    vaultRegistryVaultManagerFacet: vaultRegistryVaultManagerFacet,
+                    vaultRegistryVaultPackageManagerFacet: vaultRegistryVaultPackageManagerFacet,
+                    vaultRegistryVaultPackageQueryFacet: vaultRegistryVaultPackageQueryFacet,
+                    vaultRegistryVaultQueryFacet: vaultRegistryVaultQueryFacet,
+                    vaultRegistryDisableQueryFacet: vaultRegistryDisableQueryFacet,
+                    vaultRegistryDisableManagerFacet: vaultRegistryDisableManagerFacet
+                })
             );
             vm.label(address(indexedexManagerDFPkg), "indexedexManagerDFPkg");
             indexedexManager = diamondPackageFactory.deployIndexedexManager(

@@ -31,6 +31,8 @@ import {DETFUsageFeeLib} from "contracts/vaults/detf/core/DETFUsageFeeLib.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
@@ -64,9 +66,18 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     }
 
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
+        _requireNotDisabled();
         if (amount_ == 0) revert SingleStandardExchangeDETFRepo.ZeroAmount();
         if (block.timestamp > deadline_) {
             revert SingleStandardExchangeDETFRepo.DeadlineExpired(deadline_);
+        }
+    }
+
+    /// @notice Reverts if this DETF is disabled by address or package on the Vault Registry.
+    function _requireNotDisabled() internal view {
+        address reg = address(StandardVaultRepo._feeOracle());
+        if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
+            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
         }
     }
 

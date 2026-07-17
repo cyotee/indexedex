@@ -8,6 +8,8 @@ import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     IAerodromeStandardExchangeDFPkg
@@ -94,6 +96,40 @@ contract VaultRegistryDeployment_Auth_Test is TestBase_AerodromeStandardExchange
         address vault = aerodromeStandardExchangeDFPkg.deployVault(aeroExtremeUnbalancedPool);
 
         assertTrue(vault != address(0), "Vault should be deployed via DFPkg by any user");
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                        Package disable deploy gate                          */
+    /* -------------------------------------------------------------------------- */
+
+    function test_deployVault_revertsWhenPackageDisabled() public {
+        address pkg = address(aerodromeStandardExchangeDFPkg);
+
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(pkg, true);
+
+        vm.prank(owner);
+        vm.expectRevert(abi.encodeWithSelector(IVaultRegistryDisableQuery.DisabledPackage.selector, pkg));
+        IVaultRegistryDeployment(address(indexedexManager)).deployVault(
+            IStandardVaultPkg(pkg),
+            abi.encode(IAerodromeStandardExchangeDFPkg.PkgArgs({reserveAsset: aeroBalancedPool}))
+        );
+    }
+
+    function test_deployVault_succeedsAfterPackageReenabled() public {
+        address pkg = address(aerodromeStandardExchangeDFPkg);
+
+        vm.startPrank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(pkg, true);
+        IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(pkg, false);
+        address vault = IVaultRegistryDeployment(address(indexedexManager)).deployVault(
+            IStandardVaultPkg(pkg),
+            abi.encode(IAerodromeStandardExchangeDFPkg.PkgArgs({reserveAsset: aeroBalancedPool}))
+        );
+        vm.stopPrank();
+
+        assertTrue(vault != address(0), "Vault should deploy after package re-enable");
+        assertEq(IVaultRegistryDisableQuery(address(indexedexManager)).packageOfVault(vault), pkg);
     }
 
     /* -------------------------------------------------------------------------- */

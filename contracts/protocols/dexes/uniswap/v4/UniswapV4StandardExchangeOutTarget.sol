@@ -69,6 +69,7 @@ contract UniswapV4StandardExchangeOutTarget is UniswapV4StandardExchangeCommon, 
         nonReentrant
         returns (uint256 amountIn)
     {
+        _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeOut_DeadlineExceeded();
 
         address token0 = _token0();

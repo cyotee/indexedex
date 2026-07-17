@@ -71,6 +71,8 @@ library VaultRegistryVaultRepo {
         mapping(address vault => bytes4 seigniorageId) seigniorageIdOfVault;
         // Bytes4Set lendingVaultTypeIds;
         mapping(address vault => bytes4 lendingFeeId) lendingFeeIdOfVault;
+        // Reverse map: vault → package used at registration (for kill-switch O(1) package tier).
+        mapping(address vault => address pkg) pkgOfVault;
         // Bytes4Set tbdVaultTypeIds0;
         // Bytes4Set tbdVaultTypeIds1;
         // Bytes4Set tbdVaultTypeIds2;
@@ -102,6 +104,8 @@ library VaultRegistryVaultRepo {
         // bytes32 contentsID = abi.encode(tokens).hash();
         // VaultRegistryLayout.contentsIds
         layoutStruct.contentsIds._add(vaultConfig.contentsId);
+        // Reverse package lookup for kill-switch
+        layoutStruct.pkgOfVault[vault] = pkg;
         // VaultRegistryLayout.vaultsOfPkg
         layoutStruct.vaultsOfPkg[pkg]._add(vault);
         // VaultRegistryLayout.vaultsOfContentsId
@@ -163,6 +167,7 @@ library VaultRegistryVaultRepo {
         // bytes32 contentsID = abi.encode(tokens).hash();
         // VaultRegistryLayout.contentsIds
         // layoutStruct.contentsIds._add(vaultConfig.contentsId);
+        delete layoutStruct.pkgOfVault[vault];
         // VaultRegistryLayout.vaultsOfPkg
         layoutStruct.vaultsOfPkg[pkg]._remove(vault);
         // VaultRegistryLayout.vaultsOfContentsId
@@ -393,5 +398,13 @@ library VaultRegistryVaultRepo {
 
     function _lendingFeeIdOfVault(address vault) internal view returns (bytes4 lendingFeeId_) {
         return _lendingFeeIdOfVault(_layoutStruct(), vault);
+    }
+
+    function _packageOfVault(Storage storage layoutStruct, address vault) internal view returns (address pkg_) {
+        return layoutStruct.pkgOfVault[vault];
+    }
+
+    function _packageOfVault(address vault) internal view returns (address pkg_) {
+        return _packageOfVault(_layoutStruct(), vault);
     }
 }

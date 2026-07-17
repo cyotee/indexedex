@@ -21,6 +21,8 @@ import {
     BalancerV3VaultAwareRepo
 } from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareRepo.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/core/DETFUsageFeeLib.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {
     DualLiquidityLinkedCrossVersionUniswapVaultRepo
 } from "contracts/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol";
@@ -523,8 +525,17 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
     /// @param deadline_ Unix timestamp after which the call is considered expired.
     /// @param amount_   Input/output amount (must be non-zero).
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
+        _requireNotDisabled();
         if (amount_ == 0) revert DualLiquidityLinkedCrossVersionUniswapVaultRepo.ZeroAmount();
         if (block.timestamp > deadline_) revert DualLiquidityLinkedCrossVersionUniswapVaultRepo.DeadlineExpired(deadline_);
+    }
+
+    /// @notice Reverts if this vault is disabled by address or package on the Vault Registry.
+    function _requireNotDisabled() internal view {
+        address reg = address(StandardVaultRepo._feeOracle());
+        if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
+            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
+        }
     }
 
     /// @notice Reverts unless the reserve already holds BPT. Required by every route except the

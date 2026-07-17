@@ -9,6 +9,8 @@ import {IVaultRegistryVaultManager} from "contracts/interfaces/IVaultRegistryVau
 import {IVaultRegistryVaultPackageManager} from "contracts/interfaces/IVaultRegistryVaultPackageManager.sol";
 import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 
 interface IIndexedexManagerProxy is
     IMultiStepOwnable,
@@ -18,5 +20,7 @@ interface IIndexedexManagerProxy is
     IVaultRegistryVaultManager,
     IVaultRegistryVaultPackageManager,
     IVaultRegistryVaultPackageQuery,
-    IVaultRegistryVaultQuery
+    IVaultRegistryVaultQuery,
+    IVaultRegistryDisableQuery,
+    IVaultRegistryDisableManager
 {}

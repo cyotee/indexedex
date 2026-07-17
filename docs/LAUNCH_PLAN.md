@@ -1,8 +1,17 @@
 # IndexedEx / DualLiquidityLinked DETF — Launch Plan
 
-**Status:** Living document — research + decisions as of 2026-07-14  
+**Status:** Living document — research + decisions as of 2026-07-17  
 **Owner discussion:** In progress (not frozen)  
 **Primary product surface:** DualLiquidityLinked DETF + strategy vaults + agent portfolio tooling
+
+### Current work track (2026-07-17)
+
+1. **Review this plan** and fill remaining product/engineering gaps.  
+2. **Implement missing features** — especially DETF `donation` (fee routing into DualLiquidityLinked) and **Vault Registry kill-switch** (owner-controlled disable + emergency withdraw).  
+3. **Prepare a testnet deployment** that demonstrates the protocol (deploy → bootstrap/first bond → fee flow → donation make).  
+4. **Write announcement copy** for the **CCA (RICH)** launch and the subsequent **Bankr (RICHAI)** launch.
+
+**Out of scope for now:** DAOSYS / Crane bounty-token launch (`daosys/BANKR_LAUNCH.md`). Revisit only **after** CCA + Bankr launches.
 
 ---
 
@@ -12,7 +21,7 @@
 
 | Token | Origin / venue | Stated purpose |
 |-------|----------------|----------------|
-| **RICH** | **Deploy on Ethereum mainnet** → **bridge to Base** → sell via **Uniswap CCA on Base** | Capital raise + price discovery + Base Uni v4 seed; **fee-distribution token** for the protocol flywheel |
+| **RICH** | **Deploy on Ethereum** (Crane **ERC20 Permit DFPkg**) → **canonical Superchain bridge to Base** → sell via **Uniswap CCA on Base** | Capital raise + price discovery + Base Uni v4 seed; **fee-distribution token** for the protocol flywheel |
 | **RICHAI** | **Bankr** on Base (agent launchpad) | Agent/social traction; **fee-distribution token** alongside RICH |
 | **Optional later** | Second **RICH CCA on Ethereum** | Additional capital only if needed — **not** day-1 |
 
@@ -21,20 +30,24 @@ Canonical economic home of the token contract is **Ethereum**. Day-1 sale liquid
 ### 1.2 Fee architecture (decided)
 
 1. **All fees from other vaults / DETFs** flow into the **RICH/RICHAI DualLiquidityLinked DETF**.  
-2. If fee inventory is **not** already WETH / RICH / RICHAI (or other tokens the DETF reserve accepts), it is **sold into WETH and/or RICH and/or RICHAI**, then donated.  
-3. **`donation` is permissionless**: processes tokens into the reserve and **updates DETF state for consistency** (share/NAV accounting).  
-4. Donation path deposits into underlying strategy vaults → **buy into liquidity in underlying pools** = **buyback-and-make**.  
-5. **RICH** and **RICHAI** are fee-distribution tokens via deeper DETF-linked liquidity / NAV (not a classic cash dividend unless added later).
+2. Other vaults call the existing **Vault Fee Collector**; eng wires collector inventory into the DETF **`donation`** path (collector exists; donation + routing still to implement).  
+3. If fee inventory is **not** already WETH / RICH / RICHAI (or other tokens the DETF reserve accepts), it is **sold into WETH and/or RICH and/or RICHAI**, then donated.  
+4. **`donation` is permissionless**: processes tokens into the reserve and **updates DETF state for consistency** (share/NAV accounting). DualLiquidityLinked is **ready** for this feature to be added.  
+5. Donation path deposits into underlying strategy vaults → **buy into liquidity in underlying pools** = **buyback-and-make**.  
+6. **RICH** and **RICHAI** are fee-distribution tokens via deeper DETF-linked liquidity / NAV (not a classic cash dividend unless added later).
 
 ```text
 Other vaults / DETFs
         │  fees (any assets)
         ▼
+ Vault Fee Collector  (exists; other vaults call it)
+        │
+        ▼
   [sell → WETH / RICH / RICHAI if needed]
         │
         ▼
  RICH/RICHAI DualLiquidityLinked DETF
-        │  donation()  (permissionless)
+        │  donation()  (permissionless; to implement)
         ▼
  Underlying strategy vaults → underlying pools
         └── make liquidity + consistent reserve state
@@ -69,7 +82,7 @@ Other vaults / DETFs
 | Participation | **Open** — anyone + agents; market CCA during auction; RICHAI **after** CCA ends |
 | Proceeds recipient | **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** |
 | Proceeds split | From that wallet: **~15 ETH (~$20k)** founder ops; **remainder → liquidity** |
-| Bridge | **Canonical ETH→Base** for CCA tranche |
+| Bridge | **Canonical Superchain (OP Stack) ETH→Base** for CCA tranche |
 
 ### 1.3c Launch market structure (CCA first → RICHAI after CCA ends)
 
@@ -103,8 +116,8 @@ Other vaults / DETFs
 
 **Operational sequence (decided):**
 
-1. Deploy RICH on ETH (1B); allocate CCA / team / liquidity buckets.  
-2. Bridge CCA tranche to Base via canonical bridge.  
+1. Deploy RICH on ETH (1B) via Crane ERC20 Permit DFPkg; allocate CCA / team / liquidity buckets.  
+2. Bridge CCA tranche to Base via canonical Superchain (OP Stack) bridge.  
 3. Set CCA floor/initial price for realistic FDV optics; **back-loaded** supply over ~5 days; open Base CCA (ETH quote).  
 4. Market CCA hard (docs, agents, Gitlawb small test): capital raise + DualLiquidityLinked fee-make + agent participation.  
 5. CCA clears → proceeds → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest liquidity).  
@@ -245,16 +258,20 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 
 | Decision | Implication for engineering |
 |----------|----------------------------|
-| DETF = **fee sink** for other vaults/DETFs | Wire fee oracle / `feeTo` (or equivalent) so fees land where `donation` can consume them. |
-| **`donation` = buyback-and-make** | Implement DETF `donation` → deposit underlying strategy vaults → liquidity in underlying pools. Events for indexers/agents. Donation-resistant share accounting. |
+| DETF = **fee sink** for other vaults/DETFs | Other vaults call **Vault Fee Collector**; wire collector → DualLiquidityLinked **`donation`**. |
+| **`donation` = buyback-and-make** | Implement DETF `donation` → deposit underlying strategy vaults → liquidity in underlying pools. Events for indexers/agents. Donation-resistant share accounting. DualLiquidityLinked is ready for this work. |
 | RICH + RICHAI = **fee-distribution tokens** | Value accrual via **deeper DETF-linked liquidity / NAV**, not necessarily a claimable dividend. Still need public wording for how each ticker benefits. |
-| RICH **1B** fixed supply | Token constructor / mint-once; CCA + L1 allocations as % of 1B. |
-| RICH L1 canonical, Base CCA | Deploy on **Ethereum**; bridge CCA tranche to Base; CCA uses Base address. |
+| RICH **1B** fixed supply | Deploy via Crane **ERC20 Permit DFPkg** (mint-once / fixed supply); CCA + L1 allocations as % of 1B. |
+| RICH L1 canonical, Base CCA | Deploy on **Ethereum**; bridge CCA tranche to Base via **canonical Superchain (OP Stack) bridge**; CCA uses Base address. |
 | RICHAI Bankr Base | Fee recipient → protocol-controlled path. |
 | Optional ETH CCA later | L1 holdback of 1B supply. |
+| **Kill-switch (new)** | Owner-controlled disable: vaults/DETFs query **Vault Registry** whether a vault or **vault type ID** is disabled. Registry is source of truth for active vs disabled (includes disabled **emergency withdraw** path). |
 
-**Reserve legs (decided 2026-07-14):** DualLiquidityLinked day-1 reserve includes **WETH + RICH + RICHAI**. Eng must design weighted reserve / donation routing for all three (not RICH-only).
-**Local testing gap (related):** Scenario3 registers Balancer pools without `initialize()` — production launch checklist must include **seed/init liquidity** for every public pool or quotes revert (`PoolNotInitialized`). Tracked separately in UI test plan; still a launch blocker.
+**Reserve legs (decided 2026-07-14):** DualLiquidityLinked day-1 economic assets are **WETH + RICH + RICHAI** (token mapping at deploy, e.g. commonToken / tokenA / tokenB).
+
+**Reserve weights (clarified 2026-07-17):** Set in the DualLiquidityLinked **DFPkg** via `PkgArgs.weightA` / `weightB` / `weightPair` (WAD, must sum to `1e18`). Defaults if zero: **20% / 20% / 60%** over the three **SE vault-share legs** (commonToken–tokenA V4, commonToken–tokenB V4, tokenA–tokenB V2 pair) — not a separate free-form WETH/RICH/RICHAI weight table outside the package. Keep defaults unless deploy args override.
+
+**Bootstrap / Scenario3 (clarified 2026-07-17):** Deploy is **inert by design**: the Weighted Pool is **created but not initialized**; non-bootstrap routes revert until live (`ReservePoolNotInitialized` / equivalent). The DETF reserve is initialized by the **first bond / bootstrap path**: external deposits into underlying vaults produce leg shares (BPR); those shares initialize the weighted reserve; first BPT→shares deposit makes the vault live (1:1 when empty). Scenario3 “pool not initialized” is **expected pre-bootstrap state**, not a missing “seed every pool in the deploy script” production blocker. Demo/testnet checklist: **deploy → bootstrap/first bond → then exercise fees/donation**.
 
 ---
 
@@ -265,13 +282,13 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 1. **Chain topology (decided shape)**  
 
    ```text
-   Ethereum:  deploy RICH (canonical supply control, treasury, optional later CCA)
-        │ bridge (chosen standard)
+   Ethereum:  deploy RICH via Crane ERC20 Permit DFPkg (canonical supply, treasury, optional later CCA)
+        │ canonical Superchain (OP Stack) bridge ETH → Base
         ▼
    Base:      RICH (bridged) ──► CCA sale (FIRST, ~5d back-loaded) ──► Uni v4 seed
                          │
                          └── after CCA ends ──► RICHAI (Bankr) agent market
-              DualLiquidityLinked DETF (WETH + RICH + RICHAI reserve) + strategy vaults
+              DualLiquidityLinked DETF (WETH + RICH + RICHAI; pkg weights e.g. 20/20/60) + strategy vaults
    ```
 
 2. **Token roles (public one-pager)**  
@@ -283,14 +300,15 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
    | DualLiquidityLinked DETF | **Fee sink** + **`donation` buyback-and-make** into underlying vaults/pools | Not a claim-and-withdraw dividend vault (unless later added) |
 
 3. **Fee path is buyback-and-make via `donation` (decided mechanism)**  
+   **Decided inputs:** Vault Fee Collector already receives fees from other vaults; DualLiquidityLinked is ready for `donation` implementation; donation remains permissionless.  
    Still open for eng spec:  
-   - Which fees enter the DETF (list by facet/oracle).  
-   - `donation` interface: assets accepted, routing to which underlying vaults, min amounts, reentrancy.  
-   - Share/NAV accounting under donation (no unfair dilution).  
-   - Keeper vs permissionless donation.  
-   - How **RICHAI** shares the story if make only hits RICH-linked legs.
-4. **Bridge selection is a launch-critical decision**  
-   Options to evaluate: Superchain / native Base bridge for ETH↔Base ERC20; third-party (riskier for canonical narrative). Document **one** Base RICH address as “the” CCA and pool asset.
+   - Exact collector → donation call path and accepted assets.  
+   - `donation` interface: routing to which underlying vaults, min amounts, reentrancy.  
+   - Share/NAV accounting under donation (no unfair dilution / no donor share mint unless explicitly designed).  
+   - How **RICHAI** shares the story if make primarily hits RICH-linked legs (reserve already includes RICHAI leg once mapped).
+
+4. **Bridge (decided 2026-07-17)**  
+   **Canonical Superchain (OP Stack) ETH→Base bridge** for the RICH CCA tranche. Document **one** Base RICH address as “the” CCA and pool asset. Do not use third-party bridges for the canonical launch narrative.
 
 5. **Do not put protocol treasury, DETF admin, or fee-claim authority in Bankr agent wallets**  
    Multisig / diamond owner on ETH and Base; Bankr creator fee recipient = same controlled address or distribution contract.
@@ -326,7 +344,15 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 
 9. **Legal / disclosure**  
    - Fee tokens ≠ guaranteed yield; DETF accumulation can lose value; arb extracts from LPs.  
-   - Cross-chain RICH: disclose bridge risk.
+   - Cross-chain RICH: disclose Superchain bridge risk.
+
+10. **Security posture (decided 2026-07-17)**  
+    - **No external audit budget** for now. Self-audit with multiple models continues.  
+    - **BattleChain** (Cyfrin) for safe-harbor / ethical-hacker testing before relying on mainnet capital.  
+    - Implement **Vault Registry kill-switch**: owner disables a vault address and/or vault type ID; vaults and DETFs **must query the registry** before sensitive ops; includes a **disabled emergency withdraw** feature. Registry is the source of truth for active vs disabled.
+
+11. **RICH token deploy path (decided 2026-07-17)**  
+    Deploy RICH on Ethereum with Crane’s **ERC20 Permit DFPkg**, then bridge to Base for CCA.
 
 ### 4.2 Optional / later
 
@@ -340,33 +366,44 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 - Pricing CCA floor off a dust RICHAI print / day-1 dual seed theater.  
 - Launching RICHAI **during** CCA (attention split) or same-T0 dual launch.  
 - Setting CCA floor/FDV with no realistic fully diluted mcap story.  
-- DualLiquidityLinked **WETH + RICH + RICHAI** reserve without explicit weights, donation routing, and share accounting.  
-- Launching tokens before factory/registry deploys are **mainnet-ready and seeded**.  
-- Overclaiming “agents will manage billions” before one public demo vault has real deposits.
+- DualLiquidityLinked **WETH + RICH + RICHAI** without deploy-time `PkgArgs` weights (or silent override of 20/20/60) and without donation routing/share accounting.  
+- Treating pre-bootstrap `ReservePoolNotInitialized` as a deploy-script bug instead of running first bond/bootstrap.  
+- Launching tokens before factory/registry deploys are **testnet-demoable** (bootstrap + fee → donation path).  
+- Overclaiming “agents will manage billions” before one public demo vault has real deposits.  
+- Parking protocol treasury or kill-switch owner keys in Bankr agent wallets.
 
 ---
 
 ## 5. Proposed phased launch (discussion draft)
 
 ```text
-Phase 0 — Foundations (now)
-  [ ] DualLiquidityLinked + strategy vault deploy path on Base (product home)
-  [ ] Fee-oracle / feeTo path: other vaults/DETFs → DualLiquidityLinked DETF
+Phase 0 — Foundations (now) — plan review + missing features
+  [x] DualLiquidityLinked product surface ready for donation work
+  [x] Vault Fee Collector exists (other vaults call it)
   [ ] Implement DETF **donation** → underlying vaults → pool liquidity (buyback-and-make)
-  [ ] Donation resistance + fee-path integration tests (fees → donation → TVL/NAV)
-  [ ] RICH **1B** token (ETH) + bridge + audit scope
-  [ ] Seed/init all public pools (no PoolNotInitialized)
+  [ ] Wire Fee Collector inventory → DualLiquidityLinked donation
+  [ ] Donation resistance + fee-path integration tests (fees → collector → donation → TVL/NAV)
+  [x] Vault Registry **kill-switch**: owner disable vault and/or package; vaults/DETFs query registry (type-ID axis dropped)
+  [ ] **Disabled emergency withdraw** path gated by registry disable state (deferred until kill-switch proven)
+  [ ] BattleChain safe-harbor / attack-window workflow (no external audit budget)
+  [ ] RICH **1B** via Crane ERC20 Permit DFPkg on ETH + Superchain bridge path (scripts)
+  [ ] Demo path: deploy → **bootstrap / first bond** (initialize reserve via BPR from underlying vault deposits)
   [ ] Agent docs + CLI/API (include donation / fee-make monitoring)
   [ ] Multisig treasury (ETH + Base) + fee recipients
-Phase 1 — Soft product launch (testnet / limited mainnet)
-  [ ] Public demo: deploy vault, deposit, show arb surface, show fee flow into DETF
+  [ ] Draft CCA + Bankr announcement text (after demo path works)
+
+Phase 1 — Soft product launch (testnet demo)
+  [ ] Public testnet demo: deploy DualLiquidityLinked, bootstrap/first bond, deposit, arb surface
+  [ ] Show fee flow: vault action → Fee Collector → donation → make liquidity
+  [ ] Exercise kill-switch + emergency withdraw on testnet
   [ ] Agent onboarding guide + Bankr-friendly scripts
 
-Phase 2 — RICH: Ethereum deploy → Base bridge → Base CCA (FIRST; fully clear)
-  [ ] Deploy RICH on Ethereum (canonical)
-  [ ] Bridge CCA tranche to Base
-  [ ] Configure Base CCA: **back-loaded** supply, ~5d, ETH quote, **independent floor** (FDV workshop)
+Phase 2 — RICH: Ethereum deploy → Superchain bridge → Base CCA (FIRST; fully clear)
+  [ ] Deploy RICH on Ethereum (Crane ERC20 Permit DFPkg, canonical)
+  [ ] Bridge CCA tranche to Base (canonical Superchain bridge)
+  [ ] Configure Base CCA: **back-loaded** supply, ~5d, ETH quote, **independent floor** (FDV research — still open)
   [ ] **Open + clear CCA**; market hard: fee-token + DETF utility + agent bid path
+  [ ] **Announcement copy** for CCA launch (product + fee-make + agent bid path)
   [ ] **Gitlawb Ads:** small USDC test campaign (CCA window + product links)
   [ ] Post-auction: seed Uni v4 / DualLiquidityLinked / vault graph — **size at runtime** from proceeds + 30% slice as needed
   [ ] Hold remaining L1 RICH (incl. most of 30% + **58% dry**) for treasury / later ETH CCA / ecosystem
@@ -374,6 +411,7 @@ Phase 2 — RICH: Ethereum deploy → Base bridge → Base CCA (FIRST; fully cle
 Phase 3 — RICHAI Bankr (Base) — AFTER CCA ends
   [ ] Deploy RICHAI; fee recipient = **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (same as CCA proceeds)
   [ ] Metadata + launch posts **lead with RICH + IndexedEx**; dual fee-token; agents can buy both
+  [ ] **Announcement copy** for Bankr / RICHAI (post-CCA; agents can buy both)
   [ ] Optional: **~$100 ETH** buy of RICHAI for protocol demo wallet (not LP seed)
   [ ] Agent campaigns: vaults, arb, hold fee tokens
   [ ] **Bankr campaign copy references Gitlawb Ads** (and Gitlawb tips point to RICH market + RICHAI)
@@ -383,6 +421,7 @@ Phase 4 — Flywheel
   [ ] DualLiquidityLinked reserve live: **WETH + RICH + RICHAI**; donation make measurable
   [ ] Agents deposit; arb volume; fee-make TVL dashboards
   [ ] Optional Phase 5: Ethereum CCA for additional RICH supply if capital needed
+  [ ] Optional later: revisit **DAOSYS** token / bounty launch (explicitly deferred)
 ```
 
 ---
@@ -424,13 +463,23 @@ Phase 4 — Flywheel
 | 2026-07-11 | Open bidding (humans + agents); market CCA to **Bankr agents** | **Decided** |
 | 2026-07-11 | Proceeds: **~15 ETH (~$20k)** founder ops; **rest → liquidity** | **Decided** |
 | 2026-07-12 | CCA proceeds recipient: **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** | **Decided** |
-| 2026-07-11 | **Canonical ETH→Base bridge** for RICH CCA tranche | **Decided** |
+| 2026-07-11 | **Canonical ETH→Base bridge** for RICH CCA tranche | **Decided** (refined 2026-07-17: Superchain) |
 | 2026-07-11 | Cross-pool arb allowed as discovery; **not** designed as forced drain of locked Bankr LP | **Decided** |
 | 2026-07-11 | All vault fees → RICH/RICHAI DETF; convert to WETH/RICH/RICHAI then donate; **donation permissionless** | **Decided** |
 | 2026-07-12 | External third-token pairing deferred; **omit from launch materials** | **Decided** |
 | 2026-07-13 | **Gitlawb Ads** as launch distribution; Bankr campaign cross-references Gitlawb | **Decided** (direction) |
 | 2026-07-14 | Gitlawb budget: **small test first** (low hundreds USDC); creative draft later; landings = docs + CCA + Bankr when live | **Decided** |
-| 2026-07-14 | Tickers locked **RICH** + **RICHAI**; formal **audit + calendar still open** | **Decided** (partial) |
+| 2026-07-14 | Tickers locked **RICH** + **RICHAI**; formal **audit + calendar still open** | **Superseded in part** 2026-07-17 (no external audit budget) |
+| 2026-07-17 | **Current work track:** review plan → implement gaps (donation, kill-switch) → **testnet protocol demo** → write **CCA + Bankr announcement** copy | **Decided** |
+| 2026-07-17 | DualLiquidityLinked is **ready** for **`donation`** implementation; fee path uses existing **Vault Fee Collector** (other vaults call it) → wire to donation | **Decided** |
+| 2026-07-17 | CCA floor / FDV **not set**; requires dedicated **research** before CCA deploy | **Open** (research) |
+| 2026-07-17 | Bridge = **canonical Superchain (OP Stack)** ETH→Base for RICH CCA tranche | **Decided** |
+| 2026-07-17 | DualLiquidityLinked **weights** set in DFPkg `PkgArgs` (defaults **20/20/60** for weightA/B/pair over SE vault-share legs) | **Decided** (clarification) |
+| 2026-07-17 | Scenario3 / pre-bootstrap uninitialized reserve is **expected**; live via **first bond/bootstrap** (external deposits → BPR leg shares → init weighted reserve), not a deploy-script seed-all-pools blocker | **Decided** (clarification) |
+| 2026-07-17 | **No external audit budget**; multi-model self-audit continues; use **BattleChain** safe harbor for ethical hacker testing | **Decided** |
+| 2026-07-17 | Implement owner-controlled **Vault Registry kill-switch**: disable by vault and/or vault type ID; vaults/DETFs query registry as source of truth; includes **disabled emergency withdraw** | **Decided** (to implement) |
+| 2026-07-17 | Deploy **RICH** on Ethereum via Crane **ERC20 Permit DFPkg**, then Superchain-bridge to Base for CCA | **Decided** |
+| 2026-07-17 | **DAOSYS** token / bounty launch **dropped for now**; consider only **after** CCA + Bankr launches | **Decided** (deferred) |
 
 ---
 
@@ -443,21 +492,27 @@ Phase 4 — Flywheel
 - ETH quote; CCA floor **independent of RICHAI**; supply curve **back-loaded** ~5d  
 - **Sequence:** **CCA fully clears** → **then RICHAI Bankr**  
 - **30% seed:** size **at post-CCA runtime only**  
-- DualLiquidityLinked reserve: **WETH + RICH + RICHAI**  
+- DualLiquidityLinked reserve assets: **WETH + RICH + RICHAI**; weights via DFPkg **20/20/60** defaults  
 - **RICHAI buy ~$100 ETH** (demo only); **no day-1 dual seed theater**  
 - RICHAI messaging **leads with RICH + IndexedEx**; agents can buy both  
 - CCA proceeds + Bankr fee recipient → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`** (~15 ETH ops, rest LP)  
-- Open agents+humans; canonical bridge; donation fee path  
+- Open agents+humans; **Superchain** bridge; donation fee path via **Vault Fee Collector**  
 - **Gitlawb:** small USDC test first; creative later; landings = docs + CCA + Bankr when live  
+- **Work track:** gaps → testnet demo → CCA/Bankr announcement copy  
+- **Security:** no external audit budget; BattleChain + self-audit; Registry kill-switch + emergency withdraw (to build)  
+- **RICH deploy:** Crane ERC20 Permit DFPkg on ETH  
+- **DAOSYS launch:** deferred until after CCA + Bankr  
+- **Bootstrap:** first bond / BPR path initializes reserve (Scenario3 pre-init is expected)  
 
 ### Still open
 
-1. **CCA floor / initial price → realistic FDV workshop** — pick floor and implied fully diluted mcap before deploy (CCA runs before RICHAI, so no Bankr reference).  
-2. **Audit scope** — token + product path; required before CCA?  
-3. **Launch calendar** — target window / month.  
-4. **DualLiquidityLinked weights** among WETH / RICH / RICHAI + donation routing details.  
+1. **CCA floor / initial price → FDV research** — no floor set yet; research realistic fully diluted mcap before deploy (CCA runs before RICHAI, so no Bankr reference).  
+2. **Launch calendar** — target window / month.  
+3. **Donation eng details** — accepted assets, collector→donation call path, share/NAV rules (mechanism decided; interface TBD).  
+4. **Kill-switch eng details** — which ops check registry; exact emergency-withdraw semantics when disabled.  
 5. **Bankr metadata final copy** + partner key vs 85/15.  
-6. **Exact Gitlawb tip copy** when URLs exist (budget approach already locked).
+6. **Exact Gitlawb tip copy** when URLs exist (budget approach already locked).  
+7. **Exact day-1 token mapping** for DualLiquidityLinked (confirm commonToken/tokenA/tokenB = WETH/RICH/RICHAI or variant) if not already fixed in deploy scripts.
 
 ## 8. Sources (research)
 
@@ -469,7 +524,9 @@ Phase 4 — Flywheel
 - Bankr: https://bankr.bot/ · docs: https://docs.bankr.bot/ · token launching: https://docs.bankr.bot/token-launching/overview/  
 - Bankr skills / deploy notes (GitHub): https://github.com/BankrBot/skills  
 - Gitlawb Ads (agent-economy sponsored tips): https://ads.gitlawb.com/ · stack: https://gitlawb.com/  
-- Internal: `docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md`, Scenario3 pool init gap (UI test plan)
+- Internal: `docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md`, DualLiquidityLinked DFPkg/PRD (bootstrap / first bond; weights 20/20/60)
+- Internal: Vault Fee Collector (`contracts/fee/collector/`), Vault Registry (`contracts/registries/vault/`)
+- BattleChain: https://docs.battlechain.com/ (safe harbor; no external audit budget for now)
 
 ---
 

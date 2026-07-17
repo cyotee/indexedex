@@ -40,6 +40,8 @@ import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVault
 import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
 import {IVaultRegistryVaultPackageManager} from "contracts/interfaces/IVaultRegistryVaultPackageManager.sol";
 import {IVaultRegistryVaultManager} from "contracts/interfaces/IVaultRegistryVaultManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {VaultFeeOracleRepo} from "contracts/oracles/fee/VaultFeeOracleRepo.sol";
 
 interface IIndexedexManagerDFPkg is IDiamondFactoryPackage {
@@ -54,6 +56,8 @@ interface IIndexedexManagerDFPkg is IDiamondFactoryPackage {
         IFacet vaultRegistryVaultPackageManagerFacet;
         IFacet vaultRegistryVaultPackageQueryFacet;
         IFacet vaultRegistryVaultQueryFacet;
+        IFacet vaultRegistryDisableQueryFacet;
+        IFacet vaultRegistryDisableManagerFacet;
     }
 
     struct PkgArgs {
@@ -77,6 +81,8 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
     IFacet immutable VAULT_REGISTRY_VAULT_PACKAGE_MANAGER_FACET;
     IFacet immutable VAULT_REGISTRY_VAULT_PACKAGE_QUERY_FACET;
     IFacet immutable VAULT_REGISTRY_VAULT_QUERY_FACET;
+    IFacet immutable VAULT_REGISTRY_DISABLE_QUERY_FACET;
+    IFacet immutable VAULT_REGISTRY_DISABLE_MANAGER_FACET;
 
     constructor(PkgInit memory pkgInitArgs) {
         DIAMOND_CUT_FACET = pkgInitArgs.diamondCutFacet;
@@ -89,6 +95,8 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
         VAULT_REGISTRY_VAULT_PACKAGE_MANAGER_FACET = pkgInitArgs.vaultRegistryVaultPackageManagerFacet;
         VAULT_REGISTRY_VAULT_PACKAGE_QUERY_FACET = pkgInitArgs.vaultRegistryVaultPackageQueryFacet;
         VAULT_REGISTRY_VAULT_QUERY_FACET = pkgInitArgs.vaultRegistryVaultQueryFacet;
+        VAULT_REGISTRY_DISABLE_QUERY_FACET = pkgInitArgs.vaultRegistryDisableQueryFacet;
+        VAULT_REGISTRY_DISABLE_MANAGER_FACET = pkgInitArgs.vaultRegistryDisableManagerFacet;
     }
 
     function packageName() public pure returns (string memory name_) {
@@ -96,7 +104,7 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IDiamondCut).interfaceId;
         interfaces[1] = type(IMultiStepOwnable).interfaceId;
         // Order must match facetAddresses() ordering
@@ -108,11 +116,13 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
         interfaces[7] = type(IVaultRegistryVaultPackageManager).interfaceId;
         interfaces[8] = type(IVaultRegistryVaultPackageQuery).interfaceId;
         interfaces[9] = type(IVaultRegistryVaultQuery).interfaceId;
+        interfaces[10] = type(IVaultRegistryDisableQuery).interfaceId;
+        interfaces[11] = type(IVaultRegistryDisableManager).interfaceId;
         return interfaces;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](10);
+        facetAddresses_ = new address[](12);
         facetAddresses_[0] = address(DIAMOND_CUT_FACET);
         facetAddresses_[1] = address(MULTI_STEP_OWNABLE_FACET);
         facetAddresses_[2] = address(VAULT_FEE_QUERY_FACET);
@@ -123,6 +133,8 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
         facetAddresses_[7] = address(VAULT_REGISTRY_VAULT_PACKAGE_MANAGER_FACET);
         facetAddresses_[8] = address(VAULT_REGISTRY_VAULT_PACKAGE_QUERY_FACET);
         facetAddresses_[9] = address(VAULT_REGISTRY_VAULT_QUERY_FACET);
+        facetAddresses_[10] = address(VAULT_REGISTRY_DISABLE_QUERY_FACET);
+        facetAddresses_[11] = address(VAULT_REGISTRY_DISABLE_MANAGER_FACET);
     }
 
     function packageMetadata()
@@ -136,7 +148,7 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](10);
+        facetCuts_ = new IDiamond.FacetCut[](12);
 
         facetCuts_[0] = IDiamond.FacetCut({
             // address facetAddress;
@@ -226,6 +238,18 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
             functionSelectors: VAULT_REGISTRY_VAULT_QUERY_FACET.facetFuncs()
+        });
+
+        facetCuts_[10] = IDiamond.FacetCut({
+            facetAddress: address(VAULT_REGISTRY_DISABLE_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: VAULT_REGISTRY_DISABLE_QUERY_FACET.facetFuncs()
+        });
+
+        facetCuts_[11] = IDiamond.FacetCut({
+            facetAddress: address(VAULT_REGISTRY_DISABLE_MANAGER_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: VAULT_REGISTRY_DISABLE_MANAGER_FACET.facetFuncs()
         });
     }
 
