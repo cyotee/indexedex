@@ -300,11 +300,10 @@ contract BalancerV3StandardExchangeRouter_PrepayAuth_Test is TestBase_BalancerV3
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice When the Balancer V3 vault is in an unlocked state (i.e., inside
-     *         a vault.unlock() callback), any caller should be able to invoke
-     *         prepay functions. This is the normal prepay usage pattern.
+     * @notice Self-root (session off): a contract may prepay for itself.
+     *         (Old open gate "unlocked => anyone" is removed; this contract is self-root.)
      */
-    function test_prepayAuth_vaultUnlocked_anyCallerSucceeds() public {
+    function test_prepayAuth_selfRoot_contractSucceeds() public {
         // Mint tokens and transfer to vault for prepay settlement
         dai.mint(address(this), 100e18);
         usdc.mint(address(this), 100e18);
@@ -332,29 +331,20 @@ contract BalancerV3StandardExchangeRouter_PrepayAuth_Test is TestBase_BalancerV3
      *         reverts with NotCurrentStandardExchangeToken.
      */
     function test_prepayAuth_locked_wrongCaller_reverts() public {
-        // Vault should be locked in normal context
+        // Without an active prepay session, EOA cannot prepay (D6).
+        // Legacy currentSE pointer alone no longer grants/denies prepay; session stack does.
         assertFalse(vault.isUnlocked(), "Precondition: vault should be locked");
-
-        PrepayAuthAttacker attacker = new PrepayAuthAttacker();
+        assertFalse(prepayRouter.prepaySessionActive(), "session off");
 
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 1;
         amounts[1] = 1;
 
-        // Set currentStandardExchangeToken to daiUsdcVault, then call from attacker
+        vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector,
-                address(attacker),
-                address(daiUsdcVault)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
-
-        harness.callWithCurrentSE(
-            daiUsdcVault,
-            address(attacker),
-            abi.encodeCall(attacker.attack, (address(seRouter), daiUsdcPool, amounts, 1))
-        );
+        prepayRouter.prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
     }
 
     /**
@@ -413,45 +403,27 @@ contract BalancerV3StandardExchangeRouter_PrepayAuth_Test is TestBase_BalancerV3
         // Alice is an EOA (no code)
         vm.startPrank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector, alice, address(0)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
         prepayRouter.prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
         vm.stopPrank();
     }
 
     /**
-     * @notice When the vault is locked and no currentStandardExchangeToken is set,
-     *         contract callers are allowed (msg.sender.code.length > 0).
-     *         This supports trusted vault→router interactions.
+     * @notice Self-root: contract callers may prepay when session is off.
      */
     function test_prepayAuth_locked_noToken_contractAllowed() public {
         assertFalse(vault.isUnlocked(), "Precondition: vault should be locked");
-
-        // Create an attacker contract (has code)
-        PrepayAuthAttacker contractCaller = new PrepayAuthAttacker();
-
+        // Self-root: funded contract may prepay when session is off.
+        dai.mint(address(this), 100e18);
+        usdc.mint(address(this), 100e18);
+        dai.transfer(address(vault), 100e18);
+        usdc.transfer(address(vault), 100e18);
         uint256[] memory amounts = new uint256[](2);
-        amounts[0] = 1;
-        amounts[1] = 1;
-
-        // Contract caller with no current SE token set should NOT revert with
-        // NotCurrentStandardExchangeToken (it's allowed past the auth check).
-        // It will likely revert for other reasons (vault locked for liquidity ops).
-        try contractCaller.attack(address(seRouter), daiUsdcPool, amounts, 1) {
-        // If it succeeds, the auth check passed
-        }
-        catch (bytes memory reason) {
-            // If it reverts, verify it's NOT NotCurrentStandardExchangeToken
-            if (reason.length >= 4) {
-                bytes4 errorSelector = bytes4(reason);
-                assertTrue(
-                    errorSelector != IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector,
-                    "Contract caller should pass auth check even without current SE token"
-                );
-            }
-        }
+        amounts[0] = 100e18;
+        amounts[1] = 100e18;
+        uint256 bpt = prepayRouter.prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
+        assertGt(bpt, 0, "self-root contract prepay should work");
     }
 
     /* ---------------------------------------------------------------------- */

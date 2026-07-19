@@ -7,7 +7,11 @@ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 /**
  * @title DETFNFTVaultTest
  * @notice Tests for US-5.5 and US-5.7: NFT Sale and Protocol NFT Privileges
- * @dev Specification tests for NFT vault mechanics.
+ * @dev STUB / SPEC-ONLY: pure arithmetic placeholders — NOT production-path coverage.
+ *      Does not deploy DETFNFTVault via registry DFPkg. Real D-class authority coverage
+ *      lives on integrated DETF adversarial suites (MultiVault, Single SE, ComposedStable).
+ *      Wave 3-stub: replace with production deploy tests or keep as pure unit math only.
+ * @custom:adversarial-status stub-not-production-path
  */
 contract DETFNFTVaultTest is Test {
     /* ---------------------------------------------------------------------- */

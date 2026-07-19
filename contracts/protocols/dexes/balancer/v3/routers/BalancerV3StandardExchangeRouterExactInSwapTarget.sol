@@ -214,7 +214,12 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
         onlyBalancerV3Vault
         returns (uint256 amountCalculated)
     {
-        return _swapSingleTokenHook(params);
+        BalancerV3StandardExchangeRouterRepo._sessionBegin();
+        if (params.pool != address(0)) {
+            BalancerV3StandardExchangeRouterRepo._pushRoutePrincipal(params.pool);
+        }
+        amountCalculated = _swapSingleTokenHook(params);
+        BalancerV3StandardExchangeRouterRepo._sessionEnd();
     }
 
     function _swapSingleTokenHook(StandardExchangeSwapSingleTokenHookParams calldata params)
@@ -336,7 +341,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
                 recipient = address(this);
             }
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenInVault);
+            BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
             amountCalculated = params.tokenInVault
                 .exchangeIn(
                     IERC20(address(params.tokenIn)),
@@ -348,7 +353,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     // uint256 deadline
                     params.deadline
                 );
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(IStandardExchangeProxy(address(0)));
+            BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
 
             // Check if token out is WETH and needs to be unwrapped to ETH.
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
@@ -390,7 +395,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 _transferTokenIn(params.sender, address(params.tokenInVault), params.tokenIn, params.amountGiven);
             }
 
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenInVault);
+            BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
             // console.log("Router: About to call vault.exchangeIn for deposit");
             amountCalculated = params.tokenInVault
                 .exchangeIn(
@@ -409,7 +414,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     // uint256 deadline
                     params.deadline
                 );
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(IStandardExchangeProxy(address(0)));
+            BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
 
             // Revert if vault shares out does not meet limit.
             if (amountCalculated < params.limit) {
@@ -435,7 +440,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 // For EXACT_IN, use exchangeIn because amountGiven is for amount in.
                 // For EXACT_IN, limit is minAmountOut.
                 // Set self as recipient so WETH can be unwrapped.
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 amountCalculated = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
@@ -453,9 +458,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                         // uint256 deadline
                         params.deadline
                     );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
 
                 // Revert if withdrawn amount does not meet limit.
                 if (amountCalculated < params.limit) {
@@ -472,7 +475,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                 // For EXACT_IN, use exchangeIn because amountGiven is for amount in.
                 // For EXACT_IN, limit is minAmountOut.
                 // Set sender as recipient.
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 amountCalculated = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
@@ -490,9 +493,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                         // uint256 deadline
                         params.deadline
                     );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
 
                 // Revert if withdrawn amount does not meet limit.
                 if (amountCalculated < params.limit) {
@@ -526,7 +527,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     params.amountGiven
                 );
             }
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenInVault);
+            BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenInVault);
             uint256 actualVaultShares = params.tokenInVault
                 .exchangeIn(
                     // IERC20 tokenIn,
@@ -545,7 +546,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     // uint256 deadline
                     params.deadline
                 );
-            BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(IStandardExchangeProxy(address(0)));
+            BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
             /* -------------------------------- ! ------------------------------- */
             VaultSwapParams memory swapParams;
             swapParams.kind = params.kind;
@@ -665,7 +666,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             _balVault.sendTo(IERC20(address(params.tokenOutVault)), address(params.tokenOutVault), swapAmountOut);
 
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 amountCalculated = _exchangeInToVault(
                     // StandardExchangeSwapSingleTokenHookParams calldata params,
                     params,
@@ -676,16 +677,14 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     // address recipient
                     address(this)
                 );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
                 // Unwrap WETH to ETH and send to sender.
                 _weth.withdraw(amountCalculated);
                 // Send ETH to user.
                 payable(params.sender).sendValue(amountCalculated);
                 return amountCalculated;
             } else {
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 // Unwrap tokenOut from pool, sending tokenOut to user.
                 // FIX: Pass params.limit (user's minAmountOut in tokenOut) instead of convertedLimit
                 // The vault's exchangeIn will check if the final tokenOut >= minAmountOut
@@ -699,9 +698,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                     // address recipient
                     params.sender
                 );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
                 return amountCalculated;
             }
         }
@@ -753,7 +750,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
             _balVault.sendTo(IERC20(address(params.tokenOutVault)), address(params.tokenOutVault), swapAmountOut);
             // _balVault.settle(IERC20(address(params.tokenOutVault)), 0);
             if (params.wethIsEth && address(params.tokenOut) == address(_weth)) {
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 amountCalculated = params.tokenOutVault
                     .exchangeIn(
                         // IERC20 tokenIn,
@@ -771,16 +768,14 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                         // uint256 deadline
                         params.deadline
                     );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
                 // Unwrap WETH to ETH and send to sender.
                 _weth.withdraw(amountCalculated);
                 // Send ETH to user.
                 payable(params.sender).sendValue(amountCalculated);
                 return amountCalculated;
             } else {
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(params.tokenOutVault);
+                BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(params.tokenOutVault);
                 // Unwrap tokenOut from pool, sending tokenOut to user.
                 // FIX: Pass params.limit (user's minAmountOut in tokenOut) instead of convertedLimit
                 amountCalculated = params.tokenOutVault
@@ -800,9 +795,7 @@ contract BalancerV3StandardExchangeRouterExactInSwapTarget is
                         // uint256 deadline
                         params.deadline
                     );
-                BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                    IStandardExchangeProxy(address(0))
-                );
+                BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
                 return amountCalculated;
             }
         }

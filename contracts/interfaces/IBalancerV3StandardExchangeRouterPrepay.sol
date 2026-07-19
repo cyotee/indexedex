@@ -8,54 +8,44 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 /* -------------------------------------------------------------------------- */
-/*                                 Balancer V3                                */
-/* -------------------------------------------------------------------------- */
-
-/* ------------------------------- Interfaces ------------------------------- */
-
-import {
-    AddLiquidityHookParams,
-    RemoveLiquidityHookParams
-} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/RouterTypes.sol";
-// import {AddLiquidityKind, AddLiquidityParams} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
-
-/* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-// import {
-//     IBalancerV3StandardExchangeRouterInterrupter
-// } from "contracts/indexedex/interfaces/IBalancerV3StandardExchangeRouterInterrupter.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 
 interface IBalancerV3StandardExchangeRouterPrepay {
+    /// @dev Legacy error retained for ABI compatibility; prefer session-auth errors from the repo.
     error NotCurrentStandardExchangeToken(address provided, address current);
-
-    // /**
-    //  * @notice Data for the remove liquidity hook.
-    //  * @param sender Account originating the remove liquidity operation
-    //  * @param pool Address of the liquidity pool
-    //  * @param minAmountsOut Minimum amounts of tokens to be received, sorted in token registration order
-    //  * @param maxBptAmountIn Maximum amount of pool tokens provided
-    //  * @param kind Type of exit (e.g., single or multi-token)
-    //  * @param wethIsEth If true, incoming ETH will be wrapped to WETH and outgoing WETH will be unwrapped to ETH
-    //  * @param userData Additional (optional) data sent with the request to remove liquidity
-    //  */
-    // struct RemoveLiquidityHookParams {
-    //     address sender;
-    //     address pool;
-    //     uint256[] minAmountsOut;
-    //     uint256 maxBptAmountIn;
-    //     RemoveLiquidityKind kind;
-    //     bool wethIsEth;
-    //     bytes userData;
-    // }
 
     function isPrepaid() external view returns (bool);
 
-    // function interrupter() external view returns (IBalancerV3StandardExchangeRouterInterrupter);
-
     function currentStandardExchange() external view returns (IStandardExchangeProxy);
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Prepay session auth API                          */
+    /* ---------------------------------------------------------------------- */
+
+    /**
+     * @notice Pass prepay authorization to `next` for nested SE / Buffer→SE calls.
+     * @dev No-op success if no prepay session. Reverts if session active and caller is not stack top.
+     */
+    function passPrepayAuth(address next) external returns (bool);
+
+    /**
+     * @notice Restore prepay authorization after a nested call returns.
+     * @dev No-op success if no prepay session. Reverts if caller is not the parent principal.
+     */
+    function restorePrepayAuth() external returns (bool);
+
+    function prepaySessionActive() external view returns (bool);
+
+    function prepayAuthTop() external view returns (address);
+
+    function prepayAuthDepth() external view returns (uint256);
+
+    /* ---------------------------------------------------------------------- */
+    /*                              Prepay liquidity                            */
+    /* ---------------------------------------------------------------------- */
 
     function prepayInitialize(
         address pool,

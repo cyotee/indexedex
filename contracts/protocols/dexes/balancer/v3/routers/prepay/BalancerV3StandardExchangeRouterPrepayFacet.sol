@@ -41,13 +41,18 @@ contract BalancerV3StandardExchangeRouterPrepayFacet is BalancerV3StandardExchan
      * @inheritdoc IFacet
      */
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](11);
         funcs[0] = IBalancerV3StandardExchangeRouterPrepay.isPrepaid.selector;
         funcs[1] = IBalancerV3StandardExchangeRouterPrepay.currentStandardExchange.selector;
-        funcs[2] = IBalancerV3StandardExchangeRouterPrepay.prepayInitialize.selector;
-        funcs[3] = IBalancerV3StandardExchangeRouterPrepay.prepayAddLiquidityUnbalanced.selector;
-        funcs[4] = IBalancerV3StandardExchangeRouterPrepay.prepayRemoveLiquidityProportional.selector;
-        funcs[5] = IBalancerV3StandardExchangeRouterPrepay.prepayRemoveLiquiditySingleTokenExactIn.selector;
+        funcs[2] = IBalancerV3StandardExchangeRouterPrepay.passPrepayAuth.selector;
+        funcs[3] = IBalancerV3StandardExchangeRouterPrepay.restorePrepayAuth.selector;
+        funcs[4] = IBalancerV3StandardExchangeRouterPrepay.prepaySessionActive.selector;
+        funcs[5] = IBalancerV3StandardExchangeRouterPrepay.prepayAuthTop.selector;
+        funcs[6] = IBalancerV3StandardExchangeRouterPrepay.prepayAuthDepth.selector;
+        funcs[7] = IBalancerV3StandardExchangeRouterPrepay.prepayInitialize.selector;
+        funcs[8] = IBalancerV3StandardExchangeRouterPrepay.prepayAddLiquidityUnbalanced.selector;
+        funcs[9] = IBalancerV3StandardExchangeRouterPrepay.prepayRemoveLiquidityProportional.selector;
+        funcs[10] = IBalancerV3StandardExchangeRouterPrepay.prepayRemoveLiquiditySingleTokenExactIn.selector;
     }
 
     // end::facetFuncs()[]

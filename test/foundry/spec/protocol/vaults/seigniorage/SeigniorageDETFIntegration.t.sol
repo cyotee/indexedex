@@ -126,7 +126,7 @@ contract SeigniorageDETFIntegration_Test is TestBase_BalancerV3StandardExchangeR
         ISeigniorageDETFDFPkg.PkgArgs pkgArgs;
     }
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
 
         // SeigniorageDETFDFPkg sources the pool swap fee from the fee oracle.

@@ -10,7 +10,7 @@ Routes:
 - Route ID: TGT-BalancerRouterPrepay-01
   - Selector / Function: `prepayAddLiquidityUnbalanced(IERC20 token, uint256 amount, address pool, bytes userData)`
   - Entry Context: Proxy -> delegatecall Target; called by trusted vaults/packages
-  - Auth: Permissionless (intended)
+  - Auth: Prepay session stack top when session active; self-root contract when session off (EOAs blocked)
   - State Writes: transfers into Balancer Vault; may emit `PrepayAdd` events
   - External Calls: Permit2 transfers, Balancer Vault `swap`/`settle` calls, WETH wrapping
   - Invariants: caller must ensure token approvals/Permit2 wiring; final BPT credited to requested recipient; no leftover tokens remain in router
@@ -20,7 +20,7 @@ Routes:
 - Route ID: TGT-BalancerRouterPrepay-02
   - Selector / Function: `prepayRemoveLiquidityProportional(address pool, uint256 bptAmount, address recipient)`
   - Entry Context: Proxy -> delegatecall Target
-  - Auth: Permissionless (intended)
+  - Auth: Prepay session stack top when session active; self-root contract when session off (EOAs blocked)
   - State Writes: transfers BPT into Balancer vault and triggers proportional exit; returns constituent tokens
   - External Calls: Balancer Vault `withdraw`/`settle`, Permit2 interactions
   - Invariants: exact proportional balancing; returned tokens match expected preview within rounding tolerances

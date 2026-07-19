@@ -312,6 +312,23 @@ contract SeigniorageNFTVault_Test is SeigniorageDETFIntegration_Test {
         assertLe(info.bonusPercentage, maxBonus);
     }
 
+    /// @notice Wave 3C L1: bonus still in [min,max] when both amount and duration vary.
+    function testFuzz_bonusMultiplier_withAmounts(uint256 lockDuration, uint256 amountSeed) public {
+        BondTerms memory terms = _bondTerms();
+        lockDuration = bound(lockDuration, terms.minLockDuration, terms.maxLockDuration);
+        uint256 amount = bound(amountSeed, LOCK_AMOUNT / 10, LOCK_AMOUNT * 2);
+
+        uint256 tokenId = _lockSharesForUser(alice, amount, lockDuration);
+        ISeigniorageNFTVault.LockInfo memory info = _nftVault().lockInfoOf(tokenId);
+
+        uint256 minBonus = ONE_WAD + terms.minBonusPercentage;
+        uint256 maxBonus = ONE_WAD + terms.maxBonusPercentage;
+        assertGe(info.bonusPercentage, minBonus, "P-TIME min bonus");
+        assertLe(info.bonusPercentage, maxBonus, "P-TIME max bonus");
+        // sharesAwarded is effective (bonus-scaled) BPT claim, not raw input amount.
+        assertGe(info.sharesAwarded, amount, "P-CONS awarded >= locked input");
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                          Unlock Tests                                  */
     /* ---------------------------------------------------------------------- */

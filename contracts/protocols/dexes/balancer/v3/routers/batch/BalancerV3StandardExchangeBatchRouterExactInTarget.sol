@@ -162,9 +162,23 @@ contract BalancerV3StandardExchangeBatchRouterExactInTarget is
         onlyBalancerV3Vault
         returns (uint256[] memory pathAmountsOut, address[] memory tokensOut, uint256[] memory amountsOut)
     {
+        BalancerV3StandardExchangeRouterRepo._sessionBegin();
+        _seedBatchExactInPrincipals(params);
         (pathAmountsOut, tokensOut, amountsOut) = _swapExactInHook(params);
 
         _settlePaths(params.sender, params.wethIsEth);
+        BalancerV3StandardExchangeRouterRepo._sessionEnd();
+    }
+
+    function _seedBatchExactInPrincipals(SESwapExactInHookParams calldata params) internal {
+        for (uint256 i = 0; i < params.paths.length; ++i) {
+            for (uint256 j = 0; j < params.paths[i].steps.length; ++j) {
+                address pool = params.paths[i].steps[j].pool;
+                if (pool != address(0)) {
+                    BalancerV3StandardExchangeRouterRepo._pushRoutePrincipal(pool);
+                }
+            }
+        }
     }
 
     function _swapExactInHook(SESwapExactInHookParams calldata params)
@@ -256,8 +270,7 @@ contract BalancerV3StandardExchangeBatchRouterExactInTarget is
                         BalancerV3VaultAwareRepo._balancerV3Vault().settle(IERC20(path.tokenIn), 0);
                     }
 
-                    BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                        IStandardExchangeProxy(address(step.pool))
+                    BalancerV3StandardExchangeRouterRepo._enterStrategyPrincipal(IStandardExchangeProxy(address(step.pool))
                     );
                     amountOut = _exchangeInToVault(
                         params,
@@ -268,9 +281,7 @@ contract BalancerV3StandardExchangeBatchRouterExactInTarget is
                         address(BalancerV3VaultAwareRepo._balancerV3Vault())
                     );
 
-                    BalancerV3StandardExchangeRouterRepo._setCurrentStandardExchangeToken(
-                        IStandardExchangeProxy(address(0))
-                    );
+                    BalancerV3StandardExchangeRouterRepo._exitStrategyPrincipal(IStandardExchangeProxy(address(0)));
 
                     // The Strategy Vault output increases the Vault's balance for `step.tokenOut`.
                     // Settle immediately so the credit is available for subsequent steps / final sendTo.
@@ -502,10 +513,13 @@ contract BalancerV3StandardExchangeBatchRouterExactInTarget is
         onlyBalancerV3Vault
         returns (uint256[] memory pathAmountsOut, address[] memory tokensOut, uint256[] memory amountsOut)
     {
+        BalancerV3StandardExchangeRouterRepo._sessionBegin();
+        _seedBatchExactInPrincipals(params);
         (pathAmountsOut, tokensOut, amountsOut) = _swapExactInHook(params);
 
         // Query functions are simulated executions (e.g., eth_call). They must still satisfy the Vault's
         // transient-accounting invariant, so we settle deltas the same way as in execution.
         _settlePaths(params.sender, params.wethIsEth);
+        BalancerV3StandardExchangeRouterRepo._sessionEnd();
     }
 }

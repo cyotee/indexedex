@@ -21,6 +21,9 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {
+    IBalancerV3StandardExchangeRouterPrepay
+} from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
@@ -348,7 +351,7 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
      *      credits the pool balance with M and hookSharesDelta grows by the same
      *      round-tripped amount — the two cancel in derivedY.
      */
-    function _reconcileTTAToShares(uint256 X_raw) internal {
+    function _reconcileTTAToShares(uint256 X_raw, address seRouter) internal {
         IVault vault = IVault(_balancerV3Vault());
         IStandardExchange seVault = Repo._standardExchangeVault();
         IERC20 ttaTok = Repo._ttaToken();
@@ -360,10 +363,25 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         vault.sendTo(ttaTok, address(this), X_raw);
 
         // 2) Best-effort deposit of the full amount.
+        //    When IndexedEx router has a prepay session, pass auth to the SE (hooks==pool principal).
         ttaTok.approve(address(seVault), X_raw);
-        uint256 minted = seVault.exchangeIn(
-            ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp
-        );
+        if (seRouter != address(0) && seRouter.code.length > 0) {
+            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}
+        }
+        uint256 minted;
+        try seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp) returns (
+            uint256 m
+        ) {
+            minted = m;
+        } catch {
+            if (seRouter != address(0) && seRouter.code.length > 0) {
+                try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
+            }
+            revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
+        }
+        if (seRouter != address(0) && seRouter.code.length > 0) {
+            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
+        }
         if (minted == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
 
         // 3) Credit the Balancer Vault for the minted shares (round-trip capped).
@@ -481,9 +499,25 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         }
 
         // 3) Approve SE Vault and exchangeOut the drained shares for Y_TTA_raw.
+        //    Pass prepay auth when IndexedEx router session is active (hooks==pool principal).
         shareTok.approve(address(seVault), drainAmount);
-        uint256 sharesConsumed =
-            seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp);
+        address seRouter = params.router;
+        if (seRouter != address(0) && seRouter.code.length > 0) {
+            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}
+        }
+        uint256 sharesConsumed;
+        try seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp)
+        returns (uint256 sc) {
+            sharesConsumed = sc;
+        } catch {
+            if (seRouter != address(0) && seRouter.code.length > 0) {
+                try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
+            }
+            revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(drainAmount, Y_TTA_raw);
+        }
+        if (seRouter != address(0) && seRouter.code.length > 0) {
+            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
+        }
         if (sharesConsumed == 0) revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(drainAmount, Y_TTA_raw);
 
         // 4) Settle TTA received from the SE Vault.
@@ -607,7 +641,8 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         }
 
         // TTA->shares post-swap reconcile: extracted to avoid stack-too-deep.
-        _reconcileTTAToShares(params.amountInScaled18);
+        // `params.router` is the contract that called Vault.swap (IndexedEx SE router when used).
+        _reconcileTTAToShares(params.amountInScaled18, params.router);
         return (true, params.amountCalculatedRaw);
     }
 

@@ -33,6 +33,7 @@ borrowable
 Bountycaster
 browserslist
 bstr
+bufferable
 calced
 Calcing
 callability
@@ -294,6 +295,7 @@ uints
 unaliased
 unbond
 underdelivers
+underlyings
 ungated
 Unichain
 UNISWAPV

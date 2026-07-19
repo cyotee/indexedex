@@ -13,14 +13,16 @@ If PROGRESS.md exists in the project root, read it for cross-session context bef
      - `crane-deployment` — CREATE3, DFPkgs, FactoryService, proxy creation.
      - `crane-architecture` — core patterns, DFPkg.
      - `crane-testing` — `CraneTest`, factory bootstrap, TestBases, **production-first testing**.
+     - `crane-adversarial-testing` — abuse/attack catalogs, hostile harnesses, P0/P1 adversarial suites for diamonds/vaults.
    - Crane docs under `lib/crane/docs/` (especially `docs/deployment/` and `docs/development/testing.md`).
 
 2. This file (IndexedEx AGENTS.md) — explains how IndexedEx layers on Crane.
 
-3. IndexedEx testing skill (after Crane testing):
+3. IndexedEx testing skills (after Crane testing):
    - `.claude/skills/indexedex-testing/` — `IndexedexTest`, vault registry deploy path, gold TestBases, when mocks are forbidden.
+   - `.claude/skills/indexedex-adversarial-testing/` — DETF / SE / multi-vault adversarial suites (bond/claim, seigniorage, nested).
 
-**Skill source of truth:** Crane skills are authored under `lib/crane/.claude/skills/`. After editing them in Crane, run `./scripts/sync-crane-skills.sh` to refresh IndexedEx `.claude/skills/` and `.opencode/skills/` copies. Prefer reading the Crane path when in doubt.
+**Skill source of truth:** Crane skills are authored under `lib/crane/.claude/skills/`. After editing them in Crane, run `./scripts/sync-crane-skills.sh` to refresh IndexedEx `.claude/skills/`, `.opencode/skills/`, and `.grok/skills/` copies. Prefer reading the Crane path when in doubt.
 
 **Bankr skills:** Vendored from [BankrBot/skills](https://github.com/BankrBot/skills) at `lib/bankr-skills/`. Synced into `.claude/skills/`, `.opencode/skills/`, and `.grok/skills/` so Claude Code, OpenCode, and Grok Build can use them. External catalog stubs are expanded from their upstream sources (EthSkills, Base skills, Uniswap AI). Refresh with:
 ```bash
@@ -44,14 +46,111 @@ Use **role names**, never product token brands, in contracts, interfaces, storag
 |------|------|---------|
 | Rate Provider target / mint-bond-redeem settlement | `rateAsset` | “New money”; must be in underlying vault `tokens()` |
 | Other vault-declared token(s) | `pairToken` | Not the rateAsset |
-| Underlying SE vault | `underlyingVault` | Any `IStandardExchange` |
-| Rebasing claim token | `rebasingClaimToken` / `IRebasingClaimToken` | Claim on protocol reserve BPT |
+| Underlying SE vault | `underlyingVault` / `standardExchangeVault` | Any `IStandardExchange` |
+| Vault share of that SE vault | `vaultShare` / `standardExchangeVaultShare` | Often the vault address itself |
+| DETF diamond share | `detfToken` / `address(this)` | This proxy is the ERC-20 |
+| Reserve pool / BPT | `reservePool` / `reserveBpt` | Balancer V3 pool + BPT |
+| Rebasing claim token | `rebasingClaimToken` / `IRebasingClaimToken` | Claim on protocol-owned reserve BPT |
 
 **Anti-patterns (do not reintroduce):** `RICH`, `RICHIR`, `richToken`, `wethRichVault`, `mintWithWeth`, `wethAsEth` on generic DETF surfaces.
 
 **WETH rule:** Use `weth` / `WETH` only in code that is *actually* WETH-specific (e.g. `WETHAwareRepo`). DETF packages that accept a configurable rate asset must not name roles after WETH.
 
+**Type names:** Prefer full words in contract/file/type names (e.g. `StandardExchange`, `MultiVaultWeightedDetf`). Short locals (`seVault_`, `share_`) are fine for stack pressure.
+
 See `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
+
+## DETF families — common expectations (mandatory for agents)
+
+Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a family PRD explicitly overrides. Family PRDs and implementation plans next to each package remain normative for that family; this section is the **shared default** so agents do not re-litigate basics every session.
+
+### What a DETF is
+
+- A **true DETF**: the diamond **is** the share ERC-20; seigniorage mint/burn is against a **Balancer V3 reserve** (usually weighted) that includes the DETF self-leg plus one or more external legs.
+- **Not** a pure pro-rata “shares ∝ BPT” vault unless a specific route explicitly uses proportional BPT accounting (bond/claim unwind helpers).
+- **Opacity:** production DETF code talks only to `IStandardExchange*` / share ERC-20 / Balancer. Do **not** import concrete Uni/Aero/Camelot/Aave vault types into DETF production sources. Nested SE vaults (including DETF-as-vault) are allowed and must stay opaque.
+
+### Families (when to use which)
+
+| Family | Path | Use when |
+|--------|------|----------|
+| Single Standard Exchange | `detf/standardExchange/single/` | Exactly **one** SE vault + DETF weighted reserve |
+| Composed single | `detf/composed/single/` | Single underlying vault DETF shape (behavioral reference; brand-era names must not leak into new code) |
+| Composed stable multi | `detf/composed/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
+| Multi-vault weighted | `detf/composed/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
+| Dual-liquidity / protocol | elsewhere under `contracts/vaults/` | Protocol-specific DETF-like products; do not subclass for new generic DETFs |
+
+**Fresh codepath rule:** new DETF families are **behavioral references only** relative to peers — do **not** subclass concrete contracts from another family. Reuse `detf/core/*` and `detf/reusable/*` libs/factories.
+
+### Governance and immutability
+
+- DETF **instances are immutable and unowned** after deploy: no instance owner, no diamondCut, no admin pause surface on the diamond for normal operation.
+- Flawed config → abandon instance; ship a new package/args. Prefer deploy-time wiring only (bond NFT, claim token, rate providers, reserve pool) inside DFPkg `postDeploy`.
+- Fees / bond terms / thresholds: **Vault Fee Oracle** (`feeOracle` on manager) where peer DETFs already do. Defaults: **`mintThreshold = 1.05e18`**, **`burnThreshold = 0.95e18`** (±5% synthetic deadband), overridable via `PkgArgs` (`0` → default).
+
+### Liveness (inert → live)
+
+- Deploy **inert**. Mint/burn of user DETF against vault shares is blocked until live (`isReserveLive` / equivalent).
+- Live is established by a **first successful bond** that creates protocol reserve (family-specific):
+  - **Single SE DETF:** first bond with SE vault shares (mints DETF self-leg into pool + joins shares; BPT principal on bond NFT).
+  - **Multi-vault weighted:** first bond of **reserve BPT** (user may obtain BPT via `initializeReserve` / join that mints DETF **only into the pool**, not open seigniorage mint).
+- Do not invent a second product “bootstrap mode.” Speak **inert / pre-live** vs **live**.
+
+### Pricing and mint/burn gates
+
+- **Pricing engine = reserve pool** (balances, weights, fees, rate providers). Do **not** introduce an off-pool multi-asset FX “numeraire” ledger.
+- **Synthetic price:** fully diluted backing from owned reserve BPT’s claim on pool balances (rate-scaled), ÷ DETF `totalSupply`, abstract **1e18 peg**. Include BPT held by bond NFT vault when peers do.
+- **Mint** only if synthetic **> mintThreshold**; **burn** only if synthetic **< burnThreshold** (`DETFThresholdPolicy`). First bond is typically ungated by synthetic (no supply yet).
+- Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
+
+### User routes (defaults)
+
+- Prefer **configured vault shares ↔ DETF** on the DETF surface (exact-in closed form).
+- **RateAsset as mint `tokenIn` on the DETF** is usually **out of scope** unless that family PRD explicitly allows a zap: user deposits into the SE vault first, then uses shares.
+- **vaultShareᵢ ↔ vaultShareⱼ on the DETF** is out of scope: use Balancer / Standard Exchange Router on the reserve pool.
+- Routes that need **binary search / gas-heavy exact-out solvers** should **revert** (`InvalidRoute` preferred for new families; peer Single SE may still say `UnsupportedRoute`). Do not ship approximate solvers “for convenience.”
+- **Preview/execution:** closed-form routes must share one quote path; tests assert **exact** preview == execution when possible (document ≤ few-wei only if Balancer multi-leg proportional exit forces it).
+
+### Bonding and rebasing claim
+
+- **Full bond NFT vault** is the default v1 shape: user bond positions + protocol NFT + fee-recipient NFT wiring as peer families.
+- Bond lock terms from oracle: **revert if lock < min**; **clamp to max** if longer (bonus at max). Use `DETFBondNFTMathLib` / `DETFBondLifecycleLib`.
+- `acceptedBondTokens()` must list what the family accepts (at least reserve BPT and/or vault shares per PRD).
+- **Sell NFT → protocol** moves principal into protocol NFT accounting; **mint rebasing claim** via `IRebasingClaimToken.mintFromNFTSale` when claim package is wired.
+- **Claim redeem:** DETF-orchestrated unwind of protocol reserve BPT → vault share path → payout in configured `rateAsset`(s). Never treat raw claim amounts as free BPT authority without burning claim shares (`burnShares` / peer path). Require claim token configured when redeem is exposed.
+- Wire claim package in DFPkg `postDeploy` when the family requires claim (role-named `IRebasingClaimToken` / `RebasingClaimTokenDFPkg`).
+
+### Deploy path (same as vault packages)
+
+- Facets: CREATE3 + `*FactoryService` / `DetfFacetFactoryService` / family `*_Facet_FactoryService`.
+- DETF DFPkg: **Vault Registry / manager** (`indexedexManager.deployPkg` / typed `deploy*DFPkg`). **Never** `new` DFPkg/facets; never bypass registry for registered vault packages.
+- `PkgInit` / `PkgArgs` **on the interface**, not the contract (Crane rule).
+- Shared helpers: `contracts/vaults/detf/core/*`, `detf/reusable/*`, bond NFT packages, `StandardExchangeRateProviderDFPkg`, Balancer `WeightedPoolFactory`.
+
+### Testing expectations (DETF-specific)
+
+Production-first rules in this file and `indexedex-testing` apply. Additionally for DETFs:
+
+1. **No mocks of SUT:** DETF diamond, facets, DFPkg, manager, registry, fee oracle, attached SE vaults under test.
+2. **Gold TestBases:** inherit `CraneTest` → `IndexedexTest` → vault components / Balancer SE router or protocol SE TestBases; mirror `TestBase_SingleStandardExchangeDETF` / family `TestBase_*` patterns.
+3. **Real SE legs:** deploy production SE vaults (Aerodrome/Camelot hermetic ports, fork Uni V4, nested DETF/DualLiquidity as matrix rows). Crane `*/stubs/` protocol ports are **not** “mocks.”
+4. **Allowed non-SUT harnesses:** mintable ERC20 for funding; **reentrancy hostile ERC20** as configured vault share only for attack tests (see Single SE + MultiVault reentrancy suites); never a fake Standard Exchange for lifecycle.
+5. **Cover at least:** inert deploy; first-bond → live; pre-live mint blocked; mint/burn with **preview == execution**; threshold gates; route rejects (`InvalidRoute` / family equivalent); bond lock clamp; sell → claim (when in scope); residual free inventory zero on success (BPT on diamond may remain); nested reentrancy hits `IsLocked`.
+6. **Price movement:** for threshold tests under **default** mint/burn thresholds, drive synthetic via **real underlying pool trades** (and seigniorage dilution where needed) so both mint-allowed and burn-allowed regimes are exercised — do not only use open-threshold deploys as the sole proof.
+7. **Matrix:** when attaching many SE types, equal-priority production providers (not one preferred mock).
+
+### Key reference paths
+
+```text
+contracts/vaults/detf/core/                    # shared math/lifecycle libs
+contracts/vaults/detf/reusable/                # facet/pkg factory helpers, NFT interfaces
+contracts/vaults/detf/standardExchange/single/ # primary single-SE DETF gold implementation + TestBase
+contracts/vaults/detf/composed/multi-vault-weighted/  # multi-leg weighted PRD + implementation
+contracts/vaults/detf/composed/stable/common/  # multi-vault stable + claim token packages
+contracts/vaults/protocol/                     # DETFNFTVault, RebasingClaimToken packages
+```
+
+When implementing a new DETF family: write/update a **PRD** and **implementation/test plan** beside the package (see existing `*_PRD.md` / `*_IMPLEMENTATION_AND_TEST_PLAN.md`), then follow production-first phases. Do not re-open locked PRD decisions without an explicit PRD revision.
 
 ## Codebase Overview
 
@@ -163,7 +262,7 @@ Generic Foundry skills that demo `MockOracle` / `new MyContract()` are **subordi
 
 ## Test Patterns
 
-**See `crane-testing` (under `lib/crane/`) + `indexedex-testing` + `crane-deployment` first.**
+**See `crane-testing` (under `lib/crane/`) + `indexedex-testing` + `crane-deployment` first.** For abuse/attack suites use `crane-adversarial-testing` + `indexedex-adversarial-testing`.
 
 - Inherit `CraneTest` (provides `create3Factory` + `diamondPackageFactory` via `InitDevService`).
 - Then `IndexedexTest` (builds the core manager, fee collector, etc. using Crane factories + registers the manager as operator).

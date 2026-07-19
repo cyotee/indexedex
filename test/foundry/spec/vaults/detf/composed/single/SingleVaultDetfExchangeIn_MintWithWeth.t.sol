@@ -34,7 +34,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
     uint128 internal constant POSITION_LIQUIDITY = 5e18;
     uint128 internal constant TEST_POSITION_LIQUIDITY = 1e18;
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
 
         detf = _deploySingleVaultDetf();

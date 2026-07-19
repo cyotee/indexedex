@@ -95,7 +95,9 @@ contract DetfReentryTarget {
 }
 
 /// @notice Proves nonReentrant on exchangeIn/bond via hostile share transferFrom reentry.
-/// @dev Requirements for a green test (no theater):
+/// @dev Catalog: BASE-C / C3-class (mint→bond nested IsLocked). Partial adversarial baseline.
+///      Full C1–C2 expansion lives under `adversarial/Adversarial_Reentrancy.t.sol`.
+///      Requirements for a green test (no theater):
 ///      1) Control mint succeeds unarmed on the same path
 ///      2) reentryAttempts == 1 (nested call ran)
 ///      3) nestedCallSucceeded == false

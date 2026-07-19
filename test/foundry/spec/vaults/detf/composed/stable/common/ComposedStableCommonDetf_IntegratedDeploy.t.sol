@@ -131,7 +131,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         return 0;
     }
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
 
         protocolDETF = IProtocolDETF(makeAddr('protocolDETF'));

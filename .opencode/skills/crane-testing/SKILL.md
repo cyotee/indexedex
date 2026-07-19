@@ -342,7 +342,7 @@ See GitBook LR-2: `docs/development/testing.md` + deployment docs for registry +
 - Protocol: `contracts/protocols/.../test/bases/TestBase_*.sol`
 - Also see `IHandler.sol`, stubs under `contracts/test/`
 
-Ties to other skills: `crane-deployment` (factories + init in tests), `crane-architecture` (DFPkg + slots), `crane-natspec` (test NatSpec + central values process). GitBook: `docs/development/testing.md`, `docs/development/natspec.md`, deployment/ and protocols/ sections (LR-2).
+Ties to other skills: `crane-deployment` (factories + init in tests), `crane-architecture` (DFPkg + slots), `crane-natspec` (test NatSpec + central values process), `crane-adversarial-testing` (abuse catalogs, hostile harnesses, P0/P1 security suites — production-first). GitBook: `docs/development/testing.md`, `docs/development/natspec.md`, deployment/ and protocols/ sections (LR-2).
 
 ## LR-7 Testing Standards (Mandatory - Full List Excerpt)
 

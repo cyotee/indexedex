@@ -13,7 +13,10 @@ import {IStandardExchangeBufferPool} from
  * @title StandardExchangeBufferPoolInvariant
  * @notice Foundry invariant test suite for the Standard Exchange Buffer Pool.
  *
- * @dev Uses Handler_StandardExchangeBufferPool to drive random swap, LP-add, and LP-remove
+ * @dev **L3 GOLD** for IndexedEx property/invariant program
+ *      (`docs/testing/FUZZ_INVARIANT_COVERAGE_GAP_REPORT.md`).
+ *
+ *      Uses Handler_StandardExchangeBufferPool to drive random swap, LP-add, and LP-remove
  *      operations against the deployed pool.  Each invariant_* function corresponds to a
  *      spec section 8.3 assertion.
  *

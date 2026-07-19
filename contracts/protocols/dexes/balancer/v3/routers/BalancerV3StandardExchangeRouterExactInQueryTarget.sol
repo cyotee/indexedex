@@ -123,6 +123,18 @@ contract BalancerV3StandardExchangeRouterExactInQueryTarget is
         onlyBalancerV3Vault
         returns (uint256 amountCalculated)
     {
+        BalancerV3StandardExchangeRouterRepo._sessionBegin();
+        if (params.pool != address(0)) {
+            BalancerV3StandardExchangeRouterRepo._pushRoutePrincipal(params.pool);
+        }
+        amountCalculated = _querySwapSingleTokenExactInHookBody(params);
+        BalancerV3StandardExchangeRouterRepo._sessionEnd();
+    }
+
+    function _querySwapSingleTokenExactInHookBody(StandardExchangeSwapSingleTokenHookParams calldata params)
+        internal
+        returns (uint256 amountCalculated)
+    {
         // Deliberately simplistic implementation to facilitate testing.
         // Includes very restrictive conditionals to clearly define "routes".
 

@@ -145,11 +145,10 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         _deployBufferPoolPkg();
 
         // 6. Deploy the pool (registers with live BV3 Vault).
+        // deployPool(seVault, tta) — shares/rateProvider resolved by package from SE vault.
         bufferPool = bufferPoolPkg.deployPool(
             IStandardExchange(address(daiUsdcVault)),
-            tta,
-            shares,
-            seRateProvider
+            tta
         );
         vm.label(bufferPool, 'Fork_StandardExchangeBufferPool');
 

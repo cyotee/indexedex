@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
+// @dev Catalog: BASE-C / C-class (SE reentrancy guard). Shared SE adversarial harness extends this.
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";

@@ -11,6 +11,9 @@ import {
     IBalancerV3StandardExchangeRouterPrepay
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 import {
+    BalancerV3StandardExchangeRouterRepo
+} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterRepo.sol";
+import {
     TestBase_BalancerV3StandardExchangeRouter
 } from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
 
@@ -20,9 +23,9 @@ import {
  * @dev Prepay functions handle liquidity operations where tokens are pre-transferred to the router.
  *      This is used when another contract needs to add/remove liquidity as part of a larger operation.
  *
- *      IMPORTANT: Prepay functions require the Balancer vault to be in an "unlocked" state,
- *      which means they must be called from within a vault.unlock() callback context.
- *      Direct calls from EOAs will revert with NotCurrentStandardExchangeToken.
+ *      IMPORTANT: Prepay is session-gated when the router has an active prepay session;
+ *      when session is off, only contract self-root callers may prepay.
+ *      Direct calls from EOAs will revert with PrepayNotAuthorized (session-gated / self-root).
  */
 contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3StandardExchangeRouter {
     using CastingHelpers for address[];
@@ -77,9 +80,7 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
 
         // Direct call should revert because vault is not unlocked
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector, alice, address(0)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
         prepayRouter.prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
 
@@ -98,9 +99,7 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
 
         // Direct call should revert because vault is not unlocked
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector, alice, address(0)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
         prepayRouter.prepayRemoveLiquidityProportional(daiUsdcPool, bptAmount, minAmountsOut, "");
 
@@ -115,9 +114,7 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
 
         // Direct call should revert because vault is not unlocked
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector, alice, address(0)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
         prepayRouter.prepayRemoveLiquiditySingleTokenExactIn(daiUsdcPool, bptAmount, IERC20(address(dai)), 1, "");
 
@@ -285,9 +282,7 @@ contract BalancerV3StandardExchangeRouter_Prepay_Test is TestBase_BalancerV3Stan
 
         // Direct call should revert because vault is not unlocked
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector, alice, address(0)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
         prepayRouter.prepayInitialize(newPool, tokens, amounts, 1, "");
 

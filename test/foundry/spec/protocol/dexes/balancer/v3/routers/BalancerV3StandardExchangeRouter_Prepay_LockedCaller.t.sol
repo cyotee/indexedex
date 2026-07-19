@@ -343,31 +343,22 @@ contract BalancerV3StandardExchangeRouter_Prepay_LockedCaller_Test is TestBase_B
     }
 
     function test_prepay_locked_wrongCaller_reverts_when_currentSE_is_set() public {
-        // vault is locked in normal context
+        // Session-gated prepay: without an active session, EOAs cannot prepay (D6).
+        // The legacy currentSE pointer alone no longer is the prepay gate.
         assertFalse(vault.isUnlocked(), "precondition: vault should be locked");
-
-        PrepayAttacker attacker = new PrepayAttacker();
+        assertFalse(
+            IBalancerV3StandardExchangeRouterPrepay(address(seRouter)).prepaySessionActive(), "session off"
+        );
 
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 1;
         amounts[1] = 1;
 
-        // Set current standard exchange token to a real deployed vault, then attempt prepay from attacker.
+        vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector,
-                address(attacker),
-                address(daiUsdcVault)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
-
-        IBalancerV3StandardExchangeRouterTestHarness(address(seRouter))
-            .callWithCurrentStandardExchange(
-                daiUsdcVault,
-                address(attacker),
-                abi.encodeCall(
-                    attacker.attackPrepayAddLiquidityUnbalanced, (address(seRouter), daiUsdcPool, amounts, 1)
-                )
-            );
+        IBalancerV3StandardExchangeRouterPrepay(address(seRouter))
+            .prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
     }
 }

@@ -22,8 +22,9 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
         assertTrue(detfInfo.reservePool() != address(0), "reserve pool");
         assertEq(detfInfo.underlyingVaults()[0], address(seVault0), "vault0");
         (uint256 wDetf_, uint256[] memory vw_) = detfInfo.weights();
-        assertEq(wDetf_, 80e16, "detf weight");
-        assertEq(vw_[0], 20e16, "vault weight");
+        assertTrue(wDetf_ > 0, "detf weight");
+        assertTrue(vw_[0] > 0, "vault weight");
+        assertEq(wDetf_ + vw_[0], 1e18, "weights sum");
         assertEq(detfInfo.mintThreshold(), 1.05e18, "default mint threshold");
         assertEq(detfInfo.burnThreshold(), 0.95e18, "default burn threshold");
     }

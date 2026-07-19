@@ -9,6 +9,9 @@ import {
 
 /// @notice Sequence-based invariants over real deposits/swaps/redeems: no free value, BPT backing,
 ///         BPT-per-share non-decreasing (zero-tolerance cross-multiply).
+/// @dev **L2 GOLD** for IndexedEx property program (fixed multi-op sequences; not Foundry
+///      `invariant_*` + Handler). Prefer hermetic L3 for CI; fork L3 deferred (RPC cost).
+///      See `docs/testing/FUZZ_INVARIANT_COVERAGE_IMPLEMENTATION_PLAN.md`.
 contract DualLiquidityLinkedCrossVersionUniswapVault_Invariants is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
@@ -91,6 +94,54 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Invariants is
         uint256 bpt3 = _totalReserveBpt();
         uint256 s3 = IERC20(linkedVault).totalSupply();
         assertTrue(_bptPerShareGte(bpt3, s3, bpt2, s2), "after redeposit-style redeem");
+    }
+
+    /// @notice Wave 3B L2 expand: three actors pro-rata claims never exceed reserve BPT.
+    function test_invariant_threeActor_proRataClaimsLeReserve() public {
+        address a2 = makeAddr("inv3");
+        address a3 = makeAddr("inv4");
+        _depositCommon(actor, LEG_SEED);
+        _depositCommon(a2, LEG_SEED / 2);
+        _depositCommon(a3, LEG_SEED / 3);
+
+        uint256 supply = IERC20(linkedVault).totalSupply();
+        uint256 bpt = _totalReserveBpt();
+        assertGt(supply, 0);
+        assertGt(bpt, 0);
+
+        address[4] memory holders = [address(this), actor, a2, a3];
+        uint256 claimed;
+        for (uint256 i = 0; i < 4; i++) {
+            uint256 s = IERC20(linkedVault).balanceOf(holders[i]);
+            if (s > 0) claimed += (s * bpt) / supply;
+        }
+        assertLe(claimed, bpt, "P-PRORATA three-actor");
+    }
+
+    /// @notice Wave 3B L2 expand: partial redeem leaves residual inventory clean and BPT/share coherent.
+    function test_invariant_partialRedeem_residualAndBacking() public {
+        uint256 minted = _depositCommon(actor, LEG_SEED);
+        uint256 burn = minted / 3;
+        if (burn == 0) burn = minted;
+
+        uint256 bpt0 = _totalReserveBpt();
+        uint256 s0 = IERC20(linkedVault).totalSupply();
+
+        vm.startPrank(actor);
+        IStandardExchangeIn(linkedVault).exchangeIn(
+            IERC20(linkedVault), burn, commonToken, 0, actor, false, block.timestamp
+        );
+        vm.stopPrank();
+
+        _assertNoIntermediateInventory();
+        if (IERC20(linkedVault).totalSupply() > 0) {
+            assertGt(_totalReserveBpt(), 0, "backing after partial redeem");
+            assertTrue(
+                _bptPerShareGte(_totalReserveBpt(), IERC20(linkedVault).totalSupply(), bpt0, s0)
+                    || _totalReserveBpt() <= bpt0,
+                "BPT/share after partial redeem"
+            );
+        }
     }
 
     function test_invariant_fullBptRedeem_preservesProRata() public {

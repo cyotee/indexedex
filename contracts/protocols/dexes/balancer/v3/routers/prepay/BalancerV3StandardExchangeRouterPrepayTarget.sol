@@ -39,37 +39,9 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         return true;
     }
 
-    modifier onlyUnlockedOrSEToken() {
-        _onlyUnlockedOrSEToken();
+    modifier onlyPrepayAuthorized() {
+        BalancerV3StandardExchangeRouterRepo._onlyPrepayAuthorized(msg.sender);
         _;
-    }
-
-    function _onlyUnlockedOrSEToken() internal view {
-        // Desired behavior:
-        // - If the Balancer V3 vault is unlocked, no other caller can concurrently use it, so prepay operations are
-        //   safe to run (this is the common `vault.unlock(...)` callback context).
-        // - If the vault is locked, we only allow the current StandardExchange token (set by the router swap facets)
-        //   to call prepay, minimizing risk of arbitrary external callers invoking vault unlock flows.
-
-        if (BalancerV3VaultAwareRepo._balancerV3Vault().isUnlocked()) {
-            return;
-        }
-
-        IStandardExchangeProxy current = currentStandardExchange();
-
-        // If a StandardExchange swap is in-flight, only the in-flight token may call.
-        if (address(current) != address(0)) {
-            if (address(msg.sender) != address(current)) {
-                revert NotCurrentStandardExchangeToken(address(msg.sender), address(current));
-            }
-            return;
-        }
-
-        // Otherwise (no in-flight token), only allow contract callers.
-        // This supports trusted vault→router interactions (e.g., seigniorage flows) while still rejecting EOAs.
-        if (msg.sender.code.length == 0) {
-            revert NotCurrentStandardExchangeToken(address(msg.sender), address(0));
-        }
     }
 
     function isPrepaid() public pure returns (bool) {
@@ -80,6 +52,39 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         return BalancerV3StandardExchangeRouterRepo._currentStandardExchangeToken();
     }
 
+    /* ---------------------------------------------------------------------- */
+    /*                         Prepay session auth API                          */
+    /* ---------------------------------------------------------------------- */
+
+    /// @inheritdoc IBalancerV3StandardExchangeRouterPrepay
+    function passPrepayAuth(address next) external returns (bool) {
+        return BalancerV3StandardExchangeRouterRepo._passPrepayAuth(msg.sender, next);
+    }
+
+    /// @inheritdoc IBalancerV3StandardExchangeRouterPrepay
+    function restorePrepayAuth() external returns (bool) {
+        return BalancerV3StandardExchangeRouterRepo._restorePrepayAuth(msg.sender);
+    }
+
+    /// @inheritdoc IBalancerV3StandardExchangeRouterPrepay
+    function prepaySessionActive() external view returns (bool) {
+        return BalancerV3StandardExchangeRouterRepo._prepaySessionActive();
+    }
+
+    /// @inheritdoc IBalancerV3StandardExchangeRouterPrepay
+    function prepayAuthTop() external view returns (address) {
+        return BalancerV3StandardExchangeRouterRepo._prepayAuthTop();
+    }
+
+    /// @inheritdoc IBalancerV3StandardExchangeRouterPrepay
+    function prepayAuthDepth() external view returns (uint256) {
+        return BalancerV3StandardExchangeRouterRepo._prepayAuthDepth();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              Prepay liquidity                            */
+    /* ---------------------------------------------------------------------- */
+
     function prepayInitialize(
         address pool,
         IERC20[] memory tokens,
@@ -87,7 +92,7 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         uint256 minBptAmountOut,
         // bool wethIsEth,
         bytes memory userData
-    ) external saveSender(msg.sender) onlyUnlockedOrSEToken returns (uint256 bptAmountOut) {
+    ) external saveSender(msg.sender) onlyPrepayAuthorized returns (uint256 bptAmountOut) {
         return abi.decode(
             BalancerV3VaultAwareRepo._balancerV3Vault()
                 .unlock(
@@ -114,7 +119,7 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         uint256 minBptAmountOut,
         // bool wethIsEth,
         bytes memory userData
-    ) external saveSender(msg.sender) onlyUnlockedOrSEToken returns (uint256 bptAmountOut) {
+    ) external saveSender(msg.sender) onlyPrepayAuthorized returns (uint256 bptAmountOut) {
         (, bptAmountOut,) = abi.decode(
             BalancerV3VaultAwareRepo._balancerV3Vault()
                 .unlock(
@@ -141,7 +146,7 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         uint256[] memory minAmountsOut,
         // bool wethIsEth,
         bytes memory userData
-    ) external saveSender(msg.sender) onlyUnlockedOrSEToken returns (uint256[] memory amountsOut) {
+    ) external saveSender(msg.sender) onlyPrepayAuthorized returns (uint256[] memory amountsOut) {
         (, amountsOut,) = abi.decode(
             BalancerV3VaultAwareRepo._balancerV3Vault()
                 .unlock(
@@ -169,7 +174,7 @@ contract BalancerV3StandardExchangeRouterPrepayTarget is
         uint256 minAmountOut,
         // bool wethIsEth,
         bytes memory userData
-    ) external saveSender(msg.sender) onlyUnlockedOrSEToken returns (uint256 amountOut) {
+    ) external saveSender(msg.sender) onlyPrepayAuthorized returns (uint256 amountOut) {
         (uint256[] memory minAmountsOut, uint256 tokenIndex) =
             _getSingleInputArrayAndTokenIndex(pool, tokenOut, minAmountOut);
 
