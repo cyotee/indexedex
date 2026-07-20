@@ -122,3 +122,18 @@ fantom_mainnet = "https://fantom.drpc.org"
 apeChain_rpc = "https://rpc.apechain.com"
 apeChain_drpc = "https://apechain.drpc.org"
 apeChain_curtis_rpc = "https://rpc.curtis.apechain.com"
+# Research harness scripts only (Mode A/C telemetry). Allows via_ir for stack headroom
+# in large TestBase inheritance trees. Do NOT use for production contract builds.
+[profile.research]
+src = 'contracts'
+out = 'out'
+libs = ['node_modules', 'lib']
+test = 'test/foundry/spec'
+cache_path = 'cache_forge_research'
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+solc = "0.8.35"
+ignored_warnings_from = ["lib/crane/"]
+optimizer = true
+optimizer_runs = 1
+via_ir = true

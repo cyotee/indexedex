@@ -58,3 +58,7 @@ frontend/yarn.lock
 
 out/
 cache_forge/
+research/out/
+
+__pycache__/
+*.py[cod]
