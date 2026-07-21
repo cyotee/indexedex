@@ -529,13 +529,14 @@ git diff origin/main -- remappings.txt foundry.toml lib/crane/remappings.txt lib
 |------|-------|--------|-------|
 | 2026-07-21 | Research | ✅ | Shared dep matrix filled from upstream package/gitmodules |
 | 2026-07-21 | Protocol priority §5.0 | ✅ | Score desc, size asc; no new remappings |
-| | A0–A4 | ⬜ | |
-| | Frax (pri 1) | ⬜ | |
-| | StakeWise (pri 2) | ⬜ | |
-| | ether.fi (pri 3) | ⬜ | |
-| | Lido (pri 4) | ⬜ | |
-| | Rocket Pool (pri 5) | ⬜ | |
-| | Polish | ⬜ | |
+| 2026-07-21 | A0–A4 | ✅ | DEPENDENCY_MAP, IDepositContract, EthereumStakingLib, README; no new remaps |
+| 2026-07-21 | Frax (pri 1) | ✅ | Thin Service + SfrxETHRateProvider; mainnet fork green |
+| 2026-07-21 | StakeWise (pri 2) | ✅ | IEthVault/IOsETH/controller + Service + rate; fork green |
+| 2026-07-21 | ether.fi (pri 3) | ✅ | deposit+wrap/unwrap Service + WeETHRateProvider; fork green |
+| 2026-07-21 | Lido (pri 4) | ✅ | wrap/unwrap inverse + WstETHRateProvider; fork green |
+| 2026-07-21 | Rocket Pool (pri 5) | ✅ | deposit when capacity + RETHRateProvider; fork green |
+| 2026-07-21 | SE (Block 7) | ✅ | Generic ERC-4626 SE via registry; vaultTokens=[sfrxETH,frxETH]; deposit/redeem fork green |
+| 2026-07-21 | Polish | ✅ | staking_eth + se_erc4626 FOUNDRY profiles; 11/11 staking + 3/3 SE fork tests green |
 
 ---
 

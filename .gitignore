@@ -62,3 +62,6 @@ research/out/
 
 __pycache__/
 *.py[cod]
+
+out_se_erc4626/
+cache_se_erc4626/

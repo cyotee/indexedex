@@ -137,3 +137,23 @@ ignored_warnings_from = ["lib/crane/"]
 optimizer = true
 optimizer_runs = 1
 via_ir = true
+
+# Narrow profile for generic ERC-4626 SE (import-graph only; no new remap aliases).
+[profile.se_erc4626]
+src = 'contracts/vaults/standard/erc4626'
+test = 'test/foundry/fork/eth_main/vaults/standard/erc4626'
+out = 'out_se_erc4626'
+cache_path = 'cache_se_erc4626'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
