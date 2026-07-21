@@ -91,10 +91,10 @@ if [[ "$DATA" -eq 1 ]]; then
     esac
   else
     if [[ "$MODE_B" -eq 1 ]]; then
-      # P0 always
-      run_script Script_V2_RatesOff_ModeB_DepositCommon
-      run_script Script_V2_RatesOff_ModeB_DepositTokenA
-      run_script Script_V2_RatesOff_ModeB_DepositTokenB
+      # P0 always (continue matrix if one route reverts)
+      run_script Script_V2_RatesOff_ModeB_DepositCommon || echo "WARN: deposit_common failed"
+      run_script Script_V2_RatesOff_ModeB_DepositTokenA || echo "WARN: deposit_tokenA failed"
+      run_script Script_V2_RatesOff_ModeB_DepositTokenB || echo "WARN: deposit_tokenB failed"
       if [[ "$ROUTES" == "p0p1" || "$ROUTES" == "all" ]]; then
         run_script Script_V2_RatesOff_ModeB_DepositPairShare || echo "WARN: deposit_pairShare failed (deferred)"
         run_script Script_V2_RatesOff_ModeB_DepositVaultAShare || echo "WARN: deposit_vaultAShare failed (deferred)"
@@ -102,7 +102,7 @@ if [[ "$DATA" -eq 1 ]]; then
       fi
     fi
     if [[ "$MODE_A" -eq 1 ]]; then
-      run_script Script_V2_RatesOff_ModeA_LegDemand
+      run_script Script_V2_RatesOff_ModeA_LegDemand || echo "WARN: modeA_legDemand failed"
     fi
   fi
 fi

@@ -13,8 +13,9 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 | [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_PRD.md) | **v1 PRD (complete):** DualLiquidity residual + preview |
 | [`scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md) | DualLiquidity Mode A/B findings (R+/R− residual, preview) |
 | [`scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md`](./scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md) | **Agent handoff v1:** DualLiquidity (do not re-run casually) |
-| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md) | **v2 PRD (planned):** linked volume + share-book (primary VP) |
-| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md) | **v2 plan:** Mode B volume first → Mode A share book → Mode C stretch |
+| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md) | **v2 PRD (complete):** linked volume + share-book |
+| [`scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) | **v2 findings:** Mode B volume matrix + Mode A share book |
+| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md) | **v2 plan:** Mode B volume → Mode A share book |
 | [`scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md`](./scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md) | PRD for rate provider comparative |
 | `out/` | **Generated** JSONL + PNGs (gitignored) — recreate with runners |
 

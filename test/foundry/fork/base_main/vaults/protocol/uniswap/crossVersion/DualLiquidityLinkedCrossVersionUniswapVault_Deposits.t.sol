@@ -63,6 +63,35 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Deposits is
         assertApproxEqAbs(minted, preview, 1e6, "multi-hop deposit preview ~ execution");
     }
 
+    /// @notice Depositing the other linked token (tokenB / vaultB side) must succeed symmetrically.
+    function test_depositLinkedTokenB_previewMatchesExecution() public {
+        _fund(tokenB, depositor, LEG_SEED);
+        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenB, LEG_SEED, shareToken);
+        vm.startPrank(depositor);
+        tokenB.approve(linkedVault, LEG_SEED);
+        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+            tokenB, LEG_SEED, shareToken, 0, depositor, false, block.timestamp
+        );
+        vm.stopPrank();
+
+        assertGt(minted, 0, "linked-tokenB deposit mints shares");
+        assertApproxEqAbs(minted, preview, 1e6, "multi-hop tokenB deposit preview ~ execution");
+    }
+
+    /// @notice Research-scale tokenB deposits after a large common book (Mode B precondition).
+    function test_depositLinkedTokenB_afterLargeCommonBook() public {
+        _depositCommon(depositor, 5_000e18);
+        uint256 amountIn = 500e18;
+        _fund(tokenB, depositor, amountIn);
+        vm.startPrank(depositor);
+        tokenB.approve(linkedVault, amountIn);
+        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+            tokenB, amountIn, shareToken, 0, depositor, false, block.timestamp
+        );
+        vm.stopPrank();
+        assertGt(minted, 0, "tokenB deposit after common book mints shares");
+    }
+
     /// @notice Depositing the common token routes through the best linked leg and mints shares.
     function test_depositCommonToken_previewMatchesExecution() public {
         _fund(commonToken, depositor, LEG_SEED);

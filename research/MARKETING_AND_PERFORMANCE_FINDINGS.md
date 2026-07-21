@@ -18,8 +18,9 @@
 1. **Standard Exchange vaults re-mark with underlying markets.** When Uni (or leg) demand moves SE rates, nested Balancer legs that use Rate Providers keep mids fair; without rates, mids lag.  
 2. **Rate Providers are a mark-integrity control, not free yield.** Residual lag ≠ profitable arb until edge clears fees.  
 3. **Pool fee is an arb presentation threshold.** Below fee stack → residual can exist with zero fills; above → closer can fill (proven on Uni V2 SE high-vol).  
-4. **DualLiquidity’s primary product story is nested linked liquidity under one share**, not synthetic DETF seigniorage. Research so far proves rates fairness + deposit preview trust; **linked volume charts are Research v2**.  
-5. **Previews can match execution** on closed-form DualLiquidity deposits (exact rates-off; few-wei rates-on).
+4. **DualLiquidity’s primary product story is nested linked liquidity under one share** — deposits **fund nested SE legs and reserve BPT** (v2 volume attribution). Not synthetic DETF seigniorage; not an arb product.  
+5. **SE shares in the DualLiquidity reserve** place holders behind the same Standard Exchange books that attract re-mark traffic and, when residual clears fees, **arb-induced volume** on those legs (SE research chain + v2 inventory into SE shares).  
+6. **Previews can match execution** on closed-form DualLiquidity deposits (exact rates-off; few-wei rates-on). Rates remain optional mark integrity, not the lead claim.
 
 ---
 
@@ -30,7 +31,7 @@
 | **Uni V2 Standard Exchange + Balancer matrix** | SE share rates track underlying Uni; LP book P&L under market demand is measurable | **Strong** — Mode A full plot pack |
 | **Rate Providers on SE-share Balancer legs** | Nested mid stays fair (`residual ≈ 0`); optional off shows lag | **Strong** — pure R+/R− worlds |
 | **Fee-aware arb story** | Only treat residual as arb when it clears pool fee + path costs | **Strong** on Uni V2 SE (5% research fee ladder); transfer theory to other fees carefully |
-| **DualLiquidity Linked Cross-Version vault** | One share over V4+V2 linked legs + pair; nested mark optional via rates; deposit previews trustworthy | **Partial** — fairness + Mode B preview done; linked-market “volume driver” not fully charted yet |
+| **DualLiquidity Linked Cross-Version vault** | One share over linked V4+V2 SE legs; deposits fund nested SE inventory + BPT; benefits from SE re-mark / fee-gated arb volume on reserve legs | **Strong** for composition + volume (v2); rates/preview (v1); arb **via SE legs**, not DualLiquidity Mode C |
 
 ---
 
@@ -94,24 +95,23 @@
 | R+ nested mid fair under leg Uni demand | residualA ≈ **0** (−1 wei) | `out/dualLiquidityLinkedCrossVersion/compare/modeA_legDemand/fairness_pnl_compare.png` **(top panel)** |
 | R− mid lags same path | residualA ≈ **+1.86×10⁻⁴** (~1.9 bps); midIndex frozen, rateIndex moves | **same top panel (red vs green)** |
 | Mode B deposit preview trust | R− **exact** preview==exec; R+ **≤ ~2k wei** | `.../compare/modeB_depositCommon/preview_gap.png` |
-| Primary product VP | Nested linked V4+V2 liquidity under one share (composition/routing) — not arb/seigniorage | Narrative + Mode B successful deposits; volume-into-legs metric still light |
+| Primary product VP | Nested linked V4+V2 under one share; deposits fund SE legs + BPT; SE-in-reserve captures re-mark / fee-gated arb **volume benefits** | v1 residual+preview; **v2 volume_by_leg**; SE rateProviderCompare for arb threshold |
 
 | Hypothesis | Verdict |
 |------------|---------|
-| H1 R+ residual ≈ 0 | **Supported** |
-| H2 R− residual grows | **Supported** (modest) |
-| H4 preview==execution | **Supported** (exact off; few-wei on) |
-| H5 nested activity | **Partial** (shares mint / BPT tracked; deeper “linked volume” charts TBD) |
-| H6 fee-threshold fills on DualLiquidity | **Not run** (residual ≪ 0.3% at this tier) |
+| H1 R+ residual ≈ 0 | **Supported** (v1) |
+| H2 R− residual grows | **Supported** (v1; modest) |
+| H4 preview==execution | **Supported** (v1; exact off; few-wei on) |
+| H5 nested activity / volume into legs | **Supported** (v2 Mode B matrix) |
+| H6 fee-threshold fills on DualLiquidity reserve | **Not run** (residual ≪ 0.3% at modest tier) — arb benefit is **via SE legs**, not DL Mode C |
 
 **Detail:**  
-- [`scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md)  
-- [`scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md`](./scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md)  
-**Reproduce:** `./research/run_dual_liquidity_research.sh`
+- v1: [`FINDINGS.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md)  
+- **v2:** [`FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) (narrative synthesis + SE arb volume chain)  
+- Agent handoff: [`AGENT_RESEARCH_REPORT.md`](./scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md)  
+**Reproduce:** `./research/run_dual_liquidity_research.sh` (v1) · `./research/run_dual_liquidity_research_v2.sh` (v2)
 
-**Primary VP (research stance):** one vault share over linked Uni V4 + V2 legs for a token pair; rates optional for fair nested marks; deposits are preview-safe. Lead with **composition/routing**, not arb.
-
-**Next (v2):** linked volume attribution + share-book hero charts — [`DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md). Artifacts will land under `out/dualLiquidityLinkedCrossVersion/v2/`.
+**Primary VP (research stance):** composition/routing under one share; deposits fund nested SEs (**both** linked tokens A and B); optional rates for mid fairness; **structural** benefit from SE re-mark / fee-gated arb volume on reserve SE legs — do **not** lead with DualLiquidity-as-arb.
 
 ---
 
@@ -126,6 +126,10 @@
 | Arb fills appear | `rateProviderCompare/highVol/mul25_steps48/compare/C_uni_plus_bal_arb_WETH/probes_compare.png` |
 | DualLiquidity rates fairness | `dualLiquidityLinkedCrossVersion/compare/modeA_legDemand/fairness_pnl_compare.png` |
 | DualLiquidity deposit preview | `dualLiquidityLinkedCrossVersion/compare/modeB_depositCommon/preview_gap.png` |
+| DualLiquidity **volume into legs** (v2, tokenA) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeB_depositTokenA/volume_by_leg.png` |
+| DualLiquidity **volume into legs** (v2, tokenB) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeB_depositTokenB/volume_by_leg.png` |
+| DualLiquidity volume (common→pair) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeB_depositCommon/volume_by_leg.png` |
+| DualLiquidity share book (Mode A) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeA_legDemand/share_book_pnl.png` |
 | LP book relative P&L (SE) | `uniswapV2Se/modeA_trade_*/pnl_normalized.png` |
 
 Paths are under `research/out/` (generated; gitignored — regenerate via runners).
@@ -141,11 +145,15 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 - Without Rate Providers, nested mids can lag as underlying markets trade.  
 - Lag is not free arb below fees; above fees, arb can execute (Uni V2 SE high-vol evidence).  
 - DualLiquidity deposits: preview matches execution (exact / few-wei).  
-- DualLiquidity supports rates-on and rates-off deploy policies.
+- DualLiquidity supports rates-on and rates-off deploy policies.  
+- DualLiquidity product deposits fund nested SE legs + reserve BPT (volume_by_leg evidence; rates-off).  
+- Multiple deposit routes hit different nested surfaces (pair vs vaultA vs **vaultB**).  
+- **Both linked tokens (tokenA and tokenB) can mint DualLiquidity shares** (peer volume series).  
+- DualLiquidity holders benefit from SE legs in reserve participating in re-mark traffic and fee-gated arb volume (SE research + v2 inventory; not DualLiquidity Mode C fills).
 
 ### Not ready / incomplete
 
-- DualLiquidity as proven “volume engine into both linked markets” with dedicated volume charts — **next campaign: Research v2** ([PRD](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md)).  
+- DualLiquidity “equal flow into all three SE legs on every deposit” — routes are intentionally asymmetric.  
 - DualLiquidity Mode C arb fills at 0.3% fee (stretch only; not required for primary VP).  
 - Multi-protocol SE sameness (Aero/Camelot/Aave Stata Mode A twins).  
 - Full synthetic DETF mint/burn/bond/claim research.  
@@ -157,11 +165,10 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 
 | Priority | Campaign | Status | Spec |
 |----------|----------|--------|------|
-| **1** | DualLiquidity linked volume + share-book (v2) | **PLANNED** | [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md) · [implementation plan](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md) |
-| 2 | Multi-protocol SE Mode A twins | not started | — |
-| 3 | Single SE DETF inert→live + mint/burn | not started | — |
-
-v2 focus: Mode B **volume_by_leg** (rates-off default) → Mode A share-book P&L → Mode C stretch only. Artifacts under `research/out/dualLiquidityLinkedCrossVersion/v2/` (do not overwrite v1).
+| ~~1~~ | DualLiquidity linked volume + share-book (v2) | **COMPLETE** | [`FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) |
+| **1** | Multi-protocol SE Mode A twins | not started | — |
+| 2 | Single SE DETF inert→live + mint/burn | not started | — |
+| 3 | DualLiquidity Mode C | optional | residual ≥ 0.3% |
 
 ---
 
@@ -171,5 +178,9 @@ v2 focus: Mode B **volume_by_leg** (rates-off default) → Mode A share-book P&L
 |------|--------|
 | 2026-07-21 | **Created** this roll-up. Seeded from Mode A/C, rateProviderCompare (baseline + mul10 + mul25/s48), DualLiquidity Mode A/B. |
 | 2026-07-21 | **Next campaign planned:** DualLiquidity Research v2 (linked volume + share-book). PRD + implementation plan under `scenarios/dualLiquidityLinkedCrossVersion/`. |
+| 2026-07-21 | **DualLiquidity v2 complete:** volume attribution Mode B matrix + Mode A share-book plots under `out/.../v2/`. H1–H4 recorded in FINDINGS_v2. |
+| 2026-07-21 | **Narrative update:** DualLiquidity benefits from arb/re-mark volume on SE tokens held in the reserve (SE research chain + v2 inventory). Agent report + FINDINGS_v2 synthesis + roll-up §1–§5 refreshed. |
+| 2026-07-21 | **tokenB deposit gap closed:** nested `_swapThrough` min=0 production fix; full `modeB_depositTokenB` series (vaultB+BPT); Deposits tests green; FINDINGS/agent/marketing updated. |
+| 2026-07-21 | FINDINGS_v2 **Addendum (v2.1)** at top for skimmers (tokenB gap close summary). |
 
 *When adding a campaign: append a subsection under §3, add graph row under §4, update §5 ready/not-ready, add a changelog line.*

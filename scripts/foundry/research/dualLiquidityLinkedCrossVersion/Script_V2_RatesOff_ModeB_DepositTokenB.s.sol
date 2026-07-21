@@ -17,6 +17,7 @@ contract Script_V2_RatesOff_ModeB_DepositTokenB is Script {
         fixture.initTelemetry("v2/rates_off/modeB_depositTokenB");
 
         console2.log("DL v2 Mode B rates_off: deposit_tokenB");
+        // Peer of deposit_tokenA: same TRADE_SIZE / TRADE_STEPS (nested min fix on DualLiquidity).
         uint256 steps = fixture.TRADE_STEPS();
         uint256 size = fixture.TRADE_SIZE();
         for (uint256 i = 0; i < steps; ++i) {

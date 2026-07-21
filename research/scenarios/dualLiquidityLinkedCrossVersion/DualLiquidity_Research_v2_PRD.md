@@ -6,7 +6,7 @@ DualLiquidity Linked Cross-Version Uniswap Vault — Linked Volume & Share-Book 
 
 ## Status
 
-**PLANNED** — research-only extension of DualLiquidity v1. Does **not** re-open rates fairness (v1 complete). Implementation plan: [`DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md).
+**COMPLETE** — Mode B volume matrix + Mode A share-book (rates-off). Findings: [`FINDINGS_v2.md`](./FINDINGS_v2.md). Implementation plan: [`DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md).
 
 ## Purpose
 

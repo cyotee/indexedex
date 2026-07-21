@@ -6,7 +6,7 @@ Execute the [DualLiquidity Research v2 PRD](./DualLiquidity_Research_v2_PRD.md):
 
 ## Status
 
-**PLANNED** — ready for execution after PRD acceptance.
+**COMPLETE** — Mode B P0+P1 (tokenB deferred), Mode A rates-off, plots, FINDINGS_v2 (2026-07-21).
 
 ### Locked decisions (summary)
 
@@ -246,21 +246,21 @@ Reuse `research/plots/common.py` / stamp helpers. Prefer new `plot_dual_liquidit
 
 ### Structural
 
-- [ ] No writes outside DualLiquidity research scripts, plots, scenario docs, `out/.../v2/`
-- [ ] v1 `out/dualLiquidityLinkedCrossVersion/rates_*` untouched
-- [ ] Production deploy path only
+- [x] No writes outside DualLiquidity research scripts, plots, scenario docs, `out/.../v2/`
+- [x] v1 `out/dualLiquidityLinkedCrossVersion/rates_*` untouched
+- [x] Production deploy path only
 
 ### Empirical
 
-- [ ] Mode B series has attribution fields populated
-- [ ] `volume_by_leg.png` exists and is human-readable
-- [ ] Mode A share-book plot exists
-- [ ] H1–H4 recorded pass/fail in FINDINGS_v2
+- [x] Mode B series has attribution fields populated
+- [x] `volume_by_leg.png` exists and is human-readable
+- [x] Mode A share-book plot exists
+- [x] H1–H4 recorded pass/fail in FINDINGS_v2
 
 ### Marketing
 
-- [ ] Roll-up §5: “volume engine” claim moved to ready **or** explicit partial with caveats
-- [ ] Graph map points at `v2/...` paths
+- [x] Roll-up §5: “volume engine” claim moved to ready **or** explicit partial with caveats
+- [x] Graph map points at `v2/...` paths
 
 ---
 
@@ -277,11 +277,15 @@ Reuse `research/plots/common.py` / stamp helpers. Prefer new `plot_dual_liquidit
 
 ## 10. Execution order (checklist)
 
-0. [ ] Phase 0 attribution lock + smoke  
-1. [ ] Phase 1 Mode B volume  
-2. [ ] Phase 2 Mode A share book  
-3. [ ] Phase 3 FINDINGS_v2 + roll-up + log  
-4. [ ] Phase 4 only if needed  
+0. [x] Phase 0 attribution lock + smoke  
+1. [x] Phase 1 Mode B volume  
+2. [x] Phase 2 Mode A share book  
+3. [x] Phase 3 FINDINGS_v2 + roll-up + log  
+4. [x] Phase 4 only if needed (tokenB deferred; no Mode C)
+
+## Deviations
+
+- **deposit_tokenB deferred:** product linked path reverts `UniswapV4ExchangeIn_SlippageExceeded` at TRADE_SIZE and TRADE_SIZE/5; H2 still PASS via common/tokenA/pair/vaultA routes.  
 
 ---
 

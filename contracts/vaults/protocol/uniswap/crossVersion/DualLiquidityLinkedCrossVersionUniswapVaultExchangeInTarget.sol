@@ -467,17 +467,22 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget is
         }
     }
 
-    /// @dev Deposit-path leg exchange: routes output to this contract with a block-scoped deadline
-    ///      (the caller's end-user deadline is already enforced by `_requireLive`). `minOut_` is
-    ///      the quoted output, used as the leg's slippage floor since quotes drive the share math.
+    /// @dev Deposit-path nested leg hop: routes output to this contract with a block-scoped deadline
+    ///      (the caller's end-user deadline is already enforced by `_requireLive`).
+    /// @dev Intermediate min is **0**, not the optimistic `previewExchangeIn` quote. Nested Uni V4/V2
+    ///      share mints can undershoot preview by rounding (multi-hop rate/reserve updates); flooring
+    ///      on exact preview reverts `UniswapV4ExchangeIn_SlippageExceeded` on otherwise valid paths
+    ///      (e.g. tokenB → shares). End-user slippage is still enforced by DualLiquidity
+    ///      `exchangeIn` `minAmountOut` on minted vault shares. Share mint uses **actual** BPT from
+    ///      the join (`_mintSharesForActualBpt`), so a lower intermediate out does not dilute holders.
     function _swapThrough(
         IStandardExchangeProxy vault_,
         IERC20 tokenIn_,
         uint256 amountIn_,
         IERC20 tokenOut_,
-        uint256 minOut_
+        uint256 /* minOut_ (ignored; see NatSpec) */
     ) private returns (uint256 amountOut_) {
-        amountOut_ = _legExchange(vault_, tokenIn_, amountIn_, tokenOut_, minOut_, address(this), block.timestamp);
+        amountOut_ = _legExchange(vault_, tokenIn_, amountIn_, tokenOut_, 0, address(this), block.timestamp);
     }
 
     /// @dev Adds `amount_` of `vaultShareToken_` into the reserve (pre-transfer + router settle; see `_joinReserve`).
