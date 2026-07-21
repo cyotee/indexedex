@@ -536,7 +536,8 @@ git diff origin/main -- remappings.txt foundry.toml lib/crane/remappings.txt lib
 | 2026-07-21 | Lido (pri 4) | ✅ | wrap/unwrap inverse + WstETHRateProvider; fork green |
 | 2026-07-21 | Rocket Pool (pri 5) | ✅ | deposit when capacity + RETHRateProvider; fork green |
 | 2026-07-21 | SE (Block 7) | ✅ | Generic ERC-4626 SE via registry; vaultTokens=[sfrxETH,frxETH]; deposit/redeem fork green |
-| 2026-07-21 | Polish | ✅ | staking_eth + se_erc4626 FOUNDRY profiles; 11/11 staking + 3/3 SE fork tests green |
+| 2026-07-21 | Domain vendor D2 | ✅ | StakeWise OsToken; ether.fi WeETH; Lido WstETH; RP RETH+DepositPool under contracts/external/* |
+| 2026-07-21 | Polish | ✅ | 18 staking (domain+fork) + 3 SE tests green; READMEs pin upstream commits |
 
 ---
 
