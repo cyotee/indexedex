@@ -6,7 +6,7 @@ DualLiquidityLinkedCrossVersionUniswapVault (Dual Liquidity Linked Cross-Version
 
 ## Status
 
-IMPLEMENTED — the family is built, tested, and green under `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/`. This PRD reflects the as-built design, including the direct Balancer V3 reserve integration (no external proportional-exit adapter or generic-router abstraction — see Reserve Integration).
+IMPLEMENTED — the family is built, tested, and green under `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/`. This PRD reflects the as-built design, including the direct Balancer V3 reserve integration (no external proportional-exit adapter or generic-router abstraction — see Reserve Integration) and **optional** reserve-leg rate providers (default **off**; opt-in **on**).
 
 ## Purpose
 
@@ -29,15 +29,21 @@ Code uses role names only: `commonToken` (the asset shared by both V4 vaults), `
 
 Three underlying vault legs composed into one Balancer V3 Weighted Pool (the "reserve"):
 
-| Leg | Vault | Rate provider denomination |
-|-----|-------|---------------------------|
+| Leg | Vault | Rate provider denomination (when rates on) |
+|-----|-------|--------------------------------------------|
 | A | commonToken/tokenA Uniswap V4 Standard Exchange Vault | commonToken |
 | B | commonToken/tokenB Uniswap V4 Standard Exchange Vault | commonToken |
 | Pair | tokenA/tokenB Uniswap V2 strategy vault | tokenA |
 
 - Weights configurable in package args; default **20 / 20 / 60** with 60 on the Pair leg
 - The vault proxy holds only reserve BPT; shares are claims on that BPT
-- All three rate providers are instances of the existing `StandardExchangeRateProviderDFPkg` (`contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/`), already used by the seigniorage and single-vault families
+- **Optional rate providers (deploy-time, homogeneous, immutable after deploy):**
+  - **Default (`useRateProviders = false`):** all three reserve legs register as `TokenType.STANDARD` with zero rate providers. No rate-provider instances are deployed for that vault instance. Balancer treats rates as 1e18.
+  - **Opt-in (`useRateProviders = true`):** all three legs register as `TokenType.WITH_RATE` with one `StandardExchangeRateProviderDFPkg` instance per leg (A/B denominated in `commonToken`, Pair in `tokenA`). Restores prior rates-always-on behavior.
+  - Policy is **homogeneous** across legs A/B/pair — no per-leg mix in v1. Wrong choice → abandon instance; redeploy with new `PkgArgs`.
+  - Weighted pool CREATE salt includes the rate policy so rates-on and rates-off with the same leg tokens cannot collide on pool address.
+  - Package `PkgInit.rateProviderPkg` stays required (one package binary supports both modes); instance RP deploy is skipped when the flag is false.
+  - Research context: rate providers improve nested mark integrity under underlying share demand; they are not required for package function (see `research/scenarios/uniswapV2Se/rateProviderCompare/`).
 
 ## Token Model
 
@@ -60,7 +66,7 @@ The deployed DETF is **immutable and unowned**: no owner facet, no facet upgrade
 
 - `sharesMinted = bptIn × totalShares / totalBPT`; inverse proportion for burns. Dust-init supply at deploy prevents first-depositor share-price manipulation
 - Quoting is delegated, not recomputed: candidate routes are quoted through the underlying vaults' own `IStandardExchangeIn.previewExchangeIn` / `IStandardExchangeOut.previewExchangeOut` surfaces plus Balancer `BasePoolMath` quotes (`computeAddLiquidityUnbalanced`, `computeAddLiquiditySingleTokenExactOut`, `computeProportionalAmountsOut`) evaluated against live Vault state for Weighted Pool joins/exits. The DETF never reimplements underlying vault or pool math; its only owned math is the share↔BPT proportion and the fee split
-- Rate providers price vault shares inside the Weighted Pool per the Reserve Topology table
+- When rates are on, rate providers price vault shares inside the Weighted Pool per the Reserve Topology table. When rates are off (`STANDARD`), Balancer uses rate 1e18 for each leg; runtime exchange facets keep a single path via `getPoolTokenRates` (no dual on/off codepaths)
 
 ## Reserve Integration
 
@@ -86,6 +92,8 @@ No bootstrap event and no treasury capital raise. Both linked-token V4 markets a
 
 1. Deposit into each Uniswap V4 leg (commonToken/tokenA, commonToken/tokenB) to obtain vaultAShare and vaultBShare, and zap the Uniswap V2 pair leg (tokenA) to obtain pairVaultShare.
 2. Initialize the Weighted Pool with the three leg shares (via the Balancer router) to obtain reserve BPT. Balancer locks its own minimum liquidity at pool initialization.
+   - **Rates off (`STANDARD`):** fair init uses raw share amounts (rates are 1e18).
+   - **Rates on (`WITH_RATE`):** init sizing may use live/rate-scaled share amounts so weighted mid is fair at first join (existing path).
 3. Deposit the BPT into the vault (`exchangeIn` BPT → shares). This is the **first** deposit and mints **1:1** against the empty vault (`shares = bptIn`), making the vault live.
 
 **No dust pre-mint and no vault-level minimum-liquidity lock** (Balancer's pool-level lock suffices; the deployer is the first depositor and bootstraps its own launch). The share math (`DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt`) returns `bptIn` 1:1 when `totalSupply == 0 || totalReserveBpt == 0`. The liveness gate is split: `_requireActive` (deadline + non-zero amount) is universal, while `_requireReserveLive` (reserve BPT > 0) guards every route **except** the initializing reserve-BPT → shares deposit into an empty vault. Reserve depth then grows organically from deposits.
@@ -155,10 +163,12 @@ Family follows Repo / Common / Target / Facet / DFPkg / FactoryService conventio
 ## Package Args (deploy-time configuration)
 
 - commonToken, tokenA, tokenB addresses
-- The three leg vaults, or configuration sufficient to deploy them
+- V4 pool keys / width multipliers and pre-seeded V2 pair for the three legs
 - Weighted Pool weights (default 20/20/60)
-- Vault Fee Oracle; Balancer V3 Standard-Exchange router and Balancer V3 Vault (wired into their aware-repo slots by the DFPkg)
+- **`useRateProviders` (bool):** product default **false** (STANDARD, no instance rate providers); **true** opts into three WITH_RATE legs. Homogeneous and immutable after deploy.
+- `optionalSalt` for CREATE3 instance uniqueness
 - Share token name/symbol
+- Package init (not per-instance): Vault Fee Oracle; Balancer V3 Standard-Exchange router and Vault; companion SE vault packages; `rateProviderPkg` (required on package even when instance rates are off)
 
 ## Testing
 

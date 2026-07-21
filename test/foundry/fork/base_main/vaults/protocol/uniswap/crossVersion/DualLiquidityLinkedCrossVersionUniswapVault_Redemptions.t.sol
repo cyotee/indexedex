@@ -8,8 +8,9 @@ import {
 } from "test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 
 /// @notice Exact-in redemptions. Shares->BPT is the canonical full-value exit; other payouts are
-///         convenience routes (partial value, reserve accrual). WITH_RATE proportional-exit previews
-///         convert live scaled18 → raw so preview == execution for all redeem routes.
+///         convenience routes (partial value, reserve accrual). Proportional-exit previews convert
+///         live scaled18 → raw (rates are 1e18 under product-default STANDARD legs) so
+///         preview == execution for redeem routes.
 contract DualLiquidityLinkedCrossVersionUniswapVault_Redemptions is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
@@ -59,7 +60,7 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Redemptions is
         vm.stopPrank();
 
         assertGt(out, 0, "leg-share payout");
-        assertEq(out, preview, "leg-share WITH_RATE raw preview == execution");
+        assertEq(out, preview, "leg-share raw preview == execution");
         assertEq(legShare.balanceOf(redeemer), out);
         assertGt(_totalReserveBpt(), 0, "reserve still live");
     }

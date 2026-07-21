@@ -12,7 +12,7 @@ import {
 
 /// @notice Focused asset / leg-share redemption coverage (exact-in). Shares->BPT remains the
 ///         canonical full-value exit; these routes are convenience exits with reserve accrual.
-/// @dev Live WITH_RATE proportional exits can diverge from BasePoolMath previews; where symmetry is
+/// @dev Live proportional exits (WITH_RATE or STANDARD) can diverge from BasePoolMath previews; where symmetry is
 ///      not tight we assert non-zero payout, recipient balance, and remaining-holder accrual.
 contract DualLiquidityLinkedCrossVersionUniswapVault_AssetRedemptions is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
@@ -78,7 +78,7 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_AssetRedemptions is
         );
         vm.stopPrank();
 
-        assertEq(out, preview, "WITH_RATE raw preview == execution for leg share");
+        assertEq(out, preview, "leg-share raw preview == execution");
         assertEq(legShare.balanceOf(redeemer), tokenBalBefore + out, "recipient balance");
     }
 

@@ -246,7 +246,7 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2 is
             assertLe(used, prefund);
             assertEq(shareToken.balanceOf(user), sharesWanted, "exact shares out");
         } catch {
-            // Accept: exact-out deposit is best-effort under live WITH_RATE sizing.
+            // Accept: exact-out deposit is best-effort under live pool sizing.
         }
     }
 

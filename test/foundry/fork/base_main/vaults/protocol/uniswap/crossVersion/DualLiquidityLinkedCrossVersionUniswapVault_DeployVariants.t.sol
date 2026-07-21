@@ -5,10 +5,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
-import {
-    IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg
-} from "contracts/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 } from "test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
@@ -31,25 +27,15 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_DeployVariants is
 
     function test_deployVariants_nonDefaultWeights_deploySucceeds() public {
         // Deploy with 10/30/60 weights via package args (package accepts any sum-to-1e18 weights).
-        IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg.PkgArgs memory pkgArgs =
-            IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg.PkgArgs({
-                name: "Weighted Variant",
-                symbol: "dlW",
-                commonToken: IERC20(address(commonToken)),
-                tokenA: IERC20(address(tokenA)),
-                tokenB: IERC20(address(tokenB)),
-                poolKeyA: _poolKey(commonToken, tokenA),
-                widthMultiplierA: WIDTH_MULTIPLIER,
-                poolKeyB: _poolKey(commonToken, tokenB),
-                widthMultiplierB: WIDTH_MULTIPLIER,
-                pairPool: pair,
-                weightA: 0.1e18,
-                weightB: 0.3e18,
-                weightPair: 0.6e18,
-                optionalSalt: keccak256("weights-10-30-60")
-            });
-        vm.prank(owner);
-        address vaultW = indexedexManager.deployVault(IStandardVaultPkg(address(linkedVaultPkg)), abi.encode(pkgArgs));
+        address vaultW = _deployVaultWithArgs(
+            "Weighted Variant",
+            "dlW",
+            0.1e18,
+            0.3e18,
+            0.6e18,
+            false,
+            keccak256("weights-10-30-60")
+        );
         assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(vaultW));
         assertEq(IERC20(vaultW).totalSupply(), 0);
     }

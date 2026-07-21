@@ -4,10 +4,43 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 
 | Doc | Role |
 |-----|------|
+| [`MARKETING_AND_PERFORMANCE_FINDINGS.md`](./MARKETING_AND_PERFORMANCE_FINDINGS.md) | **Living roll-up:** marketing claims, numbers, **which graph to open** |
 | [`RESEARCH_PLAYBOOK.md`](./RESEARCH_PLAYBOOK.md) | Why / scenario ladder / chart catalog |
 | [`SCENARIO_LOG.md`](./SCENARIO_LOG.md) | Index of completed runs |
 | [`scenarios/`](./scenarios/) | **Tracked** narrative (findings + per-run notes) |
+| [`scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md`](./scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md) | **Agent handoff:** rate providers, residual, **fee-as-arb threshold** (do not re-run) |
+| [`scenarios/uniswapV2Se/rateProviderCompare/FINDINGS.md`](./scenarios/uniswapV2Se/rateProviderCompare/FINDINGS.md) | Detailed R+ vs R− comparative session findings |
+| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_PRD.md) | **v1 PRD (complete):** DualLiquidity residual + preview |
+| [`scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS.md) | DualLiquidity Mode A/B findings (R+/R− residual, preview) |
+| [`scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md`](./scenarios/dualLiquidityLinkedCrossVersion/AGENT_RESEARCH_REPORT.md) | **Agent handoff v1:** DualLiquidity (do not re-run casually) |
+| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md) | **v2 PRD (planned):** linked volume + share-book (primary VP) |
+| [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md) | **v2 plan:** Mode B volume first → Mode A share book → Mode C stretch |
+| [`scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md`](./scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md) | PRD for rate provider comparative |
 | `out/` | **Generated** JSONL + PNGs (gitignored) — recreate with runners |
+
+## Reproduce rateProviderCompare (R+ vs R−)
+
+Pure separate worlds: all Balancer share legs **WITH_RATE** (`rates_on`) vs all **STANDARD** (`rates_off`). Does **not** overwrite legacy `modeA_*` / `modeC_*` trees.
+
+```bash
+./research/run_rate_provider_compare.sh              # full baseline matrix
+./research/run_rate_provider_compare.sh --high-vol          # mul=10 steps=24
+./research/run_rate_provider_compare.sh --high-vol-25s48    # mul=25 steps=48 — arb fills appear
+./research/run_rate_provider_compare.sh --mode-a-only
+./research/run_rate_provider_compare.sh --mode-c-only
+./research/run_rate_provider_compare.sh --plot-only
+./research/run_rate_provider_compare.sh --rates-on-only | --rates-off-only
+```
+
+Artifacts:  
+- Baseline: `research/out/uniswapV2Se/rateProviderCompare/{rates_on,rates_off,compare}/`  
+- High-vol: `research/out/uniswapV2Se/rateProviderCompare/highVol/mul10/`  
+
+Findings: [`scenarios/uniswapV2Se/rateProviderCompare/FINDINGS.md`](./scenarios/uniswapV2Se/rateProviderCompare/FINDINGS.md).
+
+**Headline (baseline):** R+ residual = 0; R− residual ~±24 bps; Mode C probes = 0 (fee-drowned).  
+**Headline (mul=10):** R− residual ~±2.4%; Mode C probes still 0.  
+**Headline (mul=25, steps=48):** R− Mode A residual **~±10–12%**; Mode C **fills from ~step 22** (arb apparent under 5% fee).
 
 ## Reproduce Mode A (primary)
 

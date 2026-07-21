@@ -96,11 +96,24 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
 
     uint256 internal constant MATRIX_N = 4;
 
-    /// @dev Trade sizes (Mode A single-token runs). Sized for visible maker-fee P&L
-    ///      on half of a 10k WETH / 10M USDC pool.
+    /// @dev Baseline trade sizes (Mode A single-token runs). Sized for visible maker-fee P&L
+    ///      on half of a 10k WETH / 10M USDC pool. rateProviderCompare may scale via virtual getters.
     uint256 public constant TRADE_WETH = 1e18; // 1 WETH
     uint256 public constant TRADE_USDC = 1000e18; // 1000 USDC (18-dec)
     uint256 public constant TRADE_STEPS = 24;
+
+    /// @dev Effective per-step sizes (override in high-vol compare fixtures).
+    function tradeWethWei() public view virtual returns (uint256) {
+        return TRADE_WETH;
+    }
+
+    function tradeUsdcWei() public view virtual returns (uint256) {
+        return TRADE_USDC;
+    }
+
+    function tradeSteps() public view virtual returns (uint256) {
+        return TRADE_STEPS;
+    }
 
     IVault public bv3Vault;
 
@@ -367,7 +380,9 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         vm.label(address(constProdPkg), "Research_ConstProdPkg");
     }
 
-    function _deployMatrixPools() internal {
+    /// @dev Virtual so rateProviderCompare R− can dedupe CREATE3 salts (STANDARD share legs
+    ///      collapse rateWeth/rateUsdc variants that share the same pair token).
+    function _deployMatrixPools() internal virtual {
         // 0: rate WETH, pair USDC (cross)
         matrixLabels[0] = "rateWeth_pairUsdc_cross";
         matrixPairToken[0] = tokenUsdc;
@@ -400,9 +415,11 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         }
     }
 
+    /// @dev Virtual so rateProviderCompare can force STANDARD share legs (R− pure world).
     function _tokenConfigs(IERC20 pairToken_, IRateProvider rateProvider_)
         internal
         view
+        virtual
         returns (TokenConfig[] memory tc)
     {
         tc = new TokenConfig[](2);
@@ -426,7 +443,9 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
     /*                    Bootstrap: half LP → shares → equal inits            */
     /* ---------------------------------------------------------------------- */
 
-    function _bootstrapSharesAndInitPools() internal {
+    /// @dev Virtual so rateProviderCompare R− can init each unique physical pool once
+    ///      (CREATE3 salt collapses when share legs are STANDARD without rate providers).
+    function _bootstrapSharesAndInitPools() internal virtual {
         // Deposit only half of Uni LP into the SE vault so the other half remains free
         // for settlement liquidity when vault shares are redeemed later.
         uint256 totalLp = uniV2Pair.totalSupply();
@@ -456,7 +475,13 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         }
     }
 
-    function _pairAmountForInit(uint256 idx, uint256 rawShares_) internal view returns (uint256 pairAmt) {
+    /// @dev Virtual so R− fair-init can size without wiring rate on the pool.
+    function _pairAmountForInit(uint256 idx, uint256 rawShares_)
+        internal
+        view
+        virtual
+        returns (uint256 pairAmt)
+    {
         uint256 rate = matrixRateProvider[idx].getRate();
         require(rate > 0, "research: rate=0 before init");
         uint256 liveShares = rawShares_ * rate / 1e18;
@@ -695,7 +720,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
      *      P&L: full exit Balancer→vault→LP→tokens, marked in USDC; split into
      *      asset revaluation vs maker fees / claim qty change.
      */
-    function initTelemetry(string memory runId_, bool tradedIsWeth_) external {
+    function initTelemetry(string memory runId_, bool tradedIsWeth_) external virtual {
         tradedIsWeth = tradedIsWeth_;
         telemetryReady = true;
 
@@ -719,7 +744,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         sample("init");
     }
 
-    function _buildMetaJson(string memory runId_) private view returns (string memory) {
+    function _buildMetaJson(string memory runId_) internal view virtual returns (string memory) {
         string memory modeLabel = researchModeId == 1 ? "C_uni_plus_bal_arb" : "A_uni_only";
         string memory tradedLabel = tradedIsWeth ? "WETH" : "USDC";
         string memory marketBought = tradedIsWeth ? "USDC" : "WETH";

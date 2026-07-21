@@ -69,8 +69,8 @@ import {DualLiquidityLinkedCrossVersionUniswapVaultRepo} from
 /// @dev Per the PRD the deployed vault is immutable and unowned: the facet set is final (no ownership
 ///      and no diamond-cut facet is installed), so a flawed deployment is abandoned, not upgraded.
 ///      The package OWNS all infrastructure and companion-package references as immutables and deploys
-///      the three leg vaults + three rate providers + the reserve weighted pool itself; PkgArgs carry
-///      only the underlying tokens and their market configuration.
+///      the three leg vaults, optionally three rate providers, and the reserve weighted pool itself;
+///      PkgArgs carry the underlying tokens, market configuration, and rate policy.
 interface IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     /// @notice Reverted when the package is deployed by any caller other than the Vault Registry.
     ///         The registry is the source of truth for all deployed vaults, so it is the only
@@ -80,7 +80,9 @@ interface IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPa
     /// @notice Infrastructure + companion-package references bound once at package construction.
     /// @dev `erc5267Facet` + `erc2612Facet` give the share token EIP-2612 permit (gasless approvals).
     ///      `v4VaultPkg`/`v2VaultPkg`/`rateProviderPkg` deploy the legs (idempotent via the diamond
-    ///      factory). `balancerV3Router`/`balancerV3Vault` back the direct Balancer integration.
+    ///      factory). `rateProviderPkg` remains required so one package binary can deploy rates-on
+    ///      instances; when `PkgArgs.useRateProviders` is false, instance RP deploy is skipped.
+    ///      `balancerV3Router`/`balancerV3Vault` back the direct Balancer integration.
     ///      `vaultRegistryDeployment` is the only permitted deployer (source of truth).
     struct PkgInit {
         IFacet erc20Facet;
@@ -111,6 +113,9 @@ interface IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPa
     ///      sum to 1e18) default to 20/20/60. Deploy is inert (`totalSupply == 0`, reserve pool created
     ///      but uninitialized); the reserve is bootstrapped by a manual post-deploy procedure and the
     ///      first deposit mints 1:1.
+    ///      `useRateProviders` is deploy-time only and homogeneous across all three reserve legs:
+    ///      false (product default) → `TokenType.STANDARD` with zero rate providers (no RP deploy);
+    ///      true → three SE rate providers + `TokenType.WITH_RATE`. Wrong choice → abandon instance.
     struct PkgArgs {
         string name;
         string symbol;
@@ -125,6 +130,9 @@ interface IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPa
         uint256 weightA;
         uint256 weightB;
         uint256 weightPair;
+        /// @dev If true, deploy SE rate providers for all three legs and register TokenType.WITH_RATE.
+        ///      If false (default product preference), register STANDARD with zero rate provider.
+        bool useRateProviders;
         bytes32 optionalSalt;
     }
 
@@ -134,8 +142,9 @@ interface IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPa
 /// @title DualLiquidityLinkedCrossVersionUniswapVaultDFPkg
 /// @notice Deploys immutable DualLiquidityLinkedCrossVersionUniswapVault diamonds. On deploy the package (running in the
 ///         new proxy's context) deploys the two Uniswap V4 leg vaults + one Uniswap V2 pair leg vault
-///         (idempotent through the diamond factory), a StandardExchange rate provider per leg, and the
-///         3-token Balancer V3 weighted reserve pool, then wires the family storage internally.
+///         (idempotent through the diamond factory), optionally a StandardExchange rate provider per leg
+///         (when `useRateProviders`), and the 3-token Balancer V3 weighted reserve pool, then wires the
+///         family storage internally.
 contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPackage, IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg {
     using BetterAddress for address[];
     using BetterEfficientHashLib for bytes;
@@ -176,9 +185,10 @@ contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPack
         uint256 weightA;
         uint256 weightB;
         uint256 weightPair;
+        bool useRateProviders;
     }
 
-    /// @dev Legs + rate providers derived during postDeploy.
+    /// @dev Legs + optional rate providers derived during postDeploy.
     struct Derived {
         IStandardExchange vaultA;
         IStandardExchange vaultB;
@@ -366,10 +376,11 @@ contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPack
         cfg.weightA = args.weightA == 0 ? 0.2e18 : args.weightA;
         cfg.weightB = args.weightB == 0 ? 0.2e18 : args.weightB;
         cfg.weightPair = args.weightPair == 0 ? 0.6e18 : args.weightPair;
+        cfg.useRateProviders = args.useRateProviders;
     }
 
-    /// @notice Deploys the legs, rate providers, and reserve pool, then wires the family storage. Runs
-    ///         in the proxy's context (the factory re-enters via `IPostDeployAccountHook.postDeploy`).
+    /// @notice Deploys the legs, optional rate providers, and reserve pool, then wires family storage.
+    ///         Runs in the proxy's context (the factory re-enters via `IPostDeployAccountHook.postDeploy`).
     function postDeploy(address expectedProxy) public returns (bool) {
         if (address(this) != expectedProxy) {
             IPostDeployAccountHook(expectedProxy).postDeploy();
@@ -423,21 +434,25 @@ contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPack
         StandardVaultRepo._initialize(FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents._sort())._hash());
     }
 
-    /// @dev Deploys the three legs (idempotent), a rate provider per leg (A/B denominated in
-    ///      commonToken, Pair in tokenA), and the 3-token weighted reserve pool over the leg shares.
+    /// @dev Deploys the three legs (idempotent). When `useRateProviders`, deploys a rate provider per
+    ///      leg (A/B denominated in commonToken, Pair in tokenA); otherwise rate providers stay zero.
+    ///      Then creates the 3-token weighted reserve pool over the leg shares.
     function _deployLegsAndPool(DeployConfig storage cfg) internal returns (Derived memory d) {
         d.vaultA = IStandardExchange(V4_VAULT_PKG.deployVault(cfg.poolKeyA, cfg.widthMultiplierA));
         d.vaultB = IStandardExchange(V4_VAULT_PKG.deployVault(cfg.poolKeyB, cfg.widthMultiplierB));
         d.pairVault = IStandardExchange(V2_VAULT_PKG.deployVault(cfg.pairPool));
 
-        d.rateA = RATE_PROVIDER_PKG.deployRateProvider(d.vaultA, cfg.commonToken);
-        d.rateB = RATE_PROVIDER_PKG.deployRateProvider(d.vaultB, cfg.commonToken);
-        d.ratePair = RATE_PROVIDER_PKG.deployRateProvider(d.pairVault, cfg.tokenA);
+        if (cfg.useRateProviders) {
+            d.rateA = RATE_PROVIDER_PKG.deployRateProvider(d.vaultA, cfg.commonToken);
+            d.rateB = RATE_PROVIDER_PKG.deployRateProvider(d.vaultB, cfg.commonToken);
+            d.ratePair = RATE_PROVIDER_PKG.deployRateProvider(d.pairVault, cfg.tokenA);
+        }
+        // else: rateA/B/pair remain address(0); TokenConfig uses STANDARD
 
         (d.reservePool, d.indexA, d.indexB, d.indexPair) = _createReservePool(cfg, d);
     }
 
-    /// @dev Builds the sorted 3-token weighted pool (leg shares priced by their rate providers) and
+    /// @dev Builds the sorted 3-token weighted pool (WITH_RATE or STANDARD per deploy policy) and
     ///      returns the pool address with the vault-order [A, B, pair] registration indices.
     function _createReservePool(DeployConfig storage cfg, Derived memory d)
         internal
@@ -447,16 +462,17 @@ contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPack
         uint256[] memory weights = new uint256[](3);
         {
             uint256[3] memory weightByCfg = [cfg.weightA, cfg.weightB, cfg.weightPair];
-            cfgs[0] = _rateTokenConfig(address(d.vaultA), d.rateA);
-            cfgs[1] = _rateTokenConfig(address(d.vaultB), d.rateB);
-            cfgs[2] = _rateTokenConfig(address(d.pairVault), d.ratePair);
+            bool useRates = cfg.useRateProviders;
+            cfgs[0] = _legTokenConfig(address(d.vaultA), d.rateA, useRates);
+            cfgs[1] = _legTokenConfig(address(d.vaultB), d.rateB, useRates);
+            cfgs[2] = _legTokenConfig(address(d.pairVault), d.ratePair, useRates);
             _sortTokenConfigs(cfgs, weightByCfg);
             weights[0] = weightByCfg[0];
             weights[1] = weightByCfg[1];
             weights[2] = weightByCfg[2];
         }
 
-        pool_ = _createWeightedPool(cfgs, weights);
+        pool_ = _createWeightedPool(cfgs, weights, cfg.useRateProviders);
 
         indexA_ = _indexOf(cfgs, address(d.vaultA));
         indexB_ = _indexOf(cfgs, address(d.vaultB));
@@ -464,24 +480,32 @@ contract DualLiquidityLinkedCrossVersionUniswapVaultDFPkg is IDiamondFactoryPack
     }
 
     /// @dev Isolates the many-argument weighted-pool `create` call in its own stack frame (no viaIR).
-    function _createWeightedPool(TokenConfig[] memory cfgs, uint256[] memory weights)
+    ///      Salt includes rate policy so rates-on and rates-off with the same leg tokens cannot collide.
+    function _createWeightedPool(TokenConfig[] memory cfgs, uint256[] memory weights, bool useRateProviders_)
         internal
         returns (address pool_)
     {
         string memory nm = string.concat("Reserve ", ERC20Repo._name());
         string memory sym = string.concat("r", ERC20Repo._symbol());
-        bytes32 salt = keccak256(abi.encode(cfgs[0].token, cfgs[1].token, cfgs[2].token));
+        bytes32 salt = keccak256(
+            abi.encode(cfgs[0].token, cfgs[1].token, cfgs[2].token, useRateProviders_)
+        );
         PoolRoleAccounts memory roleAccounts;
         pool_ = WEIGHTED_POOL_FACTORY.create(
             nm, sym, cfgs, weights, roleAccounts, 0.003e18, address(0), false, false, salt
         );
     }
 
-    function _rateTokenConfig(address token_, IRateProvider rate_) internal pure returns (TokenConfig memory cfg_) {
+    /// @dev Homogeneous leg TokenConfig: WITH_RATE + rate when useRates; STANDARD + zero otherwise.
+    function _legTokenConfig(address token_, IRateProvider rateOrZero_, bool useRates_)
+        internal
+        pure
+        returns (TokenConfig memory cfg_)
+    {
         cfg_ = TokenConfig({
             token: OZIERC20(token_),
-            tokenType: TokenType.WITH_RATE,
-            rateProvider: rate_,
+            tokenType: useRates_ ? TokenType.WITH_RATE : TokenType.STANDARD,
+            rateProvider: useRates_ ? rateOrZero_ : IRateProvider(address(0)),
             paysYieldFees: false
         });
     }

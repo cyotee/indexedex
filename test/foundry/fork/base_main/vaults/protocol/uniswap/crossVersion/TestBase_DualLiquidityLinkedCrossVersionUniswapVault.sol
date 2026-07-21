@@ -275,11 +275,19 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
                 weightA: 0.2e18,
                 weightB: 0.2e18,
                 weightPair: 0.6e18,
+                // Product default false; rates-on regression overrides via `_useRateProviders()`.
+                useRateProviders: _useRateProviders(),
                 optionalSalt: keccak256(abi.encodePacked("dlCVUVault-instance", block.timestamp, address(this)))
             });
 
         vm.prank(owner);
         linkedVault = indexedexManager.deployVault(IStandardVaultPkg(address(linkedVaultPkg)), abi.encode(pkgArgs));
+    }
+
+    /// @dev Product default: rates off (STANDARD). Override to `true` only in rates-on regression suites.
+    ///      `view` (not pure) so research fixtures can return an immutable constructor flag.
+    function _useRateProviders() internal view virtual returns (bool) {
+        return false;
     }
 
     /// @dev Override in reentrancy suites to return a hostile tokenB. Default: real ERC20Permit diamond.
@@ -767,12 +775,27 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
         ) {} catch {}
     }
 
-    /// @dev Deploy a second vault instance with a distinct salt (same package / markets).
+    /// @dev Deploy a second vault instance with a distinct salt (same package / markets; rates off).
     function _deploySecondVault(bytes32 salt_) internal returns (address vault2_) {
+        return _deployVaultWithArgs(
+            "Dual Liquidity CVU Vault 2", "dlCVU2", 0.2e18, 0.2e18, 0.6e18, false, salt_
+        );
+    }
+
+    /// @dev Deploy a vault instance with explicit weights, rate policy, and salt (registry path).
+    function _deployVaultWithArgs(
+        string memory name_,
+        string memory symbol_,
+        uint256 weightA_,
+        uint256 weightB_,
+        uint256 weightPair_,
+        bool useRateProviders_,
+        bytes32 salt_
+    ) internal returns (address vault_) {
         IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg.PkgArgs memory pkgArgs =
             IDualLiquidityLinkedCrossVersionUniswapVaultDFPkg.PkgArgs({
-                name: "Dual Liquidity CVU Vault 2",
-                symbol: "dlCVU2",
+                name: name_,
+                symbol: symbol_,
                 commonToken: IERC20(address(commonToken)),
                 tokenA: IERC20(address(tokenA)),
                 tokenB: IERC20(address(tokenB)),
@@ -781,12 +804,13 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
                 poolKeyB: _poolKey(commonToken, tokenB),
                 widthMultiplierB: WIDTH_MULTIPLIER,
                 pairPool: pair,
-                weightA: 0.2e18,
-                weightB: 0.2e18,
-                weightPair: 0.6e18,
+                weightA: weightA_,
+                weightB: weightB_,
+                weightPair: weightPair_,
+                useRateProviders: useRateProviders_,
                 optionalSalt: salt_
             });
         vm.prank(owner);
-        vault2_ = indexedexManager.deployVault(IStandardVaultPkg(address(linkedVaultPkg)), abi.encode(pkgArgs));
+        vault_ = indexedexManager.deployVault(IStandardVaultPkg(address(linkedVaultPkg)), abi.encode(pkgArgs));
     }
 }
