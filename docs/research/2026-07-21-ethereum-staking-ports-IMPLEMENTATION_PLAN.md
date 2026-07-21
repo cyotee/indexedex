@@ -83,13 +83,13 @@
 
 ### 1.3 Definition of done (program)
 
-- [ ] §4 common-dep tasks closed or explicitly “N/A (document reason)”
-- [ ] L, R, E, S each have: domain vendor (as feasible) + interfaces + Service + rate helper + **green mainnet fork tests**
-- [ ] F has thin `staking/ethereum/frax/` Service + re-exports (D3); green fork tests
-- [ ] No per-protocol copies of OZ/Solady; no new remappings
-- [ ] All new imports use `@crane/...`
-- [ ] IndexedEx **generic ERC-4626 SE** deployed via registry path; `IBasicVault.vaultTokens()` = `[protocolVault, asset()]`; fork (or full TestBase) proof on **sfrxETH** at minimum (D1)
-- [ ] `forge test` gates in §7 pass
+- [x] §4 common-dep tasks closed or explicitly “N/A (document reason)”
+- [x] L, R, E, S each have: domain vendor (as feasible) + interfaces + Service + rate helper + **green mainnet fork tests**
+- [x] F has thin `staking/ethereum/frax/` Service + re-exports (D3); green fork tests
+- [x] No per-protocol copies of OZ/Solady; no new remappings
+- [x] All new imports use `@crane/...`
+- [x] IndexedEx **generic ERC-4626 SE** deployed via registry path; `IBasicVault.vaultTokens()` = `[protocolVault, asset()]`; fork (or full TestBase) proof on **sfrxETH** at minimum (D1)
+- [x] `forge test` gates in §7 pass
 
 ---
 
@@ -538,6 +538,8 @@ git diff origin/main -- remappings.txt foundry.toml lib/crane/remappings.txt lib
 | 2026-07-21 | SE (Block 7) | ✅ | Generic ERC-4626 SE via registry; vaultTokens=[sfrxETH,frxETH]; deposit/redeem fork green |
 | 2026-07-21 | Domain vendor D2 | ✅ | StakeWise OsToken; ether.fi WeETH; Lido WstETH; RP RETH+DepositPool under contracts/external/* |
 | 2026-07-21 | Polish | ✅ | 18 staking (domain+fork) + 3 SE tests green; READMEs pin upstream commits |
+| 2026-07-21 | Skeptic fixes | ✅ | RP RocketStorage/Base architecture; StakeWise hard deposit shares assert; WeETH wrap via ERC1967Proxy |
+| 2026-07-21 | Final re-verify | ✅ | `FOUNDRY_PROFILE=staking_eth` **23/23**; SE sfrxETH **3/3**; tips `crane@6be97874` / IndexedEx `9a9e195` pushed |
 
 ---
 
