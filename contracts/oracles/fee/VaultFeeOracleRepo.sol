@@ -39,6 +39,10 @@ library VaultFeeOracleRepo {
         // KinkLendingTerms defaultLendingTerms;
         // mapping(bytes4 vaultFeeTypeId => KinkLendingTerms lendingTerms) defaultLendingTermsOfType;
         // mapping(address vault => KinkLendingTerms lendingTerms) lendingTermsOfVault;
+        /// @dev Global default liquid sleeve target as WAD fraction of total reserve (0 = unset).
+        uint256 defaultLiquidReservePercentage;
+        mapping(bytes4 vaultFeeTypeId => uint256 percentage) defaultLiquidReservePercentageOfType;
+        mapping(address vault => uint256 percentage) liquidReservePercentageOfVault;
     }
 
     function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
@@ -417,5 +421,86 @@ library VaultFeeOracleRepo {
         returns (uint256 oldIncentivePercentage)
     {
         return _overrideSeigniorageIncentivePercentageOfVault(_layoutStruct(), vault_, incentivePercentage_);
+    }
+
+    /* ------------------------- Liquid reserve policy -------------------------- */
+
+    function _defaultLiquidReservePercentage(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.defaultLiquidReservePercentage;
+    }
+
+    function _defaultLiquidReservePercentage() internal view returns (uint256) {
+        return _defaultLiquidReservePercentage(_layoutStruct());
+    }
+
+    function _setDefaultLiquidReservePercentage(Storage storage layoutStruct, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.defaultLiquidReservePercentage;
+        layoutStruct.defaultLiquidReservePercentage = percentage_;
+    }
+
+    function _setDefaultLiquidReservePercentage(uint256 percentage_) internal returns (uint256 oldPercentage) {
+        return _setDefaultLiquidReservePercentage(_layoutStruct(), percentage_);
+    }
+
+    function _defaultLiquidReservePercentageOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.defaultLiquidReservePercentageOfType[vaultFeeTypeId_];
+    }
+
+    function _defaultLiquidReservePercentageOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
+        return _defaultLiquidReservePercentageOfTypeId(_layoutStruct(), vaultFeeTypeId_);
+    }
+
+    function _setDefaultLiquidReservePercentageOfTypeId(
+        Storage storage layoutStruct,
+        bytes4 vaultTypeId_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.defaultLiquidReservePercentageOfType[vaultTypeId_];
+        layoutStruct.defaultLiquidReservePercentageOfType[vaultTypeId_] = percentage_;
+    }
+
+    function _setDefaultLiquidReservePercentageOfTypeId(bytes4 vaultTypeId_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _setDefaultLiquidReservePercentageOfTypeId(_layoutStruct(), vaultTypeId_, percentage_);
+    }
+
+    function _liquidReservePercentageOfVault(Storage storage layoutStruct, address vault_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.liquidReservePercentageOfVault[vault_];
+    }
+
+    function _liquidReservePercentageOfVault(address vault_) internal view returns (uint256) {
+        return _liquidReservePercentageOfVault(_layoutStruct(), vault_);
+    }
+
+    function _overrideLiquidReservePercentageOfVault(
+        Storage storage layoutStruct,
+        address vault_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.liquidReservePercentageOfVault[vault_];
+        layoutStruct.liquidReservePercentageOfVault[vault_] = percentage_;
+    }
+
+    function _overrideLiquidReservePercentageOfVault(address vault_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _overrideLiquidReservePercentageOfVault(_layoutStruct(), vault_, percentage_);
     }
 }

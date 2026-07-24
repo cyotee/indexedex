@@ -117,6 +117,25 @@ interface IVaultFeeOracleQuery {
         view
         returns (IFeeCollectorProxy feeTo, uint256 percentage);
 
+    /* -------------------------------------------------------------------------- */
+    /*                         Liquid reserve policy (WAD)                        */
+    /* -------------------------------------------------------------------------- */
+
+    /// @notice Global default fraction of total reserve that should remain liquid (WETH sleeve).
+    /// @dev WAD: 1e18 = 100%. Stored 0 = unset (fallback).
+    function defaultLiquidReservePercentage() external view returns (uint256 percentage);
+
+    /// @notice Type-level default (vault fee / marker interface id).
+    function defaultLiquidReservePercentageOfTypeId(bytes4 vaultTypeId) external view returns (uint256 percentage);
+
+    /// @notice Effective liquid-reserve target for `vault` after three-tier resolution.
+    function liquidReservePercentageOfVault(address vault) external view returns (uint256 percentage);
+
+    function liquidReservePercentageOfVaultAndFeeTo(address vault)
+        external
+        view
+        returns (IFeeCollectorProxy feeTo, uint256 percentage);
+
     /* ---------------------------------------------------------------------- */
     /*                              Lending Terms                             */
     /* ---------------------------------------------------------------------- */

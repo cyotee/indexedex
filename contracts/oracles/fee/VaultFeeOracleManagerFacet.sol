@@ -30,7 +30,7 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](13);
+        funcs = new bytes4[](16);
         funcs[0] = IVaultFeeOracleManager.setFeeTo.selector;
         funcs[1] = IVaultFeeOracleManager.setDefaultUsageFee.selector;
         funcs[2] = IVaultFeeOracleManager.setDefaultUsageFeeOfTypeId.selector;
@@ -44,6 +44,9 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
         funcs[10] = IVaultFeeOracleManager.setDefaultSeigniorageIncentivePercentage.selector;
         funcs[11] = IVaultFeeOracleManager.setDefaultSeigniorageIncentivePercentageOfTypeId.selector;
         funcs[12] = IVaultFeeOracleManager.setSeigniorageIncentivePercentageOfVault.selector;
+        funcs[13] = IVaultFeeOracleManager.setDefaultLiquidReservePercentage.selector;
+        funcs[14] = IVaultFeeOracleManager.setDefaultLiquidReservePercentageOfTypeId.selector;
+        funcs[15] = IVaultFeeOracleManager.setLiquidReservePercentageOfVault.selector;
         return funcs;
     }
 
@@ -159,6 +162,36 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
         uint256 oldPercentage =
             VaultFeeOracleRepo._overrideSeigniorageIncentivePercentageOfVault(vault, incentivePercentage);
         emit NewSeigniorageIncentivePercentageOfVault(vault, oldPercentage, incentivePercentage);
+        return true;
+    }
+
+    function setDefaultLiquidReservePercentage(uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        uint256 oldPercentage = VaultFeeOracleRepo._setDefaultLiquidReservePercentage(percentage);
+        emit NewDefaultLiquidReservePercentage(oldPercentage, percentage);
+        return true;
+    }
+
+    function setDefaultLiquidReservePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        uint256 oldPercentage = VaultFeeOracleRepo._setDefaultLiquidReservePercentageOfTypeId(vaultTypeId, percentage);
+        emit NewDefaultLiquidReservePercentageOfTypeId(vaultTypeId, oldPercentage, percentage);
+        return true;
+    }
+
+    function setLiquidReservePercentageOfVault(address vault, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        uint256 oldPercentage = VaultFeeOracleRepo._overrideLiquidReservePercentageOfVault(vault, percentage);
+        emit NewLiquidReservePercentageOfVault(vault, oldPercentage, percentage);
         return true;
     }
 }

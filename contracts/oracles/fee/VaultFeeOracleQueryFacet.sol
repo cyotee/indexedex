@@ -34,7 +34,7 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](21);
+        funcs = new bytes4[](25);
         funcs[0] = IVaultFeeOracleQuery.feeTo.selector;
         funcs[1] = IVaultFeeOracleQuery.usageFeeVaultTypeIds.selector;
         funcs[2] = IVaultFeeOracleQuery.defaultUsageFee.selector;
@@ -56,6 +56,10 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
         funcs[18] = IVaultFeeOracleQuery.seigniorageIncentivePercentageOfTypeId.selector;
         funcs[19] = IVaultFeeOracleQuery.seigniorageIncentivePercentageOfVault.selector;
         funcs[20] = IVaultFeeOracleQuery.seigniorageIncentivePercentageOfVaultAndFeeTo.selector;
+        funcs[21] = IVaultFeeOracleQuery.defaultLiquidReservePercentage.selector;
+        funcs[22] = IVaultFeeOracleQuery.defaultLiquidReservePercentageOfTypeId.selector;
+        funcs[23] = IVaultFeeOracleQuery.liquidReservePercentageOfVault.selector;
+        funcs[24] = IVaultFeeOracleQuery.liquidReservePercentageOfVaultAndFeeTo.selector;
         return funcs;
     }
 
@@ -227,5 +231,38 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     {
         feeTo_ = feeTo();
         percentage = seigniorageIncentivePercentageOfVault(vault);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                         Liquid reserve policy (WAD)                        */
+    /* -------------------------------------------------------------------------- */
+
+    function defaultLiquidReservePercentage() public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._defaultLiquidReservePercentage();
+    }
+
+    function defaultLiquidReservePercentageOfTypeId(bytes4 vaultTypeId) public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._defaultLiquidReservePercentageOfTypeId(vaultTypeId);
+    }
+
+    function liquidReservePercentageOfVault(address vault) public view returns (uint256 percentage) {
+        percentage = VaultFeeOracleRepo._liquidReservePercentageOfVault(vault);
+        if (percentage == 0) {
+            // v1: reuse usage fee type id (marker interface id) for type-level policy
+            percentage = defaultLiquidReservePercentageOfTypeId(VaultRegistryVaultRepo._usageFeeIdOfVault(vault));
+            if (percentage == 0) {
+                percentage = defaultLiquidReservePercentage();
+            }
+        }
+        return percentage;
+    }
+
+    function liquidReservePercentageOfVaultAndFeeTo(address vault)
+        public
+        view
+        returns (IFeeCollectorProxy feeTo_, uint256 percentage)
+    {
+        feeTo_ = feeTo();
+        percentage = liquidReservePercentageOfVault(vault);
     }
 }

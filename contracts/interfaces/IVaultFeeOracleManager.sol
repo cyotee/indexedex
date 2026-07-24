@@ -36,6 +36,13 @@ interface IVaultFeeOracleManager {
     event NewSeigniorageIncentivePercentageOfVault(
         address indexed vault, uint256 indexed oldPercentage, uint256 indexed newPercentage
     );
+    event NewDefaultLiquidReservePercentage(uint256 indexed oldPercentage, uint256 indexed newPercentage);
+    event NewDefaultLiquidReservePercentageOfTypeId(
+        bytes4 indexed vaultTypeId, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
+    event NewLiquidReservePercentageOfVault(
+        address indexed vault, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
 
     /* ---------------------------------------------------------------------- */
     /*                                Functions                               */
@@ -90,6 +97,17 @@ interface IVaultFeeOracleManager {
     function setSeigniorageIncentivePercentageOfVault(address vault, uint256 incentivePercentage)
         external
         returns (bool success);
+
+    /// @param percentage Global default liquid reserve fraction in WAD (e.g. 0.05e18 = 5%).
+    function setDefaultLiquidReservePercentage(uint256 percentage) external returns (bool success);
+
+    /// @param percentage Type default in WAD. 0 = clear type override.
+    function setDefaultLiquidReservePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        returns (bool success);
+
+    /// @param percentage Vault override in WAD. 0 = clear override (fall back to type/global).
+    function setLiquidReservePercentageOfVault(address vault, uint256 percentage) external returns (bool success);
 
     // function setDefaultLendingTerms(KinkLendingTerms calldata lendingTerms) external returns (bool success);
 
