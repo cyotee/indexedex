@@ -1,7 +1,7 @@
 export type ResearchArticleStatus = 'published' | 'draft'
 
 /** Optional composition diagram id — rendered by ResearchArticleView. */
-export type ResearchDiagramId = 'single-standard-exchange'
+export type ResearchDiagramId = 'single-standard-exchange' | 'multi-vault-weighted'
 
 export type ResearchSection = {
   heading?: string

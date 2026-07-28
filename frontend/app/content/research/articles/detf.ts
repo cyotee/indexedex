@@ -40,7 +40,7 @@ export const detfArticle: ResearchArticle = {
       heading: 'What DETF means',
       paragraphs: [
         'DETF expands to Decentralized ETF. The D is decentralized: this is an onchain product pattern, not a registered securities ETF. User intent stays simple — one share over a basket of legs — without a fund administrator or a discretionary rebalancer.',
-        'IndexedEx’s premier product is the platform: deployable packages so you can stand up your own reserve-backed DETFs across many types (single standard-exchange, multi-vault weighted, mixed-buffer stable, composed, and more) — with explicit bond, mint, and burn rules. Not a spreadsheet index, and not a single branded black-box fund.',
+        'IndexedEx’s premier product is the platform: deployable packages so you can stand up your own reserve-backed DETFs across several types (single Standard Exchange, multi-vault weighted, multi-vault stable, mixed-buffer stable) — with explicit bond, mint, and burn rules. Not a spreadsheet index, and not a single branded black-box fund.',
         'Protocol DETF is how you earn a share of protocol fees using that same DETF design (home: /staking). Fees may apply; amounts are not guarantees. Same bond / mint / burn pattern as any DETF — one you can open today for protocol fee participation.',
       ],
     },

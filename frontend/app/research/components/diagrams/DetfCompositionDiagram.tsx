@@ -14,9 +14,19 @@ type Props = {
  * - Panel: accent border + glow, surface-2 fill, radial accent wash on canvas
  * - Labels / leg titles: --text-primary (light) — never accent-on-accent text
  * - Primary leg (DETF): accent border/fill; weight pill = accent fill + dark text
- * - Secondary leg (SE / external): warm amber panel; titles amber-100; pills amber-300
+ * - Secondary leg (SE / external): warm amber; solid fill when present
  * - Connectors: accent line + arrow; optional accent pill labels
  * - Caption bar: surface-1, light primary text
+ * - Hold pill: accent border wash, --text-primary label
+ *
+ * Locked multi-leg / capacity strip (canonical: Multi-Vault Weighted):
+ * - One full-width horizontal row inside the reserve pool frame (not stacked)
+ * - DETF first (accent card), then max-capacity SE slots in the same line
+ * - Filled slots: solid amber border + amber tint (example legs in use)
+ * - Open slots: dashed amber border, dimmed labels (“open”) for remaining capacity
+ * - Do NOT add a separate “Standard Exchange vaults” panel below multi-leg diagrams —
+ *   capacity and SE legs live only in the pool strip
+ * - Weight bar under the pool is optional and illustrative only
  *
  * Theme note: amber secondary stays readable on Pachira green and IndexedEx blue.
  */
@@ -24,6 +34,8 @@ export function DetfCompositionDiagram({ id, className = '' }: Props) {
   switch (id) {
     case 'single-standard-exchange':
       return <SingleStandardExchangeDiagram className={className} />
+    case 'multi-vault-weighted':
+      return <MultiVaultWeightedDiagram className={className} />
     default:
       return null
   }
@@ -213,24 +225,60 @@ function Connector({ label }: { label?: string }) {
   )
 }
 
-function WeightBar({ leftLabel, rightLabel }: { leftLabel: string; rightLabel: string }) {
+type WeightSegment = {
+  /** CSS width, e.g. "40%" */
+  width: string
+  label: string
+  tone: 'accent' | 'secondary'
+}
+
+function WeightBar({
+  segments,
+  ariaLabel,
+}: {
+  segments: readonly WeightSegment[]
+  ariaLabel: string
+}) {
   return (
     <div>
       <div
         className="flex h-2.5 overflow-hidden rounded-full"
         role="img"
-        aria-label={`Default weights: ${leftLabel} DETF, ${rightLabel} SE vault share`}
+        aria-label={ariaLabel}
         style={{
           boxShadow: '0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent)',
         }}
       >
-        <div className="h-full bg-[var(--accent)]" style={{ width: '80%' }} title={leftLabel} />
-        <div className="h-full bg-amber-300" style={{ width: '20%' }} title={rightLabel} />
+        {segments.map((seg) => (
+          <div
+            key={seg.label}
+            className={`h-full ${seg.tone === 'accent' ? 'bg-[var(--accent)]' : 'bg-amber-300'}`}
+            style={{ width: seg.width }}
+            title={seg.label}
+          />
+        ))}
       </div>
-      <div className="mt-2 flex justify-between font-mono text-[10px] uppercase tracking-wide">
-        <span className="text-[var(--text-primary)]">{leftLabel} DETF</span>
-        <span className="text-amber-200">{rightLabel} SE share</span>
+      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-wide">
+        {segments.map((seg) => (
+          <span
+            key={`lbl-${seg.label}`}
+            className={seg.tone === 'accent' ? 'text-[var(--text-primary)]' : 'text-amber-200'}
+          >
+            {seg.label}
+          </span>
+        ))}
       </div>
+    </div>
+  )
+}
+
+function Plus() {
+  return (
+    <div
+      className="flex items-center justify-center font-mono text-sm font-semibold text-[var(--accent)] sm:px-0.5"
+      aria-hidden="true"
+    >
+      +
     </div>
   )
 }
@@ -289,7 +337,15 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
 
       <PoolFrame
         label="Weighted reserve pool (Balancer V3)"
-        footer={<WeightBar leftLabel="~80%" rightLabel="~20%" />}
+        footer={
+          <WeightBar
+            ariaLabel="Example weights: about 80% DETF, about 20% SE vault share"
+            segments={[
+              { width: '80%', label: '~80% DETF', tone: 'accent' },
+              { width: '20%', label: '~20% SE share', tone: 'secondary' },
+            ]}
+          />
+        }
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
           <Leg
@@ -298,12 +354,7 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
             subtitle="This diamond’s own share token in the pool"
             weight="Default ~80%"
           />
-          <div
-            className="flex items-center justify-center font-mono text-sm font-semibold text-[var(--accent)] sm:px-1.5"
-            aria-hidden="true"
-          >
-            +
-          </div>
+          <Plus />
           <Leg
             secondary
             title="SE vault share"
@@ -327,4 +378,93 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
   )
 }
 
+/**
+ * Multi-Vault Weighted — reference implementation of the locked multi-leg strip.
+ * Clone this strip pattern for other multi-capacity diagrams (stable, mixed-buffer, etc.).
+ */
+/** Illustrative multi-leg weights (not a product default). Three SE legs filled of seven. */
+const MULTI_WEIGHTED_SEGMENTS: readonly WeightSegment[] = [
+  { width: '40%', label: '~40% DETF', tone: 'accent' },
+  { width: '25%', label: '~25% SE₁', tone: 'secondary' },
+  { width: '20%', label: '~20% SE₂', tone: 'secondary' },
+  { width: '15%', label: '~15% SE₃', tone: 'secondary' },
+]
+
+/** How many SE vault slots to show as filled (rest are open capacity through 7). */
+const MULTI_WEIGHTED_FILLED_SE = 3
+const MULTI_WEIGHTED_SE_CAPACITY = 7
+
+function MultiVaultWeightedDiagram({ className }: { className?: string }) {
+  return (
+    <DiagramShell
+      className={className}
+      title="Multi-Vault Weighted DETF"
+      caption="You hold the DETF ERC-20. The reserve is one weighted Balancer pool: DETF plus one to seven SE vault shares in a single line, each with a custom immutable weight and independent valuation. Filled slots are an example; dimmed slots are open capacity (up to 7). Weights in the bar are illustrative only. Mint and burn against configured vault shares (live + Policy/Open); first live path is initialize reserve, then bond reserve BPT."
+    >
+      <div className="mb-1 flex justify-center">
+        <div
+          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
+          style={holdPillStyle}
+        >
+          You hold → DETF share (ERC-20)
+        </div>
+      </div>
+      <Connector />
+
+      <PoolFrame
+        label="Weighted reserve pool (Balancer V3) — DETF + up to 7 SE vault shares"
+        footer={
+          <WeightBar
+            ariaLabel="Example custom weights across DETF and filled SE vault shares"
+            segments={MULTI_WEIGHTED_SEGMENTS}
+          />
+        }
+      >
+        {/* Full-width line: DETF + 7 SE slots (filled example + dimmed open capacity) */}
+        <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          <div
+            className="flex min-h-[4.5rem] min-w-0 flex-[1.15] flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5"
+            style={legAccentStyle}
+          >
+            <p className="text-sm font-medium leading-snug text-[var(--text-primary)]">DETF</p>
+            <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
+              self
+            </p>
+          </div>
+
+          {Array.from({ length: MULTI_WEIGHTED_SE_CAPACITY }, (_, i) => {
+            const filled = i < MULTI_WEIGHTED_FILLED_SE
+            return (
+              <div
+                key={`reserve-se-${i + 1}`}
+                className={`flex min-h-[4.5rem] min-w-0 flex-1 flex-col justify-center rounded-lg border px-1.5 py-2 text-center sm:px-2 ${
+                  filled
+                    ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
+                    : 'border-dashed border-amber-300/25 bg-transparent'
+                }`}
+              >
+                <p
+                  className={`font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
+                    filled ? 'text-amber-100' : 'text-amber-200/45'
+                  }`}
+                >
+                  SE {i + 1}
+                </p>
+                <p
+                  className={`mt-0.5 text-[9px] leading-tight sm:text-[10px] ${
+                    filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
+                  }`}
+                >
+                  {filled ? 'share' : 'open'}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      </PoolFrame>
+    </DiagramShell>
+  )
+}
+
 export default DetfCompositionDiagram
+
