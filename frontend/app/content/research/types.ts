@@ -5,6 +5,7 @@ export type ResearchDiagramId =
   | 'single-standard-exchange'
   | 'multi-vault-weighted'
   | 'multi-vault-stable'
+  | 'mixed-buffer-multi-vault-stable'
 
 export type ResearchSection = {
   heading?: string

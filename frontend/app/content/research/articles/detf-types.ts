@@ -104,6 +104,7 @@ export const detfTypesArticle: ResearchArticle = {
         'Bond inputs after live — buffer or vault shares; claim redeem to buffer when wired.',
         'Avoid for — disparate asset weights (use multi-vault weighted) or dual intermediate stable+common composition (use multi-vault stable composed).',
       ],
+      diagram: 'mixed-buffer-multi-vault-stable',
     },
     {
       heading: 'How to choose',

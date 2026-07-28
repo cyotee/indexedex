@@ -39,6 +39,13 @@ type Props = {
  * - Crossing connectors (SVG) from each SE vault to both of its RPs when geometry allows
  * - Top true DETF reserve still shows DETF + composition receipts (e.g. Stable BPT, Common BPT)
  *
+ * Locked mixed-buffer strip (canonical: Mixed-Buffer Multi-Vault Stable):
+ * - One MixedBuffer stable pool (not weighted; not dual intermediate stables)
+ * - Full-width row: DETF (accent) + exactly one buffer token (neutral cash leg) + SE slots
+ * - SE capacity 1–3: filled solid amber, open dashed/dimmed
+ * - Buffer is the shared cash unit vaults accept and produce; burn settles to buffer only
+ * - Do not invent dual-pool / 8-RP topology here — that is Multi-Vault Stable only
+ *
  * Theme note: amber secondary stays readable on Pachira green and IndexedEx blue.
  */
 export function DetfCompositionDiagram({ id, className = '' }: Props) {
@@ -49,6 +56,8 @@ export function DetfCompositionDiagram({ id, className = '' }: Props) {
       return <MultiVaultWeightedDiagram className={className} />
     case 'multi-vault-stable':
       return <MultiVaultStableDiagram className={className} />
+    case 'mixed-buffer-multi-vault-stable':
+      return <MixedBufferMultiVaultStableDiagram className={className} />
     default:
       return null
   }
@@ -760,5 +769,115 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
   )
 }
 
+/**
+ * Mixed-Buffer Multi-Vault Stable — single MixedBuffer pool:
+ * DETF (unpaired) + exactly one buffer token + 1..3 SE vault shares.
+ * Reference for locked mixed-buffer strip (not multi-layer RP topology).
+ */
+const MIXED_BUFFER_SE_CAPACITY = 3
+const MIXED_BUFFER_FILLED_SE = 2
+
+const bufferLegStyle: CSSProperties = {
+  borderColor: 'rgba(226, 232, 240, 0.35)',
+  background: 'color-mix(in srgb, var(--surface-1) 70%, #e2e8f0)',
+  boxShadow: '0 0 14px rgba(226, 232, 240, 0.08)',
+}
+
+function MixedBufferMultiVaultStableDiagram({ className }: { className?: string }) {
+  return (
+    <DiagramShell
+      className={className}
+      title="Mixed-Buffer Multi-Vault Stable"
+      caption="You hold the DETF ERC-20. The reserve is one MixedBuffer stable pool — not a weighted multi-risk basket and not dual intermediate stables. Legs: unpaired DETF, exactly one buffer token (shared cash every vault accepts and produces), and one to three SE vault shares. Filled SE slots are an example; dimmed slots are open capacity (max 3). Live mint: buffer or vault share → DETF. Burn: DETF → buffer only. First live path: permissionless bootstrap first-bond."
+    >
+      <div className="mb-1 flex justify-center">
+        <div
+          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
+          style={holdPillStyle}
+        >
+          You hold → DETF share (ERC-20)
+        </div>
+      </div>
+      <Connector />
+
+      <PoolFrame label="MixedBuffer stable pool (Balancer V3) — one reserve, one buffer">
+        <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          <div
+            className="flex min-h-[4.5rem] min-w-0 flex-[1.15] flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5"
+            style={legAccentStyle}
+          >
+            <p className="text-sm font-medium leading-snug text-[var(--text-primary)]">DETF</p>
+            <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
+              unpaired self
+            </p>
+          </div>
+
+          <Plus />
+
+          <div
+            className="flex min-h-[4.5rem] min-w-0 flex-[1.2] flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5"
+            style={bufferLegStyle}
+          >
+            <p className="text-sm font-medium leading-snug text-[var(--text-primary)]">Buffer</p>
+            <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
+              shared cash unit
+            </p>
+            <p className="mt-1 text-[8px] leading-tight text-[var(--text-muted)]/90 sm:text-[9px]">
+              exactly one · burn settles here
+            </p>
+          </div>
+
+          {Array.from({ length: MIXED_BUFFER_SE_CAPACITY }, (_, i) => (
+            <SeCapacitySlot
+              key={`mixed-buffer-se-${i + 1}`}
+              index={i + 1}
+              filled={i < MIXED_BUFFER_FILLED_SE}
+            />
+          ))}
+        </div>
+      </PoolFrame>
+
+      <Connector label="vaults process buffer" />
+
+      <div>
+        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+          Independent SE vaults (1–3) — each accepts & produces the buffer
+        </p>
+        <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          {Array.from({ length: MIXED_BUFFER_SE_CAPACITY }, (_, i) => {
+            const filled = i < MIXED_BUFFER_FILLED_SE
+            return (
+              <div
+                key={`mb-se-vault-${i + 1}`}
+                className={`flex min-h-[4.25rem] min-w-0 flex-1 flex-col justify-center rounded-lg border px-2 py-2.5 text-center ${
+                  filled
+                    ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
+                    : 'border-dashed border-amber-300/25 bg-transparent'
+                }`}
+              >
+                <p
+                  className={`font-mono text-[10px] uppercase tracking-wide ${
+                    filled ? 'text-amber-100' : 'text-amber-200/45'
+                  }`}
+                >
+                  SE Vault {i + 1}
+                </p>
+                <p
+                  className={`mt-0.5 text-[9px] leading-snug sm:text-[10px] ${
+                    filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
+                  }`}
+                >
+                  {filled ? 'buffer in / out' : 'open capacity'}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </DiagramShell>
+  )
+}
+
 export default DetfCompositionDiagram
+
 
