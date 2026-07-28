@@ -6,13 +6,14 @@ import { useSearchParams } from 'next/navigation'
 
 import { EarnFilters, type EarnTypeFilter } from '../components/earn/EarnFilters'
 import { ProductTypeBadge } from '../components/earn/ProductTypeBadge'
+import { RiskBadge } from '../components/earn/RiskBadge'
 import { Badge } from '../components/ui/Badge'
 import { Card } from '../components/ui/Card'
 import { EmptyState } from '../components/ui/EmptyState'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
 import { filterEarnProducts } from '../lib/earn/assembleEarnProducts'
-import { loadEarnProductsForChain, loadFeaturedEarnProducts } from '../lib/earn/loadEarnProducts'
+import { loadEarnProductsForChain, loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
 import type { EarnProductType } from '../lib/earn/types'
 import { useSelectedNetwork } from '../lib/networkSelection'
 import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
@@ -22,7 +23,11 @@ import {
   preferredToRows,
   type VaultSearchRow,
 } from '../lib/registry/mapRegistryToRows'
-import { getBaseTokensForChain } from '../lib/tokenlists'
+import {
+  feeDetfStakingHref,
+  getBaseTokensForChain,
+  isFeaturedFeeDetfAddress,
+} from '../lib/tokenlists'
 
 function parseTypeParam(raw: string | null): EarnTypeFilter {
   if (raw === 'strategy' || raw === 'protocol-detf' || raw === 'seigniorage-detf') return raw
@@ -55,6 +60,7 @@ function ResultsTable({ rows }: { rows: VaultSearchRow[] }) {
               <th className="px-4 py-3 font-medium">Product</th>
               <th className="px-4 py-3 font-medium">Source</th>
               <th className="px-4 py-3 font-medium">Type</th>
+              <th className="px-4 py-3 font-medium">Risk</th>
               <th className="px-4 py-3 font-medium">Symbol</th>
               <th className="px-4 py-3 font-medium text-right">Action</th>
             </tr>
@@ -76,6 +82,9 @@ function ResultsTable({ rows }: { rows: VaultSearchRow[] }) {
                 </td>
                 <td className="px-4 py-3">
                   <TypeCell row={p} />
+                </td>
+                <td className="px-4 py-3">
+                  <RiskBadge level={p.risk} />
                 </td>
                 <td className="px-4 py-3 font-mono text-[var(--text-muted,#9aa3b2)]">{p.symbol}</td>
                 <td className="px-4 py-3 text-right">
@@ -100,6 +109,7 @@ function ResultsTable({ rows }: { rows: VaultSearchRow[] }) {
                   <div className="flex flex-wrap gap-1">
                     <SourceBadge source={p.source} />
                     <TypeCell row={p} />
+                    <RiskBadge level={p.risk} />
                   </div>
                   <h3 className="mt-2 font-medium text-[var(--text-primary,#EDEDED)]">
                     {p.display || p.name}
@@ -133,10 +143,11 @@ function EarnCatalogInner() {
     () => loadEarnProductsForChain(selectedChainId, environment),
     [selectedChainId, environment],
   )
-  const featured = useMemo(
-    () => loadFeaturedEarnProducts(selectedChainId, environment),
+  const featuredFee = useMemo(
+    () => loadFeaturedFeeDetfs(selectedChainId, environment, 1)[0],
     [selectedChainId, environment],
   )
+  const feePromoHref = featuredFee ? feeDetfStakingHref(featuredFee.address) : '/staking'
 
   // Symbol → address hints for registry queries (base tokens + preferred products).
   const knownTokens = useMemo(() => {
@@ -170,6 +181,8 @@ function EarnCatalogInner() {
    */
   const rows: VaultSearchRow[] = useMemo(() => {
     const typeFilter = productType === 'all' ? undefined : (productType as EarnProductType)
+    const dropFeeDetf = (list: VaultSearchRow[]) =>
+      list.filter((r) => !isFeaturedFeeDetfAddress(selectedChainId, environment, r.address))
 
     if (!registrySearch.isRegistryMode) {
       // Preferred default or free-text filter on preferred list.
@@ -180,14 +193,16 @@ function EarnCatalogInner() {
       // When mode is text, filterEarnProducts already applied search.
       // When empty, product type filter only.
       if (registrySearch.parsed.mode === 'empty') {
-        return preferredToRows(
-          filterEarnProducts(preferredCatalog, { productType: typeFilter ?? 'all' }),
+        return dropFeeDetf(
+          preferredToRows(
+            filterEarnProducts(preferredCatalog, { productType: typeFilter ?? 'all' }),
+          ),
         )
       }
-      return preferredToRows(filtered)
+      return dropFeeDetf(preferredToRows(filtered))
     }
 
-    // Registry mode: live view results.
+    // Registry mode: live view results (still exclude Protocol DETF addresses).
     let regRows = mapRegistryAddressesToRows(
       registrySearch.registryAddresses,
       selectedChainId,
@@ -198,7 +213,7 @@ function EarnCatalogInner() {
         (r) => r.productType === typeFilter || r.productType === 'registry',
       )
     }
-    return regRows
+    return dropFeeDetf(regRows)
   }, [
     registrySearch.isRegistryMode,
     registrySearch.parsed.mode,
@@ -207,6 +222,7 @@ function EarnCatalogInner() {
     productType,
     search,
     selectedChainId,
+    environment,
   ])
 
   const statusLine = useMemo(() => {
@@ -234,16 +250,22 @@ function EarnCatalogInner() {
         subtitle="Preferred catalog from tokenlists; search uses on-chain Vault Registry views."
       />
 
-      {featured.length > 0 && !search.trim() ? (
+      {!search.trim() ? (
         <Card accent className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-wide text-[var(--accent,#4FD44B)]">Featured</p>
+            <p className="text-xs uppercase tracking-wide text-[var(--accent,#4FD44B)]">
+              Protocol DETF
+            </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
-              {featured[0].display || featured[0].name} — start here if you are new.
+              {featuredFee
+                ? `${featuredFee.symbol} lives on the Protocol DETF workspace (mint / bond / sell) — not in this strategy catalog.`
+                : 'Protocol DETFs use a dedicated workspace for mint, bond, and sell — not this catalog grid.'}
             </p>
           </div>
-          <Link href={`/earn/${featured[0].address}`}>
-            <Button size="sm">Open</Button>
+          <Link href={feePromoHref}>
+            <Button size="sm">
+              {featuredFee ? `Open ${featuredFee.symbol}` : 'Open Protocol DETF'}
+            </Button>
           </Link>
         </Card>
       ) : null}

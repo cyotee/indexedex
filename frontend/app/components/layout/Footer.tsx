@@ -24,6 +24,9 @@ export function Footer() {
             <Link href="/earn" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Earn
             </Link>
+            <Link href="/research" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Research
+            </Link>
             <Link href="/token" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Token
             </Link>

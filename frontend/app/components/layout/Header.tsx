@@ -739,11 +739,18 @@ export function Header() {
     await promptWalletSwitch(selectedTargetChain)
   }
 
+  const navLinkClass =
+    'text-[var(--accent,#4FD44B)] hover:text-[var(--text-primary,#EDEDED)] px-3 py-2 text-sm font-medium transition-colors rounded-md'
+  const moreItemClass =
+    'block px-4 py-2 text-sm text-[var(--text-primary,#EDEDED)] hover:bg-[var(--surface-2,#1c2030)]'
+  const controlBtnClass =
+    'px-3 py-1 text-xs rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] text-[var(--text-primary,#EDEDED)] hover:border-[var(--border-accent,rgba(79,212,75,0.45))] disabled:opacity-50'
+
   return (
-    <header className="border-b border-gray-700 bg-gray-800">
+    <header className="border-b border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 py-2 justify-between items-center flex-wrap gap-2">
-          <div className="flex items-center flex-wrap">
+          <div className="flex items-center flex-wrap min-w-0">
             <Link href="/" className="flex items-center flex-shrink-0 gap-2 brand-logo-link">
               <Image
                 src={brand.logoSrc}
@@ -757,36 +764,30 @@ export function Header() {
                 {brand.name}
               </span>
             </Link>
-            <nav className="ml-4 lg:ml-10 flex flex-wrap gap-x-1 gap-y-1 items-center">
-                <Link
-                    href="/earn"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
+            <nav
+              className="ml-2 sm:ml-4 lg:ml-10 flex flex-wrap gap-x-1 gap-y-1 items-center"
+              aria-label="Primary"
+            >
+                <Link href="/earn" className={navLinkClass}>
                 Earn
                 </Link>
-                <Link
-                    href="/swap"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
+                <Link href="/swap" className={navLinkClass}>
                 Swap
                 </Link>
-                <Link
-                    href="/portfolio"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
+                <Link href="/portfolio" className={navLinkClass}>
                 Portfolio
                 </Link>
-                <Link
-                    href="/token"
-                    className="text-green-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                >
+                <Link href="/research" className={navLinkClass}>
+                Research
+                </Link>
+                <Link href="/token" className={navLinkClass}>
                 Token
                 </Link>
               {/* More: power routes demoted from primary nav */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsTestnetDropdownOpen(!isTestnetDropdownOpen)}
-                  className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors flex items-center"
+                  className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)] px-3 py-2 text-sm font-medium transition-colors flex items-center"
                   aria-expanded={isTestnetDropdownOpen}
                   aria-haspopup="menu"
                 >
@@ -802,15 +803,18 @@ export function Header() {
                 </button>
                 
                 {isTestnetDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-52 bg-gray-700 rounded-md shadow-lg z-50 border border-gray-600">
+                  <div className="absolute top-full left-0 mt-1 w-52 rounded-md shadow-lg z-50 border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]">
                     <div className="py-1">
-                      <Link href="/batch-swap" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Batch Swap</Link>
-                      <Link href="/create" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Create</Link>
-                      <Link href="/insights" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Insights</Link>
-                      <Link href="/staking" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>DETF workspace</Link>
-                      <Link href="/mint" className="block px-4 py-2 text-sm text-yellow-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>
-                      <Link href="/token-info" className="block px-4 py-2 text-sm text-yellow-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Token Info</Link>
-                      <Link href="/admin" className="block px-4 py-2 text-sm text-blue-300 hover:bg-gray-600" onClick={() => setIsTestnetDropdownOpen(false)}>Admin</Link>
+                      <Link href="/batch-swap" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Batch Swap</Link>
+                      <Link href="/create" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Create</Link>
+                      <Link href="/insights" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Insights</Link>
+                      <Link href="/staking" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Protocol DETF</Link>
+                      <Link href="/mint" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>
+                      <Link href="/token-info" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Token Info</Link>
+                      {/* Admin only in debug lab — production must not link to a 404 */}
+                      {process.env.NEXT_PUBLIC_SHOW_DEBUG === 'true' ? (
+                        <Link href="/admin" className={`${moreItemClass} text-sky-300`} onClick={() => setIsTestnetDropdownOpen(false)}>Admin</Link>
+                      ) : null}
                     </div>
                   </div>
                 )}
@@ -818,14 +822,14 @@ export function Header() {
               
             </nav>
           </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0 flex-wrap justify-end">
             <div className="flex flex-col items-end gap-1">
-              <label className="text-[10px] uppercase tracking-wide text-gray-400" htmlFor="header-chain-selector">
+              <label className="text-[10px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]" htmlFor="header-chain-selector">
                 App Network
               </label>
               <select
                 id="header-chain-selector"
-                className="rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-gray-100"
+                className="rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-2 py-1 text-xs text-[var(--text-primary,#EDEDED)]"
                 value={selectedChainOption}
                 onChange={(event) => void handleChainSelection(event.target.value as HeaderChainOption)}
                 disabled={isPromptingWalletSwitch}
@@ -834,14 +838,14 @@ export function Header() {
                 <option value="ethereum">Ethereum Sepolia</option>
                 <option value="base">Base Sepolia</option>
               </select>
-              <div className="max-w-[220px] text-right text-[10px] leading-tight text-gray-400">
+              <div className="max-w-[220px] text-right text-[10px] leading-tight text-[var(--text-muted,#9aa3b2)]">
                 Selecting a network updates the app and prompts your wallet when a non-local wallet chain does not match.
               </div>
               {walletNeedsSwitchPrompt ? (
                 <button
                   onClick={() => void handleWalletSwitchPrompt()}
                   disabled={isPromptingWalletSwitch}
-                  className="rounded-md border border-sky-600 bg-sky-700 px-2 py-1 text-[10px] text-white hover:bg-sky-600 disabled:opacity-50"
+                  className="rounded-md border border-sky-600/60 bg-sky-700/80 px-2 py-1 text-[10px] text-white hover:brightness-110 disabled:opacity-50"
                   title={`Prompt wallet to switch to ${selectedTargetChain.label}`}
                 >
                   {isPromptingWalletSwitch ? 'Switching Wallet…' : `Switch Wallet Network to ${selectedTargetChain.label}`}
@@ -866,7 +870,7 @@ export function Header() {
             {!brandLocked ? (
               <button
                 onClick={toggleBrand}
-                className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600"
+                className={controlBtnClass}
                 aria-label="Switch brand theme"
                 title="Same layout — Pachira (green) or IndexedEx (dark blue)"
               >
@@ -874,7 +878,7 @@ export function Header() {
               </button>
             ) : (
               <span
-                className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-300"
+                className={`${controlBtnClass} opacity-80`}
                 title="Brand locked for this deploy"
               >
                 {brand.name}
@@ -883,7 +887,7 @@ export function Header() {
             {isConnected ? (
               <button
                 onClick={() => disconnect()}
-                className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600"
+                className={controlBtnClass}
                 title={address}
               >
                 {address ? `${address.slice(0, 6)}…${address.slice(-4)}` : 'Connected'}
@@ -919,7 +923,7 @@ export function Header() {
                     setIsOpeningWallet(false);
                   }}
                   disabled={!preferredConnector || status === 'pending' || isOpeningWallet}
-                  className="px-3 py-1 text-xs rounded-md border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600 disabled:opacity-50"
+                  className={controlBtnClass}
                   title={error ? String(error?.message ?? error) : undefined}
                 >
                   {status === 'pending' ? 'Connecting…' : isOpeningWallet ? 'Opening wallet…' : 'Connect Wallet'}

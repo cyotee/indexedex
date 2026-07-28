@@ -24,6 +24,10 @@ type StoredPermitSignature = {
 
 interface MintChirSectionProps {
   detfAddress: `0x${string}` | undefined
+  /** DETF share symbol (primary label). */
+  detfSymbol?: string
+  /** Rate asset symbol when known (often WETH). */
+  rateAssetSymbol?: string
   effectiveWethToken: `0x${string}` | undefined
   dataChainId: number
   isConnected: boolean
@@ -49,6 +53,8 @@ function computeMinAmountOut(amountOut: bigint | undefined, slippage: number) {
 
 export default function MintChirSection({
   detfAddress,
+  detfSymbol = 'DETF',
+  rateAssetSymbol = 'WETH',
   effectiveWethToken,
   dataChainId,
   isConnected,
@@ -393,15 +399,38 @@ export default function MintChirSection({
     }
   }
 
+  const inputClass =
+    'mt-1 w-full rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
+  const btnPrimary =
+    'w-full rounded-lg bg-[var(--accent,#4FD44B)] px-3 py-2 text-sm font-semibold text-black hover:brightness-110 disabled:opacity-50'
+  const btnSecondary =
+    'w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm font-medium text-[var(--text-primary,#EDEDED)] hover:border-[var(--border-accent,rgba(79,212,75,0.45))] disabled:opacity-50'
+
   return (
-    <div className="rounded-md border border-gray-700 bg-gray-900 p-3">
-      <div className="text-sm font-medium text-gray-100">Mint CHIR with WETH</div>
-      <div className="mt-2 rounded border border-indigo-800 bg-indigo-950/40 p-2">
-        <div className="text-xs font-medium uppercase tracking-wide text-indigo-300">You receive (preview)</div>
-        <div className="text-lg font-semibold text-indigo-100">{previewMintOut !== undefined ? formatUnits(previewMintOut as bigint, 18) : '—'}</div>
-        <div className="mt-1 text-xs text-indigo-300">Min: {previewMintOut ? formatUnits(computeMinAmountOut(previewMintOut as bigint, mintSlippage), 18) : '—'} CHIR</div>
+    <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
+      <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">
+        Mint {detfSymbol}
       </div>
-      <label className="mt-3 flex items-center gap-2 text-xs text-gray-300">
+      <p className="mt-0.5 text-xs text-[var(--text-muted,#9aa3b2)]">
+        Pay with {rateAssetSymbol}
+        <span className="text-[var(--text-muted,#9aa3b2)]"> · rate asset</span>
+      </p>
+      <div className="mt-2 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] p-2">
+        <div className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
+          You receive (preview)
+        </div>
+        <div className="font-mono text-lg font-semibold tabular-nums text-[var(--text-primary,#EDEDED)]">
+          {previewMintOut !== undefined ? formatUnits(previewMintOut as bigint, 18) : '—'}
+        </div>
+        <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+          Min:{' '}
+          {previewMintOut
+            ? formatUnits(computeMinAmountOut(previewMintOut as bigint, mintSlippage), 18)
+            : '—'}{' '}
+          {detfSymbol}
+        </div>
+      </div>
+      <label className="mt-3 flex items-center gap-2 text-xs text-[var(--text-muted,#9aa3b2)]">
         <input
           type="checkbox"
           checked={wrapEthBeforeMint}
@@ -409,29 +438,54 @@ export default function MintChirSection({
             setWrapEthBeforeMint(event.target.checked)
             clearSignedState()
           }}
-          className="rounded border-gray-600 bg-gray-950"
+          className="rounded border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)]"
         />
         Wrap ETH to WETH in the router before minting
       </label>
-      <label className="mt-2 block text-xs text-gray-400">{wrapEthBeforeMint ? 'ETH amount' : 'WETH amount'}</label>
-      <input value={mintWethAmount} onChange={(event) => setMintWethAmount(event.target.value)} className="mt-1 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-100" placeholder="1.0" />
+      <label className="mt-2 block text-xs text-[var(--text-muted,#9aa3b2)]">
+        {wrapEthBeforeMint ? 'ETH amount' : `${rateAssetSymbol} amount`}
+      </label>
+      <input
+        value={mintWethAmount}
+        onChange={(event) => setMintWethAmount(event.target.value)}
+        className={inputClass}
+        placeholder="1.0"
+      />
       {wrapEthBeforeMint && ethBalance?.value !== undefined ? (
-        <div className="mt-1 text-xs text-gray-400">
+        <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
           Balance: {formatUnits(ethBalance.value, ethBalance.decimals)} ETH
         </div>
       ) : null}
       {!wrapEthBeforeMint && wethBalance !== undefined ? (
-        <div className="mt-1 text-xs text-gray-400">
-          Balance: {formatUnits(wethBalance, wethDecimals)} WETH
+        <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+          Balance: {formatUnits(wethBalance, wethDecimals)} {rateAssetSymbol}
         </div>
       ) : null}
-      <label className="mt-2 block text-xs text-gray-400">Preview CHIR out</label>
+      <label className="mt-2 block text-xs text-[var(--text-muted,#9aa3b2)]">
+        Preview {detfSymbol} out
+      </label>
       <input
-        value={mintingAllowedNow === false ? 'Unavailable' : !mintWethAmount.trim() || parsedMintWeth === undefined || parsedMintWeth === BigInt(0) ? '0' : previewMintOut !== undefined ? formatUnits(previewMintOut as bigint, 18) : ''}
+        value={
+          mintingAllowedNow === false
+            ? 'Unavailable'
+            : !mintWethAmount.trim() || parsedMintWeth === undefined || parsedMintWeth === BigInt(0)
+              ? '0'
+              : previewMintOut !== undefined
+                ? formatUnits(previewMintOut as bigint, 18)
+                : ''
+        }
         readOnly
-        className="mt-1 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200"
+        className={`${inputClass} text-[var(--text-muted,#9aa3b2)]`}
       />
-      {mintingAllowedNow === false ? <div className="mt-1 text-xs text-amber-300">Mint preview is unavailable unless minting is currently enabled.</div> : previewMintOutError ? <div className="mt-1 text-xs text-amber-300">Mint preview read reverted on the current pool state.</div> : null}
+      {mintingAllowedNow === false ? (
+        <div className="mt-1 text-xs text-amber-300">
+          Mint preview is unavailable unless minting is currently enabled.
+        </div>
+      ) : previewMintOutError ? (
+        <div className="mt-1 text-xs text-amber-300">
+          Mint preview read reverted on the current pool state.
+        </div>
+      ) : null}
       <ApprovalSettingsPanel
         className="mt-3"
         approvalMode={approvalMode}
@@ -446,28 +500,86 @@ export default function MintChirSection({
         onIssuePermit2Approval={handleIssuePermit2Approval}
         onIssueRouterApproval={handleIssueRouterApproval}
         onEnsureApprovals={handleApproval}
-        disableActions={wrapEthBeforeMint || !isConnected || !walletMatchesDataChain || !effectiveWethToken || !routerAddress}
+        disableActions={
+          wrapEthBeforeMint ||
+          !isConnected ||
+          !walletMatchesDataChain ||
+          !effectiveWethToken ||
+          !routerAddress
+        }
         signedDisabled={wrapEthBeforeMint}
         signedDisabledReason="Signed Permit2 mode only applies when the input asset is WETH. Wrapping native ETH uses the router payable path instead."
-        explicitDescription={wrapEthBeforeMint ? 'Native ETH path: the router wraps the sent ETH into WETH before the mint executes. No token approvals are required.' : undefined}
+        explicitDescription={
+          wrapEthBeforeMint
+            ? 'Native ETH path: the router wraps the sent ETH into WETH before the mint executes. No token approvals are required.'
+            : undefined
+        }
       />
       <SlippageInput className="mt-3" value={mintSlippage} onChange={setMintSlippage} />
-      {approvalError ? <div className="mt-2 text-xs text-amber-300">Approval error: {approvalError}</div> : null}
-      {approvalState === 'approving' ? <div className="mt-2 text-xs text-gray-400">Approvals pending…</div> : null}
-      {accurateQuote !== null ? <div className="mt-2 text-xs text-green-300">Accurate signed quote: {formatUnits(accurateQuote, 18)} CHIR</div> : null}
-      {accurateQuoteError ? <div className="mt-2 text-xs text-amber-300">{accurateQuoteError}</div> : null}
+      {approvalError ? (
+        <div className="mt-2 text-xs text-amber-300">Approval error: {approvalError}</div>
+      ) : null}
+      {approvalState === 'approving' ? (
+        <div className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">Approvals pending…</div>
+      ) : null}
+      {accurateQuote !== null ? (
+        <div className="mt-2 text-xs text-[var(--accent,#4FD44B)]">
+          Accurate signed quote: {formatUnits(accurateQuote, 18)} {detfSymbol}
+        </div>
+      ) : null}
+      {accurateQuoteError ? (
+        <div className="mt-2 text-xs text-amber-300">{accurateQuoteError}</div>
+      ) : null}
       <div className="mt-3 flex flex-col gap-2">
         {approvalMode === 'signed' ? (
           <>
-            <button type="button" onClick={() => void handleGetAccurateQuote()} disabled={!isConnected || !walletMatchesDataChain || !parsedMintWeth || !effectiveWethToken || !routerAddress || accurateQuoteLoading} className="w-full rounded-md bg-yellow-600 px-3 py-2 text-sm font-medium text-white hover:bg-yellow-500 disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() => void handleGetAccurateQuote()}
+              disabled={
+                !isConnected ||
+                !walletMatchesDataChain ||
+                !parsedMintWeth ||
+                !effectiveWethToken ||
+                !routerAddress ||
+                accurateQuoteLoading
+              }
+              className={btnSecondary}
+            >
               {accurateQuoteLoading ? 'Signing Quote…' : 'Get Accurate Quote (Signed)'}
             </button>
-            <button type="button" onClick={() => void handleMintSigned()} disabled={mintingAllowedNow === false || !isConnected || !walletMatchesDataChain || !parsedMintWeth || !effectiveWethToken || !routerAddress || !storedPermitSignature || storedPermitSignature.intentKey !== activePermitIntentKey} className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() => void handleMintSigned()}
+              disabled={
+                mintingAllowedNow === false ||
+                !isConnected ||
+                !walletMatchesDataChain ||
+                !parsedMintWeth ||
+                !effectiveWethToken ||
+                !routerAddress ||
+                !storedPermitSignature ||
+                storedPermitSignature.intentKey !== activePermitIntentKey
+              }
+              className={btnPrimary}
+            >
               Mint (Signed)
             </button>
           </>
         ) : (
-          <button type="button" onClick={() => void handleMint()} disabled={mintingAllowedNow === false || !isConnected || !walletMatchesDataChain || !parsedMintWeth || !effectiveWethToken || !routerAddress} className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={() => void handleMint()}
+            disabled={
+              mintingAllowedNow === false ||
+              !isConnected ||
+              !walletMatchesDataChain ||
+              !parsedMintWeth ||
+              !effectiveWethToken ||
+              !routerAddress
+            }
+            className={btnPrimary}
+          >
             {wrapEthBeforeMint ? 'Mint with ETH Wrapping' : 'Mint (Explicit)'}
           </button>
         )}

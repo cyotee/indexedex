@@ -1,3 +1,18 @@
+# PROGRESS.md
+
+> **⚠️ Frontend redesign / IndexedEx UI roadmap is NOT tracked here.**
+>
+> For frontend product work, start at:
+> **[`frontend/ROADMAP.md`](frontend/ROADMAP.md)**
+>
+> Related:
+> - [`frontend/FRONTEND_REDESIGN_DESIGN.md`](frontend/FRONTEND_REDESIGN_DESIGN.md) (rev 6)
+> - [`frontend/WAVE1_5_ANVIL_AND_EMBED_PLAN.md`](frontend/WAVE1_5_ANVIL_AND_EMBED_PLAN.md) — **active next phase**
+>
+> Content below is **historical** (Permit2 signature implementation notes) and must not be treated as current frontend redesign status.
+
+---
+
 # PROGRESS.md - Permit2 Signature Implementation
 
 ## Summary

@@ -1,7 +1,11 @@
+import type { RiskLevel } from './riskFromTags'
+
 export type Address = `0x${string}`
 
 /** Earn catalog product kinds merged from tokenlists. */
 export type EarnProductType = 'strategy' | 'protocol-detf' | 'seigniorage-detf'
+
+export type { RiskLevel }
 
 export type EarnProduct = {
   address: Address
@@ -11,6 +15,8 @@ export type EarnProduct = {
   decimals: number
   display?: string
   productType: EarnProductType
+  /** From tokenlist risk-* tags / extensions.risk only; omit when untagged. */
+  risk?: RiskLevel
 }
 
 export type EarnProductInput = {
@@ -20,6 +26,11 @@ export type EarnProductInput = {
   symbol: string
   decimals: number
   display?: string
+  /** Uniswap-style tokenlist tags (may include risk-*). */
+  tags?: string[]
+  extensions?: Record<string, unknown>
+  /** Pre-resolved risk; if omitted, assembled from tags/extensions. */
+  risk?: RiskLevel
 }
 
 export type EarnCatalogInputs = {

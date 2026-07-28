@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '../../components/ui/Button'
 
 interface SellNftSectionProps {
   isConnected: boolean
@@ -9,21 +10,34 @@ interface SellNftSectionProps {
   onSell: (tokenId: bigint) => Promise<void>
 }
 
-export default function SellNftSection({ isConnected, walletMatchesDataChain, isWritePending, onSell }: SellNftSectionProps) {
+const inputClass =
+  'mt-1 w-full rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
+
+export default function SellNftSection({
+  isConnected,
+  walletMatchesDataChain,
+  isWritePending,
+  onSell,
+}: SellNftSectionProps) {
   const [tokenIdInput, setTokenIdInput] = useState('')
 
   return (
-    <div className="rounded-md border border-gray-700 bg-gray-900 p-3">
-      <div className="text-sm font-medium text-gray-100">Sell NFT for RICHIR</div>
-      <label className="mt-2 block text-xs text-gray-400">Token ID</label>
+    <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
+      <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Sell bond NFT</div>
+      <p className="mt-0.5 text-xs text-[var(--text-muted,#9aa3b2)]">
+        Receive rebasing claim token (claim token)
+      </p>
+      <label className="mt-2 block text-xs text-[var(--text-muted,#9aa3b2)]">Token ID</label>
       <input
         value={tokenIdInput}
         onChange={(event) => setTokenIdInput(event.target.value)}
-        className="mt-1 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-100"
+        className={inputClass}
         placeholder="1"
       />
-      <button
+      <Button
         type="button"
+        variant="primary"
+        className="mt-3 w-full"
         onClick={() => {
           try {
             void onSell(BigInt(tokenIdInput || '0'))
@@ -32,10 +46,10 @@ export default function SellNftSection({ isConnected, walletMatchesDataChain, is
           }
         }}
         disabled={!isConnected || !walletMatchesDataChain || isWritePending || !tokenIdInput.trim()}
-        className="mt-3 w-full rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white hover:bg-orange-500 disabled:opacity-50"
+        loading={isWritePending}
       >
         Sell NFT
-      </button>
+      </Button>
     </div>
   )
 }

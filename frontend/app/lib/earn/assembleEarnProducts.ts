@@ -1,3 +1,4 @@
+import { resolveRiskLevel } from './riskFromTags'
 import type {
   Address,
   EarnCatalogInputs,
@@ -21,6 +22,8 @@ function toProduct(entry: EarnProductInput, productType: EarnProductType): EarnP
   const address = normalizeAddress(entry.address)
   if (!address) return null
   if (!Number.isFinite(entry.chainId) || entry.chainId <= 0) return null
+  const risk =
+    entry.risk ?? resolveRiskLevel(entry.tags, entry.extensions ?? null)
   return {
     address,
     chainId: entry.chainId,
@@ -29,6 +32,7 @@ function toProduct(entry: EarnProductInput, productType: EarnProductType): EarnP
     decimals: Number.isFinite(entry.decimals) ? entry.decimals : 18,
     display: entry.display,
     productType,
+    ...(risk ? { risk } : {}),
   }
 }
 

@@ -1,5 +1,10 @@
+import { Suspense } from 'react'
 import StakingPageClient from './StakingPageClient'
 
 export default function StakingPage() {
-  return <StakingPageClient />
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-[var(--text-muted,#9aa3b2)]">Loading DETF workspace…</div>}>
+      <StakingPageClient />
+    </Suspense>
+  )
 }

@@ -11,7 +11,7 @@ That matches production: wagmi’s **injected** connector + your UI.
 ## Prerequisites
 
 1. **Build** the Next app at least once: `npm run build`
-2. Optional but recommended for on-chain reads: **Anvil** (or full `local_testing` stack) on `127.0.0.1:8545` with chain id `11155111`
+2. Optional for on-chain reads/txs: an **already running** RPC (e.g. `127.0.0.1:8545`, chain id `11155111`) with contracts that match committed `app/addresses/**`. **Do not** start or redeploy stacks as part of frontend agent work — see `ROADMAP.md` § Do not deploy.
 3. Chromium for Playwright: `npx playwright install chromium`
 
 ## Run
@@ -41,4 +41,4 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e   # terminal 2
 ## Extending
 
 - Prefer `test` from `./wallet/fixture` so every test gets the injected provider.
-- For deposit flows, ensure Anvil has the vault deployed (`local_testing.sh`) and assert UI status / portfolio text after click — still no MetaMask popup.
+- For deposit flows against a live RPC, assert UI status / portfolio after click only when vaults already exist on that RPC — still no MetaMask popup. **Do not** run deploy scripts to create them.

@@ -1,13 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import { useReadContract } from 'wagmi'
 import { formatUnits } from 'viem'
 
 import { DepositPanel } from '../../components/earn/DepositPanel'
 import { DetfLifecycleStepper } from '../../components/earn/DetfLifecycleStepper'
+import { DetfWorkspaceEmbed } from '../../components/earn/detf/DetfWorkspaceEmbed'
 import { ProductTypeBadge } from '../../components/earn/ProductTypeBadge'
+import { RiskBadge } from '../../components/earn/RiskBadge'
 import { AddressLink } from '../../components/ui/AddressLink'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -17,8 +20,11 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { Stat } from '../../components/ui/Stat'
 import { TabPanel, Tabs } from '../../components/ui/Tabs'
 import { findEarnProduct } from '../../lib/earn/loadEarnProducts'
+import { RISK_LEVEL_LABEL } from '../../lib/earn/riskFromTags'
+import { isEarnDetfEmbedEnabled } from '../../lib/lab'
 import { useSelectedNetwork } from '../../lib/networkSelection'
 import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment'
+import { feeDetfStakingHref, isFeaturedFeeDetfAddress } from '../../lib/tokenlists'
 
 const vaultAbi = [
   {
@@ -47,14 +53,31 @@ function isAddress(value: string): value is `0x${string}` {
 }
 
 export default function EarnDetailClient({ address }: { address: string }) {
+  const router = useRouter()
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
   const [tab, setTab] = useState('overview')
 
+  // Wave 2: Protocol DETF addresses redirect to /staking (not Earn strategy UI).
+  const isFeeDetf = useMemo(() => {
+    if (!isAddress(address)) return false
+    return isFeaturedFeeDetfAddress(selectedChainId, environment, address)
+  }, [address, selectedChainId, environment])
+
+  useEffect(() => {
+    if (!isFeeDetf || !isAddress(address)) return
+    router.replace(feeDetfStakingHref(address))
+  }, [isFeeDetf, address, router])
+
   const product = useMemo(() => {
     if (!isAddress(address)) return undefined
+    if (isFeaturedFeeDetfAddress(selectedChainId, environment, address)) return undefined
     return findEarnProduct(selectedChainId, address, environment)
   }, [address, selectedChainId, environment])
+
+  const earnDetfEmbed = isEarnDetfEmbedEnabled()
+  const isDetf =
+    product?.productType === 'protocol-detf' || product?.productType === 'seigniorage-detf'
 
   const vaultAddress = product?.address
 
@@ -76,6 +99,22 @@ export default function EarnDetailClient({ address }: { address: string }) {
 
   const tokenList = Array.isArray(tokens) ? (tokens as `0x${string}`[]) : []
   const reserveList = Array.isArray(reserves) ? (reserves as bigint[]) : []
+
+  if (isFeeDetf && isAddress(address)) {
+    return (
+      <EmptyState
+        title="Redirecting to Protocol DETF"
+        body="This product lives on the Protocol DETF workspace, not Earn."
+        action={
+          <Link href={feeDetfStakingHref(address)}>
+            <Button variant="secondary" size="sm">
+              Open workspace
+            </Button>
+          </Link>
+        }
+      />
+    )
+  }
 
   if (!isAddress(address) || !product) {
     return (
@@ -102,11 +141,22 @@ export default function EarnDetailClient({ address }: { address: string }) {
       </div>
 
       <PageHeader
-        title={product.display || product.name}
-        subtitle={product.symbol}
+        title={product.symbol || product.display || product.name}
+        subtitle={
+          product.display && product.display !== product.symbol
+            ? `${product.display} · ${product.productType === 'strategy' ? 'strategy vault' : product.productType === 'seigniorage-detf' ? 'seigniorage DETF' : 'protocol DETF'}`
+            : product.productType === 'strategy'
+              ? 'Strategy vault'
+              : product.productType === 'seigniorage-detf'
+                ? 'Seigniorage DETF'
+                : product.productType === 'protocol-detf'
+                  ? 'Protocol DETF'
+                  : undefined
+        }
         actions={
           <div className="flex flex-wrap gap-2 items-center">
             <ProductTypeBadge type={product.productType} />
+            <RiskBadge level={product.risk} />
             <Badge tone="neutral">Chain {selectedChainId}</Badge>
           </div>
         }
@@ -137,6 +187,7 @@ export default function EarnDetailClient({ address }: { address: string }) {
               { id: 'overview', label: 'Overview' },
               { id: 'composition', label: 'Composition' },
               { id: 'risks', label: 'Risks' },
+              ...(isDetf && earnDetfEmbed ? [{ id: 'actions', label: 'Mint / bond / sell' }] : []),
             ]}
             active={tab}
             onChange={setTab}
@@ -156,7 +207,8 @@ export default function EarnDetailClient({ address }: { address: string }) {
                 <>
                   <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">DETF lifecycle</h3>
                   <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] mb-4">
-                    Mint or exchange in, bond as an NFT, sell to the protocol bond NFT vault, and manage RICHIR.
+                    Mint or exchange in, bond as an NFT, sell to the protocol bond NFT vault, and redeem via the
+                    rebasing claim token.
                   </p>
                   <DetfLifecycleStepper activeIndex={0} />
                   <div className="mt-4">
@@ -171,6 +223,12 @@ export default function EarnDetailClient({ address }: { address: string }) {
             </Card>
           </TabPanel>
 
+          {isDetf && earnDetfEmbed ? (
+            <TabPanel when="actions" active={tab}>
+              <DetfWorkspaceEmbed detfAddress={product.address} symbol={product.symbol} />
+            </TabPanel>
+          ) : null}
+
           <TabPanel when="composition" active={tab}>
             <Card>
               <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)] mb-3">
@@ -178,8 +236,8 @@ export default function EarnDetailClient({ address }: { address: string }) {
               </h3>
               {product.productType !== 'strategy' ? (
                 <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-                  DETF composition is dynamic (reserve pool, bond NFT, RICHIR). Use the DETF workspace for live
-                  mint thresholds and bonding.
+                  DETF composition is dynamic (reserve pool, bond NFT, rebasing claim token). Use the DETF workspace
+                  for live mint thresholds and bonding.
                 </p>
               ) : tokenList.length === 0 ? (
                 <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
@@ -203,6 +261,12 @@ export default function EarnDetailClient({ address }: { address: string }) {
           <TabPanel when="risks" active={tab}>
             <Card>
               <ul className="list-disc pl-5 text-sm text-[var(--text-muted,#9aa3b2)] space-y-2">
+                {product.risk ? (
+                  <li>
+                    Tokenlist risk label: <strong className="text-[var(--text-primary,#EDEDED)]">{RISK_LEVEL_LABEL[product.risk]}</strong>
+                    {' '}(from list tags only — not a guarantee or credit rating).
+                  </li>
+                ) : null}
                 <li>Smart-contract risk on vault, router, and underlying venues.</li>
                 <li>Impermanent loss and market risk for LP-based strategies.</li>
                 <li>DETF bond locks may delay full redemption until unlock.</li>

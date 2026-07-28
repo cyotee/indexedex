@@ -24,6 +24,10 @@ type StoredPermitSignature = {
 
 interface BurnChirSectionProps {
   detfAddress: `0x${string}` | undefined
+  /** DETF share symbol (primary label). */
+  detfSymbol?: string
+  /** Rate asset symbol when known (often WETH). */
+  rateAssetSymbol?: string
   effectiveWethToken: `0x${string}` | undefined
   dataChainId: number
   isConnected: boolean
@@ -50,6 +54,8 @@ function computeMinAmountOut(amountOut: bigint | undefined, slippage: number) {
 
 export default function BurnChirSection({
   detfAddress,
+  detfSymbol = 'DETF',
+  rateAssetSymbol = 'WETH',
   effectiveWethToken,
   dataChainId,
   isConnected,
@@ -364,18 +370,55 @@ export default function BurnChirSection({
     }
   }
 
+  const inputClass =
+    'mt-1 w-full rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
+  const btnPrimary =
+    'w-full rounded-lg bg-[var(--accent,#4FD44B)] px-3 py-2 text-sm font-semibold text-black hover:brightness-110 disabled:opacity-50'
+  const btnSecondary =
+    'w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm font-medium text-[var(--text-primary,#EDEDED)] hover:border-[var(--border-accent,rgba(79,212,75,0.45))] disabled:opacity-50'
+  const outSymbol = unwrapWethAfterBurn ? 'ETH' : rateAssetSymbol
+
   return (
-    <div className="rounded-md border border-gray-700 bg-gray-900 p-3">
-      <div className="text-sm font-medium text-gray-100">Burn CHIR for {unwrapWethAfterBurn ? 'ETH' : 'WETH'}</div>
-      <div className="mt-2 rounded border border-cyan-800 bg-cyan-950/40 p-2">
-        <div className="text-xs font-medium uppercase tracking-wide text-cyan-300">You receive (preview)</div>
-        <div className="text-lg font-semibold text-cyan-100">{previewBurnOut !== undefined ? formatUnits(previewBurnOut as bigint, wethDecimals) : '—'}</div>
-        <div className="mt-1 text-xs text-cyan-300">Min: {previewBurnOut ? formatUnits(computeMinAmountOut(previewBurnOut as bigint, burnSlippage), wethDecimals) : '—'} WETH</div>
+    <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
+      <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">
+        Burn {detfSymbol} for {outSymbol}
       </div>
-      <label className="mt-3 block text-xs text-gray-400">CHIR amount</label>
-      <input value={burnChirAmount} onChange={(event) => setBurnChirAmount(event.target.value)} className="mt-1 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-100" placeholder="100" />
-      {chirBalance !== undefined ? <div className="mt-1 text-xs text-gray-400">Balance: {formatUnits(chirBalance, 18)} CHIR</div> : null}
-      <label className="mt-2 flex items-center gap-2 text-xs text-gray-300">
+      <p className="mt-0.5 text-xs text-[var(--text-muted,#9aa3b2)]">
+        Receive {outSymbol}
+        {!unwrapWethAfterBurn ? ' · rate asset' : ''}
+      </p>
+      <div className="mt-2 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] p-2">
+        <div className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
+          You receive (preview)
+        </div>
+        <div className="font-mono text-lg font-semibold tabular-nums text-[var(--text-primary,#EDEDED)]">
+          {previewBurnOut !== undefined
+            ? formatUnits(previewBurnOut as bigint, wethDecimals)
+            : '—'}
+        </div>
+        <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+          Min:{' '}
+          {previewBurnOut
+            ? formatUnits(computeMinAmountOut(previewBurnOut as bigint, burnSlippage), wethDecimals)
+            : '—'}{' '}
+          {outSymbol}
+        </div>
+      </div>
+      <label className="mt-3 block text-xs text-[var(--text-muted,#9aa3b2)]">
+        {detfSymbol} amount
+      </label>
+      <input
+        value={burnChirAmount}
+        onChange={(event) => setBurnChirAmount(event.target.value)}
+        className={inputClass}
+        placeholder="100"
+      />
+      {chirBalance !== undefined ? (
+        <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+          Balance: {formatUnits(chirBalance, 18)} {detfSymbol}
+        </div>
+      ) : null}
+      <label className="mt-2 flex items-center gap-2 text-xs text-[var(--text-muted,#9aa3b2)]">
         <input
           type="checkbox"
           checked={unwrapWethAfterBurn}
@@ -383,17 +426,35 @@ export default function BurnChirSection({
             setUnwrapWethAfterBurn(event.target.checked)
             clearSignedState()
           }}
-          className="rounded border-gray-600 bg-gray-950"
+          className="rounded border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)]"
         />
         Unwrap WETH to ETH in the router after burning
       </label>
-      <label className="mt-2 block text-xs text-gray-400">Preview {unwrapWethAfterBurn ? 'ETH' : 'WETH'} out</label>
+      <label className="mt-2 block text-xs text-[var(--text-muted,#9aa3b2)]">
+        Preview {outSymbol} out
+      </label>
       <input
-        value={burningAllowedNow === false ? 'Unavailable' : !burnChirAmount.trim() || parsedBurnChir === undefined || parsedBurnChir === BigInt(0) ? '0' : previewBurnOut !== undefined ? formatUnits(previewBurnOut as bigint, wethDecimals) : ''}
+        value={
+          burningAllowedNow === false
+            ? 'Unavailable'
+            : !burnChirAmount.trim() || parsedBurnChir === undefined || parsedBurnChir === BigInt(0)
+              ? '0'
+              : previewBurnOut !== undefined
+                ? formatUnits(previewBurnOut as bigint, wethDecimals)
+                : ''
+        }
         readOnly
-        className="mt-1 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200"
+        className={`${inputClass} text-[var(--text-muted,#9aa3b2)]`}
       />
-      {burningAllowedNow === false ? <div className="mt-1 text-xs text-amber-300">Burn preview is unavailable unless burning is currently enabled.</div> : previewBurnOutError ? <div className="mt-1 text-xs text-amber-300">Burn preview read reverted on the current pool state.</div> : null}
+      {burningAllowedNow === false ? (
+        <div className="mt-1 text-xs text-amber-300">
+          Burn preview is unavailable unless burning is currently enabled.
+        </div>
+      ) : previewBurnOutError ? (
+        <div className="mt-1 text-xs text-amber-300">
+          Burn preview read reverted on the current pool state.
+        </div>
+      ) : null}
       <ApprovalSettingsPanel
         className="mt-3"
         approvalMode={approvalMode}
@@ -409,26 +470,74 @@ export default function BurnChirSection({
         onIssueRouterApproval={handleIssueRouterApproval}
         onEnsureApprovals={handleApproval}
         disableActions={!isConnected || !walletMatchesDataChain || !detfAddress || !routerAddress}
-        explicitDescription="Two-step: approve CHIR → Permit2, then Permit2 → Router for burn execution."
+        explicitDescription={`Two-step: approve ${detfSymbol} → Permit2, then Permit2 → Router for burn execution.`}
         signedDescription="EIP-712 signature per burn. Useful when you want a stricter signed path with no router allowance step."
       />
       <SlippageInput className="mt-3" value={burnSlippage} onChange={setBurnSlippage} />
-      {approvalError ? <div className="mt-2 text-xs text-amber-300">Approval error: {approvalError}</div> : null}
-      {approvalState === 'approving' ? <div className="mt-2 text-xs text-gray-400">Approvals pending…</div> : null}
-      {accurateQuote !== null ? <div className="mt-2 text-xs text-green-300">Accurate signed quote: {formatUnits(accurateQuote, wethDecimals)} {unwrapWethAfterBurn ? 'ETH' : 'WETH'}</div> : null}
-      {accurateQuoteError ? <div className="mt-2 text-xs text-amber-300">{accurateQuoteError}</div> : null}
+      {approvalError ? (
+        <div className="mt-2 text-xs text-amber-300">Approval error: {approvalError}</div>
+      ) : null}
+      {approvalState === 'approving' ? (
+        <div className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">Approvals pending…</div>
+      ) : null}
+      {accurateQuote !== null ? (
+        <div className="mt-2 text-xs text-[var(--accent,#4FD44B)]">
+          Accurate signed quote: {formatUnits(accurateQuote, wethDecimals)} {outSymbol}
+        </div>
+      ) : null}
+      {accurateQuoteError ? (
+        <div className="mt-2 text-xs text-amber-300">{accurateQuoteError}</div>
+      ) : null}
       <div className="mt-3 flex flex-col gap-2">
         {approvalMode === 'signed' ? (
           <>
-            <button type="button" onClick={() => void handleGetAccurateQuote()} disabled={!isConnected || !walletMatchesDataChain || !parsedBurnChir || !detfAddress || !routerAddress || accurateQuoteLoading} className="w-full rounded-md bg-yellow-600 px-3 py-2 text-sm font-medium text-white hover:bg-yellow-500 disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() => void handleGetAccurateQuote()}
+              disabled={
+                !isConnected ||
+                !walletMatchesDataChain ||
+                !parsedBurnChir ||
+                !detfAddress ||
+                !routerAddress ||
+                accurateQuoteLoading
+              }
+              className={btnSecondary}
+            >
               {accurateQuoteLoading ? 'Signing Quote…' : 'Get Accurate Quote (Signed)'}
             </button>
-            <button type="button" onClick={() => void handleBurnSigned()} disabled={burningAllowedNow === false || !isConnected || !walletMatchesDataChain || !parsedBurnChir || !detfAddress || !routerAddress || !storedPermitSignature || storedPermitSignature.intentKey !== activePermitIntentKey} className="w-full rounded-md bg-cyan-600 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-500 disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() => void handleBurnSigned()}
+              disabled={
+                burningAllowedNow === false ||
+                !isConnected ||
+                !walletMatchesDataChain ||
+                !parsedBurnChir ||
+                !detfAddress ||
+                !routerAddress ||
+                !storedPermitSignature ||
+                storedPermitSignature.intentKey !== activePermitIntentKey
+              }
+              className={btnPrimary}
+            >
               {unwrapWethAfterBurn ? 'Burn to ETH (Signed)' : 'Burn (Signed)'}
             </button>
           </>
         ) : (
-          <button type="button" onClick={() => void handleBurn()} disabled={burningAllowedNow === false || !isConnected || !walletMatchesDataChain || !parsedBurnChir || !detfAddress || !routerAddress} className="w-full rounded-md bg-cyan-600 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-500 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={() => void handleBurn()}
+            disabled={
+              burningAllowedNow === false ||
+              !isConnected ||
+              !walletMatchesDataChain ||
+              !parsedBurnChir ||
+              !detfAddress ||
+              !routerAddress
+            }
+            className={btnPrimary}
+          >
             {unwrapWethAfterBurn ? 'Burn to ETH (Explicit)' : 'Burn (Explicit)'}
           </button>
         )}

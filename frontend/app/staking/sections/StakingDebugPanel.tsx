@@ -43,9 +43,9 @@ export default function StakingDebugPanel({
         </div>
         <div>Router: {routerAddress ?? '—'} | bytecode: {String(routerHasBytecode)}</div>
         {routerBytecodeError ? <div>Router error: {routerBytecodeError}</div> : null}
-        <div>CHIR: {detfAddress ?? '—'}</div>
-        <div>RICH: {pairTokenAddress}</div>
-        <div>RICHIR: {rebasingClaimTokenAddress}</div>
+        <div>DETF: {detfAddress ?? '—'}</div>
+        <div>pairToken: {pairTokenAddress}</div>
+        <div>rebasingClaimToken: {rebasingClaimTokenAddress}</div>
         <div>NFT Vault: {nftVaultAddress}</div>
         <div>Reserve Pool: {reservePoolAddress}</div>
         <div>Status: {status || '—'}</div>

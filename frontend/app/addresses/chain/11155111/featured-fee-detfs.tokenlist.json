@@ -1,0 +1,38 @@
+{
+  "name": "Indexedex Featured Protocol DETFs",
+  "timestamp": "2026-07-26T00:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 1
+  },
+  "keywords": [
+    "indexedex",
+    "detf",
+    "protocol-detf",
+    "seigniorage"
+  ],
+  "tags": {
+    "vault": {
+      "name": "Vault",
+      "description": "Vault share token"
+    },
+    "fee-detf": {
+      "name": "Protocol DETF",
+      "description": "Protocol DETF (mint/bond/sell on /staking)"
+    }
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "address": "0xD6359e57572AF5685AbE48C6Fd928826c887096f",
+      "name": "Protocol DETF",
+      "symbol": "CHIR",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "fee-detf"
+      ]
+    }
+  ]
+}

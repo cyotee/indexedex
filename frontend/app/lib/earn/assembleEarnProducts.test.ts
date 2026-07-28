@@ -54,6 +54,24 @@ describe('assembleEarnProducts', () => {
     expect(products).toHaveLength(1)
     expect(products[0].address).toBe(A)
   })
+
+  it('resolves risk from tags only; untagged products omit risk', () => {
+    const products = assembleEarnProducts({
+      strategy: [
+        {
+          address: A,
+          chainId: 1,
+          name: 'Tagged',
+          symbol: 'T',
+          decimals: 18,
+          tags: ['strat', 'risk-experimental'],
+        },
+        { address: B, chainId: 1, name: 'Plain', symbol: 'P', decimals: 18, tags: ['strat'] },
+      ],
+    })
+    expect(products.find((p) => p.symbol === 'T')?.risk).toBe('experimental')
+    expect(products.find((p) => p.symbol === 'P')?.risk).toBeUndefined()
+  })
 })
 
 describe('filterEarnProducts', () => {

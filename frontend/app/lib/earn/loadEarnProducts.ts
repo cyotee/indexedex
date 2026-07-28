@@ -3,9 +3,11 @@ import {
   type DeploymentEnvironment,
 } from '../addressArtifacts'
 import {
+  getFeaturedFeeDetfsForChain,
   getProtocolDetfsForChain,
   getSeigniorageDetfsForChain,
   getStrategyVaultTokensForChain,
+  isFeaturedFeeDetfAddress,
   type TokenListEntry,
 } from '../tokenlists'
 import { assembleEarnProducts, filterEarnProducts, resolveFeaturedProducts, parseFeaturedAddressList } from './assembleEarnProducts'
@@ -19,21 +21,29 @@ function toInput(entry: TokenListEntry): EarnProductInput {
     symbol: entry.symbol,
     decimals: entry.decimals,
     display: entry.display,
+    ...(entry.tags?.length ? { tags: entry.tags } : {}),
+    ...(entry.extensions ? { extensions: entry.extensions } : {}),
   }
 }
 
 /**
  * Build the Earn catalog for a chain from live tokenlists (strategy + DETFs).
+ * Wave 2: addresses on the featured-fee-detfs list are excluded (fee DETFs live on /staking).
  */
 export function loadEarnProductsForChain(
   chainId: number,
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment(),
 ): EarnProduct[] {
-  return assembleEarnProducts({
+  const feeExcluded = new Set(
+    getFeaturedFeeDetfsForChain(chainId, environment).map((t) => t.address.toLowerCase()),
+  )
+  const catalog = assembleEarnProducts({
     strategy: getStrategyVaultTokensForChain(chainId, environment).map(toInput),
     protocolDetf: getProtocolDetfsForChain(chainId, environment).map(toInput),
     seigniorageDetf: getSeigniorageDetfsForChain(chainId, environment).map(toInput),
   })
+  if (feeExcluded.size === 0) return catalog
+  return catalog.filter((p) => !feeExcluded.has(p.address.toLowerCase()))
 }
 
 export function loadFilteredEarnProducts(
@@ -55,6 +65,7 @@ export function findEarnProduct(
 
 /**
  * Featured products for landing/Earn banner: env address list ∩ live catalog.
+ * Legacy helper — strategy-focused. Prefer {@link loadFeaturedFeeDetfs} for Wave 2 fee DETF marketing.
  */
 export function loadFeaturedEarnProducts(
   chainId: number,
@@ -72,4 +83,22 @@ export function loadFeaturedEarnProducts(
   return pool.slice(0, 3)
 }
 
-export { assembleEarnProducts, filterEarnProducts, resolveFeaturedProducts, parseFeaturedAddressList }
+/**
+ * Wave 2 featured Protocol DETFs from the dedicated tokenlist.
+ * Max 3 cards; order follows the list. Not mixed into Earn catalog.
+ */
+export function loadFeaturedFeeDetfs(
+  chainId: number,
+  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment(),
+  max = 3,
+): TokenListEntry[] {
+  return getFeaturedFeeDetfsForChain(chainId, environment).slice(0, Math.max(0, max))
+}
+
+export {
+  assembleEarnProducts,
+  filterEarnProducts,
+  resolveFeaturedProducts,
+  parseFeaturedAddressList,
+  isFeaturedFeeDetfAddress,
+}
