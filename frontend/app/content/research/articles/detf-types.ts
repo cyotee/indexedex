@@ -89,6 +89,7 @@ export const detfTypesArticle: ResearchArticle = {
         'Routing — deposits can route into vaults and intermediate pools by lowest rated liquidity (family rules).',
         'Not Mixed-buffer — no single buffer token as the primary cash leg of one mixed stable reserve.',
       ],
+      diagram: 'multi-vault-stable',
     },
     {
       heading: '4. Mixed-Buffer Multi-Vault Stable',

@@ -36,6 +36,8 @@ export function DetfCompositionDiagram({ id, className = '' }: Props) {
       return <SingleStandardExchangeDiagram className={className} />
     case 'multi-vault-weighted':
       return <MultiVaultWeightedDiagram className={className} />
+    case 'multi-vault-stable':
+      return <MultiVaultStableDiagram className={className} />
     default:
       return null
   }
@@ -432,36 +434,181 @@ function MultiVaultWeightedDiagram({ className }: { className?: string }) {
             </p>
           </div>
 
-          {Array.from({ length: MULTI_WEIGHTED_SE_CAPACITY }, (_, i) => {
-            const filled = i < MULTI_WEIGHTED_FILLED_SE
-            return (
-              <div
-                key={`reserve-se-${i + 1}`}
-                className={`flex min-h-[4.5rem] min-w-0 flex-1 flex-col justify-center rounded-lg border px-1.5 py-2 text-center sm:px-2 ${
-                  filled
-                    ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
-                    : 'border-dashed border-amber-300/25 bg-transparent'
-                }`}
-              >
-                <p
-                  className={`font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
-                    filled ? 'text-amber-100' : 'text-amber-200/45'
-                  }`}
-                >
-                  SE {i + 1}
-                </p>
-                <p
-                  className={`mt-0.5 text-[9px] leading-tight sm:text-[10px] ${
-                    filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
-                  }`}
-                >
-                  {filled ? 'share' : 'open'}
-                </p>
-              </div>
-            )
-          })}
+          {Array.from({ length: MULTI_WEIGHTED_SE_CAPACITY }, (_, i) => (
+            <SeCapacitySlot
+              key={`reserve-se-${i + 1}`}
+              index={i + 1}
+              filled={i < MULTI_WEIGHTED_FILLED_SE}
+            />
+          ))}
         </div>
       </PoolFrame>
+    </DiagramShell>
+  )
+}
+
+/** Filled / dimmed SE capacity cell — shared by multi-leg pool strips. */
+function SeCapacitySlot({
+  index,
+  filled,
+  labelPrefix = 'SE',
+}: {
+  index: number
+  filled: boolean
+  labelPrefix?: string
+}) {
+  return (
+    <div
+      className={`flex min-h-[4.5rem] min-w-0 flex-1 flex-col justify-center rounded-lg border px-1.5 py-2 text-center sm:px-2 ${
+        filled
+          ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
+          : 'border-dashed border-amber-300/25 bg-transparent'
+      }`}
+    >
+      <p
+        className={`font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
+          filled ? 'text-amber-100' : 'text-amber-200/45'
+        }`}
+      >
+        {labelPrefix} {index}
+      </p>
+      <p
+        className={`mt-0.5 text-[9px] leading-tight sm:text-[10px] ${
+          filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
+        }`}
+      >
+        {filled ? 'share' : 'open'}
+      </p>
+    </div>
+  )
+}
+
+function PoolSlot({
+  title,
+  subtitle,
+  accent,
+  secondary,
+  flexClass = 'flex-1',
+}: {
+  title: string
+  subtitle: string
+  accent?: boolean
+  secondary?: boolean
+  flexClass?: string
+}) {
+  const style = accent ? legAccentStyle : secondary ? legSecondaryStyle : undefined
+  const titleClass = secondary ? 'text-amber-100' : 'text-[var(--text-primary)]'
+  return (
+    <div
+      className={`flex min-h-[4.5rem] min-w-0 ${flexClass} flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5`}
+      style={style}
+    >
+      <p className={`text-sm font-medium leading-snug ${titleClass}`}>{title}</p>
+      <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
+        {subtitle}
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Multi-Vault Stable (Composed) — layered topology:
+ * top weighted reserve = DETF + Stable BPT + Common BPT;
+ * two intermediate stables hold the same SE vault set (different rate groupings).
+ */
+const MULTI_STABLE_TOP_SEGMENTS: readonly WeightSegment[] = [
+  { width: '50%', label: '~50% DETF', tone: 'accent' },
+  { width: '25%', label: '~25% Stable BPT', tone: 'secondary' },
+  { width: '25%', label: '~25% Common BPT', tone: 'secondary' },
+]
+
+const MULTI_STABLE_SE_CAPACITY = 5
+const MULTI_STABLE_FILLED_SE = 3
+
+function IntermediateStablePool({
+  title,
+  rateNote,
+}: {
+  title: string
+  rateNote: string
+}) {
+  return (
+    <div
+      className="min-w-0 flex-1 rounded-xl border border-amber-300/40 px-3 py-3"
+      style={{
+        background: 'color-mix(in srgb, #78350f 18%, var(--surface-0))',
+        boxShadow: '0 0 16px rgba(251, 191, 36, 0.08)',
+      }}
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+        {title}
+      </p>
+      <p className="mt-0.5 text-[10px] leading-snug text-[var(--text-muted)]">{rateNote}</p>
+      <div className="mt-2.5 flex w-full flex-row items-stretch gap-1 sm:gap-1.5">
+        {Array.from({ length: MULTI_STABLE_SE_CAPACITY }, (_, i) => (
+          <SeCapacitySlot
+            key={`${title}-se-${i + 1}`}
+            index={i + 1}
+            filled={i < MULTI_STABLE_FILLED_SE}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MultiVaultStableDiagram({ className }: { className?: string }) {
+  return (
+    <DiagramShell
+      className={className}
+      title="Multi-Vault Stable (Composed)"
+      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Both intermediate Balancer stable pools hold the same SE vault shares — stable grouping uses per-vault rate targets; common grouping uses one shared rate target. Filled SE slots are an example; dimmed slots are open capacity. Not Mixed-buffer (no single cash buffer leg)."
+    >
+      <div className="mb-1 flex justify-center">
+        <div
+          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
+          style={holdPillStyle}
+        >
+          You hold → DETF share (ERC-20)
+        </div>
+      </div>
+      <Connector />
+
+      <PoolFrame
+        label="Top weighted reserve (Balancer V3) — DETF only here"
+        footer={
+          <WeightBar
+            ariaLabel="Example top-reserve weights: DETF, Stable BPT, Common BPT"
+            segments={MULTI_STABLE_TOP_SEGMENTS}
+          />
+        }
+      >
+        <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          <PoolSlot accent title="DETF" subtitle="self leg" flexClass="flex-[1.1]" />
+          <Plus />
+          <PoolSlot secondary title="Stable BPT" subtitle="intermediate receipt" />
+          <Plus />
+          <PoolSlot secondary title="Common BPT" subtitle="intermediate receipt" />
+        </div>
+      </PoolFrame>
+
+      <Connector label="BPTs are claims on" />
+
+      <div>
+        <p className="mb-2.5 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+          Intermediate stable pools — same SE vault set, different rate groupings
+        </p>
+        <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-stretch">
+          <IntermediateStablePool
+            title="Stable Pool"
+            rateNote="Per-vault rate targets (unique per SE)"
+          />
+          <IntermediateStablePool
+            title="Common Pool"
+            rateNote="One common rate target for every SE"
+          />
+        </div>
+      </div>
     </DiagramShell>
   )
 }
