@@ -42,15 +42,24 @@ export const detfTypesArticle: ResearchArticle = {
       ],
     },
     {
+      heading: 'What is a Standard Exchange vault?',
+      paragraphs: [
+        'Before the five DETF layouts: a Standard Exchange (SE) vault is IndexedEx’s vault standard for integrating an external protocol. Each SE vault uses the same deposit / share / redeem surface. You deposit underlyings, hold an ERC-20 vault share, and redeem later — without learning a different API per venue.',
+        'Example: a Uniswap V4 SE vault wraps V4 liquidity exposure as that share. Example: an Euler SE vault wraps lending-market exposure the same way. The vault is the adapter to Uni or Euler; products above it only see the SE share.',
+        'SE vaults are not DETF types and not another composition family. They are building blocks on Earn, in routers, and as optional reserve legs. The types below describe how those shares sit in a DETF reserve — not how Uniswap or Euler themselves work. Venue names are illustrative, not an exclusive live list.',
+      ],
+    },
+    {
       heading: '1. Single Standard Exchange DETF',
       paragraphs: [
-        'Weighted reserve with two legs: the DETF share and exactly one Standard Exchange vault share (default weights often 80% DETF / 20% vault share, overridable at deploy). Classic mental model: one vault-share surface against DETF mint and burn, with bond into protocol-owned depth. First live path is first bond with vault shares.',
+        'Weighted reserve with two legs: the DETF share and exactly one Standard Exchange vault share (default weights often 80% DETF / 20% vault share, overridable at deploy). Classic mental model: one vault-share surface against DETF mint and burn, with bond into protocol-owned depth. First live path is first bond with vault shares. The diagram below shows the composition; Uniswap V4 and Euler under the SE vault are example backends, not a fixed venue list.',
       ],
       bullets: [
         'Best when — one external vault leg is enough for the basket.',
         'Primary market — vault shares ↔ DETF (exact-in closed form preferred).',
         'Avoid for — several vault legs, fixed multi-leg weights, or a shared cash buffer fan-out.',
       ],
+      diagram: 'single-standard-exchange',
     },
     {
       heading: '2. Single Vault DETF (composed single)',

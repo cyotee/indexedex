@@ -4,7 +4,12 @@ import { detfTypesArticle } from './articles/detf-types'
 import { rateProvidersArticle } from './articles/rate-providers'
 import type { ResearchArticle } from './types'
 
-export type { ResearchArticle, ResearchArticleStatus, ResearchSection } from './types'
+export type {
+  ResearchArticle,
+  ResearchArticleStatus,
+  ResearchDiagramId,
+  ResearchSection,
+} from './types'
 
 /** All registered articles (published + draft). */
 export const RESEARCH_ARTICLES: ResearchArticle[] = [

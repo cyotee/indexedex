@@ -9,13 +9,15 @@ export const detfArticle: ResearchArticle = {
   slug: 'detf',
   title: 'What is a DETF?',
   summary:
-    'DETF means Decentralized ETF — the D is decentralized. One onchain share over a real multi-asset reserve. IndexedEx’s premier offer is creating DETFs from many package types. Protocol DETF is how you earn a share of protocol fees. Policy price-gates mint/burn; Open never does.',
+    'DETF means Decentralized ETF — the D is decentralized. One onchain share over a real multi-asset reserve, often built from Standard Exchange vault shares (IndexedEx’s standard for integrating external protocols). Premier offer: create DETFs from many types. Protocol DETF: share of protocol fees. Policy price-gates mint/burn; Open never does.',
   date: '2026-07-27',
   tags: ['detf', 'product'],
   status: 'published',
   claims: [
     'The DETF diamond is the share ERC-20 — one token surface for the product.',
-    'Reserve pricing lives in a Balancer V3 weighted pool, not an off-pool dashboard ledger.',
+    'Standard Exchange (SE) is IndexedEx’s vault standard: one interface that wraps external protocols so DETFs and Earn can integrate them the same way.',
+    'Example backends: Uniswap V4 as a DEX integration; Euler as a lending integration — both appear as SE vault shares to the rest of the stack.',
+    'Reserve pricing lives in a Balancer V3 pool, not an off-pool dashboard ledger.',
     'Instances deploy inert; the first successful bond takes them live and deepens protocol-owned reserve.',
     'Policy mode restricts primary mint/burn by synthetic price thresholds; Open mode has no price restrictions on mint or burn.',
     'After deploy, instances are immutable and unowned for normal operation.',
@@ -23,6 +25,8 @@ export const detfArticle: ResearchArticle = {
   notClaiming: [
     'A DETF is not a registered securities ETF or fund share.',
     'Holding DETF or reserve assets is not legal ownership of offchain stocks or underlyings.',
+    'SE vaults are not DETF types; they are the standard adapter under strategy vaults and DETF reserve legs.',
+    'Naming Uniswap V4 or Euler is illustrative — not an exclusive or guaranteed live catalog on every network.',
     'Policy thresholds (or choosing Open) are not a guarantee of peg stability or yield.',
     'There is no promised APY, rebase return, or “(3,3)” performance.',
     'Open removes price gates only — it does not erase fees or invent returns.',
@@ -41,11 +45,19 @@ export const detfArticle: ResearchArticle = {
       ],
     },
     {
+      heading: 'What is a Standard Exchange vault?',
+      paragraphs: [
+        'A Standard Exchange (SE) vault is IndexedEx’s vault standard for integrating an external protocol under one interface. You deposit into the vault, receive an ERC-20 vault share, and redeem that share later — deposit / share / redeem is the same shape no matter which protocol sits underneath.',
+        'Example: a Uniswap V4 SE vault wraps V4 liquidity exposure as that share. Example: an Euler SE vault wraps lending-market exposure the same way. The vault, not the DETF, talks to Uni or Euler; other products only need the SE share surface.',
+        'SE vaults are not DETF types. They are adapters you can use on Earn, in routers, or as reserve legs when a DETF is composed. Naming Uniswap V4 or Euler is illustrative — not an exclusive live catalog on every network.',
+      ],
+    },
+    {
       heading: 'Core shape',
       paragraphs: ['A true DETF combines these design choices:'],
       bullets: [
         'Share token — the diamond proxy is the ERC-20 users hold.',
-        'Reserve — a Balancer V3 weighted pool that includes the DETF self-leg and external vault-share legs.',
+        'Reserve — a Balancer V3 pool that includes the DETF self-leg and external legs (often SE vault shares).',
         'Bonding — first bond establishes liveness and protocol-owned reserve depth; bond terms come from onchain configuration.',
         'Primary market — preferred routes are configured vault shares against DETF (exact-in, closed-form where supported).',
         'Threshold mode — deploy-time Policy (price-gated mint/burn) or Open (no price restrictions on mint/burn). Zero thresholds never mean Open.',

@@ -169,7 +169,6 @@ Implemented in `app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. 
 - [x] Header primary nav includes Research  
 - [x] Footer includes Research  
 - [x] No new deploy scripts; no contract work  
-- [x] Registry unit test (`app/content/research/researchRegistry.test.ts`)  
 - [x] Insights remains a separate lab route  
 
 ---

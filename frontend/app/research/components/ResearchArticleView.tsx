@@ -4,6 +4,7 @@ import type { ResearchArticle } from '../../content/research'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { DetfCompositionDiagram } from './diagrams/DetfCompositionDiagram'
 
 function formatDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00.000Z`)
@@ -89,6 +90,7 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
                 ))}
               </ul>
             ) : null}
+            {section.diagram ? <DetfCompositionDiagram id={section.diagram} /> : null}
           </section>
         ))}
       </div>

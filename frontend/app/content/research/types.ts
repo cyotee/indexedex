@@ -1,9 +1,14 @@
 export type ResearchArticleStatus = 'published' | 'draft'
 
+/** Optional composition diagram id — rendered by ResearchArticleView. */
+export type ResearchDiagramId = 'single-standard-exchange'
+
 export type ResearchSection = {
   heading?: string
   paragraphs: string[]
   bullets?: string[]
+  /** Composition diagram under the section body (optional). */
+  diagram?: ResearchDiagramId
 }
 
 export type ResearchArticle = {
