@@ -9,7 +9,16 @@ type Props = {
 
 /**
  * Composition diagrams for DETF research notes.
- * Iterate style on single-standard-exchange first; clone for other types later.
+ *
+ * Locked visual system (reuse for every family diagram):
+ * - Panel: accent border + glow, surface-2 fill, radial accent wash on canvas
+ * - Labels / leg titles: --text-primary (light) — never accent-on-accent text
+ * - Primary leg (DETF): accent border/fill; weight pill = accent fill + dark text
+ * - Secondary leg (SE / external): warm amber panel; titles amber-100; pills amber-300
+ * - Connectors: accent line + arrow; optional accent pill labels
+ * - Caption bar: surface-1, light primary text
+ *
+ * Theme note: amber secondary stays readable on Pachira green and IndexedEx blue.
  */
 export function DetfCompositionDiagram({ id, className = '' }: Props) {
   switch (id) {
@@ -102,7 +111,7 @@ function PoolFrame({
 }) {
   return (
     <div className="rounded-xl border p-3.5 sm:p-5" style={poolStyle}>
-      <p className="mb-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--accent)]">
+      <p className="mb-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
         {label}
       </p>
       {children}
@@ -117,10 +126,11 @@ const legAccentStyle: CSSProperties = {
   boxShadow: '0 0 22px color-mix(in srgb, var(--accent) 20%, transparent)',
 }
 
+/** Warm amber secondary — stays readable on green (Pachira) and blue (IndexedEx) themes. */
 const legSecondaryStyle: CSSProperties = {
-  borderColor: 'rgba(103, 232, 249, 0.45)',
-  background: 'color-mix(in srgb, #0e7490 24%, var(--surface-0))',
-  boxShadow: '0 0 18px rgba(34, 211, 238, 0.14)',
+  borderColor: 'rgba(251, 191, 36, 0.5)',
+  background: 'color-mix(in srgb, #78350f 28%, var(--surface-0))',
+  boxShadow: '0 0 18px rgba(251, 191, 36, 0.12)',
 }
 
 function Leg({
@@ -144,18 +154,15 @@ function Leg({
         ? legSecondaryStyle
         : undefined
 
+  // Titles use high-contrast light text; accent/amber reserved for weight pills (not title-on-tint).
   const titleClass =
-    tone === 'accent'
-      ? 'text-[var(--accent)]'
-      : tone === 'secondary'
-        ? 'text-cyan-200'
-        : 'text-[var(--text-primary)]'
+    tone === 'secondary' ? 'text-amber-100' : 'text-[var(--text-primary)]'
 
   const weightClass =
     tone === 'accent'
       ? 'bg-[var(--accent)] text-[var(--surface-0)]'
       : tone === 'secondary'
-        ? 'bg-cyan-300 text-[var(--surface-0)]'
+        ? 'bg-amber-300 text-[var(--surface-0)]'
         : 'bg-[var(--surface-2)] text-[var(--text-muted)]'
 
   return (
@@ -218,11 +225,11 @@ function WeightBar({ leftLabel, rightLabel }: { leftLabel: string; rightLabel: s
         }}
       >
         <div className="h-full bg-[var(--accent)]" style={{ width: '80%' }} title={leftLabel} />
-        <div className="h-full bg-cyan-300" style={{ width: '20%' }} title={rightLabel} />
+        <div className="h-full bg-amber-300" style={{ width: '20%' }} title={rightLabel} />
       </div>
       <div className="mt-2 flex justify-between font-mono text-[10px] uppercase tracking-wide">
-        <span className="text-[var(--accent)]">{leftLabel} DETF</span>
-        <span className="text-cyan-200">{rightLabel} SE share</span>
+        <span className="text-[var(--text-primary)]">{leftLabel} DETF</span>
+        <span className="text-amber-200">{rightLabel} SE share</span>
       </div>
     </div>
   )
@@ -234,14 +241,14 @@ const SE_VAULT_EXAMPLES = ['Uniswap V4', 'Euler'] as const
 function ExampleChips({ labels }: { labels: readonly string[] }) {
   return (
     <div className="mt-3.5">
-      <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-cyan-200/80">
+      <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-amber-200/90">
         Example integrations
       </p>
       <ul className="mt-2 flex flex-wrap gap-1.5">
         {labels.map((label) => (
           <li
             key={label}
-            className="rounded-full border border-cyan-300/40 bg-cyan-400/15 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-cyan-100"
+            className="rounded-full border border-amber-300/45 bg-amber-400/15 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-amber-100"
           >
             {label}
           </li>
@@ -258,9 +265,9 @@ const holdPillStyle: CSSProperties = {
 }
 
 const seBoxStyle: CSSProperties = {
-  borderColor: 'rgba(103, 232, 249, 0.4)',
-  background: 'color-mix(in srgb, #0e7490 20%, var(--surface-0))',
-  boxShadow: '0 0 22px rgba(34, 211, 238, 0.12)',
+  borderColor: 'rgba(251, 191, 36, 0.45)',
+  background: 'color-mix(in srgb, #78350f 22%, var(--surface-0))',
+  boxShadow: '0 0 22px rgba(251, 191, 36, 0.1)',
 }
 
 function SingleStandardExchangeDiagram({ className }: { className?: string }) {
@@ -272,7 +279,7 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
     >
       <div className="mb-1 flex justify-center">
         <div
-          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--accent)]"
+          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
           style={holdPillStyle}
         >
           You hold → DETF share (ERC-20)
@@ -309,7 +316,7 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
       <Connector label="is" />
 
       <div className="rounded-xl border px-4 py-4" style={seBoxStyle}>
-        <p className="text-base font-medium text-cyan-100">Standard Exchange vault</p>
+        <p className="text-base font-medium text-amber-100">Standard Exchange vault</p>
         <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-muted)]">
           Vault standard — not a DETF type. Same deposit / share / redeem interface wrapping an
           external protocol. The DETF holds the SE share only; Uni or Euler stay behind the vault.
