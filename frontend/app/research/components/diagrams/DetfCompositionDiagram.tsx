@@ -544,15 +544,59 @@ function IntermediateStablePool({
         {title}
       </p>
       <p className="mt-0.5 text-[10px] leading-snug text-[var(--text-muted)]">{rateNote}</p>
-      <div className="mt-2.5 flex w-full flex-row items-stretch gap-1 sm:gap-1.5">
-        {Array.from({ length: MULTI_STABLE_SE_CAPACITY }, (_, i) => (
-          <SeCapacitySlot
-            key={`${title}-se-${i + 1}`}
-            index={i + 1}
-            filled={i < MULTI_STABLE_FILLED_SE}
-          />
-        ))}
-      </div>
+      <p className="mt-2 font-mono text-[9px] uppercase tracking-wide text-amber-200/80">
+        Holds SE vault shares (below)
+      </p>
+    </div>
+  )
+}
+
+/** One SE vault under both intermediate pools — dual rate-provider markings. */
+function SharedSeVaultWithRateProviders({
+  index,
+  filled,
+}: {
+  index: number
+  filled: boolean
+}) {
+  return (
+    <div
+      className={`flex min-w-0 flex-1 flex-col rounded-lg border px-1.5 py-2 sm:px-2 ${
+        filled
+          ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
+          : 'border-dashed border-amber-300/25 bg-transparent'
+      }`}
+    >
+      <p
+        className={`text-center font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
+          filled ? 'text-amber-100' : 'text-amber-200/45'
+        }`}
+      >
+        SE {index}
+      </p>
+      <p
+        className={`mt-0.5 text-center text-[9px] leading-tight sm:text-[10px] ${
+          filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
+        }`}
+      >
+        {filled ? 'vault share' : 'open'}
+      </p>
+      {filled ? (
+        <div className="mt-2 space-y-1 border-t border-amber-300/25 pt-2">
+          <p className="rounded bg-[var(--surface-0)]/50 px-1 py-0.5 text-center text-[8px] leading-snug text-[var(--text-primary)] sm:text-[9px]">
+            Rate provider → Stable
+            <span className="mt-0.5 block text-[var(--text-muted)]">unique target</span>
+          </p>
+          <p className="rounded bg-[var(--surface-0)]/50 px-1 py-0.5 text-center text-[8px] leading-snug text-[var(--text-primary)] sm:text-[9px]">
+            Rate provider → Common
+            <span className="mt-0.5 block text-[var(--text-muted)]">shared target</span>
+          </p>
+        </div>
+      ) : (
+        <p className="mt-2 border-t border-amber-300/15 pt-2 text-center text-[8px] leading-snug text-[var(--text-muted)]/45 sm:text-[9px]">
+          capacity
+        </p>
+      )}
     </div>
   )
 }
@@ -562,7 +606,7 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
     <DiagramShell
       className={className}
       title="Multi-Vault Stable (Composed)"
-      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Both intermediate Balancer stable pools hold the same SE vault shares — stable grouping uses per-vault rate targets; common grouping uses one shared rate target. Filled SE slots are an example; dimmed slots are open capacity. Not Mixed-buffer (no single cash buffer leg)."
+      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Both intermediate Balancer stable pools hold the same SE vault shares. Each filled SE vault is marked into both pools via rate providers — unique per-vault targets on the Stable Pool, one shared target on the Common Pool. Dimmed slots are open capacity. Not Mixed-buffer (no single cash buffer leg)."
     >
       <div className="mb-1 flex justify-center">
         <div
@@ -596,7 +640,7 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
 
       <div>
         <p className="mb-2.5 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Intermediate stable pools — same SE vault set, different rate groupings
+          Intermediate stable pools
         </p>
         <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-stretch">
           <IntermediateStablePool
@@ -607,6 +651,33 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
             title="Common Pool"
             rateNote="One common rate target for every SE"
           />
+        </div>
+      </div>
+
+      <Connector label="same SE vaults in both" />
+
+      <div
+        className="rounded-xl border border-amber-300/40 px-3 py-3.5 sm:px-4"
+        style={{
+          background: 'color-mix(in srgb, #78350f 14%, var(--surface-0))',
+          boxShadow: '0 0 16px rgba(251, 191, 36, 0.08)',
+        }}
+      >
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+          Shared SE vault set
+        </p>
+        <p className="mt-0.5 text-[10px] leading-snug text-[var(--text-muted)]">
+          One vault share inventory marked into both pools. Rate providers differ by grouping —
+          not two different vault sets.
+        </p>
+        <div className="mt-3 flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          {Array.from({ length: MULTI_STABLE_SE_CAPACITY }, (_, i) => (
+            <SharedSeVaultWithRateProviders
+              key={`shared-se-${i + 1}`}
+              index={i + 1}
+              filled={i < MULTI_STABLE_FILLED_SE}
+            />
+          ))}
         </div>
       </div>
     </DiagramShell>
