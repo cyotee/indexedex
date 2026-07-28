@@ -24,9 +24,20 @@ type Props = {
  * - DETF first (accent card), then max-capacity SE slots in the same line
  * - Filled slots: solid amber border + amber tint (example legs in use)
  * - Open slots: dashed amber border, dimmed labels (“open”) for remaining capacity
- * - Do NOT add a separate “Standard Exchange vaults” panel below multi-leg diagrams —
- *   capacity and SE legs live only in the pool strip
+ * - For single-layer weighted reserves: SE capacity lives in the pool strip only
  * - Weight bar under the pool is optional and illustrative only
+ *
+ * Locked multi-layer rate-provider composition (canonical: Multi-Vault Stable):
+ * Use when a DETF has intermediate pools, dual rate views, or multiple rate providers
+ * per vault — not for flat single-pool weighted DETFs.
+ * - Intermediate pools enumerate SE vault legs they hold (per-pool strip, not a shared set)
+ * - SE vaults are independent products — never one grouped “shared set” card
+ * - Separate Rate Provider blocks: one RP per (vault × marking/pool) pair
+ *   Example: 4 SE vaults × 2 pools = 8 rate providers
+ * - RP → Stable markings: accent-tinted blocks; RP → Common (or second view): amber
+ * - Independent SE vault blocks on their own row below the RPs
+ * - Crossing connectors (SVG) from each SE vault to both of its RPs when geometry allows
+ * - Top true DETF reserve still shows DETF + composition receipts (e.g. Stable BPT, Common BPT)
  *
  * Theme note: amber secondary stays readable on Pachira green and IndexedEx blue.
  */
@@ -512,9 +523,9 @@ function PoolSlot({
 }
 
 /**
- * Multi-Vault Stable (Composed) — layered topology:
+ * Multi-Vault Stable (Composed) — reference for locked multi-layer rate-provider layout:
  * top weighted reserve = DETF + Stable BPT + Common BPT;
- * two intermediate stables hold the same SE vault set (different rate groupings).
+ * intermediate pools enumerate SE legs; 8 RPs; 4 independent SE vaults; crossing connectors.
  */
 const MULTI_STABLE_TOP_SEGMENTS: readonly WeightSegment[] = [
   { width: '50%', label: '~50% DETF', tone: 'accent' },
@@ -522,8 +533,8 @@ const MULTI_STABLE_TOP_SEGMENTS: readonly WeightSegment[] = [
   { width: '25%', label: '~25% Common BPT', tone: 'secondary' },
 ]
 
-const MULTI_STABLE_SE_CAPACITY = 5
-const MULTI_STABLE_FILLED_SE = 3
+/** Example instance: 4 independent SE vaults → 8 rate providers → 2 intermediate stables. */
+const MULTI_STABLE_SE_COUNT = 4
 
 function IntermediateStablePool({
   title,
@@ -544,60 +555,120 @@ function IntermediateStablePool({
         {title}
       </p>
       <p className="mt-0.5 text-[10px] leading-snug text-[var(--text-muted)]">{rateNote}</p>
-      <p className="mt-2 font-mono text-[9px] uppercase tracking-wide text-amber-200/80">
-        Holds SE vault shares (below)
+      <div className="mt-2.5 flex w-full flex-row items-stretch gap-1 sm:gap-1.5">
+        {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
+          <SeCapacitySlot
+            key={`${title}-se-${i + 1}`}
+            index={i + 1}
+            filled
+            labelPrefix="SE"
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function RateProviderBlock({
+  seIndex,
+  pool,
+}: {
+  seIndex: number
+  pool: 'stable' | 'common'
+}) {
+  const isStable = pool === 'stable'
+  return (
+    <div
+      className={`flex min-h-[4.25rem] min-w-0 flex-1 flex-col justify-center rounded-lg border px-1.5 py-2 text-center sm:px-2 ${
+        isStable ? '' : 'border-amber-300/45 bg-amber-400/15'
+      }`}
+      style={
+        isStable
+          ? {
+              borderColor: 'color-mix(in srgb, var(--accent) 55%, transparent)',
+              background: 'color-mix(in srgb, var(--accent-muted) 82%, transparent)',
+              boxShadow: '0 0 12px color-mix(in srgb, var(--accent) 12%, transparent)',
+            }
+          : undefined
+      }
+    >
+      <p
+        className={`font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
+          isStable ? 'text-[var(--text-primary)]' : 'text-amber-100'
+        }`}
+      >
+        RP {seIndex}
+        {isStable ? 'S' : 'C'}
+      </p>
+      <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
+        {isStable ? '→ Stable Pool' : '→ Common Pool'}
+      </p>
+      <p className="mt-0.5 text-[8px] leading-tight text-[var(--text-muted)]/80 sm:text-[9px]">
+        rates SE {seIndex}
       </p>
     </div>
   )
 }
 
-/** One SE vault under both intermediate pools — dual rate-provider markings. */
-function SharedSeVaultWithRateProviders({
-  index,
-  filled,
-}: {
-  index: number
-  filled: boolean
-}) {
+function IndependentSeVaultBlock({ index }: { index: number }) {
   return (
     <div
-      className={`flex min-w-0 flex-1 flex-col rounded-lg border px-1.5 py-2 sm:px-2 ${
-        filled
-          ? 'border-amber-300/45 bg-amber-400/15 shadow-[0_0_12px_rgba(251,191,36,0.1)]'
-          : 'border-dashed border-amber-300/25 bg-transparent'
-      }`}
+      className="flex min-h-[4.5rem] min-w-0 flex-1 flex-col justify-center rounded-lg border border-amber-300/45 bg-amber-400/15 px-2 py-2.5 text-center shadow-[0_0_12px_rgba(251,191,36,0.1)]"
     >
-      <p
-        className={`text-center font-mono text-[9px] uppercase tracking-wide sm:text-[10px] ${
-          filled ? 'text-amber-100' : 'text-amber-200/45'
-        }`}
-      >
-        SE {index}
+      <p className="font-mono text-[10px] uppercase tracking-wide text-amber-100">SE Vault {index}</p>
+      <p className="mt-0.5 text-[9px] leading-snug text-[var(--text-muted)] sm:text-[10px]">
+        Independent vault
       </p>
-      <p
-        className={`mt-0.5 text-center text-[9px] leading-tight sm:text-[10px] ${
-          filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
-        }`}
-      >
-        {filled ? 'vault share' : 'open'}
+      <p className="mt-1 text-[8px] leading-snug text-[var(--text-muted)]/80 sm:text-[9px]">
+        2 rate providers (S + C)
       </p>
-      {filled ? (
-        <div className="mt-2 space-y-1 border-t border-amber-300/25 pt-2">
-          <p className="rounded bg-[var(--surface-0)]/50 px-1 py-0.5 text-center text-[8px] leading-snug text-[var(--text-primary)] sm:text-[9px]">
-            Rate provider → Stable
-            <span className="mt-0.5 block text-[var(--text-muted)]">unique target</span>
-          </p>
-          <p className="rounded bg-[var(--surface-0)]/50 px-1 py-0.5 text-center text-[8px] leading-snug text-[var(--text-primary)] sm:text-[9px]">
-            Rate provider → Common
-            <span className="mt-0.5 block text-[var(--text-muted)]">shared target</span>
-          </p>
-        </div>
-      ) : (
-        <p className="mt-2 border-t border-amber-300/15 pt-2 text-center text-[8px] leading-snug text-[var(--text-muted)]/45 sm:text-[9px]">
-          capacity
-        </p>
-      )}
     </div>
+  )
+}
+
+/**
+ * Crossing connectors: each SE vault (bottom) → its Stable RP (left group) and Common RP (right group).
+ * Percentage geometry matches 4 equal columns under a 4+4 rate-provider row.
+ */
+function SeToRateProviderCrossConnectors() {
+  const seXs = [12.5, 37.5, 62.5, 87.5]
+  const stableXs = [6.25, 18.75, 31.25, 43.75]
+  const commonXs = [56.25, 68.75, 81.25, 93.75]
+  const yTop = 4
+  const yBot = 46
+
+  return (
+    <svg
+      className="pointer-events-none h-14 w-full sm:h-16"
+      viewBox="0 0 100 50"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      {seXs.map((seX, i) => {
+        const sX = stableXs[i]
+        const cX = commonXs[i]
+        return (
+          <g key={`cross-${i}`}>
+            {/* SE → Stable RP (accent) */}
+            <path
+              d={`M ${seX} ${yBot} C ${seX} ${(yBot + yTop) / 2}, ${sX} ${(yBot + yTop) / 2}, ${sX} ${yTop}`}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="0.55"
+              strokeOpacity="0.75"
+            />
+            {/* SE → Common RP (amber) — crosses the accent fan */}
+            <path
+              d={`M ${seX} ${yBot} C ${seX} ${(yBot + yTop) / 2}, ${cX} ${(yBot + yTop) / 2}, ${cX} ${yTop}`}
+              fill="none"
+              stroke="rgb(251 191 36)"
+              strokeWidth="0.55"
+              strokeOpacity="0.7"
+            />
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 
@@ -606,7 +677,7 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
     <DiagramShell
       className={className}
       title="Multi-Vault Stable (Composed)"
-      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Both intermediate Balancer stable pools hold the same SE vault shares. Each filled SE vault is marked into both pools via rate providers — unique per-vault targets on the Stable Pool, one shared target on the Common Pool. Dimmed slots are open capacity. Not Mixed-buffer (no single cash buffer leg)."
+      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Example: four independent SE vaults are each marked into both intermediate stable pools by a pair of rate providers (8 providers total) — unique targets on the Stable Pool, shared common target on the Common Pool. Crossing lines: each vault reaches its Stable RP and Common RP. Not Mixed-buffer."
     >
       <div className="mb-1 flex justify-center">
         <div
@@ -640,7 +711,7 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
 
       <div>
         <p className="mb-2.5 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Intermediate stable pools
+          Intermediate stable pools — each lists the SE vault legs it holds
         </p>
         <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-stretch">
           <IntermediateStablePool
@@ -654,29 +725,34 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
         </div>
       </div>
 
-      <Connector label="same SE vaults in both" />
+      <Connector label="via 8 rate providers" />
 
-      <div
-        className="rounded-xl border border-amber-300/40 px-3 py-3.5 sm:px-4"
-        style={{
-          background: 'color-mix(in srgb, #78350f 14%, var(--surface-0))',
-          boxShadow: '0 0 16px rgba(251, 191, 36, 0.08)',
-        }}
-      >
-        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Shared SE vault set
+      <div>
+        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+          Rate providers — 4 × Stable + 4 × Common (8 total)
         </p>
-        <p className="mt-0.5 text-[10px] leading-snug text-[var(--text-muted)]">
-          One vault share inventory marked into both pools. Rate providers differ by grouping —
-          not two different vault sets.
+        <div className="flex w-full flex-row items-stretch gap-1 sm:gap-1.5">
+          {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
+            <RateProviderBlock key={`rp-s-${i + 1}`} seIndex={i + 1} pool="stable" />
+          ))}
+          {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
+            <RateProviderBlock key={`rp-c-${i + 1}`} seIndex={i + 1} pool="common" />
+          ))}
+        </div>
+      </div>
+
+      {/* Crossing: each SE vault → its Stable RP (left) and Common RP (right) */}
+      <div className="-my-0.5 w-full" aria-hidden="true">
+        <SeToRateProviderCrossConnectors />
+      </div>
+
+      <div>
+        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+          Independent SE vaults (not one grouped set)
         </p>
-        <div className="mt-3 flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
-          {Array.from({ length: MULTI_STABLE_SE_CAPACITY }, (_, i) => (
-            <SharedSeVaultWithRateProviders
-              key={`shared-se-${i + 1}`}
-              index={i + 1}
-              filled={i < MULTI_STABLE_FILLED_SE}
-            />
+        <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
+          {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
+            <IndependentSeVaultBlock key={`se-vault-${i + 1}`} index={i + 1} />
           ))}
         </div>
       </div>
