@@ -34,7 +34,7 @@ contract MultiVaultWeightedDetfExchangeInFacet is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](26);
+        funcs_ = new bytes4[](27);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -57,10 +57,11 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         funcs_[19] = IMultiVaultWeightedDetfInfo.syntheticPrice.selector;
         funcs_[20] = IMultiVaultWeightedDetfInfo.mintThreshold.selector;
         funcs_[21] = IMultiVaultWeightedDetfInfo.burnThreshold.selector;
-        funcs_[22] = IMultiVaultWeightedDetfInfo.isMintingAllowed.selector;
-        funcs_[23] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
-        funcs_[24] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
-        funcs_[25] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
+        funcs_[22] = IMultiVaultWeightedDetfInfo.thresholdMode.selector;
+        funcs_[23] = IMultiVaultWeightedDetfInfo.isMintingAllowed.selector;
+        funcs_[24] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
+        funcs_[25] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
+        funcs_[26] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
     }
 
     function facetMetadata()
@@ -73,7 +74,7 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(IMultiVaultWeightedDetfBonding).interfaceId;
         interfaces_[2] = type(IMultiVaultWeightedDetfInfo).interfaceId;
-        funcs_ = new bytes4[](26);
+        funcs_ = new bytes4[](27);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -96,9 +97,10 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         funcs_[19] = IMultiVaultWeightedDetfInfo.syntheticPrice.selector;
         funcs_[20] = IMultiVaultWeightedDetfInfo.mintThreshold.selector;
         funcs_[21] = IMultiVaultWeightedDetfInfo.burnThreshold.selector;
-        funcs_[22] = IMultiVaultWeightedDetfInfo.isMintingAllowed.selector;
-        funcs_[23] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
-        funcs_[24] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
-        funcs_[25] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
+        funcs_[22] = IMultiVaultWeightedDetfInfo.thresholdMode.selector;
+        funcs_[23] = IMultiVaultWeightedDetfInfo.isMintingAllowed.selector;
+        funcs_[24] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
+        funcs_[25] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
+        funcs_[26] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
     }
 }

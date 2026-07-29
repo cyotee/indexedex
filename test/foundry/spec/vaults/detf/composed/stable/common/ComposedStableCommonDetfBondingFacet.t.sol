@@ -25,6 +25,7 @@ import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stabl
 import {
     ComposedStableCommonDetfBondingFacet
 } from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 contract MockBondToken is IERC20 {
     string public name;
@@ -229,6 +230,7 @@ contract ComposedStableCommonDetfBondingHarness is ComposedStableCommonDetfBondi
             feeOracle_,
             0,
             0,
+            ThresholdMode.Policy,
             routes_
         );
     }

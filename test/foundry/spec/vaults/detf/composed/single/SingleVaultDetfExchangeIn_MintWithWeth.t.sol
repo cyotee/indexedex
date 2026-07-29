@@ -18,6 +18,7 @@ import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 import {SingleVaultDetfProductionBase} from "test/foundry/spec/vaults/detf/composed/single/SingleVaultDetf_ProductionBase.t.sol";
 
@@ -34,10 +35,14 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
     uint128 internal constant POSITION_LIQUIDITY = 5e18;
     uint128 internal constant TEST_POSITION_LIQUIDITY = 1e18;
 
+    /// @dev Legacy ±0.5% Policy band so synthetic-regime drivers can enter mint-allowed (product default is ±5%).
+    uint256 internal constant LEGACY_MINT_THRESHOLD = 1005e15;
+    uint256 internal constant LEGACY_BURN_THRESHOLD = 995e15;
+
     function setUp() public virtual override {
         super.setUp();
 
-        detf = _deploySingleVaultDetf();
+        detf = _deploySingleVaultDetf(LEGACY_MINT_THRESHOLD, LEGACY_BURN_THRESHOLD, ThresholdMode.Policy);
         _bootstrapDetf();
 
         for (uint256 i = 0; i < 12; ++i) {
@@ -357,7 +362,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
     }
 
     function _assertMintEnabled(IProtocolDETF detf_) internal view {
-        assertGt(detf_.syntheticPrice(), detf_.mintThreshold(), "fixture should be above upper deadband bound");
+        // Gates and is*Allowed use synthetic (FD) price — never reserve spot.
+        assertGt(detf_.syntheticPrice(), detf_.mintThreshold(), "synthetic should be above mint threshold");
         assertTrue(detf_.isMintingAllowed(), "minting should be enabled");
         assertFalse(detf_.isBurningAllowed(), "burning should be disabled");
     }
@@ -395,7 +401,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
                 }
             }
             iterations++;
-            require(iterations < 60, "too many iterations seeking single-vault burn enabled");
+            require(iterations < 60, "too many iterations seeking synthetic mint-allowed");
         }
+        _assertMintEnabled(detf_);
     }
 }

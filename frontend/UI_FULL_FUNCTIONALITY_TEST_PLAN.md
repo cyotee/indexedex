@@ -1,9 +1,13 @@
 # IndexedEx / Pachira UI — Full Functionality Test Plan
 
-**Status:** Ready to execute  
+**Status:** Ready to execute (against **existing** stack/artifacts only)  
 **Audience:** Agents + humans  
-**Environment baseline:** Local Anvil via `scripts/shell/local_testing.sh` with **foundation + packages + assets + scenario1 + scenario2 + scenario3** deployed; UI pointed at chain id **11155111**, RPC **http://127.0.0.1:8545**.  
+**Environment baseline:** Operator-provided RPC (e.g. already-running local Anvil at `http://127.0.0.1:8545`, chain id **11155111**) **or** offline checks against committed tokenlists under `frontend/app/addresses/`.  
 **Wallet under test:** Injected EIP-1193 (Playwright fixture), **not** MetaMask extension — same as production path for wagmi `injected`.
+
+### ⛔ Do not deploy
+
+**Agents must not** run `scripts/shell/local_testing.sh`, forge broadcast, Anvil restart-as-redeploy, or any contract/package deploy to satisfy this plan. If stage JSON / RPC is missing, mark cases **blocked** and prefer unit/static tests. See [`ROADMAP.md`](./ROADMAP.md) § Do not deploy.
 
 ---
 
@@ -15,7 +19,7 @@
 | G2 | **Same route shapes** work on **Batch Swap** where multi-step encoding applies | Each applicable route in §5: path builds, preview OK, batch tx mines |
 | G3 | **Vault discovery** works (tokenlist + registry) | Earn preferred list non-empty; registry query by token returns ≥1 vault when registered |
 | G4 | **Earn → deposit/withdraw** works for strategy vaults | Deposit panel uses correct router args; balances move |
-| G5 | **DETF workspace** (scenario3) mint/bond paths reachable | UI loads DETF, mint/bond controls functional or clear preconditions |
+| G5 | **DETF workspace** mint/bond paths reachable | UI loads DETF, mint/bond controls functional or clear preconditions |
 | G6 | **Shell / brand / portfolio** | Connect, nav, redirects, portfolio reads non-error |
 
 Non-goals for this plan:
@@ -23,37 +27,32 @@ Non-goals for this plan:
 - MetaMask popup UX  
 - Public mainnet / funded live wallets  
 - Exhaustive fork RPC stress  
-- Visual pixel regression (unless added later)
+- Visual pixel regression (unless added later)  
+- **Deploying or redeploying** local/remote protocol stacks  
 
 ---
 
 ## 2. Preconditions (do once per session)
 
-### 2.1 Chain & deploy
+### 2.1 Chain & artifacts (read-only)
 
-```bash
-# From indexedex repo root — if not already done
-export DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-bash scripts/shell/local_testing.sh foundation --restart-anvil
-bash scripts/shell/local_testing.sh packages
-bash scripts/shell/local_testing.sh assets
-bash scripts/shell/local_testing.sh scenario1
-bash scripts/shell/local_testing.sh scenario2
-bash scripts/shell/local_testing.sh scenario3
-```
-
-Confirm artifacts:
+**Do not deploy.** Confirm what already exists:
 
 | Check | Path / command |
 |-------|----------------|
-| Stage JSON present | `ls deployments/local_testing/anvil_single/[0-9]*.json` — expect `01`…`06`, `10`–`12` as deployed |
 | Platform for UI | `frontend/app/addresses/chain/11155111/platform.json` has `vaultRegistry`, `balancerV3StandardExchangeRouter`, `weth`/`weth9`, `permit2` |
-| Tokenlists | `strategy-vaults`, `balancer-v3-pools`, `base-tokens`, `protocol-detfs` under `chain/11155111/` non-empty |
+| Tokenlists | `strategy-vaults`, `balancer-v3-pools`, `base-tokens`, `protocol-detfs` under `chain/11155111/` non-empty when those products are expected |
+| Optional stage JSON (informational only) | `deployments/local_testing/anvil_single/` may list prior stage files — **do not regenerate** |
+| RPC | Only if operator already has a node; e.g. `http://127.0.0.1:8545` with matching chain id |
+
+If lists empty or RPC dead: **document skip**; run `cd frontend && npm run check` / unit tests instead of redeploying.
 
 ### 2.2 UI process
 
 ```bash
 cd frontend
+export NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=local_testing   # or env matching committed artifacts
+export NEXT_PUBLIC_EARN_DETF_EMBED=false
 npm run dev
 # or: npm run build && npm run start
 ```
@@ -61,28 +60,28 @@ npm run dev
 | Check | Pass |
 |-------|:----:|
 | App loads `http://127.0.0.1:3000` no redbox | ☐ |
-| Header **App Network** = Ethereum Sepolia (11155111) | ☐ |
-| Anvil RPC reachable from app (local env maps sepolia → 8545) | ☐ |
+| Header **App Network** matches intended chain (e.g. Sepolia 11155111) | ☐ |
+| If using local RPC: app maps sepolia → that RPC when env is `local_testing` | ☐ |
 
 ### 2.3 Wallet (automation)
 
 | Check | Pass |
 |-------|:----:|
-| `npm run test:e2e` green (baseline inject + connect) | ☐ |
-| Optional: import Anvil #0 in browser for manual cross-check | ☐ |
+| `npm run test:e2e` green when webServer + fixtures allow | ☐ |
+| Optional: browser wallet against operator RPC | ☐ |
 
-Account under test (Anvil #0):
+Account often used with Anvil fixtures (if RPC already running):
 
 - Address: `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`  
-- Funded by Anvil; mint test tokens via `/mint` if scenarios use TTA/TTB/etc.
+- Prefer balances already on chain; do not redeploy minters/packages to fund accounts  
 
 ### 2.4 Session metadata (fill when running)
 
 ```text
 Date:
 Branch / commit:
-Scenarios: foundation + packages + assets + s1 + s2 + s3
-Anvil chainId: 11155111
+RPC (if any): existing only — no deploy this session
+ChainId:
 UI URL:
 Brand under test: Pachira / IndexedEx / both
 ```
@@ -342,11 +341,11 @@ All of the following:
 
 | Risk | Mitigation |
 |------|------------|
-| Scenario deploy incomplete | Fail preconditions; don’t mark routes N/A as pass |
+| RPC / artifacts missing | Mark cases blocked; unit/static tests; **do not deploy** |
 | Permit2 / approval stuck | Reset allowance; use explicit approval mode |
 | Route labeled wrong in UI | Compare to `routeMatcher` + debug panel (lab flag) |
 | Batch preview vs execute diverge | Prefer execute path; file bug if preview lies |
-| Tokenlist stale after redeploy | Re-run aggregator / scenario shell hook |
+| Tokenlist stale | Document gap; operator owns artifact refresh — agents do not redeploy |
 
 ---
 
@@ -354,29 +353,30 @@ All of the following:
 
 | File | Use |
 |------|-----|
-| `MANUAL_UI_ROUTE_CHECKLIST.md` | Legacy detailed swap checklist (still valid for manual depth) |
+| `ROADMAP.md` | **No-deploy** + product status |
+| `MANUAL_UI_ROUTE_CHECKLIST.md` | Manual route checklist |
 | `e2e/README.md` | Injected wallet harness |
 | `e2e/connected-wallet.spec.ts` | L2 baseline |
 | `app/swap/lib/routeMatcher.ts` | Route classification |
 | `app/lib/registry/*` | Earn registry query |
 | `app/lib/earn/buildVaultSwapArgs.ts` | Earn deposit/withdraw args |
-| `scripts/shell/local_testing.sh` | Deploy scenarios |
 
 ---
 
-**Next step after approving this plan:** implement L3 registry E2E + Swap `data-testid`s, then automate S-BAL + S-DEP as the first live tx proofs against your three scenarios.
+**Next step:** automate more live proofs only when an operator-provided RPC + committed artifacts already exist. **Do not** run deploy scripts from this plan.
 
 ---
 
-## Session log: 2026-07-11
+## Session log: 2026-07-11 (historical)
 
 ### Environment notes
 
-- Anvil **up** at `http://127.0.0.1:8545`, chainId **11155111**.
+- Anvil was **up** at `http://127.0.0.1:8545`, chainId **11155111** (operator-owned stack; not an agent deploy instruction).
 - Stage JSON present: foundation `01–06` + **scenario3** (`12`). **No `10`/`11` (scenario1/2)** in `deployments/local_testing/anvil_single/` — only scenario3 overlay artifact on disk.
 - Live registry `vaults()` returned **4** addresses; `isVault` true; `vaultsOfToken(WETH)` returned strategy vault + BPT pool.
-- **Stale tokenlists** initially pointed at addresses with **no code**. Fixed by rebuilding from fragments (run from **repo root**):
+- **Stale tokenlists** initially pointed at addresses with **no code**. Historical note: lists were refreshed from fragments by an operator; **agents must not** treat that as a required step or re-run deploy/aggregator pipelines for UI tasks:
   ```bash
+  # historical operator-only — not agent instructions
   node scripts/node/node_modules/tsx/dist/cli.mjs scripts/node/src/main.ts --config tokenlists.config.ts
   ```
   After rebuild: 1 strategy vault (`wethRichVlt`), 1 protocol DETF (`CHIR`), 6 base tokens, 2 balancer pools — addresses match live chain.

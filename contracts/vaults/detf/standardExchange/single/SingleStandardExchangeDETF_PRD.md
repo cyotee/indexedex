@@ -8,6 +8,8 @@ SingleStandardExchangeDETF (Single Standard Exchange DETF)
 
 IMPLEMENTED — production SingleStandardExchangeDETF shipped under `contracts/vaults/detf/standardExchange/single/` with requirements-backed matrix tests (Aerodrome SE, DualLiquidity, Uni V4 SE, ComposedStable). This PRD remains the normative product and architecture specification for the family.
 
+**Threshold modes:** Conforms to [`DETF_Threshold_Modes_PRD.md`](../../DETF_Threshold_Modes_PRD.md) (formal LOCKED) — deploy-time Policy (default ±5% synthetic deadband) vs Open; gates always synthetic; trailing `PkgArgs.thresholdMode`.
+
 ## Locked decisions
 
 Resolved in requirements clarification (apply everywhere; do not re-open without an explicit PRD revision):

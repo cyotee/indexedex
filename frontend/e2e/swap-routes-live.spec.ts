@@ -257,8 +257,21 @@ test.describe('Live swap routes (Anvil)', () => {
         if (vals[0]) await asset.selectOption(vals[0])
       })
     }
-    await walletPage.getByTestId('earn-deposit-amount').fill('0.01')
-    await walletPage.getByTestId('earn-deposit-submit').click()
+    // AmountField wraps the testid on a div; input is `${testid}-input`
+    await walletPage.getByTestId('earn-deposit-amount-input').fill('0.01')
+    // Multi-leg: click submit until deposit completes (connect/approve/deposit gates)
+    for (let i = 0; i < 6; i++) {
+      const submit = walletPage.getByTestId('earn-deposit-submit')
+      await expect(submit).toBeVisible({ timeout: 15_000 })
+      if (await submit.isDisabled().catch(() => true)) {
+        await walletPage.waitForTimeout(1500)
+        continue
+      }
+      await submit.click()
+      await walletPage.waitForTimeout(2500)
+      const after = await erc20Balance(vault.address as `0x${string}`, ANVIL_ACCOUNT_0.address)
+      if (after > before) break
+    }
 
     await expect
       .poll(

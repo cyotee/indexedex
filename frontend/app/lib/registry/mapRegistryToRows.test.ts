@@ -10,6 +10,7 @@ const preferred: EarnProduct[] = [
     symbol: 'ALP',
     decimals: 18,
     productType: 'strategy',
+    risk: 'balanced',
   },
 ]
 
@@ -24,15 +25,18 @@ describe('mapRegistryAddressesToRows', () => {
     expect(rows[0].symbol).toBe('ALP')
     expect(rows[0].source).toBe('registry')
     expect(rows[0].productType).toBe('strategy')
+    expect(rows[0].risk).toBe('balanced')
     expect(rows[1].productType).toBe('registry')
     expect(rows[1].source).toBe('registry')
+    expect(rows[1].risk).toBeUndefined()
   })
 })
 
 describe('preferredToRows', () => {
-  it('marks source preferred', () => {
+  it('marks source preferred and forwards risk when present', () => {
     const rows = preferredToRows(preferred)
     expect(rows[0].source).toBe('preferred')
     expect(rows[0].address).toBe(preferred[0].address)
+    expect(rows[0].risk).toBe('balanced')
   })
 })

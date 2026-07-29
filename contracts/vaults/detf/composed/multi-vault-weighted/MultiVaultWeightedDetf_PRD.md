@@ -8,6 +8,8 @@ MultiVaultWeightedDetf (Multi–Standard Exchange Weighted DETF)
 
 **DRAFT** — design locked via requirements clarification; implementation not started.
 
+**Threshold modes:** Conforms to [`DETF_Threshold_Modes_PRD.md`](../../DETF_Threshold_Modes_PRD.md) (formal LOCKED) — deploy-time Policy (default ±5% synthetic deadband) vs Open; gates always synthetic; trailing `PkgArgs.thresholdMode`.
+
 ## Locked decisions
 
 Resolved in requirements clarification (apply everywhere; do not re-open without an explicit PRD revision):

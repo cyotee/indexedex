@@ -14,11 +14,12 @@ import {
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @notice Mixed rated + unrated legs; unrated has no rateAsset redeem target.
 contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDetf {
     function test_mixedRatedUnrated_mintBothLegs() public {
-        address instance_ = _deployDetfNMixedRated(2, 1, type(uint256).max);
+        address instance_ = _deployDetfNMixedRated(2, 0, 0, ThresholdMode.Open);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
         address[] memory ras_ = info_.rateAssets();
         assertTrue(ras_[0] != address(0), "leg0 rated");
@@ -38,7 +39,7 @@ contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDe
     }
 
     function test_mixed_claimRedeem_onlyRatedLeg() public {
-        address instance_ = _deployDetfNMixedRated(2, 1, type(uint256).max);
+        address instance_ = _deployDetfNMixedRated(2, 0, 0, ThresholdMode.Open);
         // Larger bootstrap so protocol BPT unwind stays above Balancer min token balances.
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 5_000e18);
 

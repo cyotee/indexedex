@@ -37,6 +37,7 @@ import {
 import {
     ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
@@ -50,13 +51,17 @@ import {
 contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
     uint256 internal constant MIN_LOCK = 30 days;
 
-    /// @dev Open burn so StandardExchangeRateProvider can quote detfToken→dai for WITH_RATE.
-    function _composedBurnThreshold() internal pure override returns (uint256) {
-        return type(uint256).max;
+    /// @dev Product Open so rate-provider quotes work at near-peg (mint=1/burn=max illegal after pair validation).
+    function _composedThresholdMode() internal pure override returns (ThresholdMode) {
+        return ThresholdMode.Open;
     }
 
     function _composedMintThreshold() internal pure override returns (uint256) {
-        return 1; // allow mint at near-peg for fixture convenience
+        return 0;
+    }
+
+    function _composedBurnThreshold() internal pure override returns (uint256) {
+        return 0;
     }
 
     function _deployOuterOverComposed()
@@ -139,8 +144,9 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
                     rateTarget: IERC20(address(0)),
                     detfWeight: 0,
                     vaultShareWeight: 0,
-                    mintThreshold: 1,
-                    burnThreshold: type(uint256).max
+                    mintThreshold: 0,
+                    burnThreshold: 0,
+                    thresholdMode: ThresholdMode.Open
                 })
             )
         );

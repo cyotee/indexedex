@@ -1,0 +1,70 @@
+{
+  "_meta": {
+    "product": "RICH Base CCA",
+    "status": "draft_token_and_blocks_pending",
+    "pricingSource": "docs/CCA_FDV_WORKSHOP.md",
+    "parameterSheet": "docs/CCA_PARAMETER_SHEET.md",
+    "workshopEthUsd": 1900,
+    "floorRatioEthPerRich": "5e-7",
+    "fdvAtFloorEth": 500,
+    "fdvAtFloorUsdApprox": 950000,
+    "successRaisePlanningEth": 50,
+    "stretchRaisePlanningEth": 100,
+    "opsAllocationEth": 6.5,
+    "notes": [
+      "token MUST be Base Superchain-bridged RICH, not L1 address",
+      "startBlock/endBlock/claimBlock are null until open window; use relativeAuctionBlocks",
+      "factory verified on Base 2026-07-22",
+      "Do not promise raise size in public copy"
+    ]
+  },
+  "8453": {
+    "network": "Base",
+    "chainId": 8453,
+    "blockTimeSeconds": 2,
+    "factory": "0xCCccCcCAE7503Cac057829BF2811De42E16e0bD5",
+    "factoryVersion": "v1.1.0",
+    "token": "TBD_AFTER_BRIDGE",
+    "totalSupply": "100000000000000000000000000",
+    "totalSupplyHuman": "100000000",
+    "currency": "0x0000000000000000000000000000000000000000",
+    "currencySymbol": "ETH",
+    "tokensRecipient": "0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5",
+    "fundsRecipient": "0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5",
+    "startBlock": null,
+    "endBlock": null,
+    "claimBlock": null,
+    "relativeAuctionBlocks": 216000,
+    "relativePrebidBlocks": 0,
+    "suggestedStartBufferBlocks": 1800,
+    "suggestedStartBufferNote": "1800 blocks ~1 hour on Base; use 43200 for ~24h marketing buffer",
+    "tickSpacing": "396140812571321687967",
+    "validationHook": "0x0000000000000000000000000000000000000000",
+    "floorPrice": "39614081257132168796700",
+    "floorPriceRatio": "0.0000005",
+    "requiredCurrencyRaised": 0,
+    "supplySchedule": [
+      { "mps": 21, "blockDelta": 27234 },
+      { "mps": 27, "blockDelta": 21293 },
+      { "mps": 29, "blockDelta": 19507 },
+      { "mps": 31, "blockDelta": 18432 },
+      { "mps": 33, "blockDelta": 17671 },
+      { "mps": 34, "blockDelta": 17087 },
+      { "mps": 35, "blockDelta": 16617 },
+      { "mps": 35, "blockDelta": 16225 },
+      { "mps": 36, "blockDelta": 15889 },
+      { "mps": 37, "blockDelta": 15597 },
+      { "mps": 38, "blockDelta": 15339 },
+      { "mps": 38, "blockDelta": 15108 },
+      { "mps": 3096430, "blockDelta": 1 }
+    ],
+    "auctionStepsData": "0x0000150000006a6200001b000000532d00001d0000004c3300001f0000004800000021000000450700002200000042bf00002300000040e90000230000003f610000240000003e110000250000003ced0000260000003beb0000260000003b042f3f6e0000000001",
+    "supplyScheduleNotes": {
+      "alpha": 1.2,
+      "numGradualSteps": 12,
+      "finalBlockMpsPctApprox": 30.96,
+      "totalMps": 10000000,
+      "totalBlocks": 216000
+    }
+  }
+}

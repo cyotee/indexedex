@@ -37,7 +37,7 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
     }
 
     function test_D3_doubleRedeem_secondReverts() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true);
+        address instance_ = _deployOpenModeDetfN(1);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 3_000e18);
 
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
@@ -65,7 +65,7 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
     }
 
     function test_D4_redeem_junkRateAsset_InvalidRoute() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true);
+        address instance_ = _deployOpenModeDetfN(1);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 1_500e18);
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         vm.prank(alice);
@@ -102,7 +102,7 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
     }
 
     function test_D6_cannotRedeemMoreThanClaimPrincipal() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true);
+        address instance_ = _deployOpenModeDetfN(1);
         (uint256 tokenId_, uint256 bptPrincipal_) = _goLiveViaBptBond(instance_, alice, 2_500e18);
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);

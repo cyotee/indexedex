@@ -1,9 +1,9 @@
 {
   "name": "Indexedex Strategy Vaults",
-  "timestamp": "2026-07-11T08:31:52.025Z",
+  "timestamp": "2026-07-25T23:08:27.546Z",
   "version": {
-    "major": 6,
-    "minor": 0,
+    "major": 7,
+    "minor": 1,
     "patch": 0
   },
   "keywords": [
@@ -23,9 +23,31 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0xC46dD6CeC59d4A43e2ACC9160bDE7108fB639e06",
+      "address": "0x7c2108ce18Fa365D808708534023525dBC15383E",
       "name": "WETH/RICH Strategy Vault",
       "symbol": "wethRichVlt",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xC536B52D625F3c518A5de8faaE9B6eB81bdFa44F",
+      "name": "Pachira Vault of (TTA / TTB)",
+      "symbol": "abUniV2Vault",
+      "decimals": 18,
+      "tags": [
+        "vault",
+        "strat"
+      ]
+    },
+    {
+      "chainId": 11155111,
+      "address": "0xd205847d75a77cE74C16764304bb8C5235345393",
+      "name": "Pachira Vault of (TTB / WETH)",
+      "symbol": "bwUniV2Vault",
       "decimals": 18,
       "tags": [
         "vault",

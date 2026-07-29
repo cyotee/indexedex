@@ -27,6 +27,7 @@ import {
     IBalancerV3StandardExchangeRouterPrepay
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 library SingleVaultDetfRepo {
     using AddressSetRepo for AddressSet;
@@ -52,6 +53,7 @@ library SingleVaultDetfRepo {
         uint256 vaultTokenWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
         AddressSet acceptedBondTokens;
     }
 
@@ -72,7 +74,8 @@ library SingleVaultDetfRepo {
         IERC20 pairToken_,
         IERC20 rateAsset_,
         uint256 mintThreshold_,
-        uint256 burnThreshold_
+        uint256 burnThreshold_,
+        ThresholdMode thresholdMode_
     ) internal {
         layoutStruct_.feeOracle = feeOracle_;
         layoutStruct_.balancerV3PrepayRouter = balancerV3PrepayRouter_;
@@ -80,6 +83,7 @@ library SingleVaultDetfRepo {
         layoutStruct_.rateAsset = rateAsset_;
         layoutStruct_.mintThreshold = mintThreshold_;
         layoutStruct_.burnThreshold = burnThreshold_;
+        layoutStruct_.thresholdMode = thresholdMode_;
         layoutStruct_.acceptedBondTokens._add(address(rateAsset_));
         layoutStruct_.acceptedBondTokens._add(address(pairToken_));
     }
@@ -90,9 +94,27 @@ library SingleVaultDetfRepo {
         IERC20 pairToken_,
         IERC20 rateAsset_,
         uint256 mintThreshold_,
-        uint256 burnThreshold_
+        uint256 burnThreshold_,
+        ThresholdMode thresholdMode_
     ) internal {
-        _initialize(_layoutStruct(), feeOracle_, balancerV3PrepayRouter_, pairToken_, rateAsset_, mintThreshold_, burnThreshold_);
+        _initialize(
+            _layoutStruct(),
+            feeOracle_,
+            balancerV3PrepayRouter_,
+            pairToken_,
+            rateAsset_,
+            mintThreshold_,
+            burnThreshold_,
+            thresholdMode_
+        );
+    }
+
+    function _thresholdMode(Storage storage layoutStruct_) internal view returns (ThresholdMode thresholdMode_) {
+        return layoutStruct_.thresholdMode;
+    }
+
+    function _thresholdMode() internal view returns (ThresholdMode thresholdMode_) {
+        return _thresholdMode(_layoutStruct());
     }
 
     function _initializeDependencies(

@@ -26,6 +26,9 @@ export type TokenListEntry = {
   decimals: number
   // Optional derived metadata for UI dropdowns.
   display?: string
+  /** Uniswap-style tags from the source tokenlist (may include risk-*). */
+  tags?: string[]
+  extensions?: Record<string, unknown>
 }
 
 function filterChain(list: TokenListEntry[], chainId: number): TokenListEntry[] {
@@ -37,6 +40,7 @@ type TokenCache = {
   erc4626Tokens: TokenListEntry[]
   seigniorageDetfs: TokenListEntry[]
   protocolDetfTokens: TokenListEntry[]
+  featuredFeeDetfs: TokenListEntry[]
   strategyVaultTokens: TokenListEntry[]
   uniV2PoolTokens: TokenListEntry[]
   aerodromePoolTokens: TokenListEntry[]
@@ -48,11 +52,15 @@ const EMPTY_CACHE: TokenCache = {
   erc4626Tokens: [],
   seigniorageDetfs: [],
   protocolDetfTokens: [],
+  featuredFeeDetfs: [],
   strategyVaultTokens: [],
   uniV2PoolTokens: [],
   aerodromePoolTokens: [],
   balancerPoolTokens: [],
 }
+
+/** Dedicated Wave 2 list id (featured-fee-detfs.tokenlist.json). */
+export const FEATURED_FEE_DETFS_LIST_ID = 'featured-fee-detfs'
 
 function isHexAddress(value: unknown): value is Address {
   if (typeof value !== 'string') return false
@@ -166,7 +174,7 @@ function buildProtocolDetfEntriesFromPlatform(platform: unknown, chainId: number
     entries.push({
       chainId,
       address: protocolDetf,
-      name: 'Single Vault DETF CHIR',
+      name: 'Protocol DETF',
       symbol: 'CHIR',
       decimals: 18,
     })
@@ -225,6 +233,11 @@ function getArtifactsOrNull(
 }
 
 function toLegacyEntry(t: TokenInfo): TokenListEntry {
+  const tags = Array.isArray(t.tags) && t.tags.length > 0 ? [...t.tags] : undefined
+  const extensions =
+    t.extensions && typeof t.extensions === 'object' && Object.keys(t.extensions).length > 0
+      ? { ...t.extensions }
+      : undefined
   return {
     chainId: t.chainId,
     address: t.address as Address,
@@ -232,11 +245,46 @@ function toLegacyEntry(t: TokenInfo): TokenListEntry {
     symbol: t.symbol,
     decimals: t.decimals,
     display: resolveLabel(t),
+    ...(tags ? { tags } : {}),
+    ...(extensions ? { extensions } : {}),
   }
 }
 
 function fromComposed(store: ComposedStore, tags: string[], chainId: number): TokenListEntry[] {
   return byTag(store, tags, chainId).map(toLegacyEntry)
+}
+
+/**
+ * Load the dedicated featured-fee-detfs tokenlist by list id (not by tag).
+ * List order is featured order; invalid / zero addresses are dropped.
+ */
+function loadFeaturedFeeDetfEntriesFromRefs(chainId: number): TokenListEntry[] {
+  const refs = getListRefs(chainId)
+  const feeRef = refs.find((r) => r.id === FEATURED_FEE_DETFS_LIST_ID)
+  if (!feeRef?.list?.tokens?.length) return []
+
+  const out: TokenListEntry[] = []
+  const seen = new Set<string>()
+  for (const t of feeRef.list.tokens) {
+    if (t.chainId !== chainId) continue
+    if (!isHexAddress(t.address) || isZeroAddress(t.address as Address)) continue
+    const key = t.address.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(
+      toLegacyEntry({
+        chainId: t.chainId,
+        address: t.address,
+        name: t.name,
+        symbol: t.symbol,
+        decimals: t.decimals,
+        logoURI: t.logoURI,
+        tags: t.tags,
+        extensions: t.extensions,
+      }),
+    )
+  }
+  return withDisplay(out)
 }
 
 function getCached(
@@ -268,7 +316,7 @@ function getCached(
 
   // Prefer chain Token Lists (fragments → protocol-detfs.tokenlist.json). Fall back
   // to platform.protocolDetf from local_testing / stage JSON synthesis so Staking
-  // works as soon as Scenario 3 (Single Vault DETF) writes 12_scenario_3.json.
+  // works as soon as Scenario 3 (Protocol DETF) writes 12_scenario_3.json.
   const protocolDetfFromLists = fromComposed(store, ['detf'], artifactsChainId)
   const protocolDetfFromPlatform = buildProtocolDetfEntriesFromPlatform(
     artifacts.platform,
@@ -277,6 +325,9 @@ function getCached(
   const protocolDetfTokens = withDisplay(
     mergeUniqueByAddress(protocolDetfFromLists, protocolDetfFromPlatform)
   )
+
+  // Wave 2: dedicated featured-fee-detfs list (list id, not tags). Order = featured order.
+  const featuredFeeDetfs = loadFeaturedFeeDetfEntriesFromRefs(artifactsChainId)
 
   // seigniorage-detfs are not yet migrated to a Token List bucket; keep reading from the legacy artifact.
   const seigniorageDetfs = withDisplay(
@@ -288,6 +339,7 @@ function getCached(
     erc4626Tokens,
     seigniorageDetfs,
     protocolDetfTokens,
+    featuredFeeDetfs,
     strategyVaultTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
@@ -362,6 +414,35 @@ export function getProtocolDetfsForChain(
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): TokenListEntry[] {
   return getCached(chainId, environment).protocolDetfTokens.filter((t) => t.symbol === 'CHIR')
+}
+
+/**
+ * Featured Protocol DETFs from the dedicated tokenlist for the chain.
+ * Source: `featured-fee-detfs.tokenlist.json`. List order = featured order.
+ */
+export function getFeaturedFeeDetfsForChain(
+  chainId: number,
+  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
+): TokenListEntry[] {
+  return getCached(chainId, environment).featuredFeeDetfs
+}
+
+/** True when `address` is on the dedicated featured-fee-detfs list for this chain. */
+export function isFeaturedFeeDetfAddress(
+  chainId: number,
+  environment: DeploymentEnvironment,
+  address: string,
+): boolean {
+  const key = address.trim().toLowerCase()
+  if (!key) return false
+  return getFeaturedFeeDetfsForChain(chainId, environment).some(
+    (t) => t.address.toLowerCase() === key,
+  )
+}
+
+/** Canonical product home for a Protocol DETF. */
+export function feeDetfStakingHref(address: string): string {
+  return `/staking?detf=${address}`
 }
 
 export function getStrategyVaultTokensForChain(

@@ -9,9 +9,38 @@ import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol'
 import {IStandardExchangeProxy} from 'contracts/interfaces/proxies/IStandardExchangeProxy.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {ComposedStableCommonDetfCommon} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol';
+import {
+    IComposedStableCommonDetfInfo
+} from 'contracts/vaults/detf/composed/stable/common/IComposedStableCommonDetfInfo.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
-contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, IStandardExchangeIn, IFacet {
+contract ComposedStableCommonDetfExchangeIn is
+    ComposedStableCommonDetfCommon,
+    IStandardExchangeIn,
+    IComposedStableCommonDetfInfo,
+    IFacet
+{
     using BetterSafeERC20 for IERC20;
+
+    function mintThreshold() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._mintThreshold();
+    }
+
+    function burnThreshold() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._burnThreshold();
+    }
+
+    function thresholdMode() external view returns (ThresholdMode) {
+        return ComposedStableCommonDetfRepo._thresholdMode();
+    }
+
+    function isMintingAllowed() external view returns (bool) {
+        return _isMintingAllowed();
+    }
+
+    function isBurningAllowed() external view returns (bool) {
+        return _isBurningAllowed();
+    }
 
     /**
      * @param tokenIn The token provided to the vault for an exchange.
@@ -224,14 +253,20 @@ contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, I
     }
 
     function facetInterfaces() external pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](1);
+        interfaces_ = new bytes4[](2);
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces_[1] = type(IComposedStableCommonDetfInfo).interfaceId;
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](2);
+        funcs_ = new bytes4[](7);
         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
+        funcs_[3] = IComposedStableCommonDetfInfo.burnThreshold.selector;
+        funcs_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
+        funcs_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
+        funcs_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
     }
 
     function facetMetadata()
@@ -241,11 +276,17 @@ contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, I
     {
         name_ = type(ComposedStableCommonDetfExchangeIn).name;
 
-        interfaces_ = new bytes4[](1);
+        interfaces_ = new bytes4[](2);
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces_[1] = type(IComposedStableCommonDetfInfo).interfaceId;
 
-        functions_ = new bytes4[](2);
+        functions_ = new bytes4[](7);
         functions_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         functions_[1] = IStandardExchangeIn.exchangeIn.selector;
+        functions_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
+        functions_[3] = IComposedStableCommonDetfInfo.burnThreshold.selector;
+        functions_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
+        functions_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
+        functions_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
     }
 }

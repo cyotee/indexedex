@@ -1,0 +1,134 @@
+Followers
+
+Strong technical / protocol / capital accounts
+
+@0xfoobar
+@yearnfi
+@eigenfoundation
+@Nascentxyz
+@PolygonVentures
+@vfat0
+@definedfi
+@TrustSwap
+@TeamFinance_
+@OdysseyFi
+@coordinape
+@megaeth
+@delpho_labs
+@Cartainc
+@cshift_io
+@TopStrikeIO
+@ZealWallet
+
+Individual / smaller crypto accounts
+
+@0xQTpie
+@0x_Sats
+@0xcryptowizard
+@DefiDrew
+@CryptoExpert101
+@CryptoSlider
+@CryptoknightSG
+@BITCOINTRAPPER
+@ethanlin_crypto
+@crypto_klay
+@MrCartographer_
+@cartography_cap
+@guillotine_cap
+@graadient
+@thegostep
+@razoreth
+@ssgreenburg
+@mattyklein_
+@chris_walker_
+@adamdavidlong
+@jasoninch
+@jeffthedunker
+@highflyer313
+@j_mars57
+@mesky_
+@midcomm
+@papercliping
+@problemchild
+@sirpromptsalot
+@tbr90
+@trycodex
+@trystorysage
+@zigelbaum
+@yukyukID
+@NilesSankey
+@LibertyRaider
+@coach_zelos
+@countertrademoi
+@dao_duck
+@birdshot23
+@blazing420s
+@extraWide
+@ggelango
+@janvonprague
+@MStiive
+@Mindreader_AI
+@Mubarak97100
+@NNC85
+@QamarRiaz1
+@ScruFFuR
+@TaePage_
+@JohnnyDeppNFT
+@JoeDaHater1
+@E_Schhneider
+@0berisk
+@CircuitAI
+@DTSCapital
+
+High-signal individual accounts (technical / protocol builders & researchers)
+
+@haydenzadams (Hayden Adams – Uniswap)
+@fernan2_m (Fernando Martinelli – historically Balancer-related)
+@Marcus_Balancer
+@0xMert_ (Mert – frequent high-engagement DeFi commentary)
+@sassal0x
+@leptokurtic_
+@0xfoobar
+@DegenSpartan
+@CryptoCred
+@Cobie
+@HsakaTrades
+@gainzy222
+@TheDeFinvestor
+@DefiIgnas
+@jake_rothstein
+@Rewkang
+@0xRory
+@mikadontsurf
+@ atypicaltrader
+@0xCygaar
+@ atypical_eth
+@0xQuit
+@ atypicalSats
+@ atypicalfi
+
+RWA / Tokenized Assets / On-chain Finance voices
+
+@ondo_finance (and individual team members who post)
+@Centrifuge
+@MapleFinance
+@BackedFi
+@ atypicalRWA accounts that discuss Stock Tokens or tokenized equities on new L2s
+Accounts covering Robinhood Stock Tokens and RWA volume on the chain
+
+Vault / Strategy / Liquidity composition accounts
+
+Accounts around Yearn, Enzyme, Beefy, Idle, or newer strategy vault protocols
+Researchers who write about multi-DEX liquidity routing, capital efficiency, and “liquidity as a product”
+
+Robinhood Chain / Arbitrum Orbit / new L2 builders
+
+@RobinhoodCrypto
+Active Arbitrum Orbit builders and commentators
+Accounts that have been posting daily about Robinhood Chain volume, Uniswap activity on it, and new protocol launches
+
+Broader high-engagement DeFi / CT influencers (good for reach)
+
+@ atypical high-follower DeFi accounts that still engage with technical product announcements
+On-chain analysts and data accounts that track new L2 TVL and volume
+Accounts that frequently quote or reply to Balancer, Uniswap, and Morpho-style launches

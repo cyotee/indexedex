@@ -1,13 +1,16 @@
+/**
+ * DETF lifecycle steps — role names only (no RICH/RICHIR product brands).
+ */
 const STEPS = [
   { id: 'mint', label: 'Mint / exchange in' },
   { id: 'bond', label: 'Bond NFT' },
   { id: 'sell', label: 'Sell to protocol' },
-  { id: 'richir', label: 'RICHIR / redeem' },
+  { id: 'claim', label: 'Claim / redeem' },
 ] as const
 
 export function DetfLifecycleStepper({ activeIndex = 0 }: { activeIndex?: number }) {
   return (
-    <ol className="grid grid-cols-2 md:grid-cols-4 gap-2">
+    <ol className="grid grid-cols-2 md:grid-cols-4 gap-2" data-testid="detf-lifecycle-stepper">
       {STEPS.map((step, i) => {
         const active = i === activeIndex
         const done = i < activeIndex

@@ -109,6 +109,12 @@ ethereum_sepolia_infura = "https://sepolia.infura.io/v3/${INFURA_KEY}"
 sepolia_infura = "https://sepolia.infura.io/v3/${INFURA_KEY}"
 ethereum_sepolia_alchemy = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}"
 sepolia_alchemy = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}"
+# Public Sepolia fallback for L1→BattleChain bridge scripts
+sepolia_public = "https://ethereum-sepolia-rpc.publicnode.com"
+# BattleChain testnet (chain 627) settles to Ethereum Sepolia
+"battlechain-sepolia" = "https://testnet.battlechain.com"
+battlechain_testnet = "https://testnet.battlechain.com"
+battlechain_mainnet = "https://mainnet.battlechain.com"
 
 base_mainnet_infura = "https://base-mainnet.infura.io/v3/${INFURA_KEY}"
 base_mainnet_alchemy = "https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
@@ -122,6 +128,15 @@ fantom_mainnet = "https://fantom.drpc.org"
 apeChain_rpc = "https://rpc.apechain.com"
 apeChain_drpc = "https://apechain.drpc.org"
 apeChain_curtis_rpc = "https://rpc.curtis.apechain.com"
+
+# Robinhood Chain (Arbitrum Orbit L2) — chain 4663 mainnet / 46630 testnet
+# Public RPCs are rate-limited; Alchemy recommended for production forks.
+robinhood_mainnet = "https://rpc.mainnet.chain.robinhood.com"
+robinhood_mainnet_public = "https://rpc.mainnet.chain.robinhood.com"
+robinhood_mainnet_alchemy = "https://robinhood-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
+robinhood_testnet = "https://rpc.testnet.chain.robinhood.com"
+robinhood_testnet_public = "https://rpc.testnet.chain.robinhood.com"
+robinhood_testnet_alchemy = "https://robinhood-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
 # Research harness scripts only (Mode A/C telemetry). Allows via_ir for stack headroom
 # in large TestBase inheritance trees. Do NOT use for production contract builds.
 [profile.research]

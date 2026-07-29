@@ -74,6 +74,9 @@ import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleV
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
+import {
+    ISingleVaultDetfInfo
+} from "contracts/vaults/detf/composed/single/SingleVaultDetfInfoTarget.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {
@@ -81,6 +84,10 @@ import {
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {
+    DETFThresholdPolicy,
+    ThresholdMode
+} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
@@ -125,6 +132,7 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         IERC20 rateAsset;
     }
 
+    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
     struct PkgArgs {
         string name;
         string symbol;
@@ -133,6 +141,9 @@ interface ISingleVaultDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         uint256 rateAssetInitialDepositAmount;
         PoolKey underlyingPoolKey;
         uint24 underlyingWidthMultiplier;
+        uint256 mintThreshold; // 0 → 1.05e18
+        uint256 burnThreshold; // 0 → 0.95e18
+        ThresholdMode thresholdMode; // trailing; 0 = Policy
     }
 
     function deployVault(
@@ -328,6 +339,10 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
 
+        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
+        (uint256 mintThreshold_, uint256 burnThreshold_) =
+            DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
         Permit2AwareRepo._initialize(PERMIT2);
         DetfSuperchainBridgeRepo._initialize(
@@ -351,9 +366,12 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
             BALANCER_V3_PREPAY_ROUTER,
             args.pairToken,
             RATE_ASSET,
-            1005e15,
-            995e15
+            mintThreshold_,
+            burnThreshold_,
+            args.thresholdMode
         );
+        emit ISingleVaultDetfInfo.ThresholdModeSet(args.thresholdMode, mintThreshold_, burnThreshold_);
+
         _deploymentConfigLayout().underlyingPoolKey = args.underlyingPoolKey;
         _deploymentConfigLayout().underlyingWidthMultiplier = args.underlyingWidthMultiplier;
 
@@ -501,7 +519,10 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
                     pairInitialDepositAmount: 0,
                     rateAssetInitialDepositAmount: 0,
                     underlyingPoolKey: underlyingPoolKey_,
-                    underlyingWidthMultiplier: underlyingWidthMultiplier_
+                    underlyingWidthMultiplier: underlyingWidthMultiplier_,
+                    mintThreshold: 0,
+                    burnThreshold: 0,
+                    thresholdMode: ThresholdMode.Policy
                 })
             )
         );

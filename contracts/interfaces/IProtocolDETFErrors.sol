@@ -17,10 +17,14 @@ interface IProtocolDETFErrors {
     /*                          Price Gate Errors                             */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Minting is not allowed when synthetic price is at or below mint threshold
+    /// @notice Seigniorage mint blocked: inert, or Policy synthetic at/below mint threshold.
+    /// @dev Under Open + live, threshold helpers do not emit this for deadband reasons.
+    ///      Args still report the synthetic price and stored mint threshold for diagnostics.
     error MintingNotAllowed(uint256 syntheticPrice, uint256 mintThreshold);
 
-    /// @notice Burning/redemption is not allowed when synthetic price is at or above burn threshold
+    /// @notice Seigniorage burn blocked: inert, or Policy synthetic at/above burn threshold.
+    /// @dev Under Open + live, threshold helpers do not emit this for deadband reasons.
+    ///      Claim-path redemption uses `RedemptionNotAllowed` (independent of Open).
     error BurningNotAllowed(uint256 syntheticPrice, uint256 burnThreshold);
 
     /* ---------------------------------------------------------------------- */
@@ -142,7 +146,9 @@ interface IProtocolDETFErrors {
     /*                     Rebasing claim token Errors                        */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Rebasing claim redemption not allowed (synthetic price too high)
+    /// @notice Rebasing claim redemption not allowed (claim-path synthetic gate).
+    /// @dev Independent of primary-market `ThresholdMode` / Open — claim redeem is not
+    ///      opened merely because the instance is Open. Do not couple to Open short-circuit.
     error RedemptionNotAllowed(uint256 syntheticPrice, uint256 burnThreshold);
 
     /// @notice Cannot transfer rebasing claim tokens to AMM pools or lending protocols

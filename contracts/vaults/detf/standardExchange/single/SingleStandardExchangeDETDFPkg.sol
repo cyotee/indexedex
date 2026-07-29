@@ -58,6 +58,10 @@ import {
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {
+    DETFThresholdPolicy,
+    ThresholdMode
+} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title ISingleStandardExchangeDETDFPkg
 interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -83,6 +87,7 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
     /// @dev Per-instance args. `standardExchangeVault` is injected; underlyings are opaque.
     /// @dev `standardExchangeVaultShare` optional: address(0) → vault diamond is the share ERC-20
     ///      (standard multi-asset SE). Non-zero for families with a separate share token.
+    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
     struct PkgArgs {
         string name;
         string symbol;
@@ -93,6 +98,7 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
         uint256 vaultShareWeight; // 0 → 20e16
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
+        ThresholdMode thresholdMode; // trailing; 0 = Policy
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -108,8 +114,6 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
 
     uint256 private constant _EIGHTY = 80e16;
     uint256 private constant _TWENTY = 20e16;
-    uint256 private constant _DEFAULT_MINT_THRESHOLD = 1.05e18;
-    uint256 private constant _DEFAULT_BURN_THRESHOLD = 0.95e18;
 
     struct DeployConfig {
         IStandardExchangeProxy standardExchangeVault;
@@ -119,6 +123,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         uint256 vaultShareWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
     }
 
     IFacet immutable ERC20_FACET;
@@ -270,6 +275,10 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
+        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
+        (uint256 mint_, uint256 burn_) =
+            DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+
         DeployConfig storage cfg = _deployConfig();
         cfg.standardExchangeVault = args.standardExchangeVault;
         cfg.standardExchangeVaultShare = address(args.standardExchangeVaultShare) == address(0)
@@ -278,8 +287,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         cfg.rateTarget = args.rateTarget;
         cfg.detfWeight = args.detfWeight == 0 ? _EIGHTY : args.detfWeight;
         cfg.vaultShareWeight = args.vaultShareWeight == 0 ? _TWENTY : args.vaultShareWeight;
-        cfg.mintThreshold = args.mintThreshold == 0 ? _DEFAULT_MINT_THRESHOLD : args.mintThreshold;
-        cfg.burnThreshold = args.burnThreshold == 0 ? _DEFAULT_BURN_THRESHOLD : args.burnThreshold;
+        cfg.mintThreshold = mint_;
+        cfg.burnThreshold = burn_;
+        cfg.thresholdMode = args.thresholdMode;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -434,12 +444,19 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             pb_.shareIndex,
             cfg.detfWeight,
             cfg.vaultShareWeight,
-            cfg.mintThreshold,
-            cfg.burnThreshold,
-            FEE_ORACLE,
-            bondVault_,
-            protocolNftId_,
-            0
+            SingleStandardExchangeDETFRepo.ThresholdAndFeeInit({
+                mintThreshold: cfg.mintThreshold,
+                burnThreshold: cfg.burnThreshold,
+                thresholdMode: cfg.thresholdMode,
+                feeOracle: FEE_ORACLE,
+                bondNftVault: bondVault_,
+                protocolNftId: protocolNftId_,
+                feeRecipientNftId: 0
+            })
+        );
+        // Emit once after storage write with resolved thresholds (PRD §16.4).
+        emit ISingleStandardExchangeDETFInfo.ThresholdModeSet(
+            cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
         );
     }
 }

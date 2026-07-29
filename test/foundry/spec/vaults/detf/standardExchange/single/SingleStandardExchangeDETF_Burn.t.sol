@@ -3,13 +3,9 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 import {
     ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
@@ -33,23 +29,8 @@ contract SingleStandardExchangeDETF_Burn_Test is TestBase_SingleStandardExchange
     }
 
     function _deployOpenDetf() internal returns (address detf_) {
-        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
-            name: "Open Burn Single Standard Exchange DETF",
-            symbol: "obDETF",
-            standardExchangeVault: seVault,
-            standardExchangeVaultShare: IERC20(address(0)),
-            rateTarget: rateTargetToken,
-            detfWeight: 0,
-            vaultShareWeight: 0,
-            mintThreshold: 1,
-            // High burn threshold so burn is allowed when synthetic ~ 1e18.
-            burnThreshold: type(uint256).max
-        });
-        vm.startPrank(owner);
-        detf_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(singleStandardExchangeDetfPkg)), abi.encode(args)
-        );
-        vm.stopPrank();
+        // Product Open: mint+burn when live (historical mint=1/burn=max fails mint>burn validation).
+        detf_ = _deployOpenModeDetf("Open Burn Single Standard Exchange DETF", "obDETF");
     }
 
     function _bootstrapAndMint(address user, uint256 bondLp, uint256 mintLp)

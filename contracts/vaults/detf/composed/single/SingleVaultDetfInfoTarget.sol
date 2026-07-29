@@ -20,10 +20,22 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 
-contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
+/// @notice Family info surface for threshold mode (PRD DETF_Threshold_Modes).
+/// @dev Canonical typed surface is `IProtocolDETF.thresholdMode()`; this interface
+///      also exposes the getter for family casts and holds the init event.
+interface ISingleVaultDetfInfo {
+    /// @notice Emitted once at init with resolved mint/burn thresholds.
+    event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
+
+    /// @notice Same selector as `IProtocolDETF.thresholdMode()`.
+    function thresholdMode() external view returns (ThresholdMode);
+}
+
+contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon, ISingleVaultDetfInfo {
     function detfToken() external view returns (IERC20MintBurn) {
         return IERC20MintBurn(address(this));
     }
@@ -68,12 +80,16 @@ contract SingleVaultDetfInfoTarget is SingleVaultDetfCommon {
         return SingleVaultDetfRepo._layoutStruct().burnThreshold;
     }
 
+    function thresholdMode() external view returns (ThresholdMode) {
+        return SingleVaultDetfRepo._thresholdMode();
+    }
+
     function isMintingAllowed() external view returns (bool allowed_) {
-        return _isMintingAllowed(SingleVaultDetfRepo._layoutStruct(), _calcReserveSpotPrice());
+        return _isMintingAllowed(SingleVaultDetfRepo._layoutStruct());
     }
 
     function isBurningAllowed() external view returns (bool allowed_) {
-        return _isBurningAllowed(SingleVaultDetfRepo._layoutStruct(), _calcReserveSpotPrice());
+        return _isBurningAllowed(SingleVaultDetfRepo._layoutStruct());
     }
 
     function vaultRateProvider() external view returns (IRateProvider) {

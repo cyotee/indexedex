@@ -5,6 +5,15 @@ export function isDebugLabEnabled(): boolean {
   return process.env.NEXT_PUBLIC_SHOW_DEBUG === 'true'
 }
 
+/**
+ * Earn-detail DETF mint/bond/sell embed.
+ * Default **false** until mint/bond e2e smoke passes (Wave 1 PR7).
+ * Enable with NEXT_PUBLIC_EARN_DETF_EMBED=true for lab only.
+ */
+export function isEarnDetfEmbedEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_EARN_DETF_EMBED === 'true'
+}
+
 export function isLaunchBannerEnabled(): boolean {
   return process.env.NEXT_PUBLIC_SHOW_LAUNCH_BANNER === 'true'
 }

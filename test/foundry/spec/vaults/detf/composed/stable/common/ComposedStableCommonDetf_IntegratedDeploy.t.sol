@@ -69,6 +69,7 @@ import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
 import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.sol';
 import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3StandardExchangeRouter {
     using CastingHelpers for address[];
@@ -123,12 +124,82 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     }
 
     /// @dev Overridable so nested matrix fixtures can open burn for rate-provider quotes.
+    /// @notice After resolve, `0` → defaults; never means Open. Policy `1e18`/`0` → `1e18`/`0.95e18`
+    ///         so near-peg integrated mints remain allowed without product Open.
     function _composedMintThreshold() internal pure virtual returns (uint256) {
         return 1e18;
     }
 
     function _composedBurnThreshold() internal pure virtual returns (uint256) {
         return 0;
+    }
+
+    /// @dev Default Policy. Nested matrix / dual-path may override to product Open.
+    function _composedThresholdMode() internal pure virtual returns (ThresholdMode) {
+        return ThresholdMode.Policy;
+    }
+
+    /// @dev Product Open: mode Open + thresholds 0,0 (resolved defaults stored; gates ignore thresholds).
+    function _deployOpenModeDetf() internal returns (address vault_) {
+        vault_ = _deployDetfWithThresholds(0, 0, ThresholdMode.Open);
+    }
+
+    /// @dev Extreme legal Policy pair (mint > burn). Not product Open.
+    function _deployExtremePolicyDetf() internal returns (address vault_) {
+        vault_ = _deployDetfWithThresholds(2, 1, ThresholdMode.Policy);
+    }
+
+    function _deployDetfWithThresholds(uint256 mintTh_, uint256 burnTh_, ThresholdMode mode_)
+        internal
+        returns (address vault_)
+    {
+        ComposedStableCommonDetfRepo.RouteConfig[] memory routes = new ComposedStableCommonDetfRepo.RouteConfig[](1);
+        routes[0] = ComposedStableCommonDetfRepo.RouteConfig({
+            baseToken: dai,
+            vaultToken: IERC20(address(daiUsdcVault)),
+            underlyingVault: daiUsdcVault,
+            stablePoolRouter: stablePoolAdapter,
+            commonPoolRouter: commonPoolAdapter,
+            stablePoolTokenIndex: 0,
+            commonPoolTokenIndex: 0
+        });
+
+        IComposedStableCommonDetfDFPkg.PkgArgs memory pkgArgs =
+            ComposedStableCommonDetf_Component_FactoryService.buildPkgArgs(
+                ComposedStableCommonDetf_Component_FactoryService.ComposedStableCommonDetfPricingConfig({
+                    reservePool: reservePool,
+                    bondNftVault: bondNFTVault,
+                    rebasingDetfToken: rebasingDetfToken,
+                    detfToken: IERC20(address(detfToken)),
+                    stablePoolBpt: IERC20(address(stablePool)),
+                    commonPoolBpt: IERC20(address(commonPool)),
+                    rateAsset: weth,
+                    stablePoolExitPricer: stablePoolAdapter,
+                    commonPoolExitPricer: commonPoolAdapter,
+                    permit2: IPermit2(address(permit2)),
+                    balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
+                    stablePool: stablePool,
+                    commonPool: commonPool,
+                    reservePoolEntryRouter: reservePoolAdapter,
+                    detfIndex: detfIndex,
+                    stablePoolBptIndex: stablePoolBptIndex,
+                    commonPoolBptIndex: commonPoolBptIndex,
+                    mintThreshold: mintTh_,
+                    burnThreshold: burnTh_,
+                    routes: routes,
+                    thresholdMode: mode_
+                })
+            );
+
+        vm.startPrank(owner);
+        vault_ = IVaultRegistryDeployment(address(indexedexManager)).deployVault(
+            IStandardVaultPkg(address(detfPkg)), abi.encode(pkgArgs)
+        );
+        vm.stopPrank();
+
+        _authorizeDetfTokenOperator(vault_);
+        // Secondary instances share bond/rebasing companions already owned by the setUp vault —
+        // do not reassign protocol DETF or bond ownership here (NotOwner on rebasing token).
     }
 
     function setUp() public virtual override {
@@ -199,7 +270,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     commonPoolBptIndex: commonPoolBptIndex,
                     mintThreshold: _composedMintThreshold(),
                     burnThreshold: _composedBurnThreshold(),
-                    routes: routes
+                    routes: routes,
+                    thresholdMode: _composedThresholdMode()
                 })
             );
 

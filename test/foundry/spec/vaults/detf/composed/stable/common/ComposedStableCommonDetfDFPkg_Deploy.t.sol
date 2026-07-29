@@ -31,6 +31,10 @@ import {
 import {
     ComposedStableCommonDetf_Pkg_FactoryService
 } from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetf_Pkg_FactoryService.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
+import {
+    IComposedStableCommonDetfInfo
+} from 'contracts/vaults/detf/composed/stable/common/IComposedStableCommonDetfInfo.sol';
 
 contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
     using ComposedStableCommonDetf_Facet_FactoryService for ICreate3FactoryProxy;
@@ -76,7 +80,7 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
         (string memory name_, bytes4[] memory interfaces_, address[] memory facets_) = pkg.packageMetadata();
 
         assertEq(name_, 'ComposedStableCommonDetfDFPkg', 'package name');
-        assertEq(interfaces_.length, 6, 'interface count');
+        assertEq(interfaces_.length, 7, 'interface count');
         assertEq(facets_.length, 6, 'facet count');
         assertEq(facets_[0], address(multiAssetBasicVaultFacet), 'basic vault facet');
         assertEq(facets_[1], address(multiAssetStandardVaultFacet), 'standard vault facet');
@@ -84,6 +88,7 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
         assertEq(facets_[3], address(exchangeInFacet), 'exchange-in facet');
         assertEq(facets_[4], address(exchangeOutQueryFacet), 'exchange-out query facet');
         assertEq(facets_[5], address(pricingFacet), 'pricing facet');
+        assertEq(interfaces_[6], type(IComposedStableCommonDetfInfo).interfaceId, 'threshold info interface');
     }
 
     function _buildPkgArgs(IWeightedPool reservePool_) internal returns (IComposedStableCommonDetfDFPkg.PkgArgs memory) {
@@ -108,9 +113,10 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
                 detfIndex: 0,
                 stablePoolBptIndex: 1,
                 commonPoolBptIndex: 2,
-                mintThreshold: 1e18,
+                mintThreshold: 0,
                 burnThreshold: 0,
-                routes: routes
+                routes: routes,
+                thresholdMode: ThresholdMode.Policy
             })
         );
     }

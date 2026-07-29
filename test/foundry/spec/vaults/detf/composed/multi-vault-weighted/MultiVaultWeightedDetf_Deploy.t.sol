@@ -14,6 +14,10 @@ import {
 import {
     IMultiVaultWeightedDetfInfo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {
+    DETFThresholdPolicy,
+    ThresholdMode
+} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
     function test_deploy_inert_n1() public view {
@@ -25,8 +29,11 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
         assertTrue(wDetf_ > 0, "detf weight");
         assertTrue(vw_[0] > 0, "vault weight");
         assertEq(wDetf_ + vw_[0], 1e18, "weights sum");
-        assertEq(detfInfo.mintThreshold(), 1.05e18, "default mint threshold");
-        assertEq(detfInfo.burnThreshold(), 0.95e18, "default burn threshold");
+        assertEq(detfInfo.mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD, "default mint threshold");
+        assertEq(detfInfo.burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD, "default burn threshold");
+        assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy), "default mode Policy");
+        assertFalse(detfInfo.isMintingAllowed(), "inert mint false");
+        assertFalse(detfInfo.isBurningAllowed(), "inert burn false");
     }
 
     function test_deploy_n2_disparate_rateAssets() public {
@@ -59,7 +66,8 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
             weightDetf: 80e16,
             vaultWeights: weights_,
             mintThreshold: 0,
-            burnThreshold: 0
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Policy
         });
 
         vm.startPrank(owner);
@@ -93,7 +101,8 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
             weightDetf: 80e16,
             vaultWeights: weights_,
             mintThreshold: 0,
-            burnThreshold: 0
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Policy
         });
 
         vm.startPrank(owner);

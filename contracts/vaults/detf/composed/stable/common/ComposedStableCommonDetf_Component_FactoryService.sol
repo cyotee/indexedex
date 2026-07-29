@@ -25,6 +25,7 @@ import {
 } from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfDFPkg.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {IRebasingDETFTokenDFPkg} from 'contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 library ComposedStableCommonDetf_Component_FactoryService {
     struct ComposedStableCommonDetfFacets {
@@ -61,6 +62,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
         uint256 mintThreshold;
         uint256 burnThreshold;
         ComposedStableCommonDetfRepo.RouteConfig[] routes;
+        ThresholdMode thresholdMode;
     }
 
     struct RebasingDetfTokenFacets {
@@ -130,7 +132,8 @@ library ComposedStableCommonDetf_Component_FactoryService {
             commonPoolBptIndex: config_.commonPoolBptIndex,
             mintThreshold: config_.mintThreshold,
             burnThreshold: config_.burnThreshold,
-            routes: config_.routes
+            routes: config_.routes,
+            thresholdMode: config_.thresholdMode
         });
     }
 

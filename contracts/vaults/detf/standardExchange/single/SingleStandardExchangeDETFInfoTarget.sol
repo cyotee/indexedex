@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {
     SingleStandardExchangeDETFCommon
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFCommon.sol";
@@ -10,6 +11,9 @@ import {
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 
 interface ISingleStandardExchangeDETFInfo {
+    /// @notice Emitted once at init with resolved mint/burn thresholds (PRD §16.4).
+    event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
+
     function isReserveLive() external view returns (bool);
     function standardExchangeVault() external view returns (address);
     function standardExchangeVaultShare() external view returns (address);
@@ -18,6 +22,7 @@ interface ISingleStandardExchangeDETFInfo {
     function syntheticPrice() external view returns (uint256);
     function mintThreshold() external view returns (uint256);
     function burnThreshold() external view returns (uint256);
+    function thresholdMode() external view returns (ThresholdMode);
     function isMintingAllowed() external view returns (bool);
     function isBurningAllowed() external view returns (bool);
     function bondNftVault() external view returns (address);
@@ -57,6 +62,10 @@ abstract contract SingleStandardExchangeDETFInfoTarget is
 
     function burnThreshold() external view returns (uint256) {
         return SingleStandardExchangeDETFRepo._layoutStruct().burnThreshold;
+    }
+
+    function thresholdMode() external view returns (ThresholdMode) {
+        return SingleStandardExchangeDETFRepo._layoutStruct().thresholdMode;
     }
 
     function isMintingAllowed() external view returns (bool) {

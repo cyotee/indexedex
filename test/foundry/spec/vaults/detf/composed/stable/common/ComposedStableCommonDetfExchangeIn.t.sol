@@ -22,6 +22,7 @@ import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.so
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {ComposedStableCommonDetfExchangeIn} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol';
 import {BalancerV3WeightedPoolQuote} from '@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 contract MockMintableToken is IERC20 {
     string public name;
@@ -183,6 +184,7 @@ contract ComposedStableCommonDetfExchangeInHarness is ComposedStableCommonDetfEx
             IVaultFeeOracleQuery(address(0)),
             mintThreshold_,
             0,
+            ThresholdMode.Policy,
             routes_
         );
     }
@@ -428,7 +430,8 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
 
         harness.setWeightedPoolState(address(reservePoolBpt), reserveBalances, reserveWeights, 0, 0, false);
 
-        vm.expectRevert(IProtocolDETFErrors.ReservePoolNotInitialized.selector);
+        // Live-coupled mint gate: inert → MintingNotAllowed (not ReservePoolNotInitialized on mint path).
+        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, 1001e15, 1e18));
         harness.previewExchangeIn(commonToken, 1e18, detfToken);
     }
 }

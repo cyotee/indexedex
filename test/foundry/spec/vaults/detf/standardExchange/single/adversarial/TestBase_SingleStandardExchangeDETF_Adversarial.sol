@@ -18,6 +18,7 @@ import {
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title TestBase_SingleStandardExchangeDETF_Adversarial
 /// @notice Production Single SE DETF + shared hostile harness (Wave 1A).
@@ -48,6 +49,15 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
 
     function _deployHostileShareDetf(uint256 mintTh_, uint256 burnTh_) internal returns (address instance_) {
         // Match existing SingleStandardExchangeDETF_Reentrancy.t.sol wiring (rateTarget=0).
+        // When callers pass historical dual-path (1, max), use Open — 1/max fails mint>burn validation.
+        ThresholdMode mode_ = ThresholdMode.Policy;
+        uint256 mintArg_ = mintTh_;
+        uint256 burnArg_ = burnTh_;
+        if (mintTh_ <= burnTh_) {
+            mode_ = ThresholdMode.Open;
+            mintArg_ = 0;
+            burnArg_ = 0;
+        }
         ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
             name: "Adv Hostile SSE",
             symbol: "advHSSE",
@@ -56,8 +66,9 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
             rateTarget: IERC20(address(0)),
             detfWeight: 0,
             vaultShareWeight: 0,
-            mintThreshold: mintTh_,
-            burnThreshold: burnTh_
+            mintThreshold: mintArg_,
+            burnThreshold: burnArg_,
+            thresholdMode: mode_
         });
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(

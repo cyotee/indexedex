@@ -16,6 +16,7 @@ import {
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @notice Multi-leg mint/burn/claim matrix: N=2..3 lifecycle; same/disparate rateAssets; each leg.
 contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf {
@@ -56,7 +57,7 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
 
     function test_n2_disparateRateAssets_claimRedeem_each() public {
         // rated legs: rateAsset0=dai, rateAsset1=weth
-        address instance_ = _deployDetfN(2, 1, type(uint256).max, true);
+        address instance_ = _deployDetfN(2, 0, 0, true, ThresholdMode.Open);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 1_000e18);
 
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
@@ -94,7 +95,7 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
     }
 
     function test_n2_sameRateAsset_twoDistinctLegs_claimRedeem() public {
-        address instance_ = _deployDetfN2SameRateAsset(1, type(uint256).max);
+        address instance_ = _deployDetfN2SameRateAsset(0, 0, ThresholdMode.Open);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 900e18);
 
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);

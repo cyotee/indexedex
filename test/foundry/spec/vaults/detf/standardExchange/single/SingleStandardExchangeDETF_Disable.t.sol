@@ -3,15 +3,11 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 import {
     ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
@@ -50,23 +46,7 @@ contract SingleStandardExchangeDETF_Disable_Test is TestBase_SingleStandardExcha
     }
 
     function _deployOpenMintDetf() internal returns (address detf_) {
-        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
-            name: "Disable Open Mint DETF",
-            symbol: "dOmDETF",
-            standardExchangeVault: seVault,
-            standardExchangeVaultShare: IERC20(address(0)),
-            rateTarget: rateTargetToken,
-            detfWeight: 0,
-            vaultShareWeight: 0,
-            mintThreshold: 1,
-            burnThreshold: 0.95e18
-        });
-        vm.startPrank(owner);
-        detf_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(singleStandardExchangeDetfPkg)), abi.encode(args)
-        );
-        vm.stopPrank();
-        vm.label(detf_, "DisableOpenMintDETF");
+        detf_ = _deployOpenModeDetf("Disable Open Mint DETF", "dOmDETF");
     }
 
     function _bootstrapOpen(address bonder, uint256 lpAmount) internal {

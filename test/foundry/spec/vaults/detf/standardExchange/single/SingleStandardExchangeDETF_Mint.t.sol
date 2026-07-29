@@ -3,13 +3,9 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 import {
     ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
@@ -33,24 +29,8 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
     }
 
     function _deployOpenMintDetf() internal returns (address detf_) {
-        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
-            name: "Open Mint Single Standard Exchange DETF",
-            symbol: "omDETF",
-            standardExchangeVault: seVault,
-            standardExchangeVaultShare: IERC20(address(0)),
-            rateTarget: rateTargetToken,
-            detfWeight: 0,
-            vaultShareWeight: 0,
-            // Explicit floor so post-bootstrap synthetic (~1e18) clears the mint gate.
-            mintThreshold: 1,
-            burnThreshold: 0.95e18
-        });
-        vm.startPrank(owner);
-        detf_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(singleStandardExchangeDetfPkg)), abi.encode(args)
-        );
-        vm.stopPrank();
-        vm.label(detf_, "OpenMintSingleStandardExchangeDETF");
+        // Product Open: always-allow mint when live (mint=1/burn=0.95e18 fails mint>burn validation).
+        detf_ = _deployOpenModeDetf("Open Mint Single Standard Exchange DETF", "omDETF");
     }
 
     function _bootstrapOpen(address bonder, uint256 lpAmount) internal {

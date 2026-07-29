@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-wagmi`](https://github.com/wevm/wagmi/tree/main/packages/create-wagmi).
 
+## Product roadmap (agents)
+
+| Doc | Role |
+|-----|------|
+| **[ROADMAP.md](./ROADMAP.md)** | **Entry point** — status, next phase, **no-deploy**, do-not-reopen |
+| [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) | Wave 2 fee-accrual DETF narrative (**design draft** — owner sign-off → build) |
+| [FRONTEND_REDESIGN_DESIGN.md](./FRONTEND_REDESIGN_DESIGN.md) | Product / architecture source of truth (rev 8) |
+| [WAVE1_5_ANVIL_AND_EMBED_PLAN.md](./WAVE1_5_ANVIL_AND_EMBED_PLAN.md) | Wave 1.5 local verify + lab embed (**closed**) |
+| [WAVE1_IMPLEMENTATION_PLAN.md](./WAVE1_IMPLEMENTATION_PLAN.md) | Foundation (**done**) |
+| [WAVE1_UI_POLISH_IMPLEMENTATION_PLAN.md](./WAVE1_UI_POLISH_IMPLEMENTATION_PLAN.md) | UI polish (**done**) |
+
 ---
 
 ## How Token Lists reach the UI

@@ -10,6 +10,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 library ComposedStableCommonDetfRepo {
 
@@ -48,6 +49,7 @@ library ComposedStableCommonDetfRepo {
         IVaultFeeOracleQuery feeOracle;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
         RouteConfig[] routes;
     }
 
@@ -105,6 +107,7 @@ library ComposedStableCommonDetfRepo {
         IVaultFeeOracleQuery feeOracle_,
         uint256 mintThreshold_,
         uint256 burnThreshold_,
+        ThresholdMode thresholdMode_,
         RouteConfig[] memory routes_
     ) internal {
         layoutStruct_.permit2 = permit2_;
@@ -115,6 +118,7 @@ library ComposedStableCommonDetfRepo {
         layoutStruct_.feeOracle = feeOracle_;
         layoutStruct_.mintThreshold = mintThreshold_;
         layoutStruct_.burnThreshold = burnThreshold_;
+        layoutStruct_.thresholdMode = thresholdMode_;
 
         delete layoutStruct_.routes;
         for (uint256 i = 0; i < routes_.length; i++) {
@@ -131,6 +135,7 @@ library ComposedStableCommonDetfRepo {
         IVaultFeeOracleQuery feeOracle_,
         uint256 mintThreshold_,
         uint256 burnThreshold_,
+        ThresholdMode thresholdMode_,
         RouteConfig[] memory routes_
     ) internal {
         _initializeExchangeIn(
@@ -143,6 +148,7 @@ library ComposedStableCommonDetfRepo {
             feeOracle_,
             mintThreshold_,
             burnThreshold_,
+            thresholdMode_,
             routes_
         );
     }
@@ -340,6 +346,14 @@ library ComposedStableCommonDetfRepo {
 
     function _burnThreshold() internal view returns (uint256 burnThreshold_) {
         return _burnThreshold(_layoutStruct());
+    }
+
+    function _thresholdMode(Storage storage layoutStruct_) internal view returns (ThresholdMode thresholdMode_) {
+        return layoutStruct_.thresholdMode;
+    }
+
+    function _thresholdMode() internal view returns (ThresholdMode thresholdMode_) {
+        return _thresholdMode(_layoutStruct());
     }
 
     function _routeCount(Storage storage layoutStruct_) internal view returns (uint256 routeCount_) {

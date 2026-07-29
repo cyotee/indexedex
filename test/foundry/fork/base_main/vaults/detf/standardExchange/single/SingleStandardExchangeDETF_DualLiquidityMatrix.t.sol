@@ -39,6 +39,7 @@ import {
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {
     ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
@@ -153,8 +154,9 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
             rateTarget: commonToken,
             detfWeight: 0,
             vaultShareWeight: 0,
-            mintThreshold: 1,
-            burnThreshold: type(uint256).max
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Open
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(IStandardVaultPkg(address(outerPkg)), abi.encode(args));

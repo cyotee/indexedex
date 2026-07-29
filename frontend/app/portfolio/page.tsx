@@ -1,7 +1,6 @@
  'use client'
 
-import Image from 'next/image'
-
+import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   useAccount,
@@ -15,55 +14,40 @@ import {
 import { erc20Abi, formatUnits, zeroAddress, parseAbiItem } from 'viem'
 
 import DebugPanel from '../components/DebugPanel'
+import { BondNftCard } from '../components/earn/BondNftCard'
+import { SharePositionCard } from '../components/earn/SharePositionCard'
+import { AddressLink } from '../components/ui/AddressLink'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
+import { EmptyState } from '../components/ui/EmptyState'
+import { PageHeader } from '../components/ui/PageHeader'
+import { Stat } from '../components/ui/Stat'
 import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
+import { useBrand } from '../lib/brandContext'
 import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
 import { useSelectedNetwork } from '../lib/networkSelection'
+import { formatBondAmount } from '../lib/portfolio/formatBondAmount'
+import type { SharePositionInput } from '../lib/portfolio/sanitizeShareFields'
+import type { BondNftMetadata, BondPosition, TokenBalance } from '../lib/portfolio/types'
 
 import {
   CHAIN_ID_SEPOLIA,
   isSupportedChainId,
   resolveArtifactsChainId,
 } from '../lib/addressArtifacts'
+import { loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
 import {
+  feeDetfStakingHref,
   getProtocolDetfsForChain,
   getProtocolDetfTokensForChain,
   getSeigniorageDetfsForChain,
   getStrategyVaultTokensForChain,
+  isFeaturedFeeDetfAddress,
   type TokenListEntry,
 } from '../lib/tokenlists'
 import { resolveAppChain } from '../lib/runtimeChains'
 
-type TokenBalance = {
-  token: TokenListEntry
-  balance: bigint
-}
-
 const ZERO = BigInt(0)
-
-type BondNftMetadata = {
-  name?: string
-  description?: string
-  image?: string
-  rawTokenUri?: string
-}
-
-type BondPosition = {
-  kind: 'seigniorage' | 'protocol'
-  detf: TokenListEntry
-  nftVault: `0x${string}`
-  protocolNftId?: bigint
-  claimToken?: `0x${string}`
-  rewardToken?: `0x${string}`
-  tokenId: bigint
-  lockInfo?: {
-    sharesAwarded: bigint
-    rewardPerShare: bigint
-    bonusPercentage: bigint
-    unlockTime: bigint
-  }
-  pendingRewards?: bigint
-  metadata?: BondNftMetadata
-}
 
 const seigniorageDetfAbi = [
   {
@@ -343,8 +327,9 @@ function buildProtocolBondMetadata(pos: BondPosition): BondNftMetadata {
       ? 'Protocol (No Lock)'
       : formatProtocolUnlockLabel(pos.lockInfo?.unlockTime)
 
-  const shares = pos.lockInfo?.sharesAwarded?.toString() ?? '0'
-  const rewards = pos.pendingRewards?.toString() ?? '0'
+  // Human decimals for certificate — never raw wei .toString()
+  const shares = formatBondAmount(pos.lockInfo?.sharesAwarded, 18)
+  const rewards = formatBondAmount(pos.pendingRewards, 18)
   const tokenId = pos.tokenId.toString()
 
   const svg = `
@@ -419,6 +404,9 @@ export default function PortfolioPage() {
   const [bondPositions, setBondPositions] = useState<BondPosition[]>([])
   const [errors, setErrors] = useState<string[]>([])
   const [actionKeyPending, setActionKeyPending] = useState<string | null>(null)
+  /** Active share panel — sanitized fields only (PR8). */
+  const [shareTarget, setShareTarget] = useState<(SharePositionInput & { id: string }) | null>(null)
+  const { brand } = useBrand()
 
   const strategyVaultTokens = useMemo(
     () => getStrategyVaultTokensForChain(resolvedChainId, environment),
@@ -436,6 +424,10 @@ export default function PortfolioPage() {
     () => getProtocolDetfsForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
   )
+  const feeDetfExploreHref = useMemo(() => {
+    const fee = loadFeaturedFeeDetfs(resolvedChainId, environment, 1)[0]
+    return fee ? feeDetfStakingHref(fee.address) : '/staking'
+  }, [environment, resolvedChainId])
 
   const refresh = useCallback(async () => {
     if (!address || !publicClient) return
@@ -929,66 +921,147 @@ export default function PortfolioPage() {
 
   if (!isConnected) {
     return (
-      <div className="max-w-3xl mx-auto text-center pt-10 pb-6">
-        <h1 className="text-3xl font-semibold text-[var(--text-primary,#EDEDED)]">Portfolio</h1>
-        <p className="text-[var(--text-muted,#9aa3b2)] mt-2">
-          Connect your wallet to view vault tokens and bond NFTs.
-        </p>
-        <p className="text-sm text-[var(--text-muted,#9aa3b2)] mt-4">
-          No positions yet. The index is empty — you can fix that on{' '}
-          <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
-            Earn
-          </a>
-          .
-        </p>
+      <div className="max-w-3xl mx-auto pt-6">
+        <EmptyState
+          title="Connect to see positions"
+          body="Connect your wallet to view vault shares and DETF bond NFTs."
+          action={
+            <Link href="/earn">
+              <Button variant="secondary" size="sm">
+                Browse Earn
+              </Button>
+            </Link>
+          }
+        />
       </div>
     )
   }
 
   if (isUnsupportedChain) {
     return (
-      <div className="container mx-auto px-4">
-        <div className="text-center pt-10 pb-6">
-          <h1 className="text-3xl font-bold text-white">Portfolio</h1>
-          <p className="text-red-300 mt-2">This wallet is connected to an unsupported chain for the selected deployment environment.</p>
-        </div>
+      <div className="max-w-3xl mx-auto pt-6">
+        <EmptyState
+          title="Unsupported network"
+          body="This wallet is connected to an unsupported chain for the selected deployment environment."
+        />
       </div>
     )
   }
 
+  const tableHeadClass =
+    'text-left text-[var(--text-muted,#9aa3b2)] border-b border-[var(--border-subtle,rgba(255,255,255,0.08))]'
+  const tableRowClass = 'border-b border-[var(--border-subtle,rgba(255,255,255,0.08))]'
+
   return (
     <div className="max-w-6xl">
-      <div className="flex flex-wrap items-center justify-between gap-3 py-4 mb-4">
-        <div>
-          <h1 className="text-3xl font-semibold text-[var(--text-primary,#EDEDED)]">Portfolio</h1>
-          <p className="text-[var(--text-muted,#9aa3b2)] mt-2">
-            Vault shares and DETF bond NFTs.{' '}
-            <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
+      <PageHeader
+        title="Portfolio"
+        subtitle="Vault shares and DETF bond NFTs."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/earn"
+              className="text-sm text-[var(--accent,#4FD44B)] hover:underline"
+            >
               Browse Earn
-            </a>
-          </p>
-        </div>
-        <button
-          onClick={refresh}
-          disabled={!address || !publicClient || isLoading}
-          className="px-4 py-2 rounded-lg bg-[var(--accent,#4FD44B)] text-black font-medium hover:brightness-110 disabled:opacity-50"
-        >
-          {isLoading ? 'Refreshing…' : 'Refresh'}
-        </button>
+            </Link>
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={refresh}
+              disabled={!address || !publicClient}
+              loading={isLoading}
+            >
+              {isLoading ? 'Refreshing…' : 'Refresh'}
+            </Button>
+          </div>
+        }
+      />
+
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card padding="sm">
+          <Stat label="Strategy positions" value={String(strategyVaultBalances.length)} />
+        </Card>
+        <Card padding="sm">
+          <Stat label="DETF balances" value={String(detfBalances.length)} />
+        </Card>
+        <Card padding="sm">
+          <Stat label="Bond NFTs" value={String(bondPositions.length)} />
+        </Card>
       </div>
 
-      {/* Vault share tokens */}
-      <div className="mb-8 p-5 rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]">
-        <h2 className="text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Strategy Vault Shares</h2>
-        <p className="text-sm text-[var(--text-muted,#9aa3b2)] mt-1">Non-zero balances from the chain tokenlist. Manage via Earn detail.</p>
+      {strategyVaultBalances.length === 0 &&
+      detfBalances.length === 0 &&
+      bondPositions.length === 0 &&
+      !isLoading ? (
+        <div className="mb-8">
+          <EmptyState
+            title="No positions yet"
+            body="The index is empty — explore the Protocol DETF to mint, bond, and sell, or browse Earn strategies."
+            action={
+              <div className="flex flex-wrap gap-2">
+                <Link href={feeDetfExploreHref}>
+                  <Button variant="primary" size="sm">
+                    Explore Protocol DETF
+                  </Button>
+                </Link>
+                <Link href="/earn">
+                  <Button variant="secondary" size="sm">
+                    Browse Earn
+                  </Button>
+                </Link>
+              </div>
+            }
+          />
+        </div>
+      ) : null}
+
+      {shareTarget ? (
+        <Card className="mb-6" accent>
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-[var(--accent,#4FD44B)]">Share position</p>
+              <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+                Sanitized symbol, amount, and address only — never certificate HTML or tokenURI markup.
+              </p>
+            </div>
+            <Button type="button" variant="ghost" size="sm" onClick={() => setShareTarget(null)}>
+              Close
+            </Button>
+          </div>
+          <SharePositionCard
+            kind={shareTarget.kind}
+            symbol={shareTarget.symbol}
+            amountLabel={shareTarget.amountLabel}
+            address={shareTarget.address}
+            detailLabel={shareTarget.detailLabel}
+            brandName={shareTarget.brandName}
+            showCulture={false}
+          />
+        </Card>
+      ) : null}
+
+      {/* Strategy vault shares */}
+      <Card className="mb-6">
+        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Strategy Vault Shares</h2>
+        <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+          Non-zero balances from the chain tokenlist. Manage via Earn detail.
+        </p>
 
         {strategyVaultBalances.length === 0 ? (
-          <div className="text-gray-400 mt-4 text-sm">No strategy vault share balances found.</div>
+          <div className="mt-4 text-sm text-[var(--text-muted,#9aa3b2)]">
+            No strategy vault share balances found.{' '}
+            <Link href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
+              Browse Earn
+            </Link>{' '}
+            to deposit.
+          </div>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-300 border-b border-slate-700">
+                <tr className={tableHeadClass}>
                   <th className="py-2">Token</th>
                   <th className="py-2">Address</th>
                   <th className="py-2">Balance</th>
@@ -996,227 +1069,239 @@ export default function PortfolioPage() {
                 </tr>
               </thead>
               <tbody>
-                {strategyVaultBalances.map((row) => (
-                  <tr key={row.token.address} className="border-b border-slate-800">
-                    <td className="py-2 text-white">{row.token.name || row.token.symbol}</td>
-                    <td className="py-2 text-gray-400 font-mono">
-                      {row.token.address.slice(0, 6)}…{row.token.address.slice(-4)}
-                    </td>
-                    <td className="py-2 text-green-300">
-                      {formatUnits(row.balance, row.token.decimals)} {row.token.symbol}
-                    </td>
-                    <td className="py-2">
-                      <a
-                        href={`/earn/${row.token.address}`}
-                        className="text-sm text-[var(--accent,#4FD44B)] hover:underline"
-                      >
-                        Manage
-                      </a>
-                    </td>
-                  </tr>
-                ))}
+                {strategyVaultBalances.map((row) => {
+                  const amountLabel = formatUnits(row.balance, row.token.decimals)
+                  const shareId = `vault:${row.token.address.toLowerCase()}`
+                  return (
+                    <tr key={row.token.address} className={tableRowClass}>
+                      <td className="py-2 text-[var(--text-primary,#EDEDED)]">
+                        {row.token.name || row.token.symbol}
+                      </td>
+                      <td className="py-2">
+                        <AddressLink chainId={resolvedChainId} address={row.token.address} />
+                      </td>
+                      <td className="py-2 font-mono tabular-nums text-[var(--text-primary,#EDEDED)]">
+                        {amountLabel} {row.token.symbol}
+                      </td>
+                      <td className="py-2">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Link
+                            href={`/earn/${row.token.address}`}
+                            className="text-sm text-[var(--accent,#4FD44B)] hover:underline"
+                          >
+                            Manage
+                          </Link>
+                          <button
+                            type="button"
+                            className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)]"
+                            onClick={() =>
+                              setShareTarget({
+                                id: shareId,
+                                kind: 'vault-share',
+                                symbol: row.token.symbol,
+                                amountLabel,
+                                address: row.token.address,
+                                detailLabel: row.token.name || undefined,
+                                brandName: brand.name,
+                                showCulture: false,
+                              })
+                            }
+                          >
+                            Share
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* DETFs */}
-      <div className="mb-8 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-        <h2 className="text-xl font-semibold text-white">DETF Tokens</h2>
-        <p className="text-sm text-gray-300 mt-1">Non-zero balances of seigniorage + protocol DETFs.</p>
+      <Card className="mb-6">
+        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">DETF Tokens</h2>
+        <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+          Non-zero balances of seigniorage and protocol DETFs.
+        </p>
 
         {detfBalances.length === 0 ? (
-          <div className="text-gray-400 mt-4 text-sm">No DETF token balances found.</div>
+          <div className="mt-4 text-sm text-[var(--text-muted,#9aa3b2)]">No DETF token balances found.</div>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-300 border-b border-slate-700">
+                <tr className={tableHeadClass}>
                   <th className="py-2">Token</th>
                   <th className="py-2">Address</th>
                   <th className="py-2">Balance</th>
+                  <th className="py-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {detfBalances.map((row) => (
-                  <tr key={row.token.address} className="border-b border-slate-800">
-                    <td className="py-2 text-white">{row.token.name || row.token.symbol}</td>
-                    <td className="py-2 text-gray-400 font-mono">
-                      {row.token.address.slice(0, 6)}…{row.token.address.slice(-4)}
-                    </td>
-                    <td className="py-2 text-green-300">
-                      {formatUnits(row.balance, row.token.decimals)} {row.token.symbol}
-                    </td>
-                  </tr>
-                ))}
+                {detfBalances.map((row) => {
+                  const amountLabel = formatUnits(row.balance, row.token.decimals)
+                  const shareId = `detf:${row.token.address.toLowerCase()}`
+                  const isFee = isFeaturedFeeDetfAddress(
+                    resolvedChainId,
+                    environment,
+                    row.token.address,
+                  )
+                  const manageHref = isFee
+                    ? feeDetfStakingHref(row.token.address)
+                    : `/earn/${row.token.address}`
+                  return (
+                    <tr key={row.token.address} className={tableRowClass}>
+                      <td className="py-2 text-[var(--text-primary,#EDEDED)]">
+                        {row.token.name || row.token.symbol}
+                      </td>
+                      <td className="py-2">
+                        <AddressLink chainId={resolvedChainId} address={row.token.address} />
+                      </td>
+                      <td className="py-2 font-mono tabular-nums text-[var(--text-primary,#EDEDED)]">
+                        {amountLabel} {row.token.symbol}
+                      </td>
+                      <td className="py-2">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Link
+                            href={manageHref}
+                            className="text-sm text-[var(--accent,#4FD44B)] hover:underline"
+                          >
+                            Manage
+                          </Link>
+                          <button
+                            type="button"
+                            className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)]"
+                            onClick={() =>
+                              setShareTarget({
+                                id: shareId,
+                                kind: 'detf-share',
+                                symbol: row.token.symbol,
+                                amountLabel,
+                                address: row.token.address,
+                                detailLabel: row.token.name || undefined,
+                                brandName: brand.name,
+                                showCulture: false,
+                              })
+                            }
+                          >
+                            Share
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Bond NFTs */}
-      <div className="mb-8 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-        <h2 className="text-xl font-semibold text-white">Bond NFTs</h2>
-        <p className="text-sm text-gray-300 mt-1">
-          For each bond vault, discover owned tokenIds via ERC721 <span className="font-mono">Transfer</span> logs and
-          confirm ownership with <span className="font-mono">ownerOf</span>.
+      <Card className="mb-6">
+        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Bond NFTs</h2>
+        <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+          Owned bond positions discovered from NFT vault transfer logs.
         </p>
 
         {bondPositions.length === 0 ? (
-          <div className="text-gray-400 mt-4 text-sm">No bond NFTs found for this wallet.</div>
+          <div className="mt-4 text-sm text-[var(--text-muted,#9aa3b2)]">
+            No bond NFTs found for this wallet.{' '}
+            <Link
+              href="/earn?type=protocol-detf"
+              className="text-[var(--accent,#4FD44B)] hover:underline"
+            >
+              Browse DETFs on Earn
+            </Link>
+          </div>
         ) : (
           <div className="mt-4 space-y-4">
-            {bondPositions.map((pos) => (
-              <div key={`${pos.nftVault}:${pos.tokenId.toString()}`} className="rounded border border-slate-700 bg-slate-900 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-white font-semibold">
-                      {pos.detf.symbol} {pos.kind === 'protocol' ? 'Protocol Bond' : 'Bond'} #{pos.tokenId.toString()}
-                    </div>
-                    <div className="text-xs text-gray-400 mt-1 font-mono">
-                      NFT Vault: {pos.nftVault.slice(0, 6)}…{pos.nftVault.slice(-4)}
-                    </div>
-                    {pos.claimToken && (
-                      <div className="text-xs text-gray-400 mt-1 font-mono">
-                        Claim token: {pos.claimToken.slice(0, 6)}…{pos.claimToken.slice(-4)}
-                      </div>
-                    )}
-                    {pos.rewardToken && (
-                      <div className="text-xs text-gray-400 mt-1 font-mono">
-                        Reward token: {pos.rewardToken.slice(0, 6)}…{pos.rewardToken.slice(-4)}
-                      </div>
-                    )}
-                  </div>
+            {bondPositions.map((pos) => {
+              const nowSec = BigInt(Math.floor(Date.now() / 1000))
+              const unlockTime = pos.lockInfo?.unlockTime
+              const matured = unlockTime !== undefined ? nowSec >= unlockTime : false
+              const withdrawKey = `${pos.nftVault}:${pos.tokenId.toString()}:withdraw`
+              const unlockKey = `${pos.nftVault}:${pos.tokenId.toString()}:unlock`
+              const claimKey = `${pos.nftVault}:${pos.tokenId.toString()}:claim`
+              const redeemKey = `${pos.nftVault}:${pos.tokenId.toString()}:redeem`
+              const bondKey = `${pos.nftVault}:${pos.tokenId.toString()}`
+              const sharesLabel = formatBondAmount(pos.lockInfo?.sharesAwarded, 18)
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => loadMetadata(pos)}
-                      className="px-3 py-1 rounded bg-gray-700 text-gray-100 hover:bg-gray-600 text-xs"
+              return (
+                <div key={bondKey} className="space-y-2">
+                  <BondNftCard
+                    kind={pos.kind}
+                    symbol={pos.detf.symbol}
+                    tokenId={pos.tokenId}
+                    chainId={resolvedChainId}
+                    nftVault={pos.nftVault}
+                    claimToken={pos.claimToken}
+                    rewardToken={pos.rewardToken}
+                    unlockTimeLabel={formatUnixSeconds(pos.lockInfo?.unlockTime) || '—'}
+                    bonusLabel={formatPercentWad(pos.lockInfo?.bonusPercentage)}
+                    sharesAwarded={pos.lockInfo?.sharesAwarded}
+                    pendingRewards={pos.pendingRewards}
+                    matured={matured}
+                    actionKeyPending={actionKeyPending}
+                    withdrawKey={withdrawKey}
+                    unlockKey={unlockKey}
+                    claimKey={claimKey}
+                    redeemKey={redeemKey}
+                    isWritePending={isWritePending}
+                    metadata={pos.metadata}
+                    onLoadCertificate={() => loadMetadata(pos)}
+                    onWithdrawRewards={() => withdrawRewards(pos)}
+                    onUnlock={() => unlockBond(pos)}
+                    onClaim={() => claimProtocolRewards(pos)}
+                    onRedeem={() => redeemProtocolBond(pos)}
+                  />
+                  <div className="flex justify-end px-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setShareTarget({
+                          id: `bond:${bondKey}`,
+                          kind: 'bond-nft',
+                          symbol: pos.detf.symbol,
+                          amountLabel: sharesLabel === '—' ? '0' : sharesLabel,
+                          address: pos.nftVault,
+                          detailLabel: `Bond #${pos.tokenId.toString()}`,
+                          brandName: brand.name,
+                          showCulture: false,
+                        })
+                      }
                     >
-                      Load certificate
-                    </button>
+                      Share position
+                    </Button>
                   </div>
                 </div>
-
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                  <div className="text-gray-300">
-                    <span className="text-gray-500">Unlock time:</span> {formatUnixSeconds(pos.lockInfo?.unlockTime)}
-                  </div>
-                  <div className="text-gray-300">
-                    <span className="text-gray-500">Bonus:</span> {formatPercentWad(pos.lockInfo?.bonusPercentage)}
-                  </div>
-                  <div className="text-gray-300">
-                    <span className="text-gray-500">Shares awarded:</span> {pos.lockInfo?.sharesAwarded?.toString?.() ?? '?'}
-                  </div>
-                  <div className="text-gray-300">
-                    <span className="text-gray-500">Pending rewards:</span> {pos.pendingRewards?.toString?.() ?? '?'}
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {(() => {
-                    const nowSec = BigInt(Math.floor(Date.now() / 1000))
-                    const unlockTime = pos.lockInfo?.unlockTime
-                    const matured = unlockTime !== undefined ? nowSec >= unlockTime : false
-                    const pending = pos.pendingRewards ?? ZERO
-                    const withdrawKey = `${pos.nftVault}:${pos.tokenId.toString()}:withdraw`
-                    const unlockKey = `${pos.nftVault}:${pos.tokenId.toString()}:unlock`
-                    const claimKey = `${pos.nftVault}:${pos.tokenId.toString()}:claim`
-                    const redeemKey = `${pos.nftVault}:${pos.tokenId.toString()}:redeem`
-                    const withdrawDisabled = !pending || pending === ZERO || isWritePending || actionKeyPending === withdrawKey
-                    const unlockDisabled = !matured || isWritePending || actionKeyPending === unlockKey
-                    const claimDisabled = !pending || pending === ZERO || isWritePending || actionKeyPending === claimKey
-                    const redeemDisabled = !matured || isWritePending || actionKeyPending === redeemKey
-
-                    return (
-                      <>
-                        {pos.kind === 'seigniorage' ? (
-                          <>
-                            <button
-                              onClick={() => withdrawRewards(pos)}
-                              disabled={withdrawDisabled}
-                              className="px-3 py-1 rounded bg-blue-700 text-white hover:bg-blue-600 disabled:opacity-50 text-xs"
-                            >
-                              {actionKeyPending === withdrawKey ? 'Withdrawing…' : 'Withdraw rewards'}
-                            </button>
-                            <button
-                              onClick={() => unlockBond(pos)}
-                              disabled={unlockDisabled}
-                              className="px-3 py-1 rounded bg-purple-700 text-white hover:bg-purple-600 disabled:opacity-50 text-xs"
-                              title={matured ? 'Unlock bond' : 'Bond not matured yet'}
-                            >
-                              {actionKeyPending === unlockKey ? 'Unlocking…' : matured ? 'Unlock' : 'Unlock (locked)'}
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => claimProtocolRewards(pos)}
-                              disabled={claimDisabled}
-                              className="px-3 py-1 rounded bg-blue-700 text-white hover:bg-blue-600 disabled:opacity-50 text-xs"
-                            >
-                              {actionKeyPending === claimKey ? 'Claiming…' : 'Claim rewards'}
-                            </button>
-                            <button
-                              onClick={() => redeemProtocolBond(pos)}
-                              disabled={redeemDisabled}
-                              className="px-3 py-1 rounded bg-purple-700 text-white hover:bg-purple-600 disabled:opacity-50 text-xs"
-                              title={matured ? 'Redeem bond' : 'Bond not matured yet'}
-                            >
-                              {actionKeyPending === redeemKey ? 'Redeeming…' : matured ? 'Redeem' : 'Redeem (locked)'}
-                            </button>
-                          </>
-                        )}
-                      </>
-                    )
-                  })()}
-                </div>
-
-                {pos.metadata?.image && (
-                  <div className="mt-4">
-                    <div className="text-xs text-gray-400 mb-2">On-chain SVG</div>
-                    {/* image is typically a data:image/svg+xml;base64,... */}
-                    <div className="max-w-full rounded border border-slate-700 bg-white overflow-hidden">
-                      <Image
-                        src={pos.metadata.image}
-                        alt={pos.metadata.name || `Bond #${pos.tokenId.toString()}`}
-                        width={800}
-                        height={800}
-                        unoptimized
-                        className="w-full h-auto"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {pos.metadata?.name && (
-                  <div className="mt-3 text-sm text-gray-200">
-                    <div className="font-semibold">{pos.metadata.name}</div>
-                    {pos.metadata.description && <div className="text-gray-400 mt-1">{pos.metadata.description}</div>}
-                  </div>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
-      </div>
+      </Card>
 
       {errors.length > 0 && (
-        <div className="mb-8 p-4 bg-red-900/20 rounded-lg border border-red-800">
-          <div className="text-red-200 font-semibold">Errors</div>
-          <ul className="mt-2 text-sm text-red-200 list-disc pl-5 space-y-1">
+        <Card className="mb-6 border-[var(--danger,#E6386A)]/40">
+          <div className="font-semibold text-[var(--danger,#E6386A)]">Errors</div>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--text-primary,#EDEDED)]">
             {errors.slice(0, 10).map((e, idx) => (
               <li key={idx}>{e}</li>
             ))}
           </ul>
-          {errors.length > 10 && <div className="mt-2 text-xs text-red-200">(showing first 10)</div>}
-        </div>
+          {errors.length > 10 && (
+            <div className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">(showing first 10)</div>
+          )}
+        </Card>
       )}
 
       <DebugPanel title="Portfolio Debug">
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-[var(--text-muted,#9aa3b2)]">
           <div>Environment: {environment}</div>
           <div>ChainId: {resolvedChainId}</div>
           <div>Wallet: {address}</div>

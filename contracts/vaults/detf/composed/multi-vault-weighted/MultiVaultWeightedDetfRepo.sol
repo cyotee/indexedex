@@ -7,6 +7,7 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title MultiVaultWeightedDetfRepo
 /// @notice Diamond storage for MultiVaultWeightedDetf. Role names only.
@@ -49,6 +50,7 @@ library MultiVaultWeightedDetfRepo {
         IERC20 reserveBpt;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
         uint256 protocolNftId;
@@ -76,6 +78,7 @@ library MultiVaultWeightedDetfRepo {
         address reservePool;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
         uint256 protocolNftId;
@@ -100,6 +103,7 @@ library MultiVaultWeightedDetfRepo {
         s.reserveBpt = IERC20(p.reservePool);
         s.mintThreshold = p.mintThreshold;
         s.burnThreshold = p.burnThreshold;
+        s.thresholdMode = p.thresholdMode;
         s.feeOracle = p.feeOracle;
         s.bondNftVault = p.bondNftVault;
         s.protocolNftId = p.protocolNftId;

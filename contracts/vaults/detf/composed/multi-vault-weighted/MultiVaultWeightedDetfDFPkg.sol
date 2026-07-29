@@ -58,6 +58,10 @@ import {
 import {
     IMultiVaultWeightedDetfInfo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {
+    DETFThresholdPolicy,
+    ThresholdMode
+} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title IMultiVaultWeightedDetfDFPkg
 interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -85,6 +89,7 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
     /// @dev `vaultShares[i]==0` → vault diamond is the share ERC-20.
     /// @dev `rateProviders`/`rateAssets` zero = unrated leg.
     /// @dev `weightDetf + sum(vaultWeights) == 1e18`; each weight > 0. Zero weightDetf not allowed.
+    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
     struct PkgArgs {
         string name;
         string symbol;
@@ -96,6 +101,7 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
         uint256[] vaultWeights;
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
+        ThresholdMode thresholdMode; // trailing; 0 = Policy
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -109,8 +115,6 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
     bytes32 private constant _DEPLOY_CONFIG_SLOT =
         keccak256("vault.detf.composed.multi-vault-weighted.pkg.deploy-config");
 
-    uint256 private constant _DEFAULT_MINT_THRESHOLD = 1.05e18;
-    uint256 private constant _DEFAULT_BURN_THRESHOLD = 0.95e18;
     uint256 private constant _ONE = 1e18;
     uint256 private constant _MAX_VAULTS = 7;
 
@@ -124,6 +128,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256[7] vaultWeights;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
     }
 
     IFacet immutable ERC20_FACET;
@@ -308,11 +313,16 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
+        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
+        (uint256 mint_, uint256 burn_) =
+            DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+
         DeployConfig storage cfg = _deployConfig();
         cfg.vaultCount = uint8(n_);
         cfg.weightDetf = args.weightDetf;
-        cfg.mintThreshold = args.mintThreshold == 0 ? _DEFAULT_MINT_THRESHOLD : args.mintThreshold;
-        cfg.burnThreshold = args.burnThreshold == 0 ? _DEFAULT_BURN_THRESHOLD : args.burnThreshold;
+        cfg.mintThreshold = mint_;
+        cfg.burnThreshold = burn_;
+        cfg.thresholdMode = args.thresholdMode;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.vaults[i];
             cfg.vaultShares[i] = address(args.vaultShares[i]) == address(0)
@@ -522,12 +532,17 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         p.reservePool = reservePool_;
         p.mintThreshold = cfg.mintThreshold;
         p.burnThreshold = cfg.burnThreshold;
+        p.thresholdMode = cfg.thresholdMode;
         p.feeOracle = FEE_ORACLE;
         p.bondNftVault = bondVault_;
         p.protocolNftId = protocolNftId_;
         p.rebasingClaimToken = claimToken_;
         _copyLegsToInitParams(cfg, p);
         MultiVaultWeightedDetfRepo._initialize(p);
+        // Emit once after storage write with resolved thresholds (PRD §16.4).
+        emit IMultiVaultWeightedDetfInfo.ThresholdModeSet(
+            cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
+        );
     }
 
     function _copyLegsToInitParams(DeployConfig storage cfg, MultiVaultWeightedDetfRepo.InitParams memory p)

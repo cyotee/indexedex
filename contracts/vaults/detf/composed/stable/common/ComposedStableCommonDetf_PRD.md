@@ -3,6 +3,8 @@
 ## Title
 Stable Composed DETF (Composable Stable-Equivalent Vault Index)
 
+**Threshold modes:** Conforms to [`DETF_Threshold_Modes_PRD.md`](../../../DETF_Threshold_Modes_PRD.md) (formal LOCKED) — deploy-time Policy (default ±5% synthetic deadband) vs Open; gates always synthetic; trailing `PkgArgs.thresholdMode`.
+
 ## Purpose
 Enable users to deploy a DETF (Decentralized ETF) that composes 2–5 Standard Exchange vaults, each containing tokens considered of equivalent value and paired with a common asset. The DETF itself holds only a Weighted Pool token, abstracting away the underlying vaults and pools. The definition of “equivalent value” tokens and groupings is user-defined at deployment.
 

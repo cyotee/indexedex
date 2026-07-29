@@ -48,9 +48,9 @@ contract SingleVaultDetfExchangeOutTarget is SingleVaultDetfCommon, ReentrancyLo
         }
 
         if (_isDetfToken(tokenIn) && _isRateAsset(layoutStruct, tokenOut)) {
-            uint256 reserveSpotPrice = _calcReserveSpotPrice();
-            if (!_isBurningAllowed(layoutStruct, reserveSpotPrice)) {
-                revert BurningNotAllowed(reserveSpotPrice, layoutStruct.burnThreshold);
+            uint256 syntheticPrice = _calcSyntheticPrice();
+            if (!_isBurningAllowed(layoutStruct, syntheticPrice)) {
+                revert BurningNotAllowed(syntheticPrice, layoutStruct.burnThreshold);
             }
 
             uint256 vaultSharesNeeded =

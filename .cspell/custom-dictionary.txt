@@ -31,6 +31,8 @@ Boba
 bootstrapper
 borrowable
 Bountycaster
+Bridgehub
+browsable
 browserslist
 bstr
 bufferable
@@ -76,6 +78,7 @@ delever
 delisting
 deployers
 desync
+DETDF
 Determ
 DETF
 DETFDF
@@ -94,6 +97,7 @@ endswith
 ERC
 esbuild
 Ethena
+ethskills
 eventsource
 FAKEGAS
 Farcaster
@@ -183,6 +187,7 @@ nomicfoundation
 noncirculating
 Nonfungible
 nullglob
+nums
 offchain
 ONEB
 ONEK
@@ -211,6 +216,7 @@ pretransfer
 pretransferred
 pretransfers
 primitivefi
+PUBDATA
 Raptoreum
 Raydium
 rbac
@@ -223,6 +229,7 @@ recalcing
 recip
 reclamm
 Reentrancy
+refetches
 reimplementation
 remappings
 remint
@@ -321,4 +328,5 @@ Workstreams
 worktree
 worktrees
 WSYS
+YOURHANDLE
 zapout

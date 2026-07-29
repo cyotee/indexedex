@@ -195,12 +195,56 @@ abstract contract SingleVaultDetfCommon is DETFCommon {
         syntheticPrice_ = totalReserveValue.divDown(totalSupply);
     }
 
-    function _isMintingAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 price_) internal view returns (bool) {
-        return DETFThresholdPolicy._isMintingAllowed(layoutStruct_.mintThreshold, price_);
+    /// @dev Live-coupled: inert ⇒ false. Live + Open ⇒ true. Live + Policy ⇒ strict synthetic deadband.
+    function _isMintingAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (bool)
+    {
+        if (!_isInitialized()) return false;
+        return DETFThresholdPolicy._isMintingAllowed(
+            layoutStruct_.thresholdMode,
+            layoutStruct_.mintThreshold,
+            _calcSyntheticPrice()
+        );
     }
 
-    function _isBurningAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 price_) internal view returns (bool) {
-        return DETFThresholdPolicy._isBurningAllowed(layoutStruct_.burnThreshold, price_);
+    /// @dev Live-coupled: inert ⇒ false. Live + Open ⇒ true. Live + Policy ⇒ strict synthetic deadband.
+    function _isBurningAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (bool)
+    {
+        if (!_isInitialized()) return false;
+        return DETFThresholdPolicy._isBurningAllowed(
+            layoutStruct_.thresholdMode,
+            layoutStruct_.burnThreshold,
+            _calcSyntheticPrice()
+        );
+    }
+
+    /// @dev Price-param overload for callers that already computed synthetic (avoids double calc).
+    function _isMintingAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 syntheticPrice_)
+        internal
+        view
+        returns (bool)
+    {
+        if (!_isInitialized()) return false;
+        return DETFThresholdPolicy._isMintingAllowed(
+            layoutStruct_.thresholdMode, layoutStruct_.mintThreshold, syntheticPrice_
+        );
+    }
+
+    /// @dev Price-param overload for callers that already computed synthetic (avoids double calc).
+    function _isBurningAllowed(SingleVaultDetfRepo.Storage storage layoutStruct_, uint256 syntheticPrice_)
+        internal
+        view
+        returns (bool)
+    {
+        if (!_isInitialized()) return false;
+        return DETFThresholdPolicy._isBurningAllowed(
+            layoutStruct_.thresholdMode, layoutStruct_.burnThreshold, syntheticPrice_
+        );
     }
 
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {

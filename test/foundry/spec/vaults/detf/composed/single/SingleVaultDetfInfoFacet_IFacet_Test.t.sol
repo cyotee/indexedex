@@ -34,7 +34,7 @@ contract SingleVaultDetfInfoFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](15);
+        controlFuncs = new bytes4[](16);
         controlFuncs[0] = IProtocolDETF.detfToken.selector;
         controlFuncs[1] = IProtocolDETF.pairToken.selector;
         controlFuncs[2] = IProtocolDETF.rebasingClaimToken.selector;
@@ -46,9 +46,10 @@ contract SingleVaultDetfInfoFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[8] = IProtocolDETF.syntheticPrice.selector;
         controlFuncs[9] = IProtocolDETF.mintThreshold.selector;
         controlFuncs[10] = IProtocolDETF.burnThreshold.selector;
-        controlFuncs[11] = IProtocolDETF.isMintingAllowed.selector;
-        controlFuncs[12] = IProtocolDETF.isBurningAllowed.selector;
-        controlFuncs[13] = ISingleVaultDetf.vaultRateProvider.selector;
-        controlFuncs[14] = ISingleVaultDetf.reservePoolIndexes.selector;
+        controlFuncs[11] = IProtocolDETF.thresholdMode.selector;
+        controlFuncs[12] = IProtocolDETF.isMintingAllowed.selector;
+        controlFuncs[13] = IProtocolDETF.isBurningAllowed.selector;
+        controlFuncs[14] = ISingleVaultDetf.vaultRateProvider.selector;
+        controlFuncs[15] = ISingleVaultDetf.reservePoolIndexes.selector;
     }
 }

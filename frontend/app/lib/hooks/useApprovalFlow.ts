@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { PublicClient } from 'viem'
 import { erc20Abi } from 'viem'
+import { needsApprovalFromAllowance } from '../tx/allowanceGate'
 
 // Local alias for the minimal writeContractAsync shape used by Wagmi's useWriteContract
 export type WriteContractAsync = (args: {
@@ -127,17 +128,22 @@ export function useApprovalFlow(config: UseApprovalFlowConfig) {
     setAllowancesReady(false)
   }, [tokenAddress, permit2Address, routerAddress, address, effectiveApprovalMode, refetchAllowance, refetchPermit2Allowance])
 
-  const needsTokenApproval = useMemo(() => {
-    if (!effectiveAmount || effectiveAmount <= BigInt(0)) return false
-    if (tokenAllowance === undefined || tokenAllowance === null) return false
-    return tokenAllowance < effectiveAmount
-  }, [effectiveAmount, tokenAllowance])
+  // Unknown (still loading) → needs approval so Execute never enables early (Swap parity).
+  const needsTokenApproval = useMemo(
+    () => needsApprovalFromAllowance(effectiveAmount, tokenAllowance),
+    [effectiveAmount, tokenAllowance],
+  )
 
-  const needsPermit2Approval = useMemo(() => {
-    if (!effectiveAmount || effectiveAmount <= BigInt(0)) return false
-    if (permit2Allowance === undefined || permit2Allowance === null) return false
-    return permit2Allowance[0] < effectiveAmount
-  }, [effectiveAmount, permit2Allowance])
+  const needsPermit2Approval = useMemo(
+    () =>
+      needsApprovalFromAllowance(
+        effectiveAmount,
+        permit2Allowance === undefined || permit2Allowance === null
+          ? permit2Allowance
+          : permit2Allowance[0],
+      ),
+    [effectiveAmount, permit2Allowance],
+  )
 
   // Helper: set token allowance with reset-to-zero fallback
   const setTokenAllowance = useCallback(async (token: `0x${string}`, spender: `0x${string}`, amount: bigint) => {

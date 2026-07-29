@@ -1,8 +1,8 @@
 {
   "name": "Indexedex Uniswap V2 Pools",
-  "timestamp": "2026-06-11T18:58:48.335Z",
+  "timestamp": "2026-07-25T23:00:53.348Z",
   "version": {
-    "major": 5,
+    "major": 6,
     "minor": 0,
     "patch": 0
   },
@@ -24,7 +24,7 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0x7e741F1C6bB4947A033A7B7Bc0B3158F65D8A6D3",
+      "address": "0xD24ceb102a256e291B69F0bE88C6c7259C159003",
       "name": "Uniswap V2 TTA/TTB Pool",
       "symbol": "UNI-V2-AB",
       "decimals": 18,
@@ -35,7 +35,7 @@
     },
     {
       "chainId": 11155111,
-      "address": "0x4856201108D10B19d902D4138a958EeA1F4b5EB5",
+      "address": "0x7Cc34a8336f177F0261bbCf82c960f5282F51D10",
       "name": "Uniswap V2 TTB/WETH Pool",
       "symbol": "UNI-V2-BW",
       "decimals": 18,

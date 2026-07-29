@@ -40,8 +40,6 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
     using ScalingHelpers for uint256;
 
     uint256 internal constant ONE_WAD = 1e18;
-    uint256 internal constant DEFAULT_MINT_THRESHOLD = 1.05e18;
-    uint256 internal constant DEFAULT_BURN_THRESHOLD = 0.95e18;
 
     struct MintSplit {
         uint256 grossDetf;
@@ -101,14 +99,18 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
         syntheticPrice_ = totalValue_.divDown(totalSupply_);
     }
 
+    /// @dev Live-coupled: inert ⇒ false. Live + Open ⇒ true. Live + Policy ⇒ strict synthetic deadband.
     function _isMintingAllowed() internal view returns (bool) {
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
-        return DETFThresholdPolicy._isMintingAllowed(s.mintThreshold, _syntheticPrice());
+        if (!s.isReserveLive) return false;
+        return DETFThresholdPolicy._isMintingAllowed(s.thresholdMode, s.mintThreshold, _syntheticPrice());
     }
 
+    /// @dev Live-coupled: inert ⇒ false. Live + Open ⇒ true. Live + Policy ⇒ strict synthetic deadband.
     function _isBurningAllowed() internal view returns (bool) {
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
-        return DETFThresholdPolicy._isBurningAllowed(s.burnThreshold, _syntheticPrice());
+        if (!s.isReserveLive) return false;
+        return DETFThresholdPolicy._isBurningAllowed(s.thresholdMode, s.burnThreshold, _syntheticPrice());
     }
 
     function _seigniorageIncentiveWad() internal view returns (uint256) {

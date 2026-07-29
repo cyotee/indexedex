@@ -45,6 +45,7 @@ import {
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title TestBase_SingleStandardExchangeDETF
 /// @notice Deploys production SingleStandardExchangeDETF against a production SE vault.
@@ -184,7 +185,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             detfWeight: 0,
             vaultShareWeight: 0,
             mintThreshold: 0,
-            burnThreshold: 0
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Policy
         });
 
         vm.startPrank(owner);
@@ -224,8 +226,19 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault missing");
     }
 
-    /// @dev Open mintThreshold=1 and high burnThreshold for mint/burn math tests.
+    /// @dev Dual-path always-allow primary market when live (mint + burn math / adversarial suites).
+    /// @dev Historical Policy mint=1 / burn=max is **illegal** under PRD §16.3 (`mint > burn`).
+    ///      Always-allow is product **Open** (`_deployOpenModeDetf`). Kept name for call-site compatibility.
     function _deployOpenThresholdDetf(string memory name_, string memory symbol_)
+        internal
+        returns (address detf_)
+    {
+        return _deployOpenModeDetf(name_, symbol_);
+    }
+
+    /// @dev Product Open mode: threshold gates always pass when live; live/inert still enforced.
+    ///      Thresholds still resolve/store (defaults for 0,0); gates ignore them.
+    function _deployOpenModeDetf(string memory name_, string memory symbol_)
         internal
         returns (address detf_)
     {
@@ -237,8 +250,9 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             rateTarget: rateTargetToken,
             detfWeight: 0,
             vaultShareWeight: 0,
-            mintThreshold: 1,
-            burnThreshold: type(uint256).max
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Open
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -246,6 +260,57 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         );
         vm.stopPrank();
         vm.label(detf_, name_);
+    }
+
+    /// @dev Legal extreme Policy pair (mint > burn) for T4b/T18 — mode remains Policy.
+    ///      Not both-always-open (impossible under mint>burn + Policy deadband); use Open for that.
+    function _deployExtremePolicyPairDetf(string memory name_, string memory symbol_)
+        internal
+        returns (address detf_)
+    {
+        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
+            name: name_,
+            symbol: symbol_,
+            standardExchangeVault: seVault,
+            standardExchangeVaultShare: IERC20(address(0)),
+            rateTarget: rateTargetToken,
+            detfWeight: 0,
+            vaultShareWeight: 0,
+            mintThreshold: 2,
+            burnThreshold: 1,
+            thresholdMode: ThresholdMode.Policy
+        });
+        vm.startPrank(owner);
+        detf_ = indexedexManager.deployVault(
+            IStandardVaultPkg(address(singleStandardExchangeDetfPkg)), abi.encode(args)
+        );
+        vm.stopPrank();
+        vm.label(detf_, name_);
+    }
+
+    /// @dev Policy mode with explicit custom mint/burn band (already resolved; non-zero).
+    function _deployPolicyThresholds(uint256 mintThreshold_, uint256 burnThreshold_)
+        internal
+        returns (address detf_)
+    {
+        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
+            name: "Policy Custom Band DETF",
+            symbol: "pcDETF",
+            standardExchangeVault: seVault,
+            standardExchangeVaultShare: IERC20(address(0)),
+            rateTarget: rateTargetToken,
+            detfWeight: 0,
+            vaultShareWeight: 0,
+            mintThreshold: mintThreshold_,
+            burnThreshold: burnThreshold_,
+            thresholdMode: ThresholdMode.Policy
+        });
+        vm.startPrank(owner);
+        detf_ = indexedexManager.deployVault(
+            IStandardVaultPkg(address(singleStandardExchangeDetfPkg)), abi.encode(args)
+        );
+        vm.stopPrank();
+        vm.label(detf_, "PolicyCustomBandDETF");
     }
 
     function _bootstrapDetf(address instance_, address bonder, uint256 lpAmount)

@@ -21,6 +21,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {ComposedStableCommonDetfExchangeIn} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol';
 import {BalancerV3WeightedPoolQuote} from '@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 contract BurnInMockToken is IERC20 {
     string public name;
@@ -219,6 +220,7 @@ contract ComposedStableCommonDetfBurnExchangeInHarness is ComposedStableCommonDe
             IVaultFeeOracleQuery(address(0)),
             0,
             burnThreshold_,
+            ThresholdMode.Policy,
             routes_
         );
     }

@@ -14,6 +14,7 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /**
  * @title IProtocolDETF
@@ -27,11 +28,15 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
  *      - rateAsset: Rate Provider target / mint-bond-redeem settlement ("new money")
  *      - underlyingVault: Any IStandardExchange that processes rateAsset
  *
- *      Uses a fully diluted, backing-derived synthetic spot price to gate
- *      asymmetric operations with a deadband around peg:
- *      - mint below the lower deadband bound
- *      - burn above the upper deadband bound
- *      - disable both inside the deadband
+ *      Primary-market mint/burn gates use **synthetic / fully diluted** price (not pure
+ *      reserve spot). Deploy-time `ThresholdMode` (PRD DETF_Threshold_Modes):
+ *      - **Policy** (default): mint only if `synthetic > mintThreshold`; burn only if
+ *        `synthetic < burnThreshold`. Equality is deadband (neither). Defaults ±5%
+ *        when args are `0,0` (`1.05e18` / `0.95e18`).
+ *      - **Open**: when live, threshold gates always pass; thresholds still stored for
+ *        getters/display but are ignored by mint/burn gate helpers.
+ *      Inert / pre-live always blocks normal user mint/burn regardless of mode.
+ *      Claim redemption (`RedemptionNotAllowed`) is independent of Open.
  */
 interface IProtocolDETF {
     struct BridgeArgs {
@@ -102,32 +107,53 @@ interface IProtocolDETF {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Calculates the synthetic spot price of the DETF vs rateAsset backing.
-     * @dev Derived from the protocol-owned reserve backing and weighted-pool spot-price math.
-     *      `1e18` represents peg, values above peg favor minting, and values below peg favor burning.
-     * @return syntheticPrice The synthetic price (1e18 = peg)
+     * @notice Calculates the synthetic (fully diluted) price of the DETF.
+     * @dev Derived from protocol-owned reserve backing (and bond-held BPT when the
+     *      family includes it). Gate input for mint/burn is always this synthetic
+     *      value — not pure spot. Abstract `1e18` is the Policy peg reference.
+     * @return syntheticPrice The synthetic price (1e18 = abstract peg under Policy)
      */
     function syntheticPrice() external view returns (uint256);
 
     /**
-     * @notice Returns the upper deadband bound.
-     * @dev Minting is allowed only when the synthetic price is above this bound.
+     * @notice Returns the stored mint threshold (Policy upper deadband bound).
+     * @dev After deploy resolve: `0` args become `1.05e18`. Under **Open**, the value
+     *      remains stored for display/getters; **gates ignore** it. Under **Policy**,
+     *      mint is allowed only when `syntheticPrice > mintThreshold` and the product is live.
      */
     function mintThreshold() external view returns (uint256);
 
     /**
-     * @notice Returns the lower deadband bound.
-     * @dev Burning is allowed only when the synthetic price is below this bound.
+     * @notice Returns the stored burn threshold (Policy lower deadband bound).
+     * @dev After deploy resolve: `0` args become `0.95e18`. Under **Open**, the value
+     *      remains stored for display/getters; **gates ignore** it. Under **Policy**,
+     *      burn is allowed only when `syntheticPrice < burnThreshold` and the product is live.
      */
     function burnThreshold() external view returns (uint256);
 
     /**
-     * @notice Checks if minting is currently allowed.
+     * @notice Returns the deploy-time primary-market threshold mode.
+     * @dev `ThresholdMode.Policy` (0) = deadband gates; `ThresholdMode.Open` (1) =
+     *      threshold gates always pass when live. Fixed at init; no post-deploy setter.
+     */
+    function thresholdMode() external view returns (ThresholdMode);
+
+    /**
+     * @notice Checks if seigniorage minting is currently allowed.
+     * @dev Requires family **live** (e.g. reserve initialized / first bond). Then:
+     *      - **Policy:** `syntheticPrice > mintThreshold`
+     *      - **Open:** threshold check always true
+     *      Inert always returns false. Does not cover claim redemption.
      */
     function isMintingAllowed() external view returns (bool allowed);
 
     /**
-     * @notice Checks if burning/redemption is currently allowed.
+     * @notice Checks if seigniorage burning is currently allowed.
+     * @dev Requires family **live**. Then:
+     *      - **Policy:** `syntheticPrice < burnThreshold`
+     *      - **Open:** threshold check always true
+     *      Inert always returns false. Claim-path redemption is separate
+     *      (`RedemptionNotAllowed` is independent of Open).
      */
     function isBurningAllowed() external view returns (bool allowed);
 
@@ -137,7 +163,7 @@ interface IProtocolDETF {
 
     /**
      * @notice Mints DETF tokens by depositing rateAsset.
-     * @dev Only allowed when synthetic price is outside the mint deadband policy.
+     * @dev Allowed only when `isMintingAllowed()` is true (live + Policy/Open synthetic gate).
      * @param rateAssetAmount Amount of rateAsset to deposit
      * @param recipient Address to receive DETF tokens
      * @param pretransferred Whether rateAsset was already transferred

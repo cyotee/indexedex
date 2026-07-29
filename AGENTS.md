@@ -2,6 +2,7 @@
 
 This file provides guidance to AI Agents when working with code in this repository.
 If PROGRESS.md exists in the project root, read it for cross-session context before starting work.
+**Frontend product / redesign roadmap:** start at [`frontend/ROADMAP.md`](frontend/ROADMAP.md) (not root `PROGRESS.md`, which may only hold historical notes + a pointer).
 
 ## Required Reading
 
@@ -77,6 +78,7 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 | Single Standard Exchange | `detf/standardExchange/single/` | Exactly **one** SE vault + DETF weighted reserve |
 | Composed single | `detf/composed/single/` | Single underlying vault DETF shape (behavioral reference; brand-era names must not leak into new code) |
 | Composed stable multi | `detf/composed/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
+| Mixed-buffer multi-vault stable | `detf/composed/stable/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
 | Multi-vault weighted | `detf/composed/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
 | Dual-liquidity / protocol | elsewhere under `contracts/vaults/` | Protocol-specific DETF-like products; do not subclass for new generic DETFs |
 
@@ -86,7 +88,8 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 
 - DETF **instances are immutable and unowned** after deploy: no instance owner, no diamondCut, no admin pause surface on the diamond for normal operation.
 - Flawed config → abandon instance; ship a new package/args. Prefer deploy-time wiring only (bond NFT, claim token, rate providers, reserve pool) inside DFPkg `postDeploy`.
-- Fees / bond terms / thresholds: **Vault Fee Oracle** (`feeOracle` on manager) where peer DETFs already do. Defaults: **`mintThreshold = 1.05e18`**, **`burnThreshold = 0.95e18`** (±5% synthetic deadband), overridable via `PkgArgs` (`0` → default).
+- **Fees / bond terms / seigniorage incentive:** **Vault Fee Oracle** (`feeOracle` on manager) where peer DETFs already do.
+- **Mint/burn thresholds + mode:** deploy-time only via **`PkgArgs` → resolve → instance storage** — **not** the fee oracle. See **Pricing and mint/burn gates** below.
 
 ### Liveness (inert → live)
 
@@ -94,13 +97,23 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 - Live is established by a **first successful bond** that creates protocol reserve (family-specific):
   - **Single SE DETF:** first bond with SE vault shares (mints DETF self-leg into pool + joins shares; BPT principal on bond NFT).
   - **Multi-vault weighted:** first bond of **reserve BPT** (user may obtain BPT via `initializeReserve` / join that mints DETF **only into the pool**, not open seigniorage mint).
+  - **Mixed-buffer multi-vault stable:** permissionless `bootstrapFirstBond` (multi-asset non-DETF legs + rate-scaled peg DETF self-seed + reserve init; BPT principal on bond NFT).
 - Do not invent a second product “bootstrap mode.” Speak **inert / pre-live** vs **live**.
 
 ### Pricing and mint/burn gates
 
+**Normative PRD:** [`contracts/vaults/detf/DETF_Threshold_Modes_PRD.md`](contracts/vaults/detf/DETF_Threshold_Modes_PRD.md) (**LOCKED**). Core lib: [`contracts/vaults/detf/core/DETFThresholdPolicy.sol`](contracts/vaults/detf/core/DETFThresholdPolicy.sol).
+
 - **Pricing engine = reserve pool** (balances, weights, fees, rate providers). Do **not** introduce an off-pool multi-asset FX “numeraire” ledger.
-- **Synthetic price:** fully diluted backing from owned reserve BPT’s claim on pool balances (rate-scaled), ÷ DETF `totalSupply`, abstract **1e18 peg**. Include BPT held by bond NFT vault when peers do.
-- **Mint** only if synthetic **> mintThreshold**; **burn** only if synthetic **< burnThreshold** (`DETFThresholdPolicy`). First bond is typically ungated by synthetic (no supply yet).
+- **Synthetic price:** fully diluted backing from owned reserve BPT’s claim on pool balances (rate-scaled), ÷ DETF `totalSupply`, abstract **1e18 peg** (Policy narrative). Include BPT held by bond NFT vault when peers do. **All mint/burn threshold gates use synthetic** — never spot alone.
+- **Deploy-time `ThresholdMode`:** explicit field on `PkgArgs` / instance storage — **`Policy` (default)** vs **`Open`**. **Never** infer Open from `0` thresholds. Omitted / zero mode → Policy.
+- **Defaults:** `mintThreshold = 0` and `burnThreshold = 0` resolve to **`1.05e18` / `0.95e18`** via `DETFThresholdPolicy` (both modes). Resolved values are **stored** for getters under Open as well; Open gates **ignore** them.
+- **Source of truth:** mode + thresholds from **`PkgArgs` → resolve → instance storage only**. Fee oracle does **not** set, override, or mutate mode or thresholds.
+- **Validation (after resolve, both modes):** `mintThreshold > burnThreshold`; invalid mode reverts at deploy/init. No post-deploy setter.
+- **Policy gates (when live):** mint iff `synthetic > mintThreshold`; burn iff `synthetic < burnThreshold`; **equality = deadband** (neither). First bond / bootstrap remains **synthetically ungated** (both modes).
+- **Open gates (when live):** threshold gates **always pass**. Open does **not** change the route set (e.g. MixedBuffer still burns **buffer only**), fees, seigniorage split, or inert→live rules. Do not advertise a peg for Open instances.
+- **Info surface:** `thresholdMode()`, live-coupled `isMintingAllowed()` / `isBurningAllowed()` (and stored threshold getters).
+- **Shipped:** F1–F5 implement Policy/Open; F6 `IProtocolDETF` documents the surface. **F7 Seigniorage** is **Out** of the threshold-mode program (peg regime) — see [`contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md`](contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md). DualLiquidity / pure SE vaults remain out of this PRD.
 - Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
 
 ### User routes (defaults)

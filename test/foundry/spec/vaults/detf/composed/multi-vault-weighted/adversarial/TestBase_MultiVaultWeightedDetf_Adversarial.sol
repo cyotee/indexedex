@@ -26,6 +26,7 @@ import {
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share: transferFrom re-enters DETF, then completes transfer so probe state persists.
 contract AdvRecordingReentrantShare is MockERC20 {
@@ -141,6 +142,13 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
     }
 
     function _deployHostileShareDetf(uint256 mintTh_, uint256 burnTh_) internal returns (address instance_) {
+        // Historical (1, max) dual-path always-allow → product Open under §16.3.
+        ThresholdMode mode_ = ThresholdMode.Policy;
+        if (mintTh_ == 1 && burnTh_ == type(uint256).max) {
+            mintTh_ = 0;
+            burnTh_ = 0;
+            mode_ = ThresholdMode.Open;
+        }
         IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](1);
         IERC20[] memory shares_ = new IERC20[](1);
         IRateProvider[] memory rps_ = new IRateProvider[](1);
@@ -161,7 +169,8 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
             weightDetf: 80e16,
             vaultWeights: weights_,
             mintThreshold: mintTh_,
-            burnThreshold: burnTh_
+            burnThreshold: burnTh_,
+            thresholdMode: mode_
         });
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(

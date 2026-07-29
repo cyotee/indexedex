@@ -16,6 +16,8 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 | [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_PRD.md) | **v2 PRD (complete):** linked volume + share-book |
 | [`scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) | **v2 findings:** Mode B volume matrix + Mode A share book |
 | [`scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/dualLiquidityLinkedCrossVersion/DualLiquidity_Research_v2_IMPLEMENTATION_AND_TEST_PLAN.md) | **v2 plan:** Mode B volume → Mode A share book |
+| [`scenarios/cca/CCA_Rehearsal_PRD.md`](./scenarios/cca/CCA_Rehearsal_PRD.md) | **PRD (planned):** Uniswap CCA rehearsal for RICH auction ads + post-clear product path |
+| [`scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md) | **Plan (planned):** Phase 0 addresses → Mode A/B/C → FINDINGS |
 | [`scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md`](./scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md) | PRD for rate provider comparative |
 | `out/` | **Generated** JSONL + PNGs (gitignored) — recreate with runners |
 

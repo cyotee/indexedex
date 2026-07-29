@@ -9,6 +9,7 @@ import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @notice Phase 0/1: package deploys inert against production SE vault; mint blocked until first bond.
 contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchangeDETF {
@@ -21,6 +22,9 @@ contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchan
         assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault created at deploy");
         assertEq(detfInfo.mintThreshold(), 1.05e18, "default mint threshold");
         assertEq(detfInfo.burnThreshold(), 0.95e18, "default burn threshold");
+        assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy), "default mode Policy");
+        assertFalse(detfInfo.isMintingAllowed(), "inert mint false");
+        assertFalse(detfInfo.isBurningAllowed(), "inert burn false");
     }
 
     function test_deploy_mintRevertsWhileInert() public {

@@ -25,7 +25,6 @@ export const detfTypesArticle: ResearchArticle = {
     'No type is a registered securities ETF or fund share.',
     'Type choice does not guarantee peg, yield, or secondary market depth.',
     'Family availability depends on what is deployed on a given network — this note is the design map, not a live catalog guarantee.',
-    'Protocol DETF is a fee-participation path on a live DETF instance, not a fifth reserve-composition type.',
     'Deploy package names in code are not customer product titles.',
   ],
   relatedProductHref: '/research/detf',
@@ -38,7 +37,7 @@ export const detfTypesArticle: ResearchArticle = {
       paragraphs: [
         'DETF means Decentralized ETF: one onchain share over a real multi-asset reserve. IndexedEx’s premier product is standing up that pattern from more than one package type — so a one-vault basket is not forced into the same reserve layout as a multi-leg weighted or stable design.',
         'Every true DETF still: is the ERC-20, prices from its reserve, deploys inert until first bond (or family bootstrap), and offers Policy or Open mint/burn rules. Types change how legs are composed and which inputs mint or burn accept — not whether the product is “really a DETF.”',
-        'A design rule across all types: reserve vault legs are Standard Exchange vaults injected at deploy — the DETF does not hardcode a single protocol backend. Fee participation on a live instance (Protocol DETF on /staking) is not a fifth type — it is a use of a DETF, not a different reserve layout.',
+        'A design rule across all types: reserve vault legs are Standard Exchange vaults injected at deploy — the DETF does not hardcode a single protocol backend.',
       ],
     },
     {
@@ -114,13 +113,6 @@ export const detfTypesArticle: ResearchArticle = {
         'Several vaults, different valuations / fixed weights → multi-vault weighted.',
         'Several like-kind vaults composed into one structure via dual rate views + weighted top → multi-vault stable (composed).',
         'Several vaults on one cash buffer, mint buffer or shares, burn to that buffer → mixed-buffer multi-vault stable.',
-      ],
-    },
-    {
-      heading: 'Not a fifth type: Protocol DETF',
-      paragraphs: [
-        'The four types above answer: how the reserve is composed and which inputs mint or burn accept. Protocol DETF answers a different question: how you earn a share of protocol fees on a live DETF instance (home: /staking). Same bond / mint / burn design class — not another reserve layout. Fees may apply; amounts are not guarantees.',
-        'For liquid DETF versus the bond / claim seigniorage path, see Bond vs mint.',
       ],
     },
   ],

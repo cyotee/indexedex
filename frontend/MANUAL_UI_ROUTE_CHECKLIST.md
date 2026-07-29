@@ -4,12 +4,14 @@ Use this as a single place to track which UI routes you’ve manually tested, wh
 
 ## Test Session Metadata
 
-- Date:
-- Tester:
-- Git branch / commit:
-- RPC / Network (e.g. Anvil fork):
-- ChainId:
-- Deployer script run (yes/no + timestamp):
+- Date: **2026-07-25**
+- Tester: Wave 1.5 agent session (Playwright + on-chain smokes against **then-running** local RPC)
+- Git branch / commit: local workspace (Wave 1.5 verification)
+- RPC / Network: existing local RPC `http://127.0.0.1:8545`, chain **11155111** (`local_testing` artifacts)
+- ChainId: **11155111**
+- Deploy this session: **forbidden going forward** (see `ROADMAP.md` § Do not deploy). Historical Wave 1.5 used a pre-existing/local stack; **do not re-run** stage scripts for checklist completion.
+- Env: `NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=local_testing`; `NEXT_PUBLIC_EARN_DETF_EMBED=false` shared default (lab true only if operator opts in)
+- Notes: strategy deposit OK (non-zero minOut); DETF bond OK (rateAsset path); free mint may be threshold-gated; lab embed mount proven; `local_testing` registry fix in `addresses/index.js`
 
 ## **Standard Exchange Router Routes**
 
@@ -23,13 +25,15 @@ Use this as a single place to track which UI routes you’ve manually tested, wh
 
 ## Global Preconditions (do once per session)
 
+**Do not deploy** contracts or re-run `local_testing.sh` to complete this checklist. Use committed `app/addresses/**` and any RPC the operator already provides.
+
 | Check | Pass | Fail | Notes |
 |---|:--:|:--:|---|
-| App boots (`next dev`) with no redbox errors | [ ] | [ ] | [ ] |
-| Wallet connect works (connect, disconnect, reconnect) | [ ] | [ ] | [ ] |
-| Correct chain selected (Anvil chainId `31337` if local) | [ ] | [ ] | [ ] |
-| Addresses load (no “missing deployment/address” errors) | [ ] | [ ] | [ ] |
-| Basic reads work (balances / block number updates) | [ ] | [ ] | [ ] |
+| App boots (`next dev`) with no redbox errors | [✅] | [ ] | `/earn` 200 on local_testing |
+| Wallet connect works (connect, disconnect, reconnect) | [✅] | [ ] | Playwright injected EIP-1193 |
+| Correct chain selected | [✅] | [ ] | App Network Sepolia **11155111** when using that artifact set |
+| Addresses load (no “missing deployment/address” errors) | [✅] | [ ] | After index.js local_testing registry fix |
+| Basic reads work (balances / block number updates) | [✅] | [ ] | When RPC present; else document skip |
 
 ---
 
@@ -405,6 +409,59 @@ These routes were detected from `frontend/app/**/page.tsx`.
 
 ---
 
+## Wave 1 — money path & a11y (2026-07)
+
+| Check | Pass | Fail | Notes |
+|---|:--:|:--:|---|
+| Deposit four-state CTA: disconnected → Connect | [ ] | [ ] | ActionCta data-gate=disconnected |
+| Wrong network → Switch; approve/execute disabled | [ ] | [ ] | wallet chain ≠ app chain |
+| Sequential approve legs (token→Permit2, then permit2→router) | [ ] | [ ] | split handlers only |
+| Deposit only after quote; minOut from preview+slippage | [ ] | [ ] | no silent minOut=0 |
+| Wallet reject recovers (pending cleared, error message) | [ ] | [ ] | parseContractError |
+| Reduced motion: UI usable with prefers-reduced-motion | [ ] | [ ] | no critical motion-only affordances |
+| No RICH/RICHIR on Earn detail / stepper | [ ] | [ ] | role names / symbol primary |
+| `/seigniorage` single-hops to `/earn?type=seigniorage-detf` | [ ] | [ ] | |
+| DETF embed flag off in prod (`NEXT_PUBLIC_EARN_DETF_EMBED=false`) | [ ] | [ ] | enable only after mint/bond e2e |
+| No production Admin nav 404 | [ ] | [ ] | Admin only when SHOW_DEBUG |
+| **Release gate (not Wave 1 merge blocker):** brand lock / OG metadata | [ ] | [ ] | Rule 8 pre-publish |
+
+---
+
+## Wave 2 — fee-accrual DETF narrative (2026-07-26)
+
+**Status: closed.** Do not re-open for residual redesign. Agent entry: `ROADMAP.md`.
+
+| Check | Pass | Fail | Notes |
+|---|:--:|:--:|---|
+| Landing featured → `/staking?detf=` | [✅] | [ ] | Playwright `wave2-fee-detf.spec.ts` |
+| More → Fee-accrual DETF → `/staking` | [✅] | [ ] | `Header.tsx` |
+| Earn grid has no fee-detf rows; banner → staking | [✅] | [ ] | |
+| `/earn/0xFeeDetf` → `/staking?detf=` | [✅] | [ ] | |
+| Token Open {symbol} | [✅] | [ ] | |
+| Portfolio empty → staking | [✅] | [ ] | |
+| Staking mint/bond chrome loads | [✅] | [ ] | |
+| Vitest fee list + Earn exclude | [✅] | [ ] | |
+
+**Env:** Prefer `node scripts/next.mjs dev --port 3001` (avoid `npm run dev` killing :3000).
+
+**Regression:** `E2E_SKIP_WEBSERVER=1 E2E_BASE_URL=http://127.0.0.1:3001 npx playwright test e2e/wave2-fee-detf.spec.ts`
+
+---
+
+## PR8 — SharePositionCard (2026-07-26)
+
+**Status: shipped.** See `ROADMAP.md` § PR8 acceptance.
+
+| Check | Pass | Fail | Notes |
+|---|:--:|:--:|---|
+| Sanitizers + unit tests | [✅] | [ ] | `sanitizeShareFields.test.ts` |
+| SharePositionCard + Portfolio wire | [✅] | [ ] | vault / DETF / bond Share |
+| Token no invent claim | [✅] | [ ] | |
+| LaunchBanner env | [✅] | [ ] | `NEXT_PUBLIC_SHOW_LAUNCH_BANNER` |
+
+---
+
 ## Notes / Bugs Found
 
-- 
+- Wave 2 + PR8 complete 2026-07-26. Fresh agents: open `ROADMAP.md` — residual only (PR9 / brand / Wave 3).
+

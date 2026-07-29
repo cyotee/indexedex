@@ -269,8 +269,9 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         assertEq(detfIndex_, expectedDetfIndex, "detf index");
         assertEq(vaultTokenIndex_, expectedVaultTokenIndex, "vault token index");
 
-        assertEq(detf.mintThreshold(), 1005e15, "mint threshold");
-        assertEq(detf.burnThreshold(), 995e15, "burn threshold");
+        // Product defaults: Policy + 0,0 → ±5% (PRD DETF_Threshold_Modes).
+        assertEq(detf.mintThreshold(), 1.05e18, "mint threshold default");
+        assertEq(detf.burnThreshold(), 0.95e18, "burn threshold default");
         assertTrue(detf.isAcceptedBondToken(rateAsset), "weth accepted");
         assertTrue(detf.isAcceptedBondToken(pairToken), "rich accepted");
     }

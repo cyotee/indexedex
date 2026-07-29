@@ -1,5 +1,7 @@
 # Uniswap V4 Single-Vault DETF Implementation Plan
 
+**Threshold modes (F5 / SingleVaultDetf):** Conforms to [`DETF_Threshold_Modes_PRD.md`](../../DETF_Threshold_Modes_PRD.md) (formal LOCKED) — deploy-time Policy (default ±5% synthetic deadband) vs Open; **mint/burn gates always synthetic** (historical spot-price gates superseded); trailing `PkgArgs.thresholdMode`.
+
 ## Objective
 
 Implement an additional DETF under `contracts/vaults/detf/composed/single` that composes:

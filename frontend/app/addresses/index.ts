@@ -236,5 +236,5 @@ export function getArtifactBundle(
   environment: DeploymentEnvironment,
   chainId: CanonicalArtifactChainId
 ): ArtifactBundle | null {
-  return ARTIFACT_REGISTRY[environment][chainId] ?? null
+  return ARTIFACT_REGISTRY[environment]?.[chainId] ?? null
 }

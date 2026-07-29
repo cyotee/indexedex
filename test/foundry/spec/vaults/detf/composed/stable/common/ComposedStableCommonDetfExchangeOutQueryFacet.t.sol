@@ -26,6 +26,7 @@ import {
     ComposedStableCommonDetfExchangeOutQueryFacet
 } from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol';
 import {BalancerV3WeightedPoolQuote} from '@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol';
+import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
 contract MockQueryToken is IERC20 {
     string public name;
@@ -301,6 +302,7 @@ contract ComposedStableCommonDetfExchangeOutQueryHarness is ComposedStableCommon
             IVaultFeeOracleQuery(address(0)),
             0,
             burnThreshold_,
+            ThresholdMode.Policy,
             routes_
         );
     }

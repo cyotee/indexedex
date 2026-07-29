@@ -26,6 +26,9 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
  * @author cyotee doge <not_cyotee@proton.me>
  * @notice Unified proxy interface for Protocol DETF.
  * @dev Combines all interfaces that the Protocol DETF Diamond implements.
+ *      Inherits `IProtocolDETF` (including deploy-time `thresholdMode()` and
+ *      live-coupled `isMintingAllowed` / `isBurningAllowed` per DETF_Threshold_Modes).
+ *      Does not re-enumerate methods — use the parent interface selectors.
  */
 interface IProtocolDETFProxy is
     IProtocolDETF,

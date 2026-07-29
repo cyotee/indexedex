@@ -13,6 +13,19 @@ SKILLS=(
   crane-access
   crane-utilities
   crane-adversarial-testing
+  crane-porting
+  crane-porting-verification
+  crane-morpho
+  morpho-architecture
+  morpho-blue-operations
+  morpho-vaults
+  crane-olympus
+  olympus-architecture
+  olympus-operations
+  pons-architecture
+  pons-operations
+  pons-integration
+  pons-family
   forge-testing
   forge-fuzz-testing
 )

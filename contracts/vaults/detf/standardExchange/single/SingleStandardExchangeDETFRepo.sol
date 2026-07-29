@@ -6,6 +6,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title SingleStandardExchangeDETFRepo
 /// @notice Diamond storage for SingleStandardExchangeDETF. Role names only — no product tickers.
@@ -37,6 +38,18 @@ library SingleStandardExchangeDETFRepo {
         uint256 vaultShareWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
+        ThresholdMode thresholdMode;
+        IVaultFeeOracleQuery feeOracle;
+        IDETFNFTVault bondNftVault;
+        uint256 protocolNftId;
+        uint256 feeRecipientNftId;
+    }
+
+    /// @dev Packed trailing threshold + fee/NFT wiring to avoid stack-too-deep in `_initialize`.
+    struct ThresholdAndFeeInit {
+        uint256 mintThreshold;
+        uint256 burnThreshold;
+        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
         uint256 protocolNftId;
@@ -50,6 +63,7 @@ library SingleStandardExchangeDETFRepo {
         }
     }
 
+    /// @dev Core wiring args + `ThresholdAndFeeInit` (mint/burn/mode + feeOracle + NFT ids).
     function _initialize(
         IStandardExchangeProxy seVault_,
         IERC20 seShare_,
@@ -60,12 +74,7 @@ library SingleStandardExchangeDETFRepo {
         uint256 vaultShareIndex_,
         uint256 detfWeight_,
         uint256 vaultShareWeight_,
-        uint256 mintThreshold_,
-        uint256 burnThreshold_,
-        IVaultFeeOracleQuery feeOracle_,
-        IDETFNFTVault bondNftVault_,
-        uint256 protocolNftId_,
-        uint256 feeRecipientNftId_
+        ThresholdAndFeeInit memory thresholdsAndFee_
     ) internal {
         Storage storage s = _layoutStruct();
         if (address(s.standardExchangeVault) != address(0)) revert AlreadyInitialized();
@@ -81,12 +90,13 @@ library SingleStandardExchangeDETFRepo {
         s.vaultShareIndex = vaultShareIndex_;
         s.detfWeight = detfWeight_;
         s.vaultShareWeight = vaultShareWeight_;
-        s.mintThreshold = mintThreshold_;
-        s.burnThreshold = burnThreshold_;
-        s.feeOracle = feeOracle_;
-        s.bondNftVault = bondNftVault_;
-        s.protocolNftId = protocolNftId_;
-        s.feeRecipientNftId = feeRecipientNftId_;
+        s.mintThreshold = thresholdsAndFee_.mintThreshold;
+        s.burnThreshold = thresholdsAndFee_.burnThreshold;
+        s.thresholdMode = thresholdsAndFee_.thresholdMode;
+        s.feeOracle = thresholdsAndFee_.feeOracle;
+        s.bondNftVault = thresholdsAndFee_.bondNftVault;
+        s.protocolNftId = thresholdsAndFee_.protocolNftId;
+        s.feeRecipientNftId = thresholdsAndFee_.feeRecipientNftId;
     }
 
     function _setReserveLive() internal {

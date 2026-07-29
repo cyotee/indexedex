@@ -65,6 +65,7 @@ import {
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @title TestBase_MultiVaultWeightedDetf
 /// @notice Production MultiVaultWeightedDetf against production Aerodrome SE vaults (N up to 7).
@@ -383,12 +384,24 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
     /* ---------------------------------------------------------------------- */
 
     /// @param rated_ if true, set rateAsset per leg; if false all unrated.
+    /// @dev Default mode Policy (PRD §16).
     function _deployDetfN(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_, bool rated_)
         internal
         returns (address detf_)
     {
+        return _deployDetfN(n, mintThreshold_, burnThreshold_, rated_, ThresholdMode.Policy);
+    }
+
+    function _deployDetfN(
+        uint8 n,
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        bool rated_,
+        ThresholdMode mode_
+    ) internal returns (address detf_) {
         _ensureSeVaults(n);
-        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = _buildPkgArgs(n, mintThreshold_, burnThreshold_, rated_);
+        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args =
+            _buildPkgArgs(n, mintThreshold_, burnThreshold_, rated_, mode_);
         detf_ = _deployWithArgs(args);
         vm.label(detf_, string(abi.encodePacked("MultiVaultWeightedDetf_N", _u(n))));
     }
@@ -398,6 +411,16 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         view
         returns (IMultiVaultWeightedDetfDFPkg.PkgArgs memory args)
     {
+        return _buildPkgArgs(n, mintTh_, burnTh_, rated_, ThresholdMode.Policy);
+    }
+
+    function _buildPkgArgs(
+        uint8 n,
+        uint256 mintTh_,
+        uint256 burnTh_,
+        bool rated_,
+        ThresholdMode mode_
+    ) internal view returns (IMultiVaultWeightedDetfDFPkg.PkgArgs memory args) {
         args.vaults = new IStandardExchangeProxy[](n);
         args.vaultShares = new IERC20[](n);
         args.rateProviders = new IRateProvider[](n);
@@ -407,6 +430,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         args.symbol = string(abi.encodePacked("mvw", _u(n)));
         args.mintThreshold = mintTh_;
         args.burnThreshold = burnTh_;
+        args.thresholdMode = mode_;
         _fillLegsAndWeights(args, n, rated_, 50e16);
     }
 
@@ -451,14 +475,23 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         vm.stopPrank();
     }
 
-    /// @dev Mixed: leg0 rated, remaining unrated (requires n>=2).
+    /// @dev Mixed: leg0 rated, remaining unrated (requires n>=2). Default Policy.
     function _deployDetfNMixedRated(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_)
         internal
         returns (address detf_)
     {
+        return _deployDetfNMixedRated(n, mintThreshold_, burnThreshold_, ThresholdMode.Policy);
+    }
+
+    function _deployDetfNMixedRated(
+        uint8 n,
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        ThresholdMode mode_
+    ) internal returns (address detf_) {
         _ensureSeVaults(n);
         IMultiVaultWeightedDetfDFPkg.PkgArgs memory args =
-            _buildPkgArgs(n, mintThreshold_, burnThreshold_, true);
+            _buildPkgArgs(n, mintThreshold_, burnThreshold_, true, mode_);
         args.name = "MVW Mixed";
         args.symbol = "mvwM";
         for (uint256 i = 1; i < n; ++i) {
@@ -467,11 +500,19 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         detf_ = _deployWithArgs(args);
     }
 
-    /// @dev N=2 with both legs rated to the same rateAsset (distinct vaults).
+    /// @dev N=2 with both legs rated to the same rateAsset (distinct vaults). Default Policy.
     function _deployDetfN2SameRateAsset(uint256 mintThreshold_, uint256 burnThreshold_)
         internal
         returns (address detf_)
     {
+        return _deployDetfN2SameRateAsset(mintThreshold_, burnThreshold_, ThresholdMode.Policy);
+    }
+
+    function _deployDetfN2SameRateAsset(
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        ThresholdMode mode_
+    ) internal returns (address detf_) {
         // Legs 0 (dai/usdc) and 3 (extra0/dai) both rate as dai — distinct vaults.
         _ensureSeVaults(4);
         IMultiVaultWeightedDetfDFPkg.PkgArgs memory args;
@@ -489,6 +530,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         args.weightDetf = 60e16;
         args.mintThreshold = mintThreshold_;
         args.burnThreshold = burnThreshold_;
+        args.thresholdMode = mode_;
         args.name = "MVW SameRate";
         args.symbol = "mvwSR";
         detf_ = _deployWithArgs(args);
@@ -503,12 +545,35 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         return _deployDetfN(2, mintThreshold_, burnThreshold_, true);
     }
 
+    /// @dev Dual-path always-allow when live (mint+burn math / multi-leg / adversarial suites).
+    /// @dev Historical Policy mint=1 / burn=max is **illegal** under PRD §16.3 (`mint > burn`).
+    ///      Always-allow is product **Open**. Kept name for call-site compatibility.
     function _deployOpenThresholdDetf() internal returns (address) {
-        return _deployDetfN(1, 1, type(uint256).max, true);
+        return _deployOpenModeDetfN(1);
     }
 
+    /// @dev Same as `_deployOpenThresholdDetf` for N legs.
     function _deployOpenThresholdDetfN(uint8 n) internal returns (address) {
-        return _deployDetfN(n, 1, type(uint256).max, true);
+        return _deployOpenModeDetfN(n);
+    }
+
+    /// @dev Product Open mode: threshold gates always pass when live; live/inert still enforced.
+    ///      Thresholds resolve/store (defaults for 0,0); gates ignore them.
+    function _deployOpenModeDetfN(uint8 n) internal returns (address) {
+        return _deployDetfN(n, 0, 0, true, ThresholdMode.Open);
+    }
+
+    /// @dev Legal extreme Policy pair (mint > burn) for T4b/T18 — mode remains Policy.
+    function _deployExtremePolicyPairDetfN(uint8 n) internal returns (address) {
+        return _deployDetfN(n, 2, 1, true, ThresholdMode.Policy);
+    }
+
+    /// @dev Policy mode with explicit custom mint/burn band (already resolved; non-zero).
+    function _deployPolicyThresholdsN(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_)
+        internal
+        returns (address)
+    {
+        return _deployDetfN(n, mintThreshold_, burnThreshold_, true, ThresholdMode.Policy);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -516,6 +581,14 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
     /* ---------------------------------------------------------------------- */
 
     function _deployNestedSingleSeDetfLive(address bonder, uint256 lpAmount)
+        internal
+        returns (address nested_)
+    {
+        return _deployNestedSingleSeDetfLive(bonder, lpAmount, ThresholdMode.Open);
+    }
+
+    /// @dev Nested Single SE DETF with explicit mode (outer/inner modes are independent).
+    function _deployNestedSingleSeDetfLive(address bonder, uint256 lpAmount, ThresholdMode mode_)
         internal
         returns (address nested_)
     {
@@ -528,8 +601,9 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             rateTarget: rateAssets[0],
             detfWeight: 0,
             vaultShareWeight: 0,
-            mintThreshold: 1,
-            burnThreshold: type(uint256).max
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: mode_
         });
         vm.startPrank(owner);
         nested_ = indexedexManager.deployVault(
@@ -548,10 +622,24 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
     }
 
     /// @dev Outer multi-vault with leg0 = nested Single SE DETF (unrated abstract 1:1), leg1 = production SE.
+    /// @dev Historical (1, max) call sites: use Open mode overload for always-allow when live.
     function _deployOuterOverNested(address nestedDetf_, uint256 mintTh_, uint256 burnTh_)
         internal
         returns (address outer_)
     {
+        // mint=1 burn=max was dual-path always-allow; map to Open under §16.3.
+        if (mintTh_ == 1 && burnTh_ == type(uint256).max) {
+            return _deployOuterOverNested(nestedDetf_, 0, 0, ThresholdMode.Open);
+        }
+        return _deployOuterOverNested(nestedDetf_, mintTh_, burnTh_, ThresholdMode.Policy);
+    }
+
+    function _deployOuterOverNested(
+        address nestedDetf_,
+        uint256 mintTh_,
+        uint256 burnTh_,
+        ThresholdMode mode_
+    ) internal returns (address outer_) {
         _ensureSeVaults(2);
         IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](2);
         IERC20[] memory shares_ = new IERC20[](2);
@@ -577,7 +665,8 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             weightDetf: 60e16,
             vaultWeights: weights_,
             mintThreshold: mintTh_,
-            burnThreshold: burnTh_
+            burnThreshold: burnTh_,
+            thresholdMode: mode_
         });
         vm.startPrank(owner);
         outer_ = indexedexManager.deployVault(

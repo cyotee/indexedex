@@ -166,9 +166,11 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 | Priority | Campaign | Status | Spec |
 |----------|----------|--------|------|
 | ~~1~~ | DualLiquidity linked volume + share-book (v2) | **COMPLETE** | [`FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) |
-| **1** | Multi-protocol SE Mode A twins | not started | — |
-| 2 | Single SE DETF inert→live + mint/burn | not started | — |
-| 3 | DualLiquidity Mode C | optional | residual ≥ 0.3% |
+| **1** | **CCA Rehearsal** (auction UX + settle + post-clear product path) | **PLANNED** | [PRD](./scenarios/cca/CCA_Rehearsal_PRD.md) · [plan](./scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md) |
+| 2 | Fee-make `donation` demo | not started | launch plan eng + research |
+| 3 | Single SE DETF inert→live + mint/burn | not started | — |
+| 4 | Multi-protocol SE Mode A twins | not started | platform breadth; lower for CCA ads |
+| 5 | DualLiquidity Mode C | optional | residual ≥ 0.3% |
 
 ---
 
@@ -182,5 +184,11 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 | 2026-07-21 | **Narrative update:** DualLiquidity benefits from arb/re-mark volume on SE tokens held in the reserve (SE research chain + v2 inventory). Agent report + FINDINGS_v2 synthesis + roll-up §1–§5 refreshed. |
 | 2026-07-21 | **tokenB deposit gap closed:** nested `_swapThrough` min=0 production fix; full `modeB_depositTokenB` series (vaultB+BPT); Deposits tests green; FINDINGS/agent/marketing updated. |
 | 2026-07-21 | FINDINGS_v2 **Addendum (v2.1)** at top for skimmers (tokenB gap close summary). |
+| 2026-07-21 | **Next campaign PRD:** CCA Rehearsal for RICH auction advertising readiness (`research/scenarios/cca/CCA_Rehearsal_PRD.md`). |
+| 2026-07-21 | **CCA Rehearsal implementation plan** drafted (`CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md`). |
+| 2026-07-22 | **CCA FDV workshop locked** — floor \(5\times10^{-7}\) ETH/RICH; FDV at floor ~$950k @ ETH $1,900; ops ~6.5 ETH. Record: `docs/CCA_FDV_WORKSHOP.md`. Auction ads may cite floor optics (not raise guarantees). Fee-make remains roadmap VP. |
+| 2026-07-22 | **CCA parameter sheet** + Base config JSON drafted (`docs/CCA_PARAMETER_SHEET.md`, `docs/cca/base-rich-cca-config.json`). |
+| 2026-07-22 | **BattleChain testnet** added to launch promo: Crane + multi-protocol DeFi ports for ethical hackers/builders; parallel to CCA; not capital raise. |
+| 2026-07-22 | **BattleChain Wave A pack** ready: `docs/BATTLECHAIN_LAUNCH_PROMO.md`, announcement drafts, `Script_Promo_BC_Launch.s.sol` (Crane+Uni V2/V3/V4+WETH+Permit2). Live addresses pending broadcast. |
 
 *When adding a campaign: append a subsection under §3, add graph row under §4, update §5 ready/not-ready, add a changelog line.*

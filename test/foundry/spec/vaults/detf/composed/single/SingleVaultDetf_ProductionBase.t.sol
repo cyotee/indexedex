@@ -74,6 +74,7 @@ import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFacto
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 contract SingleVaultDetfUniswapV4LiquiditySeeder is IUnlockCallback {
     using BalanceDeltaLibrary for BalanceDelta;
@@ -204,14 +205,37 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
         );
     }
 
+    /// @notice Default Policy + 0,0 → product ±5% after resolve.
     function _deploySingleVaultDetf() internal returns (ISingleVaultDetf detf_) {
-        return _deploySingleVaultDetf(_emptyBridgeConfig());
+        return _deploySingleVaultDetf(_emptyBridgeConfig(), 0, 0, ThresholdMode.Policy);
+    }
+
+    /// @notice Product Open mode (always-allow gates when live; thresholds still resolved/stored).
+    function _deployOpenModeDetf() internal returns (ISingleVaultDetf detf_) {
+        return _deploySingleVaultDetf(_emptyBridgeConfig(), 0, 0, ThresholdMode.Open);
     }
 
     function _deploySingleVaultDetf(DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_)
         internal
         returns (ISingleVaultDetf detf_)
     {
+        return _deploySingleVaultDetf(bridgeConfig_, 0, 0, ThresholdMode.Policy);
+    }
+
+    function _deploySingleVaultDetf(
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        ThresholdMode thresholdMode_
+    ) internal returns (ISingleVaultDetf detf_) {
+        return _deploySingleVaultDetf(_emptyBridgeConfig(), mintThreshold_, burnThreshold_, thresholdMode_);
+    }
+
+    function _deploySingleVaultDetf(
+        DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig_,
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        ThresholdMode thresholdMode_
+    ) internal returns (ISingleVaultDetf detf_) {
         SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets memory facets =
             SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets({
                 erc20Facet: erc20Facet,
@@ -249,9 +273,13 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
             });
 
         vm.startPrank(owner);
-        singleVaultDetfDFPkg = IVaultRegistryDeployment(address(indexedexManager)).deploySingleVaultDetfDFPkg(
-            SingleVaultDetf_Component_FactoryService.buildPkgInit(facets, infra)
-        );
+        // Deploy DFPkg once; reuse for additional vault instances (Open/Policy variants).
+        // Second CREATE3 package deploy with identical init reverts NOT_AUTHORIZED / salt collision.
+        if (address(singleVaultDetfDFPkg) == address(0)) {
+            singleVaultDetfDFPkg = IVaultRegistryDeployment(address(indexedexManager)).deploySingleVaultDetfDFPkg(
+                SingleVaultDetf_Component_FactoryService.buildPkgInit(facets, infra)
+            );
+        }
 
         ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs = SingleVaultDetf_Component_FactoryService.buildPkgArgs(
             "Single Vault DETF",
@@ -260,7 +288,10 @@ abstract contract SingleVaultDetfProductionBase is TestBase_BalancerV3StandardEx
             10_000e18,
             1_000e18,
             _buildPoolKey(),
-            60
+            60,
+            mintThreshold_,
+            burnThreshold_,
+            thresholdMode_
         );
 
         detf_ = ISingleVaultDetf(

@@ -112,11 +112,16 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     }
 
     function _requireReservePoolInitialized() internal view {
-        WeightedPoolDynamicData memory dynamicData =
-            _weightedPoolDynamicData(ComposedStableCommonDetfRepo._reservePool());
-        if (!dynamicData.isPoolInitialized || dynamicData.totalSupply == 0) {
+        if (!_isReserveLive()) {
             revert ReservePoolNotInitialized();
         }
+    }
+
+    /// @dev Family live probe: reserve pool initialized with non-zero total supply.
+    function _isReserveLive() internal view returns (bool live_) {
+        WeightedPoolDynamicData memory dynamicData =
+            _weightedPoolDynamicData(ComposedStableCommonDetfRepo._reservePool());
+        live_ = dynamicData.isPoolInitialized && dynamicData.totalSupply > 0;
     }
 
     function _selectRoutingPath(IERC20 tokenIn_) internal view returns (RoutedPoolSelection memory selection_) {
@@ -458,12 +463,32 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
         }
     }
 
+    /// @dev Live-coupled: false when reserve not initialized. Open short-circuit only via lib.
     function _isMintingAllowed(uint256 syntheticPrice_) internal view returns (bool allowed_) {
-        allowed_ = DETFThresholdPolicy._isMintingAllowed(ComposedStableCommonDetfRepo._mintThreshold(), syntheticPrice_);
+        if (!_isReserveLive()) return false;
+        allowed_ = DETFThresholdPolicy._isMintingAllowed(
+            ComposedStableCommonDetfRepo._thresholdMode(),
+            ComposedStableCommonDetfRepo._mintThreshold(),
+            syntheticPrice_
+        );
     }
 
+    /// @dev Live-coupled: false when reserve not initialized. Open short-circuit only via lib.
     function _isBurningAllowed(uint256 syntheticPrice_) internal view returns (bool allowed_) {
-        allowed_ = DETFThresholdPolicy._isBurningAllowed(ComposedStableCommonDetfRepo._burnThreshold(), syntheticPrice_);
+        if (!_isReserveLive()) return false;
+        allowed_ = DETFThresholdPolicy._isBurningAllowed(
+            ComposedStableCommonDetfRepo._thresholdMode(),
+            ComposedStableCommonDetfRepo._burnThreshold(),
+            syntheticPrice_
+        );
+    }
+
+    function _isMintingAllowed() internal view returns (bool allowed_) {
+        allowed_ = _isMintingAllowed(_syntheticDetfEthPrice());
+    }
+
+    function _isBurningAllowed() internal view returns (bool allowed_) {
+        allowed_ = _isBurningAllowed(_syntheticDetfEthPrice());
     }
 
     function _tryPreviewExchangeOut(address router_, IERC20 tokenIn_, IERC20 tokenOut_, uint256 amountOut_)

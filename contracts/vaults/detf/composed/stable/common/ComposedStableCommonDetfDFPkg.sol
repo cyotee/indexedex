@@ -26,6 +26,13 @@ import {VaultFeeType} from 'contracts/interfaces/VaultFeeTypes.sol';
 import {VaultTypeUtils} from 'contracts/registries/vault/VaultTypeUtils.sol';
 import {MultiAssetBasicVaultRepo} from 'contracts/vaults/basic/MultiAssetBasicVaultRepo.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
+import {
+    IComposedStableCommonDetfInfo
+} from 'contracts/vaults/detf/composed/stable/common/IComposedStableCommonDetfInfo.sol';
+import {
+    DETFThresholdPolicy,
+    ThresholdMode
+} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 import {StandardVaultRepo} from 'contracts/vaults/standard/StandardVaultRepo.sol';
 
 interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -41,6 +48,7 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
         IVaultRegistryDeployment vaultRegistryDeployment;
     }
 
+    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
     struct PkgArgs {
         IWeightedPool reservePool;
         IDETFNFTVault bondNftVault;
@@ -62,6 +70,7 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
         uint256 mintThreshold;
         uint256 burnThreshold;
         ComposedStableCommonDetfRepo.RouteConfig[] routes;
+        ThresholdMode thresholdMode; // trailing; 0 = Policy
     }
 }
 
@@ -117,13 +126,14 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](6);
+        interfaces_ = new bytes4[](7);
         interfaces_[0] = type(IBasicVault).interfaceId;
         interfaces_[1] = type(IStandardVault).interfaceId;
         interfaces_[2] = type(IComposedStableCommonDetfBonding).interfaceId;
         interfaces_[3] = type(IStandardExchangeIn).interfaceId;
         interfaces_[4] = type(IStandardExchangeOut).interfaceId;
         interfaces_[5] = type(IDETF).interfaceId;
+        interfaces_[6] = type(IComposedStableCommonDetfInfo).interfaceId;
     }
 
     function packageMetadata()
@@ -191,6 +201,10 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
 
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
+        (uint256 mintThreshold_, uint256 burnThreshold_) =
+            DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+
         address[] memory tokens_ = new address[](3);
         tokens_[0] = address(args.detfToken);
         tokens_[1] = address(args.stablePoolBpt);
@@ -225,10 +239,12 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
             args.commonPool,
             args.reservePoolEntryRouter,
             IVaultFeeOracleQuery(address(VAULT_REGISTRY_DEPLOYMENT)),
-            args.mintThreshold,
-            args.burnThreshold,
+            mintThreshold_,
+            burnThreshold_,
+            args.thresholdMode,
             args.routes
         );
+        emit IComposedStableCommonDetfInfo.ThresholdModeSet(args.thresholdMode, mintThreshold_, burnThreshold_);
     }
 
     function postDeploy(address) public pure returns (bool) {

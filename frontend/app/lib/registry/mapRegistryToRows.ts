@@ -1,4 +1,4 @@
-import type { EarnProduct } from '../earn/types'
+import type { EarnProduct, RiskLevel } from '../earn/types'
 import type { Address } from './pickRegistryQuery'
 
 export type SearchResultSource = 'preferred' | 'registry'
@@ -13,6 +13,8 @@ export type VaultSearchRow = {
   /** Preferred list product type when known; registry-only rows use strategy as neutral. */
   productType: EarnProduct['productType'] | 'registry'
   source: SearchResultSource
+  /** From preferred list tags only; registry-only rows leave undefined. */
+  risk?: RiskLevel
 }
 
 /**
@@ -44,6 +46,7 @@ export function mapRegistryAddressesToRows(
         display: hit.display,
         productType: hit.productType,
         source: 'registry',
+        ...(hit.risk ? { risk: hit.risk } : {}),
       })
     } else {
       const short = `${raw.slice(0, 6)}…${raw.slice(-4)}`
@@ -72,5 +75,6 @@ export function preferredToRows(preferred: readonly EarnProduct[]): VaultSearchR
     display: p.display,
     productType: p.productType,
     source: 'preferred' as const,
+    ...(p.risk ? { risk: p.risk } : {}),
   }))
 }

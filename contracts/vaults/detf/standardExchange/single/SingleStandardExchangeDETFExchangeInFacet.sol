@@ -38,7 +38,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](15);
+        funcs_ = new bytes4[](16);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -51,9 +51,10 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[9] = ISingleStandardExchangeDETFInfo.syntheticPrice.selector;
         funcs_[10] = ISingleStandardExchangeDETFInfo.mintThreshold.selector;
         funcs_[11] = ISingleStandardExchangeDETFInfo.burnThreshold.selector;
-        funcs_[12] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
-        funcs_[13] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
-        funcs_[14] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
+        funcs_[12] = ISingleStandardExchangeDETFInfo.thresholdMode.selector;
+        funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
+        funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
+        funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
     }
 
     function facetMetadata()
@@ -66,7 +67,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(ISingleStandardExchangeDETFBonding).interfaceId;
         interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
-        funcs_ = new bytes4[](15);
+        funcs_ = new bytes4[](16);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -79,8 +80,9 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[9] = ISingleStandardExchangeDETFInfo.syntheticPrice.selector;
         funcs_[10] = ISingleStandardExchangeDETFInfo.mintThreshold.selector;
         funcs_[11] = ISingleStandardExchangeDETFInfo.burnThreshold.selector;
-        funcs_[12] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
-        funcs_[13] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
-        funcs_[14] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
+        funcs_[12] = ISingleStandardExchangeDETFInfo.thresholdMode.selector;
+        funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
+        funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
+        funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
     }
 }

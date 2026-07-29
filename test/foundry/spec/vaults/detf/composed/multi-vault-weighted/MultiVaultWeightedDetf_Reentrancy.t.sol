@@ -20,6 +20,7 @@ import {
 import {
     IMultiVaultWeightedDetfInfo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share: transferFrom re-enters DETF, then ALWAYS completes transfer so probe state persists.
 contract RecordingReentrantShare is MockERC20 {
@@ -124,8 +125,9 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
             rateAssets: ras_,
             weightDetf: 80e16,
             vaultWeights: weights_,
-            mintThreshold: 1,
-            burnThreshold: type(uint256).max
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Open
         });
         vm.startPrank(owner);
         outerDetf = indexedexManager.deployVault(

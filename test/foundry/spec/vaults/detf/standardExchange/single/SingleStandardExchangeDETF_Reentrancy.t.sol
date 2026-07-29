@@ -18,6 +18,7 @@ import {
 import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share token: on transferFrom, re-enters target then ALWAYS completes the transfer
 ///      so probe state (reentryAttempts / nested error) is not rolled back by a bubbling revert.
@@ -126,8 +127,9 @@ contract SingleStandardExchangeDETF_Reentrancy_Test is TestBase_SingleStandardEx
             rateTarget: IERC20(address(0)),
             detfWeight: 0,
             vaultShareWeight: 0,
-            mintThreshold: 1,
-            burnThreshold: type(uint256).max
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Open
         });
         vm.startPrank(owner);
         outerDetf = indexedexManager.deployVault(

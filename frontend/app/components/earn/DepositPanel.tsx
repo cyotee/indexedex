@@ -4,14 +4,15 @@ import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   erc20Abi,
-  formatUnits,
-  parseUnits,
   type PublicClient,
 } from 'viem'
 import {
   useAccount,
+  useChainId,
+  useConnect,
   usePublicClient,
   useReadContract,
+  useSwitchChain,
   useWriteContract,
 } from 'wagmi'
 
@@ -23,10 +24,28 @@ import {
   buildStrategyVaultDepositArgs,
   buildStrategyVaultWithdrawArgs,
 } from '../../lib/earn/buildVaultSwapArgs'
+import {
+  computeMinAmountOut,
+  DEFAULT_SLIPPAGE_PERCENT,
+} from '../../lib/earn/computeMinAmountOut'
+import { formatPreviewAmount } from '../../lib/earn/previewFormat'
+import {
+  querySwapExactInAbi,
+  toVaultDepositQueryArgs,
+  toVaultWithdrawQueryArgs,
+} from '../../lib/earn/toVaultSwapQueryArgs'
 import type { EarnProduct } from '../../lib/earn/types'
+import {
+  resolveWalletGate,
+  type PendingLeg,
+} from '../../lib/tx/actionState'
+import { parseContractError } from '../../lib/tx/parseContractError'
+import { ActionCta } from '../ui/ActionCta'
+import { AmountField, parseAmountFieldValue } from '../ui/AmountField'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
 import { TxSteps } from '../ui/TxSteps'
+import SlippageInput from '../SlippageInput'
 
 const vaultTokensAbi = [
   {
@@ -48,8 +67,11 @@ const vaultTokensAbi = [
 type Mode = 'deposit' | 'withdraw'
 
 /**
- * Strategy vault deposit/withdraw via Standard Exchange Router (same path as Swap vault deposit).
- * pool = vault, tokenOut (deposit) or tokenIn (withdraw) = vault share token.
+ * Strategy vault deposit/withdraw via Standard Exchange Router.
+ *
+ * Preview: query 8-tuple + simulateContract + ZERO_ADDR account (never execute-args spread).
+ * Execute: 10-tuple builders with minOut from computeMinAmountOut(preview, slippage).
+ * Approvals: split handlers only (K17) — never one-shot handleApproval for multi-leg CTA.
  */
 export function DepositPanel({
   product,
@@ -59,9 +81,12 @@ export function DepositPanel({
   chainId: number
 }) {
   const { address, isConnected } = useAccount()
+  const walletChainId = useChainId()
+  const { connect, connectors, isPending: isConnectPending } = useConnect()
+  const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
   const { environment } = useDeploymentEnvironment()
   const publicClient = usePublicClient({ chainId }) as PublicClient | undefined
-  const { writeContractAsync, isPending } = useWriteContract()
+  const { writeContractAsync } = useWriteContract()
 
   const [mode, setMode] = useState<Mode>('deposit')
   const [tokenIn, setTokenIn] = useState<`0x${string}` | ''>('')
@@ -69,6 +94,15 @@ export function DepositPanel({
   const [status, setStatus] = useState('')
   const [txPhase, setTxPhase] = useState<'idle' | 'approve' | 'submit' | 'done' | 'error'>('idle')
   const [successHash, setSuccessHash] = useState<string | null>(null)
+  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE_PERCENT)
+  const [previewOut, setPreviewOut] = useState<bigint | null>(null)
+  const [previewError, setPreviewError] = useState<string | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [pendingLeg, setPendingLeg] = useState<PendingLeg>(null)
+  const [assetSymbols, setAssetSymbols] = useState<Record<string, string>>({})
+
+  const isWrongNetwork =
+    isConnected && typeof walletChainId === 'number' && walletChainId !== chainId
 
   const platform = useMemo(() => {
     try {
@@ -118,8 +152,43 @@ export function DepositPanel({
     }
   }, [mode, underlyingTokens, tokenIn, vaultAddress])
 
+  // Resolve symbols for underlying assets (symbol primary in select)
+  useEffect(() => {
+    if (!publicClient || underlyingTokens.length === 0) return
+    let cancelled = false
+    void (async () => {
+      const entries: Record<string, string> = {}
+      await Promise.all(
+        underlyingTokens.map(async (t) => {
+          try {
+            const sym = (await publicClient.readContract({
+              address: t,
+              abi: erc20Abi,
+              functionName: 'symbol',
+            })) as string
+            entries[t.toLowerCase()] = sym
+          } catch {
+            entries[t.toLowerCase()] = `${t.slice(0, 6)}…${t.slice(-4)}`
+          }
+        }),
+      )
+      if (!cancelled) setAssetSymbols(entries)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [publicClient, underlyingTokens])
+
+  const withdrawTokenOut = underlyingTokens[0] as `0x${string}` | undefined
+
   const assetForBalance =
     mode === 'deposit' ? (tokenIn as `0x${string}` | undefined) : vaultAddress
+
+  // Output token for preview display: deposit → vault shares; withdraw → underlying
+  const assetForOut =
+    mode === 'deposit'
+      ? vaultAddress
+      : (withdrawTokenOut as `0x${string}` | undefined)
 
   const { data: decimals } = useReadContract({
     address: assetForBalance,
@@ -137,6 +206,22 @@ export function DepositPanel({
     query: { enabled: !!assetForBalance },
   })
 
+  const { data: outDecimalsRaw } = useReadContract({
+    address: assetForOut,
+    abi: erc20Abi,
+    functionName: 'decimals',
+    chainId,
+    query: { enabled: !!assetForOut },
+  })
+
+  const { data: outSymbolRaw } = useReadContract({
+    address: assetForOut,
+    abi: erc20Abi,
+    functionName: 'symbol',
+    chainId,
+    query: { enabled: !!assetForOut },
+  })
+
   const { data: balance, refetch: refetchBalance } = useReadContract({
     address: assetForBalance,
     abi: erc20Abi,
@@ -147,14 +232,24 @@ export function DepositPanel({
   })
 
   const dec = typeof decimals === 'number' ? decimals : 18
-  const parsedAmount = useMemo(() => {
-    if (!amount) return undefined
-    try {
-      return parseUnits(amount, dec)
-    } catch {
-      return undefined
-    }
-  }, [amount, dec])
+  // Prefer on-chain out decimals; fall back to product.decimals for vault shares
+  const outDec =
+    typeof outDecimalsRaw === 'number'
+      ? outDecimalsRaw
+      : mode === 'deposit' && typeof product.decimals === 'number'
+        ? product.decimals
+        : 18
+  const outSymbolDisplay =
+    outSymbolRaw != null
+      ? String(outSymbolRaw)
+      : mode === 'deposit'
+        ? product.symbol || 'shares'
+        : 'asset'
+  const parsedAmount = useMemo(
+    () => parseAmountFieldValue(amount, dec),
+    [amount, dec],
+  )
+  const amountValid = parsedAmount != null && parsedAmount > BigInt(0)
 
   const approval = useApprovalFlow({
     tokenAddress: mode === 'deposit' ? (tokenIn as `0x${string}`) || null : vaultAddress,
@@ -169,11 +264,158 @@ export function DepositPanel({
     effectiveAmount: parsedAmount,
   })
 
-  const withdrawTokenOut = underlyingTokens[0] as `0x${string}` | undefined
+  // Preview: 8-tuple query via simulateContract + ZERO_ADDR
+  useEffect(() => {
+    if (!routerAddress || !publicClient || !amountValid || !parsedAmount) {
+      setPreviewOut(null)
+      setPreviewError(null)
+      setPreviewLoading(false)
+      return
+    }
+    if (mode === 'deposit' && !tokenIn) {
+      setPreviewOut(null)
+      return
+    }
+    if (mode === 'withdraw' && !withdrawTokenOut) {
+      setPreviewOut(null)
+      setPreviewError('Vault underlying tokens unavailable for withdraw.')
+      return
+    }
 
-  const runDeposit = useCallback(async () => {
-    if (!routerAddress || !publicClient || !address || !parsedAmount || parsedAmount <= BigInt(0)) {
-      setStatus('Connect wallet, select amount, and ensure router is configured.')
+    let cancelled = false
+    setPreviewLoading(true)
+    setPreviewError(null)
+
+    const run = async () => {
+      try {
+        const queryArgs =
+          mode === 'deposit'
+            ? toVaultDepositQueryArgs({
+                vault: vaultAddress,
+                tokenIn: tokenIn as `0x${string}`,
+                amountIn: parsedAmount,
+              })
+            : toVaultWithdrawQueryArgs({
+                vault: vaultAddress,
+                tokenOut: withdrawTokenOut as `0x${string}`,
+                amountIn: parsedAmount,
+              })
+
+        // Explicit 8-tuple only — never spread execute 10-tuple
+        const { result } = await publicClient.simulateContract({
+          address: routerAddress,
+          abi: querySwapExactInAbi,
+          functionName: 'querySwapSingleTokenExactIn',
+          args: [...queryArgs],
+          account: '0x0000000000000000000000000000000000000000',
+        })
+
+        if (!cancelled) {
+          setPreviewOut(result as bigint)
+          setPreviewError(null)
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setPreviewOut(null)
+          setPreviewError(parseContractError(e))
+        }
+      } finally {
+        if (!cancelled) setPreviewLoading(false)
+      }
+    }
+
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [
+    routerAddress,
+    publicClient,
+    amountValid,
+    parsedAmount,
+    mode,
+    tokenIn,
+    withdrawTokenOut,
+    vaultAddress,
+  ])
+
+  const minOut =
+    previewOut != null && previewOut > BigInt(0)
+      ? computeMinAmountOut(previewOut, slippage)
+      : BigInt(0)
+  const hasPreview = previewOut != null && previewOut > BigInt(0) && minOut > BigInt(0)
+
+  const gate = resolveWalletGate({
+    isConnected,
+    isWrongNetwork,
+    amountValid,
+    hasPreview: hasPreview && !!routerAddress,
+    needsTokenApproval: approval.needsTokenApproval,
+    needsPermit2Approval: approval.needsPermit2Approval,
+    executeLabel: mode === 'deposit' ? 'Deposit' : 'Withdraw',
+  })
+
+  // Merge local pending with connect/switch hook pending
+  const effectivePending: PendingLeg =
+    pendingLeg ??
+    (isConnectPending
+      ? 'connect'
+      : isSwitchPending
+        ? 'switch'
+        : approval.approvalState === 'approving'
+          ? gate.kind === 'approve' && gate.leg === 'token-permit2'
+            ? 'approve-token-permit2'
+            : gate.kind === 'approve' && gate.leg === 'permit2-router'
+              ? 'approve-permit2-router'
+              : null
+          : null)
+
+  const handleConnect = useCallback(() => {
+    const c = connectors[0]
+    if (c) connect({ connector: c })
+  }, [connect, connectors])
+
+  const handleSwitch = useCallback(async () => {
+    try {
+      setStatus('')
+      await switchChainAsync?.({ chainId })
+    } catch (e) {
+      setStatus(parseContractError(e))
+    }
+  }, [switchChainAsync, chainId])
+
+  const handleApproveToken = useCallback(async () => {
+    setPendingLeg('approve-token-permit2')
+    setTxPhase('approve')
+    setStatus('')
+    try {
+      // Split handler only — never handleApproval for sequential multi-leg
+      await approval.handleIssuePermit2Approval()
+    } catch (e) {
+      setTxPhase('error')
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
+  }, [approval])
+
+  const handleApproveRouter = useCallback(async () => {
+    setPendingLeg('approve-permit2-router')
+    setTxPhase('approve')
+    setStatus('')
+    try {
+      await approval.handleIssueRouterApproval(parsedAmount)
+    } catch (e) {
+      setTxPhase('error')
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
+  }, [approval, parsedAmount])
+
+  const runExecute = useCallback(async () => {
+    if (!routerAddress || !publicClient || !address || !parsedAmount || !hasPreview) {
+      setStatus('Quote required before deposit. Continue via Swap if preview fails.')
       return
     }
     if (mode === 'deposit' && !tokenIn) {
@@ -184,22 +426,19 @@ export function DepositPanel({
       setStatus('Vault underlying tokens unavailable for withdraw.')
       return
     }
+    // Honest floor: never silent minOut = 0 on happy path
+    if (minOut <= BigInt(0)) {
+      setStatus('Preview unavailable — cannot deposit with zero minOut. Use Swap fallback.')
+      return
+    }
 
     try {
       setStatus('')
       setSuccessHash(null)
-      setTxPhase('approve')
-
-      // Real approval path: Token → Permit2 → Router (same helper as Swap / staking mint).
-      if (approval.needsTokenApproval || approval.needsPermit2Approval) {
-        await approval.handleApproval()
-      }
-
+      setPendingLeg('execute')
       setTxPhase('submit')
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200)
-      const minOut = BigInt(0) // honest min; user can refine via Swap for slippage control
 
-      // Args match proven Swap Strategy Vault Deposit / Withdrawal routes (routeMatcher).
       const args =
         mode === 'deposit'
           ? buildStrategyVaultDepositArgs({
@@ -217,6 +456,11 @@ export function DepositPanel({
               deadline,
             })
 
+      // 10-tuple execute only
+      if (args.length !== 10) {
+        throw new Error('Invalid execute args arity')
+      }
+
       const hash = await writeContractAsync({
         address: routerAddress,
         abi: swapExactInAbi,
@@ -233,23 +477,27 @@ export function DepositPanel({
       void refetchBalance()
       void approval.refetchAllowance()
       void approval.refetchPermit2Allowance()
-    } catch (e: any) {
+    } catch (e: unknown) {
       setTxPhase('error')
-      setStatus(e?.shortMessage || e?.message || 'Transaction failed')
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
     }
   }, [
     routerAddress,
     publicClient,
     address,
     parsedAmount,
+    hasPreview,
+    minOut,
     mode,
     tokenIn,
     withdrawTokenOut,
-    approval,
     writeContractAsync,
     vaultAddress,
     chainId,
     refetchBalance,
+    approval,
   ])
 
   if (product.productType !== 'strategy') {
@@ -267,14 +515,6 @@ export function DepositPanel({
             </Button>
           </Link>
         </div>
-      </Card>
-    )
-  }
-
-  if (!isConnected) {
-    return (
-      <Card>
-        <p className="text-sm text-[var(--text-muted,#9aa3b2)]">Connect your wallet to deposit.</p>
       </Card>
     )
   }
@@ -318,6 +558,7 @@ export function DepositPanel({
             setTokenIn(underlyingTokens[0] || '')
             setTxPhase('idle')
             setStatus('')
+            setPreviewOut(null)
           }}
         >
           Deposit
@@ -331,6 +572,7 @@ export function DepositPanel({
             setTokenIn(vaultAddress)
             setTxPhase('idle')
             setStatus('')
+            setPreviewOut(null)
           }}
         >
           Withdraw
@@ -346,46 +588,54 @@ export function DepositPanel({
             value={tokenIn}
             onChange={(e) => setTokenIn(e.target.value as `0x${string}`)}
           >
-            {underlyingTokens.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
+            {underlyingTokens.map((t) => {
+              const sym = assetSymbols[t.toLowerCase()]
+              return (
+                <option key={t} value={t}>
+                  {sym ? `${sym} · ${t.slice(0, 6)}…${t.slice(-4)}` : t}
+                </option>
+              )
+            })}
           </select>
         </label>
       ) : null}
 
-      <label className="block text-xs text-[var(--text-muted,#9aa3b2)]">
-        Amount {symbol ? `(${String(symbol)})` : ''}
-        <div className="mt-1 flex gap-2">
-          <input
-            data-testid="earn-deposit-amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.0"
-            className="flex-1 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 font-mono text-sm tabular-nums text-[var(--text-primary,#EDEDED)]"
-          />
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => {
-              if (typeof balance === 'bigint') setAmount(formatUnits(balance, dec))
-            }}
-          >
-            Max
-          </Button>
-        </div>
-      </label>
+      <AmountField
+        data-testid="earn-deposit-amount"
+        label="Amount"
+        value={amount}
+        onChange={setAmount}
+        decimals={dec}
+        balance={typeof balance === 'bigint' ? balance : undefined}
+        symbol={symbol ? String(symbol) : undefined}
+        usdValue={null}
+      />
 
-      <p className="mt-2 text-[11px] text-[var(--text-muted,#9aa3b2)]">
-        Balance:{' '}
-        <span className="font-mono">
-          {typeof balance === 'bigint' ? formatUnits(balance, dec) : '—'}
-        </span>
-      </p>
-      <p className="mt-1 text-[11px] text-[var(--text-muted,#9aa3b2)]">
-        Fees: protocol/router fees apply on-chain. Use Swap for advanced slippage.
-      </p>
+      <div className="mt-3">
+        <SlippageInput value={slippage} onChange={setSlippage} className="max-w-xs" />
+      </div>
+
+      <div className="mt-2 text-[11px] text-[var(--text-muted,#9aa3b2)] space-y-0.5">
+        {previewLoading ? <p data-testid="earn-deposit-preview-loading">Fetching quote…</p> : null}
+        {hasPreview ? (
+          <p data-testid="earn-deposit-preview">
+            Expected out:{' '}
+            <span className="font-mono tabular-nums text-[var(--text-primary,#EDEDED)]">
+              {formatPreviewAmount(previewOut!, outDec)}
+            </span>{' '}
+            {outSymbolDisplay}
+            {' · '}
+            Min:{' '}
+            <span className="font-mono tabular-nums">{formatPreviewAmount(minOut, outDec)}</span>
+          </p>
+        ) : null}
+        {previewError && amountValid ? (
+          <p data-testid="earn-deposit-preview-error" className="text-amber-300/90">
+            Quote unavailable: {previewError}
+          </p>
+        ) : null}
+        <p>Fees: protocol/router fees apply on-chain. Numeric fee display not yet available.</p>
+      </div>
 
       {!routerAddress ? (
         <p className="mt-3 text-sm text-red-300">Router not configured for this environment.</p>
@@ -395,15 +645,17 @@ export function DepositPanel({
         <TxSteps steps={steps} />
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Button
+      <div className="mt-4 flex flex-wrap gap-2 items-center">
+        <ActionCta
           data-testid="earn-deposit-submit"
-          loading={isPending || txPhase === 'approve' || txPhase === 'submit'}
-          disabled={!routerAddress || !parsedAmount}
-          onClick={() => void runDeposit()}
-        >
-          {mode === 'deposit' ? 'Deposit' : 'Withdraw'}
-        </Button>
+          gate={gate}
+          pendingLeg={effectivePending}
+          onConnect={handleConnect}
+          onSwitchNetwork={() => void handleSwitch()}
+          onApproveTokenPermit2={() => void handleApproveToken()}
+          onApprovePermit2Router={() => void handleApproveRouter()}
+          onExecute={() => void runExecute()}
+        />
         {txPhase === 'done' ? (
           <Link href="/portfolio">
             <Button variant="secondary">View portfolio</Button>
@@ -411,11 +663,18 @@ export function DepositPanel({
         ) : null}
         <Link
           href={`/swap?tokenOut=${vaultAddress}`}
+          data-testid="earn-deposit-swap-fallback"
           className="inline-flex items-center text-xs text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
         >
-          Advanced via Swap →
+          Continue via Swap →
         </Link>
       </div>
+
+      {gate.kind === 'disabled' && gate.reason === 'no-preview' && amountValid ? (
+        <p className="mt-2 text-xs text-amber-200/90">
+          Deposit disabled until a quote is available. Use Swap fallback if the vault quote fails.
+        </p>
+      ) : null}
 
       {status ? (
         <p
@@ -424,6 +683,9 @@ export function DepositPanel({
         >
           {status}
         </p>
+      ) : null}
+      {approval.approvalError ? (
+        <p className="mt-2 text-sm text-red-300">{approval.approvalError}</p>
       ) : null}
       {successHash ? (
         <p

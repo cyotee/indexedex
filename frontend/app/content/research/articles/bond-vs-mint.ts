@@ -77,7 +77,7 @@ export const bondVsMintArticle: ResearchArticle = {
       heading: 'How this shows up in the app',
       paragraphs: [
         'Protocol DETF on /staking is the live product surface for mint, burn, bond, sell, and claim when configured. Research here explains the tradeoff; the product page names actions by verb (Bond, Mint, Burn, Claim).',
-        'Companion notes: What is a DETF? (pattern and modes), DETF types (which reserve shape you stand up), and Rate providers (why nested vault-share legs must re-mark honestly).',
+        'Companion notes: What is a DETF? (pattern and modes), DETF types (which reserve shape you stand up), and Rate providers (mark accuracy vs market reprice for nested vault-share legs).',
       ],
     },
   ],

@@ -167,9 +167,26 @@ exports.ARTIFACT_REGISTRY = {
             balancerPools: supersim_sepolia_base_balancerv3_pools_tokenlist_json_1.default,
         }),
     },
+    // Single-chain Anvil local_testing: platform comes from chain/<id>/platform.json overrides;
+    // tokenlists are chain-keyed via tokenlistRegistry (empty legacy bundle is intentional).
+    local_testing: {
+        [exports.CHAIN_ID_SEPOLIA]: buildBundle('local_testing', exports.CHAIN_ID_SEPOLIA, 'ethereum', {
+            platform: {},
+            tokens: [],
+            erc4626: [],
+            seigniorageDetfs: [],
+            protocolDetf: [],
+            strategyVaults: [],
+            uniV2Pools: [],
+            aerodromePools: [],
+            aerodromeStrategyVaults: [],
+            balancerPools: [],
+        }),
+    },
 };
-exports.DEPLOYMENT_ENVIRONMENTS = ['sepolia', 'public_sepolia', 'supersim_sepolia'];
+exports.DEPLOYMENT_ENVIRONMENTS = ['sepolia', 'public_sepolia', 'supersim_sepolia', 'local_testing'];
 function getArtifactBundle(environment, chainId) {
-    return exports.ARTIFACT_REGISTRY[environment][chainId] ?? null;
+    var _a;
+    return ((_a = exports.ARTIFACT_REGISTRY[environment]) === null || _a === void 0 ? void 0 : _a[chainId]) ?? null;
 }
 exports.getArtifactBundle = getArtifactBundle;

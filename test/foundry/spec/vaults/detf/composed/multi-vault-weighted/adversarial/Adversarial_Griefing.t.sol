@@ -20,7 +20,7 @@ import {
 contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     /// @notice H2: impossible minOut reverts whole redeem; claim not permanently burned.
     function test_H2_redeemClaim_revert_claimUnchanged() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true);
+        address instance_ = _deployOpenModeDetfN(1);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 2_500e18);
 
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
@@ -56,7 +56,7 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
 
     /// @notice H2b: full claim redeem either succeeds or reverts cleanly (no partial strand).
     function test_H2_fullRedeem_atomic() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true);
+        address instance_ = _deployOpenModeDetfN(1);
         // Large bootstrap to reduce TokenBalanceBelowMin grief on full exit
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 5_000e18);
         // Add more reserve via mint so full claim exit is a fraction of pool

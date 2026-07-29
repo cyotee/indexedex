@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 import {
     MultiVaultWeightedDetfCommon
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfCommon.sol";
@@ -10,6 +11,9 @@ import {
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
 
 interface IMultiVaultWeightedDetfInfo {
+    /// @notice Emitted once at init with resolved mint/burn thresholds (PRD §16.4).
+    event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
+
     function isReserveLive() external view returns (bool);
     function vaultCount() external view returns (uint256);
     function underlyingVaults() external view returns (address[] memory);
@@ -22,6 +26,7 @@ interface IMultiVaultWeightedDetfInfo {
     function syntheticPrice() external view returns (uint256);
     function mintThreshold() external view returns (uint256);
     function burnThreshold() external view returns (uint256);
+    function thresholdMode() external view returns (ThresholdMode);
     function isMintingAllowed() external view returns (bool);
     function isBurningAllowed() external view returns (bool);
     function bondNftVault() external view returns (address);
@@ -92,6 +97,10 @@ abstract contract MultiVaultWeightedDetfInfoTarget is MultiVaultWeightedDetfComm
 
     function burnThreshold() external view returns (uint256) {
         return MultiVaultWeightedDetfRepo._layoutStruct().burnThreshold;
+    }
+
+    function thresholdMode() external view returns (ThresholdMode) {
+        return MultiVaultWeightedDetfRepo._layoutStruct().thresholdMode;
     }
 
     function isMintingAllowed() external view returns (bool) {

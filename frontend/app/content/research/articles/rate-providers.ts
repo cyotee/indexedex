@@ -1,59 +1,128 @@
 import type { ResearchArticle } from '../types'
 
+/**
+ * Rate providers — deploy-time mark policy for SE-share legs in nested / DETF reserves.
+ * Public framing: accuracy-first (rates on) vs reprice-volume (rates off).
+ * Evidence: research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3;
+ * research/scenarios/uniswapV2Se/rateProviderCompare/.
+ * Voice: indexedex-product-voice.
+ */
 export const rateProvidersArticle: ResearchArticle = {
   slug: 'rate-providers',
-  title: 'Rate providers keep nested markets honest',
+  title: 'Rate providers: mark accuracy or market reprice',
   summary:
-    'When Standard Exchange vault shares sit in nested Balancer legs, rate providers keep mids fair as underlying markets move. That is mark integrity — not free yield.',
-  date: '2026-07-21',
-  tags: ['rates', 'se', 'balancer', 'integrity'],
+    'DETF reserves that hold Standard Exchange vault shares can deploy with rate providers on or off. On prioritizes accurate live marks so deposits and synthetic price track claim value. Off leaves raw-share mids that can lag — inviting reprice volume when that gap is large enough to trade. Two product intents. Neither is free yield.',
+  date: '2026-07-28',
+  tags: ['rates', 'se', 'balancer', 'detf', 'integrity'],
   status: 'published',
   claims: [
-    'With rate providers on, residual mid lag under tested Uni-driven demand paths is effectively zero.',
-    'With rate providers off, residual lag grows as volume scales.',
-    'Residual lag is not a free arb until edge clears pool fees and path costs.',
-    'Pool fee acts as an arb presentation threshold: below the stack, residuals can exist with zero fills.',
+    'DETF and nested SE-share reserves can deploy with rate providers on or off — two intentional mark policies.',
+    'Rates on prioritize mark accuracy: live claim accounting so deposit and synthetic quotes track redeem-fair value as underlyings move.',
+    'Rates off prioritize market reprice: raw-share mids can lag claim value, which can invite closer volume when residual clears fees and path costs.',
+    'With rate providers on under tested Uni-driven demand paths, residual mid lag is effectively zero.',
+    'With rate providers off, residual lag grows as underlying volume scales; fills appear only when edge clears the fee stack.',
+    'Rate providers re-mark live claim units; they do not auto-rebalance weights or allocate capital across vaults.',
   ],
   notClaiming: [
-    'Rate providers do not print yield or guarantee profit.',
+    'Neither policy prints yield, guarantees profit, or promises mainnet reprice volume.',
     'Results are from hermetic/fork research scenarios — not a promise of live DETF portfolio performance.',
     'Fee ladders and fill behavior transfer carefully across pool fee settings; do not extrapolate one research fee to all production pools.',
-    'This note does not claim DualLiquidity itself is an arb product.',
+    'Rates on do not replace user mint, burn, bond, or deposit flow for moving inventory.',
+    'Rates off do not guarantee aggressive rebalancing — residual can exist below fees with no fills.',
   ],
   relatedProductHref: '/research/detf',
   relatedProductLabel: 'What is a DETF?',
   sourceNote:
-    'research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3 (rate provider comparative); scenarios under research/scenarios/uniswapV2Se/rateProviderCompare/.',
+    'research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3 (rate provider comparative); research/scenarios/uniswapV2Se/rateProviderCompare/ (AGENT_RESEARCH_REPORT.md, FINDINGS.md). Product spine: docs/marketing/DETF_NARRATIVE_SPINE.md (pricing engine = reserve pool). DualLiquidity optional rates appear only as composition context — not the hero product.',
   sections: [
     {
-      heading: 'The problem nested reserves create',
+      heading: 'Two ways to mark SE-share legs',
       paragraphs: [
-        'Standard Exchange (SE) vault shares re-mark with their underlying venues. When those shares become legs in a Balancer pool, the nested mid only stays fair if the pool sees an accurate rate for the vault share.',
-        'Without rate providers, the nested mid can lag while the underlying market moves. With rate providers, research runs show residual mid error collapsing under the same demand path.',
+        'A DETF (Decentralized ETF) prices itself from a real multi-asset reserve — often Balancer V3 legs that hold Standard Exchange (SE) vault shares. Those shares track claim value on underlying venues (for example a Uniswap book wrapped as an SE vault).',
+        'When you stand up a reserve, you can wire those share legs with rate providers on, or leave them as raw ERC-20 legs with rate providers off. That is a product intent choice: mark accuracy first, or market-driven reprice first.',
+        'Both designs are intentional. Pick the one that matches how you want the reserve to behave when underlyings move.',
       ],
     },
     {
-      heading: 'What the comparative runs showed',
+      heading: 'What the switch changes',
       paragraphs: [
-        'In pure separate worlds (rates on vs rates off) against Uni V2 SE demand:',
+        'SE vault shares are raw token balances. A rate provider answers how much claim one share is worth right now against the vault’s rate target. Balancer can use that answer so pool math works in live claim units.',
       ],
       bullets: [
-        'Baseline and higher-volume Mode A paths: rates on → residual ≈ 0; rates off → residual scales with volume (from tens of bps into multi-percent under stress tiers).',
-        'Modest Mode C arb probes: residuals below the research fee stack produced zero fills — lag without a free lunch.',
-        'Extreme stress tiers: when residual cleared fees, fills appeared — confirming fee as a presentation threshold, not that “rates off is free money.”',
+        'Mark accuracy (rates on) — live balance of a share leg scales with the SE rate. Nested mids re-mark as underlyings move, even before anyone trades the reserve.',
+        'Market reprice (rates off) — the pool sees raw share amounts. If underlyings move and reserve inventory is quiet, the nested mid can hold while redeem claim value moves.',
+        'Same raw inventory, two intents — continuous live marks versus raw-share mids that markets can reprice when the gap is worth trading.',
       ],
     },
     {
-      heading: 'Why DETFs care',
+      heading: 'Mark accuracy (rates on)',
       paragraphs: [
-        'A DETF prices seigniorage from its reserve pool. If vault-share legs mis-mark, synthetic price and mint/burn gates inherit that error. Rate providers are a mark-integrity control for nested composition — the same class of honesty problem DETF reserves face when legs are SE shares.',
-        'Product messaging should lead with integrity and re-mark behavior, not with residual-as-yield.',
+        'Choose rate providers when accurate reserve pricing matters most: fair deposits, fair vault-share ↔ DETF quotes, and a synthetic price that tracks live claim as underlyings move.',
+        'With rates on, the composed pool acts as a live ledger for the DETF reserve. Heterogeneous vault shares become comparable claim units in one Balancer book. Primary mint, burn, and deposit sizing can read that same book — not a separate admin NAV.',
+      ],
+      bullets: [
+        'Live path — SE shares (raw) → rate providers (claim per share) → live reserve balances → synthetic price and deposit quotes.',
+        'Fair deposits — joins and primary routes use rate-aware math so quotes stay aligned with claim value.',
+        'Honest synthetic — Policy mode gates mint and burn from reserve-derived synthetic price. A current book keeps those gates and quotes tied to redeem-fair marks. Open mode still benefits: quotes stay current even though Open does not price-gate mint or burn.',
+        'Who moves inventory — users rebalance exposure through deposit, mint, burn, and bond. Rates re-mark the book; they do not auto-shift weight from vault A to vault B. You do not need lag-driven arb to keep the mid honest.',
       ],
     },
     {
-      heading: 'How to read the graphs later',
+      heading: 'Market reprice (rates off)',
       paragraphs: [
-        'When figures ship on this site (R4), the primary compare panel is residual / fairness under matched demand with rates on vs off. Until then, the monorepo plot packs under research/out/uniswapV2Se/rateProviderCompare/ are the machine-readable evidence.',
+        'Choose rates off when you want raw-share mids and stronger incentive for markets to trade the reserve when claim value and the nested mid diverge.',
+        'As underlying venues move, SE rates update and residual mid lag can grow while raw inventory is quiet. That gap can invite closers to trade nested paths — more active reprice flow on the reserve when the edge clears fees, impact, and path costs.',
+      ],
+      bullets: [
+        'Product upside — lag creates a signal for reprice volume that can push reserve inventory more actively than a continuously fair mid alone.',
+        'Clear tradeoff — mids may not track claim value continuously until that flow happens. Deposit and synthetic quotes can inherit the lag in the meantime.',
+        'Fee-aware — residual is not free yield. Research closers only filled when residual cleared the fee stack; modest lag can sit with no fills.',
+        'Best fit — compositions that want market-driven reprice on nested SE-share legs and accept less continuous mark accuracy.',
+      ],
+    },
+    {
+      heading: 'Side-by-side: same underlying move',
+      paragraphs: [
+        'Toy path: the reserve holds a fixed raw amount of SE shares. The underlying market moves so the SE rate goes from 1.00 to 1.05. No one has traded the reserve yet.',
+      ],
+      bullets: [
+        'Rates on — live share balance scales up; the pool’s quote per raw share re-marks with claim value. Residual mid×rate stays near zero. A deposit or mint against that leg tracks live claim more closely.',
+        'Rates off — raw mid holds; redeem claim moved about five percent. Residual grows. That gap can later invite reprice trades if it clears costs; until then, quotes can sit away from live claim.',
+        'Why scaling under rates on is not free arb — the scale is re-pricing live claim units so the book stays fair. Reprice incentive shows up when the mid is left raw (rates off) and residual is large enough to trade.',
+      ],
+    },
+    {
+      heading: 'How to choose',
+      paragraphs: [
+        'Match the flag to product goals. Families may expose this as a deploy-time option on SE-share reserve legs. Defaults can differ by package — read instance args for the DETF or vault you care about.',
+      ],
+      bullets: [
+        'Choose mark accuracy (rates on) when fair primary deposits, live multi-leg accounting, and redeem-aligned synthetic matter most — with users moving inventory through product routes.',
+        'Choose market reprice (rates off) when you want lag to invite closer volume across the reserve and accept that mids may trail claim until that volume trades.',
+        'Weighted, stable, or multi-token design changes impact and path shape — not the core choice between continuous re-mark and raw-share reprice. More legs make a clear mark policy more important, because more raw counts can look similar when their claims are not.',
+      ],
+    },
+    {
+      heading: 'What research measured',
+      paragraphs: [
+        'Hermetic Uni V2 SE runs compared pure rates-on and rates-off worlds under the same demand path. Those matrices used a research Balancer const-prod fee of 5% — treat fee thresholds as scenario-specific, not a universal production rule.',
+      ],
+      bullets: [
+        'Underlying demand only: rates on → residual ≈ 0 across volume tiers tested; rates off → residual scales with volume (tens of bps at modest stress into multi-percent and higher under extreme tiers).',
+        'Modest closer probes: residual below the research fee stack → no fills — lag without a free lunch.',
+        'Extreme stress: when residual cleared fees, fills appeared — reprice volume becomes real once edge clears costs. Multi-path stress can still produce some fills with rates on; residual series still separates continuous re-mark (on) from raw mid lag (off).',
+        'Figures on this site (when R4 ships): residual and fairness compares under matched demand. Until then: monorepo research/out/uniswapV2Se/rateProviderCompare/ and research/scenarios/uniswapV2Se/rateProviderCompare/.',
+      ],
+    },
+    {
+      heading: 'Short FAQ',
+      paragraphs: [
+        'Can I deploy either way? Yes — when the package allows the flag. Both are intentional mark policies.',
+        'Which is better for a fair primary market? Mark accuracy (rates on).',
+        'Which invites reprice volume on nested legs? Market reprice (rates off), when residual clears costs — not guaranteed every path.',
+        'Do rate providers rebalance weights for me? No. Rates on re-mark live claim. Rates off leave raw mids for markets to reprice. Users still deposit, mint, burn, and bond to change exposure.',
+        'Does Open mode make rates irrelevant? No. Open removes price restrictions on primary mint and burn; quote quality still follows how the reserve marks SE legs.',
+        'Where does this sit in the stack? SE vaults under Earn and many DETF reserve legs. Basket shape: /research/detf-types. Liquid share vs bond path: /research/bond-vs-mint. DETF overview: /research/detf.',
       ],
     },
   ],

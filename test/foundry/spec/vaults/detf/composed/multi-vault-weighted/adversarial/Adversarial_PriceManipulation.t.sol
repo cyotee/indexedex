@@ -18,7 +18,7 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
     ///      seigniorage as vault-share PnL. That is intentional product surface — not a free drain of
     ///      bonded principal. Hard invariants: victim DETF balance, residual inventory, claim authority.
     function test_B1_skewMintReverseBurn_seigniorageBounds() public {
-        address instance_ = _deployDetfN(1, 1, type(uint256).max, true); // both gates open
+        address instance_ = _deployOpenModeDetfN(1); // both gates open when live
         (uint256 aliceTokenId_, uint256 aliceBpt_) = _goLiveViaBptBond(instance_, alice, 2_000e18);
         assertTrue(aliceTokenId_ > 0 && aliceBpt_ > 0, "alice bond principal");
 

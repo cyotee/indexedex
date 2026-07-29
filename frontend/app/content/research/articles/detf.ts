@@ -85,7 +85,7 @@ export const detfArticle: ResearchArticle = {
     {
       heading: 'Why research matters',
       paragraphs: [
-        'A DETF is only as honest as how nested reserve legs re-mark. Companion notes cover DETF types (which reserve shape to stand up), bond vs mint (liquid share vs seigniorage path), and rate providers as mark-integrity controls. Measured fee-share (Protocol DETF) performance campaigns are product-ops work beyond this mechanics note.',
+        'Nested reserve legs follow a deploy-time rate policy — mark accuracy or market reprice. Companion notes cover DETF types (which reserve shape to stand up), bond vs mint (liquid share vs seigniorage path), and rate providers (that choice for SE-share legs). Measured fee-share (Protocol DETF) performance campaigns are product-ops work beyond this mechanics note.',
       ],
     },
   ],

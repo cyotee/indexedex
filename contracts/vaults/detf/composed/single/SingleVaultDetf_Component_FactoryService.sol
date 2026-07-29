@@ -25,6 +25,7 @@ import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimT
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 import {ISingleVaultDetfDFPkg} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 library SingleVaultDetf_Component_FactoryService {
     struct SingleVaultDetfFacets {
@@ -98,6 +99,7 @@ library SingleVaultDetf_Component_FactoryService {
         });
     }
 
+    /// @notice Default Policy + 0,0 → product ±5% defaults after resolve.
     function buildPkgArgs(
         string memory name_,
         string memory symbol_,
@@ -107,6 +109,32 @@ library SingleVaultDetf_Component_FactoryService {
         PoolKey memory underlyingPoolKey_,
         uint24 underlyingWidthMultiplier_
     ) internal pure returns (ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs_) {
+        pkgArgs_ = buildPkgArgs(
+            name_,
+            symbol_,
+            pairToken_,
+            pairInitialDepositAmount_,
+            rateAssetInitialDepositAmount_,
+            underlyingPoolKey_,
+            underlyingWidthMultiplier_,
+            0,
+            0,
+            ThresholdMode.Policy
+        );
+    }
+
+    function buildPkgArgs(
+        string memory name_,
+        string memory symbol_,
+        IERC20 pairToken_,
+        uint256 pairInitialDepositAmount_,
+        uint256 rateAssetInitialDepositAmount_,
+        PoolKey memory underlyingPoolKey_,
+        uint24 underlyingWidthMultiplier_,
+        uint256 mintThreshold_,
+        uint256 burnThreshold_,
+        ThresholdMode thresholdMode_
+    ) internal pure returns (ISingleVaultDetfDFPkg.PkgArgs memory pkgArgs_) {
         pkgArgs_ = ISingleVaultDetfDFPkg.PkgArgs({
             name: name_,
             symbol: symbol_,
@@ -114,7 +142,10 @@ library SingleVaultDetf_Component_FactoryService {
             pairInitialDepositAmount: pairInitialDepositAmount_,
             rateAssetInitialDepositAmount: rateAssetInitialDepositAmount_,
             underlyingPoolKey: underlyingPoolKey_,
-            underlyingWidthMultiplier: underlyingWidthMultiplier_
+            underlyingWidthMultiplier: underlyingWidthMultiplier_,
+            mintThreshold: mintThreshold_,
+            burnThreshold: burnThreshold_,
+            thresholdMode: thresholdMode_
         });
     }
 }

@@ -2,7 +2,17 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
+import {
+  useAccount,
+  useChainId,
+  useConnect,
+  useConnection,
+  useConnectorClient,
+  usePublicClient,
+  useSignTypedData,
+  useSwitchChain,
+  useWalletClient,
+} from 'wagmi'
 import { useReadContract, useReadContracts, useWriteContract } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
 import { balancerV3StandardExchangeRouterExactInQueryFacetAbi } from '../generated'
@@ -18,8 +28,15 @@ import { createPublicClient, http } from 'viem'
 import { decodeEventLog, encodeAbiParameters, formatUnits, hashTypedData, keccak256, parseUnits, recoverAddress } from 'viem'
 import type { Log } from 'viem'
 import DebugPanel from '../components/DebugPanel'
+import { ActionCta } from '../components/ui/ActionCta'
+import { Card } from '../components/ui/Card'
 import { debugError, debugLog } from '../lib/debug'
 import { usePreferredBrowserChainId } from '../lib/browserChain'
+import {
+  resolveWalletGate,
+  type PendingLeg,
+} from '../lib/tx/actionState'
+import { parseContractError } from '../lib/tx/parseContractError'
 
 import { hasBytecode, isZeroAddress } from '../lib/onchain'
 import { useSelectedNetwork } from '../lib/networkSelection'
@@ -360,6 +377,8 @@ function SwapPageInner() {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
   const { selectedChainId } = useSelectedNetwork()
+  const { connect, connectors, isPending: isConnectPending } = useConnect()
+  const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
   const connection = useConnection()
   const connectorId = connection.connector?.id
   const { data: connectorClient } = useConnectorClient()
@@ -621,6 +640,8 @@ function SwapPageInner() {
   const [permit2SpendingLimit, setPermit2SpendingLimit] = useState(MAX_UINT160.toString())
   const [routerSpendingLimit, setRouterSpendingLimit] = useState('')
   const [routerSpendingLimitDirty, setRouterSpendingLimitDirty] = useState(false)
+  /** Per-leg pending for ActionCta — never share one isLoading across approve + swap (K17 / ethskills). */
+  const [pendingLeg, setPendingLeg] = useState<PendingLeg>(null)
 
   useEffect(() => {
     const validPoolValues = new Set(poolOptions.map((option) => option.value.toLowerCase()))
@@ -2034,6 +2055,90 @@ function SwapPageInner() {
     return needsAny
   }, [approvalMode, effectiveApprovalMode, needsTokenApproval, needsPermit2Approval, routePattern])
 
+  // Multi-leg primary CTA gate (connect → switch → approve leg(s) → execute).
+  // Explicit: both approve legs via split handlers only (never one-shot handleApproval).
+  // Signed: token→Permit2 only; permit2→router leg omitted (signedMode).
+  const amountValidForGate = useMemo(() => {
+    if (lastEditedField === 'in') {
+      return !!exactAmountInField && exactAmountInField > BigInt(0)
+    }
+    return !!exactAmountOutField && exactAmountOutField > BigInt(0)
+  }, [lastEditedField, exactAmountInField, exactAmountOutField])
+
+  const hasPreviewForGate = useMemo(() => {
+    if (!routerReady) return false
+    if (lastEditedField === 'in') return !!previewExactIn
+    return !!previewExactOut
+  }, [routerReady, lastEditedField, previewExactIn, previewExactOut])
+
+  const isWrongNetworkForGate = useMemo(() => {
+    if (!isConnected) return false
+    if (isUnsupportedChain) return true
+    if (
+      typeof walletChainId === 'number' &&
+      typeof selectedChainId === 'number' &&
+      walletChainId !== selectedChainId
+    ) {
+      return true
+    }
+    if (rpcChainId !== null && typeof walletChainId === 'number' && rpcChainId !== walletChainId) {
+      return true
+    }
+    return false
+  }, [isConnected, isUnsupportedChain, walletChainId, selectedChainId, rpcChainId])
+
+  const swapWalletGate = useMemo(
+    () =>
+      resolveWalletGate({
+        isConnected,
+        isWrongNetwork: isWrongNetworkForGate,
+        amountValid: amountValidForGate,
+        hasPreview: hasPreviewForGate,
+        // ETH-in skips ERC20 approvals entirely
+        needsTokenApproval: useEthIn ? false : needsTokenApproval,
+        needsPermit2Approval: useEthIn ? false : needsPermit2Approval,
+        executeLabel: lastEditedField === 'in' ? 'Swap (Exact In)' : 'Swap (Exact Out)',
+        signedMode: effectiveApprovalMode === 'signed',
+      }),
+    [
+      isConnected,
+      isWrongNetworkForGate,
+      amountValidForGate,
+      hasPreviewForGate,
+      useEthIn,
+      needsTokenApproval,
+      needsPermit2Approval,
+      lastEditedField,
+      effectiveApprovalMode,
+    ],
+  )
+
+  const effectiveSwapPendingLeg: PendingLeg = useMemo(() => {
+    if (pendingLeg) return pendingLeg
+    if (isConnectPending) return 'connect'
+    if (isSwitchPending) return 'switch'
+    if (approvalState === 'approving') {
+      if (swapWalletGate.kind === 'approve' && swapWalletGate.leg === 'token-permit2') {
+        return 'approve-token-permit2'
+      }
+      if (swapWalletGate.kind === 'approve' && swapWalletGate.leg === 'permit2-router') {
+        return 'approve-permit2-router'
+      }
+      // Safety: ensureSpendingLimits inside handleSwap may set approving while on execute
+      return null
+    }
+    if (swapPending || lastSwapReceiptStatus === 'pending') return 'execute'
+    return null
+  }, [
+    pendingLeg,
+    isConnectPending,
+    isSwitchPending,
+    approvalState,
+    swapWalletGate,
+    swapPending,
+    lastSwapReceiptStatus,
+  ])
+
   // Bridge from approval-state to the simulation-mode flag declared earlier in
   // the render. In Explicit mode, switch the Amount Out preview from the
   // router's read-only query function to a full simulation of the actual swap
@@ -2235,6 +2340,12 @@ function SwapPageInner() {
     [permit2Address, publicClient, writeSwapAsync]
   )
 
+  /**
+   * Legacy one-shot approval orchestrator (both legs in one click).
+   * Kept for rare debug / non-sequential callers only.
+   * Multi-leg ActionCta MUST use handleIssuePermit2Approval / handleIssueRouterApproval (K17).
+   * Do not wire ActionCta onClick to this function.
+   */
   const handleApproval = useCallback(async () => {
     if (useEthIn) return
     if (!tokenInAddress || !effectiveAmountIn || !address) return
@@ -2394,6 +2505,7 @@ function SwapPageInner() {
   }, [])
 
   // Handler for issuing permit2 approval with custom limit
+  // K17: split handler only — ActionCta multi-leg must never call one-shot handleApproval
   const handleIssuePermit2Approval = useCallback(async () => {
     if (useEthIn) {
       failApproval('Token-to-Permit2 approval is not needed when paying in native ETH')
@@ -2421,6 +2533,7 @@ function SwapPageInner() {
       ? BigInt(permit2SpendingLimit)
       : MAX_UINT160
 
+    setPendingLeg('approve-token-permit2')
     setApprovalState('approving')
     setApprovalError('')
 
@@ -2431,15 +2544,18 @@ function SwapPageInner() {
       setTimeout(() => setApprovalState('idle'), 3000)
     } catch (error) {
       setApprovalState('error')
-      setApprovalError(error instanceof Error ? error.message : 'Permit2 approval failed')
+      setApprovalError(parseContractError(error) || (error instanceof Error ? error.message : 'Permit2 approval failed'))
       setTimeout(() => {
         setApprovalState('idle')
         setApprovalError('')
       }, 5000)
+    } finally {
+      setPendingLeg(null)
     }
   }, [useEthIn, tokenInAddress, address, publicClient, permit2Address, permit2SpendingLimit, setTokenAllowance, refetchAllowance, MAX_UINT160, failApproval])
 
   // Handler for issuing router approval with custom limit
+  // K17: split handler only — ActionCta multi-leg must never call one-shot handleApproval
   const handleIssueRouterApproval = useCallback(async () => {
     if (useEthIn) {
       failApproval('Permit2-to-Router approval is not needed when paying in native ETH')
@@ -2478,6 +2594,7 @@ function SwapPageInner() {
       ? BigInt(routerSpendingLimit)
       : (exactAmountInField ?? MAX_UINT160)
 
+    setPendingLeg('approve-permit2-router')
     setApprovalState('approving')
     setApprovalError('')
 
@@ -2488,13 +2605,35 @@ function SwapPageInner() {
       setTimeout(() => setApprovalState('idle'), 3000)
     } catch (error) {
       setApprovalState('error')
-      setApprovalError(error instanceof Error ? error.message : 'Router approval failed')
+      setApprovalError(parseContractError(error) || (error instanceof Error ? error.message : 'Router approval failed'))
       setTimeout(() => {
         setApprovalState('idle')
         setApprovalError('')
       }, 5000)
+    } finally {
+      setPendingLeg(null)
     }
   }, [useEthIn, tokenInAddress, address, publicClient, routerSpendingLimit, exactAmountInField, routerAddress, routerHasBytecode, routerBytecodeError, rpcChainId, resolvedChainId, setPermit2Allowance, refetchPermit2Allowance, MAX_UINT160, failApproval])
+
+  const handleConnectWallet = useCallback(() => {
+    const c = connectors[0]
+    if (c) connect({ connector: c })
+  }, [connect, connectors])
+
+  const handleSwitchNetwork = useCallback(async () => {
+    const target =
+      typeof selectedChainId === 'number' && isSupportedChainId(selectedChainId)
+        ? selectedChainId
+        : CHAIN_ID_SEPOLIA
+    try {
+      setPendingLeg('switch')
+      await switchChainAsync?.({ chainId: target })
+    } catch (e) {
+      failApproval(parseContractError(e) || 'Failed to switch network')
+    } finally {
+      setPendingLeg(null)
+    }
+  }, [selectedChainId, switchChainAsync, failApproval])
 
   // Handler for getting accurate quote with signed permit (supports both Exact In and Exact Out)
   const handleGetAccurateQuote = useCallback(async () => {
@@ -2879,6 +3018,8 @@ function SwapPageInner() {
   ])
 
   const handleSwap = useCallback(async () => {
+    // Execute path only — approvals must already be done via sequential ActionCta legs.
+    // Do not call one-shot handleApproval from multi-leg UI (K17).
     if (!ready) return
     if (!publicClient) return
 
@@ -2893,6 +3034,7 @@ function SwapPageInner() {
     }
     
     try {
+      setPendingLeg('execute')
       setLastSwapReceiptStatus('pending')
       setLastSwapTxHash(null)
       setLastSwapEthDeltaWei(null)
@@ -2902,20 +3044,20 @@ function SwapPageInner() {
 
       const preBalance = address ? await publicClient.getBalance({ address }) : null
 
+      // Safety re-check of on-chain allowances only (not multi-leg UI). Pending stays on execute.
       if (!useEthIn && requiredAmountIn && effectiveApprovalMode === 'explicit') {
-        setApprovalState('approving')
         setApprovalError('')
         try {
           await ensureSpendingLimits(requiredAmountIn)
-          setApprovalState('success')
-          setTimeout(() => setApprovalState('idle'), 1500)
         } catch (e) {
           setApprovalState('error')
-          setApprovalError(e instanceof Error ? e.message : 'Approval failed')
+          setApprovalError(parseContractError(e) || (e instanceof Error ? e.message : 'Approval failed'))
           setTimeout(() => {
             setApprovalState('idle')
             setApprovalError('')
           }, 5000)
+          setPendingLeg(null)
+          setLastSwapReceiptStatus(null)
           return
         }
       }
@@ -3627,6 +3769,8 @@ function SwapPageInner() {
     } catch (error) {
       debugError('Swap failed:', error)
       setLastSwapReceiptStatus('reverted')
+    } finally {
+      setPendingLeg(null)
     }
   }, [
     ready,
@@ -3727,42 +3871,47 @@ function SwapPageInner() {
   }, [approvalState, requiredAmountIn, refetchAllowance, refetchPermit2Allowance, tokenAllowance, permit2Allowance, approvalMode])
 
   return (
-    <div className="container mx-auto px-4 max-w-2xl">
-      <h1 className="text-3xl font-bold text-white text-center py-4">Swap Tokens</h1>
+    <div className="container mx-auto max-w-2xl px-4">
+      <div className="mb-6 pt-4">
+        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)] md:text-3xl">
+          Swap
+        </h1>
+        <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+          Exchange tokens via the Standard Exchange router.
+        </p>
+      </div>
 
       {!isConnected && (
-        <div className="mb-4 p-3 bg-amber-600/20 border border-amber-500/50 rounded-lg">
-          <div className="text-sm text-amber-200 font-medium">Wallet not connected</div>
-          <div className="text-xs text-amber-300 mt-1">
+        <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-600/15 p-3">
+          <div className="text-sm font-medium text-amber-200">Wallet not connected</div>
+          <div className="mt-1 text-xs text-amber-200/90">
             You can still preview quotes, but you&apos;ll need to connect a wallet to issue approvals or submit a swap.
           </div>
         </div>
       )}
 
       {isUnsupportedChain && (
-        <div className="mb-4 p-3 bg-rose-600/20 border border-rose-500/50 rounded-lg">
-          <div className="text-sm text-rose-200 font-medium">Unsupported network</div>
-          <div className="text-xs text-rose-300 mt-1">
+        <div className="mb-4 rounded-lg border border-[var(--danger,#E6386A)]/40 bg-[var(--danger,#E6386A)]/10 p-3">
+          <div className="text-sm font-medium text-[var(--danger,#E6386A)]">Unsupported network</div>
+          <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
             Connected wallet chainId {walletChainId}. Switch to Sepolia ({CHAIN_ID_SEPOLIA}) or the local Anvil fork ({CHAIN_ID_ANVIL}).
           </div>
         </div>
       )}
        
-      {/* Approval Mode Settings */}
+      {/* Advanced: approval mode — default collapsed via showApprovalSettings false */}
       <div className="mb-4">
         <button
+          type="button"
           onClick={() => setShowApprovalSettings(!showApprovalSettings)}
-          className="flex items-center justify-between w-full px-4 py-2 bg-slate-700/50 rounded-lg border border-slate-600 hover:bg-slate-700 transition-colors"
+          className="flex w-full items-center justify-between rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] px-4 py-2 transition-colors hover:border-[var(--border-accent,rgba(79,212,75,0.45))]"
         >
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="text-sm font-medium text-gray-200">Approval Settings</span>
+            <span className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Advanced</span>
+            <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Approval settings</span>
           </div>
           <svg 
-            className={`w-4 h-4 text-gray-400 transition-transform ${showApprovalSettings ? 'rotate-180' : ''}`} 
+            className={`h-4 w-4 text-[var(--text-muted,#9aa3b2)] transition-transform ${showApprovalSettings ? 'rotate-180' : ''}`} 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -3772,8 +3921,10 @@ function SwapPageInner() {
         </button>
         
         {showApprovalSettings && (
-          <div className="mt-2 p-4 bg-slate-700/30 rounded-lg border border-slate-600">
-            <div className="text-xs text-gray-400 mb-3">Choose how you authorize token transfers:</div>
+          <div className="mt-2 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] p-4">
+            <div className="mb-3 text-xs text-[var(--text-muted,#9aa3b2)]">
+              Choose how you authorize token transfers:
+            </div>
             
             {/* Explicit Approval Option */}
             <label
@@ -4234,15 +4385,15 @@ function SwapPageInner() {
         </div>
       )}
       
-      {/* Preview */}
+      {/* Preview — hierarchy: form → preview → ActionCta */}
       {lastEditedField === 'in' && previewExactIn && (
-        <div className="mb-6 p-4 bg-slate-700/50 rounded-lg">
-          <div className="text-sm text-green-300 font-medium">Preview (Exact In)</div>
-          <div className="text-xs text-gray-400 mt-1">
+        <div className="mb-6 rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
+          <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Preview (Exact In)</div>
+          <div className="mt-1 font-mono text-xs tabular-nums text-[var(--text-muted,#9aa3b2)]">
             Expected Output: {formatUnits(previewExactIn, tokenOutAddress ? getTokenDecimalsByAddressForChain(resolvedChainId, tokenOutAddress) : 18)} {tokenOut}
           </div>
           {minOut && (
-            <div className="text-xs text-gray-400">
+            <div className="font-mono text-xs tabular-nums text-[var(--text-muted,#9aa3b2)]">
               Minimum Output: {formatUnits(minOut, tokenOutAddress ? getTokenDecimalsByAddressForChain(resolvedChainId, tokenOutAddress) : 18)} {tokenOut}
             </div>
           )}
@@ -4250,253 +4401,193 @@ function SwapPageInner() {
       )}
 
       {lastEditedField === 'out' && previewExactOut && (
-        <div className="mb-6 p-4 bg-slate-700/50 rounded-lg">
-          <div className="text-sm text-green-300 font-medium">Preview (Exact Out)</div>
-          <div className="text-xs text-gray-400 mt-1">
+        <div className="mb-6 rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
+          <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Preview (Exact Out)</div>
+          <div className="mt-1 font-mono text-xs tabular-nums text-[var(--text-muted,#9aa3b2)]">
             Expected Input: {formatUnits(previewExactOut, tokenInAddress ? getTokenDecimalsByAddressForChain(resolvedChainId, tokenInAddress) : 18)} {tokenIn}
           </div>
-          <div className="text-xs text-gray-400 mt-1">
+          <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
             Preview is conservative for exact-out: actual input used may be lower.
           </div>
           {maxIn && (
-            <div className="text-xs text-gray-400">
+            <div className="font-mono text-xs tabular-nums text-[var(--text-muted,#9aa3b2)]">
               Maximum Input: {formatUnits(maxIn, tokenInAddress ? getTokenDecimalsByAddressForChain(resolvedChainId, tokenInAddress) : 18)} {tokenIn}
             </div>
           )}
         </div>
       )}
       
-      {/* Action Buttons */}
-      <div className="space-y-3">
-        {/* Signed Approval Mode - Show info and optional max approval */}
-        {approvalMode === 'signed' && !useEthIn && (
-          <div className="space-y-3">
-            <div className="p-4 bg-purple-600/20 border border-purple-500 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                <span className="text-sm font-medium text-purple-300">Signed Approval Mode</span>
+      {/* Primary action strip: single multi-leg ActionCta (never Approve + Swap together). */}
+      <Card className="space-y-3 p-4">
+        {/* Secondary advanced (signed quote / spending limits) — default collapsed */}
+        <details className="rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)]">
+          <summary className="cursor-pointer px-3 py-2 text-sm text-[var(--text-muted,#9aa3b2)]">
+            Advanced options
+          </summary>
+          <div className="space-y-3 border-t border-[var(--border-subtle,rgba(255,255,255,0.08))] p-3">
+            {approvalMode === 'signed' && !useEthIn && (
+              <div className="rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-3">
+                <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Signed approval mode</div>
+                <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+                  Sign a permit with your wallet for the swap. Pre-approval is only needed for Token → Permit2 when allowance is insufficient.
+                </div>
               </div>
-              <div className="text-xs text-gray-400">
-                You&apos;ll sign a permit with your wallet to authorize this swap. No pre-approval transactions needed for the swap itself.
+            )}
+
+            {approvalMode === 'signed' &&
+              !useEthIn &&
+              ((lastEditedField === 'in' && builtExactIn.valid) ||
+                (lastEditedField === 'out' && builtExactOut.valid)) && (
+                <div className="rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-3">
+                  <div className="mb-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+                    Optional: sign a permit to simulate an accurate quote before swapping.
+                  </div>
+                  {accurateQuote && (
+                    <div className="mb-2 w-full rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] p-3 text-[var(--text-primary,#EDEDED)]">
+                      <div className="mb-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+                        {lastEditedField === 'in' ? 'Accurate Quote' : "You'll Pay"}
+                      </div>
+                      <div className="font-mono text-base tabular-nums">
+                        {lastEditedField === 'in'
+                          ? `${formatUnits(accurateQuote, tokenOutDecimals)} ${/^0x[a-fA-F0-9]{40}$/.test(tokenOut) ? 'Token Out' : tokenOut}`
+                          : `${formatUnits(accurateQuote, tokenInDecimals)} ${/^0x[a-fA-F0-9]{40}$/.test(tokenIn) ? 'Token In' : tokenIn}`}
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleGetAccurateQuote}
+                    disabled={
+                      accurateQuoteLoading ||
+                      (!exactAmountInField && lastEditedField === 'in') ||
+                      (!exactAmountOutField && lastEditedField === 'out')
+                    }
+                    className="w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] py-2 px-4 text-sm text-[var(--text-primary,#EDEDED)] disabled:opacity-50"
+                  >
+                    {accurateQuoteLoading ? 'Getting Accurate Quote...' : 'Get Accurate Quote (Sign Permit)'}
+                  </button>
+                  {accurateQuoteError && (
+                    <div className="mt-2 text-xs text-[var(--danger,#E6386A)]">{accurateQuoteError}</div>
+                  )}
+                </div>
+              )}
+
+            {swapWalletGate.kind === 'approve' && swapWalletGate.leg === 'token-permit2' && !useEthIn && (
+              <div
+                data-testid="swap-approve-permit2-limits"
+                className="rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-3"
+              >
+                <div className="mb-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+                  Token → Permit2 spending limit (optional)
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder="Token → Permit2 spending limit"
+                    value={permit2SpendingLimit}
+                    onChange={(e) => setPermit2SpendingLimit(e.target.value)}
+                    className="w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 pr-16 text-sm text-[var(--text-primary,#EDEDED)]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleSetPermit2SpendingLimit(MAX_UINT160)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 rounded bg-[var(--surface-1,#14171f)] px-2 py-1 text-xs text-[var(--text-primary,#EDEDED)] hover:brightness-110"
+                  >
+                    Max
+                  </button>
+                </div>
+                {tokenAllowance !== undefined && (
+                  <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+                    Current: {tokenAllowance.toString()} wei
+                  </div>
+                )}
               </div>
+            )}
+            {swapWalletGate.kind === 'approve' &&
+              swapWalletGate.leg === 'permit2-router' &&
+              approvalMode === 'explicit' &&
+              !useEthIn && (
+                <div
+                  data-testid="swap-approve-router-limits"
+                  className="rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-3"
+                >
+                  <div className="mb-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+                    Permit2 → Router spending limit (optional)
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder="Spending limit"
+                      value={routerSpendingLimit}
+                      onChange={(e) => {
+                        const next = e.target.value
+                        setRouterSpendingLimit(next)
+                        setRouterSpendingLimitDirty(next !== '')
+                      }}
+                      className="w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 pr-16 text-sm text-[var(--text-primary,#EDEDED)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSetRouterSpendingLimit(MAX_UINT160)}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded bg-[var(--surface-1,#14171f)] px-2 py-1 text-xs text-[var(--text-primary,#EDEDED)] hover:brightness-110"
+                    >
+                      Max
+                    </button>
+                  </div>
+                  {permit2Allowance?.[0] !== undefined && (
+                    <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+                      Current: {permit2Allowance[0].toString()} wei
+                    </div>
+                  )}
+                </div>
+              )}
+          </div>
+        </details>
+
+        {/* Explicit mode: router availability warnings (not primary CTA) */}
+        {approvalMode === 'explicit' && !useEthIn && !routerSpenderAddress && (
+          <div className="rounded-lg border border-amber-600/50 bg-amber-700/20 p-3 text-sm text-amber-200">
+            Swap router not deployed on this chain. Deploy{' '}
+            <code className="mx-1 rounded bg-[var(--surface-0,#0a0a0a)] px-1">balancerV3StandardExchangeRouter</code>{' '}
+            before Permit2 → Router approval.
+          </div>
+        )}
+        {approvalMode === 'explicit' &&
+          !useEthIn &&
+          routerSpenderAddress &&
+          routerHasBytecode === false && (
+            <div className="rounded-lg border border-amber-600/50 bg-amber-700/20 p-3 text-sm text-amber-200">
+              Swap router address {routerSpenderAddress} has no bytecode on this chain.
+              {routerBytecodeError ? ` (${routerBytecodeError})` : ''}
             </div>
+          )}
 
-            {/* Get Accurate Quote button - for Exact In or Exact Out */}
-            {((lastEditedField === 'in' && builtExactIn.valid) || (lastEditedField === 'out' && builtExactOut.valid)) && (
-              <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                <div className="text-xs text-gray-400 mb-2">
-                  This will ask you to sign an approval so we can simulate the transaction to get you an accurate quote.
-                </div>
-                {accurateQuote && (
-                  <div className="w-full rounded-md border border-slate-600 bg-slate-700 text-white p-3 mb-2">
-                    <div className="text-sm text-indigo-300 mb-1">
-                      {lastEditedField === 'in' ? 'Accurate Quote' : "You'll Pay"}
-                    </div>
-                    <div className="text-base">
-                      {lastEditedField === 'in'
-                        ? `${formatUnits(accurateQuote, tokenOutDecimals)} ${/^0x[a-fA-F0-9]{40}$/.test(tokenOut) ? 'Token Out' : tokenOut}`
-                        : `${formatUnits(accurateQuote, tokenInDecimals)} ${/^0x[a-fA-F0-9]{40}$/.test(tokenIn) ? 'Token In' : tokenIn}`}
-                    </div>
-                  </div>
-                )}
-                <button
-                  onClick={handleGetAccurateQuote}
-                  disabled={accurateQuoteLoading || (!exactAmountInField && lastEditedField === 'in') || (!exactAmountOutField && lastEditedField === 'out')}
-                  className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md disabled:opacity-50 text-sm"
-                >
-                  {accurateQuoteLoading ? 'Getting Accurate Quote...' : 'Get Accurate Quote (Sign Permit)'}
-                </button>
-                {accurateQuoteError && (
-                  <div className="text-xs text-red-400 mt-2">
-                    {accurateQuoteError}
-                  </div>
-                )}
-                {accurateQuote && (
-                  <div className="text-xs text-green-400 mt-2">
-                    ✓ Permit signed and stored for swap
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {showTokenToPermit2Controls && (
-              <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                <button
-                  data-testid="swap-approve-permit2"
-                  onClick={handleIssuePermit2Approval}
-                  disabled={approvalState === 'approving'}
-                  className="w-full py-2 px-4 bg-purple-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
-                >
-                  {approvalState === 'approving' ? 'Approving...' : 'Issue Approval: Token → Permit2'}
-                </button>
-                <div className="relative">
-                  <input
-                    type="number"
-                    placeholder="Token → Permit2 spending limit"
-                    value={permit2SpendingLimit}
-                    onChange={(e) => setPermit2SpendingLimit(e.target.value)}
-                    className="w-full px-3 pr-16 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                  />
-                  <button
-                    onClick={() => handleSetPermit2SpendingLimit(MAX_UINT160)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-500 text-white rounded text-xs hover:bg-slate-400"
-                  >
-                    Max
-                  </button>
-                </div>
-                {tokenAllowance !== undefined && (
-                  <div className="text-xs text-gray-400 mt-1">
-                    Current: {tokenAllowance.toString()} wei
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Explicit Approval Mode - Show approval button */}
-        {approvalMode === 'explicit' && (
-          <div className="space-y-3">
-            {/* Router missing: the next-step approval can't render because there is
-                nothing to spend through. Surface it instead of silently hiding the button. */}
-            {!showTokenToPermit2Controls && !routerSpenderAddress && !useEthIn && (
-              <div className="p-3 bg-amber-700/30 border border-amber-600 rounded-lg text-amber-200 text-sm">
-                ⚠️ Swap router not deployed on this chain. Run
-                <code className="mx-1 px-1 bg-slate-900/50 rounded">scenario3</code>
-                (deploys <code>balancerV3StandardExchangeRouter</code>) before issuing the Permit2 → Router approval.
-              </div>
-            )}
-            {!showTokenToPermit2Controls && routerSpenderAddress && routerHasBytecode === false && (
-              <div className="p-3 bg-amber-700/30 border border-amber-600 rounded-lg text-amber-200 text-sm">
-                ⚠️ Swap router address {routerSpenderAddress} has no bytecode on this chain.
-                {routerBytecodeError ? ` (${routerBytecodeError})` : ''} Redeploy
-                <code className="mx-1 px-1 bg-slate-900/50 rounded">scenario3</code>
-                or restart Anvil with <code>--restart-anvil</code> and redeploy from foundation.
-              </div>
-            )}
-            {showTokenToPermit2Controls && (
-              <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                <button
-                  data-testid="swap-approve-permit2"
-                  onClick={handleIssuePermit2Approval}
-                  disabled={approvalState === 'approving'}
-                  className="w-full py-2 px-4 bg-blue-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
-                >
-                  Issue Approval: Permit2
-                </button>
-                <div className="relative">
-                  <input
-                    type="number"
-                    placeholder="Token → Permit2 spending limit"
-                    value={permit2SpendingLimit}
-                    onChange={(e) => setPermit2SpendingLimit(e.target.value)}
-                    className="w-full px-3 pr-16 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                  />
-                  <button
-                    onClick={() => handleSetPermit2SpendingLimit(MAX_UINT160)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-500 text-white rounded text-xs hover:bg-slate-400"
-                  >
-                    Max
-                  </button>
-                </div>
-                {tokenAllowance !== undefined && (
-                  <div className="text-xs text-gray-400 mt-1">
-                    Current: {tokenAllowance.toString()} wei
-                  </div>
-                )}
-              </div>
-            )}
-
-            {needsPermit2Approval && (
-              <div className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                <button
-                  data-testid="swap-approve-router"
-                  onClick={handleIssueRouterApproval}
-                  disabled={approvalState === 'approving'}
-                  className="w-full py-2 px-4 bg-blue-600 text-white rounded-md disabled:opacity-50 text-sm mb-2"
-                >
-                  Issue Approval: Router
-                </button>
-                <div className="relative">
-                  <input
-                    type="number"
-                    placeholder="Spending limit"
-                    value={routerSpendingLimit}
-                    onChange={(e) => {
-                      const next = e.target.value
-                      setRouterSpendingLimit(next)
-                      setRouterSpendingLimitDirty(next !== '')
-                    }}
-                    className="w-full px-3 pr-16 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                  />
-                  <button
-                    onClick={() => handleSetRouterSpendingLimit(MAX_UINT160)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-500 text-white rounded text-xs hover:bg-slate-400"
-                  >
-                    Max
-                  </button>
-                </div>
-                {permit2Allowance?.[0] !== undefined && (
-                  <div className="text-xs text-gray-400 mt-1">
-                    Current: {permit2Allowance[0].toString()} wei
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Permit2 -> Router Approval - ALREADY DEFINED ABOVE */}
-            {/* DUPLICATE REMOVED */}
-          </div>
-        )}
-        
         {approvalState === 'success' && (
-          <div className="w-full py-3 px-4 bg-green-600 text-white rounded-md text-center">
-            ✅ Approval Successful! You can now swap.
+          <div className="w-full rounded-md bg-[var(--accent,#4FD44B)]/80 py-2 px-3 text-center text-sm text-black">
+            Approval confirmed. Continue with the next step.
           </div>
         )}
-        
-        {approvalState === 'error' && (
-          <div className="w-full py-3 px-4 bg-red-600 text-white rounded-md text-center">
-            ❌ Approval Failed: {approvalError}
+        {approvalState === 'error' && approvalError && (
+          <div className="w-full rounded-md bg-[var(--danger,#E6386A)]/80 py-2 px-3 text-center text-sm text-white">
+            {approvalError}
           </div>
         )}
 
-        {/* Swap Button State Debug */}
-        <DebugPanel title="🔍 Swap Button State" className="mt-4">
+        <DebugPanel title="🔍 Swap Button State" className="mt-2">
+          <div>Gate: {swapWalletGate.kind}
+            {swapWalletGate.kind === 'approve' ? ` (${swapWalletGate.leg})` : ''}
+            {swapWalletGate.kind === 'disabled' ? ` (${swapWalletGate.reason})` : ''}
+          </div>
+          <div>Pending leg: {effectiveSwapPendingLeg ?? 'null'}</div>
           <div>Mode: {lastEditedField === 'in' ? 'Exact In' : 'Exact Out'}</div>
           <div>
-            Ready: {ready ? '✅' : '❌'} | Preview: {(lastEditedField === 'in' ? !!previewExactIn : !!previewExactOut) ? '✅' : '❌'} | NeedsApproval: {needsApproval ? '❌' : '✅'}
+            Ready: {ready ? '✅' : '❌'} | Preview: {hasPreviewForGate ? '✅' : '❌'} | NeedsApproval:{' '}
+            {needsApproval ? '❌' : '✅'}
           </div>
-          <div>
-            Button Disabled: {(!ready || !(lastEditedField === 'in' ? !!previewExactIn : !!previewExactOut) || needsApproval) ? 'YES' : 'NO'}
-          </div>
-          <div>Allowances Ready (post-approval): {allowancesReady ? '✅ Yes' : '❌ No'}</div>
-          <div>Preview Error: {previewError ? '❌ ' + previewError.message : '✅ None'}</div>
-          <div className="mt-2 text-xs text-gray-400">
-            <div>HookEnabled: {previewExactInHookEnabled ? '✅' : '❌'}</div>
-            <div>ExactAmountIn: {exactAmountInField?.toString() || 'undefined'}</div>
-            <div>BuiltExactIn Valid: {builtExactIn.valid ? '✅' : '❌'}</div>
-            <div>Missing: {builtExactIn.missing?.join(', ') || 'none'}</div>
-            <div>TokenIn: {tokenInAddress || 'none'}</div>
-            <div>TokenOut: {tokenOutAddress || 'none'}</div>
-            <div>Pool: {poolAddress || 'none'}</div>
-          </div>
-          <div className="mt-2">
-            <button 
-              onClick={() => {
-                debugLog('[Debug] Manual preview refresh triggered')
-                handlePreview()
-              }}
-              className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              🔄 Refresh Preview
-            </button>
-          </div>
+          <div>Allowances Ready: {allowancesReady ? '✅' : '❌'}</div>
+          <div>Approval mode: {approvalMode} | signedMode gate: {String(effectiveApprovalMode === 'signed')}</div>
         </DebugPanel>
-        
-        {/* Auto-quote runs on input change; this button re-triggers simulation for e2e/manual refresh. */}
+
         <button
           data-testid="swap-preview"
           type="button"
@@ -4504,21 +4595,31 @@ function SwapPageInner() {
             lastCompletedPreviewKeyRef.current = null
             handlePreview()
           }}
-          disabled={!ready && !builtExactIn.valid && !builtExactOut.valid}
-          className="w-full py-2 px-4 bg-slate-600 text-white rounded-md disabled:opacity-50 text-sm"
+          disabled={!previewReady && !builtExactIn.valid && !builtExactOut.valid}
+          className="w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] py-2 px-4 text-sm text-[var(--text-primary,#EDEDED)] disabled:opacity-50"
         >
           {previewExactInPending || previewExactOutPending ? 'Refreshing quote…' : 'Refresh Quote'}
         </button>
 
-        <button
+        {/*
+          Single sequential primary CTA.
+          Explicit: onApproveTokenPermit2 → handleIssuePermit2Approval only;
+                    onApprovePermit2Router → handleIssueRouterApproval only.
+          Signed: signedMode omits permit2→router; only token→Permit2 then execute/sign path.
+          Never wire onClick to one-shot handleApproval for multi-leg sequential UI (K17).
+        */}
+        <ActionCta
           data-testid="swap-submit"
-          onClick={handleSwap}
-          disabled={!ready || !(lastEditedField === 'in' ? !!previewExactIn : !!previewExactOut)}
-          className="w-full py-3 px-4 bg-blue-600 text-black rounded-md disabled:opacity-50"
-        >
-          {swapPending ? 'Swapping...' : lastEditedField === 'in' ? 'Swap (Exact In)' : 'Swap (Exact Out)'}
-        </button>
-      </div>
+          className="w-full"
+          gate={swapWalletGate}
+          pendingLeg={effectiveSwapPendingLeg}
+          onConnect={handleConnectWallet}
+          onSwitchNetwork={() => void handleSwitchNetwork()}
+          onApproveTokenPermit2={() => void handleIssuePermit2Approval()}
+          onApprovePermit2Router={() => void handleIssueRouterApproval()}
+          onExecute={() => void handleSwap()}
+        />
+      </Card>
       
       {/* Debug Info */}
       {

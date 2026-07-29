@@ -1,9 +1,9 @@
 {
   "name": "Indexedex Protocol DETFs",
-  "timestamp": "2026-07-11T08:31:52.025Z",
+  "timestamp": "2026-07-25T23:08:27.546Z",
   "version": {
-    "major": 0,
-    "minor": 1,
+    "major": 1,
+    "minor": 0,
     "patch": 0
   },
   "keywords": [
@@ -23,7 +23,7 @@
   "tokens": [
     {
       "chainId": 11155111,
-      "address": "0xBB080663EE627ec82DEBA6D909159f585D689d88",
+      "address": "0xD6359e57572AF5685AbE48C6Fd928826c887096f",
       "name": "Single Vault DETF CHIR",
       "symbol": "CHIR",
       "decimals": 18,
