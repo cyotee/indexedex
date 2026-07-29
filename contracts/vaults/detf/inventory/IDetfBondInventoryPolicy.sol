@@ -8,11 +8,11 @@ interface IDetfBondInventoryPolicy {
         external
         returns (uint256 tokenId);
 
-    function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
+    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         returns (uint256 principalShares, uint256 rewardsClaimed);
 
     function addToDETFNFT(uint256 tokenId, uint256 shares) external;
 
-    function reallocateProtocolRewards(address recipient) external returns (uint256 amount);
+    function reallocateDetfNftRewards(address recipient) external returns (uint256 amount);
 }

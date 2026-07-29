@@ -67,7 +67,7 @@ import {
 } from 'contracts/vaults/detf/composed/stable/common/RebasingDETFToken_Pkg_FactoryService.sol';
 import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
 import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.sol';
-import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
+import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
 
@@ -100,7 +100,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     IERC20 internal detfToken;
     IDETFNFTVault internal bondNFTVault;
     IRebasingClaimToken internal rebasingDetfToken;
-    IProtocolDETF internal protocolDETF;
+    IDetf internal detf;
 
     StablePoolFactory internal stablePoolFactory;
     StablePoolFactory internal commonPoolFactory;
@@ -205,7 +205,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     function setUp() public virtual override {
         super.setUp();
 
-        protocolDETF = IProtocolDETF(makeAddr('protocolDETF'));
+        detf = IDetf(makeAddr('detf'));
         _deployDetfToken();
 
         multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
@@ -284,7 +284,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         _authorizeDetfTokenOperator(deployedDetfVault);
         _transferBondVaultOwnership(deployedDetfVault);
         vm.prank(owner);
-        rebasingDetfToken.setProtocolDETF(deployedDetfVault);
+        rebasingDetfToken.setDetf(deployedDetfVault);
         _transferRebasingDetfTokenOwnership(deployedDetfVault);
     }
 
@@ -321,13 +321,13 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         IComposedStableCommonDetfBondNFTVault deployedBondVault =
             IComposedStableCommonDetfBondNFTVault(IDETF(deployedDetfVault).bondNftVault());
         IRebasingClaimToken deployedRebasingToken = IRebasingClaimToken(IDETF(deployedDetfVault).rebasingDetfToken());
-        uint256 protocolNftId = deployedBondVault.detfNFTId();
+        uint256 detfNftId = deployedBondVault.detfNFTId();
         uint256 feeRecipientNftId = deployedBondVault.feeRecipientNFTId();
 
-        assertEq(deployedBondVault.ownerOf(protocolNftId), address(deployedBondVault), 'protocol nft initialized');
+        assertEq(deployedBondVault.ownerOf(detfNftId), address(deployedBondVault), 'protocol nft initialized');
         assertTrue(deployedBondVault.ownerOf(feeRecipientNftId) != address(0), 'fee recipient nft minted');
         assertEq(address(deployedBondVault.rewardToken()), address(detfToken), 'bond vault reward token wired');
-        assertEq(deployedRebasingToken.detfNFTId(), protocolNftId, 'rebasing token protocol nft');
+        assertEq(deployedRebasingToken.detfNFTId(), detfNftId, 'rebasing token protocol nft');
         assertEq(address(deployedRebasingToken.rateAsset()), address(weth), 'rebasing common token wired');
     }
 
@@ -528,7 +528,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
             bondNFTVaultPkg.deployVault(
                 'Composed Stable Bond NFT Vault',
                 'csBOND',
-                protocolDETF,
+                detf,
                 IERC20(address(reservePool)),
                 IERC20(address(detfToken)),
                 0,
@@ -541,7 +541,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         vm.startPrank(owner);
         rebasingDetfToken = IRebasingClaimToken(
             rebasingDetfTokenPkg.deployToken(
-                IDETF(address(protocolDETF)),
+                IDETF(address(detf)),
                 bondNFTVault,
                 weth,
                 bondNFTVault.detfNFTId(),

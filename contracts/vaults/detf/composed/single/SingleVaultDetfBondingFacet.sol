@@ -15,7 +15,7 @@ import {
     ISingleVaultDetfBonding,
     SingleVaultDetfBondingTarget
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 
 contract SingleVaultDetfBondingFacet is SingleVaultDetfBondingTarget, IFacet {
     function facetName() external pure returns (string memory name_) {
@@ -37,9 +37,9 @@ contract SingleVaultDetfBondingFacet is SingleVaultDetfBondingTarget, IFacet {
         funcs_[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         funcs_[6] = ISingleVaultDetfBonding.sellNFT.selector;
         funcs_[7] = ISingleVaultDetfBonding.donate.selector;
-        funcs_[8] = IProtocolDETF.claimLiquidity.selector;
-        funcs_[9] = IProtocolDETF.bridgeRebasingClaim.selector;
-        funcs_[10] = IProtocolDETF.receiveBridgedPair.selector;
+        funcs_[8] = IDetf.claimLiquidity.selector;
+        funcs_[9] = IDetf.bridgeRebasingClaim.selector;
+        funcs_[10] = IDetf.receiveBridgedPair.selector;
     }
 
     function facetMetadata()
@@ -59,8 +59,8 @@ contract SingleVaultDetfBondingFacet is SingleVaultDetfBondingTarget, IFacet {
         functions_[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         functions_[6] = ISingleVaultDetfBonding.sellNFT.selector;
         functions_[7] = ISingleVaultDetfBonding.donate.selector;
-        functions_[8] = IProtocolDETF.claimLiquidity.selector;
-        functions_[9] = IProtocolDETF.bridgeRebasingClaim.selector;
-        functions_[10] = IProtocolDETF.receiveBridgedPair.selector;
+        functions_[8] = IDetf.claimLiquidity.selector;
+        functions_[9] = IDetf.bridgeRebasingClaim.selector;
+        functions_[10] = IDetf.receiveBridgedPair.selector;
     }
 }

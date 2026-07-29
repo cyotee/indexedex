@@ -14,7 +14,7 @@ import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactor
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -41,7 +41,7 @@ import {
     SingleVaultDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
@@ -70,7 +70,7 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/bondNft/DETFNFTVaultDFPkg.sol";
 
 contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchangeRouter {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
@@ -259,7 +259,7 @@ contract SingleVaultDetfDFPkg_Deploy_Test is TestBase_BalancerV3StandardExchange
         assertTrue(address(detf.rebasingClaimToken()) != address(0), "richir token");
 
         IRebasingClaimToken rebasingClaimToken_ = IRebasingClaimToken(address(detf.rebasingClaimToken()));
-        assertEq(rebasingClaimToken_.protocolDETF(), detfAddr, "richir protocol detf");
+        assertEq(rebasingClaimToken_.detf(), detfAddr, "richir protocol detf");
         assertEq(address(rebasingClaimToken_.rateAsset()), address(rateAsset), "richir weth token");
         assertEq(rebasingClaimToken_.detfNFTId(), detf.detfNFTId(), "richir protocol nft id");
 

@@ -25,13 +25,13 @@ import {SingleVaultDetfCommon} from "contracts/vaults/detf/composed/single/Singl
 import {SingleVaultDetfRepo} from "contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol";
 
 /// @notice Family info surface for threshold mode (PRD DETF_Threshold_Modes).
-/// @dev Canonical typed surface is `IProtocolDETF.thresholdMode()`; this interface
+/// @dev Canonical typed surface is `IDetf.thresholdMode()`; this interface
 ///      also exposes the getter for family casts and holds the init event.
 interface ISingleVaultDetfInfo {
     /// @notice Emitted once at init with resolved mint/burn thresholds.
     event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
 
-    /// @notice Same selector as `IProtocolDETF.thresholdMode()`.
+    /// @notice Same selector as `IDetf.thresholdMode()`.
     function thresholdMode() external view returns (ThresholdMode);
 }
 

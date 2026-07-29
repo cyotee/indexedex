@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol";
 
-abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IProtocolDETFErrors {
+abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IDetfErrors {
     using ComposedStableCommonDetfBondNFTVaultRepo for ComposedStableCommonDetfBondNFTVaultRepo.Storage;
 
     error BaseSharesZero();

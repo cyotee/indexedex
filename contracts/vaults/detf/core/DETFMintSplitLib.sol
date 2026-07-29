@@ -9,9 +9,9 @@ library DETFMintSplitLib {
     function _splitHalfSeigniorage(uint256 grossAmount_, uint256 seignioragePercentage_)
         internal
         pure
-        returns (uint256 userAmount_, uint256 protocolAmount_)
+        returns (uint256 userAmount_, uint256 inventoryAmount_)
     {
-        protocolAmount_ = Math.mulDiv(grossAmount_, seignioragePercentage_, 2 * ONE_WAD);
-        userAmount_ = grossAmount_ - protocolAmount_;
+        inventoryAmount_ = Math.mulDiv(grossAmount_, seignioragePercentage_, 2 * ONE_WAD);
+        userAmount_ = grossAmount_ - inventoryAmount_;
     }
 }

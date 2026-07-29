@@ -11,7 +11,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
@@ -133,7 +133,7 @@ contract SingleVaultDetfExchangeInQueryTarget is SingleVaultDetfCommon {
     function previewBridgeRebasingClaim(uint256 targetChainId_, uint256 rebasingClaimAmount_)
         external
         view
-        returns (IProtocolDETF.BridgeQuote memory quote_)
+        returns (IDetf.BridgeQuote memory quote_)
     {
         SingleVaultDetfRepo.Storage storage layoutStruct = SingleVaultDetfRepo._layoutStruct();
         DetfSuperchainBridgeRepo.Storage storage bridgeLayout = DetfSuperchainBridgeRepo._layoutStruct();

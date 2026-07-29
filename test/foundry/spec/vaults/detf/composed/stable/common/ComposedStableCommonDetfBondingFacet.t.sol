@@ -15,7 +15,7 @@ import {IPermit2} from '@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
 
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
@@ -125,7 +125,7 @@ contract MockBondNFTVault {
         nextPrincipalShares = principalShares_;
     }
 
-    function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
+    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         returns (uint256 principalShares, uint256 rewardsClaimed)
     {
@@ -413,7 +413,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
     }
 
     function test_bond_revertsForUnsupportedToken() public {
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.BondTokenNotSupported.selector, detfToken));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.BondTokenNotSupported.selector, detfToken));
         harness.bond(detfToken, 1e18, 7 days, address(this), block.timestamp + 1);
     }
 
@@ -468,7 +468,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         reserveWeights[2] = 20e16;
         unconfiguredHarness.setWeightedPoolState(address(reservePoolToken), reserveBalances, reserveWeights, 0, 1000e18, true);
 
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.InvalidToken.selector, IERC20(address(0))));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.InvalidToken.selector, IERC20(address(0))));
         unconfiguredHarness.sellNFT(1, address(this));
     }
 }

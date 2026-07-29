@@ -8,7 +8,7 @@ import {
 
 contract RebasingDETFTokenPricingTarget_Test is TestBase_ComposedStableCommonDetf_Components {
     function test_previewRebasingDetfTokenReserveBpt_returnsProtocolReserveSlice() public {
-        mockProtocolReserveBpt(7, 40e18);
+        mockDetfOwnedReserveBpt(7, 40e18);
         mockRebasingShareQuote(5e18, 10e18, 80e18);
 
         assertEq(pricingHarness.previewRebasingDetfTokenReserveBpt(5e18), 5e18);

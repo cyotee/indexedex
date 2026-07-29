@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {ISeigniorageNFTVault} from 'contracts/interfaces/ISeigniorageNFTVault.sol';
 import {DETFBondNFTMathLib} from 'contracts/vaults/detf/core/DETFBondNFTMathLib.sol';
 import {ISeigniorageBondNFT} from 'contracts/vaults/seigniorage/nft/ISeigniorageBondNFT.sol';
@@ -17,7 +17,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
 
     // /**
     //  * @inheritdoc IDETFNFTVault
-    //  * @dev Only the owner (Protocol DETF) can call this function.
+    //  * @dev Only the owner (DETF diamond) can call this function.
     //  */
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
@@ -66,7 +66,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
                 tokenId: tokenId,
                 recipient: recipient,
                 caller: msg.sender,
-                protocolDETF: address(MultiStepOwnableRepo._owner())
+                detf: address(MultiStepOwnableRepo._owner())
             });
             address owner = ERC721Repo._ownerOf(tokenId);
             if (!_validateRedeemCaller(params, owner)) {
@@ -76,7 +76,7 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
 
         // Cannot redeem protocol NFT normally
         if (_isDETFOwnedNFT(tokenId)) {
-            revert IProtocolDETFErrors.DETFNFTRestricted(tokenId);
+            revert IDetfErrors.DETFNFTRestricted(tokenId);
         }
 
         // Check lock expiry
@@ -96,14 +96,14 @@ contract SeigniorageBondNFTTarget is SeigniorageBondNFTCommon, ReentrancyLockMod
         // DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // // Grant approval for burn if DETF is calling
-        // if (msg.sender == address(layoutStruct.protocolDETF)) {
+        // if (msg.sender == address(layoutStruct.detf)) {
         //     ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
         // }
         // ERC721Repo._burn(tokenId);
 
         // // Canonical Bond NFT → WETH redemption:
-        // // delegate to ProtocolDETF, which custody-holds BPT and executes the pool unwind.
-        // wethOut = layoutStruct.protocolDETF.claimLiquidity(lpAmount, recipient);
+        // // delegate to the DETF diamond, which custody-holds BPT and executes the pool unwind.
+        // wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);
 
         // emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }

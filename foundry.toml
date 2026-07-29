@@ -93,7 +93,7 @@ ignore = [
     "lib/crane/",
     "contracts/vaults/basic/BasicVaultErrors.sol",
     "contracts/vaults/seigniorage/nft/SeigniorageBondNFTFacet.sol",
-    "test/foundry/fork/sepolia/protocol/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol",
+    "test/foundry/fork/archive/sepolia/EthereumProtocolDETFSyntheticPrice_SuperSimFork.t.sol",
     "lib/crane/test/foundry/fork/ethereum/protocols/staking/liquity/v2/gov/VotingPower.t.sol",
     "lib/crane/contracts/protocols/tokens/stable/frax/Common/Ownable.sol",
     "lib/crane/contracts/protocols/lending/aave/v3.6/dependencies/openzeppelin/contracts/AccessControl.sol",

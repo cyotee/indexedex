@@ -23,10 +23,7 @@ import {Script_15_DeploySeigniorageDETFS} from "../../anvil_base_main/Script_15_
 
 import {Script_ExportTokenlists} from "./Script_ExportTokenlists.s.sol";
 
-// Use local Script_16 which only deploys packages (no WETH funding)
-import {Script_16_DeployProtocolDETF} from "./Script_16_DeployProtocolDETF.s.sol";
-
-contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
+contract Script_DeployAll is DeploymentBase {
     function run() external override {
         string memory outDir = _localOutDir();
         vm.setEnv("OUT_DIR_OVERRIDE", outDir);
@@ -53,10 +50,7 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         // Stage 15 - Seigniorage DETFs
         new Script_15_DeploySeigniorageDETFS().run();
 
-        // Stage 16 - Protocol DETF (packages only, no funding)
-        if (!vm.envOr("PUBLIC_SEPOLIA_SKIP_STAGE16", false)) {
-            _runProtocolDetfStage16();
-        }
+        // Stage 16 (Protocol DETF) removed — product archived; see scripts/archive/foundry/protocol-detf/
 
         new Script_ExportTokenlists().run();
     }

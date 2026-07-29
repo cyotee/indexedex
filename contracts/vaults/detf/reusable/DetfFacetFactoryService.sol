@@ -20,8 +20,8 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {DETFNFTVaultFacet} from "contracts/vaults/protocol/DETFNFTVaultFacet.sol";
-import {RebasingClaimTokenFacet} from "contracts/vaults/protocol/RebasingClaimTokenFacet.sol";
+import {DETFNFTVaultFacet} from "contracts/vaults/detf/bondNft/DETFNFTVaultFacet.sol";
+import {RebasingClaimTokenFacet} from "contracts/vaults/detf/claimToken/RebasingClaimTokenFacet.sol";
 import {RebasingDETFTokenFacet} from "contracts/vaults/detf/composed/stable/common/RebasingDETFTokenFacet.sol";
 import {ERC4626BasedBasicVaultFacet} from "contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol";
 import {ERC4626StandardVaultFacet} from "contracts/vaults/standard/ERC4626StandardVaultFacet.sol";

@@ -41,7 +41,7 @@ library SingleStandardExchangeDETFRepo {
         ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 protocolNftId;
+        uint256 detfNftId;
         uint256 feeRecipientNftId;
     }
 
@@ -52,7 +52,7 @@ library SingleStandardExchangeDETFRepo {
         ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 protocolNftId;
+        uint256 detfNftId;
         uint256 feeRecipientNftId;
     }
 
@@ -95,7 +95,7 @@ library SingleStandardExchangeDETFRepo {
         s.thresholdMode = thresholdsAndFee_.thresholdMode;
         s.feeOracle = thresholdsAndFee_.feeOracle;
         s.bondNftVault = thresholdsAndFee_.bondNftVault;
-        s.protocolNftId = thresholdsAndFee_.protocolNftId;
+        s.detfNftId = thresholdsAndFee_.detfNftId;
         s.feeRecipientNftId = thresholdsAndFee_.feeRecipientNftId;
     }
 

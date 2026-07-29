@@ -17,7 +17,7 @@ import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxi
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 import {ComposedStableCommonDetfExchangeIn} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol';
@@ -413,7 +413,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
     function test_previewExchangeIn_revertsWhenMintingClosed() public {
         harness.setSyntheticPrice(1e18);
 
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, 1e18, 1e18));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.MintingNotAllowed.selector, 1e18, 1e18));
         harness.previewExchangeIn(commonToken, 1e18, detfToken);
     }
 
@@ -431,7 +431,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
         harness.setWeightedPoolState(address(reservePoolBpt), reserveBalances, reserveWeights, 0, 0, false);
 
         // Live-coupled mint gate: inert → MintingNotAllowed (not ReservePoolNotInitialized on mint path).
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.MintingNotAllowed.selector, 1001e15, 1e18));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.MintingNotAllowed.selector, 1001e15, 1e18));
         harness.previewExchangeIn(commonToken, 1e18, detfToken);
     }
 }

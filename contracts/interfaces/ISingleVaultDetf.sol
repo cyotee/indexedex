@@ -17,12 +17,12 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 
 /**
  * @title ISingleVaultDetf
  * @notice Single-vault DETF surface for a DETF composed over one IStandardExchange.
- * @dev Extends the Protocol DETF interface to remain compatible with DETFNFTVault,
+ * @dev Extends the shared DETF (IDetf) interface to remain compatible with DETFNFTVault,
  *      while adding explicit single-vault getters.
  *
  *      Role model:
@@ -30,7 +30,7 @@ import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
  *      - pairToken: any other token declared by the underlying vault
  *      - underlyingVault: the IStandardExchange (any tokens() set containing rateAsset)
  */
-interface ISingleVaultDetf is IProtocolDETF {
+interface ISingleVaultDetf is IDetf {
     /**
      * @notice Returns the Balancer rate provider used to value vault shares in rateAsset terms.
      */

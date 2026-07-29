@@ -78,7 +78,7 @@ P0 Core lib (API + pure unit tests)
 | **P3** | F3 MixedBufferMultiVaultStableDetf: same product law | `done` | 2026-07-27 implement; **oversight PASS 2026-07-28** — re-ran 72/72 green |
 | **P4** | Formal PRD status → **LOCKED** | `done` | 2026-07-28 — PRD formal LOCKED + changelog; Wave 2 P0–P3 green |
 | **P5** | F4 ComposedStableCommon + F5 SingleVaultDetf (synthetic migration) | `done` | 2026-07-28 — P5a/P5b/P5c green; F5 synthetic migration + Open suite; 106/106 composed/single/** |
-| **P6** | F6 IProtocolDETF NatSpec; F7 Seigniorage audit parity-or-Out | `done` | 2026-07-28 — F6 shipped; F7 **Out** (`THRESHOLD_MODES_OUT.md`); F5 smoke 106/106 |
+| **P6** | F6 IDetf NatSpec (formerly IProtocolDETF); F7 Seigniorage audit parity-or-Out | `done` | 2026-07-28 — F6 shipped; F7 **Out** (`THRESHOLD_MODES_OUT.md`); F5 smoke 106/106 |
 | **P7** | AGENTS.md one-liner + family PRD “conforms to …” notes | `done` | 2026-07-28 — AGENTS Policy/Open; F1–F4 PRD + F5 plan conform notes; program complete |
 
 #### P5 split (plans vs implement)
@@ -264,12 +264,12 @@ Concrete test names live in each family plan’s **Test map** section.
 | **Work (implement)** | **Mandatory synthetic migration** of all mint/burn gates + `is*Allowed` off spot; trailing `thresholdMode` + PkgArgs mint/burn; resolve/validate; `ThresholdModeSet`; mode-aware 3-arg lib; live-coupled info; Open suite T1–T19 |
 | **Verify** | `forge test --match-path 'test/foundry/spec/vaults/detf/composed/single/**' -vv` → **106/106 pass** |
 
-### F6 — IProtocolDETF surface (P6 / Wave 4)
+### F6 — IDetf surface (P6 / Wave 4; formerly IProtocolDETF)
 
 | | |
 |--|--|
-| **Path** | `contracts/interfaces/IProtocolDETF.sol` (+ errors/proxy) |
-| **Work** | NatSpec Policy vs Open + synthetic gates; `thresholdMode()` on typed surface (`ThresholdMode` from core); live-coupled `is*Allowed` NatSpec; thresholds display under Open; `RedemptionNotAllowed` independent of Open; F5 facet selector uses `IProtocolDETF.thresholdMode`. |
+| **Path** | `contracts/interfaces/detf/IDetf.sol` (+ errors/proxy) |
+| **Work** | NatSpec Policy vs Open + synthetic gates; `thresholdMode()` on typed surface (`ThresholdMode` from core); live-coupled `is*Allowed` NatSpec; thresholds display under Open; `RedemptionNotAllowed` independent of Open; F5 facet selector uses `IDetf.thresholdMode`. |
 | **Status** | `done` (2026-07-28) |
 | **Verify** | `forge build`; `forge test --match-path 'test/foundry/spec/vaults/detf/composed/single/**' -vv` |
 
@@ -314,7 +314,7 @@ Concrete test names live in each family plan’s **Test map** section.
 6. **P5a plans:** ~~draft F4 + F5~~ → **`done`** (2026-07-28)
 7. **P5b implement F4** ComposedStableCommon ← **`done` 2026-07-28**
 8. **P5c F5** SingleVaultDetf ← **`done` 2026-07-28**; whole **P5 `done`**
-9. **P6** F6 IProtocolDETF NatSpec / F7 Seigniorage Out ← **`done` 2026-07-28**
+9. **P6** F6 IDetf NatSpec / F7 Seigniorage Out ← **`done` 2026-07-28**
 10. **P7** AGENTS.md + family PRD “conforms to …” notes ← **`done` 2026-07-28**
 
 **Program complete (P0–P7).** No automatic next implementor phase; open a new initiative for frontend mode UX, F7 revival, or further fee-oracle language cleanup elsewhere.
@@ -338,5 +338,5 @@ Each agent: read PRD → this tracker → assigned plan → implement only that 
 | 2026-07-28 | **P5 plans done (F4 + F5).** Full plans at `composed/stable/common/ComposedStableCommonDetf_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md` and `composed/single/SingleVaultDetf_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md`. P5 split: P5a plans `done`; P5b F4 impl / P5c F5 impl still `todo` (whole P5 not implement-complete). **Next: implement F4 ComposedStableCommon, then F5 SingleVaultDetf (synthetic migration).** |
 | 2026-07-28 | **P5b F4 done:** trailing `thresholdMode` after `routes`; resolve/validate both modes; `ThresholdModeSet` once resolved; live-coupled mode-aware gates (synthetic price); ExchangeIn + ExchangeOut/query sites; info surface on ExchangeIn; FactoryService/TestBase Open helpers; Open suite T1–T19 mapped; matrix always-allow → product Open. `forge test --match-path 'test/foundry/spec/vaults/detf/composed/stable/common/**'` **116/116** pass. **P5c F5 still `todo`.** Whole P5 remains `in_progress`. |
 | 2026-07-28 | **P5c F5 done:** synthetic migration (all mint/burn gates + `is*Allowed` use `_calcSyntheticPrice`; spot helper non-gate only); trailing `PkgArgs.thresholdMode` + mint/burn (hardcode ±0.5% removed → product ±5% defaults); resolve/validate; `ThresholdModeSet` once resolved; mode-aware 3-arg lib; live-coupled Info; facet `thresholdMode` selector; Open suite T1–T19 mapped. `forge test --match-path 'test/foundry/spec/vaults/detf/composed/single/**'` **106/106** pass. **Whole P5 done.** Next: P6 F6/F7. |
-| 2026-07-28 | **P6 done:** F6 `IProtocolDETF` + errors/proxy NatSpec; `thresholdMode()` on typed surface (`ThresholdMode` from core); F5 facet selector + IFacet test use `IProtocolDETF.thresholdMode`; claim `RedemptionNotAllowed` independent of Open. `forge build` ok; F5 path **106/106** pass. F7 **Out** (evidence: peg-regime diluted gates, no threshold/mode storage, consolidation reference-only, not on anvil_single modern path) — note `contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md`; no code half-migration. PRD inventory F6/F7 updated. **Next: P7** AGENTS.md + family PRD conform notes. |
+| 2026-07-28 | **P6 done:** F6 `IDetf` (formerly `IProtocolDETF`) + errors/proxy NatSpec; `thresholdMode()` on typed surface (`ThresholdMode` from core); F5 facet selector + IFacet test use `IDetf.thresholdMode`; claim `RedemptionNotAllowed` independent of Open. `forge build` ok; F5 path **106/106** pass. F7 **Out** (evidence: peg-regime diluted gates, no threshold/mode storage, consolidation reference-only, not on anvil_single modern path) — note `contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md`; no code half-migration. PRD inventory F6/F7 updated. **Next: P7** AGENTS.md + family PRD conform notes. |
 | 2026-07-28 | **P7 done:** AGENTS Policy/Open + synthetic gates; fee oracle no longer owns mint/burn thresholds (PkgArgs source of truth); family PRD conform notes F1–F4 (+ F5 plan-header synthetic note); F7 remains Out. **Threshold Modes program P0–P7 complete.** |

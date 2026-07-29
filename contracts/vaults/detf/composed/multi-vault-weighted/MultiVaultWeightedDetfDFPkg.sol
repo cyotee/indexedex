@@ -31,7 +31,7 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -48,7 +48,7 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
@@ -348,16 +348,16 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         _deployRateProviders(cfg);
         (address reservePool_, uint256 detfIndex_, uint256[] memory shareIndexes_) = _createWeightedReservePool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(reservePool_);
-        uint256 protocolNftId_ = _tryInitProtocolNft(bondVault_);
-        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, protocolNftId_);
+        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
+        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
         _initBasicVaultTokens(cfg, reservePool_);
-        _initFamilyRepo(cfg, reservePool_, detfIndex_, shareIndexes_, bondVault_, protocolNftId_, claimToken_);
+        _initFamilyRepo(cfg, reservePool_, detfIndex_, shareIndexes_, bondVault_, detfNftId_, claimToken_);
     }
 
     function _deployRebasingClaimToken(
         DeployConfig storage cfg,
         IDETFNFTVault bondVault_,
-        uint256 protocolNftId_
+        uint256 detfNftId_
     ) private returns (IRebasingClaimToken claimToken_) {
         // Prefer first configured rateAsset for claim token pricing surface; unrated-only deploys use address(0).
         IERC20 rateAsset_ = IERC20(address(0));
@@ -370,7 +370,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         address detf_ = address(this);
         claimToken_ = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IProtocolDETF(detf_), bondVault_, rateAsset_, protocolNftId_, detf_
+                IDetf(detf_), bondVault_, rateAsset_, detfNftId_, detf_
             )
         );
     }
@@ -487,7 +487,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             BOND_NFT_VAULT_PKG.deployVault(
                 string(abi.encodePacked(ERC20Repo._name(), " Bond")),
                 string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
-                IProtocolDETF(detf_),
+                IDetf(detf_),
                 IERC20(reservePool_),
                 IERC20(detf_),
                 0,
@@ -496,11 +496,11 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         );
     }
 
-    function _tryInitProtocolNft(IDETFNFTVault bondVault_) private returns (uint256 protocolNftId_) {
+    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
         try bondVault_.initializeDETFNFT() returns (uint256 id_) {
-            protocolNftId_ = id_;
+            detfNftId_ = id_;
         } catch {
-            protocolNftId_ = 0;
+            detfNftId_ = 0;
         }
     }
 
@@ -521,7 +521,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256 detfIndex_,
         uint256[] memory shareIndexes_,
         IDETFNFTVault bondVault_,
-        uint256 protocolNftId_,
+        uint256 detfNftId_,
         IRebasingClaimToken claimToken_
     ) private {
         MultiVaultWeightedDetfRepo.InitParams memory p;
@@ -535,7 +535,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         p.thresholdMode = cfg.thresholdMode;
         p.feeOracle = FEE_ORACLE;
         p.bondNftVault = bondVault_;
-        p.protocolNftId = protocolNftId_;
+        p.detfNftId = detfNftId_;
         p.rebasingClaimToken = claimToken_;
         _copyLegsToInitParams(cfg, p);
         MultiVaultWeightedDetfRepo._initialize(p);

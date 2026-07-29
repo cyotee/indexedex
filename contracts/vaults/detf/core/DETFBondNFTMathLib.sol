@@ -115,7 +115,7 @@ library DETFBondNFTMathLib {
         return owner_ == caller_;
     }
 
-    function _validateRedeemCaller(address caller_, address recipient_, address protocolDETF_, address owner_)
+    function _validateRedeemCaller(address caller_, address recipient_, address detf_, address owner_)
         internal
         pure
         returns (bool)
@@ -124,7 +124,7 @@ library DETFBondNFTMathLib {
             return true;
         }
 
-        if (caller_ == protocolDETF_ && recipient_ == owner_) {
+        if (caller_ == detf_ && recipient_ == owner_) {
             return true;
         }
 

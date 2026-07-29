@@ -925,11 +925,11 @@ main() {
         "$DEPLOYMENTS_DIR/15_seigniorage_detfs.json"
 
     # ================================================================================
-    # STAGE 16: Deploy Protocol DETF
+    # STAGE 16: Protocol DETF (archived — see scripts/archive/foundry/protocol-detf/)
     # ================================================================================
-    run_stage "Script_16_DeployProtocolDETF.s.sol" \
-        "Stage 16: Deploy Protocol DETF (CHIR)" \
-        "$DEPLOYMENTS_DIR/16_protocol_detf.json"
+    # run_stage "Script_16_DeployArchivedDetfProduct.s.sol" \
+    #     "Stage 16: Deploy Protocol DETF (CHIR)" \
+    #     "$DEPLOYMENTS_DIR/16_protocol_detf.json"
 
     # ================================================================================
     # STAGE 17: Deploy WETH/TTC Pools

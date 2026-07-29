@@ -118,13 +118,13 @@ abstract contract TestBase_ComposedStableCommonDetf_Components is Test {
         vm.mockCall(address(detfToken), abi.encodeWithSelector(IERC20.totalSupply.selector), abi.encode(totalSupply_));
     }
 
-    function mockProtocolReserveBpt(uint256 protocolNftId_, uint256 reserveBptAmount_) internal {
+    function mockDetfOwnedReserveBpt(uint256 detfNftId_, uint256 reserveBptAmount_) internal {
         vm.mockCall(
-            address(bondNftVault), abi.encodeWithSelector(IDETFNFTVault.detfNFTId.selector), abi.encode(protocolNftId_)
+            address(bondNftVault), abi.encodeWithSelector(IDETFNFTVault.detfNFTId.selector), abi.encode(detfNftId_)
         );
         vm.mockCall(
             address(bondNftVault),
-            abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, protocolNftId_),
+            abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, detfNftId_),
             abi.encode(reserveBptAmount_)
         );
     }

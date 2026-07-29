@@ -18,7 +18,7 @@ Copy this entire file into a new agent session **only if** the human selected on
 | **P3** | F3 MixedBufferMultiVaultStableDetf | `done` |
 | **P4** | Formal PRD **LOCKED** | `done` |
 | **P5** | F4 + F5 (plans + implement; F5 synthetic migration) | `done` |
-| **P6** | F6 `IProtocolDETF` NatSpec/`thresholdMode`; F7 Seigniorage **Out** | `done` |
+| **P6** | F6 `IDetf` NatSpec/`thresholdMode` (formerly `IProtocolDETF`); F7 Seigniorage **Out** | `done` |
 | **P7** | AGENTS + family PRD conform notes | `done` |
 
 **Canonical tracker:** `contracts/vaults/detf/DETF_Threshold_Modes_PROGRESS.md`  

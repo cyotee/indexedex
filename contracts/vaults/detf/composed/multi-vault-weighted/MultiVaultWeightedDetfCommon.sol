@@ -45,7 +45,7 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
         uint256 grossDetf;
         uint256 userDetf;
         uint256 feeToDetf;
-        uint256 protocolDetf;
+        uint256 inventoryDetf;
     }
 
     function _requireReserveLive() internal view {
@@ -190,8 +190,8 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
         (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
         split_.feeToDetf = feeTo_;
         uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.protocolDetf = afterFee_.mulDown(halfInc_);
-        split_.userDetf = afterFee_ - split_.protocolDetf;
+        split_.inventoryDetf = afterFee_.mulDown(halfInc_);
+        split_.userDetf = afterFee_ - split_.inventoryDetf;
     }
 
     function _toLiveScaled18(uint256 raw_, TokenInfo memory info_) internal view returns (uint256) {

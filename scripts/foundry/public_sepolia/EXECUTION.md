@@ -203,7 +203,7 @@ SENDER=0xYourAddress \
 NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia/base \
-forge script scripts/foundry/public_sepolia/ethereum/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF \
+forge script scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -218,7 +218,7 @@ SENDER=0xYourAddress \
 NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia/base \
 REMOTE_OUT_DIR=deployments/public_sepolia/ethereum \
-forge script scripts/foundry/public_sepolia/base/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF \
+forge script scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url base_sepolia_alchemy \
   --broadcast \
   --sender 0xYourAddress \
@@ -472,7 +472,7 @@ SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 NETWORK_PROFILE=ethereum_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/ethereum \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/base \
-forge script scripts/foundry/public_sepolia/ethereum/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF \
+forge script scripts/foundry/public_sepolia/ethereum/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url http://127.0.0.1:8545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
@@ -486,7 +486,7 @@ SENDER=0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \
 NETWORK_PROFILE=base_sepolia \
 OUT_DIR_OVERRIDE=deployments/public_sepolia_supersim/base \
 REMOTE_OUT_DIR=deployments/public_sepolia_supersim/ethereum \
-forge script scripts/foundry/public_sepolia/base/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF \
+forge script scripts/foundry/public_sepolia/base/ARCHIVED_Script_16_DeployArchivedDetfProduct.s.sol:ARCHIVED_Script_16_DeployArchivedDetfProduct \
   --rpc-url http://127.0.0.1:9545 \
   --broadcast \
   --sender 0xF71ea560c6465727efFe07Cfb4e1a05B40520Dd7 \

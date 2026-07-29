@@ -26,11 +26,11 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
         funcs_[2] = IDETFNFTVault.redeemPosition.selector;
         funcs_[3] = IDETFNFTVault.claimRewards.selector;
         funcs_[4] = IDETFNFTVault.addToDETFNFT.selector;
-        funcs_[5] = IDETFNFTVault.sellPositionToProtocol.selector;
+        funcs_[5] = IDETFNFTVault.sellPositionToDetfNft.selector;
         funcs_[6] = IDETFNFTVault.getPosition.selector;
         funcs_[7] = IDETFNFTVault.pendingRewards.selector;
         funcs_[8] = IDETFNFTVault.totalShares.selector;
-        funcs_[9] = IDETFNFTVault.protocolDETF.selector;
+        funcs_[9] = IDETFNFTVault.detf.selector;
         funcs_[10] = IDETFNFTVault.lpToken.selector;
         funcs_[11] = IDETFNFTVault.rewardToken.selector;
         funcs_[12] = IDETFNFTVault.detfNFTId.selector;
@@ -42,7 +42,7 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
         funcs_[18] = IDETFNFTVault.convertToShares.selector;
         funcs_[19] = IDETFNFTVault.convertToAssets.selector;
         funcs_[20] = IDETFNFTVault.markDETFNFTSold.selector;
-        funcs_[21] = IDETFNFTVault.reallocateProtocolRewards.selector;
+        funcs_[21] = IDETFNFTVault.reallocateDetfNftRewards.selector;
         funcs_[22] = IERC721Metadata.tokenURI.selector;
         funcs_[23] = IDetfFeeRecipientInventoryPolicy.feeRecipientNFTId.selector;
         funcs_[24] = IComposedStableCommonDetfBondNFTVault.deploymentTimestamp.selector;

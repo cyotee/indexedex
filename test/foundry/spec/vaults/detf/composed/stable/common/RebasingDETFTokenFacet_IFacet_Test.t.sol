@@ -55,8 +55,8 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[9] = IRebasingClaimToken.sharesOf.selector;
         controlFuncs[10] = IRebasingClaimToken.totalShares.selector;
         controlFuncs[11] = IRebasingClaimToken.redemptionRate.selector;
-        controlFuncs[12] = IRebasingClaimToken.protocolDETF.selector;
-        controlFuncs[13] = IRebasingClaimToken.setProtocolDETF.selector;
+        controlFuncs[12] = IRebasingClaimToken.detf.selector;
+        controlFuncs[13] = IRebasingClaimToken.setDetf.selector;
         controlFuncs[14] = IRebasingClaimToken.detfNFTId.selector;
         controlFuncs[15] = IRebasingClaimToken.rateAsset.selector;
         controlFuncs[16] = IRebasingClaimToken.convertToShares.selector;

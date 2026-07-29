@@ -26,7 +26,7 @@ library ComposedStableCommonDetfBondNFTVaultService {
         uint256 tokenId;
         address recipient;
         address caller;
-        address protocolDETF;
+        address detf;
     }
 
     function _calcHarvestRewards(HarvestParams memory params) internal pure returns (HarvestResult memory result) {
@@ -51,6 +51,6 @@ library ComposedStableCommonDetfBondNFTVaultService {
     }
 
     function _validateRedeemCaller(RedeemParams memory params, address owner) internal pure returns (bool) {
-        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.protocolDETF, owner);
+        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.detf, owner);
     }
 }

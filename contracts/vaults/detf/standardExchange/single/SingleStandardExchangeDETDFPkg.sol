@@ -33,7 +33,7 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
@@ -313,9 +313,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         DeployConfig storage cfg = _deployConfig();
         PoolBuild memory pb_ = _createRateProviderAndPool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(pb_.reservePool);
-        uint256 protocolNftId_ = _tryInitProtocolNft(bondVault_);
+        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
         _initBasicVaultTokens(address(pb_.seShare), pb_.reservePool);
-        _initFamilyRepo(cfg, pb_, bondVault_, protocolNftId_);
+        _initFamilyRepo(cfg, pb_, bondVault_, detfNftId_);
     }
 
     function _createRateProviderAndPool(DeployConfig storage cfg) private returns (PoolBuild memory pb_) {
@@ -403,7 +403,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             BOND_NFT_VAULT_PKG.deployVault(
                 string(abi.encodePacked(ERC20Repo._name(), " Bond")),
                 string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
-                IProtocolDETF(detf_),
+                IDetf(detf_),
                 IERC20(reservePool_),
                 IERC20(detf_),
                 0,
@@ -412,11 +412,11 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         );
     }
 
-    function _tryInitProtocolNft(IDETFNFTVault bondVault_) private returns (uint256 protocolNftId_) {
+    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
         try bondVault_.initializeDETFNFT() returns (uint256 id_) {
-            protocolNftId_ = id_;
+            detfNftId_ = id_;
         } catch {
-            protocolNftId_ = 0;
+            detfNftId_ = 0;
         }
     }
 
@@ -432,7 +432,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         DeployConfig storage cfg,
         PoolBuild memory pb_,
         IDETFNFTVault bondVault_,
-        uint256 protocolNftId_
+        uint256 detfNftId_
     ) private {
         SingleStandardExchangeDETFRepo._initialize(
             cfg.standardExchangeVault,
@@ -450,7 +450,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
                 thresholdMode: cfg.thresholdMode,
                 feeOracle: FEE_ORACLE,
                 bondNftVault: bondVault_,
-                protocolNftId: protocolNftId_,
+                detfNftId: detfNftId_,
                 feeRecipientNftId: 0
             })
         );

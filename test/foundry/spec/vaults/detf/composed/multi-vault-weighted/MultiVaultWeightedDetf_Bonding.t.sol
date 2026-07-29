@@ -31,10 +31,10 @@ contract MultiVaultWeightedDetf_Bonding_Test is TestBase_MultiVaultWeightedDetf 
         assertTrue(shares_ > 0, "bpt principal");
     }
 
-    function test_sellPositionToProtocol() public {
+    function test_sellPositionToDetfNft() public {
         (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 800e18);
         vm.prank(alice);
-        uint256 principal_ = detfBonding.sellPositionToProtocol(tokenId_, alice);
+        uint256 principal_ = detfBonding.sellPositionToDetfNft(tokenId_, alice);
         assertTrue(principal_ > 0, "principal sold");
     }
 }

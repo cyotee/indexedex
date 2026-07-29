@@ -20,9 +20,9 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
+import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/detf/bondNft/DETFNFTVaultDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {RebasingClaimTokenDFPkg, IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {RebasingClaimTokenDFPkg, IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {
     IRebasingDETFTokenDFPkg,
     RebasingDETFTokenDFPkg

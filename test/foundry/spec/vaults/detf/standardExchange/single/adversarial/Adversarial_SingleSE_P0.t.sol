@@ -117,12 +117,12 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         address instance_ = _openLiveOpenThreshold();
         address pool_ = ISingleStandardExchangeDETFInfo(instance_).reservePool();
         uint256 bptBefore_ = IERC20(pool_).balanceOf(instance_);
-        // Attacker without NFT cannot sellPositionToProtocol on bond vault (onlyOwner = DETF)
+        // Attacker without NFT cannot sellPositionToDetfNft on bond vault (onlyOwner = DETF)
         IDETFNFTVault bondVault_ =
             IDETFNFTVault(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
         vm.prank(attacker);
         vm.expectRevert();
-        bondVault_.sellPositionToProtocol(1, attacker, attacker);
+        bondVault_.sellPositionToDetfNft(1, attacker, attacker);
         assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "A3: BPT intact");
     }
 
@@ -133,17 +133,17 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         // First bond gave alice a tokenId; attacker cannot sell via DETF without ownership
         vm.prank(attacker);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToProtocol(1, attacker);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, attacker);
     }
 
     function test_D3_doubleSell_secondReverts() public {
         address instance_ = _deployOpenThresholdDetf("Adv DoubleSell", "advDS");
         uint256 tokenId_ = _bootstrapDetf(instance_, alice, 1_500e18);
         vm.prank(alice);
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToProtocol(tokenId_, alice);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, alice);
         vm.prank(alice);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToProtocol(tokenId_, alice);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, alice);
     }
 
     function test_D5_lockClamp_minRevert_maxOk() public {

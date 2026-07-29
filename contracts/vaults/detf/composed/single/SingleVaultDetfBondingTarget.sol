@@ -23,7 +23,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
@@ -51,7 +51,7 @@ interface ISingleVaultDetfBonding {
     function captureSeigniorage() external returns (uint256 bptReceived);
     function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted);
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
-    function bridgeRebasingClaim(IProtocolDETF.BridgeArgs calldata args)
+    function bridgeRebasingClaim(IDetf.BridgeArgs calldata args)
         external
         returns (uint256 localRebasingClaimOut, uint256 pairOut);
     function receiveBridgedPair(address recipient, uint256 pairAmount, uint256 deadline)
@@ -172,7 +172,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 
-    function _addReservePoolBptToProtocolNft(
+    function _addReservePoolBptToDetfNft(
         SingleVaultDetfRepo.Storage storage layoutStruct,
         uint256 bptAmount
     ) internal {
@@ -180,7 +180,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             return;
         }
 
-        DETFBondLifecycleLib._addReservePoolBptToProtocolNft(
+        DETFBondLifecycleLib._addReservePoolBptToDetfNft(
             IERC20(layoutStruct.reservePool), layoutStruct.detfNFTVault, layoutStruct.detfNFTId, bptAmount
         );
     }
@@ -292,10 +292,10 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
             revert ReservePoolNotInitialized();
         }
 
-        uint256 detfAmount = DETFBondLifecycleLib._collectProtocolRewards(layoutStruct.detfNFTVault);
+        uint256 detfAmount = DETFBondLifecycleLib._collectDetfNftRewards(layoutStruct.detfNFTVault);
 
         bptReceived_ = _addLiquidityToReservePool(layoutStruct, detfAmount, 0);
-        _addReservePoolBptToProtocolNft(layoutStruct, bptReceived_);
+        _addReservePoolBptToDetfNft(layoutStruct, bptReceived_);
     }
 
     function sellNFT(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rebasingClaimMinted_) {
@@ -348,7 +348,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         }
 
         BondAssets memory assets = _bondFromRateAsset(layoutStruct, amount, block.timestamp);
-        _addReservePoolBptToProtocolNft(layoutStruct, assets.bptOut);
+        _addReservePoolBptToDetfNft(layoutStruct, assets.bptOut);
     }
 
     function claimLiquidity(uint256 lpAmount, address recipient) external nonReentrant returns (uint256 extractedWeth_) {
@@ -372,7 +372,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         _syncLastTotalAssetsFromReservePool(layoutStruct);
     }
 
-    function bridgeRebasingClaim(IProtocolDETF.BridgeArgs calldata args)
+    function bridgeRebasingClaim(IDetf.BridgeArgs calldata args)
         external
         nonReentrant
         returns (uint256 localRebasingClaimOut, uint256 pairOut)
@@ -474,7 +474,7 @@ contract SingleVaultDetfBondingTarget is SingleVaultDetfCommon, ReentrancyLockMo
         );
 
         bytes memory receiveData = abi.encodeCall(
-            IProtocolDETF.receiveBridgedPair,
+            IDetf.receiveBridgedPair,
             (args.recipient == address(0) ? msg.sender : args.recipient, pairOut, args.deadline)
         );
         bytes memory relayData = abi.encodeCall(

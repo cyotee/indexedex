@@ -14,12 +14,12 @@ import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol'
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {RebasingDETFTokenRepo} from 'contracts/vaults/detf/composed/stable/common/RebasingDETFTokenRepo.sol';
 
-contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
+contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
     using BetterSafeERC20 for IERC20;
     using RebasingDETFTokenRepo for RebasingDETFTokenRepo.Storage;
 
@@ -59,11 +59,11 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
         return _getCurrentRedemptionRate(RebasingDETFTokenRepo._layoutStruct());
     }
 
-    function protocolDETF() external view returns (address) {
+    function detf() external view returns (address) {
         return address(RebasingDETFTokenRepo._detf());
     }
 
-    function setProtocolDETF(address detf_) external onlyOwner {
+    function setDetf(address detf_) external onlyOwner {
         RebasingDETFTokenRepo._setDetf(IDETF(detf_));
     }
 
@@ -326,7 +326,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
             return 0;
         }
 
-        amountOut_ = IProtocolDETF(address(layoutStruct_.detf)).previewClaimLiquidity(reserveBptAmount);
+        amountOut_ = IDetf(address(layoutStruct_.detf)).previewClaimLiquidity(reserveBptAmount);
     }
 
     function _previewExchangeOut(
@@ -388,7 +388,7 @@ contract RebasingDETFTokenTarget is IProtocolDETFErrors, ReentrancyLockModifiers
         }
 
         RebasingDETFTokenRepo._burnShares(layoutStruct_, address(this), shares);
-        amountOut_ = IProtocolDETF(address(layoutStruct_.detf)).claimLiquidity(reserveBptAmount, recipient_);
+        amountOut_ = IDetf(address(layoutStruct_.detf)).claimLiquidity(reserveBptAmount, recipient_);
 
         emit IRebasingClaimToken.Redeemed(
             msg.sender,

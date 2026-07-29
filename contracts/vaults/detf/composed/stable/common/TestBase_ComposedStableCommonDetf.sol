@@ -8,7 +8,7 @@ import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
-import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
+import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
@@ -99,13 +99,13 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
     IRebasingClaimToken internal rebasingDetfToken;
 
     address internal detfOwner;
-    IProtocolDETF internal protocolDETF;
+    IDetf internal detf;
 
     function setUp() public virtual override {
         super.setUp();
 
         detfOwner = makeAddr('detfOwner');
-        protocolDETF = IProtocolDETF(makeAddr('protocolDETF'));
+        detf = IDetf(makeAddr('detf'));
 
         lpToken = new MockComposedStableCommonERC20('Reserve BPT', 'rBPT', 18);
         detfToken = new MockComposedStableCommonERC20('DETF Token', 'DETF', 18);
@@ -154,7 +154,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
             bondNFTVaultPkg.deployVault(
                 'Composed Stable Bond NFT Vault',
                 'csBOND',
-                protocolDETF,
+                detf,
                 IERC20(address(lpToken)),
                 IERC20(address(detfToken)),
                 0,
@@ -170,7 +170,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
         vm.startPrank(owner);
         rebasingDetfToken = IRebasingClaimToken(
             rebasingDetfTokenPkg.deployToken(
-                IDETF(address(protocolDETF)), bondNFTVault, IERC20(address(rateAsset)), bondNFTVault.detfNFTId(), owner
+                IDETF(address(detf)), bondNFTVault, IERC20(address(rateAsset)), bondNFTVault.detfNFTId(), owner
             )
         );
         vm.stopPrank();

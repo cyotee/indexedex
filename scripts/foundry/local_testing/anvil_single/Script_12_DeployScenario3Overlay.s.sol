@@ -32,7 +32,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
@@ -65,8 +65,8 @@ import {
     ISingleVaultDetfDFPkg
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/bondNft/DETFNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 
 import {
@@ -137,12 +137,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
     IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
     IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
-    ISingleVaultDetfDFPkg private protocolDetfPkg;
+    ISingleVaultDetfDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
     SingleVaultDetfUniswapV4LiquiditySeeder private liquiditySeeder;
 
     address private pairToken;
-    address private protocolDetf;
+    address private inventoryDetf;
     address private protocolNftVault;
     address private rebasingClaimToken;
     address private reservePool;
@@ -171,7 +171,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         _deployUniswapV4PoolInfra();
         _seedWethRichPool();
         _deployPkgs();
-        _deployProtocolDetf();
+        _deploySingleVaultDetf();
         _deployOuterPool();
         vm.stopBroadcast();
 
@@ -217,7 +217,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     }
 
     function _loadExistingScenario() internal returns (bool) {
-        (address detf, bool hasDetf) = _readAddressSafe(ARTIFACT_FILE, "protocolDetf");
+        (address detf, bool hasDetf) = _readAddressSafe(ARTIFACT_FILE, "inventoryDetf");
         (address outerPool, bool hasOuterPool) = _readAddressSafe(ARTIFACT_FILE, "balancerWethDetfPool");
         (address poolManagerAddr, bool hasPoolManager) = _readAddressSafe(ARTIFACT_FILE, "poolManager");
 
@@ -229,7 +229,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             return false;
         }
 
-        protocolDetf = detf;
+        inventoryDetf = detf;
         weightedPool = outerPool;
         poolManager = IPoolManager(poolManagerAddr);
 
@@ -246,9 +246,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             weightedPool8020Factory = IWeightedPool8020Factory(weightedPoolFactoryAddr);
         }
 
-        (address detfPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "protocolDetfPkg");
+        (address detfPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "inventoryDetfPkg");
         if (detfPkgAddr != address(0)) {
-            protocolDetfPkg = ISingleVaultDetfDFPkg(detfPkgAddr);
+            inventoryDetfPkg = ISingleVaultDetfDFPkg(detfPkgAddr);
         }
         (address nftPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "detfNFTVaultPkg");
         if (nftPkgAddr != address(0)) {
@@ -409,7 +409,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         );
 
         DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig = _emptyBridgeConfig();
-        protocolDetfPkg = SingleVaultDetf_Pkg_FactoryService.deploySingleVaultDetfDFPkg(
+        inventoryDetfPkg = SingleVaultDetf_Pkg_FactoryService.deploySingleVaultDetfDFPkg(
             vaultRegistry,
             SingleVaultDetf_Component_FactoryService.buildPkgInit(
                 SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets({
@@ -448,9 +448,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         );
     }
 
-    function _deployProtocolDetf() internal {
-        protocolDetf = vaultRegistry.deployVault(
-            IStandardVaultPkg(address(protocolDetfPkg)),
+    function _deploySingleVaultDetf() internal {
+        inventoryDetf = vaultRegistry.deployVault(
+            IStandardVaultPkg(address(inventoryDetfPkg)),
             abi.encode(
                 SingleVaultDetf_Component_FactoryService.buildPkgArgs(
                     "Single Vault DETF CHIR",
@@ -464,17 +464,17 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        IProtocolDETF detf = IProtocolDETF(protocolDetf);
+        IDetf detf = IDetf(inventoryDetf);
         protocolNftVault = address(detf.detfNFTVault());
         rebasingClaimToken = address(detf.rebasingClaimToken());
         reservePool = detf.reservePool();
-        underlyingVault = address(ISingleVaultDetf(protocolDetf).underlyingVault());
+        underlyingVault = address(ISingleVaultDetf(inventoryDetf).underlyingVault());
     }
 
     function _deployOuterPool() internal {
         TokenConfig[] memory cfg = new TokenConfig[](2);
         cfg[0] = _standardTokenConfig(address(weth));
-        cfg[1] = _standardTokenConfig(protocolDetf);
+        cfg[1] = _standardTokenConfig(inventoryDetf);
         weightedPool = balConstProdPkg.deployVault(cfg, address(0));
     }
 
@@ -514,13 +514,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         string memory json;
         json = vm.serializeAddress("scenario3", "pairToken", pairToken);
         json = vm.serializeAddress("scenario3", "weightedPool8020Factory", address(weightedPool8020Factory));
-        json = vm.serializeAddress("scenario3", "protocolDetfPkg", address(protocolDetfPkg));
+        json = vm.serializeAddress("scenario3", "inventoryDetfPkg", address(inventoryDetfPkg));
         json = vm.serializeAddress("scenario3", "detfNFTVaultPkg", address(detfNFTVaultPkg));
         json = vm.serializeAddress("scenario3", "rebasingClaimTokenPkg", address(rebasingClaimTokenPkg));
         json = vm.serializeAddress("scenario3", "underlyingVaultPkg", address(underlyingVaultPkg));
         json = vm.serializeAddress("scenario3", "poolManager", address(poolManager));
         json = vm.serializeAddress("scenario3", "liquiditySeeder", address(liquiditySeeder));
-        json = vm.serializeAddress("scenario3", "protocolDetf", protocolDetf);
+        json = vm.serializeAddress("scenario3", "inventoryDetf", inventoryDetf);
         json = vm.serializeAddress("scenario3", "protocolNftVault", protocolNftVault);
         json = vm.serializeAddress("scenario3", "rebasingClaimToken", rebasingClaimToken);
         json = vm.serializeAddress("scenario3", "reservePool", reservePool);
@@ -536,9 +536,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     function _exportFragments() internal {
         _writeFragment("tokens", "richir", rebasingClaimToken, "Rich Reserve Token", "RICHIR", new string[](0));
         _writeFragment(
-            "vaults/protocolDetf",
-            "protocolDetf",
-            protocolDetf,
+            "vaults/inventoryDetf",
+            "inventoryDetf",
+            inventoryDetf,
             "Single Vault DETF CHIR",
             "CHIR",
             new string[](0)
@@ -592,7 +592,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     function _logResults() internal view {
         _logString("Artifact:", ARTIFACT_FILE);
         _logAddress("WeightedPool8020Factory:", address(weightedPool8020Factory));
-        _logAddress("Single Vault DETF:", protocolDetf);
+        _logAddress("Single Vault DETF:", inventoryDetf);
         _logAddress("Protocol NFT Vault:", protocolNftVault);
         _logAddress("RICHIR:", rebasingClaimToken);
         _logAddress("Reserve Pool:", reservePool);

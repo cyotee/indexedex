@@ -60,7 +60,7 @@ contract RebasingDETFTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
         address tokenAddr = pkg.deployToken(IDETF(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), weth, 7, owner);
 
         assertGt(tokenAddr.code.length, 0, 'rebasing token proxy not deployed');
-        assertEq(IRebasingClaimToken(tokenAddr).protocolDETF(), address(0xBEEF), 'detf mismatch');
+        assertEq(IRebasingClaimToken(tokenAddr).detf(), address(0xBEEF), 'detf mismatch');
         assertEq(IRebasingClaimToken(tokenAddr).detfNFTId(), 7, 'protocol nft id mismatch');
     }
 

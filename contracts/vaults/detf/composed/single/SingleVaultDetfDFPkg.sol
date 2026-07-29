@@ -48,7 +48,7 @@ import {
 
 import "contracts/constants/Indexedex_CONSTANTS.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -59,7 +59,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/ISuperChainBridgeTokenRegistry.sol";
 import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
 import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
@@ -289,7 +289,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         interfaces_[5] = type(IStandardVault).interfaceId;
         interfaces_[6] = type(IStandardExchangeIn).interfaceId;
         interfaces_[7] = type(IStandardExchangeOut).interfaceId;
-        interfaces_[8] = type(IProtocolDETF).interfaceId;
+        interfaces_[8] = type(IDetf).interfaceId;
         interfaces_[9] = type(ISingleVaultDetf).interfaceId ^ type(ISingleVaultDetfBonding).interfaceId ^ type(IOperable).interfaceId;
     }
 
@@ -440,7 +440,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
             PROTOCOL_NFT_VAULT_PKG.deployVault(
                 string.concat("Protocol NFT Vault of ", ERC20Repo._name()),
                 string.concat("pNFT-", ERC20Repo._symbol()),
-                IProtocolDETF(address(this)),
+                IDetf(address(this)),
                 IERC20(deployment_.reservePool),
                 IERC20(address(this)),
                 9,
@@ -450,7 +450,7 @@ contract SingleVaultDetfDFPkg is ISingleVaultDetfDFPkg {
         deployment_.detfNFTId = deployment_.detfNFTVault.initializeDETFNFT();
         deployment_.rebasingClaimToken = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IProtocolDETF(address(this)),
+                IDetf(address(this)),
                 deployment_.detfNFTVault,
                 RATE_ASSET,
                 deployment_.detfNFTId,

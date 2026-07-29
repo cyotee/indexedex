@@ -12,7 +12,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol";
 
 /**
@@ -49,10 +49,10 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Returns the Protocol DETF contract.
-     * @return The Protocol DETF contract
+     * @notice Returns the DETF diamond.
+     * @return The DETF diamond
      */
-    function protocolDETF() external view returns (IProtocolDETF);
+    function detf() external view returns (IDetf);
 
     /**
      * @notice Returns the LP token (BPT from reserve pool).
@@ -62,7 +62,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     /**
     * @notice Returns the reward token.
-    * @return The reward token for this vault's accrual model. For Protocol DETF deployments this is CHIR.
+    * @return The reward token for this vault's accrual model. For historical Protocol DETF deployments this was CHIR.
      */
     function rewardToken() external view returns (IERC20);
 
@@ -123,7 +123,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
     /**
     * @notice Returns pending reward-token rewards for a token ID.
      * @param tokenId The NFT token ID
-    * @return pending Amount of pending reward-token rewards. For Protocol DETF deployments this is CHIR.
+    * @return pending Amount of pending reward-token rewards. For historical Protocol DETF deployments this was CHIR.
      */
     function pendingRewards(uint256 tokenId) external view returns (uint256 pending);
 
@@ -147,7 +147,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     /**
      * @notice Creates a new bond position.
-     * @dev Called by Protocol DETF during bonding.
+     * @dev Called by the DETF diamond during bonding.
      * @param lpAmount Amount of LP tokens to bond
      * @param lockDuration Duration to lock in seconds
      * @param recipient Address to receive the NFT
@@ -174,7 +174,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
     * @notice Claims reward-token rewards without redeeming position.
      * @param tokenId The NFT token ID
      * @param recipient Address to receive rewards
-    * @return rewards Amount of reward-token rewards claimed. For Protocol DETF deployments this is CHIR.
+    * @return rewards Amount of reward-token rewards claimed. For historical Protocol DETF deployments this was CHIR.
      */
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
@@ -184,7 +184,7 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     /**
      * @notice Sells a user bond NFT position into the protocol-owned position.
-     * @dev Intended to be called by the Protocol DETF (owner) when a user invokes
+     * @dev Intended to be called by the DETF diamond (owner) when a user invokes
      *      the canonical Bond NFT → rebasing claim token route.
      *
      *      Semantics (per TASK.md):
@@ -196,9 +196,9 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      * @param seller The expected owner of `tokenId`.
      * @param rewardsRecipient Address to receive harvested rewards.
      * @return principalShares Principal-only shares contributed to the protocol NFT.
-     * @return rewardsClaimed Amount of reward-token rewards claimed. For Protocol DETF deployments this is CHIR.
+     * @return rewardsClaimed Amount of reward-token rewards claimed. For historical Protocol DETF deployments this was CHIR.
      */
-    function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
+    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         returns (uint256 principalShares, uint256 rewardsClaimed);
 
@@ -227,9 +227,9 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      * @notice Reallocates uncollected protocol NFT rewards as bond incentives.
      * @dev Can only be called by feeTo address from VaultFeeOracle.
      * @param recipient Address to receive reallocated rewards
-    * @return amount Amount of reward-token rewards reallocated. For Protocol DETF deployments this is CHIR.
+    * @return amount Amount of reward-token rewards reallocated. For historical Protocol DETF deployments this was CHIR.
      */
-    function reallocateProtocolRewards(address recipient) external returns (uint256 amount);
+    function reallocateDetfNftRewards(address recipient) external returns (uint256 amount);
 
     /* ---------------------------------------------------------------------- */
     /*                              Events                                    */
@@ -250,5 +250,5 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     event DETFNFTUpdated(uint256 indexed tokenId, uint256 lpAdded, uint256 newTotalShares);
 
-    event ProtocolRewardsReallocated(address indexed recipient, uint256 amount);
+    event DetfNftRewardsReallocated(address indexed recipient, uint256 amount);
 }

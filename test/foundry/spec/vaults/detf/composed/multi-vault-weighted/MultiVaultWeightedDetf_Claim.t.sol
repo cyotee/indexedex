@@ -15,7 +15,7 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
     function test_claimToken_wiredOnDeploy() public view {
         address claim_ = detfInfo.rebasingClaimToken();
         assertTrue(claim_ != address(0), "claim token wired");
-        assertEq(IRebasingClaimToken(claim_).protocolDETF(), detf, "claim points at detf");
+        assertEq(IRebasingClaimToken(claim_).detf(), detf, "claim points at detf");
     }
 
     function test_sellNFT_mintsClaim_thenRedeemToRateAsset() public {

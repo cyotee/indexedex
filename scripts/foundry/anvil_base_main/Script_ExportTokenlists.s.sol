@@ -542,7 +542,7 @@ contract Script_ExportTokenlists is DeploymentBase {
                     chainIdStr,
                     reservePool,
                     "Protocol DETF Reserve Pool",
-                    "protocolDetfReservePool"
+                    "inventoryDetfReservePool"
                 );
             }
             _writeTokenlist("anvil_base_main-balancerv3-pools.tokenlist.json", entries);
@@ -600,7 +600,7 @@ contract Script_ExportTokenlists is DeploymentBase {
     }
 
     function _exportProtocolDetf(string memory chainIdStr) internal {
-        (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "protocolDetf");
+        (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "inventoryDetf");
         (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "pairToken");
         (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "rebasingClaimToken");
 

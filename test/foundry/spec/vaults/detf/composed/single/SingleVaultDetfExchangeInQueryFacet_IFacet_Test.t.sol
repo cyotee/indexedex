@@ -6,7 +6,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
 import {SingleVaultDetfExchangeInQueryFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInQueryFacet.sol";
@@ -32,14 +32,14 @@ contract SingleVaultDetfExchangeInQueryFacet_IFacet_Test is CraneTest, TestBase_
         controlInterfaces = new bytes4[](3);
         controlInterfaces[0] = type(IStandardExchangeIn).interfaceId;
         controlInterfaces[1] = type(IStandardExchangeOut).interfaceId;
-        controlInterfaces[2] = type(IProtocolDETF).interfaceId;
+        controlInterfaces[2] = type(IDetf).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
         controlFuncs = new bytes4[](4);
         controlFuncs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         controlFuncs[1] = IStandardExchangeOut.previewExchangeOut.selector;
-        controlFuncs[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        controlFuncs[3] = IProtocolDETF.previewBridgeRebasingClaim.selector;
+        controlFuncs[2] = IDetf.previewClaimLiquidity.selector;
+        controlFuncs[3] = IDetf.previewBridgeRebasingClaim.selector;
     }
 }

@@ -145,7 +145,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
             revert InvalidToken(IERC20(address(0)));
         }
 
-        (uint256 principalShares,) = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct).sellPositionToProtocol(
+        (uint256 principalShares,) = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct).sellPositionToDetfNft(
             tokenId, msg.sender, recipient
         );
         if (principalShares == 0) {

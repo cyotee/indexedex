@@ -10,7 +10,7 @@ import {Base64} from "@crane/contracts/utils/Base64.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
 string constant CSCD_BOND_METADATA_JSON_PREFIX = "data:application/json;base64,";
@@ -39,7 +39,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.detf.composed.stable.common.bond.nft");
 
     struct Storage {
-        IProtocolDETF protocolDETF;
+        IDetf detf;
         IERC20 lpToken;
         IERC20 rewardToken;
         uint256 deploymentTimestamp;
@@ -70,12 +70,12 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _initialize(
         Storage storage layoutStruct_,
-        IProtocolDETF protocolDETF_,
+        IDetf detf_,
         IERC20 lpToken_,
         IERC20 rewardToken_,
         uint8 decimalOffset_
     ) internal {
-        layoutStruct_.protocolDETF = protocolDETF_;
+        layoutStruct_.detf = detf_;
         layoutStruct_.lpToken = lpToken_;
         layoutStruct_.rewardToken = rewardToken_;
         layoutStruct_.deploymentTimestamp = block.timestamp;
@@ -83,10 +83,10 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         layoutStruct_.nextTokenId = 1;
     }
 
-    function _initialize(IProtocolDETF protocolDETF_, IERC20 lpToken_, IERC20 rewardToken_, uint8 decimalOffset_)
+    function _initialize(IDetf detf_, IERC20 lpToken_, IERC20 rewardToken_, uint8 decimalOffset_)
         internal
     {
-        _initialize(_layoutStruct(), protocolDETF_, lpToken_, rewardToken_, decimalOffset_);
+        _initialize(_layoutStruct(), detf_, lpToken_, rewardToken_, decimalOffset_);
     }
 
     function _setDETFNFTId(Storage storage layoutStruct_, uint256 tokenId_) internal {
@@ -105,12 +105,12 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         _setFeeRecipientNFTId(_layoutStruct(), tokenId_);
     }
 
-    function _protocolDETF(Storage storage layoutStruct_) internal view returns (IProtocolDETF) {
-        return layoutStruct_.protocolDETF;
+    function _detf(Storage storage layoutStruct_) internal view returns (IDetf) {
+        return layoutStruct_.detf;
     }
 
-    function _protocolDETF() internal view returns (IProtocolDETF) {
-        return _protocolDETF(_layoutStruct());
+    function _detf() internal view returns (IDetf) {
+        return _detf(_layoutStruct());
     }
 
     function _lpToken(Storage storage layoutStruct_) internal view returns (IERC20) {
@@ -316,7 +316,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
     }
 
     function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_) internal view returns (uint256 shares_) {
-        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.protocolDETF)).reserveOfToken(address(layoutStruct_.lpToken));
+        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
         uint256 totalShares_ = layoutStruct_.totalShares;
 
         if (totalShares_ == 0 || totalLpReserve == 0) {
@@ -331,7 +331,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
     }
 
     function _convertToAssets(Storage storage layoutStruct_, uint256 shares_) internal view returns (uint256 lpAmount_) {
-        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.protocolDETF)).reserveOfToken(address(layoutStruct_.lpToken));
+        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
         uint256 totalShares_ = layoutStruct_.totalShares;
 
         if (totalShares_ == 0 || totalLpReserve == 0) {

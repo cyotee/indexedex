@@ -42,7 +42,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
-        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToProtocol.selector;
+        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector;
         funcs_[4] = ISingleStandardExchangeDETFInfo.isReserveLive.selector;
         funcs_[5] = ISingleStandardExchangeDETFInfo.standardExchangeVault.selector;
         funcs_[6] = ISingleStandardExchangeDETFInfo.standardExchangeVaultShare.selector;
@@ -71,7 +71,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
-        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToProtocol.selector;
+        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector;
         funcs_[4] = ISingleStandardExchangeDETFInfo.isReserveLive.selector;
         funcs_[5] = ISingleStandardExchangeDETFInfo.standardExchangeVault.selector;
         funcs_[6] = ISingleStandardExchangeDETFInfo.standardExchangeVaultShare.selector;

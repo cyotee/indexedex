@@ -11,8 +11,8 @@ import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/ext
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
@@ -115,9 +115,9 @@ contract SingleVaultDetf_MintSellRedeem_Test is SingleVaultDetfProductionBase {
     }
 
     function test_claimLiquidity_revertsWhenNotProtocolNftVault() public {
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.NotNFTVault.selector, detfAlice));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.NotNFTVault.selector, detfAlice));
         vm.prank(detfAlice);
-        IProtocolDETF(address(detf)).claimLiquidity(1e18, detfAlice);
+        IDetf(address(detf)).claimLiquidity(1e18, detfAlice);
     }
 
     function test_exchangeIn_wethToRichir_previewIsConservative() public {

@@ -10,7 +10,7 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
 import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol";
 import {ComposedStableCommonDetfBondNFTVaultCommon} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultCommon.sol";
@@ -86,7 +86,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
                     tokenId: tokenId,
                     recipient: recipient,
                     caller: msg.sender,
-                    protocolDETF: address(layoutStruct.protocolDETF)
+                    detf: address(layoutStruct.detf)
                 });
             address owner = ERC721Repo._ownerOf(tokenId);
             if (!ComposedStableCommonDetfBondNFTVaultService._validateRedeemCaller(params, owner)) {
@@ -112,12 +112,12 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
             ComposedStableCommonDetfBondNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
         ComposedStableCommonDetfBondNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
-        if (msg.sender == address(layoutStruct.protocolDETF)) {
+        if (msg.sender == address(layoutStruct.detf)) {
             ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
         }
         ERC721Repo._burn(tokenId);
 
-        wethOut = layoutStruct.protocolDETF.claimLiquidity(lpAmount, recipient);
+        wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);
 
         emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
     }
@@ -180,7 +180,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
     }
 
-    function sellPositionToProtocol(uint256 tokenId, address seller, address rewardsRecipient)
+    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         onlyOwner
         nonReentrant
@@ -263,8 +263,8 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._rewardPerShares();
     }
 
-    function protocolDETF() external view returns (IProtocolDETF) {
-        return ComposedStableCommonDetfBondNFTVaultRepo._protocolDETF();
+    function detf() external view returns (IDetf) {
+        return ComposedStableCommonDetfBondNFTVaultRepo._detf();
     }
 
     function detfNFTSold() external view returns (bool) {
@@ -320,10 +320,10 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._convertToAssets(shares);
     }
 
-    function reallocateProtocolRewards(address recipient) external returns (uint256 amount) {
+    function reallocateDetfNftRewards(address recipient) external returns (uint256 amount) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
-        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layoutStruct.protocolDETF)) {
+        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layoutStruct.detf)) {
             revert NotAuthorized(msg.sender);
         }
 
@@ -331,7 +331,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultRepo._updateGlobalRewards(layoutStruct);
         amount = _harvestRewardsInternal(layoutStruct, protocolTokenId, recipient);
 
-        emit IDETFNFTVault.ProtocolRewardsReallocated(recipient, amount);
+        emit IDETFNFTVault.DetfNftRewardsReallocated(recipient, amount);
     }
 
     function balanceOf(address owner) public view returns (uint256 balance) {
@@ -359,21 +359,21 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) public payable virtual {
-        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._protocolDETF())) {
+        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._detf())) {
             revert IERC721Errors.ERC721InvalidReceiver(to);
         }
         ERC721Repo._safeTransferFrom(from, to, tokenId, data);
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId) public payable virtual {
-        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._protocolDETF())) {
+        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._detf())) {
             revert IERC721Errors.ERC721InvalidReceiver(to);
         }
         ERC721Repo._safeTransferFrom(from, to, tokenId);
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public payable virtual {
-        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._protocolDETF())) {
+        if (to == address(ComposedStableCommonDetfBondNFTVaultRepo._detf())) {
             revert IERC721Errors.ERC721InvalidReceiver(to);
         }
         ERC721Repo._transferFrom(from, to, tokenId);

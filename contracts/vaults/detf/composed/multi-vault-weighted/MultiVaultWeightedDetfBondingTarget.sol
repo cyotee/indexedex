@@ -29,7 +29,7 @@ interface IMultiVaultWeightedDetfBonding {
         external
         returns (uint256 bptOut);
 
-    function sellPositionToProtocol(uint256 tokenId, address recipient)
+    function sellPositionToDetfNft(uint256 tokenId, address recipient)
         external
         returns (uint256 principalShares);
 
@@ -139,7 +139,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
             bptPrincipal_ = _joinReserveBothDetfAndShare(legIndex_, detfForPool_, vaultShares_);
             if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
             if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
-            if (split_.protocolDetf > 0) _mintDetf(address(s.bondNftVault), split_.protocolDetf);
+            if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
         }
 
         tokenId_ = DETFBondLifecycleLib._createBondPosition(
@@ -153,7 +153,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
-    function sellPositionToProtocol(uint256 tokenId_, address recipient_)
+    function sellPositionToDetfNft(uint256 tokenId_, address recipient_)
         public
         virtual
         nonReentrant
@@ -161,7 +161,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
     {
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
         if (recipient_ == address(0)) recipient_ = msg.sender;
-        principalShares_ = DETFBondLifecycleLib._sellPositionToProtocol(
+        principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
             s.bondNftVault, tokenId_, msg.sender, recipient_
         );
     }

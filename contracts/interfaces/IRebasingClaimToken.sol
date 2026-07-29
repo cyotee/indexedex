@@ -64,17 +64,17 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
     function redemptionRate() external view returns (uint256 rate);
 
     /**
-     * @notice Returns the Protocol DETF contract.
-     * @return The Protocol DETF contract
+     * @notice Returns the DETF diamond.
+     * @return The DETF diamond
      */
-    function protocolDETF() external view returns (address);
+    function detf() external view returns (address);
 
     /**
      * @notice Sets the DETF contract used for pricing and redemption callbacks.
      * @dev Owner-only deployment-time wiring hook for composed DETF deployments.
      * @param detf The DETF contract
      */
-    function setProtocolDETF(address detf) external;
+    function setDetf(address detf) external;
 
     /**
      * @notice Returns the protocol-owned NFT token ID held by this contract.
@@ -117,7 +117,7 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
 
     /**
      * @notice Mints rebasing claim token in exchange for NFT LP shares.
-     * @dev Called by Protocol DETF when users sell their NFTs.
+     * @dev Called by the DETF diamond when users sell their NFTs.
      *      LP shares are transferred to the protocol NFT held by this contract.
      * @param lpShares Amount of LP shares being contributed
      * @param recipient Address to receive rebasing claim token
@@ -151,8 +151,8 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
 
     /**
      * @notice Burns rebasing claim token shares without transferring rateAsset.
-     * @dev Called by Protocol DETF during rebasing claim token → rateAsset redemption.
-     *      The Protocol DETF handles the BPT exit and rateAsset transfer separately.
+     * @dev Called by the DETF diamond during rebasing claim token → rateAsset redemption.
+     *      The DETF diamond handles the BPT exit and rateAsset transfer separately.
      * @param rebasingClaimAmount Amount of rebasing claim token balance to burn
      * @param owner Address whose rebasing claim token is being burned
      * @param pretransferred Whether rebasing claim token was already transferred to this contract

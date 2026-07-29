@@ -82,10 +82,10 @@ contract ComposedStableCommonDetfExchangeIn is
         revert InvalidRoute(address(tokenIn), address(tokenOut));
     }
 
-    function _accrueMintProtocolInventory(
+    function _accrueMintInventory(
         ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
         uint256 reservePoolBptOut_,
-        uint256 protocolDetfOut_
+        uint256 inventoryDetfOut_
     ) internal {
         IDETFNFTVault bondNftVault = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_);
         if (address(bondNftVault) == address(0)) {
@@ -96,8 +96,8 @@ contract ComposedStableCommonDetfExchangeIn is
             bondNftVault.addToDETFNFT(bondNftVault.detfNFTId(), reservePoolBptOut_);
         }
 
-        if (protocolDetfOut_ > 0) {
-            _mintDetf(address(bondNftVault), protocolDetfOut_);
+        if (inventoryDetfOut_ > 0) {
+            _mintDetf(address(bondNftVault), inventoryDetfOut_);
         }
     }
 
@@ -149,7 +149,7 @@ contract ComposedStableCommonDetfExchangeIn is
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         uint256 reservePoolBptOut = _depositIntoReservePoolShared(layoutStruct, selection, poolBptOut, args_.deadline);
 
-        _accrueMintProtocolInventory(layoutStruct, reservePoolBptOut, mintSplit.protocolDetfOut);
+        _accrueMintInventory(layoutStruct, reservePoolBptOut, mintSplit.inventoryDetfOut);
         _mintDetf(args_.recipient == address(0) ? msg.sender : args_.recipient, amountOut_);
     }
 

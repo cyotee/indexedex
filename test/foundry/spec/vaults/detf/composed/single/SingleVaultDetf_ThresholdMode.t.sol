@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -54,10 +54,10 @@ contract SingleVaultDetf_ThresholdMode_Test is SingleVaultDetfExchangeIn_MintWit
         ISingleVaultDetf policy_ = _deploySingleVaultDetf(0, 0, ThresholdMode.Policy);
         ISingleVaultDetfInfo info_ = ISingleVaultDetfInfo(address(policy_));
         assertEq(uint8(info_.thresholdMode()), uint8(ThresholdMode.Policy), "mode Policy");
-        assertEq(IProtocolDETF(address(policy_)).mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD);
-        assertEq(IProtocolDETF(address(policy_)).burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD);
-        assertFalse(IProtocolDETF(address(policy_)).isMintingAllowed(), "inert mint false");
-        assertFalse(IProtocolDETF(address(policy_)).isBurningAllowed(), "inert burn false");
+        assertEq(IDetf(address(policy_)).mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD);
+        assertEq(IDetf(address(policy_)).burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD);
+        assertFalse(IDetf(address(policy_)).isMintingAllowed(), "inert mint false");
+        assertFalse(IDetf(address(policy_)).isBurningAllowed(), "inert burn false");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -68,8 +68,8 @@ contract SingleVaultDetf_ThresholdMode_Test is SingleVaultDetfExchangeIn_MintWit
         ISingleVaultDetf custom_ = _deploySingleVaultDetf(1.10e18, 0.90e18, ThresholdMode.Policy);
         ISingleVaultDetfInfo info_ = ISingleVaultDetfInfo(address(custom_));
         assertEq(uint8(info_.thresholdMode()), uint8(ThresholdMode.Policy));
-        assertEq(IProtocolDETF(address(custom_)).mintThreshold(), 1.10e18);
-        assertEq(IProtocolDETF(address(custom_)).burnThreshold(), 0.90e18);
+        assertEq(IDetf(address(custom_)).mintThreshold(), 1.10e18);
+        assertEq(IDetf(address(custom_)).burnThreshold(), 0.90e18);
     }
 
     function test_deploy_legacyHalfPercentPolicyBand() public {

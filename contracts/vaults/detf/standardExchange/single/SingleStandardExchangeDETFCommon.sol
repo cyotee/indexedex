@@ -50,7 +50,7 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         uint256 grossDetf;
         uint256 userDetf;
         uint256 feeToDetf;
-        uint256 protocolDetf;
+        uint256 inventoryDetf;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -233,8 +233,8 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         split_.feeToDetf = feeTo_;
         // Half of seigniorage incentive of remaining → protocol NFT accrual path
         uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.protocolDetf = afterFee_.mulDown(halfInc_);
-        split_.userDetf = afterFee_ - split_.protocolDetf;
+        split_.inventoryDetf = afterFee_.mulDown(halfInc_);
+        split_.userDetf = afterFee_ - split_.inventoryDetf;
     }
 
     function _toLiveScaled18(uint256 raw_, TokenInfo memory info_) internal view returns (uint256) {

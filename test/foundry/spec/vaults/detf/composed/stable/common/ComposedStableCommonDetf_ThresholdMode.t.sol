@@ -27,7 +27,7 @@ import {
     ThresholdMode,
     InvalidThresholdPair
 } from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 
 /// @notice F4 threshold-mode surface: Policy defaults, Open product mode, validation, live coupling.
 /// @dev Maps PRD T1–T19 for ComposedStableCommonDetf. Primary setUp vault is product Open so live
@@ -320,7 +320,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
                 }
             }
             assertTrue(
-                sel != IProtocolDETFErrors.BurningNotAllowed.selector,
+                sel != IDetfErrors.BurningNotAllowed.selector,
                 'Open must not deadband-block burn'
             );
         }

@@ -7,7 +7,7 @@ import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -100,13 +100,13 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy_Test is TestBase_Vault
     function test_deployVault_initializesBondVaultReferences() public {
         IERC20 lpToken = IERC20(address(new MockBondVaultDeployERC20("Reserve BPT", "rBPT", 18)));
         IERC20 detfToken = IERC20(address(new MockBondVaultDeployERC20("DETF Token", "DETF", 18)));
-        IProtocolDETF protocolDETF = IProtocolDETF(makeAddr("protocolDETF"));
+        IDetf detf = IDetf(makeAddr("detf"));
 
         vm.startPrank(owner);
         address vault = pkg.deployVault(
             "Composed Stable Bond NFT Vault",
             "csBOND",
-            protocolDETF,
+            detf,
             lpToken,
             detfToken,
             9,
@@ -116,7 +116,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy_Test is TestBase_Vault
 
         assertEq(address(IDETFNFTVault(vault).lpToken()), address(lpToken), "lp token initialized");
         assertEq(address(IDETFNFTVault(vault).rewardToken()), address(detfToken), "reward token initialized to detf");
-        assertEq(address(IDETFNFTVault(vault).protocolDETF()), address(protocolDETF), "protocol detf initialized");
+        assertEq(address(IDETFNFTVault(vault).detf()), address(detf), "protocol detf initialized");
 
         IComposedStableCommonDetfBondNFTVault bondVault = IComposedStableCommonDetfBondNFTVault(vault);
         uint256 protocolTokenId = bondVault.detfNFTId();

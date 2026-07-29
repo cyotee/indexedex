@@ -41,8 +41,8 @@ import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/s
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
-import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
@@ -77,13 +77,13 @@ import {
 import {
     ISingleVaultDetfBonding
 } from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/protocol/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
 import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/protocol/DETFNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/bondNft/DETFNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {ITokenTransferRelayer} from "@crane/contracts/protocols/l2s/superchain/relayers/token/ITokenTransferRelayer.sol";
 
@@ -537,12 +537,12 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
             bridgeAmount = rebasingClaimMinted;
         }
 
-        IProtocolDETF.BridgeQuote memory quote = detf.previewBridgeRebasingClaim(TARGET_CHAIN_ID, bridgeAmount);
+        IDetf.BridgeQuote memory quote = detf.previewBridgeRebasingClaim(TARGET_CHAIN_ID, bridgeAmount);
         vm.recordLogs();
         vm.startPrank(detfAlice);
         IERC20(address(detf.rebasingClaimToken())).approve(address(detf), bridgeAmount);
         (uint256 localRebasingClaimOut, uint256 pairOut) = detf.bridgeRebasingClaim(
-            IProtocolDETF.BridgeArgs({
+            IDetf.BridgeArgs({
                 targetChainId: TARGET_CHAIN_ID,
                 rebasingClaimAmount: bridgeAmount,
                 recipient: recipient,
@@ -595,7 +595,7 @@ contract SingleVaultDetf_BridgeTransport_Test is SingleVaultDetfBridgeForkBase {
 
     function test_receiveBridgedPair_reverts_forNonRelayer() public {
         vm.expectRevert(
-            abi.encodeWithSelector(IProtocolDETFErrors.NotBridgeRelayer.selector, detfAlice, localRelayer)
+            abi.encodeWithSelector(IDetfErrors.NotBridgeRelayer.selector, detfAlice, localRelayer)
         );
         vm.prank(detfAlice);
         detf.receiveBridgedPair(recipient, 1e18, block.timestamp + 1 hours);

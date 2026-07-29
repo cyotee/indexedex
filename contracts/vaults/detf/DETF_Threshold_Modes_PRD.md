@@ -17,7 +17,7 @@
 | **Normative shared helpers today** | `contracts/vaults/detf/core/DETFThresholdPolicy.sol` |
 | **AGENTS.md** | DETF families — common expectations (mint/burn thresholds, inert→live); update after formal LOCKED (P7) |
 
-**Implementation status:** Product law is normative. Waves 2–4 are **shipped** for in-scope families: core lib + F1–F5 Policy/Open, F6 `IProtocolDETF` NatSpec/`thresholdMode`, F7 Seigniorage formal **Out**. **P7 complete** (AGENTS.md Policy/Open + family PRD conform notes). **Threshold Modes program P0–P7 complete.**
+**Implementation status:** Product law is normative. Waves 2–4 are **shipped** for in-scope families: core lib + F1–F5 Policy/Open, F6 `IDetf` NatSpec/`thresholdMode` (formerly `IProtocolDETF`), F7 Seigniorage formal **Out**. **P7 complete** (AGENTS.md Policy/Open + family PRD conform notes). **Threshold Modes program P0–P7 complete.**
 
 ---
 
@@ -514,22 +514,22 @@ Each plan should include: touch list, PkgArgs diff, gate call sites, synthetic f
 | **Path** | `contracts/vaults/detf/composed/single/` |
 | **DFPkg** | `SingleVaultDetfDFPkg.sol` |
 | **Plans** | `UNISWAP_V4_SINGLE_DETF_IMPLEMENTATION_PLAN.md`, adversarial plan; add threshold-modes plan |
-| **Interfaces** | `contracts/interfaces/ISingleVaultDetf.sol`, related `IProtocolDETF` surface |
+| **Interfaces** | `contracts/interfaces/ISingleVaultDetf.sol`, related `IDetf` surface |
 | **Gate wiring** | `SingleVaultDetfCommon`, ExchangeIn/Out/Query, Info, Repo |
 | **Gate price today** | Some paths use **`_calcReserveSpotPrice()` / reserve spot** |
 | **Gate price target** | **Migrate all mint/burn gates to synthetic** in this program (locked) |
 | **Notes** | Same Policy/Open deploy option as peers. Brand-era names must not re-enter code. Keep gated Policy tests; add Open tests. |
 
-#### F6 — Protocol DETF interface / legacy surface (**Wave 4 — shipped**)
+#### F6 — Shared DETF interface surface (`IDetf`; formerly Protocol DETF) (**Wave 4 — shipped**)
 
 | Field | Value |
 |-------|--------|
-| **Product surface** | `IProtocolDETF` |
-| **Path** | `contracts/interfaces/IProtocolDETF.sol`, `IProtocolDETFErrors.sol`, `proxies/IProtocolDETFProxy.sol` |
+| **Product surface** | `IDetf` (formerly `IProtocolDETF`) |
+| **Path** | `contracts/interfaces/detf/IDetf.sol`, `IDetfErrors.sol`, `proxies/IDetfProxy.sol` |
 | **Impl note** | **No** standalone `ProtocolDETF*.sol` package under `contracts/` (verified 2026-07-27). Concrete mint/burn lives in families that expose this interface (notably **F5**). |
 | **Gate API** | **Shipped 2026-07-28:** NatSpec Policy vs Open + synthetic gate input; `thresholdMode()` returns `ThresholdMode`; live-coupled `isMintingAllowed` / `isBurningAllowed` NatSpec; stored thresholds under Open for display |
 | **Errors** | `MintingNotAllowed`, `BurningNotAllowed` (primary gates); `RedemptionNotAllowed` (claim path — **independent** of Open) — NatSpec aligned |
-| **Notes** | F5 `SingleVaultDetfInfoFacet` registers `IProtocolDETF.thresholdMode` selector. Claim redemption stays out of threshold-mode scope. |
+| **Notes** | F5 `SingleVaultDetfInfoFacet` registers `IDetf.thresholdMode` selector. Claim redemption stays out of threshold-mode scope. |
 
 #### F7 — Seigniorage DETF (legacy package tree) (**Wave 4 — formal Out**)
 
@@ -569,7 +569,7 @@ Each plan should include: touch list, PkgArgs diff, gate call sites, synthetic f
 | F3 | MixedBufferMultiVaultStableDetf | `detf/composed/stable/mixedBuffer/` | **P1** | Synthetic | Extend | **Yes / shipped** |
 | F4 | ComposedStableCommonDetf | `detf/composed/stable/common/` | **P2** | Synthetic | Extend | **Yes / shipped** |
 | F5 | SingleVaultDetf | `detf/composed/single/` | **P2** | Synthetic (migrated) | Extend | **Yes / shipped** |
-| F6 | IProtocolDETF surface | `interfaces/` + tests | **P3** | Per impl | N/A | **NatSpec + thresholdMode shipped** |
+| F6 | IDetf surface | `interfaces/detf/` + tests | **P3** | Per impl | N/A | **NatSpec + thresholdMode shipped** (renamed from IProtocolDETF) |
 | F7 | SeigniorageDETF | `vaults/seigniorage/` | **P3** | Peg (unchanged) | N/A | **Out / not shipping** |
 | — | DualLiquidity | `vaults/protocol/uniswap/crossVersion/` | **Out** | N/A | N/A | N/A |
 
@@ -716,7 +716,7 @@ contracts/vaults/detf/composed/stable/mixedBuffer/MixedBufferMultiVaultStableDet
 | 2026-07-27 | **Product law lock.** Explicit `ThresholdMode` enum; extreme Policy legal but Open requires mode; Policy validation after resolve; Open storage display-only; Open economics + no peg; fee oracle excluded; live check outside lib; first bond orthogonal; MUST info surface + `ThresholdModeSet`; synthetic gates for all families; F2/F3 plans gate formal LOCKED; adversarial T17–T19; dual-path tests; fees mode-independent; no asymmetric modes; no nested composition rules. |
 | 2026-07-27 | **§16 Pre-plan encoding locks.** PkgArgs trailing `thresholdMode`; core lib owns enum/defaults/helpers; Open uses same resolve + mint>burn validation; invalid mode reverts; canonical `ThresholdModeSet` event; plan agent prompt path. |
 | 2026-07-28 | **Formal LOCKED.** Product law locked 2026-07-27; F1+F2+F3 threshold-mode plans accepted; Wave 2 implement complete and green — P0 core lib, P1 F1 Single SE (81/81), P2 F2 MultiVaultWeighted (97/97), P3 F3 MixedBuffer (72/72, oversight re-verify 2026-07-28). Inventory F1–F3 Open formalized = Yes/shipped. F4–F7 remain later waves. |
-| 2026-07-28 | **Wave 4 P6:** F6 `IProtocolDETF` + errors/proxy NatSpec and `thresholdMode()` shipped (F5 implementer). F7 Seigniorage formal **Out** of threshold-mode implement scope — audit in `vaults/seigniorage/THRESHOLD_MODES_OUT.md` (peg chassis, no threshold storage, consolidation reference-only). Inventory F6/F7 updated. Next: P7 AGENTS + family PRD conform notes. |
+| 2026-07-28 | **Wave 4 P6:** F6 `IDetf` (formerly `IProtocolDETF`) + errors/proxy NatSpec and `thresholdMode()` shipped (F5 implementer). F7 Seigniorage formal **Out** of threshold-mode implement scope — audit in `vaults/seigniorage/THRESHOLD_MODES_OUT.md` (peg chassis, no threshold storage, consolidation reference-only). Inventory F6/F7 updated. Next: P7 AGENTS + family PRD conform notes. |
 
 ---
 

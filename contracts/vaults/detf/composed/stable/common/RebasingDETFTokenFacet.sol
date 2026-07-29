@@ -38,8 +38,8 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[9] = IRebasingClaimToken.sharesOf.selector;
         funcs_[10] = IRebasingClaimToken.totalShares.selector;
         funcs_[11] = IRebasingClaimToken.redemptionRate.selector;
-        funcs_[12] = IRebasingClaimToken.protocolDETF.selector;
-        funcs_[13] = IRebasingClaimToken.setProtocolDETF.selector;
+        funcs_[12] = IRebasingClaimToken.detf.selector;
+        funcs_[13] = IRebasingClaimToken.setDetf.selector;
         funcs_[14] = IRebasingClaimToken.detfNFTId.selector;
         funcs_[15] = IRebasingClaimToken.rateAsset.selector;
         funcs_[16] = IRebasingClaimToken.convertToShares.selector;
@@ -81,8 +81,8 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[9] = IRebasingClaimToken.sharesOf.selector;
         functions_[10] = IRebasingClaimToken.totalShares.selector;
         functions_[11] = IRebasingClaimToken.redemptionRate.selector;
-        functions_[12] = IRebasingClaimToken.protocolDETF.selector;
-        functions_[13] = IRebasingClaimToken.setProtocolDETF.selector;
+        functions_[12] = IRebasingClaimToken.detf.selector;
+        functions_[13] = IRebasingClaimToken.setDetf.selector;
         functions_[14] = IRebasingClaimToken.detfNFTId.selector;
         functions_[15] = IRebasingClaimToken.rateAsset.selector;
         functions_[16] = IRebasingClaimToken.convertToShares.selector;

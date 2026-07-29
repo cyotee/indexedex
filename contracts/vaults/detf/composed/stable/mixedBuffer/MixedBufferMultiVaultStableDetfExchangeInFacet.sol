@@ -41,7 +41,7 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
         funcs_[3] = bytes4(keccak256("exchangeOut(address,address,uint256,uint256,address,bool,uint256)"));
         funcs_[4] = IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector;
         funcs_[5] = IMixedBufferMultiVaultStableDetfBonding.bond.selector;
-        funcs_[6] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToProtocol.selector;
+        funcs_[6] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToDetfNft.selector;
         funcs_[7] = IMixedBufferMultiVaultStableDetfBonding.sellNFT.selector;
         funcs_[8] = IMixedBufferMultiVaultStableDetfBonding.acceptedBondTokens.selector;
         funcs_[9] = IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector;
@@ -83,7 +83,7 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
         funcs_[3] = bytes4(keccak256("exchangeOut(address,address,uint256,uint256,address,bool,uint256)"));
         funcs_[4] = IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector;
         funcs_[5] = IMixedBufferMultiVaultStableDetfBonding.bond.selector;
-        funcs_[6] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToProtocol.selector;
+        funcs_[6] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToDetfNft.selector;
         funcs_[7] = IMixedBufferMultiVaultStableDetfBonding.sellNFT.selector;
         funcs_[8] = IMixedBufferMultiVaultStableDetfBonding.acceptedBondTokens.selector;
         funcs_[9] = IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector;

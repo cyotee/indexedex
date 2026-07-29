@@ -18,7 +18,7 @@ abstract contract SeigniorageBondNFTCommon {
         uint256 tokenId;
         address recipient;
         address caller;
-        address protocolDETF;
+        address detf;
     }
 
     /// @notice Parameters for harvesting rewards
@@ -86,7 +86,7 @@ abstract contract SeigniorageBondNFTCommon {
      * @dev Validates redemption caller. Returns true if valid.
      */
     function _validateRedeemCaller(RedeemParams memory params, address owner) internal pure returns (bool) {
-        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.protocolDETF, owner);
+        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.detf, owner);
     }
 
     /**

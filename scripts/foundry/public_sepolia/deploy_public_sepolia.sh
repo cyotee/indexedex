@@ -375,21 +375,22 @@ run_bridge_infra_script \
   "$BASE_SEPOLIA_RPC_URL" \
   "$PUBLIC_SEPOLIA_BASE_OUT_DIR"
 
-echo "Deploying Protocol DETF on Ethereum..." >&2
-run_protocol_detf_script \
-  "$ETHEREUM_SEPOLIA_RPC_URL" \
-  "scripts/foundry/public_sepolia/ethereum/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF" \
-  "ethereum_sepolia" \
-  "$PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR" \
-  "$PUBLIC_SEPOLIA_BASE_OUT_DIR"
-
-echo "Deploying Protocol DETF on Base..." >&2
-run_protocol_detf_script \
-  "$BASE_SEPOLIA_RPC_URL" \
-  "scripts/foundry/public_sepolia/base/Script_16_DeployProtocolDETF.s.sol:Script_16_DeployProtocolDETF" \
-  "base_sepolia" \
-  "$PUBLIC_SEPOLIA_BASE_OUT_DIR" \
-  "$PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR"
+# Protocol DETF Stage 16 archived — see scripts/archive/foundry/protocol-detf/
+# echo "Deploying Protocol DETF on Ethereum..." >&2
+# run_protocol_detf_script \
+#   "$ETHEREUM_SEPOLIA_RPC_URL" \
+#   "scripts/foundry/public_sepolia/ethereum/Script_16_DeployArchivedDetfProduct.s.sol:Script_16_DeployArchivedDetfProduct" \
+#   "ethereum_sepolia" \
+#   "$PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR" \
+#   "$PUBLIC_SEPOLIA_BASE_OUT_DIR"
+#
+# echo "Deploying Protocol DETF on Base..." >&2
+# run_protocol_detf_script \
+#   "$BASE_SEPOLIA_RPC_URL" \
+#   "scripts/foundry/public_sepolia/base/Script_16_DeployArchivedDetfProduct.s.sol:Script_16_DeployArchivedDetfProduct" \
+#   "base_sepolia" \
+#   "$PUBLIC_SEPOLIA_BASE_OUT_DIR" \
+#   "$PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR"
 
 echo "Configuring Protocol DETF bridge on Ethereum..." >&2
 run_bridge_config_script \

@@ -26,7 +26,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IBalancerV3StandardExchangeRouterPrepay
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
-import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
 library SingleVaultDetfRepo {
@@ -159,7 +159,7 @@ library SingleVaultDetfRepo {
         uint256 detfNFTId_
     ) internal {
         if (detfIndex_ > 1 || vaultTokenIndex_ > 1 || detfIndex_ == vaultTokenIndex_) {
-            revert IProtocolDETFErrors.InvalidReservePoolIndices(detfIndex_, vaultTokenIndex_);
+            revert IDetfErrors.InvalidReservePoolIndices(detfIndex_, vaultTokenIndex_);
         }
 
         layoutStruct_.reservePool = reservePool_;

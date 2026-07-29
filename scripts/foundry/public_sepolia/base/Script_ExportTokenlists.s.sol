@@ -235,7 +235,7 @@ contract Script_ExportTokenlists is DeploymentBase {
     }
 
     function _exportProtocolDetf(string memory chainIdStr) internal {
-        (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "protocolDetf");
+        (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "inventoryDetf");
         (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "pairToken");
         (address richir, bool okRichir) = _readAddressSafe("16_protocol_detf.json", "rebasingClaimToken");
         if (!(okChir && okRich && okRichir) || chir == address(0) || rich == address(0) || richir == address(0)) {

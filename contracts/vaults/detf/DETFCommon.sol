@@ -15,7 +15,7 @@ pragma solidity ^0.8.0;
 
 /* --------------------------- Imported Interfaces -------------------------- */
 
-import {IProtocolDETFErrors} from "contracts/interfaces/IProtocolDETFErrors.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 
 /* --------------------------- Imported Libraries --------------------------- */
@@ -26,6 +26,6 @@ import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErr
 /*                                  Contracts                                 */
 /* -------------------------------------------------------------------------- */
 
-abstract contract DETFCommon is IStandardExchangeErrors, IProtocolDETFErrors {
+abstract contract DETFCommon is IStandardExchangeErrors, IDetfErrors {
 
 }

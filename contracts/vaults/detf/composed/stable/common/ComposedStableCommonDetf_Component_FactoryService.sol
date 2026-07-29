@@ -13,7 +13,7 @@ import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol'
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
-import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
+import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
 import {
@@ -84,7 +84,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
     struct BondNFTVaultConfig {
         string name;
         string symbol;
-        IProtocolDETF protocolDETF;
+        IDetf detf;
         IERC20 lpToken;
         IERC20 rewardToken;
         uint8 decimalOffset;
@@ -175,7 +175,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
         pkgArgs_ = IComposedStableCommonDetfBondNFTVaultDFPkg.PkgArgs({
             name: config_.name,
             symbol: config_.symbol,
-            protocolDETF: config_.protocolDETF,
+            detf: config_.detf,
             lpToken: config_.lpToken,
             rewardToken: config_.rewardToken,
             decimalOffset: config_.decimalOffset,

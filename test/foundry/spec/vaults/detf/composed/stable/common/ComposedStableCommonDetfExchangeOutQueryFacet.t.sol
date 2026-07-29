@@ -17,7 +17,7 @@ import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeErrors} from 'contracts/interfaces/IStandardExchangeErrors.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
-import {IProtocolDETFErrors} from 'contracts/interfaces/IProtocolDETFErrors.sol';
+import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IBalancerV3StandardExchangeRouterProxy} from 'contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol';
@@ -480,7 +480,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function test_claimLiquidity_revertsWhenCallerUnauthorized() public {
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.NotAuthorized.selector, address(this)));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.NotAuthorized.selector, address(this)));
         harness.claimLiquidity(1e18, address(this));
     }
 
@@ -488,7 +488,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         reservePoolToken.mint(address(harness), 1e18);
 
         vm.prank(bondVaultCaller);
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.InsufficientBalance.selector, 2e18, 1e18));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.InsufficientBalance.selector, 2e18, 1e18));
         harness.claimLiquidity(2e18, address(this));
     }
 
@@ -535,12 +535,12 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     function test_previewExchangeOut_revertsWhenBurningClosed() public {
         harness.setSyntheticPrice(1e18);
 
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.BurningNotAllowed.selector, 1e18, 1e18));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.BurningNotAllowed.selector, 1e18, 1e18));
         harness.previewExchangeOut(detfToken, commonToken, 1e18);
     }
 
     function test_previewExchangeOut_revertsForUnsupportedTokenIn() public {
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.InvalidToken.selector, otherToken));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.InvalidToken.selector, otherToken));
         harness.previewExchangeOut(otherToken, commonToken, 1e18);
     }
 
@@ -558,7 +558,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
 
         harness.setWeightedPoolState(address(reservePoolToken), reserveBalances, reserveWeights, 0, 0, false);
 
-        vm.expectRevert(IProtocolDETFErrors.ReservePoolNotInitialized.selector);
+        vm.expectRevert(IDetfErrors.ReservePoolNotInitialized.selector);
         harness.previewExchangeOut(detfToken, commonToken, 1e18);
     }
 
@@ -625,7 +625,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         detfToken.approve(address(harness), previewAmountIn - 1);
 
         vm.expectRevert(
-            abi.encodeWithSelector(IProtocolDETFErrors.SlippageExceeded.selector, previewAmountIn - 1, previewAmountIn)
+            abi.encodeWithSelector(IDetfErrors.SlippageExceeded.selector, previewAmountIn - 1, previewAmountIn)
         );
         harness.exchangeOut(detfToken, previewAmountIn - 1, commonToken, 1e18, address(this), false, block.timestamp + 1);
     }
@@ -646,14 +646,14 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function test_exchangeOut_revertsWhenAmountOutIsZero() public {
-        vm.expectRevert(IProtocolDETFErrors.ZeroAmount.selector);
+        vm.expectRevert(IDetfErrors.ZeroAmount.selector);
         harness.exchangeOut(detfToken, 1e18, commonToken, 0, address(this), false, block.timestamp + 1);
     }
 
     function test_exchangeOut_revertsWhenBurningClosed() public {
         harness.setSyntheticPrice(1e18);
 
-        vm.expectRevert(abi.encodeWithSelector(IProtocolDETFErrors.BurningNotAllowed.selector, 1e18, 1e18));
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.BurningNotAllowed.selector, 1e18, 1e18));
         harness.exchangeOut(detfToken, 1e18, commonToken, 1e18, address(this), false, block.timestamp + 1);
     }
 
@@ -689,7 +689,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         detfToken.mint(address(this), 1e18);
         detfToken.approve(address(harness), 1e18);
 
-        vm.expectRevert(IProtocolDETFErrors.ReservePoolNotInitialized.selector);
+        vm.expectRevert(IDetfErrors.ReservePoolNotInitialized.selector);
         harness.exchangeOut(detfToken, 1e18, commonToken, 1e18, address(this), false, block.timestamp + 1);
     }
 

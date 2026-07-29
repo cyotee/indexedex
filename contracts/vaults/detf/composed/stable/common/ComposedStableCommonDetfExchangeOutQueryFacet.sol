@@ -8,7 +8,7 @@ import {IERC20MintBurn} from '@crane/contracts/interfaces/IERC20MintBurn.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IProtocolDETF} from 'contracts/interfaces/IProtocolDETF.sol';
+import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IStandardExchangeProxy} from 'contracts/interfaces/proxies/IStandardExchangeProxy.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
@@ -246,8 +246,8 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         funcs_ = new bytes4[](4);
         funcs_[0] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[1] = IStandardExchangeOut.exchangeOut.selector;
-        funcs_[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        funcs_[3] = IProtocolDETF.claimLiquidity.selector;
+        funcs_[2] = IDetf.previewClaimLiquidity.selector;
+        funcs_[3] = IDetf.claimLiquidity.selector;
     }
 
     function facetMetadata()
@@ -263,7 +263,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         functions_ = new bytes4[](4);
         functions_[0] = IStandardExchangeOut.previewExchangeOut.selector;
         functions_[1] = IStandardExchangeOut.exchangeOut.selector;
-        functions_[2] = IProtocolDETF.previewClaimLiquidity.selector;
-        functions_[3] = IProtocolDETF.claimLiquidity.selector;
+        functions_[2] = IDetf.previewClaimLiquidity.selector;
+        functions_[3] = IDetf.claimLiquidity.selector;
     }
 }

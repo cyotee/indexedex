@@ -11,8 +11,6 @@ import {Script_05_DeployUniswapV2} from "../../anvil_sepolia/Script_05_DeployUni
 import {Script_07_DeployTestTokens} from "../../anvil_sepolia/Script_07_DeployTestTokens.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_sepolia/Script_14_DeployERC4626PermitVaults.s.sol";
 import {Script_15_DeploySeigniorageDETFS} from "../../anvil_sepolia/Script_15_DeploySeigniorageDETFS.s.sol";
-import {Script_16_DeployProtocolDETF} from "./Script_16_DeployProtocolDETF.s.sol";
-
 import {Script_04_NonWethUniV2PoolsAndVaults} from "./Script_04_NonWethUniV2PoolsAndVaults.s.sol";
 import {Script_05_NonWethBalancerPools} from "./Script_05_NonWethBalancerPools.s.sol";
 import {Script_ExportTokenlists} from "./Script_ExportTokenlists.s.sol";
@@ -28,12 +26,9 @@ contract DeploymentBase is AnvilDeploymentBase {
         revert("OUT_DIR_OVERRIDE must be set");
     }
 
-    function _skipProtocolDetfStage16() internal view returns (bool) {
-        return vm.envOr("PUBLIC_SEPOLIA_SKIP_STAGE16", false);
-    }
 }
 
-contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
+contract Script_DeployAll is DeploymentBase {
     function run() external override {
         string memory outDir = _localOutDir();
         vm.setEnv("OUT_DIR_OVERRIDE", outDir);
@@ -49,14 +44,7 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         new Script_05_NonWethBalancerPools().run();
         new Script_14_DeployERC4626PermitVaults().run();
         new Script_15_DeploySeigniorageDETFS().run();
-
-        if (!_skipProtocolDetfStage16()) {
-            _runStage16();
-        }
+        // Stage 16 (Protocol DETF) removed — product archived; see scripts/archive/foundry/protocol-detf/
         new Script_ExportTokenlists().run();
-    }
-
-    function _runStage16() internal {
-        _runProtocolDetfStage16();
     }
 }

@@ -6,7 +6,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {ISingleVaultDetfBonding} from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol";
 import {SingleVaultDetfBondingFacet} from "contracts/vaults/detf/composed/single/SingleVaultDetfBondingFacet.sol";
 import {SingleVaultDetf_Facet_FactoryService} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Facet_FactoryService.sol";
@@ -42,8 +42,8 @@ contract SingleVaultDetfBondingFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[5] = ISingleVaultDetfBonding.captureSeigniorage.selector;
         controlFuncs[6] = ISingleVaultDetfBonding.sellNFT.selector;
         controlFuncs[7] = ISingleVaultDetfBonding.donate.selector;
-        controlFuncs[8] = IProtocolDETF.claimLiquidity.selector;
-        controlFuncs[9] = IProtocolDETF.bridgeRebasingClaim.selector;
-        controlFuncs[10] = IProtocolDETF.receiveBridgedPair.selector;
+        controlFuncs[8] = IDetf.claimLiquidity.selector;
+        controlFuncs[9] = IDetf.bridgeRebasingClaim.selector;
+        controlFuncs[10] = IDetf.receiveBridgedPair.selector;
     }
 }

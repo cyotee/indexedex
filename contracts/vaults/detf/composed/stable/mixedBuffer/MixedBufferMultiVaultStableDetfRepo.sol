@@ -57,7 +57,7 @@ library MixedBufferMultiVaultStableDetfRepo {
         ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 protocolNftId;
+        uint256 detfNftId;
         uint256 feeRecipientNftId;
         IRebasingClaimToken rebasingClaimToken;
     }
@@ -85,7 +85,7 @@ library MixedBufferMultiVaultStableDetfRepo {
         ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 protocolNftId;
+        uint256 detfNftId;
         IRebasingClaimToken rebasingClaimToken;
     }
 
@@ -115,7 +115,7 @@ library MixedBufferMultiVaultStableDetfRepo {
         s.thresholdMode = p.thresholdMode;
         s.feeOracle = p.feeOracle;
         s.bondNftVault = p.bondNftVault;
-        s.protocolNftId = p.protocolNftId;
+        s.detfNftId = p.detfNftId;
         s.rebasingClaimToken = p.rebasingClaimToken;
 
         for (uint256 i; i < vaultCount_; ++i) {

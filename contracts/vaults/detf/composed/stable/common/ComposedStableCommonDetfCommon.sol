@@ -78,7 +78,7 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     struct MintSplit {
         uint256 grossDetfOut;
         uint256 userDetfOut;
-        uint256 protocolDetfOut;
+        uint256 inventoryDetfOut;
     }
 
     function _syntheticDetfEthPrice() internal view virtual returns (uint256 syntheticPrice_) {
@@ -258,7 +258,7 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
             return split_;
         }
 
-        (split_.userDetfOut, split_.protocolDetfOut) =
+        (split_.userDetfOut, split_.inventoryDetfOut) =
             DETFMintSplitLib._splitHalfSeigniorage(grossDetfOut_, _seigniorageIncentivePercentage());
     }
 

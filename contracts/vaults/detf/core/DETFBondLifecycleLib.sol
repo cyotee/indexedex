@@ -31,34 +31,34 @@ library DETFBondLifecycleLib {
         address seller_,
         address recipient_
     ) internal returns (uint256 principalShares_, uint256 rebasingClaimMinted_) {
-        principalShares_ = _sellPositionToProtocol(vault_, tokenId_, seller_, recipient_);
+        principalShares_ = _sellPositionToDetfNft(vault_, tokenId_, seller_, recipient_);
 
         rebasingClaimMinted_ = rebasingClaimToken_.mintFromNFTSale(principalShares_, recipient_);
     }
 
-    function _sellPositionToProtocol(
+    function _sellPositionToDetfNft(
         IDetfSelfNftInventoryPolicy vault_,
         uint256 tokenId_,
         address seller_,
         address recipient_
     ) internal returns (uint256 principalShares_) {
-        (principalShares_,) = vault_.sellPositionToProtocol(tokenId_, seller_, recipient_);
+        (principalShares_,) = vault_.sellPositionToDetfNft(tokenId_, seller_, recipient_);
     }
 
-    function _collectProtocolRewards(IDetfSelfNftInventoryPolicy vault_) internal returns (uint256 rewardAmount_) {
-        rewardAmount_ = vault_.reallocateProtocolRewards(address(this));
+    function _collectDetfNftRewards(IDetfSelfNftInventoryPolicy vault_) internal returns (uint256 rewardAmount_) {
+        rewardAmount_ = vault_.reallocateDetfNftRewards(address(this));
         if (rewardAmount_ == 0) {
             revert NoSeigniorageToCapture();
         }
     }
 
-    function _addReservePoolBptToProtocolNft(
+    function _addReservePoolBptToDetfNft(
         IERC20 reservePoolToken_,
         IDetfSelfNftInventoryPolicy vault_,
-        uint256 protocolNftId_,
+        uint256 detfNftId_,
         uint256 bptAmount_
     ) internal {
         reservePoolToken_.forceApprove(address(vault_), bptAmount_);
-        vault_.addToDETFNFT(protocolNftId_, bptAmount_);
+        vault_.addToDETFNFT(detfNftId_, bptAmount_);
     }
 }

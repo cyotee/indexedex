@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IDetfProtocolNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfProtocolNftInventoryPolicy.sol";
+import {IDetfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfNftInventoryPolicy.sol";
 
-interface IComposedStableCommonDetfBondNFTVault is IDETFNFTVault, IDetfProtocolNftInventoryPolicy {
+interface IComposedStableCommonDetfBondNFTVault is IDETFNFTVault, IDetfNftInventoryPolicy {
 
     function deploymentTimestamp() external view returns (uint256 timestamp);
 }

@@ -82,7 +82,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         _joinReserveBufferAndDetf(bufferAmount_, split_.grossDetf);
         _mintDetf(recipient_, split_.userDetf);
         if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
-        if (split_.protocolDetf > 0) _mintDetf(address(s.bondNftVault), split_.protocolDetf);
+        if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
         return split_.userDetf;
     }
 
@@ -101,7 +101,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         _joinReserveShareAndDetf(legIndex_, vaultShares_, split_.grossDetf);
         _mintDetf(recipient_, split_.userDetf);
         if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
-        if (split_.protocolDetf > 0) _mintDetf(address(s.bondNftVault), split_.protocolDetf);
+        if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
         return split_.userDetf;
     }
 }

@@ -10,7 +10,7 @@ import {PositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/Posit
 import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
 import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IWETH9.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
@@ -107,8 +107,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
 
     function test_donate_weth_addsReserveSharesToProtocolNft() public {
         uint256 amountIn = 1e16;
-        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
-        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
+        uint256 detfNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(detfNftId);
         uint256 richirBefore = detf.rebasingClaimToken().balanceOf(detfAlice);
 
         vm.startPrank(detfAlice);
@@ -117,7 +117,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         vm.stopPrank();
 
         assertGt(
-            detf.detfNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(detfNftId),
             protocolSharesBefore,
             "protocol nft funded by weth donation"
         );
@@ -126,8 +126,8 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
 
     function test_donate_detf_burnsSupply_withoutAddingProtocolShares() public {
         uint256 detfAmount = _mintDetfFor(detfAlice, 1e16);
-        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
-        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
+        uint256 detfNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(detfNftId);
         uint256 totalSupplyBefore = IERC20(address(detf)).totalSupply();
 
         vm.startPrank(detfAlice);
@@ -138,7 +138,7 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         assertEq(IERC20(address(detf)).balanceOf(detfAlice), 0, "alice detf donated");
         assertEq(IERC20(address(detf)).totalSupply(), totalSupplyBefore - detfAmount, "detf supply burned");
         assertEq(
-            detf.detfNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(detfNftId),
             protocolSharesBefore,
             "detf donation does not add protocol reserve shares"
         );
@@ -165,9 +165,9 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
 
         _mintDetfFor(detfBob, 1e16);
 
-        uint256 protocolNftId = detf.detfNFTVault().detfNFTId();
-        uint256 protocolPendingBefore = detf.detfNFTVault().pendingRewards(protocolNftId);
-        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(protocolNftId);
+        uint256 detfNftId = detf.detfNFTVault().detfNFTId();
+        uint256 protocolPendingBefore = detf.detfNFTVault().pendingRewards(detfNftId);
+        uint256 protocolSharesBefore = detf.detfNFTVault().originalSharesOf(detfNftId);
 
         assertGt(protocolPendingBefore, 0, "protocol nft should accrue pending detf rewards");
 
@@ -175,11 +175,11 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
 
         assertGt(bptReceived, 0, "seigniorage captured");
         assertEq(
-            detf.detfNFTVault().originalSharesOf(protocolNftId),
+            detf.detfNFTVault().originalSharesOf(detfNftId),
             protocolSharesBefore + bptReceived,
             "protocol nft receives captured reserve shares"
         );
-        assertEq(detf.detfNFTVault().pendingRewards(protocolNftId), 0, "capture consumes pending protocol rewards");
+        assertEq(detf.detfNFTVault().pendingRewards(detfNftId), 0, "capture consumes pending protocol rewards");
     }
 
     function test_previewExchangeIn_detfToWeth_reverts_whenBurningNotAllowed() public {
@@ -361,14 +361,14 @@ contract SingleVaultDetfExchangeIn_MintWithWeth_Test is SingleVaultDetfProductio
         vm.stopPrank();
     }
 
-    function _assertMintEnabled(IProtocolDETF detf_) internal view {
+    function _assertMintEnabled(IDetf detf_) internal view {
         // Gates and is*Allowed use synthetic (FD) price — never reserve spot.
         assertGt(detf_.syntheticPrice(), detf_.mintThreshold(), "synthetic should be above mint threshold");
         assertTrue(detf_.isMintingAllowed(), "minting should be enabled");
         assertFalse(detf_.isBurningAllowed(), "burning should be disabled");
     }
 
-    function _driveToMintEnabled(IProtocolDETF detf_) internal {
+    function _driveToMintEnabled(IDetf detf_) internal {
         if (detf_.isMintingAllowed()) {
             return;
         }

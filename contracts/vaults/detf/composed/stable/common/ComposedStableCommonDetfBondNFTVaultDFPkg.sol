@@ -15,7 +15,7 @@ import {ERC721MetadataRepo} from "@crane/contracts/tokens/ERC721/ERC721MetadataR
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 
-import {IProtocolDETF} from "contracts/interfaces/IProtocolDETF.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -42,7 +42,7 @@ interface IComposedStableCommonDetfBondNFTVaultDFPkg is IDiamondFactoryPackage, 
     struct PkgArgs {
         string name;
         string symbol;
-        IProtocolDETF protocolDETF;
+        IDetf detf;
         IERC20 lpToken;
         IERC20 rewardToken;
         uint8 decimalOffset;
@@ -54,7 +54,7 @@ interface IComposedStableCommonDetfBondNFTVaultDFPkg is IDiamondFactoryPackage, 
     function deployVault(
         string memory name,
         string memory symbol,
-        IProtocolDETF protocolDETF,
+        IDetf detf,
         IERC20 lpToken,
         IERC20 rewardToken,
         uint8 decimalOffset,
@@ -93,7 +93,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
     function deployVault(
         string memory name_,
         string memory symbol,
-        IProtocolDETF protocolDETF,
+        IDetf detf,
         IERC20 lpToken,
         IERC20 rewardToken,
         uint8 decimalOffset,
@@ -106,7 +106,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
                     PkgArgs({
                         name: name_,
                         symbol: symbol,
-                        protocolDETF: protocolDETF,
+                        detf: detf,
                         lpToken: lpToken,
                         rewardToken: rewardToken,
                         decimalOffset: decimalOffset,
@@ -228,7 +228,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
         }
 
         ComposedStableCommonDetfBondNFTVaultRepo._initialize(
-            args.protocolDETF, args.lpToken, args.rewardToken, args.decimalOffset
+            args.detf, args.lpToken, args.rewardToken, args.decimalOffset
         );
 
         {
