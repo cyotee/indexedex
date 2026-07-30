@@ -7,7 +7,8 @@ Static public landing for **DETF research** and multi-chain launch narrative.
 | Field | Value |
 |-------|--------|
 | **Site** | https://cyotee.github.io/indexedex/ |
-| **Litepaper PDF** | https://cyotee.github.io/indexedex/DETF_LITEPAPAPER.pdf |
+| **Litepaper (HTML)** | https://cyotee.github.io/indexedex/litepaper.html |
+| **Litepaper PDF (optional)** | https://cyotee.github.io/indexedex/DETF_LITEPAPAPER.pdf |
 | **Source dir** | this folder (`marketing/research-site/`) |
 | **Workflow** | `.github/workflows/deploy-research-pages.yml` |
 
@@ -32,11 +33,12 @@ npx vercel          # preview
 npx vercel --prod   # production
 ```
 
-## Litepaper PDF
+## Litepaper
 
 Served from this folder:
 
-- [`DETF_LITEPAPAPER.pdf`](./DETF_LITEPAPAPER.pdf) — public download (also linked from hero, nav, research, footer)
+- [`litepaper.html`](./litepaper.html) — **preferred** in-browser reading
+- [`DETF_LITEPAPAPER.pdf`](./DETF_LITEPAPAPER.pdf) — optional offline PDF
 - Source/build: `research/papers/detf-litepaper/` (`build_pdf.sh`)
 
 When regenerating the PDF, copy it here and to `frontend/public/research/DETF_LITEPAPAPER.pdf` for the Next app.

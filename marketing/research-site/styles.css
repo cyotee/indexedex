@@ -600,3 +600,173 @@ main {
     display: none;
   }
 }
+
+/* —— Litepaper HTML edition —— */
+.paper-page .paper-main {
+  width: min(46rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.paper-hero {
+  padding: 3rem 0 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.paper-hero h1 {
+  margin: 0 auto;
+  max-width: 18ch;
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.paper-note {
+  margin: 1rem auto 0;
+  max-width: 36rem;
+  color: var(--faint);
+}
+
+.paper-body {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.paper-body h2 {
+  margin: 2.25rem 0 0.75rem;
+  color: var(--text);
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.paper-body h3 {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--text);
+  font-size: 1.12rem;
+}
+
+.paper-body h4 {
+  margin: 1.15rem 0 0.4rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.paper-body p {
+  margin: 0.75rem 0;
+}
+
+.paper-body ul,
+.paper-body ol {
+  margin: 0.65rem 0 0.9rem;
+  padding-left: 1.25rem;
+}
+
+.paper-body li + li {
+  margin-top: 0.35rem;
+}
+
+.paper-body strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.paper-body code {
+  font-size: 0.88em;
+}
+
+.paper-body pre {
+  margin: 1rem 0;
+  padding: 0.95rem 1.05rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--accent-2);
+}
+
+.paper-body pre code {
+  color: inherit;
+  font-size: inherit;
+}
+
+.paper-body hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+.paper-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.paper-body a:hover {
+  color: var(--accent-2);
+}
+
+.paper-figure {
+  margin: 1.5rem 0 1.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.paper-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  background: #0a0f18;
+}
+
+.paper-figure figcaption {
+  margin-top: 0.65rem;
+  padding: 0 0.25rem;
+  font-size: 0.86rem;
+  color: var(--faint);
+  line-height: 1.4;
+}
+
+.table-wrap {
+  margin: 1rem 0 1.35rem;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.paper-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.paper-body th,
+.paper-body td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+.paper-body th {
+  background: rgba(91, 140, 255, 0.1);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.paper-body tr:last-child td {
+  border-bottom: 0;
+}
+
+.paper-end {
+  margin-top: 2.5rem;
+}
