@@ -6,6 +6,11 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 |-----|------|
 | [`MARKETING_AND_PERFORMANCE_FINDINGS.md`](./MARKETING_AND_PERFORMANCE_FINDINGS.md) | **Living roll-up:** marketing claims, numbers, **which graph to open** |
 | [`RESEARCH_PLAYBOOK.md`](./RESEARCH_PLAYBOOK.md) | Why / scenario ladder / chart catalog |
+| [`papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md`](./papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md) | **DETF litepaper/whitepaper program:** claims matrix, phases 0–7, scenarios D0–D7, writing plan |
+| [`scenarios/detf/singleSe/DETF_Research_PRD.md`](./scenarios/detf/singleSe/DETF_Research_PRD.md) | **Active DETF research campaign PRD** (Single SE): product/scenario law |
+| [`scenarios/detf/singleSe/DETF_Research_Phase3_PRD.md`](./scenarios/detf/singleSe/DETF_Research_Phase3_PRD.md) | **Phase 3 execution PRD**: harness + D0–D9 scripts + figures + FINDINGS |
+| [`scenarios/detf/singleSe/DETF_Research_Phase3_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/detf/singleSe/DETF_Research_Phase3_IMPLEMENTATION_AND_TEST_PLAN.md) | **Phase 3 implementation plan**: M0–M5, fixture API, per-Di steps, runner, plots |
+| [`scenarios/detf/singleSe/AGENT_HANDOFF.md`](./scenarios/detf/singleSe/AGENT_HANDOFF.md) | **Session handoff**: locked decisions, D0 status, prompts for implementation vs writing agents |
 | [`SCENARIO_LOG.md`](./SCENARIO_LOG.md) | Index of completed runs |
 | [`scenarios/`](./scenarios/) | **Tracked** narrative (findings + per-run notes) |
 | [`scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md`](./scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md) | **Agent handoff:** rate providers, residual, **fee-as-arb threshold** (do not re-run) |

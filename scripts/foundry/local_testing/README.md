@@ -42,20 +42,10 @@ scripts/
         Script_10_DeployScenario1Overlay.s.sol
         Script_11_DeployScenario2Overlay.s.sol
         Script_12_DeployScenario3Overlay.s.sol
-      supersim/
-        LocalTestingSuperSimBase.sol
-        Script_21_DeployBridgeInfra.s.sol
-        Script_22_ConfigureSingleVaultDetfBridge.s.sol
-        Script_23_ValidateSingleVaultDetfBridge.s.sol
-        ethereum/
-          Script_20_DeployFoundation.s.sol
-        base/
-          Script_20_DeployFoundation.s.sol
       shared/
         LocalTestingDeploymentBase.sol
   shell/
     local_testing.sh
-    local_testing_supersim.sh
 ```
 
 ## Wrapper Usage
@@ -206,41 +196,36 @@ Expected manifest: `11_scenario_2.json`
 - `06`: foundation assets
 - `12`: Scenario 3 overlay
 
-Scenario 3 deploys the **Single Vault DETF** from
-`contracts/vaults/detf/composed/single` (not the older standardExchange/single DETF):
+Scenario 3 deploys **SingleStandardExchangeDETF** from
+`contracts/vaults/detf/standardExchange/single/` (hermetic single-chain overlay; no Superchain bridge):
 
-- local `WeightedPool8020Factory`
-- Uniswap V4 PoolManager + WETH/RICH liquidity seed for the DETF reserve path
-- Single Vault DETF instance (CHIR) for the RICH/WETH graph
-- Protocol NFT Vault and RICHIR dependencies for that DETF
-- outer Balancer constant-product pool pairing WETH with the Single Vault DETF token
+- local `WeightedPoolFactory` for the DETF reserve weighted pool
+- Uniswap V4 PoolManager + WETH/RICH liquidity seed via `UniswapV4LiquiditySeeder`
+- separately deployed Uniswap V4 Standard Exchange vault (injected into DETF `PkgArgs`)
+- SingleStandardExchangeDETF instance (CHIR) with bond NFT vault wiring
+- outer Balancer constant-product pool pairing WETH with the DETF share token
 
-Expected manifest: `12_scenario_3.json`
+Expected manifest: `12_scenario_3.json` (stable keys include `inventoryDetf`, `underlyingVault`,
+`balancerWethDetfPool`, `poolManager`, `liquiditySeeder`, `protocolNftVault`, `reservePool`).
 
 UI wiring for the Staking page:
 
-- Stage 12 writes a `fragments/vaults/protocolDetf/protocolDetf.json` fragment
-  (symbol `CHIR`) and stage JSON keys `protocolDetf`, `pairToken`, `rebasingClaimToken`, etc.
+- Stage 12 writes inventory DETF fragments (symbol `CHIR`) and stage JSON keys such as
+  `inventoryDetf`, `pairToken`, `underlyingVault`, `balancerWethDetfPool`.
 - The shell wrapper merges stage JSONs into
   `frontend/app/addresses/chain/<chainId>/platform.json` and runs the tokenlist
-  aggregator so `protocol-detfs.tokenlist.json` includes CHIR.
-- Staking resolves CHIR from that token list, with `platform.protocolDetf` as a
-  fallback when the list is temporarily empty.
+  aggregator so DETF tokens are discoverable.
+- Staking resolves CHIR from that token list when present.
 
 Prerequisite: run `foundation` (stages 01–03) once before `scenario3`.
 
 ### Scenario 4
 
-Use `scripts/shell/local_testing_supersim.sh` for the dual-chain SuperSim profile.
+Historical SuperSim dual-chain bridge scenarios (Script_20–23) lived under
+protocol-detf / supersim paths and are not part of the live single-chain
+Scenario 3 path.
 
-Stage model:
-
-- `20`: per-chain foundation plus Single Vault DETF graph on Ethereum and Base local SuperSim forks
-- `21`: bridge infrastructure on both forks
-- `22`: Single Vault DETF bridge configuration on both forks
-- `23`: reserve bridge validation on both forks
-
-Expected directories:
+Expected directories (if reintroduced later):
 
 - `deployments/local_testing/supersim/ethereum/`
 - `deployments/local_testing/supersim/base/`

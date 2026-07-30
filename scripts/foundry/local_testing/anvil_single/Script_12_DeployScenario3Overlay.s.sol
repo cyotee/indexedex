@@ -13,10 +13,8 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IVault as IBalancerVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {
-    IWeightedPool8020Factory
-} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool8020Factory.sol";
-import {CREATE3} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/solmate/CREATE3.sol";
-import {WeightedPool8020Factory} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPool8020Factory.sol";
+    WeightedPoolFactory
+} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -31,8 +29,7 @@ import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
-import {ISingleVaultDetf} from "contracts/interfaces/ISingleVaultDetf.sol";
-import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
@@ -53,37 +50,28 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/reusable/DetfFacetF
 import {DetfComponentFactoryService} from "contracts/vaults/detf/reusable/DetfComponentFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/reusable/DetfPkgFactoryService.sol";
 import {
-    SingleVaultDetf_Component_FactoryService
-} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Component_FactoryService.sol";
+    ISingleStandardExchangeDETDFPkg
+} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 import {
-    SingleVaultDetf_Facet_FactoryService
-} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Facet_FactoryService.sol";
+    SingleStandardExchangeDETF_Component_FactoryService
+} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
 import {
-    SingleVaultDetf_Pkg_FactoryService
-} from "contracts/vaults/detf/composed/single/SingleVaultDetf_Pkg_FactoryService.sol";
-import {
-    ISingleVaultDetfDFPkg
-} from "contracts/vaults/detf/composed/single/SingleVaultDetfDFPkg.sol";
+    ISingleStandardExchangeDETFInfo
+} from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/bondNft/DETFNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/claimToken/RebasingClaimTokenDFPkg.sol";
-import {DetfSuperchainBridgeRepo} from "contracts/vaults/detf/DetfSuperchainBridgeRepo.sol";
+import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
 
-import {
-    ISuperChainBridgeTokenRegistry
-} from "@crane/contracts/interfaces/ISuperChainBridgeTokenRegistry.sol";
-import {IStandardBridge} from "@crane/contracts/interfaces/protocols/l2s/superchain/IStandardBridge.sol";
-import {ICrossDomainMessenger} from "@crane/contracts/interfaces/protocols/l2s/superchain/ICrossDomainMessenger.sol";
-
-import {SingleVaultDetfUniswapV4LiquiditySeeder} from "../../shared/SingleVaultDetfUniswapV4LiquiditySeeder.sol";
+import {UniswapV4LiquiditySeeder} from "../../shared/UniswapV4LiquiditySeeder.sol";
 
 /// @title Script_12_DeployScenario3Overlay
-/// @notice Deploys Scenario 3: a Single Vault DETF and an outer Balancer WETH/DETF pool for local testing
+/// @notice Deploys Scenario 3: SingleStandardExchangeDETF + Uni V4 SE leg + outer Balancer WETH/DETF pool.
 contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
-    using SingleVaultDetf_Facet_FactoryService for ICreate3FactoryProxy;
+    using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
+    using SingleStandardExchangeDETF_Component_FactoryService for IVaultRegistryDeployment;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
 
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
@@ -109,11 +97,10 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private erc5267Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
-    IFacet private operableFacet;
 
     IBalancerVault private balancerV3Vault;
     IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
-    IWeightedPool8020Factory private weightedPool8020Factory;
+    WeightedPoolFactory private weightedPoolFactory;
     IStandardExchangeRateProviderDFPkg private rateProviderPkg;
     IBalancerV3ConstantProductPoolStandardVaultPkg private balConstProdPkg;
     IPermit2 private permit2;
@@ -121,13 +108,8 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     IFacet private multiAssetBasicVaultFacet;
     IFacet private multiAssetStandardVaultFacet;
-    IFacet private singleVaultDetfExchangeInFacet;
-    IFacet private singleVaultDetfExchangeInQueryFacet;
-    IFacet private singleVaultDetfInfoFacet;
-    IFacet private singleVaultDetfExchangeOutFacet;
-    IFacet private singleVaultDetfBondingFacet;
+    IFacet private singleStandardExchangeDetfExchangeInFacet;
     IFacet private detfNFTVaultFacet;
-    IFacet private rebasingClaimTokenFacet;
     IFacet private uniswapV4StandardExchangeInFacet;
     IFacet private uniswapV4StandardExchangeInQueryFacet;
     IFacet private uniswapV4StandardExchangePositionImportFacet;
@@ -135,11 +117,10 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
-    IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
     IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
-    ISingleVaultDetfDFPkg private inventoryDetfPkg;
+    ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
-    SingleVaultDetfUniswapV4LiquiditySeeder private liquiditySeeder;
+    UniswapV4LiquiditySeeder private liquiditySeeder;
 
     address private pairToken;
     address private inventoryDetf;
@@ -157,7 +138,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         if (_loadExistingScenario()) {
             // Re-emit JSON + fragments so the tokenlist aggregator and chain
-            // platform synthesis always see the Single Vault DETF (CHIR) even
+            // platform synthesis always see the Single SE DETF (CHIR) even
             // when the on-chain instance was already deployed.
             _exportJson();
             _exportFragments();
@@ -166,12 +147,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
 
         vm.startBroadcast();
-        _deployWeightedPool8020FactoryIfNeeded();
+        _deployWeightedPoolFactoryIfNeeded();
         _deployFacets();
         _deployUniswapV4PoolInfra();
         _seedWethRichPool();
         _deployPkgs();
-        _deploySingleVaultDetf();
+        _deployUniV4SeVaultAndDetf();
         _deployOuterPool();
         vm.stopBroadcast();
 
@@ -191,7 +172,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         erc5267Facet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc5267Facet"));
         erc4626BasicVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc4626BasicVaultFacet"));
         erc4626StandardVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc4626StandardVaultFacet"));
-        operableFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "operableFacet"));
 
         permit2 = IPermit2(_readAddress(PROTOCOLS_BASE_FILE, "permit2"));
         weth = IWETH(_readAddress(PROTOCOLS_BASE_FILE, "weth"));
@@ -238,25 +218,19 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         (reservePool, ) = _readAddressSafe(ARTIFACT_FILE, "reservePool");
         (underlyingVault, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVault");
 
-        // Reload package + factory addresses so resume re-exports do not clobber
-        // non-zero artifact fields with zero-initialized storage.
         (address weightedPoolFactoryAddr, bool hasWeightedPoolFactory) =
-            _readAddressSafe(ARTIFACT_FILE, "weightedPool8020Factory");
+            _readAddressSafe(ARTIFACT_FILE, "weightedPoolFactory");
         if (hasWeightedPoolFactory && weightedPoolFactoryAddr != address(0) && weightedPoolFactoryAddr.code.length > 0) {
-            weightedPool8020Factory = IWeightedPool8020Factory(weightedPoolFactoryAddr);
+            weightedPoolFactory = WeightedPoolFactory(weightedPoolFactoryAddr);
         }
 
         (address detfPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "inventoryDetfPkg");
         if (detfPkgAddr != address(0)) {
-            inventoryDetfPkg = ISingleVaultDetfDFPkg(detfPkgAddr);
+            inventoryDetfPkg = ISingleStandardExchangeDETDFPkg(detfPkgAddr);
         }
         (address nftPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "detfNFTVaultPkg");
         if (nftPkgAddr != address(0)) {
             detfNFTVaultPkg = IDetfSelfNftInventoryDFPkg(nftPkgAddr);
-        }
-        (address rebasingClaimTokenPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "rebasingClaimTokenPkg");
-        if (rebasingClaimTokenPkgAddr != address(0)) {
-            rebasingClaimTokenPkg = IRebasingClaimTokenDFPkg(rebasingClaimTokenPkgAddr);
         }
         (address underlyingVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVaultPkg");
         if (underlyingVaultPkgAddr != address(0)) {
@@ -264,24 +238,24 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
         (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (seederAddr != address(0) && seederAddr.code.length > 0) {
-            liquiditySeeder = SingleVaultDetfUniswapV4LiquiditySeeder(seederAddr);
+            liquiditySeeder = UniswapV4LiquiditySeeder(seederAddr);
         }
 
         return true;
     }
 
-    function _deployWeightedPool8020FactoryIfNeeded() internal {
-        (address existingFactory, bool hasExistingFactory) = _readAddressSafe(ARTIFACT_FILE, "weightedPool8020Factory");
+    function _deployWeightedPoolFactoryIfNeeded() internal {
+        (address existingFactory, bool hasExistingFactory) = _readAddressSafe(ARTIFACT_FILE, "weightedPoolFactory");
         if (hasExistingFactory && existingFactory != address(0) && existingFactory.code.length > 0) {
-            weightedPool8020Factory = IWeightedPool8020Factory(existingFactory);
+            weightedPoolFactory = WeightedPoolFactory(existingFactory);
             return;
         }
 
-        weightedPool8020Factory = IWeightedPool8020Factory(
+        weightedPoolFactory = WeightedPoolFactory(
             create3Factory.create3WithArgs(
-                type(WeightedPool8020Factory).creationCode,
-                abi.encode(address(balancerV3Vault), uint32(365 days), "Factory v1", "8020Pool v1"),
-                keccak256("LocalTestingScenario3WeightedPool8020Factory")
+                type(WeightedPoolFactory).creationCode,
+                abi.encode(address(balancerV3Vault), uint32(365 days), "Factory v1", "Pool v1"),
+                keccak256("LocalTestingScenario3WeightedPoolFactory")
             )
         );
     }
@@ -290,14 +264,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
         multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
 
-        singleVaultDetfExchangeInFacet = create3Factory.deploySingleVaultDetfExchangeInFacet();
-        singleVaultDetfExchangeInQueryFacet = create3Factory.deploySingleVaultDetfExchangeInQueryFacet();
-        singleVaultDetfInfoFacet = create3Factory.deploySingleVaultDetfInfoFacet();
-        singleVaultDetfExchangeOutFacet = create3Factory.deploySingleVaultDetfExchangeOutFacet();
-        singleVaultDetfBondingFacet = create3Factory.deploySingleVaultDetfBondingFacet();
+        singleStandardExchangeDetfExchangeInFacet = create3Factory.deployExchangeInFacet();
 
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
-        rebasingClaimTokenFacet = create3Factory.deployRebasingClaimTokenFacet();
         uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
@@ -327,11 +296,11 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         (address existingSeeder, bool hasSeeder) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (hasSeeder && existingSeeder != address(0) && existingSeeder.code.length > 0) {
-            liquiditySeeder = SingleVaultDetfUniswapV4LiquiditySeeder(existingSeeder);
+            liquiditySeeder = UniswapV4LiquiditySeeder(existingSeeder);
         } else {
-            liquiditySeeder = SingleVaultDetfUniswapV4LiquiditySeeder(
+            liquiditySeeder = UniswapV4LiquiditySeeder(
                 create3Factory.create3WithArgs(
-                    type(SingleVaultDetfUniswapV4LiquiditySeeder).creationCode,
+                    type(UniswapV4LiquiditySeeder).creationCode,
                     abi.encode(poolManager),
                     keccak256("LocalTestingScenario3LiquiditySeeder")
                 )
@@ -378,17 +347,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        rebasingClaimTokenPkg = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory,
-            DetfComponentFactoryService.buildRICHIRPkgInit(
-                erc20Facet,
-                erc5267Facet,
-                erc2612Facet,
-                rebasingClaimTokenFacet,
-                diamondPackageFactory
-            )
-        );
-
         underlyingVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
             vaultRegistry,
             UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
@@ -408,67 +366,58 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        DetfSuperchainBridgeRepo.BridgeConfig memory bridgeConfig = _emptyBridgeConfig();
-        inventoryDetfPkg = SingleVaultDetf_Pkg_FactoryService.deploySingleVaultDetfDFPkg(
-            vaultRegistry,
-            SingleVaultDetf_Component_FactoryService.buildPkgInit(
-                SingleVaultDetf_Component_FactoryService.SingleVaultDetfFacets({
-                    erc20Facet: erc20Facet,
-                    erc5267Facet: erc5267Facet,
-                    erc2612Facet: erc2612Facet,
-                    multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                    multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-                    exchangeInFacet: singleVaultDetfExchangeInFacet,
-                    exchangeInQueryFacet: singleVaultDetfExchangeInQueryFacet,
-                    infoFacet: singleVaultDetfInfoFacet,
-                    exchangeOutFacet: singleVaultDetfExchangeOutFacet,
-                    bondingFacet: singleVaultDetfBondingFacet,
-                    operableFacet: operableFacet
-                }),
-                SingleVaultDetf_Component_FactoryService.SingleVaultDetfInfra({
-                    feeOracle: feeOracle,
-                    vaultRegistryDeployment: vaultRegistry,
-                    permit2: permit2,
-                    rateAsset: IERC20(address(weth)),
-                    balancerV3Vault: balancerV3Vault,
-                    balancerV3PrepayRouter: balancerV3StandardExchangeRouter,
-                    weightedPool8020Factory: weightedPool8020Factory,
-                    bridgeTokenRegistry: bridgeConfig.bridgeTokenRegistry,
-                    standardBridge: bridgeConfig.standardBridge,
-                    messenger: bridgeConfig.messenger,
-                    localRelayer: bridgeConfig.localRelayer,
-                    peerRelayer: bridgeConfig.peerRelayer,
-                    underlyingVaultPkg: underlyingVaultPkg,
-                    detfNFTVaultPkg: detfNFTVaultPkg,
-                    rebasingClaimTokenPkg: rebasingClaimTokenPkg,
-                    rateProviderPkg: rateProviderPkg,
-                    diamondFactory: diamondPackageFactory
-                })
-            )
+        // Single SE DETF PkgInit: factories/facets only — no underlying vault pkg on DETF init.
+        inventoryDetfPkg = vaultRegistry.deployPkg(
+            ISingleStandardExchangeDETDFPkg.PkgInit({
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                exchangeInFacet: singleStandardExchangeDetfExchangeInFacet,
+                feeOracle: feeOracle,
+                vaultRegistryDeployment: vaultRegistry,
+                balancerV3Router: balancerV3StandardExchangeRouter,
+                balancerV3Vault: balancerV3Vault,
+                weightedPoolFactory: weightedPoolFactory,
+                rateProviderPkg: rateProviderPkg,
+                bondNftVaultPkg: detfNFTVaultPkg,
+                diamondFactory: diamondPackageFactory
+            })
         );
     }
 
-    function _deploySingleVaultDetf() internal {
+    /// @dev Deploy Uni V4 SE vault separately, inject address into Single SE DETF PkgArgs (DETF stays SE-opaque).
+    function _deployUniV4SeVaultAndDetf() internal {
+        underlyingVault = underlyingVaultPkg.deployVault(_buildPoolKey(), WETH_RICH_WIDTH_MULTIPLIER);
+
+        ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
+            name: "Single Standard Exchange DETF CHIR",
+            symbol: "CHIR",
+            standardExchangeVault: IStandardExchangeProxy(underlyingVault),
+            standardExchangeVaultShare: IERC20(address(0)),
+            rateTarget: IERC20(address(weth)),
+            detfWeight: 0,
+            vaultShareWeight: 0,
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Policy,
+        expansionClosureRatePerSecond: 0,
+        expansionCatchUpMaxSeconds: 0,
+        expansionCatchUpCapBps: 0
+        });
+
         inventoryDetf = vaultRegistry.deployVault(
             IStandardVaultPkg(address(inventoryDetfPkg)),
-            abi.encode(
-                SingleVaultDetf_Component_FactoryService.buildPkgArgs(
-                    "Single Vault DETF CHIR",
-                    "CHIR",
-                    IERC20(pairToken),
-                    INITIAL_RICH_DEPOSIT,
-                    INITIAL_WETH_DEPOSIT,
-                    _buildPoolKey(),
-                    WETH_RICH_WIDTH_MULTIPLIER
-                )
-            )
+            abi.encode(args)
         );
 
-        IDetf detf = IDetf(inventoryDetf);
-        protocolNftVault = address(detf.detfNFTVault());
-        rebasingClaimToken = address(detf.rebasingClaimToken());
-        reservePool = detf.reservePool();
-        underlyingVault = address(ISingleVaultDetf(inventoryDetf).underlyingVault());
+        ISingleStandardExchangeDETFInfo detfInfo = ISingleStandardExchangeDETFInfo(inventoryDetf);
+        protocolNftVault = detfInfo.bondNftVault();
+        // Single SE DETF does not wire a rebasing claim token; keep key as zero for stable artifact shape.
+        rebasingClaimToken = address(0);
+        reservePool = detfInfo.reservePool();
+        underlyingVault = detfInfo.standardExchangeVault();
     }
 
     function _deployOuterPool() internal {
@@ -500,23 +449,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         });
     }
 
-    function _emptyBridgeConfig() internal pure returns (DetfSuperchainBridgeRepo.BridgeConfig memory config) {
-        config = DetfSuperchainBridgeRepo.BridgeConfig({
-            bridgeTokenRegistry: ISuperChainBridgeTokenRegistry(address(0)),
-            standardBridge: IStandardBridge(payable(address(0))),
-            messenger: ICrossDomainMessenger(address(0)),
-            localRelayer: address(0),
-            peerRelayer: address(0)
-        });
-    }
-
     function _exportJson() internal {
         string memory json;
         json = vm.serializeAddress("scenario3", "pairToken", pairToken);
-        json = vm.serializeAddress("scenario3", "weightedPool8020Factory", address(weightedPool8020Factory));
+        json = vm.serializeAddress("scenario3", "weightedPoolFactory", address(weightedPoolFactory));
         json = vm.serializeAddress("scenario3", "inventoryDetfPkg", address(inventoryDetfPkg));
         json = vm.serializeAddress("scenario3", "detfNFTVaultPkg", address(detfNFTVaultPkg));
-        json = vm.serializeAddress("scenario3", "rebasingClaimTokenPkg", address(rebasingClaimTokenPkg));
         json = vm.serializeAddress("scenario3", "underlyingVaultPkg", address(underlyingVaultPkg));
         json = vm.serializeAddress("scenario3", "poolManager", address(poolManager));
         json = vm.serializeAddress("scenario3", "liquiditySeeder", address(liquiditySeeder));
@@ -534,12 +472,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     }
 
     function _exportFragments() internal {
+        // rebasingClaimToken is not wired for Single SE DETF; skip zero addresses via _writeFragment.
         _writeFragment("tokens", "richir", rebasingClaimToken, "Rich Reserve Token", "RICHIR", new string[](0));
         _writeFragment(
             "vaults/inventoryDetf",
             "inventoryDetf",
             inventoryDetf,
-            "Single Vault DETF CHIR",
+            "Single Standard Exchange DETF CHIR",
             "CHIR",
             new string[](0)
         );
@@ -547,7 +486,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             "vaults/strategy",
             "underlyingVault",
             underlyingVault,
-            "WETH/RICH Strategy Vault",
+            "WETH/RICH Uni V4 Standard Exchange Vault",
             "wethRichVlt",
             new string[](0)
         );
@@ -555,7 +494,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             "pools/balancerV3",
             "balancerWethDetfPool",
             weightedPool,
-            "Balancer 80/20 WETH/DETF Pool",
+            "Balancer WETH/DETF Pool",
             "wethDetfBP",
             new string[](0)
         );
@@ -591,12 +530,11 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     function _logResults() internal view {
         _logString("Artifact:", ARTIFACT_FILE);
-        _logAddress("WeightedPool8020Factory:", address(weightedPool8020Factory));
-        _logAddress("Single Vault DETF:", inventoryDetf);
-        _logAddress("Protocol NFT Vault:", protocolNftVault);
-        _logAddress("RICHIR:", rebasingClaimToken);
+        _logAddress("WeightedPoolFactory:", address(weightedPoolFactory));
+        _logAddress("Single Standard Exchange DETF:", inventoryDetf);
+        _logAddress("Bond NFT Vault:", protocolNftVault);
         _logAddress("Reserve Pool:", reservePool);
-        _logAddress("WETH/RICH Vault:", underlyingVault);
+        _logAddress("Uni V4 SE Vault:", underlyingVault);
         _logAddress("Balancer WETH/DETF Pool:", weightedPool);
         _logComplete("Stage 12");
     }

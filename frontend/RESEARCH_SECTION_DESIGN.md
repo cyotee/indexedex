@@ -91,9 +91,9 @@ Each article module exports a `ResearchArticle`:
 
 | Slug | Title | Source spine |
 |------|-------|----------------|
-| `detf` | What is a DETF? | Product PRDs / AGENTS DETF rules / marketing spine |
+| `detf` | DETFs: one share over a real onchain reserve | Product PRDs / AGENTS DETF rules / marketing spine |
 | `detf-types` | DETF types: which design for which basket | AGENTS DETF families; family PRDs |
-| `bond-vs-mint` | Bond vs mint: liquid share or seigniorage path | Spine lifecycle; bond/claim AGENTS rules |
+| `bond-vs-mint` | Bond vs mint: liquid share or protocol depth | Spine lifecycle; bond/claim AGENTS rules; Policy/Open axis |
 | `rate-providers` | Rate providers: mark accuracy or market reprice | `MARKETING_AND_PERFORMANCE_FINDINGS` §3.3; rates on (accuracy) vs off (reprice volume) |
 
 **Removed from public research:** `preview-execution` (engineering trust bar, not a selling panel). DualLiquidity may appear as **supporting evidence** inside rate-provider notes — **not** as a hero product name.

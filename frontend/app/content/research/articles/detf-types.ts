@@ -2,9 +2,9 @@ import type { ResearchArticle } from '../types'
 
 /**
  * DETF types (families) in plain customer language.
- * Four composition packages under contracts/vaults/detf/ (Single SE + multi-vault families).
+ * Four live composition packages under contracts/vaults/detf/ (Single SE + multi-vault families).
  * Package names stay out of titles — engineer paths only in sourceNote.
- * SingleVaultDetf (composed/single) is deprecated / out of product map — hardcoded SE path.
+ * Do not reference removed composed/single (SingleVaultDetf).
  */
 export const detfTypesArticle: ResearchArticle = {
   slug: 'detf-types',
@@ -28,9 +28,9 @@ export const detfTypesArticle: ResearchArticle = {
     'Deploy package names in code are not customer product titles.',
   ],
   relatedProductHref: '/research/detf',
-  relatedProductLabel: 'What is a DETF?',
+  relatedProductLabel: 'DETFs: one share over a real reserve',
   sourceNote:
-    'Four families under contracts/vaults/detf/: standardExchange/single (SingleStandardExchangeDETF); composed/multi-vault-weighted (MultiVaultWeightedDetf); composed/stable/common (ComposedStableCommonDetf); composed/stable/mixedBuffer (MixedBufferMultiVaultStableDetf). composed/single (SingleVaultDetf) is deprecated — not a product type. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
+    'Four live families under contracts/vaults/detf/: standardExchange/single (SingleStandardExchangeDETF); composed/multi-vault-weighted (MultiVaultWeightedDetf); composed/stable/common (ComposedStableCommonDetf); composed/stable/mixedBuffer (MixedBufferMultiVaultStableDetf). Removed path composed/single is not a product type. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
   sections: [
     {
       heading: 'One pattern, four compositions',

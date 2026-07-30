@@ -769,19 +769,22 @@ export function Header() {
               aria-label="Primary"
             >
                 <Link href="/earn" className={navLinkClass}>
-                Earn
+                  Earn
                 </Link>
                 <Link href="/swap" className={navLinkClass}>
-                Swap
+                  Swap
+                </Link>
+                <Link href="/create" className={navLinkClass}>
+                  Create
                 </Link>
                 <Link href="/portfolio" className={navLinkClass}>
-                Portfolio
+                  Portfolio
                 </Link>
                 <Link href="/research" className={navLinkClass}>
-                Research
+                  Research
                 </Link>
                 <Link href="/token" className={navLinkClass}>
-                Token
+                  Token
                 </Link>
               {/* More: power routes demoted from primary nav */}
               <div className="relative" ref={dropdownRef}>
@@ -806,7 +809,6 @@ export function Header() {
                   <div className="absolute top-full left-0 mt-1 w-52 rounded-md shadow-lg z-50 border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]">
                     <div className="py-1">
                       <Link href="/batch-swap" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Batch Swap</Link>
-                      <Link href="/create" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Create</Link>
                       <Link href="/insights" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Insights</Link>
                       <Link href="/staking" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Protocol DETF</Link>
                       <Link href="/mint" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>

@@ -20,6 +20,7 @@
 
 ---
 
+
 ## 1. Executive summary
 
 ### What we have wired today

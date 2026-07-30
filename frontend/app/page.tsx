@@ -234,8 +234,13 @@ export default function HomePage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/research/detf">
+              <Link href="/create">
                 <Button size="lg" className="landing-lab__cta-primary">
+                  Create DETF
+                </Button>
+              </Link>
+              <Link href="/research/detf">
+                <Button size="lg" variant="secondary">
                   How DETFs work
                 </Button>
               </Link>

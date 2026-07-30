@@ -218,7 +218,7 @@ Hero — create DETFs (premier)
 
 Pull from published `frontend/app/content/research` articles (title + summary + link). Prefer:
 
-1. What is a DETF? (`/research/detf`)  
+1. DETFs: one share over a real onchain reserve (`/research/detf`)  
 2. DETF types (`/research/detf-types`)  
 3. Bond vs mint (`/research/bond-vs-mint`)  
 4. Rate providers / mark integrity (`/research/rate-providers`)  

@@ -7,6 +7,7 @@ One row per completed research run. **Narrative** lives under `research/scenario
 **Reproduce Mode A:** `./research/run_mode_a.sh`  
 **Reproduce Mode C:** `./research/run_mode_c.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce rateProviderCompare:** `./research/run_rate_provider_compare.sh` (`FOUNDRY_PROFILE=default`)  
+**Reproduce Single SE DETF Phase 3:** `./research/run_detf_single_se.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce DualLiquidity research:** `./research/run_dual_liquidity_research.sh` (Base fork)
 
 | Date | Product | Mode | Scenario doc | Artifact dir | Status | One-line finding |
@@ -42,7 +43,18 @@ One row per completed research run. **Narrative** lives under `research/scenario
 | 2026-07-21 | dualLiquidityLinkedCrossVersion | v2 Mode B P0 | deposit_common / deposit_tokenA | `v2/rates_off/modeB_deposit*` | complete | pair+BPT / vaultA+pair+BPT volume |
 | 2026-07-21 | dualLiquidityLinkedCrossVersion | v2 Mode B P1 | pairShare, vaultAShare, swap A→B | `v2/rates_off/modeB_*` | complete | SE-share joins; swap exec without reserve live Δ |
 | 2026-07-21 | dualLiquidityLinkedCrossVersion | v2 Mode A | legDemand rates-off | `v2/rates_off/modeA_legDemand` | complete | share_book_pnl; mark flat; residual ~1.86e-4 |
-| — | detf/* | — | — | — | not started | After SE foundation / DualLiquidity research |
+
+| 2026-07-30 | detf/singleSe | Phase 3 full | [`scenarios/detf/singleSe/FINDINGS.md`](scenarios/detf/singleSe/FINDINGS.md) | `out/detf/singleSe/` | **complete** | D0–D9 + F1–F4,F7–F9; RQ1–RQ10 PASS; Uni V2 SE + Single SE DETF hermetic |
+| 2026-07-30 | detf/singleSe | D0 inert | FINDINGS | `D0_inert` | PASS | inert; mint reverts; defaults 1.05/0.95 |
+| 2026-07-30 | detf/singleSe | D1 firstBond | FINDINGS | `D1_firstBond` | PASS | live after first bond |
+| 2026-07-30 | detf/singleSe | D2 policyDeadband | FINDINGS | `D2_policyDeadband` | PASS | burn-side post-bond; mint blocked |
+| 2026-07-30 | detf/singleSe | D3 policyMintAllowed | FINDINGS | `D3_policyMintAllowed` | PASS | preview==exec exact; Uni trades |
+| 2026-07-30 | detf/singleSe | D4 policyBurnGate | FINDINGS | `D4_policyBurnGate` | PASS | burn when synth < 0.95 |
+| 2026-07-30 | detf/singleSe | D5 openControl | FINDINGS | `D5_openControl` | PASS | Open no expansion on warp |
+| 2026-07-30 | detf/singleSe | D6 capitalSeigniorage | FINDINGS | `D6_capitalSeigniorage` | PASS | serial mints supply ↑ |
+| 2026-07-30 | detf/singleSe | D7 bondVsMint | FINDINGS | `D7_bondVsMint` | PASS | free holder no expansion airdrop |
+| 2026-07-30 | detf/singleSe | D8 naturalExpansion | FINDINGS | `D8_naturalExpansion` | PASS | Policy supply ↑ after warp; Open twin no |
+| 2026-07-30 | detf/singleSe | D9 protocolCompound | FINDINGS | `D9_protocolCompound` | PASS | protocol BPT principal ↑ |
 
 ## Reconstruction checklist (any scenario)
 
