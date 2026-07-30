@@ -15,21 +15,43 @@ import {IERC20MintBurn} from '@crane/contracts/interfaces/IERC20MintBurn.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 import {Math} from '@crane/contracts/utils/Math.sol';
 
+import {IVault} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol';
 import {DETFCommon} from 'contracts/vaults/detf/DETFCommon.sol';
 import {DETFMintSplitLib} from 'contracts/vaults/detf/core/DETFMintSplitLib.sol';
-import {DETFThresholdPolicy} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
+import {DETFThresholdPolicy, ThresholdMode} from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
+import {DETFProtocolCompoundLib} from 'contracts/vaults/detf/core/DETFProtocolCompoundLib.sol';
+import {DETFNaturalExpansionLib} from 'contracts/vaults/detf/core/DETFNaturalExpansionLib.sol';
+import {DETFBondLifecycleLib} from 'contracts/vaults/detf/core/DETFBondLifecycleLib.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
+import {IDetfSelfNftInventoryPolicy} from 'contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {BalancerV3WeightedPoolQuote} from '@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol';
 import {MetaStableMath} from '@crane/contracts/protocols/perps/pendle/core/StandardizedYield/implementations/BalancerStable/base/MetaStable/MetaStableMath.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol';
 
+/// @dev Minimal pool-token surface for Balancer V3 vault address (BalancerPoolToken.getVault).
+interface IComposedStableBalancerPoolToken {
+    function getVault() external view returns (IVault);
+}
+
 abstract contract ComposedStableCommonDetfCommon is DETFCommon {
     using BetterSafeERC20 for IERC20;
     using ComposedStableCommonDetfRepo for ComposedStableCommonDetfRepo.Storage;
 
     uint256 internal constant ONE_WAD = 1e18;
+    /// @dev Family reserve is always DETF + stable BPT + common BPT (3 legs).
+    uint256 internal constant RESERVE_TOKEN_COUNT = 3;
+
+    /// @notice Emitted when detf-owned NFT pending seigniorage DETF is compounded into reserve BPT.
+    event ProtocolRewardsCompounded(uint256 detfIn, uint256 bptOut);
+
+    /// @notice Emitted when natural supply expansion mints free DETF into the bond NFT vault.
+    event NaturalSupplyExpanded(uint256 mintAmount, uint256 syntheticPrice, uint256 newTimestamp);
+
+    error NotSelf();
+    error CompoundJoinProducedZeroBpt();
 
     struct ReservePoolQuoteContext {
         WeightedPoolDynamicData dynamicData;
@@ -901,5 +923,130 @@ abstract contract ComposedStableCommonDetfCommon is DETFCommon {
 
     function _mintDetf(address recipient_, uint256 amount_) internal {
         IERC20MintBurn(address(ComposedStableCommonDetfRepo._detfToken())).mint(recipient_, amount_);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                     Natural supply expansion (Phase 2)                 */
+    /* ---------------------------------------------------------------------- */
+
+    /// @dev Mint-on-update natural expansion into bond NFT vault (same sink as seigniorage inventory).
+    ///      Uses only `DETFNaturalExpansionLib`; Open / not-live / not-mint-allowed → zero mint.
+    ///      Advances `lastExpansionTimestamp` only when mint > 0. Seeds clock if still zero while live.
+    ///      Expansion target is bond-reward DETF (`detfToken`), not the rebasing claim token.
+    function _updateExpansionMintOnRewards() internal returns (uint256 mintAmount_) {
+        ComposedStableCommonDetfRepo.Storage storage s = ComposedStableCommonDetfRepo._layoutStruct();
+        if (!_isReserveLive() || address(s.bondNftVault) == address(0)) {
+            return 0;
+        }
+        // Seed accrual clock on first live touch if not already set at bootstrap.
+        if (s.lastExpansionTimestamp == 0) {
+            s.lastExpansionTimestamp = block.timestamp;
+            return 0;
+        }
+
+        DETFNaturalExpansionLib.AccrualInput memory in_;
+        in_.isLive = true;
+        in_.isPolicyMode = s.thresholdMode == ThresholdMode.Policy;
+        in_.isMintAllowed = _isMintingAllowed();
+        in_.syntheticPrice = _syntheticDetfEthPrice();
+        // Family DETF share is the mintable detfToken (diamond is not the ERC-20).
+        in_.totalDetfSupply = s.detfToken.totalSupply();
+        in_.lastExpansionTimestamp = s.lastExpansionTimestamp;
+        in_.nowTimestamp = block.timestamp;
+        in_.closureRatePerSecond = s.expansionClosureRatePerSecond;
+        in_.catchUpMaxSeconds = s.expansionCatchUpMaxSeconds;
+        in_.catchUpCapBps = s.expansionCatchUpCapBps;
+
+        uint256 newTs_;
+        (mintAmount_, newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+        if (mintAmount_ > 0) {
+            _mintDetf(address(s.bondNftVault), mintAmount_);
+            s.lastExpansionTimestamp = newTs_;
+            emit NaturalSupplyExpanded(mintAmount_, in_.syntheticPrice, newTs_);
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                     Protocol seigniorage compound                      */
+    /* ---------------------------------------------------------------------- */
+
+    /// @dev Single-sided DETF join into the weighted reserve (DETF leg only).
+    ///      Tokens must be held by this diamond; prepaid to Balancer vault then joined via SE router.
+    function _joinReserveDetfOnly(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        if (detfAmount_ == 0) {
+            return 0;
+        }
+
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        address pool_ = address(layoutStruct.reservePool);
+        IVault balVault_ = IComposedStableBalancerPoolToken(pool_).getVault();
+
+        uint256[] memory amountsIn_ = new uint256[](RESERVE_TOKEN_COUNT);
+        amountsIn_[layoutStruct.detfIndex] = detfAmount_;
+
+        layoutStruct.detfToken.safeTransfer(address(balVault_), detfAmount_);
+        bptOut_ = layoutStruct.balancerV3Router.prepayAddLiquidityUnbalanced(pool_, amountsIn_, 0, '');
+    }
+
+    /// @dev Best-effort protocol NFT compound for lazy hooks and public surface.
+    ///      Preferred pull pattern: atomic self-call harvest+join+BPT credit; join failure rolls back harvest.
+    ///      Dust gate + harvest live inside the atomic self-call so mock/incomplete bond vaults
+    ///      cannot revert the outer mint/bond path (pendingRewards / detfNFTId outside try would).
+    ///      Runs natural expansion mint-on-update first so expansion + protocol share compound in one touch.
+    function _tryCompoundProtocolRewards() internal returns (uint256 detfIn_, uint256 bptOut_) {
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        if (address(layoutStruct.bondNftVault) == address(0) || !_isReserveLive()) {
+            return (0, 0);
+        }
+
+        // Phase 2: accrue free DETF into bond vault before protocol harvest sees balances.
+        _updateExpansionMintOnRewards();
+
+        // External self-call so join (or bond-vault view) revert rolls back harvest.
+        try this.compoundProtocolRewardsAtomic() returns (uint256 d_, uint256 b_) {
+            detfIn_ = d_;
+            bptOut_ = b_;
+            if (bptOut_ > 0) {
+                emit ProtocolRewardsCompounded(detfIn_, bptOut_);
+            }
+        } catch {
+            return (0, 0);
+        }
+    }
+
+    /// @notice Atomic harvest → single-sided DETF join → credit BPT to detf NFT. Only self-callable.
+    /// @dev Used by `_tryCompoundProtocolRewards` via try/catch for preferred pull atomicity.
+    ///      Not permissionless ops surface — reverts unless `msg.sender == address(this)`.
+    function compoundProtocolRewardsAtomic() external returns (uint256 detfIn_, uint256 bptOut_) {
+        if (msg.sender != address(this)) revert NotSelf();
+        return _compoundProtocolRewardsAtomic();
+    }
+
+    function _compoundProtocolRewardsAtomic() internal returns (uint256 detfIn_, uint256 bptOut_) {
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        IDETFNFTVault vault_ = layoutStruct.bondNftVault;
+        uint256 protocolId_ = vault_.detfNFTId();
+
+        uint256 pending_ = vault_.pendingRewards(protocolId_);
+        if (!DETFProtocolCompoundLib.isCompoundable(pending_)) {
+            return (0, 0);
+        }
+
+        // Harvest free DETF to this diamond (authorized as owner of bond vault / protocol DETF).
+        detfIn_ = vault_.reallocateDetfNftRewards(address(this));
+        if (detfIn_ == 0) {
+            return (0, 0);
+        }
+
+        // DETF self-leg only into weighted reserve; weight skew accepted (PRD §9).
+        bptOut_ = _joinReserveDetfOnly(detfIn_);
+        if (bptOut_ == 0) revert CompoundJoinProducedZeroBpt();
+
+        DETFBondLifecycleLib._addReservePoolBptToDetfNft(
+            IERC20(address(layoutStruct.reservePool)),
+            IDetfSelfNftInventoryPolicy(address(vault_)),
+            protocolId_,
+            bptOut_
+        );
     }
 }

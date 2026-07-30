@@ -12,6 +12,7 @@ import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/ICompo
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/core/DETFBondNFTMathLib.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol";
 import {ComposedStableCommonDetfBondNFTVaultCommon} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultCommon.sol";
 import {ComposedStableCommonDetfBondNFTVaultService} from "contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultService.sol";
@@ -323,7 +324,13 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     function reallocateDetfNftRewards(address recipient) external returns (uint256 amount) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
-        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layoutStruct.detf)) {
+        // Allow fee collector, configured protocol DETF address, or bond-vault owner (DETF diamond
+        // after ownership transfer — family companions are deployed before the diamond exists).
+        if (
+            msg.sender != address(StandardVaultRepo._feeOracle().feeTo())
+                && msg.sender != address(layoutStruct.detf)
+                && msg.sender != MultiStepOwnableRepo._owner()
+        ) {
             revert NotAuthorized(msg.sender);
         }
 

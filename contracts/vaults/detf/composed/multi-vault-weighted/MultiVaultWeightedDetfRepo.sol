@@ -56,6 +56,11 @@ library MultiVaultWeightedDetfRepo {
         uint256 detfNftId;
         uint256 feeRecipientNftId;
         IRebasingClaimToken rebasingClaimToken;
+        // Phase 2 natural expansion (resolved deploy-time; no post-deploy setter).
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
+        uint256 lastExpansionTimestamp; // seeded at live transition or first accrual
     }
 
     function _layoutStruct() internal pure returns (Storage storage layoutStruct_) {
@@ -83,6 +88,9 @@ library MultiVaultWeightedDetfRepo {
         IDETFNFTVault bondNftVault;
         uint256 detfNftId;
         IRebasingClaimToken rebasingClaimToken;
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
     }
 
     function _initialize(InitParams memory p) internal {
@@ -108,6 +116,10 @@ library MultiVaultWeightedDetfRepo {
         s.bondNftVault = p.bondNftVault;
         s.detfNftId = p.detfNftId;
         s.rebasingClaimToken = p.rebasingClaimToken;
+        s.expansionClosureRatePerSecond = p.expansionClosureRatePerSecond;
+        s.expansionCatchUpMaxSeconds = p.expansionCatchUpMaxSeconds;
+        s.expansionCatchUpCapBps = p.expansionCatchUpCapBps;
+        s.lastExpansionTimestamp = 0;
 
         for (uint256 i; i < vaultCount_; ++i) {
             s.underlyingVaults[i] = p.vaults[i];
@@ -120,7 +132,12 @@ library MultiVaultWeightedDetfRepo {
     }
 
     function _setReserveLive() internal {
-        _layoutStruct().isReserveLive = true;
+        Storage storage s = _layoutStruct();
+        s.isReserveLive = true;
+        // Seed expansion clock at live so accrual window starts from first-bond, not deploy.
+        if (s.lastExpansionTimestamp == 0) {
+            s.lastExpansionTimestamp = block.timestamp;
+        }
     }
 
     function _setRebasingClaimToken(IRebasingClaimToken token_) internal {

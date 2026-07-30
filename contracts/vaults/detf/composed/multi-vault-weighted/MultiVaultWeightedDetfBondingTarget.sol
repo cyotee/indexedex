@@ -150,6 +150,9 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         if (!s.isReserveLive) {
             MultiVaultWeightedDetfRepo._setReserveLive();
         }
+
+        // Lazy protocol compound after reward-affecting bond / inventory mint (best-effort).
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
@@ -164,6 +167,8 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
             s.bondNftVault, tokenId_, msg.sender, recipient_
         );
+        // Sell moves principal onto detf NFT; attempt compound of any pending protocol rewards.
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding

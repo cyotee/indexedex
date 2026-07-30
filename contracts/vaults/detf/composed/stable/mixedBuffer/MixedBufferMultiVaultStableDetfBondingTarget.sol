@@ -117,6 +117,8 @@ abstract contract MixedBufferMultiVaultStableDetfBondingTarget is
         );
 
         MixedBufferMultiVaultStableDetfRepo._setReserveLive();
+        // Lazy protocol compound after live + inventory mint (best-effort; typically no-op pre-pending).
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc IMixedBufferMultiVaultStableDetfBonding
@@ -170,6 +172,8 @@ abstract contract MixedBufferMultiVaultStableDetfBondingTarget is
             s.bondNftVault, bptPrincipal_, effectiveLock_, recipient_
         );
         shares_ = bptPrincipal_;
+        // Lazy protocol compound after reward-affecting bond / inventory mint (best-effort).
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc IMixedBufferMultiVaultStableDetfBonding
@@ -185,6 +189,8 @@ abstract contract MixedBufferMultiVaultStableDetfBondingTarget is
         principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
             s.bondNftVault, tokenId_, msg.sender, recipient_
         );
+        // Sell moves principal onto detf NFT; attempt compound of any pending protocol rewards.
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc IMixedBufferMultiVaultStableDetfBonding

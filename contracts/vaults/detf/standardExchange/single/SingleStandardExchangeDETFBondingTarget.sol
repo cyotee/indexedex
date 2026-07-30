@@ -92,6 +92,9 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         if (!s.isReserveLive) {
             SingleStandardExchangeDETFRepo._setReserveLive();
         }
+
+        // Lazy protocol compound after reward-affecting bond / inventory mint (best-effort).
+        _tryCompoundProtocolRewards();
     }
 
     /// @inheritdoc ISingleStandardExchangeDETFBonding
@@ -106,5 +109,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
             s.bondNftVault, tokenId_, msg.sender, recipient_
         );
+        // Sell moves principal onto detf NFT; attempt compound of any pending protocol rewards.
+        _tryCompoundProtocolRewards();
     }
 }

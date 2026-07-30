@@ -363,7 +363,10 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
                 mintThreshold: mintTh_,
                 burnThreshold: burnTh_,
                 routes: routes,
-                thresholdMode: mode_
+                thresholdMode: mode_,
+                expansionClosureRatePerSecond: 0,
+                expansionCatchUpMaxSeconds: 0,
+                expansionCatchUpCapBps: 0
             })
         );
     }

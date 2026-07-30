@@ -18,7 +18,9 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
@@ -63,6 +65,7 @@ import {
     IMixedBufferMultiVaultStableDetfInfo
 } from "contracts/vaults/detf/composed/stable/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
 import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {DETFNaturalExpansionLib} from "contracts/vaults/detf/core/DETFNaturalExpansionLib.sol";
 import {
     ISingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
@@ -658,5 +661,163 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
 
     function _feeTo() internal view returns (address) {
         return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                     Protocol compound test helpers                     */
+    /* ---------------------------------------------------------------------- */
+
+    /// @dev Enable non-zero seigniorage so mint/bond produce inventory DETF on the bond vault.
+    function _enableSeigniorageIncentive(address instance_, uint256 incentiveWad_) internal {
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setSeigniorageIncentivePercentageOfVault(
+            instance_, incentiveWad_
+        );
+        vm.stopPrank();
+    }
+
+    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault());
+    }
+
+    function _detfNftId(address instance_) internal view returns (uint256) {
+        return _bondNftVault(instance_).detfNFTId();
+    }
+
+    /// @dev Protocol NFT principal (BPT share units) — claim rate path depends on this rising after compound.
+    function _protocolNftPrincipal(address instance_) internal view returns (uint256) {
+        IDETFNFTVault vault_ = _bondNftVault(instance_);
+        return vault_.originalSharesOf(vault_.detfNFTId());
+    }
+
+    function _protocolPendingRewards(address instance_) internal view returns (uint256) {
+        IDETFNFTVault vault_ = _bondNftVault(instance_);
+        return vault_.pendingRewards(vault_.detfNFTId());
+    }
+
+    /// @dev Bootstrap open-mode MixedBuffer DETF, sell first bond into protocol NFT so it has principal
+    ///      shares, then create a second locked user bond and seed inventory via mint (seigniorage on).
+    /// @return instance_ Open-mode DETF diamond.
+    /// @return userBondId_ Second user bond still locked (for C3 claim-while-locked).
+    function _setupProtocolRewardsLive(address bonder_, address minter_)
+        internal
+        returns (address instance_, uint256 userBondId_)
+    {
+        instance_ = _deployOpenModeDetfN(1);
+        // 20% seigniorage incentive → inventory = afterFee * 10% (half of incentive).
+        _enableSeigniorageIncentive(instance_, 0.20e18);
+
+        // First bootstrap bond → live; sell to protocol so detf NFT earns reward share.
+        (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
+        vm.prank(bonder_);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
+
+        // Second buffer bond: user keeps NFT (for claim-while-locked). Keep modest vs pool.
+        _fundBuffer(bonder_, 100e18);
+        vm.startPrank(bonder_);
+        IERC20(address(dai)).approve(instance_, 100e18);
+        (userBondId_,) = IMixedBufferMultiVaultStableDetfBonding(instance_).bond(
+            IERC20(address(dai)), 100e18, DEFAULT_MIN_LOCK, bonder_, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        // Mint seigniorage with inventory DETF into bond vault reward pool.
+        _mintDetfFromBuffer(instance_, minter_, 50e18);
+    }
+
+    /// @dev Seed extra free DETF inventory on the bond vault (forces reward balance without another mint).
+    ///      **Adds** to existing vault balance (does not set absolute) so `lastRewardTokenBalance`
+    ///      accounting stays consistent with inventory already deposited via production mint/bond.
+    function _seedBondVaultRewardDetf(address instance_, uint256 amount_) internal {
+        address vault_ = address(_bondNftVault(instance_));
+        uint256 before_ = IERC20(instance_).balanceOf(vault_);
+        // Non-SUT controllability: forge deal adjusts ERC20 balance + totalSupply.
+        deal(instance_, vault_, before_ + amount_, true);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                     Natural expansion test helpers                     */
+    /* ---------------------------------------------------------------------- */
+
+    function _warp(uint256 seconds_) internal {
+        vm.warp(block.timestamp + seconds_);
+    }
+
+    /// @dev Deploy Policy N=1 with WITH_RATE on leg0 so underlying Aerodrome trades move synthetic.
+    function _deployPolicyWithRateNamed(string memory name_, string memory symbol_)
+        internal
+        returns (address detf_)
+    {
+        _ensureSeVaults(1);
+        IRateProvider rp_ = rateProviderPkg.deployRateProvider(
+            IStandardExchange(address(seVaults[0])), seShares[0], IERC20(address(dai))
+        );
+        IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args =
+            _buildPkgArgs(1, 0, 0, ThresholdMode.Policy);
+        args.name = name_;
+        args.symbol = symbol_;
+        args.vaultShareRateProviders[0] = rp_;
+        // Explicit zeros → lib defaults (document deploy-time expansion fields).
+        args.expansionClosureRatePerSecond = 0;
+        args.expansionCatchUpMaxSeconds = 0;
+        args.expansionCatchUpCapBps = 0;
+        detf_ = _deployWithArgs(args);
+        vm.label(detf_, name_);
+    }
+
+    /// @dev Drive synthetic above mint threshold under **default Policy** via real underlying trades.
+    ///      Requires WITH_RATE share leg (see `_deployPolicyWithRateNamed`).
+    function _pushSyntheticAboveMintThreshold(address instance_) internal {
+        IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(instance_);
+        require(info_.isReserveLive(), "must be live");
+        if (info_.isMintingAllowed()) return;
+
+        for (uint256 i; i < 20 && !info_.isMintingAllowed(); ++i) {
+            _shiftUnderlyingPrice(0, true, 20_000e18 * (i + 1));
+            if (info_.isMintingAllowed()) return;
+            _shiftUnderlyingPrice(0, false, 20_000e18 * (i + 1));
+        }
+        require(info_.isMintingAllowed(), "could not open mint under default thresholds");
+    }
+
+    /// @dev Live Policy MixedBuffer with locked user bond + protocol NFT principal (for expansion/compound).
+    /// @dev Does **not** push synthetic here (caller runs `_pushSyntheticAboveMintThreshold` when needed).
+    function _setupPolicyExpansionLive(address bonder_, address helper_)
+        internal
+        returns (address instance_, uint256 userBondId_)
+    {
+        instance_ = _deployPolicyWithRateNamed("Natural Expansion MBMVS DETF", "neMBMVS");
+        _enableSeigniorageIncentive(instance_, 0.20e18);
+
+        // Bootstrap → live; sell first bond into protocol NFT so it has principal shares.
+        (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
+        vm.prank(bonder_);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
+
+        // Second buffer bond: user keeps NFT (for claim-while-locked + reward share).
+        _fundBuffer(bonder_, 100e18);
+        vm.startPrank(bonder_);
+        IERC20(address(dai)).approve(instance_, 100e18);
+        (userBondId_,) = IMixedBufferMultiVaultStableDetfBonding(instance_).bond(
+            IERC20(address(dai)), 100e18, DEFAULT_MIN_LOCK, bonder_, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(
+            _bondNftVault(instance_).effectiveSharesOf(userBondId_),
+            0,
+            "user bond has effective shares"
+        );
+
+        // Seed expansion clock touch is safe at dt≈0 after live seed.
+        IMixedBufferMultiVaultStableDetfInfo(instance_).compoundProtocolRewards();
+
+        helper_; // reserved for multi-actor suites
+    }
+
+    /// @dev Expected max expansion mint under resolved defaults for given supply (bps cap).
+    function _maxExpansionMintDefault(uint256 totalSupply_) internal pure returns (uint256) {
+        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
     }
 }

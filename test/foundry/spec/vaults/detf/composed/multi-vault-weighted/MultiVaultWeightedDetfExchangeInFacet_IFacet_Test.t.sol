@@ -13,7 +13,7 @@ contract MultiVaultWeightedDetfExchangeInFacet_IFacet_Test is Test {
         (string memory name_, bytes4[] memory ifaces_, bytes4[] memory funcs_) = facet.facetMetadata();
         assertEq(keccak256(bytes(name_)), keccak256(bytes("MultiVaultWeightedDetfExchangeInFacet")));
         assertTrue(ifaces_.length >= 3, "interfaces");
-        assertTrue(funcs_.length >= 24, "funcs");
+        assertTrue(funcs_.length >= 29, "funcs incl. compound selectors");
         assertTrue(facet.facetFuncs().length == funcs_.length, "funcs match");
     }
 }

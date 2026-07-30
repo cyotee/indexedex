@@ -187,7 +187,10 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     mintThreshold: mintTh_,
                     burnThreshold: burnTh_,
                     routes: routes,
-                    thresholdMode: mode_
+                    thresholdMode: mode_,
+                    expansionClosureRatePerSecond: 0,
+                    expansionCatchUpMaxSeconds: 0,
+                    expansionCatchUpCapBps: 0
                 })
             );
 
@@ -271,7 +274,10 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     mintThreshold: _composedMintThreshold(),
                     burnThreshold: _composedBurnThreshold(),
                     routes: routes,
-                    thresholdMode: _composedThresholdMode()
+                    thresholdMode: _composedThresholdMode(),
+                    expansionClosureRatePerSecond: 0,
+                    expansionCatchUpMaxSeconds: 0,
+                    expansionCatchUpCapBps: 0
                 })
             );
 

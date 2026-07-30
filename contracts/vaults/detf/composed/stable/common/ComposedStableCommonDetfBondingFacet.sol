@@ -130,6 +130,8 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
             lockDuration,
             recipient == address(0) ? msg.sender : recipient
         );
+        // Lazy protocol seigniorage compound (best-effort; never fails user bond).
+        _tryCompoundProtocolRewards();
     }
 
     function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted_) {
@@ -153,6 +155,8 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         }
 
         rebasingClaimMinted_ = richir.mintFromNFTSale(principalShares, recipient);
+        // Lazy compound after protocol principal absorbs sold bond (best-effort).
+        _tryCompoundProtocolRewards();
     }
 
     function facetName() external pure returns (string memory name_) {

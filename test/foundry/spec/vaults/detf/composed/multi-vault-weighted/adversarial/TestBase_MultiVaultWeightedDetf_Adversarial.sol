@@ -170,7 +170,10 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
             vaultWeights: weights_,
             mintThreshold: mintTh_,
             burnThreshold: burnTh_,
-            thresholdMode: mode_
+            thresholdMode: mode_,
+            expansionClosureRatePerSecond: 0,
+            expansionCatchUpMaxSeconds: 0,
+            expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(

@@ -116,7 +116,10 @@ contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_VaultComponents {
                 mintThreshold: 0,
                 burnThreshold: 0,
                 routes: routes,
-                thresholdMode: ThresholdMode.Policy
+                thresholdMode: ThresholdMode.Policy,
+                expansionClosureRatePerSecond: 0,
+                expansionCatchUpMaxSeconds: 0,
+                expansionCatchUpCapBps: 0
             })
         );
     }

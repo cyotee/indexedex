@@ -62,6 +62,7 @@ import {
     DETFThresholdPolicy,
     ThresholdMode
 } from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {DETFNaturalExpansionLib} from "contracts/vaults/detf/core/DETFNaturalExpansionLib.sol";
 
 /// @title IMultiVaultWeightedDetfDFPkg
 interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -90,6 +91,12 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
     /// @dev `rateProviders`/`rateAssets` zero = unrated leg.
     /// @dev `weightDetf + sum(vaultWeights) == 1e18`; each weight > 0. Zero weightDetf not allowed.
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
+    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
+    ///
+    /// # PkgArgs field order (Stage 07 — mirror Stage 06)
+    /// 1 name, 2 symbol, 3 vaults, 4 vaultShares, 5 rateProviders, 6 rateAssets,
+    /// 7 weightDetf, 8 vaultWeights, 9 mintThreshold, 10 burnThreshold, 11 thresholdMode,
+    /// 12 expansionClosureRatePerSecond, 13 expansionCatchUpMaxSeconds, 14 expansionCatchUpCapBps
     struct PkgArgs {
         string name;
         string symbol;
@@ -102,6 +109,9 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
         ThresholdMode thresholdMode; // trailing; 0 = Policy
+        uint256 expansionClosureRatePerSecond; // 0 → default
+        uint256 expansionCatchUpMaxSeconds; // 0 → default
+        uint256 expansionCatchUpCapBps; // 0 → default
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -129,6 +139,9 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
     }
 
     IFacet immutable ERC20_FACET;
@@ -316,6 +329,11 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
+            args.expansionClosureRatePerSecond,
+            args.expansionCatchUpMaxSeconds,
+            args.expansionCatchUpCapBps
+        );
 
         DeployConfig storage cfg = _deployConfig();
         cfg.vaultCount = uint8(n_);
@@ -323,6 +341,9 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
         cfg.thresholdMode = args.thresholdMode;
+        cfg.expansionClosureRatePerSecond = expRate_;
+        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
+        cfg.expansionCatchUpCapBps = expCapBps_;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.vaults[i];
             cfg.vaultShares[i] = address(args.vaultShares[i]) == address(0)
@@ -537,6 +558,9 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         p.bondNftVault = bondVault_;
         p.detfNftId = detfNftId_;
         p.rebasingClaimToken = claimToken_;
+        p.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
+        p.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
+        p.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
         _copyLegsToInitParams(cfg, p);
         MultiVaultWeightedDetfRepo._initialize(p);
         // Emit once after storage write with resolved thresholds (PRD §16.4).

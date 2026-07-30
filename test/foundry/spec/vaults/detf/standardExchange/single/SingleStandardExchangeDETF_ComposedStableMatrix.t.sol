@@ -146,7 +146,10 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
                     vaultShareWeight: 0,
                     mintThreshold: 0,
                     burnThreshold: 0,
-                    thresholdMode: ThresholdMode.Open
+                    thresholdMode: ThresholdMode.Open,
+                expansionClosureRatePerSecond: 0,
+                expansionCatchUpMaxSeconds: 0,
+                expansionCatchUpCapBps: 0
                 })
             )
         );

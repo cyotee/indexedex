@@ -51,6 +51,11 @@ library ComposedStableCommonDetfRepo {
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
         RouteConfig[] routes;
+        // Phase 2 natural expansion (resolved deploy-time; no post-deploy setter).
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
+        uint256 lastExpansionTimestamp; // seeded at first live accrual touch
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -150,6 +155,32 @@ library ComposedStableCommonDetfRepo {
             burnThreshold_,
             thresholdMode_,
             routes_
+        );
+    }
+
+    /// @dev Phase 2 natural expansion params (resolved); deploy-time only, no post-deploy setter.
+    function _initializeNaturalExpansion(
+        Storage storage layoutStruct_,
+        uint256 expansionClosureRatePerSecond_,
+        uint256 expansionCatchUpMaxSeconds_,
+        uint256 expansionCatchUpCapBps_
+    ) internal {
+        layoutStruct_.expansionClosureRatePerSecond = expansionClosureRatePerSecond_;
+        layoutStruct_.expansionCatchUpMaxSeconds = expansionCatchUpMaxSeconds_;
+        layoutStruct_.expansionCatchUpCapBps = expansionCatchUpCapBps_;
+        layoutStruct_.lastExpansionTimestamp = 0;
+    }
+
+    function _initializeNaturalExpansion(
+        uint256 expansionClosureRatePerSecond_,
+        uint256 expansionCatchUpMaxSeconds_,
+        uint256 expansionCatchUpCapBps_
+    ) internal {
+        _initializeNaturalExpansion(
+            _layoutStruct(),
+            expansionClosureRatePerSecond_,
+            expansionCatchUpMaxSeconds_,
+            expansionCatchUpCapBps_
         );
     }
 
@@ -354,6 +385,54 @@ library ComposedStableCommonDetfRepo {
 
     function _thresholdMode() internal view returns (ThresholdMode thresholdMode_) {
         return _thresholdMode(_layoutStruct());
+    }
+
+    function _expansionClosureRatePerSecond(Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 expansionClosureRatePerSecond_)
+    {
+        return layoutStruct_.expansionClosureRatePerSecond;
+    }
+
+    function _expansionClosureRatePerSecond() internal view returns (uint256 expansionClosureRatePerSecond_) {
+        return _expansionClosureRatePerSecond(_layoutStruct());
+    }
+
+    function _expansionCatchUpMaxSeconds(Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 expansionCatchUpMaxSeconds_)
+    {
+        return layoutStruct_.expansionCatchUpMaxSeconds;
+    }
+
+    function _expansionCatchUpMaxSeconds() internal view returns (uint256 expansionCatchUpMaxSeconds_) {
+        return _expansionCatchUpMaxSeconds(_layoutStruct());
+    }
+
+    function _expansionCatchUpCapBps(Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 expansionCatchUpCapBps_)
+    {
+        return layoutStruct_.expansionCatchUpCapBps;
+    }
+
+    function _expansionCatchUpCapBps() internal view returns (uint256 expansionCatchUpCapBps_) {
+        return _expansionCatchUpCapBps(_layoutStruct());
+    }
+
+    function _lastExpansionTimestamp(Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 lastExpansionTimestamp_)
+    {
+        return layoutStruct_.lastExpansionTimestamp;
+    }
+
+    function _lastExpansionTimestamp() internal view returns (uint256 lastExpansionTimestamp_) {
+        return _lastExpansionTimestamp(_layoutStruct());
     }
 
     function _routeCount(Storage storage layoutStruct_) internal view returns (uint256 routeCount_) {

@@ -74,12 +74,5 @@ abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardE
         }
     }
 
-    function _joinReserveDetfOnly(uint256 detfAmount_) internal {
-        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
-        uint256 n_ = _reserveVault().getCurrentLiveBalances(s.reservePool).length;
-        uint256[] memory amountsIn_ = new uint256[](n_);
-        amountsIn_[s.detfIndex] = detfAmount_;
-        IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
-        _reserveRouter().prepayAddLiquidityUnbalanced(s.reservePool, amountsIn_, 0, "");
-    }
+    // `_joinReserveDetfOnly` lives on SingleStandardExchangeDETFCommon (returns bptOut).
 }

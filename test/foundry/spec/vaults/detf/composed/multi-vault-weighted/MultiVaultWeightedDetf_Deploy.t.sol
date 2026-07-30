@@ -67,7 +67,10 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
             vaultWeights: weights_,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy
+            thresholdMode: ThresholdMode.Policy,
+            expansionClosureRatePerSecond: 0,
+            expansionCatchUpMaxSeconds: 0,
+            expansionCatchUpCapBps: 0
         });
 
         vm.startPrank(owner);
@@ -102,7 +105,10 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
             vaultWeights: weights_,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy
+            thresholdMode: ThresholdMode.Policy,
+            expansionClosureRatePerSecond: 0,
+            expansionCatchUpMaxSeconds: 0,
+            expansionCatchUpCapBps: 0
         });
 
         vm.startPrank(owner);

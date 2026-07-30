@@ -33,6 +33,23 @@ interface IMixedBufferMultiVaultStableDetfInfo {
     function detfIndex() external view returns (uint256);
     function bufferIndex() external view returns (uint256);
     function shareIndex(uint256 i) external view returns (uint256);
+
+    /// @notice Last timestamp at which expansion mint advanced the accrual clock (0 if never live).
+    function lastExpansionTimestamp() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion closure rate per second (1e18 fixed point).
+    function expansionClosureRatePerSecond() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion catch-up max seconds.
+    function expansionCatchUpMaxSeconds() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion catch-up cap in bps of totalSupply.
+    function expansionCatchUpCapBps() external view returns (uint256);
+
+    /// @notice Update expansion + bond rewards and attempt detf-NFT reward → single-sided DETF join → BPT to detf NFT.
+    /// @dev Required public surface (PRD Phase 1 + Phase 2 expansion catch-up). Permissionless; no keeper.
+    ///      Best-effort: returns (0,0) when nothing to compound or join fails (pending left intact).
+    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut);
 }
 
 abstract contract MixedBufferMultiVaultStableDetfInfoTarget is
@@ -123,5 +140,26 @@ abstract contract MixedBufferMultiVaultStableDetfInfoTarget is
 
     function shareIndex(uint256 i) external view returns (uint256) {
         return MixedBufferMultiVaultStableDetfRepo._layoutStruct().shareIndexes[i];
+    }
+
+    function lastExpansionTimestamp() external view returns (uint256) {
+        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().lastExpansionTimestamp;
+    }
+
+    function expansionClosureRatePerSecond() external view returns (uint256) {
+        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionClosureRatePerSecond;
+    }
+
+    function expansionCatchUpMaxSeconds() external view returns (uint256) {
+        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionCatchUpMaxSeconds;
+    }
+
+    function expansionCatchUpCapBps() external view returns (uint256) {
+        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionCatchUpCapBps;
+    }
+
+    /// @inheritdoc IMixedBufferMultiVaultStableDetfInfo
+    function compoundProtocolRewards() external nonReentrant returns (uint256 detfIn, uint256 bptOut) {
+        return _tryCompoundProtocolRewards();
     }
 }

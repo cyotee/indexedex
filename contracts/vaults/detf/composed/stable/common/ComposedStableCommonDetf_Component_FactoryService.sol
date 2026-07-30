@@ -63,6 +63,9 @@ library ComposedStableCommonDetf_Component_FactoryService {
         uint256 burnThreshold;
         ComposedStableCommonDetfRepo.RouteConfig[] routes;
         ThresholdMode thresholdMode;
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
     }
 
     struct RebasingDetfTokenFacets {
@@ -133,7 +136,10 @@ library ComposedStableCommonDetf_Component_FactoryService {
             mintThreshold: config_.mintThreshold,
             burnThreshold: config_.burnThreshold,
             routes: config_.routes,
-            thresholdMode: config_.thresholdMode
+            thresholdMode: config_.thresholdMode,
+            expansionClosureRatePerSecond: config_.expansionClosureRatePerSecond,
+            expansionCatchUpMaxSeconds: config_.expansionCatchUpMaxSeconds,
+            expansionCatchUpCapBps: config_.expansionCatchUpCapBps
         });
     }
 

@@ -166,7 +166,10 @@ contract SingleStandardExchangeDETF_UniswapV4Matrix_Test is
             vaultShareWeight: 0,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Open
+            thresholdMode: ThresholdMode.Open,
+        expansionClosureRatePerSecond: 0,
+        expansionCatchUpMaxSeconds: 0,
+        expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(IStandardVaultPkg(address(outerPkg)), abi.encode(args));

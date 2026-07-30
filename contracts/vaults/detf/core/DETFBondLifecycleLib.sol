@@ -6,6 +6,12 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol";
 
+/// @notice Shared bond / detf-NFT lifecycle helpers for true DETFs.
+/// @dev Protocol BPT compound is **DETF-orchestrated** (see `DETFProtocolCompoundLib`).
+///      Callers that compound detf-owned NFT rewards own the full pipeline after harvest:
+///      single-sided DETF join → credit BPT via `_addReservePoolBptToDetfNft`.
+///      Preferred pull pattern: harvest only on the successful compound path so join
+///      failure leaves pending rewards intact (lazy hooks must not fail the outer user path).
 library DETFBondLifecycleLib {
     using BetterSafeERC20 for IERC20;
 
@@ -45,6 +51,13 @@ library DETFBondLifecycleLib {
         (principalShares_,) = vault_.sellPositionToDetfNft(tokenId_, seller_, recipient_);
     }
 
+    /// @notice Harvest free DETF rewards from the detf-owned NFT to this contract.
+    /// @dev Free-DETF harvest only — **not** protocol BPT compound. Compound remains
+    ///      DETF-orchestrated: after a successful harvest on the compound path, the caller
+    ///      must single-sided join DETF into the reserve and credit BPT with
+    ///      `_addReservePoolBptToDetfNft`. Prefer not calling this until join will succeed
+    ///      (or reverse on join failure) so reward debt never wipes without BPT credit.
+    ///      Reverts `NoSeigniorageToCapture` when harvest returns zero.
     function _collectDetfNftRewards(IDetfSelfNftInventoryPolicy vault_) internal returns (uint256 rewardAmount_) {
         rewardAmount_ = vault_.reallocateDetfNftRewards(address(this));
         if (rewardAmount_ == 0) {
@@ -52,6 +65,9 @@ library DETFBondLifecycleLib {
         }
     }
 
+    /// @notice Credit reserve BPT principal onto the detf-owned NFT after a successful join.
+    /// @dev Stage 00 / Phase 1 compound step 6: family join produces `bptAmount_`, then
+    ///      this helper approves + `addToDETFNFT`. Do not call if join failed.
     function _addReservePoolBptToDetfNft(
         IERC20 reservePoolToken_,
         IDetfSelfNftInventoryPolicy vault_,

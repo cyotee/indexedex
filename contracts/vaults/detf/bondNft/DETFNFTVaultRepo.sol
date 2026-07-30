@@ -352,12 +352,41 @@ library DETFNFTVaultRepo {
 
     /**
      * @notice Adds LP to an existing position without affecting lock time.
-     * @dev Used when adding to the protocol-owned NFT.
+     * @dev Used when adding to the protocol-owned NFT (sell-in, protocol compound BPT credit).
+     *      Reward debt is kept consistent so new principal does not invent phantom pending:
+     *      - First shares on a tokenId: set paid = current `rewardPerShares` (baseline).
+     *      - Additional shares: preserve previously earned pending by re-basing paid on new effective.
+     *      Callers should `_updateGlobalRewards` first (see `addToDETFNFT` / sell path).
      */
     function _addToPosition(Storage storage layoutStruct_, uint256 tokenId_, uint256 additionalShares_) internal {
+        if (additionalShares_ == 0) return;
+
+        uint256 oldEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        if (oldEff_ == 0) {
+            // No prior stake: do not inherit historical rewardPerShares as claimable debt.
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+            layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
+            layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+            layoutStruct_.totalShares += additionalShares_;
+            return;
+        }
+
+        // Preserve pending earned on old stake while increasing principal.
+        uint256 pending_ = _earned(layoutStruct_, tokenId_);
         layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.totalShares += additionalShares_;
+
+        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 rps_ = layoutStruct_.rewardPerShares;
+        // pending = newEff * (rps - paid) / 1e18  ⇒  paid = rps - pending * 1e18 / newEff
+        if (newEff_ > 0 && pending_ > 0) {
+            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+            layoutStruct_.userRewardPerSharePaid[tokenId_] =
+                rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+        } else {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+        }
     }
 
     function _addToPosition(uint256 tokenId_, uint256 additionalShares_) internal {

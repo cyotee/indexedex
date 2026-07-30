@@ -60,6 +60,7 @@ import {
     DETFThresholdPolicy,
     ThresholdMode
 } from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {DETFNaturalExpansionLib} from "contracts/vaults/detf/core/DETFNaturalExpansionLib.sol";
 
 /// @title IMixedBufferMultiVaultStableDetfDFPkg
 interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -86,6 +87,12 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
     /// @dev `vaultShareRateProviders.length == N`; address(0) => STANDARD share leg.
     /// @dev No buffer RP, no DETF RP, no auto-deployed default share RPs.
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
+    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
+    ///
+    /// # PkgArgs field order (Stage 08)
+    /// 1 name, 2 symbol, 3 bufferToken, 4 standardExchangeVaults, 5 vaultShareRateProviders,
+    /// 6 amplificationParameter, 7 mintThreshold, 8 burnThreshold, 9 thresholdMode,
+    /// 10 expansionClosureRatePerSecond, 11 expansionCatchUpMaxSeconds, 12 expansionCatchUpCapBps
     struct PkgArgs {
         string name;
         string symbol;
@@ -96,6 +103,9 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
         ThresholdMode thresholdMode; // trailing; 0 = Policy
+        uint256 expansionClosureRatePerSecond; // 0 → default
+        uint256 expansionCatchUpMaxSeconds; // 0 → default
+        uint256 expansionCatchUpCapBps; // 0 → default
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -122,6 +132,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
     }
 
     IFacet immutable ERC20_FACET;
@@ -285,6 +298,11 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
+            args.expansionClosureRatePerSecond,
+            args.expansionCatchUpMaxSeconds,
+            args.expansionCatchUpCapBps
+        );
 
         DeployConfig storage cfg = _deployConfig();
         cfg.vaultCount = uint8(n_);
@@ -293,6 +311,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
         cfg.thresholdMode = args.thresholdMode;
+        cfg.expansionClosureRatePerSecond = expRate_;
+        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
+        cfg.expansionCatchUpCapBps = expCapBps_;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.standardExchangeVaults[i];
             // Vault diamond is the share ERC-20 for Standard Exchange vaults.
@@ -452,6 +473,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         p.bondNftVault = bondVault_;
         p.detfNftId = detfNftId_;
         p.rebasingClaimToken = claimToken_;
+        p.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
+        p.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
+        p.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
 
         uint256 n_ = cfg.vaultCount;
         p.vaults = new IStandardExchange[](n_);

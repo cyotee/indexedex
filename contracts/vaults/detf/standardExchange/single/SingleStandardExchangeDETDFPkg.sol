@@ -62,6 +62,7 @@ import {
     DETFThresholdPolicy,
     ThresholdMode
 } from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {DETFNaturalExpansionLib} from "contracts/vaults/detf/core/DETFNaturalExpansionLib.sol";
 
 /// @title ISingleStandardExchangeDETDFPkg
 interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -88,6 +89,12 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
     /// @dev `standardExchangeVaultShare` optional: address(0) → vault diamond is the share ERC-20
     ///      (standard multi-asset SE). Non-zero for families with a separate share token.
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
+    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
+    ///
+    /// # PkgArgs field order (Stage 06 — document for later families)
+    /// 1 name, 2 symbol, 3 standardExchangeVault, 4 standardExchangeVaultShare, 5 rateTarget,
+    /// 6 detfWeight, 7 vaultShareWeight, 8 mintThreshold, 9 burnThreshold, 10 thresholdMode,
+    /// 11 expansionClosureRatePerSecond, 12 expansionCatchUpMaxSeconds, 13 expansionCatchUpCapBps
     struct PkgArgs {
         string name;
         string symbol;
@@ -98,7 +105,10 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
         uint256 vaultShareWeight; // 0 → 20e16
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
-        ThresholdMode thresholdMode; // trailing; 0 = Policy
+        ThresholdMode thresholdMode; // trailing mode; 0 = Policy
+        uint256 expansionClosureRatePerSecond; // 0 → default
+        uint256 expansionCatchUpMaxSeconds; // 0 → default
+        uint256 expansionCatchUpCapBps; // 0 → default
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -124,6 +134,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
+        uint256 expansionClosureRatePerSecond;
+        uint256 expansionCatchUpMaxSeconds;
+        uint256 expansionCatchUpCapBps;
     }
 
     IFacet immutable ERC20_FACET;
@@ -278,6 +291,11 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
+        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
+            args.expansionClosureRatePerSecond,
+            args.expansionCatchUpMaxSeconds,
+            args.expansionCatchUpCapBps
+        );
 
         DeployConfig storage cfg = _deployConfig();
         cfg.standardExchangeVault = args.standardExchangeVault;
@@ -290,6 +308,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
         cfg.thresholdMode = args.thresholdMode;
+        cfg.expansionClosureRatePerSecond = expRate_;
+        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
+        cfg.expansionCatchUpCapBps = expCapBps_;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -451,7 +472,10 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
                 feeOracle: FEE_ORACLE,
                 bondNftVault: bondVault_,
                 detfNftId: detfNftId_,
-                feeRecipientNftId: 0
+                feeRecipientNftId: 0,
+                expansionClosureRatePerSecond: cfg.expansionClosureRatePerSecond,
+                expansionCatchUpMaxSeconds: cfg.expansionCatchUpMaxSeconds,
+                expansionCatchUpCapBps: cfg.expansionCatchUpCapBps
             })
         );
         // Emit once after storage write with resolved thresholds (PRD §16.4).

@@ -96,7 +96,10 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             vaultShareWeight: 0,
             mintThreshold: 1e18,
             burnThreshold: 1e18,
-            thresholdMode: ThresholdMode.Policy
+            thresholdMode: ThresholdMode.Policy,
+        expansionClosureRatePerSecond: 0,
+        expansionCatchUpMaxSeconds: 0,
+        expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 1e18, 1e18));
@@ -117,7 +120,10 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             vaultShareWeight: 0,
             mintThreshold: 0.5e18,
             burnThreshold: 0.6e18,
-            thresholdMode: ThresholdMode.Open
+            thresholdMode: ThresholdMode.Open,
+        expansionClosureRatePerSecond: 0,
+        expansionCatchUpMaxSeconds: 0,
+        expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 0.5e18, 0.6e18));
@@ -306,7 +312,10 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             vaultShareWeight: 0,
             mintThreshold: 1.2e18,
             burnThreshold: 0.8e18,
-            thresholdMode: ThresholdMode.Open
+            thresholdMode: ThresholdMode.Open,
+        expansionClosureRatePerSecond: 0,
+        expansionCatchUpMaxSeconds: 0,
+        expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         address customOpen_ = indexedexManager.deployVault(

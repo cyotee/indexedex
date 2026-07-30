@@ -76,7 +76,6 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 | Family | Path | Use when |
 |--------|------|----------|
 | Single Standard Exchange | `detf/standardExchange/single/` | Exactly **one** SE vault + DETF weighted reserve |
-| Composed single | `detf/composed/single/` | Single underlying vault DETF shape (behavioral reference; brand-era names must not leak into new code) |
 | Composed stable multi | `detf/composed/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
 | Mixed-buffer multi-vault stable | `detf/composed/stable/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
 | Multi-vault weighted | `detf/composed/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
@@ -90,6 +89,7 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 - Flawed config → abandon instance; ship a new package/args. Prefer deploy-time wiring only (bond NFT, claim token, rate providers, reserve pool) inside DFPkg `postDeploy`.
 - **Fees / bond terms / seigniorage incentive:** **Vault Fee Oracle** (`feeOracle` on manager) where peer DETFs already do.
 - **Mint/burn thresholds + mode:** deploy-time only via **`PkgArgs` → resolve → instance storage** — **not** the fee oracle. See **Pricing and mint/burn gates** below.
+- **Protocol compound rules + natural expansion rate/caps:** deploy-time only via **`PkgArgs` → resolve → instance storage** — **not** the fee oracle. See **Protocol seigniorage compound + natural supply expansion** below.
 
 ### Liveness (inert → live)
 
@@ -115,6 +115,30 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 - **Info surface:** `thresholdMode()`, live-coupled `isMintingAllowed()` / `isBurningAllowed()` (and stored threshold getters).
 - **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **F7 Seigniorage** is **Out** of the threshold-mode program (peg regime) — see [`contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md`](contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md). DualLiquidity / pure SE vaults remain out of this PRD.
 - Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
+
+### Protocol seigniorage compound + natural supply expansion
+
+**Normative PRD:** [`contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**). Program index / stages: [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md). Shared libs: [`DETFProtocolCompoundLib.sol`](contracts/vaults/detf/core/DETFProtocolCompoundLib.sol), [`DETFNaturalExpansionLib.sol`](contracts/vaults/detf/core/DETFNaturalExpansionLib.sol).
+
+Apply to **true DETFs** in scope (Single SE, multi-vault weighted, mixed-buffer, composed stable common). **Out:** `composed/single`, `contracts/vaults/seigniorage/`, `detf/dual/**` unless re-supported.
+
+**Protocol compound (detf-owned bond NFT only):**
+
+- Capital-backed seigniorage inventory accrues on the bond NFT reward ledger. **User** and **fee-recipient** positions: **claimable free DETF** while locked (`claimRewards` / pending) — do **not** auto-compound them in v1.
+- **Detf-owned NFT** pending reward DETF is **auto-compounded** into the reserve via **single-sided DETF join** (self-leg only); credit BPT to detf-owned principal. Weight skew accepted in v1.
+- **Lazy** on DETF touch points that already update rewards (mint inventory, bond, etc.) **plus** required public **`compoundProtocolRewards()`** (or family-equivalent). No keeper.
+- Join failure is **best-effort**: do not fail the whole user touch solely because join reverts; leave pending for next touch / public compound; reward debt must stay consistent.
+- When rebasing claim is wired: protocol compound **must** increase detf-owned BPT so claim redemption rate **can rise**.
+
+**Natural supply expansion (Policy only):**
+
+- While **live + `thresholdMode == Policy` + synthetic mint-allowed** (`synthetic > mintThreshold`), mint free DETF **without** external capital into the bond reward vault (**mint-on-update** → same `rewardPerShares` ledger as seigniorage). **Open = never expands.**
+- Formula shape: **premium-closure** via `DETFNaturalExpansionLib` (deploy-time rate / catch-up caps from **`PkgArgs` → resolve → storage only** — not fee oracle; no post-deploy setter).
+- Distribution: **same effective-share weights** as seigniorage inventory rewards. Free unlocked DETF holders get none unless they hold a bond.
+- Protocol’s expansion share compounds via the Phase 1 path. Users claim expansion while locked like other rewards. Preview pending consistent with claim after update.
+- No keeper. Idle catch-up respects deploy-time caps.
+
+**Do not** invent balanced multi-leg protocol compound, user auto-compound, or expansion under Open without a PRD revision.
 
 ### User routes (defaults)
 
@@ -151,17 +175,21 @@ Production-first rules in this file and `indexedex-testing` apply. Additionally 
 5. **Cover at least:** inert deploy; first-bond → live; pre-live mint blocked; mint/burn with **preview == execution**; threshold gates; route rejects (`InvalidRoute` / family equivalent); bond lock clamp; sell → claim (when in scope); residual free inventory zero on success (BPT on diamond may remain); nested reentrancy hits `IsLocked`.
 6. **Price movement:** for threshold tests under **default** mint/burn thresholds, drive synthetic via **real underlying pool trades** (and seigniorage dilution where needed) so both mint-allowed and burn-allowed regimes are exercised — do not only use open-threshold deploys as the sole proof.
 7. **Matrix:** when attaching many SE types, equal-priority production providers (not one preferred mock).
+8. **Protocol compound:** lazy + public `compoundProtocolRewards`; detf-owned BPT ↑; user claim free DETF while locked; join-failure best-effort + retry; claim rate path when claim is wired.
+9. **Natural expansion (Policy):** expands only when live + mint-allowed synthetic; Open never expands; pending == claim after update; protocol expansion share compounds; catch-up caps.
 
 ### Key reference paths
 
 ```text
-contracts/vaults/detf/core/                    # shared math/lifecycle libs
+contracts/vaults/detf/core/                    # shared math/lifecycle libs (incl. compound + expansion)
 contracts/vaults/detf/reusable/                # facet/pkg factory helpers, NFT interfaces
 contracts/vaults/detf/standardExchange/single/ # primary single-SE DETF gold implementation + TestBase
 contracts/vaults/detf/composed/multi-vault-weighted/  # multi-leg weighted PRD + implementation
 contracts/vaults/detf/composed/stable/common/  # multi-vault stable + claim token packages
+contracts/vaults/detf/composed/stable/mixedBuffer/  # mixed-buffer multi-vault stable
 contracts/vaults/detf/bondNft/                 # DETFNFTVault (shared bond NFT package)
 contracts/vaults/detf/claimToken/              # RebasingClaimToken package
+contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_*.md  # compound + expansion law + program
 contracts/vaults/protocol/uniswap/             # DualLiquidity (unrelated; not Protocol DETF)
 ```
 

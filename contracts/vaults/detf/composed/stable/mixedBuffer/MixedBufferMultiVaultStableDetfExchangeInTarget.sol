@@ -83,6 +83,8 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         _mintDetf(recipient_, split_.userDetf);
         if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
+        // Lazy protocol compound after inventory seigniorage mint (best-effort; never fails mint).
+        _tryCompoundProtocolRewards();
         return split_.userDetf;
     }
 
@@ -102,6 +104,8 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         _mintDetf(recipient_, split_.userDetf);
         if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
+        // Lazy protocol compound after inventory seigniorage mint (best-effort; never fails mint).
+        _tryCompoundProtocolRewards();
         return split_.userDetf;
     }
 }

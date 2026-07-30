@@ -68,7 +68,10 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
             vaultShareWeight: 0,
             mintThreshold: mintArg_,
             burnThreshold: burnArg_,
-            thresholdMode: mode_
+            thresholdMode: mode_,
+            expansionClosureRatePerSecond: 0,
+            expansionCatchUpMaxSeconds: 0,
+            expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(

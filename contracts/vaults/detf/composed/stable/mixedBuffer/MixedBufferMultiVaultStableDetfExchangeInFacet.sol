@@ -34,7 +34,7 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](29);
+        funcs_ = new bytes4[](35);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -64,6 +64,12 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
         funcs_[26] = IMixedBufferMultiVaultStableDetfInfo.detfIndex.selector;
         funcs_[27] = IMixedBufferMultiVaultStableDetfInfo.bufferIndex.selector;
         funcs_[28] = IMixedBufferMultiVaultStableDetfInfo.shareIndex.selector;
+        funcs_[29] = IMixedBufferMultiVaultStableDetfInfo.compoundProtocolRewards.selector;
+        funcs_[30] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[31] = IMixedBufferMultiVaultStableDetfInfo.lastExpansionTimestamp.selector;
+        funcs_[32] = IMixedBufferMultiVaultStableDetfInfo.expansionClosureRatePerSecond.selector;
+        funcs_[33] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[34] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpCapBps.selector;
     }
 
     function facetMetadata()
@@ -76,7 +82,7 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(IMixedBufferMultiVaultStableDetfBonding).interfaceId;
         interfaces_[2] = type(IMixedBufferMultiVaultStableDetfInfo).interfaceId;
-        funcs_ = new bytes4[](29);
+        funcs_ = new bytes4[](35);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -106,5 +112,11 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet is
         funcs_[26] = IMixedBufferMultiVaultStableDetfInfo.detfIndex.selector;
         funcs_[27] = IMixedBufferMultiVaultStableDetfInfo.bufferIndex.selector;
         funcs_[28] = IMixedBufferMultiVaultStableDetfInfo.shareIndex.selector;
+        funcs_[29] = IMixedBufferMultiVaultStableDetfInfo.compoundProtocolRewards.selector;
+        funcs_[30] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[31] = IMixedBufferMultiVaultStableDetfInfo.lastExpansionTimestamp.selector;
+        funcs_[32] = IMixedBufferMultiVaultStableDetfInfo.expansionClosureRatePerSecond.selector;
+        funcs_[33] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[34] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpCapBps.selector;
     }
 }

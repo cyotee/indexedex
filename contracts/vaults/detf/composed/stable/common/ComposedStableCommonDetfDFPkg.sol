@@ -33,6 +33,7 @@ import {
     DETFThresholdPolicy,
     ThresholdMode
 } from 'contracts/vaults/detf/core/DETFThresholdPolicy.sol';
+import {DETFNaturalExpansionLib} from 'contracts/vaults/detf/core/DETFNaturalExpansionLib.sol';
 import {StandardVaultRepo} from 'contracts/vaults/standard/StandardVaultRepo.sol';
 
 interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
@@ -49,6 +50,7 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
     }
 
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
+    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
     struct PkgArgs {
         IWeightedPool reservePool;
         IDETFNFTVault bondNftVault;
@@ -71,6 +73,9 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
         uint256 burnThreshold;
         ComposedStableCommonDetfRepo.RouteConfig[] routes;
         ThresholdMode thresholdMode; // trailing; 0 = Policy
+        uint256 expansionClosureRatePerSecond; // 0 → default
+        uint256 expansionCatchUpMaxSeconds; // 0 → default
+        uint256 expansionCatchUpCapBps; // 0 → default
     }
 }
 
@@ -244,7 +249,18 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
             args.thresholdMode,
             args.routes
         );
+        // Expansion resolve+store in a separate frame to avoid stack-too-deep.
+        _initNaturalExpansion(args);
         emit IComposedStableCommonDetfInfo.ThresholdModeSet(args.thresholdMode, mintThreshold_, burnThreshold_);
+    }
+
+    function _initNaturalExpansion(PkgArgs memory args) internal {
+        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
+            args.expansionClosureRatePerSecond,
+            args.expansionCatchUpMaxSeconds,
+            args.expansionCatchUpCapBps
+        );
+        ComposedStableCommonDetfRepo._initializeNaturalExpansion(expRate_, expCatchUpSec_, expCapBps_);
     }
 
     function postDeploy(address) public pure returns (bool) {

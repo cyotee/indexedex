@@ -38,7 +38,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](16);
+        funcs_ = new bytes4[](22);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -55,6 +55,13 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
         funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
         funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
+        funcs_[16] = ISingleStandardExchangeDETFInfo.compoundProtocolRewards.selector;
+        // Atomic self-call helper (only-self); not on ISingleStandardExchangeDETFInfo.
+        funcs_[17] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[18] = ISingleStandardExchangeDETFInfo.lastExpansionTimestamp.selector;
+        funcs_[19] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
+        funcs_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[21] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
     }
 
     function facetMetadata()
@@ -67,7 +74,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(ISingleStandardExchangeDETFBonding).interfaceId;
         interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
-        funcs_ = new bytes4[](16);
+        funcs_ = new bytes4[](22);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -84,5 +91,11 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
         funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
         funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
+        funcs_[16] = ISingleStandardExchangeDETFInfo.compoundProtocolRewards.selector;
+        funcs_[17] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[18] = ISingleStandardExchangeDETFInfo.lastExpansionTimestamp.selector;
+        funcs_[19] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
+        funcs_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[21] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
     }
 }

@@ -42,6 +42,27 @@ contract ComposedStableCommonDetfExchangeIn is
         return _isBurningAllowed();
     }
 
+    function lastExpansionTimestamp() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._lastExpansionTimestamp();
+    }
+
+    function expansionClosureRatePerSecond() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._expansionClosureRatePerSecond();
+    }
+
+    function expansionCatchUpMaxSeconds() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._expansionCatchUpMaxSeconds();
+    }
+
+    function expansionCatchUpCapBps() external view returns (uint256) {
+        return ComposedStableCommonDetfRepo._expansionCatchUpCapBps();
+    }
+
+    /// @inheritdoc IComposedStableCommonDetfInfo
+    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut) {
+        return _tryCompoundProtocolRewards();
+    }
+
     /**
      * @param tokenIn The token provided to the vault for an exchange.
      * @param amountIn The amount of `tokenIn` the users wishes to exchange for `tokenOut`.
@@ -151,6 +172,8 @@ contract ComposedStableCommonDetfExchangeIn is
 
         _accrueMintInventory(layoutStruct, reservePoolBptOut, mintSplit.inventoryDetfOut);
         _mintDetf(args_.recipient == address(0) ? msg.sender : args_.recipient, amountOut_);
+        // Lazy protocol seigniorage compound (best-effort; never fails user mint).
+        _tryCompoundProtocolRewards();
     }
 
     function _executeBurnRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
@@ -259,7 +282,7 @@ contract ComposedStableCommonDetfExchangeIn is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](7);
+        funcs_ = new bytes4[](13);
         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
@@ -267,6 +290,12 @@ contract ComposedStableCommonDetfExchangeIn is
         funcs_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
         funcs_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
         funcs_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
+        funcs_[7] = IComposedStableCommonDetfInfo.lastExpansionTimestamp.selector;
+        funcs_[8] = IComposedStableCommonDetfInfo.expansionClosureRatePerSecond.selector;
+        funcs_[9] = IComposedStableCommonDetfInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[10] = IComposedStableCommonDetfInfo.expansionCatchUpCapBps.selector;
+        funcs_[11] = IComposedStableCommonDetfInfo.compoundProtocolRewards.selector;
+        funcs_[12] = bytes4(keccak256('compoundProtocolRewardsAtomic()'));
     }
 
     function facetMetadata()
@@ -280,7 +309,7 @@ contract ComposedStableCommonDetfExchangeIn is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(IComposedStableCommonDetfInfo).interfaceId;
 
-        functions_ = new bytes4[](7);
+        functions_ = new bytes4[](13);
         functions_[0] = IStandardExchangeIn.previewExchangeIn.selector;
         functions_[1] = IStandardExchangeIn.exchangeIn.selector;
         functions_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
@@ -288,5 +317,11 @@ contract ComposedStableCommonDetfExchangeIn is
         functions_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
         functions_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
         functions_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
+        functions_[7] = IComposedStableCommonDetfInfo.lastExpansionTimestamp.selector;
+        functions_[8] = IComposedStableCommonDetfInfo.expansionClosureRatePerSecond.selector;
+        functions_[9] = IComposedStableCommonDetfInfo.expansionCatchUpMaxSeconds.selector;
+        functions_[10] = IComposedStableCommonDetfInfo.expansionCatchUpCapBps.selector;
+        functions_[11] = IComposedStableCommonDetfInfo.compoundProtocolRewards.selector;
+        functions_[12] = bytes4(keccak256('compoundProtocolRewardsAtomic()'));
     }
 }

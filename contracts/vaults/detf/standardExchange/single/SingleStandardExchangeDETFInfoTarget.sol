@@ -14,6 +14,8 @@ interface ISingleStandardExchangeDETFInfo {
     /// @notice Emitted once at init with resolved mint/burn thresholds (PRD §16.4).
     event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
 
+    // ProtocolRewardsCompounded is declared on SingleStandardExchangeDETFCommon (emitted by compound path).
+
     function isReserveLive() external view returns (bool);
     function standardExchangeVault() external view returns (address);
     function standardExchangeVaultShare() external view returns (address);
@@ -26,6 +28,23 @@ interface ISingleStandardExchangeDETFInfo {
     function isMintingAllowed() external view returns (bool);
     function isBurningAllowed() external view returns (bool);
     function bondNftVault() external view returns (address);
+
+    /// @notice Last timestamp at which expansion mint advanced the accrual clock (0 if never live).
+    function lastExpansionTimestamp() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion closure rate per second (1e18 fixed point).
+    function expansionClosureRatePerSecond() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion catch-up max seconds.
+    function expansionCatchUpMaxSeconds() external view returns (uint256);
+
+    /// @notice Resolved deploy-time expansion catch-up cap in bps of totalSupply.
+    function expansionCatchUpCapBps() external view returns (uint256);
+
+    /// @notice Update expansion + bond rewards and attempt detf-NFT reward → single-sided DETF join → BPT to detf NFT.
+    /// @dev Required public surface (PRD Phase 1 + Phase 2 expansion catch-up). Permissionless; no keeper.
+    ///      Best-effort: returns (0,0) when nothing to compound or join fails (pending left intact).
+    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut);
 }
 
 abstract contract SingleStandardExchangeDETFInfoTarget is
@@ -78,5 +97,26 @@ abstract contract SingleStandardExchangeDETFInfoTarget is
 
     function bondNftVault() external view returns (address) {
         return address(SingleStandardExchangeDETFRepo._layoutStruct().bondNftVault);
+    }
+
+    function lastExpansionTimestamp() external view returns (uint256) {
+        return SingleStandardExchangeDETFRepo._layoutStruct().lastExpansionTimestamp;
+    }
+
+    function expansionClosureRatePerSecond() external view returns (uint256) {
+        return SingleStandardExchangeDETFRepo._layoutStruct().expansionClosureRatePerSecond;
+    }
+
+    function expansionCatchUpMaxSeconds() external view returns (uint256) {
+        return SingleStandardExchangeDETFRepo._layoutStruct().expansionCatchUpMaxSeconds;
+    }
+
+    function expansionCatchUpCapBps() external view returns (uint256) {
+        return SingleStandardExchangeDETFRepo._layoutStruct().expansionCatchUpCapBps;
+    }
+
+    /// @inheritdoc ISingleStandardExchangeDETFInfo
+    function compoundProtocolRewards() external nonReentrant returns (uint256 detfIn, uint256 bptOut) {
+        return _tryCompoundProtocolRewards();
     }
 }

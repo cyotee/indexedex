@@ -34,7 +34,7 @@ contract MultiVaultWeightedDetfExchangeInFacet is
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](27);
+        funcs_ = new bytes4[](33);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -62,6 +62,12 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         funcs_[24] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
         funcs_[25] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
         funcs_[26] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
+        funcs_[27] = IMultiVaultWeightedDetfInfo.compoundProtocolRewards.selector;
+        funcs_[28] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[29] = IMultiVaultWeightedDetfInfo.lastExpansionTimestamp.selector;
+        funcs_[30] = IMultiVaultWeightedDetfInfo.expansionClosureRatePerSecond.selector;
+        funcs_[31] = IMultiVaultWeightedDetfInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[32] = IMultiVaultWeightedDetfInfo.expansionCatchUpCapBps.selector;
     }
 
     function facetMetadata()
@@ -74,7 +80,7 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(IMultiVaultWeightedDetfBonding).interfaceId;
         interfaces_[2] = type(IMultiVaultWeightedDetfInfo).interfaceId;
-        funcs_ = new bytes4[](27);
+        funcs_ = new bytes4[](33);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -102,5 +108,11 @@ contract MultiVaultWeightedDetfExchangeInFacet is
         funcs_[24] = IMultiVaultWeightedDetfInfo.isBurningAllowed.selector;
         funcs_[25] = IMultiVaultWeightedDetfInfo.bondNftVault.selector;
         funcs_[26] = IMultiVaultWeightedDetfInfo.rebasingClaimToken.selector;
+        funcs_[27] = IMultiVaultWeightedDetfInfo.compoundProtocolRewards.selector;
+        funcs_[28] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        funcs_[29] = IMultiVaultWeightedDetfInfo.lastExpansionTimestamp.selector;
+        funcs_[30] = IMultiVaultWeightedDetfInfo.expansionClosureRatePerSecond.selector;
+        funcs_[31] = IMultiVaultWeightedDetfInfo.expansionCatchUpMaxSeconds.selector;
+        funcs_[32] = IMultiVaultWeightedDetfInfo.expansionCatchUpCapBps.selector;
     }
 }
