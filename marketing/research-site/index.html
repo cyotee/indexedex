@@ -41,9 +41,10 @@
         <a href="#why">Why here</a>
         <a href="#roadmap">Roadmap</a>
         <a href="#research">Research</a>
+        <a href="#litepaper">Litepaper</a>
         <a href="#disclaimers" class="nav-muted">Disclaimers</a>
       </nav>
-      <a class="btn btn-sm" href="#follow">Follow</a>
+      <a class="btn btn-sm" href="./DETF_LITEPAPAPER.pdf" download>Litepaper PDF</a>
     </header>
 
     <main id="top">
@@ -60,8 +61,9 @@
           <strong> Open</strong> with no price restrictions. Not a black-box rebalancer.
         </p>
         <div class="hero-ctas">
-          <a class="btn" href="#detf">What is a DETF?</a>
-          <a class="btn btn-ghost" href="#research">Read the research</a>
+          <a class="btn" href="./DETF_LITEPAPAPER.pdf" download>Download litepaper PDF</a>
+          <a class="btn btn-ghost" href="#detf">What is a DETF?</a>
+          <a class="btn btn-ghost" href="#research">Measured findings</a>
         </div>
         <dl class="hero-meta">
           <div>
@@ -110,7 +112,7 @@
               First bond takes an instance from <strong>inert → live</strong> and deepens
               protocol-owned reserve. Bond terms come from onchain fee/oracle configuration —
               not discretionary admin favor. Until live, seigniorage mint/burn stay blocked
-              in every mode.
+              in every mode. Bond positions can earn free DETF rewards; free unlocked holders do not.
             </p>
           </article>
           <article class="card">
@@ -119,9 +121,8 @@
               Pricing engine = the reserve pool, not an off-pool dashboard.
               <strong>Policy (default):</strong> mint only when synthetic price is strictly above
               the mint threshold; burn only below the burn threshold (defaults commonly ±5%).
-              <strong>Open:</strong> no price restrictions on mint or burn — seigniorage stays
-              available regardless of synthetic price; fees still apply.
-              Zero thresholds never mean Open.
+              <strong>Open:</strong> no price restrictions on mint or burn; fees still apply;
+              <strong>never</strong> natural expansion. Zero thresholds never mean Open.
             </p>
           </article>
           <article class="card">
@@ -129,7 +130,8 @@
             <p>
               After deploy, DETF instances are <strong>unowned</strong>: no instance owner,
               no diamondCut, no admin pause surface for normal operation. Flawed config →
-              abandon and ship a new package.
+              abandon and ship a new package. Protocol bond rewards can compound into more
+              protocol-owned reserve BPT (not a yield coupon).
             </p>
           </article>
         </div>
@@ -142,6 +144,8 @@
               <li>Bonding path into protocol-owned liquidity</li>
               <li>Deploy-time Policy (price-gated) or Open (no price gates)</li>
               <li>Closed-form routes with preview ≈ execution on supported paths</li>
+              <li>Policy-only natural expansion to bond holders when synthetically rich</li>
+              <li>Protocol compound of protocol bond rewards into reserve BPT</li>
               <li>Composable with Standard Exchange vaults (opaque protocol legs)</li>
               <li>Deployable pattern — many DETFs, many baskets</li>
             </ul>
@@ -151,12 +155,38 @@
             <ul>
               <li>A registered securities ETF or fund share</li>
               <li>Legal ownership of offchain underlyings</li>
-              <li>Guaranteed rebase yield or “(3,3)” performance</li>
+              <li>Guaranteed rebase yield, peg, or “(3,3)” performance</li>
               <li>Admin-tunable monetary policy after launch</li>
-              <li>Open still price-checking thresholds (it does not)</li>
+              <li>Open with price gates or natural expansion (neither)</li>
+              <li>Expansion airdrop to free unlocked DETF holders</li>
               <li>A promise of tight spreads on thin legs</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section id="litepaper" class="section section-alt">
+        <div class="section-head">
+          <p class="eyebrow">Publication</p>
+          <h2>DETF litepaper</h2>
+          <p class="section-lede">
+            Mechanism paper with measured appendix: how DETFs work, Policy vs Open, bond-ledger
+            rewards, nested mark integrity, and hermetic Single SE scenario results.
+            Not a prospectus and not a yield forecast.
+          </p>
+        </div>
+        <div class="callout">
+          <h3>Download</h3>
+          <p>
+            <a class="btn" href="./DETF_LITEPAPAPER.pdf" download>DETF_LITEPAPAPER.pdf</a>
+            <span class="fine" style="margin-left: 0.75rem">~14 pages · July 2026</span>
+          </p>
+          <ul>
+            <li>Synthetic price, inert → live, Policy / Open gates</li>
+            <li>Capital seigniorage vs natural expansion vs protocol compound</li>
+            <li>Hermetic D0–D9 findings + nested SE rate-provider appendix</li>
+            <li>Explicit non-claims: no mainnet APY, peg, or registered-fund status</li>
+          </ul>
         </div>
       </section>
 
@@ -241,19 +271,45 @@
         </ol>
       </section>
 
-      <section id="research" class="section section-alt">
+      <section id="research" class="section">
         <div class="section-head">
           <p class="eyebrow">Evidence before hype</p>
           <h2>Research spine</h2>
           <p class="section-lede">
-            Marketing claims should cite measured behavior. Below is the publishable spine from
-            IndexedEx vault / nested-liquidity research — not performance of a live DETF portfolio.
+            Marketing claims should cite measured behavior. Hermetic Single SE DETF scenarios
+            (D0–D9) and prior Uni V2 SE rate-provider matrices — not performance of a live mainnet
+            DETF portfolio and not APY advertising.
           </p>
         </div>
 
         <div class="grid-3">
           <article class="card">
-            <p class="card-kicker">Finding</p>
+            <p class="card-kicker">DETF · measured</p>
+            <h3>Inert → first bond live</h3>
+            <p>
+              Policy Single SE deploys inert; user mint blocked until first bond creates the reserve.
+              Warp alone does not enable mint or expansion.
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-kicker">DETF · measured</p>
+            <h3>Policy gates · Open never expands</h3>
+            <p>
+              Defaults resolve mint 1.05 / burn 0.95. Open has no price gates when live and
+              <strong>never</strong> runs natural expansion. Policy expands only when mint-rich,
+              to the bond reward ledger only.
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-kicker">DETF · measured</p>
+            <h3>Preview honesty · protocol compound</h3>
+            <p>
+              Closed-form capital mint: preview equaled execution exactly on the measured path.
+              Protocol compound raises protocol-owned BPT principal — not a claim coupon.
+            </p>
+          </article>
+          <article class="card">
+            <p class="card-kicker">SE · measured</p>
             <h3>SE vaults re-mark with markets</h3>
             <p>
               Standard Exchange vault share rates track underlying pool demand. Nested Balancer legs
@@ -261,7 +317,7 @@
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">Finding</p>
+            <p class="card-kicker">SE · measured</p>
             <h3>Rates ≠ free yield</h3>
             <p>
               Rate providers are a <strong>mark-integrity</strong> control. Residual lag is not a
@@ -269,27 +325,38 @@
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">Bar</p>
-            <h3>Preview = execution</h3>
+            <p class="card-kicker">Limitation</p>
+            <h3>Post-bond synthetic drive</h3>
             <p>
-              Closed-form deposit and exchange routes aim for exact preview/execution match
-              (document few-wei only where multi-leg math forces it). Trust numbers the chain can prove.
+              In hermetic Single SE, Uni trades alone often cannot clear the mint band after first
+              bond (free-DETF dilution). Production inventory paths matter — documented, not a
+              license to fake prices.
             </p>
           </article>
         </div>
 
         <div class="callout">
-          <h3>Open research themes</h3>
+          <h3>Where to go deeper</h3>
           <ul>
-            <li>Multi-vault weighted DETF reserves under real leg demand</li>
-            <li>Policy threshold bands (±5% default synthetic deadband) under price stress</li>
-            <li>Open mode primary markets (no price gates on mint/burn)</li>
-            <li>Fee-make into protocol capital liquidity (measured when live — not advertised as APR)</li>
-            <li>Agent-native flows: deploy DETF once vs continuous rebalance bots</li>
+            <li>
+              <a href="./DETF_LITEPAPAPER.pdf" download><strong>Litepaper PDF</strong></a>
+              — public mechanism write-up with figures
+            </li>
+            <li>
+              Monorepo
+              <code>research/scenarios/detf/singleSe/FINDINGS.md</code>
+              — RQ1–RQ10 scenario results
+            </li>
+            <li>
+              Monorepo
+              <code>research/MARKETING_AND_PERFORMANCE_FINDINGS.md</code>
+              — science roll-up for claims
+            </li>
+            <li>Multi-family DETF empirics and fork validation remain future work</li>
           </ul>
           <p class="fine">
-            Deep technical material lives in the monorepo under
-            <code>research/</code> and <code>docs/</code>. This site is the public front door.
+            This site is the public front door. Reproduce hermetic DETF runs with
+            <code>./research/run_detf_single_se.sh</code> only when parameters change.
           </p>
         </div>
       </section>
@@ -340,17 +407,18 @@
             then markets. No invented APYs.
           </p>
           <div class="hero-ctas">
-            <!-- Replace hrefs before deploy -->
-            <a class="btn" href="https://x.com/" rel="noopener noreferrer" target="_blank"
-              >Follow on X</a
-            >
-            <a class="btn btn-ghost" href="https://github.com/" rel="noopener noreferrer" target="_blank"
-              >GitHub (optional)</a
+            <a class="btn" href="./DETF_LITEPAPAPER.pdf" download>Download litepaper</a>
+            <a
+              class="btn btn-ghost"
+              href="https://github.com/cyotee/indexedex"
+              rel="noopener noreferrer"
+              target="_blank"
+              >GitHub</a
             >
           </div>
           <p class="fine">
-            Replace social links in this HTML before shipping. X post pack:
-            <code>marketing/X_POSTS.md</code> in the repo.
+            Litepaper and measured findings ship with this site. X post pack in the monorepo:
+            <code>marketing/X_POSTS.md</code>.
           </p>
         </div>
       </section>
@@ -373,7 +441,13 @@
           </li>
           <li>
             <strong>Open mode removes price gates only.</strong> Primary mint and burn are not
-            restricted by synthetic price. Fees still apply. Modes are not a peg or return guarantee.
+            restricted by synthetic price. Fees still apply. Open never runs natural expansion.
+            Modes are not a peg or return guarantee.
+          </li>
+          <li>
+            <strong>Expansion and compound are not yield products.</strong> Natural expansion
+            (Policy only, when mint-rich) accrues to bond holders. Protocol compound deepens
+            protocol BPT and can improve claim backing — amounts are not guaranteed.
           </li>
           <li>
             <strong>Eligibility.</strong> Some underlying tokens may be restricted by issuer or venue
@@ -393,8 +467,10 @@
       </div>
       <div class="footer-links">
         <a href="#detf">DETF</a>
-        <a href="#roadmap">Roadmap</a>
+        <a href="#litepaper">Litepaper</a>
+        <a href="#research">Research</a>
         <a href="#disclaimers">Disclaimers</a>
+        <a href="./DETF_LITEPAPAPER.pdf" download>PDF</a>
       </div>
       <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
     </footer>

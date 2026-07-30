@@ -116,6 +116,19 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
 
       <footer className="mt-10 space-y-2 border-t border-[var(--border-subtle,rgba(255,255,255,0.08))] pt-6 text-xs text-[var(--text-muted,#9aa3b2)]">
         {article.sourceNote ? <p>Sources: {article.sourceNote}</p> : null}
+        {article.tags.includes('detf') ? (
+          <p>
+            Full mechanism write-up:{' '}
+            <a
+              href="/research/DETF_LITEPAPAPER.pdf"
+              download
+              className="text-[var(--accent,#4FD44B)] hover:underline"
+            >
+              Download DETF litepaper PDF
+            </a>
+            .
+          </p>
+        ) : null}
         <p>
           Research notes are educational. Smart contracts and markets involve risk of loss. Not investment,
           legal, or tax advice.

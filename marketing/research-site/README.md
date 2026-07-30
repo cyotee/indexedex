@@ -41,9 +41,18 @@ npx vercel --prod   # production
 
 If the main app already uses Vercel from `frontend/`, create a **second** Vercel project pointed at `marketing/research-site` so product UI and research marketing stay independent.
 
+## Litepaper PDF
+
+Served from this folder:
+
+- [`DETF_LITEPAPAPER.pdf`](./DETF_LITEPAPAPER.pdf) — public download (also linked from hero, nav, research, footer)
+- Source/build: `research/papers/detf-litepaper/` (`build_pdf.sh`)
+
+When regenerating the PDF, copy it here and to `frontend/public/research/DETF_LITEPAPAPER.pdf` for the Next app.
+
 ## Before public ship
 
-1. Replace X / GitHub links in `index.html` (`#follow` section).
+1. Confirm GitHub / social links in `index.html` (`#follow` section).
 2. Set a real domain (e.g. `research.indexedex.xyz`) in Vercel.
 3. Optional: add `og-image.png` and wire `og:image` / `twitter:image` meta tags.
 4. Align public venue naming with `docs/ROBINHOOD_LAUNCH_PLAN.md` comms rule — this site is **venue-forward** by default (names Robinhood Chain). Switch copy to brand-silent if that decision stays locked.

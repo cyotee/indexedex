@@ -47,23 +47,51 @@ export default function ResearchIndexPage() {
           Create your own DETFs
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          DETF means Decentralized ETF — the D is decentralized. One onchain share over a real
-          multi-asset reserve. IndexedEx ships many package types so you can compose that design —
-          bond into protocol-owned depth; Policy price-gates mint/burn, or Open with no price
-          restrictions. Protocol DETF is how you earn a share of protocol fees. Not a registered
-          securities ETF.
+          A DETF (Decentralized ETF) is one onchain share over a multi-asset reserve. Stand up
+          your own instance from IndexedEx package types — bond into protocol-owned depth; Policy
+          price-gates mint/burn, or Open with no price restrictions. Deploy on Create; use
+          research notes below for the design. Want protocol fees instead of deploying? Open
+          Protocol DETF.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
+          <Link href="/create">
+            <Button size="sm">Create DETF</Button>
+          </Link>
           {detf ? (
             <Link href={`/research/${detf.slug}`}>
-              <Button size="sm">What is a DETF?</Button>
+              <Button size="sm" variant="secondary">
+                How DETFs work
+              </Button>
             </Link>
           ) : null}
+          <a href="/research/DETF_LITEPAPAPER.pdf" download>
+            <Button size="sm" variant="secondary">
+              Download litepaper PDF
+            </Button>
+          </a>
           <Link href="/staking">
             <Button size="sm" variant="secondary">
               Open Protocol DETF
             </Button>
           </Link>
+        </div>
+      </Card>
+
+      <Card className="mb-8">
+        <p className="text-xs uppercase tracking-widest text-[var(--accent,#4FD44B)]">Litepaper</p>
+        <h2 className="mt-2 text-lg font-medium text-[var(--text-primary,#EDEDED)]">
+          DETF Litepaper — July 2026
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
+          Mechanism write-up with measured appendix: inert to live, Policy vs Open, bond-ledger
+          rewards (capital seigniorage, natural expansion, protocol compound), nested SE mark
+          integrity, and hermetic Single SE scenario results. Not a prospectus and not a yield
+          forecast.
+        </p>
+        <div className="mt-4">
+          <a href="/research/DETF_LITEPAPAPER.pdf" download>
+            <Button size="sm">Download PDF</Button>
+          </a>
         </div>
       </Card>
 

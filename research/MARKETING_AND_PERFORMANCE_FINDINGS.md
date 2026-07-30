@@ -1,7 +1,7 @@
 # IndexedEx — Marketing & Performance Research Findings
 
 **Living document.** Roll-up of hermetic/fork research results for product messaging, docs, and agent handoff.  
-**Updated:** 2026-07-21  
+**Updated:** 2026-07-30  
 
 | Companion | Role |
 |-----------|------|
@@ -20,7 +20,8 @@
 3. **Pool fee is an arb presentation threshold.** Below fee stack → residual can exist with zero fills; above → closer can fill (proven on Uni V2 SE high-vol).  
 4. **DualLiquidity’s primary product story is nested linked liquidity under one share** — deposits **fund nested SE legs and reserve BPT** (v2 volume attribution). Not synthetic DETF seigniorage; not an arb product.  
 5. **SE shares in the DualLiquidity reserve** place holders behind the same Standard Exchange books that attract re-mark traffic and, when residual clears fees, **arb-induced volume** on those legs (SE research chain + v2 inventory into SE shares).  
-6. **Previews can match execution** on closed-form DualLiquidity deposits (exact rates-off; few-wei rates-on). Rates remain optional mark integrity, not the lead claim.
+6. **Previews can match execution** on closed-form DualLiquidity deposits (exact rates-off; few-wei rates-on). Rates remain optional mark integrity, not the lead claim.  
+7. **DETFs are reserve-backed shares with explicit Policy/Open rules** — hermetic Single SE + Uni V2 proves inert→live, synthetic gates, preview honesty, Policy-only natural expansion to bond holders, and protocol compound into protocol BPT. Not APY; Open never expands.
 
 ---
 
@@ -32,6 +33,7 @@
 | **Rate Providers on SE-share Balancer legs** | Nested mid stays fair (`residual ≈ 0`); optional off shows lag | **Strong** — pure R+/R− worlds |
 | **Fee-aware arb story** | Only treat residual as arb when it clears pool fee + path costs | **Strong** on Uni V2 SE (5% research fee ladder); transfer theory to other fees carefully |
 | **DualLiquidity Linked Cross-Version vault** | One share over linked V4+V2 SE legs; deposits fund nested SE inventory + BPT; benefits from SE re-mark / fee-gated arb volume on reserve legs | **Strong** for composition + volume (v2); rates/preview (v1); arb **via SE legs**, not DualLiquidity Mode C |
+| **Single Standard Exchange DETF** | Inert→live via first bond; Policy/Open mint-burn; capital seigniorage vs natural expansion (Policy-only, bond ledger); protocol compound → protocol BPT | **Strong** hermetic D0–D9 — not mainnet yield |
 
 ---
 
@@ -113,6 +115,24 @@
 
 **Primary VP (research stance):** composition/routing under one share; deposits fund nested SEs (**both** linked tokens A and B); optional rates for mid fairness; **structural** benefit from SE re-mark / fee-gated arb volume on reserve SE legs — do **not** lead with DualLiquidity-as-arb.
 
+### 3.5 Single SE DETF Phase 3 (hermetic Uni V2 SE)
+
+| Finding | Result | Primary graph(s) |
+|---------|--------|------------------|
+| Inert until first bond | Mint blocked; warp does not enable mint | `detf/singleSe/figures/F1_lifecycle.png` |
+| First bond → live | Reserve live; protocol depth accounting | F1 |
+| Policy mint/burn bands | Defaults 1.05 / 0.95; post-bond often burn-side | `F2_synthetic_thresholds.png` |
+| Capital mint preview honesty | preview == exec exact (D3) | `F4_preview_vs_execution.png` |
+| Open vs expansion | Open mint/burn ungated on price; **no** natural expansion | `F8_expansion_policy_vs_open.png` |
+| Natural expansion (Policy rich) | Supply/reward ledger ↑ after warp+touch; free-only holders none | F8, `F7_bond_vs_mint.png` |
+| Protocol compound | Protocol NFT BPT principal ↑ after `compoundProtocolRewards` | `F9_protocol_compound.png` |
+
+**Caveat:** Post-bond synthetic may require production free-DETF inventory burns + Uni trades to clear mintThreshold (RQ5) — Uni trades alone insufficient in this fixture. Hermetic only; no APY.
+
+**Detail:** [`scenarios/detf/singleSe/FINDINGS.md`](./scenarios/detf/singleSe/FINDINGS.md) · [`AGENT_RESEARCH_REPORT.md`](./scenarios/detf/singleSe/AGENT_RESEARCH_REPORT.md)  
+**Litepaper:** [`papers/detf-litepaper/LITEOPAPER_DRAFT.md`](./papers/detf-litepaper/LITEOPAPER_DRAFT.md)  
+**Reproduce:** `./research/run_detf_single_se.sh` (do not re-run casually)
+
 ---
 
 ## 4. Graph map (quick lookup)
@@ -131,6 +151,12 @@
 | DualLiquidity volume (common→pair) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeB_depositCommon/volume_by_leg.png` |
 | DualLiquidity share book (Mode A) | `dualLiquidityLinkedCrossVersion/v2/rates_off/modeA_legDemand/share_book_pnl.png` |
 | LP book relative P&L (SE) | `uniswapV2Se/modeA_trade_*/pnl_normalized.png` |
+| DETF inert → live | `detf/singleSe/figures/F1_lifecycle.png` |
+| DETF Policy bands / synthetic | `detf/singleSe/figures/F2_synthetic_thresholds.png` |
+| DETF mint preview == exec | `detf/singleSe/figures/F4_preview_vs_execution.png` |
+| DETF bond vs free holder | `detf/singleSe/figures/F7_bond_vs_mint.png` |
+| DETF expansion Policy vs Open | `detf/singleSe/figures/F8_expansion_policy_vs_open.png` |
+| DETF protocol compound BPT | `detf/singleSe/figures/F9_protocol_compound.png` |
 
 Paths are under `research/out/` (generated; gitignored — regenerate via runners).
 
@@ -151,13 +177,23 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 - **Both linked tokens (tokenA and tokenB) can mint DualLiquidity shares** (peer volume series).  
 - DualLiquidity holders benefit from SE legs in reserve participating in re-mark traffic and fee-gated arb volume (SE research + v2 inventory; not DualLiquidity Mode C fills).
 
+### Ready to cite (DETF — hermetic Single SE)
+
+- **Inert → first bond live** on Policy Single SE + Uni V2 SE (D0–D1).  
+- **Policy gates** at default 1.05 / 0.95; Open has no price gates when live and **never** natural expansion (D2–D5).  
+- **Preview == execution exact** on measured capital mint path (D3).  
+- **Natural expansion** when Policy + mint-rich + time; bond ledger only; free unlocked holders get no airdrop (D7–D8).  
+- **Protocol compound** raises protocol NFT BPT principal (D9).  
+- Full write-up: [`scenarios/detf/singleSe/FINDINGS.md`](./scenarios/detf/singleSe/FINDINGS.md) · litepaper draft [`papers/detf-litepaper/LITEOPAPER_DRAFT.md`](./papers/detf-litepaper/LITEOPAPER_DRAFT.md).
+
 ### Not ready / incomplete
 
 - DualLiquidity “equal flow into all three SE legs on every deposit” — routes are intentionally asymmetric.  
 - DualLiquidity Mode C arb fills at 0.3% fee (stretch only; not required for primary VP).  
 - Multi-protocol SE sameness (Aero/Camelot/Aave Stata Mode A twins).  
-- Full synthetic DETF mint/burn/bond/claim research.  
-- Production APY or live mainnet performance numbers.
+- Multi-family DETF empirics (weighted / mixed-buffer / stable).  
+- Production APY or live mainnet performance numbers.  
+- DETF mainnet / fork performance attribution.
 
 ---
 
@@ -166,9 +202,10 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 | Priority | Campaign | Status | Spec |
 |----------|----------|--------|------|
 | ~~1~~ | DualLiquidity linked volume + share-book (v2) | **COMPLETE** | [`FINDINGS_v2.md`](./scenarios/dualLiquidityLinkedCrossVersion/FINDINGS_v2.md) |
+| ~~3~~ | Single SE DETF Phase 3 (D0–D9 + figures) | **COMPLETE** | [`scenarios/detf/singleSe/FINDINGS.md`](./scenarios/detf/singleSe/FINDINGS.md) |
 | **1** | **CCA Rehearsal** (auction UX + settle + post-clear product path) | **PLANNED** | [PRD](./scenarios/cca/CCA_Rehearsal_PRD.md) · [plan](./scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | 2 | Fee-make `donation` demo | not started | launch plan eng + research |
-| 3 | Single SE DETF inert→live + mint/burn | not started | — |
+| 3 | DETF litepaper public polish (PDF / frontend R4 figures) | **draft ready** | [`papers/detf-litepaper/`](./papers/detf-litepaper/) |
 | 4 | Multi-protocol SE Mode A twins | not started | platform breadth; lower for CCA ads |
 | 5 | DualLiquidity Mode C | optional | residual ≥ 0.3% |
 
@@ -190,5 +227,6 @@ Paths are under `research/out/` (generated; gitignored — regenerate via runner
 | 2026-07-22 | **CCA parameter sheet** + Base config JSON drafted (`docs/CCA_PARAMETER_SHEET.md`, `docs/cca/base-rich-cca-config.json`). |
 | 2026-07-22 | **BattleChain testnet** added to launch promo: Crane + multi-protocol DeFi ports for ethical hackers/builders; parallel to CCA; not capital raise. |
 | 2026-07-22 | **BattleChain Wave A pack** ready: `docs/BATTLECHAIN_LAUNCH_PROMO.md`, announcement drafts, `Script_Promo_BC_Launch.s.sol` (Crane+Uni V2/V3/V4+WETH+Permit2). Live addresses pending broadcast. |
+| 2026-07-30 | **Single SE DETF Phase 3 complete:** hermetic D0–D9 (Policy/Open, expansion, protocol compound) + F1–F4/F7–F9. FINDINGS + litepaper draft under `scenarios/detf/singleSe/` and `papers/detf-litepaper/`. |
 
 *When adding a campaign: append a subsection under §3, add graph row under §4, update §5 ready/not-ready, add a changelog line.*
