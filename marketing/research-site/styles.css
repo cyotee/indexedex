@@ -136,6 +136,11 @@ main,
   color: var(--text);
 }
 
+.nav a[aria-current="page"] {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .nav-muted {
   opacity: 0.75;
 }

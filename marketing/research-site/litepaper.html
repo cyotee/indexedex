@@ -16,11 +16,38 @@
       content="Product report for DETF: Decentralized ETF. Redirecting to How DETFs work."
     />
     <meta name="theme-color" content="#0B1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="bg-grid" aria-hidden="true"></div>
-    <main class="paper-main" style="padding-top: 4rem">
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>IndexedEx</strong>
+          <span>DETF</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="./#product">Product</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./#proof">Proof</a>
+        <a href="./technical-note.html">Builders</a>
+        <a href="./#disclaimers" class="nav-muted">Disclaimers</a>
+      </nav>
+      <a class="btn btn-sm" href="./how-detfs-work.html">Read how it works</a>
+    </header>
+
+    <main class="paper-main">
       <header class="paper-hero">
         <p class="eyebrow">Reading guide</p>
         <h1>The product report moved</h1>
@@ -40,5 +67,21 @@
         </p>
       </header>
     </main>
+
+    <footer class="site-footer">
+      <div><strong>IndexedEx</strong> · DETF</div>
+      <div class="footer-links">
+        <a href="./">Home</a>
+        <a href="./#product">Product</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./#proof">Proof</a>
+        <a href="./technical-note.html">Builders</a>
+        <a href="./#disclaimers">Disclaimers</a>
+      </div>
+      <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
+    </footer>
+    <script>
+      document.getElementById('y').textContent = String(new Date().getFullYear())
+    </script>
   </body>
 </html>
