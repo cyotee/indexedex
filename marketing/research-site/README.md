@@ -1,6 +1,17 @@
-# IndexedEx research site (Vercel)
+# IndexedEx research site
 
 Static public landing for **DETF research** and multi-chain launch narrative.
+
+## Live URL (GitHub Pages)
+
+| Field | Value |
+|-------|--------|
+| **Site** | https://cyotee.github.io/indexedex/ |
+| **Litepaper PDF** | https://cyotee.github.io/indexedex/DETF_LITEPAPAPER.pdf |
+| **Source dir** | this folder (`marketing/research-site/`) |
+| **Workflow** | `.github/workflows/deploy-research-pages.yml` |
+
+Redeploys on push to `main` when this folder (or the workflow) changes, or via **Actions → Deploy research site to GitHub Pages → Run workflow**.
 
 ## Local preview
 
@@ -11,35 +22,15 @@ python3 -m http.server 4173
 # open http://127.0.0.1:4173
 ```
 
-Or with Vercel CLI:
+## Optional: Vercel mirror
 
-```bash
-cd marketing/research-site
-npx vercel dev
-```
-
-## Deploy to Vercel
-
-### Option A — CLI (from this folder)
+The original plan also allowed a **second** Vercel project rooted at `marketing/research-site` (independent of the Next app under `frontend/`). GitHub Pages is the default public research landing; Vercel remains optional.
 
 ```bash
 cd marketing/research-site
 npx vercel          # preview
 npx vercel --prod   # production
 ```
-
-### Option B — Vercel dashboard
-
-1. Import the repo (or this subdirectory as a monorepo root).
-2. Set **Root Directory** to `marketing/research-site`.
-3. Framework Preset: **Other**.
-4. Build Command: leave empty (static).
-5. Output Directory: `.` (or leave default for static).
-6. Deploy.
-
-### Option C — monorepo with existing project
-
-If the main app already uses Vercel from `frontend/`, create a **second** Vercel project pointed at `marketing/research-site` so product UI and research marketing stay independent.
 
 ## Litepaper PDF
 
