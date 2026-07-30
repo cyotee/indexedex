@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>IndexedEx Research — DETF · Decentralized ETF</title>
+    <title>IndexedEx — DETF · Decentralized ETF</title>
     <meta
       name="description"
-      content="IndexedEx research hub. DETF is a decentralized ETF product pattern: reserve-backed seigniorage shares with Policy or Open mint/burn modes on multi-asset AMM infrastructure. Robinhood Chain first, then Base and Ethereum."
+      content="DETF means Decentralized ETF: create your own onchain share over a real multi-asset reserve. Bond, mint, and burn with clear Policy or Open rules. Not a registered fund. No promised yield."
     />
-    <meta property="og:title" content="IndexedEx Research — DETF" />
+    <meta property="og:title" content="IndexedEx — DETF · Decentralized ETF" />
     <meta
       property="og:description"
-      content="Decentralized ETF infrastructure. Bond. Mint. Policy or Open. Research-first launch."
+      content="Build your own onchain DETF. One share over a real reserve. Clear mint, burn, and bond rules."
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -33,38 +33,39 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-text">
           <strong>IndexedEx</strong>
-          <span>Research</span>
+          <span>DETF</span>
         </span>
       </a>
       <nav class="nav">
-        <a href="#detf">DETF</a>
-        <a href="#why">Why here</a>
+        <a href="#product">Product</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="#why">Why now</a>
         <a href="#roadmap">Roadmap</a>
-        <a href="#research">Research</a>
-        <a href="./litepaper.html">Litepaper</a>
+        <a href="#proof">Proof</a>
         <a href="#disclaimers" class="nav-muted">Disclaimers</a>
       </nav>
-      <a class="btn btn-sm" href="./litepaper.html">Read litepaper</a>
+      <a class="btn btn-sm" href="./how-detfs-work.html">Read how it works</a>
     </header>
 
     <main id="top">
       <section class="hero">
-        <p class="eyebrow">Research-first · Product next</p>
+        <p class="eyebrow">DETF = Decentralized ETF · create your own</p>
         <h1>
-          The <em>decentralized ETF</em><br />
-          for multi-asset onchain reserves.
+          Build your own onchain <em>DETF</em><br />
+          — one share over a real reserve.
         </h1>
         <p class="lede">
-          <strong>DETF</strong> is IndexedEx’s premier product: a reserve-backed share with
-          bonding into protocol-owned depth. Primary mint/burn is
-          <strong> Policy</strong>-gated on synthetic price by default, or deploy-time
-          <strong> Open</strong> with no price restrictions. Not a black-box rebalancer.
+          <strong>DETF</strong> means <strong>Decentralized ETF</strong> — the D is decentralized,
+          not a registered securities fund. You get one transferable share over a real multi-asset
+          onchain reserve. Pricing and mint/burn come from that reserve, not an admin spreadsheet.
+          The main product is standing up <strong>your own DETFs</strong> from several designs.
+          Want a share of protocol fees? That path is <strong>Protocol DETF</strong> — same design class,
+          amounts not guaranteed.
         </p>
         <div class="hero-ctas">
-          <a class="btn" href="./litepaper.html">Read litepaper</a>
-          <a class="btn btn-ghost" href="./DETF_LITEPAPAPER.pdf" download>Optional PDF</a>
-          <a class="btn btn-ghost" href="#detf">What is a DETF?</a>
-          <a class="btn btn-ghost" href="#research">Measured findings</a>
+          <a class="btn" href="./how-detfs-work.html">Read how DETFs work</a>
+          <a class="btn btn-ghost" href="#product">What is a DETF?</a>
+          <a class="btn btn-ghost" href="#proof">What we verified</a>
         </div>
         <dl class="hero-meta">
           <div>
@@ -80,8 +81,8 @@
             <dd>Other EVM chains</dd>
           </div>
           <div>
-            <dt>Stack</dt>
-            <dd>Crane · Balancer V3 · vaults</dd>
+            <dt>Status</dt>
+            <dd>Product report · app next</dd>
           </div>
         </dl>
       </section>
@@ -89,50 +90,70 @@
       <section class="strip" aria-label="Positioning">
         <p>
           Built by the <strong>original developer of Olympus</strong>.
-          A DETF is how you <strong>launch your own OHM-class unit</strong> for a chosen reserve —
-          productized seigniorage, not a one-off protocol.
+          A DETF is how you launch your own reserve-backed unit with clear
+          <strong>bond, mint, and burn</strong> rules — productized, not a one-off protocol.
+          Not OlympusDAO governance and not the OHM token.
         </p>
       </section>
 
-      <section id="detf" class="section">
+      <section id="product" class="section">
         <div class="section-head">
-          <p class="eyebrow">Premier product</p>
+          <p class="eyebrow">Product</p>
           <h2>DETF — Decentralized ETF</h2>
           <p class="section-lede">
-            “ETF-shaped” intent: one share over a basket of reserve legs.
-            Onchain mechanics: the diamond <em>is</em> the share ERC-20, the reserve lives in a
-            Balancer V3 weighted pool, and mint/burn rules are priced from that pool —
-            with deploy-time <strong>Policy</strong> or <strong>Open</strong> modes.
+            ETF-shaped intent: one share over a basket. Onchain reality: a real reserve you can
+            inspect, rules fixed at launch, and no black-box rebalancer rewriting your book.
           </p>
         </div>
 
         <div class="grid-3">
           <article class="card">
-            <h3>Bond</h3>
+            <h3>One share, real basket</h3>
             <p>
-              First bond takes an instance from <strong>inert → live</strong> and deepens
-              protocol-owned reserve. Bond terms come from onchain fee/oracle configuration —
-              not discretionary admin favor. Until live, seigniorage mint/burn stay blocked
-              in every mode. Bond positions can earn free DETF rewards; free unlocked holders do not.
+              Hold one token that stands for a configured onchain reserve — strategy vaults and
+              related assets you can name at deploy. Basket exposure without a discretionary
+              portfolio manager.
             </p>
           </article>
           <article class="card">
-            <h3>Mint &amp; burn</h3>
+            <h3>Bond to open the market</h3>
             <p>
-              Pricing engine = the reserve pool, not an off-pool dashboard.
-              <strong>Policy (default):</strong> mint only when synthetic price is strictly above
-              the mint threshold; burn only below the burn threshold (defaults commonly ±5%).
-              <strong>Open:</strong> no price restrictions on mint or burn; fees still apply;
-              <strong>never</strong> natural expansion. Zero thresholds never mean Open.
+              New units start <strong>closed</strong>. The first bond opens them and builds shared
+              reserve depth. Bond holders can earn free DETF rewards while locked; free unlocked
+              holders do not get automatic expansion.
             </p>
           </article>
           <article class="card">
-            <h3>Immutable by design</h3>
+            <h3>Clear rules or open rules</h3>
             <p>
-              After deploy, DETF instances are <strong>unowned</strong>: no instance owner,
-              no diamondCut, no admin pause surface for normal operation. Flawed config →
-              abandon and ship a new package. Protocol bond rewards can compound into more
-              protocol-owned reserve BPT (not a yield coupon).
+              <strong>Policy (default):</strong> mint only when the unit is rich vs its reserve;
+              burn only when cheap (commonly about ±5%).
+              <strong>Open:</strong> mint and burn without those price limits. Fees may still apply.
+              Neither mode promises a peg or return.
+            </p>
+          </article>
+        </div>
+
+        <div class="grid-3" style="margin-top: 1rem">
+          <article class="card">
+            <h3>Rules that don’t move under you</h3>
+            <p>
+              After launch, nobody “owns” the instance to rewrite policy or pause for favor.
+              Bad config means abandon the unit and deploy a new one — not silent edits.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Create your own (premier path)</h3>
+            <p>
+              IndexedEx’s main offer is many DETF designs you can stand up yourself — single
+              strategy, multi-strategy weighted, stable multi, mixed buffer, and more as they ship.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Protocol DETF (fees path)</h3>
+            <p>
+              Same design class, framed as a way to <strong>earn a share of protocol fees</strong>.
+              Not a separate product category and not guaranteed yield.
             </p>
           </article>
         </div>
@@ -141,64 +162,89 @@
           <div class="compare-col">
             <h3>What a DETF is</h3>
             <ul>
-              <li>Share token over a multi-asset (or single-leg) onchain reserve</li>
-              <li>Bonding path into protocol-owned liquidity</li>
-              <li>Deploy-time Policy (price-gated) or Open (no price gates)</li>
-              <li>Closed-form routes with preview ≈ execution on supported paths</li>
-              <li>Policy-only natural expansion to bond holders when synthetically rich</li>
-              <li>Protocol compound of protocol bond rewards into reserve BPT</li>
-              <li>Composable with Standard Exchange vaults (opaque protocol legs)</li>
-              <li>Deployable pattern — many DETFs, many baskets</li>
+              <li>One onchain share over a multi-asset (or single-leg) reserve</li>
+              <li>Bond path that opens the unit and deepens shared reserve</li>
+              <li>Deploy-time Policy (price limits) or Open (no price limits)</li>
+              <li>Pricing from the reserve itself, not a private dashboard</li>
+              <li>Many units, many baskets — a deployable product pattern</li>
+              <li>Bond rewards for lockers; optional protocol fee path</li>
             </ul>
           </div>
           <div class="compare-col muted">
             <h3>What a DETF is not</h3>
             <ul>
               <li>A registered securities ETF or fund share</li>
-              <li>Legal ownership of offchain underlyings</li>
-              <li>Guaranteed rebase yield, peg, or “(3,3)” performance</li>
+              <li>Legal ownership of stocks or other offchain underlyings</li>
+              <li>Guaranteed yield, peg, or “(3,3)” performance</li>
               <li>Admin-tunable monetary policy after launch</li>
-              <li>Open with price gates or natural expansion (neither)</li>
-              <li>Expansion airdrop to free unlocked DETF holders</li>
-              <li>A promise of tight spreads on thin legs</li>
+              <li>Automatic expansion airdrops to free unlocked holders</li>
+              <li>A promise of tight spreads on thin markets</li>
             </ul>
           </div>
         </div>
       </section>
 
-      <section id="litepaper" class="section section-alt">
+      <section id="how" class="section section-alt">
         <div class="section-head">
-          <p class="eyebrow">Publication</p>
-          <h2>DETF litepaper</h2>
-          <p class="section-lede">
-            Mechanism paper with measured appendix: how DETFs work, Policy vs Open, bond-ledger
-            rewards, nested mark integrity, and hermetic Single SE scenario results.
-            Not a prospectus and not a yield forecast.
-          </p>
+          <p class="eyebrow">How it works</p>
+          <h2>Three steps users actually take</h2>
         </div>
+        <ol class="timeline">
+          <li>
+            <span class="t-phase">1</span>
+            <div>
+              <h3>Bond</h3>
+              <p>
+                Take a closed unit live and put capital into shared reserve depth.
+                Further bonds can lock terms set onchain — not discretionary admin favor.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="t-phase">2</span>
+            <div>
+              <h3>Mint or burn</h3>
+              <p>
+                When the unit is live, exchange into or out of DETF against the reserve under
+                Policy or Open rules. Fees may apply. Quotes should match what executes on
+                supported paths.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="t-phase">3</span>
+            <div>
+              <h3>Hold, claim, or trade</h3>
+              <p>
+                Hold the share, claim bond rewards while locked where wired, or trade on a
+                secondary market when one exists. Nothing here invents an APY.
+              </p>
+            </div>
+          </li>
+        </ol>
         <div class="callout">
-          <h3>Download</h3>
+          <h3>Full product report</h3>
           <p>
-            <a class="btn" href="./litepaper.html">Read on the web</a>
-            <a class="btn btn-ghost" href="./DETF_LITEPAPAPER.pdf" download style="margin-left:0.5rem">Optional PDF</a>
-            <span class="fine" style="margin-left: 0.75rem">HTML preferred · PDF optional</span></p>
-          <ul>
-            <li>Synthetic price, inert → live, Policy / Open gates</li>
-            <li>Capital seigniorage vs natural expansion vs protocol compound</li>
-            <li>Hermetic D0–D9 findings + nested SE rate-provider appendix</li>
-            <li>Explicit non-claims: no mainnet APY, peg, or registered-fund status</li>
-          </ul>
+            Modes, bond rewards, reserve honesty, DETF types, and plain-language risks —
+            without contract names or simulation scripts.
+          </p>
+          <p style="margin-top: 0.85rem">
+            <a class="btn" href="./how-detfs-work.html">Read how DETFs work</a>
+            <a class="btn btn-ghost" href="./technical-note.html" style="margin-left: 0.5rem"
+              >For builders</a
+            >
+          </p>
         </div>
       </section>
 
-      <section id="why" class="section section-alt">
+      <section id="why" class="section">
         <div class="section-head">
           <p class="eyebrow">Why this chain first</p>
-          <h2>Multi-asset markets need multi-asset infrastructure</h2>
+          <h2>Multi-asset markets need multi-asset products</h2>
           <p class="section-lede">
             Robinhood Chain is a natural first home for products that treat
-            <strong>baskets and market-linked ERC-20s</strong> as first-class reserve material —
-            not an afterthought bolted onto a single-pair swap UI.
+            <strong>baskets and market-linked tokens</strong> as first-class reserve material —
+            not an afterthought bolted onto a single-pair swap screen.
           </p>
         </div>
 
@@ -208,32 +254,32 @@
             <h3>Decentralized ETF on a multi-asset L2</h3>
             <p>
               Where liquid market-linked tokens and crypto rails coexist, a DETF can express
-              sector baskets, dual market×ETH units, or simple single-leg demos — each as its
-              own reserve-backed share with transparent mint/burn rules (Policy or Open).
+              sector baskets, dual market×crypto units, or simple single-leg demos — each as its
+              own reserve-backed share with transparent mint and burn rules.
             </p>
             <p class="fine">
               Public copy describes <strong>onchain economic exposure</strong>. Jurisdiction and
-              transfer rules of underlying assets remain issuer/venue-defined; DETF does not
+              transfer rules of underlying assets remain issuer- and venue-defined; a DETF does not
               rewrite them.
             </p>
           </article>
           <article class="card card-lg">
             <p class="card-kicker">Infrastructure gap</p>
-            <h3>Weighted reserves, not just pairs</h3>
+            <h3>A real multi-asset reserve, not just pairs</h3>
             <p>
-              Spot pair AMMs are table stakes. DETFs need
-              <strong>Balancer V3-class multi-asset pools</strong> as the pricing and reserve engine.
-              IndexedEx ships vault orchestration + DETF packages on top of that stack.
+              Pair swaps are table stakes. A DETF needs a real multi-asset reserve as the pricing
+              engine — balances, weights, and fees you can inspect. IndexedEx ships vault
+              orchestration and DETF designs on top of that stack.
             </p>
             <p class="fine">
-              We add multi-asset reserve infrastructure for seigniorage products —
-              we do not claim to “replace” existing AMMs on any chain.
+              We add multi-asset reserve infrastructure for these products. We do not claim to
+              replace every AMM on every chain.
             </p>
           </article>
         </div>
       </section>
 
-      <section id="roadmap" class="section">
+      <section id="roadmap" class="section section-alt">
         <div class="section-head">
           <p class="eyebrow">Deployment path</p>
           <h2>Chain roadmap</h2>
@@ -244,8 +290,7 @@
             <div>
               <h3>Robinhood Chain</h3>
               <p>
-                Product home for flagship DETF research demos and first public infrastructure.
-                Multi-asset reserve narrative leads.
+                First public home for flagship DETF demos and multi-asset reserve narrative.
               </p>
             </div>
           </li>
@@ -254,7 +299,7 @@
             <div>
               <h3>Base + Ethereum</h3>
               <p>
-                Capital formation, deep liquidity rails, and Superchain-adjacent distribution.
+                Capital formation, deeper liquidity rails, and broader distribution.
                 Same DETF pattern; richer markets.
               </p>
             </div>
@@ -264,74 +309,73 @@
             <div>
               <h3>Additional EVM chains</h3>
               <p>
-                Deterministic CREATE3-style deploy via Crane so addresses and packages stay coherent
-                as the graph expands.
+                Same product pattern on more chains as markets mature — coherent deploys, not
+                one-off rewrites per chain.
               </p>
             </div>
           </li>
         </ol>
       </section>
 
-      <section id="research" class="section">
+      <section id="proof" class="section">
         <div class="section-head">
           <p class="eyebrow">Evidence before hype</p>
-          <h2>Research spine</h2>
+          <h2>What we verified</h2>
           <p class="section-lede">
-            Marketing claims should cite measured behavior. Hermetic Single SE DETF scenarios
-            (D0–D9) and prior Uni V2 SE rate-provider matrices — not performance of a live mainnet
-            DETF portfolio and not APY advertising.
+            Claims should rest on measured behavior in controlled runs — not invented mainnet APYs
+            or performance of a live portfolio.
           </p>
         </div>
 
         <div class="grid-3">
           <article class="card">
-            <p class="card-kicker">DETF · measured</p>
-            <h3>Inert → first bond live</h3>
+            <p class="card-kicker">Lifecycle</p>
+            <h3>Closed until first bond</h3>
             <p>
-              Policy Single SE deploys inert; user mint blocked until first bond creates the reserve.
-              Warp alone does not enable mint or expansion.
+              Units start closed. User mint stays blocked until the first successful bond opens
+              the reserve. Waiting alone does not open the market.
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">DETF · measured</p>
-            <h3>Policy gates · Open never expands</h3>
+            <p class="card-kicker">Modes</p>
+            <h3>Policy limits · Open does not expand</h3>
             <p>
-              Defaults resolve mint 1.05 / burn 0.95. Open has no price gates when live and
-              <strong>never</strong> runs natural expansion. Policy expands only when mint-rich,
-              to the bond reward ledger only.
+              Default Policy uses rich/cheap bands (commonly about ±5%). Open has no price
+              restrictions when live and does <strong>not</strong> run extra supply expansion.
+              Policy expansion, when it runs, goes to bond holders only.
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">DETF · measured</p>
-            <h3>Preview honesty · protocol compound</h3>
+            <p class="card-kicker">Honesty</p>
+            <h3>Quote matched execution</h3>
             <p>
-              Closed-form capital mint: preview equaled execution exactly on the measured path.
-              Protocol compound raises protocol-owned BPT principal — not a claim coupon.
+              On the supported capital mint path we measured, the previewed amount equaled the
+              executed amount. That is a trust bar — not a yield claim.
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">SE · measured</p>
-            <h3>SE vaults re-mark with markets</h3>
+            <p class="card-kicker">Marks</p>
+            <h3>Nested vaults re-mark with markets</h3>
             <p>
-              Standard Exchange vault share rates track underlying pool demand. Nested Balancer legs
-              that use rate providers keep mids fair; without rates, mids lag as volume scales.
+              Strategy vault shares can track underlying demand when re-marking is wired.
+              Without it, mid prices can lag as volume scales.
             </p>
           </article>
           <article class="card">
-            <p class="card-kicker">SE · measured</p>
-            <h3>Rates ≠ free yield</h3>
+            <p class="card-kicker">Fees</p>
+            <h3>Lag is not free profit</h3>
             <p>
-              Rate providers are a <strong>mark-integrity</strong> control. Residual lag is not a
-              free arb until edge clears pool fees and path costs.
+              Mark lag is a fairness issue, not an arb coupon. After pool fees and path costs,
+              modest lag often does not pay to close.
             </p>
           </article>
           <article class="card">
             <p class="card-kicker">Limitation</p>
-            <h3>Post-bond synthetic drive</h3>
+            <h3>Opening is not “always mint-rich”</h3>
             <p>
-              In hermetic Single SE, Uni trades alone often cannot clear the mint band after first
-              bond (free-DETF dilution). Production inventory paths matter — documented, not a
-              license to fake prices.
+              After the first bond, the unit may sit cheap vs its bands. Making it rich enough
+              to mint under Policy can require real inventory activity — not only trading the
+              underlying pool. Documented, not hidden.
             </p>
           </article>
         </div>
@@ -340,65 +384,63 @@
           <h3>Where to go deeper</h3>
           <ul>
             <li>
-              <a href="./litepaper.html"><strong>Litepaper (HTML)</strong></a>
-              — full mechanism write-up with figures and measured results
-              · <a href="./DETF_LITEPAPAPER.pdf" download>optional PDF</a>
+              <a href="./how-detfs-work.html"><strong>How DETFs work</strong></a>
+              — full product report with figures and plain-language risks
             </li>
             <li>
-              More DETF family scenarios and mainnet validation are on the research roadmap —
-              this page stays claim-safe until they ship.
+              <a href="./technical-note.html"><strong>Technical note</strong></a>
+              — mechanism detail and measured tables for builders (optional)
+            </li>
+            <li>
+              Live app addresses and audits will be linked when published. This site stays
+              claim-safe until then.
             </li>
           </ul>
         </div>
       </section>
 
-      <section class="section">
+      <section class="section section-alt">
         <div class="section-head">
           <p class="eyebrow">Mental model</p>
-          <h2>From one OHM to many</h2>
+          <h2>From one global unit to many</h2>
         </div>
         <div class="map">
           <div class="map-row">
-            <span class="map-from">Protocol token as money</span>
+            <span class="map-from">One protocol money unit</span>
             <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">DETF share <em>is</em> the currency of that reserve</span>
+            <span class="map-to">Many DETFs — one share currency per basket</span>
           </div>
           <div class="map-row">
-            <span class="map-from">Treasury / reserves</span>
+            <span class="map-from">Opaque treasury story</span>
             <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">Balancer V3 weighted reserve (transparent pool)</span>
+            <span class="map-to">Visible multi-asset reserve that prices the share</span>
           </div>
           <div class="map-row">
-            <span class="map-from">Bonding → POL</span>
+            <span class="map-from">Bonding into shared depth</span>
             <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">Bond NFT + first bond → live</span>
+            <span class="map-to">First bond opens the unit; more bonds deepen it</span>
           </div>
           <div class="map-row">
-            <span class="map-from">Seigniorage policy</span>
+            <span class="map-from">Fixed or open mint rules</span>
             <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">Policy thresholds on synthetic price — or Open (no price gates)</span>
-          </div>
-          <div class="map-row">
-            <span class="map-from">One global unit</span>
-            <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">Many DETFs — one monetary unit per basket</span>
+            <span class="map-to">Policy price bands — or Open with no price limits</span>
           </div>
         </div>
         <p class="fine center">
-          Category language, not affiliation: not OlympusDAO governance, not the OHM token.
+          Category language only: not OlympusDAO governance, not the OHM token.
         </p>
       </section>
 
       <section id="follow" class="section cta-section">
         <div class="cta-card">
           <p class="eyebrow">Stay close</p>
-          <h2>Follow the research launch</h2>
+          <h2>Follow the product launch</h2>
           <p>
-            We’re publishing the DETF story in public: mechanics first, then deploy addresses,
+            We’re publishing the DETF story in public: how it works first, then deploy addresses,
             then markets. No invented APYs.
           </p>
           <div class="hero-ctas">
-            <a class="btn" href="./litepaper.html">Read litepaper</a>
+            <a class="btn" href="./how-detfs-work.html">Read how DETFs work</a>
             <a
               class="btn btn-ghost"
               href="https://github.com/cyotee/indexedex"
@@ -423,26 +465,26 @@
           </li>
           <li>
             <strong>No performance promises.</strong> Nothing here is investment, legal, or tax advice.
-            Smart contracts and markets involve loss of funds. Mint/burn thresholds and Policy/Open
-            modes do not guarantee peg stability, liquidity, or returns.
+            Smart contracts and markets involve loss of funds. Mint/burn rules and Policy/Open modes
+            do not guarantee peg stability, liquidity, or returns.
           </li>
           <li>
-            <strong>Open mode removes price gates only.</strong> Primary mint and burn are not
-            restricted by synthetic price. Fees still apply. Open never runs natural expansion.
-            Modes are not a peg or return guarantee.
+            <strong>Open mode removes price limits only.</strong> Primary mint and burn are not
+            restricted by reserve-based price. Fees still apply. Open never runs natural supply
+            expansion. Modes are not a peg or return guarantee.
           </li>
           <li>
-            <strong>Expansion and compound are not yield products.</strong> Natural expansion
-            (Policy only, when mint-rich) accrues to bond holders. Protocol compound deepens
-            protocol BPT and can improve claim backing — amounts are not guaranteed.
+            <strong>Rewards and reserve growth are mechanisms, not yield products.</strong>
+            Extra supply under Policy (when rich) accrues to bond holders. Protocol rewards can
+            deepen shared reserve over time — amounts are not guaranteed.
           </li>
           <li>
             <strong>Eligibility.</strong> Some underlying tokens may be restricted by issuer or venue
             rules. Users are responsible for compliance in their jurisdiction.
           </li>
           <li>
-            <strong>Status.</strong> This site advertises research and product direction. Live
-            contract addresses and audits will be linked when published.
+            <strong>Status.</strong> This site explains product direction. Live contract addresses
+            and audits will be linked when published.
           </li>
         </ul>
       </section>
@@ -450,14 +492,14 @@
 
     <footer class="site-footer">
       <div>
-        <strong>IndexedEx</strong> Research · DETF
+        <strong>IndexedEx</strong> · DETF
       </div>
       <div class="footer-links">
-        <a href="#detf">DETF</a>
-        <a href="./litepaper.html">Litepaper</a>
-        <a href="#research">Research</a>
+        <a href="#product">Product</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./technical-note.html">Builders</a>
+        <a href="#proof">Proof</a>
         <a href="#disclaimers">Disclaimers</a>
-        <a href="./DETF_LITEPAPAPER.pdf" download>PDF</a>
       </div>
       <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
     </footer>

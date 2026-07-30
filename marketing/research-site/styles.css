@@ -770,3 +770,51 @@ main {
 .paper-end {
   margin-top: 2.5rem;
 }
+
+.paper-toc {
+  margin: 0 0 2rem;
+  padding: 1.1rem 1.25rem 1.2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.paper-toc .toc-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.paper-toc ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--muted);
+}
+
+.paper-toc li + li {
+  margin-top: 0.35rem;
+}
+
+.paper-toc a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.paper-toc a:hover {
+  color: var(--accent);
+}
+
+.paper-disclaimers {
+  margin-top: 2.5rem;
+  padding-top: 0.5rem;
+}
+
+.paper-body .lede a,
+.paper-hero .lede a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

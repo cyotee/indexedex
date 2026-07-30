@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DETF Technical Note — IndexedEx (builders)</title>
+    <meta
+      name="description"
+      content="Optional builder note: DETF mechanisms, measured tables, and methodology. Prefer How DETFs work for the product story."
+    />
+    <meta property="og:title" content="DETF Technical Note — IndexedEx" />
+    <meta
+      property="og:description"
+      content="Mechanism detail and measured appendix for builders. Product story lives on How DETFs work."
+    />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#0B1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="paper-page">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>IndexedEx</strong>
+          <span>DETF</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="./">Home</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./technical-note.html" aria-current="page">Builders</a>
+        <a href="./#disclaimers" class="nav-muted">Disclaimers</a>
+      </nav>
+      <a class="btn btn-sm" href="./how-detfs-work.html">Product report</a>
+    </header>
+
+    <main class="paper-main">
+      <header class="paper-hero">
+        <p class="eyebrow">For builders · optional depth · July 2026</p>
+        <h1>DETF technical note</h1>
+        <p class="lede">
+          Mechanism detail, measured tables, and methodology. Prefer
+          <a href="./how-detfs-work.html">How DETFs work</a> if you want the product story without
+          lab labels or formulas.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn" href="./how-detfs-work.html">How DETFs work</a>
+          <a class="btn btn-ghost" href="./">Home</a>
+          <a class="btn btn-ghost" href="./DETF_LITEPAPAPER.pdf" download>Optional PDF</a>
+        </div>
+        <p class="fine paper-note">
+          This page keeps the prior mechanism write-up for engineers and researchers. The PDF is an
+          offline snapshot of similar technical content and may lag the customer product report.
+        </p>
+      </header>
+
+      <article class="paper-body">
+
+<h2 id="abstract">Abstract</h2>
+<p>A <strong>DETF</strong> (<strong>D</strong>ecentralized <strong>ETF</strong>) is an onchain product pattern: one ERC-20 share over a real multi-asset reserve, with mint, burn, and synthetic valuation derived from that same reserve—not from an admin spreadsheet.</p>
+<p>Instances deploy <strong>inert</strong>, go <strong>live</strong> on first successful bond, and choose deploy-time <strong>Policy</strong> (synthetic price gates primary mint and burn) or <strong>Open</strong> (no price gates when live). Nested Standard Exchange (SE) legs can keep marks fair under underlying demand when rate providers are on. Residual lag under rates-off is real, but it is not free arbitrage once fees bind.</p>
+<p>This paper formalizes synthetic price, Policy and Open gates, <strong>natural supply expansion</strong> (Policy and mint-rich only; bond ledger only), and <strong>protocol compound</strong> (protocol bond rewards sink into protocol-owned reserve BPT). Hermetic Single SE DETF scenarios and prior Uni V2 SE rate-provider matrices supply measured support.</p>
+<p><strong>This is not a prospectus and not a yield forecast.</strong> We do not claim mainnet APY, peg guarantees, registered-fund status, or expansion yields for free unlocked holders.</p>
+<hr />
+<h2 id="1-introduction">1. Introduction</h2>
+<p>ETF-shaped demand wants one transferable share over a basket. Onchain attempts often fail in predictable ways: discretionary managers, off-pool “NAV” that disagrees with the market, opaque rebalancers, or nested vault legs that freeze mid prices while underlyings move.</p>
+<p>A DETF answers with:</p>
+<ul>
+<li><strong>Reserve-pool pricing</strong> as the single engine for primary mint, burn, and synthetic valuation</li>
+<li><strong>Immutable, unowned instances</strong> after deploy for normal operation</li>
+<li>An explicit <strong>inert -&gt; live</strong> lifecycle via bonding</li>
+<li>Nested SE vaults plus Balancer rate providers for mark integrity on vault-share legs</li>
+<li>Bond-ledger rewards for capital seigniorage and (on Policy units) natural expansion</li>
+<li>Protocol compound that sinks protocol rewards into reserve BPT</li>
+</ul>
+<p>Merits are stated as <strong>properties</strong>, not performance promises. Measured results come from production-first hermetic research—not mocks of the subject under test.</p>
+<hr />
+<h2 id="2-background-nested-standard-exchange">2. Background: nested Standard Exchange</h2>
+<p>Standard Exchange vaults wrap protocol liquidity (for example Uni V2 LP) behind deposit and redeem share interfaces. When a Balancer pool holds SE shares as legs, two deploy intents matter:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Intent</th>
+<th>Effect under Uni demand</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rates on (R+)</strong></td>
+<td>Pool mids re-mark with SE redeem rates; residual approx  0</td>
+</tr>
+<tr>
+<td><strong>Rates off (R−)</strong></td>
+<td>Mids can freeze while rates track Uni; residual grows</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Residual</strong> (research fairness metric):</p>
+<pre><code>residual approx  mid_index * rate_index − 1
+</code></pre>
+<p>Residual measures mark lag. It is <strong>not</strong> profit. A closer must clear Balancer swap fee, SE usage fee, impact, and dust. In the SE research package, the Balancer constant-product fee was <strong>5%</strong>—a hard economic filter.</p>
+<p>Under baseline Uni-only demand: R+ residual approx  0; R− residual ~+/-0.24%. At extreme volume (size mul=25, 48 steps): R− residual ~10–12%, and Mode C fills appear once residual exceeds fee scale.</p>
+<p>We cite industry work on LVR and adverse selection for <em>why</em> fees and inventory matter. We do not re-derive that theory here.</p>
+<hr />
+<h2 id="3-how-a-detf-works">3. How a DETF works</h2>
+<h3 id="31-roles-and-reserve">3.1 Roles and reserve</h3>
+<p>The DETF diamond <strong>is</strong> the share ERC-20. A typical Single Standard Exchange composition:</p>
+<ul>
+<li>One <strong>SE vault</strong> and its <strong>vault share</strong></li>
+<li>A Balancer V3 <strong>weighted reserve</strong> including the DETF self-leg and external legs</li>
+<li>A <strong>bond NFT vault</strong> for locked principal and reward accounting</li>
+<li>Optional <strong>rebasing claim</strong> on protocol-owned reserve BPT</li>
+</ul>
+<p>Production DETF code talks to Standard Exchange interfaces, share ERC-20s, and Balancer—not venue brands baked into the product definition.</p>
+<h3 id="32-synthetic-price">3.2 Synthetic price</h3>
+<pre><code>p_syn = (rate-scaled claim of owned reserve BPT on pool balances)
+        / (DETF totalSupply)
+</code></pre>
+<p>Bond-vault BPT is included when peer families do. The abstract Policy peg narrative is <strong>1e18</strong>. <strong>All mint and burn threshold gates use synthetic price</strong>—never spot alone.</p>
+<h3 id="33-lifecycle-inert-live">3.3 Lifecycle: inert -&gt; live</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>State</th>
+<th>User primary mint</th>
+<th>Protocol depth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inert</strong></td>
+<td>Blocked</td>
+<td>Not live</td>
+</tr>
+<tr>
+<td><strong>Live</strong> (after first successful bond)</td>
+<td>Subject to Policy or Open</td>
+<td>Bond principal in protocol accounting</td>
+</tr>
+</tbody>
+</table></div>
+<p>First bond is <strong>synthetically ungated</strong>. Hermetic research confirms: inert deploy blocks mint; warp while inert does not enable mint; first bond takes the unit live and sets the reserve pool.</p>
+<figure class="paper-figure"><img src="./figures/F1_lifecycle.png" alt="Lifecycle: inert Policy deploy, first bond, live reserve." loading="lazy" /><figcaption>Lifecycle: inert Policy deploy, first bond, live reserve.</figcaption></figure>
+<h3 id="34-policy-vs-open">3.4 Policy vs Open</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Policy</strong> (default)</th>
+<th><strong>Open</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mint when live</td>
+<td><code>p_syn &gt; mintThreshold</code></td>
+<td>Always (route rules still apply)</td>
+</tr>
+<tr>
+<td>Burn when live</td>
+<td><code>p_syn &lt; burnThreshold</code></td>
+<td>Always</td>
+</tr>
+<tr>
+<td>Defaults if args are zero</td>
+<td>mint 1.05e18 / burn 0.95e18</td>
+<td>Same stored defaults; gates ignore them</td>
+</tr>
+<tr>
+<td>Natural expansion</td>
+<td>When mint-rich + time</td>
+<td><strong>Never</strong></td>
+</tr>
+<tr>
+<td>Zero args imply Open?</td>
+<td><strong>No</strong></td>
+<td>Mode must be explicit at deploy</td>
+</tr>
+</tbody>
+</table></div>
+<p>Hermetic Single SE results: after first bond, synthetic often sits burn-side of peg under default thresholds, so Policy mint is blocked until a rich path is established; Open mint and burn execute when live without synthetic gates.</p>
+<figure class="paper-figure"><img src="./figures/F2_synthetic_thresholds.png" alt="Synthetic price versus default mint and burn bands under Policy." loading="lazy" /><figcaption>Synthetic price versus default mint and burn bands under Policy.</figcaption></figure>
+<h3 id="35-immutability">3.5 Immutability</h3>
+<p>True DETF instances are <strong>immutable and unowned</strong> after deploy for normal operation: no instance owner, no discretionary diamond cut, no admin pause as the product model. Flawed config means abandon and redeploy—not silent rewrites of a live instance.</p>
+<h3 id="36-routes-and-preview-honesty">3.6 Routes and preview honesty</h3>
+<p>Preferred routes are closed-form <strong>vault shares &lt;-&gt; DETF</strong>. Rate-asset-as-mint-input is family-scoped only. Cross-share routes on the DETF surface are out of scope; use Balancer or the Standard Exchange router on the reserve pool.</p>
+<p>On the measured capital mint path, <strong>preview amount equaled execution amount exactly</strong> (difference zero).</p>
+<figure class="paper-figure"><img src="./figures/F4_preview_vs_execution.png" alt="Closed-form capital mint: preview versus execution." loading="lazy" /><figcaption>Closed-form capital mint: preview versus execution.</figcaption></figure>
+<hr />
+<h2 id="4-rewards-three-paths-three-labels">4. Rewards: three paths, three labels</h2>
+<p>Keep capital seigniorage, natural expansion, and protocol compound separate.</p>
+<h3 id="41-capital-seigniorage">4.1 Capital seigniorage</h3>
+<p>External capital (SE shares) mints DETF when gates allow. Usage fees and inventory splits feed the <strong>bond reward ledger</strong> as the family defines. This is <strong>not</strong> expansion.</p>
+<h3 id="42-natural-supply-expansion">4.2 Natural supply expansion</h3>
+<p>When <strong>Policy</strong>, <strong>live</strong>, and <strong><code>p_syn &gt; mintThreshold</code></strong>, free DETF may mint over time into the bond reward vault (premium-closure formula; deploy-time rate and catch-up caps). Distribution follows <strong>bond effective shares</strong>. Free unlocked DETF holders receive <strong>none</strong>. <strong>Open never expands.</strong> Inert and non-rich units do not expand.</p>
+<p>Hermetic results: Open supply and pending rewards are unchanged over long warps; Policy expands when rich after time and a product touch; free-only holders do not receive expansion airdrops.</p>
+<figure class="paper-figure"><img src="./figures/F8_expansion_policy_vs_open.png" alt="Natural expansion under Policy when rich versus Open control." loading="lazy" /><figcaption>Natural expansion under Policy when rich versus Open control.</figcaption></figure>
+<figure class="paper-figure"><img src="./figures/F7_bond_vs_mint.png" alt="Bond reward path versus free unlocked DETF holder." loading="lazy" /><figcaption>Bond reward path versus free unlocked DETF holder.</figcaption></figure>
+<h3 id="43-protocol-compound">4.3 Protocol compound</h3>
+<p>Protocol-owned NFT free DETF rewards <strong>auto-sink</strong> into more <strong>protocol-owned reserve BPT</strong> via a single-sided DETF join (best-effort; also callable via public <code>compoundProtocolRewards</code>). Users still <strong>claim free DETF</strong> on their own bonds. Claim redemption <strong>can</strong> improve when protocol BPT rises—this is not a coupon.</p>
+<p>Hermetic D9 shows protocol NFT BPT principal rising after compound.</p>
+<figure class="paper-figure"><img src="./figures/F9_protocol_compound.png" alt="Protocol compound raises protocol-owned BPT principal." loading="lazy" /><figcaption>Protocol compound raises protocol-owned BPT principal.</figcaption></figure>
+<hr />
+<h2 id="5-merits-as-properties">5. Merits as properties</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETF-shaped basket exposure without a discretionary PM</td>
+<td>Design</td>
+</tr>
+<tr>
+<td>Mint, burn, and synthetic share one pricing engine</td>
+<td>Design + measured DETF</td>
+</tr>
+<tr>
+<td>Clear inert/live; bonding builds protocol-owned depth</td>
+<td>Measured DETF</td>
+</tr>
+<tr>
+<td>Explicit monetary policy (Policy vs Open) at deploy</td>
+<td>Product law + measured</td>
+</tr>
+<tr>
+<td>No admin rewrite of a live instance as product model</td>
+<td>Product law</td>
+</tr>
+<tr>
+<td>Nested SE legs with rates on keep residual approx  0 under Uni demand</td>
+<td>Measured SE</td>
+</tr>
+<tr>
+<td>Lag invites reprice only after the fee stack clears</td>
+<td>Measured SE</td>
+</tr>
+<tr>
+<td>Liquid mint vs bond reward books</td>
+<td>Measured DETF</td>
+</tr>
+<tr>
+<td>Natural expansion when rich (Policy only)</td>
+<td>Measured DETF</td>
+</tr>
+<tr>
+<td>Protocol compound deepens protocol BPT</td>
+<td>Measured DETF</td>
+</tr>
+<tr>
+<td>Keeper-free accrual and compound</td>
+<td>Product law + code</td>
+</tr>
+<tr>
+<td>Composable package types for different baskets</td>
+<td>Design taxonomy</td>
+</tr>
+<tr>
+<td>Platform: many DETFs; optional protocol fee path</td>
+<td>Product hierarchy</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="6-nested-mark-integrity-measured-se">6. Nested mark integrity (measured SE)</h2>
+<p><strong>Headline.</strong> With rate providers on, Uni demand re-marks Balancer mids so midxrate residual approx  0. With rates off, residual scales with Uni stress. Residual is not free arb: under a 5% research pool fee, modest residual never filled; extreme residual did.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>R+ residual</th>
+<th>R− residual</th>
+<th>Mode C R− fills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>approx  0</td>
+<td>~+/-0.24%</td>
+<td>0</td>
+</tr>
+<tr>
+<td>mul10</td>
+<td>approx  0</td>
+<td>~+/-2.4%</td>
+<td>0 (fee-drowned)</td>
+</tr>
+<tr>
+<td>mul25 x 48 steps</td>
+<td>approx  0</td>
+<td>~+/-10–12%</td>
+<td>Fills from ~step 22</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="paper-figure"><img src="./figures/F5_fairness_compare.png" alt="R+ versus R− residual under Uni-only demand (baseline)." loading="lazy" /><figcaption>R+ versus R− residual under Uni-only demand (baseline).</figcaption></figure>
+<figure class="paper-figure"><img src="./figures/F6_probes_compare.png" alt="Fee as economic threshold: probes and fills under extreme volume." loading="lazy" /><figcaption>Fee as economic threshold: probes and fills under extreme volume.</figcaption></figure>
+<p><strong>Transferability.</strong> Hermetic only. The research Balancer fee is not every production fee tier. Cite mechanism, not universal fill rates.</p>
+<hr />
+<h2 id="7-detf-scenarios-measured-single-se-uni-v2">7. DETF scenarios (measured Single SE + Uni V2)</h2>
+<p><strong>Harness.</strong> Production-first CREATE3 and registry DFPkg path; Uni V2 WETH/USDC SE; Foundry default profile. One forge script per scenario D0–D9.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Result</th>
+<th>One-line</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D0</td>
+<td>PASS</td>
+<td>Inert Policy; defaults 1.05/0.95; mint blocked; warp inert</td>
+</tr>
+<tr>
+<td>D1</td>
+<td>PASS</td>
+<td>First bond -&gt; live</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>PASS</td>
+<td>Post-bond burn-side synth; mint reverts; no expansion on warp</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>PASS</td>
+<td>Mint-allowed after inventory path + Uni trades; preview = exec exact</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>PASS</td>
+<td>Burn-allowed; burn executes</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>PASS</td>
+<td>Open mint/burn live; no natural expansion over warp</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>PASS</td>
+<td>Serial capital mints increase supply (not expansion)</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>PASS</td>
+<td>Bonder reward path ≠ free-holder airdrop</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>PASS</td>
+<td>Policy expansion when rich; Open twin none</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>PASS</td>
+<td>Protocol compound raises protocol NFT BPT principal</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="paper-figure"><img src="./figures/F3_demand_to_synthetic.png" alt="Demand and inventory paths that move synthetic under Policy." loading="lazy" /><figcaption>Demand and inventory paths that move synthetic under Policy.</figcaption></figure>
+<p><strong>Limitation (RQ5).</strong> After first bond, hermetic synthetic often sits ~0.625 (far below mint threshold). <strong>Uni trades alone</strong> did not clear mint threshold in this fixture. The mint-allowed path used <strong>production</strong> free-DETF primary burns plus Uni trades (no Open mode, no deal-seed). Document as a research limitation of the post-bond book—not a product bug, and not a license to storage-hack synthetic.</p>
+<hr />
+<h2 id="8-composition-types">8. Composition types</h2>
+<p>Four <strong>live</strong> families share the DETF pattern; only the reserve shape changes:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Choose when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single Standard Exchange</td>
+<td>Exactly one SE vault + DETF weighted reserve</td>
+</tr>
+<tr>
+<td>Multi-vault weighted</td>
+<td>Multiple SE legs that must keep distinct valuations</td>
+</tr>
+<tr>
+<td>Multi-vault stable</td>
+<td>Like-kind rate targets</td>
+</tr>
+<tr>
+<td>Mixed-buffer multi-vault stable</td>
+<td>Shared buffer rate asset; burn buffer only</td>
+</tr>
+</tbody>
+</table></div>
+<p>v1 empirics cover <strong>Single SE only</strong>. Other families are taxonomy and product law. Removed packages are out of research universe.</p>
+<hr />
+<h2 id="9-product-hierarchy">9. Product hierarchy</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Offer</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Premier</strong></td>
+<td>Create and deploy <strong>your own DETFs</strong> across package families</td>
+</tr>
+<tr>
+<td><strong>Protocol DETF</strong></td>
+<td>Same design class as a path to <strong>share protocol fees</strong> (amounts not guaranteed)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Neither is a registered securities fund. Fee sizes are not promises.</p>
+<hr />
+<h2 id="10-limitations-and-risks">10. Limitations and risks</h2>
+<ol>
+<li><strong>Hermetic only</strong> — not mainnet TVL, APY, or reprice volume guarantees.</li>
+<li><strong>Not a registered securities ETF</strong> — no legal ownership of offchain underlyings.</li>
+<li><strong>No peg, expansion APY, or claim coupon</strong> — Policy bands and expansion are mechanisms, not guarantees.</li>
+<li><strong>Open</strong> removes price gates only — not fees, not returns, not expansion.</li>
+<li><strong>IL and LVR</strong> on underlying legs remain.</li>
+<li><strong>Fee transferability</strong> — SE research 5% fee is not every production pool.</li>
+<li><strong>Post-bond synthetic</strong> in hermetic Single SE may require inventory paths (not Uni alone) to re-enter mint-allowed.</li>
+<li><strong>Protocol compound</strong> single-sided join accepts self-leg weight skew in v1.</li>
+<li><strong>Immutable instances</strong> imply abandonment risk if misconfigured—not silent admin rescue.</li>
+</ol>
+<hr />
+<h2 id="11-conclusion">11. Conclusion</h2>
+<p>A DETF is a reproducible onchain share over a real reserve, with one pricing engine, explicit Policy or Open rules, bonding into protocol-owned depth, bond-ledger rewards, Policy-only natural expansion when rich, and keeper-free protocol compounding into reserve BPT. Nested SE rate providers keep marks honest under demand when wired on.</p>
+<p>Hermetic research supports the lifecycle, gates, preview honesty, expansion negatives on Open, and protocol BPT growth on compound—<strong>without inventing yield</strong>.</p>
+<hr />
+<h2 id="appendix-a-methodology">Appendix A. Methodology</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Profile</td>
+<td>Hermetic Foundry research profile</td>
+</tr>
+<tr>
+<td>DETF runner</td>
+<td>Hermetic DETF scenario suite</td>
+</tr>
+<tr>
+<td>DETF artifacts</td>
+<td>Scenario telemetry and figures</td>
+</tr>
+<tr>
+<td>SE compare</td>
+<td>SE rate-provider compare suite</td>
+</tr>
+<tr>
+<td>SE artifacts</td>
+<td>SE rate-provider artifacts</td>
+</tr>
+<tr>
+<td>Telemetry</td>
+<td>Per-run series, metadata, and notes</td>
+</tr>
+<tr>
+<td>Production-first</td>
+<td>Production deploy path; no mocks of the subject under test</td>
+</tr>
+<tr>
+<td>Synthetic drive</td>
+<td>Real Uni V2 trades (+ documented production inventory paths); no primary storage hacks</td>
+</tr>
+</tbody>
+</table></div>
+<p>Figures in this edition are taken from the hermetic research campaign summarized in the measured sections above.</p>
+<hr />
+<h2 id="appendix-b-claims-map">Appendix B. Claims map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Claim</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>One share over reserve</td>
+<td>Design</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>Pricing engine = reserve pool</td>
+<td>Design + measured</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>Inert -&gt; live via first bond</td>
+<td>Measured D0–D1</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>Policy / Open gates</td>
+<td>Measured D2–D5</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>Immutability after deploy</td>
+<td>Product law</td>
+</tr>
+<tr>
+<td>C6</td>
+<td>Preview honesty</td>
+<td>Measured D3 (exact)</td>
+</tr>
+<tr>
+<td>C7</td>
+<td>R+ residual approx  0</td>
+<td>Measured SE</td>
+</tr>
+<tr>
+<td>C8</td>
+<td>Fee as arb threshold</td>
+<td>Measured SE</td>
+</tr>
+<tr>
+<td>C9</td>
+<td>Bond vs mint books</td>
+<td>Measured D7</td>
+</tr>
+<tr>
+<td>C10</td>
+<td>Four live composition types</td>
+<td>Taxonomy</td>
+</tr>
+<tr>
+<td>C11</td>
+<td>Product hierarchy</td>
+<td>Design</td>
+</tr>
+<tr>
+<td>C12</td>
+<td>Natural expansion Policy-only</td>
+<td>Measured D5, D8</td>
+</tr>
+<tr>
+<td>C13</td>
+<td>Protocol compound -&gt; BPT</td>
+<td>Measured D9</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><em>IndexedEx Research · July 2026 · Hermetic findings; not financial advice.</em></p>
+      </article>
+
+      <section class="paper-end cta-card">
+        <p class="eyebrow">Continue</p>
+        <h2>Back to the product story</h2>
+        <p>
+          Prefer the plain-language product report for customers. Keep this page for mechanism
+          detail and measured tables.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn" href="./how-detfs-work.html">How DETFs work</a>
+          <a class="btn btn-ghost" href="./">Home</a>
+          <a class="btn btn-ghost" href="./DETF_LITEPAPAPER.pdf" download>Optional PDF</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div><strong>IndexedEx</strong> · DETF technical note</div>
+      <div class="footer-links">
+        <a href="./">Home</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./DETF_LITEPAPAPER.pdf" download>PDF</a>
+        <a href="./#disclaimers">Disclaimers</a>
+      </div>
+      <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
+    </footer>
+    <script>
+      document.getElementById("y").textContent = String(new Date().getFullYear());
+    </script>
+  </body>
+</html>
