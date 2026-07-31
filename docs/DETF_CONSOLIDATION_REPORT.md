@@ -6,7 +6,7 @@ This report reviews the current DETF implementations under:
 
 - `contracts/vaults/protocol/`
 - `contracts/vaults/detf/composed/single/`
-- `contracts/vaults/detf/composed/stable/common/`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/`
 
 The goal is to identify how to consolidate and reorganize the code so new DETF families can be built by composing shared modules instead of copying and reworking entire vault stacks.
 
@@ -78,13 +78,13 @@ Core characteristics:
 
 Representative files:
 
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/RebasingDETFTokenTarget.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol`
 
 Core characteristics:
 
@@ -102,7 +102,7 @@ Repeated concept in:
 
 - `contracts/vaults/protocol/BaseProtocolDETFCommon.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol`
 
 Repeated behavior:
 
@@ -124,8 +124,8 @@ Repeated concept in:
 - `contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInQueryTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol`
 
 Repeated behavior:
 
@@ -154,8 +154,8 @@ Repeated concept in:
 - `contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfExchangeInQueryTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfExchangeOutTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
 
 Repeated behavior:
 
@@ -176,8 +176,8 @@ Repeated concept in:
 - `contracts/vaults/protocol/BaseProtocolDETFCommon.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol`
 
 Repeated behavior:
 
@@ -204,7 +204,7 @@ Repeated concept in:
 
 - `contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol`
 
 Repeated behavior:
 
@@ -226,8 +226,8 @@ Repeated concept in:
 
 - `contracts/vaults/protocol/ProtocolNFTVaultTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol`
 
 Repeated behavior:
 
@@ -250,9 +250,9 @@ Repeated concept in:
 - `contracts/vaults/detf/composed/single/*_Component_FactoryService.sol`
 - `contracts/vaults/detf/composed/single/*_Facet_FactoryService.sol`
 - `contracts/vaults/detf/composed/single/*_Pkg_FactoryService.sol`
-- `contracts/vaults/detf/composed/stable/common/*_Component_FactoryService.sol`
-- `contracts/vaults/detf/composed/stable/common/*_Facet_FactoryService.sol`
-- `contracts/vaults/detf/composed/stable/common/*_Pkg_FactoryService.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/*_Component_FactoryService.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/*_Facet_FactoryService.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/*_Pkg_FactoryService.sol`
 
 Repeated behavior:
 
@@ -271,7 +271,7 @@ The exact components differ, but the assembly pattern is repeated. This should b
 
 Create a new folder:
 
-- `contracts/vaults/detf/core/`
+- `contracts/vaults/detf/common/core/`
 
 Recommended modules:
 
@@ -375,7 +375,7 @@ Recommended split:
 
 Create:
 
-- `contracts/vaults/detf/core/DETFCoreRepo.sol`
+- `contracts/vaults/detf/common/core/DETFCoreRepo.sol`
 
 Shared fields should include:
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {ISeigniorageNFTVault} from 'contracts/interfaces/ISeigniorageNFTVault.sol';
-import {DETFBondNFTMathLib} from 'contracts/vaults/detf/core/DETFBondNFTMathLib.sol';
+import {DETFBondNFTMathLib} from 'contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol';
 import {ISeigniorageBondNFT} from 'contracts/vaults/seigniorage/nft/ISeigniorageBondNFT.sol';
 import {BondTerms} from 'contracts/interfaces/VaultFeeTypes.sol';
 import {ERC721Repo} from '@crane/contracts/tokens/ERC721/ERC721Repo.sol';

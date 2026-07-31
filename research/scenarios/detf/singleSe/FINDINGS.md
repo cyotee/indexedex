@@ -12,7 +12,7 @@ A production Single SE DETF against hermetic Uni V2 SE deploys **inert**, goes *
 
 | Item | Value |
 |------|--------|
-| DETF family | `contracts/vaults/detf/standardExchange/single/` |
+| DETF family | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 | SE attachment | Uni V2 Standard Exchange (WETH/USDC hermetic) |
 | Fixture | `scripts/foundry/research/detf/singleSe/ResearchFixture_DetfSingleSeUniV2.sol` |
 | Thresholds | Policy defaults resolve mint=1.05e18, burn=0.95e18 |

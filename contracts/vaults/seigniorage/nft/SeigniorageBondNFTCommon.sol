@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {MultiStepOwnableRepo} from '@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol';
-import {DETFBondNFTMathLib} from 'contracts/vaults/detf/core/DETFBondNFTMathLib.sol';
-import {DETFSafeTransferLib} from 'contracts/vaults/detf/core/DETFSafeTransferLib.sol';
+import {DETFBondNFTMathLib} from 'contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol';
+import {DETFSafeTransferLib} from 'contracts/vaults/detf/common/core/DETFSafeTransferLib.sol';
 import {ISeigniorageNFTVault} from 'contracts/interfaces/ISeigniorageNFTVault.sol';
 import {BondTerms} from 'contracts/interfaces/VaultFeeTypes.sol';
 import {SeigniorageBondNFTRepo} from "contracts/vaults/seigniorage/nft/SeigniorageBondNFTRepo.sol";

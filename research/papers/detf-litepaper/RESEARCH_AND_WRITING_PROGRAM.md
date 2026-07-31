@@ -12,12 +12,12 @@
 | **Primary deliverable** | DETF litepaper (then optional whitepaper expansion) |
 | **Genre** | Design + mechanism paper with measured appendix — **not** mainnet APY marketing |
 | **Canonical product narrative** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../../../docs/marketing/DETF_NARRATIVE_SPINE.md) |
-| **Compound / expansion handoff** | [`contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md) |
+| **Compound / expansion handoff** | [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md) |
 | **Public education surface** | Frontend `/research` notes (`detf`, `detf-types`, `bond-vs-mint`, `rate-providers`) — must absorb expansion/compound |
 | **Research methodology** | [`research/RESEARCH_PLAYBOOK.md`](../../RESEARCH_PLAYBOOK.md) |
 | **Science roll-up** | [`research/MARKETING_AND_PERFORMANCE_FINDINGS.md`](../../MARKETING_AND_PERFORMANCE_FINDINGS.md) |
 | **Product law (modes)** | [`contracts/vaults/detf/DETF_Threshold_Modes_PRD.md`](../../../contracts/vaults/detf/DETF_Threshold_Modes_PRD.md) (**LOCKED**) |
-| **Product law (compound + expansion)** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**) |
+| **Product law (compound + expansion)** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**) |
 
 **Rule:** When this program conflicts with family PRDs, threshold-modes PRD, or compound/expansion PRD on product behavior, **product PRDs win**. When it conflicts with locked chart conventions, **`research/README.md` conventions win**. When it conflicts with public claim language, **`DETF_NARRATIVE_SPINE.md` + compound/expansion handoff** win.
 
@@ -53,7 +53,7 @@ Produce a **claim-safe litepaper** (then optional whitepaper) that:
 | Another SE rate-provider mega-matrix? | **No** — reuse existing findings; do not re-run casually |
 | DETF-native hermetic scenarios? | **Yes** — required to prove Policy/Open, inert→live, preview honesty; expansion negatives on Open/inert |
 | Monte Carlo / multi-family APY sims? | **No** for v1 |
-| Gold family for empirics | **Single Standard Exchange DETF** (`contracts/vaults/detf/standardExchange/single/`) only for v1; research attaches **Uni V2 SE** (not Aero TestBase default) |
+| Gold family for empirics | **Single Standard Exchange DETF** (`contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/`) only for v1; research attaches **Uni V2 SE** (not Aero TestBase default) |
 | Synthetic drive | **Strict real trades only** on Uni V2 / SE underlyings |
 | Campaign figures | **PNG F1–F4 required**; F7–F9 with stretch D7–D9 |
 | D2 deadband | Flexible / N/A if already mint-allowed at t_live |
@@ -105,7 +105,7 @@ Phase 7  Fork validation + academic upgrades (optional / last)
 | Rate providers | `/research/rate-providers` | Accuracy vs reprice + SE evidence |
 | Content source | `frontend/app/content/research/articles/*.ts` | Claim-safe TS modules |
 | Design note | `frontend/RESEARCH_SECTION_DESIGN.md` | R1–R4 delivery |
-| Compound/expansion handoff | `contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md` | Docs/UI law summary (**2026-07-30**) |
+| Compound/expansion handoff | `docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md` | Docs/UI law summary (**2026-07-30**) |
 
 #### C. Normative product law
 
@@ -113,7 +113,7 @@ Phase 7  Fork validation + academic upgrades (optional / last)
 |-----|------|
 | `docs/marketing/DETF_NARRATIVE_SPINE.md` | Public story + disclaimers |
 | `contracts/vaults/detf/DETF_Threshold_Modes_PRD.md` | Policy/Open, synthetic gates (**LOCKED**) |
-| `contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md` | Protocol compound + natural expansion (**LOCKED**) |
+| `docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md` | Protocol compound + natural expansion (**LOCKED**) |
 | AGENTS.md DETF section | Role names, inert→live, testing expectations |
 | Family PRDs under `contracts/vaults/detf/**` | Per-package rules |
 

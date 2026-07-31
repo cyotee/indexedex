@@ -500,8 +500,8 @@ Logic already optional via `rateTarget == 0`. PRD and tests still bias rates-on.
 
 | Path | Change |
 |------|--------|
-| `contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_PRD.md` | Default **off** (`rateTarget = 0`); rates on is opt-in for mark integrity |
-| `contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` (and matrix TestBases) | Prefer `rateTarget: address(0)` for default instances |
+| `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_PRD.md` | Default **off** (`rateTarget = 0`); rates on is opt-in for mark integrity |
+| `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` (and matrix TestBases) | Prefer `rateTarget: address(0)` for default instances |
 | Rates-on regression | Existing nested/matrix cases that need rates keep non-zero `rateTarget` — name them as rates-on |
 | NatSpec on `PkgArgs.rateTarget` | “Zero = STANDARD share leg; non-zero = deploy SE RP denominated in target” |
 

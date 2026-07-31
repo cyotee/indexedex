@@ -209,15 +209,15 @@ Use this matrix as the default decision table when implementing the consolidatio
 | Shared fee and vault metadata access | `contracts/vaults/standard/StandardVaultRepo.sol` | Indexedex | Reuse | Keep fee oracle, vault fee type ids, vault type ids, and contents metadata aligned with standard vault storage instead of creating DETF-only copies. |
 | Bond lifecycle helper | `contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol` | Indexedex | Extract | One of the primary sources for lifecycle ordering and settlement behavior. |
 | Bond lifecycle helper | `contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol` | Indexedex | Extract | Use as the simpler pilot source where lifecycle is close to protocol DETF. |
-| Bond lifecycle helper | `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol` | Indexedex | Extract last | Hardest topology, should consume a proven lifecycle abstraction instead of defining it. |
+| Bond lifecycle helper | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol` | Indexedex | Extract last | Hardest topology, should consume a proven lifecycle abstraction instead of defining it. |
 | Inventory policy layer | `contracts/vaults/protocol/ProtocolNFTVaultService.sol` | Indexedex | Extract or wrap | Best current starting point for stateless DETF NFT inventory operations. |
 | Inventory policy layer | `contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol` | Indexedex | Reuse via shared role alias | Keep the existing concrete package and adapt DETF consumers toward shared Self NFT and Protocol NFT policy variants without changing external deployment flow. |
 | Inventory policy layer | `contracts/vaults/protocol/ProtocolNFTVaultTarget.sol` | Indexedex | Extract Self NFT semantics | Source for protocol-owned inventory behavior, to be renamed under Self NFT semantics. |
-| Inventory policy layer | `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol` | Indexedex | Extract Protocol NFT deltas | Source for fee-recipient NFT behavior, to be reorganized as Protocol NFT semantics. |
-| Shared rebasing package | `contracts/vaults/detf/composed/stable/common/RebasingDETFTokenDFPkg.sol` | Indexedex | Reuse directly as base package | Canonical rebasing package source for cross-DETF reuse. |
+| Inventory policy layer | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol` | Indexedex | Extract Protocol NFT deltas | Source for fee-recipient NFT behavior, to be reorganized as Protocol NFT semantics. |
+| Shared rebasing package | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol` | Indexedex | Reuse directly as base package | Canonical rebasing package source for cross-DETF reuse. |
 | Topology adapter: self common | `contracts/vaults/protocol/BaseProtocolDETFCommon.sol` | Indexedex | Extract adapter and rename | Rename and restructure this line as `SelfCommonDETF`, keeping bridge and token-model extras outside the adapter interface. |
 | Topology adapter: single vault | `contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol` | Indexedex | Extract adapter first | Preferred pilot source for shared route-plan abstraction. |
-| Topology adapter: composed stable/common | `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol` | Indexedex | Extract adapter last | Reuse planner and lifecycle once proven elsewhere. |
+| Topology adapter: composed stable/common | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol` | Indexedex | Extract adapter last | Reuse planner and lifecycle once proven elsewhere. |
 | Route-plan and planner structs | `contracts/vaults/protocol/BaseProtocolDETFPreviewHelpers.sol` | Indexedex | Extend pattern | Keep heavy plan calculations in helper units when needed for compilation hygiene. |
 | Factory consolidation | `contracts/vaults/VaultComponentFactoryService.sol` | Indexedex | Compose | Use as the Indexedex-specific factory layer over Crane. |
 | Factory consolidation | `lib/daosys/lib/crane/contracts/access/AccessFacetFactoryService.sol` | Crane | Compose | Reuse standard access facet deployment. |
@@ -242,7 +242,7 @@ The plan is anchored to these current seams:
 - `contracts/vaults/detf/dual/DualDETFCommon.sol` is also effectively empty and is a natural intermediate layer for dual-reserve DETF behavior if needed.
 - `contracts/vaults/protocol/BaseProtocolDETFCommon.sol` is the current source that should be renamed and restructured as `SelfCommonDETF`.
 - `contracts/vaults/detf/composed/single/SingleVaultDetfCommon.sol` contains a narrower version of the same family of concerns.
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol` contains route selection and stable/common reserve logic that should stay topology-aware but consume shared planning and lifecycle helpers.
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol` contains route selection and stable/common reserve logic that should stay topology-aware but consume shared planning and lifecycle helpers.
 - `contracts/vaults/basic/BasicVaultCommon.sol` already contains the strongest existing shared token intake pattern and should be treated as a direct consolidation input.
 - `contracts/vaults/protocol/ProtocolNFTVaultService.sol` already represents the strongest in-scope inventory-service pattern relevant to bond policy extraction.
 - `contracts/vaults/VaultComponentFactoryService.sol` already provides a vault-specific factory layer on top of Crane.
@@ -251,7 +251,7 @@ The plan is anchored to these current seams:
 
 The current refactor pass has already completed a focused subset of the Phase 1 and Phase 4 extraction work inside the bond and preview paths.
 
-Completed shared helpers under `contracts/vaults/detf/core/`:
+Completed shared helpers under `contracts/vaults/detf/common/core/`:
 
 - `DETFPreviewLib.sol`
   - shared preview discount and markup helpers now back the duplicated conservative preview buffer math in protocol bonding and exact-out paths
@@ -275,7 +275,7 @@ Completed shared helpers under `contracts/vaults/detf/core/`:
 Families already rewired to these helpers:
 
 - `contracts/vaults/protocol/ProtocolNFTVault*`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVault*`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault*`
 - `contracts/vaults/seigniorage/nft/SeigniorageBondNFT*`
 - `contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol`
 - `contracts/vaults/protocol/EthereumProtocolDETFBondingTarget.sol`
@@ -329,10 +329,10 @@ Goal:
 
 New modules:
 
-- `contracts/vaults/detf/core/DETFMintSplitLib.sol`
-- `contracts/vaults/detf/core/DETFTokenTransferLib.sol`
-- `contracts/vaults/detf/core/DETFThresholdPolicy.sol`
-- `contracts/vaults/detf/core/DETFPreviewLib.sol`
+- `contracts/vaults/detf/common/core/DETFMintSplitLib.sol`
+- `contracts/vaults/detf/common/core/DETFTokenTransferLib.sol`
+- `contracts/vaults/detf/common/core/DETFThresholdPolicy.sol`
+- `contracts/vaults/detf/common/core/DETFPreviewLib.sol`
 
 Primary work:
 
@@ -361,8 +361,8 @@ Goal:
 
 New modules:
 
-- `contracts/vaults/detf/core/DETFReservePoolStateLib.sol`
-- optional `contracts/vaults/detf/core/DETFCoreRepo.sol` for new shared fields only if needed without breaking existing external behavior
+- `contracts/vaults/detf/common/core/DETFReservePoolStateLib.sol`
+- optional `contracts/vaults/detf/common/core/DETFCoreRepo.sol` for new shared fields only if needed without breaking existing external behavior
 
 Primary work:
 
@@ -373,7 +373,7 @@ Primary work:
 - keep these repos separate for now:
   - `contracts/vaults/protocol/BaseProtocolDETFRepo.sol`
   - `contracts/vaults/detf/composed/single/SingleVaultDetfRepo.sol`
-  - `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfRepo.sol`
+  - `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol`
 
 Exit criteria:
 
@@ -394,7 +394,7 @@ Why Single Vault first:
 
 New modules:
 
-- `contracts/vaults/detf/core/DETFRoutePlanTypes.sol`
+- `contracts/vaults/detf/common/core/DETFRoutePlanTypes.sol`
 - shared mint plan builder and execution helpers, likely under `core/` plus a single-vault topology adapter
 - `contracts/vaults/detf/topology/IDetfTopologyAdapter.sol`
 - `contracts/vaults/detf/topology/SingleVaultTopologyAdapter.sol`
@@ -421,10 +421,10 @@ Goal:
 
 New modules:
 
-- `contracts/vaults/detf/core/DETFBondLifecycleLib.sol`
-- `contracts/vaults/detf/inventory/IDetfBondInventoryPolicy.sol`
-- `contracts/vaults/detf/reusable/nft/SelfNFT*`
-- `contracts/vaults/detf/reusable/nft/ProtocolNFT*`
+- `contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol`
+- `contracts/vaults/detf/common/inventory/IDetfBondInventoryPolicy.sol`
+- `contracts/vaults/detf/common/factory/nft/SelfNFT*`
+- `contracts/vaults/detf/common/factory/nft/ProtocolNFT*`
 
 Primary work:
 
@@ -442,9 +442,9 @@ Current surfaces to reconcile:
 
 - `contracts/vaults/protocol/BaseProtocolDETFBondingTarget.sol`
 - `contracts/vaults/detf/composed/single/SingleVaultDetfBondingTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol`
 - `contracts/vaults/protocol/ProtocolNFTVaultTarget.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultTarget.sol`
 - `contracts/vaults/protocol/ProtocolNFTVaultDFPkg.sol`
 
 Exit criteria:
@@ -503,11 +503,11 @@ Primary work:
 
 Current surfaces in scope:
 
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeIn.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
-- `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfBondingFacet.sol`
-- `contracts/vaults/detf/composed/stable/common/RebasingDETFTokenTarget.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol`
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol`
 
 Exit criteria:
 
@@ -546,8 +546,8 @@ Goal:
 Primary work:
 
 - move current protocol DETF internals under `contracts/vaults/detf/self/common/`
-- move reusable NFT logic under `contracts/vaults/detf/reusable/nft/`
-- move reusable rebasing logic under `contracts/vaults/detf/reusable/rebasing/`
+- move reusable NFT logic under `contracts/vaults/detf/common/factory/nft/`
+- move reusable rebasing logic under `contracts/vaults/detf/common/factory/rebasing/`
 - update imports only after runtime consolidation has landed
 
 Exit criteria:
@@ -656,10 +656,10 @@ Primary success signal:
   - status: in progress; current helpers cover bond position creation, protocol reward collection, shared sale-to-protocol settlement, and reserve-pool BPT top-up sequencing, with protocol plus single-vault plus Ethereum protocol bonding flows now routing their reserve-BPT protocol-NFT top-ups through the shared lifecycle helper, protocol plus Ethereum bridge source-compensation and destination rich-to-richir mint flows, and protocol plus Ethereum exchange-in RICHIR mint paths consuming those exact lifecycle fragments
 2. `DETF-11` Define shared DETF NFT inventory policy interface
   - codify Self NFT and Protocol NFT policy hooks
-  - status: started; `contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol` now names the shared protocol-owned inventory surface, `contracts/vaults/detf/inventory/IDetfProtocolNftInventoryPolicy.sol` names the fee-recipient inventory surface, the lower-level hook interfaces remain split under `IDetfBondInventoryPolicy.sol` and `IDetfFeeRecipientInventoryPolicy.sol`, and `DETFBondLifecycleLib` depends on the shared Self NFT inventory interface instead of the concrete protocol NFT vault interface; the remaining work is to migrate more consumers and converge the reusable NFT package around those policy roles
+  - status: started; `contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol` now names the shared protocol-owned inventory surface, `contracts/vaults/detf/common/inventory/IDetfProtocolNftInventoryPolicy.sol` names the fee-recipient inventory surface, the lower-level hook interfaces remain split under `IDetfBondInventoryPolicy.sol` and `IDetfFeeRecipientInventoryPolicy.sol`, and `DETFBondLifecycleLib` depends on the shared Self NFT inventory interface instead of the concrete protocol NFT vault interface; the remaining work is to migrate more consumers and converge the reusable NFT package around those policy roles
 3. `DETF-12` Reorganize reusable NFT package
   - converge current DETF families on one reusable NFT package based on existing in-scope NFT code
-  - status: in progress; `contracts/vaults/detf/reusable/nft/IDetfSelfNftInventoryDFPkg.sol` now names the reusable Self NFT package role over the existing `ProtocolNFTVaultDFPkg` surface, the base protocol DETF, Ethereum protocol DETF, and single-vault DETF package wiring now consume that alias at the package-init layer without changing underlying deployment behavior, and the active DETF deploy/integration scaffolding now holds package instances through that alias; remaining concrete `IProtocolNFTVaultDFPkg` usage in the main workspace is now limited to the underlying package implementation plus `PkgInit`/`PkgArgs`/error typing, while the existing concrete package stays in place
+  - status: in progress; `contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol` now names the reusable Self NFT package role over the existing `ProtocolNFTVaultDFPkg` surface, the base protocol DETF, Ethereum protocol DETF, and single-vault DETF package wiring now consume that alias at the package-init layer without changing underlying deployment behavior, and the active DETF deploy/integration scaffolding now holds package instances through that alias; remaining concrete `IProtocolNFTVaultDFPkg` usage in the main workspace is now limited to the underlying package implementation plus `PkgInit`/`PkgArgs`/error typing, while the existing concrete package stays in place
 
 ### Phase 5 Tickets
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 import {
     ResearchFixture_DetfSingleSeUniV2

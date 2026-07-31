@@ -13,7 +13,7 @@ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
-import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 
 /**
  * @title IDETFNFTVault

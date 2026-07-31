@@ -63,7 +63,7 @@ See `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
 
 ## DETF families — common expectations (mandatory for agents)
 
-Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a family PRD explicitly overrides. Family PRDs and implementation plans next to each package remain normative for that family; this section is the **shared default** so agents do not re-litigate basics every session.
+Apply these to **any** DETF work under `contracts/vaults/detf/**`. Normative product law is this section, code NatSpec, and shared law under `docs/detf/` (compound/expansion PRD + PROGRAM). Co-located family PRDs/plans were retired in the directory reorg; do not reintroduce them next to packages. Family-specific compound/expansion stage plans live under mirrored `docs/detf/balancer/v3/<family-path>/`.
 
 ### What a DETF is
 
@@ -75,13 +75,15 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 
 | Family | Path | Use when |
 |--------|------|----------|
-| Single Standard Exchange | `detf/standardExchange/single/` | Exactly **one** SE vault + DETF weighted reserve |
-| Composed stable multi | `detf/composed/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
-| Mixed-buffer multi-vault stable | `detf/composed/stable/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
-| Multi-vault weighted | `detf/composed/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
+| Single Standard Exchange | `detf/protocols/dexes/balancer/v3/standardExchange/single/` | Exactly **one** SE vault + DETF weighted reserve |
+| Composed stable multi | `detf/protocols/dexes/balancer/v3/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
+| Mixed-buffer multi-vault stable | `detf/protocols/dexes/balancer/v3/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
+| Multi-vault weighted | `detf/protocols/dexes/balancer/v3/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
 | Dual-liquidity / protocol | elsewhere under `contracts/vaults/` | Protocol-specific DETF-like products; do not subclass for new generic DETFs |
 
-**Fresh codepath rule:** new DETF families are **behavioral references only** relative to peers — do **not** subclass concrete contracts from another family. Reuse `detf/core/*` and `detf/reusable/*` libs/factories.
+**Layout law:** shared true-DETF infrastructure → `detf/common/`; Balancer V3–backed family packages → `detf/protocols/dexes/balancer/v3/…`. See `contracts/vaults/detf/DETF_DIRECTORY_REORGANIZATION_PRD.md`.
+
+**Fresh codepath rule:** new DETF families are **behavioral references only** relative to peers — do **not** subclass concrete contracts from another family. Reuse `detf/common/core/*` and `detf/common/factory/*` libs/factories.
 
 ### Governance and immutability
 
@@ -102,7 +104,7 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 
 ### Pricing and mint/burn gates
 
-**Normative PRD:** [`contracts/vaults/detf/DETF_Threshold_Modes_PRD.md`](contracts/vaults/detf/DETF_Threshold_Modes_PRD.md) (**LOCKED**). Core lib: [`contracts/vaults/detf/core/DETFThresholdPolicy.sol`](contracts/vaults/detf/core/DETFThresholdPolicy.sol).
+**Normative source:** this section + core lib [`contracts/vaults/detf/common/core/DETFThresholdPolicy.sol`](contracts/vaults/detf/common/core/DETFThresholdPolicy.sol) (and threshold plan under [`docs/detf/DETFThresholdPolicy_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md`](docs/detf/DETFThresholdPolicy_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md)). Threshold mode product law is **LOCKED** in code and AGENTS; do not invent a separate off-tree Threshold Modes PRD path.
 
 - **Pricing engine = reserve pool** (balances, weights, fees, rate providers). Do **not** introduce an off-pool multi-asset FX “numeraire” ledger.
 - **Synthetic price:** fully diluted backing from owned reserve BPT’s claim on pool balances (rate-scaled), ÷ DETF `totalSupply`, abstract **1e18 peg** (Policy narrative). Include BPT held by bond NFT vault when peers do. **All mint/burn threshold gates use synthetic** — never spot alone.
@@ -118,9 +120,9 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**` unless a famil
 
 ### Protocol seigniorage compound + natural supply expansion
 
-**Normative PRD:** [`contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**). Program index / stages: [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md). Shared libs: [`DETFProtocolCompoundLib.sol`](contracts/vaults/detf/core/DETFProtocolCompoundLib.sol), [`DETFNaturalExpansionLib.sol`](contracts/vaults/detf/core/DETFNaturalExpansionLib.sol).
+**Normative PRD:** [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**). Program index / stages: [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md). Shared libs: [`DETFProtocolCompoundLib.sol`](contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol), [`DETFNaturalExpansionLib.sol`](contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol).
 
-Apply to **true DETFs** in scope (Single SE, multi-vault weighted, mixed-buffer, composed stable common). **Out:** `composed/single`, `contracts/vaults/seigniorage/`, `detf/dual/**` unless re-supported.
+Apply to **true DETFs** in scope (Single SE, multi-vault weighted, mixed-buffer, composed stable common). **Out:** removed single-vault DETF residue, `contracts/vaults/seigniorage/`, dual DETF stubs (deleted) unless re-supported.
 
 **Protocol compound (detf-owned bond NFT only):**
 
@@ -143,7 +145,7 @@ Apply to **true DETFs** in scope (Single SE, multi-vault weighted, mixed-buffer,
 ### User routes (defaults)
 
 - Prefer **configured vault shares ↔ DETF** on the DETF surface (exact-in closed form).
-- **RateAsset as mint `tokenIn` on the DETF** is usually **out of scope** unless that family PRD explicitly allows a zap: user deposits into the SE vault first, then uses shares.
+- **RateAsset as mint `tokenIn` on the DETF** is usually **out of scope** unless a family package explicitly documents a zap: user deposits into the SE vault first, then uses shares.
 - **vaultShareᵢ ↔ vaultShareⱼ on the DETF** is out of scope: use Balancer / Standard Exchange Router on the reserve pool.
 - Routes that need **binary search / gas-heavy exact-out solvers** should **revert** (`InvalidRoute` preferred for new families; peer Single SE may still say `UnsupportedRoute`). Do not ship approximate solvers “for convenience.”
 - **Preview/execution:** closed-form routes must share one quote path; tests assert **exact** preview == execution when possible (document ≤ few-wei only if Balancer multi-leg proportional exit forces it).
@@ -162,7 +164,7 @@ Apply to **true DETFs** in scope (Single SE, multi-vault weighted, mixed-buffer,
 - Facets: CREATE3 + `*FactoryService` / `DetfFacetFactoryService` / family `*_Facet_FactoryService`.
 - DETF DFPkg: **Vault Registry / manager** (`indexedexManager.deployPkg` / typed `deploy*DFPkg`). **Never** `new` DFPkg/facets; never bypass registry for registered vault packages.
 - `PkgInit` / `PkgArgs` **on the interface**, not the contract (Crane rule).
-- Shared helpers: `contracts/vaults/detf/core/*`, `detf/reusable/*`, bond NFT packages, `StandardExchangeRateProviderDFPkg`, Balancer `WeightedPoolFactory`.
+- Shared helpers: `contracts/vaults/detf/common/core/*`, `detf/common/factory/*`, bond NFT packages, `StandardExchangeRateProviderDFPkg`, Balancer `WeightedPoolFactory`.
 
 ### Testing expectations (DETF-specific)
 
@@ -181,19 +183,22 @@ Production-first rules in this file and `indexedex-testing` apply. Additionally 
 ### Key reference paths
 
 ```text
-contracts/vaults/detf/core/                    # shared math/lifecycle libs (incl. compound + expansion)
-contracts/vaults/detf/reusable/                # facet/pkg factory helpers, NFT interfaces
-contracts/vaults/detf/standardExchange/single/ # primary single-SE DETF gold implementation + TestBase
-contracts/vaults/detf/composed/multi-vault-weighted/  # multi-leg weighted PRD + implementation
-contracts/vaults/detf/composed/stable/common/  # multi-vault stable + claim token packages
-contracts/vaults/detf/composed/stable/mixedBuffer/  # mixed-buffer multi-vault stable
-contracts/vaults/detf/bondNft/                 # DETFNFTVault (shared bond NFT package)
-contracts/vaults/detf/claimToken/              # RebasingClaimToken package
-contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_*.md  # compound + expansion law + program
-contracts/vaults/protocol/uniswap/             # DualLiquidity (unrelated; not Protocol DETF)
+contracts/vaults/detf/common/core/                    # shared math/lifecycle libs (incl. compound + expansion)
+contracts/vaults/detf/common/factory/                 # facet/pkg factory helpers, NFT interfaces
+contracts/vaults/detf/common/bondNft/                 # DETFNFTVault (shared bond NFT package)
+contracts/vaults/detf/common/claimToken/              # RebasingClaimToken package
+contracts/vaults/detf/common/inventory/               # NFT inventory policy interfaces
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/  # Single SE DETF + TestBase
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/     # multi-leg weighted DETF
+contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/            # multi-vault stable + claim packages
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/              # mixed-buffer multi-vault stable
+contracts/vaults/detf/protocols/dexes/uniswap/v4/                          # placeholder (empty) for later host families
+docs/detf/                                            # compound + expansion product law + shared stages
+docs/detf/balancer/v3/<family-path>/                  # family-specific compound/expansion stage plans
+contracts/vaults/protocol/uniswap/                    # DualLiquidity (unrelated; not Protocol DETF)
 ```
 
-When implementing a new DETF family: write/update a **PRD** and **implementation/test plan** beside the package (see existing `*_PRD.md` / `*_IMPLEMENTATION_AND_TEST_PLAN.md`), then follow production-first phases. Do not re-open locked PRD decisions without an explicit PRD revision.
+When implementing a new DETF family: place package code under the correct host tree (`protocols/dexes/<host>/…`), keep shared libs in `common/`, and put planning docs under `docs/detf/` (mirrored for family stages). Do not re-open locked product law without an explicit PRD revision under `docs/detf/`.
 
 ## Codebase Overview
 

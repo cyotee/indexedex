@@ -14,7 +14,7 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {ThresholdMode} from "contracts/vaults/detf/core/DETFThresholdPolicy.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /**
  * @title IDetf

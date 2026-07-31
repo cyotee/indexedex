@@ -130,15 +130,13 @@ MultiVault is adversarial gold and property empty — **implement L3 here first*
 #### 4.1.1 Layout
 
 ```text
-contracts/vaults/detf/composed/multi-vault-weighted/
-  MultiVaultWeightedDetf_FUZZ_INVARIANT_TEST_PLAN.md   # product checklist + property IDs
-
-test/foundry/spec/vaults/detf/composed/multi-vault-weighted/invariant/
-  Handler_MultiVaultWeightedDetf.sol
+# Product-local co-located fuzz/invariant plan md is retired (directory reorg).
+# Property IDs: suite NatSpec + this program doc + AGENTS.md testing expectations.
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/
   MultiVaultWeightedDetf.invariant.t.sol
 
-test/foundry/spec/vaults/detf/composed/multi-vault-weighted/fuzz/
-  MultiVaultWeightedDetf_Fuzz.t.sol   # L1 pack (can land before or with L3)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/
+  MultiVaultWeightedDetf_Fuzz.t.sol   # L1 pack
 ```
 
 #### 4.1.2 Handler surface (P0 selectors)
@@ -195,10 +193,10 @@ Start config:
 #### 4.1.6 Verification
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/fuzz/**' -vv
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/invariant/**' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/**' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/**' -vv
 # Regression:
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/**'
 ```
 
 #### 4.1.7 Exit
@@ -216,14 +214,11 @@ forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weig
 #### 4.2.1 Layout
 
 ```text
-contracts/vaults/detf/standardExchange/single/
-  SingleStandardExchangeDETF_FUZZ_INVARIANT_TEST_PLAN.md
-
-test/foundry/spec/vaults/detf/standardExchange/single/fuzz/
+# Product-local co-located fuzz/invariant plan md is retired (directory reorg).
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/
   SingleStandardExchangeDETF_Fuzz.t.sol
 
-test/foundry/spec/vaults/detf/standardExchange/single/invariant/
-  Handler_SingleStandardExchangeDETF.sol
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/
   SingleStandardExchangeDETF.invariant.t.sol
 ```
 
@@ -241,9 +236,9 @@ test/foundry/spec/vaults/detf/standardExchange/single/invariant/
 #### 4.2.3 Verification
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/fuzz/**'
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/invariant/**'
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/adversarial/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/**'
 ```
 
 **Est.:** 3–5 eng-days after 1A pattern exists (parallel only if 1A Handler API frozen).
@@ -364,13 +359,13 @@ Multi-leg + rebasing claim: **L2 sequences first** (cheaper to debug), then L3.
 #### 6.1.2 Layout
 
 ```text
-test/foundry/spec/vaults/detf/composed/stable/common/sequences/
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/sequences/
   ComposedStableCommonDetf_Sequences.t.sol
 
-test/foundry/spec/vaults/detf/composed/stable/common/fuzz/
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/fuzz/
   ComposedStableCommonDetf_Fuzz.t.sol
 
-test/foundry/spec/vaults/detf/composed/stable/common/invariant/   # after sequences stable
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/   # after sequences stable
   Handler_ComposedStableCommonDetf.sol
   ComposedStableCommonDetf.invariant.t.sol
 ```
@@ -470,8 +465,8 @@ Execute for each Wave product:
 
 ```text
 1. Confirm happy-path (and adversarial if present) green on gold TestBase
-2. Write <Product>_FUZZ_INVARIANT_TEST_PLAN.md
-     - L1/L2/L3 scope, property IDs, deferred with reason, forge-config
+2. Document L1/L2/L3 scope + property IDs + deferred reasons in suite NatSpec / this program doc
+     (do not co-locate product plan md under family package dirs)
 3. L1 fuzz first if Handler unknown (faster feedback)
 4. Handler:
      - constructor(TestBase)
@@ -621,7 +616,7 @@ Do not merge suites into one directory; share only assert libs and TestBases.
 | Artifact | When |
 |----------|------|
 | This plan | Wave 0 start |
-| Per-product `*_FUZZ_INVARIANT_TEST_PLAN.md` | Start of each product wave |
+| Per-product fuzz/invariant suites under `test/.../{fuzz,invariant}/` + NatSpec | Start of each product wave |
 | Gap report checkbox / maturity table updates | End of each wave |
 | Optional `foundry.toml` `[profile.invariant_nightly]` | Wave 4 or W0 if approved |
 
@@ -630,7 +625,7 @@ Do not merge suites into one directory; share only assert libs and TestBases.
 ## 15. Immediate next actions (execute Wave 0 → 1A)
 
 1. Land W0-1 InvariantAssertLib + W0-4 gold labels.  
-2. Open `MultiVaultWeightedDetf_FUZZ_INVARIANT_TEST_PLAN.md` with P0 property list.  
+2. Document MultiVault P0 property list in suite NatSpec / this plan (no co-located product plan).  
 3. Implement MultiVault L1 fuzz pack until green.  
 4. Port BufferPool Handler skeleton → MultiVault Handler; add four P0 invariants.  
 5. Freeze Handler API; start Single SE DETF + Aerodrome L3 in parallel.

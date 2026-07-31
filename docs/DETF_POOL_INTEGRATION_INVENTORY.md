@@ -27,12 +27,12 @@
 
 | DETF / product family | Reserve curve | Factory / pool type | Who creates the pool? |
 |----------------------|---------------|---------------------|------------------------|
-| **SingleStandardExchangeDETF** (`detf/standardExchange/single/`) | Weighted (2-token; default 80/20) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
-| **MultiVaultWeightedDetf** (`detf/composed/multi-vault-weighted/`) | Weighted (2–8 tokens: DETF + 1..7 SE shares) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
-| **SingleVaultDetf** (`detf/composed/single/`) | Weighted 80/20 | Crane **`WeightedPool8020Factory`** | **D** — DFPkg |
+| **SingleStandardExchangeDETF** (`detf/protocols/dexes/balancer/v3/standardExchange/single/`) | Weighted (2-token; default 80/20) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
+| **MultiVaultWeightedDetf** (`detf/protocols/dexes/balancer/v3/multi-vault-weighted/`) | Weighted (2–8 tokens: DETF + 1..7 SE shares) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
+| **SingleVaultDetf** (removed; was `detf/composed/single/`) | — | — | **Removed** — use Single SE |
 | **SeigniorageDETF** (`vaults/seigniorage/`) | Weighted 80/20 | Crane **`WeightedPool8020Factory`** | **D** — DFPkg |
-| **ComposedStableCommonDetf** (`detf/composed/stable/common/`) | Weighted reserve of BPTs + DETF | Crane **`IWeightedPool`** + **`IStablePool`×2** | **E** — all three supplied in `PkgArgs` |
-| **MixedBufferMultiVaultStableDetf** (`detf/composed/stable/mixedBuffer/`) | Stable (MixedBuffer) | IndexedEx **`MixedBufferMultiVaultStablePool`** | **D** — via pool DFPkg |
+| **ComposedStableCommonDetf** (`detf/protocols/dexes/balancer/v3/stable/common/`) | Weighted reserve of BPTs + DETF | Crane **`IWeightedPool`** + **`IStablePool`×2** | **E** — all three supplied in `PkgArgs` |
+| **MixedBufferMultiVaultStableDetf** (`detf/protocols/dexes/balancer/v3/mixedBuffer/`) | Stable (MixedBuffer) | IndexedEx **`MixedBufferMultiVaultStablePool`** | **D** — via pool DFPkg |
 | **DualLiquidityLinkedCrossVersionUniswapVault** (`vaults/protocol/uniswap/crossVersion/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
 
 ### Gap headline
@@ -113,7 +113,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/detf/standardExchange/single/` |
+| Path | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 | Status | **Shipped** (threshold modes F1 green) |
 | Reserve | Balancer V3 **Weighted** (typically 2 tokens: DETF + SE vault share; default weights 80/20 overridable) |
 | Factory | `WeightedPoolFactory` (immutable on DFPkg from `PkgInit`) |
@@ -125,7 +125,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/detf/composed/multi-vault-weighted/` |
+| Path | `contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/` |
 | Status | **Implemented** (threshold modes F2 green; PRD header may lag as DRAFT) |
 | Reserve | Balancer V3 **Weighted** (DETF + 1..7 SE shares; custom weights sum `1e18`) |
 | Factory | `WeightedPoolFactory` |
@@ -137,7 +137,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/detf/composed/stable/mixedBuffer/` |
+| Path | `contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/` |
 | Status | **Shipped** (threshold modes F3 green) |
 | Reserve | IndexedEx **`MixedBufferMultiVaultStablePool`** (StableMath) |
 | Layout | DETF unpaired + `bufferToken` + 1..3 SE vault shares |
@@ -148,7 +148,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/detf/composed/stable/common/` |
+| Path | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/` |
 | Status | **Partial / in progress** (mint routing, bond surface, unwind query shipped; full execution checklist still open in PRD) |
 | Reserve | **Weighted** pool whose legs include DETF + **stablePool BPT** + **commonPool BPT** |
 | Intermediate | Two Balancer **Stable** pools (`stablePool`, `commonPool`) for like-kind vault composition |
@@ -156,16 +156,13 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 | Custom IndexedEx pool | **None** today (could later swap intermediate stables for CommonBuffer Stable / MixedBuffer) |
 | Evidence | `ComposedStableCommonDetfDFPkg.sol` `PkgArgs`, `ComposedStableCommonDetfRepo.sol` |
 
-### F5 — SingleVaultDetf (`composed/single`)
+### F5 — SingleVaultDetf (`composed/single`) — **REMOVED**
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/detf/composed/single/` |
-| Status | **Implemented** (behavioral peer / older shape vs Single SE family) |
-| Reserve | Weighted **80/20** via **`WeightedPool8020Factory`** |
-| Deploy | DFPkg `_createReservePool` → `WEIGHTED_POOL_8020_FACTORY.create(...)` |
-| Custom IndexedEx pool | **None** |
-| Note | Gold *product* path for single SE is now `standardExchange/single` (generalized WeightedPoolFactory); this family remains the 8020-shaped reference |
+| Path | ~~`contracts/vaults/detf/composed/single/`~~ (removed) |
+| Status | **Removed** — use Single SE family (F1) |
+| Note | Gold product path is `detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 
 ### F6 — SeigniorageDETF (legacy / protocol-adjacent)
 
@@ -191,7 +188,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Path | Status |
 |------|--------|
-| `contracts/vaults/detf/dual/` | Shared common stubs only (`DualDETFCommon`, `DualEmbeddedDETFCommon`) — **no pool integration / DFPkg** |
+| ~~`contracts/vaults/detf/dual/`~~ | **Deleted** in directory reorg (empty Dual* commons; no production surface) |
 
 ---
 
@@ -323,15 +320,15 @@ Derived from the matrix; product priority may override.
 
 ### DETF packages
 
-| Family | DFPkg | TestBase / PRD |
+| Family | DFPkg | TestBase / law |
 |--------|-------|----------------|
-| Single SE | `.../standardExchange/single/SingleStandardExchangeDETDFPkg.sol` | `TestBase_*`, `*_PRD.md` |
-| MultiVault Weighted | `.../multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol` | `TestBase_*`, `*_PRD.md` |
-| MixedBuffer Stable | `.../mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol` | `TestBase_*`, `*_PRD.md` |
-| Composed Stable Common | `.../stable/common/ComposedStableCommonDetfDFPkg.sol` | `TestBase_*`, `*_PRD.md` |
-| Single Vault (8020) | `.../composed/single/SingleVaultDetfDFPkg.sol` | (no gold TestBase name parity) |
+| Single SE | `.../balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
+| MultiVault Weighted | `.../balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
+| MixedBuffer Stable | `.../balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
+| Composed Stable Common | `.../balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
+| Single Vault (8020) | removed | — |
 | Seigniorage | `contracts/vaults/seigniorage/SeigniorageDETFDFPkg.sol` | component docs under `docs/components/` |
-| DualLiquidity | `.../uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | `*_PRD.md` |
+| DualLiquidity | `.../uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | family docs under protocol tree |
 
 ### IndexedEx pools
 

@@ -160,8 +160,8 @@ stamp_meta.py + plot_detf_single_se_*.py
 |------|------|
 | Uni V2 SE + research bootstrap | `scripts/foundry/research/uniswapV2Se/ResearchFixture_UniswapV2SeRateMatrix.sol` |
 | Uni V2 SE TestBase | `contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2StandardExchange.sol` |
-| Single SE DETF deploy + bond | `contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` |
-| Mint/burn/preview tests | `test/foundry/spec/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_Mint.t.sol` (and Burn, Bonding, Info) |
+| Single SE DETF deploy + bond | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` |
+| Mint/burn/preview tests | `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Mint.t.sol` (and Burn, Bonding, Info) |
 | Expansion / compound tests | `*NaturalExpansion.t.sol`, `*ProtocolCompound.t.sol` under single SE tests |
 | Telemetry | `scripts/foundry/research/harness/ResearchTelemetry.sol` |
 | Runner pattern | `research/run_mode_a.sh` |

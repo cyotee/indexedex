@@ -101,13 +101,16 @@ indexedex/
 │   │   ├── basic/                      # Basic + ERC4626 + multi-asset reserve vaults
 │   │   ├── standard/                   # Fee-aware standard vaults (+ exchange/)
 │   │   ├── slipstream/                 # Slipstream reserve vault repo
-│   │   ├── detf/                       # ★ Restructured DETF system
-│   │   │   ├── core/                   #   Reusable libs (bond lifecycle, threshold, math)
-│   │   │   ├── composed/single/        #   Single-vault DETF
-│   │   │   ├── composed/stable/common/ #   CHIR-style composed DETF + Rebasing DETF token
-│   │   │   ├── dual/embedded/          #   Dual / embedded DETF common
-│   │   │   ├── inventory/              #   Inventory policy interfaces
-│   │   │   └── reusable/nft/           #   Factory services + self-NFT inventory pkg
+│   │   ├── detf/                       # ★ DETF system (common + host-backed families)
+│   │   │   ├── common/                 #   Shared true-DETF infrastructure
+│   │   │   │   ├── core/               #     Libs (threshold, compound, expansion, bond math)
+│   │   │   │   ├── bondNft/            #     Shared DETF bond NFT package
+│   │   │   │   ├── claimToken/         #     Rebasing claim token package
+│   │   │   │   ├── inventory/          #     Inventory policy interfaces
+│   │   │   │   └── factory/            #     Detf*FactoryService (+ nft/)
+│   │   │   └── protocols/dexes/        #   Host-backed DETF family packages
+│   │   │       ├── balancer/v3/        #     True DETFs (Single SE, multi-vault, mixedBuffer, stable)
+│   │   │       └── uniswap/v4/         #     Placeholder (empty)
 │   │   ├── protocol/                   # Protocol NFT vault + RICHIR
 │   │   └── seigniorage/                # Seigniorage DETF + Bond NFT (nft/)
 │   └── test/                           # In-contract test infra (bases, handlers, helpers)
@@ -218,15 +221,20 @@ indexedex/
 #### Basic & Standard (`vaults/basic/`, `vaults/standard/`)
 Reserve tracking without complex mechanics. Basic: `BasicVault{Repo,Common,Facet,Target}`, `MultiAssetBasicVault*`, `ERC4626BasedBasicVaultFacet`. Standard (fee-aware): `StandardVault{Repo,Target}`, `ERC4626StandardVaultFacet`, `MultiAssetStandardVaultFacet`, `WeightedPoolReserveVaultRepo`, with `standard/exchange/IStandardExchange{In,Out}.sol`.
 
-#### DETF (`vaults/detf/`) ★ RESTRUCTURED
-The former flat "Protocol DETF" is now a layered system:
-- **`core/`** — reusable libraries: `DETFBondLifecycleLib`, `DETFBondNFTMathLib`, `DETFMintSplitLib`, `DETFPreviewLib`, `DETFThresholdPolicy`, `DETFUsageFeeLib`, `DETFBalancerScaleLib`, `DETFSafeTransferLib`.
-- **`composed/single/`** — `SingleVaultDetf*` (bonding, exchange in/out, info, repo, three-tier factory services: `_Component_`/`_Facet_`/`_Pkg_`).
-- **`composed/stable/common/`** — CHIR-style composed stable DETF: `ComposedStableCommonDetf*` (bonding, exchange, bond-NFT vault, factory services) + **`RebasingDETFToken*`** (replaces the old RICHIR-only rebasing token with a reusable rebasing DETF token: facet, pricing facet/target, repo, pkg).
-- **`dual/embedded/`** — `DualDETFCommon`, `DualEmbeddedDETFCommon` shared logic for embedded dual vaults.
-- **`inventory/`** — policy interfaces: `IDetfBondInventoryPolicy`, `IDetfFeeRecipientInventoryPolicy`, `IDetfProtocolNftInventoryPolicy`, `IDetfSelfNftInventoryPolicy`.
-- **`reusable/`** — `Detf{Component,Facet,Pkg}FactoryService` + `nft/IDetfSelfNftInventoryDFPkg`.
-- Cross-chain: `DetfSuperchainBridgeRepo.sol` (Superchain bridge state).
+#### DETF (`vaults/detf/`) ★ RESTRUCTURED (2026-07-31 directory reorg)
+Two-axis layout (see `DETF_DIRECTORY_REORGANIZATION_PRD.md` + `AGENTS.md`):
+
+- **`common/`** — shared true-DETF infrastructure:
+  - **`common/core/`** — libs: `DETFBondLifecycleLib`, `DETFBondNFTMathLib`, `DETFMintSplitLib`, `DETFPreviewLib`, `DETFThresholdPolicy`, `DETFUsageFeeLib`, `DETFProtocolCompoundLib`, `DETFNaturalExpansionLib`, `DETFBalancerScaleLib`, `DETFSafeTransferLib`.
+  - **`common/bondNft/`**, **`common/claimToken/`**, **`common/inventory/`**, **`common/factory/`** (was `reusable/`; `Detf{Component,Facet,Pkg}FactoryService` + `nft/`).
+- **`protocols/dexes/balancer/v3/`** — Balancer V3–backed production families:
+  - **`standardExchange/single/`** — Single SE DETF (gold pathfinder) + `TestBase_SingleStandardExchangeDETF`.
+  - **`multi-vault-weighted/`** — MultiVault weighted DETF.
+  - **`mixedBuffer/`** — Mixed-buffer multi-vault stable DETF.
+  - **`stable/common/`** — Composed stable common DETF + family-local bond NFT / `RebasingDETFToken*`.
+- **`protocols/dexes/uniswap/v4/`** — empty placeholder for a future host family (not SE legs).
+- **Removed:** empty dual DETF shells, `DETFCommon`, co-located family PRD/plan markdown (product law under `docs/detf/` + AGENTS).
+- Planning law: `docs/detf/` (compound/expansion PRD/PROGRAM + mirrored family stages).
 
 #### Protocol (`vaults/protocol/`)
 `ProtocolNFTVault*` (bond positions: repo, common, facet, target, service, pkg) and `RICHIR*` (rebasing redemption token: repo, facet, target, pkg).
@@ -409,10 +417,11 @@ Public Anvil dev accounts inherit live drain-bot EIP-7702 designators on Sepolia
 4. Test base `TestBase_*StandardExchange.sol`; fork tests under `test/foundry/fork/base_main/{protocol}/`
 
 **Add a new DETF variant**:
-1. Reuse `vaults/detf/core/*` libs and `vaults/detf/reusable/*` factory services
-2. Add a `composed/<kind>/` (or `dual/`) directory with `*Repo/Common/Facet/Target/DFPkg` + three-tier `_Component_/_Facet_/_Pkg_` factory services
-3. Define inventory policy via `vaults/detf/inventory/` interfaces
-4. Register fee type in `contracts/interfaces/VaultFeeTypes.sol`
+1. Reuse `vaults/detf/common/core/*` libs and `vaults/detf/common/factory/*` factory services
+2. Place family packages under `vaults/detf/protocols/dexes/<host>/…` (today Balancer V3) with `*Repo/Common/Facet/Target/DFPkg` + three-tier `_Component_/_Facet_/_Pkg_` factory services — do **not** subclass another family’s concrete contracts
+3. Define inventory policy via `vaults/detf/common/inventory/` interfaces
+4. Put planning docs under `docs/detf/` (mirrored for family stages); do not co-locate PRDs under the package
+5. Register fee type in `contracts/interfaces/VaultFeeTypes.sol` when needed
 
 **Work on the Buffer Pool**:
 1. Pool math/storage: `.../constProd/standardExchange/StandardExchangeBufferPool{Target,Repo}.sol`

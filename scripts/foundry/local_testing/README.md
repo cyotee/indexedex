@@ -197,7 +197,7 @@ Expected manifest: `11_scenario_2.json`
 - `12`: Scenario 3 overlay
 
 Scenario 3 deploys **SingleStandardExchangeDETF** from
-`contracts/vaults/detf/standardExchange/single/` (hermetic single-chain overlay; no Superchain bridge):
+`contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` (hermetic single-chain overlay; no Superchain bridge):
 
 - local `WeightedPoolFactory` for the DETF reserve weighted pool
 - Uniswap V4 PoolManager + WETH/RICH liquidity seed via `UniswapV4LiquiditySeeder`

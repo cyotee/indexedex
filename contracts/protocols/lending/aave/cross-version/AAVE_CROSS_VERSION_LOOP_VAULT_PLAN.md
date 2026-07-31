@@ -95,7 +95,7 @@ controllable than a mainnet fork). Crane vendors everything needed:
   (provides `hub1`, `spoke1`, mock assets, `HubActions`); IR via `IAssetInterestRateStrategy.InterestRateData`
   (`optimalUsageRatio`, `baseDrawnRate`, `rateGrowthBefore/AfterOptimal`, all BPS).
 - **V3.6 market:** `AaveV3BatchOrchestration` + `ProtocolV3TestBase`; IR via `DefaultReserveInterestRateStrategyV2` params.
-- **Test tokens:** `@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg` (per user direction) — proper diamond ERC20s with mint/burn + ownable/operable, so the test can freely mint to seed Aave liquidity and fund users. Deploy recipe (see `test/foundry/spec/vaults/detf/composed/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol`):
+- **Test tokens:** `@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg` (per user direction) — proper diamond ERC20s with mint/burn + ownable/operable, so the test can freely mint to seed Aave liquidity and fund users. Deploy recipe (see `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol`):
   1. `create3Factory.deployFacet(type(<Facet>).creationCode, salt)` for the 6 facets (erc20, erc5267, erc2612, erc20MintBurnOwnable, multiStepOwnable, operable) — most come from `TestBase_VaultComponents`/`IndexedexTest`.
   2. Build `IERC20MintBurnOwnableOperableDFPkg.PkgInit{...facets, diamondFactory: diamondPackageFactory}`.
   3. `create3Factory.deployPackageWithArgs(type(ERC20MintBurnOwnableOperableDFPkg).creationCode, abi.encode(pkgInit), salt)`.

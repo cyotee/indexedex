@@ -47,4 +47,4 @@ A4–A5, B2/B4–B5, C4–C5, D7, E2–E3, G2–G3, H1, peer product ports — e
 
 ## Reference suite
 
-`test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/`
+`test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/`

@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-15  
 **Scope:** IndexedEx vault / DETF / Standard Exchange surfaces vs production-first adversarial methodology (`crane-adversarial-testing` + `indexedex-adversarial-testing`).  
-**Gold standard:** `test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/` (P0/P1 green; plan: `MultiVaultWeightedDetf_ADVERSARIAL_TEST_PLAN.md`).
+**Gold standard:** `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/` (P0/P1 green). Co-located product plans retired in directory reorg — law: `AGENTS.md` + `docs/testing/ADVERSARIAL_VAULT_COVERAGE_IMPLEMENTATION_PLAN.md` + suite NatSpec.
 
 This report inventories **where formal adversarial suites are missing**, what **baseline** abuse coverage already exists (happy-path-adjacent or partial), and a **recommended port order**. It is not a claim that other products have zero security tests — only that they lack a catalog-driven adversarial program comparable to MultiVaultWeightedDetf.
 
@@ -82,7 +82,7 @@ No blocking gap for this family.
 
 | Item | Detail |
 |------|--------|
-| Production | `contracts/vaults/detf/standardExchange/single/` |
+| Production | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 | TestBase | `TestBase_SingleStandardExchangeDETF.sol` |
 | Existing specs | Deploy, Mint, Burn, Bonding, Guards, Info, Requirements, Reentrancy, ComposedStable matrix; fork matrices DualLiquidity / Uni V4 |
 | Plan callout | MultiVault adversarial plan Phase 6: port A1–A3, B1, C*, D2-class, E1, E4, F* |
@@ -109,7 +109,7 @@ No blocking gap for this family.
 **Recommended suite path:**
 
 ```text
-test/foundry/spec/vaults/detf/standardExchange/single/adversarial/
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/
   TestBase_SingleStandardExchangeDETF_Adversarial.sol
   Adversarial_*.t.sol  # mirror MultiVault layout
 ```
@@ -122,7 +122,7 @@ Reuse MultiVault harness patterns; underlying SE via existing matrix providers (
 
 | Item | Detail |
 |------|--------|
-| Production | `contracts/vaults/detf/composed/stable/common/` |
+| Production | `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/` |
 | TestBase | `TestBase_ComposedStableCommonDetf.sol` (+ Components) |
 | Existing | Deploy, exchangeIn/burn, bonding facet, integrated deploy (bond→sell→redeem), rebasing token behavior/pricing |
 

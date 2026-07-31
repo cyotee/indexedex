@@ -37,7 +37,7 @@
 2. Phase 3 FINDINGS + agent report (this directory)  
 3. SE rails (cite only): [`../../uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md`](../../uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md)  
 4. Product narrative: [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../../../../docs/marketing/DETF_NARRATIVE_SPINE.md)  
-5. Compound/expansion handoff: [`contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md)  
+5. Compound/expansion handoff: [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md)  
 
 **Progress (Mode B):**
 
@@ -72,7 +72,7 @@ Research campaign to **prove DETF merits** for a **litepaper** (then optional wh
 
 | Topic | Decision |
 |-------|----------|
-| Gold DETF | `contracts/vaults/detf/standardExchange/single/` only |
+| Gold DETF | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` only |
 | Removed package | **No** `composed/single` / SingleVaultDetf |
 | SE attachment | **Uni V2 SE** hermetic — **not** Aero TestBase default |
 | Synthetic drive (D3/D4/D8) | **Production paths only:** free-DETF primary burns when burn-allowed + real Uni V2 trades (no Open/deal). Uni-only insufficient post-bond (RQ5 PARTIAL) |
@@ -215,7 +215,7 @@ Read:
 - research/papers/detf-litepaper/FORMAL_DEFINITIONS.md
 - research/papers/detf-litepaper/FIGURE_MANIFEST.md
 - research/papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md
-- contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md
+- docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md
 
 Phase 3 is LOCKED. Do not re-run full hermetic matrices unless FINDINGS are missing.
 

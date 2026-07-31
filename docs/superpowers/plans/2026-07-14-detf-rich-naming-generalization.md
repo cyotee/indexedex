@@ -177,13 +177,13 @@ Rename **struct member names** in source for clarity. **Do not change `STORAGE_S
 
 **Implementations — stable common (partial debt)**
 
-- `contracts/vaults/detf/composed/stable/common/**` — replace remaining `IRICHIR` / `richir*` / `convertToRichir` / event types with glossary names while keeping existing good names (`rebasingDetfToken`, `rewardToken`)
+- `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/**` — replace remaining `IRICHIR` / `richir*` / `convertToRichir` / event types with glossary names while keeping existing good names (`rebasingDetfToken`, `rewardToken`)
 
 ### 3.2 Must change (P1 — tests & factories)
 
 - `test/foundry/spec/vaults/detf/composed/single/**`
 - `test/foundry/spec/vaults/protocol/RICHIR*` → rename paths
-- `test/foundry/spec/vaults/detf/composed/stable/common/**`
+- `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/**`
 - `test/foundry/fork/**` Protocol DETF suites that call `richToken` / `richir` selectors
 - `test/foundry/debug/**` as needed
 
@@ -333,7 +333,7 @@ forge test --match-path 'test/foundry/spec/vaults/detf/composed/single/*' -vv
 **Verification**
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/stable/common/*' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/*' -vv
 ```
 
 **Exit:** No RICH product vocabulary under `contracts/vaults/detf/**` or `contracts/vaults/protocol/**`.

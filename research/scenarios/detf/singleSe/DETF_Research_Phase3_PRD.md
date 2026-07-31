@@ -14,7 +14,7 @@ Phase 3 — Single SE DETF Research Harness & Scenarios D0–D9 (Execution)
 | **Created** | 2026-07-30 |
 | **Campaign (normative product/scenario law)** | [`DETF_Research_PRD.md`](./DETF_Research_PRD.md) |
 | **Portfolio program** | [`research/papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md`](../../../papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md) |
-| **Compound / expansion law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**) |
+| **Compound / expansion law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**) |
 | **Threshold law** | [`DETF_Threshold_Modes_PRD.md`](../../../../contracts/vaults/detf/DETF_Threshold_Modes_PRD.md) (**LOCKED**) |
 | **SE research rails (cite, do not re-run)** | [`../../uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md`](../../uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md) |
 | **Implementation plan** | [`DETF_Research_Phase3_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_Research_Phase3_IMPLEMENTATION_AND_TEST_PLAN.md) |
@@ -89,7 +89,7 @@ Do not re-open without revising **this** PRD (or the campaign PRD if product int
 | **Script structure** | **One script per `Di`** (`Script_D0_…` … `Script_D9_…`) |
 | **Shared fixture** | One research fixture contract reused by all scripts |
 | **SE attachment** | **Uni V2 Standard Exchange** (WETH/USDC-style hermetic; continuity with Mode A / rateProviderCompare) |
-| **DETF family** | `contracts/vaults/detf/standardExchange/single/` only |
+| **DETF family** | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` only |
 | **Removed path** | No `composed/single` |
 | **Synthetic drive (D3/D4/D8)** | **Production paths only:** free-DETF primary burns when burn-allowed (unwind bond free-DETF dilution) + real Uni V2 trades. **Forbidden:** Open thresholds, deal-seed DETF, storage hacks. Uni-trades-alone is empirically insufficient post-bond (see FINDINGS RQ5). |
 | **D2** | Flexible / N/A if already mint-allowed at `t_live` |

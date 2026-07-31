@@ -202,7 +202,7 @@ No blocking gap for this family. **Use as template** for DETF/SE Handlers.
 **Recommended suite path:**
 
 ```text
-test/foundry/spec/vaults/detf/composed/multi-vault-weighted/invariant/
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/
   Handler_MultiVaultWeightedDetf.sol
   MultiVaultWeightedDetf.invariant.t.sol
 ```

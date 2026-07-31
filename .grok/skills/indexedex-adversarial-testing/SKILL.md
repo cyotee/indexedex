@@ -71,14 +71,16 @@ See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-na
 | H2 | redeemClaim minOut fail | Claim balance unchanged (tx atomicity; production may burn-then-exit) |
 | H3 | Failed mint minOut | Residual free shares/DETF = 0 |
 
-Reference implementation:
+Reference implementation (gold suite + law — co-located product plans deleted in directory reorg):
 
 ```text
-test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/
-contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetf_ADVERSARIAL_TEST_PLAN.md
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/
+AGENTS.md (DETF families — common expectations)
+docs/detf/   # compound/expansion + shared threshold law
+docs/testing/ADVERSARIAL_VAULT_COVERAGE_IMPLEMENTATION_PLAN.md
 ```
 
-Copy layout and ID naming when porting to `standardExchange/single` or other DETFs.
+Copy adversarial suite layout and ID naming from the multi-vault `adversarial/` tree when porting to `standardExchange/single` or other DETFs. Do **not** reintroduce co-located `*_ADVERSARIAL_TEST_PLAN.md` under family packages.
 
 ## Harness: MultiVault adversarial TestBase
 
@@ -136,17 +138,17 @@ Do not leave catalog IDs silently missing.
 ## Porting checklist (new DETF / SE vault)
 
 1. Happy-path matrix green on production TestBase
-2. Write `*_ADVERSARIAL_TEST_PLAN.md` from Crane catalog template
+2. Map P0/P1 IDs from Crane catalog + `references/detf-adversarial-checklist.md` (document deferred IDs in suite NatSpec; do not co-locate product plan md under the family package)
 3. `TestBase_*_Adversarial` extends feature TestBase
 4. Implement P0: D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced
 5. `forge test --match-path '.../adversarial/**'` then full feature path
-6. Update plan checklist + deferred NatSpec
+6. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
 
 ## Commands
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/**' -vv
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/**' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/**'
 ```
 
 ## Related skills

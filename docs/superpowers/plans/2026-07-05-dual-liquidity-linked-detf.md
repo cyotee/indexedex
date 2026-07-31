@@ -114,10 +114,10 @@ Key existing code consumed (verified paths/signatures):
 - `@crane/contracts/interfaces/IStandardExchangeOut.sol` — `previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut) → uint256 amountIn`; `exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) → uint256 amountIn`.
 - `contracts/interfaces/proxies/IStandardExchangeProxy.sol` — combined In+Out proxy interface (leg vault type).
 - `contracts/interfaces/IVaultFeeOracleQuery.sol` — `usageFeeOfVault(address vault) → uint256`; `feeTo() → IFeeCollectorProxy`.
-- `contracts/vaults/detf/core/DETFUsageFeeLib.sol` — `_splitUsageFee(uint256 gross, uint256 feeWad) → (uint256 user, uint256 fee)`.
+- `contracts/vaults/detf/common/core/DETFUsageFeeLib.sol` — `_splitUsageFee(uint256 gross, uint256 feeWad) → (uint256 user, uint256 fee)`.
 - `@crane/contracts/tokens/ERC20/ERC20Repo.sol` — diamond ERC20 storage/mint/burn (as used by `RebasingDETFTokenTarget.sol`).
 - `@crane/contracts/factories/diamondPkg/IFacet.sol` — `facetName()`, `facetInterfaces()`, `facetFuncs()`, `facetMetadata()`.
-- Behavioral references (read, do not import concretes): `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfDFPkg.sol` (DFPkg shape), `ComposedStableCommonDetfExchangeOutQueryFacet.sol` (Balancer proportional-exit call shape), `Seigniorage_Component_FactoryService.sol` (rate-provider wiring via `StandardExchangeRateProviderDFPkg`).
+- Behavioral references (read, do not import concretes): `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol` (DFPkg shape), `ComposedStableCommonDetfExchangeOutQueryFacet.sol` (Balancer proportional-exit call shape), `Seigniorage_Component_FactoryService.sol` (rate-provider wiring via `StandardExchangeRateProviderDFPkg`).
 
 ---
 
@@ -411,7 +411,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 **Steps:**
 
-- [ ] **Step 1: Read the behavioral reference** — `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol` and its shared reserve-exit helpers, plus `contracts/vaults/detf/composed/stable/common/ComposedStableCommonDetfCommon.sol` `claimLiquidity` path, to copy the exact Balancer V3 router-proxy call shape (`removeLiquidityProportional`-equivalent, Permit2 approvals). Do not import their contracts; replicate the call pattern.
+- [ ] **Step 1: Read the behavioral reference** — `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol` and its shared reserve-exit helpers, plus `contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol` `claimLiquidity` path, to copy the exact Balancer V3 router-proxy call shape (`removeLiquidityProportional`-equivalent, Permit2 approvals). Do not import their contracts; replicate the call pattern.
 - [ ] **Step 2: Implement the adapter** — constructor `(IBalancerV3StandardExchangeRouterProxy router, IPermit2 permit2, IWeightedPool pool, IERC20[3] memory orderedShares)`; `exitProportional` pulls BPT from caller, executes the proportional exit via the router, reorders outputs to `[vaultAShare, vaultBShare, pairVaultShare]`, transfers to `recipient`, returns amounts. Reverts `ResidualInventory` if any BPT or share dust remains on the adapter.
 - [ ] **Step 3: Build** — `forge build` clean.
 - [ ] **Step 4: Commit** — `feat(detf): add Balancer V3 proportional exit adapter` (+ trailer).

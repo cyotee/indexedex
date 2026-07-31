@@ -7,7 +7,7 @@
 | **Date** | 2026-07-25 (impl 2026-07-26) |
 | **Agent entry** | [`ROADMAP.md`](./ROADMAP.md) — **do not re-implement Wave 2** |
 | **Architecture SoT** | [`FRONTEND_REDESIGN_DESIGN.md`](./FRONTEND_REDESIGN_DESIGN.md) (**rev 9**) |
-| **Contract package (hero)** | `contracts/vaults/detf/standardExchange/single` — **SingleStandardExchangeDETF** |
+| **Contract package (hero)** | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single` — **SingleStandardExchangeDETF** |
 | **Depends on** | Wave 1 + Wave 1.5 **shipped** |
 | **Working directory** | `frontend/` |
 | **Follow-on** | PR8 SharePositionCard **also shipped** (see ROADMAP). Residual = PR9 / brand / Wave 3 — not Wave 2 rework. |
@@ -87,7 +87,7 @@ Wave 1 already shipped mint/bond/sell mechanics and chrome on `/staking`. Wave 2
 
 ### 2.1 Package
 
-**Hero:** [SingleStandardExchangeDETF](../contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_PRD.md)
+**Hero:** [SingleStandardExchangeDETF](../contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_PRD.md)
 
 - True seigniorage DETF: DETF share + one SE vault share on Balancer V3 weighted reserve.
 - User flows: mint / exchange in → bond NFT → sell to protocol → claim/redeem.

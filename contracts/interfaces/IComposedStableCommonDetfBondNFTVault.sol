@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IDetfNftInventoryPolicy} from "contracts/vaults/detf/inventory/IDetfNftInventoryPolicy.sol";
+import {IDetfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfNftInventoryPolicy.sol";
 
 interface IComposedStableCommonDetfBondNFTVault is IDETFNFTVault, IDetfNftInventoryPolicy {
 

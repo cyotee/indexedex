@@ -15,9 +15,9 @@ Single Standard Exchange DETF — Lifecycle, Policy/Open Gates, Primary-Market H
 | **Updated** | 2026-07-30 — protocol compound + natural supply expansion product law |
 | **Horizon** | Hours to ~1 day agent execution (not multi-week process) |
 | **Portfolio program** | [`research/papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md`](../../../papers/detf-litepaper/RESEARCH_AND_WRITING_PROGRAM.md) |
-| **Product PRD (SUT)** | [`SingleStandardExchangeDETF_PRD.md`](../../../../contracts/vaults/detf/standardExchange/single/SingleStandardExchangeDETF_PRD.md) |
+| **Product PRD (SUT)** | [`SingleStandardExchangeDETF_PRD.md`](../../../../contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_PRD.md) |
 | **Threshold law** | [`DETF_Threshold_Modes_PRD.md`](../../../../contracts/vaults/detf/DETF_Threshold_Modes_PRD.md) (**LOCKED**) |
-| **Compound + expansion law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**); docs handoff: [`DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../../contracts/vaults/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md) |
+| **Compound + expansion law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**); docs handoff: [`DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md`](../../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md) |
 | **Narrative / non-claims** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../../../../docs/marketing/DETF_NARRATIVE_SPINE.md) |
 | **Methodology** | [`research/RESEARCH_PLAYBOOK.md`](../../../RESEARCH_PLAYBOOK.md) Tier 5 |
 | **SE rails (reuse, do not re-run)** | [`rateProviderCompare/AGENT_RESEARCH_REPORT.md`](../../uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md) |
@@ -134,8 +134,8 @@ Playbook **Tier 5 (DETF)** was explicitly **not started**. This PRD starts it fo
 |------|----------|
 | Family | Single Standard Exchange DETF |
 | Package | `SingleStandardExchangeDETDFPkg` / registry deploy path |
-| Code root | `contracts/vaults/detf/standardExchange/single/` (**not** `composed/single`) |
-| Gold TestBase | `contracts/vaults/detf/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` |
+| Code root | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` (**not** `composed/single`) |
+| Gold TestBase | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol` |
 | Default SE attachment (research) | **Uni V2 Standard Exchange** (WETH/USDC-style hermetic path) for narrative continuity with SE rateProviderCompare / Mode A — **real SE, not mock**. TestBase default Aero DAI/USDC is **not** the research gold attachment unless re-locked. |
 | Info / bond / exchange surfaces | `ISingleStandardExchangeDETFInfo`, bonding target, `IStandardExchangeIn` |
 

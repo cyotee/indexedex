@@ -5,8 +5,8 @@
 **Inputs:**
 
 - Gap report: [`docs/testing/ADVERSARIAL_VAULT_COVERAGE_GAP_REPORT.md`](./ADVERSARIAL_VAULT_COVERAGE_GAP_REPORT.md)
-- Gold suite: `test/foundry/spec/vaults/detf/composed/multi-vault-weighted/adversarial/`
-- Gold plan: `contracts/vaults/detf/composed/multi-vault-weighted/MultiVaultWeightedDetf_ADVERSARIAL_TEST_PLAN.md`
+- Gold suite: `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/`
+- Gold law: `AGENTS.md` DETF expectations + `docs/detf/` (co-located family `*_ADVERSARIAL_TEST_PLAN.md` retired in directory reorg — do not restore under package dirs)
 - Skills: `crane-adversarial-testing`, `indexedex-adversarial-testing`
 
 **Goal:** Bring peer vault / DETF / SE families to a MultiVault-comparable **P0 (and target P1)** adversarial bar using production-first Foundry tests — not mocks of the SUT.
@@ -100,20 +100,12 @@ Avoid copy-paste thrash across families; keep MultiVault as behavior gold, extra
 #### 4.1.1 Layout
 
 ```text
-contracts/vaults/detf/standardExchange/single/
-  SingleStandardExchangeDETF_ADVERSARIAL_TEST_PLAN.md   # product plan (checklist)
-
-test/foundry/spec/vaults/detf/standardExchange/single/adversarial/
+# Product-local co-located plan md is retired; track IDs in suite NatSpec + this program doc.
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/
   TestBase_SingleStandardExchangeDETF_Adversarial.sol
-  Adversarial_Guards.t.sol          # E5, H3, pre-live, routes (extend existing Guards)
-  Adversarial_Access.t.sol          # F1–F4
-  Adversarial_Reentrancy.t.sol      # C1–C3 (extend beyond BASE mint/bond)
-  Adversarial_Donation.t.sol        # A1–A3
-  Adversarial_BondClaim.t.sol       # D2–D6
-  Adversarial_Economic.t.sol        # E1, E4
-  Adversarial_PriceManipulation.t.sol  # B1, B3
-  Adversarial_Griefing.t.sol        # H2
-  Adversarial_Nested.t.sol          # G1 (optional P1; reuse ComposedStable matrix patterns)
+  Adversarial_SingleSE_P0.t.sol     # consolidated P0 suite (guards, access, reentrancy, donation, bond/claim, economic)
+  # optional split files if re-partitioned later:
+  # Adversarial_Guards.t.sol, Adversarial_Access.t.sol, …
 ```
 
 #### 4.1.2 Task checklist
@@ -135,10 +127,10 @@ test/foundry/spec/vaults/detf/standardExchange/single/adversarial/
 #### 4.1.3 Verification
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/adversarial/**' -vv
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/**' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/**'
 # Optional fork matrix smoke (if touched wiring):
-# forge test --match-path 'test/foundry/fork/base_main/vaults/detf/standardExchange/single/**'
+# forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/**'
 ```
 
 #### 4.1.4 Exit
@@ -156,19 +148,9 @@ forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/*
 #### 4.2.1 Layout
 
 ```text
-contracts/vaults/detf/composed/stable/common/
-  ComposedStableCommonDetf_ADVERSARIAL_TEST_PLAN.md
-
-test/foundry/spec/vaults/detf/composed/stable/common/adversarial/
-  TestBase_ComposedStableCommonDetf_Adversarial.sol
-  Adversarial_Guards.t.sol
-  Adversarial_Access.t.sol
-  Adversarial_Reentrancy.t.sol
-  Adversarial_Donation.t.sol
-  Adversarial_BondClaim.t.sol       # DETF + RebasingDETFToken surfaces
-  Adversarial_Economic.t.sol
-  Adversarial_RouteGrief.t.sol      # B/H: most-liquid route, multi-leg residual (P1/P2)
-  Adversarial_Griefing.t.sol        # H2 (diamond + claim token)
+# Product-local co-located plan md is retired; track IDs in suite NatSpec + this program doc.
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/
+  Adversarial_ComposedStable_P0.t.sol
 ```
 
 #### 4.2.2 Task checklist
@@ -189,8 +171,8 @@ test/foundry/spec/vaults/detf/composed/stable/common/adversarial/
 #### 4.2.3 Verification
 
 ```bash
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/stable/common/adversarial/**' -vv
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/stable/common/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/**' -vv
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/**'
 ```
 
 **Est.:** 5–7 eng-days (multi-leg complexity).
@@ -345,7 +327,7 @@ Execute in this order for each wave item:
 
 ```
 1. Confirm happy-path green on gold TestBase
-2. Write <Product>_ADVERSARIAL_TEST_PLAN.md (status PLANNED, P0 list, deferred)
+2. Map P0 list + deferred IDs in suite NatSpec / this program doc (do not co-locate product plan under family package)
 3. TestBase_*_Adversarial (live helpers, attacker, residual)
 4. P0 files: Guards/Access → BondClaim/Authority → Reentrancy → Donation → Economic/Price → Griefing
 5. P1 files or NatSpec defer
@@ -450,11 +432,11 @@ Ship gates can stop after **Wave 1** for “peer DETFs adversarially tested,” 
 
 ```bash
 # Gold — must stay green throughout
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/multi-vault-weighted/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/**'
 
 # Wave 1
-forge test --match-path 'test/foundry/spec/vaults/detf/standardExchange/single/adversarial/**'
-forge test --match-path 'test/foundry/spec/vaults/detf/composed/stable/common/adversarial/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/**'
+forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/**'
 
 # Wave 2
 FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/adversarial/**'
@@ -474,7 +456,7 @@ Capture logs under session scratch when running under a goal harness.
 |-----|-------------|
 | This plan | Checkbox / status per wave |
 | Gap report | Mark families Full/Partial as waves complete |
-| Product `*_ADVERSARIAL_TEST_PLAN.md` | Per product exit |
+| Product adversarial suite under `test/.../adversarial/` + NatSpec | Per product exit |
 | `AGENTS.md` | Only if new skill paths or mandatory reading changes (already points to adversarial skills) |
 
 ---
