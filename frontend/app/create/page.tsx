@@ -301,11 +301,6 @@ export default function CreatePage() {
                 await writeBalDeploy({ args: [tokenConfigs as any, hooksContract] as const })
                 return
             }
-            if (selectedFactory.hookName === 'StandardExchangeSingleVaultSeigniorageDETFDFPkg' && selectedFn.functionName === 'deployDetf') {
-                // Stub: Implement useWrite... for this hook
-                console.log('DETF deploy not implemented', argsState)
-                return
-            }
             console.log('Submitting (no writer wired)', { factory: selectedFactory.name, fn: selectedFn.functionName, argsState })
         } catch (e) {
             console.error('Create failed', e)

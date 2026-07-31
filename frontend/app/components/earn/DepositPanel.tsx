@@ -505,7 +505,7 @@ export function DepositPanel({
       <Card>
         <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Deposit via DETF flows</h3>
         <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-          Protocol and seigniorage DETFs use mint / bond / sell rather than a single vault share deposit.
+          Protocol DETFs use mint / bond / sell rather than a single vault share deposit.
           Use the DETF actions below, or open the full workspace.
         </p>
         <div className="mt-3">

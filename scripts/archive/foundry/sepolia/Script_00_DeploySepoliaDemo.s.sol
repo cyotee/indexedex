@@ -15,7 +15,6 @@ import {Script_11_DeployStandardExchangeRateProviders} from "./Script_11_DeployS
 import {Script_12_DeployBalancerConstProdVaultTokenPools} from "./Script_12_DeployBalancerConstProdVaultTokenPools.s.sol";
 import {Script_13_SeedBalancerVaultTokenPoolLiquidity} from "./Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "./Script_14_DeployERC4626PermitVaults.s.sol";
-import {Script_15_DeploySeigniorageDETFS} from "./Script_15_DeploySeigniorageDETFS.s.sol";
 import {Script_ExportTokenlists} from "./Script_ExportTokenlists.s.sol";
 
 contract Script_00_DeploySepoliaDemo {
@@ -34,7 +33,7 @@ contract Script_00_DeploySepoliaDemo {
         new Script_12_DeployBalancerConstProdVaultTokenPools().run();
         new Script_13_SeedBalancerVaultTokenPoolLiquidity().run();
         new Script_14_DeployERC4626PermitVaults().run();
-        new Script_15_DeploySeigniorageDETFS().run();
+        // Stage 15 (SeigniorageDETF dual-token product) removed.
         new Script_ExportTokenlists().run();
     }
 }

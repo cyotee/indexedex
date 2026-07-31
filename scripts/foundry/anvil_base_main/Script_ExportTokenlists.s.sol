@@ -568,37 +568,6 @@ contract Script_ExportTokenlists is DeploymentBase {
         _writeTokenlist("anvil_base_main-erc4626.tokenlist.json", entries);
     }
 
-    function _exportSeigniorageDetfs(string memory chainIdStr) internal {
-        (address detfAb, bool okAb) = _readAddressSafe("15_seigniorage_detfs.json", "detf_abVault");
-        (address detfAc, bool okAc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_acVault");
-        (address detfBc, bool okBc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_bcVault");
-        (address detfAeroAb, bool okAeroAb) = _readAddressSafe("15_seigniorage_detfs.json", "detf_aeroAbVault");
-        (address detfAeroAc, bool okAeroAc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_aeroAcVault");
-        (address detfAeroBc, bool okAeroBc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_aeroBcVault");
-
-        if (!(okAb && okAc && okBc && okAeroAb && okAeroAc && okAeroBc)) {
-            _writeEmptyTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json");
-            return;
-        }
-
-        if (
-            detfAb == address(0) || detfAc == address(0) || detfBc == address(0) || detfAeroAb == address(0)
-                || detfAeroAc == address(0) || detfAeroBc == address(0)
-        ) {
-            _writeEmptyTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json");
-            return;
-        }
-
-        string[] memory entries = new string[](6);
-        entries[0] = _tokenlistEntry(chainIdStr, detfAb, "Seigniorage DETF (abVault)", "sdetfAb");
-        entries[1] = _tokenlistEntry(chainIdStr, detfAc, "Seigniorage DETF (acVault)", "sdetfAc");
-        entries[2] = _tokenlistEntry(chainIdStr, detfBc, "Seigniorage DETF (bcVault)", "sdetfBc");
-        entries[3] = _tokenlistEntry(chainIdStr, detfAeroAb, "Seigniorage DETF (aeroAbVault)", "sdetfAeroAb");
-        entries[4] = _tokenlistEntry(chainIdStr, detfAeroAc, "Seigniorage DETF (aeroAcVault)", "sdetfAeroAc");
-        entries[5] = _tokenlistEntry(chainIdStr, detfAeroBc, "Seigniorage DETF (aeroBcVault)", "sdetfAeroBc");
-        _writeTokenlist("anvil_base_main-seigniorage-detfs.tokenlist.json", entries);
-    }
-
     function _exportProtocolDetf(string memory chainIdStr) internal {
         (address chir, bool okChir) = _readAddressSafe("16_protocol_detf.json", "inventoryDetf");
         (address rich, bool okRich) = _readAddressSafe("16_protocol_detf.json", "pairToken");
@@ -639,7 +608,6 @@ contract Script_ExportTokenlists is DeploymentBase {
         _exportStrategyVaults(chainIdStr);
         _exportBalancerPools(chainIdStr);
         _exportERC4626Vaults(chainIdStr);
-        _exportSeigniorageDetfs(chainIdStr);
         _exportProtocolDetf(chainIdStr);
         _writeMarker();
 

@@ -13,7 +13,6 @@ const sepolia_uniV2pool_tokenlist_json_1 = __importDefault(require("./sepolia/se
 const sepolia_aerodrome_pools_tokenlist_json_1 = __importDefault(require("./sepolia/sepolia-aerodrome-pools.tokenlist.json"));
 const sepolia_aerodrome_strategy_vaults_tokenlist_json_1 = __importDefault(require("./sepolia/sepolia-aerodrome-strategy-vaults.tokenlist.json"));
 const sepolia_balancerv3_pools_tokenlist_json_1 = __importDefault(require("./sepolia/sepolia-balancerv3-pools.tokenlist.json"));
-const sepolia_seigniorage_detfs_tokenlist_json_1 = __importDefault(require("./sepolia/sepolia-seigniorage-detfs.tokenlist.json"));
 const sepolia_protocol_detf_tokenlist_json_1 = __importDefault(require("./sepolia/sepolia-protocol-detf.tokenlist.json"));
 const base_deployments_json_2 = __importDefault(require("./public_sepolia/ethereum/base_deployments.json"));
 const public_sepolia_tokens_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-tokens.tokenlist.json"));
@@ -23,7 +22,6 @@ const public_sepolia_uniV2pool_tokenlist_json_1 = __importDefault(require("./pub
 const public_sepolia_aerodrome_pools_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-aerodrome-pools.tokenlist.json"));
 const public_sepolia_aerodrome_strategy_vaults_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-aerodrome-strategy-vaults.tokenlist.json"));
 const public_sepolia_balancerv3_pools_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-balancerv3-pools.tokenlist.json"));
-const public_sepolia_seigniorage_detfs_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-seigniorage-detfs.tokenlist.json"));
 const public_sepolia_protocol_detf_tokenlist_json_1 = __importDefault(require("./public_sepolia/ethereum/public_sepolia-protocol-detf.tokenlist.json"));
 const base_deployments_json_3 = __importDefault(require("./public_sepolia/base/base_deployments.json"));
 const public_sepolia_tokens_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-tokens.tokenlist.json"));
@@ -33,7 +31,6 @@ const public_sepolia_uniV2pool_tokenlist_json_2 = __importDefault(require("./pub
 const public_sepolia_aerodrome_pools_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-aerodrome-pools.tokenlist.json"));
 const public_sepolia_aerodrome_strategy_vaults_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-aerodrome-strategy-vaults.tokenlist.json"));
 const public_sepolia_balancerv3_pools_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-balancerv3-pools.tokenlist.json"));
-const public_sepolia_seigniorage_detfs_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-seigniorage-detfs.tokenlist.json"));
 const public_sepolia_protocol_detf_tokenlist_json_2 = __importDefault(require("./public_sepolia/base/public_sepolia-protocol-detf.tokenlist.json"));
 const base_deployments_json_4 = __importDefault(require("./supersim_sepolia/ethereum/base_deployments.json"));
 const sepolia_factories_contractlist_json_2 = __importDefault(require("./supersim_sepolia/ethereum/sepolia-factories.contractlist.json"));
@@ -44,7 +41,6 @@ const supersim_sepolia_uniV2pool_tokenlist_json_1 = __importDefault(require("./s
 const supersim_sepolia_aerodrome_pools_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/ethereum/supersim_sepolia-aerodrome-pools.tokenlist.json"));
 const supersim_sepolia_aerodrome_strategy_vaults_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/ethereum/supersim_sepolia-aerodrome-strategy-vaults.tokenlist.json"));
 const supersim_sepolia_balancerv3_pools_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/ethereum/supersim_sepolia-balancerv3-pools.tokenlist.json"));
-const supersim_sepolia_seigniorage_detfs_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/ethereum/supersim_sepolia-seigniorage-detfs.tokenlist.json"));
 const supersim_sepolia_protocol_detf_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/ethereum/supersim_sepolia-protocol-detf.tokenlist.json"));
 const base_deployments_json_5 = __importDefault(require("./supersim_sepolia/base/base_deployments.json"));
 const supersim_sepolia_base_tokens_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-tokens.tokenlist.json"));
@@ -54,7 +50,6 @@ const supersim_sepolia_base_uniV2pool_tokenlist_json_1 = __importDefault(require
 const supersim_sepolia_base_aerodrome_pools_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-aerodrome-pools.tokenlist.json"));
 const supersim_sepolia_base_aerodrome_strategy_vaults_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-aerodrome-strategy-vaults.tokenlist.json"));
 const supersim_sepolia_base_balancerv3_pools_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-balancerv3-pools.tokenlist.json"));
-const supersim_sepolia_base_seigniorage_detfs_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-seigniorage-detfs.tokenlist.json"));
 const supersim_sepolia_base_protocol_detf_tokenlist_json_1 = __importDefault(require("./supersim_sepolia/base/supersim_sepolia-protocol-detf.tokenlist.json"));
 exports.CHAIN_ID_SEPOLIA = 11155111;
 exports.CHAIN_ID_BASE_SEPOLIA = 84532;
@@ -89,7 +84,6 @@ const buildBundle = (environment, chainId, chainRole, source) => ({
     tokenlists: {
         tokens: normalizeList(source.tokens, chainId),
         erc4626: normalizeList(source.erc4626, chainId),
-        seigniorageDetfs: normalizeList(source.seigniorageDetfs, chainId),
         protocolDetf: normalizeList(source.protocolDetf, chainId),
         strategyVaults: normalizeList(source.strategyVaults, chainId),
         uniV2Pools: normalizeList(source.uniV2Pools, chainId),
@@ -105,7 +99,6 @@ exports.ARTIFACT_REGISTRY = {
             factories: sepolia_factories_contractlist_json_1.default,
             tokens: sepolia_tokens_tokenlist_json_1.default,
             erc4626: sepolia_erc4626_tokenlist_json_1.default,
-            seigniorageDetfs: sepolia_seigniorage_detfs_tokenlist_json_1.default,
             protocolDetf: sepolia_protocol_detf_tokenlist_json_1.default,
             strategyVaults: sepolia_strategy_vaults_tokenlist_json_1.default,
             uniV2Pools: sepolia_uniV2pool_tokenlist_json_1.default,
@@ -119,7 +112,6 @@ exports.ARTIFACT_REGISTRY = {
             platform: base_deployments_json_2.default,
             tokens: public_sepolia_tokens_tokenlist_json_1.default,
             erc4626: public_sepolia_erc4626_tokenlist_json_1.default,
-            seigniorageDetfs: public_sepolia_seigniorage_detfs_tokenlist_json_1.default,
             protocolDetf: public_sepolia_protocol_detf_tokenlist_json_1.default,
             strategyVaults: public_sepolia_strategy_vaults_tokenlist_json_1.default,
             uniV2Pools: public_sepolia_uniV2pool_tokenlist_json_1.default,
@@ -131,7 +123,6 @@ exports.ARTIFACT_REGISTRY = {
             platform: base_deployments_json_3.default,
             tokens: public_sepolia_tokens_tokenlist_json_2.default,
             erc4626: public_sepolia_erc4626_tokenlist_json_2.default,
-            seigniorageDetfs: public_sepolia_seigniorage_detfs_tokenlist_json_2.default,
             protocolDetf: public_sepolia_protocol_detf_tokenlist_json_2.default,
             strategyVaults: public_sepolia_strategy_vaults_tokenlist_json_2.default,
             uniV2Pools: public_sepolia_uniV2pool_tokenlist_json_2.default,
@@ -146,7 +137,6 @@ exports.ARTIFACT_REGISTRY = {
             factories: sepolia_factories_contractlist_json_2.default,
             tokens: supersim_sepolia_tokens_tokenlist_json_1.default,
             erc4626: supersim_sepolia_erc4626_tokenlist_json_1.default,
-            seigniorageDetfs: supersim_sepolia_seigniorage_detfs_tokenlist_json_1.default,
             protocolDetf: supersim_sepolia_protocol_detf_tokenlist_json_1.default,
             strategyVaults: supersim_sepolia_strategy_vaults_tokenlist_json_1.default,
             uniV2Pools: supersim_sepolia_uniV2pool_tokenlist_json_1.default,
@@ -158,7 +148,6 @@ exports.ARTIFACT_REGISTRY = {
             platform: base_deployments_json_5.default,
             tokens: supersim_sepolia_base_tokens_tokenlist_json_1.default,
             erc4626: supersim_sepolia_base_erc4626_tokenlist_json_1.default,
-            seigniorageDetfs: supersim_sepolia_base_seigniorage_detfs_tokenlist_json_1.default,
             protocolDetf: supersim_sepolia_base_protocol_detf_tokenlist_json_1.default,
             strategyVaults: supersim_sepolia_base_strategy_vaults_tokenlist_json_1.default,
             uniV2Pools: supersim_sepolia_base_uniV2pool_tokenlist_json_1.default,
@@ -174,7 +163,6 @@ exports.ARTIFACT_REGISTRY = {
             platform: {},
             tokens: [],
             erc4626: [],
-            seigniorageDetfs: [],
             protocolDetf: [],
             strategyVaults: [],
             uniV2Pools: [],

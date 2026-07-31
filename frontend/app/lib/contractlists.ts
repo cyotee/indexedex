@@ -1,7 +1,6 @@
 import {
     getBaseTokensForChain,
     getErc4626TokensForChain,
-    getSeigniorageDetfsForChain,
     getProtocolDetfTokensForChain,
     getUniV2PoolTokensForChain,
     getAerodromePoolTokensForChain,
@@ -93,7 +92,6 @@ function resolveTokenlistEntries(path: string, chainId: number): any[] {
     const normalized = path.toLowerCase();
 
     if (normalized.includes('protocol-detf')) return getProtocolDetfTokensForChain(chainId);
-    if (normalized.includes('seigniorage-detfs')) return getSeigniorageDetfsForChain(chainId);
     if (normalized.includes('aerodrome-strategy-vaults')) return getStrategyVaultTokensForChain(chainId);
     if (normalized.includes('strategy-vaults')) return getStrategyVaultTokensForChain(chainId);
     if (normalized.includes('balancerv3-pools')) return getBalancerPoolTokensForChain(chainId);

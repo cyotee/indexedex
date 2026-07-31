@@ -39,7 +39,7 @@ function toProduct(entry: EarnProductInput, productType: EarnProductType): EarnP
 /**
  * Merge strategy vaults and DETF tokenlist entries into a unified Earn catalog.
  * Later lists do not override an address already claimed by an earlier kind
- * (strategy wins, then protocol DETF, then seigniorage).
+ * (strategy wins, then protocol DETF).
  */
 export function assembleEarnProducts(inputs: EarnCatalogInputs): EarnProduct[] {
   const out: EarnProduct[] = []
@@ -59,7 +59,6 @@ export function assembleEarnProducts(inputs: EarnCatalogInputs): EarnProduct[] {
 
   pushAll(inputs.strategy, 'strategy')
   pushAll(inputs.protocolDetf, 'protocol-detf')
-  pushAll(inputs.seigniorageDetf, 'seigniorage-detf')
 
   return out
 }

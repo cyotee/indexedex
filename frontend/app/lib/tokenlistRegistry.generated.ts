@@ -11,7 +11,6 @@ import chain84532_baseTokens from '../addresses/chain/84532/base-tokens.tokenlis
 import chain84532_erc4626Vaults from '../addresses/chain/84532/erc4626-vaults.tokenlist.json'
 import chain84532_featuredFeeDetfs from '../addresses/chain/84532/featured-fee-detfs.tokenlist.json'
 import chain84532_protocolDetfs from '../addresses/chain/84532/protocol-detfs.tokenlist.json'
-import chain84532_seigniorageDetfs from '../addresses/chain/84532/seigniorage-detfs.tokenlist.json'
 import chain84532_strategyVaults from '../addresses/chain/84532/strategy-vaults.tokenlist.json'
 import chain84532_uniV2Pools from '../addresses/chain/84532/uni-v2-pools.tokenlist.json'
 
@@ -20,7 +19,6 @@ import chain11155111_balancerV3Pools from '../addresses/chain/11155111/balancer-
 import chain11155111_baseTokens from '../addresses/chain/11155111/base-tokens.tokenlist.json'
 import chain11155111_featuredFeeDetfs from '../addresses/chain/11155111/featured-fee-detfs.tokenlist.json'
 import chain11155111_protocolDetfs from '../addresses/chain/11155111/protocol-detfs.tokenlist.json'
-import chain11155111_seigniorageDetfs from '../addresses/chain/11155111/seigniorage-detfs.tokenlist.json'
 import chain11155111_strategyVaults from '../addresses/chain/11155111/strategy-vaults.tokenlist.json'
 import chain11155111_uniV2Pools from '../addresses/chain/11155111/uni-v2-pools.tokenlist.json'
 
@@ -34,7 +32,6 @@ export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('erc4626-vaults', chain84532_erc4626Vaults),
     ref('featured-fee-detfs', chain84532_featuredFeeDetfs),
     ref('protocol-detfs', chain84532_protocolDetfs),
-    ref('seigniorage-detfs', chain84532_seigniorageDetfs),
     ref('strategy-vaults', chain84532_strategyVaults),
     ref('uni-v2-pools', chain84532_uniV2Pools),
   ],
@@ -43,7 +40,6 @@ export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('base-tokens', chain11155111_baseTokens),
     ref('featured-fee-detfs', chain11155111_featuredFeeDetfs),
     ref('protocol-detfs', chain11155111_protocolDetfs),
-    ref('seigniorage-detfs', chain11155111_seigniorageDetfs),
     ref('strategy-vaults', chain11155111_strategyVaults),
     ref('uni-v2-pools', chain11155111_uniV2Pools),
   ],

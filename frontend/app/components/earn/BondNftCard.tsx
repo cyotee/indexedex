@@ -8,7 +8,7 @@ import { formatBondAmount } from '../../lib/portfolio/formatBondAmount'
 import type { BondNftMetadata } from '../../lib/portfolio/types'
 
 export type BondNftCardProps = {
-  kind: 'seigniorage' | 'protocol'
+  kind: 'protocol'
   symbol: string
   tokenId: bigint
   chainId: number
@@ -23,15 +23,11 @@ export type BondNftCardProps = {
   rewardDecimals?: number
   matured: boolean
   actionKeyPending: string | null
-  withdrawKey: string
-  unlockKey: string
   claimKey: string
   redeemKey: string
   isWritePending?: boolean
   metadata?: BondNftMetadata
   onLoadCertificate?: () => void
-  onWithdrawRewards?: () => void
-  onUnlock?: () => void
   onClaim?: () => void
   onRedeem?: () => void
 }
@@ -56,23 +52,16 @@ export function BondNftCard({
   rewardDecimals = 18,
   matured,
   actionKeyPending,
-  withdrawKey,
-  unlockKey,
   claimKey,
   redeemKey,
   isWritePending = false,
   metadata,
   onLoadCertificate,
-  onWithdrawRewards,
-  onUnlock,
   onClaim,
   onRedeem,
 }: BondNftCardProps) {
   const ZERO = BigInt(0)
   const pending = pendingRewards ?? ZERO
-  const withdrawDisabled =
-    !pending || pending === ZERO || isWritePending || actionKeyPending === withdrawKey
-  const unlockDisabled = !matured || isWritePending || actionKeyPending === unlockKey
   const claimDisabled =
     !pending || pending === ZERO || isWritePending || actionKeyPending === claimKey
   const redeemDisabled = !matured || isWritePending || actionKeyPending === redeemKey
@@ -129,31 +118,6 @@ export function BondNftCard({
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {kind === 'seigniorage' ? (
-          <>
-            <Button
-              type="button"
-              variant="primary"
-              size="sm"
-              disabled={withdrawDisabled}
-              loading={actionKeyPending === withdrawKey}
-              onClick={onWithdrawRewards}
-            >
-              {actionKeyPending === withdrawKey ? 'Withdrawing…' : 'Withdraw rewards'}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              disabled={unlockDisabled}
-              loading={actionKeyPending === unlockKey}
-              onClick={onUnlock}
-              title={matured ? 'Unlock bond' : 'Bond not matured yet'}
-            >
-              {actionKeyPending === unlockKey ? 'Unlocking…' : matured ? 'Unlock' : 'Unlock (locked)'}
-            </Button>
-          </>
-        ) : (
           <>
             <Button
               type="button"
@@ -177,7 +141,7 @@ export function BondNftCard({
               {actionKeyPending === redeemKey ? 'Redeeming…' : matured ? 'Redeem' : 'Redeem (locked)'}
             </Button>
           </>
-        )}
+
       </div>
 
       {metadata?.image ? (

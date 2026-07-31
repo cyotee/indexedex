@@ -76,8 +76,7 @@ export default function EarnDetailClient({ address }: { address: string }) {
   }, [address, selectedChainId, environment])
 
   const earnDetfEmbed = isEarnDetfEmbedEnabled()
-  const isDetf =
-    product?.productType === 'protocol-detf' || product?.productType === 'seigniorage-detf'
+  const isDetf = product?.productType === 'protocol-detf'
 
   const vaultAddress = product?.address
 
@@ -144,14 +143,12 @@ export default function EarnDetailClient({ address }: { address: string }) {
         title={product.symbol || product.display || product.name}
         subtitle={
           product.display && product.display !== product.symbol
-            ? `${product.display} · ${product.productType === 'strategy' ? 'strategy vault' : product.productType === 'seigniorage-detf' ? 'seigniorage DETF' : 'protocol DETF'}`
+            ? `${product.display} · ${product.productType === 'strategy' ? 'strategy vault' : 'protocol DETF'}`
             : product.productType === 'strategy'
               ? 'Strategy vault'
-              : product.productType === 'seigniorage-detf'
-                ? 'Seigniorage DETF'
-                : product.productType === 'protocol-detf'
-                  ? 'Protocol DETF'
-                  : undefined
+              : product.productType === 'protocol-detf'
+                ? 'Protocol DETF'
+                : undefined
         }
         actions={
           <div className="flex flex-wrap gap-2 items-center">

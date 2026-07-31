@@ -40,7 +40,6 @@ import {
   feeDetfStakingHref,
   getProtocolDetfsForChain,
   getProtocolDetfTokensForChain,
-  getSeigniorageDetfsForChain,
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
   type TokenListEntry,
@@ -49,98 +48,12 @@ import { resolveAppChain } from '../lib/runtimeChains'
 
 const ZERO = BigInt(0)
 
-const seigniorageDetfAbi = [
-  {
-    type: 'function',
-    name: 'seigniorageNFTVault',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-] as const
-
 const protocolDetfAbi = [
   {
     type: 'function',
     name: 'protocolNFTVault',
     stateMutability: 'view',
     inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-] as const
-
-const seigniorageNftVaultAbi = [
-  {
-    type: 'function',
-    name: 'withdrawRewards',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'rewards', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'unlock',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'lpAmount', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'claimToken',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-  {
-    type: 'function',
-    name: 'rewardToken',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-  {
-    type: 'function',
-    name: 'lockInfoOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [
-      {
-        name: 'info',
-        type: 'tuple',
-        components: [
-          { name: 'sharesAwarded', type: 'uint256' },
-          { name: 'rewardPerShare', type: 'uint256' },
-          { name: 'bonusPercentage', type: 'uint256' },
-          { name: 'unlockTime', type: 'uint256' },
-        ],
-      },
-    ],
-  },
-  {
-    type: 'function',
-    name: 'pendingRewards',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'tokenURI',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'string' }],
-  },
-  {
-    type: 'function',
-    name: 'ownerOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
     outputs: [{ name: '', type: 'address' }],
   },
 ] as const
@@ -412,10 +325,6 @@ export default function PortfolioPage() {
     () => getStrategyVaultTokensForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
   )
-  const seigniorageDetfs = useMemo(
-    () => getSeigniorageDetfsForChain(resolvedChainId, environment),
-    [environment, resolvedChainId]
-  )
   const protocolDetfTokens = useMemo(
     () => getProtocolDetfTokensForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
@@ -539,7 +448,7 @@ export default function PortfolioPage() {
 
       const [vaultBals, detfBals] = await Promise.all([
         fetchBalances(strategyVaultTokens),
-        fetchBalances([...seigniorageDetfs, ...protocolDetfTokens]),
+        fetchBalances([...protocolDetfTokens]),
       ])
 
       setStrategyVaultBalances(vaultBals)
@@ -556,7 +465,7 @@ export default function PortfolioPage() {
         getVaultAddress,
       }: {
         detfs: TokenListEntry[]
-        kind: 'seigniorage' | 'protocol'
+        kind: 'protocol'
         getVaultAddress: (detfAddress: `0x${string}`) => Promise<`0x${string}`>
       }) => {
         for (const detf of detfs) {
@@ -567,7 +476,7 @@ export default function PortfolioPage() {
           try {
             nftVault = await getVaultAddress(detfAddress)
           } catch (e: any) {
-            appendError(`Failed ${kind === 'protocol' ? 'protocolNFTVault' : 'seigniorageNFTVault'}() for ${detf.symbol}: ${String(e?.message ?? e)}`)
+            appendError(`Failed protocolNFTVault() for ${detf.symbol}: ${String(e?.message ?? e)}`)
             continue
           }
 
@@ -622,7 +531,7 @@ export default function PortfolioPage() {
               try {
                 const owner = (await publicClient.readContract({
                   address: nftVault,
-                  abi: kind === 'protocol' ? protocolNftVaultAbi : seigniorageNftVaultAbi,
+                  abi: protocolNftVaultAbi,
                   functionName: 'ownerOf',
                   args: [tokenId],
                 })) as `0x${string}`
@@ -639,20 +548,11 @@ export default function PortfolioPage() {
           let claimToken: `0x${string}` | undefined
           let rewardToken: `0x${string}` | undefined
           try {
-            if (kind === 'seigniorage') {
-              const [c, r] = await Promise.all([
-                publicClient.readContract({ address: nftVault, abi: seigniorageNftVaultAbi, functionName: 'claimToken' }),
-                publicClient.readContract({ address: nftVault, abi: seigniorageNftVaultAbi, functionName: 'rewardToken' }),
-              ])
-              claimToken = c as `0x${string}`
-              rewardToken = r as `0x${string}`
-            } else {
-              rewardToken = (await publicClient.readContract({
-                address: nftVault,
-                abi: protocolNftVaultAbi,
-                functionName: 'rewardToken',
-              })) as `0x${string}`
-            }
+            rewardToken = (await publicClient.readContract({
+              address: nftVault,
+              abi: protocolNftVaultAbi,
+              functionName: 'rewardToken',
+            })) as `0x${string}`
           } catch {
             // non-fatal
           }
@@ -669,58 +569,33 @@ export default function PortfolioPage() {
                 tokenId,
               }
               try {
-                if (kind === 'seigniorage') {
-                  const [lockInfo, pending] = await Promise.all([
-                    publicClient.readContract({
-                      address: nftVault,
-                      abi: seigniorageNftVaultAbi,
-                      functionName: 'lockInfoOf',
-                      args: [tokenId],
-                    }),
-                    publicClient.readContract({
-                      address: nftVault,
-                      abi: seigniorageNftVaultAbi,
-                      functionName: 'pendingRewards',
-                      args: [tokenId],
-                    }),
-                  ])
+                const [position, pending] = await Promise.all([
+                  publicClient.readContract({
+                    address: nftVault,
+                    abi: protocolNftVaultAbi,
+                    functionName: 'getPosition',
+                    args: [tokenId],
+                  }),
+                  publicClient.readContract({
+                    address: nftVault,
+                    abi: protocolNftVaultAbi,
+                    functionName: 'pendingRewards',
+                    args: [tokenId],
+                  }),
+                ])
 
-                  out.lockInfo = {
-                    sharesAwarded: (lockInfo as any).sharesAwarded,
-                    rewardPerShare: (lockInfo as any).rewardPerShare,
-                    bonusPercentage: (lockInfo as any).bonusPercentage,
-                    unlockTime: (lockInfo as any).unlockTime,
-                  }
-                  out.pendingRewards = pending as bigint
-                } else {
-                  const [position, pending] = await Promise.all([
-                    publicClient.readContract({
-                      address: nftVault,
-                      abi: protocolNftVaultAbi,
-                      functionName: 'getPosition',
-                      args: [tokenId],
-                    }),
-                    publicClient.readContract({
-                      address: nftVault,
-                      abi: protocolNftVaultAbi,
-                      functionName: 'pendingRewards',
-                      args: [tokenId],
-                    }),
-                  ])
-
-                  const originalShares = (position as any).originalShares as bigint
-                  if (originalShares === ZERO) {
-                    return null
-                  }
-
-                  out.lockInfo = {
-                    sharesAwarded: (position as any).effectiveShares,
-                    rewardPerShare: (position as any).rewardDebt,
-                    bonusPercentage: (position as any).bonusMultiplier,
-                    unlockTime: (position as any).unlockTime,
-                  }
-                  out.pendingRewards = pending as bigint
+                const originalShares = (position as any).originalShares as bigint
+                if (originalShares === ZERO) {
+                  return null
                 }
+
+                out.lockInfo = {
+                  sharesAwarded: (position as any).effectiveShares,
+                  rewardPerShare: (position as any).rewardDebt,
+                  bonusPercentage: (position as any).bonusMultiplier,
+                  unlockTime: (position as any).unlockTime,
+                }
+                out.pendingRewards = pending as bigint
               } catch (e: any) {
                 appendError(`Failed position details for ${detf.symbol} #${tokenId}: ${String(e?.message ?? e)}`)
               }
@@ -731,18 +606,6 @@ export default function PortfolioPage() {
           allBondPositions.push(...perId.filter((position): position is BondPosition => position !== null))
         }
       }
-
-      await discoverBondPositions({
-        detfs: seigniorageDetfs,
-        kind: 'seigniorage',
-        getVaultAddress: async (detfAddress) =>
-          (await publicClient.readContract({
-            address: detfAddress,
-            abi: seigniorageDetfAbi,
-            functionName: 'seigniorageNFTVault',
-            args: [],
-          })) as `0x${string}`,
-      })
 
       await discoverBondPositions({
         detfs: protocolDetfs,
@@ -760,7 +623,7 @@ export default function PortfolioPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [address, publicClient, strategyVaultTokens, seigniorageDetfs, protocolDetfTokens, protocolDetfs])
+  }, [address, publicClient, strategyVaultTokens, protocolDetfTokens, protocolDetfs])
 
   const loadMetadata = useCallback(
     async (pos: BondPosition) => {
@@ -768,7 +631,7 @@ export default function PortfolioPage() {
       try {
         const tokenUri = await publicClient.readContract({
           address: pos.nftVault,
-          abi: pos.kind === 'protocol' ? protocolNftVaultAbi : seigniorageNftVaultAbi,
+          abi: protocolNftVaultAbi,
           functionName: 'tokenURI',
           args: [pos.tokenId],
         })
@@ -813,56 +676,6 @@ export default function PortfolioPage() {
       }
     },
     [publicClient]
-  )
-
-  const withdrawRewards = useCallback(
-    async (pos: BondPosition) => {
-      if (!address) return
-      if (pos.kind !== 'seigniorage') return
-      const key = `${pos.nftVault}:${pos.tokenId.toString()}:withdraw`
-      setActionKeyPending(key)
-      try {
-        await writeContractAsync({
-          chain: targetChain,
-          account: address,
-          address: pos.nftVault,
-          abi: seigniorageNftVaultAbi,
-          functionName: 'withdrawRewards',
-          args: [pos.tokenId, address as `0x${string}`],
-        })
-        await refresh()
-      } catch (e: any) {
-        setErrors((prev) => [...prev, `Withdraw rewards failed for ${pos.detf.symbol} #${pos.tokenId}: ${String(e?.message ?? e)}`])
-      } finally {
-        setActionKeyPending(null)
-      }
-    },
-    [address, targetChain, writeContractAsync, refresh]
-  )
-
-  const unlockBond = useCallback(
-    async (pos: BondPosition) => {
-      if (!address) return
-      if (pos.kind !== 'seigniorage') return
-      const key = `${pos.nftVault}:${pos.tokenId.toString()}:unlock`
-      setActionKeyPending(key)
-      try {
-        await writeContractAsync({
-          chain: targetChain,
-          account: address,
-          address: pos.nftVault,
-          abi: seigniorageNftVaultAbi,
-          functionName: 'unlock',
-          args: [pos.tokenId, address as `0x${string}`],
-        })
-        await refresh()
-      } catch (e: any) {
-        setErrors((prev) => [...prev, `Unlock failed for ${pos.detf.symbol} #${pos.tokenId}: ${String(e?.message ?? e)}`])
-      } finally {
-        setActionKeyPending(null)
-      }
-    },
-    [address, targetChain, writeContractAsync, refresh]
   )
 
   const claimProtocolRewards = useCallback(
@@ -1124,7 +937,7 @@ export default function PortfolioPage() {
       <Card className="mb-6">
         <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">DETF Tokens</h2>
         <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-          Non-zero balances of seigniorage and protocol DETFs.
+          Non-zero balances of protocol DETFs.
         </p>
 
         {detfBalances.length === 0 ? (
@@ -1223,8 +1036,6 @@ export default function PortfolioPage() {
               const nowSec = BigInt(Math.floor(Date.now() / 1000))
               const unlockTime = pos.lockInfo?.unlockTime
               const matured = unlockTime !== undefined ? nowSec >= unlockTime : false
-              const withdrawKey = `${pos.nftVault}:${pos.tokenId.toString()}:withdraw`
-              const unlockKey = `${pos.nftVault}:${pos.tokenId.toString()}:unlock`
               const claimKey = `${pos.nftVault}:${pos.tokenId.toString()}:claim`
               const redeemKey = `${pos.nftVault}:${pos.tokenId.toString()}:redeem`
               const bondKey = `${pos.nftVault}:${pos.tokenId.toString()}`
@@ -1246,15 +1057,11 @@ export default function PortfolioPage() {
                     pendingRewards={pos.pendingRewards}
                     matured={matured}
                     actionKeyPending={actionKeyPending}
-                    withdrawKey={withdrawKey}
-                    unlockKey={unlockKey}
                     claimKey={claimKey}
                     redeemKey={redeemKey}
                     isWritePending={isWritePending}
                     metadata={pos.metadata}
                     onLoadCertificate={() => loadMetadata(pos)}
-                    onWithdrawRewards={() => withdrawRewards(pos)}
-                    onUnlock={() => unlockBond(pos)}
                     onClaim={() => claimProtocolRewards(pos)}
                     onRedeem={() => redeemProtocolBond(pos)}
                   />
@@ -1306,7 +1113,6 @@ export default function PortfolioPage() {
           <div>ChainId: {resolvedChainId}</div>
           <div>Wallet: {address}</div>
           <div>Strategy vault tokens in list: {strategyVaultTokens.length}</div>
-          <div>Seigniorage DETFs in list: {seigniorageDetfs.length}</div>
           <div>Protocol DETFs in list: {protocolDetfs.length}</div>
           <div>Bond positions: {bondPositions.length}</div>
         </div>

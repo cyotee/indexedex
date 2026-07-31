@@ -20,7 +20,6 @@ contract Script_ExportTokenlists is DeploymentBase {
         _exportEmptyTokenlist(_uiTokenlistFilename("aerodrome-strategy-vaults.tokenlist.json"));
         _exportBalancerPools(chainIdStr);
         _exportERC4626Vaults(chainIdStr);
-        _exportSeigniorageDetfs(chainIdStr);
         _exportProtocolDetf(chainIdStr);
     }
 
@@ -171,22 +170,6 @@ contract Script_ExportTokenlists is DeploymentBase {
         entries[1] = _tokenlistEntry(chainIdStr, ttbVault, "TTB ERC4626 Vault", "ttbERC4626Vault");
         entries[2] = _tokenlistEntry(chainIdStr, ttcVault, "TTC ERC4626 Vault", "ttcERC4626Vault");
         _writeTokenlist(_uiTokenlistFilename("erc4626.tokenlist.json"), entries);
-    }
-
-    function _exportSeigniorageDetfs(string memory chainIdStr) internal {
-        (address detfAb, bool okAb) = _readAddressSafe("15_seigniorage_detfs.json", "detf_abVault");
-        (address detfAc, bool okAc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_acVault");
-        (address detfBc, bool okBc) = _readAddressSafe("15_seigniorage_detfs.json", "detf_bcVault");
-        if (!(okAb && okAc && okBc) || detfAb == address(0) || detfAc == address(0) || detfBc == address(0)) {
-            _exportEmptyTokenlist(_uiTokenlistFilename("seigniorage-detfs.tokenlist.json"));
-            return;
-        }
-
-        string[] memory entries = new string[](3);
-        entries[0] = _tokenlistEntry(chainIdStr, detfAb, "Seigniorage DETF (abVault)", "sdetfAb");
-        entries[1] = _tokenlistEntry(chainIdStr, detfAc, "Seigniorage DETF (acVault)", "sdetfAc");
-        entries[2] = _tokenlistEntry(chainIdStr, detfBc, "Seigniorage DETF (bcVault)", "sdetfBc");
-        _writeTokenlist(_uiTokenlistFilename("seigniorage-detfs.tokenlist.json"), entries);
     }
 
     function _exportProtocolDetf(string memory chainIdStr) internal {

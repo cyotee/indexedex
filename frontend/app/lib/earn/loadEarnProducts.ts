@@ -5,7 +5,6 @@ import {
 import {
   getFeaturedFeeDetfsForChain,
   getProtocolDetfsForChain,
-  getSeigniorageDetfsForChain,
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
   type TokenListEntry,
@@ -40,7 +39,6 @@ export function loadEarnProductsForChain(
   const catalog = assembleEarnProducts({
     strategy: getStrategyVaultTokensForChain(chainId, environment).map(toInput),
     protocolDetf: getProtocolDetfsForChain(chainId, environment).map(toInput),
-    seigniorageDetf: getSeigniorageDetfsForChain(chainId, environment).map(toInput),
   })
   if (feeExcluded.size === 0) return catalog
   return catalog.filter((p) => !feeExcluded.has(p.address.toLowerCase()))

@@ -30,7 +30,7 @@ import {
 } from '../lib/tokenlists'
 
 function parseTypeParam(raw: string | null): EarnTypeFilter {
-  if (raw === 'strategy' || raw === 'protocol-detf' || raw === 'seigniorage-detf') return raw
+  if (raw === 'strategy' || raw === 'protocol-detf') return raw
   if (raw === 'detf') return 'protocol-detf'
   return 'all'
 }

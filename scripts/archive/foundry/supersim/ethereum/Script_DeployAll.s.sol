@@ -8,7 +8,6 @@ import {Script_04_DeployDEXPackages_BalancerV3} from "../../anvil_sepolia/Script
 import {Script_05_DeployUniswapV2} from "../../anvil_sepolia/Script_05_DeployUniswapV2.s.sol";
 import {Script_07_DeployTestTokens} from "../../anvil_sepolia/Script_07_DeployTestTokens.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_sepolia/Script_14_DeployERC4626PermitVaults.s.sol";
-import {Script_15_DeploySeigniorageDETFS} from "../../anvil_sepolia/Script_15_DeploySeigniorageDETFS.s.sol";
 import {Script_16_DeployProtocolDETF} from "../../anvil_sepolia/Script_16_DeployProtocolDETF.s.sol";
 
 import {Script_04_UniV2PoolsAndVaults} from "./Script_04_UniV2PoolsAndVaults.s.sol";
@@ -33,7 +32,7 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         new Script_04_UniV2PoolsAndVaults().run();
         new Script_05_BalancerPools().run();
         new Script_14_DeployERC4626PermitVaults().run();
-        new Script_15_DeploySeigniorageDETFS().run();
+        // Stage 15 (SeigniorageDETF dual-token product) removed.
 
         _runStage16();
         new Script_ExportTokenlists().run();

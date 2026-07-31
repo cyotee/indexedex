@@ -52,7 +52,7 @@
 # - Rate infrastructure: standard exchange rate providers.
 # - Vault-token pools: Balancer const-prod vault-token pools and seeded liquidity.
 # - ERC4626 vaults: permit-enabled ERC4626 vaults for TTA, TTB, and TTC.
-# - DETFs: seigniorage DETFs and the Protocol DETF (CHIR).
+# - DETFs: legacy SeigniorageDETF product removed; Protocol DETF archived.
 # - WETH/TTC expansion: pools, strategy vaults, liquidity, rate providers, vault-token pools, and vault-vault pool.
 # - Frontend artifacts: segmented tokenlists and merged platform deployment addresses.
 # - Final balance consolidation: sweeps ETH and ERC20 balances into DEPLOYER_ADDRESS.
@@ -867,10 +867,7 @@ main() {
         "Stage 14: Deploy ERC4626 Permit Vaults (TTA, TTB, TTC)" \
         "$DEPLOYMENTS_DIR/14_erc4626_permit_vaults.json"
 
-    run_stage "Script_15_DeploySeigniorageDETFS.s.sol" \
-        "Stage 15: Deploy Seigniorage DETFs (1 per Standard Exchange vault)" \
-        "$DEPLOYMENTS_DIR/15_seigniorage_detfs.json"
-
+# Stage 15 SeigniorageDETF dual-token product removed.
 # Stage 16 Protocol DETF archived — see scripts/archive/foundry/protocol-detf/
 # run_stage "Script_16_DeployArchivedDetfProduct.s.sol" \
 #     "Stage 16: Deploy Protocol DETF (CHIR)" \

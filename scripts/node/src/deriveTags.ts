@@ -6,7 +6,6 @@ const TAXONOMY: Record<string, string[]> = {
   'vaults/erc4626': ['vault', 'erc4626'],
   'vaults/strategy': ['vault', 'strat'],
   'vaults/protocolDetf': ['vault', 'detf'],
-  'vaults/seigniorageDetf': ['vault', 'sdetf'],
 }
 
 function normalize(typeDir: string): string {

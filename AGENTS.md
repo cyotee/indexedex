@@ -115,7 +115,7 @@ Apply these to **any** DETF work under `contracts/vaults/detf/**`. Normative pro
 - **Policy gates (when live):** mint iff `synthetic > mintThreshold`; burn iff `synthetic < burnThreshold`; **equality = deadband** (neither). First bond / bootstrap remains **synthetically ungated** (both modes).
 - **Open gates (when live):** threshold gates **always pass**. Open does **not** change the route set (e.g. MixedBuffer still burns **buffer only**), fees, seigniorage split, or inert→live rules. Do not advertise a peg for Open instances.
 - **Info surface:** `thresholdMode()`, live-coupled `isMintingAllowed()` / `isBurningAllowed()` (and stored threshold getters).
-- **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **F7 Seigniorage** is **Out** of the threshold-mode program (peg regime) — see [`contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md`](contracts/vaults/seigniorage/THRESHOLD_MODES_OUT.md). DualLiquidity / pure SE vaults remain out of this PRD.
+- **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **Legacy dual-token SeigniorageDETF** product under `contracts/vaults/seigniorage/` is **REMOVED** (not a true DETF family). DualLiquidity / pure SE vaults remain out of this PRD.
 - Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
 
 ### Protocol seigniorage compound + natural supply expansion

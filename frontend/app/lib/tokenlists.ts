@@ -38,7 +38,6 @@ function filterChain(list: TokenListEntry[], chainId: number): TokenListEntry[] 
 type TokenCache = {
   baseTokens: TokenListEntry[]
   erc4626Tokens: TokenListEntry[]
-  seigniorageDetfs: TokenListEntry[]
   protocolDetfTokens: TokenListEntry[]
   featuredFeeDetfs: TokenListEntry[]
   strategyVaultTokens: TokenListEntry[]
@@ -50,7 +49,6 @@ type TokenCache = {
 const EMPTY_CACHE: TokenCache = {
   baseTokens: [],
   erc4626Tokens: [],
-  seigniorageDetfs: [],
   protocolDetfTokens: [],
   featuredFeeDetfs: [],
   strategyVaultTokens: [],
@@ -329,15 +327,9 @@ function getCached(
   // Wave 2: dedicated featured-fee-detfs list (list id, not tags). Order = featured order.
   const featuredFeeDetfs = loadFeaturedFeeDetfEntriesFromRefs(artifactsChainId)
 
-  // seigniorage-detfs are not yet migrated to a Token List bucket; keep reading from the legacy artifact.
-  const seigniorageDetfs = withDisplay(
-    filterChain(((artifacts.tokenlists as any).seigniorageDetfs ?? []) as TokenListEntry[], artifactsChainId)
-  )
-
   const cached: TokenCache = {
     baseTokens,
     erc4626Tokens,
-    seigniorageDetfs,
     protocolDetfTokens,
     featuredFeeDetfs,
     strategyVaultTokens,
@@ -393,13 +385,6 @@ export function getErc4626TokensForChain(
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): TokenListEntry[] {
   return getCached(chainId, environment).erc4626Tokens
-}
-
-export function getSeigniorageDetfsForChain(
-  chainId: number,
-  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
-): TokenListEntry[] {
-  return getCached(chainId, environment).seigniorageDetfs
 }
 
 export function getProtocolDetfTokensForChain(
@@ -482,7 +467,6 @@ export function getAllTokens(): TokenListEntry[] {
   const {
     baseTokens,
     erc4626Tokens,
-    seigniorageDetfs,
     protocolDetfTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
@@ -491,7 +475,6 @@ export function getAllTokens(): TokenListEntry[] {
   return [
     ...baseTokens,
     ...erc4626Tokens,
-    ...seigniorageDetfs,
     ...protocolDetfTokens,
     ...uniV2PoolTokens,
     ...aerodromePoolTokens,
@@ -506,7 +489,6 @@ export function getAllTokensForChain(
   const {
     baseTokens,
     erc4626Tokens,
-    seigniorageDetfs,
     protocolDetfTokens,
     uniV2PoolTokens,
     aerodromePoolTokens,
@@ -515,7 +497,6 @@ export function getAllTokensForChain(
   return [
     ...baseTokens,
     ...erc4626Tokens,
-    ...seigniorageDetfs,
     ...protocolDetfTokens,
     ...uniV2PoolTokens,
     ...aerodromePoolTokens,

@@ -424,7 +424,7 @@ FOUNDRY_PROFILE=fork forge test --match-path \
 | 3C-4 | L3 only if mint surface is stable under random order | P2 |
 
 ```bash
-forge test --match-path 'test/foundry/spec/protocol/vaults/seigniorage/**'
+# SeigniorageDETF product tests removed with package (legacy dual-token product)
 # fork smoke optional:
 # FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/seigniorage/**'
 ```

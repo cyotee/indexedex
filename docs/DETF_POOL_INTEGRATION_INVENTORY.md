@@ -30,7 +30,7 @@
 | **SingleStandardExchangeDETF** (`detf/protocols/dexes/balancer/v3/standardExchange/single/`) | Weighted (2-token; default 80/20) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
 | **MultiVaultWeightedDetf** (`detf/protocols/dexes/balancer/v3/multi-vault-weighted/`) | Weighted (2–8 tokens: DETF + 1..7 SE shares) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
 | **SingleVaultDetf** (removed; was `detf/composed/single/`) | — | — | **Removed** — use Single SE |
-| **SeigniorageDETF** (`vaults/seigniorage/`) | Weighted 80/20 | Crane **`WeightedPool8020Factory`** | **D** — DFPkg |
+| **SeigniorageDETF** (legacy dual-token) | — | — | **REMOVED** |
 | **ComposedStableCommonDetf** (`detf/protocols/dexes/balancer/v3/stable/common/`) | Weighted reserve of BPTs + DETF | Crane **`IWeightedPool`** + **`IStablePool`×2** | **E** — all three supplied in `PkgArgs` |
 | **MixedBufferMultiVaultStableDetf** (`detf/protocols/dexes/balancer/v3/mixedBuffer/`) | Stable (MixedBuffer) | IndexedEx **`MixedBufferMultiVaultStablePool`** | **D** — via pool DFPkg |
 | **DualLiquidityLinkedCrossVersionUniswapVault** (`vaults/protocol/uniswap/crossVersion/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
@@ -164,15 +164,13 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 | Status | **Removed** — use Single SE family (F1) |
 | Note | Gold product path is `detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 
-### F6 — SeigniorageDETF (legacy / protocol-adjacent)
+### F6 — SeigniorageDETF (legacy dual-token) — **REMOVED**
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/seigniorage/` |
-| Status | **Implemented** (older seigniorage stack) |
-| Reserve | Weighted 80/20 via **`WeightedPool8020Factory`** |
-| Custom IndexedEx pool | **None** |
-| Note | Threshold-modes program marks seigniorage **out** of F7; still a live reserve consumer of default weighted 8020 |
+| Path | ~~`contracts/vaults/seigniorage/`~~ |
+| Status | **REMOVED** (2026-07-31) — dual-token RBT/sRBT + underwrite NFT product deleted |
+| Note | Not a true DETF family. Fee-oracle seigniorage **mint incentive** for true DETFs is unrelated and retained. Do not reintroduce this package. |
 
 ### F7 — DualLiquidityLinkedCrossVersionUniswapVault
 
@@ -290,7 +288,7 @@ Most “true DETF” work still prices on **vanilla WeightedPool**:
 | Pair | Observation |
 |------|-------------|
 | SingleVaultDetf vs SingleStandardExchangeDETF | Both single-SE seigniorage; differ mainly by **8020 factory** vs **general WeightedPoolFactory** + generalized SE attachment matrix |
-| SeigniorageDETF vs Single* families | Older 8020 seigniorage stack; threshold program treats seigniorage as separate from F1–F6 |
+| SeigniorageDETF vs Single* families | **REMOVED** — legacy dual-token product no longer in tree |
 
 ### E. Explicit non-goals already locked on pool PRDs
 
@@ -327,7 +325,7 @@ Derived from the matrix; product priority may override.
 | MixedBuffer Stable | `.../balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
 | Composed Stable Common | `.../balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
 | Single Vault (8020) | removed | — |
-| Seigniorage | `contracts/vaults/seigniorage/SeigniorageDETFDFPkg.sol` | component docs under `docs/components/` |
+| Seigniorage (legacy) | **REMOVED** | — |
 | DualLiquidity | `.../uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | family docs under protocol tree |
 
 ### IndexedEx pools

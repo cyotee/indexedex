@@ -23,23 +23,17 @@ describe('assembleEarnProducts', () => {
         { address: A, chainId: 11155111, name: 'DETF A', symbol: 'DA', decimals: 18 },
         { address: B, chainId: 11155111, name: 'DETF B', symbol: 'DB', decimals: 18 },
       ],
-      seigniorageDetf: [
-        { address: C, chainId: 11155111, name: 'Seig C', symbol: 'SC', decimals: 18 },
-      ],
     })
 
-    expect(products).toHaveLength(3)
+    expect(products).toHaveLength(2)
     expect(products.map((p) => p.address.toLowerCase()).sort()).toEqual(
-      [A, B, C].map((x) => x.toLowerCase()).sort(),
+      [A, B].map((x) => x.toLowerCase()).sort(),
     )
     const a = products.find((p) => p.address.toLowerCase() === A.toLowerCase())
     expect(a?.productType).toBe('strategy')
     expect(a?.symbol).toBe('VA')
     expect(products.find((p) => p.address.toLowerCase() === B.toLowerCase())?.productType).toBe(
       'protocol-detf',
-    )
-    expect(products.find((p) => p.address.toLowerCase() === C.toLowerCase())?.productType).toBe(
-      'seigniorage-detf',
     )
   })
 

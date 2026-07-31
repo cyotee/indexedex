@@ -377,6 +377,8 @@ two paths diverge.
 ### Open follow-ups worth tracking
 1. Migrate the remaining Solidity scripts to emit fragments (Phase 4).
 2. Add a `vaults/seigniorageDetf` bucket so that category leaves the legacy path.
+
+> **Update 2026-07-31:** Legacy dual-token SeigniorageDETF product list is **retired** (stage 15 + `_exportSeigniorageDetfs` removed). Do not reintroduce a seigniorage-detfs tokenlist bucket for that product.
 3. Add typed `extensions` interfaces per tag category (e.g. `BalancerPoolExtensions`
    with `factory`, `composingAssets`, `hook`).
 4. Add a `factories/`, `facets/`, `hooks/`, `routers/` typed taxonomy with

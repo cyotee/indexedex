@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-/** Legacy DETF route → unified Earn. */
+/** Legacy dual-token DETF route → Earn (product removed). */
 export default function DetfRedirectPage() {
-  redirect('/earn?type=detf')
+  redirect('/earn')
 }

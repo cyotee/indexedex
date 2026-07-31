@@ -13,7 +13,7 @@ export type BondNftMetadata = {
 }
 
 export type BondPosition = {
-  kind: 'seigniorage' | 'protocol'
+  kind: 'protocol'
   detf: TokenListEntry
   nftVault: `0x${string}`
   protocolNftId?: bigint

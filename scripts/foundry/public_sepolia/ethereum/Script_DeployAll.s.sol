@@ -10,7 +10,6 @@ import {Script_04_DeployDEXPackages_BalancerV3} from "../../anvil_sepolia/Script
 import {Script_05_DeployUniswapV2} from "../../anvil_sepolia/Script_05_DeployUniswapV2.s.sol";
 import {Script_07_DeployTestTokens} from "../../anvil_sepolia/Script_07_DeployTestTokens.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_sepolia/Script_14_DeployERC4626PermitVaults.s.sol";
-import {Script_15_DeploySeigniorageDETFS} from "../../anvil_sepolia/Script_15_DeploySeigniorageDETFS.s.sol";
 import {Script_04_NonWethUniV2PoolsAndVaults} from "./Script_04_NonWethUniV2PoolsAndVaults.s.sol";
 import {Script_05_NonWethBalancerPools} from "./Script_05_NonWethBalancerPools.s.sol";
 import {Script_ExportTokenlists} from "./Script_ExportTokenlists.s.sol";
@@ -43,7 +42,7 @@ contract Script_DeployAll is DeploymentBase {
         new Script_04_NonWethUniV2PoolsAndVaults().run();
         new Script_05_NonWethBalancerPools().run();
         new Script_14_DeployERC4626PermitVaults().run();
-        new Script_15_DeploySeigniorageDETFS().run();
+        // Stage 15 (SeigniorageDETF dual-token product) removed.
         // Stage 16 (Protocol DETF) removed — product archived; see scripts/archive/foundry/protocol-detf/
         new Script_ExportTokenlists().run();
     }

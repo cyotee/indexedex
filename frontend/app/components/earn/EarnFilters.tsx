@@ -8,7 +8,6 @@ const OPTIONS: { id: EarnTypeFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'strategy', label: 'Strategy' },
   { id: 'protocol-detf', label: 'Protocol DETF' },
-  { id: 'seigniorage-detf', label: 'Seigniorage' },
 ]
 
 export function EarnFilters({

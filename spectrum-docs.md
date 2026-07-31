@@ -1,0 +1,606 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Spectrum" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e21]:
+        - link "Explore" [ref=e22] [cursor=pointer]:
+          - /url: /explore
+        - link "Swap" [ref=e23] [cursor=pointer]:
+          - /url: /swap
+        - link "Launch" [ref=e24] [cursor=pointer]:
+          - /url: /launch
+        - link "Portfolio" [ref=e25] [cursor=pointer]:
+          - /url: /portfolio
+        - link "League" [ref=e26] [cursor=pointer]:
+          - /url: /league
+        - link "Earn" [ref=e27] [cursor=pointer]:
+          - /url: /earn
+        - button "More" [ref=e29]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - button "BASE" [ref=e34]
+          - button "ETH" [ref=e35]
+          - button "RH" [ref=e36]
+        - button "Connect" [ref=e37]
+  - generic [ref=e38]:
+    - generic [ref=e41]:
+      - generic [ref=e187]:
+        - text: The PRISM v2 community claim is live. Held v1 PRISM? Your make-good allocation may be waiting.
+        - link "Check your address →" [ref=e188] [cursor=pointer]:
+          - /url: /claim
+      - button "Dismiss" [ref=e189]
+    - generic [ref=e193]:
+      - text: Spectrum is experimental technology.
+      - link "Read the disclosure →" [ref=e194] [cursor=pointer]:
+        - /url: /risk
+  - main [ref=e195]:
+    - generic [ref=e196]:
+      - link "← Back to Spectrum" [ref=e197] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - heading "Reading a Spectrum basket" [level=1] [ref=e202]
+          - paragraph [ref=e203]: For builders, price feeds, and dashboards reading Spectrum baskets. Everything here works against a plain public RPC, no API key.
+          - textbox [ref=e208]:
+            - /placeholder: Search the docs…
+        - generic [ref=e209]:
+          - navigation [ref=e210]:
+            - generic [ref=e211]:
+              - generic [ref=e212]: On this page
+              - list [ref=e213]:
+                - listitem [ref=e214]:
+                  - link "1 · What a basket is" [ref=e215] [cursor=pointer]:
+                    - /url: "#what"
+                - listitem [ref=e216]:
+                  - link "2 · Reading NAV" [ref=e217] [cursor=pointer]:
+                    - /url: "#nav"
+                - listitem [ref=e218]:
+                  - link "3 · Cross-check / fallback" [ref=e219] [cursor=pointer]:
+                    - /url: "#recon"
+                - listitem [ref=e220]:
+                  - link "4 · Per-basket fees" [ref=e221] [cursor=pointer]:
+                    - /url: "#fees"
+                - listitem [ref=e222]:
+                  - link "5 · hookData / legMins" [ref=e223] [cursor=pointer]:
+                    - /url: "#hookdata"
+                - listitem [ref=e224]:
+                  - link "6 · In-kind redemption" [ref=e225] [cursor=pointer]:
+                    - /url: "#exit"
+                - listitem [ref=e226]:
+                  - link "7 · Discovering baskets" [ref=e227] [cursor=pointer]:
+                    - /url: "#discover"
+                - listitem [ref=e228]:
+                  - link "8 · Direct contract access" [ref=e229] [cursor=pointer]:
+                    - /url: "#direct"
+                - listitem [ref=e230]:
+                  - link "9 · Gotchas" [ref=e231] [cursor=pointer]:
+                    - /url: "#gotchas"
+                - listitem [ref=e232]:
+                  - link "10 · Addresses" [ref=e233] [cursor=pointer]:
+                    - /url: "#addresses"
+                - listitem [ref=e234]:
+                  - link "11 · Indexing / events" [ref=e235] [cursor=pointer]:
+                    - /url: "#indexing"
+          - article [ref=e236]:
+            - generic [ref=e237]:
+              - generic [ref=e238]:
+                - generic [ref=e239]: "01"
+                - heading "What a Spectrum basket is" [level=2] [ref=e240]
+              - generic [ref=e241]:
+                - paragraph [ref=e242]:
+                  - text: A Spectrum basket is an ERC-20 token (
+                  - strong [ref=e243]: 18 decimals
+                  - text: ") backed by a fixed set of constituent tokens. The token is its own V4 hook and its own liquidity: minting deposits value against the constituents, redeeming returns it."
+                - table [ref=e245]:
+                  - rowgroup [ref=e246]:
+                    - row [ref=e247]:
+                      - columnheader "Thing" [ref=e248]
+                      - columnheader "Value" [ref=e249]
+                  - rowgroup [ref=e250]:
+                    - row [ref=e251]:
+                      - cell "Basket token decimals" [ref=e252]
+                      - cell [ref=e253]:
+                        - strong [ref=e254]: "18"
+                    - row [ref=e255]:
+                      - cell "USDC (settlement asset)" [ref=e256]
+                      - cell [ref=e257]:
+                        - generic [ref=e258]:
+                          - strong [ref=e259]: 6 decimals
+                          - text: ", canonical Base USDC"
+                    - row [ref=e260]:
+                      - cell "Basket weights" [ref=e261]
+                      - cell [ref=e262]:
+                        - generic [ref=e263]:
+                          - text: BPS (10000 = 100%),
+                          - emphasis [ref=e264]: target
+                          - text: weights; live weights drift with price
+                    - row [ref=e265]:
+                      - cell "Constituent decimals" [ref=e266]
+                      - cell [ref=e267]:
+                        - generic [ref=e268]:
+                          - strong [ref=e269]: varies
+                          - text: ", read per entry, never assume 18"
+            - generic [ref=e270]:
+              - generic [ref=e271]:
+                - generic [ref=e272]: "02"
+                - 'heading "Reading NAV: static views first" [level=2] [ref=e273]'
+              - generic [ref=e274]:
+                - paragraph [ref=e275]:
+                  - text: The V2 token exposes static, non-reverting NAV views. They return display-grade marks with an explicit health flag, treat a
+                  - code [ref=e276]: fullyPriced == false
+                  - text: result as partial, and never treat any of these as a manipulation-resistant oracle.
+                - generic [ref=e277]:
+                  - generic [ref=e278]: Bottom line (V2 inverts the v1 guidance)
+                  - paragraph [ref=e280]:
+                    - text: Call
+                    - code [ref=e281]: exchangeRate()
+                    - text: ", in V2 it is now non-reverting, with a"
+                    - code [ref=e282]: fullyPriced
+                    - text: health flag. The aggregate-spot reconstruction (
+                    - link "§3" [ref=e283] [cursor=pointer]:
+                      - /url: "#recon"
+                    - text: ) remains the manipulation-resistant cross-check and the fallback. Settlement is canonical Base USDC.
+                - generic [ref=e284]:
+                  - generic [ref=e286]:
+                    - generic [ref=e287]: static NAV views · V2
+                    - button "Copy" [ref=e288]
+                  - code [ref=e293]:
+                    - generic [ref=e294]: "// V2 static NAV views, non-reverting, display-grade (value, priced) marks:"
+                    - generic [ref=e295]: exchangeRate() returns (uint256 rate1e18, bool fullyPriced) // USDC per token, 1e18-scaled
+                    - generic [ref=e296]: totalReserve() returns (uint256 usdcValue, bool fullyPriced) // total backing, USDC (6 dec)
+                    - generic [ref=e297]: quoteLeg(i) returns (uint256 usdcValue, bool priced) // one constituent's mark
+                    - generic [ref=e298]: effectiveSupply() returns (uint256) // NAV denominator
+                - generic [ref=e299]:
+                  - generic [ref=e300]: Use idleHeld(asset), not balanceOf
+                  - paragraph [ref=e302]:
+                    - code [ref=e303]: idleHeld
+                    - text: is the basket’s tracked, donation-immune reserve of a constituent;
+                    - code [ref=e304]: balanceOf
+                    - text: can be inflated by tokens donated to the basket. Denominator is
+                    - code [ref=e305]: effectiveSupply()
+                    - text: ", not"
+                    - code [ref=e306]: totalSupply()
+                    - text: .
+                    - button "More context" [ref=e308]: i
+                - generic [ref=e309]:
+                  - generic [ref=e310]: Never price from the basket's own pool
+                  - paragraph [ref=e312]:
+                    - text: Each basket has an internal Uniswap v4 self-pool, but mint/redeem are hook-mediated, so that pool’s price does
+                    - strong [ref=e313]: not
+                    - text: track value and is effectively static. An indexer that auto-detects that pool will publish a wrong price.
+                    - button "More context" [ref=e315]: i
+            - generic [ref=e316]:
+              - generic [ref=e317]:
+                - generic [ref=e318]: "03"
+                - heading "Aggregate-spot cross-check / fallback" [level=2] [ref=e319]
+              - generic [ref=e320]:
+                - paragraph [ref=e321]: Reconstruct the value from holdings plus your own price source. Publish a divergence warning when this and the on-chain view disagree by more than ~2%, that gap is signal, not noise. Historical NAV still has no on-chain source; charts are reconstructed from per-asset price series.
+                - generic [ref=e322]:
+                  - generic [ref=e324]:
+                    - generic [ref=e325]: pseudocode
+                    - button "Copy" [ref=e326]
+                  - code [ref=e331]:
+                    - generic [ref=e332]: "# Aggregate-spot cross-check (also the fallback when views are unavailable)"
+                    - generic [ref=e333]: AUM_usd = 0
+                    - generic [ref=e334]: "for i in 0 .. basketLength()-1:"
+                    - generic [ref=e335]: (asset, _, _, _, _, _, dec) = basket(i)
+                    - generic [ref=e336]: "held = idleHeld(asset) # raw, asset decimals (tracked reserve)"
+                    - generic [ref=e337]: "price = priceUsd(asset) # your price source; canonical USDC -> 1.0"
+                    - generic [ref=e338]: AUM_usd += (held / 10**dec) * price
+                    - generic [ref=e340]: navPerToken = AUM_usd / (effectiveSupply() / 1e18)
+                - list [ref=e341]:
+                  - listitem [ref=e342]:
+                    - generic [ref=e343]: ·
+                    - generic [ref=e344]:
+                      - strong [ref=e345]: Live weight
+                      - text: of constituent
+                      - code [ref=e346]: i
+                      - text: =
+                      - code [ref=e347]: (held_i × price_i) / AUM
+                      - text: .
+                  - listitem [ref=e348]:
+                    - generic [ref=e349]: ·
+                    - generic [ref=e350]:
+                      - strong [ref=e351]: 24h change
+                      - text: = value-weighted sum of each priced constituent’s 24h change.
+                  - listitem [ref=e352]:
+                    - generic [ref=e353]: ·
+                    - generic [ref=e354]:
+                      - text: Leave a constituent unpriced rather than assuming $0; surface
+                      - code [ref=e355]: pricedCount / totalCount
+                      - text: .
+            - generic [ref=e356]:
+              - generic [ref=e357]:
+                - generic [ref=e358]: "04"
+                - 'heading "Per-basket fees: never hardcode a split" [level=2] [ref=e359]'
+              - generic [ref=e360]:
+                - paragraph [ref=e361]: "Fees vary per basket and are immutable from launch. There is no universal split to print. Read each basket’s config and the protocol constants:"
+                - generic [ref=e362]:
+                  - generic [ref=e364]:
+                    - generic [ref=e365]: fee readout · V2
+                    - button "Copy" [ref=e366]
+                  - code [ref=e371]:
+                    - generic [ref=e372]: "// Per-basket immutable fee config (creator picks the rate + their own share):"
+                    - generic [ref=e373]: basketFeeBps() returns (uint16) // total fee in bps (100-300)
+                    - generic [ref=e374]: creatorShareBps() returns (uint16) // creator's share of the remainder (0-3000 = 0-30%)
+                    - generic [ref=e375]: creatorPayout() returns (address) // where the creator share is sent (0x0 = none)
+                    - generic [ref=e376]: launcher() returns (address) // per-basket origination recipient (0x0 = none)
+                    - generic [ref=e377]: "// Fixed protocol constants (same on every basket, no ratchet, no routing table):"
+                    - generic [ref=e378]: BURN_SHARE_BPS = 1000 // 10% PRISM burn of every fee (+ all rounding dust)
+                    - generic [ref=e379]: INTERFACE_SHARE_BPS = 555 // ~5% of the fee; carved off the post-burn base only
+                    - generic [ref=e380]: LAUNCHER_SHARE_BPS = 555 // when a frontend tag / launcher is present
+                    - generic [ref=e381]: MAX_CREATOR_SHARE_BPS = 3000 // creator <=30% of remainder => holders >=70% of it
+                    - generic [ref=e382]: MIN_BASKET_FEE_BPS = 100 / MAX_BASKET_FEE_BPS = 300 / CRANK_BOUNTY_BPS = 50
+                    - generic [ref=e383]: "// Waterfall: burn 10% off the top; then (if present) interface 555/bps and"
+                    - generic [ref=e384]: // launcher 555/bps of the post-burn base; creatorShareBps of what remains to
+                    - generic [ref=e385]: // creatorPayout; holders get the rest. Unused interface/launcher slices stay in
+                    - generic [ref=e386]: // the remainder -> creator + holders. No burnShareBps() getter; no routes().
+                - paragraph [ref=e387]:
+                  - text: The burn share is a fixed protocol constant (
+                  - code [ref=e388]: BURN_SHARE_BPS
+                  - text: "= 10%): every basket routes exactly that share of its pool mint/redeem fees to an autonomous PRISM buy-and-burn path, uniform on every basket, with no per-basket dial and no ratchet. (The in-kind exit’s haircut is the one exception, it stays in reserve for remaining holders.)"
+            - generic [ref=e389]:
+              - generic [ref=e390]:
+                - generic [ref=e391]: "05"
+                - heading "hookData / legMins encoding" [level=2] [ref=e392]
+              - generic [ref=e393]:
+                - generic [ref=e394]:
+                  - generic [ref=e396]:
+                    - generic [ref=e397]: mint/redeem hookData · v3
+                    - button "Copy" [ref=e398]
+                  - code [ref=e403]:
+                    - generic [ref=e404]: "// hookData is OPTIONAL (v3). TAGGED path: frontends encoding floors + attribution."
+                    - generic [ref=e405]: abi.encode(
+                    - generic [ref=e406]: uint256 minOut, // aggregate minimum out
+                    - generic [ref=e407]: "uint256[] legMins, // per-leg minimums: quotedLeg[i] * (1 - slippageBps/10000)"
+                    - generic [ref=e408]: address frontend // interface tag; address(0) = none (interface slice not carved → stays in remainder)
+                    - generic [ref=e409]: )
+                    - generic [ref=e410]: "// BARE path (empty hookData: generic aggregators / canonical v4 routers):"
+                    - generic [ref=e411]: // minOut = 0 (the caller's settlement check owns slippage) and a buy gets
+                    - generic [ref=e412]: // in-protocol per-leg floors from the factory's immutable TWAP lens.
+                    - generic [ref=e413]: "// EXCEPTION: the FIRST mint (effectiveSupply() == 0) still hard-requires the"
+                    - generic [ref=e414]: // full tagged payload with non-zero legMins on every swapped leg, since it sets
+                    - generic [ref=e415]: // the share basis every future holder inherits.
+                - generic [ref=e416]:
+                  - generic [ref=e417]: The first mint stays protected
+                  - paragraph [ref=e419]:
+                    - text: Empty hookData is accepted on launched baskets (v3, which is what lets generic aggregators and the canonical v4 router fill baskets with no adapter; see
+                    - link "the integration guide" [ref=e420] [cursor=pointer]:
+                      - /url: /integrate
+                    - text: "). The first mint of a new basket still hard-requires the tagged payload: derive"
+                    - code [ref=e421]: legMins
+                    - text: "from live per-leg quotes at sign time: an interface that encodes zeros there removes the only slippage protection the share basis gets."
+            - generic [ref=e422]:
+              - generic [ref=e423]:
+                - generic [ref=e424]: "06"
+                - 'heading "In-kind redemption: the unconditional exit" [level=2] [ref=e425]'
+              - generic [ref=e426]:
+                - generic [ref=e427]:
+                  - generic [ref=e429]:
+                    - generic [ref=e430]: redeemInKind · V2
+                    - button "Copy" [ref=e431]
+                  - code [ref=e436]:
+                    - generic [ref=e437]: "// Unconditional exit, works even if every pool is dead:"
+                    - generic [ref=e438]: redeemInKind(uint256 amount, bool[] legMask, address to)
+                    - generic [ref=e439]: // Constituents-out ONLY, pro-rata, deterministic, no minOuts; never touches
+                    - generic [ref=e440]: // USDC or any pool. legMask[i] = false skips a frozen/reverting leg explicitly
+                    - generic [ref=e441]: // (the skipped share stays in reserve for remaining holders).
+                - paragraph [ref=e442]: "This is a mechanical contract swap, stated here as mechanics: outputs are deterministic pro-rata amounts of the constituent tokens themselves."
+            - generic [ref=e443]:
+              - generic [ref=e444]:
+                - generic [ref=e445]: "07"
+                - heading "Discovering baskets" [level=2] [ref=e446]
+              - generic [ref=e447]:
+                - paragraph [ref=e448]: V2 adds keyless enumeration, a plain public RPC lists every basket with two view calls. No log scanning, no archive node, no API key.
+                - generic [ref=e449]:
+                  - generic [ref=e451]:
+                    - generic [ref=e452]: factory enumeration · V2
+                    - button "Copy" [ref=e453]
+                  - code [ref=e458]:
+                    - generic [ref=e459]: "// Keyless enumeration, the factory keeps an append-only public array:"
+                    - generic [ref=e460]: allBasketsLength() returns (uint256)
+                    - generic [ref=e461]: allBaskets(i) returns (address)
+                    - generic [ref=e462]: "// tokens(basket) returns (address deployer): on-chain creator attribution."
+                    - generic [ref=e463]: // The Launched event remains for enrichment (inception timestamps).
+            - generic [ref=e464]:
+              - generic [ref=e465]:
+                - generic [ref=e466]: "08"
+                - heading "Direct contract access" [level=2] [ref=e467]
+              - paragraph [ref=e469]: Every operation, mint, redeem, in-kind redemption, fee claim, enumeration, every read, works by calling the contracts directly, without any frontend. Any interface (including this one) can disappear or delist anything; the contracts do not care. If you integrate, integrate against the contracts, not against any website.
+            - generic [ref=e470]:
+              - generic [ref=e471]:
+                - generic [ref=e472]: "09"
+                - heading "Gotchas checklist" [level=2] [ref=e473]
+              - list [ref=e475]:
+                - listitem [ref=e476]:
+                  - generic [ref=e481]:
+                    - text: Basket token is 18 decimals; USDC is 6; constituents vary, read per-entry
+                    - code [ref=e482]: decimals
+                    - text: .
+                - listitem [ref=e483]:
+                  - generic [ref=e488]:
+                    - text: Denominator is
+                    - code [ref=e489]: effectiveSupply()
+                    - text: ", not"
+                    - code [ref=e490]: totalSupply()
+                    - text: .
+                - listitem [ref=e491]:
+                  - generic [ref=e496]:
+                    - text: Held amount is
+                    - code [ref=e497]: idleHeld(asset)
+                    - text: (tracked, donation-immune), not
+                    - code [ref=e498]: balanceOf
+                    - text: .
+                - listitem [ref=e499]:
+                  - generic [ref=e504]:
+                    - text: Check the
+                    - code [ref=e505]: fullyPriced
+                    - text: flag on every static NAV read.
+                - listitem [ref=e506]:
+                  - generic [ref=e510]: Cross-check on-chain NAV against aggregate-spot; surface >2% divergence.
+                - listitem [ref=e511]:
+                  - generic [ref=e515]: Never price the basket from its own self-pool.
+                - listitem [ref=e516]:
+                  - generic [ref=e521]:
+                    - text: Never print a universal fee split, read
+                    - code [ref=e522]: basketFeeBps()
+                    - text: per basket.
+                - listitem [ref=e523]:
+                  - generic [ref=e528]:
+                    - text: Never encode empty/zero
+                    - code [ref=e529]: legMins
+                    - text: in hookData.
+                - listitem [ref=e530]:
+                  - generic [ref=e535]:
+                    - text: Weights from
+                    - code [ref=e536]: basket()
+                    - text: are
+                    - emphasis [ref=e537]: targets
+                    - text: in BPS; compute live weights from value.
+            - generic [ref=e538]:
+              - generic [ref=e539]:
+                - generic [ref=e540]: "10"
+                - heading "Addresses" [level=2] [ref=e541]
+              - generic [ref=e542]:
+                - paragraph [ref=e543]:
+                  - text: Addresses come exclusively from this build’s
+                  - code [ref=e544]: deployments.json
+                  - text: / env config (see
+                  - code [ref=e545]: OPERATORS.md
+                  - text: "): what renders below is what this deployment is wired to. Nothing else ships; there are deliberately no v1 addresses anywhere, and a build with no deployment configured shows nothing here."
+                - generic [ref=e546]:
+                  - generic [ref=e547]:
+                    - generic [ref=e548]: Factory
+                    - generic [ref=e549]:
+                      - generic [ref=e550]: Base
+                      - button "0x91ca52C4095c795f6e05DABF7d53Db44101ef7A6" [ref=e551]
+                    - generic [ref=e556]:
+                      - generic [ref=e557]: Ethereum
+                      - button "0xEf520C7f354d03253149388F6338189Bc1A0Ba01" [ref=e558]
+                    - generic [ref=e563]:
+                      - generic [ref=e564]: Robinhood
+                      - button "0x07Bfce0976b205FcfDF115F7aD1401Ab1f197e6f" [ref=e565]
+                  - generic [ref=e570]:
+                    - generic [ref=e571]: v4 PoolManager
+                    - generic [ref=e572]:
+                      - generic [ref=e573]: Base
+                      - button "0x498581fF718922c3f8e6A244956aF099B2652b2b" [ref=e574]
+                    - generic [ref=e579]:
+                      - generic [ref=e580]: Ethereum
+                      - button "0x000000000004444c5dc75cB358380D2e3dE08A90" [ref=e581]
+                    - generic [ref=e586]:
+                      - generic [ref=e587]: Robinhood
+                      - button "0x8366a39CC670B4001A1121B8F6A443A643e40951" [ref=e588]
+                  - generic [ref=e593]:
+                    - generic [ref=e594]: v4 Quoter
+                    - generic [ref=e595]:
+                      - generic [ref=e596]: Base
+                      - button "0x0d5e0F971ED27FBfF6c2837bf31316121532048D" [ref=e597]
+                    - generic [ref=e602]:
+                      - generic [ref=e603]: Ethereum
+                      - button "0x52F0E24D1c21C8A0cB1e5a5dD6198556BD9E1203" [ref=e604]
+                    - generic [ref=e609]:
+                      - generic [ref=e610]: Robinhood
+                      - button "0x8Dc178eFB8111BB0973Dd9d722ebeFF267c98F94" [ref=e611]
+                  - generic [ref=e616]:
+                    - generic [ref=e617]: Universal Router
+                    - generic [ref=e618]:
+                      - generic [ref=e619]: Base
+                      - button "0x6fF5693b99212Da76ad316178A184AB56D299b43" [ref=e620]
+                    - generic [ref=e625]:
+                      - generic [ref=e626]: Ethereum
+                      - button "0x66a9893cC07D91D95644AEDD05D03f95e1dBA8Af" [ref=e627]
+                    - generic [ref=e632]:
+                      - generic [ref=e633]: Robinhood
+                      - button "0x8876789976dEcBfCbBbe364623C63652db8C0904" [ref=e634]
+                - generic [ref=e639]:
+                  - generic [ref=e640]: Verify, then trust
+                  - paragraph [ref=e642]:
+                    - text: Re-verify every address on-chain before relying on it, including the canonical v4 periphery against Uniswap’s published deployments. A token the factory does not know (
+                    - code [ref=e643]: tokens(basket) == 0
+                    - text: ) is not a Spectrum basket.
+            - generic [ref=e644]:
+              - generic [ref=e645]:
+                - generic [ref=e646]: "11"
+                - 'heading "Indexing: events and topic0s" [level=2] [ref=e647]'
+              - generic [ref=e648]:
+                - paragraph [ref=e649]: "Everything an indexer subscribes to, with the topic0 hashes computed from the shipped ABI at render (they cannot drift from what this app transacts through). Full event signatures matter: a shortened signature hashes to a different topic0."
+                - generic [ref=e650]:
+                  - table [ref=e652]:
+                    - rowgroup [ref=e653]:
+                      - row [ref=e654]:
+                        - columnheader "Contract" [ref=e655]
+                        - columnheader "Event (canonical signature)" [ref=e656]
+                        - columnheader "topic0" [ref=e657]
+                    - rowgroup [ref=e658]:
+                      - row [ref=e659]:
+                        - cell "Factory" [ref=e660]
+                        - cell "Launched(address indexed basket, address indexed deployer, string name, string symbol, uint160 startSqrtPriceX96, uint256 ethPaid, uint16 basketFeeBps) One per basket created; ethPaid is the auction price." [ref=e661]:
+                          - generic [ref=e662]:
+                            - code [ref=e663]: Launched(address indexed basket, address indexed deployer, string name, string symbol, uint160 startSqrtPriceX96, uint256 ethPaid, uint16 basketFeeBps)
+                            - generic [ref=e664]: One per basket created; ethPaid is the auction price.
+                        - cell [ref=e665]:
+                          - button "0x8ade4199…" [ref=e666]
+                      - row [ref=e671]:
+                        - cell "Basket" [ref=e672]
+                        - cell "FeeConfigured(uint16 basketFeeBps, uint16 creatorShareBps, address creatorPayout, address launcher) Once at initialize; the immutable fee economics." [ref=e673]:
+                          - generic [ref=e674]:
+                            - code [ref=e675]: FeeConfigured(uint16 basketFeeBps, uint16 creatorShareBps, address creatorPayout, address launcher)
+                            - generic [ref=e676]: Once at initialize; the immutable fee economics.
+                        - cell [ref=e677]:
+                          - button "0x08b4f832…" [ref=e678]
+                      - row [ref=e683]:
+                        - cell "Basket" [ref=e684]
+                        - cell "MintedInKind(address indexed to, address indexed frontend, uint256 shares, uint256 feeUsdc) In-kind mint; per-leg amounts ride the tx calldata, not the event." [ref=e685]:
+                          - generic [ref=e686]:
+                            - code [ref=e687]: MintedInKind(address indexed to, address indexed frontend, uint256 shares, uint256 feeUsdc)
+                            - generic [ref=e688]: In-kind mint; per-leg amounts ride the tx calldata, not the event.
+                        - cell [ref=e689]:
+                          - button "0xf406d553…" [ref=e690]
+                      - row [ref=e695]:
+                        - cell "Basket" [ref=e696]
+                        - cell "FeesClaimed(address indexed holder, uint256 amount) Holder pulled accrued fees." [ref=e697]:
+                          - generic [ref=e698]:
+                            - code [ref=e699]: FeesClaimed(address indexed holder, uint256 amount)
+                            - generic [ref=e700]: Holder pulled accrued fees.
+                        - cell [ref=e701]:
+                          - button "0x9493e5bb…" [ref=e702]
+                      - row [ref=e707]:
+                        - cell "Basket" [ref=e708]
+                        - cell "FrontendFeesFlushed(address indexed frontend, uint256 amount) Interface / launcher / creator accrual pushed out by the crank." [ref=e709]:
+                          - generic [ref=e710]:
+                            - code [ref=e711]: FrontendFeesFlushed(address indexed frontend, uint256 amount)
+                            - generic [ref=e712]: Interface / launcher / creator accrual pushed out by the crank.
+                        - cell [ref=e713]:
+                          - button "0x1616182e…" [ref=e714]
+                      - row [ref=e719]:
+                        - cell "Basket" [ref=e720]
+                        - cell "PrismBurnBridged(uint256 usdcIn, uint256 ethBridged) Burn-share settlement left for the L1 burner." [ref=e721]:
+                          - generic [ref=e722]:
+                            - code [ref=e723]: PrismBurnBridged(uint256 usdcIn, uint256 ethBridged)
+                            - generic [ref=e724]: Burn-share settlement left for the L1 burner.
+                        - cell [ref=e725]:
+                          - button "0x19fb0924…" [ref=e726]
+                      - row [ref=e731]:
+                        - cell "Basket" [ref=e732]
+                        - cell "ClaimsRedeemed(uint256 claimsBurned) Lazy-burn queue settled (see the supply note below)." [ref=e733]:
+                          - generic [ref=e734]:
+                            - code [ref=e735]: ClaimsRedeemed(uint256 claimsBurned)
+                            - generic [ref=e736]: Lazy-burn queue settled (see the supply note below).
+                        - cell [ref=e737]:
+                          - button "0x14f39df6…" [ref=e738]
+                      - row [ref=e743]:
+                        - cell "Swap router" [ref=e744]
+                        - 'cell "Swapped(address indexed basket, address indexed trader, address tokenIn, uint256 amountIn, uint256 amountOut, address frontend) One per buy or sell: tokenIn is the settlement asset on buys, the basket on sells." [ref=e745]':
+                          - generic [ref=e746]:
+                            - code [ref=e747]: Swapped(address indexed basket, address indexed trader, address tokenIn, uint256 amountIn, uint256 amountOut, address frontend)
+                            - generic [ref=e748]: "One per buy or sell: tokenIn is the settlement asset on buys, the basket on sells."
+                        - cell [ref=e749]:
+                          - button "0x1eeaa4ac…" [ref=e750]
+                  - list [ref=e755]:
+                    - listitem [ref=e756]:
+                      - generic [ref=e760]:
+                        - text: "Trades: the router's"
+                        - code [ref=e761]: Swapped
+                        - text: is the complete feed. Pool-level fills also appear as v4
+                        - code [ref=e762]: PoolManager.Swap
+                        - text: with
+                        - code [ref=e763]: poolId
+                        - text: derived from the basket's own
+                        - code [ref=e764]: selfKey()
+                        - text: .
+                    - listitem [ref=e765]:
+                      - generic [ref=e769]:
+                        - text: "Supply has two numbers: sells can queue burns, so"
+                        - code [ref=e770]: totalSupply()
+                        - text: ≥
+                        - code [ref=e771]: effectiveSupply()
+                        - text: . NAV per token divides by
+                        - code [ref=e772]: effectiveSupply()
+                        - text: .
+                    - listitem [ref=e773]:
+                      - generic [ref=e777]:
+                        - text: "Fees are pull-based: value accrues in views ("
+                        - code [ref=e778]: feeReserve()
+                        - text: ","
+                        - code [ref=e779]: pendingFrontendFees(fe)
+                        - text: ) and moves only when the permissionless cranks fire, not per trade.
+                    - listitem [ref=e780]:
+                      - generic [ref=e784]:
+                        - code [ref=e785]: currentDeployPrice()
+                        - text: REVERTS between auction slots. That is an honest state (one deploy per slot), not an outage.
+                    - listitem [ref=e786]:
+                      - generic [ref=e790]:
+                        - text: "Settlement asset per chain: the factory's"
+                        - code [ref=e791]: USDC()
+                        - text: immutable (USDC on Base and Ethereum, USDG on Robinhood Chain), always 6 decimals; baskets are always 18.
+                    - listitem [ref=e792]:
+                      - generic [ref=e796]: "The factory and router are one CREATE2 build: identical addresses on Base and Robinhood Chain. Key uniqueness on (chainId, address), never the address alone."
+                    - listitem [ref=e797]:
+                      - generic [ref=e801]:
+                        - text: Token address == hook address (CREATE2-mined to carry the v4
+                        - code [ref=e802]: "0x88"
+                        - text: "permission bits), and pool liquidity fields read ~0 by design: reserves live in the basket, so depth is"
+                        - code [ref=e803]: totalReserve()
+                        - text: ", never pool reserves."
+                  - generic [ref=e804]:
+                    - generic [ref=e805]: ABI and verified source
+                    - paragraph [ref=e807]:
+                      - text: The full JSON ABI is on each contract's explorer page (
+                      - generic [ref=e808]:
+                        - link "Base factory" [ref=e809] [cursor=pointer]:
+                          - /url: https://basescan.org/address/0x91ca52C4095c795f6e05DABF7d53Db44101ef7A6
+                        - text: ","
+                        - link "router" [ref=e810] [cursor=pointer]:
+                          - /url: https://basescan.org/address/0x10139577Eb5a710De69aE0fD60F9E881d39cb6bA
+                      - generic [ref=e811]:
+                        - text: ·
+                        - link "Ethereum factory" [ref=e812] [cursor=pointer]:
+                          - /url: https://etherscan.io/address/0xEf520C7f354d03253149388F6338189Bc1A0Ba01
+                        - text: ","
+                        - link "router" [ref=e813] [cursor=pointer]:
+                          - /url: https://etherscan.io/address/0x15D9C385dC3d3f4fB50321F6e224b25A391F0025
+                      - generic [ref=e814]:
+                        - text: ·
+                        - link "Robinhood factory" [ref=e815] [cursor=pointer]:
+                          - /url: https://robinhoodchain.blockscout.com/address/0x07Bfce0976b205FcfDF115F7aD1401Ab1f197e6f
+                        - text: ","
+                        - link "router" [ref=e816] [cursor=pointer]:
+                          - /url: https://robinhoodchain.blockscout.com/address/0x4d3590a5B0aCee04Bb7Ab721B23fDdae8B880486
+                      - text: ), and the maintained typed interface set ships in this kit at
+                      - code [ref=e817]: app/src/lib/spectrum/abis-v2.ts
+                      - text: . Basket tokens are factory-deployed, one contract per basket; discover them via
+                      - code [ref=e818]: Launched
+                      - text: or the factory enumeration.
+                - paragraph [ref=e819]:
+                  - text: △ SPECTRUM · onchain baskets. This page defines the integration surface against the shipped V2 ABI (
+                  - code [ref=e820]: src/lib/spectrum/abis-v2.ts
+                  - text: ); re-verify signatures and addresses on-chain before relying on them.
+  - contentinfo [ref=e821]:
+    - generic [ref=e822]:
+      - generic [ref=e823]:
+        - generic [ref=e824]: "Spectrum · Introducing A New Asset Class: Basket Tokens One Token Backed By The Price Of All Assets"
+        - generic [ref=e825]: powered by Spectrum Mini
+      - navigation [ref=e826]:
+        - link "Learn" [ref=e827] [cursor=pointer]:
+          - /url: /learn
+        - link "FAQ" [ref=e828] [cursor=pointer]:
+          - /url: /faq
+        - link "Docs" [ref=e829] [cursor=pointer]:
+          - /url: /docs/valuation
+        - link "Integrate" [ref=e830] [cursor=pointer]:
+          - /url: /integrate
+        - link "Earn" [ref=e831] [cursor=pointer]:
+          - /url: /earn
+        - link "Terms" [ref=e832] [cursor=pointer]:
+          - /url: /terms
+        - link "Privacy" [ref=e833] [cursor=pointer]:
+          - /url: /privacy
+        - link "Risk" [ref=e834] [cursor=pointer]:
+          - /url: /risk
+        - link "Verify contracts" [ref=e835] [cursor=pointer]:
+          - /url: /verify
+        - link "Customize" [ref=e836] [cursor=pointer]:
+          - /url: /setup
+    - paragraph [ref=e838]: Informational only. Not an offer, solicitation, or financial, investment, legal, or tax advice. Spectrum is software provided without warranty. Basket tokens are created and issued by their respective deployers, who are solely responsible for their own use of it. Verify on-chain yourself. Onchain assets carry risk, including total loss of value.

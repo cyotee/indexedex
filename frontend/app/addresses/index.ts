@@ -7,7 +7,6 @@ import sepoliaUniV2PoolsJson from './sepolia/sepolia-uniV2pool.tokenlist.json'
 import sepoliaAerodromePoolsJson from './sepolia/sepolia-aerodrome-pools.tokenlist.json'
 import sepoliaAerodromeStrategyVaultsJson from './sepolia/sepolia-aerodrome-strategy-vaults.tokenlist.json'
 import sepoliaBalancerPoolsJson from './sepolia/sepolia-balancerv3-pools.tokenlist.json'
-import sepoliaSeigniorageDetfsJson from './sepolia/sepolia-seigniorage-detfs.tokenlist.json'
 import sepoliaProtocolDetfJson from './sepolia/sepolia-protocol-detf.tokenlist.json'
 
 import publicSepoliaEthereumPlatformJson from './public_sepolia/ethereum/base_deployments.json'
@@ -18,7 +17,6 @@ import publicSepoliaEthereumUniV2PoolsJson from './public_sepolia/ethereum/publi
 import publicSepoliaEthereumAerodromePoolsJson from './public_sepolia/ethereum/public_sepolia-aerodrome-pools.tokenlist.json'
 import publicSepoliaEthereumAerodromeStrategyVaultsJson from './public_sepolia/ethereum/public_sepolia-aerodrome-strategy-vaults.tokenlist.json'
 import publicSepoliaEthereumBalancerPoolsJson from './public_sepolia/ethereum/public_sepolia-balancerv3-pools.tokenlist.json'
-import publicSepoliaEthereumSeigniorageDetfsJson from './public_sepolia/ethereum/public_sepolia-seigniorage-detfs.tokenlist.json'
 import publicSepoliaEthereumProtocolDetfJson from './public_sepolia/ethereum/public_sepolia-protocol-detf.tokenlist.json'
 
 import publicSepoliaBasePlatformJson from './public_sepolia/base/base_deployments.json'
@@ -29,7 +27,6 @@ import publicSepoliaBaseUniV2PoolsJson from './public_sepolia/base/public_sepoli
 import publicSepoliaBaseAerodromePoolsJson from './public_sepolia/base/public_sepolia-aerodrome-pools.tokenlist.json'
 import publicSepoliaBaseAerodromeStrategyVaultsJson from './public_sepolia/base/public_sepolia-aerodrome-strategy-vaults.tokenlist.json'
 import publicSepoliaBaseBalancerPoolsJson from './public_sepolia/base/public_sepolia-balancerv3-pools.tokenlist.json'
-import publicSepoliaBaseSeigniorageDetfsJson from './public_sepolia/base/public_sepolia-seigniorage-detfs.tokenlist.json'
 import publicSepoliaBaseProtocolDetfJson from './public_sepolia/base/public_sepolia-protocol-detf.tokenlist.json'
 
 import supersimEthereumPlatformJson from './supersim_sepolia/ethereum/base_deployments.json'
@@ -41,7 +38,6 @@ import supersimEthereumUniV2PoolsJson from './supersim_sepolia/ethereum/supersim
 import supersimEthereumAerodromePoolsJson from './supersim_sepolia/ethereum/supersim_sepolia-aerodrome-pools.tokenlist.json'
 import supersimEthereumAerodromeStrategyVaultsJson from './supersim_sepolia/ethereum/supersim_sepolia-aerodrome-strategy-vaults.tokenlist.json'
 import supersimEthereumBalancerPoolsJson from './supersim_sepolia/ethereum/supersim_sepolia-balancerv3-pools.tokenlist.json'
-import supersimEthereumSeigniorageDetfsJson from './supersim_sepolia/ethereum/supersim_sepolia-seigniorage-detfs.tokenlist.json'
 import supersimEthereumProtocolDetfJson from './supersim_sepolia/ethereum/supersim_sepolia-protocol-detf.tokenlist.json'
 
 import supersimBasePlatformJson from './supersim_sepolia/base/base_deployments.json'
@@ -52,7 +48,6 @@ import supersimBaseUniV2PoolsJson from './supersim_sepolia/base/supersim_sepolia
 import supersimBaseAerodromePoolsJson from './supersim_sepolia/base/supersim_sepolia-aerodrome-pools.tokenlist.json'
 import supersimBaseAerodromeStrategyVaultsJson from './supersim_sepolia/base/supersim_sepolia-aerodrome-strategy-vaults.tokenlist.json'
 import supersimBaseBalancerPoolsJson from './supersim_sepolia/base/supersim_sepolia-balancerv3-pools.tokenlist.json'
-import supersimBaseSeigniorageDetfsJson from './supersim_sepolia/base/supersim_sepolia-seigniorage-detfs.tokenlist.json'
 import supersimBaseProtocolDetfJson from './supersim_sepolia/base/supersim_sepolia-protocol-detf.tokenlist.json'
 
 export const CHAIN_ID_SEPOLIA = 11155111 as const
@@ -72,7 +67,6 @@ export type ArtifactBundle = {
   tokenlists: {
     tokens: any[]
     erc4626: any[]
-    seigniorageDetfs: any[]
     protocolDetf: any[]
     strategyVaults: any[]
     uniV2Pools: any[]
@@ -118,7 +112,6 @@ const buildBundle = (
     factories?: any[]
     tokens: any
     erc4626: any
-    seigniorageDetfs: any
     protocolDetf: any
     strategyVaults: any
     uniV2Pools: any
@@ -135,7 +128,6 @@ const buildBundle = (
   tokenlists: {
     tokens: normalizeList(source.tokens, chainId),
     erc4626: normalizeList(source.erc4626, chainId),
-    seigniorageDetfs: normalizeList(source.seigniorageDetfs, chainId),
     protocolDetf: normalizeList(source.protocolDetf, chainId),
     strategyVaults: normalizeList(source.strategyVaults, chainId),
     uniV2Pools: normalizeList(source.uniV2Pools, chainId),
@@ -152,7 +144,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       factories: sepoliaFactoriesJson,
       tokens: sepoliaTokensJson,
       erc4626: sepoliaErc4626Json,
-      seigniorageDetfs: sepoliaSeigniorageDetfsJson,
       protocolDetf: sepoliaProtocolDetfJson,
       strategyVaults: sepoliaStrategyVaultsJson,
       uniV2Pools: sepoliaUniV2PoolsJson,
@@ -166,7 +157,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       platform: publicSepoliaEthereumPlatformJson,
       tokens: publicSepoliaEthereumTokensJson,
       erc4626: publicSepoliaEthereumErc4626Json,
-      seigniorageDetfs: publicSepoliaEthereumSeigniorageDetfsJson,
       protocolDetf: publicSepoliaEthereumProtocolDetfJson,
       strategyVaults: publicSepoliaEthereumStrategyVaultsJson,
       uniV2Pools: publicSepoliaEthereumUniV2PoolsJson,
@@ -178,7 +168,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       platform: publicSepoliaBasePlatformJson,
       tokens: publicSepoliaBaseTokensJson,
       erc4626: publicSepoliaBaseErc4626Json,
-      seigniorageDetfs: publicSepoliaBaseSeigniorageDetfsJson,
       protocolDetf: publicSepoliaBaseProtocolDetfJson,
       strategyVaults: publicSepoliaBaseStrategyVaultsJson,
       uniV2Pools: publicSepoliaBaseUniV2PoolsJson,
@@ -193,7 +182,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       factories: supersimEthereumFactoriesJson,
       tokens: supersimEthereumTokensJson,
       erc4626: supersimEthereumErc4626Json,
-      seigniorageDetfs: supersimEthereumSeigniorageDetfsJson,
       protocolDetf: supersimEthereumProtocolDetfJson,
       strategyVaults: supersimEthereumStrategyVaultsJson,
       uniV2Pools: supersimEthereumUniV2PoolsJson,
@@ -205,7 +193,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       platform: supersimBasePlatformJson,
       tokens: supersimBaseTokensJson,
       erc4626: supersimBaseErc4626Json,
-      seigniorageDetfs: supersimBaseSeigniorageDetfsJson,
       protocolDetf: supersimBaseProtocolDetfJson,
       strategyVaults: supersimBaseStrategyVaultsJson,
       uniV2Pools: supersimBaseUniV2PoolsJson,
@@ -219,7 +206,6 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       platform: {},
       tokens: [],
       erc4626: [],
-      seigniorageDetfs: [],
       protocolDetf: [],
       strategyVaults: [],
       uniV2Pools: [],

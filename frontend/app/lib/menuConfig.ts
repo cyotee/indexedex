@@ -45,7 +45,7 @@ export const MENU_CONFIG = {
   // Token In / Token Out dropdowns on /swap, /batch-swap, /detf.
   // Spec: Tokens, ERC4626 Vaults, Standard Exchange Vaults, Protocol DETFs
   // (pool legs such as CHIR on Balancer V3 pools). ETH is a sentinel prepend
-  // by the consumer. No LP tokens, no seigniorage DETFs in these menus.
+  // by the consumer. No LP tokens.
   'token-select': {
     fromLists: [
       { listId: 'base-tokens', type: 'token' },
@@ -67,21 +67,11 @@ export const MENU_CONFIG = {
   'earn-protocol-detfs': {
     fromLists: [{ listId: 'protocol-detfs', type: 'vault' }],
   },
-  'earn-seigniorage-detfs': {
-    fromLists: [{ listId: 'seigniorage-detfs', type: 'vault' }],
-  },
-  // DETF picker on /detf — only seigniorage DETFs.
-  'seigniorage-detfs-page': {
-    fromLists: [
-      { listId: 'seigniorage-detfs', type: 'vault' },
-    ],
-  },
   // /token-info — every chain-keyed token bucket merged into one balance grid.
   'token-info': {
     fromLists: [
       { listId: 'base-tokens', type: 'token' },
       { listId: 'erc4626-vaults', type: 'vault' },
-      { listId: 'seigniorage-detfs', type: 'vault' },
       { listId: 'protocol-detfs', type: 'vault' },
       { listId: 'strategy-vaults', type: 'vault' },
       { listId: 'uni-v2-pools', type: 'lp' },

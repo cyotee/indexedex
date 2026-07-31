@@ -20,7 +20,6 @@ import {Script_11_DeployStandardExchangeRateProviders} from "../../anvil_base_ma
 import {Script_12_DeployBalancerConstProdVaultTokenPools} from "../../anvil_base_main/Script_12_DeployBalancerConstProdVaultTokenPools.s.sol";
 import {Script_13_SeedBalancerVaultTokenPoolLiquidity} from "../../anvil_base_main/Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_base_main/Script_14_DeployERC4626PermitVaults.s.sol";
-import {Script_15_DeploySeigniorageDETFS} from "../../anvil_base_main/Script_15_DeploySeigniorageDETFS.s.sol";
 import {Script_16_DeployProtocolDETF} from "../../anvil_base_main/Script_16_DeployProtocolDETF.s.sol";
 
 import {Script_17_WethTtcPoolsAndVaults} from "./Script_17_WethTtcPoolsAndVaults.s.sol";
@@ -60,7 +59,7 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
         new Script_13_SeedBalancerVaultTokenPoolLiquidity().run();
         new Script_14_DeployERC4626PermitVaults().run();
 
-        _runStage15();
+        // Stage 15 (SeigniorageDETF dual-token product) removed.
         _runStage16();
         _runStage17();
         new Script_18_WethTtcBalancerPools().run();
@@ -79,21 +78,6 @@ contract Script_DeployAll is DeploymentBase, Script_16_DeployProtocolDETF {
     }
 
     function _requireSupportedBaseSepoliaDeps() internal pure {
-    }
-
-    function _runStage15() internal {
-        console.log("[BaseDeployAll] Dispatching Stage 15: Seigniorage DETFs");
-
-        Script_15_DeploySeigniorageDETFS stage15 = new Script_15_DeploySeigniorageDETFS();
-        console.log("[BaseDeployAll] Stage 15 contract instantiated");
-
-        try stage15.run() {
-            console.log("[BaseDeployAll] Stage 15 returned successfully");
-        } catch (bytes memory reason) {
-            console.log("[BaseDeployAll] Stage 15 reverted");
-            console.log("[BaseDeployAll] Stage 15 revert bytes length", reason.length);
-            _revertWith(reason);
-        }
     }
 
     function _runStage16() internal {

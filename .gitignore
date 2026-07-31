@@ -65,3 +65,6 @@ __pycache__/
 
 out_se_erc4626/
 cache_se_erc4626/
+
+# Local Playwright MCP page dumps
+.playwright-mcp/

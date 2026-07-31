@@ -19,7 +19,6 @@ import {Script_11_DeployStandardExchangeRateProviders} from "../../anvil_base_ma
 import {Script_12_DeployBalancerConstProdVaultTokenPools} from "../../anvil_base_main/Script_12_DeployBalancerConstProdVaultTokenPools.s.sol";
 import {Script_13_SeedBalancerVaultTokenPoolLiquidity} from "./Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol";
 import {Script_14_DeployERC4626PermitVaults} from "../../anvil_base_main/Script_14_DeployERC4626PermitVaults.s.sol";
-import {Script_15_DeploySeigniorageDETFS} from "../../anvil_base_main/Script_15_DeploySeigniorageDETFS.s.sol";
 
 import {Script_ExportTokenlists} from "./Script_ExportTokenlists.s.sol";
 
@@ -47,9 +46,7 @@ contract Script_DeployAll is DeploymentBase {
         new Script_13_SeedBalancerVaultTokenPoolLiquidity().run();
         new Script_14_DeployERC4626PermitVaults().run();
 
-        // Stage 15 - Seigniorage DETFs
-        new Script_15_DeploySeigniorageDETFS().run();
-
+        // Stage 15 (SeigniorageDETF dual-token product) removed.
         // Stage 16 (Protocol DETF) removed — product archived; see scripts/archive/foundry/protocol-detf/
 
         new Script_ExportTokenlists().run();

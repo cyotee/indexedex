@@ -44,8 +44,7 @@ graph TB
 
     subgraph Vaults["Vault Types"]
         Basic[Basic / Standard Vaults]
-        DETF[DETF — composed / dual]
-        Seigniorage[Seigniorage DETF + Bond NFT]
+        DETF[True DETF families — Balancer V3]
         BufferPool[Std Exchange Buffer Pool]
     end
 
@@ -111,12 +110,12 @@ indexedex/
 │   │   │   └── protocols/dexes/        #   Host-backed DETF family packages
 │   │   │       ├── balancer/v3/        #     True DETFs (Single SE, multi-vault, mixedBuffer, stable)
 │   │   │       └── uniswap/v4/         #     Placeholder (empty)
-│   │   ├── protocol/                   # Protocol NFT vault + RICHIR
-│   │   └── seigniorage/                # Seigniorage DETF + Bond NFT (nft/)
+│   │   └── protocol/                   # Protocol NFT vault + RICHIR
+│   │   # (legacy dual-token SeigniorageDETF under vaults/seigniorage/ REMOVED)
 │   └── test/                           # In-contract test infra (bases, handlers, helpers)
 ├── frontend/                           # Next.js React app (38 .tsx)
 │   ├── app/
-│   │   ├── {swap,batch-swap,vaults,detf,detfs,seigniorage,
+│   │   ├── {swap,batch-swap,vaults,detf,detfs,
 │   │   │   staking,mint,portfolio,insights,token-info,create}/   # page.tsx routes
 │   │   ├── addresses/<env>/*.tokenlist.json   # Chain-keyed token lists
 │   │   ├── components/                 # React components
@@ -239,8 +238,8 @@ Two-axis layout (see `DETF_DIRECTORY_REORGANIZATION_PRD.md` + `AGENTS.md`):
 #### Protocol (`vaults/protocol/`)
 `ProtocolNFTVault*` (bond positions: repo, common, facet, target, service, pkg) and `RICHIR*` (rebasing redemption token: repo, facet, target, pkg).
 
-#### Seigniorage (`vaults/seigniorage/`)
-`SeigniorageDETF*` (exchange in/out, underwriting facet/target, repo, common, pkg), `SeigniorageNFTVault*`, and `nft/SeigniorageBondNFT*` (dedicated bond NFT). `Seigniorage_Component_FactoryService.sol`.
+#### Seigniorage (`vaults/seigniorage/`) — **REMOVED**
+Legacy dual-token SeigniorageDETF product (RBT/sRBT + underwrite NFT vault) deleted. Fee-oracle seigniorage **incentive** for true DETFs is unrelated and remains under `contracts/oracles/fee/**` / `VaultFeeType.SEIGNIORAGE`.
 
 ---
 
@@ -257,13 +256,13 @@ Two-axis layout (see `DETF_DIRECTORY_REORGANIZATION_PRD.md` + `AGENTS.md`):
 
 **Purpose**: Replaced the old `local/segmented` flow with explicitly ordered `Script_00..Script_99` stages per environment (`anvil_base_main`, `anvil_sepolia`, …), each writing a `ManifestEntry` and emitting Token List fragments.
 
-Representative `anvil_base_main` sequence: `01_DeployFactories` → `02_DeploySharedFacets` → `03_DeployCoreProxies` → `04_DeployDEXPackages` → `05_DeployTestTokens` → `06_DeployPools` → `07/08_DeployStrategyVaults` → `09_DeployBalancerConstProdPools` → `10_DepositBaseLiquidity` → `11_DeployStandardExchangeRateProviders` → `12/13_BalancerVaultTokenPools (+seed)` → `14_ERC4626PermitVaults / ExportTokenlists` → `15_SeigniorageDETFs` → `16_ProtocolDETF` → `17..23_WethTtc*` → `99_Sweep`. Drivers: `deploy_all.sh`, `DeploymentBase.sol`. See `scripts/foundry/README.md` and `TOKENLIST_PIPELINE_CONTEXT.md`.
+Representative `anvil_base_main` sequence: `01_DeployFactories` → `02_DeploySharedFacets` → `03_DeployCoreProxies` → `04_DeployDEXPackages` → `05_DeployTestTokens` → `06_DeployPools` → `07/08_DeployStrategyVaults` → `09_DeployBalancerConstProdPools` → `10_DepositBaseLiquidity` → `11_DeployStandardExchangeRateProviders` → `12/13_BalancerVaultTokenPools (+seed)` → `14_ERC4626PermitVaults / ExportTokenlists` → (stage 15 SeigniorageDETF **removed**) → (stage 16 Protocol DETF archived) → `17..23_WethTtc*` → `99_Sweep`. Drivers: `deploy_all.sh`, `DeploymentBase.sol`. See `scripts/foundry/README.md` and `TOKENLIST_PIPELINE_CONTEXT.md`.
 
 ---
 
 ### 9. Frontend (`frontend/`)
 
-**Stack**: Next.js 14, TypeScript, Wagmi 3.0, Viem, TailwindCSS. 14 `page.tsx` routes: `swap`, `batch-swap`, `vaults`, `detf`, `detfs`, `seigniorage`, `staking`, `mint`, `portfolio`, `insights`, `token-info`, `create`, `test`, root.
+**Stack**: Next.js 14, TypeScript, Wagmi 3.0, Viem, TailwindCSS. Routes include `swap`, `batch-swap`, `vaults`, `detf`/`detfs` (legacy redirects to Earn), `staking`, `mint`, `portfolio`, `insights`, `token-info`, `create`, `test`, root. `/seigniorage` product route **removed**.
 
 **Swap auto-routing** (`app/lib/swap/` + `swapBuilders.ts`/`swapAbis.ts`): Balancer pools that wrap a Standard Exchange Vault are auto-routed through the vault; the route matcher auto-flags "Use Token In/Out Vault", short-circuits the WETH wrap/unwrap sentinel, ties signed-permit accurate quotes into the Amount-Out preview, and surfaces guard/approval failures explicitly. Unit-tested via `vitest` (`npm test`).
 **Contract integration**: generated hooks via `wagmi.config.ts` (`npm run hooks` → `wagmi generate`). Permit2 two-step approval handled in `permit2-signature.ts` / `permit2-nonce.ts`.
@@ -275,7 +274,7 @@ Representative `anvil_base_main` sequence: `01_DeployFactories` → `02_DeploySh
 181 `.sol` test files: **120 spec** (mock-based unit/invariant/comparative) under `spec/`, **31 fork** under `fork/base_main/`.
 
 **Base hierarchy**: `CraneTest → IndexedexTest → TestBase_VaultComponents → TestBase_[Protocol]StandardExchange → specific tests`. Invariant suites pair a `*.invariant.t.sol` with a `Handler_*.sol`. Comparative suites add `bases/` + `behaviors/` and assert parity against a reference implementation.
-**Fork infra**: `TestBase_BaseFork`, `TestBase_AerodromeFork`, `TestBase_BalancerV3Fork`, `TestBase_SeigniorageDETF_Fork`. Fork tests pin a Base mainnet block (`BASE_FORK_BLOCK`).
+**Fork infra**: `TestBase_BaseFork`, `TestBase_AerodromeFork`, `TestBase_BalancerV3Fork`. (SeigniorageDETF fork base **removed** with the product.) Fork tests pin a Base mainnet block (`BASE_FORK_BLOCK`).
 
 ---
 
