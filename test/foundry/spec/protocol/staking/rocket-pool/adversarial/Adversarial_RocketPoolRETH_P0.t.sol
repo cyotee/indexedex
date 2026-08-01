@@ -194,7 +194,7 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         vault = rocketPoolSeDFPkg.deployVault(address(reth2), address(hostile), address(pool2));
     }
 
-    /// @dev E1: round-trip W↔S — preview==exec both legs; no extractable profit; residual free inventory ok on sleeve.
+    /// @dev E1: round-trip W↔S - preview==exec both legs; no extractable profit; residual free inventory ok on sleeve.
     function test_E1_roundTrip_wethSe() public {
         // Capacity 0 keeps full eth face liquid so SE→WETH can close without burn.
         hermeticPool.setMaxDepositAmount(0);

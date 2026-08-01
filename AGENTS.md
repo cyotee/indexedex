@@ -193,9 +193,10 @@ contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/     # mu
 contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/            # multi-vault stable + claim packages
 contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/              # mixed-buffer multi-vault stable
 contracts/vaults/detf/protocols/dexes/uniswap/v4/                          # placeholder (empty) for later host families
+contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/  # DualLiquidity linked cross-version (pro-rata BPT vault; NOT a true DETF)
 docs/detf/                                            # compound + expansion product law + shared stages
 docs/detf/balancer/v3/<family-path>/                  # family-specific compound/expansion stage plans
-contracts/vaults/protocol/uniswap/                    # DualLiquidity (unrelated; not Protocol DETF)
+docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/     # DualLiquidity product + process docs (not co-located with Solidity)
 ```
 
 When implementing a new DETF family: place package code under the correct host tree (`protocols/dexes/<host>/…`), keep shared libs in `common/`, and put planning docs under `docs/detf/` (mirrored for family stages). Do not re-open locked product law without an explicit PRD revision under `docs/detf/`.
@@ -321,7 +322,7 @@ Protocol / vault gold TestBases (follow these exactly):
 - `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol`
 - `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol`
 - `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol`
-- `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` (fork + full factory/registry path)
+- `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` (fork + full factory/registry path)
 
 **Key rule in IndexedEx**: Facets use the Crane path (`create3Factory`). Vault/StandardExchange *DFPkgs* use the manager/registry path. See the section below.
 

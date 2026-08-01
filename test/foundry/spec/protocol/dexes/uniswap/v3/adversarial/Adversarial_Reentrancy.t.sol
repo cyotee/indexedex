@@ -190,7 +190,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         assertEq(token_.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, string.concat(tag_, " IsLocked"));
     }
 
-    /// @notice C1 — mid-pull transferFrom during exchangeIn reenters exchangeIn → IsLocked.
+    /// @notice C1 - mid-pull transferFrom during exchangeIn reenters exchangeIn → IsLocked.
     function test_C1_reentrancy_exchangeIn_isLocked() public {
         address h0 = hostilePool.token0();
         address h1 = hostilePool.token1();
@@ -221,7 +221,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         hostile.disarm();
     }
 
-    /// @notice C2 — mid-payout transfer during exchangeOut reenters exchangeOut → IsLocked.
+    /// @notice C2 - mid-payout transfer during exchangeOut reenters exchangeOut → IsLocked.
     function test_C2_reentrancy_exchangeOut_isLocked() public {
         address h0 = hostilePool.token0();
         address h1 = hostilePool.token1();
@@ -273,7 +273,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         hostile.disarm();
     }
 
-    /// @notice C3 — mid-import remint mint-callback transfer reenters importPosition → IsLocked.
+    /// @notice C3 - mid-import remint mint-callback transfer reenters importPosition → IsLocked.
     function test_C3_reentrancy_import_isLocked() public {
         address h0 = hostilePool.token0();
         address h1 = hostilePool.token1();
@@ -303,7 +303,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         );
         assertGt(liq, 0, "nft liq");
 
-        // Fresh empty vault for import (hostileVault may already have inventory from other tests — redeploy).
+        // Fresh empty vault for import (hostileVault may already have inventory from other tests - redeploy).
         IStandardExchangeProxy importVault = _deployVault(hostilePool, DEFAULT_WIDTH_MULTIPLIER);
 
         bytes memory reentry = abi.encodeCall(
@@ -338,7 +338,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         hostile.disarm();
     }
 
-    /// @notice C4 — during authenticated mint callback (zap mint), reenter exchangeIn share mint → IsLocked.
+    /// @notice C4 - during authenticated mint callback (zap mint), reenter exchangeIn share mint → IsLocked.
     function test_C4_callback_reentry_blocked() public {
         address h0 = hostilePool.token0();
         address h1 = hostilePool.token1();

@@ -31,20 +31,20 @@ import {TestBase_StandardExchangeBufferPool} from
  *        - Repo storage (tta, shares, rateProvider, indices) is already populated
  *
  *      POSITIVE TEST STRATEGY
- *      onRegister succeeded once (at pool registration time) — we can assert the resulting
+ *      onRegister succeeded once (at pool registration time) - we can assert the resulting
  *      state via getHookFlags, virtualTTA, etc.  To verify the positive path of onRegister
  *      itself we call it again via vm.prank(address(bv3Vault)) with the exact same args the
  *      Vault used during registration.
  *
  *      NEGATIVE TEST STRATEGY
  *      For each guard in onRegister we call the function from a non-vault address or pass bad
- *      arguments and assert it returns false.  No second pool deployment is required — the
+ *      arguments and assert it returns false.  No second pool deployment is required - the
  *      real pool's onRegister is a pure view that reads Repo storage and msg.sender; calling
  *      it with wrong args is safe and does not alter state.
  *
  *      onBeforeInitialize: the pool is already initialized, but calling it again via
  *      vm.prank(address(bv3Vault)) is safe because it is a state-mutating view whose only
- *      side-effects are updating Repo.virtualTTA and Repo.hookSharesDelta — both of which we
+ *      side-effects are updating Repo.virtualTTA and Repo.hookSharesDelta - both of which we
  *      restore with vm.store after the assertion.
  */
 contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
@@ -180,7 +180,7 @@ contract HookRegistrationTest is TestBase_StandardExchangeBufferPool {
         TokenConfig[] memory cfg = _validTokenConfigs();
         IStandardExchangeBufferPool pool_ = IStandardExchangeBufferPool(bufferPool);
         uint256 ttaIdx = pool_.ttaIndex();
-        // Flip TTA from STANDARD to WITH_RATE — this should fail the tokenType check.
+        // Flip TTA from STANDARD to WITH_RATE - this should fail the tokenType check.
         cfg[ttaIdx].tokenType = TokenType.WITH_RATE;
         cfg[ttaIdx].rateProvider = pool_.rateProvider();
         vm.prank(address(bv3Vault));

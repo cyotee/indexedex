@@ -27,7 +27,7 @@ import {
 /**
  * @title TestBase_CommonBufferMultiVaultWeightedPool
  * @notice Default: U=0, N=1, buffer=DAI → seVault. Override U/N for multi-vault / unpaired.
- * @dev All SE vaults process the same bufferToken (DAI) — one-to-many layout.
+ * @dev All SE vaults process the same bufferToken (DAI) - one-to-many layout.
  */
 abstract contract TestBase_CommonBufferMultiVaultWeightedPool is TestBase_StandardExchangeBufferPool {
     using CommonBufferMultiVaultWeightedPool_FactoryService for IVaultRegistryDeployment;

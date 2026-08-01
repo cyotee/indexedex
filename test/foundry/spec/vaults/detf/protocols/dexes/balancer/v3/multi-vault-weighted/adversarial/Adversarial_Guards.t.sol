@@ -96,7 +96,7 @@ contract Adversarial_Guards_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
     }
 
     function test_threshold_mintBlocked_whenNotAllowed() public {
-        // Default thresholds: after live, synthetic often > mintThreshold for N=1 50/50 style —
+        // Default thresholds: after live, synthetic often > mintThreshold for N=1 50/50 style -
         // force burn-only region or assert coupling.
         address instance_ = _openLiveN1DefaultThresholds();
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);

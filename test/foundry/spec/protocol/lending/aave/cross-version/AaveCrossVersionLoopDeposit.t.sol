@@ -87,7 +87,7 @@ contract AaveCrossVersionLoopDeposit_Test is TestBase_AaveCrossVersionLoopV3Mark
     /// @notice Never-borrow unwind (PRD decision 14) safely deleverages and frees principal while
     ///         keeping both versions solvent. Note: fully closing a *maxed* symmetric loop via pure
     ///         deleveraging asymptotically stalls (mutual repays shrink faster than they free
-    ///         capacity) — full closure would need flash loans, which the PRD excludes. The real
+    ///         capacity) - full closure would need flash loans, which the PRD excludes. The real
     ///         user path is a partial withdrawal serviced from the HF buffer, which this validates.
     function test_never_borrow_unwind_deleverages_and_stays_solvent() public {
         _seedBorrowLiquidity();
@@ -108,7 +108,7 @@ contract AaveCrossVersionLoopDeposit_Test is TestBase_AaveCrossVersionLoopV3Mark
         CrossVersionLoopExecutor.fullUnwind(_market(), 50);
 
         // Position was deleveraged (V3 tokenA supply strictly decreased), principal was freed as raw
-        // tokenA, and both versions remain solvent (HF > 1) — never borrowed, never reverted.
+        // tokenA, and both versions remain solvent (HF > 1) - never borrowed, never reverted.
         assertLt(
             AaveV36Service.suppliedOf(v36Pool, address(tokenA), address(this)),
             suppliedBefore,

@@ -22,7 +22,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 
 /// @dev Hostile share token: on transferFrom, re-enters target then ALWAYS completes the transfer
 ///      so probe state (reentryAttempts / nested error) is not rolled back by a bubbling revert.
-///      The security claim is that nested exchangeIn/bond fails with IsLocked — not that outer aborts.
+///      The security claim is that nested exchangeIn/bond fails with IsLocked - not that outer aborts.
 contract RecordingReentrantShare is MockERC20 {
     address public target;
     bytes public reentryCall;
@@ -66,7 +66,7 @@ contract RecordingReentrantShare is MockERC20 {
                 nestedErrorSelector = bytes4(0);
             }
             _depth = 0;
-            // Intentionally do NOT bubble nested failure — outer transfer completes so state sticks.
+            // Intentionally do NOT bubble nested failure - outer transfer completes so state sticks.
         }
         return super.transferFrom(from_, to_, value_);
     }
@@ -175,7 +175,7 @@ contract SingleStandardExchangeDETF_Reentrancy_Test is TestBase_SingleStandardEx
         uint256 balBefore_ = IERC20(outerDetf).balanceOf(bob);
         vm.startPrank(bob);
         hostileShare.approve(outerDetf, amountIn_);
-        // Outer mint may succeed after failed nested reentry (transfer completes); that is fine —
+        // Outer mint may succeed after failed nested reentry (transfer completes); that is fine -
         // the attack (nested mint under lock) must have been blocked with IsLocked.
         outerEx.exchangeIn(
             IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours

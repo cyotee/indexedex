@@ -187,7 +187,7 @@ contract VaultRegistry_Disable_Test is IndexedexTest {
         vm.startPrank(owner);
         disableManager.setPackageDisabled(pkg1, true);
         disableManager.setVaultAddressDisabled(vault1, true);
-        // re-enable address only — package still disabled
+        // re-enable address only - package still disabled
         disableManager.setVaultAddressDisabled(vault1, false);
         vm.stopPrank();
 

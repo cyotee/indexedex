@@ -31,7 +31,7 @@ contract MixedBufferMultiVaultStablePoolInvariant is TestBase_MixedBufferMultiVa
 
     function invariant_virtualNonNegativeBounded() public view {
         assertLt(mbmvs().virtualBuffer(), type(uint128).max, "virtual overflow");
-        // virtual is uint256 storage — always >= 0 by type; assert still live after ops
+        // virtual is uint256 storage - always >= 0 by type; assert still live after ops
         assertTrue(mbmvs().virtualBuffer() >= 0);
     }
 
@@ -44,7 +44,7 @@ contract MixedBufferMultiVaultStablePoolInvariant is TestBase_MixedBufferMultiVa
     }
 
     function invariant_unpairedNotVirtualized() public view {
-        // unpaired math balance equals live — virtualBuffer is only for buffer leg
+        // unpaired math balance equals live - virtualBuffer is only for buffer leg
         uint256 uIdx = mbmvs().unpairedIndex(0);
         (,, uint256[] memory balancesRaw,) = bv3Vault.getPoolTokenInfo(mbmvsPool);
         // derived depth API is for shares only; ensure buffer virtual is independent of unpaired raw

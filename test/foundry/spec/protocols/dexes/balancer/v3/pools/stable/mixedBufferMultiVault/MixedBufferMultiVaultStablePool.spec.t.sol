@@ -208,7 +208,7 @@ contract MixedBufferMultiVaultStablePoolSpec is TestBase_MixedBufferMultiVaultSt
     }
 
     function test_reject_R1_T6() public {
-        // U=2 N=3 would be T=6 — reject even if we only pass invalid counts without real vaults.
+        // U=2 N=3 would be T=6 - reject even if we only pass invalid counts without real vaults.
         IMixedBufferMultiVaultStablePoolPkg.PkgArgs memory args = _buildPkgArgs(1, 1);
         args.unpairedCount = 2;
         args.unpairedTokens = new IERC20[](2);
@@ -256,7 +256,7 @@ contract MixedBufferMultiVaultStablePoolSpec is TestBase_MixedBufferMultiVaultSt
         uint256[] memory maxAmounts = new uint256[](tokens.length);
         maxAmounts[mbmvs().bufferIndex()] = bufAdd;
         maxAmounts[mbmvs().shareIndex(0)] = shareAdd;
-        // unpaired leg left 0 — unbalanced buffer+share add path
+        // unpaired leg left 0 - unbalanced buffer+share add path
         vm.startPrank(alice);
         dai.approve(address(router), type(uint256).max);
         IERC20(address(seVault)).approve(address(router), type(uint256).max);

@@ -27,7 +27,7 @@ import {TestBase_StandardExchangeBufferPool} from
  *            => S = X_shares - (shrBalPost - shrBalPre)
  *
  * Critical invariant (spec 6.3 step 5):
- *   With the hookSharesDelta offset, Y_TTA_final == Y_TTA exactly — the pool reads the same
+ *   With the hookSharesDelta offset, Y_TTA_final == Y_TTA exactly - the pool reads the same
  *   derived_y post-pre-seat as pre-pre-seat.  No residual-redeposit pass is needed.
  */
 abstract contract Behavior_StandardExchangeBufferPool_Swap_SharesToTTA is Test {
@@ -127,7 +127,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_SharesToTTA is Test {
         //     product math this rate drift was invisible (CP math never read the rate). Under
         //     weighted math, onSwap's effective weights are rate-sensitive, so the pre-seated
         //     Y_TTA (quoted at the pre-drift rate) and the swap's actual output (quoted at the
-        //     post-drift rate) differ by the rate movement — a real economic effect, not
+        //     post-drift rate) differ by the rate movement - a real economic effect, not
         //     rounding. Real rate-movement coverage lands in Task 4; here we bound the
         //     observed drift (~8e-6 relative for this fixture) with headroom.
         assertApproxEqRel(

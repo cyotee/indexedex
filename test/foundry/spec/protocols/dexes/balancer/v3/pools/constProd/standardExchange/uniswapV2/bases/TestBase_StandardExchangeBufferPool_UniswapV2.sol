@@ -43,13 +43,13 @@ import {
  *         Aerodrome SE Vault.
  *
  * @dev Override strategy:
- *      - `_deploySEVault()` — deploys UniV2Factory + Router stubs, creates a fresh pair
+ *      - `_deploySEVault()` - deploys UniV2Factory + Router stubs, creates a fresh pair
  *        of (dai, usdc) test tokens, seeds liquidity, then deploys UniswapV2StandardExchangeDFPkg
  *        and the SE vault wrapping that pair. Sets `seVault`, `tta`, `ttb`, and `shares`.
- *      - `mintShares()` — overrides the Aerodrome-specific LP → deposit flow with the V2
+ *      - `mintShares()` - overrides the Aerodrome-specific LP → deposit flow with the V2
  *        addLiquidity → SE vault deposit flow.
- *      - `_initPool()` — overrides the Aerodrome-specific pool init flow with the V2 path.
- *      - `mintTTA()` — inherited as-is (still calls dai.mint), so no override needed.
+ *      - `_initPool()` - overrides the Aerodrome-specific pool init flow with the V2 path.
+ *      - `mintTTA()` - inherited as-is (still calls dai.mint), so no override needed.
  *
  *      The Aerodrome infrastructure fields (`aeroForwarder`, etc.) remain at their zero-values
  *      because `_deploySEVault()` is fully overridden and never calls `_deployAerodromeInfrastructure`.
@@ -176,7 +176,7 @@ abstract contract TestBase_StandardExchangeBufferPool_UniswapV2 is TestBase_Stan
         IFacet v2ExchangeInFacet  = create3Factory.deployUniswapV2StandardExchangeInFacet();
         IFacet v2ExchangeOutFacet = create3Factory.deployUniswapV2StandardExchangeOutFacet();
 
-        // Build PkgInit — mirrors TestBase_UniswapV2StandardExchange.setUp() exactly.
+        // Build PkgInit - mirrors TestBase_UniswapV2StandardExchange.setUp() exactly.
         IUniswapV2StandardExchangeDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet                        = erc20Facet;
         pkgInit.erc2612Facet                      = erc2612Facet;

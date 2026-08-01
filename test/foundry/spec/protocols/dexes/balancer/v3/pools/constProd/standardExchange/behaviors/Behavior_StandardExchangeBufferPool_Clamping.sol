@@ -13,10 +13,10 @@ import {TestBase_StandardExchangeBufferPool} from
  *         Standard Exchange Buffer Pool.
  *
  * @dev Two side-exhaustion conditions are tested:
- *      1. Shares side exhausted  — hookSharesDelta is driven to an extreme positive value via
+ *      1. Shares side exhausted  - hookSharesDelta is driven to an extreme positive value via
  *         vm.store so that the pool's "available shares" clamps to zero, causing the pool to revert
  *         with PoolSharesSideExhausted when a TTA→shares swap is attempted.
- *      2. TTA side exhausted — virtualTTA is forced to zero via vm.store, causing the pool to
+ *      2. TTA side exhausted - virtualTTA is forced to zero via vm.store, causing the pool to
  *         revert with PoolTTASideExhausted when a shares→TTA swap is attempted.
  *
  *      Slot offsets in the Storage struct (base = keccak256("...standardExchange")):
@@ -87,7 +87,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Clamping is Test {
         // Ensure alice has TTA to attempt the swap.
         tb.mintTTA(alice_, 1e18);
 
-        // The swap must revert — either with the typed error selector or an outer revert from the
+        // The swap must revert - either with the typed error selector or an outer revert from the
         // Balancer V3 RouterMock wrapping the inner revert.
         vm.expectRevert();
         tb.swapTTAforShares(alice_, 1e18);

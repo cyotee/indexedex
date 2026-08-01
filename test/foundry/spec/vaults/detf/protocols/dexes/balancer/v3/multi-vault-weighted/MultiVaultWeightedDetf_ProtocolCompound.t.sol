@@ -17,7 +17,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 
 /// @notice Stage 02 Phase 1: protocol seigniorage compound (PRD C1–C8) on MultiVaultWeightedDetf.
-/// @dev Production-first: real diamond, manager, registry, SE vaults — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults - no SUT mocks.
 ///      Semantics match Stage 01; only multi-leg join index wiring differs.
 contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeightedDetf {
     address internal compoundDetf;
@@ -51,7 +51,7 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
         uint256 seShares_ = _fundSeShares0(bob, 30e18);
         vm.startPrank(bob);
         seShare0.approve(compoundDetf, seShares_);
-        // Lazy compound runs inside mint — no public compoundProtocolRewards call.
+        // Lazy compound runs inside mint - no public compoundProtocolRewards call.
         uint256 out_ = compoundExchangeIn.exchangeIn(
             seShare0, seShares_, IERC20(compoundDetf), 0, bob, false, block.timestamp + 1 hours
         );
@@ -73,7 +73,7 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
         uint256 principalBefore_ = _protocolNftPrincipal(compoundDetf);
 
         vm.recordLogs();
-        // Anyone may call — no keeper.
+        // Anyone may call - no keeper.
         vm.prank(permissionlessCaller);
         (uint256 detfIn_, uint256 bptOut_) = compoundInfo.compoundProtocolRewards();
 
@@ -158,7 +158,7 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
 
         uint256 feeDelta_ = IERC20(compoundDetf).balanceOf(feeTo_) - feeBefore_;
         assertGt(feeDelta_, 0, "feeTo received free detf");
-        // Fee is free DETF balance — protocol compound only touches detf-owned NFT.
+        // Fee is free DETF balance - protocol compound only touches detf-owned NFT.
     }
 
     /* ---------------------------------------------------------------------- */
@@ -191,7 +191,7 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
     /*                                 C8                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C8: join/atomic failure is best-effort — user mint succeeds; pending intact; later compound works.
+    /// @dev C8: join/atomic failure is best-effort - user mint succeeds; pending intact; later compound works.
     function test_C8_joinFailureBestEffort_thenRetry() public {
         assertGt(_protocolNftPrincipal(compoundDetf), 0, "protocol principal");
         _seedBondVaultRewardDetf(compoundDetf, 50e18);
@@ -212,7 +212,7 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
         assertEq(detfInFail_, 0, "no detfIn on failed compound");
         assertEq(bptFail_, 0, "no bpt on failed compound");
         assertEq(_protocolNftPrincipal(compoundDetf), principalBefore_, "principal unchanged on fail");
-        // Preferred pull: harvest rolled back — reward DETF still on bond vault.
+        // Preferred pull: harvest rolled back - reward DETF still on bond vault.
         assertGe(
             IERC20(compoundDetf).balanceOf(address(_bondNftVault(compoundDetf))),
             vaultRewardBalBefore_,

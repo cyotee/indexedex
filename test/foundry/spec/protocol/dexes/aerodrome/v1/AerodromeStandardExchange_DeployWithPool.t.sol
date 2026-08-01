@@ -344,7 +344,7 @@ contract AerodromeStandardExchange_DeployWithPool_Test is TestBase_AerodromeStan
      * @notice Variant: asymmetric amounts to exercise proportional deposit on second call
      * @dev First deposit uses asymmetric ratio (100 A : 200 B). Second call attempts a
      *      non-proportional deposit (50 A : 200 B) which should be reduced to the
-     *      proportional subset (50 A : 100 B) — exercising `_proportionalDeposit`.
+     *      proportional subset (50 A : 100 B) - exercising `_proportionalDeposit`.
      */
     function test_DoubleDeployVaultWithDeposit_SamePool_Asymmetric() public {
         uint256 amountA1 = 100 ether;

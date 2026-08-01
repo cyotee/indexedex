@@ -89,7 +89,7 @@ contract MultiVaultWeightedDetf_PriceShift_Test is TestBase_MultiVaultWeightedDe
         }
         assertTrue(detfInfo.isMintingAllowed(), "mint must open under default thresholds after skew");
 
-        // Bob mints (holder for burn path — alice has no free DETF after BPT-only bond).
+        // Bob mints (holder for burn path - alice has no free DETF after BPT-only bond).
         uint256 mintOut_ = _mintVaultShareToDetf(bob, 300e18);
         assertTrue(mintOut_ > 0, "bob minted detf");
         assertTrue(IERC20(detf).balanceOf(bob) >= mintOut_, "bob holds detf");

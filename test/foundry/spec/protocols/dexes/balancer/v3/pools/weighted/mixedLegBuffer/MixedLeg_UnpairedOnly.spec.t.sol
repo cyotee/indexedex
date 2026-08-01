@@ -9,7 +9,7 @@ import {
 
 /**
  * @title MixedLeg_UnpairedOnlySpec
- * @notice U=2 P=0 — pure unpaired weighted pool (no SE buffer I/O; physical balances only).
+ * @notice U=2 P=0 - pure unpaired weighted pool (no SE buffer I/O; physical balances only).
  */
 contract MixedLeg_UnpairedOnlySpec is TestBase_MixedLegWeightedBufferPool {
     function _targetUnpairedCount() internal pure override returns (uint8) {

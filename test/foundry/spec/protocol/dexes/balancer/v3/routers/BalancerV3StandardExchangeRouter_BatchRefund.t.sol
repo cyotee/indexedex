@@ -127,7 +127,7 @@ contract BalancerV3StandardExchangeRouter_BatchRefund_Test is TestBase_BalancerV
         // Verify: user received at least exact USDC amount
         assertGe(usdcAfter - usdcBefore, SWAP_AMOUNT, "Should receive at least exact USDC amount");
 
-        // Verify: the refund was applied — shares used should be close to expected, not maxSharesIn
+        // Verify: the refund was applied - shares used should be close to expected, not maxSharesIn
         // If no refund mechanism, sharesBefore - sharesAfter would equal maxSharesIn
         if (sharesUsed < maxSharesIn) {
             // Refund was correctly forwarded

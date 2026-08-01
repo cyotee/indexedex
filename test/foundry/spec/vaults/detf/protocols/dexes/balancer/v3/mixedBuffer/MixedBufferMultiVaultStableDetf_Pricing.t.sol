@@ -68,7 +68,7 @@ contract MixedBufferMultiVaultStableDetf_Pricing_Test is TestBase_MixedBufferMul
 
     function test_burn_reverts_when_gate_closed() public {
         // Mint open (mintTh=2 so synth ~1e18 always > 2); burn closed via burnThreshold=1 (synth never < 1).
-        // mint==burn is illegal after PRD mint>burn validation — use mint=2, burn=1.
+        // mint==burn is illegal after PRD mint>burn validation - use mint=2, burn=1.
         address closedBurn_ = _deployDetfN(1, 2, 1);
         IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(closedBurn_);
         IStandardExchangeIn ex_ = IStandardExchangeIn(closedBurn_);

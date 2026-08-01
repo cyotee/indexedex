@@ -89,7 +89,8 @@ Without a layout law, agents re-invent trees, leave dual stubs “for later,” 
 - Renaming Solidity **types**, **interfaces**, or **CREATE3 salt-affecting** `type(X).name` values (including `SingleStandardExchangeDETDFPkg`, `IDetf`, `*Detf` vs `*DETF` family renames).
 - Extracting shared logic from family `*Common.sol` bodies (DRY / consolidation program — separate).
 - Converging Composed Stable family-local Bond NFT onto shared `bondNft/` (separate).
-- Moving or redesigning **Seigniorage**, **DualLiquidity**, or Balancer **pool/SE** packages under `contracts/protocols/dexes/balancer/v3/`.
+- Moving or redesigning **Seigniorage** or Balancer **pool/SE** packages under `contracts/protocols/dexes/balancer/v3/`.
+- **DualLiquidity** layout was a non-goal of *this* reorg pass; superseded by [`docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_CrossVersion_Directory_Move_PRD.md`](../../../docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_CrossVersion_Directory_Move_PRD.md) (package now under `protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`; still **not** a true DETF).
 - Implementing a Uniswap V4–reserve DETF under the placeholder path.
 - Moving, deleting, or adopting **`standardExchange/uniV4Single/`** (leave untouched).
 - Recreating missing **`DETF_Threshold_Modes_PRD.md`** from history.
@@ -491,7 +492,7 @@ A **separate** PRD or amendment will cover:
 |----------|--------|
 | `contracts/protocols/dexes/balancer/v3/**` (pools, routers, SE) | **Out of scope** |
 | `contracts/vaults/seigniorage/**` | **Out of scope** |
-| DualLiquidity / protocol Uni cross-version | **Out of scope** |
+| DualLiquidity linked cross-version | **Layout move done** under `protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` (see DualLiquidity directory-move process PRD); still **not** a true DETF product |
 | `contracts/vaults/detf/standardExchange/uniV4Single/**` | **Out of scope this pass** — leave untouched |
 | Frontend product map | Update only if imports break (unlikely) |
 

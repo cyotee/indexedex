@@ -258,7 +258,7 @@ Do **not** assert emergency withdraw (does not exist yet).
 #### DualLiquidityLinked
 
 **Location:**  
-`test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/`  
+`test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`  
 Add e.g. `DualLiquidityLinkedCrossVersionUniswapVault_Disable.t.sol` on existing production/fork TestBase.
 
 | Test | Steps |
@@ -309,7 +309,7 @@ forge test --match-contract DualLiquidityLinkedCrossVersionUniswapVault_Disable 
 forge test --match-path 'test/foundry/spec/registries/vault/*' -vv
 
 # Full DualLiquidity fork suite (regression)
-forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/*' -vv
+forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/*' -vv
 ```
 
 (Adjust paths/names if TestBase requires fork flags already used by the suite.)

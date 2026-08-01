@@ -85,7 +85,7 @@ contract MultiVaultWeightedDetfInvariant is TestBase_MultiVaultWeightedDetf, IMu
 
     /// @notice P-RESID: no free DETF or vault shares stuck on diamond after ops.
     function invariant_residualInventory() public view {
-        // Donate intentionally leaves vault shares on instance — only free product DETF
+        // Donate intentionally leaves vault shares on instance - only free product DETF
         // and non-donated residual must be zero when donate ghost is 0.
         assertEq(IERC20(invInstanceAddr).balanceOf(invInstanceAddr), 0, "P-RESID: free DETF");
         // After donate, seShares may sit on instance; that is intentional free transfer.

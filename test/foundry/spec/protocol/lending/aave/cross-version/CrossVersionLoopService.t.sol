@@ -8,7 +8,7 @@ import {CrossVersionLoopService} from
 /**
  * @title CrossVersionLoopService_Test
  * @notice Unit tests for the pure carry-math primitives (PRD decisions 28, 29, 33).
- * @dev Pure functions — no fork needed. Validates the formulas the loop/preview depend on.
+ * @dev Pure functions - no fork needed. Validates the formulas the loop/preview depend on.
  */
 contract CrossVersionLoopService_Test is Test {
     uint256 constant RAY = 1e27;

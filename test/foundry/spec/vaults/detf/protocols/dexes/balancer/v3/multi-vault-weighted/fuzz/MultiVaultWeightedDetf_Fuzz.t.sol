@@ -28,7 +28,7 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
         _assertLive(instance_);
     }
 
-    /// @notice P-CONS: mint then partial burn — shares returned ≤ shares spent (fee-aware upper bound).
+    /// @notice P-CONS: mint then partial burn - shares returned ≤ shares spent (fee-aware upper bound).
     function testFuzz_mintThenPartialBurn_conservation(uint256 lpSeed, uint256 burnSeed) public {
         address instance_ = _openLive();
         uint256 lpAmount_ = bound(lpSeed, 50e18, 200e18);
@@ -97,7 +97,7 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
             _assertNoFreeInventory(instance_);
             return;
         }
-        // Fund tiny via larger fund then transfer dust shares if needed — skip if fund path too heavy.
+        // Fund tiny via larger fund then transfer dust shares if needed - skip if fund path too heavy.
         _assertNoFreeInventory(instance_);
     }
 
@@ -112,7 +112,7 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
 
         uint256 supply_ = IERC20(instance_).totalSupply();
         assertTrue(supply_ > 0, "supply");
-        // Use DETF totalSupply as claim units; reserve BPT backs DETF economically —
+        // Use DETF totalSupply as claim units; reserve BPT backs DETF economically -
         // assert no free inventory residual as hard property; pro-rata soft via balances sum.
         uint256 sum_ = IERC20(instance_).balanceOf(actorA) + IERC20(instance_).balanceOf(actorB)
             + IERC20(instance_).balanceOf(address(this));

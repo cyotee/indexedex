@@ -84,7 +84,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
     function test_req_allowlistedAssetMintPath() public {
         _bootstrapDetf(openDetf, alice, 2_000e18);
 
-        // Use production SE vaultTokens() surface — pick first underlying that is not the share.
+        // Use production SE vaultTokens() surface - pick first underlying that is not the share.
         address[] memory vt_ = IBasicVault(address(seVault)).vaultTokens();
         IERC20 tokenIn_;
         for (uint256 i; i < vt_.length; ++i) {

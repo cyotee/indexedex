@@ -279,7 +279,7 @@ contract CommonBufferMultiVaultStable_N2 is TestBase_CommonBufferMultiVaultStabl
 
         uint256 amountIn = 40e18;
         dai.mint(alice, amountIn);
-        // tokenOut = share0 — deposit still to shallowest (vault1)
+        // tokenOut = share0 - deposit still to shallowest (vault1)
         uint256 out = swapExactIn(alice, IERC20(address(dai)), IERC20(address(seVault)), amountIn);
         assertGt(out, 0);
         assertEq(cbmvs().virtualBuffer(), vBefore + amountIn, "virtual += amountIn");

@@ -217,7 +217,7 @@ abstract contract TestBase_MixedLegWeightedBufferPool is TestBase_StandardExchan
     function _unpairedTokenAt(uint8 i) internal view virtual returns (IERC20) {
         if (i == 0) return IERC20(address(usdc));
         // For default U=2 P=1: second unpaired = WETH (not a pair0 buffer).
-        // When P>=3 WETH is buffer — still OK for U<=1; for U>=2 with high P use only USDC in fixtures.
+        // When P>=3 WETH is buffer - still OK for U<=1; for U>=2 with high P use only USDC in fixtures.
         if (i == 1) return IERC20(address(weth));
         if (i == 2) return IERC20(address(wsteth));
         return IERC20(address(usdt));

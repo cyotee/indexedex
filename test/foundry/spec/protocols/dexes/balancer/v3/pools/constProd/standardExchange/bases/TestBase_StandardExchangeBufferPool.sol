@@ -94,19 +94,19 @@ import {StandardUnbalancedLiquidityInvariantRatioBoundsFacet} from
  *         (Aerodrome DAI/USDC), and a Standard Exchange Buffer Pool Diamond, ready for end-to-end tests.
  *
  * @dev Inheritance:
- *      - TestBase_BalancerV3Vault  — provides `vault` (VaultMock), `router` (RouterMock), `dai`, `usdc`,
+ *      - TestBase_BalancerV3Vault  - provides `vault` (VaultMock), `router` (RouterMock), `dai`, `usdc`,
  *                                    `alice`, `bob`, `lp`, `permit2`, `erc4626RateProviderDFPkg`
- *      - IndexedexTest             — provides `create3Factory`, `diamondPackageFactory`, `indexedexManager`
+ *      - IndexedexTest             - provides `create3Factory`, `diamondPackageFactory`, `indexedexManager`
  *
  * After setUp():
- *   bv3Vault     — Balancer V3 VaultMock (IVault)
- *   seVault      — Aerodrome DAI/USDC Standard Exchange vault (IStandardExchangeProxy)
- *   tta          — DAI (the TTA side of the buffer pool, IERC20)
- *   ttb          — USDC (the other underlying of the SE vault, for reference)
- *   shares       — SE vault shares token (= IERC20(address(seVault)))
- *   rateProvider — ERC4626-based rate provider for the SE vault
- *   bufferPoolPkg — deployed StandardExchangeBufferPoolStandardVaultPkg
- *   pool         — deployed buffer pool address (registered with BV3 Vault, initialized)
+ *   bv3Vault     - Balancer V3 VaultMock (IVault)
+ *   seVault      - Aerodrome DAI/USDC Standard Exchange vault (IStandardExchangeProxy)
+ *   tta          - DAI (the TTA side of the buffer pool, IERC20)
+ *   ttb          - USDC (the other underlying of the SE vault, for reference)
+ *   shares       - SE vault shares token (= IERC20(address(seVault)))
+ *   rateProvider - ERC4626-based rate provider for the SE vault
+ *   bufferPoolPkg - deployed StandardExchangeBufferPoolStandardVaultPkg
+ *   pool         - deployed buffer pool address (registered with BV3 Vault, initialized)
  */
 abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vault, IndexedexTest {
     using BetterEfficientHashLib for bytes;
@@ -354,7 +354,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
             address(aeroForwarder),
             address(aeroFactoryRegistry),
             address(aeroPoolFactory),
-            address(0), // voter — unused in tests
+            address(0), // voter - unused in tests
             address(weth)
         );
         vm.label(address(aeroRouter), "AeroRouter");
@@ -607,7 +607,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
             tokenIn,
             tokenOut,
             amountIn,
-            0,               // minAmountOut — no slippage guard in tests
+            0,               // minAmountOut - no slippage guard in tests
             block.timestamp, // deadline
             false,           // wethIsEth
             bytes("")        // userData

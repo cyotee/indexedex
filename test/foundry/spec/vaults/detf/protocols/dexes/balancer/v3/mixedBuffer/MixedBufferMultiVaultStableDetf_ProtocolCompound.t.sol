@@ -17,7 +17,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 
 /// @notice Stage 03 Phase 1: protocol seigniorage compound (PRD C1–C8) on MixedBufferMultiVaultStableDetf.
-/// @dev Production-first: real diamond, manager, registry, SE vaults — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults - no SUT mocks.
 ///      Semantics match Stage 01/02; MixedBuffer uses buffer mint/bond + existing `_joinReserveDetfOnly`.
 contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_MixedBufferMultiVaultStableDetf {
     address internal compoundDetf;
@@ -48,7 +48,7 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
         _seedBondVaultRewardDetf(compoundDetf, 20e18);
         uint256 principalBefore_ = _protocolNftPrincipal(compoundDetf);
 
-        // Lazy compound runs inside mint — no public compoundProtocolRewards call.
+        // Lazy compound runs inside mint - no public compoundProtocolRewards call.
         uint256 out_ = _mintDetfFromBuffer(compoundDetf, bob, 30e18);
         assertGt(out_, 0, "mint succeeded");
 
@@ -67,7 +67,7 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
         uint256 principalBefore_ = _protocolNftPrincipal(compoundDetf);
 
         vm.recordLogs();
-        // Anyone may call — no keeper.
+        // Anyone may call - no keeper.
         vm.prank(permissionlessCaller);
         (uint256 detfIn_, uint256 bptOut_) = compoundInfo.compoundProtocolRewards();
 
@@ -146,7 +146,7 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
 
         uint256 feeDelta_ = IERC20(compoundDetf).balanceOf(feeTo_) - feeBefore_;
         assertGt(feeDelta_, 0, "feeTo received free detf");
-        // Fee is free DETF balance — protocol compound only touches detf-owned NFT.
+        // Fee is free DETF balance - protocol compound only touches detf-owned NFT.
     }
 
     /* ---------------------------------------------------------------------- */
@@ -179,7 +179,7 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
     /*                                 C8                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C8: join/atomic failure is best-effort — user mint succeeds; pending intact; later compound works.
+    /// @dev C8: join/atomic failure is best-effort - user mint succeeds; pending intact; later compound works.
     function test_C8_joinFailureBestEffort_thenRetry() public {
         assertGt(_protocolNftPrincipal(compoundDetf), 0, "protocol principal");
         _seedBondVaultRewardDetf(compoundDetf, 50e18);
@@ -200,7 +200,7 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
         assertEq(detfInFail_, 0, "no detfIn on failed compound");
         assertEq(bptFail_, 0, "no bpt on failed compound");
         assertEq(_protocolNftPrincipal(compoundDetf), principalBefore_, "principal unchanged on fail");
-        // Preferred pull: harvest rolled back — reward DETF still on bond vault.
+        // Preferred pull: harvest rolled back - reward DETF still on bond vault.
         assertGe(
             IERC20(compoundDetf).balanceOf(address(_bondNftVault(compoundDetf))),
             vaultRewardBalBefore_,

@@ -7,7 +7,7 @@
 - Gap report: [`docs/testing/FUZZ_INVARIANT_COVERAGE_GAP_REPORT.md`](./FUZZ_INVARIANT_COVERAGE_GAP_REPORT.md)
 - Adversarial companion (done Waves 0–3): [`docs/testing/ADVERSARIAL_VAULT_COVERAGE_IMPLEMENTATION_PLAN.md`](./ADVERSARIAL_VAULT_COVERAGE_IMPLEMENTATION_PLAN.md)
 - L3 gold: `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol` + `Handler_StandardExchangeBufferPool.sol`
-- L2 gold: `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVault_Invariants.t.sol`
+- L2 gold: `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVault_Invariants.t.sol`
 - L1 gold: `AerodromeStandardExchange_Fuzz.t.sol`, `*_InOutInvariant.t.sol`
 - Skills: `crane-testing`, `indexedex-testing`, `forge-fuzz-testing`; adversarial skills for catalog cross-refs only
 
@@ -406,7 +406,7 @@ Keep fork L3 **optional**. Prefer:
 
 ```bash
 FOUNDRY_PROFILE=fork forge test --match-path \
-  'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/*Invariant*'
+  'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/*Invariant*'
 ```
 
 **Est.:** 2–4 eng-days (L2 expand); +3–5 if hermetic L3.

@@ -41,7 +41,7 @@ abstract contract TestBase_StandardExchangeBufferPool_Comparative is
     ///      since init). Both `_atInitialRate` tests still deposit shares (mintShares) before
     ///      the swap snapshot, nudging the rate a hair off baseline; `_afterRateChange` tests
     ///      deliberately move the rate by trading the underlying pair. In both cases the buffer
-    ///      pool's quote legitimately diverges from the fixed-50/50 reference quote — this is
+    ///      pool's quote legitimately diverges from the fixed-50/50 reference quote - this is
     ///      the intended behavior change, not rounding. Widened from 1e12 to 1e16 (1%) to cover
     ///      the observed divergence (~0.5% max for the afterRateChange cases) with headroom.
     ///      Deeper rate-movement-aware comparative coverage lands in Task 4.
@@ -217,8 +217,8 @@ abstract contract TestBase_StandardExchangeBufferPool_Comparative is
     ///      amount. Forcing the buffer pool's fee toward zero removes that cushion, and the V2
     ///      single-sided ZapIn price impact then pushes the required deposit over the cap
     ///      (`MaxAmountExceeded`). Keeping the buffer pool in its native fee regime and matching the
-    ///      reference pool to it gives an identical fee on both pools — which is all the comparison
-    ///      requires — without breaking the hook's tested path.
+    ///      reference pool to it gives an identical fee on both pools - which is all the comparison
+    ///      requires - without breaking the hook's tested path.
     function _equalizeFees() internal virtual {
         uint256 bufferFee = vault.getStaticSwapFeePercentage(bufferPool);
         vault.manualSetStaticSwapFeePercentage(referencePool, bufferFee);

@@ -58,7 +58,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T1 — Policy 0,0 → defaults + mode Policy                              */
+    /*  T1 - Policy 0,0 → defaults + mode Policy                              */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyDefaults_thresholdModeAndEvent() public {
@@ -67,14 +67,14 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
         assertEq(uint8(info_.thresholdMode()), uint8(ThresholdMode.Policy), 'mode Policy');
         assertEq(info_.mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD);
         assertEq(info_.burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD);
-        // Secondary instance shares pool not yet initialized for this diamond's view path —
+        // Secondary instance shares pool not yet initialized for this diamond's view path -
         // pool may already be uninit here (pre-bootstrap); inert → false.
         assertFalse(info_.isMintingAllowed(), 'inert mint false');
         assertFalse(info_.isBurningAllowed(), 'inert burn false');
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T2 — Policy custom band                                               */
+    /*  T2 - Policy custom band                                               */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyCustomBand() public {
@@ -86,7 +86,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T3 — Open deploy stores mode + resolved thresholds                    */
+    /*  T3 - Open deploy stores mode + resolved thresholds                    */
     /* ---------------------------------------------------------------------- */
 
     function test_openDeploy_modeAndStoredThresholds() public view {
@@ -98,7 +98,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4 — Invalid mint <= burn after resolve (both modes)                  */
+    /*  T4 - Invalid mint <= burn after resolve (both modes)                  */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_revertsWhenMintLeBurn_policy() public {
@@ -124,7 +124,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4b / T18 — Legal extreme Policy still reports Policy                 */
+    /*  T4b / T18 - Legal extreme Policy still reports Policy                 */
     /* ---------------------------------------------------------------------- */
 
     function test_extremePolicy_reportsModePolicy() public {
@@ -141,7 +141,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T8 / T11 — Inert blocked (Open primary)                               */
+    /*  T8 / T11 - Inert blocked (Open primary)                               */
     /* ---------------------------------------------------------------------- */
 
     function test_openInert_mintBlocked() public {
@@ -160,7 +160,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T10 / T12 / T13b — Open live inside former deadband                   */
+    /*  T10 / T12 / T13b - Open live inside former deadband                   */
     /* ---------------------------------------------------------------------- */
 
     function test_openLive_mintAndBurnInsideFormerDeadband() public {
@@ -195,7 +195,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T13 — Open mint applies usage fee / seigniorage split                 */
+    /*  T13 - Open mint applies usage fee / seigniorage split                 */
     /* ---------------------------------------------------------------------- */
 
     function test_openMint_appliesUsageFeeAndSeigniorageSplit() public {
@@ -226,7 +226,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T14 — No post-deploy mode/threshold setter                            */
+    /*  T14 - No post-deploy mode/threshold setter                            */
     /* ---------------------------------------------------------------------- */
 
     function test_noPostDeployThresholdOrModeSetter() public {
@@ -240,7 +240,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T15 — Invalid routes still invalid under Open                         */
+    /*  T15 - Invalid routes still invalid under Open                         */
     /* ---------------------------------------------------------------------- */
 
     function test_open_invalidRouteStillReverts() public {
@@ -255,7 +255,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T17 — Open round-trip mint→burn                                       */
+    /*  T17 - Open round-trip mint→burn                                       */
     /* ---------------------------------------------------------------------- */
 
     function test_openRoundTrip_mintThenBurn() public {
@@ -274,7 +274,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T19 — Open + non-default stored thresholds never deadband-revert      */
+    /*  T19 - Open + non-default stored thresholds never deadband-revert      */
     /* ---------------------------------------------------------------------- */
 
     function test_openCustomStoredThresholds_neverDeadbandRevert() public {
@@ -310,7 +310,7 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
     function _assertBurnNotDeadbandBlocked(uint256 /* detfBalance_ */) internal view {
         assertTrue(openInfo.isBurningAllowed(), 'Open burn view true');
         try openExOut.previewExchangeOut(detfToken, dai, 1e15) returns (uint256 needIn_) {
-            // Path available — Open allowed the quote (would have reverted BurningNotAllowed if gated).
+            // Path available - Open allowed the quote (would have reverted BurningNotAllowed if gated).
             assertTrue(needIn_ >= 0, 'quoted');
         } catch (bytes memory reason) {
             bytes4 sel;

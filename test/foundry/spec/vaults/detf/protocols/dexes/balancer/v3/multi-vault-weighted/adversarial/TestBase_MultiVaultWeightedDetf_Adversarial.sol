@@ -109,7 +109,7 @@ contract AdvReentryTarget {
 
 /// @title TestBase_MultiVaultWeightedDetf_Adversarial
 /// @notice Helpers for adversarial suites. Production DETF + SE only (CREATE3 + registry DFPkg path).
-/// @dev Peer DETF ports (Phase 6: single SE, stable composed) deferred — non-goal for MultiVault green.
+/// @dev Peer DETF ports (Phase 6: single SE, stable composed) deferred - non-goal for MultiVault green.
 abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiVaultWeightedDetf {
     address internal attacker;
     address internal victim;

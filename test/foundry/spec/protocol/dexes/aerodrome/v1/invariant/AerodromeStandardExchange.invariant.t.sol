@@ -51,7 +51,7 @@ contract AerodromeStandardExchangeInvariant is TestBase_AerodromeStandardExchang
     }
 
     function invariant_ghostMonotonic() public view {
-        // Counts are uint — always >= 0; ensure no absurd wrap (always true for uint increases).
+        // Counts are uint - always >= 0; ensure no absurd wrap (always true for uint increases).
         assertTrue(handler.ghost_swapCount() < type(uint128).max, "P-GHOST swap");
         assertTrue(handler.ghost_depositCount() < type(uint128).max, "P-GHOST deposit");
         assertTrue(handler.ghost_withdrawCount() < type(uint128).max, "P-GHOST withdraw");

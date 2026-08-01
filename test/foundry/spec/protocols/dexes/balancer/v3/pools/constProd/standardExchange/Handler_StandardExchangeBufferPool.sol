@@ -22,7 +22,7 @@ import {IStandardExchangeBufferPool} from
  * Actor model:
  *   - Two actors (alice, bob) are picked via seed % 2.
  *   - Before each action the handler mints/tops-up the actor's token balance so the
- *     pool bounds — not insufficient balance — are the limiting factor for rejection.
+ *     pool bounds - not insufficient balance - are the limiting factor for rejection.
  */
 contract Handler_StandardExchangeBufferPool is Test {
 
@@ -87,8 +87,8 @@ contract Handler_StandardExchangeBufferPool is Test {
 
     /**
      * @notice Fuzz action: swap TTA (DAI) into the pool and receive shares.
-     * @dev Mints enough TTA to the actor if needed so the pool bounds — not a zero
-     *      balance — drive rejection.  Bounded to [1e15, 100e18] to stay within
+     * @dev Mints enough TTA to the actor if needed so the pool bounds - not a zero
+     *      balance - drive rejection.  Bounded to [1e15, 100e18] to stay within
      *      realistic pool liquidity.
      */
     function swap_TTA_in(uint256 amount, uint256 actorSeed) public {
@@ -109,7 +109,7 @@ contract Handler_StandardExchangeBufferPool is Test {
             ghost_totalSharesOut += out;
             ghost_swapTTAtoSharesCount++;
         } catch {
-            // Pool bounds or fee constraints rejected the swap — not an invariant violation.
+            // Pool bounds or fee constraints rejected the swap - not an invariant violation.
         }
     }
 
@@ -166,7 +166,7 @@ contract Handler_StandardExchangeBufferPool is Test {
     }
 
     /**
-     * @notice Fuzz action: add liquidity unbalanced — shares only (Change 1).
+     * @notice Fuzz action: add liquidity unbalanced - shares only (Change 1).
      * @dev Contributes only shares, exercising the new UNBALANCED code path in onAfterAddLiquidity.
      *      Shares-only unbalanced adds increase derived_y (the pool's BPT-visible invariant side),
      *      so they produce a positive bptAmountOut. TTA-only unbalanced adds cannot produce BPT
@@ -187,7 +187,7 @@ contract Handler_StandardExchangeBufferPool is Test {
             // Count as a deposit for the noFreeValue invariant skip logic.
             ghost_lpDepositCount++;
         } catch {
-            // Pool math or invariant ratio bounds may reject — not an invariant violation.
+            // Pool math or invariant ratio bounds may reject - not an invariant violation.
         }
     }
 

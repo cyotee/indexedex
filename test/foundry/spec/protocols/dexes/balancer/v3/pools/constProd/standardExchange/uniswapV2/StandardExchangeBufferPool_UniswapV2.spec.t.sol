@@ -38,9 +38,9 @@ import {Behavior_StandardExchangeBufferPool_Adversarial} from
  *      constant-product vault.
  *
  *      Inherits:
- *      - TestBase_StandardExchangeBufferPool_UniswapV2 — provides the V2-backed fixture
+ *      - TestBase_StandardExchangeBufferPool_UniswapV2 - provides the V2-backed fixture
  *        (UniV2Factory stub + UniV2 DAI/USDC pair + UniswapV2StandardExchangeDFPkg + Buffer Pool)
- *      - Every Behavior_* library — assertions are SE-vault-agnostic, reading `tb.seVault()`,
+ *      - Every Behavior_* library - assertions are SE-vault-agnostic, reading `tb.seVault()`,
  *        `tb.tta()`, etc. from the test base rather than Aerodrome-specific fields.
  */
 contract StandardExchangeBufferPool_UniswapV2_Spec is

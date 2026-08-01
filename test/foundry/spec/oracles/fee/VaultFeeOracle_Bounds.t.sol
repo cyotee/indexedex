@@ -42,7 +42,7 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
     /*                        Usage Fee Bounds                                */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Setting usage fee to 100% (1e18) is accepted — no on-chain cap.
+    /// @notice Setting usage fee to 100% (1e18) is accepted - no on-chain cap.
     function test_setDefaultUsageFee_accepts100Percent() public {
         vm.prank(owner);
         bool success = feeManager.setDefaultUsageFee(ONE_WAD);
@@ -58,14 +58,14 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
         feeManager.setDefaultUsageFee(aboveMax);
     }
 
-    /// @notice Setting usage fee to 0 is the sentinel for "unset" — triggers fallback.
+    /// @notice Setting usage fee to 0 is the sentinel for "unset" - triggers fallback.
     function test_setUsageFeeOfVault_zeroTriggersDefaultFallback() public {
         // First set a custom fee
         vm.prank(owner);
         feeManager.setUsageFeeOfVault(testVault, 5e16); // 5%
         assertEq(feeOracle.usageFeeOfVault(testVault), 5e16);
 
-        // Reset to 0 (unset) — should fallback to global default
+        // Reset to 0 (unset) - should fallback to global default
         vm.prank(owner);
         feeManager.setUsageFeeOfVault(testVault, 0);
         assertEq(feeOracle.usageFeeOfVault(testVault), DEFAULT_VAULT_USAGE_FEE);
@@ -111,14 +111,14 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
         feeManager.setVaultDexSwapFee(testVault, 1e16); // 1%
         assertEq(feeOracle.dexSwapFeeOfVault(testVault), 1e16);
 
-        // Reset to 0 — fallback to global default
+        // Reset to 0 - fallback to global default
         vm.prank(owner);
         feeManager.setVaultDexSwapFee(testVault, 0);
         assertEq(feeOracle.dexSwapFeeOfVault(testVault), DEFAULT_DEX_FEE);
     }
 
     /* ---------------------------------------------------------------------- */
-    /*                   Bond Terms Validation — Reverts                      */
+    /*                   Bond Terms Validation - Reverts                      */
     /* ---------------------------------------------------------------------- */
 
     /// @notice maxBonusPercentage > ONE_WAD reverts.
@@ -175,7 +175,7 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*                   Bond Terms Validation — Accepts                       */
+    /*                   Bond Terms Validation - Accepts                       */
     /* ---------------------------------------------------------------------- */
 
     /// @notice Valid bond terms with typical percentages are accepted.
@@ -227,7 +227,7 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
         assertEq(stored.minBonusPercentage, stored.maxBonusPercentage);
     }
 
-    /// @notice All-zero bond terms is the sentinel for "unset" — triggers fallback.
+    /// @notice All-zero bond terms is the sentinel for "unset" - triggers fallback.
     function test_setVaultBondTerms_allZeroTriggersDefaultFallback() public {
         // Set vault-specific bond terms
         BondTerms memory custom = BondTerms({
@@ -239,7 +239,7 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
         BondTerms memory stored = feeOracle.bondTermsOfVault(testVault);
         assertEq(stored.minLockDuration, 7 days);
 
-        // Reset with all-zero bond terms — minLockDuration == 0 triggers fallback
+        // Reset with all-zero bond terms - minLockDuration == 0 triggers fallback
         BondTerms memory zero =
             BondTerms({minLockDuration: 0, maxLockDuration: 0, minBonusPercentage: 0, maxBonusPercentage: 0});
         vm.prank(owner);
@@ -337,7 +337,7 @@ contract VaultFeeOracle_Bounds_Test is IndexedexTest {
         // Tier 3: global default
         assertEq(feeOracle.usageFeeOfVault(testVault), DEFAULT_VAULT_USAGE_FEE);
 
-        // Tier 2: type-level default (need to register vault with this type — skip, covered by unit tests)
+        // Tier 2: type-level default (need to register vault with this type - skip, covered by unit tests)
 
         // Tier 1: vault-specific override
         vm.prank(owner);

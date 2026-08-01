@@ -42,7 +42,7 @@ contract MixedBufferMultiVaultStable_UniV2MatrixRow is TestBase_MixedBufferMulti
     }
 
     function test_matrix_univ2_C0_unpaired_to_share_swap() public {
-        // Pure free-leg to UniV2 SE share — no buffer SE I/O; proves MixedBuffer pricing on UniV2 share leg.
+        // Pure free-leg to UniV2 SE share - no buffer SE I/O; proves MixedBuffer pricing on UniV2 share leg.
         usdt.mint(alice, 5e18);
         vm.prank(alice);
         usdt.approve(address(router), type(uint256).max);

@@ -17,7 +17,7 @@ import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNat
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Stage 06 Phase 2: natural supply expansion (PRD E1–E8) on Single SE DETF.
-/// @dev Production-first: real diamond, manager, registry, SE vaults — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults - no SUT mocks.
 ///      E9 is covered by `SingleStandardExchangeDETF_ProtocolCompound` remaining green.
 contract SingleStandardExchangeDETF_NaturalExpansion_Test is TestBase_SingleStandardExchangeDETF {
     address internal expDetf;
@@ -253,7 +253,7 @@ contract SingleStandardExchangeDETF_NaturalExpansion_Test is TestBase_SingleStan
             DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
             "cap bps default"
         );
-        // No setter on info interface — compile-time absence is structural proof.
+        // No setter on info interface - compile-time absence is structural proof.
         // Runtime: getters match storage set at init only.
     }
 

@@ -19,7 +19,7 @@ import {
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
-} from "test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
+} from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 import {
     IStandardExchangeRateProviderDFPkg,
     StandardExchangeRateProviderDFPkg

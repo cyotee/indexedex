@@ -114,10 +114,10 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
     /// @notice The deployed buffer pool address (registered with the live BV3 Vault).
     address public bufferPool;
 
-    /// @notice TTA token (DAI — the non-share side of the buffer pool).
+    /// @notice TTA token (DAI - the non-share side of the buffer pool).
     IERC20 public tta;
 
-    /// @notice Shares token (= address(daiUsdcVault) — the ERC4626 SE vault shares).
+    /// @notice Shares token (= address(daiUsdcVault) - the ERC4626 SE vault shares).
     IERC20 public shares;
 
     /* ---------------------------------------------------------------------- */
@@ -145,7 +145,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         _deployBufferPoolPkg();
 
         // 6. Deploy the pool (registers with live BV3 Vault).
-        // deployPool(seVault, tta) — shares/rateProvider resolved by package from SE vault.
+        // deployPool(seVault, tta) - shares/rateProvider resolved by package from SE vault.
         bufferPool = bufferPoolPkg.deployPool(
             IStandardExchange(address(daiUsdcVault)),
             tta
@@ -366,7 +366,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
             tta,
             shares,
             amountIn,
-            0,            // minAmountOut — no slippage guard in smoke test
+            0,            // minAmountOut - no slippage guard in smoke test
             _deadline(),
             false,        // wethIsEth
             bytes('')     // userData

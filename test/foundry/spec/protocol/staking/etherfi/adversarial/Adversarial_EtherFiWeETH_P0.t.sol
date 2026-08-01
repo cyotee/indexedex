@@ -187,7 +187,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
             false,
             block.timestamp + 1 hours
         );
-        // sleeve pay only — weETH inventory and queue unchanged
+        // sleeve pay only - weETH inventory and queue unchanged
         assertEq(hermeticWeEth.balanceOf(seVault), weBefore);
         assertEq(hermeticQueue.lastRequestId(), reqBefore);
     }

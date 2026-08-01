@@ -90,7 +90,7 @@ contract Handler_BalancerV3SERouter_PrepayAuth is Test {
     function attemptPass_asAttacker(address next) external {
         ++attackAttempts;
         // When session off, pass is no-op success by design (not an auth bypass for prepay).
-        // Count only if session is active and pass succeeds without being top — should not happen.
+        // Count only if session is active and pass succeeds without being top - should not happen.
         if (!prepayRouter.prepaySessionActive()) {
             return;
         }
@@ -103,7 +103,7 @@ contract Handler_BalancerV3SERouter_PrepayAuth is Test {
     function donateToVault(uint256 amountSeed) external {
         uint256 amt = bound(amountSeed, 1, 10e18);
         deal(address(token0), address(this), amt);
-        // Free balance on vault — attackers should not convert via unauthorized prepay.
+        // Free balance on vault - attackers should not convert via unauthorized prepay.
         token0.transfer(address(prepayRouter), 0); // no-op keep compiler happy if needed
         // Donate to a dead address as "unattributed" sink; real vault donation uses vault address in tests.
         // Handler does not hold vault address; donate is covered in fixed A1.

@@ -201,7 +201,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         vm.stopPrank();
 
         _authorizeDetfTokenOperator(vault_);
-        // Secondary instances share bond/rebasing companions already owned by the setUp vault —
+        // Secondary instances share bond/rebasing companions already owned by the setUp vault -
         // do not reassign protocol DETF or bond ownership here (NotOwner on rebasing token).
     }
 

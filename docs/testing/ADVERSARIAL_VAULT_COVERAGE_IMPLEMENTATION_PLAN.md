@@ -190,7 +190,7 @@ Fork-first (gold TestBase is fork). **Do not invent hermetic dual-liquidity if p
 #### 5.1.2 Layout
 
 ```text
-test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/adversarial/
+test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/adversarial/
   TestBase_DualLiquidity_Adversarial.sol   # thin wrapper over existing TestBase
   Adversarial_Catalog.t.sol                # or split by category
   # Prefer: NatSpec map existing ShareInflation / Reentrancy / Residual tests → IDs
@@ -210,9 +210,9 @@ test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/adversarial/
 #### 5.1.4 Verification
 
 ```bash
-forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/adversarial/**'
+forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/adversarial/**'
 # Full dual-liquidity suite (RPC-dependent):
-forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/**'
+forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/**'
 ```
 
 **Est.:** 3–5 eng-days (+ RPC flakiness buffer).
@@ -439,7 +439,7 @@ forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/
 forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/**'
 
 # Wave 2
-FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/adversarial/**'
+FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/adversarial/**'
 forge test --match-path 'test/foundry/spec/vaults/standard-exchange/adversarial/**'
 
 # Program sweep (when multiple exist)

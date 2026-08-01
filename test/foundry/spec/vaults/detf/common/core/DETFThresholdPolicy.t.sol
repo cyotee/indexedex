@@ -10,7 +10,7 @@ import {
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Pure unit tests for DETFThresholdPolicy (P0 threshold modes).
-/// @dev No diamond / CraneTest — exercises the production library entry points only.
+/// @dev No diamond / CraneTest - exercises the production library entry points only.
 contract DETFThresholdPolicyTest is Test {
     //--------------------------------------------------------------------------
     // Resolve (T1 / T2)

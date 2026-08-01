@@ -15,7 +15,7 @@ import {
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
 
 /// @notice Stage 09 Phase 2: natural supply expansion (PRD E1–E8) on ComposedStableCommonDetf.
-/// @dev Production-first: real diamond, manager, registry, SE vaults, family bond NFT — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults, family bond NFT - no SUT mocks.
 ///      E9 is covered by `ComposedStableCommonDetf_ProtocolCompound` remaining green.
 ///      Expansion mints into bond-reward DETF (`detfToken`), not the rebasing claim token.
 contract ComposedStableCommonDetf_NaturalExpansion_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
@@ -337,7 +337,7 @@ contract ComposedStableCommonDetf_NaturalExpansion_Test is ComposedStableCommonD
             DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
             "cap bps default"
         );
-        // No setter on info interface — compile-time absence is structural proof.
+        // No setter on info interface - compile-time absence is structural proof.
     }
 
     /* ---------------------------------------------------------------------- */

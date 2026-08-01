@@ -61,7 +61,7 @@ contract MultiPairStandardExchangeBufferPoolSpec is TestBase_MultiPairStandardEx
         buffers[0] = tta;
         buffers[1] = tta; // duplicate
         vaults[0] = IStandardExchange(address(seVault));
-        // need a different vault address — use a fake distinct address that won't fully deploy
+        // need a different vault address - use a fake distinct address that won't fully deploy
         // For processArgs validation only, call via deploy which hits processArgs.
         // Use bob as fake vault address for uniqueness check at processArgs.
         vaults[1] = IStandardExchange(bob);

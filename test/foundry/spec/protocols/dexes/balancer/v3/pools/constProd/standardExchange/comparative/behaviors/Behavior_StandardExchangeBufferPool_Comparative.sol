@@ -12,7 +12,7 @@ import {
  * @notice Reusable A/B assertions comparing buffer-pool swaps to the reference const-prod pool.
  * @dev Each comparison runs the SAME swap on each pool from an identical pre-state via
  *      vm.snapshotState()/vm.revertToState(), so neither swap perturbs the other's comparison.
- *      The swap actor is `getAlice()` — the pool initializer, guaranteed to hold DAI + shares
+ *      The swap actor is `getAlice()` - the pool initializer, guaranteed to hold DAI + shares
  *      permit2/router approvals set during setUp (mirrors the existing passing swap behaviors).
  */
 abstract contract Behavior_StandardExchangeBufferPool_Comparative is Test {
@@ -53,7 +53,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Comparative is Test {
     function _assertClose(uint256 a, uint256 b, string memory label) internal {
         // Tolerances are read from the base via public getters (ABS_TOL/REL_TOL are internal const).
         // For small values (<= ABS_TOL) use the absolute bound (relative comparison is meaningless
-        // near zero). For larger values use the relative bound only — asserting BOTH unconditionally
+        // near zero). For larger values use the relative bound only - asserting BOTH unconditionally
         // was incorrect: outputs routinely exceed ABS_TOL (e.g. decimal-offset SE vault shares scale
         // into the billions/trillions of raw units) well before the relative divergence is a problem.
         if (b <= _base().ABS_TOL_()) {

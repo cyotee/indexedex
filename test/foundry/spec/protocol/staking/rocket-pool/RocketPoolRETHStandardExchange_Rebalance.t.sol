@@ -37,7 +37,7 @@ contract RocketPoolRETHStandardExchange_Rebalance_Test is TestBase_RocketPoolRET
     function test_RB3_liquidLow_collateralOpen_burns() public {
         // Seed locked rETH, fund tiny sleeve via donation then force liquid low
         _seedVaultInventory(0, 50 ether);
-        // liquid is 0 already — band around target (20% of 50 = 10) so liquid + band < target → burn
+        // liquid is 0 already - band around target (20% of 50 = 10) so liquid + band < target → burn
         _enableBurn(20 ether);
         uint256 liquidBefore = rocketPoolSe.liquidReserveEth();
         uint256 rethBefore = hermeticReth.balanceOf(seVault);

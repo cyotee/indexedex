@@ -52,7 +52,7 @@ contract UniswapV3StandardExchange_FeeCompound_Test is TestBase_UniswapV3Standar
             vault.exchangeIn(IERC20(token0), 1 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
         vm.stopPrank();
 
-        // Attacker receives only shares for own principal — not all of accrued fee value.
+        // Attacker receives only shares for own principal - not all of accrued fee value.
         assertLt(attackerShares, incumbentShares / 10, "attacker not fee-diluting");
         assertEq(IERC20(address(vault)).balanceOf(incumbent), incumbentShares, "incumbent shares unchanged");
 

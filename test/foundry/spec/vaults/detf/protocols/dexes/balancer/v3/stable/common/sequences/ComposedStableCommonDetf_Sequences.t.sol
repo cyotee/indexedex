@@ -44,7 +44,7 @@ contract ComposedStableCommonDetf_Sequences_Test is ComposedStableCommonDetf_Int
         ) returns (uint256 out_) {
             assertTrue(out_ > 0 || burn_ > 0, "burn attempted");
         } catch {
-            // Some composed paths redeem via claim token only — sequence still checks residual.
+            // Some composed paths redeem via claim token only - sequence still checks residual.
         }
         vm.stopPrank();
 

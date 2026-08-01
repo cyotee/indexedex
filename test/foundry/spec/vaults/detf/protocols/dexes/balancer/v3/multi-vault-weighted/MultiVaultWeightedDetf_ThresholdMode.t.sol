@@ -46,7 +46,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T1 — Policy 0,0 → defaults + mode Policy                              */
+    /*  T1 - Policy 0,0 → defaults + mode Policy                              */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyDefaults_thresholdModeAndEvent() public view {
@@ -59,7 +59,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T2 — Policy custom band                                               */
+    /*  T2 - Policy custom band                                               */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyCustomBand() public {
@@ -71,7 +71,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T3 — Open deploy stores mode + resolved thresholds                    */
+    /*  T3 - Open deploy stores mode + resolved thresholds                    */
     /* ---------------------------------------------------------------------- */
 
     function test_openDeploy_modeAndStoredThresholds() public view {
@@ -84,7 +84,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4 — Invalid mint <= burn after resolve (both modes)                  */
+    /*  T4 - Invalid mint <= burn after resolve (both modes)                  */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_revertsWhenMintLeBurn_policy() public {
@@ -109,7 +109,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4b / T18 — Legal extreme Policy still reports Policy                 */
+    /*  T4b / T18 - Legal extreme Policy still reports Policy                 */
     /* ---------------------------------------------------------------------- */
 
     function test_extremePolicy_reportsModePolicy() public {
@@ -128,7 +128,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T8 / T11 — Inert blocked (Policy default + Open)                      */
+    /*  T8 / T11 - Inert blocked (Policy default + Open)                      */
     /* ---------------------------------------------------------------------- */
 
     function test_openInert_mintBlocked() public {
@@ -143,7 +143,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T10 / T12 / T13b — Open live inside former deadband                   */
+    /*  T10 / T12 / T13b - Open live inside former deadband                   */
     /* ---------------------------------------------------------------------- */
 
     function test_openLive_mintAndBurnInsideFormerDeadband() public {
@@ -184,7 +184,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
             synth_ <= DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD
                 && synth_ >= DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD
         ) {
-            // Inside former deadband — mint+burn already proved Open ignores it.
+            // Inside former deadband - mint+burn already proved Open ignores it.
         }
         _assertNoFreeInventory(openDetf);
     }
@@ -196,7 +196,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T13 — Open mint applies usage fee / seigniorage split                 */
+    /*  T13 - Open mint applies usage fee / seigniorage split                 */
     /* ---------------------------------------------------------------------- */
 
     function test_openMint_appliesUsageFeeAndSeigniorageSplit() public {
@@ -228,7 +228,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T14 — No post-deploy mode/threshold setter                            */
+    /*  T14 - No post-deploy mode/threshold setter                            */
     /* ---------------------------------------------------------------------- */
 
     function test_noPostDeployThresholdOrModeSetter() public {
@@ -242,7 +242,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T17 — Open round-trip mint → burn                                     */
+    /*  T17 - Open round-trip mint → burn                                     */
     /* ---------------------------------------------------------------------- */
 
     function test_openRoundTrip_mintThenBurn() public {
@@ -270,7 +270,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T19 — Open + non-default stored thresholds never deadband-revert      */
+    /*  T19 - Open + non-default stored thresholds never deadband-revert      */
     /* ---------------------------------------------------------------------- */
 
     function test_openWithNonDefaultStoredThresholds_neverDeadbandRevert() public {
@@ -315,7 +315,7 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
             "inner Open"
         );
 
-        // Outer Open and outer Policy over the *same* nested — modes are per-instance, not inherited.
+        // Outer Open and outer Policy over the *same* nested - modes are per-instance, not inherited.
         address outerOpen_ = _deployOuterOverNested(nestedOpen_, 0, 0, ThresholdMode.Open);
         address outerPolicy_ = _deployOuterOverNested(nestedOpen_, 0, 0, ThresholdMode.Policy);
 

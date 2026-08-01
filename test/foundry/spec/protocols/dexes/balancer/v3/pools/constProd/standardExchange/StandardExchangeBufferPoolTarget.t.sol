@@ -98,7 +98,7 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
     }
 
     /**
-     * @dev Read the Vault's current live (scaled18 + rated) balances for the pool — the same
+     * @dev Read the Vault's current live (scaled18 + rated) balances for the pool - the same
      *      array onSwap/computeInvariant receive from the Vault.
      */
     function _liveBalances() internal view returns (uint256[] memory) {
@@ -145,7 +145,7 @@ contract StandardExchangeBufferPoolTargetTest is TestBase_StandardExchangeBuffer
     function _bal100() internal view returns (uint256[] memory bal) {
         bal = new uint256[](2);
         uint256 sharesIdx = IStandardExchangeBufferPool(bufferPool).sharesIndex();
-        // TTA side is virtual — we pass 0 in the balances array (onSwap reads virtualTTA from storage).
+        // TTA side is virtual - we pass 0 in the balances array (onSwap reads virtualTTA from storage).
         bal[sharesIdx] = 100e18;
     }
 

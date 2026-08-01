@@ -18,7 +18,7 @@ import {
 
 /// @notice C1–C3 reentrancy expansion: nested DETF entries during hostile share transferFrom → IsLocked.
 /// @dev Deferred P2: C4 (redeemClaim→exchangeIn via hostile rateAsset without breaking SE),
-///      C5 (read-only reentrancy on preview — preview is view-safe by construction).
+///      C5 (read-only reentrancy on preview - preview is view-safe by construction).
 contract Adversarial_Reentrancy_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     function test_C1_reenterInitializeReserve_hitsIsLocked() public {
         address instance_ = _deployHostileShareDetf(1, type(uint256).max);

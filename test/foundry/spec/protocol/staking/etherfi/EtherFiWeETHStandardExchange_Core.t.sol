@@ -79,7 +79,7 @@ contract EtherFiWeETHStandardExchange_Core_Test is TestBase_EtherFiWeETHStandard
 
     function test_M2_wethToSe_exactOut_splitMint() public {
         // Large exact-out so amountIn exceeds target liquid and split stakes overage.
-        // Fresh vault: first mint with no prior NAV — use large share out via empty→mint exact-in first then out.
+        // Fresh vault: first mint with no prior NAV - use large share out via empty→mint exact-in first then out.
         // Prefer: large WETH exact-out shares against zero NAV is awkward; use empty vault large exact-in style via Out.
         // Seed small locked, then exact-out large share amount requiring multi-eth WETH.
         _seedVaultInventory(0, 1 ether);
@@ -112,7 +112,7 @@ contract EtherFiWeETHStandardExchange_Core_Test is TestBase_EtherFiWeETHStandard
         uint256 target = (total * DEFAULT_LIQUID_PCT) / 1e18;
         uint256 band = (target * 0.10e18) / 1e18 + 1;
         assertApproxEqAbs(liquid, target, band);
-        // Overage was staked — locked weETH grew beyond the 1 eth seed
+        // Overage was staked - locked weETH grew beyond the 1 eth seed
         assertGt(hermeticWeEth.balanceOf(seVault), 1 ether);
     }
 

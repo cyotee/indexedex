@@ -57,7 +57,7 @@ contract MixedLeg_ValidationSpec is TestBase_MixedLegWeightedBufferPool {
     }
 
     function test_reject_duplicateBufferToken() public {
-        // Need two pairs with same buffer — force after pair1 SE exists
+        // Need two pairs with same buffer - force after pair1 SE exists
         _deployExtraSeVault(1);
         IERC20[] memory unpaired = new IERC20[](0);
         IRateProvider[] memory unpairedRps = new IRateProvider[](0);

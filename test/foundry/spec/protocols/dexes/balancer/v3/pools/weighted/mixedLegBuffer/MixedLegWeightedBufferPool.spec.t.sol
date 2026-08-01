@@ -75,7 +75,7 @@ contract MixedLegWeightedBufferPoolSpec is TestBase_MixedLegWeightedBufferPool {
     /* ----- Uniqueness ----- */
 
     function test_reject_unpairedEqualsBuffer() public {
-        // unpaired USDC + pair buffer USDC would collide if we force it — use DAI as unpaired + DAI buffer.
+        // unpaired USDC + pair buffer USDC would collide if we force it - use DAI as unpaired + DAI buffer.
         IERC20[] memory unpaired = new IERC20[](1);
         IRateProvider[] memory unpairedRps = new IRateProvider[](1);
         unpaired[0] = IERC20(address(dai)); // same as buffer

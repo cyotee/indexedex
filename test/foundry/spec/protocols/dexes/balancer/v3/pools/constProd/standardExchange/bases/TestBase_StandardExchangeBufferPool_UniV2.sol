@@ -27,14 +27,14 @@ import {
  *        - `counterAsset` / `shareToken` naming aliases for the brief's "Produces" list
  *          (the base already exposes the same tokens as `ttb` / `shares`; no renaming, just aliasing
  *          so both this suite and the existing comparative suite keep working unchanged).
- *        - `_shiftRateUp` / `_shiftRateDown` — real Uniswap V2 trades through `uniV2Router` that
+ *        - `_shiftRateUp` / `_shiftRateDown` - real Uniswap V2 trades through `uniV2Router` that
  *          move the SE vault's NAV (and therefore `seRateProvider.getRate()`), asserting the
  *          direction deterministically.
- *        - `_quoteSwapExactIn` — direct `onSwap` quote helper (no state change), reading live
+ *        - `_quoteSwapExactIn` - direct `onSwap` quote helper (no state change), reading live
  *          balances from the Vault, matching the pattern already used in
  *          `StandardExchangeBufferPoolTarget.t.sol`.
- *        - `_navTtaPerRawShare` — NAV identity helper (`scalingFactor * rate / 1e18`).
- *        - `_swapThroughBalancerVault` — thin wrapper around the parent's `_doSwapExactIn`-style
+ *        - `_navTtaPerRawShare` - NAV identity helper (`scalingFactor * rate / 1e18`).
+ *        - `_swapThroughBalancerVault` - thin wrapper around the parent's `_doSwapExactIn`-style
  *          router swap, exposed under the brief's requested name.
  */
 abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_StandardExchangeBufferPool_UniswapV2 {
@@ -42,12 +42,12 @@ abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_Standard
     /*                          Brief Naming Aliases                           */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Alias for `ttb` (USDC) — the other side of the underlying Uniswap V2 pair.
+    /// @notice Alias for `ttb` (USDC) - the other side of the underlying Uniswap V2 pair.
     function counterAsset() public view returns (IERC20) {
         return ttb;
     }
 
-    /// @notice Alias for `shares` — the SE vault share token.
+    /// @notice Alias for `shares` - the SE vault share token.
     function shareToken() public view returns (IERC20) {
         return shares;
     }
@@ -59,8 +59,8 @@ abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_Standard
     /**
      * @dev Moves the SE share NAV (in TTA terms) by trading through the underlying
      *      Uniswap V2 pair. Buying counterAsset with TTA raises counterAsset's TTA
-     *      price; LP value in TTA terms ~ 2*sqrt(k * p_counter), so the share NAV —
-     *      and therefore seRateProvider.getRate() — rises. Swap fees push NAV up in
+     *      price; LP value in TTA terms ~ 2*sqrt(k * p_counter), so the share NAV -
+     *      and therefore seRateProvider.getRate() - rises. Swap fees push NAV up in
      *      both directions, so _shiftRateDown trades the opposite way and asserts
      *      the net effect.
      */
@@ -124,7 +124,7 @@ abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_Standard
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @dev Direct (non-state-changing) quote via `onSwap`, built from Vault-fresh live balances —
+     * @dev Direct (non-state-changing) quote via `onSwap`, built from Vault-fresh live balances -
      *      the same pattern used in `StandardExchangeBufferPoolTarget.t.sol`. `onSwap` computes
      *      and returns amounts in the Vault's scaled18(+rated) space; this helper converts the
      *      output back to RAW token units (dividing out the output token's rate/scalingFactor)
@@ -197,7 +197,7 @@ abstract contract TestBase_StandardExchangeBufferPool_UniV2 is TestBase_Standard
     ///        rawSharesOut = dx * 1e18 / (scalingFactor * rate)
     ///      Computed as a single `mulDiv` (not `dx * 1e18 / _navTtaPerRawShare(rate)`, which
     ///      would double-apply the `/1e18` baked into `_navTtaPerRawShare` and additionally
-    ///      floors to 0 / reverts FullMulDivFailed whenever rate << 1e18 — see that function's
+    ///      floors to 0 / reverts FullMulDivFailed whenever rate << 1e18 - see that function's
     ///      docs).
     function _sharesOutAtNav(uint256 dx, uint256 rate) internal view returns (uint256) {
         (uint256[] memory scalingFactors,) = bv3Vault.getPoolTokenRates(bufferPool);

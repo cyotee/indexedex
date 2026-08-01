@@ -74,7 +74,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertEq(mp().virtualBuffer(0), vtBefore);
     }
 
-    /// @notice E7 — buffer-in op does not leave *additional* physical buffer (net residual ~0 vs pre).
+    /// @notice E7 - buffer-in op does not leave *additional* physical buffer (net residual ~0 vs pre).
     function test_E7_eventualZero_physicalBufferAfterBufferIn() public {
         uint256 amountIn = 20e18;
         dai.mint(alice, amountIn);
@@ -84,7 +84,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertApproxEqAbs(rawPoolBufferBalance(0), rawBefore, 10, "physical buffer residual net");
     }
 
-    /// @notice E1 — pre-seat path reverts cleanly when amount would exhaust side (MaxInRatio / underflow).
+    /// @notice E1 - pre-seat path reverts cleanly when amount would exhaust side (MaxInRatio / underflow).
     function test_E1_preSeatFail_virtualsUnchanged() public {
         uint256 v0 = mp().virtualBuffer(0);
         uint256 v1 = mp().virtualBuffer(1);
@@ -107,7 +107,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertEq(mp().hookShareDelta(1), h1);
     }
 
-    /// @notice E2 — SE exchangeIn fails mid-reconcile → full swap reverts; virtuals/BPT unchanged.
+    /// @notice E2 - SE exchangeIn fails mid-reconcile → full swap reverts; virtuals/BPT unchanged.
     function test_E2_postSwapDepositFailed_atomic() public {
         HostileStandardExchange hostile = new HostileStandardExchange(IERC20(address(dai)));
         address hPool = _deployHostileSePool(hostile);
@@ -188,7 +188,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertEq(IERC20(address(hostile)).balanceOf(alice), shBefore, "no free shares out");
     }
 
-    /// @notice E3 — within-pair swap leaves other pair virtual/delta unchanged.
+    /// @notice E3 - within-pair swap leaves other pair virtual/delta unchanged.
     function test_E3_crossPair_isolation_withinPair0() public {
         uint256 v1 = mp().virtualBuffer(1);
         int256 h1 = mp().hookShareDelta(1);
@@ -198,7 +198,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertEq(mp().hookShareDelta(1), h1);
     }
 
-    /// @notice E4 — cross-pair buffer0→share1 does not free-mint BPT; pair0 virtual grows; pair1 virtual unchanged.
+    /// @notice E4 - cross-pair buffer0→share1 does not free-mint BPT; pair0 virtual grows; pair1 virtual unchanged.
     function test_E4_crossPair_noFreeBpt() public {
         uint256 bptBefore = IERC20(multiPairPool).totalSupply();
         uint256 v0 = mp().virtualBuffer(0);
@@ -212,7 +212,7 @@ contract Adversarial_MultiPairBuffer_P0 is TestBase_MultiPairStandardExchangeBuf
         assertApproxEqAbs(rawPoolBufferBalance(0), raw0, 10);
     }
 
-    /// @notice C1 — hostile ERC20 bufferToken reenters CUSTOM remove mid transferFrom on live swap path.
+    /// @notice C1 - hostile ERC20 bufferToken reenters CUSTOM remove mid transferFrom on live swap path.
     function test_C1_hostileBuffer_reentrancy_onLiveSwap() public {
         HostileBufferToken hostile = new HostileBufferToken();
         // Deploy SE for hostile/USDC aero pool + multi-pair pool with hostile as sole buffer.

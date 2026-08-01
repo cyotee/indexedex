@@ -104,8 +104,8 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
      *
      *         Tighter bounding (e.g. "actual TTA <= sum of unbalanced TTA deposits minus drained
      *         TTA") is deferred to a dedicated integration test once the opportunistic drain
-     *         mechanism (onAfterSwap reconcile) is fully characterised.  In steady state —
-     *         when swaps occur regularly — the existing onAfterSwap drain maintains near-zero
+     *         mechanism (onAfterSwap reconcile) is fully characterised.  In steady state -
+     *         when swaps occur regularly - the existing onAfterSwap drain maintains near-zero
      *         actual TTA for TTA→shares swap paths.
      */
     function invariant_actualTTABounded() public view {
@@ -121,7 +121,7 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
     }
 
     /**
-     * @notice §8.3 I-5: No free value via swaps only — TTA extracted via shares→TTA swaps
+     * @notice §8.3 I-5: No free value via swaps only - TTA extracted via shares→TTA swaps
      *         does not exceed TTA contributed via TTA→shares swaps plus the TTA-equivalent
      *         value of shares contributed (using the canonical rate provider), with a small
      *         rounding allowance.  Only checked when no LP operations occurred in the sequence.
@@ -139,7 +139,7 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
      *         invariant is correct regardless of the rate provider implementation.
      */
     function invariant_noFreeValue() public view {
-        // Skip if any LP add occurred — free mints during lp_add break ghost accounting.
+        // Skip if any LP add occurred - free mints during lp_add break ghost accounting.
         if (handler.ghost_lpDepositCount() > 0) return;
 
         uint256 ttaOut   = handler.ghost_totalTTAOut();
@@ -178,7 +178,7 @@ contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferP
         // direction counts sum to the total observed swap operations.
         uint256 totalSwaps = handler.ghost_swapTTAtoSharesCount() + handler.ghost_swapSharesToTTACount();
         uint256 totalLp    = handler.ghost_lpDepositCount() + handler.ghost_lpRemoveCount();
-        // These must be valid uint256 values (non-wrapping) — the assertion fires if
+        // These must be valid uint256 values (non-wrapping) - the assertion fires if
         // the addition itself overflowed, which would indicate a ghost variable bug.
         assertLe(totalSwaps, type(uint128).max, "I-6a: swap ghost counter wrapped");
         assertLe(totalLp,    type(uint128).max, "I-6b: LP ghost counter wrapped");

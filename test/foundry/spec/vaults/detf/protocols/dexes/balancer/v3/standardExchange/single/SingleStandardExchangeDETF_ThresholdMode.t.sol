@@ -44,7 +44,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T1 — Policy 0,0 → defaults + mode Policy                              */
+    /*  T1 - Policy 0,0 → defaults + mode Policy                              */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyDefaults_thresholdModeAndEvent() public {
@@ -57,7 +57,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T2 — Policy custom band                                               */
+    /*  T2 - Policy custom band                                               */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_policyCustomBand() public {
@@ -69,7 +69,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T3 — Open deploy stores mode + resolved thresholds                    */
+    /*  T3 - Open deploy stores mode + resolved thresholds                    */
     /* ---------------------------------------------------------------------- */
 
     function test_openDeploy_modeAndStoredThresholds() public view {
@@ -82,7 +82,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4 — Invalid mint <= burn after resolve (both modes)                  */
+    /*  T4 - Invalid mint <= burn after resolve (both modes)                  */
     /* ---------------------------------------------------------------------- */
 
     function test_deploy_revertsWhenMintLeBurn_policy() public {
@@ -134,7 +134,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T4b / T18 — Legal extreme Policy still reports Policy                 */
+    /*  T4b / T18 - Legal extreme Policy still reports Policy                 */
     /* ---------------------------------------------------------------------- */
 
     function test_extremePolicy_reportsModePolicy() public {
@@ -153,7 +153,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T8 / T11 — Inert blocked (Policy default + Open)                      */
+    /*  T8 / T11 - Inert blocked (Policy default + Open)                      */
     /* ---------------------------------------------------------------------- */
 
     function test_openInert_mintBlocked() public {
@@ -168,7 +168,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T10 / T12 / T13b — Open live inside former deadband                   */
+    /*  T10 / T12 / T13b - Open live inside former deadband                   */
     /* ---------------------------------------------------------------------- */
 
     function test_openLive_mintAndBurnInsideFormerDeadband() public {
@@ -211,7 +211,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
         if (synth_ <= DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD
             && synth_ >= DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD)
         {
-            // Inside former deadband — mint+burn already proved Open ignores it.
+            // Inside former deadband - mint+burn already proved Open ignores it.
         }
         _assertNoFreeInventory(openDetf);
     }
@@ -223,7 +223,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T13 — Open mint applies usage fee / seigniorage split                 */
+    /*  T13 - Open mint applies usage fee / seigniorage split                 */
     /* ---------------------------------------------------------------------- */
 
     function test_openMint_appliesUsageFeeAndSeigniorageSplit() public {
@@ -255,7 +255,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T14 — No post-deploy mode/threshold setter                            */
+    /*  T14 - No post-deploy mode/threshold setter                            */
     /* ---------------------------------------------------------------------- */
 
     function test_noPostDeployThresholdOrModeSetter() public {
@@ -270,7 +270,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T17 — Open round-trip mint → burn                                     */
+    /*  T17 - Open round-trip mint → burn                                     */
     /* ---------------------------------------------------------------------- */
 
     function test_openRoundTrip_mintThenBurn() public {
@@ -298,7 +298,7 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  T19 — Open + non-default stored thresholds never deadband-revert      */
+    /*  T19 - Open + non-default stored thresholds never deadband-revert      */
     /* ---------------------------------------------------------------------- */
 
     function test_openWithNonDefaultStoredThresholds_neverDeadbandRevert() public {

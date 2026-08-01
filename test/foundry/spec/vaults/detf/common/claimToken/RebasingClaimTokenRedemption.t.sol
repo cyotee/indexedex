@@ -7,7 +7,7 @@ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 /**
  * @title RICHIRRedemptionTest
  * @notice Tests for US-5.6: claim-token redemption math (legacy brand names in comments only)
- * @dev STUB / SPEC-ONLY: pure arithmetic placeholders — NOT production-path coverage.
+ * @dev STUB / SPEC-ONLY: pure arithmetic placeholders - NOT production-path coverage.
  *      Does not deploy RebasingClaimToken via DetfPkgFactoryService. Real claim redeem /
  *      H2 atomicity coverage lives on integrated DETF suites (MultiVault adversarial, ComposedStable).
  *      Wave 3-stub: replace with production claim token tests or deprecate in favor of DETF integration.

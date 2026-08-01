@@ -20,7 +20,7 @@ import {
 import {DetfReentryTarget} from "contracts/test/adversarial/DetfReentryTarget.sol";
 
 /// @notice Wave 1A P0/P1 adversarial coverage for SingleStandardExchangeDETF.
-/// @dev Deferred: D6 claim over-redeem N/A (no rebasing claim v1); H2 claim path N/A — use sellPosition;
+/// @dev Deferred: D6 claim over-redeem N/A (no rebasing claim v1); H2 claim path N/A - use sellPosition;
 ///      G1 nested optional (see ComposedStable matrix). Production entry points only.
 contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adversarial {
     // --- E5 / H3 / Guards ---

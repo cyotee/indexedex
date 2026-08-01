@@ -9,7 +9,7 @@ import {
 
 /**
  * @title MixedLeg_CrossConfig_U0P2
- * @notice U=0 P=2 — full-graph within/cross pair (MultiPair cross-pair parity).
+ * @notice U=0 P=2 - full-graph within/cross pair (MultiPair cross-pair parity).
  */
 contract MixedLeg_CrossConfig_U0P2 is TestBase_MixedLegWeightedBufferPool {
     function _targetUnpairedCount() internal pure override returns (uint8) {

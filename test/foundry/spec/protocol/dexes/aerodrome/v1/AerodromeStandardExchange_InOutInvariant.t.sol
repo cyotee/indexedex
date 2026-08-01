@@ -646,11 +646,11 @@ contract AerodromeStandardExchange_InOutInvariant is TestBase_AerodromeStandardE
     }
 
     /**
-     * @dev SKIPPED — Route 7 exchangeOut does not enforce maxAmountIn for the Aerodrome vault
+     * @dev SKIPPED - Route 7 exchangeOut does not enforce maxAmountIn for the Aerodrome vault
      *      (pre-existing behavior consistent with V2 vault). See V2 invariant test for notes.
      */
     function testSkip_route7_exchangeOut_revertsWhenMaxInsufficient() public pure {
-        // See NatSpec above — Route 7 does not enforce maxAmountIn.
+        // See NatSpec above - Route 7 does not enforce maxAmountIn.
     }
 
     function testFuzz_route7_inOutInvariant(uint256 sharesIn) public {

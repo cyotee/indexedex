@@ -180,7 +180,7 @@ Reuse MultiVault harness patterns; underlying SE via existing matrix providers (
 
 | Item | Detail |
 |------|--------|
-| Production | `contracts/vaults/protocol/uniswap/crossVersion/` |
+| Production | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` |
 | Mode | Primarily **Base fork** gold TestBase |
 | Existing security-ish | ShareInflation (donation), Reentrancy, ReentrancyRedeem, Residual, Guards, Immutability, RateExtremes, Invariants/handler, Fees |
 

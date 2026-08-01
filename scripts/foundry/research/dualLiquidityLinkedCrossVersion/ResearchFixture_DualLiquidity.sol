@@ -20,7 +20,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
-} from "test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
+} from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 import {ResearchTelemetry} from "scripts/foundry/research/harness/ResearchTelemetry.sol";
 
 /**

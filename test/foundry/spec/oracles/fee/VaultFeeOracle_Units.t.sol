@@ -118,14 +118,14 @@ contract VaultFeeOracle_Units_Test is IndexedexTest {
     /* ---------------------------------------------------------------------- */
 
     function test_usageFeeOfVault_fallsBackToDefault_whenUnset() public view {
-        // Query fee for a vault that has no override set — should return global default
+        // Query fee for a vault that has no override set - should return global default
         address unknownVault = address(0xdead);
         uint256 fee = feeOracle.usageFeeOfVault(unknownVault);
         assertEq(fee, DEFAULT_VAULT_USAGE_FEE);
     }
 
     function test_dexSwapFeeOfVault_fallsBackToDefault_whenUnset() public view {
-        // Query fee for a vault that has no override set — should return global default
+        // Query fee for a vault that has no override set - should return global default
         address unknownVault = address(0xdead);
         uint256 fee = feeOracle.dexSwapFeeOfVault(unknownVault);
         assertEq(fee, DEFAULT_DEX_FEE);

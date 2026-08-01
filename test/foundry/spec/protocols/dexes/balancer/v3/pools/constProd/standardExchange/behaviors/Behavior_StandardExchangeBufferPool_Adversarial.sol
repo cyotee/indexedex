@@ -15,30 +15,30 @@ import {TestBase_StandardExchangeBufferPool} from
  *
  * @dev Adversarial cases covered:
  *
- *      Case 2 — Malicious rate provider returning 0:
+ *      Case 2 - Malicious rate provider returning 0:
  *        vm.mockCall forces getRate() to return 0 on the pool's seRateProvider. A shares→TTA
  *        swap must revert before any state changes because _liftSharesToScaled18Rated detects
  *        rate == 0 and reverts with RateProviderZero. After vm.clearMockedCalls() the pool is
  *        undamaged and a normal swap succeeds.
  *
- *      Case 3 — Donation griefing:
+ *      Case 3 - Donation griefing:
  *        An external attacker donates tokens directly to the Balancer V3 pool via
  *        router.donate(). Since DONATION kind mints 0 BPT, onAfterAddLiquidity's proportional
- *        delta (bptAmountOut * X / T_pre) is zero — virtualTTA and hookSharesDelta are
+ *        delta (bptAmountOut * X / T_pre) is zero - virtualTTA and hookSharesDelta are
  *        unchanged. BPT supply is also unchanged. The donated tokens grow actual reserves
  *        (benefiting existing LPs via higher per-BPT value) but the attacker minted no BPT
  *        and cannot drain value.
  *
- * Deferred cases (require alternate pool instances with custom SE Vault mocks — tracked as
+ * Deferred cases (require alternate pool instances with custom SE Vault mocks - tracked as
  * future work per spec section 10):
  *
- *      Case 1 — Stale-rate sandwich:
+ *      Case 1 - Stale-rate sandwich:
  *        The SE Vault rate changes between hook's previewExchangeOut (sizing) and the actual
  *        exchangeOut (settle). Requires a MockStandardExchange with deliberately divergent
  *        previewExchangeOut and exchangeOut return values deployed via a fresh pool instance.
  *        The test base uses a live Aerodrome pool that cannot easily inject this divergence.
  *
- *      Case 4 — Reentrant Standard Exchange Vault:
+ *      Case 4 - Reentrant Standard Exchange Vault:
  *        A malicious mock SE Vault re-enters Vault.swap during exchangeIn/exchangeOut.
  *        Balancer V3's nonReentrant guard should catch it. Requires a fresh pool instance
  *        wired to a ReentrantMockSEVault; the test base fixture exposes no such hook.
@@ -54,7 +54,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
     function _base() internal view virtual returns (TestBase_StandardExchangeBufferPool);
 
     /* ---------------------------------------------------------------------- */
-    /*                  Case 2 — Malicious Rate Provider (zero)                */
+    /*                  Case 2 - Malicious Rate Provider (zero)                */
     /* ---------------------------------------------------------------------- */
 
     /**
@@ -96,7 +96,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
             abi.encode(uint256(0))
         );
 
-        // The swap must revert — either typed (RateProviderZero) or vault-wrapped.
+        // The swap must revert - either typed (RateProviderZero) or vault-wrapped.
         // alice_ is already cached above so no external call is the "next" after expectRevert.
         vm.expectRevert();
         tb.swapSharesForTTA(alice_, 1e15);
@@ -123,7 +123,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*                    Case 3 — Donation Griefing                           */
+    /*                    Case 3 - Donation Griefing                           */
     /* ---------------------------------------------------------------------- */
 
     /**
@@ -141,7 +141,7 @@ abstract contract Behavior_StandardExchangeBufferPool_Adversarial is Test {
      *        5. Assert virtualTTA, hookSharesDelta, BPT supply all unchanged.
      *
      *      The donated TTA is credited to the pool's raw reserve, raising per-BPT value for
-     *      existing LPs — but the attacker receives nothing (they paid for liquidity without
+     *      existing LPs - but the attacker receives nothing (they paid for liquidity without
      *      minting BPT). This confirms the pool is correctly immune to donation griefing.
      */
     function behavior_adversarial_donationGriefing() public {

@@ -51,7 +51,7 @@ contract CommonBufferMultiVault_RoutingAndWalk is TestBase_CommonBufferMultiVaul
 
         uint256 amountIn = 40e18;
         dai.mint(alice, amountIn);
-        // tokenOut = share0 (vault 0) — must still deposit to vault 1
+        // tokenOut = share0 (vault 0) - must still deposit to vault 1
         uint256 out = swapExactIn(alice, IERC20(address(dai)), IERC20(address(seVault)), amountIn);
         assertGt(out, 0);
         assertEq(cbmv().virtualBuffer(), vBefore + amountIn, "virtual += amountIn");
@@ -179,7 +179,7 @@ contract CommonBufferMultiVault_WalkAndExhaust is TestBase_CommonBufferMultiVaul
         ICommonBufferMultiVaultWeightedPool p = ICommonBufferMultiVaultWeightedPool(pool);
         h0.setFailExchangeOut(true);
 
-        // Sell real SE shares for buffer — pre-seat may try h0 first if most excess, then walk to seVault.
+        // Sell real SE shares for buffer - pre-seat may try h0 first if most excess, then walk to seVault.
         uint256 amt = 20e18;
         assertGe(IERC20(address(seVault)).balanceOf(alice), amt);
         uint256 vBefore = p.virtualBuffer();

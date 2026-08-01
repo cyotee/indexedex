@@ -92,7 +92,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
             IERC20(address(tokenB)), outB_, IERC20(address(tokenA)), 0, attacker, false, _deadline()
         );
         vm.stopPrank();
-        // Round-trip loses fees/slippage — out <= in
+        // Round-trip loses fees/slippage - out <= in
         assertLe(backA_, amount_, "E1: no free lunch on SE swap round-trip");
     }
 }

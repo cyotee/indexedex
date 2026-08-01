@@ -55,7 +55,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
             IERC20(seVault),
             0,
             attacker,
-            true, // pretransferred — no transferFrom, no balance credit
+            true, // pretransferred - no transferFrom, no balance credit
             block.timestamp + 1 hours
         );
 
@@ -313,7 +313,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
             IERC20(address(hermeticWeth)),
             victimIn,
             IERC20(emptyVault),
-            1, // must mint at least 1 share — fails without inflation defense
+            1, // must mint at least 1 share - fails without inflation defense
             victim,
             false,
             block.timestamp + 1 hours
@@ -321,7 +321,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.stopPrank();
         assertGt(victimShares, 0, "victim must not receive zero shares after donation");
 
-        // Attacker redeems all shares — cannot extract more than their 1 wei + fair share of donation dust
+        // Attacker redeems all shares - cannot extract more than their 1 wei + fair share of donation dust
         uint256 attackerShareBal = IERC20(emptyVault).balanceOf(attacker);
         uint256 liquid = ILidoWstETHStandardVault(emptyVault).liquidReserveEth();
         // Max WETH attacker can pull is proportional; upper bound < donation + victimIn (no full steal)
@@ -457,7 +457,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         uint256 reqId = hermeticQueue.lastRequestId();
         if (reqId == 0) {
             // if no queue created, still probe rebalance reentrancy by calling while locked via WETH path
-            // Fall back: arm is not available on hermeticWeth — use nested rebalance from a wrapper.
+            // Fall back: arm is not available on hermeticWeth - use nested rebalance from a wrapper.
             ReenterRebalance attackerContract = new ReenterRebalance(seVault);
             // fund wrapper and call rebalance through it is not mid-lock; skip if no request
             assertTrue(true);
@@ -467,12 +467,12 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         vm.deal(address(this), face);
         hermeticQueue.finalizeForTest{value: face}(reqId);
 
-        // Use ReenterOnEthReceive vault is the SE itself — inject by claiming to SE which has empty receive.
+        // Use ReenterOnEthReceive vault is the SE itself - inject by claiming to SE which has empty receive.
         // Deploy helper that is owner of a request: use HostileClaimReceiver as queue owner not supported.
         // Direct: call rebalance twice nested via ReenterRebalance from eth callback on a custom queue.
         // Simpler production path: call rebalance while already in rebalance via claim ETH to SE.
-        // SE receive() is empty and does not reenter — force reentrancy via HostileWETH deposit in claim path.
-        // rebalance does IWETH.deposit after claim — HostileWETH.deposit can reenter.
+        // SE receive() is empty and does not reenter - force reentrancy via HostileWETH deposit in claim path.
+        // rebalance does IWETH.deposit after claim - HostileWETH.deposit can reenter.
         HostileWETH hostile = new HostileWETH();
         HermeticStETH st = new HermeticStETH();
         HermeticWstETH wst = new HermeticWstETH(st);

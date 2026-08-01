@@ -16,7 +16,7 @@ import {
 /// @notice H2 claim redeem atomicity; H3 residual already in Guards.
 /// @dev H2 critical: if redeemClaim reverts, claim balance must be unchanged (single-tx atomicity).
 ///      Production burns claim then exits BPT; EVM full-tx revert restores claim if exit fails.
-///      Deferred P2: H1 (N=7 initializeReserve gas boundary — NRange deploys N=7 live path).
+///      Deferred P2: H1 (N=7 initializeReserve gas boundary - NRange deploys N=7 live path).
 contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     /// @notice H2: impossible minOut reverts whole redeem; claim not permanently burned.
     function test_H2_redeemClaim_revert_claimUnchanged() public {
@@ -69,7 +69,7 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         vm.prank(alice);
         bonding_.sellNFT(tokenId_, alice);
         uint256 claimBal_ = claim_.balanceOf(alice);
-        // Redeem majority but not 100% of pool BPT path — use 30% of claim to stay above min balances
+        // Redeem majority but not 100% of pool BPT path - use 30% of claim to stay above min balances
         uint256 part_ = (claimBal_ * 30) / 100;
         if (part_ == 0) part_ = claimBal_;
 

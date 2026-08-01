@@ -6,7 +6,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
 /// @notice Pure unit tests for DETFNaturalExpansionLib (Stage 05 natural expansion foundation).
-/// @dev No diamond / CraneTest — exercises the production library entry points only.
+/// @dev No diamond / CraneTest - exercises the production library entry points only.
 ///      Vectors T5.1–T5.10 from `05_DETF_Natural_Expansion_Shared_IMPLEMENTATION_AND_TEST_PLAN.md`.
 ///      All mint expectations come from `computeExpansionMint` / `resolveExpansionParams`
 ///      (no parallel formula reimplementation).

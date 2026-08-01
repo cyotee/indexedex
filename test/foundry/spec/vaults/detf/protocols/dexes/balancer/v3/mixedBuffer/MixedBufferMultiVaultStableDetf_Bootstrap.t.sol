@@ -83,7 +83,7 @@ contract MixedBufferMultiVaultStableDetf_Bootstrap_Test is TestBase_MixedBufferM
     }
 
     function test_bootstrap_ungated_by_synthetic() public {
-        // Default thresholds — bootstrap still succeeds near peg.
+        // Default thresholds - bootstrap still succeeds near peg.
         (uint256 tokenId_,,) = _bootstrapDefault(detf, alice);
         assertTrue(tokenId_ > 0, "tokenId");
         assertTrue(detfInfo.syntheticPrice() > 0, "synthetic readable");

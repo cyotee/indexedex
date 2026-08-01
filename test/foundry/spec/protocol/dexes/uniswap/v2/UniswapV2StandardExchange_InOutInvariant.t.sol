@@ -16,7 +16,7 @@ pragma solidity ^0.8.0;
  *   previewExchangeIn uses post-deposit reserve (mirrors exchangeIn behavior).
  *   previewExchangeOut uses pre-deposit reserve (mirrors exchangeOut behavior).
  *   This means the cross-invariant previewExchangeOut(previewExchangeIn(X)) ≈ X
- *   does NOT hold exactly — the two functions are on different accounting bases.
+ *   does NOT hold exactly - the two functions are on different accounting bases.
  *   Route 4 tests therefore only verify execution-vs-preview (C, D) and the
  *   reverse direction B (previewExchangeIn(previewExchangeOut(Y)) >= Y).
  *
@@ -335,7 +335,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
      * @dev Route 4 note: previewExchangeIn uses post-deposit reserve accounting
      *      while previewExchangeOut uses pre-deposit reserve accounting.
      *      The forward round-trip (previewExchangeOut(previewExchangeIn(X)) ≈ X)
-     *      intentionally does NOT hold — the two previews serve different purposes.
+     *      intentionally does NOT hold - the two previews serve different purposes.
      *      We only test:
      *        B. reverse: previewExchangeIn(previewExchangeOut(Y)) >= Y
      *        C. execution-vs-preview for exchangeOut
@@ -639,7 +639,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
     }
 
     /**
-     * @dev SKIPPED — Route 7 exchangeOut does not enforce maxAmountIn: it burns the exact
+     * @dev SKIPPED - Route 7 exchangeOut does not enforce maxAmountIn: it burns the exact
      *      computed share count regardless of the caller-supplied maxAmountIn value.
      *      This is a pre-existing behavior in the Route 7 implementation; adding a
      *      MaxAmountExceeded check to Route 7 is a separate fix outside the scope of this PR.
@@ -648,7 +648,7 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
      *      that the preview correctly predicts the number of shares burned.
      */
     function testSkip_route7_exchangeOut_revertsWhenMaxInsufficient() public pure {
-        // See NatSpec above — Route 7 does not enforce maxAmountIn.
+        // See NatSpec above - Route 7 does not enforce maxAmountIn.
     }
 
     function testFuzz_route7_inOutInvariant(uint256 sharesIn) public {

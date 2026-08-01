@@ -17,7 +17,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
 
 /// @notice G1: outer mint/burn does not brick nested inner DETF for third users.
-/// @dev Deferred P2: G2 (inner activity does not inflate outer free inventory — residual asserts on outer),
+/// @dev Deferred P2: G2 (inner activity does not inflate outer free inventory - residual asserts on outer),
 ///      G3 (structural opacity: outer sources do not import concrete inner protocol types).
 contract Adversarial_Nested_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     function test_G1_outerActivity_doesNotBrickInner() public {

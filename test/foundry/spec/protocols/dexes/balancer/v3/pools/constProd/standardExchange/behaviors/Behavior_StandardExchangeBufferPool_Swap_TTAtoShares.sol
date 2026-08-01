@@ -14,18 +14,18 @@ import {TestBase_StandardExchangeBufferPool} from
  *         EXACT_IN swap.
  *
  * @dev After a TTA→shares EXACT_IN swap of X TTA, post Task 5's best-effort reconcile
- *      (`_reconcileTTAToShares` deposits the FULL X into the SE Vault via `exchangeIn` — there
+ *      (`_reconcileTTAToShares` deposits the FULL X into the SE Vault via `exchangeIn` - there
  *      is no exact-mint target and therefore no `ttaSurplus` leg):
  *      (a) User's TTA balance decreases by X; user's shares balance increases by Y_shares.
  *      (b) BPT total supply is unchanged (no LP action).
  *      (c) Pool's per-pool actual TTA balance is UNCHANGED (equals ttaBalPre exactly).
  *          The hook drains all X TTA from the Vault, deposits all of it into the SE Vault via
  *          `exchangeIn` (no partial consumption / no surplus leg), and CUSTOM-removes exactly
- *          X TTA from the pool's balance — net zero change, for any amount the SE Vault mints.
+ *          X TTA from the pool's balance - net zero change, for any amount the SE Vault mints.
  *      (d) virtualTTA increases by exactly X (assumes 18-decimal TTA).
  *      (e) hookSharesDelta increases by Y' = `_bv3SharesDonationRaw(minted)`, the round-trip
  *          -capped raw shares actually donated into the pool (`minted` is whatever `exchangeIn`
- *          affords for X at NAV — no longer tied to the swap's quoted `Y_shares`). Y' is
+ *          affords for X at NAV - no longer tied to the swap's quoted `Y_shares`). Y' is
  *          derived from the change in the pool's actual shares balance plus the shares
  *          delivered to the user: Y' = (shrBalPost - shrBalPre) + Y_shares.
  *      (f) Pool's actual shares balance changes by Y' - Y_shares (may be negative now: since

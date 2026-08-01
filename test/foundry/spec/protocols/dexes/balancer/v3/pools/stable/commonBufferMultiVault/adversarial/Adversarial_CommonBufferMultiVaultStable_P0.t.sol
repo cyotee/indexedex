@@ -114,7 +114,7 @@ contract Adversarial_CommonBufferMultiVaultStable_P0 is TestBase_CommonBufferMul
         assertGe(cbmvs().virtualBuffer(), 0);
     }
 
-    /// @notice C1 — hostile ERC20 bufferToken reenters CUSTOM remove mid transferFrom on live swap path.
+    /// @notice C1 - hostile ERC20 bufferToken reenters CUSTOM remove mid transferFrom on live swap path.
     function test_C1_hostileBuffer_reentrancy_onLiveSwap() public {
         HostileBufferToken hostile = new HostileBufferToken();
         address poolAddr = aeroPoolFactory.createPool(address(hostile), address(usdc), false);

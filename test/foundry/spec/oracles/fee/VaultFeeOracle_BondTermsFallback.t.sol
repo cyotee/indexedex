@@ -46,7 +46,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
     bytes4 constant TEST_BOND_TYPE_ID = bytes4(0xb04d0001);
 
     // Packed VaultFeeTypeIds: [usage:4][dex:4][bond:4][seigniorage:4][lending:4][padding:12]
-    // Only the bond slot (index 2) matters — set to TEST_BOND_TYPE_ID.
+    // Only the bond slot (index 2) matters - set to TEST_BOND_TYPE_ID.
     bytes32 vaultFeeTypeIds;
 
     function setUp() public override {
@@ -172,7 +172,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
         // Step 2: Register vault with TEST_BOND_TYPE_ID in the bond slot.
         _registerTestVault(testVault);
 
-        // Step 3: Query — should return vault-type default, NOT global default.
+        // Step 3: Query - should return vault-type default, NOT global default.
         BondTerms memory terms = feeOracle.bondTermsOfVault(testVault);
         assertEq(terms.minLockDuration, 45 days, "Should use vault-type default minLockDuration");
         assertEq(terms.maxLockDuration, 240 days, "Should use vault-type default maxLockDuration");
@@ -216,7 +216,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
 
         _registerTestVault(testVault);
 
-        // Set vault-specific override — should take priority.
+        // Set vault-specific override - should take priority.
         BondTerms memory vaultOverride = BondTerms({
             minLockDuration: 7 days,
             maxLockDuration: 90 days,
@@ -310,7 +310,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
     /*                     Sentinel Logic: minLockDuration == 0              */
     /* ====================================================================== */
 
-    /// @notice minLockDuration == 0 is the ONLY sentinel check — other fields don't matter.
+    /// @notice minLockDuration == 0 is the ONLY sentinel check - other fields don't matter.
     function test_sentinel_onlyChecksMinLockDuration() public {
         // Set bond terms where minLockDuration is 0 but other fields are non-zero.
         BondTerms memory partialZero = BondTerms({
@@ -336,7 +336,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
     /// @notice A minLockDuration of 1 (smallest non-zero) does NOT trigger fallback.
     function test_sentinel_minLockDurationOfOne_noFallback() public {
         BondTerms memory minimal = BondTerms({
-            minLockDuration: 1, // smallest valid value — NOT the sentinel
+            minLockDuration: 1, // smallest valid value - NOT the sentinel
             maxLockDuration: 2,
             minBonusPercentage: 3,
             maxBonusPercentage: 4
@@ -433,7 +433,7 @@ contract VaultFeeOracle_BondTermsFallback_Test is IndexedexTest {
     function testFuzz_setVaultBondTerms_roundTrip(uint256 minLock, uint256 maxLock, uint256 minBonus, uint256 maxBonus)
         public
     {
-        vm.assume(minLock > 0); // 0 is the sentinel — skip it.
+        vm.assume(minLock > 0); // 0 is the sentinel - skip it.
         maxLock = bound(maxLock, minLock, type(uint256).max); // minLock <= maxLock required
         maxBonus = bound(maxBonus, 0, 1e18);
         minBonus = bound(minBonus, 0, maxBonus);

@@ -11,11 +11,11 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 
 /// @notice B1 flash-style skew arb bound; B3 threshold gate coupling under rate moves.
-/// @dev Deferred P2: B2 (reserve sandwich — user minOut + no protocol NFT drain; external pool risk),
-///      B4 (cross-leg rate desync N=2), B5 (MaxInRatio/min-balance grief — clean revert only).
+/// @dev Deferred P2: B2 (reserve sandwich - user minOut + no protocol NFT drain; external pool risk),
+///      B4 (cross-leg rate desync N=2), B5 (MaxInRatio/min-balance grief - clean revert only).
 contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     /// @notice B1: when mint AND burn are both open (open thresholds), underlying skew can extract
-    ///      seigniorage as vault-share PnL. That is intentional product surface — not a free drain of
+    ///      seigniorage as vault-share PnL. That is intentional product surface - not a free drain of
     ///      bonded principal. Hard invariants: victim DETF balance, residual inventory, claim authority.
     function test_B1_skewMintReverseBurn_seigniorageBounds() public {
         address instance_ = _deployOpenModeDetfN(1); // both gates open when live
@@ -62,7 +62,7 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         // Bonded principal inventory still on diamond (mint/burn may change free reserve BPT via join/exit)
         assertTrue(IERC20(pool_).balanceOf(instance_) > 0, "B1: diamond still holds reserve BPT");
         // Seigniorage bound: share profit (if any) is finite and sub-linear in size of attack vs bootstrap.
-        // Documented intentional risk when both gates open — not unbounded drain of aliceBpt_ principal.
+        // Documented intentional risk when both gates open - not unbounded drain of aliceBpt_ principal.
         if (sharesBack_ > sharesIn_) {
             uint256 profit_ = sharesBack_ - sharesIn_;
             emit log_named_uint("B1_intentional_seigniorage_share_profit", profit_);

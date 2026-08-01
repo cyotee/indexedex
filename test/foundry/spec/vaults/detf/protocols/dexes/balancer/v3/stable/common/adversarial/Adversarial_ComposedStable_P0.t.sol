@@ -93,7 +93,7 @@ contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_Integrat
         );
         uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId_, alice);
         uint256 before_ = rebasingDetfToken.balanceOf(alice);
-        // redeem with impossible recipient path or zero via wrong amount — over-redeem reverts
+        // redeem with impossible recipient path or zero via wrong amount - over-redeem reverts
         vm.expectRevert();
         rebasingDetfToken.redeem(before_ + 1, alice, false);
         assertEq(rebasingDetfToken.balanceOf(alice), before_, "H2: claim unchanged after fail");

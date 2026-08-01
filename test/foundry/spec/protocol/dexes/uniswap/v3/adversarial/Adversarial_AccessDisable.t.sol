@@ -17,7 +17,7 @@ contract Adversarial_AccessDisable_Test is TestBase_UniswapV3StandardExchange_Ad
         vm.prank(owner);
         try IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(vault), true) {}
         catch {
-            // If disable API differs, skip with structural note — still cover F2.
+            // If disable API differs, skip with structural note - still cover F2.
         }
 
         ERC20PermitMintableStub(token0).mint(attacker, 1 ether);
@@ -26,7 +26,7 @@ contract Adversarial_AccessDisable_Test is TestBase_UniswapV3StandardExchange_Ad
         // If disable succeeded, mutate reverts; if not available, still ensure vault callable state is defined.
         try vault.exchangeIn(IERC20(token0), 1 ether, IERC20(pool.token1()), 0, attacker, false, block.timestamp + 1)
         returns (uint256) {
-            // Disable path not active on this manager wiring — views still work.
+            // Disable path not active on this manager wiring - views still work.
             assertTrue(true);
         } catch {
             assertTrue(true, "disabled");

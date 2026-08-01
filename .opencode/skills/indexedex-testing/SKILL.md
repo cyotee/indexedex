@@ -74,7 +74,7 @@ Fork tests often combine `IndexedexTest` / vault components with `TestBase_*Fork
 | Camelot SE | `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol` | In/Out facets + `deployCamelotV2StandardExchangeDFPkg` |
 | Aave Stata SE | `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol` | Registry path for lending SE |
 | Aerodrome SE | `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol` | Same pattern as Camelot |
-| Dual-liquidity (fork) | `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Full production deploy on Base fork |
+| Dual-liquidity (fork) | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Full production deploy on Base fork |
 
 ## Two deploy paths (critical)
 

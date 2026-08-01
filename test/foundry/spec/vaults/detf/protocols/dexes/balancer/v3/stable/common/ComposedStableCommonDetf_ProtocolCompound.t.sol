@@ -18,7 +18,7 @@ import {
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
 
 /// @notice Stage 04 Phase 1: protocol seigniorage compound (PRD C1–C8) on ComposedStableCommonDetf.
-/// @dev Production-first: real diamond, manager, registry, SE vaults, family bond NFT — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults, family bond NFT - no SUT mocks.
 ///      C5 is non-waivable for this family (claim / protocol BPT backing path).
 contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
     uint256 internal constant MIN_LOCK = 30 days;
@@ -48,7 +48,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         compoundInfo = IComposedStableCommonDetfInfo(deployedDetfVault);
         compoundBonding = IComposedStableCommonDetfBonding(deployedDetfVault);
         compoundExchangeIn = IStandardExchangeIn(deployedDetfVault);
-        // Do not bootstrap here — parent IntegratedDeploy tests call `_bootstrapReserveGraph`
+        // Do not bootstrap here - parent IntegratedDeploy tests call `_bootstrapReserveGraph`
         // themselves; double-init reverts PoolAlreadyInitialized.
     }
 
@@ -134,7 +134,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
 
     /// @dev Public compound with modest seed; retry once with larger (still join-safe) seed.
     function _compoundWithSeed() internal returns (uint256 detfIn_, uint256 bptOut_) {
-        // ~5% of bootstrap DETF leg — joinable single-sided without max-in-ratio blowups.
+        // ~5% of bootstrap DETF leg - joinable single-sided without max-in-ratio blowups.
         _seedBondVaultRewardDetf(0.05e18);
         (detfIn_, bptOut_) = compoundInfo.compoundProtocolRewards();
         if (detfIn_ == 0) {
@@ -159,7 +159,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         uint256 principalBefore_ = _protocolNftPrincipal();
 
         vm.recordLogs();
-        // Lazy compound runs inside mint — no public compoundProtocolRewards call.
+        // Lazy compound runs inside mint - no public compoundProtocolRewards call.
         uint256 out_ = _mintDetfFromDai(bob, 300e18);
         assertGt(out_, 0, "mint succeeded");
 
@@ -193,7 +193,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         uint256 principalBefore_ = _protocolNftPrincipal();
 
         vm.recordLogs();
-        // Anyone may call — no keeper.
+        // Anyone may call - no keeper.
         vm.prank(permissionlessCaller);
         (uint256 detfIn_, uint256 bptOut_) = _compoundWithSeed();
 
@@ -272,7 +272,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
 
         assertGt(claimed_, 0, "fee claimed free detf");
         assertEq(detfToken.balanceOf(feeOwner_) - feeBefore_, claimed_, "free detf to fee recipient");
-        // Protocol compound only touches detf-owned NFT — fee rewards stay free DETF.
+        // Protocol compound only touches detf-owned NFT - fee rewards stay free DETF.
     }
 
     /* ---------------------------------------------------------------------- */
@@ -315,7 +315,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
     /*                                 C8                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C8: join/atomic failure is best-effort — user mint succeeds; pending intact; later compound works.
+    /// @dev C8: join/atomic failure is best-effort - user mint succeeds; pending intact; later compound works.
     function test_C8_joinFailureBestEffort_thenRetry() public {
         _prepareLiveCompoundFixture();
         assertGt(_protocolNftPrincipal(), 0, "protocol principal");
@@ -327,7 +327,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         assertGt(pendingBefore_, 0, "pending before fail");
 
         // Force compound atomic body to fail (simulates join revert). Isolates compound from
-        // user mint path (same diamond, different call path). No SUT mock of diamond logic —
+        // user mint path (same diamond, different call path). No SUT mock of diamond logic -
         // only sabotage the atomic helper entry so try/catch best-effort path is exercised.
         vm.mockCallRevert(
             deployedDetfVault,
@@ -340,7 +340,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         assertEq(detfInFail_, 0, "no detfIn on failed compound");
         assertEq(bptFail_, 0, "no bpt on failed compound");
         assertEq(_protocolNftPrincipal(), principalBefore_, "principal unchanged on public fail");
-        // Preferred pull: harvest rolled back — reward DETF still on bond vault.
+        // Preferred pull: harvest rolled back - reward DETF still on bond vault.
         assertGe(
             detfToken.balanceOf(address(bondNFTVault)),
             vaultRewardBalBefore_,
@@ -348,7 +348,7 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
         );
 
         // User mint still succeeds (lazy compound fails best-effort).
-        // Note: mint also accrues inventory BPT via `_accrueMintInventory` (not compound) —
+        // Note: mint also accrues inventory BPT via `_accrueMintInventory` (not compound) -
         // so principal may rise from mint inventory even when compound is sabotaged.
         uint256 minted_ = _mintDetfFromDai(bob, 200e18);
         assertGt(minted_, 0, "user mint succeeds despite compound fail");

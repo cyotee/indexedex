@@ -16,7 +16,7 @@ import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNat
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Stage 07 Phase 2: natural supply expansion (PRD E1–E8) on MultiVaultWeightedDetf.
-/// @dev Production-first: real diamond, manager, registry, SE vaults — no SUT mocks.
+/// @dev Production-first: real diamond, manager, registry, SE vaults - no SUT mocks.
 ///      E9 is covered by `MultiVaultWeightedDetf_ProtocolCompound` remaining green.
 contract MultiVaultWeightedDetf_NaturalExpansion_Test is TestBase_MultiVaultWeightedDetf {
     address internal expDetf;
@@ -258,7 +258,7 @@ contract MultiVaultWeightedDetf_NaturalExpansion_Test is TestBase_MultiVaultWeig
             DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
             "cap bps default"
         );
-        // No setter on info interface — compile-time absence is structural proof.
+        // No setter on info interface - compile-time absence is structural proof.
         // Runtime: getters match storage set at init only.
     }
 

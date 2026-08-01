@@ -11,7 +11,7 @@ import {TestBase_StandardExchangeBufferPool} from
 /**
  * @title Behavior_StandardExchangeBufferPool_LP_AddUnbalanced
  * @notice Reusable behavior contract asserting spec post-state for an unbalanced add-liquidity
- *         operation (Change 1 of the refactor plan — eventual zero TTA).
+ *         operation (Change 1 of the refactor plan - eventual zero TTA).
  *
  * @dev After an addLiquidityUnbalanced call contributing `ttaIn` TTA and `sharesIn` shares:
  *
@@ -37,7 +37,7 @@ import {TestBase_StandardExchangeBufferPool} from
  *        CP product post-add:
  *          virtualTTA_post * derived_y_post
  *          = (vt + X_tta) * (old_derived_y + Y_shares * r)
- *          > vt * old_derived_y      [strictly greater — consistent with new liquidity deposited]
+ *          > vt * old_derived_y      [strictly greater - consistent with new liquidity deposited]
  *
  *      DESIGN CONSTRAINT: The pool's `computeInvariant` uses virtualTTA from storage, not from the
  *      Vault-supplied `balancesLiveScaled18[ttaIdx]`.  This means a pure TTA-only UNBALANCED add
@@ -163,7 +163,7 @@ abstract contract Behavior_StandardExchangeBufferPool_LP_AddUnbalanced is Test {
         // ------------------------------------------------------------------
         uint256 tPost = IERC20(tb.bufferPool()).totalSupply();
 
-        // (a) BPT minted (driven by shares contribution — see design constraint).
+        // (a) BPT minted (driven by shares contribution - see design constraint).
         assertGt(bptOut, 0, "lpAdd_unbalanced_both: no BPT minted");
         assertEq(tPost, tPre + bptOut, "lpAdd_unbalanced_both: total supply mismatch");
 

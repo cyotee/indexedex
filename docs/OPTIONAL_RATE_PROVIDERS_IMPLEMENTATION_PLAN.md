@@ -15,7 +15,7 @@ Execute the inventory in [`docs/OPTIONAL_RATE_PROVIDERS_REFACTOR_REPORT.md`](./O
 | Doc | Role |
 |-----|------|
 | [`docs/OPTIONAL_RATE_PROVIDERS_REFACTOR_REPORT.md`](./OPTIONAL_RATE_PROVIDERS_REFACTOR_REPORT.md) | Inventory, force sites, priority matrix |
-| [`contracts/vaults/protocol/uniswap/crossVersion/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md`](../contracts/vaults/protocol/uniswap/crossVersion/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md) | **Gold path** (done) |
+| [`contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md`](../contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md) | **Gold path** (done) |
 | [`research/scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md`](../research/scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md) | Why rates off is product default for most cases |
 | Family PRDs | Per-package product truth after edits |
 
@@ -576,7 +576,7 @@ rg -n "rateProvider\.getRate\(\)" contracts/vaults contracts/protocols/dexes/bal
 
 | Family | Command (indicative) |
 |--------|----------------------|
-| DualLiquidity (regression) | `FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/**' -vv` |
+| DualLiquidity (regression) | `FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/**' -vv` |
 | Single Vault DETF | `FOUNDRY_PROFILE=default forge test --match-path 'test/foundry/spec/vaults/detf/composed/single/**' -vv` |
 | Seigniorage | spec + fork paths above |
 | Buffer / MultiPair / MixedLeg / CommonBuffer | matching `test/foundry/spec/protocols/dexes/balancer/v3/pools/**` paths |
@@ -686,7 +686,7 @@ research/.../AGENT_RESEARCH_REPORT.md            # optional one-liner when shipp
 ### Already done (do not re-scope)
 
 ```text
-contracts/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol
+contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol
 test/.../crossVersion/** including DualLiquidityLinkedCrossVersionUniswapVault_RatesOn.t.sol
 ```
 

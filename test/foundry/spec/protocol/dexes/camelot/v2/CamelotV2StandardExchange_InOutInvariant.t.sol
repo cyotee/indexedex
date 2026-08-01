@@ -89,7 +89,7 @@ contract CamelotV2StandardExchange_InOutInvariant is TestBase_CamelotV2StandardE
         ) returns (uint256 out) {
             assertTrue(out > 0, "swap out");
         } catch {
-            // Fee / min path may reject — OK for property suite
+            // Fee / min path may reject - OK for property suite
         }
         vm.stopPrank();
         assertTrue(IERC20(address(vault)).totalSupply() > 0, "vault supply remains");

@@ -143,7 +143,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         uint256 maxDep = IRocketDepositPool(depositPool).getMaximumDepositAmount();
         emit log_named_uint("maxDeposit", maxDep);
         if (maxDep == 0) {
-            emit log("FK2: capacity 0 at tip — hard-fail path asserted");
+            emit log("FK2: capacity 0 at tip - hard-fail path asserted");
             uint256 amount = 0.1 ether;
             vm.deal(address(this), amount);
             IWETH(payable(MAINNET_WETH)).deposit{value: amount}();
@@ -212,11 +212,11 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
 
     /**
      * @dev FK6: Live rETH.burn tops up WETH pay when sleeve short.
-     *      When mainnet collateral is 0 at tip, log honestly — do not soft-pass success forever.
+     *      When mainnet collateral is 0 at tip, log honestly - do not soft-pass success forever.
      *      Hermetic BP* covers unit proof; this is integration when collateral allows.
      */
     function test_FK6_liveBurn_whenCollateral() public whenForked {
-        // Seed vault with rETH (user holds rETH — deal if cheat available)
+        // Seed vault with rETH (user holds rETH - deal if cheat available)
         // On fork we can deal ERC20 balances
         uint256 rethSeed = 2 ether;
         deal(MAINNET_RETH, address(this), rethSeed);
@@ -226,7 +226,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         );
         assertEq(se.liquidReserveEth(), 0);
 
-        // Try SE→WETH of 0.1 eth face — may succeed via burn if collateral exists
+        // Try SE→WETH of 0.1 eth face - may succeed via burn if collateral exists
         uint256 requested = 0.05 ether;
         uint256 seBal = IERC20(seVault).balanceOf(address(this));
         if (seBal == 0) return;
@@ -243,7 +243,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
             emit log("FK6: live burn path succeeded (collateral available)");
             assertGt(IERC20(MAINNET_WETH).balanceOf(address(this)), 0);
         } catch {
-            emit log("FK6: burn/liquid path reverted at tip — record collateral dry or rate; hermetic BP* is unit proof");
+            emit log("FK6: burn/liquid path reverted at tip - record collateral dry or rate; hermetic BP* is unit proof");
             emit log_named_uint("maxDepositAtSetup", maxDepositAtSetup);
             // Honest: do not soft-pass as success when collateral was required
             // Pass only means we exercised the path and logged; if collateral exists mid-test elsewhere, prefer success branch

@@ -22,7 +22,7 @@ import {
 /**
  * @notice Base mainnet fork smoke for Uni V3 SE.
  * @dev Pin: WETH/USDC 0.05% pool on Base (fee 500).
- *      Pool: 0xd0b53D9277642d899DF5C87A3966A349A798F224 (WETH/USDC 500) — verify at runtime.
+ *      Pool: 0xd0b53D9277642d899DF5C87A3966A349A798F224 (WETH/USDC 500) - verify at runtime.
  *      If RPC unavailable, env failure is expected; hermetic suite remains DoD.
  */
 contract UniswapV3StandardExchange_Fork_Test is TestBase_BaseFork, TestBase_Permit2, TestBase_VaultComponents {

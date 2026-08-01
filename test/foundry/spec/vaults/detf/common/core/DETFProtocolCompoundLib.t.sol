@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 
 /// @notice Pure unit tests for DETFProtocolCompoundLib (Stage 00 protocol compound foundation).
-/// @dev No diamond / CraneTest — exercises the production library entry points only.
+/// @dev No diamond / CraneTest - exercises the production library entry points only.
 contract DETFProtocolCompoundLibTest is Test {
     //--------------------------------------------------------------------------
     // Dust gate (T0.1 / T0.2)

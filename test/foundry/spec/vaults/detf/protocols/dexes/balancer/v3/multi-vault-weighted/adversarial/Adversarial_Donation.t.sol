@@ -14,10 +14,10 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
 
 /// @notice A1–A3 donation / inflation: direct transfers cannot mint free DETF or steal bond principal.
-/// @dev Deferred P2: A4 (dust first-bond/initializeReserve grief — min amounts or later users still mint),
-///      A5 (fee/protocol seigniorage double-claim — FeeNonDilution matrix).
+/// @dev Deferred P2: A4 (dust first-bond/initializeReserve grief - min amounts or later users still mint),
+///      A5 (fee/protocol seigniorage double-claim - FeeNonDilution matrix).
 contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
-    /// @notice A1: donate vault shares to diamond without exchangeIn — idle inventory; no free mint for attacker.
+    /// @notice A1: donate vault shares to diamond without exchangeIn - idle inventory; no free mint for attacker.
     function test_A1_donateVaultShares_cannotMintFreeDetf() public {
         address instance_ = _openLiveN1();
         uint256 donated_ = _fundSeSharesLeg(0, attacker, 100e18);
@@ -42,13 +42,13 @@ contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversaria
             seShares[0], victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
-        // Preview is computed from pool state; donated idle shares are NOT joined into reserve —
+        // Preview is computed from pool state; donated idle shares are NOT joined into reserve -
         // so they must not inflate victim mint beyond preview (exact match expected).
         assertEq(out_, preview_, "victim mint matches preview; idle donation not joined");
         assertTrue(out_ > 0, "victim mint ok");
     }
 
-    /// @notice A2: donate DETF to diamond — no synthetic self-destruct; burn of 0 still reverts.
+    /// @notice A2: donate DETF to diamond - no synthetic self-destruct; burn of 0 still reverts.
     function test_A2_donateDetfToDiamond_noTheft() public {
         address instance_ = _openLiveN1();
         uint256 minted_ = _mintOnLeg(instance_, 0, attacker, 40e18);
@@ -85,7 +85,7 @@ contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         }
     }
 
-    /// @notice A3: donate BPT to diamond — attacker cannot redeem others' bond principal without claim.
+    /// @notice A3: donate BPT to diamond - attacker cannot redeem others' bond principal without claim.
     function test_A3_donateBpt_cannotRedeemOthersPrincipal() public {
         address instance_ = _openLiveN1();
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
@@ -93,7 +93,7 @@ contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversaria
 
         // Attacker gets some BPT by going live on a separate DETF? Simpler: pull BPT from alice's free
         // balance after init is not available (bonded). Mint shares and bond to get NFT, then...
-        // Donate by transferring BPT that somehow exists — fund via second initialize on different
+        // Donate by transferring BPT that somehow exists - fund via second initialize on different
         // instance is hard. Instead: alice still holds 0 free BPT after bond. Create extra BPT by
         // bonding vault shares (joins reserve, mints more BPT to bond NFT). Use residual path:
         // transfer BPT from a second user who bonds then... actually bond(BPT) consumes BPT.
@@ -106,7 +106,7 @@ contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         uint256 bptAfterMint_ = IERC20(pool_).balanceOf(instance_);
         assertGe(bptAfterMint_, bptBefore_, "reserve BPT non-decreasing on mint join");
 
-        // Attacker has no claim — cannot drain BPT (A3 / D2 overlap)
+        // Attacker has no claim - cannot drain BPT (A3 / D2 overlap)
         uint256 attackerBptBefore_ = IERC20(pool_).balanceOf(attacker);
         vm.prank(attacker);
         vm.expectRevert();

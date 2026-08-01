@@ -119,7 +119,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
             vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
 
         uint256 balBefore = IERC20(token0).balanceOf(alice);
-        // Burn shares for token0 out — use half shares as max, request some min out.
+        // Burn shares for token0 out - use half shares as max, request some min out.
         uint256 sharesBurned = vault.exchangeOut(
             IERC20(address(vault)), shares, IERC20(token0), 1, alice, false, block.timestamp + 1
         );

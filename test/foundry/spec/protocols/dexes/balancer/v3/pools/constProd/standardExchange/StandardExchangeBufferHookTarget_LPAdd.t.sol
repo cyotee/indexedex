@@ -18,8 +18,8 @@ import {TestBase_StandardExchangeBufferPool} from
  *      have been retired.
  *
  *      Tests retained:
- *        1. rejectsWrongCaller  — onBeforeAddLiquidity returns false for non-Vault msg.sender.
- *        2. rejectsWrongPool    — onBeforeAddLiquidity returns false when pool arg ≠ address(this).
+ *        1. rejectsWrongCaller  - onBeforeAddLiquidity returns false for non-Vault msg.sender.
+ *        2. rejectsWrongPool    - onBeforeAddLiquidity returns false when pool arg ≠ address(this).
  */
 contract HookLPAddTest is TestBase_StandardExchangeBufferPool {
 

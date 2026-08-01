@@ -188,7 +188,7 @@ contract BalancerV3StandardExchangeRouter_QueryHookAbuse_Test is TestBase_Balanc
         // The attack: contract calls the hook directly
         (bool success, bytes memory returnData) = attacker.attackViaCallback();
 
-        // Must fail — not the Balancer Vault
+        // Must fail - not the Balancer Vault
         assertFalse(success, "Malicious callback should fail");
         assertTrue(attacker.callAttempted(), "Attack should have been attempted");
 

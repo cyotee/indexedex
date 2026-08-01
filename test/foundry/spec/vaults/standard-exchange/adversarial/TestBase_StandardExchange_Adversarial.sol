@@ -6,7 +6,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 
 /// @title TestBase_StandardExchange_Adversarial
-/// @notice Abstract SE adversarial cases — wire vault + tokens in protocol instances (Wave 2B).
+/// @notice Abstract SE adversarial cases - wire vault + tokens in protocol instances (Wave 2B).
 abstract contract TestBase_StandardExchange_Adversarial {
     function seVaultUnderTest() internal view virtual returns (IStandardExchangeProxy);
     function seTokenA() internal view virtual returns (IERC20);
@@ -18,6 +18,6 @@ abstract contract TestBase_StandardExchange_Adversarial {
     address internal seVictim;
 
     function _seInitActors() internal {
-        // makeAddr requires Test inheritance — call from child setUp after super
+        // makeAddr requires Test inheritance - call from child setUp after super
     }
 }

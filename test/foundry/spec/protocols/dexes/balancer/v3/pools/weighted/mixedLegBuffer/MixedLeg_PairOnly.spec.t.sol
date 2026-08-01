@@ -9,7 +9,7 @@ import {
 
 /**
  * @title MixedLeg_PairOnlySpec
- * @notice U=0 P=1 — pairs-only layout equivalent to multi-pair P=1 / single buffer shape.
+ * @notice U=0 P=1 - pairs-only layout equivalent to multi-pair P=1 / single buffer shape.
  */
 contract MixedLeg_PairOnlySpec is TestBase_MixedLegWeightedBufferPool {
     function _targetUnpairedCount() internal pure override returns (uint8) {

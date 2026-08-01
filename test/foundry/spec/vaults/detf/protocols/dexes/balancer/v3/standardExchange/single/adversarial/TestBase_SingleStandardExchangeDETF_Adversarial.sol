@@ -49,7 +49,7 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
 
     function _deployHostileShareDetf(uint256 mintTh_, uint256 burnTh_) internal returns (address instance_) {
         // Match existing SingleStandardExchangeDETF_Reentrancy.t.sol wiring (rateTarget=0).
-        // When callers pass historical dual-path (1, max), use Open — 1/max fails mint>burn validation.
+        // When callers pass historical dual-path (1, max), use Open - 1/max fails mint>burn validation.
         ThresholdMode mode_ = ThresholdMode.Policy;
         uint256 mintArg_ = mintTh_;
         uint256 burnArg_ = burnTh_;

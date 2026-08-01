@@ -17,7 +17,7 @@ import {
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
-} from "test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
+} from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 import {
     IStandardExchangeRateProviderDFPkg,
     StandardExchangeRateProviderDFPkg
@@ -81,7 +81,7 @@ contract SingleStandardExchangeDETF_UniswapV4Matrix_Test is
         try IStandardExchangeIn(uniV4SeVault).exchangeIn(
             commonToken, 1_000e18, IERC20(uniV4SeVault), 0, address(this), false, block.timestamp
         ) returns (uint256) {} catch {
-            // Some V4 SE vaults require both tokens or position path — fund via deposit if present.
+            // Some V4 SE vaults require both tokens or position path - fund via deposit if present.
             try IERC20(uniV4SeVault).balanceOf(address(this)) returns (uint256) {} catch {}
         }
 

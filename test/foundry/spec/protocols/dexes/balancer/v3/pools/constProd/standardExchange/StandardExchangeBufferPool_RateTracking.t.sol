@@ -39,7 +39,7 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
         uint256 sharesOut = _quoteSwapExactIn(tta, shareToken(), dx);
         // NAV: TTA per raw share = scalingFactor * rate / 1e18; invert for shares-out
         // (fused via _sharesOutAtNav to avoid flooring the NAV to 0 for large rate/raw-supply
-        // ratios — see its docs).
+        // ratios - see its docs).
         uint256 expected = _sharesOutAtNav(dx, rate);
         assertApproxEqRel(sharesOut, expected, 0.01e18);
     }
@@ -129,7 +129,7 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
     /// This stresses the maximum reachable rate drift in this fixture: a large direct V2
     /// trade (bigger than _shiftRateUp's default 10%-of-balance trade) pushes the rate close
     /// to (but inside) the effective-weight guard bound, then a swap sized to ~29% of
-    /// virtualTTA is pushed through the buffer pool — the largest dx that stays clear of the
+    /// virtualTTA is pushed through the buffer pool - the largest dx that stays clear of the
     /// weight guard at this drift. Under the old exact-mint (exchangeOut) reconcile this
     /// combination was the closest reachable approximation of a PostSwapDepositFailed
     /// revert (see task-5-report.md for why an exact repro could not be forced within the
@@ -146,7 +146,7 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
     ///         30% of the pool's shares-side live balance (`WeightedMath._MAX_OUT_RATIO`). This is
     ///         the lever the Task 5 reviewer flagged as untested: `onSwap` supports EXACT_OUT via
     ///         `computeInGivenExactOut`, whose required TTA input diverges non-linearly as the
-    ///         requested shares approach the out-ratio ceiling — orthogonal to the rate-drift /
+    ///         requested shares approach the out-ratio ceiling - orthogonal to the rate-drift /
     ///         weight-guard lever the original Task 5 analysis exercised. `onAfterSwap` still calls
     ///         `_reconcileTTAToShares(params.amountInScaled18)` for this swap kind, so the
     ///         best-effort reconcile must handle whatever (possibly large) X_raw the Vault quotes.
@@ -175,7 +175,7 @@ contract StandardExchangeBufferPool_RateTrackingTest is TestBase_StandardExchang
     }
 
     /// @notice Same EXACT_OUT near-max-out-ratio scenario, but combined with a moderate in-bounds
-    ///         upward rate shift — exercises both levers (out-ratio + rate drift) together.
+    ///         upward rate shift - exercises both levers (out-ratio + rate drift) together.
     function test_ttaToSharesExactOut_nearMaxOutRatio_withRateShift_succeeds() public {
         _shiftRateUp();
 

@@ -51,9 +51,9 @@ Same as v1 — no product rename.
 | Item | Path / identity |
 |------|-----------------|
 | Package | `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg` |
-| Facets / common | `contracts/vaults/protocol/uniswap/crossVersion/*` |
+| Facets / common | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/*` |
 | Product PRD | `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` |
-| Gold TestBase | `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` |
+| Gold TestBase | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` |
 | Rates API | `PkgArgs.useRateProviders` — **false** default; **true** opt-in; homogeneous |
 | v1 research fixture | `scripts/foundry/research/dualLiquidityLinkedCrossVersion/ResearchFixture_DualLiquidity.sol` |
 

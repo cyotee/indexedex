@@ -26,7 +26,7 @@ contract MultiVaultWeightedDetf_FeeNonDilution_Test is TestBase_MultiVaultWeight
         address bondVault_ = IMultiVaultWeightedDetfInfo(instance_).bondNftVault();
         uint256 protocolBefore_ = IERC20(instance_).balanceOf(bondVault_);
 
-        // Bob mints — may send fee/protocol slices
+        // Bob mints - may send fee/protocol slices
         uint256 bobOut_ = _mintOnLeg(instance_, 0, bob, 20e18);
         assertTrue(bobOut_ > 0, "bob minted");
 

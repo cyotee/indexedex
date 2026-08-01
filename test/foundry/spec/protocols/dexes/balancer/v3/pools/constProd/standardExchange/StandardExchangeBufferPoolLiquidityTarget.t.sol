@@ -24,7 +24,7 @@ import {StandardExchangeBufferPoolLiquidityTarget} from
  *      without deploying the full integration stack.
  *
  *      The test calls t.callOnAdd(address(t), amts) so that `router == address(t)` which is
- *      `address(this)` inside the target's execution context — satisfying the guard.
+ *      `address(this)` inside the target's execution context - satisfying the guard.
  *      For the negative path the test passes an arbitrary address that is NOT `address(t)` and
  *      asserts that the NotHookCaller error is emitted.
  *
@@ -50,7 +50,7 @@ contract LiquidityTargetExposed is StandardExchangeBufferPoolLiquidityTarget {
  * @notice Unit tests for the CUSTOM add/remove liquidity passthrough guard in
  *         StandardExchangeBufferPoolLiquidityTarget.
  *
- * @dev No Vault or SE-vault deployment required — see LiquidityTargetExposed NatSpec for
+ * @dev No Vault or SE-vault deployment required - see LiquidityTargetExposed NatSpec for
  *      the rationale.  Tests use address(0xBEEF) and address(0xDEAD) purely as sentinel
  *      values for the "wrong router" negative paths; they do not represent real contracts.
  */

@@ -67,7 +67,7 @@ contract CommonBufferMultiVaultStable_WalkAndExhaust is TestBase_CommonBufferMul
         ICommonBufferMultiVaultStablePool p = ICommonBufferMultiVaultStablePool(pool);
         h0.setFailExchangeOut(true);
 
-        // Sell real SE shares for buffer — equal depth redeem rank tries index 0 first (fails) then seVault.
+        // Sell real SE shares for buffer - equal depth redeem rank tries index 0 first (fails) then seVault.
         uint256 amt = 20e18;
         assertGe(IERC20(address(seVault)).balanceOf(alice), amt);
         uint256 vBefore = p.virtualBuffer();

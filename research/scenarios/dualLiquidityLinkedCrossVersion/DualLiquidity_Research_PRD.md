@@ -42,9 +42,9 @@ Results feed a marketing outline and an agent research report; they do **not** c
 | Item | Path / identity |
 |------|-----------------|
 | Package | `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg` |
-| Facets / common | `contracts/vaults/protocol/uniswap/crossVersion/*` |
+| Facets / common | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/*` |
 | Product PRD (as-built) | `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` |
-| Gold TestBase | `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` |
+| Gold TestBase | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` |
 | Rates API | `PkgArgs.useRateProviders` — **false** default; **true** opt-in; homogeneous all three reserve legs |
 
 ### Role names (mandatory)
@@ -369,7 +369,7 @@ Phases:
 
 | Path | Role |
 |------|------|
-| `contracts/vaults/protocol/uniswap/crossVersion/` | SUT package |
+| `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` | SUT package |
 | `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` | Product as-built |
 | `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` | Rates optional (done) |
 | `research/scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md` | Prior fee/rates theory |

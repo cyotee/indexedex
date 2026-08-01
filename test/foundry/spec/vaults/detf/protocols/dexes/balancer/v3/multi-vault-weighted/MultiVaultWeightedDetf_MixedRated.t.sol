@@ -61,7 +61,7 @@ contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDe
         assertTrue(out_ > 0, "redeem rated");
         assertEq(IERC20(rated_).balanceOf(alice) - before_, out_, "payout");
 
-        // Unrated leg has no rateAsset — zero address is invalid route for redeem
+        // Unrated leg has no rateAsset - zero address is invalid route for redeem
         vm.prank(alice);
         vm.expectRevert();
         bonding_.redeemClaim(1, IERC20(address(0)), 0, alice, block.timestamp + 1 hours);

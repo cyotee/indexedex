@@ -17,7 +17,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 
 /// @notice D2–D6 claim authority, double redeem, lock clamp.
-/// @dev Deferred P2: D7 (sell then immediate redeem vs lock — sell/redeem independence by design;
+/// @dev Deferred P2: D7 (sell then immediate redeem vs lock - sell/redeem independence by design;
 ///      documented in PRD; no free principal without sell).
 contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     function test_D2_redeemClaim_withoutClaim_noBptDrain() public {

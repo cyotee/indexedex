@@ -31,7 +31,7 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
         assertEq(claim_.balanceOf(alice) - claimBefore_, minted_, "claim balance");
 
         // Redeemer must approve DETF (burnShares pulls claim via onlyOwner path without transfer when owner=DETF).
-        // burnShares(owner=msg.sender) burns from alice without transferFrom when pretransferred=false — it burns sharesOf(owner).
+        // burnShares(owner=msg.sender) burns from alice without transferFrom when pretransferred=false - it burns sharesOf(owner).
         uint256 daiBefore_ = dai.balanceOf(alice);
         uint256 claimAmt_ = claim_.balanceOf(alice);
         assertTrue(claimAmt_ > 0, "has claim");

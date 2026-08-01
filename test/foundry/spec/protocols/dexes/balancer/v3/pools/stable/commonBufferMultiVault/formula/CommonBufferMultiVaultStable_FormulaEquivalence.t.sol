@@ -17,7 +17,7 @@ import {
 /**
  * @title CommonBufferMultiVaultStable_FormulaEquivalence
  * @notice Proves onSwap / computeInvariant / computeBalance match pure StableMath on math balances.
- * @dev No WeightedMath on the quote path — drives real pool entry points after production deploy.
+ * @dev No WeightedMath on the quote path - drives real pool entry points after production deploy.
  */
 contract CommonBufferMultiVaultStable_FormulaEquivalence is TestBase_CommonBufferMultiVaultStablePool {
     function test_formula_invariant_matchesStableMath() public view {
@@ -130,13 +130,13 @@ contract CommonBufferMultiVaultStable_FormulaEquivalence is TestBase_CommonBuffe
         uint256 expected = StableMath.computeBalance(amp, mathBal, targetInv, tokenIndex);
 
         uint256 poolBal = IBalancerV3Pool(cbmvsPool).computeBalance(live, tokenIndex, ratio);
-        // computeBalance in target uses FixedPoint.mulUp — allow 1 wei if rounding path differs
+        // computeBalance in target uses FixedPoint.mulUp - allow 1 wei if rounding path differs
         assertApproxEqAbs(poolBal, expected, 1, "computeBalance ~ StableMath");
     }
 
     function test_noWeightedMath_onPackageSources() public pure {
         // Structural: formula suite exists and uses StableMath only (see imports).
-        // Production Target imports StableMath, not WeightedMath — verified by compile + formula equality.
+        // Production Target imports StableMath, not WeightedMath - verified by compile + formula equality.
         assertTrue(true);
     }
 }

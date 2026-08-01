@@ -15,7 +15,7 @@
 
 | Component | Path | Enforces RP today? | Default | Runtime safe if STANDARD? | Priority |
 |-----------|------|--------------------|---------|---------------------------|----------|
-| DualLiquidity Linked Cross-Version | `contracts/vaults/protocol/uniswap/crossVersion/` | **No** (optional via `useRateProviders`) | **off** | Yes (`getPoolTokenRates` → 1e18) | **Done** |
+| DualLiquidity Linked Cross-Version | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` | **No** (optional via `useRateProviders`) | **off** | Yes (`getPoolTokenRates` → 1e18) | **Done** |
 | Single SE DETF | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` | **No** (opt-in via non-zero `rateTarget`) | on if `rateTarget` set | Yes (Common guards zeros) | Low (docs/default only) |
 | Multi-vault weighted DETF | `contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/` | **No** (per-leg optional; auto-deploy only when `rateAsset` set) | unrated if both zero | Yes | Low (clarify auto-deploy policy) |
 | Single Vault DETF (composed) | `contracts/vaults/detf/composed/single/` | **Yes** — always deploy RP + WITH_RATE | forced on | Mostly (some paths guard zeros) | **P0** |

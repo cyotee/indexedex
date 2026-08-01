@@ -211,7 +211,7 @@ contract Adversarial_PrepayAuth_Test is TestBase_PrepaySessionHarness {
         );
         // Harness always ends session even on revert of outer call? withPrepaySession reverts before end if call fails.
         // Production path: session end is after call; on revert of target, assembly reverts after _sessionEnd.
-        // Check harness: sessionEnd is BEFORE the if (!ok) revert — yes, session is cleaned.
+        // Check harness: sessionEnd is BEFORE the if (!ok) revert - yes, session is cleaned.
         assertFalse(prepayRouter.prepaySessionActive(), "session must end after harness");
         assertEq(prepayRouter.prepayAuthDepth(), 0);
     }

@@ -42,9 +42,9 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
     address constant WEETH = 0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee;
     address constant LIQUIDITY_POOL = 0x308861A430be4cce5502d0A12724771Fc6DaF216;
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    // WithdrawRequestNFT (ether.fi mainnet — LiquidityPool.withdrawRequestNFT())
+    // WithdrawRequestNFT (ether.fi mainnet - LiquidityPool.withdrawRequestNFT())
     address constant WITHDRAW_REQUEST_NFT = 0x7d5706f6ef3F89B3951E23e557CDFBC3239D4E2c;
-    // EtherFiRedemptionManager mainnet — LiquidityPool.etherFiRedemptionManager()
+    // EtherFiRedemptionManager mainnet - LiquidityPool.etherFiRedemptionManager()
     address constant REDEMPTION_MANAGER = 0xDadEf1fFBFeaAB4f68A9fD181395F68b4e4E7Ae0;
 
     uint256 internal constant DEFAULT_LIQUID_PCT = 0.20e18;
@@ -212,7 +212,7 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         uint256 target = etherFiSe.totalReserveEth() * DEFAULT_LIQUID_PCT / 1e18;
         if (liquid + (target / 10) < target) {
             seRebalance.rebalance();
-            // request tracked — pending face increases locked accounting
+            // request tracked - pending face increases locked accounting
             assertGe(etherFiSe.lockedReserveEth(), 0);
         }
     }

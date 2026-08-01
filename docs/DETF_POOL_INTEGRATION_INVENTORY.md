@@ -33,7 +33,7 @@
 | **SeigniorageDETF** (legacy dual-token) | — | — | **REMOVED** |
 | **ComposedStableCommonDetf** (`detf/protocols/dexes/balancer/v3/stable/common/`) | Weighted reserve of BPTs + DETF | Crane **`IWeightedPool`** + **`IStablePool`×2** | **E** — all three supplied in `PkgArgs` |
 | **MixedBufferMultiVaultStableDetf** (`detf/protocols/dexes/balancer/v3/mixedBuffer/`) | Stable (MixedBuffer) | IndexedEx **`MixedBufferMultiVaultStablePool`** | **D** — via pool DFPkg |
-| **DualLiquidityLinkedCrossVersionUniswapVault** (`vaults/protocol/uniswap/crossVersion/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
+| **DualLiquidityLinkedCrossVersionUniswapVault** (`vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
 
 ### Gap headline
 
@@ -176,7 +176,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 
 | Field | Value |
 |-------|-------|
-| Path | `contracts/vaults/protocol/uniswap/crossVersion/` |
+| Path | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` |
 | Status | **Implemented** |
 | Product type | Dual-liquidity **Standard Exchange vault** with weighted reserve (DETF-*like*, not generic family DETF) |
 | Reserve | **WeightedPoolFactory** 3-token layout (vaultA share, vaultB share, pair vault) |

@@ -11,8 +11,8 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 
 /// @notice E1 conservation round-trip; E4 soft non-dilution of existing holder balances.
-/// @dev Deferred P2: E2 (multi-leg dust after burn — covered residual-clean in MultiLeg/FeeNonDilution matrix),
-///      E3 (fee recipient drain — FeeNonDilution suite).
+/// @dev Deferred P2: E2 (multi-leg dust after burn - covered residual-clean in MultiLeg/FeeNonDilution matrix),
+///      E3 (fee recipient drain - FeeNonDilution suite).
 contract Adversarial_Economic_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     /// @notice E1: vaultShare → DETF → vaultShare; out ≤ in + tiny wei; residual free inventory 0.
     function test_E1_mintThenPartialBurn_conservation() public {
@@ -62,12 +62,12 @@ contract Adversarial_Economic_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         _mintOnLeg(instance_, 0, attacker, 40e18);
 
         assertEq(IERC20(instance_).balanceOf(victim), victimBal_, "E4: victim DETF balance unchanged");
-        // Soft: synthetic claim may move with seigniorage; document — balance units non-decreasing
+        // Soft: synthetic claim may move with seigniorage; document - balance units non-decreasing
         uint256 synthAfter_ = IMultiVaultWeightedDetfInfo(instance_).syntheticPrice();
         // Victim's DETF * synthetic is economic claim; balance fixed so claim tracks synthetic.
         // Assert at least victim token balance invariant (hard).
         assertTrue(victimBal_ > 0, "victim still holds");
-        // synth may fall on free seigniorage mint — intentional design, not a theft of token balance.
+        // synth may fall on free seigniorage mint - intentional design, not a theft of token balance.
         emit log_named_uint("synth_before", synthBefore_);
         emit log_named_uint("synth_after", synthAfter_);
     }

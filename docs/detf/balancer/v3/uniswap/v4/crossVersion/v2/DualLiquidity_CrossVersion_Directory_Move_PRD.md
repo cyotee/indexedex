@@ -2,9 +2,9 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | **LOCKED for implement** — open items resolved 2026-07-31 (see §0 / §0.2) |
+| **Status** | **DONE** — directory move completed 2026-07-31 (see §12) |
 | **Date** | 2026-07-31 |
-| **Product** | `DualLiquidityLinkedCrossVersionUniswapVault` (as-built package under `contracts/vaults/protocol/uniswap/crossVersion/`) |
+| **Product** | `DualLiquidityLinkedCrossVersionUniswapVault` (as-built package under `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`) |
 | **Target code path** | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` |
 | **Target test path** | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` |
 | **Target product docs** | `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/` (product PRD + optional-rates plan; **not** co-located with Solidity) |
@@ -91,10 +91,11 @@ Without a single coordinated move, import rewrites, and a full fork verification
 
 **Does not mean:** reclassify DualLiquidity as a true DETF or apply AGENTS “DETF families — common expectations” product gates.
 
-Product as-built law remains:
+Product as-built law after move:
 
-- Co-located after move: `…/v2/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md`
-- Optional rates: `…/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md`
+- Product PRD: `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md`
+- Optional rates plan: `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md`
+- Process PRD: this file (same docs leaf)
 
 ---
 
@@ -102,13 +103,14 @@ Product as-built law remains:
 
 ### Goals
 
-1. Move **all** files from `contracts/vaults/protocol/uniswap/crossVersion/` → `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`.
-2. Mirror the **full** fork test tree (including `adversarial/`) to the DETF-aligned path under `test/foundry/fork/base_main/vaults/detf/...`.
-3. Rewrite **every** import / path string that pointed at the old locations (production, tests, scripts, skills, AGENTS, docs, research).
-4. Update consumers that only import the TestBase or package paths (Single SE DualLiquidity / Uni V4 matrix tests; research fixture).
-5. Clean empty parent directories left by the move.
-6. Prove **behavior unchanged**: full DualLiquidity fork suite green; matrix consumers that inherit DualLiquidity TestBase green; research fixture still compiles against the moved TestBase.
-7. Update layout law docs (AGENTS, pool inventory, DETF reorg non-goal footnote, indexedex-testing skill).
+1. Move **all Solidity** from `contracts/vaults/protocol/uniswap/crossVersion/` → `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`.
+2. Relocate **product markdown** (product PRD + optional-rates plan) from co-located package dir → `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/` (Solidity tree has **no** co-located family docs after the move).
+3. Mirror the **full** fork test tree (including `adversarial/`) to the DETF-aligned path under `test/foundry/fork/base_main/vaults/detf/...`.
+4. Rewrite **every** import / path string that pointed at the old locations (production, tests, scripts, skills, AGENTS, docs, research).
+5. Update consumers that only import the TestBase or package paths (Single SE DualLiquidity / Uni V4 matrix tests; research fixture).
+6. Delete empty parent directories left by the move (`protocol/uniswap/crossVersion` chain under contracts + fork tests).
+7. Prove **behavior unchanged**: full DualLiquidity fork suite green; matrix consumers that inherit DualLiquidity TestBase green; research fixture still compiles against the moved TestBase.
+8. Update layout law docs (AGENTS gold TestBase + **Key reference paths** with not-true-DETF note, pool inventory, DETF reorg non-goal footnote, indexedex-testing skill).
 
 ### Non-goals
 
@@ -126,9 +128,10 @@ Product as-built law remains:
 
 ## 4. Source inventory (complete)
 
-### 4.1 Production + co-located docs
+### 4.1 Production Solidity
 
-**From:** `contracts/vaults/protocol/uniswap/crossVersion/`
+**From:** `contracts/vaults/protocol/uniswap/crossVersion/`  
+**To:** `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`
 
 | File | Role |
 |------|------|
@@ -147,10 +150,21 @@ Product as-built law remains:
 | `DualLiquidityLinkedCrossVersionUniswapVault_Facet_FactoryService.sol` | CREATE3 facet deploy |
 | `DualLiquidityLinkedCrossVersionUniswapVault_Pkg_FactoryService.sol` | Registry DFPkg deploy |
 | `DualLiquidityLinkedCrossVersionUniswapVault_Component_FactoryService.sol` | Facet+pkg composition |
-| `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` | Product as-built PRD |
-| `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` | Optional rates plan (done) |
 
-**Count:** 15 Solidity + 2 markdown = **17 files**.
+**Count:** **15 Solidity** files → package destination only.
+
+### 4.1b Product docs (currently co-located; relocate to docs/)
+
+**From:** `contracts/vaults/protocol/uniswap/crossVersion/*.md`  
+**To:** `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/`
+
+| File | Role after move |
+|------|-----------------|
+| `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` | Product as-built PRD (docs leaf only) |
+| `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` | Optional rates plan (docs leaf only) |
+| `DualLiquidity_CrossVersion_Directory_Move_PRD.md` | This process PRD (already under docs leaf) |
+
+**Do not** leave these markdown files under the Solidity package directory after the move.
 
 ### 4.2 Fork tests
 
@@ -199,10 +213,8 @@ contracts/vaults/detf/protocols/dexes/balancer/v3/
     v4/
       crossVersion/
         v2/
-          DualLiquidityLinkedCrossVersionUniswapVault*.sol   # all 15
-          DualLiquidityLinkedCrossVersionUniswapVault_PRD.md
-          DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md
-          # process PRD lives under docs/ (this file), not required co-located
+          DualLiquidityLinkedCrossVersionUniswapVault*.sol   # all 15 Solidity only
+          # NO co-located product PRD / rates plan / process PRD
 
 test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/
   uniswap/
@@ -218,10 +230,12 @@ test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/
             DualLiquidity_ADVERSARIAL_CATALOG.md
 
 docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/
-  DualLiquidity_CrossVersion_Directory_Move_PRD.md   # this PRD
+  DualLiquidity_CrossVersion_Directory_Move_PRD.md              # this process PRD
+  DualLiquidityLinkedCrossVersionUniswapVault_PRD.md            # product as-built
+  DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md   # rates plan (done)
 
 # REMOVED after empty:
-contracts/vaults/protocol/uniswap/crossVersion/   (and empty parents)
+contracts/vaults/protocol/uniswap/crossVersion/   (and empty uniswap/, protocol/ parents)
 test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/  (and empty parents)
 ```
 
@@ -242,17 +256,23 @@ test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/  (and empty pa
 Prefer `git mv` so history follows:
 
 ```bash
-# Production
+# Production Solidity only (exclude .md — handled next)
 mkdir -p contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2
-git mv contracts/vaults/protocol/uniswap/crossVersion/* \
+git mv contracts/vaults/protocol/uniswap/crossVersion/*.sol \
   contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/
+
+# Product docs → docs leaf (not co-located)
+mkdir -p docs/detf/balancer/v3/uniswap/v4/crossVersion/v2
+git mv contracts/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md \
+      contracts/vaults/protocol/uniswap/crossVersion/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md \
+      docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/
 
 # Fork tests
 mkdir -p test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2
 git mv test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/* \
   test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/
 
-# Remove empty parents if empty
+# Remove empty parents (required when empty — locked §0.2 #3)
 rmdir contracts/vaults/protocol/uniswap/crossVersion \
       contracts/vaults/protocol/uniswap \
       contracts/vaults/protocol 2>/dev/null || true
@@ -307,14 +327,14 @@ Order of rewrite:
 5. AGENTS + skills.
 6. Docs / research path tables / match-path examples.
 
-### 6.5 Co-located markdown path updates
+### 6.5 Product docs path updates (docs leaf)
 
-Inside moved:
+After relocating markdown to `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/`:
 
-- `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` — Scope path, test path, status line.
-- `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` — any self-paths / forge match-path.
-
-Also update external links that pointed at the co-located files (e.g. `docs/OPTIONAL_RATE_PROVIDERS_IMPLEMENTATION_PLAN.md` gold-path table).
+- `DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` — Scope path (Solidity home), test path, Status (filesystem home changed; product behavior unchanged).
+- `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` — self-paths + forge match-path.
+- External links that pointed at co-located package paths (e.g. `docs/OPTIONAL_RATE_PROVIDERS_IMPLEMENTATION_PLAN.md` gold-path table) → new docs leaf.
+- Confirm **zero** `*.md` under the Solidity package destination after the move.
 
 ---
 
@@ -322,7 +342,7 @@ Also update external links that pointed at the co-located files (e.g. `docs/OPTI
 
 | Surface | Action |
 |---------|--------|
-| **AGENTS.md** | Gold TestBase path → new fork path; key reference table if DualLiquidity listed under `contracts/vaults/protocol/uniswap/` |
+| **AGENTS.md** | Gold TestBase path → new fork path; **Key reference paths** add DualLiquidity line with new code path + **not a true DETF** note; remove/update any `contracts/vaults/protocol/uniswap/` DualLiquidity pointer |
 | **Claude.md** | Only if it duplicates DualLiquidity paths (usually points at AGENTS) |
 | **indexedex-testing skill** | Dual-liquidity (fork) TestBase path row |
 | **indexedex-adversarial-testing skill** | If DualLiquidity adversarial path is cited |
@@ -342,34 +362,36 @@ Also update external links that pointed at the co-located files (e.g. `docs/OPTI
 
 ### P0 — Move + internal imports
 
-1. `git mv` production + tests.
+1. `git mv` production **Solidity** + fork tests; `git mv` product markdown → docs leaf.
 2. Rewrite package-internal imports.
 3. Rewrite fork suite imports (package + TestBase relative paths).
-4. `forge build` (or compile path that includes DualLiquidity) succeeds.
+4. Update paths inside relocated product PRD + rates plan.
+5. `forge build` (or compile path that includes DualLiquidity) succeeds.
 
-### P1 — External consumers
+### P1 — External consumers + parent cleanup
 
 1. Single SE DualLiquidity matrix + Uni V4 matrix TestBase imports.
 2. Research fixture TestBase import.
-3. Parent directory cleanup.
+3. Delete empty `protocol/uniswap/crossVersion` parent trees (contracts + fork tests).
 
 ### P2 — Repo-wide path grep
 
-1. AGENTS, skills, pool inventory, optional rates docs, testing plans, research path tables.
-2. Zero remaining hits for `contracts/vaults/protocol/uniswap/crossVersion` and `test/.../vaults/protocol/uniswap/crossVersion` outside intentional historical quotes (prefer zero everywhere).
+1. AGENTS (gold TestBase + Key reference paths + not-true-DETF note), skills, pool inventory, optional rates docs, testing plans, research path tables.
+2. Zero remaining hits for `contracts/vaults/protocol/uniswap/crossVersion` and `test/.../vaults/protocol/uniswap/crossVersion`.
+3. Zero co-located product `.md` under the new Solidity package directory.
 
-### P3 — Verification (§10)
+### P3 — Verification (§9)
 
-1. Full DualLiquidity fork suite.
-2. Matrix consumers.
-3. Optional research fixture compile / smoke script if RPC allows.
+1. Full DualLiquidity fork suite (incl. adversarial).
+2. Direct matrix consumers only (not four true-DETF full suites).
+3. Research fixture compile.
 4. Grep gate clean.
 
 ### P4 — Layout law touch-ups
 
-1. AGENTS product map: DualLiquidity path under detf tree; still **not** a true DETF family row.
+1. AGENTS Key reference paths: DualLiquidity under detf tree with **not a true DETF** note.
 2. DETF reorg PRD non-goal amendment or “superseded for DualLiquidity” note.
-3. Optional: one-line note in product PRD Status that filesystem home changed.
+3. Product PRD Status: filesystem home is docs leaf; Solidity home is detf package path.
 
 ---
 
@@ -386,8 +408,13 @@ rg -n 'test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion' \
 # New roots exist and are non-empty
 test -f contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol
 test -f test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol
+test -f docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md
+test -f docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md
 
-# Old roots gone
+# Package dir is Solidity-only (no co-located product markdown)
+! ls contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/*.md 2>/dev/null
+
+# Old roots gone (and empty parents removed when nothing else lives there)
 test ! -e contracts/vaults/protocol/uniswap/crossVersion
 test ! -e test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion
 ```
@@ -442,8 +469,9 @@ forge build --contracts scripts/foundry/research/dualLiquidityLinkedCrossVersion
 | Missed import → compile fail | Full-repo path grep; `forge build` before claiming done |
 | Missed match-path in docs → agent runs wrong suite | Grep old match-path strings; update in same PR |
 | Accidental type rename → CREATE3 address drift | Explicit non-goal; code review forbid rename |
-| Product law confusion (true DETF vs DualLiquidity) | §2 table; AGENTS wording: path under detf, product class unchanged |
-| Dual empty trees | Delete old parents; no stubs |
+| Product law confusion (true DETF vs DualLiquidity) | §2 table; AGENTS Key reference paths: path under detf + not-true-DETF note |
+| Dual empty trees | Delete empty parents (locked); no stubs |
+| Product docs left co-located by mistake | Docs-only policy; static gate forbids `*.md` under package dir |
 | Fork suite flaky / RPC | Pre-move baseline optional; same profile as today |
 | Confusing `detf/…/uniswap/v4` host placeholder | Leave placeholder empty; document contrast in §0.1 |
 | Partial PR lands | Single PR delivery; do not merge half-moved tree |
@@ -465,19 +493,22 @@ forge build --contracts scripts/foundry/research/dualLiquidityLinkedCrossVersion
 
 ## 12. Acceptance criteria (checklist)
 
-- [ ] All 15 Solidity + 2 co-located markdown files live under `…/balancer/v3/uniswap/v4/crossVersion/v2/`.
-- [ ] Full fork suite + adversarial live under mirrored `test/.../v2/`.
-- [ ] No remaining filesystem use of `contracts/vaults/protocol/uniswap/crossVersion` or old fork test root.
-- [ ] Zero broken imports; `forge build` green.
-- [ ] `FOUNDRY_PROFILE=fork` DualLiquidity match-path suite green.
-- [ ] Single SE DualLiquidity + Uni V4 matrix tests green (or same pre-move status if environmental).
-- [ ] Research fixture import points at new TestBase; compiles.
-- [ ] AGENTS gold TestBase path updated.
-- [ ] indexedex-testing skill DualLiquidity path updated.
-- [ ] Pool inventory F7 path updated.
-- [ ] CREATE3-affecting names untouched.
-- [ ] Product class still documented as pro-rata dual-liquidity vault (not true DETF).
-- [ ] This process PRD remains the normative move record under `docs/detf/…/v2/`.
+**Completed 2026-07-31.** Residual exact-string greps for the historical pre-move roots remain only inside this process PRD and the co-located implementation plan (migration map / commands). Operational code, tests, skills, AGENTS, and inventory use the new paths only.
+
+- [x] All **15 Solidity** files live under `contracts/.../balancer/v3/uniswap/v4/crossVersion/v2/` with **no** co-located product markdown.
+- [x] Product PRD + optional-rates plan live under `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/` (with this process PRD).
+- [x] Full fork suite + adversarial live under mirrored `test/.../v2/`.
+- [x] No remaining filesystem use of the old package or fork test root; empty parents deleted when empty.
+- [x] Zero broken imports; `forge build` green.
+- [x] `FOUNDRY_PROFILE=fork` DualLiquidity match-path suite green (incl. adversarial): first pass **163/167** with 4× Alchemy HTTP 429 in `setUp()`; **retry of those four suites → 22/22 pass**. Full DualLiquidity fork path verified green after rate-limit backoff.
+- [x] Single SE DualLiquidity + Uni V4 matrix exercised: Uni V4 matrix **3/3 pass**; DualLiquidity matrix **2/3** (`test_matrix_dualLiquidity_firstBondMintBurn` → `MaxInRatio()` at tip — market/ratio environmental, not path).
+- [x] Research fixture import points at new TestBase; `forge build` green for package/tests; fixture path verified.
+- [x] AGENTS gold TestBase path updated **and** Key reference paths include DualLiquidity with not-true-DETF note.
+- [x] indexedex-testing skill DualLiquidity path updated (`.claude`, `.opencode`, `.grok`).
+- [x] Pool inventory F7 path updated (code + docs columns as applicable).
+- [x] CREATE3-affecting names untouched; leaf `v2` is directory-only.
+- [x] Product class still documented as pro-rata dual-liquidity vault (not true DETF).
+- [x] Four true-DETF full suites **not** required for this PR’s definition of done.
 
 ---
 
@@ -487,10 +518,12 @@ forge build --contracts scripts/foundry/research/dualLiquidityLinkedCrossVersion
 
 **Body (outline):**
 
-- Move DualLiquidity production package + co-located docs from `vaults/protocol/uniswap/crossVersion` to DETF Balancer host tree leaf `uniswap/v4/crossVersion/v2`.
+- Move DualLiquidity production Solidity from `vaults/protocol/uniswap/crossVersion` to DETF Balancer host tree leaf `uniswap/v4/crossVersion/v2`.
+- Relocate product PRD + optional-rates plan to `docs/detf/.../v2/` (no co-located package docs).
 - Mirror fork tests (including adversarial) to matching path under `test/foundry/fork/.../detf/...`.
-- Update imports, AGENTS, skills, pool inventory, research fixture; no type renames; no product behavior change.
-- Verification: forge build + full DualLiquidity fork suite + matrix consumers.
+- Delete empty `protocol/uniswap` parents; update imports, AGENTS (incl. Key reference paths + not-true-DETF note), skills, pool inventory, research fixture.
+- No type renames; no product behavior change.
+- Verification: forge build + full DualLiquidity fork suite + direct matrix consumers + research fixture compile.
 
 ---
 
@@ -498,24 +531,19 @@ forge build --contracts scripts/foundry/research/dualLiquidityLinkedCrossVersion
 
 | Doc / path | Role |
 |------------|------|
-| `contracts/vaults/protocol/uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` | Product as-built (moves with package) |
+| `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md` | Product as-built (**destination**; currently still under contracts until implement) |
+| `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` | Optional rates plan (**destination**) |
 | `contracts/vaults/detf/DETF_DIRECTORY_REORGANIZATION_PRD.md` | True DETF layout law; DualLiquidity previously out of scope |
-| `AGENTS.md` | Gold TestBase; DETF product law (true DETFs only) |
+| `AGENTS.md` | Gold TestBase; DETF product law (true DETFs only); Key reference paths update |
 | `docs/DETF_POOL_INTEGRATION_INVENTORY.md` | F7 DualLiquidity inventory |
 | `test/foundry/fork/base_main/vaults/protocol/uniswap/crossVersion/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Current gold TestBase (moves) |
 | `scripts/foundry/research/dualLiquidityLinkedCrossVersion/` | Research harness (stays; imports update) |
 
 ---
 
-## 15. Open questions (resolve before or during implement)
+## 15. Open questions
 
-| # | Question | Proposed default |
-|---|----------|------------------|
-| 1 | Keep product PRD co-located after move, or also copy under `docs/detf/.../v2/`? | **Co-located only** (move with package); process PRD stays under `docs/detf` |
-| 2 | Should AGENTS “Key reference paths” add DualLiquidity under the detf tree explicitly? | **Yes** — one line, with “not a true DETF” note |
-| 3 | Delete empty `contracts/vaults/protocol/` entirely if DualLiquidity was the only child? | **Yes** if empty after move |
-| 4 | Run full four true-DETF suites as part of this PR? | **No** — only DualLiquidity + direct matrix consumers unless opportunistic |
-| 5 | Leaf name `v2` vs package generation? | **Directory leaf only** — no Solidity rename; documents package generation / tree version |
+**None remaining.** All items in §0.2 are locked. Do not re-open without an explicit PRD revision.
 
 ---
 

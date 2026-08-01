@@ -88,9 +88,9 @@ contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHS
     }
 
     function test_BP4_rethToWeth_inventory_usesLadder() public {
-        // No sleeve — must burn vault rETH after inventory credit... wait:
+        // No sleeve - must burn vault rETH after inventory credit... wait:
         // rETH→WETH keeps user rETH as locked inventory and pays WETH via ladder.
-        // Vault needs locked rETH to burn if sleeve empty — user rETH is pulled first so vault has it.
+        // Vault needs locked rETH to burn if sleeve empty - user rETH is pulled first so vault has it.
         // Burn uses vault rETH including the just-pulled amount? Actually pay uses eth face of amountIn
         // and burns shortfall from vault inventory which includes the credited rETH.
         _enableBurn(10 ether);

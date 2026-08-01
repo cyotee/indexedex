@@ -20,7 +20,7 @@ import {TestBase_StandardExchangeBufferPool} from
  *          if (router != address(this)) revert NotHookCaller(router);
  *      where `router` is the first ABI parameter and `address(this)` resolves to the pool Diamond's
  *      own address at execution time.  Any caller that supplies a `router` argument other than the
- *      pool address will therefore receive a NotHookCaller revert — regardless of msg.sender.
+ *      pool address will therefore receive a NotHookCaller revert - regardless of msg.sender.
  *
  *      The two tests below exercise both entry-points with an attacker-controlled router argument
  *      and assert that the typed error is emitted with the correct argument value.

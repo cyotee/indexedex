@@ -473,7 +473,7 @@ If DualLiquidity package is mid-edit by another agent, wait for stable `useRateP
 | Path | Role |
 |------|------|
 | [DualLiquidity_Research_PRD.md](./DualLiquidity_Research_PRD.md) | Normative research requirements |
-| `contracts/vaults/protocol/uniswap/crossVersion/` | SUT |
+| `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/` | SUT |
 | `TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Gold bootstrap (`_bootstrapReserve`, `_depositCommon`) |
 | `research/scenarios/uniswapV2Se/rateProviderCompare/AGENT_RESEARCH_REPORT.md` | Prior rates/fee theory |
 | `scripts/foundry/research/uniswapV2Se/rateProviderCompare/` | Script/telemetry patterns to mirror |

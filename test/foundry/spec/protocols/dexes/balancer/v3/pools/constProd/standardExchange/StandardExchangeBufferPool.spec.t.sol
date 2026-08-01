@@ -173,7 +173,7 @@ contract StandardExchangeBufferPoolSpec is
     /// @dev The shares contribution drives invariant growth (and BPT mint); the TTA contribution
     ///      grows virtualTTA by the exact amount added (amountsInScaled18[ttaIdx]).
     function test_lpAdd_unbalanced_bothTokens_basic() public {
-        // Contribute a small TTA and a different shares amount — deliberately unequal.
+        // Contribute a small TTA and a different shares amount - deliberately unequal.
         behavior_lpAdd_unbalanced_bothTokensUnequal(5e18, 10e18);
     }
 

@@ -22,8 +22,8 @@ import {TestBase_StandardExchangeBufferPool} from
  *              occur in a live pool (you cannot burn more BPT than exists).
  *
  *      Tests retained:
- *        1. rejectsWrongCaller — onAfterAddLiquidity returns false for non-Vault msg.sender.
- *        2. rejectsWrongPool   — onAfterRemoveLiquidity returns false when pool arg ≠ address(this).
+ *        1. rejectsWrongCaller - onAfterAddLiquidity returns false for non-Vault msg.sender.
+ *        2. rejectsWrongPool   - onAfterRemoveLiquidity returns false when pool arg ≠ address(this).
  *           These access-control guards are never triggered by the RouterMock (which always passes
  *           the correct values), so they are only reachable via direct calls.
  */
