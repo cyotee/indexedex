@@ -12,9 +12,13 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
-import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+import {MultiAssetBasicVaultTarget} from "contracts/vaults/basic/MultiAssetBasicVaultTarget.sol";
 
-contract MultiAssetBasicVaultFacet is IBasicVault, IFacet {
+/**
+ * @title MultiAssetBasicVaultFacet
+ * @notice IFacet-only surface; domain logic lives on MultiAssetBasicVaultTarget (D41).
+ */
+contract MultiAssetBasicVaultFacet is MultiAssetBasicVaultTarget, IFacet {
     /* ---------------------------------------------------------------------- */
     /*                                 IFacet                                 */
     /* ---------------------------------------------------------------------- */
@@ -43,21 +47,5 @@ contract MultiAssetBasicVaultFacet is IBasicVault, IFacet {
         name_ = facetName();
         interfaces = facetInterfaces();
         functions = facetFuncs();
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                               IBasicVault                              */
-    /* ---------------------------------------------------------------------- */
-
-    function vaultTokens() external view returns (address[] memory tokens_) {
-        return MultiAssetBasicVaultRepo._vaultTokens();
-    }
-
-    function reserveOfToken(address token) external view returns (uint256 reserve_) {
-        return MultiAssetBasicVaultRepo._reserveOfToken(token);
-    }
-
-    function reserves() external view returns (uint256[] memory reserves_) {
-        return MultiAssetBasicVaultRepo._reserves();
     }
 }

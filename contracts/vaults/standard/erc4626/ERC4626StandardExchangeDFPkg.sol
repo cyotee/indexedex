@@ -19,6 +19,8 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -128,7 +130,7 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](8);
+        interfaces = new bytes4[](10);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -137,9 +139,14 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
         interfaces[5] = type(IStandardExchangeIn).interfaceId;
         interfaces[6] = type(IStandardExchangeOut).interfaceId;
         interfaces[7] = type(IERC4626StandardExchange).interfaceId;
+        interfaces[8] = type(IBasicVault).interfaceId;
+        interfaces[9] = type(IStandardVault).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+        // Multi-asset Basic + Standard (PRD §6.0.B). MultiAssetStandard replaces
+        // ERC4626StandardVaultFacet for IStandardVault so vaultConfig.tokens uses
+        // MultiAssetBasicVaultRepo (protocolVault + asset), avoiding FunctionAlreadyPresent.
         cuts = new IDiamond.FacetCut[](9);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
@@ -162,14 +169,14 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
             functionSelectors: ERC4626_FACET.facetFuncs()
         });
         cuts[4] = IDiamond.FacetCut({
-            facetAddress: address(ERC4626_STANDARD_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC4626_STANDARD_VAULT_FACET.facetFuncs()
-        });
-        cuts[5] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
+        });
+        cuts[5] = IDiamond.FacetCut({
+            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
         cuts[6] = IDiamond.FacetCut({
             facetAddress: address(EXCHANGE_IN_FACET),
