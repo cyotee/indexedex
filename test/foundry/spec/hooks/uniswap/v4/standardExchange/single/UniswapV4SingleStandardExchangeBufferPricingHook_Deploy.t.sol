@@ -13,18 +13,18 @@ import {TestBase_ERC4626StandardExchange} from
     "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
-import {IUniswapV4BufferAndPricingHook} from
-    "contracts/hooks/uniswap/v4/standardExchange/interfaces/IUniswapV4BufferAndPricingHook.sol";
+import {IUniswapV4SingleStandardExchangeBufferPricingHook} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferPricingHook.sol";
 import {
-    UniswapV4BufferAndPricingHook_FactoryService
-} from "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHook_FactoryService.sol";
+    UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService
+} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHook_Deploy_Test
+ * @title UniswapV4SingleStandardExchangeBufferPricingHook_Deploy_Test
  * @notice Deploy / mine / idempotency / preview passthrough tests (production create3Factory path).
  */
-contract UniswapV4BufferAndPricingHook_Deploy_Test is TestBase_ERC4626StandardExchange {
-    using UniswapV4BufferAndPricingHook_FactoryService for ICreate3FactoryProxy;
+contract UniswapV4SingleStandardExchangeBufferPricingHook_Deploy_Test is TestBase_ERC4626StandardExchange {
+    using UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService for ICreate3FactoryProxy;
 
     SimpleMintableERC20 internal underlying;
     SimpleYieldERC4626 internal protocolVault;
@@ -48,35 +48,35 @@ contract UniswapV4BufferAndPricingHook_Deploy_Test is TestBase_ERC4626StandardEx
         );
 
         // create3Factory onlyOwnerOrOperator — test contract is operator via CraneTest
-        hook = UniswapV4BufferAndPricingHook_FactoryService.deployHook(
+        hook = UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.deployHook(
             create3Factory, pm, se, address(underlying)
         );
     }
 
     function test_HD1_deployedFlagsMatchBaseTokenWrapperPermissions() public view {
-        uint160 flags = UniswapV4BufferAndPricingHook_FactoryService.requiredFlags();
+        uint160 flags = UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.requiredFlags();
         assertEq(uint160(hook) & HookMinerCreate3.FLAG_MASK, flags);
         Hooks.validateHookPermissions(IHooks(hook), _perms());
     }
 
     function test_HD2_idempotentRedeploySameNamespace() public {
-        address again = UniswapV4BufferAndPricingHook_FactoryService.deployHook(
+        address again = UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.deployHook(
             create3Factory, pm, se, address(underlying)
         );
         assertEq(again, hook);
     }
 
     function test_HD3_differentNamespace_secondInstance() public {
-        address other = UniswapV4BufferAndPricingHook_FactoryService.deployHook(
-            create3Factory, pm, se, address(underlying), "uv4-buffer-pricing-hook-test-"
+        address other = UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.deployHook(
+            create3Factory, pm, se, address(underlying), "uv4-single-se-buffer-pricing-hook-test-"
         );
         assertTrue(other != hook);
-        assertEq(uint160(other) & HookMinerCreate3.FLAG_MASK, UniswapV4BufferAndPricingHook_FactoryService.requiredFlags());
-        assertEq(IUniswapV4BufferAndPricingHook(other).standardExchange(), se);
+        assertEq(uint160(other) & HookMinerCreate3.FLAG_MASK, UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.requiredFlags());
+        assertEq(IUniswapV4SingleStandardExchangeBufferPricingHook(other).standardExchange(), se);
     }
 
     function test_HD5_viewsEqualDeployArgs() public view {
-        IUniswapV4BufferAndPricingHook h = IUniswapV4BufferAndPricingHook(hook);
+        IUniswapV4SingleStandardExchangeBufferPricingHook h = IUniswapV4SingleStandardExchangeBufferPricingHook(hook);
         assertEq(address(h.poolManager()), address(pm));
         assertEq(h.standardExchange(), se);
         assertEq(h.underlying(), address(underlying));
@@ -96,7 +96,7 @@ contract UniswapV4BufferAndPricingHook_Deploy_Test is TestBase_ERC4626StandardEx
     }
 
     function deployHookExternal(address underlying_) external returns (address) {
-        return UniswapV4BufferAndPricingHook_FactoryService.deployHook(
+        return UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.deployHook(
             create3Factory, pm, se, underlying_
         );
     }
@@ -116,7 +116,7 @@ contract UniswapV4BufferAndPricingHook_Deploy_Test is TestBase_ERC4626StandardEx
         );
 
         uint256 amountIn = 10 ether;
-        uint256 fromHook = IUniswapV4BufferAndPricingHook(hook).previewWrap(amountIn);
+        uint256 fromHook = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrap(amountIn);
         uint256 fromSE = IStandardExchangeIn(se).previewExchangeIn(
             IERC20(address(underlying)), amountIn, IERC20(se)
         );
@@ -125,13 +125,13 @@ contract UniswapV4BufferAndPricingHook_Deploy_Test is TestBase_ERC4626StandardEx
 
     function test_HP2_zeroPreview_reverts() public {
         vm.expectRevert();
-        IUniswapV4BufferAndPricingHook(hook).previewWrap(0);
+        IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrap(0);
         vm.expectRevert();
-        IUniswapV4BufferAndPricingHook(hook).previewUnwrap(0);
+        IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrap(0);
         vm.expectRevert();
-        IUniswapV4BufferAndPricingHook(hook).previewWrapExactOut(0);
+        IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrapExactOut(0);
         vm.expectRevert();
-        IUniswapV4BufferAndPricingHook(hook).previewUnwrapExactOut(0);
+        IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrapExactOut(0);
     }
 
     function _perms() internal pure returns (Hooks.Permissions memory) {

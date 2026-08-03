@@ -4,11 +4,11 @@ pragma solidity ^0.8.0;
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 
 /**
- * @title IUniswapV4BufferAndPricingHook
+ * @title IUniswapV4SingleStandardExchangeBufferPricingHook
  * @notice Public surface for Uniswap V4 buffer/pricing hook bound to one SE + underlying.
  * @dev No wrapZeroForOne() public getter (D70/D73). Previews are SE passthroughs only.
  */
-interface IUniswapV4BufferAndPricingHook {
+interface IUniswapV4SingleStandardExchangeBufferPricingHook {
     function poolManager() external view returns (IPoolManager);
     function standardExchange() external view returns (address);
     function underlying() external view returns (address);

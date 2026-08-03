@@ -1,10 +1,10 @@
-# PRD: Uniswap V4 Buffer and Pricing Hook (Standard Exchange)
+# PRD: Uniswap V4 Single Standard Exchange Buffer Pricing Hook
 
-**Name:** `UniswapV4BufferAndPricingHook`  
+**Name:** `UniswapV4SingleStandardExchangeBufferPricingHook`  
 **Date:** 2026-08-02  
 **Status:** Product + implementor-edge decisions locked (implementation planning ready)  
 **Clarifications locked:** 2026-08-02 (see **D48–D74** and §3.1)  
-**Package path:** `contracts/hooks/uniswap/v4/standardExchange/`  
+**Package path:** `contracts/hooks/uniswap/v4/standardExchange/single/`  
 **Package kind:** IndexedEx **hook deploy package** — CREATE3-mined single contract via the **existing** ecosystem `create3Factory` + `HookMinerCreate3` + FactoryService helpers. **Not** a vault share diamond; **not** a second CREATE3 factory; **not** `DiamondPackageCallBackFactory` for the hook instance (v1). **Not** a Facet/DFPkg diamond product — use **Repo + Target** style on a single mined contract.
 
 **In-scope dependency (mandatory for implementors):** fix and complete the **generic ERC-4626 Standard Exchange** package under `contracts/vaults/standard/erc4626/` so the hook can price and settle **only** through `IStandardExchangeIn` / `IStandardExchangeOut` for the full exact-in + exact-out matrix. See **§6.0**. Shipping the hook without those SE fixes is **out of compliance** with this PRD.
@@ -96,8 +96,8 @@ Swap SE → WETH:  take SE → SE.exchangeOut → Morpho redeem → pay WETH
 
 | # | Decision | Value |
 |---|----------|--------|
-| D1 | Product name | **`UniswapV4BufferAndPricingHook`** |
-| D2 | Package location | `contracts/hooks/uniswap/v4/standardExchange/` |
+| D1 | Product name | **`UniswapV4SingleStandardExchangeBufferPricingHook`** |
+| D2 | Package location | `contracts/hooks/uniswap/v4/standardExchange/single/` |
 | D3 | SE generality | **Any `IStandardExchange`** with closed-form underlying ↔ SE routes; **underlying explicit at deploy**; deploy **requires** `underlying ∈ SE.vaultTokens()` (no empty-SE preview smoke) |
 | D4 | Morpho-specific SE | **Not required** — generic ERC-4626 SE after §6.0 fixes; interest via protocol 4626 inside SE previews |
 | D5 | Pricing correctness rule | Quotes must use **SE ↔ underlying** previews (`previewExchangeIn` / `previewExchangeOut`); **forbidden** as sole NAV: SE `convertToAssets` when `asset()` is protocol-vault shares only; **forbidden**: hook reimplements pro-rata/Morpho math |
@@ -115,8 +115,8 @@ Swap SE → WETH:  take SE → SE.exchangeOut → Morpho redeem → pay WETH
 | D17 | Pool initialization | **External caller / script only**; package deploys hook only; **no normative product tickSpacing/sqrtPrice**. Hook `beforeInitialize` still validates pair + fee=0. **Test convention (D56 / D60):** hermetic/fork TestBases use **`tickSpacing = 60`** and **1:1 mid `sqrtPriceX96`** (`TickMath.getSqrtPriceAtTick(0)` or equivalent) |
 | D18 | Hook address mining | **Required**. Mine with **`HookMinerCreate3`** helpers (`computeAddress` / CREATE3 address formula; `deployer = address(existing create3Factory)`). **FactoryService owns the binding-aware mine loop** (do not call bare `find` / `findWithPrefix` alone for product deploys — see D32 / §8.5). Prefer off-chain mine in FactoryService |
 | D19 | Deploy form (v1 **locked**) | **CREATE3-mined single hook contract** via **existing** `create3Factory` + **`HookMinerCreate3`**. No second CREATE3 factory; no `DiamondPackageCallBackFactory.deploy` for hook instance |
-| D20 | Registration / deploy surface | **Library on existing create3Factory only** — not vault registry, not `deployPkg`, **not** a new IndexedexManager surface. Typed `UniswapV4BufferAndPricingHook_FactoryService` = **internal library helpers** on `ICreate3FactoryProxy` (peer facet FactoryService pattern). ACL = existing `create3` / `create3WithArgs` **`onlyOwnerOrOperator`** |
-| D21 | CREATE3 salt namespace | **Default namespace:** `"uv4-buffer-pricing-hook-"`. **Override allowed** on `deployHook` (empty / omitted → default). Binding + mineNonce are always part of salt material (D32). **Multi-instance (D58):** same `(poolManager, SE, underlying)` with a **different** non-empty namespace is an **intentional** way to deploy **multiple** hook instances (e.g. test vs prod, A/B). Idempotency (D37) is **per** `(namespace, poolManager, SE, underlying)` |
+| D20 | Registration / deploy surface | **Library on existing create3Factory only** — not vault registry, not `deployPkg`, **not** a new IndexedexManager surface. Typed `UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService` = **internal library helpers** on `ICreate3FactoryProxy` (peer facet FactoryService pattern). ACL = existing `create3` / `create3WithArgs` **`onlyOwnerOrOperator`** |
+| D21 | CREATE3 salt namespace | **Default namespace:** `"uv4-single-se-buffer-pricing-hook-"`. **Override allowed** on `deployHook` (empty / omitted → default). Binding + mineNonce are always part of salt material (D32). **Multi-instance (D58):** same `(poolManager, SE, underlying)` with a **different** non-empty namespace is an **intentional** way to deploy **multiple** hook instances (e.g. test vs prod, A/B). Idempotency (D37) is **per** `(namespace, poolManager, SE, underlying)` |
 | D22 | Miner/deployer consistency | Miner `deployer` **must** equal `create3Factory`. Mining with EOA/`address(this)` then deploying via factory is **forbidden** |
 | D23 | Preview fidelity | **preview == execution** on closed-form wrap/unwrap (± **`MAX_DUST_WEI` (10)** only if SE documents multi-leg dust per D50/D55). SE interfaces treat preview as source of truth |
 | D24 | Fees in previews | **Previews ALWAYS include any usage/mint fees** as they affect state / return values. Hook does not invent a second fee layer. Fee **shape** locked in D40 |
@@ -130,7 +130,7 @@ Swap SE → WETH:  take SE → SE.exchangeOut → Morpho redeem → pay WETH
 | D29 | Binding | **Constructor immutables** for `poolManager`, `standardExchange`, `underlying`; Diamond **Repo** for any non-immutable layout fields / flags as needed; **no post-deploy `initialize` for binding** |
 | D30 | Pool vault currency | **Always `address(SE)`** (SE diamond / share token). No separate share-token arg in v1 |
 | D31 | Settlement | Prefer **pretransferred** when SE implements it. **Exact-out Out:** compute `amountIn`, burn/spend **only** that, **refund** refundable excess (pretransferred or pull); unrefundable multi-leg dust ≤ **`MAX_DUST_WEI = 10`** → oracle **`feeTo` only (D50 / D66)** when non-zero; **skip if `feeTo == 0` (D71)**; under-delivery of `amountOut` → **`Slippage` (D69)**; **zero amounts revert (D74)**. **No Permit2** on hook paths in v1. **Hook exact-out take (D43):** from PoolManager take **exactly** SE-previewed `amountIn` (no surplus pull) |
-| D32 | Salt scheme | **Binding-aware CREATE3 salt** (locked). Material = `namespace, poolManager, standardExchange, underlying, mineNonce`. **Encode (option C):** Crane **`BetterEfficientHashLib`** — same style as `HookMinerCreate3.findWithPrefix`: `salt = abi.encodePacked(namespace, poolManager, standardExchange, underlying, mineNonce)._hash()`. **Canonical implementation lives only in `UniswapV4BufferAndPricingHook_FactoryService`** (public pure helpers for salt + mine) so every deployer shares one formula. `mineNonce` until flags match. Same binding + namespace ⇒ same address. Use `HookMinerCreate3.computeAddress` (`deployer = create3Factory`). **Do not** bare `find` / `findWithPrefix` for product deploys (empty-only breaks D37) |
+| D32 | Salt scheme | **Binding-aware CREATE3 salt** (locked). Material = `namespace, poolManager, standardExchange, underlying, mineNonce`. **Encode (option C):** Crane **`BetterEfficientHashLib`** — same style as `HookMinerCreate3.findWithPrefix`: `salt = abi.encodePacked(namespace, poolManager, standardExchange, underlying, mineNonce)._hash()`. **Canonical implementation lives only in `UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService`** (public pure helpers for salt + mine) so every deployer shares one formula. `mineNonce` until flags match. Same binding + namespace ⇒ same address. Use `HookMinerCreate3.computeAddress` (`deployer = create3Factory`). **Do not** bare `find` / `findWithPrefix` for product deploys (empty-only breaks D37) |
 | D33 | Public previews on hook | **Yes** — all wrap/unwrap exact-in/out preview helpers are permissionless views |
 | D34 | ERC-4626 SE co-work | **In scope of this PRD** — implementors **must** fix ERC-4626 SE per §6.0 |
 | D35 | Fork priority | **Robinhood first**, then **Base**. Base Morpho addresses: **prefer Morpho official documentation** |
@@ -171,7 +171,7 @@ Swap SE → WETH:  take SE → SE.exchangeOut → Morpho redeem → pay WETH
 | D70 | `wrapZeroForOne` storage | **Repo storage only.** Set once in ctor from address sort (D62). **Not** a Solidity `immutable` field (unlike Crane `BaseTokenWrapperHook`). No post-deploy setter. **No public product getter (D73)** |
 | D71 | Dust absorb when `feeTo == 0` | **Skip absorb.** Mirror Rocket Pool dilution fee mint: if `address(feeOracle.feeTo()) == address(0)`, **do not** transfer residual dust; residual may remain on SE/hook **only** in that edge. **Do not** revert solely because `feeTo` is zero; **do not** burn residual as a substitute; **do not** invent an alternate sink. NatSpec must document skip-when-zero. Dilution fee mint already skips when `feeTo == 0` / `feePct == 0` (Rocket peer) |
 | D72 | RH / Base vault pin selection | **Morpho-official / curated WETH Vault V2 only.** Pin addresses from Morpho documentation or Morpho-curated vault lists. **Forbidden** as sole pin criterion: highest-TVL scan, first arbitrary live instance, or runtime discovery. Same spirit for **Base P1** when pinning a vault instance. Factory + infra constants (D47) still required; pin is the **instance** address |
-| D73 | `wrapZeroForOne` public surface | **No public getter on product interface.** `IUniswapV4BufferAndPricingHook` does **not** expose `wrapZeroForOne()`. Currency order is **Repo-only** (D70); tests assert behavior via pool init + swaps, not a dedicated view. Internal Target/Common may still read Repo |
+| D73 | `wrapZeroForOne` public surface | **No public getter on product interface.** `IUniswapV4SingleStandardExchangeBufferPricingHook` does **not** expose `wrapZeroForOne()`. Currency order is **Repo-only** (D70); tests assert behavior via pool init + swaps, not a dedicated view. Internal Target/Common may still read Repo |
 | D74 | Zero amountIn / amountOut | **Revert on zero.** Hook wrap/unwrap and ERC-4626 SE `previewExchange*` / `exchangeIn` / `exchangeOut` routes **must revert** when `amountIn == 0` or exact-out `amountOut == 0` (prefer a clear amount error; `Slippage` / existing SE errors OK if peer already uses them). **No** no-op success path that returns zero and succeeds |
 
 ### 3.1 Clarification lock notes (2026-08-02)
@@ -208,12 +208,12 @@ Swap SE → WETH:  take SE → SE.exchangeOut → Morpho redeem → pay WETH
 ┌──────────────────────────────────────────────────────────────────┐
 │ Uniswap V4 PoolManager                                           │
 │   PoolKey: currency0/1 = {underlying, SE}, fee=0,                │
-│            hooks = UniswapV4BufferAndPricingHook instance        │
+│            hooks = UniswapV4SingleStandardExchangeBufferPricingHook instance        │
 └────────────────────────────┬─────────────────────────────────────┘
                              │ beforeSwap + BeforeSwapDelta
                              ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│ UniswapV4BufferAndPricingHook (this package)                     │
+│ UniswapV4SingleStandardExchangeBufferPricingHook (this package)                     │
 │   underlyingCurrency = WETH (example)                            │
 │   wrapperCurrency    = SE shares                                 │
 │   se                 = IStandardExchangeIn/Out                   │
@@ -294,36 +294,37 @@ Unwrap exact-in:
 
 ## 5. Package surface (normative file plan)
 
-Target layout under `contracts/hooks/uniswap/v4/standardExchange/`:
+Target layout under `contracts/hooks/uniswap/v4/standardExchange/single/`:
 
 ```text
-contracts/hooks/uniswap/v4/standardExchange/
-  UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md          # this file
-  UNISWAP_V4_BUFFER_AND_PRICING_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md  # follow-on
+contracts/hooks/uniswap/v4/standardExchange/single/
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md          # this file
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md  # follow-on
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_MOVE_AND_RENAME_PLAN.md
 
   interfaces/
-    IUniswapV4BufferAndPricingHook.sol               # marker + public previews + views
+    IUniswapV4SingleStandardExchangeBufferPricingHook.sol               # marker + public previews + views
 
-  UniswapV4BufferAndPricingHookRepo.sol              # Diamond-pattern storage layout (Repo library)
-  UniswapV4BufferAndPricingHookCommon.sol            # preview helpers (SE calls only), currency order, settlement
-  UniswapV4BufferAndPricingHookTarget.sol            # IHooks logic (pattern-copy BaseTokenWrapperHook; no inheritance — D51)
-  UniswapV4BufferAndPricingHook.sol                  # single CREATE3-mined contract (wires Target/Repo)
+  UniswapV4SingleStandardExchangeBufferPricingHookRepo.sol              # Diamond-pattern storage layout (Repo library)
+  UniswapV4SingleStandardExchangeBufferPricingHookCommon.sol            # preview helpers (SE calls only), currency order, settlement
+  UniswapV4SingleStandardExchangeBufferPricingHookTarget.sol            # IHooks logic (pattern-copy BaseTokenWrapperHook; no inheritance — D51)
+  UniswapV4SingleStandardExchangeBufferPricingHook.sol                  # single CREATE3-mined contract (wires Target/Repo)
 
-  UniswapV4BufferAndPricingHook_FactoryService.sol   # mine off-chain via HookMinerCreate3 + create3Factory
+  UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.sol   # mine off-chain via HookMinerCreate3 + create3Factory
   # Optional: thin Deployer helper script/contract wrapping FactoryService
 
   # FORBIDDEN for hook product:
   #   *Facet.sol, *DFPkg.sol, I*DFPkg.sol
 ```
 
-**Naming lock:** product and primary types use **`UniswapV4BufferAndPricingHook`** (not “SEBufferHook” in code).
+**Naming lock:** product and primary types use **`UniswapV4SingleStandardExchangeBufferPricingHook`** (not “SEBufferHook” in code).
 
 **Shape lock (D15):** Diamond **storage + Repo library + Target** patterns; **no Facet**, **no DFPkg**, **no** diamond package factory for the hook instance.
 
 ### 5.1 Interface sketch (informative)
 
 ```solidity
-interface IUniswapV4BufferAndPricingHook {
+interface IUniswapV4SingleStandardExchangeBufferPricingHook {
     function poolManager() external view returns (IPoolManager);
     function standardExchange() external view returns (address); // SE diamond
     function underlying() external view returns (address);
@@ -349,9 +350,9 @@ All preview functions are **public / permissionless** (D32). Implementations **m
 ### 5.2 Deploy API (FactoryService — no DFPkg)
 
 ```solidity
-// UniswapV4BufferAndPricingHook_FactoryService (library on create3Factory — D20)
+// UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService (library on create3Factory — D20)
 // internal helpers; call path: scripts/tests with create3Factory owner/operator
-// Default namespace when saltNamespace is empty: "uv4-buffer-pricing-hook-" (D21)
+// Default namespace when saltNamespace is empty: "uv4-single-se-buffer-pricing-hook-" (D21)
 // NOT on IndexedexManager; NOT vault registry / deployPkg
 function deployHook(
     ICreate3FactoryProxy create3Factory,
@@ -382,11 +383,11 @@ function deployHook(
 
 **Salt (D32) — binding-aware mine + EfficientHash (locked):**
 
-Canonical encode lives in **`UniswapV4BufferAndPricingHook_FactoryService`** only (everyone deploys through it):
+Canonical encode lives in **`UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService`** only (everyone deploys through it):
 
 ```solidity
 // using BetterEfficientHashLib for bytes;
-// DEFAULT_SALT_NAMESPACE = "uv4-buffer-pricing-hook-"
+// DEFAULT_SALT_NAMESPACE = "uv4-single-se-buffer-pricing-hook-"
 
 function hookSalt(
     string memory namespace, // empty → DEFAULT_SALT_NAMESPACE
@@ -403,7 +404,7 @@ function hookSalt(
 Mine / deploy loop:
 
 ```text
-namespace = saltNamespace if non-empty else "uv4-buffer-pricing-hook-"
+namespace = saltNamespace if non-empty else "uv4-single-se-buffer-pricing-hook-"
 // Different namespace ⇒ different salt stream ⇒ multi-instance for same (pm, se, underlying) is intentional (D58)
 
 for mineNonce = 0 .. MAX_LOOP:   // same bound spirit as HookMinerCreate3.MAX_LOOP
@@ -699,7 +700,7 @@ After pure Morpho interest (no new SE mints) — real accrual only (D52):
 ┌────────────────────────────────────────────────────────────┐
 │ Existing create3Factory (ecosystem singleton / test base)  │
 │   • deploy facets (today)                                  │
-│   • deploy UniswapV4BufferAndPricingHook instances (this)  │
+│   • deploy UniswapV4SingleStandardExchangeBufferPricingHook instances (this)  │
 │   • HookMinerCreate3.deployer == address(create3Factory)    │
 └────────────────────────────────────────────────────────────┘
 ```
@@ -709,7 +710,7 @@ After pure Morpho interest (no new SE mints) — real accrual only (D52):
 | Layer | Path | Deploys |
 |-------|------|---------|
 | Hook implementation bytecode | Via **existing** `create3Factory` + **mined** salt | One contract per (SE, underlying) [+ ctor immutables] |
-| Typed helpers | `UniswapV4BufferAndPricingHook_FactoryService` | **Internal library** on create3Factory (D20); mines salt, calls `create3Factory`, labels, returns hook |
+| Typed helpers | `UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService` | **Internal library** on create3Factory (D20); mines salt, calls `create3Factory`, labels, returns hook |
 | Optional deploy helper | script wrapping `deployHook` | Mines + create3 only; **does not** require `DiamondPackageCallBackFactory.deploy`; **not** a DFPkg; **not** IndexedexManager / vault registry |
 
 Salt **namespace** (D19): never reuse plain `abi.encode(type(X).name)._hash()` style facet salts for hooks.
@@ -888,7 +889,7 @@ Facets still CREATE3 as usual. Only the **proxy** is flag-mined CREATE2.
 // (Solmate CREATE3: intermediate proxy CREATE2, then CREATE child — init code does NOT affect address)
 
 flags = BEFORE_INITIALIZE | BEFORE_ADD_LIQUIDITY | BEFORE_SWAP | BEFORE_SWAP_RETURNS_DELTA
-namespace = override or default "uv4-buffer-pricing-hook-"   // D21
+namespace = override or default "uv4-single-se-buffer-pricing-hook-"   // D21
 
 // CRITICAL: deployer must be create3Factory, not the script EOA / test contract
 // FactoryService mine loop (D32 / D37) — NOT bare find / findWithPrefix:
@@ -1024,12 +1025,12 @@ test/foundry/spec/vaults/standard/erc4626/
   ERC4626StandardExchange_*_VaultTokens.t.sol
 
 # Hook
-contracts/hooks/uniswap/v4/standardExchange/test/bases/
-  TestBase_UniswapV4BufferAndPricingHook.sol
-test/foundry/spec/hooks/uniswap/v4/standardExchange/
-  UniswapV4BufferAndPricingHook_*.t.sol
-test/foundry/fork/robinhood_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
-test/foundry/fork/base_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
+contracts/test/bases/
+  TestBase_UniswapV4SingleStandardExchangeBufferPricingHook.sol  # optional; not required for v1 Deploy/Routes
+test/foundry/spec/hooks/uniswap/v4/standardExchange/single/
+  UniswapV4SingleStandardExchangeBufferPricingHook_*.t.sol
+test/foundry/fork/robinhood_main/.../UniswapV4SingleStandardExchangeBufferPricingHook_*_Fork.t.sol
+test/foundry/fork/base_main/.../UniswapV4SingleStandardExchangeBufferPricingHook_*_Fork.t.sol
 ```
 
 ---
@@ -1096,7 +1097,7 @@ test/foundry/fork/base_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
 - Hook v1 test matrix: **ERC-4626 / Morpho only** (D45).  
 - Deploy: `underlying ∈ vaultTokens()`; no empty-SE preview smoke; empty-SE first-deposit is **already shipped SE law — do not rework** (D48).  
 - Prefer pretransferred; **`deadline = block.timestamp` only** (D59); recipient on SE APIs.  
-- **Salt (D21/D32/D37/D58):** fields `namespace, pm, se, underlying, mineNonce`; **encode = `abi.encodePacked(...)._hash()` via FactoryService only**; default namespace `"uv4-buffer-pricing-hook-"` (overridable); **different namespace ⇒ intentional multi-instance** for same binding; same namespace+binding → existing expected hook; wrong occupant **reverts**; mine exhaustion **reverts** (D65).  
+- **Salt (D21/D32/D37/D58):** fields `namespace, pm, se, underlying, mineNonce`; **encode = `abi.encodePacked(...)._hash()` via FactoryService only**; default namespace `"uv4-single-se-buffer-pricing-hook-"` (overridable); **different namespace ⇒ intentional multi-instance** for same binding; same namespace+binding → existing expected hook; wrong occupant **reverts**; mine exhaustion **reverts** (D65).  
 - **Hook swap on Target via SE In/Out** (D39); **no Solidity inheritance** of `BaseTokenWrapperHook` / `BaseHook` / `DeltaResolver` — **full pattern-copy only** (D51 / D67).  
 - **Canonical miner path:** `hooks/public/utils/HookMinerCreate3.sol` via FactoryService loop (**not** bare `find`).  
 - **`wrapZeroForOne` at ctor from address sort → Repo storage only** (D62 / D70); **no public getter (D73)**; Repo has **no** deadline-skew field (D49 / D59).  
@@ -1174,12 +1175,13 @@ test/foundry/fork/base_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
 
 | Date | Change |
 |------|--------|
+| 2026-08-03 | **Move + rename under `single/`:** package path `contracts/hooks/uniswap/v4/standardExchange/single/`; product `UniswapV4SingleStandardExchangeBufferPricingHook`; CREATE3 default salt `"uv4-single-se-buffer-pricing-hook-"`; Repo storage id `"indexedex.hooks.uv4.single.se.buffer.pricing.storage"`; Deploy-test override `"uv4-single-se-buffer-pricing-hook-test-"`; dual package untouched (stale dual→single links accepted until dual follow-up). See `UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_MOVE_AND_RENAME_PLAN.md`. |
 | 2026-08-02 | **Clarification lock (ask pass 4):** D71 dust absorb **skip when `feeTo == 0`** (Rocket peer); D72 vault pin = **Morpho-official / curated only** (not TVL/arbitrary); D73 **no public `wrapZeroForOne()`**; D74 **zero amounts revert** (hook + SE); §3.1 / §5–§7 / §9–§14 aligned |
 | 2026-08-02 | **Clarification lock (ask pass 3):** D66 dust → **oracle `feeTo` only**; D67 **no** `BaseHook`/`DeltaResolver` inheritance (full pattern-copy); D68 **pin WETH Morpho Vault V2** before RH P0; D69 exact-out under-delivery → **`Slippage`** (dust ≠ shortfall); D70 **`wrapZeroForOne` Repo-only** (not immutable); §3.1 / §5.3 / §6 / §9–§14 aligned |
 | 2026-08-02 | **Implementor-edge ask lock:** D40a/D57 WAD fee unit; D50/D55 `MAX_DUST_WEI=10`; D53 views-only `isExpectedHook`; D54 ERC-4626-only regression floor; D52 real interest accrual only; D56 test `tickSpacing=60`; D51 pattern-copy hook (no `BaseTokenWrapperHook` inheritance); D13/D25/D37/D39/D41/§6–§14 aligned |
 | 2026-08-02 | **Lock D50:** unrefundable multi-leg exact-out dust **absorbed** (not second-transfer user refund; not hook inventory); later tightened to `MAX_DUST_WEI=10` and destination **oracle `feeTo` only** (D66) |
 | 2026-08-02 | **Clarification lock (ask pass):** D42 exit usage fee none; D41 ERC-4626-focused blast radius; D20 FactoryService library only; D43 exact preview take; D44 protocolVault→SE SE-only; D45 Morpho/4626 test matrix; D46 tight SE bounds; D47 existing RH constants; D48 empty-SE is SE law; D49 optional Repo |
-| 2026-08-02 | Initial PRD: UniswapV4BufferAndPricingHook package, SE buffer + Morpho-aware pricing, DFPkg layout, reuse inventory |
+| 2026-08-02 | Initial PRD: UniswapV4SingleStandardExchangeBufferPricingHook package, SE buffer + Morpho-aware pricing, DFPkg layout, reuse inventory |
 | 2026-08-02 | Clarifications: mined-address / diamond OK with proxy salt mining; exact-in+out both ways; factory-only registry; any SE + explicit underlying; external pool init |
 | 2026-08-02 | §8.5: full address-mining law — CREATE2/CREATE3 miners, diamond factory salt formula, mine-nonce PkgArgs path, etch-not-production |
 | 2026-08-02 | Diamond salt includes pkg but mining still possible with mineNonce; **prefer CREATE3 + HookMinerCreate3** over DiamondPackageCallBackFactory for hook instance |
@@ -1189,7 +1191,7 @@ test/foundry/fork/base_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
 | 2026-08-02 | **§6.0 mandatory:** implementors **must** fix ERC-4626 SE — wrap exact-out (`tokenOut=SE`), unwrap exact-in, `pretransferred`/preview fidelity, **`vaultTokens()` via typical facets + init `[protocolVault, asset()]`** |
 | 2026-08-02 | **Lock:** exact-out calc amountIn + refund excess (D38); protocolVault→SE exact-out; previews always include fees (D24); idempotent deployHook (D37); MultiAsset Targets extracted + Facets inherit; Base Morpho from Morpho docs; RH then Base |
 | 2026-08-02 | **Clarify:** MultiAsset Facets cut into **ERC-4626 SE proxy** (not hook); **D24a** tests must set non-zero **Vault Fee Oracle** usage fee |
-| 2026-08-02 | **Lock clarifications:** binding-aware salt + default namespace `"uv4-buffer-pricing-hook-"` (override OK); D37 collision revert if not expected hook; D39 SE exact-out on Target (later: pattern-copy, no BaseTokenWrapperHook inheritance — D51); correct `HookMinerCreate3` path + use `computeAddress` not bare find/findWithPrefix |
+| 2026-08-02 | **Lock clarifications:** binding-aware salt + default namespace `"uv4-single-se-buffer-pricing-hook-"` (override OK); D37 collision revert if not expected hook; D39 SE exact-out on Target (later: pattern-copy, no BaseTokenWrapperHook inheritance — D51); correct `HookMinerCreate3` path + use `computeAddress` not bare find/findWithPrefix |
 | 2026-08-02 | **Lock:** salt encode option C — `BetterEfficientHashLib` `encodePacked(...)._hash()` **only in FactoryService**; **D40 dilution usage fee** (mint fee extra, never skim user); **D41** MultiAsset domain on Targets, Facets IFacet-only; refund dust |
 | 2026-08-02 | **Consistency pass:** wrap exact-out sketch + §7 pricing notes + §10/§14 DoD aligned to D40 dilution (fee does not increase amountIn / does not skim user) |
 | 2026-08-02 | **Clarification lock (ask pass 2):** D48 first-deposit already shipped (no §6.0 rework); D58 namespace multi-instance intentional; D59 `deadline = block.timestamp` only; D60 test 1:1 mid sqrtPrice; D61 interest strict increase only; D62 ctor address-sort currency order; D63 SE-first stack; D64 no Uni V4 DETF coupling; D65 mine-loop exhaustion reverts; §8.1 bare-`find` wording fixed to FactoryService mine loop; §3.1 notes table |

@@ -25,7 +25,7 @@
 **Related Crane / IndexedEx standards (mandatory pattern sources):**
 
 - Single buffer PRD (package shape, CREATE3 mine, settle pattern-copy, inheritance ban):  
-  `contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md`
+  `contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md`
 - Dual buffer PRD (LP ERC-20 on hook, custom deposit surface, `beforeAddLiquidity` ban):  
   `contracts/hooks/uniswap/v4/standardExchange/dual/UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`
 - Orbital PRD (multi-pool shared inventory + Repo/Target/Math peer for multi-asset hooks):  
@@ -691,7 +691,7 @@ function deployHook(
 
 **Ctor validation (hook):** non-zero token addresses; **`token0 < token1 < token2 < token3`**; no native ETH; decimals ∈ [6,18]; `0 < lpFeePips < 1_000_000`; `0 < baseAmp < MAX_AMP`; each rate provider is `address(0)` or a contract that will be called as `IRateProvider` (no on-chain bytecode probe required beyond non-EOA optional guidance — runtime fail-closed D74); `Hooks.validateHookPermissions(this, permissions)`; cache decimals + LP name/symbol.
 
-**Mine loop:** same structure as `UniswapV4BufferAndPricingHook_FactoryService` (binding-aware salt + `computeAddress` + empty deploy / expected return / collision revert / MAX_LOOP exhaust).
+**Mine loop:** same structure as `UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService` (binding-aware salt + `computeAddress` + empty deploy / expected return / collision revert / MAX_LOOP exhaust).
 
 **`isExpectedHook`:** views match deploy args (pm, four tokens, fee, amp fingerprint, code present).
 

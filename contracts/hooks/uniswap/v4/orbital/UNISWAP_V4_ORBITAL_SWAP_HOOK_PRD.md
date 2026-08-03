@@ -2,10 +2,19 @@
 
 **Name:** `UniswapV4OrbitalSwapHook`  
 **Date:** 2026-08-03  
-**Status:** **v1.10 plan-ready** — O1–O9 + Q1–Q42 + growth fee (2026-08-03). Prior locks plus **Q37–Q42:** bit-exact previews; partial-book **seed-only** add; full-book **three-leg proportional only** (no on-hook zap); LP **EIP-2612** + remove burns `msg.sender`; oracle always per-address query APIs; zap deferred to §10.  
+**Status:** **v1.11 plan-ready** — O1–O9 + Q1–Q48 + growth fee (2026-08-03). **v1.11:** partial-book min only over maxed positive legs (Q43); **sphere-NAV fair seed** (Q44 / D72 — replaces sum-NAV); residual `sumPos` invariant (Q45); `addLiquidity` returns used amounts (Q46); **orbital-normative Permit2 packing** §5.6 (Q47); Robinhood fork **chain ID 4663** (Q48).  
 **Package path:** `contracts/hooks/uniswap/v4/orbital/`  
 **Package kind:** IndexedEx **hook deploy package** — CREATE3-mined single contract via the **existing** ecosystem `create3Factory` + `HookMinerCreate3` + FactoryService helpers. **Not** a vault share diamond; **not** a second CREATE3 factory; **not** `DiamondPackageCallBackFactory` for the hook instance (v1). **Not** a Facet/DFPkg diamond product — use **Repo + Target + Math** style on a single mined contract that is also the fungible LP ERC-20 (EIP-2612).  
 **Decision ID note:** `D*`, `O*`, and `Q*` IDs are **stable keys**, not document order.
+
+**Authority (normative):**
+
+| Layer | Role |
+|-------|------|
+| **This PRD (v1.11)** | Product law used to **write** the implementation plan. Canonical decisions live in §3 (D/O/Q). |
+| **Implementation plan** (follow-on) | **Source of truth for implementors** once written against this PRD |
+| Peer packages / reference repo | Pattern and math references only — **not** deploy law; do not copy CREATE2 / BaseHook / console.log |
+| ETHGlobal `OrbitalHook.sol` | Behavioral/math reference only (D3) |
 
 **Reference implementation (behavioral + math source, not deploy law):**
 
@@ -17,20 +26,35 @@
 
 | Package | Path | Role |
 |---------|------|------|
-| Single SE buffer | `contracts/hooks/uniswap/v4/standardExchange/` | Wrapper pool `underlying ↔ SE`; no multi-asset AMM |
+| Single SE buffer | `contracts/hooks/uniswap/v4/standardExchange/single/` | Wrapper pool `underlying ↔ SE`; no multi-asset AMM |
 | Dual SE buffer | `…/standardExchange/dual/` | CP AMM on **two** SE claim legs; buffer/unwrap into SEs |
 | **This package** | `contracts/hooks/uniswap/v4/orbital/` | **3-asset spherical** curve on **raw ERC-20 reserves** held by the hook |
 
 **Related Crane / IndexedEx standards (mandatory pattern sources):**
 
 - Single buffer PRD (package shape, CREATE3 mine, settle pattern-copy, inheritance ban):  
-  `contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md`
-- Dual buffer PRD (LP ERC-20 on hook, custom deposit surface, `beforeAddLiquidity` ban, Permit2 packing §7.3):  
+  `contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md`
+- Dual buffer PRD (LP ERC-20 on hook, custom deposit surface, `beforeAddLiquidity` ban, Permit2 peer patterns):  
   `contracts/hooks/uniswap/v4/standardExchange/dual/UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`
 - Crane HookMiner: `lib/crane/contracts/protocols/dexes/uniswap/v4/hooks/public/utils/HookMinerCreate3.sol`
 - Crane fee units: `lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol` (`DYNAMIC_FEE_FLAG`, `OVERRIDE_FEE_FLAG`)
 - Crane math: `FixedPointMathLib` / `BetterMath` under `lib/crane/contracts/utils/`
 - AGENTS.md — production-first tests; CREATE3; no mock SUT; no `new` facets
+
+### 0. Terminology (normative)
+
+| Term | Meaning in this PRD |
+|------|---------------------|
+| **Binding order** | Ctor order `(token0, token1, token2)` — LP views, events `amount0/1/2`, Permit2 batch index order |
+| **Pool currency order** | V4 `currency0` / `currency1` = pair tokens **sorted by address** (may differ from binding indices) |
+| **Hook LP / shares** | Fungible ERC-20 on **this** hook (18 decimals). API params named `shares` mean **hook LP**, never SE vault shares |
+| **Full book** | All three Repo reserves \(r_0,r_1,r_2 > 0\) |
+| **Partial book** | At least one Repo reserve is 0 (and `totalSupply > 0`) |
+| **Seed** | Deposit into a **zero** reserve leg (pull full `a_jMax`); share mint via **sphere-NAV** (Q44 / D72), not sum-of-reserves |
+| **Sphere spot weight \(p_i\)** | \(p_i = R - r_i^{18}\) (pre-op 1e18 reserves). Matches sphere marginal price ratios: \(\mathrm{d}y/\mathrm{d}x = -(R-x)/(R-y)\). Zero leg: \(p_j = R\) |
+| **WAD domain** | All sphere, fee, LP, and NAV algebra in **1e18**; Repo stores **raw** native units |
+| **\(L^2\)** | **Stored sphere parameter** (Q26) — recomputed after state changes; not a fee-conserved invariant |
+| **DoD** | Definition of Done — package complete when §11 is satisfied |
 
 ### Canonical law index (planner shortcut)
 
@@ -43,17 +67,18 @@ Use this table as the **first hop**; full normative text lives at the linked sec
 | Decimal / WAD boundary + ceil/floor | D17, Q30, Q32/D64 |
 | Trading fee + V4 override | D20–D21, D20a–c, §4.4.0 |
 | Protocol growth fee (`kLast`) | D51–D59, Q11, §4.4.1 |
-| First / later / seed / remove LP | D22–D25a, D24a, Q38–Q39, §4.5 |
+| First / later / seed / remove LP | D22–D25a, D24a, D72, Q38–Q39, Q43–Q46, §4.5 |
+| Sphere-NAV partial mint | D72, Q44, §4.5.1 |
 | No on-hook single-asset zap | Q40, §2.3 #19, §10 #6 |
 | Preview fidelity | D27/Q37 — **bit-exact** |
 | Swap settle / BeforeSwapDelta | §4.6 |
 | Pool init scope | D31, D65, Q31, Q25 |
 | Deploy / salt / CREATE3 | D32–D35, §5.2, §7 |
-| Permit2 (inventory pulls) | D48–D49, Q22, Q36, §5.6 |
+| Permit2 (inventory pulls) | D48–D49, Q22, Q36, Q47, **§5.6 (normative packing)** |
 | LP ERC-20 + EIP-2612 + remove | D13, D46, Q41, §5.1 |
 | Events / errors | D60/D61, §5.5 |
-| Test DoD | §9; forks Q16/Q23 |
-| Locked decision tables | §3 (O1–O9, Q1–Q42, D*) |
+| Test DoD | §9; forks Q16/Q23/Q48 (Robinhood **4663**) |
+| Locked decision tables | §3 (O1–O9, Q1–Q48, D*) |
 
 ---
 
@@ -91,8 +116,9 @@ LP: fungible auto-named ERC-20 (e.g. ORB-USDC-USDT-DAI) on same contract
 
 --- First liquidity ---
 User calls addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data)
+  → returns (shares, a0, a1, a2) used amounts (Q46)
   → require deadline; ≥2 of three amountMax > 0 (O7)
-  → pull via ERC-20 SafeTransfer and/or Permit2 (Q1 / Q22)
+  → pull via ERC-20 SafeTransfer and/or Permit2 (Q1 / Q22 / §5.6)
   → R := max(a0Wad, a1Wad, a2Wad) * 10  (set once; O3/Q4)
   → shares = sumWad − MINIMUM_LIQUIDITY (O2); require ≥ sharesMin
   → no protocol growth mint (kLast == 0); then set kLast/kLastMode if fee-on
@@ -109,11 +135,14 @@ initialize only the pairs you need
 
 --- Subsequent add (after swaps grew k) ---
   → if fee-on: mint protocol LP to feeTo from k growth vs kLast (D51–D57)
-  → then user proportional / seed mint on post-protocol totalSupply
+  → full book: three-leg Uni V2 proportional only (Q39); no on-hook zap (Q40)
+  → partial book: prop min only over maxed positive legs (Q43); seed via sphere-NAV (Q44);
+      seed-only OK (Q38); unified shares = supply' * V_in / V_before (D72)
+  → then user mint on post-protocol totalSupply
 
 --- Withdraw ---
 removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline)
-  → protocol growth mint first if fee-on; then pro-rata burn/pay
+  → protocol growth mint first if fee-on; burn msg.sender LP only (Q41); pro-rata pay to `to`
 ```
 
 ### 1.2 Why this exists (product problem)
@@ -144,7 +173,7 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | Protocol growth fee | **Live** `usageFeeOfVault(this)` — **WAD**; Uni V2–style **`kLast` + mint LP to `feeTo`** on add/remove (D51+) |
 | V4 PoolKey.fee | **`DYNAMIC_FEE_FLAG`** — trading fee SoT is oracle (Q7 / Q19) |
 | LP | Fungible ERC-20 + **EIP-2612**; **decimals always 18** (Q24); auto name/symbol; pro-rata (+ seed shares); protocol may hold LP via `feeTo` |
-| Deposit / withdraw | Uni V2 **three-leg** proportional when full book; **seed-only OK** on zero legs (Q38–Q39); **no** on-hook zap (Q40); mins + deadline; SafeERC20 and/or Permit2 for inventory; remove burns **`msg.sender`** (Q41); **protocol mint before user supply change** when fee-on |
+| Deposit / withdraw | Uni V2 **three-leg** proportional when full book; partial: **sphere-NAV** mint (Q44/D72), prop min only over maxed positive legs (Q43), **seed-only OK** (Q38); **no** on-hook zap (Q40); `addLiquidity` returns **(shares, a0, a1, a2)** (Q46); mins + deadline; SafeERC20 and/or Permit2 (§5.6); remove burns **`msg.sender`** (Q41); **protocol mint before user supply change** when fee-on |
 | Deploy path | Existing `create3Factory` + `HookMinerCreate3` + FactoryService |
 | Access | **Permissionless** instance; fee rates / `feeTo` via Vault Fee Oracle only |
 
@@ -166,7 +195,7 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 3. Yield buffering into SE / Morpho / ERC-4626 on the orbital book (future composition PRD).  
 4. Native ETH as a pool currency (wrap to WETH off-hook).  
 5. Fee-on-transfer / rebasing tokens as inventory (Q1 — **out of scope / unsupported**).  
-6. Binary-search solvers — exact-in/out must be **closed form** on the sphere.  
+6. Binary-search solvers — exact-in/out must be **closed form** on the sphere (no zap-split solver carve-out — Q40).  
 7. Subclassing dual/single buffer hooks.  
 8. Shared TestBases with DETF Uni V4 packages.  
 9. Reusing reference CREATE2 `HookMiner.find` + `new {salt}` deploy (forbidden — CREATE3 factory law).  
@@ -199,11 +228,11 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D10 | Native CL | **Forbidden** — `beforeAddLiquidity` and `beforeRemoveLiquidity` **revert** |
 | D11 | Package shape | **Repo + Target + Common + Math + FactoryService + thin wire contract**; no Facet/DFPkg |
 | D12 | Hook inheritance | **No** inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver`, or reference `BaseHook` — full **pattern-copy** |
-| D13 | LP ERC-20 | **Same mined hook contract** (IHooks + ERC-20). **Decimals always `18`** independent of leg decimals (Q24). `MINIMUM_LIQUIDITY = 1000` is **LP wei** |
+| D13 | LP ERC-20 | **Same mined hook contract** (IHooks + ERC-20 + **EIP-2612**). **Decimals always `18`** independent of leg decimals (Q24). `MINIMUM_LIQUIDITY = 1000` is **LP wei**. Prefer Crane/Uni V2–style token helpers (not OZ `_mint` semantics that break dead shares — D46) |
 | D14 | AMM model | **Orbital sphere** single orbit: \((R-x)^2+(R-y)^2+(R-z)^2=L^2\) |
 | D15 | Radius \(R\) | **Set once on first successful `addLiquidity`**. \(R = \max(a_i^{18}) \times\) **`R_SAFETY_MULTIPLIER = 10`** (Q4). Repo set-once. Later ops with any 1e18 reserve **≥ \(R\)** **revert**. Pre-first-mint: \(R = 0\); swaps revert |
 | D16 | Sphere parameter \(L^2\) | Repo **stored sphere parameter** (not a fee-conserved invariant). **Recompute** after every successful LP/swap state change from current 1e18 reserves: \(L^2=\sum_i(R-r_i^{18})^2\). With trading residual, post-swap reserves are **not** on the pre-swap sphere; the **next** trade uses the new \(L^2\) (Q26). Zero until first mint |
-| D17 | Decimal law (uniform WAD math) | **Any `uint8` leg decimals** (Q2 / Q30 / Q32). Cache `decimals()` at ctor (missing/revert → **18**). **All product math** in **1e18**. **Repo stores raw.** **toWad** always **floor**. **fromWad denorm (Q32):** **floor** for amounts the user **receives** (exact-in `amountOut`, remove payouts, and LP `used_i` pulls sized by ratio); **ceil** for amounts the user **pays on exact-out** (`amountIn` after WAD gross-up). Decimals &gt; 18: truncating `toWad`; never invent tokens on invert. **preview == execution** must share the same ceil/floor path |
+| D17 | Decimal law (uniform WAD math) | **Any `uint8` leg decimals** (Q2 / Q30 / Q32). Cache `decimals()` at ctor (missing/revert → **18**). **All product math** in **1e18**. **Repo stores raw.** **toWad** always **floor**. **fromWad denorm (Q32):** **floor** for amounts the user **receives** (exact-in `amountOut`, remove payouts, and LP `used_i` pulls sized by ratio); **ceil** for amounts the user **pays on exact-out** (`amountIn` after WAD gross-up). Decimals &gt; 18: truncating `toWad`; never invent tokens on invert. **preview == execution** is **bit-exact** on the shared ceil/floor path (Q37) |
 | D18 | Reserves SoT | **Repo `reserves[token]`** — ignore stray `balanceOf` donations (D36) |
 | D19 | Witness token | Third bound token always in formulas (may be **zero** — O7) |
 | D20 | Trading (swap) fee | **Live per-address** WAD from **`feeOracle.dexSwapFeeOfVault(address(this))` on every swap and swap preview** (Q3 / Q10). Oracle cascade still applies when per-address unset (vault → type → default). **0 allowed**. Require **`feeWad < 1e18`**. Input residual; not PoolKey static fee |
@@ -218,44 +247,56 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D55 | `kLast` measure (3-asset) — **dual mode (Q11)** | **Full book** (all three reserves > 0): \(k = x^{18}\cdot y^{18}\cdot z^{18}\); fee root = **`cbrt(k)`**. **Partial book** (any reserve == 0): **sum-based interim** \(k = x^{18}+y^{18}+z^{18}\); fee root = **`k` itself** (linear growth measure). Repo stores **`kLast`** and **`kLastMode`** (`FullProduct` \| `SumInterim`). **Cross-mode:** if mode of this op ≠ stored mode, **do not mint** from incompatible `kLast`; treat as `kLast == 0` for mint, then set `kLast`/`kLastMode` post-op. **Re-seed** (partial → full): mint protocol fee on **sum-based** \(k_{\text{pre}}\) vs sum-mode `kLast` when same mode and growth; after successful seed to all-three, set post-op `kLast` to **product** and mode `FullProduct`. Overflow: accepted Uni V2-class risk on product mode |
 | D56 | `ownerFeeShare` + protocol mint algebra | **`ownerFeeShare = usageFeeWad * 100_000 / 1e18`** (floor), `FEE_DENOMINATOR = 100_000`. **Same Uni V2 / ConstProdUtils generic branch** for both modes — only `rootK` measurement changes (Q20): FullProduct `rootK = cbrt(k)`; SumInterim `rootK = k`. Normative mint: `protocolLp = totalSupply * (rootK - rootKLast) / (rootK * FEE_DENOMINATOR / ownerFeeShare + rootK - rootKLast)` when `rootK > rootKLast` and fee-on; else 0. If floor `ownerFeeShare == 0`, fee-off (Q18). See §4.4.1 worked example |
 | D57 | Growth fee timing (Uni V2 peer) | **Add:** measure \(k_{\text{pre}}\) from **current reserves before pull/seed**; if fee-on && `kLast != 0`, mint protocol LP from \((k_{\text{pre}}, kLast)\); then pull tokens / update reserves / mint **user** LP using **post-protocol-mint** `totalSupply`; set `kLast = k_{\text{post}}` if fee-on else `0`. User’s new capital is **not** taxed as growth in the same op. **Remove:** mint protocol LP from current \(k\) vs `kLast` **before** user burn; then burn/pay out; set `kLast` post-op. **First mint:** no protocol mint while `kLast == 0`; after first mint, set `kLast`/`kLastMode` from **post** reserves if fee-on (**dual-mode** — product only if all three > 0, else SumInterim). **Swaps** do **not** mint protocol LP or update `kLast` (growth accrues; next LP op realizes fee — dual D67 peer). Trading-fee residual and any reserve increase are fee-eligible on next LP op |
-| D58 | Growth fee + previews | `previewAddLiquidity` / `previewRemoveLiquidity` **must** simulate protocol mint dilution (post-protocol `totalSupply`) so preview == execution when fee-on **at the same oracle reads** (usageFee, feeTo, and trading fee for swaps) |
+| D58 | Growth fee + previews | `previewAddLiquidity` / `previewRemoveLiquidity` **must** simulate protocol mint dilution (post-protocol `totalSupply`) so preview == execution **bit-exact** when fee-on **at the same oracle reads** (usageFee, feeTo, and trading fee for swaps) (Q37) |
 | D59 | Growth fee public views | Required: `usageFee()` (WAD passthrough), `feeTo()`, `kLast()`, **`kLastMode()`** (Q21), and existing `dexSwapFee()` / `feeOracle()` |
-| D22 | Deposit | **`addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data)`** — **D57 protocol mint first** (if fee-on); pull via SafeERC20/Permit2; shares ≥ sharesMin; deadline |
-| D23 | First mint | **≥2** positive legs; **`require sum(a_iWad) > MINIMUM_LIQUIDITY`** so `shares = sumWad − MIN` does not underflow and user shares **&gt; 0** (Q33); set \(R\); dead MIN to **`address(0)`**; **no** protocol mint (`kLast == 0`); then set `kLast`/`kLastMode` if fee-on (D57 dual-mode) |
-| D24 | Subsequent mint (all legs > 0) | **Protocol mint** from pre-pull \(k\) vs `kLast` (D57); then **classic Uni V2 min-ratio in 1e18 units** on **post-protocol** supply (Q19 / Q29 / Q30): `r_iWad = toWad(r_i)`; `a_iMaxWad = toWad(a_iMax)`; `shares = min_i(a_iMaxWad * supply' / r_iWad)`; `used_iWad = shares * r_iWad / supply'` (floor); `used_i = fromWadFloor(used_iWad)`; pull **only** `used_i`; **require every positive-leg `used_i > 0`** when that leg participates in the ratio (Q35); require `shares >= sharesMin` and post 1e18 reserves **&lt; \(R\)**; set `kLast` post-op |
-| D24a | Zero-leg seed shares (Q5) | Positive legs: Uni V2 min-ratio in **WAD** as D24. For each zero leg with `amount_j > 0`: pull full max; **`sharesSeed_j = toWad(amount_jMax) * supply' / sumPositiveReservesWad`** (supply **after** protocol mint). `shares = sharesProp + Σ sharesSeed_j`. While partial, protocol growth uses **SumInterim** \(k\) (Q11) — not a no-op |
-| D25 | Withdraw | **`removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline)`** — **D57 protocol mint first**; then pro-rata in **WAD**: `amount_iWad = shares * toWad(r_i) / supply'`; `amount_i = fromWadFloor(amount_iWad)`; require ≥ mins; pay raw; deadline; set `kLast` post-op |
-| D25a | Full liquid exit (Q6) | After only **MINIMUM_LIQUIDITY** remains: residual pro-rata dust locked forever; **\(R\) stays set**; next add is **subsequent** path (never re-run first-mint / never reset \(R\)) |
+| D22 | Deposit | **`addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data) returns (shares, a0, a1, a2)`** only multipath surface in v1 — **no** `depositSingle` / zap (Q40). **D57 protocol mint first** (if fee-on); pull via SafeERC20/Permit2 (§5.6); shares ≥ sharesMin; deadline. Returns **native used** amounts in **binding order** (Q46). Branch: first mint / full-book later (D24) / partial (D24a/D72/Q38) |
+| D23 | First mint | **≥2** positive legs; **`require sum(a_iWad) > MINIMUM_LIQUIDITY`** so `shares = sumWad − MIN` does not underflow and user shares **&gt; 0** (Q33); set \(R\); dead MIN to **`address(0)`** (D46 Uni V2 peer); **no** protocol mint (`kLast == 0`); then set `kLast`/`kLastMode` if fee-on (D57 dual-mode) |
+| D24 | Subsequent mint (all legs > 0) | **Full book only — three-leg Uni V2 min-ratio** (Q39). **No** one- or two-sided add; **no** zap. **Protocol mint** from pre-pull \(k\) vs `kLast` (D57); then min-ratio in **1e18** on **post-protocol** supply (Q19 / Q29 / Q30): `r_iWad = toWad(r_i)`; `a_iMaxWad = toWad(a_iMax)`; `shares = min_i(a_iMaxWad * supply' / r_iWad)`; `used_iWad = shares * r_iWad / supply'` (floor); `used_i = fromWadFloor(used_iWad)`; pull **only** `used_i`; **require `used_i > 0` for every leg** (all three participate) (Q35); require `shares >= sharesMin` and post 1e18 reserves **&lt; \(R\)**; set `kLast` post-op. Zero `a_iMax` on any leg ⇒ shares/used zero path **reverts** |
+| D24a | Partial-book used amounts (Q5 / Q38 / Q43) | When **any** `r_j == 0` (partial book): (1) **Positive-leg prop set \(P\)** = `{i : r_i > 0 ∧ a_iMax > 0}` — Uni V2 min-ratio in **WAD over \(P\) only** (Q43). Legs with `r_i > 0` and `a_iMax == 0` are **not** in the min and **not** pulled. (2) **Zero-leg seed set \(Z\)** = `{j : r_j == 0 ∧ a_jMax > 0}` — pull **full** `a_jMax` native. (3) **Seed-only (Q38):** \(P = \emptyset\), \(Z \ne \emptyset\) OK. (4) Require \(P \cup Z \ne \emptyset\). Each \(i \in P\): `used_i > 0` after floor (Q35). **Share mint = sphere-NAV (D72 / Q44)** — **not** sum-of-reserves and **not** additive `sharesProp + sharesSeed`. While partial, protocol growth uses **SumInterim** \(k\) (Q11) |
+| D72 | Sphere-NAV partial mint (Q44) | After protocol mint and after determining **used** amounts (D24a): pre-op spot weights **`p_i = R - toWad(r_i)`** (zero leg ⇒ `p_j = R`). Require every `p_i > 0` (equiv. all `r_i^{18} < R`). **`V_before = Σ_i p_i · toWad(r_i)`** (zero legs contribute 0). **`V_in = Σ_i p_i · toWad(used_i)`** using **pre-op** prices (no price-impact gift). **`shares = supply' · V_in / V_before`** (floor). Require `V_before > 0` (Q45), `shares > 0`, `shares >= sharesMin`. Full-book later mint **does not** use D72 (stays Uni V2 three-leg D24). First mint **does not** use D72 (O2 sumWad). Math lib must expose pure `sphereSpotWeight` / `sphereNavShares` helpers |
+| D25 | Withdraw | **`removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline)`** — burn **`msg.sender`** LP only (Q41; no allowance/`burnFrom`); pay legs to `to`. **D57 protocol mint first**; then pro-rata in **WAD**: `amount_iWad = shares * toWad(r_i) / supply'`; `amount_i = fromWadFloor(amount_iWad)`; require ≥ mins; pay raw; deadline; set `kLast` post-op |
+| D25a | Full liquid exit (Q6 / Q45) | After only **MINIMUM_LIQUIDITY** remains: residual pro-rata dust locked forever; **\(R\) stays set**; next add is **subsequent** path (never re-run first-mint / never reset \(R\)). **Invariant:** whenever `totalSupply > 0`, **`Σ toWad(r_i) > 0`** (residual dust on dead MIN never zeroes all legs). No `sumPosWad == 0` re-seed branch — if violated, treat as fatal invariant failure (tests assert; production should be unreachable) |
 | D26 | Swap modes | Exact-in + exact-out; **pre- and post-swap** both leg **Repo** reserves **&gt; 0** (Q27 — **no full drain** of output leg); witness may be 0 |
-| D27 | Preview fidelity | preview == execution **at same oracle fee reads** (dexSwapFee on swaps; usageFee + feeTo on LP); ±1 wei denorm only |
+| D27 | Preview fidelity | **Bit-exact** `preview* == execution` **at same oracle fee reads** (dexSwapFee on swaps; usageFee + feeTo on LP) and **same** toWad/fromWad ceil/floor path (Q37). **No** ±1 wei allowance in v1 DoD |
 | D28 | Public previews / fee views | LP + swap previews (LP previews **include** protocol mint sim — D58); `reserveOf`, `lSquared`, `radius`, **`feeOracle`**, **`dexSwapFee()`**, **`usageFee()`**, **`feeTo()`**, **`kLast()`**, **`kLastMode()`**, tokens/pm |
 | D29 | Zero amounts | Revert zero amountIn/out/shares; first mint &lt;2 positive legs reverts |
 | D30 | Reentrancy | **One global non-reentrant lock** on **`addLiquidity` / `removeLiquidity` and `beforeSwap` body** (after `msg.sender == poolManager` check) (Q34). Blocks LP ↔ swap cross-reentrancy (malicious ERC-20 callbacks, nested unlock attempts). |
 | D31 | Pool init | External; **only pools that set `hooks = this`** invoke the hook (Q31). Validate: currencies ⊂ bound set, distinct, **`fee == DYNAMIC_FEE_FLAG`**. **No** per-pair uniqueness: multiple PoolKeys for the same bound pair (e.g. different `tickSpacing`) **allowed** — all share the same reserves. **No** product concern for other pools of the same tokens that **do not** use this hook. **`sqrtPriceX96` + `tickSpacing` = plumbing only** (Q25); hermetic: spacing **60**, 1:1 mid. Subset of pairs OK (O6) |
 | D62 | LP vs pool init independence | **`addLiquidity` / `removeLiquidity` / LP previews do not require** any V4 pool `initialize` (Q28). **Swaps** require: \(R > 0\), **initialized** pair pool for that directed pair, both trade-leg Repo reserves &gt; 0. **V4 `initialize` does not require** hook liquidity |
 | D63 | Post-swap reserve floor | Successful swap **must leave** `reserves[tokenOut] > 0` and `reserves[tokenIn] > 0` in Repo after updates (Q27). Exact-in: require **`0 < y' < y`** (strict). Exact-out: `amountOut` must leave residual raw out reserve &gt; 0. Revert if trade would zero a leg (no dust-floor mint; hard fail) |
-| D32 | Deploy | CREATE3 + flag mine; FactoryService; **not** vault registry `deployPkg` for instance (**no registry required** — Q10). Fees always resolved **live per hook address** via oracle query APIs |
+| D32 | Deploy | CREATE3 + flag mine; FactoryService; **not** vault registry `deployPkg` for instance (**no registry required** — Q10 / Q42). Fees always resolved **live** via **per-address** oracle query APIs; oracle cascade/defaults apply when per-address slot unset |
 | D33 | Salt namespace default | **`"uv4-orbital-swap-hook-"`** |
 | D34 | Salt material | `namespace, poolManager, feeOracle, token0, token1, token2, mineNonce` — **no \(R\)**, **no fee pips**. `mineNonce` is internal to the FactoryService mine loop (not a user deploy arg) |
 | D35 | Idempotent deploy | Same binding + namespace ⇒ same address; `isExpectedHook` checks pm + feeOracle + tokens |
 | D36 | Donations | Stray ERC-20 **ignore forever** for pricing/reserves (Q14). No skim/absorb in v1 |
-| D60 | Events (Q17 / Q21) | **Normative ABIs in §5.5.** Required: `LiquidityAdded`, `LiquidityRemoved`, `Swap`. Optional: `ProtocolFeeMinted`. No per-swap oracle spam events |
-| D37 | Math library | Pure Math — sphere, WAD, shares, trading fee, \(R\), **cbrt product growth + sum interim growth** (Q11) + D56 algebra |
+| D60 | Events (Q17 / Q21) | **Normative ABIs in §5.5.** Required: `LiquidityAdded`, `LiquidityRemoved`, `Swap`. **`ProtocolFeeMinted` required whenever protocol growth mint &gt; 0** (omit only when mint is 0). No per-swap oracle spam events |
+| D37 | Math library | Pure Math — sphere, WAD, shares, trading fee, \(R\), **sphere-NAV** \(p_i / V_{\mathrm{in}} / V_{\mathrm{before}}\) (D72), **cbrt product growth + sum interim growth** (Q11) + D56 algebra |
 | D38 | Sqrt / cbrt | Crane `FixedPointMathLib` / `BetterMath` (or bit-identical pure helpers in Math) |
 | D39 | Settle (swaps) | **§4.6** normative short law + pattern-copy dual/single buffer Target settle order (Q21) |
 | D40 | Delta convention | §4.6 + tests: six directed pairs + router; custom curve / NoOp |
-| D41 | Tests | Production-first; hermetic **required**; forks **required on Ethereum + Base + Robinhood mainnets** (Q9 / Q16 / Q23); no mock hook SUT |
-| D42 | Fork DoD chains + tokens | **Ethereum, Base, and Robinhood** mainnet forks all required (Q16). **Token choice is free:** production ERC-20s **or mintable/test tokens deployed on the fork** (Q23). Purpose = integration with **production protocol code** (PoolManager, Permit2, fee oracle, hook), **not** a specific stable triad |
+| D41 | Tests | Production-first; hermetic **required**; forks **required on Ethereum + Base + Robinhood Chain (4663)** (Q9 / Q16 / Q23 / Q48); no mock hook SUT |
+| D42 | Fork DoD chains + tokens | **Ethereum, Base, and Robinhood Chain (chain ID 4663)** mainnet forks all required (Q16 / Q48). **Token choice is free:** production ERC-20s **or mintable/test tokens deployed on the fork** (Q23). Purpose = integration with **production protocol code** (PoolManager, Permit2, fee oracle, hook), **not** a specific stable triad. Prefer live stack; else deploy production-equivalent bytecode on the fork (dual D74 peer) |
 | D43 | License / style | BUSL-1.1 (or peer); NatSpec + Crane style |
 | D44 | LP name/symbol | Auto `ORB-{s0}-{s1}-{s2}`; address-fragment fallback |
 | D45 | Access control | Permissionless instance; fee rate via **oracle only** |
-| D46 | MINIMUM_LIQUIDITY | **1000 LP wei** (LP decimals = 18) → **`address(0)`** on first mint; never burned |
-| D48 | Token pull (Q1 / Q22 / Q36) | LP: **SafeERC20 `transferFrom`** (USDT-safe) **and** **Permit2** (signature and/or allowance transfer). **`permit2Data` empty ⇒ transferFrom only for every pulled leg.** **Non-empty ⇒ Permit2 for every `used_i > 0` leg** — **no mixed** transferFrom + Permit2 in the same call (Q36). Packing SoT = dual buffer PRD **§7.3** (adapt to ≤3 legs). Swaps: PoolManager settlement only |
+| D46 | MINIMUM_LIQUIDITY | **1000 LP wei** (LP decimals = 18) → **`address(0)`** on first mint; **never burned**; permanently dilutes residual (Uni V2 / dual O5 peer). LP ERC-20 must support **balance on `address(0)`** (custom/Uni V2–style mint — **not** OZ `_update` that treats `to == 0` as burn) |
+| D48 | Token pull (Q1 / Q22 / Q36 / Q47) | LP: **SafeERC20 `transferFrom`** (USDT-safe) **and** **Permit2** (signature **and** allowance transfer — both in DoD). **`permit2Data` empty ⇒ transferFrom only for every pulled leg.** **Non-empty ⇒ Permit2 for every `used_i > 0` leg** — **no mixed** transferFrom + Permit2 in the same call (Q36). **Normative packing = this PRD §5.6** (orbital self-contained; dual §7.3 is peer reference only). Swaps: PoolManager settlement only |
 | D49 | Permit2 address | Uniswap **well-known Permit2** constant (chain-canonical); not a ctor arg (dual peer) |
 | D50 | Fee oracle units | Both `dexSwapFeeOfVault` and `usageFeeOfVault` are **WAD percentages** (`_validateWadPercentage` peer in VaultFeeOracleRepo) |
-| D61 | Custom errors (minimum set) | Plan may name precisely; **must cover:** `DeadlineExpired`, radius unset / swaps before first mint, `ReservesExceedRadius`, insufficient shares / amount mins, zero amounts, invalid pair / not bound token, wrong PoolKey fee (not dynamic), not pool manager, LP forbidden (native CL), invalid fee WAD ≥ 1e18, first mint &lt;2 legs, **first mint sumWad ≤ MIN** (Q33), **trade would zero leg** (Q27), **used_i == 0 after fromWad** (Q35), reentrancy |
-| D64 | Denorm ceil/floor (Q32) | **`fromWadFloor`:** exact-in `amountOut`, remove `amount_i`, later-mint `used_i`, seed positive-leg `used_i`. **`fromWadCeil`:** exact-out native `amountIn` after WAD fee gross-up. `toWad` always floor. Previews identical |
+| D61 | Custom errors (minimum set) | Plan may name precisely; **must cover:** `DeadlineExpired`, radius unset / swaps before first mint, `ReservesExceedRadius`, insufficient shares / amount mins, zero amounts, invalid pair / not bound token, wrong PoolKey fee (not dynamic), not pool manager, LP forbidden (native CL), invalid fee WAD ≥ 1e18, first mint &lt;2 legs, **first mint sumWad ≤ MIN** (Q33), **trade would zero leg** (Q27), **used_i == 0 after fromWad** (Q35 / full-book one-sided Q39), partial book empty \(P \cup Z\), invalid Permit2 packing/mode, reentrancy, insufficient LP balance on remove |
+| D64 | Denorm ceil/floor (Q32) | **`fromWadFloor`:** exact-in `amountOut`, remove `amount_i`, later-mint `used_i`, seed positive-leg `used_i`. **`fromWadCeil`:** exact-out native `amountIn` after WAD fee gross-up. `toWad` always floor. Previews **bit-exact** match execution (Q37) |
 | D65 | Pool-init product scope (Q31) | Hook only gates **pools that use this instance**. Validate bound pair + `DYNAMIC_FEE_FLAG`. **Do not** enforce single PoolKey per pair. **Do not** track or restrict same-token pools with `hooks != this` |
+| D66 | Preview fidelity (Q37) | Same as D27 — **bit-exact**; supersedes any prior “±1 wei denorm” wording |
+| D67 | Partial-book seed-only (Q38) | When any reserve is 0: `addLiquidity` may seed zero legs with **all** positive-leg maxes = 0 (\(P = \emptyset\)); shares from D72 only |
+| D68 | Full-book add law (Q39) | When all three reserves &gt; 0: **only** three-leg proportional D24; one-/two-sided maxes **revert** |
+| D69 | No on-hook zap (Q40) | No `depositSingle` / internal rebalance-then-mint in v1 |
+| D70 | LP remove + permit (Q41) | Remove burns **`msg.sender`** only; LP has **EIP-2612 `permit`** for approvals/transfers (not a separate remove path) |
+| D71 | Oracle call shape (Q42) | Always invoke **per-address** `dexSwapFeeOfVault(this)` / `usageFeeOfVault(this)` / `feeTo()`; oracle implements default fallback when override unset |
+| D73 | Partial prop min set (Q43) | \(P = \{i : r_i > 0 \land a_iMax > 0\}\) only — zero-max positive legs ignored for min and pull |
+| D74 | Residual sumPos invariant (Q45) | `totalSupply > 0` ⇒ `Σ toWad(r_i) > 0` always (D25a); no divide-by-zero re-seed path |
+| D75 | addLiquidity return (Q46) | Returns `(uint256 shares, uint256 a0, uint256 a1, uint256 a2)` native used in binding order |
+| D76 | Permit2 packing SoT (Q47) | **§5.6** of this PRD is normative; dual §7.3 is non-normative peer |
+| D77 | Robinhood fork ID (Q48) | Robinhood Chain mainnet = **chain ID 4663** (same as dual D64/D74) |
 | D47 | Impl plan follow-on | `UNISWAP_V4_ORBITAL_SWAP_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md` |
 
 ### 3.1 Implementor edges O1–O9 — **LOCKED** (2026-08-03; O1/O4 **revised by Q3**)
@@ -277,10 +318,10 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | ID | Topic | Locked value |
 |----|--------|--------------|
 | Q1 | Token types + pulls | **Standard + USDT-style** SafeERC20. **Permit2** for LP token pulls (sig and/or allowance). FoT/rebasing **unsupported**. |
-| Q2 | Decimals | **Any `uint8`** with toWad/fromWad (incl. >18 via truncating division). Both floor. **All internal math in WAD** (Q30). |
+| Q2 | Decimals | **Any `uint8`** with toWad/fromWad (incl. >18 via truncating division). **`toWad` always floor**; **`fromWadFloor` / `fromWadCeil` per Q32** (not “both floor”). **All internal math in WAD** (Q30). |
 | Q3 | Trading fee source | **`dexSwapFeeOfVault(this)`** WAD; 0 allowed; **&lt; 1e18**. **Protocol growth** separately uses **`usageFeeOfVault(this)`** → `feeTo` (D51–D59; v1.4). |
 | Q4 | \(R\) multiplier | **Keep 10** |
-| Q5 | Zero-leg seed | **Seed mints additional shares** per D24a (NAV-style vs positive-leg reserve sum) |
+| Q5 | Zero-leg seed | **REVISED (Q44):** seed used amounts per D24a; **share mint = sphere-NAV (D72)** — **not** sum-of-positive-reserves. **Seed-only allowed** when partial (Q38) |
 | Q6 | Post full exit | Dead shares lock dust; **\(R\) permanent**; no re-first-mint |
 | Q7 | Uni V4 fee field | **`DYNAMIC_FEE_FLAG`**. Oracle is SoT; fee may change without re-init. Hook returns V4 fee override from current WAD with **`OVERRIDE_FEE_FLAG`** (D20b). **Do not** freeze pips into PoolKey. |
 | Q8 | LP deadline | **`deadline` required** on addLiquidity and removeLiquidity (`block.timestamp <= deadline`) |
@@ -290,14 +331,14 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 
 | ID | Topic | Locked value |
 |----|--------|--------------|
-| Q10 | Oracle resolution | **Always pull per-address** `dexSwapFeeOfVault(this)` on **each swap** and `usageFeeOfVault(this)` (+ `feeTo`) on **each liquidity deposit/withdraw** (and matching previews). No VaultRegistry registration required for deploy. Cascade still applies inside oracle when per-address slot is zero. |
+| Q10 | Oracle resolution | **Always pull per-address** `dexSwapFeeOfVault(this)` on **each swap** and `usageFeeOfVault(this)` (+ `feeTo`) on **each liquidity deposit/withdraw** (and matching previews) (**Q42**). No VaultRegistry registration required for deploy. **Oracle-internal** cascade/defaults apply when per-address override is unset (type-level fees only if something external registered a type — **not** required for this package). |
 | Q11 | Partial-book `kLast` | **Sum-based interim \(k\)** when any leg is 0; **mint protocol fee** on that measure when fee-on and same mode. Full book uses triple product + cbrt. Cross-mode: no mint from incompatible `kLast`; snapshot new mode post-op. Re-seed can mint on sum growth then switch to product `kLast`. |
-| Q12 | feeTo exit | **Permissionless `removeLiquidity`** for any LP holder including `feeTo` |
+| Q12 | feeTo exit | **Permissionless `removeLiquidity`** for any LP holder including `feeTo` (burns that holder’s **`msg.sender`** balance — Q41) |
 | Q13 | First mint legs | **Keep ≥2** positive legs (O7 unchanged) |
 | Q14 | Donations | **Ignore forever** (D36) |
 | Q15 | tickSpacing | **No product validation** — any valid spacing |
-| Q16 | Fork DoD | **Ethereum + Base + Robinhood** mainnet forks **all required** |
-| Q17 | Events | **`LiquidityAdded`, `LiquidityRemoved`, `Swap`** required (field lists §5.5) |
+| Q16 | Fork DoD | **Ethereum + Base + Robinhood Chain (4663)** mainnet forks **all required** (Q48) |
+| Q17 | Events | **`LiquidityAdded`, `LiquidityRemoved`, `Swap`** required; **`ProtocolFeeMinted` when protocol mint &gt; 0** (field lists §5.5 / D60) |
 | Q18 | Tiny usage fee floor | **`ownerFeeShare == 0` ⇒ fee-off** (no protocol mint) |
 
 ### 3.4 Clarity lock Q19–Q23 — **LOCKED** (2026-08-03; plan-ready)
@@ -307,7 +348,7 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | Q19 | Exact-out + proportional + fee override + V4 oracle fees | **Exact-out gross-up = WAD only** (delete pips form). **Later mint = classic Uni V2 min-ratio in WAD** (D24 / Q29). **Fee override = informational / router UX + `OVERRIDE_FEE_FLAG`; residual SoT on hook; no double-haircut** (D20b/D20c). **Live oracle trading fees via `DYNAMIC_FEE_FLAG` are in-scope v1** — V4 supports per-swap override from `beforeSwap` |
 | Q20 | Protocol mint algebra | **Same ConstProdUtils-generic Uni V2 formula for both modes**; only `rootK` changes (cbrt vs sum). Worked SumInterim example in §4.4.1 |
 | Q21 | Surface: mode view, events, settle | **`kLastMode()` required public view.** **Normative event field lists** (§5.5). **Short §4.6 settle law + dual/single buffer Target peer pointer** |
-| Q22 | Permit2 packing | **Empty `permit2Data` ⇒ SafeERC20 transferFrom only; non-empty ⇒ Permit2.** Packing SoT = dual buffer PRD **§7.3** (adapt to ≤3 legs) |
+| Q22 | Permit2 packing | **Empty `permit2Data` ⇒ SafeERC20 transferFrom only; non-empty ⇒ Permit2.** **Normative packing = this PRD §5.6** (Q47); dual §7.3 peer reference only |
 | Q23 | Fork tokens | **Any ERC-20s OK on forks** — live production tokens **or deploy mintable/test tokens**. Goal = integrate with **production PM / Permit2 / fee oracle / hook bytecode**, not a specific stable set |
 
 ### 3.5 Clarity lock Q24–Q30 — **LOCKED** (2026-08-03; plan-ready)
@@ -327,11 +368,33 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | ID | Topic | Locked value |
 |----|--------|--------------|
 | Q31 | Pool init scope | **Only** restrict pools that configure **`hooks = this`**. `beforeInitialize`: bound pair + `DYNAMIC_FEE_FLAG` (+ PM plumbing free). **No** at-most-one-PoolKey-per-pair rule. **No** concern for other same-token pools that do **not** use this hook. Multiple tickSpacings for the same pair **on this hook** share reserves and are **allowed** |
-| Q32 | Denorm ceil/floor | **Ceil** exact-out native `amountIn`; **floor** exact-in native `amountOut` (and LP pull/pay floors). Previews match |
+| Q32 | Denorm ceil/floor | **Ceil** exact-out native `amountIn`; **floor** exact-in native `amountOut` (and LP pull/pay floors). Previews **bit-exact** with execution (Q37) |
 | Q33 | First mint vs MIN | **`sum(a_iWad) > MINIMUM_LIQUIDITY`** required; else revert (no underflow / zero user shares) |
 | Q34 | Reentrancy | **Single global lock** on LP add/remove **and** swap (`beforeSwap` path) |
-| Q35 | Zero native used after fromWad | **Revert** if a required positive-leg `used_i == 0` after floor denorm (later mint / seed proportional legs) |
+| Q35 | Zero native used after fromWad | **Revert** if a required positive-leg `used_i == 0` after floor denorm (later mint / seed proportional legs). Full book: all three legs required (Q39) |
 | Q36 | Permit2 vs transferFrom | Empty `permit2Data` ⇒ all pulls `transferFrom`. Non-empty ⇒ **all** pulled legs Permit2 only — **no mixed** path in one `addLiquidity` |
+
+### 3.7 Clarity lock Q37–Q42 — **LOCKED** (2026-08-03; v1.10 plan-ready)
+
+| ID | Topic | Locked value |
+|----|--------|--------------|
+| Q37 | Preview fidelity | **Bit-exact** `previewAddLiquidity` / `previewRemoveLiquidity` / `previewSwapExactIn` / `previewSwapExactOut` vs execution at the **same** oracle reads and **same** ceil/floor denorm path. **Supersedes** any “±1 wei denorm only” wording (D27 / D66). |
+| Q38 | Partial-book seed-only | When **any** reserve is 0: user may set **all** positive-leg `a_iMax = 0` and only seed zero legs (\(P = \emptyset\)); **shares from D72 sphere-NAV**; require `shares > 0` and ≥ `sharesMin`. Combined seed + proportional still allowed when positive maxes are set (D24a). |
+| Q39 | Full-book three-leg only | When **all three** reserves &gt; 0: **only** classic Uni V2 min-ratio over **all three** legs (D24). One- or two-sided `a_iMax` patterns **revert** (zero used / zero shares). **Not** a zap surface. |
+| Q40 | No on-hook zap v1 | **No** `depositSingle`, **no** internal sphere rebalance-then-proportional-mint. Fair single-asset zap = **§10 future**. Closed-form swap solvers non-goal (#6) remains; no zap solver carve-out. |
+| Q41 | Remove + LP permit | **`removeLiquidity` burns only `msg.sender`’s LP balance** (no allowance/`burnFrom`). Payout to `to`. LP token **must** implement **EIP-2612 `permit`** for approvals/transfers (router UX); permit is **not** a separate remove entrypoint. Inventory pulls still use Permit2/`transferFrom` (Q22/Q36) — unrelated to LP permit. |
+| Q42 | Oracle query shape | Product code **always** calls per-address `dexSwapFeeOfVault(address(this))`, `usageFeeOfVault(address(this))`, and `feeTo()` (as applicable). Vault Fee Oracle **owns** fallback to defaults when per-address override is unset. No registry registration required for hook deploy. |
+
+### 3.8 Clarity lock Q43–Q48 — **LOCKED** (2026-08-03; v1.11 plan-ready)
+
+| ID | Topic | Locked value |
+|----|--------|--------------|
+| Q43 | Partial prop min set | Min-ratio only over **positive-reserve legs with `a_iMax > 0`** (\(P\)). Zero-max positive legs are skipped (not pulled, not in min). |
+| Q44 | Sphere-NAV seed / partial shares | **Supersedes sum-NAV** `amount * supply / sumPos`. Partial-book **user shares** = **`supply' * V_in / V_before`** with pre-op \(p_i = R - r_i^{18}\), \(V = \sum p_i r_i^{18}\), \(V_{\mathrm{in}} = \sum p_i \cdot \mathrm{used}_i^{18}\) (D72). Worked example §4.5.1. |
+| Q45 | Residual sumPos | Whenever `totalSupply > 0`, **`Σ toWad(r_i) > 0`** (dead MIN residual dust). **No** `sumPos == 0` re-seed branch; tests assert after full user exit. |
+| Q46 | addLiquidity returns | **`(shares, a0, a1, a2)`** — native used amounts in binding order (symmetry with remove). |
+| Q47 | Permit2 packing SoT | **§5.6 of this PRD is normative** (Signature batch + Allowance modes; binding-order pulled legs). Dual §7.3 is peer reference only. |
+| Q48 | Robinhood chain ID | Fork DoD **Robinhood Chain mainnet = 4663** (dual D64/D74 peer). |
 
 ---
 
@@ -427,7 +490,7 @@ Repo updates use **native** gross in / out, then recompute \(L^2\) from `toWad(r
 - v1 does **not** support exterior sphere branches  
 - Native `amountOut` ≤ available raw reserve **and** leaves residual out &gt; 0  
 
-**Denorm (Q32 / D64):** exact-in out = **floor**; exact-out in = **ceil** (after WAD `+1` when fee &gt; 0). Preview == execution (D27).
+**Denorm (Q32 / D64):** exact-in out = **floor**; exact-out in = **ceil** (after WAD `+1` when fee &gt; 0). Preview == execution **bit-exact** (D27 / Q37).
 
 ### 4.3.1 Setting \(R\) (O3 — normative)
 
@@ -558,6 +621,15 @@ swaps:
 
 **Uniform WAD math (Q29 / Q30):** all share and ratio formulas use **1e18-normalized** leg amounts. **Native** units appear only when pulling/paying tokens (`fromWad` / user maxes / event amounts). LP ERC-20 **metadata decimals always 18** (Q24) — same numeric domain as WAD share wei, but that is LP metadata, not “scale each leg to match LP.”
 
+**Branch selector (v1 — no zap):**
+
+| State | Path |
+|-------|------|
+| `totalSupply == 0` | **First mint** (O2 / D23) — ≥2 positive legs; sumWad − MIN |
+| All three `r_i > 0` | **Full-book later** (D24 / Q39) — three-leg Uni V2 min-ratio only |
+| Some `r_j == 0` (and supply &gt; 0) | **Partial** (D24a / D72 / Q38 / Q43–Q44) — used amounts then **sphere-NAV shares**; seed-only OK |
+| Single-asset when full book | **Revert** — not zap (Q40); rebalance off-hook then three-leg add |
+
 ```text
 First mint (totalSupply == 0) — WAD sum (O2 / Q33):
   require deadline; count(amount_iMax > 0) >= 2
@@ -567,59 +639,119 @@ First mint (totalSupply == 0) — WAD sum (O2 / Q33):
   shares = sum(a_iWad) - MINIMUM_LIQUIDITY     // MINIMUM = 1000 LP wei; shares > 0
   require shares >= sharesMin
   R = max(a_iWad) * 10
-  pull native used_i via transferFrom XOR Permit2-all-legs (Q22 / Q36)
-  mint dead 1000 to address(0); reserves[i] = used_i (raw)
-  recompute L² from toWad(reserves); mint user shares
+  pull native used_i via transferFrom XOR Permit2 (§5.6 / Q22 / Q36)
+  mint dead 1000 to address(0)  // Uni V2 peer — balance on address(0); D46
+  reserves[i] = used_i (raw)
+  recompute L² from toWad(reserves); mint user shares to `to`
   if feeOn:
     if all three reserves > 0: kLast = xWad*yWad*zWad; kLastMode = FullProduct
     else: kLast = xWad+yWad+zWad; kLastMode = SumInterim
   else: kLast = 0
   // no protocol mint on first (D57)
   // does NOT require any V4 pool initialize (Q28)
+  return (shares, used0, used1, used2)  // Q46
 
-Later mint (all r_i > 0) — Uni V2 min-ratio in WAD (D24 / Q19 / Q29 / Q30):
+Later mint (all r_i > 0) — three-leg Uni V2 min-ratio in WAD (D24 / Q39 / Q19 / Q29 / Q30):
   require deadline
-  // 1) protocol growth mint to feeTo from k_pre vs kLast (D57) — k in WAD domain
+  // 1) protocol growth mint to feeTo from k_pre vs kLast (D57); emit ProtocolFeeMinted if > 0
   // 2) supply' = totalSupply after protocol mint
   r_iWad = toWad(r_i); a_iMaxWad = toWad(a_iMax)
   shares = min(a0MaxWad * supply' / r0Wad, a1MaxWad * supply' / r1Wad, a2MaxWad * supply' / r2Wad)
   require shares > 0 && shares >= sharesMin
   used_iWad = shares * r_iWad / supply'      // floor
   used_i = fromWadFloor(used_iWad)           // native pull; do NOT pull unused max
-  require used_i > 0 for every positive leg in the ratio path  // Q35
+  require used_i > 0 for ALL three legs      // Q35 + Q39 — one/two-sided reverts
   require post toWad(reserves + used) < R
-  pull used_i; reserves += used_i; recompute L²; mint user shares
+  pull used_i; reserves += used_i; recompute L²; mint user shares to `to`
   kLast = feeOn ? k_post : 0; kLastMode = mode_post if feeOn
+  // NO depositSingle / internal zap (Q40)
+  return (shares, used0, used1, used2)
 
-Later mint (some r_j == 0) — seed mints shares (Q5 / D24a) + sum interim growth (Q11):
+Later mint (some r_j == 0) — partial book (D24a / D72 / Q43 / Q44 / Q38) + SumInterim growth (Q11):
   // Partial books: partial first mint (≥2 legs), and/or floor dust on remove (pro-rata can
-  // zero a tiny leg). Swaps must NOT zero a trade leg (Q27). Seed remains required for re-seed.
+  // zero a tiny leg). Swaps must NOT zero a trade leg (Q27). Seed re-seeds zero legs.
+  // Invariant Q45: sumPosWad = Σ toWad(r_i) > 0 whenever totalSupply > 0.
   require deadline
-  // protocol mint on SumInterim k_pre vs kLast when fee-on and same mode
-  sumPosWad = Σ toWad(r_i) for r_i > 0
-  r_iWad / a_iMaxWad as above for positive legs
-  sharesProp = min(a_iMaxWad * supply' / r_iWad for r_i > 0)   // WAD
-  used_iWad (positive) = sharesProp * r_iWad / supply'
-  used_i (positive) = fromWadFloor(used_iWad)
-  require used_i > 0 for each positive leg that entered the min  // Q35
-  for each zero leg j with amount_jMax > 0:
-    sharesSeed_j = toWad(amount_jMax) * supply' / sumPosWad
-    used_j = amount_jMax   // full native max pulled for seed
-  shares = sharesProp + Σ sharesSeed_j
-  require shares >= sharesMin
-  pull native (transferFrom XOR Permit2-all); update raw reserves; recompute L²
+  // 1) protocol mint on SumInterim k_pre vs kLast when fee-on and same mode; emit if > 0
+  // 2) supply' = totalSupply after protocol mint
+  // 3) Determine USED amounts (not shares yet):
+  P = { i | r_i > 0 && a_iMax > 0 }     // Q43 — only maxed positive legs
+  Z = { j | r_j == 0 && a_jMax > 0 }     // seed candidates
+  require P ∪ Z ≠ ∅
+  if P ≠ ∅:
+    sTmp = min_{i in P}(a_iMaxWad * supply' / r_iWad)
+    for i in P:
+      used_iWad = sTmp * r_iWad / supply'   // floor
+      used_i = fromWadFloor(used_iWad)
+      require used_i > 0                    // Q35
+    for i with r_i > 0 && a_iMax == 0:
+      used_i = 0                            // skipped — not in min
+  else:
+    used_i = 0 for all positive-reserve legs  // seed-only Q38
+  for j in Z:
+    used_j = a_jMax                         // full native max seed pull
+  for j with r_j == 0 && a_jMax == 0:
+    used_j = 0
+  // 4) Sphere-NAV shares (D72 / Q44) — pre-op prices; NOT sum-NAV; NOT sharesProp+sharesSeed
+  //    p_i = R - toWad(r_i)   // zero leg ⇒ p = R; require r_iWad < R for all i
+  //    V_before = Σ p_i * toWad(r_i)     // > 0 by Q45
+  //    V_in     = Σ p_i * toWad(used_i)  // pre prices
+  //    shares   = supply' * V_in / V_before   // floor
+  require shares > 0 && shares >= sharesMin
+  require post toWad(reserves + used) < R for every leg
+  pull native (transferFrom XOR Permit2 §5.6); update raw reserves; recompute L²
+  mint user shares to `to`
   kLast/mode = post-op measure (SumInterim or FullProduct if seed completed all three)
+  return (shares, used0, used1, used2)
 
-Remove:
+Remove (Q41):
   require deadline
-  // 1) protocol growth mint to feeTo (D57)
+  // burns msg.sender only — no burnFrom / LP Permit2 path
+  // 1) protocol growth mint to feeTo (D57); emit ProtocolFeeMinted if > 0
   // 2) amount_iWad = userShares * toWad(r_i) / totalSupply' (post protocol mint)
-  //    amount_i = fromWadFloor(amount_iWad)   // native pay
+  //    amount_i = fromWadFloor(amount_iWad)   // native pay to `to`
   require amount_i >= a_iMin
-  burn user; transfer native; recompute L²
+  burn msg.sender shares; transfer native to `to`; recompute L²
   kLast = feeOn ? k_post : 0
-  // if only MINIMUM_LIQUIDITY left: dust locked; R unchanged (Q6)
+  // if only MINIMUM_LIQUIDITY left: dust locked; R unchanged (Q6);
+  //    assert Σ toWad(r_i) > 0 (Q45)
 ```
+
+#### 4.5.1 Sphere-NAV partial mint (normative — D72 / Q44)
+
+Sphere marginal price ratios from §4.3: holding the third reserve fixed,
+\[
+\frac{\mathrm{d}y}{\mathrm{d}x} = -\frac{R-x}{R-y}
+\quad\Rightarrow\quad
+p_i \propto (R - r_i^{18}).
+\]
+
+**Pre-op weights (1e18 domain):** \(p_i = R - \mathrm{toWad}(r_i)\). For a zero leg, \(p_j = R\). Require \(p_i > 0\) for all \(i\) (already implied by \(r_i^{18} < R\)).
+
+| Quantity | Formula |
+|----------|---------|
+| Pool value (relative) | \(V_{\mathrm{before}} = \sum_i p_i \cdot \mathrm{toWad}(r_i)\) |
+| Deposit value (pre prices) | \(V_{\mathrm{in}} = \sum_i p_i \cdot \mathrm{toWad}(\texttt{used}_i)\) |
+| User LP minted | \(\texttt{shares} = \left\lfloor \texttt{supply'} \cdot V_{\mathrm{in}} / V_{\mathrm{before}} \right\rfloor\) |
+
+**Why not sum-NAV:** \(\sum r_i\) prices every WAD of inventory at 1 regardless of sphere imbalance. Seeding a scarce (zero) leg or topping an unbalanced book would systematically dilute or enrich existing LPs vs sphere spots. **D72 is the v1 fairness law** for all partial-book user mints (seed-only, prop-only on a subset of live legs, or combined).
+
+**Consistency check (informative):** If \(P\) is **all** positive-reserve legs, used amounts are reserve-proportional with factor \(\alpha = s_{\mathrm{tmp}}/\texttt{supply'}\), and \(Z = \emptyset\), then \(V_{\mathrm{in}} = \alpha V_{\mathrm{before}}\) and \(\texttt{shares} = \alpha \cdot \texttt{supply'} = s_{\mathrm{tmp}}\) — recovers classic Uni V2 prop mint.
+
+**Worked seed-only example (informative):**
+
+```text
+// Partial: r0Wad = 100e18, r1Wad = 100e18, r2Wad = 0; R = 1000e18; supply' = 1000e18
+// p0 = p1 = 900e18; p2 = 1000e18
+// V_before = 900e18*100e18 + 900e18*100e18 + 1000e18*0 = 180_000e36
+// Seed-only: used0 = used1 = 0; used2Wad = 50e18
+// V_in = 1000e18 * 50e18 = 50_000e36
+// shares = 1000e18 * 50_000e36 / 180_000e36 = 1000e18 * 5/18 ≈ 277.777…e18 (floor)
+// (Sum-NAV would have been 50e18 * 1000e18 / 200e18 = 250e18 — lower; sphere prices the
+//  scarce leg higher, so seeder receives more LP for the same WAD of token2.)
+```
+
+**Multi-zero seed:** when two legs are zero, \(V_{\mathrm{in}} = R \cdot (\Delta_a^{18} + \Delta_b^{18})\) at pre prices; still one unified `shares` (not independent per-leg sum-NAV mints).
 
 ### 4.6 Swap settle / BeforeSwapDelta (normative short law — Q21)
 
@@ -654,7 +786,7 @@ contracts/hooks/uniswap/v4/orbital/
   interfaces/
     IUniswapV4OrbitalSwapHook.sol                            # views + previews + LP surface
 
-  UniswapV4OrbitalSwapHookMath.sol                           # pure sphere + WAD + shares + cbrt growth fee
+  UniswapV4OrbitalSwapHookMath.sol                           # pure sphere + WAD + shares + sphere-NAV (D72) + cbrt growth fee
   UniswapV4OrbitalSwapHookRepo.sol                           # diamond-style storage slot layout
   UniswapV4OrbitalSwapHookCommon.sol                         # reserve helpers, decimal cache, guards
   UniswapV4OrbitalSwapHookTarget.sol                         # IHooks + LP execute (pattern-copy settle)
@@ -697,7 +829,11 @@ interface IUniswapV4OrbitalSwapHook {
     function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
         external view returns (uint256 amountIn);
 
-    /// @param permit2Data empty => SafeERC20 transferFrom only; non-empty => Permit2 (dual §7.3 packing)
+    /// @param permit2Data empty => SafeERC20 transferFrom only; non-empty => Permit2 (§5.6 packing)
+    /// @return shares LP minted to `to` (after protocol mint dilution when fee-on)
+    /// @return a0 used amount of token0 (binding order, native)
+    /// @return a1 used amount of token1
+    /// @return a2 used amount of token2
     function addLiquidity(
         uint256 a0Max,
         uint256 a1Max,
@@ -706,8 +842,9 @@ interface IUniswapV4OrbitalSwapHook {
         uint256 sharesMin,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external returns (uint256 shares);
+    ) external returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2);
 
+    /// @dev Burns `shares` from msg.sender only (no burnFrom). Pays native legs to `to`.
     function removeLiquidity(
         uint256 shares,
         address to,
@@ -716,10 +853,14 @@ interface IUniswapV4OrbitalSwapHook {
         uint256 a2Min,
         uint256 deadline
     ) external returns (uint256 a0, uint256 a1, uint256 a2);
+
+    // Also on the same contract (ERC-20 + EIP-2612 — Q41):
+    // name(), symbol(), decimals()==18, totalSupply, balanceOf, allowance,
+    // transfer, approve, transferFrom, DOMAIN_SEPARATOR, permit, nonces
 }
 ```
 
-LP ERC-20 surface on the same contract. **decimals always 18 (Q24)**; **name/symbol auto at ctor (O5)**. Prefer Crane token helpers. Previews **must** include protocol-mint dilution when fee-on (D58).
+LP ERC-20 surface on the same contract. **decimals always 18 (Q24)**; **name/symbol auto at ctor (O5)**; **EIP-2612 `permit` required (Q41)**. Prefer Crane / Uni V2–style token helpers (D46 — mint `MINIMUM_LIQUIDITY` to `address(0)`). Previews **must** include protocol-mint dilution when fee-on (D58) and are **bit-exact** vs execution (Q37). `previewAddLiquidity` returns the same used-amount triple as execution (Q46). **No** `depositSingle` / zap entrypoint (Q40).
 
 ### 5.2 Deploy API (FactoryService)
 
@@ -802,21 +943,84 @@ event Swap(
     uint256 feeWad
 );
 
-/// @dev Optional but recommended when protocol growth mint > 0
+/// @dev Required whenever protocol growth mint > 0 (D60); omit when mint is 0
 event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
 ```
 
 `amount0/1/2` are in **binding token order** (`token0/1/2`), **native** token units (not WAD). Swap `amountIn`/`amountOut` are native. `feeWad` is the trading fee **rate** WAD applied on that swap (0 if fee-off) — not a native fee amount.
 
-### 5.6 Permit2 packing pointer (Q22)
+### 5.6 Permit2 packing (normative DoD — Q22 / Q36 / Q47)
+
+Canonical Permit2: `0x000000000022D473030F116dDEE9F6B43aC78BA3` (D49).  
+Interfaces: Crane `ISignatureTransfer` / `IAllowanceTransfer`.  
+**No witness** in v1 (plain transfer-to-hook; spender = hook).  
+Owner of tokens = **`msg.sender`**. Recipient of pulls = **`address(this)`** (hook).  
+**Pulled legs** = every binding index \(i\) with `used_i > 0` after mint math (1–3 legs).  
+**Binding order** for batch indices: ascending `token0` → `token1` → `token2` among pulled legs only.
 
 | Rule | Value |
 |------|--------|
 | Empty `permit2Data` | SafeERC20 `transferFrom(msg.sender, hook, used_i)` for **every** pulled leg |
-| Non-empty `permit2Data` | **All** `used_i > 0` legs via Permit2 only (sig and/or allowance) — **no mixed** transferFrom (Q36). Both Permit2 modes in DoD |
-| Packing SoT | Dual buffer PRD **§7.3** — adapt batch/struct packing to **up to three** token legs for used amounts |
-| Permit2 address | Uniswap well-known constant (D49); not ctor/salt |
+| Non-empty `permit2Data` | **All** pulled legs via Permit2 only — **no mixed** transferFrom (Q36) |
+| Modes in DoD | **Both** SignatureTransfer **and** AllowanceTransfer |
+| Permit2 address | Well-known constant (D49); not ctor/salt |
 | Swaps | No hook Permit2 — V4/PoolManager only |
+| LP token | EIP-2612 `permit` on the hook ERC-20 (Q41) — **not** inventory Permit2; **not** used by `removeLiquidity` itself |
+
+#### Mode discriminator (non-empty `permit2Data`)
+
+```text
+// First word selects mode (normative):
+uint8 mode = abi.decode(permit2Data[:1] or via abi.encode prefix)
+
+mode == 0  // SIGNATURE_BATCH
+  permit2Data = abi.encode(
+    uint8(0),
+    ISignatureTransfer.PermitBatchTransferFrom permit,
+    bytes signature
+  )
+
+mode == 1  // ALLOWANCE
+  permit2Data = abi.encode(uint8(1))
+  // Pre: user ERC-20 approved Permit2; user set Permit2 allowance for each
+  // pulled token → hook via IAllowanceTransfer.approve
+  // Pull: Permit2.transferFrom(msg.sender, hook, used_i, token_i) per pulled leg
+```
+
+#### SignatureTransfer batch (`mode == 0`)
+
+```text
+// permit.permitted.length == nPull where nPull = count(used_i > 0), 1..3
+// permitted[k] ordered by ascending binding index among pulled legs only
+// Requirements (else revert):
+//   permitted[k].token == token of k-th pulled binding leg
+//   signed/requested amount covers used_i for that leg
+// Call: permitBatchTransferFrom
+//   transferDetails[k].to = hook
+//   transferDetails[k].requestedAmount = used for that leg
+// Wrong token order, wrong length, insufficient amount, bad/expired sig → revert
+```
+
+**Examples:**
+
+| Used legs | `permitted` length / order |
+|-----------|----------------------------|
+| only token1 | 1: `[token1]` |
+| token0 + token2 | 2: `[token0, token2]` |
+| all three | 3: `[token0, token1, token2]` |
+
+#### AllowanceTransfer (`mode == 1`)
+
+```text
+// No signature payload.
+// For each pulled leg in ascending binding order:
+//   IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, hook, used_i, token_i)
+// Insufficient Permit2 allowance / ERC-20 allowance to Permit2 → revert
+```
+
+**DoD tests:** empty transferFrom path; Signature batch for 1-, 2-, and 3-leg pulls in binding order; Allowance mode; wrong batch order / wrong length / expired sig / insufficient allowance revert; **no mixed** path in one call.
+
+**Peer reference (non-normative):** dual buffer PRD §7.3 — same Permit2 address and no-witness spirit; **orbital packing above is SoT** for this package (Q47).
 
 ---
 
@@ -836,7 +1040,7 @@ event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
 | Fee residual updates \(L^2\) | **Keep** (LP fee accrual model) |
 | First LP `sum` raw amounts | **Sum of 1e18-normalized** amounts (O2); later mint also **WAD** Uni V2 (Q29) |
 | No LP slippage params | **sharesMin / amountMins** (O8) |
-| Exact-in + exact-out | Keep; prove preview == execution; **WAD** gross-up O4/D20a |
+| Exact-in + exact-out | Keep; prove **bit-exact** preview == execution (Q37); **WAD** gross-up O4/D20a |
 | Solady FixedPointMathLib | Prefer **Crane** FixedPointMathLib / BetterMath |
 
 ### 6.1 Known reference risks (must fix in port)
@@ -898,9 +1102,13 @@ After deploy, integrator (order flexible — **Q28**):
 | kLast overflow (triple product) | Accepted Uni V2-class scale limit; document |
 | Reentrancy LP ↔ swap | **Global lock** on LP + `beforeSwap` (Q34) + V4 unlock discipline |
 | First depositor inflation | MINIMUM_LIQUIDITY dead shares to address(0) |
-| Fee / rounding leak | preview == execution at same feeWad; same toWad/fromWad floors (Q30); exact-out WAD gross-up +1 |
+| Partial-book LP dilution | **Sphere-NAV** mint (D72) at pre-op \(p_i = R-r_i\); **not** sum-NAV (Q44) |
+| Residual empty book / `V_before == 0` | Impossible under Q45 when `totalSupply > 0`; tests assert after full exit |
+| Fee / rounding leak | **Bit-exact** preview == execution at same feeWad (Q37); same toWad/fromWad ceil/floor path (Q30/Q32); exact-out WAD gross-up +1 |
 | Mixed-decimal skew | Uniform WAD internal math (Q29/Q30) — never mix raw ratios with WAD sphere |
 | Multi-pool desync | Single reserve mapping |
+| Same-pair multi tickSpacing doors | Allowed (Q31); shared reserves — integrator MEV/routing surface, not a product bug |
+| Stray ETH / non-bound ERC-20 | Ignore forever (same spirit as D36 donations); no skim in v1 |
 | Stale PoolManager slot0 | True price is hook preview only |
 | Overflow on squares / fee gross-up | Math bounds; fuzz under \(R\); feeWad &lt; 1e18 |
 | Permissionless griefing | No instance admin (O9); fee via oracle governance |
@@ -918,26 +1126,26 @@ After deploy, integrator (order flexible — **Q28**):
 5. First add with deadline + sharesMin (+ optional Permit2 path); \(R = max \times 10\); shares = sumWad − 1000; **sumWad ≤ MIN reverts** (Q33); **LP decimals == 18** (Q24); **no pool init required** for LP (Q28).  
 6. Two-leg first mint OK; one-leg fails; first-mint `kLastMode` SumInterim if partial.  
 7. Init **one** pool with **DYNAMIC_FEE_FLAG**; static fee=0 / wrong fee reverts (Q7); **sqrtPrice/tickSpacing not product-validated** (Q25); hermetic uses spacing 60 + tick-0 mid; optional second PoolKey same pair different spacing **allowed** (Q31).  
-8. Set oracle **dex** fee non-zero WAD; six directed exact-in/out; preview == execution; **ceil in / floor out** (Q32); override includes OVERRIDE bit.  
-9. Change dex fee mid-life; quotes change; preview == execution.  
+8. Set oracle **dex** fee non-zero WAD; six directed exact-in/out; **bit-exact** preview == execution (Q37); **ceil in / floor out** (Q32); override includes OVERRIDE bit.  
+9. Change dex fee mid-life; quotes change; **bit-exact** preview == execution.  
 10. Zero trading fee path.  
 11. **No full drain:** exact-in/out that would set out reserve to 0 **reverts** (Q27); post-swap both trade legs &gt; 0.  
-12. **Protocol growth fee:** non-zero per-address usage fee + feeTo; after swaps, next LP **mints to feeTo**; preview == execution (D58).  
+12. **Protocol growth fee:** non-zero per-address usage fee + feeTo; after swaps, next LP **mints to feeTo**; **`ProtocolFeeMinted`**; **bit-exact** preview == execution (D58 / Q37).  
 13. Growth fee-off / **ownerFeeShare == 0** (Q18): no protocol mint.  
-14. First mint ≥2 legs; `kLast`/`kLastMode` set if fee-on (SumInterim if partial).  
-15. Witness=0 (partial first mint) + **seed mints shares** (Q5); **sum-interim protocol mint on re-seed** (Q11); then FullProduct mode.  
+14. First mint ≥2 legs; `kLast`/`kLastMode` set if fee-on (SumInterim if partial); MIN to `address(0)` (D46).  
+15. Witness=0 (partial first mint) + **sphere-NAV seed shares** (Q5 / Q44 / D72); **seed-only** with positive maxes all 0 (Q38); prop min **only over maxed positive legs** (Q43); **sum-interim protocol mint on re-seed** (Q11); then FullProduct mode. Bit-exact preview of seed vs sum-NAV golden (seed shares ≠ sum-NAV).  
 16. Cross-mode: no bogus mint when mode flips without compatible kLast.  
-17. Proportional later mint: unused max **not** pulled; **WAD** Uni V2 + floor pull; **used_i == 0 reverts** (Q35); mixed-decimal legs.  
+17. Full-book later mint: unused max **not** pulled; **three-leg WAD** Uni V2 + floor pull; **one-/two-sided reverts** (Q39); **used_i == 0 reverts** (Q35); mixed-decimal legs. **No** depositSingle/zap path (Q40).  
 18. sharesMin / amountMin / deadline fail paths.  
-19. Reserve ≥ \(R\); full exit dust; \(R\) sticky (Q6).  
-20. SafeERC20 **or** Permit2-all-legs (empty vs non-empty; **no mix** — Q36); donations ignored (Q14).  
-21. Events LiquidityAdded / Removed / Swap with §5.5 fields (Q17).  
+19. Reserve ≥ \(R\); full exit dust; \(R\) sticky (Q6); **assert `Σ toWad(r_i) > 0` after full user exit** (Q45).  
+20. SafeERC20 **or** Permit2 §5.6 (empty; Signature 1/2/3-leg binding order; Allowance mode; **no mix** — Q36/Q47); donations ignored (Q14).  
+21. Events LiquidityAdded / Removed / Swap with §5.5 fields; **ProtocolFeeMinted when mint &gt; 0** (Q17 / D60).  
 22. Native modifyLiquidity reverts; zero amounts revert; **global reentrancy** LP↔swap (Q34).  
-23. `kLastMode()` view; auto name/symbol; no mock hook/PM SUT.
+23. `kLastMode()` view; auto name/symbol; **EIP-2612 permit** on LP (Q41); remove burns **msg.sender** only; `addLiquidity` returns **(shares, a0, a1, a2)** match preview used (Q46); no mock hook/PM SUT.
 
-### 9.2 Fork DoD — **Ethereum + Base + Robinhood mainnets all required** (Q9 / Q16 / Q23)
+### 9.2 Fork DoD — **Ethereum + Base + Robinhood Chain (4663) all required** (Q9 / Q16 / Q23 / Q48)
 
-For **each** of Ethereum, Base, and Robinhood mainnet forks:
+For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (chain ID 4663)** forks:
 
 1. **Tokens:** use live production ERC-20s **or deploy mintable/test ERC-20s on the fork** (Q23). No requirement that the three legs be USDC/USDT/DAI specifically.  
 2. **Stack:** live PoolManager / Permit2 / fee-oracle when present; else **deploy production-equivalent bytecode** on the fork (dual D74 peer). Not interface mocks of the SUT.  
@@ -949,8 +1157,9 @@ For **each** of Ethereum, Base, and Robinhood mainnet forks:
 
 1. After any successful op with \(R > 0\): stored \(L^2 = \sum_i (R - r_i^{18})^2\) (Q26 — equality is **definition of stored parameter**, not fee-less conservation across swaps).  
 2. After swaps only: input raw reserve increases by full gross `amountIn`; output decreases by `amountOut`; trading residual remains in input reserve; **both trade-leg reserves remain &gt; 0**.  
-3. LP remove after add (no swaps) returns ≈ deposited (minus MINIMUM_LIQUIDITY share of pool), within documented dust.  
-4. Protocol mint never exceeds D56 algebra for measured `rootK` growth.
+3. LP remove after add (no swaps): pro-rata payouts **bit-exact** vs `previewRemoveLiquidity` (Q37); residual locked for dead MIN share (Q6); **`Σ toWad(r_i) > 0` while `totalSupply > 0`** (Q45).  
+4. Protocol mint never exceeds D56 algebra for measured `rootK` growth.  
+5. Partial-book mint: `shares == floor(supply' * V_in / V_before)` for pre-op \(p_i = R - r_i^{18}\) (D72); not sum-NAV.
 
 ---
 
@@ -960,20 +1169,22 @@ For **each** of Ethereum, Base, and Robinhood mainnet forks:
 2. **Orbital + Standard Exchange buffer** (hold SE shares as legs; yield-bearing orbital).  
 3. \(n\)-asset hypersphere.  
 4. **Additional fee channels beyond v1’s two:** e.g. splitting **trading residual** to `feeTo` on every swap, multi-recipient fee splits, orbit-level fees. (**In scope v1:** live `dexSwapFeeOfVault` residual in reserves + live `usageFeeOfVault` growth mint; V4 `DYNAMIC_FEE_FLAG` + per-swap override — Q19.)  
-5. Hook-as-DETF leg.
+5. Hook-as-DETF leg.  
+6. **On-hook single-asset zap / `depositSingle`** — fair path = internal sphere rebalance to a proportional basket then D24 mint (solver/heuristic TBD). **Explicitly out of v1** (Q40); full book is three-leg `addLiquidity` only (Q39).  
+7. **Allowance-based LP burn** (`burnFrom` / remove with spender) — v1 burns **`msg.sender` only** (Q41).
 
 ---
 
 ## 11. Definition of done (package)
 
-- [x] PRD O1–O9 + Q1–Q36 + growth fee D51–D65 locked (**v1.9 plan-ready**).  
+- [x] PRD O1–O9 + Q1–Q48 + growth fee D51–D77 locked (**v1.11 plan-ready**).  
 - [ ] Implementation + test plan document written.  
 - [ ] Files under `contracts/hooks/uniswap/v4/orbital/` per §5.  
 - [ ] FactoryService CREATE3 mine deploy green.  
-- [ ] Hermetic DoD §9.1 green.  
-- [ ] Fork DoD §9.2 green on **Ethereum + Base + Robinhood** (Q16 / Q23).  
+- [ ] Hermetic DoD §9.1 green (incl. sphere-NAV seed, Permit2 §5.6, addLiquidity returns).  
+- [ ] Fork DoD §9.2 green on **Ethereum + Base + Robinhood Chain (4663)** (Q16 / Q23 / Q48).  
 - [ ] NatSpec + no console.log.  
-- [ ] No BaseHook inheritance; no DFPkg/Facet; no owner/pause.  
+- [ ] No BaseHook inheritance; no DFPkg/Facet; no owner/pause; no on-hook zap.  
 - [ ] AGENTS.md testing / CREATE3 compliance.
 
 ---
@@ -998,11 +1209,15 @@ For **each** of Ethereum, Base, and Robinhood mainnet forks:
 | Trading fee | Fixed ~0.3% residual (D29) | Live **`dexSwapFeeOfVault`** residual (WAD) |
 | Yield / growth fee | `kLast` via oracle field named **`dexSwapFee`** (growth share — dual naming callout) | Growth via **`usageFeeOfVault` + `kLast`/`kLastMode`** mint to feeTo |
 | V4 pools | One pair | Up to three pairs (subset OK), one hook |
-| LP | Dual pro-rata; **decimals 18** | Triple pro-rata (+ seed if a leg is 0); **decimals 18** (Q24) |
+| LP | Dual pro-rata; **decimals 18** | Triple pro-rata; partial **sphere-NAV** (Q44/D72); **seed-only OK** Q38; **decimals 18** (Q24); **EIP-2612** (Q41) |
+| Single-asset deposit | `depositSingle` zap when eligible | **No** on-hook zap v1 (Q40); three-leg add when full book (Q39); partial seed ≠ zap |
 | Radius / depth | N/A (CP) | \(R\) from first mint ×10 |
 | V4 init price | Plumbing only (C6) | Plumbing only (Q25) |
 | Package standards | Same CREATE3 / Repo-Target / no BaseHook | **Same** |
-| Permit2 packing | Normative §7.3 | **Pointer to dual §7.3** (Q22); empty/non-empty `permit2Data` |
+| Permit2 packing | Normative §7.3 | **Orbital-normative §5.6** (Q47); dual §7.3 peer only |
+| addLiquidity returns | plan-defined | **`(shares, a0, a1, a2)`** (Q46) |
+| Forks | Base + Robinhood 4663 | **Ethereum + Base + Robinhood 4663** (Q48) |
+| Preview fidelity | fee-on preview == execution | **Bit-exact** (Q37) |
 
 ## 14. Appendix C — Revision log (clarity)
 
@@ -1012,8 +1227,10 @@ For **each** of Ethereum, Base, and Robinhood mainnet forks:
 | 2026-08-03 | v1.6 plan-ready | **Q19–Q23:** WAD-only exact-out; Uni V2 proportional used amounts; D20b `OVERRIDE_FEE_FLAG` + D20c no double-haircut; V4 dynamic oracle fees confirmed in-scope; D56 algebra + SumInterim example; first-mint dual-mode `kLast`; `kLastMode()` required; normative events §5.5; settle §4.6; Permit2 → dual §7.3; fork tokens free (test tokens OK); §10 fee future rephrased; D61 error minimum set; dual PRD path corrected |
 | 2026-08-03 | v1.7 plan-ready | **Q24–Q29:** LP decimals always 18; V4 `sqrtPrice`/`tickSpacing` plumbing + hermetic convention; \(L^2\) stored sphere parameter; no full trade-leg drain; LP independent of pool init; (later revised) first mint WAD vs later raw Uni V2 |
 | 2026-08-03 | v1.8 plan-ready | **Q29 revised + Q30:** uniform 1e18 internal math; native only at transfer/settle; Repo raw; Q24 = LP metadata only |
-| 2026-08-03 | **v1.9 plan-ready** | **Q31–Q36:** pool-init scope = this hook only (no per-pair uniqueness; multi tickSpacing OK); **ceil amountIn / floor amountOut**; first mint `sumWad > MIN`; **global reentrancy lock**; **used_i == 0 revert**; Permit2 **all pulled legs** when non-empty. D17/D23–D24/D30–D31/D48/D64–D65/§4–§9 aligned |
+| 2026-08-03 | v1.9 plan-ready | **Q31–Q36:** pool-init scope = this hook only (no per-pair uniqueness; multi tickSpacing OK); **ceil amountIn / floor amountOut**; first mint `sumWad > MIN`; **global reentrancy lock**; **used_i == 0 revert**; Permit2 **all pulled legs** when non-empty. D17/D23–D24/D30–D31/D48/D64–D65/§4–§9 aligned |
+| 2026-08-03 | **v1.10 plan-ready** | **Q37–Q42** + D66–D71: **bit-exact** previews (drop ±1 wei); partial **seed-only**; full-book **three-leg only** / **no on-hook zap**; LP **EIP-2612** + remove burns `msg.sender`; oracle always per-address query APIs; `ProtocolFeeMinted` when mint &gt; 0; MIN/`address(0)` Uni V2 mint note; canonical law index; §2.3/§4.5/§5/§9–§11/Appendix B aligned |
+| 2026-08-03 | **v1.11 plan-ready** | **Q43–Q48** + D72–D77: partial prop min = maxed positive legs only; **sphere-NAV fair seed** (replaces sum-NAV; §4.5.1 + worked example); residual `sumPos > 0` invariant; `addLiquidity` returns `(shares,a0,a1,a2)`; **§5.6 orbital Permit2 packing** (sig batch + allowance); Robinhood **4663**; authority + terminology §0; security/DoD/Appendix B aligned |
 
 ---
 
-**End of PRD — UniswapV4OrbitalSwapHook (v1.9 plan-ready — Q1–Q36 locked)**
+**End of PRD — UniswapV4OrbitalSwapHook (v1.11 plan-ready — Q1–Q48 locked)**

@@ -7,14 +7,14 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {UniswapV4BufferAndPricingHookRepo} from
-    "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHookRepo.sol";
+import {UniswapV4SingleStandardExchangeBufferPricingHookRepo} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookRepo.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHookCommon
+ * @title UniswapV4SingleStandardExchangeBufferPricingHookCommon
  * @notice SE preview/execute helpers + pattern-copied take/settle utilities (no Crane hook inheritance).
  */
-abstract contract UniswapV4BufferAndPricingHookCommon {
+abstract contract UniswapV4SingleStandardExchangeBufferPricingHookCommon {
     using SafeERC20 for IERC20;
 
     error ZeroAmount();
@@ -51,7 +51,7 @@ abstract contract UniswapV4BufferAndPricingHookCommon {
     }
 
     function _wrapZeroForOne() internal view returns (bool) {
-        return UniswapV4BufferAndPricingHookRepo._wrapZeroForOne();
+        return UniswapV4SingleStandardExchangeBufferPricingHookRepo._wrapZeroForOne();
     }
 
     /* ---------------------------------------------------------------------- */

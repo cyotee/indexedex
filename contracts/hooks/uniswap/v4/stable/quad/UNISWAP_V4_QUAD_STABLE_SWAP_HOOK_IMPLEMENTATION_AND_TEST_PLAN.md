@@ -4,14 +4,14 @@
 **This plan (implementor SoT once accepted):** phases, file map, zap algorithm pins, constants, settle notes, test matrix.  
 **Package:** `contracts/hooks/uniswap/v4/stable/quad/`  
 **Date:** 2026-08-03  
-**Status:** **Canonical plan v1.2** — write from PRD v0.5.2. Greenfield package (no production sources yet). **Plan-only; no product code in this file.**
+**Status:** **Canonical plan v1.3** — write from PRD v0.5.2 + stakeholder pin pass (zap clamp, Newton reference, label recompute, LP metadata, dual TestBase path). Greenfield package (no production sources yet). **Plan-only; no product code in this file.**
 
 **Authority**
 
 | Layer | Role |
 |-------|------|
 | PRD v0.5.2 | Product law (D1–D74, Q1–Q33, §0–§8, §10–§11) |
-| **This plan** | Implementor source of truth for phases, file layout, **Ann convention**, **zap pins**, **ctor metadata / LP string caps**, **TestBase peer**, test IDs |
+| **This plan** | Implementor source of truth for phases, file layout, **Ann convention**, **zap pins** (incl. `maxViableIn`), **ctor metadata / LP strings**, **TestBase peer path**, test IDs |
 | Peer buffer / dual hooks | Pattern-copy only (CREATE3 mine, settle order, Repo shape) — **do not subclass** |
 
 **Process rule:** If this plan and the PRD disagree, **PRD wins** and this plan must be patched. Do **not** reopen locked PRD decisions without a PRD revision.
@@ -43,10 +43,11 @@
 | Amp | Deploy-time immutable `baseAmp`; `AMP_PRECISION = 100`; **`0 < baseAmp < MAX_AMP`**; no ramp |
 | Rates | **`IRateProvider` addresses only** (or `address(0)`); always `getRate()`; **fail-closed** (D74); no package adapters |
 | First mint | All four amounts > 0; geometric mean of rate-scaled − `MINIMUM_LIQUIDITY`; lock **1000** to **`address(0)`** |
-| Zap | Algorithm **A** target-ratio sequential; any non-empty subset; public slippage **`sharesMin` only**; **closed-form inverse sizing only**; **clamp** unviable inverse to max viable exact-in; **working-snapshot until final mint** (see §6.5) |
-| Ctor metadata | **`decimals()`** fail-closed ∈ [6,18]; **`symbol()`/`name()`** soft-fallback to address fragments (see §5.2) |
-| LP strings | Auto `QS-…`; **symbol ≤ 32 bytes**, **name ≤ 64 bytes** (truncate — see §0.1 / §5.2) |
-| TestBase peer | Pattern-copy **dual SE buffer** TestBase / package setup for hermetic V4 + CREATE3 (see §8.1) |
+| Zap | Algorithm **A** target-ratio sequential; any non-empty subset; public slippage **`sharesMin` only**; **closed-form inverse sizing only**; **clamp** unviable inverse via **leave ≥1 scaled unit on out-leg** (§6.5.4); **reclassify surplus/deficit after every internal swap**; **working-snapshot until final mint** (see §6.5) |
+| Ctor metadata | **`decimals()`** fail-closed ∈ [6,18]; **`symbol()`** soft-fallback = **last 4 hex** of token (no `0x`) (see §5.2) |
+| LP strings | Auto `QS-…`; name **`Quad Stable ` + QS body**; **symbol ≤ 32 bytes**, **name ≤ 64 bytes** (hard UTF-8 cut — §5.2) |
+| TestBase peer | **LOCKED path:** `test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol` (see §8.1) |
+| Math reference | **Classic Curve StableSwap** (Vyper-style) Newton `get_D`/`get_y` for \(n=4\); **not** StableSwapNG; **not** Balancer StableMath (§6.2) |
 | Swap gate | **Pair legs only** (`reserves[in/out] > 0` + convergent); witnesses may be zero |
 | Access | Fully permissionless on hook and factory deploy; no owner/pause/skim |
 | Deploy | Existing **`create3Factory`** + `HookMinerCreate3`; factory immutable **canonical chain V4 PoolManager** (D67); not vault registry |
@@ -73,7 +74,9 @@
 | `LP_NAME_MAX` | **64** | UTF-8 byte length; truncate if over (see §5.2) |
 | Demo `lpFeePips` | `500` | 0.05% (tests) |
 | Demo `baseAmp` | `100`–`1000` | Prefer \(A \ge 10\) |
-| `Ann` convention | **`Ann = A' * N_TOKENS`** | \(A' = baseAmp \cdot AMP\_PRECISION\); Curve-style iterative form — see §6.2 |
+| `Ann` convention | **`Ann = A' * N_TOKENS`** | \(A' = baseAmp \cdot AMP\_PRECISION\); classic Curve iterative form — see §6.2 |
+| FIX-D1 tolerance | **`\|D − S\| ≤ 1`** | Equal-balance scaled units; see §6.2 FIX-* |
+| Zap `maxViableIn` | **Leave ≥1 scaled unit on out-leg** | Closed-form bound only — see §6.5.4 |
 | Preview / residual dust | Prefer **exact** match; **≤ 1 wei** only where ceil/descale forces | Applies to swap/LP/zap previews **and** zap refund residual free inventory |
 
 ### 0.2 Deliberate divergences from peer packages (document in NatSpec)
@@ -108,8 +111,8 @@ Ship production-first:
 
 | Asset | Path | Use |
 |-------|------|-----|
-| Buffer FactoryService | `…/standardExchange/UniswapV4BufferAndPricingHook_FactoryService.sol` | Mine loop, salt hash, idempotent deploy |
-| Buffer Target | `…/UniswapV4BufferAndPricingHookTarget.sol` | Permissions, take/sync/settle order |
+| Buffer FactoryService | `…/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.sol` | Mine loop, salt hash, idempotent deploy |
+| Buffer Target | `…/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookTarget.sol` | Permissions, take/sync/settle order |
 | Dual Target | `…/standardExchange/dual/…Target.sol` | Multi-leg LP + reentrancy patterns |
 | `HookMinerCreate3` | Crane `…/hooks/public/utils/HookMinerCreate3.sol` | `computeAddress`, `MAX_LOOP` |
 | `BaseTokenWrapperHook` / `BaseHook` | Crane V4 base | **Behavioral settle only** — no inheritance |
@@ -177,7 +180,7 @@ test/foundry/spec/hooks/uniswap/v4/stable/quad/
 test/foundry/fork/base_main/hooks/uniswap/v4/stable/quad/
   UniswapV4QuadStableSwapHook_Base.t.sol
 
-test/foundry/fork/robinhood_4663/hooks/uniswap/v4/stable/quad/   # or repo RH path convention
+test/foundry/fork/robinhood_4663/hooks/uniswap/v4/stable/quad/   # LOCKED (not robinhood_main)
   UniswapV4QuadStableSwapHook_Robinhood.t.sol
 ```
 
@@ -243,10 +246,14 @@ baseScale0..3 and/or decimals0..3 (if not re-read)
 
 1. Validate D6–D7, D15, D20; never initialize V4 pools (D61).  
 2. **`decimals()` (each token) — fail-closed:** staticcall must succeed; decode `uint8`; require **∈ [6, 18]**. Revert `InvalidToken` otherwise (bad returndata, revert, out of range). Cache `decimals` / `baseScale` as preferred.  
-3. **`symbol()` / underlying `name()` — soft-fallback (D45):** if staticcall fails, empty, or non-string returndata → use **short address fragment** for that leg (e.g. last 4 hex chars of token address, or peer dual-hook style). **Do not** revert deploy solely for missing `symbol()`.  
-4. Build LP metadata:  
-   - `symbol = truncate(LP_PREFIX + s0 + "-" + s1 + "-" + s2 + "-" + s3, LP_SYMBOL_MAX)`  
-   - `name` similarly with a human-readable prefix if desired, **≤ `LP_NAME_MAX`**  
+3. **Per-leg display segment `s_i` (LOCKED — D45):**  
+   - Prefer `token.symbol()` via staticcall when it succeeds with non-empty string returndata.  
+   - **Soft-fallback:** if staticcall fails, empty, or non-string returndata → **`s_i` = last 4 hex characters of `token` address** (lowercase hex, **no** `0x` prefix).  
+   - **Do not** revert deploy solely for missing/reverting `symbol()`.  
+4. Build LP metadata (**LOCKED** shapes):  
+   - `qsBody = s0 + "-" + s1 + "-" + s2 + "-" + s3`  
+   - `symbol = truncate(LP_PREFIX + qsBody, LP_SYMBOL_MAX)` → e.g. `QS-USDC-USDT-DAI-USDS`  
+   - `name = truncate("Quad Stable " + (LP_PREFIX + qsBody), LP_NAME_MAX)` → e.g. `Quad Stable QS-USDC-…`  
 5. **Truncation rule (LOCKED):** if UTF-8 byte length exceeds the max, **hard cut** to `MAX` bytes (do not require ellipsis). Prefer cutting so the string remains valid UTF-8 (drop incomplete trailing code units). Cache both strings in Repo at ctor.  
 6. `Hooks.validateHookPermissions(this, permissions)`.
 
@@ -325,7 +332,14 @@ A\, n^{n} \sum x_i + D = A\, D\, n^{n} + \frac{D^{n+1}}{n^{n} \prod x_i}
 \]
 with \(n = 4\), \(x_i\) rate-scaled 1e18 units.
 
-**Code mapping (LOCKED — Curve-style iterative form):**
+**Normative iterative reference (LOCKED — stakeholder pin v1.3):**
+
+- **Classic Curve StableSwap** (Vyper `StableSwap` / historical 4-coin pool style) Newton **`get_D` / `get_y`**.  
+- **Not** Curve **StableSwapNG** (unless a future PRD revises).  
+- **Not** Balancer V2/V3 StableMath.  
+- Agents may re-implement in pure Solidity for fixed `n=4`; structure and constants must match classic Curve, not invent a third iteration.
+
+**Code mapping (LOCKED — classic Curve iterative form):**
 
 ```text
 N          = N_TOKENS = 4
@@ -334,24 +348,24 @@ Ann        = A' * N                      // LOCKED: Curve Ann = amp * N_COINS (n
 A_PRECISION = AMP_PRECISION              // 100 — same role as Curve A_PRECISION in D iteration
 ```
 
-- Implement **Curve StableSwap** Newton `get_D` / `get_y` for fixed `n=4` using **`Ann = A' * N`** and the standard iterative update that divides by `A_PRECISION` in the \(D\) step (same structure as Curve `get_D` / `get_y`).  
+- Implement Newton `get_D` / `get_y` for fixed `n=4` using **`Ann = A' * N`** and the standard iterative update that divides by `A_PRECISION` in the \(D\) step (same structure as classic Curve `get_D` / `get_y`).  
 - **Do not** use `Ann = A' * n^n` in code. The PRD LaTeX \(A n^n\) is the continuous identity; production Curve maps amp into the iterative form via `Ann = amp * N`.  
 - Inputs: rate-scaled `x[4]`, `A'`, `Ann`.  
 - Max **`MAX_NR_ITERS = 255`**; stop when \(\lvert\Delta\rvert \le 1\); else revert `InvariantFailed`.  
 - Zero or near-zero product of balances: solver must **revert**, not return garbage.  
-- **NatSpec** must restate this Ann pin and point at `Math.t.sol` fixtures as law.
+- **NatSpec** must restate this Ann pin, classic Curve reference, and point at `Math.t.sol` fixtures as law.
 
 **Required fixtures (Math.t.sol is law — Phase A exit):**
 
 | ID | Setup (rate-scaled units) | Assert |
 |----|---------------------------|--------|
-| FIX-D1 | Equal balances `x = [1e24, 1e24, 1e24, 1e24]`, `baseAmp = 100` → \(A' = 10\_000\) | `getD` converges; \(D \approx S = 4e24\) within tight tol; re-run `getD` after noop is stable |
-| FIX-D2 | Mild imbalance e.g. `x = [2e24, 1e24, 1e24, 1e24]`, same \(A'\) | `getD` converges; `getY` for out-leg after +Δ on in-leg preserves \(D\) within 1 wei on reconverge |
+| FIX-D1 | Equal balances `x = [1e24, 1e24, 1e24, 1e24]`, `baseAmp = 100` → \(A' = 10\_000\) | `getD` converges; **`\|D − S\| ≤ 1`** with \(S = 4e24\); re-run `getD` after noop is stable (bit-identical or same bound) |
+| FIX-D2 | Mild imbalance e.g. `x = [2e24, 1e24, 1e24, 1e24]`, same \(A'\) | `getD` converges; `getY` for out-leg after +Δ on in-leg preserves \(D\) within **1 wei** on reconverge |
 | FIX-Y1 | From FIX-D1 state: exact-in scale add on index 0, solve `getY` for index 1 | `y_out' < x[1]`; post-state `getD` converges |
 | FIX-FEE1 | Fee helpers only: `lpFeePips = 500` | exact-in deduct + exact-out gross-up round-trip identities (pool-favoring ceils) |
 | FIX-NR1 | Pathological balances / amp that cannot converge within 255 | reverts `InvariantFailed` |
 
-Optional: one comparative vector vs a known Curve `n=4` reference within documented tolerance — **not** required if FIX-* green and NatSpec matches this pin.
+Optional: one comparative vector vs classic Curve `n=4` reference within documented tolerance — **not** required if FIX-* green and NatSpec matches this pin.
 
 ### 6.3 Geometric mean4 (D26)
 
@@ -436,20 +450,32 @@ swapIn = min( rawSurplus_i, amountInIdeal )
 ```
 
    - If `need_j` exceeds what surplus `i` can produce: **`swapIn = rawSurplus_i`** (full surplus of `i` toward `j`), then continue walk (do not partial-pro-rata split).  
-   - **Unviable inverse → clamp (LOCKED):** if the ideal inverse would drain more than `workingR[j]` allows, `getY` reverts / fails to converge, `amountInIdeal == 0`, or post-swap working state would be non-priceable, **do not fail the whole zap**. Instead:  
-     1. Compute **`maxViableIn`** = largest `swapIn ≤ rawSurplus_i` such that fee-on-output exact-in on `workingR` succeeds and leaves pair legs (and witnesses) priceable — prefer a **closed-form** max (e.g. leave ≥1 raw wei or ≥1 scaled unit on out-leg / known Curve dust bound) rather than open binary search.  
-     2. If no positive viable in: **`swapIn = 0`**, skip this `(i,j)`, continue walk.  
-     3. Else **`swapIn = min(swapIn, maxViableIn)`** (clamp down), then execute.  
-     Remaining imbalance is absorbed later by proportional mint + refund (`sharesMin` still enforces user floor).  
+   - **Unviable inverse → clamp (LOCKED — stakeholder pin v1.3):** if the ideal inverse would drain more than `workingR[j]` allows, `getY` reverts / fails to converge, `amountInIdeal == 0`, or post-swap working state would be non-priceable, **do not fail the whole zap**. Use this **single** closed-form bound (no binary search, no open solver):
+
+```text
+// Leave ≥ 1 scaled unit on the out-leg after fee-on-output exact-in:
+//   max userOut (raw) such that scaleToUp(rawOutNeeded, r[j]) <= max(outScaled - 1, 0)
+outScaled     = scaleTo(workingR[j], r[j])
+maxOutScaled  = outScaled > 1 ? outScaled - 1 : 0   // if 0 → no positive viable out
+// Invert fee-on-output for maxOutScaled (same rawOutNeeded / getY path as amountInIdeal above)
+//   wantUserOut_raw_max from maxOutScaled via descale (pool-favoring as needed)
+//   amountInIdeal_max = closed-form inverse for that want (same as § above)
+maxViableIn   = min(rawSurplus_i, amountInIdeal_max)   // 0 if inverse fails / non-priceable
+
+if maxViableIn == 0: swapIn = 0; skip this (i,j); continue walk
+else: swapIn = min(swapIn, maxViableIn); then execute
+```
+
+     Remaining imbalance is absorbed later by proportional mint + refund (`sharesMin` still enforces user floor). Preview and execution **must** share the **same** pure clamp helper.  
    - If `swapIn == 0` break/skip inner for this pair.  
    - **Execute** exact-in StableSwap fee-on-output on **`workingR`** with input `swapIn`:  
      update `workingR[i]`, `workingR[j]`, `W[i] -= swapIn`, `W[j] += userOut` (same amounts public exact-in would yield on that snapshot).  
-   - Recompute `wS` (and optionally refresh surplus/deficit labels for remaining inner steps of this pair only as needed).  
-5. After full pass, if still unbalanced, **second full pass** only (max **2** outer passes). Recompute `T_s` from **current** `W` and **current** `workingR` at the start of each outer pass. Remaining imbalance absorbed by proportional min-share sizing (user accepts leftover in refund).
+   - **Reclassify after every internal swap (LOCKED):** recompute `wS` from current `W`; re-evaluate surplus/deficit vs **current outer-pass** `T_s` (ε rules above) before choosing the next `(i,j)`. Do **not** keep a frozen surplus/deficit set for the whole pass.  
+5. After full pass, if still unbalanced, **second full pass** only (max **2** outer passes). **`T_s` is recomputed only at the start of each outer pass** from current `W` and current `workingR`. Remaining imbalance absorbed by proportional min-share sizing (user accepts leftover in refund).
 
 **ε:** 1 scaled unit (1e18 stable-unit wei).  
 **Multi-deficit split:** sequential full-need toward each deficit in index order (not pro-rata split of one surplus across deficits in one step).  
-**Forbidden:** multi-step `previewSwapExactIn` refinement loops for *target* sizing, or a second public sizing API. **`maxViableIn` may use a single closed-form bound** (or at most one pure helper shared by preview/exec) — not an unbounded solver product. Preview and execution must share the **same** clamp helper.
+**Forbidden:** multi-step `previewSwapExactIn` refinement loops for *target* sizing; binary search for `maxViableIn`; a second public sizing API; recompute of `T_s` mid-pass (only at outer-pass start).
 
 #### 6.5.5 Mint after rebalance + single Repo commit (LOCKED)
 
@@ -499,7 +525,7 @@ Ordered for incremental green slices. After each phase: `forge build` green; pha
 
 1. scale/descale round-trip (6 and 18 decimals).  
 2. geometricMean4.  
-3. `getD` / `getY` with **§6.2 FIX-*** vectors (`Ann = A' * N` locked).  
+3. `getD` / `getY` with **§6.2 FIX-*** vectors (classic Curve StableSwap; `Ann = A' * N`; FIX-D1 `|D−S|≤1`).  
 4. Exact-in/out fee helpers (output fee + gross-up) — FIX-FEE1.  
 5. Newton exhaust / non-converge reverts — FIX-NR1.  
 6. Optional: comparative fixture vs known Curve `n=4` reference within documented tolerance.
@@ -554,7 +580,7 @@ Ordered for incremental green slices. After each phase: `forge build` green; pha
 ### Phase F — Zap-in
 
 1. Gate `NotZapEligible`.  
-2. Algorithm A with §6.5 pins: surplus→deficit order, **closed-form inverse**, **clamp unviable inverse**, **working-snapshot until single Repo commit**, `sharesMin` only.  
+2. Algorithm A with §6.5 pins: surplus→deficit order, **closed-form inverse**, **clamp = leave ≥1 scaled unit on out-leg**, **reclassify after every swap**, **working-snapshot until single Repo commit**, `sharesMin` only.  
 3. Single-leg and multi-leg; balanced skip-swap path.  
 4. Case: inverse would overshoot out-leg → clamp / skip pair; zap still succeeds if `sharesMin` met.  
 5. `previewZapIn == execution` (**≤ 1 wei** max documented).  
@@ -638,7 +664,13 @@ Pin concrete addresses in deploy scripts / constants when known; do **not** inve
 3. Real V4 PoolManager (Crane hermetic or fork).  
 4. Gold TestBase: package-adjacent `TestBase_UniswapV4QuadStableSwapHook` (`§3.1`).  
    - Inherit `CraneTest` → `IndexedexTest` (if create3/manager needed).  
-   - **Peer pattern-copy (LOCKED):** dual SE buffer hook TestBase / package setup under `contracts/hooks/uniswap/v4/standardExchange/dual/` for hermetic **V4 PoolManager + CREATE3 mine + hook deploy** patterns (do **not** subclass dual production types; copy structure/helpers only). Document the exact dual TestBase file chosen in TestBase NatSpec at Phase 0.  
+   - **Peer pattern-copy (LOCKED — stakeholder pin v1.3):**  
+     - **TestBase:** `test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol`  
+     - **Production settle/mine peers:** dual package under `contracts/hooks/uniswap/v4/standardExchange/dual/` (`…Target.sol`, `…_FactoryService.sol`) + single buffer Target for settle order if dual omits a step.  
+     - **Do not** hunt for a TestBase under `contracts/hooks/.../dual/` (there is none).  
+     - **Do not** subclass dual production types; copy structure/helpers only.  
+     - Cite the dual TestBase path in this package’s TestBase NatSpec at Phase 0.  
+   - **Fork path convention (LOCKED):** `test/foundry/fork/base_main/hooks/uniswap/v4/stable/quad/` and `test/foundry/fork/robinhood_4663/hooks/uniswap/v4/stable/quad/` (match dual SE fork layout; not `robinhood_main` unless that tree is later unified).  
 5. **preview == execution** on swap, LP, zap (**≤1 wei** documented).  
 
 ### 8.2 Minimum DoD matrix
@@ -652,7 +684,7 @@ Pin concrete addresses in deploy scripts / constants when known; do **not** inve
 | F3 | Non-operator EOA deploy (factory is operator) | D52 |
 | F4 | Unsorted / duplicate tokens revert | D7 |
 | F5 | Zero fee / zero amp / bad decimals revert | D6, D15, D20 |
-| F5a | Missing/reverting `symbol()` still deploys (address-fragment fallback); name/symbol length caps | D45, §5.2 |
+| F5a | Missing/reverting `symbol()` still deploys (**last 4 hex** fallback); name = **`Quad Stable QS-…`**; length caps 32/64 | D45, §5.2 |
 | F6 | Idempotent redeploy; `HookDeployed` only once | D35, D68 |
 | F7 | `ensurePairPools` factory-only; foreign hook reverts | D59 |
 | F8 | `pairPoolKeys` match D55–D56 | D55, D56 |
@@ -704,10 +736,10 @@ Matches PRD §8; expand with plan artifacts:
 
 - [ ] All §3 production files present; no Facet/DFPkg; no BaseHook inheritance.  
 - [ ] FactoryService mine + Factory paths A+B + ensure; six doors; D67 PM law.  
-- [ ] Math pure; **`Ann = A' * N`** + §6.2 FIX-* green; NR bounds in NatSpec.  
-- [ ] LP first/later/remove + zap A with §6.5 pins (closed-form inverse, **clamp**, working-snapshot commit); `sharesMin` only.  
-- [ ] Package-adjacent gold TestBase under `stable/quad/`; dual SE buffer peer pattern-copy documented.  
-- [ ] Ctor: decimals fail-closed; symbol soft-fallback; LP string caps 32/64.  
+- [ ] Math pure; classic Curve StableSwap Newton; **`Ann = A' * N`** + §6.2 FIX-* green (FIX-D1 **`|D−S|≤1`**); NR bounds in NatSpec.  
+- [ ] LP first/later/remove + zap A with §6.5 pins (closed-form inverse, **≥1 scaled out-leg clamp**, reclassify after each swap, working-snapshot commit); `sharesMin` only.  
+- [ ] Package-adjacent gold TestBase under `stable/quad/`; peer = **`TestBase_UniswapV4DualSEBCPHook`** documented in NatSpec.  
+- [ ] Ctor: decimals fail-closed; symbol soft-fallback **last 4 hex**; name **`Quad Stable QS-…`**; caps 32/64.  
 - [ ] All six pairs exact-in/out; preview fidelity; pair-leg swap gate.  
 - [ ] Rate fail-closed; IRateProvider-only public surface.  
 - [ ] Safety: non-zero fee, zero-input exact-out, post priceability, no native ETH, donation ignore.  
@@ -725,9 +757,9 @@ Matches PRD §8; expand with plan artifacts:
 | Permissionless factory grief (bad A/fee/tokens) | User chooses binding; no protocol bailout; validation gates |
 | Mid-zap MEV | `sharesMin` only; user sizes via preview |
 | Zap preview ≠ exec | Single closed-form inverse + shared clamp helper + identical working path |
-| Zap inverse overshoots liquidity | Clamp to max viable exact-in or skip pair; `sharesMin` is user floor |
+| Zap inverse overshoots liquidity | Clamp via leave ≥1 scaled unit on out-leg or skip pair; `sharesMin` is user floor |
 | Fee-on-output / zap refund dust | Pool-favoring ceils; tests document ≤1 wei |
-| Long / missing token symbols | Soft-fallback + hard-cut 32/64 byte caps |
+| Long / missing token symbols | Last-4-hex fallback + `Quad Stable QS-…` + hard-cut 32/64 |
 | Zero witness / drained leg | Swap gate pair-only; solver reverts if non-priceable |
 | Donation inflation | Repo reserves ignore stray balances |
 
@@ -758,7 +790,8 @@ Phase J  polish + size + PRD §8 check
 | **v1.0** | 2026-08-03 | Initial plan from PRD **v0.5.2**. Pins `MAX_LOOP = 160_444`; zap surplus→deficit ordering; fee-on-output vs orbital note; factory bootstrap; full phase + test matrix. |
 | **v1.1** | 2026-08-03 | Plan refinement locks: (1) zap sizing = **closed-form inverse of exact-in only** (no iterative refinement); (2) zap mutation = **memory working snapshot until single Repo commit**; (3) Math **`Ann = A' * N`** Curve-style + FIX-* fixtures; (4) gold TestBase path = **package-adjacent** `stable/quad/`. Dust ≤1 wei aligned; F9 → §5.3; Z5 commit assert. |
 | **v1.2** | 2026-08-03 | (1) Zap unviable inverse → **clamp** to max viable exact-in or skip pair (no whole-zap fail); (2) ctor **decimals fail-closed**, **symbol soft-fallback**; (3) LP **symbol ≤32 / name ≤64** hard-cut; (4) hermetic TestBase peer = **dual SE buffer** pattern-copy. Matrix F5a, Z6. |
+| **v1.3** | 2026-08-03 | Stakeholder pin pass: (1) `maxViableIn` = **leave ≥1 scaled unit on out-leg** closed-form; (2) Newton = **classic Curve StableSwap** (not NG/Balancer); FIX-D1 **`|D−S|≤1`**; (3) reclassify surplus/deficit **after every internal swap**; `T_s` only at outer-pass start; (4) LP symbol fallback **last 4 hex**; name **`Quad Stable QS-…`**; (5) TestBase peer path = **`TestBase_UniswapV4DualSEBCPHook`**; fork dir **`robinhood_4663`**. |
 
 ---
 
-**End of plan — UniswapV4QuadStableSwapHook (v1.2 / PRD v0.5.2)**
+**End of plan — UniswapV4QuadStableSwapHook (v1.3 / PRD v0.5.2)**

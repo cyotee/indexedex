@@ -4,23 +4,23 @@ pragma solidity ^0.8.0;
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
-import {UniswapV4BufferAndPricingHookRepo} from
-    "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHookRepo.sol";
-import {UniswapV4BufferAndPricingHookTarget} from
-    "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHookTarget.sol";
+import {UniswapV4SingleStandardExchangeBufferPricingHookRepo} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookRepo.sol";
+import {UniswapV4SingleStandardExchangeBufferPricingHookTarget} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookTarget.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHook
+ * @title UniswapV4SingleStandardExchangeBufferPricingHook
  * @notice CREATE3-mined single-contract V4 buffer/pricing hook for Standard Exchange shares.
  * @dev Binding is ctor immutables. wrapZeroForOne stored in Repo only (no public getter).
  */
-/// @dev Implements IUniswapV4BufferAndPricingHook surface without dual-inheritance override noise.
-contract UniswapV4BufferAndPricingHook is UniswapV4BufferAndPricingHookTarget {
+/// @dev Implements IUniswapV4SingleStandardExchangeBufferPricingHook surface without dual-inheritance override noise.
+contract UniswapV4SingleStandardExchangeBufferPricingHook is UniswapV4SingleStandardExchangeBufferPricingHookTarget {
     error ZeroAddress();
     error UnderlyingNotInVaultTokens();
 
     constructor(IPoolManager poolManager_, address standardExchange_, address underlying_)
-        UniswapV4BufferAndPricingHookTarget(poolManager_, standardExchange_, underlying_)
+        UniswapV4SingleStandardExchangeBufferPricingHookTarget(poolManager_, standardExchange_, underlying_)
     {
         if (address(poolManager_) == address(0) || standardExchange_ == address(0) || underlying_ == address(0)) {
             revert ZeroAddress();
@@ -28,7 +28,7 @@ contract UniswapV4BufferAndPricingHook is UniswapV4BufferAndPricingHookTarget {
         _requireUnderlyingInVaultTokens(standardExchange_, underlying_);
         // Currency order from address sort (D62); Repo-only (D70/D73)
         bool wrapZFO = underlying_ < standardExchange_;
-        UniswapV4BufferAndPricingHookRepo._setWrapZeroForOne(wrapZFO);
+        UniswapV4SingleStandardExchangeBufferPricingHookRepo._setWrapZeroForOne(wrapZFO);
         Hooks.validateHookPermissions(this, getHookPermissions());
     }
 
@@ -45,7 +45,7 @@ contract UniswapV4BufferAndPricingHook is UniswapV4BufferAndPricingHookTarget {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*                         IUniswapV4BufferAndPricingHook                 */
+    /*                         IUniswapV4SingleStandardExchangeBufferPricingHook                 */
     /* ---------------------------------------------------------------------- */
 
     function previewWrap(uint256 underlyingIn) external view returns (uint256 seOut) {

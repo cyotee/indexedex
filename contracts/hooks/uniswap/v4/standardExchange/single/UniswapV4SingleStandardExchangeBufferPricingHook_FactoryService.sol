@@ -8,20 +8,20 @@ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfac
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {HookMinerCreate3} from
     "@crane/contracts/protocols/dexes/uniswap/v4/hooks/public/utils/HookMinerCreate3.sol";
-import {UniswapV4BufferAndPricingHook} from
-    "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHook.sol";
-import {IUniswapV4BufferAndPricingHook} from
-    "contracts/hooks/uniswap/v4/standardExchange/interfaces/IUniswapV4BufferAndPricingHook.sol";
+import {UniswapV4SingleStandardExchangeBufferPricingHook} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHook.sol";
+import {IUniswapV4SingleStandardExchangeBufferPricingHook} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferPricingHook.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHook_FactoryService
+ * @title UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService
  * @notice Binding-aware CREATE3 mine + deploy on existing create3Factory (D20/D32/D37).
  * @dev Do not use bare HookMinerCreate3.find / findWithPrefix for product deploys.
  */
-library UniswapV4BufferAndPricingHook_FactoryService {
+library UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService {
     using BetterEfficientHashLib for bytes;
 
-    string internal constant DEFAULT_SALT_NAMESPACE = "uv4-buffer-pricing-hook-";
+    string internal constant DEFAULT_SALT_NAMESPACE = "uv4-single-se-buffer-pricing-hook-";
 
     error HookMineExhausted();
     error HookDeployCollision(address occupied);
@@ -54,17 +54,17 @@ library UniswapV4BufferAndPricingHook_FactoryService {
         address underlying
     ) internal view returns (bool) {
         if (predicted.code.length == 0) return false;
-        try IUniswapV4BufferAndPricingHook(predicted).poolManager() returns (IPoolManager pm) {
+        try IUniswapV4SingleStandardExchangeBufferPricingHook(predicted).poolManager() returns (IPoolManager pm) {
             if (address(pm) != poolManager) return false;
         } catch {
             return false;
         }
-        try IUniswapV4BufferAndPricingHook(predicted).standardExchange() returns (address se) {
+        try IUniswapV4SingleStandardExchangeBufferPricingHook(predicted).standardExchange() returns (address se) {
             if (se != standardExchange) return false;
         } catch {
             return false;
         }
-        try IUniswapV4BufferAndPricingHook(predicted).underlying() returns (address u) {
+        try IUniswapV4SingleStandardExchangeBufferPricingHook(predicted).underlying() returns (address u) {
             if (u != underlying) return false;
         } catch {
             return false;
@@ -98,7 +98,7 @@ library UniswapV4BufferAndPricingHook_FactoryService {
         string memory namespace =
             bytes(saltNamespace).length == 0 ? DEFAULT_SALT_NAMESPACE : saltNamespace;
         uint160 flags = requiredFlags();
-        bytes memory creationCode = type(UniswapV4BufferAndPricingHook).creationCode;
+        bytes memory creationCode = type(UniswapV4SingleStandardExchangeBufferPricingHook).creationCode;
         bytes memory ctorArgs = abi.encode(poolManager, standardExchange, underlying);
 
         for (uint256 mineNonce; mineNonce < HookMinerCreate3.MAX_LOOP; mineNonce++) {

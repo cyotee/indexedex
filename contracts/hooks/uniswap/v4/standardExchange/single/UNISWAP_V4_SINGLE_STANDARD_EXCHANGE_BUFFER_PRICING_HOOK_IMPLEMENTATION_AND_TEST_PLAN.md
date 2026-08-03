@@ -1,9 +1,9 @@
-# Uniswap V4 Buffer and Pricing Hook — Implementation and Testing Plan
+# Uniswap V4 Single Standard Exchange Buffer Pricing Hook — Implementation and Testing Plan
 
 **Date:** 2026-08-02  
 **Status:** READY TO IMPLEMENT  
-**Normative product:** [`UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md`](./UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md)  
-**Package path:** `contracts/hooks/uniswap/v4/standardExchange/`  
+**Normative product:** [`UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md`](./UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md)  
+**Package path:** `contracts/hooks/uniswap/v4/standardExchange/single/`  
 **SE dependency path:** `contracts/vaults/standard/erc4626/` (+ shared MultiAsset vault Targets under `contracts/vaults/basic/` / `contracts/vaults/standard/`)  
 
 **Methodology skills:** `crane-deployment`, `crane-architecture`, `crane-testing`, `indexedex-testing`, `crane-adversarial-testing`, `indexedex-adversarial-testing`, `crane-uniswap` (V4 settle patterns — behavioral reference only)
@@ -18,7 +18,7 @@ Ordered for incremental delivery. Each phase leaves a green, reviewable slice. *
 
 | Topic | Decision |
 |-------|----------|
-| Product | **`UniswapV4BufferAndPricingHook`** — CREATE3-mined single contract |
+| Product | **`UniswapV4SingleStandardExchangeBufferPricingHook`** — CREATE3-mined single contract |
 | Package shape | **Repo + Target + Common + FactoryService**; **no** Facet / DFPkg / diamond for **hook** |
 | SE binding | One SE + one `underlying` + PoolManager; **ctor immutables**; no post-deploy binding init |
 | Pool vault currency | **`address(SE)`** always (D30) |
@@ -29,7 +29,7 @@ Ordered for incremental delivery. Each phase leaves a green, reviewable slice. *
 | Inheritance | **No** `BaseTokenWrapperHook` / `BaseHook` / `DeltaResolver` — **full pattern-copy (D51 / D67)** |
 | Deploy | Existing **`create3Factory`** + **`HookMinerCreate3.computeAddress`** + FactoryService binding-aware mine loop |
 | Salt | `namespace, pm, se, underlying, mineNonce` → `encodePacked(...)._hash()` via FactoryService only |
-| Default namespace | `"uv4-buffer-pricing-hook-"`; multi-instance via different namespace (D58) |
+| Default namespace | `"uv4-single-se-buffer-pricing-hook-"`; multi-instance via different namespace (D58) |
 | Idempotency | Same namespace+binding → return existing if `isExpectedHook` (views only — D53); wrong occupant **reverts** |
 | Fees (ERC-4626 SE) | **Dilution mint on mint routes only** (D40); WAD + `BetterMath._percentageOfWAD` (D40a/D57); **exit: no usage fee (D42)** |
 | Dust | Unrefundable residual ≤ **`MAX_DUST_WEI = 10`** → oracle **`feeTo` only** if non-zero (D50/D66); **skip if `feeTo == 0` (D71)** |
@@ -65,7 +65,7 @@ Ordered for incremental delivery. Each phase leaves a green, reviewable slice. *
 
 1. **Fix generic ERC-4626 SE** so full underlying ↔ SE exact-in/out matrix works via `IStandardExchangeIn` / `IStandardExchangeOut` only (PRD §6.0).  
 2. **Wire `vaultTokens`** via standard MultiAsset **Targets** + Facets **IFacet-only**, cut **both** Basic + Standard multi-asset facets into the SE proxy; storage already inits `[protocolVault, asset()]` — keep that.  
-3. Ship **`UniswapV4BufferAndPricingHook`**: pattern-copy wrapper hook; SE-priced wrap/unwrap exact-in/out; public previews.  
+3. Ship **`UniswapV4SingleStandardExchangeBufferPricingHook`**: pattern-copy wrapper hook; SE-priced wrap/unwrap exact-in/out; public previews.  
 4. **FactoryService** library on existing `create3Factory`: binding-aware mine, idempotent `deployHook`, multi-namespace multi-instance.  
 5. **Hermetic** Morpho + real V4 PoolManager; **fork** RH then Base with pinned curated Morpho Vault V2.  
 6. Prove: preview == execution (fees on mint), real interest strict increase, zero-amount reverts, dust/`Slippage` law, deploy flags + idempotency.
@@ -185,23 +185,24 @@ Prefer small custom errors on FactoryService for deploy failures (e.g. `HookDepl
 ### 4.1 Hook package (new)
 
 ```text
-contracts/hooks/uniswap/v4/standardExchange/
-  UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md
-  UNISWAP_V4_BUFFER_AND_PRICING_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md  # this file
+contracts/hooks/uniswap/v4/standardExchange/single/
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md  # this file
+  UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_MOVE_AND_RENAME_PLAN.md
 
   interfaces/
-    IUniswapV4BufferAndPricingHook.sol
+    IUniswapV4SingleStandardExchangeBufferPricingHook.sol
 
-  UniswapV4BufferAndPricingHookRepo.sol
-  UniswapV4BufferAndPricingHookCommon.sol
-  UniswapV4BufferAndPricingHookTarget.sol
-  UniswapV4BufferAndPricingHook.sol
-  UniswapV4BufferAndPricingHook_FactoryService.sol
+  UniswapV4SingleStandardExchangeBufferPricingHookRepo.sol
+  UniswapV4SingleStandardExchangeBufferPricingHookCommon.sol
+  UniswapV4SingleStandardExchangeBufferPricingHookTarget.sol
+  UniswapV4SingleStandardExchangeBufferPricingHook.sol
+  UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.sol
 
   # FORBIDDEN: *Facet.sol, *DFPkg.sol, I*DFPkg.sol
 
-  test/bases/   # optional co-locate; or contracts/test/bases/
-    TestBase_UniswapV4BufferAndPricingHook.sol
+  # optional TestBase: contracts/test/bases/
+  #   TestBase_UniswapV4SingleStandardExchangeBufferPricingHook.sol
 ```
 
 ### 4.2 ERC-4626 SE / MultiAsset (modify)
@@ -239,15 +240,15 @@ test/foundry/fork/eth_main/vaults/standard/erc4626/
   ERC4626StandardExchange_SfrxETH_Fork.t.sol   # retain/extend
 
 # Hook hermetic
-test/foundry/spec/hooks/uniswap/v4/standardExchange/
-  UniswapV4BufferAndPricingHook_Deploy.t.sol
-  UniswapV4BufferAndPricingHook_Routes.t.sol
-  UniswapV4BufferAndPricingHook_Interest.t.sol
-  UniswapV4BufferAndPricingHook_InitGuards.t.sol
+test/foundry/spec/hooks/uniswap/v4/standardExchange/single/
+  UniswapV4SingleStandardExchangeBufferPricingHook_Deploy.t.sol
+  UniswapV4SingleStandardExchangeBufferPricingHook_Routes.t.sol
+  UniswapV4SingleStandardExchangeBufferPricingHook_Interest.t.sol
+  UniswapV4SingleStandardExchangeBufferPricingHook_InitGuards.t.sol
 
 # Hook fork
-test/foundry/fork/robinhood_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
-test/foundry/fork/base_main/.../UniswapV4BufferAndPricingHook_*_Fork.t.sol
+test/foundry/fork/robinhood_main/.../UniswapV4SingleStandardExchangeBufferPricingHook_*_Fork.t.sol
+test/foundry/fork/base_main/.../UniswapV4SingleStandardExchangeBufferPricingHook_*_Fork.t.sol
 
 # Constants
 contracts/constants/ (or ROBINHOOD_MAIN peer): pin Morpho Vault V2 WETH instance (D68/D72)
@@ -260,7 +261,7 @@ CraneTest
   → IndexedexTest
     → TestBase_VaultComponents
       → TestBase_ERC4626StandardExchange   # after §6.0
-        → TestBase_UniswapV4BufferAndPricingHook
+        → TestBase_UniswapV4SingleStandardExchangeBufferPricingHook
             # + Crane Morpho / Uni V4 PoolManager ports as peer TestBases require
 ```
 
@@ -443,7 +444,7 @@ Checklist (all required):
 
 **Deliverables**
 
-- `IUniswapV4BufferAndPricingHook`: views `poolManager`, `standardExchange`, `underlying`, `wrapper`; previews wrap/unwrap exact-in/out  
+- `IUniswapV4SingleStandardExchangeBufferPricingHook`: views `poolManager`, `standardExchange`, `underlying`, `wrapper`; previews wrap/unwrap exact-in/out  
 - **No** `wrapZeroForOne()` public (D73)  
 - Repo layout: immutables for binding (or immutable fields on contract + Repo for `wrapZeroForOne` only — match PRD D29/D70)  
 - Ctor: non-zero checks; `underlying ∈ vaultTokens()`; set Repo `wrapZeroForOne` from address sort; `Hooks.validateHookPermissions`  
@@ -504,8 +505,8 @@ Map zeroForOne to wrap vs unwrap using Repo `wrapZeroForOne`.
 **Deliverables**
 
 ```text
-library UniswapV4BufferAndPricingHook_FactoryService
-  DEFAULT_SALT_NAMESPACE = "uv4-buffer-pricing-hook-"
+library UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService
+  DEFAULT_SALT_NAMESPACE = "uv4-single-se-buffer-pricing-hook-"
   hookSalt(namespace, pm, se, underlying, mineNonce) → encodePacked(...)._hash()
   deployHook(create3Factory, pm, se, underlying)
   deployHook(..., saltNamespace)
@@ -639,7 +640,7 @@ settle net deltas per pattern-copied BaseTokenWrapperHook order
 ### 7.4 FactoryService salt
 
 ```solidity
-// only in UniswapV4BufferAndPricingHook_FactoryService
+// only in UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService
 salt = abi.encodePacked(namespace, poolManager, standardExchange, underlying, mineNonce)._hash();
 // empty namespace → DEFAULT_SALT_NAMESPACE
 ```
@@ -695,11 +696,11 @@ forge test --match-path 'test/foundry/spec/vaults/standard/erc4626/*' -vv
 forge test --match-contract ERC4626StandardExchange -vv
 
 # Hook hermetic
-forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/*' -vv
+forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/single/**' -vv
 
 # Fork (profiles as repo defines)
-FOUNDRY_PROFILE=robinhood_main forge test --match-path 'test/foundry/fork/robinhood_main/**/UniswapV4BufferAndPricingHook*' -vv
-FOUNDRY_PROFILE=base_main forge test --match-path 'test/foundry/fork/base_main/**/UniswapV4BufferAndPricingHook*' -vv
+FOUNDRY_PROFILE=robinhood_main forge test --match-path 'test/foundry/fork/robinhood_main/**/UniswapV4SingleStandardExchangeBufferPricingHook*' -vv
+FOUNDRY_PROFILE=base_main forge test --match-path 'test/foundry/fork/base_main/**/UniswapV4SingleStandardExchangeBufferPricingHook*' -vv
 ```
 
 ---
@@ -726,7 +727,7 @@ Matches PRD §14. Ship gate when **all** hold:
 
 | Anti-pattern | Why |
 |--------------|-----|
-| `new UniswapV4BufferAndPricingHook` | CREATE3 + mine required |
+| `new UniswapV4SingleStandardExchangeBufferPricingHook` | CREATE3 + mine required |
 | Second CREATE3 factory | PRD D19/D20 |
 | Bare `HookMinerCreate3.find` / `findWithPrefix` as product entry | Breaks D37 |
 | Inherit `BaseTokenWrapperHook` / `BaseHook` / `DeltaResolver` | D51/D67 |
@@ -776,4 +777,5 @@ Prefer **SE-first stack** (D63). Mixed mega-PR allowed only if CI still gates SE
 
 | Date | Change |
 |------|--------|
+| 2026-08-03 | **Move + rename under `single/`:** package path `contracts/hooks/uniswap/v4/standardExchange/single/`; product `UniswapV4SingleStandardExchangeBufferPricingHook`; salt `"uv4-single-se-buffer-pricing-hook-"`; storage id `"indexedex.hooks.uv4.single.se.buffer.pricing.storage"`; Deploy-test override `"uv4-single-se-buffer-pricing-hook-test-"`; hermetic tests under `test/.../standardExchange/single/`. Dual package untouched. |
 | 2026-08-02 | Initial implementation + test plan from locked PRD D1–D74; gap audit of ERC-4626 Out/In, MultiAsset cuts, fee absence |

@@ -15,15 +15,15 @@ import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
-import {UniswapV4BufferAndPricingHookCommon} from
-    "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHookCommon.sol";
+import {UniswapV4SingleStandardExchangeBufferPricingHookCommon} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookCommon.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHookTarget
+ * @title UniswapV4SingleStandardExchangeBufferPricingHookTarget
  * @notice IHooks logic — full pattern-copy of BaseTokenWrapperHook settle order (D51/D67).
  * @dev No Solidity inheritance of BaseTokenWrapperHook / BaseHook / DeltaResolver.
  */
-abstract contract UniswapV4BufferAndPricingHookTarget is UniswapV4BufferAndPricingHookCommon, IHooks {
+abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is UniswapV4SingleStandardExchangeBufferPricingHookCommon, IHooks {
     using SafeERC20 for IERC20;
 
     error LiquidityNotAllowed();
@@ -32,7 +32,7 @@ abstract contract UniswapV4BufferAndPricingHookTarget is UniswapV4BufferAndPrici
     error HookNotImplemented();
 
     constructor(IPoolManager poolManager_, address standardExchange_, address underlying_)
-        UniswapV4BufferAndPricingHookCommon(poolManager_, standardExchange_, underlying_)
+        UniswapV4SingleStandardExchangeBufferPricingHookCommon(poolManager_, standardExchange_, underlying_)
     {}
 
     function getHookPermissions() public pure returns (Hooks.Permissions memory) {

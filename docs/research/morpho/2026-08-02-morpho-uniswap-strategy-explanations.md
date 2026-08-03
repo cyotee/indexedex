@@ -6,7 +6,7 @@
 **Primary research map:** [`2026-08-02-morpho-uniswap-lending-mm-strategies.md`](./2026-08-02-morpho-uniswap-lending-mm-strategies.md)  
 **Lending × CL MM protocol processes:** [`2026-08-02-lending-cl-mm-protocol-process-research.md`](./2026-08-02-lending-cl-mm-protocol-process-research.md)  
 **Composition sketch:** [`2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md`](./2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md)  
-**In-flight product (S0 + V4 rate surface):** [`contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md`](../../../contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md)
+**In-flight product (S0 + V4 rate surface):** [`contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md`](../../../contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md)
 
 This document **explains** the strategy families listed in the research note: what capital does, where yield comes from, what can go wrong, and how each maps onto IndexedEx / Morpho V2 / Uniswap V3–V4 shapes. Use the research note for the ranked map and decision tree; use this note when choosing or teaching a strategy.
 

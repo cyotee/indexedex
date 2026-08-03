@@ -24,7 +24,7 @@
 - **S3 design surfaces (borrow→LP pre-PRD):** [`2026-08-02-s3-borrow-to-lp-design-surfaces.md`](./2026-08-02-s3-borrow-to-lp-design-surfaces.md)  
 - **S3 DFPkg PkgInit/PkgArgs sketch:** [`2026-08-02-s3-dfpkg-pkgargs-interface-sketch.md`](./2026-08-02-s3-dfpkg-pkgargs-interface-sketch.md)  
 - Composition diagram: [`2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md`](./2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md)  
-- V4 buffer/pricing hook PRD (S0 + swap surface): `contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md`  
+- V4 buffer/pricing hook PRD (S0 + swap surface): `contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md`  
 - Generic ERC-4626 SE consumer rules: `docs/research/2026-07-21-ethereum-staking-protocol-ports-PRD.md` §7  
 - Custom vs generic SE assessment: `docs/research/2026-07-23-ethereum-staking-ported-protocols-custom-se-assessment.md`
 

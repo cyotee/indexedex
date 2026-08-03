@@ -12,7 +12,7 @@
 | [`2026-08-02-morpho-uniswap-lending-mm-strategies.md`](./2026-08-02-morpho-uniswap-lending-mm-strategies.md) | Strategy map S0–S6, decision tree |
 | [`2026-08-02-morpho-uniswap-strategy-explanations.md`](./2026-08-02-morpho-uniswap-strategy-explanations.md) | Strategy primer |
 | [`2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md`](./2026-08-02-morpho-v2-uniswap-v4-composition-diagram.md) | S0 + V4 buffer composition sketch |
-| Hook PRD | `contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_BUFFER_AND_PRICING_HOOK_PRD.md` (S0 surface only — **not** levered LP) |
+| Hook PRD | `contracts/hooks/uniswap/v4/standardExchange/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_PRICING_HOOK_PRD.md` (S0 surface only — **not** levered LP) |
 
 **IndexedEx building blocks this research maps onto:**
 

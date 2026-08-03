@@ -14,22 +14,22 @@ import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManage
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {TestBase_ERC4626MorphoHermetic} from
     "contracts/test/bases/TestBase_ERC4626MorphoHermetic.sol";
-import {IUniswapV4BufferAndPricingHook} from
-    "contracts/hooks/uniswap/v4/standardExchange/interfaces/IUniswapV4BufferAndPricingHook.sol";
+import {IUniswapV4SingleStandardExchangeBufferPricingHook} from
+    "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferPricingHook.sol";
 import {
-    UniswapV4BufferAndPricingHook_FactoryService
-} from "contracts/hooks/uniswap/v4/standardExchange/UniswapV4BufferAndPricingHook_FactoryService.sol";
+    UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService
+} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
 import {
     PoolModifyLiquidityTest
 } from "@crane/contracts/protocols/dexes/uniswap/v4/hooks/public/dependencies/v4-core/test/PoolModifyLiquidityTest.sol";
 
 /**
- * @title UniswapV4BufferAndPricingHook_Routes_Test
+ * @title UniswapV4SingleStandardExchangeBufferPricingHook_Routes_Test
  * @notice Hermetic Morpho MetaMorpho SE + real V4 PM: all four wrap/unwrap exact-in AND exact-out
  *         swap paths (positive amountSpecified for exact-out), fees, interest, add-liquidity guard.
  */
-contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHermetic {
+contract UniswapV4SingleStandardExchangeBufferPricingHook_Routes_Test is TestBase_ERC4626MorphoHermetic {
     IPoolManager internal pm;
     address internal hook;
     WrapperExactOutRouter internal swapRouter;
@@ -54,7 +54,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
         swapRouter = new WrapperExactOutRouter(pm);
         liqRouter = new PoolModifyLiquidityTest(pm);
 
-        hook = UniswapV4BufferAndPricingHook_FactoryService.deployHook(
+        hook = UniswapV4SingleStandardExchangeBufferPricingHook_FactoryService.deployHook(
             create3Factory, pm, se, address(loanToken)
         );
 
@@ -103,7 +103,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
 
     function test_HS1_wrapExactIn_previewEqualsExecution() public {
         uint256 amountIn = 10 ether;
-        uint256 preview = IUniswapV4BufferAndPricingHook(hook).previewWrap(amountIn);
+        uint256 preview = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrap(amountIn);
         bool zfo = _isWrapZFO();
         uint256 seBefore = IERC20(se).balanceOf(user);
 
@@ -118,7 +118,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
 
     function test_HS2_unwrapExactIn_previewEqualsExecution() public {
         uint256 seIn = 5 ether;
-        uint256 preview = IUniswapV4BufferAndPricingHook(hook).previewUnwrap(seIn);
+        uint256 preview = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrap(seIn);
         bool zfo = !_isWrapZFO(); // unwrap opposite of wrap
         uint256 uBefore = loanToken.balanceOf(user);
 
@@ -133,7 +133,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
 
     function test_HS3_wrapExactOut_positiveAmountSpecified() public {
         uint256 seOut = 3 ether;
-        uint256 amountIn = IUniswapV4BufferAndPricingHook(hook).previewWrapExactOut(seOut);
+        uint256 amountIn = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrapExactOut(seOut);
         assertGt(amountIn, 0);
         bool zfo = _isWrapZFO();
         uint256 seBefore = IERC20(se).balanceOf(user);
@@ -157,7 +157,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
 
     function test_HS4_unwrapExactOut_positiveAmountSpecified() public {
         uint256 uOut = 2 ether;
-        uint256 seIn = IUniswapV4BufferAndPricingHook(hook).previewUnwrapExactOut(uOut);
+        uint256 seIn = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrapExactOut(uOut);
         assertGt(seIn, 0);
         bool zfo = !_isWrapZFO();
         uint256 seBefore = IERC20(se).balanceOf(user);
@@ -207,7 +207,7 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 0.01e18);
 
         uint256 amountIn = 10 ether;
-        uint256 preview = IUniswapV4BufferAndPricingHook(hook).previewWrap(amountIn);
+        uint256 preview = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewWrap(amountIn);
         bool zfo = _isWrapZFO();
         uint256 feeBefore = IERC20(se).balanceOf(feeTo);
         uint256 seBefore = IERC20(se).balanceOf(user);
@@ -224,19 +224,19 @@ contract UniswapV4BufferAndPricingHook_Routes_Test is TestBase_ERC4626MorphoHerm
 
     function test_H_DoD_morphoInterestStrictIncrease() public {
         uint256 seAmt = 10 ether;
-        uint256 beforeOut = IUniswapV4BufferAndPricingHook(hook).previewUnwrap(seAmt);
+        uint256 beforeOut = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrap(seAmt);
 
         // Real Morpho borrow + time + accrueInterest (not claim-growth cheats)
         _accrueMorphoInterest();
 
-        uint256 afterOut = IUniswapV4BufferAndPricingHook(hook).previewUnwrap(seAmt);
+        uint256 afterOut = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrap(seAmt);
         assertGt(afterOut, beforeOut, "strict increase after Morpho interest");
     }
 
     /// @dev Hook must not retain free underlying after unwrap exact-out (settle actual got).
     function test_Hook_unwrapExactOut_noIdleUnderlyingOnHook() public {
         uint256 uOut = 2 ether;
-        uint256 seIn = IUniswapV4BufferAndPricingHook(hook).previewUnwrapExactOut(uOut);
+        uint256 seIn = IUniswapV4SingleStandardExchangeBufferPricingHook(hook).previewUnwrapExactOut(uOut);
         bool zfo = !_isWrapZFO();
 
         vm.prank(user);
