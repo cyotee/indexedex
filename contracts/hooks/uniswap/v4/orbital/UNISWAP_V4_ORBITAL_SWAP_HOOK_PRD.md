@@ -2,25 +2,27 @@
 
 **Name:** `UniswapV4OrbitalSwapHook`  
 **Date:** 2026-08-03  
-**Status:** **v1.11 plan-ready** — O1–O9 + Q1–Q48 + growth fee (2026-08-03). **v1.11:** partial-book min only over maxed positive legs (Q43); **sphere-NAV fair seed** (Q44 / D72 — replaces sum-NAV); residual `sumPos` invariant (Q45); `addLiquidity` returns used amounts (Q46); **orbital-normative Permit2 packing** §5.6 (Q47); Robinhood fork **chain ID 4663** (Q48).  
+**Status:** **v1.14 plan-ready** — O1–O9 + Q1–Q62 + growth fee + on-chain factory (2026-08-03). **v1.14 open-item lock:** binding hooks via Crane **`AddressSetRepo`** (Q58); discovery **array + count/at** (Q59); **unbounded** set (Q60); **msg.sender-only** salt scope (Q61); map key = **exact binding order** (Q62).  
 **Package path:** `contracts/hooks/uniswap/v4/orbital/`  
-**Package kind:** IndexedEx **hook deploy package** — CREATE3-mined single contract via the **existing** ecosystem `create3Factory` + `HookMinerCreate3` + FactoryService helpers. **Not** a vault share diamond; **not** a second CREATE3 factory; **not** `DiamondPackageCallBackFactory` for the hook instance (v1). **Not** a Facet/DFPkg diamond product — use **Repo + Target + Math** style on a single mined contract that is also the fungible LP ERC-20 (EIP-2612).  
+**Package kind:** IndexedEx **hook deploy package** — **permissionless on-chain factory** deploys each hook via **CREATE3** (`deployer = factory`) using a **user-supplied salt mined off-chain** for hook flags; factory also **initializes all three** V4 pair pools. Hook instance = Repo + Target + Math + Common on a single mined contract that is also the fungible LP ERC-20 (EIP-2612). **Not** a vault share diamond; **not** `DiamondPackageCallBackFactory` for the hook instance; **not** a Facet/DFPkg diamond product.  
 **Decision ID note:** `D*`, `O*`, and `Q*` IDs are **stable keys**, not document order.
 
 **Authority (normative):**
 
 | Layer | Role |
 |-------|------|
-| **This PRD (v1.11)** | Product law used to **write** the implementation plan. Canonical decisions live in §3 (D/O/Q). |
+| **This PRD (v1.14)** | Product law used to **write** the implementation plan. Canonical decisions live in §3 (D/O/Q). |
 | **Implementation plan** (follow-on) | **Source of truth for implementors** once written against this PRD |
 | Peer packages / reference repo | Pattern and math references only — **not** deploy law; do not copy CREATE2 / BaseHook / console.log |
 | ETHGlobal `OrbitalHook.sol` | Behavioral/math reference only (D3) |
+| Revert `StableSwapHooksFactory` | **UX peer only** — off-chain salt + on-chain factory deploy; **CREATE2 → CREATE3** for this package (Q49) |
 
 **Reference implementation (behavioral + math source, not deploy law):**
 
 - Repo: [Dhruv-2003/ethglobal-buenos-aires-25](https://github.com/Dhruv-2003/ethglobal-buenos-aires-25) (`src/OrbitalHook.sol`, deploy/interaction scripts)
 - Paper / product concept: [Paradigm — Orbital (2025-06)](https://www.paradigm.xyz/2025/06/orbital)
 - Design notes in reference: multi-stable shared liquidity via spherical invariant; three Uni V4 pools as entry “doors”; hook holds inventory and does all pricing
+- On-chain factory UX peer: [revert-finance/stableswap-hooks `StableSwapHooksFactory.sol`](https://github.com/revert-finance/stableswap-hooks/blob/main/src/factories/StableSwapHooksFactory.sol) — CREATE2 + off-chain salt; **this package uses CREATE3 + off-chain salt + all-three pool init**
 
 **Sibling packages (do not conflate):**
 
@@ -39,6 +41,7 @@
 - Crane HookMiner: `lib/crane/contracts/protocols/dexes/uniswap/v4/hooks/public/utils/HookMinerCreate3.sol`
 - Crane fee units: `lib/crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol` (`DYNAMIC_FEE_FLAG`, `OVERRIDE_FEE_FLAG`)
 - Crane math: `FixedPointMathLib` / `BetterMath` under `lib/crane/contracts/utils/`
+- Crane sets: `lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol` (factory binding→hooks — Q58)
 - AGENTS.md — production-first tests; CREATE3; no mock SUT; no `new` facets
 
 ### 0. Terminology (normative)
@@ -55,6 +58,10 @@
 | **WAD domain** | All sphere, fee, LP, and NAV algebra in **1e18**; Repo stores **raw** native units |
 | **\(L^2\)** | **Stored sphere parameter** (Q26) — recomputed after state changes; not a fee-conserved invariant |
 | **DoD** | Definition of Done — package complete when §11 is satisfied |
+| **On-chain factory** | Permissionless `UniswapV4OrbitalSwapHookFactory` — CREATE3 deploy + init all three pair pools |
+| **Off-chain salt** | User `bytes32 salt` mined so `CREATE3.getDeployed(effectiveSalt, factory)` has flags, where **`effectiveSalt = keccak256(abi.encodePacked(salt, deployer))`** and `deployer` is the address that will call `deploy` (Q53) |
+| **Binding key** | Discovery map key: `(feeOracle, token0, token1, token2)` in **exact deploy order** (Q62) — not address-sorted |
+| **hooks set** | Per binding: Crane `AddressSet` via `AddressSetRepo` (Q58); unbounded (Q60) |
 
 ### Canonical law index (planner shortcut)
 
@@ -72,13 +79,13 @@ Use this table as the **first hop**; full normative text lives at the linked sec
 | No on-hook single-asset zap | Q40, §2.3 #19, §10 #6 |
 | Preview fidelity | D27/Q37 — **bit-exact** |
 | Swap settle / BeforeSwapDelta | §4.6 |
-| Pool init scope | D31, D65, Q31, Q25 |
-| Deploy / salt / CREATE3 | D32–D35, §5.2, §7 |
+| Pool init scope | D31, D65, Q31, Q25, **D80** (factory always creates all three) |
+| Deploy / on-chain factory / salt | **D78–D96, Q49–Q62, §5.2, §5.7, §7** |
 | Permit2 (inventory pulls) | D48–D49, Q22, Q36, Q47, **§5.6 (normative packing)** |
 | LP ERC-20 + EIP-2612 + remove | D13, D46, Q41, §5.1 |
-| Events / errors | D60/D61, §5.5 |
-| Test DoD | §9; forks Q16/Q23/Q48 (Robinhood **4663**) |
-| Locked decision tables | §3 (O1–O9, Q1–Q48, D*) |
+| Events / errors | D60/D61, §5.5, **§5.7 factory events** |
+| Test DoD | §9; forks Q16/Q23/Q48 (Robinhood **4663**); **factory DoD §9.1 / §9.4** |
+| Locked decision tables | §3 (O1–O9, Q1–Q62, D*) |
 
 ---
 
@@ -97,15 +104,33 @@ Ship a **production-first Uniswap V4 hook package** that:
 5. Mints a **single fungible ERC-20** LP representing pro-rata claim on all three reserve legs.
 6. Provides **custom** `addLiquidity` / `removeLiquidity` on the hook; **forbids** native V4 `modifyLiquidity` / CL.
 7. Settles swaps via **`beforeSwap` + `beforeSwapReturnDelta`** (custom accounting / NoOp curve), pattern-copied to Crane settle order — **no** Solidity inheritance of OZ/`BaseHook` / `BaseTokenWrapperHook` / `DeltaResolver`.
-8. Deploys via **existing** `create3Factory` + binding-aware `HookMinerCreate3` + FactoryService (same law as buffer hooks).
+8. Deploys via **permissionless on-chain factory** (`UniswapV4OrbitalSwapHookFactory`): **CREATE3** with **off-chain-mined `bytes32 salt`** (deployer = factory); factory **initializes all three** pair pools with `hooks = this` (Q49–Q52 / §5.7 / §7).
 9. Uses **live Vault Fee Oracle** rates: trading fee (`dexSwapFeeOfVault`) residual in reserves + protocol growth (`usageFeeOfVault`) LP mint to `feeTo`; PoolKey uses **`DYNAMIC_FEE_FLAG`** so rates can change without re-init (Q7 / Q19).
 
 ### 1.1 Canonical user story (USDC / USDT / DAI)
 
 ```text
+--- Off-chain (anyone) ---
+factory = UniswapV4OrbitalSwapHookFactory (immutable poolManager)
+// Off-chain mine for the EOA/contract that will call deploy (msg.sender):
+// effectiveSalt = keccak256(abi.encodePacked(userSalt, msg.sender))
+// predicted = CREATE3.getDeployed(effectiveSalt, factory) must have HOOK_FLAGS
+userSalt = mine such that flags(predict(factory, userSalt, deployer)) match
+// recommended: fold feeOracle+tokens+namespace into userSalt preimage (D83)
+
+--- On-chain factory.deploy (permissionless; caller = deployer) ---
+hook = factory.deploy(feeOracle, USDC, USDT, DAI, userSalt, tickSpacing, sqrtPriceX96)
+  → effectiveSalt = keccak256(abi.encodePacked(userSalt, msg.sender))  // Q53
+  → CREATE3 deploy hook at predicted address (ctor immutables)
+  → initialize ALL three pair pools (binding pairs 01, 12, 02; currencies address-sorted each):
+       fee = DYNAMIC_FEE_FLAG, hooks = hook; shared tickSpacing + sqrtPrice for all three
+  → record hook in binding → hooks set (Q56); isDeployedByFactory[hook]=true
+  → emit HookDeployed + PoolsInitialized
+  → returns (hook, poolKey01, poolKey12, poolKey02)  // binding pair order Q57
+
 Hook binding (instance):
   token0 = USDC, token1 = USDT, token2 = DAI
-  poolManager = V4 singleton
+  poolManager = factory.poolManager() (same singleton)
   feeOracle = Vault Fee Oracle (IVaultFeeOracleQuery) — ctor immutable
   swap fee = feeOracle.dexSwapFeeOfVault(address(hook))  // WAD; may change over time
   usage fee = feeOracle.usageFeeOfVault(address(hook))   // WAD; growth mint to feeTo
@@ -114,7 +139,7 @@ Hook binding (instance):
 Inventory: hook holds USDC + USDT + DAI balances (accounting via Repo reserves)
 LP: fungible auto-named ERC-20 (e.g. ORB-USDC-USDT-DAI) on same contract
 
---- First liquidity ---
+--- First liquidity (no extra pool init required) ---
 User calls addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data)
   → returns (shares, a0, a1, a2) used amounts (Q46)
   → require deadline; ≥2 of three amountMax > 0 (O7)
@@ -123,8 +148,9 @@ User calls addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Dat
   → shares = sumWad − MINIMUM_LIQUIDITY (O2); require ≥ sharesMin
   → no protocol growth mint (kLast == 0); then set kLast/kLastMode if fee-on
 
---- Pools (integrator, external; any subset OK — O6) ---
-initialize only the pairs you need
+--- Pools ---
+Factory path always created all three doors (D80). External init of additional
+PoolKeys (e.g. other tickSpacing) still allowed (Q31) with same hook + DYNAMIC_FEE_FLAG.
   → beforeInitialize: pair ⊂ bound tokens; **fee == DYNAMIC_FEE_FLAG** (Q7)
   → actual LP fee always from oracle at swap time (not frozen in PoolKey)
 
@@ -164,9 +190,9 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 
 | Attribute | Value |
 |-----------|--------|
-| Primary artifact | CREATE3-mined single hook (Repo + Target + Math + Common) implementing V4 `IHooks` **plus** 3-asset LP ERC-20 |
+| Primary artifact | CREATE3-deployed single hook (Repo + Target + Math + Common) implementing V4 `IHooks` **plus** 3-asset LP ERC-20 |
 | Binding | `(poolManager, feeOracle, token0, token1, token2)` — ctor immutables; **\(R\) set once on first liquidity** |
-| Pool currencies | Any **ordered pair** of the three bound tokens (subset of three pools OK) |
+| Pool currencies | **All three** ordered pairs of bound tokens created by factory (D80); extra PoolKeys for same pairs still allowed (Q31) |
 | Inventory | Hook-held **raw ERC-20**; Repo reserves are SoT |
 | Pricing | Orbital sphere on **1e18-normalized** reserves (**all** math in WAD — Q30); \(L^2\) **stored sphere parameter** (Q26); witness may be 0; **no full trade-leg drain** (Q27) |
 | Swap (trading) fee | **Live** `dexSwapFeeOfVault(this)` — **WAD**; residual **stays in reserves** (LPs). Hook is economic SoT (D20c) |
@@ -174,8 +200,8 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | V4 PoolKey.fee | **`DYNAMIC_FEE_FLAG`** — trading fee SoT is oracle (Q7 / Q19) |
 | LP | Fungible ERC-20 + **EIP-2612**; **decimals always 18** (Q24); auto name/symbol; pro-rata (+ seed shares); protocol may hold LP via `feeTo` |
 | Deposit / withdraw | Uni V2 **three-leg** proportional when full book; partial: **sphere-NAV** mint (Q44/D72), prop min only over maxed positive legs (Q43), **seed-only OK** (Q38); **no** on-hook zap (Q40); `addLiquidity` returns **(shares, a0, a1, a2)** (Q46); mins + deadline; SafeERC20 and/or Permit2 (§5.6); remove burns **`msg.sender`** (Q41); **protocol mint before user supply change** when fee-on |
-| Deploy path | Existing `create3Factory` + `HookMinerCreate3` + FactoryService |
-| Access | **Permissionless** instance; fee rates / `feeTo` via Vault Fee Oracle only |
+| Deploy path | **Permissionless on-chain factory** — CREATE3 (`deployer = factory`) + **user-supplied off-chain-mined salt**; **init all three pools** (Q49–Q52 / §5.7). Helpers: FactoryService + HookMinerCreate3 for factory deploy + off-chain mine |
+| Access | **Permissionless** factory deploy + **permissionless** hook instance; fee rates / `feeTo` via Vault Fee Oracle only |
 
 ### 2.2 What this package is not
 
@@ -183,7 +209,9 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 - Not a full Paradigm multi-orbit tick / nested spherical-cap book (single \(R\), single \(L^2\) surface in v1).
 - Not Uni V4 concentrated liquidity / Position Manager LP / tick bitmap.
 - Not a Facet/DFPkg diamond for the hook instance.
-- Not package-owned pool creation (integrator initializes the three pools).
+- Not “integrator must manually init pools after script deploy” as the **product path** — factory **always** creates all three doors (D80). External re-init / extra tickSpacing still allowed (Q31).
+- Not Revert CREATE2 / user-supplied creation bytecode — **CREATE3** with factory-embedded hook init code (Q49 / D81).
+- Not on-chain salt mining (gas-heavy loop) — salt is **mined off-chain** and passed in (Q50).
 - Not a DETF or vault registry product.
 - Not a copy-paste of OZ `BaseHook` / Solady ERC20 from the hackathon tree without IndexedEx layering.
 - Not dual-buffer fee naming: dual uses oracle `dexSwapFee` as **growth** share; **this** product uses `dexSwapFee` for **trading** residual and `usageFee` for **growth** (Appendix B).
@@ -198,17 +226,19 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 6. Binary-search solvers — exact-in/out must be **closed form** on the sphere (no zap-split solver carve-out — Q40).  
 7. Subclassing dual/single buffer hooks.  
 8. Shared TestBases with DETF Uni V4 packages.  
-9. Reusing reference CREATE2 `HookMiner.find` + `new {salt}` deploy (forbidden — CREATE3 factory law).  
+9. Reusing reference / Revert **CREATE2** `HookMiner.find` + `Create2.deploy` for **hook instances** (forbidden — **CREATE3** with factory as deployer — Q49).  
 10. Leaving `console.log` / debug logs in production sources.  
 11. Trusting PoolManager `slot0` price for quoting (aggregators must use hook previews).  
-12. Owner / pause / admin surface on the instance (**fully permissionless** — O9). Fee **rate** changes only via **Vault Fee Oracle** governance (not instance admin).  
+12. Owner / pause / admin surface on the **hook instance** (**fully permissionless** — O9). Fee **rate** changes only via **Vault Fee Oracle** governance (not instance admin). Factory is also **permissionless** (no owner/pause on factory v1 — D79).  
 13. Growing \(R\) after first mint (O3: set-once only; later ops that would make any 1e18 reserve ≥ \(R\) **revert**).  
 14. Resetting \(R\) after full liquid exit (Q6 — dead shares + fixed \(R\) forever).  
 15. Immutable deploy-time swap fee pips as product SoT (**superseded** by oracle WAD — Q3).  
 16. Protocol cut taken as an extra **swap amountIn haircut** (protocol cut is **LP mint on growth only** — D51).  
 17. Using `dexSwapFeeOfVault` as the protocol growth rate (that field is **trading fee only** on this product; growth uses **`usageFeeOfVault`** — D52).  
 18. Splitting trading residual to `feeTo` on every swap, multi-recipient fee splits, or orbit-level fees (future — §10).  
-19. **On-hook single-asset zap / `depositSingle`** (internal sphere rebalance then proportional mint) — **v1 out** (Q40). Full book = three-leg proportional `addLiquidity` only (Q39). Users rebalance off-hook, then multi-leg add. Fair zap = future PRD (§10).
+19. **On-hook single-asset zap / `depositSingle`** (internal sphere rebalance then proportional mint) — **v1 out** (Q40). Full book = three-leg proportional `addLiquidity` only (Q39). Users rebalance off-hook, then multi-leg add. Fair zap = future PRD (§10).  
+20. **On-chain salt mining loop** inside `factory.deploy` (Q50 — mine off-chain only).  
+21. Requiring ecosystem `create3Factory` **operator** for each hook instance (instances deploy from the orbital factory via local CREATE3 — D78).
 
 ---
 
@@ -223,10 +253,10 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D5 | Binding | Ctor immutables: `poolManager`, **`feeOracle` (`IVaultFeeOracleQuery`)**, `token0`, `token1`, `token2`; **no post-deploy rebind**; **\(R\) not a ctor arg** (D15). **No** immutable swap fee |
 | D6 | Token validation | Non-zero; **pairwise distinct**; standard ERC-20 + **USDT-style** SafeERC20 (Q1). **Fee-on-transfer / rebasing unsupported** |
 | D7 | Ctor token order | Caller-supplied order is **canonical binding order** for LP / views; pool keys still sort by address for V4 |
-| D8 | Pool set | Integrator may create **any subset** of the three pair pools (O6); all `hooks = this` when created |
+| D8 | Pool set | **Factory path always creates all three** pair pools (D80 / O6 revised). External actors may still initialize **additional** PoolKeys (e.g. other `tickSpacing`) with `hooks = this` + `DYNAMIC_FEE_FLAG` (Q31) |
 | D9 | Pool fee (V4 key) | **`LPFeeLibrary.DYNAMIC_FEE_FLAG`** only (Q7 / Q19). **Not** static 0 and **not** a frozen pips snapshot. SoT for rate = oracle |
 | D10 | Native CL | **Forbidden** — `beforeAddLiquidity` and `beforeRemoveLiquidity` **revert** |
-| D11 | Package shape | **Repo + Target + Common + Math + FactoryService + thin wire contract**; no Facet/DFPkg |
+| D11 | Package shape | **Repo + Target + Common + Math + thin wire hook** + **on-chain Factory** + FactoryService helpers; no Facet/DFPkg |
 | D12 | Hook inheritance | **No** inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver`, or reference `BaseHook` — full **pattern-copy** |
 | D13 | LP ERC-20 | **Same mined hook contract** (IHooks + ERC-20 + **EIP-2612**). **Decimals always `18`** independent of leg decimals (Q24). `MINIMUM_LIQUIDITY = 1000` is **LP wei**. Prefer Crane/Uni V2–style token helpers (not OZ `_mint` semantics that break dead shares — D46) |
 | D14 | AMM model | **Orbital sphere** single orbit: \((R-x)^2+(R-y)^2+(R-z)^2=L^2\) |
@@ -264,17 +294,17 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D31 | Pool init | External; **only pools that set `hooks = this`** invoke the hook (Q31). Validate: currencies ⊂ bound set, distinct, **`fee == DYNAMIC_FEE_FLAG`**. **No** per-pair uniqueness: multiple PoolKeys for the same bound pair (e.g. different `tickSpacing`) **allowed** — all share the same reserves. **No** product concern for other pools of the same tokens that **do not** use this hook. **`sqrtPriceX96` + `tickSpacing` = plumbing only** (Q25); hermetic: spacing **60**, 1:1 mid. Subset of pairs OK (O6) |
 | D62 | LP vs pool init independence | **`addLiquidity` / `removeLiquidity` / LP previews do not require** any V4 pool `initialize` (Q28). **Swaps** require: \(R > 0\), **initialized** pair pool for that directed pair, both trade-leg Repo reserves &gt; 0. **V4 `initialize` does not require** hook liquidity |
 | D63 | Post-swap reserve floor | Successful swap **must leave** `reserves[tokenOut] > 0` and `reserves[tokenIn] > 0` in Repo after updates (Q27). Exact-in: require **`0 < y' < y`** (strict). Exact-out: `amountOut` must leave residual raw out reserve &gt; 0. Revert if trade would zero a leg (no dust-floor mint; hard fail) |
-| D32 | Deploy | CREATE3 + flag mine; FactoryService; **not** vault registry `deployPkg` for instance (**no registry required** — Q10 / Q42). Fees always resolved **live** via **per-address** oracle query APIs; oracle cascade/defaults apply when per-address slot unset |
-| D33 | Salt namespace default | **`"uv4-orbital-swap-hook-"`** |
-| D34 | Salt material | `namespace, poolManager, feeOracle, token0, token1, token2, mineNonce` — **no \(R\)**, **no fee pips**. `mineNonce` is internal to the FactoryService mine loop (not a user deploy arg) |
-| D35 | Idempotent deploy | Same binding + namespace ⇒ same address; `isExpectedHook` checks pm + feeOracle + tokens |
+| D32 | Deploy | **Permissionless on-chain factory** CREATE3-deploys hook instances (**not** vault registry `deployPkg`; **no registry required** — Q10 / Q42). Salt mined **off-chain**; factory does **not** run a mine loop (Q50). Fees always resolved **live** via **per-address** oracle query APIs |
+| D33 | Salt namespace default (off-chain recommend) | **`"uv4-orbital-swap-hook-"`** — used only in **recommended** off-chain salt preimage (D83); factory accepts any `bytes32` salt that yields correct flags |
+| D34 | Salt (user-supplied) | **`bytes32 salt` is a required `deploy` argument** (Q50). **Effective CREATE3 salt** = **`keccak256(abi.encodePacked(salt, msg.sender))`** (Q53 / D86) — scopes address to caller, blocks cross-caller salt griefing. Address = `f(factory, effectiveSalt)` only. Factory checks flags on **predicted** address (D82). **No \(R\)**, **no fee pips** in salt |
+| D35 | Idempotent deploy | Same **caller** + same `salt` + same factory ⇒ same address. If code already present: **require** `isExpectedHook` for requested binding; apply **Q54 pool policy** (D87); return existing; if code present with **wrong** binding ⇒ **revert** `SaltOccupied`. `isExpectedHook` checks pm + feeOracle + tokens |
 | D36 | Donations | Stray ERC-20 **ignore forever** for pricing/reserves (Q14). No skim/absorb in v1 |
 | D60 | Events (Q17 / Q21) | **Normative ABIs in §5.5.** Required: `LiquidityAdded`, `LiquidityRemoved`, `Swap`. **`ProtocolFeeMinted` required whenever protocol growth mint &gt; 0** (omit only when mint is 0). No per-swap oracle spam events |
 | D37 | Math library | Pure Math — sphere, WAD, shares, trading fee, \(R\), **sphere-NAV** \(p_i / V_{\mathrm{in}} / V_{\mathrm{before}}\) (D72), **cbrt product growth + sum interim growth** (Q11) + D56 algebra |
 | D38 | Sqrt / cbrt | Crane `FixedPointMathLib` / `BetterMath` (or bit-identical pure helpers in Math) |
 | D39 | Settle (swaps) | **§4.6** normative short law + pattern-copy dual/single buffer Target settle order (Q21) |
 | D40 | Delta convention | §4.6 + tests: six directed pairs + router; custom curve / NoOp |
-| D41 | Tests | Production-first; hermetic **required**; forks **required on Ethereum + Base + Robinhood Chain (4663)** (Q9 / Q16 / Q23 / Q48); no mock hook SUT |
+| D41 | Tests | Production-first; hermetic **required**; forks **required on Ethereum + Base + Robinhood Chain (4663)** (Q9 / Q16 / Q23 / Q48); **factory DoD §9.4 required** (Q52); no mock hook/factory/PM SUT |
 | D42 | Fork DoD chains + tokens | **Ethereum, Base, and Robinhood Chain (chain ID 4663)** mainnet forks all required (Q16 / Q48). **Token choice is free:** production ERC-20s **or mintable/test tokens deployed on the fork** (Q23). Purpose = integration with **production protocol code** (PoolManager, Permit2, fee oracle, hook), **not** a specific stable triad. Prefer live stack; else deploy production-equivalent bytecode on the fork (dual D74 peer) |
 | D43 | License / style | BUSL-1.1 (or peer); NatSpec + Crane style |
 | D44 | LP name/symbol | Auto `ORB-{s0}-{s1}-{s2}`; address-fragment fallback |
@@ -283,7 +313,7 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D48 | Token pull (Q1 / Q22 / Q36 / Q47) | LP: **SafeERC20 `transferFrom`** (USDT-safe) **and** **Permit2** (signature **and** allowance transfer — both in DoD). **`permit2Data` empty ⇒ transferFrom only for every pulled leg.** **Non-empty ⇒ Permit2 for every `used_i > 0` leg** — **no mixed** transferFrom + Permit2 in the same call (Q36). **Normative packing = this PRD §5.6** (orbital self-contained; dual §7.3 is peer reference only). Swaps: PoolManager settlement only |
 | D49 | Permit2 address | Uniswap **well-known Permit2** constant (chain-canonical); not a ctor arg (dual peer) |
 | D50 | Fee oracle units | Both `dexSwapFeeOfVault` and `usageFeeOfVault` are **WAD percentages** (`_validateWadPercentage` peer in VaultFeeOracleRepo) |
-| D61 | Custom errors (minimum set) | Plan may name precisely; **must cover:** `DeadlineExpired`, radius unset / swaps before first mint, `ReservesExceedRadius`, insufficient shares / amount mins, zero amounts, invalid pair / not bound token, wrong PoolKey fee (not dynamic), not pool manager, LP forbidden (native CL), invalid fee WAD ≥ 1e18, first mint &lt;2 legs, **first mint sumWad ≤ MIN** (Q33), **trade would zero leg** (Q27), **used_i == 0 after fromWad** (Q35 / full-book one-sided Q39), partial book empty \(P \cup Z\), invalid Permit2 packing/mode, reentrancy, insufficient LP balance on remove |
+| D61 | Custom errors (minimum set) | Plan may name precisely; **must cover:** `DeadlineExpired`, radius unset / swaps before first mint, `ReservesExceedRadius`, insufficient shares / amount mins, zero amounts, invalid pair / not bound token, wrong PoolKey fee (not dynamic), not pool manager, LP forbidden (native CL), invalid fee WAD ≥ 1e18, first mint &lt;2 legs, **first mint sumWad ≤ MIN** (Q33), **trade would zero leg** (Q27), **used_i == 0 after fromWad** (Q35 / full-book one-sided Q39), partial book empty \(P \cup Z\), invalid Permit2 packing/mode, reentrancy, insufficient LP balance on remove; **factory:** `InvalidHookSalt`, `SaltOccupied`, `ZeroAddress`, `TokensNotDistinct` |
 | D64 | Denorm ceil/floor (Q32) | **`fromWadFloor`:** exact-in `amountOut`, remove `amount_i`, later-mint `used_i`, seed positive-leg `used_i`. **`fromWadCeil`:** exact-out native `amountIn` after WAD fee gross-up. `toWad` always floor. Previews **bit-exact** match execution (Q37) |
 | D65 | Pool-init product scope (Q31) | Hook only gates **pools that use this instance**. Validate bound pair + `DYNAMIC_FEE_FLAG`. **Do not** enforce single PoolKey per pair. **Do not** track or restrict same-token pools with `hooks != this` |
 | D66 | Preview fidelity (Q37) | Same as D27 — **bit-exact**; supersedes any prior “±1 wei denorm” wording |
@@ -297,6 +327,25 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | D75 | addLiquidity return (Q46) | Returns `(uint256 shares, uint256 a0, uint256 a1, uint256 a2)` native used in binding order |
 | D76 | Permit2 packing SoT (Q47) | **§5.6** of this PRD is normative; dual §7.3 is non-normative peer |
 | D77 | Robinhood fork ID (Q48) | Robinhood Chain mainnet = **chain ID 4663** (same as dual D64/D74) |
+| D78 | On-chain factory (Q49) | **`UniswapV4OrbitalSwapHookFactory`** — permissionless contract. **CREATE3** deploys hook with **`deployer = address(factory)`** (Crane/solmate CREATE3 peer — **not** ecosystem `create3Factory.create3*` for instances; **not** CREATE2). Immutable **`poolManager`**. Hook creation code **embedded** in factory (no user-supplied bytecode / no creationCodeHash path) |
+| D79 | Factory access control | **No owner, no pause, no admin** on factory v1 (align O9 spirit). Anyone may `deploy` / view helpers |
+| D80 | Factory always creates all three pools (Q51) | On successful `deploy`, factory **`initialize`s all three** pair pools: (t0,t1), (t1,t2), (t0,t2) with currencies **address-sorted** per pair, **`fee = DYNAMIC_FEE_FLAG`**, **`hooks = hook`**, caller-supplied or default `tickSpacing` + `sqrtPriceX96` (Q25 plumbing). Atomic with hook deploy (same tx). Product path is **not** subset-only |
+| D81 | CREATE3 vs Revert peer | Revert `StableSwapHooksFactory` is **UX peer** (off-chain salt + factory deploy). **Do not** port CREATE2 / Create2.deploy / user `_creationCode`. Use CREATE3 so address depends only on `(factory, salt)` |
+| D82 | Salt flag check | Before CREATE3: `predicted = CREATE3.getDeployed(salt, address(this))`; require `(uint160(predicted) & FLAG_MASK) == REQUIRED_FLAGS` and `Hooks.isValidHookAddress` / equivalent; else revert `InvalidHookSalt` |
+| D83 | Recommended off-chain salt preimage | Optional but **DoD-tested helper**: `saltCandidate = keccak256(abi.encode(namespace, feeOracle, token0, token1, token2, mineNonce))` then search `mineNonce` until flags match (or pure numeric salt search). Prevents accidental cross-binding collisions. Factory does **not** re-encode salt — only verifies flags |
+| D84 | Idempotent factory deploy | If `predicted.code.length > 0`: require hook matches binding (`isExpectedHook`); apply **D87** pool init policy; return hook + keys for **this call’s** plumbing. If code length > 0 and binding mismatch: revert `SaltOccupied` |
+| D85 | Factory views / registry | Required: `poolManager()`, `HOOK_FLAGS()`, `predictHookAddress(salt, deployer)`, `isDeployedByFactory(hook)`, **`hooksOfBinding` + count + at** (Q59 / D88 / D93). Return keys pure-computed for a call’s params when needed |
+| D86 | Deployer-scoped salt (Q53 / Q61) | `effectiveSalt = keccak256(abi.encodePacked(userSalt, msg.sender))` — **`msg.sender` only** (EOA or contract that calls `deploy`; multisig = Safe/module address, not owner EOA). **No** `tx.origin`. **No** separate deployer arg on `deploy`. Off-chain mine **must** use that same address as `deployer` |
+| D87 | Re-deploy pool plumbing (Q54) | On every `deploy` (first or idempotent): for each of the three binding pairs, build PoolKey with **this call’s** `tickSpacing'` / `sqrtPriceX96'` (shared args Q55). If that **PoolId** is uninitialized → `initialize`. If already initialized → **skip** (leave alone). Prior doors with other spacing remain. Does **not** require plumbing to match a prior call |
+| D88 | Binding → hooks enumeration (Q56 / Q58–Q62) | Per binding key `(feeOracle, token0, token1, token2)` in **exact deploy binding order** (Q62): store hooks in Crane **`AddressSet`** via **`AddressSetRepo`** (`lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol`). On first CREATE3 success: `_add(hook)` (idempotent). **No max length** (Q60). Required views (Q59): **`hooksOfBinding(...) → address[]`** (`_asArray` / values), **`hooksOfBindingCount`** (`_length`), **`hooksOfBindingAt`** (`_index`, document 0-based external vs repo 1-based). Optional: `_range` pagination helper. Same binding + different salts/callers ⇒ **multiple** hooks |
+| D89 | Shared pool plumbing args (Q55) | Single `tickSpacing` + single `sqrtPriceX96` applied to **all three** factory-created pools in that call. `0` → defaults (60 / 1:1 mid) |
+| D90 | Return PoolKey order (Q57) | `poolKey01` = binding pair (token0, token1); `poolKey12` = (token1, token2); `poolKey02` = (token0, token2). Each key’s `currency0/currency1` are **address-sorted** |
+| D91 | predictHookAddress | Required: `predictHookAddress(bytes32 salt, address deployer)` with `effectiveSalt = keccak256(abi.encodePacked(salt, deployer))`. Optional convenience view `predictHookAddress(salt)` using `msg.sender` **only if** clearly NatSpec’d as “caller will be deployer” |
+| D92 | AddressSetRepo SoT (Q58) | Binding→hooks storage **must** use Crane `AddressSet` + `AddressSetRepo` (`_add`, `_contains`, `_length`, `_index` / `_asArray`, optional `_range`). Do not invent a parallel set type |
+| D93 | Discovery API surface (Q59) | **Both** full `hooksOfBinding → address[]` **and** `hooksOfBindingCount` + `hooksOfBindingAt(index)` required in DoD |
+| D94 | No hooks-per-binding cap (Q60) | **Unbounded** set growth; enumeration gas is integrator concern. No revert on `_add` due to size |
+| D95 | Binding map key (Q62) | Key = `(feeOracle, token0, token1, token2)` **as passed to deploy** — not address-sorted triple. Permuting ctor order ⇒ different map entry and different hook immutables |
+| D96 | External index convention | Public `hooksOfBindingAt(index)` is **0-based** (plan maps to AddressSetRepo’s 1-based `_index` as needed). Out-of-range reverts |
 | D47 | Impl plan follow-on | `UNISWAP_V4_ORBITAL_SWAP_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md` |
 
 ### 3.1 Implementor edges O1–O9 — **LOCKED** (2026-08-03; O1/O4 **revised by Q3**)
@@ -308,10 +357,10 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | O3 | Radius \(R\) | First liquidity only; \(R = \max \times 10\); set-once |
 | O4 | Exact-out gross-up | **REVISED:** WAD form `* 1e18 / (1e18 − feeWad) + 1` (D20a) |
 | O5 | LP name/symbol | Auto `ORB-{s0}-{s1}-{s2}` + fallback |
-| O6 | Pool subset | Any initialized pair enough |
+| O6 | Pool set | **REVISED (Q51):** factory **always** initializes **all three** pair pools. Swaps still only need the directed pair’s pool live; extra external PoolKeys remain OK (Q31) |
 | O7 | Live swaps | Both trade-leg reserves &gt; 0 **before and after** (Q27); witness may be 0; first mint ≥2 legs |
 | O8 | LP slippage | sharesMin on add; amount mins on remove |
-| O9 | Access control | Fully permissionless instance |
+| O9 | Access control | Fully permissionless **hook instance** + **permissionless factory** (no factory owner/pause v1 — D79) |
 
 ### 3.2 Clarification lock Q1–Q9 — **LOCKED** (2026-08-03)
 
@@ -396,6 +445,35 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 | Q47 | Permit2 packing SoT | **§5.6 of this PRD is normative** (Signature batch + Allowance modes; binding-order pulled legs). Dual §7.3 is peer reference only. |
 | Q48 | Robinhood chain ID | Fork DoD **Robinhood Chain mainnet = 4663** (dual D64/D74 peer). |
 
+### 3.9 On-chain factory lock Q49–Q52 — **LOCKED** (2026-08-03; v1.12 plan-ready)
+
+| ID | Topic | Locked value |
+|----|--------|--------------|
+| Q49 | Factory + CREATE3 | Ship **`UniswapV4OrbitalSwapHookFactory`** (permissionless). Deploy hooks with **CREATE3**, `deployer = factory`. Pattern peer: Revert `StableSwapHooksFactory` (off-chain salt) — **not** CREATE2. |
+| Q50 | Off-chain salt only | Caller passes **`bytes32 salt`** mined **off-chain** so predicted CREATE3 address has required flags. **No** on-chain mine loop in `deploy`. FactoryService/scripts provide `mineSalt` / `predictHookAddress` helpers for tests and integrators. |
+| Q51 | All three pools | Factory **`deploy` always initializes all three** bound pair pools (address-sorted currencies, `DYNAMIC_FEE_FLAG`, `hooks = hook`). Defaults: hermetic **tickSpacing = 60**, **1:1 mid** `sqrtPriceX96` when caller passes 0 / product defaults (Q25). |
+| Q52 | Factory DoD | Hermetic + forks must exercise **real factory**: off-chain mine salt for **deployer** → `deploy` → assert three pools initialized → LP + swap on each door. Wrong-flag salt reverts; salt collision wrong binding reverts; idempotent same-salt same-caller same-binding returns same hook; deployer-scope + binding set covered. |
+
+### 3.10 Factory clarity lock Q53–Q57 — **LOCKED** (2026-08-03; v1.13 plan-ready)
+
+| ID | Topic | Locked value |
+|----|--------|--------------|
+| Q53 | Deployer-scoped salt | **`effectiveSalt = keccak256(abi.encodePacked(userSalt, msg.sender))`**. Mine off-chain with that deployer. Prevents other EOAs from stealing your salt via front-run with a different binding. |
+| Q54 | Idempotent / re-deploy pools | Init **only missing PoolIds for this call’s** shared tickSpacing/sqrtPrice; **leave** already-initialized pools alone (including older spacings). |
+| Q55 | Shared plumbing | **One** `tickSpacing` + **one** `sqrtPriceX96` for all three pools per `deploy` call. |
+| Q56 | Discovery | **Binding → set of hooks** (enumerate). Plus `isDeployedByFactory(hook)`. Multiple hooks per binding allowed (different salts/callers). **Storage/API refined by Q58–Q62.** |
+| Q57 | Return key order | Binding pairs **01, 12, 02**; currencies address-sorted inside each key. |
+
+### 3.11 Factory open-items lock Q58–Q62 — **LOCKED** (2026-08-03; v1.14 plan-ready)
+
+| ID | Topic | Locked value |
+|----|--------|--------------|
+| Q58 | Set implementation | Crane **`AddressSet` + `AddressSetRepo`** for hooks per binding. Path: `lib/crane/contracts/utils/collections/sets/AddressSetRepo.sol`. |
+| Q59 | Discovery API | **Both** `hooksOfBinding(...) → address[]` **and** `hooksOfBindingCount` + `hooksOfBindingAt(0-based index)`. |
+| Q60 | Cap | **None** — unbounded `_add`; no product max N. |
+| Q61 | Salt scope | **`msg.sender` only** in effectiveSalt. Multisig/AA: mine for the **contract** that will call `deploy`. No `tx.origin`; no optional deployer param. |
+| Q62 | Binding map key | **Exact** `(feeOracle, token0, token1, token2)` deploy order — not sorted. |
+
 ---
 
 ## 4. Architecture
@@ -404,21 +482,27 @@ v1 is the **productionization of the ETHGlobal prototype curve + multi-pool shar
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
-│ User / Router                                                    │
+│ Anyone (permissionless)                                          │
+│   • off-chain: mine salt for factory CREATE3 flags               │
+│   • factory.deploy(feeOracle, t0, t1, t2, salt, spacing, price)  │
 │   • addLiquidity / removeLiquidity on Hook                       │
-│   • swapExact* via V4 on any pair pool                           │
+│   • swapExact* via V4 on any of the three pair pools             │
 └───────────────┬─────────────────────────────┬────────────────────┘
                 │                             │
                 ▼                             ▼
 ┌───────────────────────────┐   ┌──────────────────────────────────┐
-│ UniswapV4OrbitalSwapHook  │   │ Uniswap V4 PoolManager           │
-│  reserves x,y,z + L² + R  │◄──│  Pool AB / BC / AC               │
-│  L² = stored sphere param │   │  fee = DYNAMIC_FEE_FLAG          │
-│  feeOracle:               │   │  sqrtPrice/tickSpacing plumbing  │
-│   dexSwapFee = trade WAD  │   │  hooks = same Orbital instance   │
-│   usageFee → feeTo LP mint│   │  beforeSwap + ReturnDelta        │
-│  kLast + kLastMode + LP18 │   │  fee override | OVERRIDE bit     │
-│  Math: sphere + cbrt fee  │   │                                  │
+│ OrbitalSwapHookFactory    │   │ Uniswap V4 PoolManager           │
+│  CREATE3(hook, salt)      │──►│  init Pool AB + BC + AC          │
+│  deployer = factory       │   │  fee = DYNAMIC_FEE_FLAG          │
+│  HOOK_FLAGS / predict     │   │  hooks = deployed Orbital hook   │
+└───────────────┬───────────┘   └──────────────────────────────────┘
+                │ CREATE3
+                ▼
+┌───────────────────────────┐   ┌──────────────────────────────────┐
+│ UniswapV4OrbitalSwapHook  │◄──│  Pool AB / BC / AC (all three)   │
+│  reserves x,y,z + L² + R  │   │  beforeSwap + ReturnDelta        │
+│  feeOracle + kLast + LP18 │   │  fee override | OVERRIDE bit     │
+│  Math: sphere + NAV + cbrt│   │                                  │
 └───────────────────────────┘   └──────────────────────────────────┘
 ```
 
@@ -785,18 +869,21 @@ contracts/hooks/uniswap/v4/orbital/
 
   interfaces/
     IUniswapV4OrbitalSwapHook.sol                            # views + previews + LP surface
+    IUniswapV4OrbitalSwapHookFactory.sol                     # permissionless factory surface
 
   UniswapV4OrbitalSwapHookMath.sol                           # pure sphere + WAD + shares + sphere-NAV (D72) + cbrt growth fee
   UniswapV4OrbitalSwapHookRepo.sol                           # diamond-style storage slot layout
   UniswapV4OrbitalSwapHookCommon.sol                         # reserve helpers, decimal cache, guards
   UniswapV4OrbitalSwapHookTarget.sol                         # IHooks + LP execute (pattern-copy settle)
-  UniswapV4OrbitalSwapHook.sol                               # single CREATE3-mined wire + ERC-20
+  UniswapV4OrbitalSwapHook.sol                               # single CREATE3-deployed wire + ERC-20
 
-  UniswapV4OrbitalSwapHook_FactoryService.sol                # mine + create3Factory deploy
+  UniswapV4OrbitalSwapHookFactory.sol                        # on-chain CREATE3 deploy + init all 3 pools
+  UniswapV4OrbitalSwapHook_FactoryService.sol                # off-chain mine helpers + factory self-deploy helpers
 
   # FORBIDDEN for hook product:
   #   *Facet.sol, *DFPkg.sol, I*DFPkg.sol
   #   Solidity inheritance of BaseHook / BaseTokenWrapperHook / DeltaResolver
+  #   CREATE2 deploy of hook instances (use CREATE3 via factory)
 ```
 
 ### 5.1 Interface sketch (informative → required names)
@@ -862,27 +949,145 @@ interface IUniswapV4OrbitalSwapHook {
 
 LP ERC-20 surface on the same contract. **decimals always 18 (Q24)**; **name/symbol auto at ctor (O5)**; **EIP-2612 `permit` required (Q41)**. Prefer Crane / Uni V2–style token helpers (D46 — mint `MINIMUM_LIQUIDITY` to `address(0)`). Previews **must** include protocol-mint dilution when fee-on (D58) and are **bit-exact** vs execution (Q37). `previewAddLiquidity` returns the same used-amount triple as execution (Q46). **No** `depositSingle` / zap entrypoint (Q40).
 
-### 5.2 Deploy API (FactoryService)
+### 5.2 Deploy API — on-chain factory (normative — Q49–Q52 / D78–D85)
+
+**Product path:** call **`UniswapV4OrbitalSwapHookFactory.deploy`** (permissionless). Salt is mined **off-chain**.
 
 ```solidity
-// Default namespace: "uv4-orbital-swap-hook-"
-// R and swap fee are NOT deploy arguments
-function deployHook(
-    ICreate3FactoryProxy create3Factory,
-    IPoolManager poolManager,
+interface IUniswapV4OrbitalSwapHookFactory {
+    /// @notice Required hook address flags (BEFORE_INITIALIZE | BEFORE_ADD/REMOVE_LIQUIDITY |
+    ///         BEFORE_SWAP | BEFORE_SWAP_RETURNS_DELTA)
+    function HOOK_FLAGS() external view returns (uint160);
+
+    function poolManager() external view returns (IPoolManager);
+
+    /// @notice CREATE3 predicted address for user salt + deployer (Q53 / D91)
+    /// @dev effectiveSalt = keccak256(abi.encodePacked(salt, deployer));
+    ///      return CREATE3.getDeployed(effectiveSalt, address(this))
+    function predictHookAddress(bytes32 salt, address deployer) external view returns (address);
+
+    /// @notice True after this factory first CREATE3-deployed `hook`
+    function isDeployedByFactory(address hook) external view returns (bool);
+
+    /// @notice All hooks for this binding (Q59) — AddressSetRepo._asArray; unbounded (Q60)
+    function hooksOfBinding(
+        IVaultFeeOracleQuery feeOracle,
+        address token0,
+        address token1,
+        address token2
+    ) external view returns (address[] memory hooks);
+
+    /// @notice Count of hooks for binding (AddressSetRepo._length)
+    function hooksOfBindingCount(
+        IVaultFeeOracleQuery feeOracle,
+        address token0,
+        address token1,
+        address token2
+    ) external view returns (uint256);
+
+    /// @notice Hook at 0-based index (Q59 / D96); OOB reverts
+    function hooksOfBindingAt(
+        IVaultFeeOracleQuery feeOracle,
+        address token0,
+        address token1,
+        address token2,
+        uint256 index
+    ) external view returns (address hook);
+
+    /// @notice Permissionless: CREATE3 deploy hook + initialize all three pair pools.
+    /// @param feeOracle Vault fee oracle for the instance (immutable on hook)
+    /// @param token0 Binding token0 (canonical LP/event order — not necessarily address order)
+    /// @param token1 Binding token1
+    /// @param token2 Binding token2
+    /// @param salt User salt; effectiveSalt = keccak256(abi.encodePacked(salt, msg.sender)) (Q53)
+    /// @param tickSpacing Shared plumbing for all three pools; 0 → default 60 (Q55 / Q25)
+    /// @param sqrtPriceX96 Shared plumbing; 0 → 1:1 mid getSqrtPriceAtTick(0)
+    /// @return hook Deployed (or idempotent existing) hook
+    /// @return poolKey01 Binding pair (token0,token1), currencies address-sorted (Q57)
+    /// @return poolKey12 Binding pair (token1,token2), currencies address-sorted
+    /// @return poolKey02 Binding pair (token0,token2), currencies address-sorted
+    function deploy(
+        IVaultFeeOracleQuery feeOracle,
+        address token0,
+        address token1,
+        address token2,
+        bytes32 salt,
+        int24 tickSpacing,
+        uint160 sqrtPriceX96
+    )
+        external
+        returns (
+            address hook,
+            PoolKey memory poolKey01,
+            PoolKey memory poolKey12,
+            PoolKey memory poolKey02
+        );
+}
+```
+
+**`deploy` algorithm (normative):**
+
+```text
+1. Validate non-zero feeOracle, tokens; pairwise distinct tokens
+2. effectiveSalt = keccak256(abi.encodePacked(salt, msg.sender))   // Q53
+3. predicted = CREATE3.getDeployed(effectiveSalt, address(this))  // CREATE3 deployer = factory
+4. require flags(predicted) == HOOK_FLAGS else InvalidHookSalt
+5. if predicted.code.length == 0:
+     CREATE3 deploy UniswapV4OrbitalSwapHook with salt=effectiveSalt, ctor:
+       (poolManager, feeOracle, token0, token1, token2)
+     // embedded creation code — no user bytecode
+     isDeployedByFactory[predicted] = true
+     AddressSetRepo._add(hooksByBinding[feeOracle,t0,t1,t2], predicted)  // Q58; exact binding order Q62
+     emit HookDeployed(msg.sender, predicted, salt, effectiveSalt, feeOracle, t0, t1, t2)
+   else:
+     require isExpectedHook(predicted, poolManager, feeOracle, token0, token1, token2)
+       else SaltOccupied
+6. tickSpacing' = tickSpacing == 0 ? 60 : tickSpacing
+   sqrtPrice'  = sqrtPriceX96 == 0 ? getSqrtPriceAtTick(0) : sqrtPriceX96
+7. For binding pairs in order 01, 12, 02 (Q57):
+     currencies = sort(pair) by address
+     key = PoolKey(currency0, currency1, DYNAMIC_FEE_FLAG, tickSpacing', hooks=hook, …)
+     if PoolId not initialized: poolManager.initialize(key, sqrtPrice')
+     else: skip (Q54 — leave existing alone; may be prior spacing)
+8. emit PoolsInitialized(hook, poolId01, poolId12, poolId02)
+9. return (hook, key01, key12, key02)  // keys for THIS call’s plumbing
+```
+
+**Hook ctor validation:** non-zero `poolManager`, `feeOracle`, tokens; pairwise distinct; `Hooks.validateHookPermissions` on address; cache decimals (missing → 18) + LP metadata.
+
+**`isExpectedHook`:** `poolManager()`, `feeOracle()`, `token0/1/2()` match — factory-side / library helper (not required on hook user ABI).
+
+### 5.2.1 Off-chain mine + FactoryService helpers
+
+```solidity
+// Library / script helpers (not the on-chain product path for instances)
+// Default namespace recommend: "uv4-orbital-swap-hook-"
+
+/// @dev Off-chain: search userSalt such that
+/// predicted = CREATE3.getDeployed(keccak256(abi.encodePacked(userSalt, deployer)), factory)
+/// has HOOK_FLAGS. `deployer` MUST be the address that will call factory.deploy.
+function mineSalt(address factory, address deployer, uint160 flags)
+    internal view returns (bytes32 userSalt, address predicted);
+
+/// @dev Recommended unique preimage then mine (D83 + Q53):
+/// userSalt seed = keccak256(abi.encode(namespace, feeOracle, token0, token1, token2, mineNonce))
+/// then vary mineNonce until flags(predict(factory, userSalt, deployer)) match
+function mineSaltForBinding(
+    address factory,
+    address deployer,
+    string memory namespace,           // empty → default
     IVaultFeeOracleQuery feeOracle,
     address token0,
     address token1,
-    address token2,
-    string memory saltNamespace  // empty → default
-) internal returns (address hook);
+    address token2
+) internal view returns (bytes32 userSalt, address predicted);
+
+/// @dev Deploy the factory contract itself (once per chain) — may use ecosystem create3Factory
+///      or plain CREATE; not the per-instance path.
+function deployFactory(IPoolManager poolManager) internal returns (address factory);
 ```
 
-**Ctor validation:** non-zero `poolManager`, `feeOracle`, tokens; pairwise distinct tokens; `Hooks.validateHookPermissions`; cache any `uint8` decimals (missing → 18) + LP metadata.
-
-**Mine loop:** buffer peer; salt includes **feeOracle**; no \(R\) / no pips; internal `mineNonce` only.
-
-**`isExpectedHook`:** `poolManager()`, `feeOracle()`, `token0/1/2()` match (factory-side helper OK; not required on user ABI).
+**Do not** use ecosystem `create3Factory.create3WithArgs` for **hook instances** (owner/operator gated). Instances always go through the orbital factory’s local CREATE3.
 
 ### 5.3 Storage (Repo)
 
@@ -911,7 +1116,7 @@ function deployHook(
 | beforeSwapReturnDelta | **Yes** | Custom accounting / NoOp curve (§4.6) |
 | after* / donate | **No** (v1) |
 
-Required flags must be mined into the CREATE3 address (buffer §8 peer).
+Required flags must be present on the CREATE3 address (factory salt check D82).
 
 ### 5.5 Events (normative field lists — D60 / Q21)
 
@@ -1022,6 +1227,30 @@ mode == 1  // ALLOWANCE
 
 **Peer reference (non-normative):** dual buffer PRD §7.3 — same Permit2 address and no-witness spirit; **orbital packing above is SoT** for this package (Q47).
 
+### 5.7 Factory events + errors (normative — D85 / Q52)
+
+```solidity
+event HookDeployed(
+    address indexed sender,
+    address indexed hook,
+    bytes32 salt,            // user-supplied
+    bytes32 effectiveSalt,   // keccak256(abi.encodePacked(salt, sender))
+    address feeOracle,
+    address token0,
+    address token1,
+    address token2
+);
+
+event PoolsInitialized(
+    address indexed hook,
+    bytes32 poolId01,
+    bytes32 poolId12,
+    bytes32 poolId02
+);
+```
+
+**Minimum factory errors:** `InvalidHookSalt`, `SaltOccupied`, `ZeroAddress`, `TokensNotDistinct`, invalid tickSpacing if PM rejects (bubble), pool init failure (bubble unless already-init skip).
+
 ---
 
 ## 6. Mapping from reference implementation → IndexedEx law
@@ -1029,19 +1258,20 @@ mode == 1  // ALLOWANCE
 | Reference (`OrbitalHook.sol`) | IndexedEx product law |
 |-------------------------------|------------------------|
 | `is BaseHook, ERC20` | **Pattern-copy** IHooks; ERC-20 on wire contract; **no BaseHook inherit** |
-| CREATE2 `HookMiner.find` + `new {salt}` | **CREATE3** existing factory + FactoryService mine loop |
+| CREATE2 `HookMiner.find` + `new {salt}` | **CREATE3** via **on-chain factory** + **off-chain-mined salt** (Q49/Q50) |
 | Hardcoded `R = 1_000_000e18` | **\(R\) from first liquidity** ×10 max WAD leg (O3/Q4) |
 | Hardcoded `LP_FEE = 1000` | Trading: live **`dexSwapFeeOfVault`**; growth: **`usageFeeOfVault` → feeTo** via `kLast`; PoolKey **DYNAMIC_FEE_FLAG** + **OVERRIDE_FEE_FLAG** |
 | `mapping(Currency => uint256) reserves` | Repo storage under diamond slot discipline |
 | Inline sphere math | **`UniswapV4OrbitalSwapHookMath` pure library** |
 | `console.log` | **Forbidden** in production |
 | Empty `unlockCallback` | Omit unused IUnlockCallback unless settle path needs it |
-| Always init three pools in script | **Optional subset** (O6); integrator choice |
+| Always init three pools in script | **Factory always inits all three** (D80 / O6) |
 | Fee residual updates \(L^2\) | **Keep** (LP fee accrual model) |
 | First LP `sum` raw amounts | **Sum of 1e18-normalized** amounts (O2); later mint also **WAD** Uni V2 (Q29) |
 | No LP slippage params | **sharesMin / amountMins** (O8) |
 | Exact-in + exact-out | Keep; prove **bit-exact** preview == execution (Q37); **WAD** gross-up O4/D20a |
 | Solady FixedPointMathLib | Prefer **Crane** FixedPointMathLib / BetterMath |
+| Revert `StableSwapHooksFactory` CREATE2 + salt | **CREATE3** + salt + **all-three pool init**; no user creationCode |
 
 ### 6.1 Known reference risks (must fix in port)
 
@@ -1060,24 +1290,29 @@ mode == 1  // ALLOWANCE
 
 ## 7. Deployment model
 
-Matches buffer hook §8 spirit:
-
 | Requirement | Law |
 |-------------|-----|
-| CREATE3 factory | **Existing** ecosystem `create3Factory` only |
-| Address mining | `HookMinerCreate3.computeAddress` + binding salt; deployer = create3Factory |
+| Hook instance deploy | **Permissionless** `UniswapV4OrbitalSwapHookFactory.deploy` (CREATE3, deployer = factory) |
+| Salt | **Off-chain mined** user `bytes32`; **effectiveSalt = keccak256(abi.encodePacked(salt, msg.sender))** (Q53); factory verifies flags (D82 / Q50) |
+| Address prediction | `factory.predictHookAddress(salt, deployer)` with same effectiveSalt rule |
 | Flags | `BEFORE_INITIALIZE \| BEFORE_ADD_LIQUIDITY \| BEFORE_REMOVE_LIQUIDITY \| BEFORE_SWAP \| BEFORE_SWAP_RETURNS_DELTA` |
+| Pool initialize | **Part of factory.deploy** — **all three** pairs (D80) |
+| Ecosystem `create3Factory` | Optional for **deploying the orbital factory contract once**; **not** used for each hook instance |
 | Vault registry | **Not** required for hook instance deploy; oracle may still key fees by vault address |
 | Diamond package factory for instance | **Not** v1 |
-| Pool initialize | **Not** part of `deployHook` |
+| Factory owner/pause | **None** v1 (D79) |
 
-After deploy, integrator (order flexible — **Q28**):
+**Integrator flow:**
 
-1. Configure oracle **dex** swap fee and **usage** fee for the hook address (and/or defaults) as needed.  
-2. Approve tokens to hook and/or Permit2 for LP.  
-3. `addLiquidity(..., sharesMin, deadline, permit2Data)` — **sets \(R\)**. **Does not require** pools initialized.  
-4. Initialize **any subset** of pair pools with **`fee = DYNAMIC_FEE_FLAG`**, `hooks=hook` (O6/Q7). **`sqrtPriceX96` + `tickSpacing` are PM plumbing only** (Q25) — hermetic tests use tickSpacing **60** and 1:1 mid (`getSqrtPriceAtTick(0)`); integrators any valid values. Init **does not require** liquidity.  
-5. Swaps only after: \(R > 0\), pair pool initialized, both trade-leg reserves &gt; 0.
+1. Deploy orbital factory once per chain (`deployFactory(poolManager)` or script).  
+2. **Off-chain:** `mineSalt(factory, deployer=yourCaller, …)` → `(userSalt, predictedHook)`.  
+3. **On-chain from that same deployer:** `factory.deploy(feeOracle, t0, t1, t2, userSalt, tickSpacing, sqrtPriceX96)` → hook + three pools.  
+4. Configure oracle **dex** / **usage** fees for the hook address (and/or defaults) as needed.  
+5. Approve tokens to hook and/or Permit2 for LP.  
+6. `addLiquidity(...)` — **sets \(R\)**. Pools already initialized by factory (LP still independent of needing extra pools — Q28).  
+7. Swaps after: \(R > 0\), pair pool initialized (true after factory deploy), both trade-leg reserves &gt; 0.
+
+**Defaults for pool plumbing (Q25 / Q51):** `tickSpacing == 0` → **60**; `sqrtPriceX96 == 0` → **1:1 mid** (`getSqrtPriceAtTick(0)`).
 
 ---
 
@@ -1085,7 +1320,10 @@ After deploy, integrator (order flexible — **Q28**):
 
 | Risk | Mitigation |
 |------|------------|
-| Wrong hook flags | Mine + `validateHookPermissions` + tests |
+| Wrong hook flags | Off-chain mine + factory salt flag check (D82) + `validateHookPermissions` + tests |
+| Bad / colliding salt | `InvalidHookSalt` / `SaltOccupied` (D84) |
+| Salt front-run griefing | **Deployer-scoped effectiveSalt** (Q53) — attacker cannot use your salt under their `msg.sender` to occupy your predicted address |
+| CREATE2 confusion | CREATE3 only for instances (D81); document Revert as UX peer only |
 | Invariant break / negative output | Require chains in Math; domain/branch constraints §4.3 |
 | Reserve approaches / hits \(R\) | \(R = 10 \times \max\) first-mint WAD; later ops revert if reserve ≥ \(R\) |
 | First-mint \(R\) too small for later TVL | Re-deploy new instance if capacity exhausted |
@@ -1117,31 +1355,35 @@ After deploy, integrator (order flexible — **Q28**):
 
 ## 9. Testing requirements (DoD)
 
-### 9.1 Hermetic (**required** — Q9)
+### 9.1 Hermetic (**required** — Q9 / Q52)
 
 1. Deploy Crane V4 PoolManager + real **Vault Fee Oracle** surface (IndexedexTest peer — not a mock oracle SUT unless only for non-SUT isolation).  
 2. Three mintable ERC-20s with **mixed decimals** including **>18 or 0** if practical (Q2); at least 6/6/18.  
-3. `deployHook` with feeOracle; flags; `radius()==0`; immutables include feeOracle.  
-4. Idempotent redeploy.  
-5. First add with deadline + sharesMin (+ optional Permit2 path); \(R = max \times 10\); shares = sumWad − 1000; **sumWad ≤ MIN reverts** (Q33); **LP decimals == 18** (Q24); **no pool init required** for LP (Q28).  
-6. Two-leg first mint OK; one-leg fails; first-mint `kLastMode` SumInterim if partial.  
-7. Init **one** pool with **DYNAMIC_FEE_FLAG**; static fee=0 / wrong fee reverts (Q7); **sqrtPrice/tickSpacing not product-validated** (Q25); hermetic uses spacing 60 + tick-0 mid; optional second PoolKey same pair different spacing **allowed** (Q31).  
-8. Set oracle **dex** fee non-zero WAD; six directed exact-in/out; **bit-exact** preview == execution (Q37); **ceil in / floor out** (Q32); override includes OVERRIDE bit.  
-9. Change dex fee mid-life; quotes change; **bit-exact** preview == execution.  
-10. Zero trading fee path.  
-11. **No full drain:** exact-in/out that would set out reserve to 0 **reverts** (Q27); post-swap both trade legs &gt; 0.  
-12. **Protocol growth fee:** non-zero per-address usage fee + feeTo; after swaps, next LP **mints to feeTo**; **`ProtocolFeeMinted`**; **bit-exact** preview == execution (D58 / Q37).  
-13. Growth fee-off / **ownerFeeShare == 0** (Q18): no protocol mint.  
-14. First mint ≥2 legs; `kLast`/`kLastMode` set if fee-on (SumInterim if partial); MIN to `address(0)` (D46).  
-15. Witness=0 (partial first mint) + **sphere-NAV seed shares** (Q5 / Q44 / D72); **seed-only** with positive maxes all 0 (Q38); prop min **only over maxed positive legs** (Q43); **sum-interim protocol mint on re-seed** (Q11); then FullProduct mode. Bit-exact preview of seed vs sum-NAV golden (seed shares ≠ sum-NAV).  
-16. Cross-mode: no bogus mint when mode flips without compatible kLast.  
-17. Full-book later mint: unused max **not** pulled; **three-leg WAD** Uni V2 + floor pull; **one-/two-sided reverts** (Q39); **used_i == 0 reverts** (Q35); mixed-decimal legs. **No** depositSingle/zap path (Q40).  
-18. sharesMin / amountMin / deadline fail paths.  
-19. Reserve ≥ \(R\); full exit dust; \(R\) sticky (Q6); **assert `Σ toWad(r_i) > 0` after full user exit** (Q45).  
-20. SafeERC20 **or** Permit2 §5.6 (empty; Signature 1/2/3-leg binding order; Allowance mode; **no mix** — Q36/Q47); donations ignored (Q14).  
-21. Events LiquidityAdded / Removed / Swap with §5.5 fields; **ProtocolFeeMinted when mint &gt; 0** (Q17 / D60).  
-22. Native modifyLiquidity reverts; zero amounts revert; **global reentrancy** LP↔swap (Q34).  
-23. `kLastMode()` view; auto name/symbol; **EIP-2612 permit** on LP (Q41); remove burns **msg.sender** only; `addLiquidity` returns **(shares, a0, a1, a2)** match preview used (Q46); no mock hook/PM SUT.
+3. Deploy **`UniswapV4OrbitalSwapHookFactory`** with `poolManager`; assert no owner/pause surface.  
+4. **Off-chain mine** userSalt for **(factory, deployer=test EOA)** + HOOK_FLAGS; `predictHookAddress(salt, deployer)` matches.  
+5. **`factory.deploy(...)`** from that deployer with feeOracle + tokens + salt; assert: hook flags; immutables; `radius()==0`; **`isDeployedByFactory`**; **hooksOfBinding** contains hook; **all three** pools initialized (`DYNAMIC_FEE_FLAG`, hooks=hook); `HookDeployed` + `PoolsInitialized` events.  
+6. **Invalid salt** (wrong flags for effectiveSalt) reverts `InvalidHookSalt`.  
+7. **Idempotent** same caller + same salt + same binding returns same hook; re-`deploy` with **new tickSpacing** inits additional PoolIds only (Q54); old doors remain.  
+8. **SaltOccupied:** same caller + same salt + different binding after first deploy → revert. Different caller + same userSalt → **different** address (Q53) — can deploy independently.  
+9. First add with deadline + sharesMin (+ optional Permit2 path); \(R = max \times 10\); shares = sumWad − 1000; **sumWad ≤ MIN reverts** (Q33); **LP decimals == 18** (Q24).  
+10. Two-leg first mint OK; one-leg fails; first-mint `kLastMode` SumInterim if partial.  
+11. Static fee / wrong fee on **external** second PoolKey init reverts (Q7); hermetic factory uses spacing 60 + tick-0 mid; optional extra PoolKey same pair different spacing **allowed** (Q31).  
+12. Set oracle **dex** fee non-zero WAD; six directed exact-in/out **across all three doors**; **bit-exact** preview == execution (Q37); **ceil in / floor out** (Q32); override includes OVERRIDE bit.  
+13. Change dex fee mid-life; quotes change; **bit-exact** preview == execution.  
+14. Zero trading fee path.  
+15. **No full drain:** exact-in/out that would set out reserve to 0 **reverts** (Q27); post-swap both trade legs &gt; 0.  
+16. **Protocol growth fee:** non-zero per-address usage fee + feeTo; after swaps, next LP **mints to feeTo**; **`ProtocolFeeMinted`**; **bit-exact** preview == execution (D58 / Q37).  
+17. Growth fee-off / **ownerFeeShare == 0** (Q18): no protocol mint.  
+18. First mint ≥2 legs; `kLast`/`kLastMode` set if fee-on (SumInterim if partial); MIN to `address(0)` (D46).  
+19. Witness=0 (partial first mint) + **sphere-NAV seed shares** (Q5 / Q44 / D72); **seed-only** with positive maxes all 0 (Q38); prop min **only over maxed positive legs** (Q43); **sum-interim protocol mint on re-seed** (Q11); then FullProduct mode. Bit-exact preview of seed vs sum-NAV golden (seed shares ≠ sum-NAV).  
+20. Cross-mode: no bogus mint when mode flips without compatible kLast.  
+21. Full-book later mint: unused max **not** pulled; **three-leg WAD** Uni V2 + floor pull; **one-/two-sided reverts** (Q39); **used_i == 0 reverts** (Q35); mixed-decimal legs. **No** depositSingle/zap path (Q40).  
+22. sharesMin / amountMin / deadline fail paths.  
+23. Reserve ≥ \(R\); full exit dust; \(R\) sticky (Q6); **assert `Σ toWad(r_i) > 0` after full user exit** (Q45).  
+24. SafeERC20 **or** Permit2 §5.6 (empty; Signature 1/2/3-leg binding order; Allowance mode; **no mix** — Q36/Q47); donations ignored (Q14).  
+25. Events LiquidityAdded / Removed / Swap with §5.5 fields; **ProtocolFeeMinted when mint &gt; 0** (Q17 / D60).  
+26. Native modifyLiquidity reverts; zero amounts revert; **global reentrancy** LP↔swap (Q34).  
+27. `kLastMode()` view; auto name/symbol; **EIP-2612 permit** on LP (Q41); remove burns **msg.sender** only; `addLiquidity` returns **(shares, a0, a1, a2)** match preview used (Q46); no mock hook/PM/factory SUT.
 
 ### 9.2 Fork DoD — **Ethereum + Base + Robinhood Chain (4663) all required** (Q9 / Q16 / Q23 / Q48)
 
@@ -1149,7 +1391,7 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 
 1. **Tokens:** use live production ERC-20s **or deploy mintable/test ERC-20s on the fork** (Q23). No requirement that the three legs be USDC/USDT/DAI specifically.  
 2. **Stack:** live PoolManager / Permit2 / fee-oracle when present; else **deploy production-equivalent bytecode** on the fork (dual D74 peer). Not interface mocks of the SUT.  
-3. Deploy hook + fee oracle wiring + add liquidity + init pool(s) (**DYNAMIC_FEE_FLAG**) + swap.  
+3. Deploy **orbital factory** (if not already) + off-chain mine salt + **`factory.deploy`** (all three pools) + fee oracle wiring + add liquidity + swap on ≥1 door.  
 4. If a USDT-style token is among the legs, cover SafeERC20 quirks; otherwise not required.  
 5. At least one LP path exercising protocol growth mint when usage fee + feeTo configured.
 
@@ -1159,7 +1401,29 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 2. After swaps only: input raw reserve increases by full gross `amountIn`; output decreases by `amountOut`; trading residual remains in input reserve; **both trade-leg reserves remain &gt; 0**.  
 3. LP remove after add (no swaps): pro-rata payouts **bit-exact** vs `previewRemoveLiquidity` (Q37); residual locked for dead MIN share (Q6); **`Σ toWad(r_i) > 0` while `totalSupply > 0`** (Q45).  
 4. Protocol mint never exceeds D56 algebra for measured `rootK` growth.  
-5. Partial-book mint: `shares == floor(supply' * V_in / V_before)` for pre-op \(p_i = R - r_i^{18}\) (D72); not sum-NAV.
+5. Partial-book mint: `shares == floor(supply' * V_in / V_before)` for pre-op \(p_i = R - r_i^{18}\) (D72); not sum-NAV.  
+6. Factory: predicted address flags always match HOOK_FLAGS for accepted salts; CREATE3 address independent of binding args (collision only via salt reuse).
+
+### 9.4 Factory-focused DoD checklist (required — Q52)
+
+| # | Case |
+|---|------|
+| F1 | Deploy factory; `poolManager()` immutable; **no** owner/pause |
+| F2 | Off-chain `mineSalt(factory, deployer, …)` finds userSalt; `predictHookAddress(salt, deployer)` matches CREATE3 |
+| F3 | `deploy` creates hook + **exactly three** initialized pair pools (this call’s plumbing) |
+| F4 | Each pool: bound pair, `DYNAMIC_FEE_FLAG`, `hooks == hook`, address-sorted currencies; return order 01/12/02 |
+| F5 | Wrong-flag salt → `InvalidHookSalt` |
+| F6 | Same caller + same salt + same binding → idempotent success |
+| F7 | Same caller + same salt + different binding → `SaltOccupied` |
+| F7b | Different callers + same userSalt → different hooks both succeed (Q53) |
+| F7c | Re-deploy new tickSpacing → new PoolIds inited; old spacing pools still exist (Q54) |
+| F8 | Swap works on **each** of the three doors after LP |
+| F9 | Permissionless: prank random EOA can `deploy` |
+| F10 | `isDeployedByFactory(hook) == true` after first CREATE3 |
+| F11 | `hooksOfBinding` array + count + at list hook; second deploy different salt same binding appends second hook (Q56/Q59) |
+| F12 | Binding map key is exact deploy order — permuted token order is a **different** set (Q62) |
+| F13 | Multisig/prank: mine with `deployer = caller`; different caller same userSalt ⇒ different hook (Q61) |
+| F14 | Storage uses AddressSetRepo semantics (contains/idempotent add) (Q58) |
 
 ---
 
@@ -1171,20 +1435,24 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 4. **Additional fee channels beyond v1’s two:** e.g. splitting **trading residual** to `feeTo` on every swap, multi-recipient fee splits, orbit-level fees. (**In scope v1:** live `dexSwapFeeOfVault` residual in reserves + live `usageFeeOfVault` growth mint; V4 `DYNAMIC_FEE_FLAG` + per-swap override — Q19.)  
 5. Hook-as-DETF leg.  
 6. **On-hook single-asset zap / `depositSingle`** — fair path = internal sphere rebalance to a proportional basket then D24 mint (solver/heuristic TBD). **Explicitly out of v1** (Q40); full book is three-leg `addLiquidity` only (Q39).  
-7. **Allowance-based LP burn** (`burnFrom` / remove with spender) — v1 burns **`msg.sender` only** (Q41).
+7. **Allowance-based LP burn** (`burnFrom` / remove with spender) — v1 burns **`msg.sender` only** (Q41).  
+8. **On-chain salt mining** inside factory (gas) — off-chain only (Q50).  
+9. Factory owner/pause/fee-collector admin (Revert-style Ownable factory) — not v1 (D79).  
+10. Factory-enforced “only one PoolKey per pair” — still allowed to add extra tickSpacings externally (Q31).
 
 ---
 
 ## 11. Definition of done (package)
 
-- [x] PRD O1–O9 + Q1–Q48 + growth fee D51–D77 locked (**v1.11 plan-ready**).  
-- [ ] Implementation + test plan document written.  
-- [ ] Files under `contracts/hooks/uniswap/v4/orbital/` per §5.  
-- [ ] FactoryService CREATE3 mine deploy green.  
-- [ ] Hermetic DoD §9.1 green (incl. sphere-NAV seed, Permit2 §5.6, addLiquidity returns).  
+- [x] PRD O1–O9 + Q1–Q62 + growth fee D51–D96 locked (**v1.14 plan-ready**).  
+- [x] Implementation + test plan document written (`UNISWAP_V4_ORBITAL_SWAP_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`).  
+- [ ] Files under `contracts/hooks/uniswap/v4/orbital/` per §5 (incl. **Factory** + interface).  
+- [ ] On-chain factory CREATE3 deploy + all-three pool init green.  
+- [ ] Off-chain mine helpers + factory self-deploy helpers green.  
+- [ ] Hermetic DoD §9.1 + factory §9.4 green.  
 - [ ] Fork DoD §9.2 green on **Ethereum + Base + Robinhood Chain (4663)** (Q16 / Q23 / Q48).  
 - [ ] NatSpec + no console.log.  
-- [ ] No BaseHook inheritance; no DFPkg/Facet; no owner/pause; no on-hook zap.  
+- [ ] No BaseHook inheritance; no DFPkg/Facet; no owner/pause on hook or factory; no on-hook zap.  
 - [ ] AGENTS.md testing / CREATE3 compliance.
 
 ---
@@ -1194,10 +1462,11 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 | Path (upstream) | Role |
 |-----------------|------|
 | `src/OrbitalHook.sol` | Full prototype: sphere swap, 3-asset LP, fees |
-| `script/OrbitalDeploy.s.sol` | CREATE2 mine + deploy (replace with FactoryService) |
+| `script/OrbitalDeploy.s.sol` | CREATE2 mine + deploy (replace with **on-chain factory** + off-chain salt) |
 | `script/OrbitalInteraction.s.sol` | Fork demo: LP + 3 pools + swap |
 | `README.md` / `info.md` | Product narrative + math derivation notes |
 | `HookMath.png` | Diagram asset (optional copy to docs) |
+| Revert `StableSwapHooksFactory.sol` | UX peer: off-chain salt + factory.deploy; **CREATE2 → CREATE3** for IndexedEx |
 
 ## 13. Appendix B — Comparison to dual buffer hook
 
@@ -1208,12 +1477,13 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 | Curve | Constant product on claims | Sphere on reserves |
 | Trading fee | Fixed ~0.3% residual (D29) | Live **`dexSwapFeeOfVault`** residual (WAD) |
 | Yield / growth fee | `kLast` via oracle field named **`dexSwapFee`** (growth share — dual naming callout) | Growth via **`usageFeeOfVault` + `kLast`/`kLastMode`** mint to feeTo |
-| V4 pools | One pair | Up to three pairs (subset OK), one hook |
+| V4 pools | One pair | **All three** pairs via factory (D80); extra tickSpacing OK |
 | LP | Dual pro-rata; **decimals 18** | Triple pro-rata; partial **sphere-NAV** (Q44/D72); **seed-only OK** Q38; **decimals 18** (Q24); **EIP-2612** (Q41) |
 | Single-asset deposit | `depositSingle` zap when eligible | **No** on-hook zap v1 (Q40); three-leg add when full book (Q39); partial seed ≠ zap |
 | Radius / depth | N/A (CP) | \(R\) from first mint ×10 |
 | V4 init price | Plumbing only (C6) | Plumbing only (Q25) |
-| Package standards | Same CREATE3 / Repo-Target / no BaseHook | **Same** |
+| Package standards | CREATE3 FactoryService library | **On-chain permissionless factory** CREATE3 + off-chain salt |
+| Deploy UX peer | Buffer FactoryService mine loop | Revert factory salt pattern (CREATE3) |
 | Permit2 packing | Normative §7.3 | **Orbital-normative §5.6** (Q47); dual §7.3 peer only |
 | addLiquidity returns | plan-defined | **`(shares, a0, a1, a2)`** (Q46) |
 | Forks | Base + Robinhood 4663 | **Ethereum + Base + Robinhood 4663** (Q48) |
@@ -1230,7 +1500,10 @@ For **each** of Ethereum mainnet, Base mainnet, and **Robinhood Chain mainnet (c
 | 2026-08-03 | v1.9 plan-ready | **Q31–Q36:** pool-init scope = this hook only (no per-pair uniqueness; multi tickSpacing OK); **ceil amountIn / floor amountOut**; first mint `sumWad > MIN`; **global reentrancy lock**; **used_i == 0 revert**; Permit2 **all pulled legs** when non-empty. D17/D23–D24/D30–D31/D48/D64–D65/§4–§9 aligned |
 | 2026-08-03 | **v1.10 plan-ready** | **Q37–Q42** + D66–D71: **bit-exact** previews (drop ±1 wei); partial **seed-only**; full-book **three-leg only** / **no on-hook zap**; LP **EIP-2612** + remove burns `msg.sender`; oracle always per-address query APIs; `ProtocolFeeMinted` when mint &gt; 0; MIN/`address(0)` Uni V2 mint note; canonical law index; §2.3/§4.5/§5/§9–§11/Appendix B aligned |
 | 2026-08-03 | **v1.11 plan-ready** | **Q43–Q48** + D72–D77: partial prop min = maxed positive legs only; **sphere-NAV fair seed** (replaces sum-NAV; §4.5.1 + worked example); residual `sumPos > 0` invariant; `addLiquidity` returns `(shares,a0,a1,a2)`; **§5.6 orbital Permit2 packing** (sig batch + allowance); Robinhood **4663**; authority + terminology §0; security/DoD/Appendix B aligned |
+| 2026-08-03 | **v1.12 plan-ready** | **Q49–Q52** + D78–D85: permissionless **on-chain factory**; **CREATE3** + **off-chain-mined salt** (Revert UX peer, not CREATE2); **always init all three pools**; no factory owner/pause; §5.2/§5.7/§7 rewrite; hermetic + §9.4 factory DoD; O6 revised |
+| 2026-08-03 | **v1.13 plan-ready** | **Q53–Q57** + D86–D91: **deployer-scoped effectiveSalt**; re-deploy inits new PoolIds only; shared plumbing; **binding→hooks set**; return key order 01/12/02; predict(salt, deployer); factory DoD F7b–F11 |
+| 2026-08-03 | **v1.14 plan-ready** | **Q58–Q62** + D92–D96: Crane **AddressSetRepo** for binding hooks; discovery **array + count + at**; **unbounded**; **msg.sender-only** salt; map key **exact binding order**; 0-based external index |
 
 ---
 
-**End of PRD — UniswapV4OrbitalSwapHook (v1.11 plan-ready — Q1–Q48 locked)**
+**End of PRD — UniswapV4OrbitalSwapHook (v1.14 plan-ready — Q1–Q62 locked)**
