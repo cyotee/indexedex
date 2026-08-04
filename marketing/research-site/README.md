@@ -23,7 +23,7 @@ Redeploys on push to `main` when this folder (or the workflow) changes, or via *
 |------|----------|---------|
 | `index.html` | Prospective customers | Product home: what a DETF is, Uniswap V4 rails strip, roadmap, plain-language proof |
 | `how-detfs-work.html` | Prospective customers | Full DETF product report (primary long-form) |
-| `uniswap-v4.html` | Prospective customers | Uniswap V4 market rails pitch (vault bridges + multi-asset books) |
+| `uniswap-v4.html` | Prospective customers | Uniswap V4 market rails pitch (CP buffer, dual-vault pairs, multi-asset books) |
 | `technical-note.html` | Builders / researchers | DETF mechanism detail, measured tables, methodology (+ pointer to V4 product page) |
 | `litepaper.html` | Bookmarks / old links | Soft redirect to the product report |
 
@@ -51,7 +51,7 @@ npx vercel --prod   # production
 ## Litepaper / PDF
 
 - Preferred public read: [`how-detfs-work.html`](./how-detfs-work.html)
-- Uniswap V4 rails: [`uniswap-v4.html`](./uniswap-v4.html)
+- Uniswap V4 rails (CP buffer + multi-asset): [`uniswap-v4.html`](./uniswap-v4.html)
 - Builders: [`technical-note.html`](./technical-note.html)
 - Optional offline PDF: [`DETF_LITEPAPAPER.pdf`](./DETF_LITEPAPAPER.pdf) (technical snapshot; may lag the product report)
 - Source/build for the PDF: `research/papers/detf-litepaper/` (`build_pdf.sh`)

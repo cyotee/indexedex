@@ -6,12 +6,12 @@
     <title>Uniswap V4 Markets — IndexedEx</title>
     <meta
       name="description"
-      content="IndexedEx Uniswap V4 market rails: yield vault bridges, yield-bearing pair markets, and multi-asset shared books (three-asset, four-asset stable, weighted). Spec complete; deploys land as each rail ships. Designed to compose with DETFs later."
+      content="IndexedEx Uniswap V4 market rails: constant-product buffer markets (free token + vault-buffered cash), yield-bearing dual-vault pairs, and multi-asset shared books. Spec complete; deploys land as each rail ships. CP buffer designed as a DETF reserve."
     />
     <meta property="og:title" content="Uniswap V4 Markets — IndexedEx" />
     <meta
       property="og:description"
-      content="Multi-asset books and vault bridges on Uniswap V4. One shared inventory, pair-level entry points, strategy vault claims when yield matters."
+      content="Constant-product buffer reserves, dual-vault pairs, and multi-asset books on Uniswap V4. One free leg + vault-buffered cash for DETF-shaped listing depth."
     />
     <meta property="og:type" content="article" />
     <meta name="theme-color" content="#0B1220" />
@@ -52,11 +52,12 @@
         <p class="eyebrow">Uniswap V4 · market rails · August 2026</p>
         <h1>Multi-asset markets on Uniswap V4</h1>
         <p class="lede">
-          IndexedEx is building <strong>Uniswap V4 market rails</strong>: bridges that put strategy
-          vaults on Uni V4, and multi-asset books with pair-level doors into one shared inventory.
-          Specs are locked. Public deploys land as each rail is ready. These are markets and
-          vault infrastructure — not DETF products by themselves. They are designed to compose
-          with <strong>Decentralized ETF</strong> designs later.
+          IndexedEx is building <strong>Uniswap V4 market rails</strong>: constant-product buffer
+          markets that hold one free token and buffer the other into a strategy vault, pair books
+          on two vaults, and multi-asset books with pair-level doors into one shared inventory.
+          Specs are locked. Public deploys land as each rail is ready. The buffer market is
+          designed so a <strong>Decentralized ETF</strong> can use it as its on-chain reserve —
+          list the share against a pair token without a separate wrapper portal.
         </p>
         <div class="hero-ctas">
           <a class="btn" href="./">Back to home</a>
@@ -98,14 +99,15 @@
               inventory was never shared.
             </li>
             <li>
-              <strong>Yield stuck off the swap surface</strong> — strategy vaults earn, but Uni V4
-              routers want a simple pair. Bridging claim-on-underlying into that surface is easy to
-              get wrong if pricing ignores the vault.
+              <strong>Listing a share without a real reserve book</strong> — a thin portal that only
+              swaps base asset for vault shares has no fungible LP, no constant-product depth, and
+              no natural bond principal for a DETF.
             </li>
             <li>
-              <strong>DETFs need honest legs</strong> — a Decentralized ETF prices from a real
-              reserve. Those legs are strategy vaults and multi-asset markets. If the market layer
-              is only single pairs, the reserve story is thinner than it should be.
+              <strong>DETFs need honest reserves on Uni V4</strong> — a Decentralized ETF prices
+              from a real book. Cash legs should sit in strategy vaults when yield matters; the
+              share leg should list against that book on Uni V4, not only on another venue’s
+              multi-asset pool.
             </li>
           </ul>
         </section>
@@ -122,9 +124,9 @@
               <h3>What you get</h3>
               <ul>
                 <li>Pair-level entry points routers already understand</li>
+                <li>Constant-product buffer books: free token × vault-buffered cash</li>
                 <li>One inventory book for multi-asset rails (not N isolated pools)</li>
-                <li>Fungible LP over the whole book where the product is an AMM</li>
-                <li>Vault bridges that track claim on underlying, including yield when earned</li>
+                <li>Fungible LP over the whole book; single-sided deposit and withdraw where designed</li>
                 <li>Deploy-time rules; no admin rewrite surface as the product model</li>
               </ul>
             </div>
@@ -132,9 +134,9 @@
               <h3>What you do not get</h3>
               <ul>
                 <li>A promise that these rails replace every AMM everywhere</li>
+                <li>A wrapper-only portal with no LP book (that shape is not this product map)</li>
                 <li>Concentrated-range NFT positions as the product shape for these books</li>
                 <li>Guaranteed yield, peg, or arb profits from mark lag</li>
-                <li>A DETF mint/burn surface by itself (DETFs are a separate product class)</li>
                 <li>Mainnet addresses on this page until they are published</li>
               </ul>
             </div>
@@ -148,15 +150,30 @@
             language — not deploy package labels.
           </p>
 
-          <h3>1. Yield vault on Uni V4</h3>
+          <h3>1. Constant-product buffer market</h3>
           <p>
-            A wrapper-style pair: <strong>base asset ↔ strategy vault share</strong>. Pricing
-            follows the vault’s claim on underlying. When the vault earns protocol yield, the
-            quote moves with that claim — not a flat one-to-one forever.
+            A <strong>normal constant-product AMM</strong> on Uniswap V4 whose two legs are
+            asymmetric: one <strong>free token</strong> held directly in the book, and one
+            <strong>cash (pair) token</strong> buffered into a strategy vault. Effective reserves
+            are free inventory × vault claim on cash — so yield on the vaulted leg can deepen the
+            cash side of the book. Liquidity providers mint <strong>one fungible LP</strong>.
+            Single-sided deposit (zap-in) and single-sided withdraw (zap-out) rebalance through
+            the book when it is live.
           </p>
           <p>
-            <strong>For whom:</strong> anyone who wants Uni V4 access to a yield-bearing vault
-            without inventing a separate market-making strategy on ticks.
+            Public swaps still look like a simple pair (for example share token ↔ USDC). The pool
+            does not trade vault shares as a currency; the vault is inventory under the cash leg.
+          </p>
+          <p>
+            <strong>For whom:</strong> listing a share (including a DETF) against a pair token with
+            real CP depth, vaulted cash, and LP that can serve as bond principal — not a thin
+            wrap/unwrap portal with no book.
+          </p>
+          <p>
+            <strong>DETF use:</strong> a Uni V4 DETF family is designed so the share is the free
+            leg, the pair token is the cash leg, first bond opens the reserve at a deploy-time
+            creation rate, and bond principal is this fungible LP. That DETF surface is a separate
+            product package on top of this market rail.
           </p>
           <p><span class="status-pill">Spec complete</span></p>
 
@@ -225,30 +242,32 @@
           <h2>How this meets DETFs</h2>
           <p>
             A <strong>DETF</strong> (Decentralized ETF) is a reserve-backed share with bond, mint,
-            and burn rules. The reserve needs real legs. Strategy vaults and multi-asset markets
-            are those legs.
+            and burn rules. On Uni V4, the first designed family uses the
+            <strong>constant-product buffer market</strong> as the reserve — not a Balancer BPT
+            book and not a wrapper-only pool.
           </p>
           <ul>
             <li>
-              <strong>Vault bridge and yield-bearing pair</strong> put Standard Exchange–style vault
-              claims on Uni V4 so depth and yield can sit where routers already trade.
+              <strong>CP buffer reserve</strong> — the DETF share is the free leg; the pair token
+              is buffered into a strategy vault. Traders see share ↔ pair on Uni V4. Bond principal
+              is fungible LP from that book. First bond can open the market at a deploy-time
+              creation rate (may start rich vs an abstract peg); later mint/burn follows Policy or
+              Open rules like other DETFs.
+            </li>
+            <li>
+              <strong>Yield-bearing dual-vault pairs</strong> put two strategy-vault claims on a
+              normal pair so depth can earn on both legs where that topology fits.
             </li>
             <li>
               <strong>Sphere, stable, and weighted books</strong> give multi-asset inventory with
-              pair-level access — closer to the multi-asset reserve story a DETF needs than a
-              stack of isolated pairs.
-            </li>
-            <li>
-              <strong>Composition comes next.</strong> DETF package designs that use these rails
-              will be published when product law for those families is ready. This page does not
-              invent those DETF designs early.
+              pair-level access for broader baskets as those DETF designs land.
             </li>
           </ul>
           <p>
             Premier product hierarchy stays the same: the main offer is still
             <strong>create your own DETFs</strong>. Protocol DETF remains the path to
             <strong>earn a share of protocol fees</strong> (amounts not guaranteed). Uniswap V4
-            rails are infrastructure under that story.
+            rails are the market layer under that story.
           </p>
           <p>
             <a href="./how-detfs-work.html">Read how DETFs work →</a>
@@ -290,8 +309,9 @@
               availability. Live addresses and audits will be linked when published.
             </li>
             <li>
-              <strong>Not a DETF by itself.</strong> Uniswap V4 rails do not mint DETF shares or
-              promise Protocol DETF fee amounts.
+              <strong>Rails vs DETF packages.</strong> Market rails are not the full DETF mint/burn
+              product. A DETF family that uses the CP buffer as reserve is a separate package —
+              this page describes the market layer and how that family is designed to use it.
             </li>
             <li>
               <strong>No yield or peg promises.</strong> Vault yield, stable curves, and weighted
