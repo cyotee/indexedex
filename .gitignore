@@ -68,3 +68,6 @@ cache_se_erc4626/
 
 # Local Playwright MCP page dumps
 .playwright-mcp/
+
+out_orbital/
+cache_orbital/

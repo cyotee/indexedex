@@ -171,3 +171,25 @@ remappings = [
     "contracts/solady/=lib/crane/contracts/external/solady/",
     "contracts/external/solady/=lib/crane/contracts/external/solady/",
 ]
+
+# Narrow profile for Uniswap V4 Orbital Swap Hook (import-graph only).
+[profile.orbital]
+src = 'contracts/hooks/uniswap/v4/orbital'
+test = 'test/foundry/spec/hooks/uniswap/v4/orbital'
+out = 'out_orbital'
+cache_path = 'cache_orbital'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]

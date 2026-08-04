@@ -4,7 +4,7 @@
 **This plan (implementor SoT once accepted):** phased delivery, file map, algorithms, tests.  
 **Package:** `contracts/hooks/uniswap/v4/orbital/`  
 **Date:** 2026-08-03  
-**Status:** **Canonical plan — written from PRD v1.14.** Greenfield (no production sources yet). **No code in this plan-only pass.**
+**Status:** **Implemented 2026-08-03** (PRD v1.14 + P1–P4). Production sources + hermetic/fork tests green under `FOUNDRY_PROFILE=orbital` / `fork`.
 
 **Authority**
 
@@ -13,7 +13,16 @@
 | **PRD v1.14** | Product law (O1–O9, Q1–Q62, D1–D96, §0–§11). **PRD wins** on conflict |
 | **This plan** | Implementor SoT for phases, files, tests, peer paths |
 | ETHGlobal / Paradigm / Revert factory | Behavioral/math/UX reference only — not deploy law |
-| Dual / single buffer hooks | Pattern-copy settle, Permit2 packing spirit, Repo+Target layering — **no inheritance** |
+| Dual / single buffer hooks | Pattern-copy settle, Permit2 packing spirit, Repo+Target layering — **no inheritance of dual/single types** |
+
+**Locked implementor decisions (2026-08-03)**
+
+| # | Decision | Law for this plan |
+|---|----------|-------------------|
+| **P1** | **Production factory only** | Implement **`UniswapV4OrbitalSwapHookFactory`** as the product deploy path. **All** hermetic + fork tests deploy hooks via **factory** (`deployFactory` → `mineSalt` → `factory.deploy`). **Forbidden:** temporary CREATE3 helpers, ad-hoc `new` hooks, ecosystem `create3Factory` for instances, or any non-factory test-only deploy path. |
+| **P2** | **Integration-only tests** | **No pure unit / isolated Math-only test suite.** Sphere math, WAD, sphere-NAV, growth algebra, etc. are covered **only** through full production stack: real PoolManager + fee oracle + factory-deployed hook + LP/swap execution (and bit-exact previews on that instance). Math lib may still be a pure library; tests always go through the wire. |
+| **P3** | **Fork tokens = test tokens** | Forks (Ethereum / Base / Robinhood **4663**) use **mintable test ERC-20s**, not live mainnet stables. Fork purpose is **protocol integration** (live/deploy-if-missing PoolManager, Permit2, fee oracle stack on that chain) + factory + hook lifecycle — not live USDC/USDT/DAI inventory. |
+| **P4** | **Wire stack (inheritance)** | Peer dual/single shape: **`UniswapV4OrbitalSwapHook` (wire)** inherits **`UniswapV4OrbitalSwapHookTarget`** inherits **`UniswapV4OrbitalSwapHookCommon`**; **`UniswapV4OrbitalSwapHookRepo`** is a storage library (diamond-style slot); **`UniswapV4OrbitalSwapHookMath`** is a pure library. **Do not** use composition-only Target without inheritance. |
 
 **Read order for implementors**
 
@@ -21,7 +30,7 @@
 2. PRD §3 locked tables (focus D14–D35, D48–D59, D72, D78–D96)  
 3. PRD §4.3 sphere math, §4.4 fees, §4.5 liquidity + §4.5.1 sphere-NAV, §4.6 settle  
 4. PRD §5.2 / §5.6 / §5.7 factory + Permit2 + events  
-5. **This plan** §1–§8  
+5. **This plan** §1–§8 (incl. locked decisions above)  
 
 **Methodology skills:** `crane-deployment`, `crane-architecture`, `crane-testing`, `indexedex-testing`, `crane-adversarial-testing`, `uniswap-v4-hooks` / `v4-security-foundations` (permissions + NoOp deltas), dual buffer Target settle pattern-copy.
 
@@ -61,53 +70,63 @@ contracts/hooks/uniswap/v4/orbital/
     IUniswapV4OrbitalSwapHook.sol
     IUniswapV4OrbitalSwapHookFactory.sol
 
-  UniswapV4OrbitalSwapHookMath.sol        # pure: sphere, WAD, shares, NAV, cbrt/growth
-  UniswapV4OrbitalSwapHookRepo.sol        # diamond-style storage slot
+  UniswapV4OrbitalSwapHookMath.sol        # pure lib: sphere, WAD, shares, NAV, cbrt/growth
+  UniswapV4OrbitalSwapHookRepo.sol        # diamond-style storage slot library
   UniswapV4OrbitalSwapHookCommon.sol      # reserves, decimals, guards, fee oracle reads
-  UniswapV4OrbitalSwapHookTarget.sol      # IHooks + LP execute + settle
-  UniswapV4OrbitalSwapHook.sol            # wire: IHooks + ERC-20 + EIP-2612 + ctor
+  UniswapV4OrbitalSwapHookTarget.sol      # IHooks + LP execute + settle (extends Common)
+  UniswapV4OrbitalSwapHook.sol            # wire extends Target: ERC-20 + EIP-2612 + ctor
 
-  UniswapV4OrbitalSwapHookFactory.sol     # on-chain CREATE3 + 3× pool init + AddressSet
+  UniswapV4OrbitalSwapHookFactory.sol     # production CREATE3 + 3× pool init + AddressSet
   UniswapV4OrbitalSwapHook_FactoryService.sol  # mineSalt*, deployFactory helpers
 ```
 
-**FORBIDDEN:** `*Facet.sol`, `*DFPkg.sol`, Solidity inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver`, reference `BaseHook`.
+**Inheritance stack (P4 — mandatory):**
+
+```text
+UniswapV4OrbitalSwapHook
+  └─ UniswapV4OrbitalSwapHookTarget
+       └─ UniswapV4OrbitalSwapHookCommon
+            (+ uses UniswapV4OrbitalSwapHookRepo, UniswapV4OrbitalSwapHookMath as libraries)
+```
+
+**FORBIDDEN:** `*Facet.sol`, `*DFPkg.sol`, Solidity inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver`, reference `BaseHook`. **Forbidden for tests:** temporary CREATE3 deploy helpers; pure Math-only `.t.sol` suites (P1 / P2).
 
 **Tests:**
 
 ```text
 test/foundry/spec/hooks/uniswap/v4/orbital/
-  TestBase_UniswapV4OrbitalSwapHook.sol          # or contracts/…/TestBase_*.sol peer style
+  TestBase_UniswapV4OrbitalSwapHook.sol          # factory.deploy product path only (P1)
   UniswapV4OrbitalSwapHook_Factory.t.sol         # F1–F14 + PRD §9.4
   UniswapV4OrbitalSwapHook_Deploy.t.sol          # flags, immutables, radius 0, three pools
   UniswapV4OrbitalSwapHook_Liquidity.t.sol       # first / full / partial / seed / remove
   UniswapV4OrbitalSwapHook_Swap.t.sol            # 6 directions exact-in/out, no drain
   UniswapV4OrbitalSwapHook_Fees.t.sol            # trading residual + growth kLast modes
-  UniswapV4OrbitalSwapHook_Preview.t.sol         # bit-exact + ceil/floor
+  UniswapV4OrbitalSwapHook_Preview.t.sol         # bit-exact + ceil/floor (math via integration)
   UniswapV4OrbitalSwapHook_Permit2.t.sol         # empty / sig batch 1–3 / allowance
   UniswapV4OrbitalSwapHook_Reentrancy.t.sol      # LP ↔ swap global lock
   UniswapV4OrbitalSwapHook_Decimals.t.sol        # mixed + >18 / 0
+  # NO UniswapV4OrbitalSwapHookMath.t.sol pure unit file (P2)
 
 test/foundry/fork/eth_main/hooks/uniswap/v4/orbital/
-  UniswapV4OrbitalSwapHook_Ethereum.t.sol
+  UniswapV4OrbitalSwapHook_Ethereum.t.sol        # mintable test tokens (P3)
 
 test/foundry/fork/base_main/hooks/uniswap/v4/orbital/
-  UniswapV4OrbitalSwapHook_Base.t.sol
+  UniswapV4OrbitalSwapHook_Base.t.sol            # mintable test tokens (P3)
 
 test/foundry/fork/robinhood_4663/hooks/uniswap/v4/orbital/   # match repo RH path convention
-  UniswapV4OrbitalSwapHook_Robinhood.t.sol
+  UniswapV4OrbitalSwapHook_Robinhood.t.sol       # mintable test tokens (P3)
 ```
 
 ---
 
-## 3. Current state (greenfield)
+## 3. Current state
 
 | Item | Status |
 |------|--------|
 | PRD v1.14 | Present |
 | Implementation plan | **This file** |
-| Production Solidity | **None** |
-| Tests / TestBase | **None** |
+| Production Solidity | **Shipped** under `contracts/hooks/uniswap/v4/orbital/` |
+| Tests / TestBase | **Shipped** hermetic + ETH/Base/RH 4663 forks (mintable tokens, factory path) |
 
 **Peers to pattern-copy (do not subclass):**
 
@@ -127,25 +146,29 @@ test/foundry/fork/robinhood_4663/hooks/uniswap/v4/orbital/   # match repo RH pat
 
 ## 4. Implementation phases
 
-Ordered for reviewable green slices. **Hook math + LP can start before factory**, but package DoD requires factory path for production deploy tests (hermetic uses factory as product path).
+Ordered for reviewable green slices. **Production factory is in-path from Phase 0** (P1): TestBase always uses `deployFactory` → `mineSalt` → `factory.deploy`. Math + LP + swap coverage is **integration-only** through that stack (P2).
 
-### Phase 0 — Skeleton + interfaces + Repo
+### Phase 0 — Skeleton + interfaces + Repo + production factory deploy path
 
 **Deliverables**
 
 1. `IUniswapV4OrbitalSwapHook` / `IUniswapV4OrbitalSwapHookFactory` per PRD §5.1 / §5.2.  
 2. `UniswapV4OrbitalSwapHookRepo` storage under unique slot e.g.  
    `"indexedex.hooks.uv4.orbital.swap.storage"`:  
-   - immutables mirrored or only on wire: prefer **ctor immutables on wire** for pm/feeOracle/tokens/decimals; Repo for `R`, `reserves`, `L_SQUARED`, `kLast`, `kLastMode`, reentrancy lock, ERC-20 balances/allowances/nonces if using Uni V2–style custom ERC-20.  
-   - Decide ERC-20 layout: custom Uni V2–style (must support balance on `address(0)`) **not** OZ `_update` that burns `to==0`.  
-3. Empty Target/Common/Math/wire compiling with correct hook permissions bitmask.  
-4. Factory stub with immutables `poolManager`, `HOOK_FLAGS` constant.  
+   - **ctor immutables on wire** for pm/feeOracle/tokens/decimals; Repo for `R`, `reserves`, `L_SQUARED`, `kLast`, `kLastMode`, reentrancy lock, ERC-20 balances/allowances/nonces.  
+   - ERC-20 layout **locked**: custom Uni V2–style (must support balance on `address(0)`) **not** OZ `_update` that burns `to==0` (D46).  
+3. Inheritance stack compiling (P4): `Common` → `Target` → wire `UniswapV4OrbitalSwapHook` + pure `Math` library; correct hook permissions bitmask on wire.  
+4. **Production factory + FactoryService (minimal product path working):**  
+   - Local CREATE3 (`deployer = factory`); `effectiveSalt = keccak256(abi.encodePacked(salt, msg.sender))`  
+   - Flag check → `InvalidHookSalt`; embed `type(UniswapV4OrbitalSwapHook).creationCode` + ctor args  
+   - Init all three pools; `mineSalt` / `deployFactory(pm)` helpers  
+   - Enough for TestBase to deploy a hook with correct flags (full F1–F14 matrix completes in Phase 4)  
 
-**Exit:** `forge build` green; NatSpec headers; BUSL/peer license.
+**Exit:** `forge build` green; NatSpec headers; BUSL/peer license; TestBase can **factory-deploy** a skeleton hook (no temporary CREATE3 helper).
 
-### Phase 1 — Math library (pure)
+### Phase 1 — Math library (code) + integration proofs later
 
-**File:** `UniswapV4OrbitalSwapHookMath.sol`
+**File:** `UniswapV4OrbitalSwapHookMath.sol` (pure library)
 
 | Function group | Law |
 |----------------|-----|
@@ -160,9 +183,9 @@ Ordered for reviewable green slices. **Hook math + LP can start before factory**
 | `cbrt` + protocol LP algebra | D55–D56; ConstProdUtils generic branch |
 | SumInterim rootK = k | Q11 / Q20 |
 
-**Tests (unit pure):** domain reverts (`T<0`, \(r \ge R\), zero out, drain); floor/ceil symmetry golden; worked SumInterim protocol mint from PRD; worked seed-only NAV example (§4.5.1); prop-only partial reduces to Uni V2 when \(P\) = all positive legs.
+**Tests (P2 — integration only):** **Do not** add a pure Math `.t.sol` or call Math without PoolManager/factory/hook. Domain reverts, floor/ceil, sphere-NAV vs sum-NAV golden, SumInterim protocol mint, partial prop, drain guards, etc. are proven in Phases 2–3 / 6 via **full deploy** + LP/swap/preview on factory-deployed hooks.
 
-**Exit:** Math covered without PoolManager.
+**Exit:** Math library compiles and is wired for use by Common/Target; **no** isolated math test suite required at this phase.
 
 ### Phase 2 — Common + Target LP (no swap)
 
@@ -178,14 +201,14 @@ Ordered for reviewable green slices. **Hook math + LP can start before factory**
    - first mint / full / partial branches  
    - returns `(shares, a0, a1, a2)` (Q46)  
    - remove burns **msg.sender** only (Q41)  
-6. SafeERC20 pulls; Permit2 path can be stubbed to transferFrom-only until Phase 5 **or** land empty `permit2Data` first.  
+6. SafeERC20 pulls; empty `permit2Data` first (Permit2 full packing Phase 5).  
 7. Events `LiquidityAdded` / `LiquidityRemoved` / `ProtocolFeeMinted`.  
 8. `beforeAddLiquidity` / `beforeRemoveLiquidity` **revert**.  
 9. `beforeInitialize`: pair ⊂ bound, `fee == DYNAMIC_FEE_FLAG`.  
 
-**Peer:** dual/single for structure; **no SE**.
+**Peer:** dual/single for structure; **no SE**. **Deploy:** production factory only (P1).
 
-**Exit:** Hermetic TestBase deploys hook via temporary CREATE3 helper **or** early factory; first LP + remove bit-exact previews; MIN on address(0); fee-on growth mint after synthetic reserve growth (can set reserves via controlled swaps later — until then grow via sequential adds + oracle usage fee).
+**Exit:** Hermetic TestBase deploys hook **only** via production factory; first LP + remove bit-exact previews; MIN on address(0); fee-on growth mint after synthetic reserve growth (sequential adds + oracle usage fee until swaps land). Math-related LP cases (first mint, sphere-NAV seed, full-book ratios) covered here as **integration** tests (P2).
 
 ### Phase 3 — Swap settle + dynamic fee
 
@@ -199,11 +222,11 @@ Ordered for reviewable green slices. **Hook math + LP can start before factory**
 6. Event `Swap` with native amounts + `feeWad` rate.  
 7. Q27 / D63: no full drain; post both trade legs > 0.  
 
-**Exit:** Six directions exact-in/out; bit-exact previews; mid-life fee change; zero fee path; double-haircut not applied.
+**Exit:** Six directions exact-in/out; bit-exact previews; mid-life fee change; zero fee path; double-haircut not applied. Sphere exact-in/out + fee residual proven via factory-deployed hook + real PM (P2).
 
-### Phase 4 — On-chain factory (product deploy path)
+### Phase 4 — Factory completeness (F1–F14)
 
-**Files:** `UniswapV4OrbitalSwapHookFactory.sol`, `IUniswapV4OrbitalSwapHookFactory.sol`, `*_FactoryService.sol`
+**Files:** harden `UniswapV4OrbitalSwapHookFactory.sol`, `IUniswapV4OrbitalSwapHookFactory.sol`, `*_FactoryService.sol` (already on product path since Phase 0)
 
 | Requirement | Implementation note |
 |-------------|---------------------|
@@ -220,7 +243,7 @@ Ordered for reviewable green slices. **Hook math + LP can start before factory**
 | Access | No owner, no pause |
 | FactoryService | `mineSalt(factory, deployer, flags)`, `mineSaltForBinding(...)`, `deployFactory(pm)` |
 
-**Exit:** PRD §9.4 F1–F14 green; permissionless EOA deploy; different callers same userSalt → different hooks.
+**Exit:** PRD §9.4 F1–F14 green; permissionless EOA deploy; different callers same userSalt → different hooks. Still **no** non-factory test deploy path (P1).
 
 ### Phase 5 — Permit2 packing
 
@@ -240,7 +263,7 @@ No mix; no witness; Permit2 well-known constant.
 
 1. Dual-mode `kLast` / `kLastMode`; cross-mode no mint.  
 2. SumInterim ↔ FullProduct re-seed path.  
-3. Seed-only sphere-NAV vs sum-NAV golden (shares ≠ sum-NAV).  
+3. Seed-only sphere-NAV vs sum-NAV golden (shares ≠ sum-NAV) — **via full hook integration** (P2).  
 4. Partial prop min only over maxed positive legs (Q43).  
 5. Full-book one-/two-sided reverts (Q39).  
 6. `ownerFeeShare == 0` fee-off (Q18).  
@@ -253,15 +276,14 @@ No mix; no witness; Permit2 well-known constant.
 4. Full exit dust + R sticky + sumPos > 0.  
 5. External second PoolKey (other tickSpacing) allowed; wrong fee reverts.  
 
-### Phase 8 — Forks
+### Phase 8 — Forks (protocol integration + test tokens)
 
 Each of Ethereum, Base, Robinhood **4663**:
 
-1. Deploy factory (or use script).  
+1. Deploy **production factory** on fork (deploy-if-missing PM / Permit2 / fee oracle — dual D74 peer).  
 2. Mine salt for test EOA; `factory.deploy`.  
-3. Live or mintable tokens (Q23).  
+3. **Mintable test ERC-20s only** (P3) — not live USDC/USDT/DAI. Purpose: exercise **protocol integration** (chain PM + Permit2 + oracle + factory + hook), not live asset inventory.  
 4. LP + swap ≥1 door; optional growth fee path.  
-5. Deploy-if-missing PM / Permit2 / fee oracle (dual D74 peer).  
 
 ---
 
@@ -389,14 +411,16 @@ return (hook, key01, key12, key02)
 
 ### 7.1 TestBase requirements
 
-- Inherit `CraneTest` → `IndexedexTest` (fee oracle + create3 for **factory deploy only** if used).  
+- Inherit `CraneTest` → `IndexedexTest` (fee oracle; ecosystem create3 only if used to **deploy the factory package helper**, never for hook instances).  
 - Deploy real V4 PoolManager (Crane hermetic).  
 - Real Vault Fee Oracle (not mock SUT).  
-- Three mintable ERC-20s mixed decimals (6/6/18 minimum; include 0 or >18 if practical).  
-- **Product path:** `deployFactory` → `mineSalt(factory, address(this), flags)` → `factory.deploy(...)`.  
+- Three **mintable** ERC-20s mixed decimals (6/6/18 minimum; include 0 or >18 if practical).  
+- **Only product path (P1):** `deployFactory` → `mineSalt(factory, address(this), flags)` → `factory.deploy(...)`.  
 - Helpers: set per-address dex/usage fees; fund + approve; optional Permit2 at well-known.  
+- **Inheritance under test (P4):** wire extends Target extends Common.  
 
-**Never mock:** hook, factory, PoolManager, fee oracle under test.
+**Never mock:** hook, factory, PoolManager, fee oracle under test.  
+**Never:** temporary CREATE3 helper; pure Math unit suite without full stack (P1 / P2).
 
 ### 7.2 Hermetic matrix (map to PRD §9.1)
 
@@ -409,21 +433,23 @@ return (hook, key01, key12, key02)
 | Remove | bit-exact; msg.sender burn; mins/deadline |
 | Swap | 6 dirs exact-in/out; no drain; override bit; fee residual in input reserve |
 | Fees | growth mint after swaps; fee-off; cross-mode kLast; ownerFeeShare 0 |
-| Preview | bit-exact all routes at same oracle reads; ceil in / floor out |
+| Preview | bit-exact all routes at same oracle reads; ceil in / floor out (**math via integration**, P2) |
 | Permit2 | empty; mode 0 batch 1–3; mode 1; no mix; bad sig |
 | Reentrancy | hostile ERC-20 on LP and swap |
 | Init | wrong fee reverts; extra tickSpacing OK |
 | Radius | post ≥ R reverts; full exit R sticky |
 
-### 7.3 Fork matrix (PRD §9.2)
+All of the above run against **factory-deployed** hooks on the full production stack (P1 / P2).
+
+### 7.3 Fork matrix (PRD §9.2 + P3)
 
 | Chain | ID | Notes |
 |-------|-----|--------|
-| Ethereum mainnet | 1 | factory + deploy + LP + swap |
+| Ethereum mainnet | 1 | production factory + deploy + LP + swap on fork PM stack |
 | Base mainnet | 8453 | same |
-| Robinhood Chain | **4663** | same; deploy-if-missing stack |
+| Robinhood Chain | **4663** | same; deploy-if-missing protocol stack |
 
-Tokens free (live or mintable). At least one growth-fee path when configured.
+**Tokens (P3):** **mintable test ERC-20s only.** Forks prove **protocol integration** (PoolManager, Permit2, fee oracle, factory CREATE3, three-pool init, hook settle on that chain’s env) — not live stablecoin holdings. At least one growth-fee path when configured.
 
 ### 7.4 Invariants / fuzz (recommended)
 
@@ -432,6 +458,8 @@ Tokens free (live or mintable). At least one growth-fee path when configured.
 3. Partial mint shares == floor sphere-NAV formula.  
 4. Protocol mint ≤ D56 algebra.  
 5. `totalSupply > 0` ⇒ sumPosWad > 0.  
+
+Run on factory-deployed instances (same as integration suite).
 
 ### 7.5 Suggested `forge` filters
 
@@ -448,11 +476,12 @@ forge test --match-path 'test/foundry/fork/*/hooks/uniswap/v4/orbital/*'
 Mirror PRD §11 + this plan:
 
 - [ ] All §2 production files present and NatSpec’d  
+- [ ] Wire stack: `UniswapV4OrbitalSwapHook` → `Target` → `Common` + Repo/Math libs (P4)  
 - [ ] No BaseHook inheritance; no Facet/DFPkg; no console.log  
-- [ ] Factory CREATE3 + off-chain mine helpers green  
-- [ ] Hermetic §7.2 green (incl. bit-exact previews, sphere-NAV, Permit2, reentrancy)  
+- [ ] Production factory CREATE3 + off-chain mine helpers; **all tests use factory.deploy** (P1)  
+- [ ] Hermetic §7.2 green via **integration only** (no pure Math suite) (P2)  
 - [ ] Factory F1–F14 green  
-- [ ] Forks Ethereum + Base + Robinhood 4663 green  
+- [ ] Forks Ethereum + Base + Robinhood 4663 green with **mintable test tokens** (P3)  
 - [ ] AGENTS.md CREATE3 / production-first compliance  
 - [ ] PRD decision IDs cited in NatSpec where helpful (`@dev Q44`, etc.)  
 
@@ -464,6 +493,10 @@ Mirror PRD §11 + this plan:
 |--------|-----|
 | CREATE2 / Revert Create2.deploy for hook instances | Q49 / D81 |
 | Ecosystem `create3Factory.create3*` for each instance | Operator-gated; D78 |
+| Temporary CREATE3 / non-factory hook deploy in tests | **P1** |
+| Pure Math-only unit tests without full stack | **P2** |
+| Live mainnet stables as fork inventory (prefer test tokens) | **P3** — forks test protocol integration |
+| Composition-only Target without wire→Target→Common inheritance | **P4** |
 | On-chain salt mine loop in `deploy` | Q50 |
 | Sum-NAV seed formula | Superseded by D72 |
 | OZ ERC-20 that treats `to==0` as burn | Breaks MIN dead shares D46 |
@@ -481,15 +514,15 @@ Mirror PRD §11 + this plan:
 
 | Cluster | IDs | Phase |
 |---------|-----|-------|
-| Shape / no diamond | D1–D13, D46 | 0–2 |
-| Sphere / decimals | D14–D19, D17, Q30–Q32 | 1–3 |
+| Shape / stack / no diamond | D1–D13, D46, **P4** | 0–2 |
+| Factory product path | D78–D96, Q49–Q62, **P1** | **0**, 4 |
+| Sphere / decimals (math code) | D14–D19, D17, Q30–Q32 | 1 (code); **2–3 integration tests** |
 | Trading fee | D20–D21, D20a–c, Q7 | 3 |
 | Growth fee | D51–D59, Q11, Q18 | 2, 6 |
 | LP routes | D22–D25a, D72, Q38–Q41, Q43–Q46 | 2, 6 |
 | Settle / reentrancy | D30, D39–D40, Q34 | 3, 7 |
-| Factory | D78–D96, Q49–Q62 | 4 |
 | Permit2 | D48–D49, Q22, Q36, Q47, §5.6 | 5 |
-| Tests | D41–D42, Q9, Q16, Q23, Q48, Q52 | 7–8 |
+| Tests (integration + forks) | D41–D42, Q9, Q16, Q48, Q52, **P2**, **P3** | 2–8 |
 
 ---
 
@@ -498,6 +531,8 @@ Mirror PRD §11 + this plan:
 | Date | Change |
 |------|--------|
 | 2026-08-03 | Initial plan from PRD **v1.14** (factory + sphere-NAV + bit-exact + AddressSetRepo) |
+| 2026-08-03 | Locked implementor decisions **P1–P4**: production factory only for all tests; integration-only math coverage (no pure Math suite); fork mintable test tokens for protocol integration; wire → Target → Common inheritance stack. Phase 0 ships working factory path; Phase 4 is F1–F14 completeness. |
+| 2026-08-03 | **Implementation complete:** factory CREATE3 package, sphere LP/swap, hermetic 28 tests, fork smoke ETH/Base/RH 4663; `FOUNDRY_PROFILE=orbital` for narrow compile. |
 
 ---
 

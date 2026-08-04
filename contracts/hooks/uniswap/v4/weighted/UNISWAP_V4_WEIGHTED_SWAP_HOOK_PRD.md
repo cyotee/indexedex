@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4WeightedSwapHook`  
 **Date:** 2026-08-03  
-**Status:** **Draft v0.2.0** — quality/clarity pass; residual product opens closed via stakeholder Q&A (CREATE3 + off-chain mine; factory-immutable feeOracle; `rootK = V`; no full-book leg zeroing; factory doors only; LP deadline + `msg.sender` burn). Ready for implementation plan.  
+**Status:** **Draft v0.2.1** — plan-ready. Product law locked in this PRD; implementor SoT is the co-located implementation plan (v1.0).  
 **Package path:** `contracts/hooks/uniswap/v4/weighted/`  
 **Package kind:** IndexedEx **hook deploy package** with two primary artifacts:
 
@@ -15,8 +15,8 @@
 
 | Layer | Role |
 |-------|------|
-| **This PRD (v0.2.0)** | Product law used to **write** the implementation plan. Canonical decisions live in §3. |
-| **Implementation plan** (follow-on) | Bit-exact formulas, ABI names, file staging — **source of truth for implementors** once written against this PRD |
+| **This PRD (v0.2.1)** | Product law. Canonical decisions live in §3. **PRD wins** on conflict with the plan. |
+| **Implementation plan** | [`UNISWAP_V4_WEIGHTED_SWAP_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_WEIGHTED_SWAP_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md) (**v1.0**) — bit-exact formulas, ABI names, salt encoding, phases, test matrix — **source of truth for implementors** |
 | Peer packages / Balancer reference | Pattern and math references only — **not** deploy law; do not copy CREATE2 / BaseHook / console.log |
 
 **Behavioral / math references (requirements harvest — not deploy law, not package layout):**
@@ -987,6 +987,7 @@ Suggested plan stages:
 |---------|------|-------|
 | **v0.1.0** | 2026-08-03 | Initial PRD from design Q&A: Option A weights; \(n\in[2,8]\); all pair doors; Balancer WeightedMath + joins/exits; Vault Fee Oracle dual channel; DYNAMIC_FEE_FLAG; partial book dual-mode as allowed Balancer divergence; Permit2; on-chain factory; name `UniswapV4WeightedSwapHook`. |
 | **v0.2.0** | 2026-08-03 | Quality/clarity pass. Authority + law index. Locked: ecosystem CREATE3 + **off-chain mine** primary; **factory-immutable feeOracle**; **`rootK = V` literal**; **forbid full-book exit zeroing**; **factory doors only**; LP **deadline** + **msg.sender burn**. Fixed \(n=2\) first-mint law; added settle, events/errors; residual opens demoted to plan-level O1–O6. |
+| **v0.2.1** | 2026-08-03 | Status plan-ready. Co-located implementation plan **v1.0** written; authority table points at plan for implementor SoT (O1–O5 pinned there). |
 
 ---
 
