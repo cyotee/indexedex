@@ -8,6 +8,7 @@ Static public landing for the **DETF product story** (customer-facing) with an o
 |-------|--------|
 | **Site** | https://cyotee.github.io/indexedex/ |
 | **How DETFs work** | https://cyotee.github.io/indexedex/how-detfs-work.html |
+| **Uniswap V4 markets** | https://cyotee.github.io/indexedex/uniswap-v4.html |
 | **Technical note (builders)** | https://cyotee.github.io/indexedex/technical-note.html |
 | **Legacy `/litepaper.html`** | Redirects to the product report |
 | **Optional PDF** | https://cyotee.github.io/indexedex/DETF_LITEPAPAPER.pdf |
@@ -20,9 +21,10 @@ Redeploys on push to `main` when this folder (or the workflow) changes, or via *
 
 | Page | Audience | Content |
 |------|----------|---------|
-| `index.html` | Prospective customers | Product home: what a DETF is, benefits, roadmap, plain-language proof |
-| `how-detfs-work.html` | Prospective customers | Full product report (primary long-form) |
-| `technical-note.html` | Builders / researchers | Mechanism detail, measured tables, methodology |
+| `index.html` | Prospective customers | Product home: what a DETF is, Uniswap V4 rails strip, roadmap, plain-language proof |
+| `how-detfs-work.html` | Prospective customers | Full DETF product report (primary long-form) |
+| `uniswap-v4.html` | Prospective customers | Uniswap V4 market rails pitch (vault bridges + multi-asset books) |
+| `technical-note.html` | Builders / researchers | DETF mechanism detail, measured tables, methodology (+ pointer to V4 product page) |
 | `litepaper.html` | Bookmarks / old links | Soft redirect to the product report |
 
 Do **not** put package names, forge scenarios, or deploy scripts on customer pages.
@@ -49,6 +51,7 @@ npx vercel --prod   # production
 ## Litepaper / PDF
 
 - Preferred public read: [`how-detfs-work.html`](./how-detfs-work.html)
+- Uniswap V4 rails: [`uniswap-v4.html`](./uniswap-v4.html)
 - Builders: [`technical-note.html`](./technical-note.html)
 - Optional offline PDF: [`DETF_LITEPAPAPER.pdf`](./DETF_LITEPAPAPER.pdf) (technical snapshot; may lag the product report)
 - Source/build for the PDF: `research/papers/detf-litepaper/` (`build_pdf.sh`)

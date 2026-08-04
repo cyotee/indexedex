@@ -7,7 +7,7 @@ Public go-to-market materials for the **DETF** (decentralized ETF product patter
 | [`../docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) | **Canonical product story** (Policy/Open, landing outline, disclaimers) |
 | [`X_POSTS.md`](./X_POSTS.md) | X Premium long-form posts (hook ≤~280 chars; @ packs in expanded body) |
 | [`X_ACCOUNTS_TO_TAG.md`](./X_ACCOUNTS_TO_TAG.md) | Who to @, tiers, anti-patterns |
-| [`research-site/`](./research-site/) | Static Vercel landing for research + DETF education |
+| [`research-site/`](./research-site/) | Static GitHub Pages landing for DETF education + Uniswap V4 market rails |
 | In-app Research + landing | `frontend/app/content/research/`, `frontend/app/page.tsx` (R1–R3 shipped) |
 
 ## Narrative spine (public)

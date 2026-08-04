@@ -355,6 +355,44 @@ main {
   color: var(--accent) !important;
 }
 
+.status-pill {
+  display: inline-block;
+  margin-top: 0.85rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  background: rgba(61, 214, 198, 0.1);
+  border: 1px solid rgba(61, 214, 198, 0.28);
+}
+
+.status-pill.warn {
+  color: var(--warn);
+  background: rgba(240, 180, 41, 0.1);
+  border-color: rgba(240, 180, 41, 0.28);
+}
+
+.card .status-pill {
+  margin-top: 0.95rem;
+}
+
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.card-head h3 {
+  margin: 0;
+}
+
 .fine {
   margin-top: 0.85rem !important;
   font-size: 0.88rem;

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uniswap V4 Markets — IndexedEx</title>
+    <meta
+      name="description"
+      content="IndexedEx Uniswap V4 market rails: yield vault bridges, yield-bearing pair markets, and multi-asset shared books (three-asset, four-asset stable, weighted). Spec complete; deploys land as each rail ships. Designed to compose with DETFs later."
+    />
+    <meta property="og:title" content="Uniswap V4 Markets — IndexedEx" />
+    <meta
+      property="og:description"
+      content="Multi-asset books and vault bridges on Uniswap V4. One shared inventory, pair-level entry points, strategy vault claims when yield matters."
+    />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#0B1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="paper-page">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>IndexedEx</strong>
+          <span>DETF</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="./#product">Product</a>
+        <a href="./uniswap-v4.html" aria-current="page">V4 markets</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./#proof">Proof</a>
+        <a href="./technical-note.html">Builders</a>
+        <a href="./#disclaimers" class="nav-muted">Disclaimers</a>
+      </nav>
+      <a class="btn btn-sm" href="./how-detfs-work.html">Read how it works</a>
+    </header>
+
+    <main class="paper-main">
+      <header class="paper-hero">
+        <p class="eyebrow">Uniswap V4 · market rails · August 2026</p>
+        <h1>Multi-asset markets on Uniswap V4</h1>
+        <p class="lede">
+          IndexedEx is building <strong>Uniswap V4 market rails</strong>: bridges that put strategy
+          vaults on Uni V4, and multi-asset books with pair-level doors into one shared inventory.
+          Specs are locked. Public deploys land as each rail is ready. These are markets and
+          vault infrastructure — not DETF products by themselves. They are designed to compose
+          with <strong>Decentralized ETF</strong> designs later.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn" href="./">Back to home</a>
+          <a class="btn btn-ghost" href="./how-detfs-work.html">How DETFs work</a>
+          <a class="btn btn-ghost" href="#five">The five rails</a>
+        </div>
+        <p class="fine paper-note">
+          Plain-language product direction. No contract package names, no promised APY, no claim
+          that every rail is live on every chain.
+        </p>
+      </header>
+
+      <article class="paper-body">
+        <nav class="paper-toc" aria-label="Contents">
+          <h2 class="toc-title">Contents</h2>
+          <ol>
+            <li><a href="#problem">The problem</a></li>
+            <li><a href="#idea">The idea</a></li>
+            <li><a href="#five">The five rails</a></li>
+            <li><a href="#detf">How this meets DETFs</a></li>
+            <li><a href="#status">Status and honesty</a></li>
+            <li><a href="#disclaimers">Disclaimers</a></li>
+          </ol>
+        </nav>
+
+        <section id="problem">
+          <h2>The problem</h2>
+          <p>
+            Multi-asset products need depth that is not trapped in isolated pair pools. Today’s
+            default is expensive:
+          </p>
+          <ul>
+            <li>
+              <strong>Fragmented capital</strong> — three tokens often means three separate books
+              (or six, for four tokens). Liquidity providers rebalance by hand across pairs.
+            </li>
+            <li>
+              <strong>Multi-hop fees</strong> — traders pay for paths that only exist because
+              inventory was never shared.
+            </li>
+            <li>
+              <strong>Yield stuck off the swap surface</strong> — strategy vaults earn, but Uni V4
+              routers want a simple pair. Bridging claim-on-underlying into that surface is easy to
+              get wrong if pricing ignores the vault.
+            </li>
+            <li>
+              <strong>DETFs need honest legs</strong> — a Decentralized ETF prices from a real
+              reserve. Those legs are strategy vaults and multi-asset markets. If the market layer
+              is only single pairs, the reserve story is thinner than it should be.
+            </li>
+          </ul>
+        </section>
+
+        <section id="idea">
+          <h2>The idea</h2>
+          <p>
+            Use Uniswap V4’s hook model so <strong>one shared inventory</strong> can serve
+            <strong>many pair doors</strong>. Swaps still enter through familiar two-token pools;
+            pricing and settlement come from the shared book (or from the bound strategy vault).
+          </p>
+          <div class="compare" style="margin-top: 1rem">
+            <div class="compare-col">
+              <h3>What you get</h3>
+              <ul>
+                <li>Pair-level entry points routers already understand</li>
+                <li>One inventory book for multi-asset rails (not N isolated pools)</li>
+                <li>Fungible LP over the whole book where the product is an AMM</li>
+                <li>Vault bridges that track claim on underlying, including yield when earned</li>
+                <li>Deploy-time rules; no admin rewrite surface as the product model</li>
+              </ul>
+            </div>
+            <div class="compare-col muted">
+              <h3>What you do not get</h3>
+              <ul>
+                <li>A promise that these rails replace every AMM everywhere</li>
+                <li>Concentrated-range NFT positions as the product shape for these books</li>
+                <li>Guaranteed yield, peg, or arb profits from mark lag</li>
+                <li>A DETF mint/burn surface by itself (DETFs are a separate product class)</li>
+                <li>Mainnet addresses on this page until they are published</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="five">
+          <h2>The five rails</h2>
+          <p>
+            Five Uniswap V4 integrations form the first public map. Names below are product
+            language — not deploy package labels.
+          </p>
+
+          <h3>1. Yield vault on Uni V4</h3>
+          <p>
+            A wrapper-style pair: <strong>base asset ↔ strategy vault share</strong>. Pricing
+            follows the vault’s claim on underlying. When the vault earns protocol yield, the
+            quote moves with that claim — not a flat one-to-one forever.
+          </p>
+          <p>
+            <strong>For whom:</strong> anyone who wants Uni V4 access to a yield-bearing vault
+            without inventing a separate market-making strategy on ticks.
+          </p>
+          <p><span class="status-pill">Spec complete</span></p>
+
+          <h3>2. Yield-bearing pair market</h3>
+          <p>
+            A normal pair (for example WETH and USDC) whose effective reserves are
+            <strong>claims on two strategy vaults</strong>. Deposits buffer into the vaults;
+            swaps buffer in and unwrap out; withdrawals return both pair tokens. Liquidity
+            providers hold <strong>one fungible LP</strong> over both legs.
+          </p>
+          <p>
+            Single-sided entry is supported as a rebalance-then-add path: you accept the book’s
+            price impact and vault costs on the way in, and still receive the same dual LP.
+          </p>
+          <p>
+            <strong>For whom:</strong> pair liquidity that should sit in yield-bearing vaults, not
+            idle token balances.
+          </p>
+          <p><span class="status-pill">Spec complete</span></p>
+
+          <h3>3. Three-asset sphere market</h3>
+          <p>
+            Three tokens (often like-kind stables), one shared inventory, and
+            <strong>three pair doors</strong> into the same book. Pricing uses a spherical curve
+            so every pair trade accounts for the third token’s state. Liquidity providers mint
+            one fungible LP over all three legs.
+          </p>
+          <p>
+            <strong>For whom:</strong> multi-stable triangles that should not pay three fragmented
+            books or forced multi-hop paths.
+          </p>
+          <p>
+            <strong>Honest scope:</strong> v1 is a single shared orbit — production multi-asset
+            depth on Uni V4, not a full nested multi-orbit concentration system.
+          </p>
+          <p><span class="status-pill">Spec complete</span></p>
+
+          <h3>4. Four-asset stable market</h3>
+          <p>
+            Exactly four assets on a <strong>StableSwap-style</strong> curve with amplification
+            fixed at deploy. Up to <strong>six pair doors</strong> share one inventory. Optional
+            rate sources can put rate-scaled assets (for example yield wrappers) into the same
+            equal-unit book. Zap-in lets depositors add without a perfect four-way ratio.
+          </p>
+          <p>
+            <strong>For whom:</strong> four-leg stable or pegged baskets that need native Uni V4
+            routing instead of living only on another venue’s multi-asset pool.
+          </p>
+          <p><span class="status-pill">Spec complete</span></p>
+
+          <h3>5. Weighted multi-asset market</h3>
+          <p>
+            Two to eight tokens with a <strong>global weight vector</strong> set at deploy (each
+            weight at least 1%, weights sum to 100%). Every pair of tokens gets a door into the
+            <strong>same weighted book</strong>. Joins and exits follow weighted-pool economics
+            (proportional, single-asset, unbalanced) rather than equal-unit stable math.
+          </p>
+          <p>
+            <strong>For whom:</strong> baskets where assets should not be treated as equal units —
+            sector mixes, mixed crypto baskets, or other intentional weight stories.
+          </p>
+          <p><span class="status-pill">Spec complete</span></p>
+        </section>
+
+        <section id="detf">
+          <h2>How this meets DETFs</h2>
+          <p>
+            A <strong>DETF</strong> (Decentralized ETF) is a reserve-backed share with bond, mint,
+            and burn rules. The reserve needs real legs. Strategy vaults and multi-asset markets
+            are those legs.
+          </p>
+          <ul>
+            <li>
+              <strong>Vault bridge and yield-bearing pair</strong> put Standard Exchange–style vault
+              claims on Uni V4 so depth and yield can sit where routers already trade.
+            </li>
+            <li>
+              <strong>Sphere, stable, and weighted books</strong> give multi-asset inventory with
+              pair-level access — closer to the multi-asset reserve story a DETF needs than a
+              stack of isolated pairs.
+            </li>
+            <li>
+              <strong>Composition comes next.</strong> DETF package designs that use these rails
+              will be published when product law for those families is ready. This page does not
+              invent those DETF designs early.
+            </li>
+          </ul>
+          <p>
+            Premier product hierarchy stays the same: the main offer is still
+            <strong>create your own DETFs</strong>. Protocol DETF remains the path to
+            <strong>earn a share of protocol fees</strong> (amounts not guaranteed). Uniswap V4
+            rails are infrastructure under that story.
+          </p>
+          <p>
+            <a href="./how-detfs-work.html">Read how DETFs work →</a>
+          </p>
+        </section>
+
+        <section id="status">
+          <h2>Status and honesty</h2>
+          <ul>
+            <li>
+              <strong>Spec complete</strong> means product rules are locked enough to build and
+              review against. It is not a guarantee that a rail is live on every chain today.
+            </li>
+            <li>
+              <strong>In development</strong> as a program: shipping continues; public contract
+              addresses and audits will be linked when published.
+            </li>
+            <li>
+              <strong>No APY claims</strong> on vault-backed rails. Yield is protocol- and
+              vault-specific; fees and path costs still apply.
+            </li>
+            <li>
+              <strong>Not a registered fund</strong> and not legal ownership of offchain
+              underlyings — same honesty bar as the DETF product pages.
+            </li>
+          </ul>
+        </section>
+
+        <section id="disclaimers" class="section-legal paper-disclaimers">
+          <h2>Disclaimers</h2>
+          <ul>
+            <li>
+              <strong>Infrastructure, not performance.</strong> This page describes market rails and
+              product direction. It is not investment, legal, or tax advice. Smart contracts and
+              markets involve loss of funds.
+            </li>
+            <li>
+              <strong>Not every rail is live.</strong> Locked specs do not mean universal mainnet
+              availability. Live addresses and audits will be linked when published.
+            </li>
+            <li>
+              <strong>Not a DETF by itself.</strong> Uniswap V4 rails do not mint DETF shares or
+              promise Protocol DETF fee amounts.
+            </li>
+            <li>
+              <strong>No yield or peg promises.</strong> Vault yield, stable curves, and weighted
+              books do not guarantee returns, pegs, or arb profits.
+            </li>
+            <li>
+              <strong>Not a registered ETF.</strong> Related DETF language describes a product
+              pattern, not a securities fund share.
+            </li>
+          </ul>
+        </section>
+      </article>
+
+      <section class="paper-end cta-card">
+        <p class="eyebrow">Continue</p>
+        <h2>Back to the product story</h2>
+        <p>
+          DETF is the Decentralized ETF product pattern. Uniswap V4 rails are the market layer
+          underneath. Read the DETF report, or return home for the full map.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn" href="./how-detfs-work.html">How DETFs work</a>
+          <a class="btn btn-ghost" href="./">Home</a>
+          <a class="btn btn-ghost" href="./technical-note.html">Builders</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div><strong>IndexedEx</strong> · DETF</div>
+      <div class="footer-links">
+        <a href="./">Home</a>
+        <a href="./#product">Product</a>
+        <a href="./uniswap-v4.html">V4 markets</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./#proof">Proof</a>
+        <a href="./technical-note.html">Builders</a>
+        <a href="./#disclaimers">Disclaimers</a>
+      </div>
+      <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
+    </footer>
+    <script>
+      document.getElementById('y').textContent = String(new Date().getFullYear())
+    </script>
+  </body>
+</html>
