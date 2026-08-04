@@ -1,0 +1,23 @@
+{
+  "product": "dualLiquidityLinkedCrossVersion",
+  "scenarioFamily": "dualLiquidityLinkedCrossVersion",
+  "rateProviderMode": "off",
+  "useRateProviders": false,
+  "mode": "B_product_routes",
+  "runId": "rates_off/modeB_depositCommon",
+  "tradeSteps": 12,
+  "tradeSize": "500000000000000000000",
+  "bookDeposit": "5000000000000000000000",
+  "reserveSwapFee": "3000000000000000",
+  "portfolio0Bpt": "50353710728921",
+  "initMidA": "2667813",
+  "initRateA": "998522206154954835",
+  "residualFormula": "midA=live[pair]/live[vaultA]; residualA=midIndexA*rateIndexA/1e18-1",
+  "scenariosDoc": "research/scenarios/dualLiquidityLinkedCrossVersion/",
+  "note": "DualLiquidity research. stamp_meta.py adds gitCommit.",
+  "gitCommit": "16de28e2f064c1c3a5172b30c0d340b49662b5a4",
+  "gitCommitShort": "16de28e",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-21T15:05:43Z",
+  "script": "scripts/foundry/research/dualLiquidityLinkedCrossVersion/Script_RatesOff_ModeB_DepositCommon.s.sol:Script_RatesOff_ModeB_DepositCommon"
+}

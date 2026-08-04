@@ -153,5 +153,6 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 ## Related skills
 
 - `crane-testing`, `crane-deployment`, `crane-architecture` — **canonical** under `lib/crane/.claude/skills/`
+- `indexedex-uniswap-v4-hook-packages` — V4 hook DFPkgs, `deployHookVault`, flag mining (not monomorph CREATE3 hooks)
 - `forge-testing` — Foundry cheatcodes only; ignore its mock-first examples for IndexedEx
 - `permit2-*` — signature flows; still use real router + Permit2, not mocks

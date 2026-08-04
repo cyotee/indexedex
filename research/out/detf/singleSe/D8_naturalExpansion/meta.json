@@ -1,0 +1,15 @@
+{
+  "campaign": "detf/singleSe",
+  "phase": "3",
+  "runId": "D8_naturalExpansion",
+  "seAttachment": "uniswapV2",
+  "expansionClosureRatePerSecond": "3170979198",
+  "warpSeconds": "43200",
+  "supplyBefore": "323531031889496482499",
+  "supplyAfter": "323533269971346029699",
+  "gitCommit": "93f90c312a5ab3d732c2330962c84e9dbdff9659",
+  "gitCommitShort": "93f90c3",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-30T16:37:01Z",
+  "script": "scripts/foundry/research/detf/singleSe/Script_D8_NaturalExpansion.s.sol:Script_D8_NaturalExpansion"
+}

@@ -694,16 +694,16 @@ forge test --match-path 'test/foundry/fork/base_main/routers/balancerV3-uniswapV
 
 ## 13. Security implementation checklist
 
-- [ ] Shared nonreentrancy on swap / query / rescue  
-- [ ] Amount-scoped child funding + zero residual  
-- [ ] Balance-delta mins (not only child return values)  
-- [ ] Witness binds full params + stepsHash  
-- [ ] Ledger hop inputs (no full balance spend)  
-- [ ] FoT shortfall → `InvalidAmount`  
-- [ ] Excess ETH → principal; payout → recipient  
-- [ ] Owner rescue cannot run mid-swap  
-- [ ] Allowlist-only external router calls  
-- [ ] UR limited to Templates A/B  
+- [x] Shared nonreentrancy on swap / query / rescue  
+- [x] Amount-scoped child funding + zero residual  
+- [x] Balance-delta mins (not only child return values)  
+- [x] Witness binds full params + stepsHash  
+- [x] Ledger hop inputs (no full balance spend)  
+- [x] FoT shortfall → `InvalidAmount` (T32 green)  
+- [x] Excess ETH → principal; payout → recipient  
+- [x] Owner rescue cannot run mid-swap  
+- [x] Allowlist-only external router calls  
+- [x] UR limited to Templates A/B  
 
 ---
 
@@ -735,23 +735,26 @@ If implementation discovers a conflict with PRD product law:
 | Ver | Date | Notes |
 |-----|------|--------|
 | 1.0 | 2026-08-03 | Initial plan against PRD v1.3 |
+| 1.1 | 2026-08-04 | M0: vendor Uniswap UR **2.1.1** under Crane `external/uniswap/universal-router`; profiles `universal_router` / `coordinator` / `coordinator_fork`. Stock query uses Balancer `tx.origin==0` semantics (not EVM staticcall). Hermetic + Base fork smoke green. |
+| 1.2 | 2026-08-04 | M3 SE T5/T6 + T23 SE allowance + T32 FoT: SE suite uses real SE diamond on lean 8020 fixture (full SE TestBase stack-too-deep under via_ir). |
+| 1.3 | 2026-08-04 | Skeptic closure: T7/T8 UR liquid execute+query; T9/T10 interleave; T11–T13/T16–T18/T22/T26/T31; Base fork live stock hop; hermetic **44** tests; UR settle funds router (`payerIsUser=false`). |
 
 ---
 
 ## 16. Quick implementor checklist (copy into PR)
 
 ```text
-[ ] M0 UR port / vendor + quoter
-[ ] Interfaces + Repo + errors/events
-[ ] Witness constants match §5.1
-[ ] ExactIn target (permit + eth) + ledger
-[ ] Adapters: stock single/batch, SE, UR A/B
-[ ] Query target + child queries / V4 quoter
-[ ] Admin + rescue + shared lock
-[ ] DFPkg + FactoryService + TestBase
-[ ] T1–T32 green (or documented venue gaps)
-[ ] Fork smoke
-[ ] forge fmt + NatSpec
+[x] M0 UR port / vendor + quoter (pin 2.1.1)
+[x] Interfaces + Repo + errors/events
+[x] Witness constants match §5.1
+[x] ExactIn target (permit + eth) + ledger
+[x] Adapters: stock single/batch, SE, UR A/B (liquid T7/T8 execute+query)
+[x] Query target + child queries / V4 quoter
+[x] Admin + rescue + shared lock
+[x] DFPkg + FactoryService + TestBase
+[x] Hermetic suite green (44 tests covering T1–T32 map for hermetic venues)
+[x] Fork smoke with live stock hop (base_mainnet_alchemy)
+[x] forge fmt on touched files
 ```
 
 ---

@@ -1,0 +1,12 @@
+{
+  "campaign": "detf/singleSe",
+  "phase": "3",
+  "runId": "D4_policyBurnGate",
+  "seAttachment": "uniswapV2",
+  "product": "detf/singleSe",
+  "gitCommit": "93f90c312a5ab3d732c2330962c84e9dbdff9659",
+  "gitCommitShort": "93f90c3",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-30T16:11:46Z",
+  "script": "scripts/foundry/research/detf/singleSe/Script_D4_PolicyBurnGate.s.sol:Script_D4_PolicyBurnGate"
+}

@@ -26,6 +26,15 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {VaultRegistryVaultRepo} from "contracts/registries/vault/VaultRegistryVaultRepo.sol";
 import {VaultRegistryVaultPackageRepo} from "contracts/registries/vault/VaultRegistryVaultPackageRepo.sol";
 import {VaultRegistryDisableRepo} from "contracts/registries/vault/VaultRegistryDisableRepo.sol";
+import {
+    IUniswapV4HookDiamondPackage
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    UniswapV4HookDiamondPackageFactoryAwareRepo
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageFactoryAwareRepo.sol";
 
 contract VaultRegistryDeploymentTarget is OperableModifiers, IVaultRegistryDeployment {
     /* -------------------------------------------------------------------------- */
@@ -67,9 +76,62 @@ contract VaultRegistryDeploymentTarget is OperableModifiers, IVaultRegistryDeplo
         VaultRegistryVaultRepo._registerVault(vault, address(pkg), IStandardVault(vault).vaultConfig());
     }
 
+    /// @inheritdoc IVaultRegistryDeployment
+    function deployHookVault(IStandardVaultPkg pkg, bytes calldata pkgArgs, uint256 mineNonce)
+        public
+        returns (address vault)
+    {
+        _onlyOwnerOrOperatorOrPkg();
+        _requireRegisteredPkg(pkg);
+        IUniswapV4HookDiamondPackageCallBackFactory hookFactory =
+            UniswapV4HookDiamondPackageFactoryAwareRepo._hookDiamondPackageFactory();
+        if (address(hookFactory) == address(0)) {
+            revert IUniswapV4HookDiamondPackageCallBackFactory.ZeroAddress();
+        }
+        vault = hookFactory.deployWithMineNonce(
+            IUniswapV4HookDiamondPackage(address(pkg)), pkgArgs, mineNonce
+        );
+        VaultRegistryVaultRepo._registerVault(vault, address(pkg), IStandardVault(vault).vaultConfig());
+    }
+
+    /// @inheritdoc IVaultRegistryDeployment
+    function deployHookVaultAutoMine(IStandardVaultPkg pkg, bytes calldata pkgArgs)
+        public
+        returns (address vault)
+    {
+        _onlyOwnerOrOperatorOrPkg();
+        _requireRegisteredPkg(pkg);
+        IUniswapV4HookDiamondPackageCallBackFactory hookFactory =
+            UniswapV4HookDiamondPackageFactoryAwareRepo._hookDiamondPackageFactory();
+        if (address(hookFactory) == address(0)) {
+            revert IUniswapV4HookDiamondPackageCallBackFactory.ZeroAddress();
+        }
+        vault = hookFactory.deploy(IUniswapV4HookDiamondPackage(address(pkg)), pkgArgs);
+        VaultRegistryVaultRepo._registerVault(vault, address(pkg), IStandardVault(vault).vaultConfig());
+    }
+
+    /// @inheritdoc IVaultRegistryDeployment
+    function setHookDiamondPackageFactory(address hookFactory) public onlyOwnerOrOperator {
+        if (hookFactory == address(0)) {
+            revert IUniswapV4HookDiamondPackageCallBackFactory.ZeroAddress();
+        }
+        UniswapV4HookDiamondPackageFactoryAwareRepo._initialize(
+            IUniswapV4HookDiamondPackageCallBackFactory(hookFactory)
+        );
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                              Internal Functions                             */
     /* -------------------------------------------------------------------------- */
+
+    function _requireRegisteredPkg(IStandardVaultPkg pkg) internal view {
+        if (!VaultRegistryVaultPackageRepo._isPkg(address(pkg))) {
+            revert PkgNotRegistered(address(pkg));
+        }
+        if (VaultRegistryDisableRepo._isPackageDisabled(address(pkg))) {
+            revert IVaultRegistryDisableQuery.DisabledPackage(address(pkg));
+        }
+    }
 
     /**
      * @dev Reverts if caller is not owner, operator, or a registered package.

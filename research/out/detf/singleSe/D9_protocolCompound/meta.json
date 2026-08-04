@@ -1,0 +1,19 @@
+{
+  "campaign": "detf/singleSe",
+  "phase": "3",
+  "runId": "D9_protocolCompound",
+  "seAttachment": "uniswapV2",
+  "thresholdMode": "Open",
+  "protocolBptBaseline": "191437075850521434877",
+  "protocolBptBeforeMint": "192256350554047864167",
+  "protocolBptAfter": "192296872191317323113",
+  "detfIn": "1",
+  "bptOut": "40521637269458946",
+  "accounting": "bondNftVault.originalSharesOf(detfNFTId)",
+  "rewardSource": "seigniorage_mint_no_deal",
+  "gitCommit": "93f90c312a5ab3d732c2330962c84e9dbdff9659",
+  "gitCommitShort": "93f90c3",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-30T16:43:10Z",
+  "script": "scripts/foundry/research/detf/singleSe/Script_D9_ProtocolCompound.s.sol:Script_D9_ProtocolCompound"
+}

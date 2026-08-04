@@ -71,3 +71,8 @@ cache_se_erc4626/
 
 out_orbital/
 cache_orbital/
+
+# Foundry profile-local cache/out (narrow builds)
+cache_*/
+out_*/
+!research/out/

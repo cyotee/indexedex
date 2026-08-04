@@ -1,0 +1,151 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+
+/**
+ * @title IUniswapV4SingleStandardExchangeBufferConstantProductHook
+ * @notice Single SE + rawToken CP buffer hook surface (LP + SE In/Out + vault views).
+ */
+interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
+    event Deposit(
+        address indexed sender,
+        address indexed to,
+        uint256 amount0,
+        uint256 amount1,
+        uint256 used0,
+        uint256 used1,
+        uint256 lpAmount
+    );
+
+    event DepositSingle(
+        address indexed sender,
+        address indexed to,
+        address tokenIn,
+        uint256 amountIn,
+        uint256 lpAmount
+    );
+
+    event Withdraw(
+        address indexed sender,
+        address indexed to,
+        uint256 lpAmount,
+        uint256 amount0,
+        uint256 amount1
+    );
+
+    event WithdrawSingle(
+        address indexed sender,
+        address indexed to,
+        uint256 lpAmount,
+        address tokenOut,
+        uint256 amountOut
+    );
+
+    event ZapSwap(
+        address indexed sender,
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 amountOut
+    );
+
+    // --- Bindings ---
+    function poolManager() external view returns (address);
+    function feeOracle() external view returns (address);
+    function permit2() external view returns (address);
+    function standardExchange() external view returns (address);
+    function pairToken() external view returns (address);
+    function rawToken() external view returns (address);
+    function currency0() external view returns (address);
+    function currency1() external view returns (address);
+
+    // --- Reserves ---
+    function rawReserve() external view returns (uint256);
+    function seClaimSupply() external view returns (uint256);
+    function reserveCurrency0() external view returns (uint256);
+    function reserveCurrency1() external view returns (uint256);
+    function isLive() external view returns (bool);
+    function isZapEligible() external view returns (bool);
+
+    // --- Fees ---
+    function tradingFeePercent() external view returns (uint256);
+    function tradingFeeDenominator() external view returns (uint256);
+    function dexSwapFeeAndFeeTo() external view returns (address feeTo, uint256 dexFeeWad);
+    function kLast() external view returns (uint256);
+
+    // --- Liquidity ---
+    function deposit(uint256 amount0, uint256 amount1, address to, uint256 minLpAmount, uint256 deadline)
+        external
+        returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    function depositSingle(address tokenIn, uint256 amountIn, address to, uint256 minLpAmount, uint256 deadline)
+        external
+        returns (uint256 lpAmount);
+
+    function depositWithPermit2Signature(
+        uint256 amount0,
+        uint256 amount1,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    function depositWithPermit2Allowance(
+        uint256 amount0,
+        uint256 amount1,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) external returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    function depositSingleWithPermit2Signature(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external returns (uint256 lpAmount);
+
+    function depositSingleWithPermit2Allowance(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) external returns (uint256 lpAmount);
+
+    function withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)
+        external
+        returns (uint256 amount0, uint256 amount1);
+
+    function withdrawSingle(uint256 lpAmount, address tokenOut, address to, uint256 minAmountOut, uint256 deadline)
+        external
+        returns (uint256 amountOut);
+
+    // --- Previews ---
+    function previewDeposit(uint256 amount0, uint256 amount1)
+        external
+        view
+        returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    function previewDepositSingle(address tokenIn, uint256 amountIn) external view returns (uint256 lpAmount);
+
+    function previewZapSplit(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 amountToSwap, uint256 amountOtherOut, uint256 amountKeptIn);
+
+    function previewWithdraw(uint256 lpAmount) external view returns (uint256 amount0, uint256 amount1);
+
+    function previewWithdrawSingle(uint256 lpAmount, address tokenOut) external view returns (uint256 amountOut);
+
+    function previewSwapExactIn(bool zeroForOne, uint256 amountIn) external view returns (uint256 amountOut);
+
+    function previewSwapExactOut(bool zeroForOne, uint256 amountOut) external view returns (uint256 amountIn);
+
+    // LP ERC-20, IBasicVault, IStandardVault: shared diamond facets (ERC20 / MultiAsset Basic+Standard).
+    // Do not redeclare them here — use IERC20 / IBasicVault / IStandardVault on the proxy.
+}

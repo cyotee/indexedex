@@ -1,0 +1,14 @@
+{
+  "campaign": "detf/singleSe",
+  "phase": "3",
+  "runId": "D2_policyDeadband",
+  "seAttachment": "uniswapV2",
+  "product": "detf/singleSe",
+  "d2Status": "deadband_or_burn_side",
+  "syntheticPrice": "624999999999996735",
+  "gitCommit": "93f90c312a5ab3d732c2330962c84e9dbdff9659",
+  "gitCommitShort": "93f90c3",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-30T16:03:07Z",
+  "script": "scripts/foundry/research/detf/singleSe/Script_D2_PolicyDeadband.s.sol:Script_D2_PolicyDeadband"
+}

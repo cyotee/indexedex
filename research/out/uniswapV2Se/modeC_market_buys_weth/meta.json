@@ -1,0 +1,22 @@
+{
+  "product": "uniswapV2Se",
+  "mode": "C_uni_plus_bal_arb",
+  "runId": "modeC_market_buys_weth",
+  "framing": "lp_market_demand",
+  "tradedAsset": "USDC",
+  "marketBoughtAsset": "WETH",
+  "pnlDenom": "USDC",
+  "tradeSteps": 24,
+  "tradeWethWei": "1000000000000000000",
+  "tradeUsdcWei": "1000000000000000000000",
+  "vaultLpDeposited": "158113883008418966599444",
+  "portfolio0Usdc": "1001019984999883381120458338090",
+  "initPrice_USDC_per_WETH": "1000000000000000000000",
+  "scenariosDoc": "research/scenarios/uniswapV2Se/",
+  "note": "Raw bar ratios (no invert). stamp_meta.py adds gitCommit.",
+  "gitCommit": "5f3333a36adeb7c4944155762eb4fa929f1cf8e8",
+  "gitCommitShort": "5f3333a",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-20T17:38:41Z",
+  "script": "scripts/foundry/research/uniswapV2Se/Script_ModeC_MarketBuysWeth.s.sol:Script_ModeC_MarketBuysWeth"
+}

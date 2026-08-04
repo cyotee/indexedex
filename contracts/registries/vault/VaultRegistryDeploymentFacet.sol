@@ -40,9 +40,12 @@ contract VaultRegistryDeploymentFacet is VaultRegistryDeploymentTarget, IFacet {
      * @return selectors Array of 4-byte function selectors
      */
     function facetFuncs() public pure override returns (bytes4[] memory selectors) {
-        selectors = new bytes4[](2);
+        selectors = new bytes4[](5);
         selectors[0] = IVaultRegistryDeployment.deployPkg.selector;
         selectors[1] = IVaultRegistryDeployment.deployVault.selector;
+        selectors[2] = IVaultRegistryDeployment.deployHookVault.selector;
+        selectors[3] = IVaultRegistryDeployment.deployHookVaultAutoMine.selector;
+        selectors[4] = IVaultRegistryDeployment.setHookDiamondPackageFactory.selector;
     }
 
     function facetMetadata()

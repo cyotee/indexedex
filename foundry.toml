@@ -152,6 +152,71 @@ optimizer = true
 optimizer_runs = 1
 via_ir = true
 
+# Uniswap Universal Router port (vendored under lib/crane/.../universal-router).
+# Upstream requires via_ir; narrow src avoids compiling the whole monorepo.
+# Coordinator production facets should import only IUniversalRouter / Commands under default profile.
+[profile.universal_router]
+src = 'lib/crane/contracts/external/uniswap/universal-router'
+out = 'out_universal_router'
+libs = ['node_modules', 'lib']
+# Isolate UR tree + dedicated smoke tests (avoids monorepo stack-too-deep under via_ir).
+test = 'test/foundry/spec/routers/universal_router_port'
+cache_path = 'cache_universal_router'
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+solc = "0.8.35"
+ignored_warnings_from = ["lib/crane/"]
+optimizer = true
+optimizer_runs = 1
+via_ir = true
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+]
+
+# Coordinator Router package + hermetic specs (via_ir for UR + diamond stack headroom).
+# Import graph only — does not set src=contracts (avoids unrelated monorepo stack-too-deep).
+[profile.coordinator]
+src = 'contracts/routers/balancerV3-uniswapV4'
+out = 'out_coordinator'
+libs = ['node_modules', 'lib']
+test = 'test/foundry/spec/routers/balancerV3-uniswapV4'
+cache_path = 'cache_coordinator'
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+solc = "0.8.35"
+ignored_warnings_from = ["lib/crane/"]
+optimizer = true
+optimizer_runs = 1
+via_ir = true
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+]
+
+[profile.coordinator_fork]
+src = 'contracts/routers/balancerV3-uniswapV4'
+out = 'out_coordinator'
+libs = ['node_modules', 'lib']
+test = 'test/foundry/fork/base_main/routers/balancerV3-uniswapV4'
+cache_path = 'cache_coordinator_fork'
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+solc = "0.8.35"
+ignored_warnings_from = ["lib/crane/"]
+optimizer = true
+optimizer_runs = 1
+via_ir = true
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+]
+
 # Narrow profile for generic ERC-4626 SE (import-graph only; no new remap aliases).
 [profile.se_erc4626]
 src = 'contracts/vaults/standard/erc4626'
@@ -178,6 +243,53 @@ src = 'contracts/hooks/uniswap/v4/orbital'
 test = 'test/foundry/spec/hooks/uniswap/v4/orbital'
 out = 'out_orbital'
 cache_path = 'cache_orbital'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
+# Single SE Buffer CP Hook package (Option B + ERC-4626 SE + V4 PM).
+# Run: FOUNDRY_PROFILE=single_se_buffer_cp_hook forge test -vv
+[profile.single_se_buffer_cp_hook]
+src = 'contracts/hooks/uniswap/v4/standardExchange/constantProduct/single'
+test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single'
+out = 'out_single_se_buffer_cp_hook'
+cache_path = 'cache_single_se_buffer_cp_hook'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
+# Narrow profile for Uniswap V4 Hook Diamond Package Callback Factory.
+# Run: FOUNDRY_PROFILE=hook_factory forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/factory/**'
+# Fork FK* smokes live under the same test tree as *_Fork.t.sol siblings.
+[profile.hook_factory]
+src = 'contracts/hooks/uniswap/v4/factory'
+test = 'test/foundry/spec/hooks/uniswap/v4/factory'
+out = 'out_hook_factory'
+cache_path = 'cache_hook_factory'
 libs = ['node_modules', 'lib']
 solc = "0.8.35"
 optimizer = true

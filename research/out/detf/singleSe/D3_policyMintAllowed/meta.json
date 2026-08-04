@@ -1,0 +1,18 @@
+{
+  "campaign": "detf/singleSe",
+  "phase": "3",
+  "runId": "D3_policyMintAllowed",
+  "seAttachment": "uniswapV2",
+  "driveSteps": 32,
+  "supplyBeforeDrive": "505205472000000000000",
+  "supplyAfterDrive": "321270140643256150349",
+  "previewOut": "332354104227370659",
+  "execOut": "332354104227370659",
+  "previewExecDiff": "0",
+  "driveNote": "prod_free_detf_burns_plus_uni_trades",
+  "gitCommit": "93f90c312a5ab3d732c2330962c84e9dbdff9659",
+  "gitCommitShort": "93f90c3",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-07-30T16:08:22Z",
+  "script": "scripts/foundry/research/detf/singleSe/Script_D3_PolicyMintAllowed.s.sol:Script_D3_PolicyMintAllowed"
+}

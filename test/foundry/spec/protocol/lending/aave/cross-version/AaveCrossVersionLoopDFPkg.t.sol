@@ -35,6 +35,16 @@ contract _MockRegistry is IVaultRegistryDeployment {
         lastVault = address(0xBEEF);
         return lastVault;
     }
+
+    function deployHookVault(IStandardVaultPkg, bytes calldata, uint256) external pure returns (address) {
+        return address(0);
+    }
+
+    function deployHookVaultAutoMine(IStandardVaultPkg, bytes calldata) external pure returns (address) {
+        return address(0);
+    }
+
+    function setHookDiamondPackageFactory(address) external pure {}
 }
 
 /**

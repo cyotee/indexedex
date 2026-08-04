@@ -82,7 +82,8 @@ Capital-backed seigniorage already rewards bonders when others mint; it does **n
 | Expansion mode | **Policy only**; accrue only while synthetic is on the **mint-allowed** side of Policy; **Open = no expansion** |
 | Expansion settlement UX | Staking-style: **preview pending**, finalize on **claim / unlock paths** (no keeper) |
 | Program structure | One overall PRD (this file); **per-family** implementation plans; **Phase 1 compound → tests green → Phase 2 expansion → tests green** |
-| Family scope | Single SE, multi-vault weighted, mixed-buffer, composed stable common. **Out:** composed/single, seigniorage/, detf/dual/** |
+| Family scope | Balancer Single SE, multi-vault weighted, mixed-buffer, composed stable common, **Uni V4 Single SE CP buffer** (`detf/…/uniswap/v4/standardExchange/constantProduct/single/`). **Out:** composed/single, seigniorage/, detf/dual/** |
+| **Epoch cadence (planned shared)** | **Upcoming amendment:** discrete deploy-time **epoch length** + whole-epoch catch-up + **debt-inclusive synthetic** (pending expansion in supply denominator), as drafted in Uni V4 Single SE CP DETF PRD §10. Target: all in-scope true DETFs; continuous `dt` + catch-up seconds/bps remain current shipped default until amendment ships. |
 
 ### 0.5 Unified narrative
 
@@ -479,7 +480,7 @@ These are **not** open product *direction*; they need numeric/API choices only:
 | Expansion formula shape | **Premium-closure rate** (numeric rate/cap in family/core plans) |
 | Expansion mode | Policy only; Open off |
 | Claim | Protocol compound must raise protocol BPT so redemption rate can rise |
-| Scope In | Single SE; multi-vault weighted; mixed-buffer; composed stable common |
+| Scope In | Balancer Single SE; multi-vault weighted; mixed-buffer; composed stable common; Uni V4 Single SE CP buffer |
 | Scope Out | `composed/single`; `contracts/vaults/seigniorage/`; `detf/dual/**` (unless re-supported later) |
 | Staging | Phase 1 compound green → Phase 2 expansion green per family |
 
