@@ -7,12 +7,13 @@ import {
 import {
     UniswapV4QuadStableSwapHook_FactoryService as FactoryService
 } from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHook_FactoryService.sol";
-import {HookMinerCreate3} from
-    "@crane/contracts/protocols/dexes/uniswap/v4/hooks/public/utils/HookMinerCreate3.sol";
+import {
+    UniswapV4HookDiamondCreate2Lib as Create2Lib
+} from "contracts/hooks/uniswap/v4/factory/libs/UniswapV4HookDiamondCreate2Lib.sol";
 
 /**
  * @title UniswapV4QuadStableSwapHook_Deploy_Test
- * @notice CREATE3 mine flags + hook binding views.
+ * @notice Hook diamond package path: binding views + flag address bits.
  */
 contract UniswapV4QuadStableSwapHook_Deploy_Test is TestBase_UniswapV4QuadStableSwapHook {
     function test_deploy_bindingViews() public view {
@@ -28,6 +29,10 @@ contract UniswapV4QuadStableSwapHook_Deploy_Test is TestBase_UniswapV4QuadStable
 
     function test_hookAddress_hasRequiredFlags() public view {
         uint160 flags = FactoryService.requiredFlags();
-        assertEq(uint160(hook) & HookMinerCreate3.FLAG_MASK, flags);
+        assertEq(uint160(hook) & Create2Lib.FLAG_MASK, flags & Create2Lib.FLAG_MASK);
+    }
+
+    function test_deploy_registersVault() public view {
+        assertTrue(_registry().isVault(hook), "registered vault");
     }
 }

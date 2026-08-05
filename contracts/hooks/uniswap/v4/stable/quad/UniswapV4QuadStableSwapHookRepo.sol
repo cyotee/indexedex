@@ -3,9 +3,10 @@ pragma solidity ^0.8.0;
 
 /**
  * @title UniswapV4QuadStableSwapHookRepo
- * @notice Namespaced storage: reserves, LP ERC-20, reentrancy, LP metadata.
- * @dev Slot: keccak256("indexedex.hooks.uv4.stable.quad.storage") style (ERC-7201-ish).
- *      Binding immutables live on the wire contract — not here.
+ * @notice Diamond storage: bindings, rate-scaled book, reentrancy.
+ * @dev Slot: indexedex.hooks.uv4.stable.quad.storage
+ *      LP ERC-20 uses shared ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo.
+ *      Bindings written in package initAccount — no constructor immutables.
  */
 library UniswapV4QuadStableSwapHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
@@ -16,15 +17,29 @@ library UniswapV4QuadStableSwapHookRepo {
     uint256 internal constant ENTERED = 2;
 
     struct Layout {
+        // --- bindings (immortal instance identity) ---
+        address poolManager;
+        address token0;
+        address token1;
+        address token2;
+        address token3;
+        uint24 lpFeePips;
+        uint256 baseAmp;
+        address rateProvider0;
+        address rateProvider1;
+        address rateProvider2;
+        address rateProvider3;
+        uint8 decimals0;
+        uint8 decimals1;
+        uint8 decimals2;
+        uint8 decimals3;
+        uint256 baseScale0;
+        uint256 baseScale1;
+        uint256 baseScale2;
+        uint256 baseScale3;
+        bool bindingsInitialized;
+        // --- product book (raw face amounts) ---
         uint256[4] reserves;
-        uint256 totalSupply;
-        mapping(address => uint256) balanceOf;
-        mapping(address => mapping(address => uint256)) allowance;
-        string name;
-        string symbol;
-        uint8[4] decimals;
-        uint256[4] baseScales;
-        bool metadataInitialized;
         uint256 reentrancyStatus;
     }
 
@@ -35,19 +50,40 @@ library UniswapV4QuadStableSwapHookRepo {
         }
     }
 
-    function _setMetadata(
-        string memory name_,
-        string memory symbol_,
+    function _initializeBindings(
+        address poolManager_,
+        address token0_,
+        address token1_,
+        address token2_,
+        address token3_,
+        uint24 lpFeePips_,
+        uint256 baseAmp_,
+        address[4] memory rateProviders_,
         uint8[4] memory decimals_,
         uint256[4] memory baseScales_
     ) internal {
         Layout storage l = _layout();
-        require(!l.metadataInitialized, "metadata set");
-        l.name = name_;
-        l.symbol = symbol_;
-        l.decimals = decimals_;
-        l.baseScales = baseScales_;
-        l.metadataInitialized = true;
+        require(!l.bindingsInitialized, "bound");
+        l.poolManager = poolManager_;
+        l.token0 = token0_;
+        l.token1 = token1_;
+        l.token2 = token2_;
+        l.token3 = token3_;
+        l.lpFeePips = lpFeePips_;
+        l.baseAmp = baseAmp_;
+        l.rateProvider0 = rateProviders_[0];
+        l.rateProvider1 = rateProviders_[1];
+        l.rateProvider2 = rateProviders_[2];
+        l.rateProvider3 = rateProviders_[3];
+        l.decimals0 = decimals_[0];
+        l.decimals1 = decimals_[1];
+        l.decimals2 = decimals_[2];
+        l.decimals3 = decimals_[3];
+        l.baseScale0 = baseScales_[0];
+        l.baseScale1 = baseScales_[1];
+        l.baseScale2 = baseScales_[2];
+        l.baseScale3 = baseScales_[3];
+        l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
     }
 }

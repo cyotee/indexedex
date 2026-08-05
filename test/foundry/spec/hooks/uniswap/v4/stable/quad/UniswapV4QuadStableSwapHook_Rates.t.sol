@@ -7,13 +7,8 @@ import {
     RateProviderHarness
 } from "contracts/hooks/uniswap/v4/stable/quad/TestBase_UniswapV4QuadStableSwapHook.sol";
 import {
-    UniswapV4QuadStableSwapHookFactory
-} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookFactory.sol";
-import {
     IUniswapV4QuadStableSwapHook
 } from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHook.sol";
-import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 
 /**
  * @title UniswapV4QuadStableSwapHook_Rates_Test
@@ -61,8 +56,8 @@ contract UniswapV4QuadStableSwapHook_Rates_Test is TestBase_UniswapV4QuadStableS
         providers[1] = p1;
         providers[2] = p2;
         providers[3] = p3;
-        (hookAddr,) = factory.deploy(
-            toks[0], toks[1], toks[2], toks[3], DEMO_FEE, DEMO_AMP, providers, "rates-ns"
+        hookAddr = _deployHook(
+            _pkgArgs(toks[0], toks[1], toks[2], toks[3], DEMO_FEE, DEMO_AMP, providers)
         );
         h = IUniswapV4QuadStableSwapHook(hookAddr);
     }

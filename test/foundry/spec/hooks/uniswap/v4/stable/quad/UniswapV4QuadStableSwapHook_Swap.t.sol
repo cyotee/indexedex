@@ -55,18 +55,11 @@ contract UniswapV4QuadStableSwapHook_Swap_Test is TestBase_UniswapV4QuadStableSw
         MintableDec d = new MintableDec("ID", "ID", 18);
         (MintableDec x0, MintableDec x1, MintableDec x2, MintableDec x3) = _sortFour(a, b, c, d);
         address[4] memory providers;
-        (address h,) = factory.deploy(
-            address(x0),
-            address(x1),
-            address(x2),
-            address(x3),
-            DEMO_FEE,
-            DEMO_AMP,
-            providers,
-            "inert-book-ns"
+        address h = _deployHook(
+            _pkgArgs(address(x0), address(x1), address(x2), address(x3), DEMO_FEE, DEMO_AMP, providers)
         );
         IUniswapV4QuadStableSwapHook inert = IUniswapV4QuadStableSwapHook(h);
-        uint256[4] memory r = inert.reserves();
+        uint256[4] memory r = _bookReserves(h);
         assertEq(r[0], 0);
         assertEq(r[1], 0);
         assertEq(r[2], 0);

@@ -2,12 +2,20 @@
 
 **Name:** `UniswapV4QuadStableSwapHook`  
 **Date:** 2026-08-03  
-**Status:** **Draft v0.5.2** — quality/clarity pass: zap **`sharesMin` only**; rates = **`IRateProvider` addresses only**; rate reads **fail closed**; swap gate = **pair legs only**; stale draft residue removed. Path: **`stable/quad`**. Prior: D67 canonical PM.  
+**Status:** **Draft v0.6.0** — StableSwap product law remains normative; **deploy / CREATE3 monomorph / product factory superseded**.  
 **Package path:** `contracts/hooks/uniswap/v4/stable/quad/`  
-**Package kind:** IndexedEx **hook deploy package** with two primary artifacts:
 
-1. **Hook instance** — CREATE3-mined single contract via the **existing** ecosystem `create3Factory` + `HookMinerCreate3` (flag bits). Repo + Target + Math; also the fungible LP ERC-20. **Not** a vault share diamond; **not** `DiamondPackageCallBackFactory` for the hook instance; **not** Facet/DFPkg for the hook.
-2. **On-chain factory** — permissionless public surface that mines/deploys hooks through the existing `create3Factory` and **initializes all six** Uni V4 pair doors. Factory is **not** a second CREATE3 *system*; it is an **application factory** that *calls* the ecosystem CREATE3 factory (as operator or via equivalent authorized path).
+> **DEPLOY SUPERSESSION (2026-08-04):** All CREATE3 monomorph instance deploy, `HookMinerCreate3` product mine, `UniswapV4QuadStableSwapHookFactory` as primary UX, and `saltNamespace` identity law are **superseded** by  
+> [`UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md`](./UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md)  
+> and the co-located hook-factory implementation plan.  
+> **Current production path:** package DFPkg → vault registry `deployHookVault` → shared Uniswap V4 hook diamond package callback factory (CREATE2 flag-mined diamond).  
+> Facets + package use CREATE3 only. Six pair doors via package `postDeploy` / permissionless `ensurePairPools`.  
+> StableSwap math, rates, zap, fee-on-output, pair-door product policy in **this** PRD remain authoritative unless the refactor PRD explicitly revises them.
+
+**Package kind:** IndexedEx **hook diamond package** (after refactor):
+
+1. **Hook instance** — immutable diamond at CREATE2-mined address via shared hook factory; registered vault; LP ERC-20 on proxy via shared ERC20Permit facets.  
+2. **Package + ensure** — `UniswapV4QuadStableSwapHookDFPkg` with `deployVault` / `ensurePairPools`; product CREATE3 monomorph factory **retired**.
 
 **Behavioral / math reference (requirements harvest only — not deploy law, not package layout):**
 

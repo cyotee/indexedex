@@ -2,46 +2,93 @@
 pragma solidity ^0.8.0;
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {ICreate3Factory} from "@crane/contracts/factories/create3/ICreate3Factory.sol";
-import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
-import {HookMinerCreate3} from
-    "@crane/contracts/protocols/dexes/uniswap/v4/hooks/public/utils/HookMinerCreate3.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {
-    IUniswapV4QuadStableSwapHook
-} from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHook.sol";
+    IUniswapV4HookDiamondPackage
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
 import {
-    UniswapV4QuadStableSwapHookDeployer as Deployer
-} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookDeployer.sol";
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
+import {
+    UniswapV4QuadStableSwapHookHooksFacet
+} from "contracts/hooks/uniswap/v4/stable/quad/facets/UniswapV4QuadStableSwapHookHooksFacet.sol";
+import {
+    UniswapV4QuadStableSwapHookLiquidityFacet
+} from "contracts/hooks/uniswap/v4/stable/quad/facets/UniswapV4QuadStableSwapHookLiquidityFacet.sol";
+import {
+    UniswapV4QuadStableSwapHookDFPkg
+} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookDFPkg.sol";
+import {
+    IUniswapV4QuadStableSwapHookPackage
+} from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHookPackage.sol";
 
 /**
  * @title UniswapV4QuadStableSwapHook_FactoryService
- * @notice Binding-aware CREATE3 mine + deploy (library / factory+tests only).
- * @dev Not on public hook ABI. Pattern-copy from single SE buffer FactoryService.
- *      DeployParams packs args to avoid stack-too-deep without via_ir.
+ * @notice CREATE3 product facets + registry deployPkg helpers; mineNonce for hook CREATE2.
+ * @dev Instances: package.deployVault → registry.deployHookVault → shared hook factory.
+ *      Monomorph CREATE3 product factory is retired.
  */
 library UniswapV4QuadStableSwapHook_FactoryService {
     using BetterEfficientHashLib for bytes;
 
-    string internal constant DEFAULT_SALT_NAMESPACE = "uv4-quad-stable-swap-hook-";
+    /// forge-lint: disable-next-line(screaming-snake-case-const)
+    Vm constant vm = Vm(VM_ADDRESS);
 
-    error HookMineExhausted();
-    error HookDeployCollision(address occupied);
-    error InvalidMineNonce();
-    error ZeroAddress();
+    function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4QuadStableSwapHookHooksFacet).creationCode,
+            abi.encode(type(UniswapV4QuadStableSwapHookHooksFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4QuadStableSwapHookHooksFacet).name);
+    }
 
-    struct DeployParams {
-        ICreate3FactoryProxy create3Factory;
-        IPoolManager poolManager;
-        address token0;
-        address token1;
-        address token2;
-        address token3;
-        uint24 lpFeePips;
-        uint256 baseAmp;
-        address[4] rateProviders;
-        string saltNamespace;
+    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4QuadStableSwapHookLiquidityFacet).creationCode,
+            abi.encode(type(UniswapV4QuadStableSwapHookLiquidityFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4QuadStableSwapHookLiquidityFacet).name);
+    }
+
+    function deployPackage(
+        IVaultRegistryDeployment registry,
+        address owner,
+        IUniswapV4QuadStableSwapHookPackage.PkgInit memory init,
+        bytes32 salt
+    ) internal returns (IUniswapV4QuadStableSwapHookPackage pkg) {
+        vm.prank(owner);
+        pkg = IUniswapV4QuadStableSwapHookPackage(
+            registry.deployPkg(
+                type(UniswapV4QuadStableSwapHookDFPkg).creationCode, abi.encode(init), salt
+            )
+        );
+        vm.label(address(pkg), type(UniswapV4QuadStableSwapHookDFPkg).name);
+    }
+
+    function findMineNonce(
+        IUniswapV4HookDiamondPackageCallBackFactory factory,
+        IUniswapV4QuadStableSwapHookPackage pkg,
+        IUniswapV4QuadStableSwapHookPackage.PkgArgs memory args
+    ) internal returns (uint256 mineNonce) {
+        return HookFactoryService.findMineNonce(
+            factory, IUniswapV4HookDiamondPackage(address(pkg)), abi.encode(args)
+        );
+    }
+
+    function deployHook(
+        IUniswapV4QuadStableSwapHookPackage pkg,
+        IUniswapV4QuadStableSwapHookPackage.PkgArgs memory args,
+        uint256 mineNonce
+    ) internal returns (address vault) {
+        return pkg.deployVault(args, mineNonce);
     }
 
     function requiredFlags() internal pure returns (uint160) {
@@ -50,274 +97,5 @@ library UniswapV4QuadStableSwapHook_FactoryService {
                 | Hooks.BEFORE_REMOVE_LIQUIDITY_FLAG | Hooks.BEFORE_SWAP_FLAG
                 | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG | Hooks.BEFORE_DONATE_FLAG
         );
-    }
-
-    function rateProviderFingerprint(address[4] memory providers) internal pure returns (bytes32) {
-        return abi.encodePacked(providers[0], providers[1], providers[2], providers[3])._hash();
-    }
-
-    function hookSalt(
-        string memory namespace,
-        address poolManager,
-        address token0,
-        address token1,
-        address token2,
-        address token3,
-        uint24 lpFeePips,
-        uint256 baseAmp,
-        bytes32 rateFp,
-        uint256 mineNonce
-    ) internal pure returns (bytes32) {
-        if (bytes(namespace).length == 0) {
-            namespace = DEFAULT_SALT_NAMESPACE;
-        }
-        return abi.encodePacked(
-            namespace, poolManager, token0, token1, token2, token3, lpFeePips, baseAmp, rateFp, mineNonce
-        )._hash();
-    }
-
-    function _saltFor(DeployParams memory p, uint256 mineNonce) private pure returns (bytes32) {
-        string memory namespace =
-            bytes(p.saltNamespace).length == 0 ? DEFAULT_SALT_NAMESPACE : p.saltNamespace;
-        return hookSalt(
-            namespace,
-            address(p.poolManager),
-            p.token0,
-            p.token1,
-            p.token2,
-            p.token3,
-            p.lpFeePips,
-            p.baseAmp,
-            rateProviderFingerprint(p.rateProviders),
-            mineNonce
-        );
-    }
-
-    function _ctorArgs(DeployParams memory p) private pure returns (bytes memory) {
-        return abi.encode(
-            p.poolManager,
-            p.token0,
-            p.token1,
-            p.token2,
-            p.token3,
-            p.lpFeePips,
-            p.baseAmp,
-            p.rateProviders
-        );
-    }
-
-    function isExpectedHook(
-        address predicted,
-        address poolManager,
-        address token0,
-        address token1,
-        address token2,
-        address token3,
-        uint24 lpFeePips,
-        uint256 baseAmp,
-        address[4] memory rateProviders
-    ) internal view returns (bool) {
-        if (predicted.code.length == 0) return false;
-        IUniswapV4QuadStableSwapHook h = IUniswapV4QuadStableSwapHook(predicted);
-        try h.poolManager() returns (IPoolManager pm) {
-            if (address(pm) != poolManager) return false;
-        } catch {
-            return false;
-        }
-        try h.token0() returns (address t0) {
-            if (t0 != token0) return false;
-        } catch {
-            return false;
-        }
-        try h.token1() returns (address t1) {
-            if (t1 != token1) return false;
-        } catch {
-            return false;
-        }
-        try h.token2() returns (address t2) {
-            if (t2 != token2) return false;
-        } catch {
-            return false;
-        }
-        try h.token3() returns (address t3) {
-            if (t3 != token3) return false;
-        } catch {
-            return false;
-        }
-        try h.lpFeePips() returns (uint24 fee) {
-            if (fee != lpFeePips) return false;
-        } catch {
-            return false;
-        }
-        try h.baseAmp() returns (uint256 amp) {
-            if (amp != baseAmp) return false;
-        } catch {
-            return false;
-        }
-        try h.rateProviders() returns (address[4] memory pr) {
-            if (
-                pr[0] != rateProviders[0] || pr[1] != rateProviders[1] || pr[2] != rateProviders[2]
-                    || pr[3] != rateProviders[3]
-            ) return false;
-        } catch {
-            return false;
-        }
-        return true;
-    }
-
-    function _isExpected(DeployParams memory p, address predicted) private view returns (bool) {
-        return isExpectedHook(
-            predicted,
-            address(p.poolManager),
-            p.token0,
-            p.token1,
-            p.token2,
-            p.token3,
-            p.lpFeePips,
-            p.baseAmp,
-            p.rateProviders
-        );
-    }
-
-    /// @dev `public` so creationCode lives in linked library bytecode (keeps Factory under size limit).
-    function deployHook(
-        ICreate3FactoryProxy create3Factory,
-        IPoolManager poolManager,
-        address token0,
-        address token1,
-        address token2,
-        address token3,
-        uint24 lpFeePips,
-        uint256 baseAmp,
-        address[4] memory rateProviders,
-        string memory saltNamespace
-    ) public returns (address hook, bool newlyDeployed) {
-        return deployHookParams(
-            DeployParams(
-                create3Factory,
-                poolManager,
-                token0,
-                token1,
-                token2,
-                token3,
-                lpFeePips,
-                baseAmp,
-                rateProviders,
-                saltNamespace
-            )
-        );
-    }
-
-    function deployHookParams(DeployParams memory p) public returns (address hook, bool newlyDeployed) {
-        return _deployMine(p);
-    }
-
-    function _deployMine(DeployParams memory p) private returns (address hook, bool newlyDeployed) {
-        if (
-            address(p.create3Factory) == address(0) || address(p.poolManager) == address(0)
-                || p.token0 == address(0) || p.token1 == address(0) || p.token2 == address(0)
-                || p.token3 == address(0)
-        ) {
-            revert ZeroAddress();
-        }
-
-        uint160 flags = requiredFlags();
-        bytes memory ctorArgs = _ctorArgs(p);
-
-        for (uint256 mineNonce; mineNonce < HookMinerCreate3.MAX_LOOP; mineNonce++) {
-            bytes32 salt = _saltFor(p, mineNonce);
-            address predicted =
-                HookMinerCreate3.computeAddress(address(p.create3Factory), uint256(salt));
-
-            if (uint160(predicted) & HookMinerCreate3.FLAG_MASK != flags) {
-                continue;
-            }
-
-            if (predicted.code.length == 0) {
-                hook = Deployer.create3Hook(address(p.create3Factory), ctorArgs, salt);
-                if (hook != predicted || predicted.code.length == 0) {
-                    revert HookDeployCollision(hook);
-                }
-                return (hook, true);
-            }
-
-            if (_isExpected(p, predicted)) {
-                return (predicted, false);
-            }
-            revert HookDeployCollision(predicted);
-        }
-
-        revert HookMineExhausted();
-    }
-
-    /// @dev `public` so creationCode lives in linked library bytecode (keeps Factory under size limit).
-    function deployHookWithMineNonce(
-        ICreate3FactoryProxy create3Factory,
-        IPoolManager poolManager,
-        address token0,
-        address token1,
-        address token2,
-        address token3,
-        uint24 lpFeePips,
-        uint256 baseAmp,
-        address[4] memory rateProviders,
-        string memory saltNamespace,
-        uint256 mineNonce
-    ) public returns (address hook, bool newlyDeployed) {
-        return deployHookParamsWithNonce(
-            DeployParams(
-                create3Factory,
-                poolManager,
-                token0,
-                token1,
-                token2,
-                token3,
-                lpFeePips,
-                baseAmp,
-                rateProviders,
-                saltNamespace
-            ),
-            mineNonce
-        );
-    }
-
-    function deployHookParamsWithNonce(DeployParams memory p, uint256 mineNonce)
-        public
-        returns (address hook, bool newlyDeployed)
-    {
-        return _deployWithNonce(p, mineNonce);
-    }
-
-    function _deployWithNonce(DeployParams memory p, uint256 mineNonce)
-        private
-        returns (address hook, bool newlyDeployed)
-    {
-        if (
-            address(p.create3Factory) == address(0) || address(p.poolManager) == address(0)
-                || p.token0 == address(0) || p.token1 == address(0) || p.token2 == address(0)
-                || p.token3 == address(0)
-        ) {
-            revert ZeroAddress();
-        }
-
-        uint160 flags = requiredFlags();
-        bytes32 salt = _saltFor(p, mineNonce);
-        address predicted = HookMinerCreate3.computeAddress(address(p.create3Factory), uint256(salt));
-        if (uint160(predicted) & HookMinerCreate3.FLAG_MASK != flags) {
-            revert InvalidMineNonce();
-        }
-
-        if (predicted.code.length == 0) {
-            hook = Deployer.create3Hook(address(p.create3Factory), _ctorArgs(p), salt);
-            if (hook != predicted || predicted.code.length == 0) {
-                revert HookDeployCollision(hook);
-            }
-            return (hook, true);
-        }
-
-        if (_isExpected(p, predicted)) {
-            return (predicted, false);
-        }
-        revert HookDeployCollision(predicted);
     }
 }

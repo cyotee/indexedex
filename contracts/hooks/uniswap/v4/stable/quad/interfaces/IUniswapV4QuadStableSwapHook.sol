@@ -23,7 +23,8 @@ interface IUniswapV4QuadStableSwapHook {
     function rateProviders() external view returns (address[4] memory);
 
     function reserveOf(address token) external view returns (uint256);
-    function reserves() external view returns (uint256[4] memory);
+    /// @dev Multi-asset book legs: use `reserveOf(token)` / shared vault `reserves()` (uint256[]).
+    ///      Product fixed array was removed to avoid diamond selector collision with MultiAssetBasicVaultFacet.
     function effectiveRate(uint256 index) external view returns (uint256);
 
     function previewAddLiquidity(uint256[4] calldata amounts)

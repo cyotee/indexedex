@@ -116,9 +116,10 @@ contract UniswapV4QuadStableSwapHook_Reentrancy_Test is TestBase_UniswapV4QuadSt
     }
 
     function _factoryDeploy(address[4] memory addrs, string memory tag) internal returns (address h) {
+        tag; // binding salt is product args only (no saltNamespace)
         address[4] memory providers;
-        (h,) = factory.deploy(
-            addrs[0], addrs[1], addrs[2], addrs[3], DEMO_FEE, DEMO_AMP, providers, tag
+        h = _deployHook(
+            _pkgArgs(addrs[0], addrs[1], addrs[2], addrs[3], DEMO_FEE, DEMO_AMP, providers)
         );
     }
 

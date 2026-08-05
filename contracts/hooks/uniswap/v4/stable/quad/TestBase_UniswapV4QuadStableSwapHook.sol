@@ -1,42 +1,62 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
+import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
-import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
-import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
-import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
+
 import {
-    UniswapV4QuadStableSwapHookFactory
-} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookFactory.sol";
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
     IUniswapV4QuadStableSwapHook
 } from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHook.sol";
 import {
-    UniswapV4QuadStableSwapHookMath as Math
-} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookMath.sol";
+    IUniswapV4QuadStableSwapHookPackage
+} from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHookPackage.sol";
+import {
+    UniswapV4QuadStableSwapHook_FactoryService as PkgFactory
+} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHook_FactoryService.sol";
+import {
+    UniswapV4QuadStableSwapHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookPairPoolLib.sol";
 
 /**
  * @title TestBase_UniswapV4QuadStableSwapHook
- * @notice Gold TestBase for hermetic quad StableSwap hook (CREATE3 + real PoolManager).
- * @dev Peer pattern-copy (LOCKED): `test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol`
- *      Do not subclass dual production types — structure/helpers only.
+ * @notice Package path TestBase: hook factory + registry deployHookVault + six pair doors.
+ * @dev Ladder: CraneTest → IndexedexTest → TestBase_VaultComponents → this.
  */
-abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
+abstract contract TestBase_UniswapV4QuadStableSwapHook is TestBase_VaultComponents {
+    using BetterEfficientHashLib for bytes;
+    using HookFactoryService for ICreate3FactoryProxy;
+
     MintableDec internal t0;
     MintableDec internal t1;
     MintableDec internal t2;
     MintableDec internal t3;
 
     IPoolManager internal pm;
-    UniswapV4QuadStableSwapHookFactory internal factory;
+    IUniswapV4HookDiamondPackageCallBackFactory internal hookFactory;
+    IUniswapV4QuadStableSwapHookPackage internal hookPkg;
     address internal hook;
     IUniswapV4QuadStableSwapHook internal quad;
-    // Note: do not store PoolKey[6] in storage (legacy solc cannot copy array-of-structs).
-    // Use `_poolKeys()` helper which returns memory from factory.
 
     address internal user = address(0xBEEF);
     address internal deployerEoa = address(0xCAFE);
@@ -46,7 +66,7 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
     uint256 internal constant DUST = 1;
 
     function setUp() public virtual override {
-        IndexedexTest.setUp();
+        TestBase_VaultComponents.setUp();
 
         // four sorted tokens (addresses must be ascending after deploy)
         MintableDec a = new MintableDec("USD Coin", "USDC", 6);
@@ -55,28 +75,47 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
         MintableDec d = new MintableDec("USDS", "USDS", 18);
         (t0, t1, t2, t3) = _sortFour(a, b, c, d);
 
-        pm = IPoolManager(
-            vm.deployCode(
-                "lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol:PoolManager",
-                abi.encode(address(this))
-            )
+        pm = IPoolManager(address(new PoolManager(address(this))));
+
+        // --- Shared hook diamond factory ---
+        IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
+        IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
+        hookFactory = HookFactoryService.deployUniswapV4HookDiamondPackageCallBackFactory(
+            create3Factory,
+            IUniswapV4HookDiamondPackageCallBackFactory.InitArgs({
+                erc165Facet: facetReg.canonicalFacet(type(IERC165).interfaceId),
+                diamondLoupeFacet: facetReg.canonicalFacet(type(IDiamondLoupe).interfaceId),
+                erc8109IntrospectionFacet: facetReg.canonicalFacet(type(IERC8109Introspection).interfaceId),
+                postDeployHookFacet: facetReg.canonicalFacet(type(IPostDeployAccountHook).interfaceId),
+                hookFlagsFacet: hookFlagsFacet
+            })
+        );
+        vm.prank(owner);
+        IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
+
+        // --- Product package ---
+        IFacet hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
+        IFacet liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
+        hookPkg = PkgFactory.deployPackage(
+            IVaultRegistryDeployment(address(indexedexManager)),
+            owner,
+            IUniswapV4QuadStableSwapHookPackage.PkgInit({
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                hooksFacet: hooksFacet,
+                liquidityFacet: liquidityFacet,
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+            }),
+            abi.encode(type(IUniswapV4QuadStableSwapHookPackage).name, "v1")._hash()
         );
 
-        factory = new UniswapV4QuadStableSwapHookFactory(create3Factory, pm);
-        // create3Factory is owned by address(this) via CraneTest/InitDevService — not Indexedex `owner`
-        IOperable(address(create3Factory)).setOperator(address(factory), true);
-
-        address[4] memory providers;
-        (hook,) = factory.deploy(
-            address(t0),
-            address(t1),
-            address(t2),
-            address(t3),
-            DEMO_FEE,
-            DEMO_AMP,
-            providers,
-            ""
-        );
+        IUniswapV4QuadStableSwapHookPackage.PkgArgs memory args = _defaultPkgArgs();
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
         quad = IUniswapV4QuadStableSwapHook(hook);
 
         _fundUser();
@@ -88,8 +127,55 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
         vm.stopPrank();
     }
 
+    function _defaultPkgArgs()
+        internal
+        view
+        returns (IUniswapV4QuadStableSwapHookPackage.PkgArgs memory)
+    {
+        address[4] memory providers;
+        return IUniswapV4QuadStableSwapHookPackage.PkgArgs({
+            poolManager: address(pm),
+            token0: address(t0),
+            token1: address(t1),
+            token2: address(t2),
+            token3: address(t3),
+            lpFeePips: DEMO_FEE,
+            baseAmp: DEMO_AMP,
+            rateProviders: providers
+        });
+    }
+
+    function _pkgArgs(
+        address token0_,
+        address token1_,
+        address token2_,
+        address token3_,
+        uint24 fee,
+        uint256 amp,
+        address[4] memory providers
+    ) internal view returns (IUniswapV4QuadStableSwapHookPackage.PkgArgs memory) {
+        return IUniswapV4QuadStableSwapHookPackage.PkgArgs({
+            poolManager: address(pm),
+            token0: token0_,
+            token1: token1_,
+            token2: token2_,
+            token3: token3_,
+            lpFeePips: fee,
+            baseAmp: amp,
+            rateProviders: providers
+        });
+    }
+
+    function _deployHook(IUniswapV4QuadStableSwapHookPackage.PkgArgs memory args)
+        internal
+        returns (address h)
+    {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
     function _poolKeys() internal view returns (PoolKey[6] memory) {
-        return factory.pairPoolKeys(hook);
+        return hookPkg.pairPoolKeys(hook);
     }
 
     /// @dev Human units → raw (respects each token's decimals). `human` is whole tokens.
@@ -105,7 +191,6 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
     }
 
     function _fundUser() internal {
-        // ample balance for 6- and 18-dec legs
         t0.mint(user, _raw(t0, 10_000_000));
         t1.mint(user, _raw(t1, 10_000_000));
         t2.mint(user, _raw(t2, 10_000_000));
@@ -119,6 +204,19 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
         (shares,) = quad.addLiquidity(amounts, mins, user, 0);
     }
 
+    /// @dev Product book as fixed array (reads four reserveOf legs).
+    function _bookReserves(address h) internal view returns (uint256[4] memory r) {
+        IUniswapV4QuadStableSwapHook q = IUniswapV4QuadStableSwapHook(h);
+        r[0] = q.reserveOf(q.token0());
+        r[1] = q.reserveOf(q.token1());
+        r[2] = q.reserveOf(q.token2());
+        r[3] = q.reserveOf(q.token3());
+    }
+
+    function _bookReserves() internal view returns (uint256[4] memory) {
+        return _bookReserves(hook);
+    }
+
     function _sortFour(MintableDec a, MintableDec b, MintableDec c, MintableDec d)
         internal
         pure
@@ -126,7 +224,6 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
     {
         address[4] memory addrs = [address(a), address(b), address(c), address(d)];
         MintableDec[4] memory toks = [a, b, c, d];
-        // simple bubble sort by address
         for (uint256 i; i < 4; ++i) {
             for (uint256 j; j + 1 < 4; ++j) {
                 if (addrs[j] > addrs[j + 1]) {
@@ -136,6 +233,27 @@ abstract contract TestBase_UniswapV4QuadStableSwapHook is IndexedexTest {
             }
         }
         return (toks[0], toks[1], toks[2], toks[3]);
+    }
+
+    function _registry() internal view returns (IVaultRegistryVaultQuery) {
+        return IVaultRegistryVaultQuery(address(indexedexManager));
+    }
+
+    function _requiredFlags() internal pure returns (uint160) {
+        return PkgFactory.requiredFlags();
+    }
+
+    function _assertPoolLive(PoolKey memory key) internal view {
+        assertTrue(PairPoolLib.isPoolLive(pm, key), "pair door not initialized on PoolManager");
+        assertEq(address(key.hooks), hook, "hooks must be product proxy");
+        assertEq(key.fee, DEMO_FEE, "lpFeePips");
+    }
+
+    function _assertSixPoolsLiveFromPostDeploy() internal view {
+        PoolKey[6] memory keys = _poolKeys();
+        for (uint256 i; i < 6; ++i) {
+            _assertPoolLive(keys[i]);
+        }
     }
 }
 

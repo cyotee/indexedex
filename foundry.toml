@@ -259,6 +259,31 @@ remappings = [
     "contracts/external/solady/=lib/crane/contracts/external/solady/",
 ]
 
+# Quad Stable Swap Hook package (hook diamond factory path).
+# Run: FOUNDRY_PROFILE=quad_stable forge test -vv
+# Peer of orbital / single_se_buffer_cp_hook; plan also cites hook_factory for shared factory suite.
+[profile.quad_stable]
+src = 'contracts/hooks/uniswap/v4/stable/quad'
+test = 'test/foundry/spec/hooks/uniswap/v4/stable/quad'
+out = 'out_quad_stable'
+cache_path = 'cache_quad_stable'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+gas_limit = 30000000000
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
 # Single SE Buffer CP Hook package (Option B + ERC-4626 SE + V4 PM).
 # Run: FOUNDRY_PROFILE=single_se_buffer_cp_hook forge test -vv
 [profile.single_se_buffer_cp_hook]

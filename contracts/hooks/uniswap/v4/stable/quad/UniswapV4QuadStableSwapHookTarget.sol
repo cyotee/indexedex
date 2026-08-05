@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {
     toBeforeSwapDelta,
     BeforeSwapDelta
@@ -14,9 +16,12 @@ import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {IRateProvider} from
+    "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
-    UniswapV4QuadStableSwapHookCommon
-} from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookCommon.sol";
+    IUniswapV4QuadStableSwapHook
+} from "contracts/hooks/uniswap/v4/stable/quad/interfaces/IUniswapV4QuadStableSwapHook.sol";
 import {
     UniswapV4QuadStableSwapHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/stable/quad/UniswapV4QuadStableSwapHookRepo.sol";
@@ -26,26 +31,107 @@ import {
 
 /**
  * @title UniswapV4QuadStableSwapHookTarget
- * @notice IHooks + add/remove/zap + StableSwap beforeSwap (fee-on-output).
- * @dev Pattern-copy settle order from dual/single buffer peers. No BaseHook inheritance.
- *      Zap Algorithm A: closed-form inverse, leave ≥1 scaled out-leg clamp, reclassify after
- *      each internal swap, working-snapshot until single Repo commit (plan §6.5).
+ * @notice Product logic: IHooks + LP execute + StableSwap beforeSwap (fee-on-output).
+ * @dev Bindings in Repo (initAccount). LP via ERC20Repo; vault reserves via MultiAssetBasicVaultRepo.
+ *      No constructor immutables; no monomorph Common inheritance. No BaseHook / DeltaResolver.
  */
-abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHookCommon, IHooks {
-    constructor(
-        IPoolManager poolManager_,
-        address token0_,
-        address token1_,
-        address token2_,
-        address token3_,
-        uint24 lpFeePips_,
-        uint256 baseAmp_,
-        address[4] memory rateProviders_
-    )
-        UniswapV4QuadStableSwapHookCommon(
-            poolManager_, token0_, token1_, token2_, token3_, lpFeePips_, baseAmp_, rateProviders_
-        )
-    {}
+abstract contract UniswapV4QuadStableSwapHookTarget is IHooks, IUniswapV4QuadStableSwapHook {
+    error InvalidTokenOrder();
+    error InvalidToken();
+    error InvalidFee();
+    error InvalidAmp();
+    error ZeroAmount();
+    error Slippage();
+    error NotZapEligible();
+    error SwapNotLive();
+    error InvariantFailed();
+    error RateProviderFailed();
+    error InvalidRoute();
+    error InvalidPoolKey();
+    error LiquidityNotAllowed();
+    error DonateNotAllowed();
+    error HookNotImplemented();
+    error NotPoolManager();
+    error Reentrancy();
+    error ZeroAddress();
+    error TransferFailed();
+
+    modifier nonReentrant() {
+        Repo.Layout storage l = Repo._layout();
+        if (l.reentrancyStatus == Repo.ENTERED) revert Reentrancy();
+        l.reentrancyStatus = Repo.ENTERED;
+        _;
+        l.reentrancyStatus = Repo.NOT_ENTERED;
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              bindings / views                          */
+    /* ---------------------------------------------------------------------- */
+
+    function poolManager() public view returns (IPoolManager) {
+        return IPoolManager(Repo._layout().poolManager);
+    }
+
+    function token0() public view returns (address) {
+        return Repo._layout().token0;
+    }
+
+    function token1() public view returns (address) {
+        return Repo._layout().token1;
+    }
+
+    function token2() public view returns (address) {
+        return Repo._layout().token2;
+    }
+
+    function token3() public view returns (address) {
+        return Repo._layout().token3;
+    }
+
+    function tokens() public view returns (address[4] memory t) {
+        Repo.Layout storage l = Repo._layout();
+        t[0] = l.token0;
+        t[1] = l.token1;
+        t[2] = l.token2;
+        t[3] = l.token3;
+    }
+
+    function lpFeePips() public view returns (uint24) {
+        return Repo._layout().lpFeePips;
+    }
+
+    function baseAmp() public view returns (uint256) {
+        return Repo._layout().baseAmp;
+    }
+
+    function getCurrentAmp() public view returns (uint256) {
+        return Repo._layout().baseAmp * Math.AMP_PRECISION;
+    }
+
+    function rateProvider(uint256 index) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        if (index == 0) return l.rateProvider0;
+        if (index == 1) return l.rateProvider1;
+        if (index == 2) return l.rateProvider2;
+        if (index == 3) return l.rateProvider3;
+        revert InvalidRoute();
+    }
+
+    function rateProviders() public view returns (address[4] memory p) {
+        Repo.Layout storage l = Repo._layout();
+        p[0] = l.rateProvider0;
+        p[1] = l.rateProvider1;
+        p[2] = l.rateProvider2;
+        p[3] = l.rateProvider3;
+    }
+
+    function reserveOf(address token) public view returns (uint256) {
+        return Repo._layout().reserves[_tokenIndex(token)];
+    }
+
+    function effectiveRate(uint256 index) public view returns (uint256) {
+        return _effectiveRate(index);
+    }
 
     function getHookPermissions() public pure returns (Hooks.Permissions memory) {
         return Hooks.Permissions({
@@ -80,10 +166,9 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         address a = Currency.unwrap(poolKey.currency0);
         address b = Currency.unwrap(poolKey.currency1);
         if (a >= b) revert InvalidPoolKey();
-        // both must be bound tokens
         _tokenIndex(a);
         _tokenIndex(b);
-        if (poolKey.fee != _lpFeePips) revert InvalidPoolKey();
+        if (poolKey.fee != Repo._layout().lpFeePips) revert InvalidPoolKey();
         if (poolKey.tickSpacing != int24(int256(Math.TICK_SPACING))) revert InvalidPoolKey();
         if (address(poolKey.hooks) != address(this)) revert InvalidPoolKey();
         return IHooks.beforeInitialize.selector;
@@ -146,41 +231,63 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         returns (bytes4, BeforeSwapDelta swapDelta, uint24)
     {
         _onlyPoolManager();
-        address c0 = Currency.unwrap(key.currency0);
-        address c1 = Currency.unwrap(key.currency1);
-        address tokenIn = params.zeroForOne ? c0 : c1;
-        address tokenOut = params.zeroForOne ? c1 : c0;
-        uint256 i = _tokenIndex(tokenIn);
-        uint256 j = _tokenIndex(tokenOut);
+        swapDelta = params.amountSpecified < 0
+            ? _beforeSwapExactIn(key, params)
+            : _beforeSwapExactOut(key, params);
+        return (IHooks.beforeSwap.selector, swapDelta, 0);
+    }
 
+    function _beforeSwapExactIn(PoolKey calldata key, SwapParams calldata params)
+        private
+        returns (BeforeSwapDelta swapDelta)
+    {
+        (address tokenIn, address tokenOut, uint256 i, uint256 j) = _swapRoute(key, params.zeroForOne);
         Repo.Layout storage l = Repo._layout();
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
 
-        uint256[4] memory rates = _loadRates();
-        uint256 amp = getCurrentAmp();
+        uint256 amountIn = uint256(-params.amountSpecified);
+        if (amountIn == 0) revert ZeroAmount();
+        (uint256 amountOut, uint256[4] memory newR) = Math.quoteExactIn(
+            l.reserves, _loadRates(), i, j, amountIn, getCurrentAmp(), l.lpFeePips
+        );
+        l.reserves = newR;
+        _take(Currency.wrap(tokenIn), address(this), amountIn);
+        _settle(Currency.wrap(tokenOut), amountOut);
+        _syncVaultReserves();
+        swapDelta = toBeforeSwapDelta(int128(int256(amountIn)), int128(-int256(amountOut)));
+    }
 
-        if (params.amountSpecified < 0) {
-            // exact-in
-            uint256 amountIn = uint256(-params.amountSpecified);
-            if (amountIn == 0) revert ZeroAmount();
-            (uint256 amountOut, uint256[4] memory newR) =
-                Math.quoteExactIn(l.reserves, rates, i, j, amountIn, amp, _lpFeePips);
-            l.reserves = newR;
-            _take(Currency.wrap(tokenIn), address(this), amountIn);
-            _settle(Currency.wrap(tokenOut), amountOut);
-            swapDelta = toBeforeSwapDelta(int128(int256(amountIn)), int128(-int256(amountOut)));
-        } else {
-            // exact-out
-            uint256 amountOut = uint256(params.amountSpecified);
-            if (amountOut == 0) revert ZeroAmount();
-            (uint256 amountIn, uint256[4] memory newR) =
-                Math.quoteExactOut(l.reserves, rates, i, j, amountOut, amp, _lpFeePips);
-            l.reserves = newR;
-            _take(Currency.wrap(tokenIn), address(this), amountIn);
-            _settle(Currency.wrap(tokenOut), amountOut);
-            swapDelta = toBeforeSwapDelta(int128(-int256(amountOut)), int128(int256(amountIn)));
-        }
-        return (IHooks.beforeSwap.selector, swapDelta, 0);
+    function _beforeSwapExactOut(PoolKey calldata key, SwapParams calldata params)
+        private
+        returns (BeforeSwapDelta swapDelta)
+    {
+        (address tokenIn, address tokenOut, uint256 i, uint256 j) = _swapRoute(key, params.zeroForOne);
+        Repo.Layout storage l = Repo._layout();
+        if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
+
+        uint256 amountOut = uint256(params.amountSpecified);
+        if (amountOut == 0) revert ZeroAmount();
+        (uint256 amountIn, uint256[4] memory newR) = Math.quoteExactOut(
+            l.reserves, _loadRates(), i, j, amountOut, getCurrentAmp(), l.lpFeePips
+        );
+        l.reserves = newR;
+        _take(Currency.wrap(tokenIn), address(this), amountIn);
+        _settle(Currency.wrap(tokenOut), amountOut);
+        _syncVaultReserves();
+        swapDelta = toBeforeSwapDelta(int128(-int256(amountOut)), int128(int256(amountIn)));
+    }
+
+    function _swapRoute(PoolKey calldata key, bool zeroForOne)
+        private
+        view
+        returns (address tokenIn, address tokenOut, uint256 i, uint256 j)
+    {
+        address c0 = Currency.unwrap(key.currency0);
+        address c1 = Currency.unwrap(key.currency1);
+        tokenIn = zeroForOne ? c0 : c1;
+        tokenOut = zeroForOne ? c1 : c0;
+        i = _tokenIndex(tokenIn);
+        j = _tokenIndex(tokenOut);
     }
 
     function afterSwap(address, PoolKey calldata, SwapParams calldata, BalanceDelta, bytes calldata)
@@ -212,6 +319,212 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
     }
 
     /* ---------------------------------------------------------------------- */
+    /*                         public LP / zap / preview                      */
+    /* ---------------------------------------------------------------------- */
+
+    function previewAddLiquidity(uint256[4] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[4] memory actualAmounts)
+    {
+        return _previewAddLiquidity(amounts);
+    }
+
+    function previewRemoveLiquidity(uint256 shares) external view returns (uint256[4] memory amounts) {
+        return _previewRemoveLiquidity(shares);
+    }
+
+    function previewZapIn(uint256[4] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[4] memory amountsUsed)
+    {
+        return _previewZapIn(amounts);
+    }
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+    }
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+    }
+
+    function addLiquidity(
+        uint256[4] calldata amounts,
+        uint256[4] calldata minAmounts,
+        address to,
+        uint256 sharesMin
+    ) external nonReentrant returns (uint256 shares, uint256[4] memory actualAmounts) {
+        return _addLiquidity(amounts, minAmounts, to, sharesMin);
+    }
+
+    function zapIn(uint256[4] calldata amounts, address to, uint256 sharesMin)
+        external
+        nonReentrant
+        returns (uint256 shares, uint256[4] memory amountsUsed)
+    {
+        return _zapIn(amounts, to, sharesMin);
+    }
+
+    function removeLiquidity(uint256 shares, address to, uint256[4] calldata minAmounts)
+        external
+        nonReentrant
+        returns (uint256[4] memory amounts)
+    {
+        return _removeLiquidity(shares, to, minAmounts);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                              token helpers                             */
+    /* ---------------------------------------------------------------------- */
+
+    function _tokenIndex(address token) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (token == l.token0) return 0;
+        if (token == l.token1) return 1;
+        if (token == l.token2) return 2;
+        if (token == l.token3) return 3;
+        revert InvalidRoute();
+    }
+
+    function _tokenAt(uint256 index) internal view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        if (index == 0) return l.token0;
+        if (index == 1) return l.token1;
+        if (index == 2) return l.token2;
+        if (index == 3) return l.token3;
+        revert InvalidRoute();
+    }
+
+    function _baseScaleAt(uint256 index) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (index == 0) return l.baseScale0;
+        if (index == 1) return l.baseScale1;
+        if (index == 2) return l.baseScale2;
+        if (index == 3) return l.baseScale3;
+        revert InvalidRoute();
+    }
+
+    function _effectiveRate(uint256 index) internal view returns (uint256) {
+        uint256 base = _baseScaleAt(index);
+        address provider = rateProvider(index);
+        uint256 oracleRate = Math.RATE_PRECISION;
+        if (provider != address(0)) {
+            oracleRate = _getRateFailClosed(provider);
+        }
+        return (base * oracleRate) / Math.RATE_PRECISION;
+    }
+
+    function _loadRates() internal view returns (uint256[4] memory rates) {
+        rates[0] = _effectiveRate(0);
+        rates[1] = _effectiveRate(1);
+        rates[2] = _effectiveRate(2);
+        rates[3] = _effectiveRate(3);
+    }
+
+    function _getRateFailClosed(address provider) internal view returns (uint256 rate) {
+        (bool ok, bytes memory ret) =
+            provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
+        if (!ok || ret.length != 32) revert RateProviderFailed();
+        rate = abi.decode(ret, (uint256));
+        if (rate == 0) revert RateProviderFailed();
+    }
+
+    function _onlyPoolManager() internal view {
+        if (msg.sender != Repo._layout().poolManager) revert NotPoolManager();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                           pull / push / settle                         */
+    /* ---------------------------------------------------------------------- */
+
+    function _pull(address token, uint256 amount) internal {
+        if (amount == 0) return;
+        _callOptionalReturn(
+            token, abi.encodeWithSelector(IERC20.transferFrom.selector, msg.sender, address(this), amount)
+        );
+    }
+
+    function _push(address token, address to, uint256 amount) internal {
+        if (amount == 0) return;
+        _callOptionalReturn(token, abi.encodeWithSelector(IERC20.transfer.selector, to, amount));
+    }
+
+    function _callOptionalReturn(address token, bytes memory data) private {
+        (bool success, bytes memory returndata) = token.call(data);
+        if (!success) {
+            if (returndata.length > 0) {
+                assembly {
+                    revert(add(returndata, 0x20), mload(returndata))
+                }
+            }
+            revert TransferFailed();
+        }
+        if (returndata.length > 0) {
+            require(abi.decode(returndata, (bool)), "ERC20 op false");
+        }
+    }
+
+    function _take(Currency currency, address recipient, uint256 amount) internal {
+        if (amount == 0) return;
+        IPoolManager(Repo._layout().poolManager).take(currency, recipient, amount);
+    }
+
+    function _settle(Currency currency, uint256 amount) internal {
+        if (amount == 0) return;
+        IPoolManager pm = IPoolManager(Repo._layout().poolManager);
+        pm.sync(currency);
+        _callOptionalReturn(
+            Currency.unwrap(currency),
+            abi.encodeWithSelector(IERC20.transfer.selector, address(pm), amount)
+        );
+        pm.settle();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         LP mint/burn + vault sync                      */
+    /* ---------------------------------------------------------------------- */
+
+    function _mintLp(address to, uint256 amount) internal {
+        ERC20Repo._mint(to, amount);
+    }
+
+    function _burnLp(address from, uint256 amount) internal {
+        ERC20Repo._burn(from, amount);
+    }
+
+    function _totalSupply() internal view returns (uint256) {
+        return ERC20Repo._totalSupply();
+    }
+
+    function _syncVaultReserves() internal {
+        Repo.Layout storage l = Repo._layout();
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token0), l.reserves[0]);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token1), l.reserves[1]);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token2), l.reserves[2]);
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token3), l.reserves[3]);
+    }
+
+    function _isZapEligible() internal view returns (bool) {
+        if (_totalSupply() <= Math.MINIMUM_LIQUIDITY) return false;
+        uint256[4] memory r = Repo._layout().reserves;
+        return r[0] > 0 && r[1] > 0 && r[2] > 0 && r[3] > 0;
+    }
+
+    function _requireZapEligible() internal view {
+        if (!_isZapEligible()) revert NotZapEligible();
+    }
+
+    /* ---------------------------------------------------------------------- */
     /*                            liquidity + zap                             */
     /* ---------------------------------------------------------------------- */
 
@@ -222,7 +535,8 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
     {
         Repo.Layout storage l = Repo._layout();
         uint256[4] memory rates = _loadRates();
-        if (l.totalSupply == 0) {
+        uint256 supply = _totalSupply();
+        if (supply == 0) {
             for (uint256 i; i < 4; ++i) {
                 if (amounts[i] == 0) revert ZeroAmount();
             }
@@ -234,7 +548,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
             actual = amounts;
             return (shares, actual);
         }
-        (shares, actual) = Math.laterMintShares(amounts, l.reserves, l.totalSupply);
+        (shares, actual) = Math.laterMintShares(amounts, l.reserves, supply);
     }
 
     function _addLiquidity(
@@ -251,7 +565,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         }
 
         Repo.Layout storage l = Repo._layout();
-        bool first = l.totalSupply == 0;
+        bool first = _totalSupply() == 0;
 
         for (uint256 i; i < 4; ++i) {
             _pull(_tokenAt(i), actual[i]);
@@ -259,11 +573,10 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         }
 
         if (first) {
-            _mint(address(0), Math.MINIMUM_LIQUIDITY);
+            _mintLp(address(0), Math.MINIMUM_LIQUIDITY);
         }
-        _mint(to, shares);
-
-        // post-state priceable
+        _mintLp(to, shares);
+        _syncVaultReserves();
         _requirePriceable();
     }
 
@@ -272,8 +585,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         view
         returns (uint256[4] memory amounts)
     {
-        Repo.Layout storage l = Repo._layout();
-        return Math.removeAmounts(shares, l.reserves, l.totalSupply);
+        return Math.removeAmounts(shares, Repo._layout().reserves, _totalSupply());
     }
 
     function _removeLiquidity(uint256 shares, address to, uint256[4] memory minAmounts)
@@ -283,16 +595,16 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         if (to == address(0)) revert ZeroAddress();
         if (shares == 0) revert ZeroAmount();
         Repo.Layout storage l = Repo._layout();
-        amounts = Math.removeAmounts(shares, l.reserves, l.totalSupply);
+        amounts = Math.removeAmounts(shares, l.reserves, _totalSupply());
         for (uint256 i; i < 4; ++i) {
             if (amounts[i] < minAmounts[i]) revert Slippage();
         }
-        _burn(msg.sender, shares);
+        _burnLp(msg.sender, shares);
         for (uint256 i; i < 4; ++i) {
             l.reserves[i] -= amounts[i];
             _push(_tokenAt(i), to, amounts[i]);
         }
-        // no post-invariant require on remove (D25)
+        _syncVaultReserves();
     }
 
     function _previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
@@ -305,7 +617,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         Repo.Layout storage l = Repo._layout();
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
         (amountOut,) =
-            Math.quoteExactIn(l.reserves, _loadRates(), i, j, amountIn, getCurrentAmp(), _lpFeePips);
+            Math.quoteExactIn(l.reserves, _loadRates(), i, j, amountIn, getCurrentAmp(), l.lpFeePips);
     }
 
     function _previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -318,7 +630,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         Repo.Layout storage l = Repo._layout();
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
         (amountIn,) =
-            Math.quoteExactOut(l.reserves, _loadRates(), i, j, amountOut, getCurrentAmp(), _lpFeePips);
+            Math.quoteExactOut(l.reserves, _loadRates(), i, j, amountOut, getCurrentAmp(), l.lpFeePips);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -344,9 +656,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         uint256 amp = getCurrentAmp();
 
         (W, workingR) = _zapRebalance(W, workingR, rates, amp);
-
-        uint256 supply = l.totalSupply;
-        (shares, amountsUsed) = Math.laterMintShares(W, workingR, supply);
+        (shares, amountsUsed) = Math.laterMintShares(W, workingR, _totalSupply());
     }
 
     function _zapIn(uint256[4] memory amounts, address to, uint256 sharesMin)
@@ -361,7 +671,6 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         }
         if (!any) revert ZeroAmount();
 
-        // pull full amounts up front
         for (uint256 i; i < 4; ++i) {
             if (amounts[i] > 0) _pull(_tokenAt(i), amounts[i]);
         }
@@ -374,17 +683,16 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
 
         (W, workingR) = _zapRebalance(W, workingR, rates, amp);
 
-        (shares, amountsUsed) = Math.laterMintShares(W, workingR, l.totalSupply);
+        (shares, amountsUsed) = Math.laterMintShares(W, workingR, _totalSupply());
         if (shares < sharesMin) revert Slippage();
 
         for (uint256 i; i < 4; ++i) {
-            // single Repo commit: post-swap book + mint legs
             l.reserves[i] = workingR[i] + amountsUsed[i];
-            // refund unused (includes pre-swap residual on surplus legs)
             uint256 refund = W[i] - amountsUsed[i];
             if (refund > 0) _push(_tokenAt(i), msg.sender, refund);
         }
-        _mint(to, shares);
+        _mintLp(to, shares);
+        _syncVaultReserves();
         _requirePriceable();
     }
 
@@ -407,7 +715,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         z.workingR = workingR;
         z.rates = rates;
         z.amp = amp;
-        z.fee = _lpFeePips;
+        z.fee = Repo._layout().lpFeePips;
         _zapRebalanceWork(z);
         return (z.W, z.workingR);
     }
@@ -418,11 +726,9 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
             if (allMatch) return;
             _zapPassSurplusDeficit(z, T_s);
         }
-        // Final proportional seed so every positive reserve leg has W[j]>0 for D24 mint.
         _zapSeedZeroLegs(z);
     }
 
-    /// @dev Nudge exact-in from largest W into any W[j]==0 leg (closed-form size, maxViable clamp).
     function _zapSeedZeroLegs(ZapWork memory z) private view {
         for (uint256 round; round < 4; ++round) {
             bool anyZero;
@@ -442,13 +748,11 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
 
             for (uint256 j; j < 4; ++j) {
                 if (j == i || z.W[j] != 0 || z.workingR[j] == 0) continue;
-                // Aim for ~1/N of remaining donor (closed-form slice, not iterative target refine)
                 uint256 slice = z.W[i] / 4;
                 if (slice == 0) slice = 1;
                 if (slice > z.W[i]) slice = z.W[i];
                 uint256 maxV = _maxViableIn(z, i, j, slice);
                 if (maxV == 0) {
-                    // try tiny unit
                     maxV = _maxViableIn(z, i, j, 1);
                     if (maxV == 0) continue;
                     slice = maxV;
@@ -484,13 +788,11 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
     }
 
     function _zapPassSurplusDeficit(ZapWork memory z, uint256[4] memory T_s) private view {
-        // Cap internal swaps to avoid fee-driven thrashing under frozen T_s (plan: max 2 outer passes).
         for (uint256 n; n < 12; ++n) {
             if (!_zapOneInternalSwap(z, T_s)) break;
         }
     }
 
-    /// @dev One surplus→deficit exact-in on working snapshot; returns true if a swap ran.
     function _zapOneInternalSwap(ZapWork memory z, uint256[4] memory T_s)
         private
         view
@@ -541,9 +843,9 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         }
     }
 
-    /// @dev External boundary so zap internal swaps can try/catch quote failures.
+    /// @dev External boundary so zap internal swaps can try/catch quote failures (must be cut).
     function zapQuoteExactInExternal(
-        uint256[4] memory reserves,
+        uint256[4] memory reserves_,
         uint256[4] memory rates,
         uint256 i,
         uint256 j,
@@ -551,7 +853,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         uint256 amp,
         uint24 fee
     ) external pure returns (uint256 userOut, uint256[4] memory newR) {
-        return Math.quoteExactIn(reserves, rates, i, j, swapIn, amp, fee);
+        return Math.quoteExactIn(reserves_, rates, i, j, swapIn, amp, fee);
     }
 
     function _zapSizeSwapIn(
@@ -566,8 +868,6 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         if (rawSurplus == 0 || wantUserOutRaw == 0) return 0;
 
         uint256 amountInIdeal = _closedFormInverseExactIn(z, i, j, wantUserOutRaw);
-        // Ideal 0 means inverse unviable or need cannot be priced — fall back to maxViable only
-        // (do not force full surplus; that can thrash / drain out-leg).
         if (amountInIdeal == 0) {
             return _maxViableIn(z, i, j, rawSurplus);
         }
@@ -601,7 +901,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         }
     }
 
-    /// @dev External try/catch boundary for zap inverse (pure relative to storage).
+    /// @dev External try/catch boundary for zap inverse (must be cut).
     function tryGetYForZap(
         uint256[4] memory xp,
         uint256 amp,
@@ -615,7 +915,6 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         if (yOutScaledDelta >= xp[j]) revert InvariantFailed();
         uint256 yOutNew = xp[j] - yOutScaledDelta;
         if (yOutNew == 0) revert InvariantFailed();
-        // external Math.getY — new stack frame
         xInNew = Math.getY(j, i, yOutNew, xp, amp, D);
     }
 
@@ -625,8 +924,6 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         returns (uint256 maxViableIn)
     {
         uint256 outScaled = Math.scaleTo(z.workingR[j], z.rates[j]);
-        // Leave enough scaled units that getY stays well-conditioned (plan: ≥1; use ≥1e12 when large).
-        // Leave enough scaled units that getY stays well-conditioned (plan: ≥1; use ≥1e12 when large).
         uint256 leaveAmt = outScaled > 1e12 ? 1e12 : (outScaled > 1 ? 1 : 0);
         if (leaveAmt == 0 || outScaled <= leaveAmt) return 0;
         uint256 maxRawOut = Math.descale(outScaled - leaveAmt, z.rates[j]);
@@ -638,27 +935,6 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         maxViableIn = ideal < rawSurplus ? ideal : rawSurplus;
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                         ERC-20 mint / burn                             */
-    /* ---------------------------------------------------------------------- */
-
-    function _mint(address to, uint256 amount) internal {
-        Repo.Layout storage l = Repo._layout();
-        l.totalSupply += amount;
-        l.balanceOf[to] += amount;
-        // Transfer event emitted by wire
-        _emitTransfer(address(0), to, amount);
-    }
-
-    function _burn(address from, uint256 amount) internal {
-        Repo.Layout storage l = Repo._layout();
-        l.balanceOf[from] -= amount;
-        l.totalSupply -= amount;
-        _emitTransfer(from, address(0), amount);
-    }
-
-    function _emitTransfer(address from, address to, uint256 amount) internal virtual;
-
     function _requirePriceable() internal view {
         uint256[4] memory r = Repo._layout().reserves;
         uint256[4] memory rates = _loadRates();
@@ -666,9 +942,7 @@ abstract contract UniswapV4QuadStableSwapHookTarget is UniswapV4QuadStableSwapHo
         for (uint256 i; i < 4; ++i) {
             xp[i] = Math.scaleTo(r[i], rates[i]);
         }
-        // require all four for full book priceability after add/zap
         if (xp[0] == 0 || xp[1] == 0 || xp[2] == 0 || xp[3] == 0) revert InvariantFailed();
-        // external getD
         Math.getD(xp, getCurrentAmp());
     }
 }

@@ -31,7 +31,7 @@ contract UniswapV4QuadStableSwapHook_Liquidity_Test is TestBase_UniswapV4QuadSta
     function test_L2_firstMint_withOpenDoors_noPriorSwaps() public {
         // doors already open from factory; no swaps yet
         _addLiquidityFirst(500);
-        uint256[4] memory r = quad.reserves();
+        uint256[4] memory r = _bookReserves();
         assertGt(r[0], 0);
         assertGt(r[1], 0);
         assertGt(r[2], 0);
@@ -74,7 +74,7 @@ contract UniswapV4QuadStableSwapHook_Liquidity_Test is TestBase_UniswapV4QuadSta
         // after address sort, 6-dec and 18-dec are mixed among t0..t3
         assertTrue(t0.decimals() == 6 || t0.decimals() == 18);
         _addLiquidityFirst(1_000);
-        uint256[4] memory r = quad.reserves();
+        uint256[4] memory r = _bookReserves();
         assertGt(r[0] + r[1] + r[2] + r[3], 0);
         has6;
         has18;
@@ -82,9 +82,9 @@ contract UniswapV4QuadStableSwapHook_Liquidity_Test is TestBase_UniswapV4QuadSta
 
     function test_L6_donation_doesNotChangeReserves() public {
         _addLiquidityFirst(1_000);
-        uint256[4] memory before = quad.reserves();
+        uint256[4] memory before = _bookReserves();
         t0.mint(hook, _raw(t0, 999)); // donation
-        uint256[4] memory after_ = quad.reserves();
+        uint256[4] memory after_ = _bookReserves();
         for (uint256 i; i < 4; ++i) {
             assertEq(after_[i], before[i]);
         }

@@ -63,12 +63,12 @@ contract UniswapV4QuadStableSwapHook_Zap_Test is TestBase_UniswapV4QuadStableSwa
 
     function test_Z5_singleCommit_reservesIncrease() public {
         _addLiquidityFirst(5_000);
-        uint256[4] memory before = quad.reserves();
+        uint256[4] memory before = _bookReserves();
         uint256[4] memory amounts;
         amounts[0] = _raw(t0, 100);
         vm.prank(user);
         quad.zapIn(amounts, user, 0);
-        uint256[4] memory after_ = quad.reserves();
+        uint256[4] memory after_ = _bookReserves();
         bool grew;
         for (uint256 i; i < 4; ++i) {
             if (after_[i] > before[i]) grew = true;
@@ -96,7 +96,7 @@ contract UniswapV4QuadStableSwapHook_Zap_Test is TestBase_UniswapV4QuadStableSwa
      */
     function test_Z6_unviableInverse_clamp_previewEqualsExec_sharesMin() public {
         _addLiquidityFirst(100);
-        uint256[4] memory rBefore = quad.reserves();
+        uint256[4] memory rBefore = _bookReserves();
 
         uint256[4] memory huge;
         huge[0] = _raw(t0, 50_000);
@@ -115,7 +115,7 @@ contract UniswapV4QuadStableSwapHook_Zap_Test is TestBase_UniswapV4QuadStableSwa
         assertTrue(used[0] <= huge[0], "input leg used <= pull max");
 
         // Out-legs not drained to zero (clamp leave / skip preserved priceability)
-        uint256[4] memory rAfter = quad.reserves();
+        uint256[4] memory rAfter = _bookReserves();
         for (uint256 i; i < 4; ++i) {
             assertTrue(rAfter[i] > 0, "reserve leg remains positive after clamp zap");
         }

@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4QuadStableSwapHook` → **Hook Diamond Package**  
 **Date:** 2026-08-04  
-**Status:** **Draft v1.0 — plan-ready** (deploy-shape law only; StableSwap product law stays on the product PRD)  
+**Status:** **Implemented v1.0** (deploy-shape law only; StableSwap product law stays on the product PRD)  
 **Package path:** `contracts/hooks/uniswap/v4/stable/quad/`  
 **Package kind:** **Refactor PRD** — migrate the existing **CREATE3 monomorph** 4-asset StableSwap hook onto the **Uniswap V4 Hook Diamond Package Callback Factory** standard.
 

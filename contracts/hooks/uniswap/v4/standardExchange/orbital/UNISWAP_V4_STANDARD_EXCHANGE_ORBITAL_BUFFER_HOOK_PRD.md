@@ -2,14 +2,16 @@
 
 **Name:** `UniswapV4StandardExchangeOrbitalBufferHook`  
 **Date:** 2026-08-04  
-**Status:** **Draft v0.3 — product law (open items resolved; plan-ready for impl plan)**  
+**Status:** **Draft v0.5 — product law (plan-ready)**  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/orbital/`  
 **Package kind:** IndexedEx **Uniswap V4 hook diamond package** that is **also** a vault-compatible multi-asset surface. Instance deploys via the **shared Hook Diamond Package Callback Factory** + Vault Registry `deployHookVault` (CREATE2-mined proxy). **Not** a concentrated-liquidity (CL) reimplementation. **Not** the raw-inventory monomorph `UniswapV4OrbitalSwapHook` under `contracts/hooks/uniswap/v4/orbital/`.
 
 **Decision ID note:** `D*`, `O*`, and `Q*` IDs are **stable keys**, not document order.
 
 **v0.2 locks:** Q1 distinct SEs; orbital dual-channel fees; zap-in only; RP rates SE shares; SE In/Out required.  
-**v0.3 locks:** SE route without exact-out → **full tx revert**; Q2 native×rate then `toWad`; Q4 `MAX_DUST_WEI = 10`; Q5 **postDeploy** pool init; Q9 **zap-in high-level algorithm in PRD**; Q11 SE In/Out **Permit2 only**.
+**v0.3 locks:** SE route without exact-out → **full tx revert**; Q2 native×rate then `toWad`; Q4 `MAX_DUST_WEI = 10`; Q5 **postDeploy** pool init; Q9 **zap-in high-level algorithm in PRD**; SE In/Out funding clarified in **v0.4**.  
+**v0.4 locks:** Fork DoD = **Ethereum + Base + Robinhood (4663)**; LP symbol **`SEORB-…`**.  
+**v0.5 locks:** Hook SE In/Out pull = **BasicVaultCommon peer**: ERC-20 `transferFrom` if allowance to hook, else **Permit2 AllowanceTransfer** (`permit2.transferFrom`); `pretransferred` path unchanged. SignatureTransfer remains **LP deposit / optional overlays only** — not required on canonical `exchangeIn`/`exchangeOut`.
 
 **Authority (normative):**
 
@@ -305,13 +307,13 @@ v1 is the **composition layer**: orbital multi-door topology with Single-SE-styl
 | D43 | Subsequent full book | Three-leg Uni V2 min-ratio on **WAD effective reserves**; all three legs participate; buffer SE legs last |
 | D44 | Partial book | Orbital peer: prop min over maxed positive effective legs; seed zero legs with full max; **sphere-NAV** share mint; seed-only OK when partial. **Zap-in forbidden** while partial (not full book) |
 | D45 | Withdraw | **`removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline)`** — burn `msg.sender` LP only; pro-rata inventory; unwrap buffered legs to pool tokens; pay binding-order amounts to `to` |
-| D46 | LP name/symbol | Auto e.g. `SEORB-{s0}-{s1}-{s2}` (Standard Exchange Orbital Buffer); address-fragment fallback |
+| D46 | LP name/symbol | Auto **`SEORB-{s0}-{s1}-{s2}`** (Standard Exchange Orbital Buffer); address-fragment fallback. Prefix **`SEORB`** is locked (not a Solidity type name) |
 | D47 | Funding | SafeERC20 `transferFrom` **and** Permit2 (signature + allowance) on **addLiquidity and depositSingle** paths. Empty `permit2Data` ⇒ transferFrom only; non-empty ⇒ Permit2 for every pulled leg — **no mixed** path. Refunds of unused deposit tokens to **`msg.sender`** |
 | D48 | Reentrancy | One global non-reentrant lock on add/remove/**depositSingle**/SE In/Out **and** `beforeSwap` body (after PM sender check) |
 | D49 | Preview fidelity | **Bit-exact** `preview* == execution` at same oracle fee reads, same SE previews, same rate reads, same ceil/floor path (incl. zap + SE In/Out) |
 | D49a | SE In/Out surface | **Required v1:** implement `IStandardExchangeIn` + `IStandardExchangeOut` for exact-in/out **tokenᵢ ↔ tokenⱼ** (`i ≠ j`, both bound) against the **same** effective sphere book as public V4 swaps (D50 trading fee + D31 composition). **Internal settle** (no PoolManager unlock). **Not** LP mint/burn. Previews required and bit-exact. SE missing exact-out invert → **full tx revert** (D31a) |
 | D49b | SE In/Out token domain | Only the three bound pool tokens. Revert if token is SE share address, unbound, or same token in/out |
-| D49c | SE In/Out funding | **Permit2 only (Q11)** for pulling `tokenIn` on SE In/Out paths (SignatureTransfer and/or AllowanceTransfer as plan packs). **No** classic `transferFrom` on SE In/Out in v1. LP deposit paths still support transferFrom **and** Permit2 (D47). Payout of `tokenOut` is ordinary transfer to recipient |
+| D49c | SE In/Out funding (v0.5) | **Canonical `IStandardExchangeIn` / `IStandardExchangeOut` only** (same selectors/args as Crane). When `pretransferred == false`, pull with **BasicVaultCommon peer law** (`_secureTokenTransfer` style): if `tokenIn.allowance(msg.sender, hook) >= amount` → SafeERC20 **`transferFrom`**; else **Permit2 AllowanceTransfer** `permit2.transferFrom(msg.sender, hook, amount, tokenIn)` (user must have set Permit2 allowance for the **hook** as spender — same UX as production SE vaults). When `pretransferred == true`, require sufficient balance already on hook (delta/absolute per plan peer). **No** SignatureTransfer on the canonical SE In/Out ABI (interface has no sig fields). Optional SignatureTransfer **overlays** are **not** v1 DoD. Hook must be **Permit2-aware** (wire well-known Permit2 / `IPermit2Aware`). LP deposits still classic transferFrom **and** Permit2 Signature + Allowance (D47). Payout of `tokenOut` is ordinary transfer to `recipient` |
 
 ### 3.4 Fees, protocol growth, ops
 
@@ -338,7 +340,7 @@ v1 is the **composition layer**: orbital multi-door topology with Single-SE-styl
 | D63 | Access | Liquidity + views permissionless; hook callbacks `msg.sender == poolManager` only |
 | D64 | Vault/SE compatibility surface | **Required v1:** `IBasicVault` + `IStandardVault` multi-asset discovery: `vaultTokens()` = binding tokens; `reserveOfToken(token_i)` = **effective** reserve (shares×rate, claim, or raw face), never free dust of buffered tokens. **Plus** SE In/Out per **D49a** |
 | D65 | Test SE | Hermetic DoD uses production **ERC-4626 Wrapper SE** (and/or production SE ports) with mintable pool tokens. Matrix must cover: (a) **0 SE** raw-only, (b) **1 SE**, (c) **2 SE**, (d) **3 SE** all buffered; plus rateProvider zero/non-zero rows for at least one buffered config; zap-in on full book; SE In/Out both directions for each pair. **No** mock hook / mock SE SUT |
-| D66 | Fork DoD | **Base** + **Robinhood (4663)** required; Ethereum optional stretch. Production PM/Permit2/fee oracle when present; deploy-if-missing production-equivalent. May deploy mintable tokens + wrapper SEs on fork |
+| D66 | Fork DoD | **Ethereum + Base + Robinhood (4663)** mainnet forks **all required**. Production PM/Permit2/fee oracle when present; deploy-if-missing production-equivalent. May deploy mintable tokens + wrapper SEs on fork (token choice free; goal = production PM/Permit2/oracle/hook integration) |
 | D67 | DETF coupling | Fully independent product/test surface from DETF packages |
 | D68 | Impl plan follow-on | `UNISWAP_V4_STANDARD_EXCHANGE_ORBITAL_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md` |
 
@@ -562,7 +564,9 @@ exchangeIn(tokenIn, tokenOut, amountIn, minOut, …) / exchangeOut(…)
   → same trading fee residual (dexSwapFee WAD)
   → same buffer/unwrap + RP composition (D31)
   → internal settle only
-  → pull tokenIn via **Permit2 only** (D49c) — no transferFrom on this surface
+  → Canonical ABI pull when !pretransferred: ERC-20 allowance → transferFrom,
+    else Permit2 AllowanceTransfer (BasicVaultCommon peer — D49c)
+  → pretransferred: tokens already on hook
   → pay tokenOut to recipient
   → NEVER mint/burn hook LP
   → SE missing exact-out invert when required → full tx revert (D31a)
@@ -658,10 +662,12 @@ dexSwapFee() / usageFee() / feeTo() / kLast() / kLastMode()
 ### 6.4 SE In/Out (required)
 
 ```text
-// IStandardExchangeIn / IStandardExchangeOut peer surface (names per plan)
+// Canonical IStandardExchangeIn / IStandardExchangeOut (selectors + pretransferred)
 exchangeIn / exchangeOut  (token_i ↔ token_j, i ≠ j)
 previewExchangeIn / previewExchangeOut
-// Funding: Permit2 only for tokenIn (D49c)
+// Funding (!pretransferred): ERC-20 transferFrom if allowance, else Permit2 AllowanceTransfer
+//   (BasicVaultCommon / production SE vault peer — D49c). Hook is Permit2-aware.
+// No SignatureTransfer on this ABI. Optional sig overlays not v1 DoD.
 // Internal settle; same book as V4; not LP
 // SE exact-out unsupported → whole tx reverts (D31a)
 ```
@@ -707,7 +713,7 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 7. **Fees:** trading residual; growth mint on add/remove; previews bit-exact at same oracle/SE/RP reads.  
 8. **Permit2 + transferFrom** deposit paths.  
 9. **Reentrancy / donation / SE revert / RP fail-closed** adversarial cases.  
-10. **Forks:** Base + Robinhood (4663) smoke with production stack deploy-if-missing.  
+10. **Forks:** Ethereum + Base + Robinhood (4663) smoke with production stack deploy-if-missing.  
 11. **No** mock SUT hook/SE/manager/registry/factory.
 
 ---
@@ -726,10 +732,12 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 | Q8 | Rate provider on raw legs | **Forbidden** — D6 |
 | Q9 | Zap-in algorithm | **High-level algorithm locked in §4.5.3**; plan derives closed-form algebra; sequential internal swaps j then k by index order |
 | Q10 | Zap-out | **Out of v1** — D41b |
-| Q11 | SE In/Out funding | **Permit2 only** (no transferFrom on SE In/Out) — D49c |
+| Q11 | SE In/Out funding | **v0.5:** canonical IStandardExchange pull = ERC-20 transferFrom **or** Permit2 **AllowanceTransfer** fallback (BasicVaultCommon peer) — D49c. No SignatureTransfer on canonical ABI |
 | Q12 | SE exact-out unsupported | **Full transaction reverts** — D31a |
+| Q13 | Fork chains | **Ethereum + Base + Robinhood (4663)** all required — D66 |
+| Q14 | LP symbol prefix | **`SEORB-…`** locked — D46 |
 
-**Plan-only remaining work (not product forks):** expand §4.5.3 into explicit Math identities / proofs; wire Permit2 packing bytes for SE In/Out; name custom errors.
+**Plan-only remaining work (not product forks):** expand §4.5.3 into explicit Math identities / proofs; wire Permit2 packing bytes for SE In/Out overlays; name custom errors.
 
 ---
 
@@ -755,14 +763,15 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 - [ ] Buffer-last + share/claim composition green under SE dilution.  
 - [ ] Sphere exact-in/out + partial book + full-book multipath LP green.  
 - [ ] **Zap-in** green when zap-eligible; reverts when partial/empty/dust-only; **no zap-out**.  
-- [ ] **SE In/Out** green both directions for each token pair; Permit2-only pulls; not LP.  
+- [ ] **SE In/Out** green both directions for each token pair: transferFrom path **and** Permit2 AllowanceTransfer fallback path; pretransferred path; not LP.  
 - [ ] SE missing exact-out invert on a required path **reverts whole tx** (D31a) — covered by test.  
 - [ ] Trading + growth fee channels green (orbital dual-channel); previews bit-exact.  
-- [ ] LP: Permit2 + transferFrom; SE In/Out: Permit2 only.  
+- [ ] LP: Permit2 + transferFrom.  
 - [ ] Config matrix 0–3 SEs + RP rows green.  
 - [ ] `postDeploy` creates all three pair doors.  
 - [ ] Adversarial suite green.  
-- [ ] Fork smoke Base + Robinhood (4663) green.  
+- [ ] Fork smoke **Ethereum + Base + Robinhood (4663)** green.  
+- [ ] LP symbol uses **`SEORB-`** prefix.  
 - [ ] No monomorph CREATE3 product factory; no SE shares as pool currencies; no subclassing peer hooks.
 
 ---
@@ -773,7 +782,9 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 |---------|------|-------|
 | **v0.1** | 2026-08-04 | Initial PRD: orbital curve/topology + per-token optional SE buffer + optional rate provider; hook diamond deploy; buffer-last/claim process from Single SE BCP; three doors; 0–3 SE matrix |
 | **v0.2** | 2026-08-04 | Conversation locks: distinct SEs; orbital dual-channel fees; **zap-in only**; RP rates **SE shares** (Balancer SE RP peer); **SE In/Out required v1**; updated DoD + surfaces |
-| **v0.3** | 2026-08-04 | D31a SE exact-out fail → full revert; Q2 native×rate→toWad; Q4 dust=10; Q5 postDeploy pools; Q9 zap-in algorithm §4.5.3; Q11 SE In/Out Permit2-only; open-item table closed |
+| **v0.3** | 2026-08-04 | D31a SE exact-out fail → full revert; Q2 native×rate→toWad; Q4 dust=10; Q5 postDeploy pools; Q9 zap-in algorithm §4.5.3; open-item table closed |
+| **v0.4** | 2026-08-04 | D66 Ethereum+Base+RH required; D46 `SEORB-` locked; early D49c draft |
+| **v0.5** | 2026-08-04 | D49c: SE In/Out pull = BasicVaultCommon peer (ERC-20 transferFrom else Permit2 AllowanceTransfer); no SignatureTransfer on canonical exchange ABI |
 
 ---
 
