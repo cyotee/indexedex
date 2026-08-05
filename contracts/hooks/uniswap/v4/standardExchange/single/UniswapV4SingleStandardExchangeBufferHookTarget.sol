@@ -10,30 +10,23 @@ import {
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
-import {UniswapV4SingleStandardExchangeBufferPricingHookCommon} from
-    "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferPricingHookCommon.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferHookCommon
+} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookCommon.sol";
 
 /**
- * @title UniswapV4SingleStandardExchangeBufferPricingHookTarget
- * @notice IHooks logic — full pattern-copy of BaseTokenWrapperHook settle order (D51/D67).
- * @dev No Solidity inheritance of BaseTokenWrapperHook / BaseHook / DeltaResolver.
+ * @title UniswapV4SingleStandardExchangeBufferHookTarget
+ * @notice IHooks logic — pattern-copy of BaseTokenWrapperHook settle order (no inheritance).
  */
-abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is UniswapV4SingleStandardExchangeBufferPricingHookCommon, IHooks {
+abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
+    UniswapV4SingleStandardExchangeBufferHookCommon,
+    IHooks
+{
     using SafeERC20 for IERC20;
-
-    error LiquidityNotAllowed();
-    error InvalidPoolToken();
-    error InvalidPoolFee();
-    error HookNotImplemented();
-
-    constructor(IPoolManager poolManager_, address standardExchange_, address underlying_)
-        UniswapV4SingleStandardExchangeBufferPricingHookCommon(poolManager_, standardExchange_, underlying_)
-    {}
 
     function getHookPermissions() public pure returns (Hooks.Permissions memory) {
         return Hooks.Permissions({
@@ -65,12 +58,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is Unis
         returns (bytes4)
     {
         _onlyPoolManager();
-        Currency underlyingC = Currency.wrap(_underlying);
-        Currency wrapperC = Currency.wrap(_standardExchange);
+        Currency pairC = Currency.wrap(_pair());
+        Currency seC = Currency.wrap(_se());
         bool wrapZFO = _wrapZeroForOne();
         bool isValidPair = wrapZFO
-            ? (poolKey.currency0 == underlyingC && poolKey.currency1 == wrapperC)
-            : (poolKey.currency0 == wrapperC && poolKey.currency1 == underlyingC);
+            ? (poolKey.currency0 == pairC && poolKey.currency1 == seC)
+            : (poolKey.currency0 == seC && poolKey.currency1 == pairC);
         if (!isValidPair) revert InvalidPoolToken();
         if (poolKey.fee != 0) revert InvalidPoolFee();
         return IHooks.beforeInitialize.selector;
@@ -135,21 +128,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is Unis
         bool isExactInput = params.amountSpecified < 0;
         bool isWrap = (_wrapZeroForOne() == params.zeroForOne);
 
-        Currency underlyingC = Currency.wrap(_underlying);
-        Currency wrapperC = Currency.wrap(_standardExchange);
+        Currency pairC = Currency.wrap(_pair());
+        Currency seC = Currency.wrap(_se());
 
-        // Match BaseTokenWrapperHook delta convention exactly (pattern-copy).
-        // deltaSpecified = -amountSpecified; unspecified is -output (exact-in) or +input (exact-out).
+        // Match BaseTokenWrapperHook delta convention (pattern-copy).
         if (isWrap) {
             if (isExactInput) {
                 uint256 amountIn = uint256(-params.amountSpecified);
-                uint256 seOut = _wrapExactIn(amountIn, underlyingC, wrapperC);
+                uint256 seOut = _wrapExactIn(amountIn, pairC, seC);
                 swapDelta = toBeforeSwapDelta(
                     int128(-params.amountSpecified), int128(-int256(seOut))
                 );
             } else {
                 uint256 seOut = uint256(params.amountSpecified);
-                uint256 amountIn = _wrapExactOut(seOut, underlyingC, wrapperC);
+                uint256 amountIn = _wrapExactOut(seOut, pairC, seC);
                 swapDelta = toBeforeSwapDelta(
                     int128(-params.amountSpecified), int128(int256(amountIn))
                 );
@@ -157,13 +149,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is Unis
         } else {
             if (isExactInput) {
                 uint256 seIn = uint256(-params.amountSpecified);
-                uint256 uOut = _unwrapExactIn(seIn, underlyingC, wrapperC);
+                uint256 pairOut = _unwrapExactIn(seIn, pairC, seC);
                 swapDelta = toBeforeSwapDelta(
-                    int128(-params.amountSpecified), int128(-int256(uOut))
+                    int128(-params.amountSpecified), int128(-int256(pairOut))
                 );
             } else {
-                uint256 uOut = uint256(params.amountSpecified);
-                uint256 seIn = _unwrapExactOut(uOut, underlyingC, wrapperC);
+                uint256 pairOut = uint256(params.amountSpecified);
+                uint256 seIn = _unwrapExactOut(pairOut, pairC, seC);
                 swapDelta = toBeforeSwapDelta(
                     int128(-params.amountSpecified), int128(int256(seIn))
                 );
@@ -204,67 +196,77 @@ abstract contract UniswapV4SingleStandardExchangeBufferPricingHookTarget is Unis
     /*                         Wrap / unwrap execution                        */
     /* ---------------------------------------------------------------------- */
 
-    function _wrapExactIn(uint256 underlyingIn, Currency underlyingC, Currency wrapperC)
+    function _wrapExactIn(uint256 pairIn, Currency pairC, Currency seC)
         internal
         returns (uint256 seOut)
     {
-        seOut = _previewWrap(underlyingIn);
-        _take(underlyingC, address(this), underlyingIn);
-        // SE pulls via transferFrom (Rocket balance-delta); do not pretransfer+true free-mint path.
-        IERC20(_underlying).forceApprove(_standardExchange, underlyingIn);
-        uint256 got = _seExchangeIn(
-            IERC20(_underlying), underlyingIn, IERC20(_standardExchange), seOut, false
-        );
+        seOut = _previewWrap(pairIn);
+        _take(pairC, address(this), pairIn);
+        // SE pulls via transferFrom; do not pretransfer+true free-mint path.
+        IERC20(_pair()).forceApprove(_se(), pairIn);
+        uint256 got = _seExchangeIn(IERC20(_pair()), pairIn, IERC20(_se()), seOut, false);
         require(got == seOut || got >= seOut, "wrap seOut");
         seOut = got;
-        _settle(wrapperC, seOut);
+        _settle(seC, seOut);
     }
 
-    function _wrapExactOut(uint256 seOut, Currency underlyingC, Currency wrapperC)
+    function _wrapExactOut(uint256 seOut, Currency pairC, Currency seC)
         internal
         returns (uint256 amountIn)
     {
-        // D43: take exactly previewed amountIn
         amountIn = _previewWrapExactOut(seOut);
-        _take(underlyingC, address(this), amountIn);
-        IERC20(_underlying).forceApprove(_standardExchange, amountIn);
-        uint256 spent = _seExchangeOut(
-            IERC20(_underlying), amountIn, IERC20(_standardExchange), seOut, false
-        );
+        _take(pairC, address(this), amountIn);
+        IERC20(_pair()).forceApprove(_se(), amountIn);
+        uint256 spent = _seExchangeOut(IERC20(_pair()), amountIn, IERC20(_se()), seOut, false);
         require(spent == amountIn, "wrap exact-out spend");
-        _settle(wrapperC, seOut);
+        _settle(seC, seOut);
     }
 
-    function _unwrapExactIn(uint256 seIn, Currency underlyingC, Currency wrapperC)
+    function _unwrapExactIn(uint256 seIn, Currency pairC, Currency seC)
         internal
-        returns (uint256 uOut)
+        returns (uint256 pairOut)
     {
-        uOut = _previewUnwrap(seIn);
-        _take(wrapperC, address(this), seIn);
-        // SE burn from msg.sender = hook; hook holds SE
-        uint256 got = _seExchangeIn(
-            IERC20(_standardExchange), seIn, IERC20(_underlying), uOut, false
-        );
-        require(got >= uOut, "unwrap uOut");
-        uOut = got;
-        _settle(underlyingC, uOut);
+        pairOut = _previewUnwrap(seIn);
+        _take(seC, address(this), seIn);
+        uint256 got = _seExchangeIn(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
+        require(got >= pairOut, "unwrap pairOut");
+        pairOut = got;
+        _settle(pairC, pairOut);
     }
 
-    function _unwrapExactOut(uint256 uOut, Currency underlyingC, Currency wrapperC)
+    function _unwrapExactOut(uint256 pairOut, Currency pairC, Currency seC)
         internal
         returns (uint256 seIn)
     {
-        seIn = _previewUnwrapExactOut(uOut);
-        _take(wrapperC, address(this), seIn);
-        uint256 spent = _seExchangeOut(
-            IERC20(_standardExchange), seIn, IERC20(_underlying), uOut, false
-        );
+        seIn = _previewUnwrapExactOut(pairOut);
+        _take(seC, address(this), seIn);
+        // Delta-only settle: never settle full balanceOf (O11 idle donations must not enter swap accounting).
+        uint256 pairBefore = IERC20(_pair()).balanceOf(address(this));
+        uint256 spent = _seExchangeOut(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
         require(spent == seIn, "unwrap exact-out spend");
-        // Settle **actual** underlying received (may exceed uOut on ceil/floor redeem);
-        // do not leave free inventory on the hook (D38/D50).
-        uint256 got = IERC20(_underlying).balanceOf(address(this));
-        require(got >= uOut, "unwrap exact-out short");
-        _settle(underlyingC, got);
+        // Settle actual pair received from this exchange (may exceed pairOut on ceil/floor redeem).
+        uint256 got = IERC20(_pair()).balanceOf(address(this)) - pairBefore;
+        require(got >= pairOut, "unwrap exact-out short");
+        _settle(pairC, got);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                         Public preview surface                         */
+    /* ---------------------------------------------------------------------- */
+
+    function previewWrap(uint256 pairIn) external view returns (uint256 seOut) {
+        return _previewWrap(pairIn);
+    }
+
+    function previewWrapExactOut(uint256 seOut) external view returns (uint256 pairIn) {
+        return _previewWrapExactOut(seOut);
+    }
+
+    function previewUnwrap(uint256 seIn) external view returns (uint256 pairOut) {
+        return _previewUnwrap(seIn);
+    }
+
+    function previewUnwrapExactOut(uint256 pairOut) external view returns (uint256 seIn) {
+        return _previewUnwrapExactOut(pairOut);
     }
 }
-

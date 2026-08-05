@@ -282,6 +282,33 @@ remappings = [
     "contracts/external/solady/=lib/crane/contracts/external/solady/",
 ]
 
+# Single SE Buffer Hook package (Option B + Crane ERC4626 + V4 PM).
+# Run: FOUNDRY_PROFILE=single_se_buffer_hook forge test -vv
+# Plan also cites hook_factory; product suite uses this dedicated profile (peer of single_se_buffer_cp_hook).
+[profile.single_se_buffer_hook]
+src = 'contracts/hooks/uniswap/v4/standardExchange/single'
+# Package hermetic suite + co-located fork smokes under this tree (profile isolation).
+test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/single'
+out = 'out_single_se_buffer_hook'
+cache_path = 'cache_single_se_buffer_hook'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+# Auto-mine deployVaultAutoMine may need >1e9 gas when flags are sparse.
+gas_limit = 30000000000
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
 # Narrow profile for Uniswap V4 Hook Diamond Package Callback Factory.
 # Run: FOUNDRY_PROFILE=hook_factory forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/factory/**'
 # Fork FK* smokes live under the same test tree as *_Fork.t.sol siblings.

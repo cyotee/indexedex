@@ -1,3 +1,5 @@
+> **SUPERSEDED** by `UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_HOOK_PRD.md` / `UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md` (Buffer hook diamond package). Do not implement further under Pricing names.
+
 # Uniswap V4 Single Standard Exchange Buffer Pricing Hook — Implementation and Testing Plan
 
 **Date:** 2026-08-02  

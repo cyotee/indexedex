@@ -4,7 +4,7 @@
 **This plan (implementor SoT once accepted):** migrate monomorph `*BufferPricing*` scaffold → **hook diamond package** `UniswapV4SingleStandardExchangeBufferHook` under `standardExchange/single/`.  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/single/`  
 **Date:** 2026-08-04  
-**Status:** **Canonical plan — aligned to PRD v1.1.** Ready for implementor stamp, then code.
+**Status:** **IMPLEMENTED** (2026-08-04) — hook diamond package + hermetic/adversarial/fork suite green under `FOUNDRY_PROFILE=single_se_buffer_hook`.
 
 **Authority**
 
@@ -629,21 +629,21 @@ forge fmt
 
 ## 9. Definition of Done (checklist)
 
-- [ ] Product named **Buffer**; no rate-provider / Pricing public surface  
-- [ ] Hook factory package path only; vault registered  
-- [ ] Multi-asset Basic + Standard facets cut; **address-sorted** tokens; reserves 0  
-- [ ] `vaultFeeTypeIds` / `contentsId` match O12 exactly  
-- [ ] Public surface complete: previews + `currency0/1` + `poolFee` + hints (O13)  
-- [ ] Errors match §4.7 closed set (O14); `Exact*NotSupported` never thrown  
-- [ ] Full production type names (O15); `deployVault` + `deployVaultAutoMine` (O16)  
-- [ ] Zero CL; fee 0; four wrap/unwrap modes via SE only; preview == execution  
-- [ ] No LP APIs; no hook fees; success-path hook flat (O11 donation-aware)  
-- [ ] Hermetic: Crane `ERC4626PermitDFPkg` only as protocol vault (O17)  
-- [ ] Adversarial P0/P1 green (P2 NatSpec deferred if any)  
-- [ ] Base + Robinhood forks: live PM pins §7.4 + fresh stack (O18)  
-- [ ] Monomorph CREATE3 instance path removed; pricing PRD/plan marked SUPERSEDED  
-- [ ] Cross-links updated (dual/orbital “pricing buffer” language)  
-- [ ] This plan status set to **IMPLEMENTED**
+- [x] Product named **Buffer**; no rate-provider / Pricing public surface  
+- [x] Hook factory package path only; vault registered  
+- [x] Multi-asset Basic + Standard facets cut; **address-sorted** tokens; reserves 0  
+- [x] `vaultFeeTypeIds` / `contentsId` match O12 exactly  
+- [x] Public surface complete: previews + `currency0/1` + `poolFee` + hints (O13)  
+- [x] Errors match §4.7 closed set (O14); `Exact*NotSupported` never thrown  
+- [x] Full production type names (O15); `deployVault` + `deployVaultAutoMine` (O16)  
+- [x] Zero CL; fee 0; four wrap/unwrap modes via SE only; preview == execution  
+- [x] No LP APIs; no hook fees; success-path hook flat (O11 donation-aware)  
+- [x] Hermetic: Crane `ERC4626PermitDFPkg` only as protocol vault (O17)  
+- [x] Adversarial P0/P1 green (P2 NatSpec deferred if any)  
+- [x] Base + Robinhood forks: live PM pins §7.4 + fresh stack (O18)  
+- [x] Monomorph CREATE3 instance path removed; pricing PRD/plan marked SUPERSEDED  
+- [x] Cross-links updated (dual/orbital “pricing buffer” language)  
+- [x] This plan status set to **IMPLEMENTED**
 
 ---
 
@@ -667,6 +667,7 @@ forge fmt
 | 2026-08-04 | Initial plan for Buffer PRD v1.1: hook diamond package, multi-asset vault facets, Crane 4626 hermetic SE, full adversarial + Base/RH forks, full rename off Pricing |
 | 2026-08-04 | O8–O11: address-sorted vaultTokens; factory redeploy policy; fee-oracle non-1:1; idle donation residual never credited |
 | 2026-08-04 | O12–O18: feeTypeIds/contentsId formulas; currency+pool helpers; Crane error names; full type names; auto-mine required; mandatory Crane 4626; live PM fork pins |
+| 2026-08-04 | **IMPLEMENTED:** Buffer hook diamond package (interfaces/Repo/Target/Common/Facet/DFPkg/FactoryService/TestBase); hermetic + adversarial P0/P1 green; monomorph CREATE3 Pricing path deleted; pricing docs SUPERSEDED; forks under package profile tree with live PM pins |
 
 ---
 
