@@ -2,12 +2,13 @@
 pragma solidity ^0.8.0;
 
 import {BASE_MAIN} from "@crane/contracts/constants/networks/BASE_MAIN.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {TestBase_UniswapV4OrbitalSwapHook} from
     "test/foundry/spec/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook.sol";
 
 /**
  * @title UniswapV4OrbitalSwapHook_Base_Fork_Test
- * @notice Base mainnet fork: mintable test tokens + production factory + LP + swap (P3).
+ * @notice Base mainnet fork: mintable test tokens + package path + LP + swap (P3).
  */
 contract UniswapV4OrbitalSwapHook_Base_Fork_Test is TestBase_UniswapV4OrbitalSwapHook {
     string internal constant RPC = "base_mainnet_alchemy";
@@ -26,8 +27,8 @@ contract UniswapV4OrbitalSwapHook_Base_Fork_Test is TestBase_UniswapV4OrbitalSwa
         TestBase_UniswapV4OrbitalSwapHook.setUp();
     }
 
-    function test_fork_factory_lp_swap_mintableTokens() public {
-        assertTrue(factory.isDeployedByFactory(hook));
+    function test_fork_package_lp_swap_mintableTokens() public {
+        assertTrue(IVaultRegistryVaultQuery(address(indexedexManager)).isVault(hook));
         _seedThreeLeg(100 ether);
         assertGt(orbital.radius(), 0);
         _setDexFee(0.003e18);

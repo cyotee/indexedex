@@ -67,7 +67,7 @@ contract UniswapV4OrbitalSwapHook_Adversarial_Test is TestBase_UniswapV4OrbitalS
     }
 
     function test_hookFlags_includeLiquidityBans() public view {
-        uint160 flags = factory.HOOK_FLAGS();
+        uint160 flags = _requiredFlags();
         assertTrue(flags & Hooks.BEFORE_ADD_LIQUIDITY_FLAG != 0);
         assertTrue(flags & Hooks.BEFORE_REMOVE_LIQUIDITY_FLAG != 0);
         assertTrue(flags & Hooks.BEFORE_SWAP_FLAG != 0);

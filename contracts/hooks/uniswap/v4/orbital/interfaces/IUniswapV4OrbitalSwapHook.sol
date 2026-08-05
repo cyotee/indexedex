@@ -30,6 +30,11 @@ interface IUniswapV4OrbitalSwapHook {
     function lSquared() external view returns (uint256);
     function reserveOf(address token) external view returns (uint256);
 
+    /// @notice Process-only pair-door tick spacing (not part of salt identity).
+    function pairPoolTickSpacing() external view returns (int24);
+    /// @notice Process-only pair-door init sqrtPriceX96 (not part of salt identity).
+    function pairPoolSqrtPriceX96() external view returns (uint160);
+
     function previewAddLiquidity(uint256 a0Max, uint256 a1Max, uint256 a2Max)
         external
         view

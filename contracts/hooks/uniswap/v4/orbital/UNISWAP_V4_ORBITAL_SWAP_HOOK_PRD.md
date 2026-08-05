@@ -2,20 +2,24 @@
 
 **Name:** `UniswapV4OrbitalSwapHook`  
 **Date:** 2026-08-03  
-**Status:** **v1.14 plan-ready** — O1–O9 + Q1–Q62 + growth fee + on-chain factory (2026-08-03). **v1.14 open-item lock:** binding hooks via Crane **`AddressSetRepo`** (Q58); discovery **array + count/at** (Q59); **unbounded** set (Q60); **msg.sender-only** salt scope (Q61); map key = **exact binding order** (Q62).  
+**Status:** **v1.15 product law** — sphere / LP / fees / Permit2 / multi-pool **product** decisions remain normative.  
+**Deploy law (superseded):** CREATE3 monomorph + `UniswapV4OrbitalSwapHookFactory` + `msg.sender`-scoped salt (D78–D96 / Q49–Q62 **deploy/salt/factory** topics) are **superseded** by the **Hook Diamond Package** refactor.  
 **Package path:** `contracts/hooks/uniswap/v4/orbital/`  
-**Package kind:** IndexedEx **hook deploy package** — **permissionless on-chain factory** deploys each hook via **CREATE3** (`deployer = factory`) using a **user-supplied salt mined off-chain** for hook flags; factory also **initializes all three** V4 pair pools. Hook instance = Repo + Target + Math + Common on a single mined contract that is also the fungible LP ERC-20 (EIP-2612). **Not** a vault share diamond; **not** `DiamondPackageCallBackFactory` for the hook instance; **not** a Facet/DFPkg diamond product.  
+**Package kind (current):** **`UniswapV4OrbitalSwapHookDFPkg`** — `IUniswapV4HookDiamondPackage` + `IStandardVaultPkg`; instances are **immutable hook diamonds** at CREATE2-mined addresses via Vault Registry `deployHookVault` → shared `UniswapV4HookDiamondPackageCallBackFactory`. LP ERC-20 + EIP-2612 via shared ERC20Permit facets; product logic on hooks/liquidity facets.  
 **Decision ID note:** `D*`, `O*`, and `Q*` IDs are **stable keys**, not document order.
+
+> **Deploy / factory / salt — read first:**  
+> [`UNISWAP_V4_ORBITAL_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md`](./UNISWAP_V4_ORBITAL_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md)  
+> When this PRD conflicts with the refactor PRD on **deploy**, **salt**, **factory**, or **instance shape**, the **refactor PRD wins**. Product math and user APIs below remain unless the refactor PRD explicitly changes them.
 
 **Authority (normative):**
 
 | Layer | Role |
 |-------|------|
-| **This PRD (v1.14)** | Product law used to **write** the implementation plan. Canonical decisions live in §3 (D/O/Q). |
-| **Implementation plan** (follow-on) | **Source of truth for implementors** once written against this PRD |
-| Peer packages / reference repo | Pattern and math references only — **not** deploy law; do not copy CREATE2 / BaseHook / console.log |
+| **Refactor PRD** | **Deploy / package / factory / registry / salt / flags / vault registration** (normative for production path) |
+| **This PRD (v1.15)** | Product law: sphere, LP, fees, Permit2, multi-pool doors UX, previews. Historical CREATE3 factory text below is **legacy** unless restated by the refactor PRD. |
+| Peer packages / reference repo | Pattern and math references only — deploy via hook diamond package standard |
 | ETHGlobal `OrbitalHook.sol` | Behavioral/math reference only (D3) |
-| Revert `StableSwapHooksFactory` | **UX peer only** — off-chain salt + on-chain factory deploy; **CREATE2 → CREATE3** for this package (Q49) |
 
 **Reference implementation (behavioral + math source, not deploy law):**
 

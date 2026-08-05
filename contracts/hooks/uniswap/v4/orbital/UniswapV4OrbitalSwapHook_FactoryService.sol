@@ -1,32 +1,95 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {CREATE3} from
-    "@crane/contracts/protocols/dexes/uniswap/v4/external/solmate/utils/CREATE3.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {
-    UniswapV4OrbitalSwapHookFactory
-} from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookFactory.sol";
+    IUniswapV4HookDiamondPackage
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
 import {
-    IUniswapV4OrbitalSwapHookFactory
-} from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookFactory.sol";
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
+import {
+    UniswapV4OrbitalSwapHookHooksFacet
+} from "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookHooksFacet.sol";
+import {
+    UniswapV4OrbitalSwapHookLiquidityFacet
+} from "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookLiquidityFacet.sol";
+import {
+    UniswapV4OrbitalSwapHookDFPkg
+} from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookDFPkg.sol";
+import {
+    IUniswapV4OrbitalSwapHookPackage
+} from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookPackage.sol";
 
 /**
  * @title UniswapV4OrbitalSwapHook_FactoryService
- * @notice Off-chain salt mine helpers + factory self-deploy (PRD §5.2.1).
- * @dev Instances always go through factory.deploy — never ecosystem create3Factory for hooks.
+ * @notice CREATE3 product facets + registry deployPkg helpers; mineNonce for hook CREATE2.
+ * @dev Instances: package.deployVault → registry.deployHookVault → shared hook factory.
+ *      Monomorph CREATE3 product factory is retired.
  */
 library UniswapV4OrbitalSwapHook_FactoryService {
     using BetterEfficientHashLib for bytes;
 
-    string internal constant DEFAULT_SALT_NAMESPACE = "uv4-orbital-swap-hook-";
-    uint256 internal constant MAX_LOOP = 160_444;
+    /// forge-lint: disable-next-line(screaming-snake-case-const)
+    Vm constant vm = Vm(VM_ADDRESS);
 
-    error HookMineExhausted();
-    error ZeroAddress();
+    function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4OrbitalSwapHookHooksFacet).creationCode,
+            abi.encode(type(UniswapV4OrbitalSwapHookHooksFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4OrbitalSwapHookHooksFacet).name);
+    }
+
+    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4OrbitalSwapHookLiquidityFacet).creationCode,
+            abi.encode(type(UniswapV4OrbitalSwapHookLiquidityFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4OrbitalSwapHookLiquidityFacet).name);
+    }
+
+    function deployPackage(
+        IVaultRegistryDeployment registry,
+        address owner,
+        IUniswapV4OrbitalSwapHookPackage.PkgInit memory init,
+        bytes32 salt
+    ) internal returns (IUniswapV4OrbitalSwapHookPackage pkg) {
+        vm.prank(owner);
+        pkg = IUniswapV4OrbitalSwapHookPackage(
+            registry.deployPkg(
+                type(UniswapV4OrbitalSwapHookDFPkg).creationCode, abi.encode(init), salt
+            )
+        );
+        vm.label(address(pkg), type(UniswapV4OrbitalSwapHookDFPkg).name);
+    }
+
+    function findMineNonce(
+        IUniswapV4HookDiamondPackageCallBackFactory factory,
+        IUniswapV4OrbitalSwapHookPackage pkg,
+        IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args
+    ) internal returns (uint256 mineNonce) {
+        return HookFactoryService.findMineNonce(
+            factory, IUniswapV4HookDiamondPackage(address(pkg)), abi.encode(args)
+        );
+    }
+
+    function deployHook(
+        IUniswapV4OrbitalSwapHookPackage pkg,
+        IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args,
+        uint256 mineNonce
+    ) internal returns (address vault) {
+        return pkg.deployVault(args, mineNonce);
+    }
 
     function requiredFlags() internal pure returns (uint160) {
         return uint160(
@@ -35,107 +98,4 @@ library UniswapV4OrbitalSwapHook_FactoryService {
                 | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG
         );
     }
-
-    /// @dev Mine userSalt so CREATE3.getDeployed(keccak256(userSalt, deployer), factory) has flags.
-    function mineSalt(address factory, address deployer, uint160 flags)
-        internal
-        view
-        returns (bytes32 userSalt, address predicted)
-    {
-        if (factory == address(0) || deployer == address(0)) revert ZeroAddress();
-        flags = flags & Hooks.ALL_HOOK_MASK;
-        for (uint256 i; i < MAX_LOOP; i++) {
-            userSalt = bytes32(i);
-            bytes32 effectiveSalt = keccak256(abi.encodePacked(userSalt, deployer));
-            predicted = CREATE3.getDeployed(effectiveSalt, factory);
-            if (uint160(predicted) & Hooks.ALL_HOOK_MASK == flags && predicted.code.length == 0) {
-                return (userSalt, predicted);
-            }
-        }
-        revert HookMineExhausted();
-    }
-
-    function mineSalt(address factory, address deployer)
-        internal
-        view
-        returns (bytes32 userSalt, address predicted)
-    {
-        return mineSalt(factory, deployer, requiredFlags());
-    }
-
-    /// @dev Recommended unique preimage then mine (D83 + Q53).
-    function mineSaltForBinding(
-        address factory,
-        address deployer,
-        string memory namespace,
-        IVaultFeeOracleQuery feeOracle,
-        address token0,
-        address token1,
-        address token2
-    ) internal view returns (bytes32 userSalt, address predicted) {
-        if (bytes(namespace).length == 0) {
-            namespace = DEFAULT_SALT_NAMESPACE;
-        }
-        uint160 flags = requiredFlags();
-        for (uint256 mineNonce; mineNonce < MAX_LOOP; mineNonce++) {
-            userSalt = abi.encode(namespace, feeOracle, token0, token1, token2, mineNonce)._hash();
-            bytes32 effectiveSalt = keccak256(abi.encodePacked(userSalt, deployer));
-            predicted = CREATE3.getDeployed(effectiveSalt, factory);
-            if (uint160(predicted) & Hooks.ALL_HOOK_MASK == flags && predicted.code.length == 0) {
-                return (userSalt, predicted);
-            }
-        }
-        revert HookMineExhausted();
-    }
-
-    /// @dev Deploy the factory once per chain (plain CREATE).
-    function deployFactory(IPoolManager poolManager) internal returns (address factory) {
-        if (address(poolManager) == address(0)) revert ZeroAddress();
-        factory = address(new UniswapV4OrbitalSwapHookFactory(poolManager));
-    }
-
-    function isExpectedHook(
-        address predicted,
-        address poolManager,
-        address feeOracle,
-        address token0,
-        address token1,
-        address token2
-    ) internal view returns (bool) {
-        if (predicted.code.length == 0) return false;
-        try IUniswapV4OrbitalSwapHookLike(predicted).poolManager() returns (address pm) {
-            if (pm != poolManager) return false;
-        } catch {
-            return false;
-        }
-        try IUniswapV4OrbitalSwapHookLike(predicted).feeOracle() returns (address fo) {
-            if (fo != feeOracle) return false;
-        } catch {
-            return false;
-        }
-        try IUniswapV4OrbitalSwapHookLike(predicted).token0() returns (address t0) {
-            if (t0 != token0) return false;
-        } catch {
-            return false;
-        }
-        try IUniswapV4OrbitalSwapHookLike(predicted).token1() returns (address t1) {
-            if (t1 != token1) return false;
-        } catch {
-            return false;
-        }
-        try IUniswapV4OrbitalSwapHookLike(predicted).token2() returns (address t2) {
-            if (t2 != token2) return false;
-        } catch {
-            return false;
-        }
-        return true;
-    }
-}
-
-interface IUniswapV4OrbitalSwapHookLike {
-    function poolManager() external view returns (address);
-    function feeOracle() external view returns (address);
-    function token0() external view returns (address);
-    function token1() external view returns (address);
-    function token2() external view returns (address);
 }
