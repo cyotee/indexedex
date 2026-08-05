@@ -398,11 +398,41 @@ library DETFNFTVaultRepo {
     /* ---------------------------------------------------------------------- */
 
     /**
+     * @notice LP inventory used for share↔asset conversion.
+     * @dev Prefer physical LP held by this vault (Uni V4 PRD: user bond LP on bond NFT).
+     *      Fallback to DETF `reserveOfToken` (Balancer peer diamond BPT custody).
+     *      When LP is held here, exclude protocol NFT effective shares from the denominator —
+     *      protocol principal LP lives on the rebasing claim package after sell / primary mint.
+     */
+    function _totalLpReserveForConversion(Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 totalLpReserve_, uint256 totalShares_)
+    {
+        totalShares_ = layoutStruct_.totalShares;
+        totalLpReserve_ = layoutStruct_.lpToken.balanceOf(address(this));
+        if (totalLpReserve_ > 0) {
+            uint256 protocolId_ = layoutStruct_.detfNFTId;
+            if (protocolId_ != 0) {
+                uint256 protocolEff_ = layoutStruct_.effectiveSharesOf[protocolId_];
+                if (protocolEff_ > 0 && protocolEff_ < totalShares_) {
+                    totalShares_ -= protocolEff_;
+                } else if (protocolEff_ >= totalShares_) {
+                    // Only protocol shares remain — no user LP conversion basis.
+                    totalShares_ = 0;
+                }
+            }
+            return (totalLpReserve_, totalShares_);
+        }
+        // Diamond-custody peers: all LP (user + protocol) on DETF.
+        totalLpReserve_ = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
+    }
+
+    /**
      * @notice Converts LP token amount to shares using proportional math.
      */
     function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_) internal view returns (uint256 shares_) {
-        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
-        uint256 totalShares_ = layoutStruct_.totalShares;
+        (uint256 totalLpReserve, uint256 totalShares_) = _totalLpReserveForConversion(layoutStruct_);
 
         if (totalShares_ == 0 || totalLpReserve == 0) {
             shares_ = lpAmount_;
@@ -419,8 +449,7 @@ library DETFNFTVaultRepo {
      * @notice Converts shares back to LP token amount.
      */
     function _convertToAssets(Storage storage layoutStruct_, uint256 shares_) internal view returns (uint256 lpAmount_) {
-        uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
-        uint256 totalShares_ = layoutStruct_.totalShares;
+        (uint256 totalLpReserve, uint256 totalShares_) = _totalLpReserveForConversion(layoutStruct_);
 
         if (totalShares_ == 0 || totalLpReserve == 0) {
             lpAmount_ = shares_;

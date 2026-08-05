@@ -40,7 +40,7 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](23);
+        funcs_ = new bytes4[](24);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -64,6 +64,7 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
         funcs_[20] = IDETFNFTVault.markDETFNFTSold.selector;
         funcs_[21] = IDETFNFTVault.reallocateDetfNftRewards.selector;
         funcs_[22] = IERC721Metadata.tokenURI.selector;
+        funcs_[23] = IDETFNFTVault.transferHeldToken.selector;
     }
 
     /// @inheritdoc IFacet

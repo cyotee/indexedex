@@ -1,5 +1,14 @@
 # Plan: Uniswap V4 Standard Exchange Vault
 
+## Related product law (local liquid buffer)
+
+**Nested PoolManager lock-safety / local free inventory sleeve** is specified in:
+
+- Product law: [`UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md`](./UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md)
+- Coding plan: [`UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_IMPLEMENTATION_AND_TEST_PLAN.md)
+
+That PRD covers accepting deposits while PoolManager is already unlocked (e.g. V4 hook buffer-last into a V4 SE), reusing fee-oracle `liquidReservePercentage`, and rebalancing the sleeve when the manager is idle. Implement against the PRD + implementation plan; this file remains the original bring-up plan.
+
 ## Progress Snapshot
 
 Status as of 2026-04-24:

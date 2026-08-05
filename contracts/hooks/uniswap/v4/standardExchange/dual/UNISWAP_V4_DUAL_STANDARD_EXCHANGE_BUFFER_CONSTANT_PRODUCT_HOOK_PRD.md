@@ -6,7 +6,13 @@
 **v3.12 clarity:** SE×CP claim-delta composition (D78); `depositSingle` gate after MINIMUM_LIQUIDITY residual (D79 / C36); `isExpectedHook` factory-only (D80); `DepositSingle.amountIn` = full pull (D81); no product cap on protocol fee WAD (D82); `kLast` overflow = Uni V2-class accepted risk (D83); `dexSwapFee` naming callout; collapsed layered lock tables into canonical D/O/C + revision log.  
 **Process:** Not an implementation mandate. A later agent rewrites the implementation plan from this PRD; that plan becomes the implementor source of truth.  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/dual/`  
-**Package kind:** IndexedEx **hook deploy package** — CREATE3-mined single contract via the **existing** ecosystem `create3Factory` + `HookMinerCreate3` + FactoryService helpers. **Not** a vault share diamond; **not** a second CREATE3 factory; **not** `DiamondPackageCallBackFactory` for the hook instance (v1). **Not** a Facet/DFPkg diamond product — use **Repo + Target** style on a single mined contract. **Not** a Uniswap V4 concentrated-liquidity (CL) reimplementation.
+**Package kind:** IndexedEx **Uniswap V4 Hook Diamond Package** (Option B) — instances deploy via package → vault registry `deployHookVault` → shared **Uniswap V4 Hook Diamond Package Callback Factory** (CREATE2 + `mineNonce`). Registered vault. **Not** monomorph CREATE3 / HookMinerCreate3 for instances (superseded). **Not** a second product CREATE3 factory. **Not** a Uniswap V4 concentrated-liquidity (CL) reimplementation.
+
+> **Deploy law supersession (2026-08):** Instance CREATE3 + HookMinerCreate3 + FactoryService monomorph `deployHook` as production UX, deep `isExpectedHook` as deploy gate, and “not DFPkg/not vault diamond” package-kind statements in this PRD are **superseded** by  
+> [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_REFACTOR_PRD.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_REFACTOR_PRD.md)  
+> and the implementor plan  
+> [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_IMPLEMENTATION_AND_TEST_PLAN.md).  
+> **Product math / D78–D83 / liquidity / fees / Permit2** in this PRD (v3.12) remain normative.
 
 **Sibling package (do not conflate):**  
 `contracts/hooks/uniswap/v4/standardExchange/` — **single** SE buffer/pricing hook (`UniswapV4BufferAndPricingHook`): wrapper pool `underlying ↔ SE shares`, **no** dual pair-token AMM, **no** user LP deposit surface.

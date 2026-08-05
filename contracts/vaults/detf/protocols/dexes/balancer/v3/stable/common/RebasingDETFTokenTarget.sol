@@ -223,6 +223,12 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         }
     }
 
+    /// @inheritdoc IRebasingClaimToken
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+        if (to == address(0) || address(token) == address(0) || amount == 0) revert ZeroAmount();
+        token.safeTransfer(to, amount);
+    }
+
     function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)
         external
         onlyOwner

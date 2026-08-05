@@ -10,6 +10,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC721Repo} from "@crane/contracts/tokens/ERC721/ERC721Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiStepOwnableModifiers.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
@@ -37,6 +38,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     // IDETFNFTVault
     using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
     using ERC721Repo for ERC721Repo.Storage;
+    using BetterSafeERC20 for IERC20;
 
     /* ---------------------------------------------------------------------- */
     /*                              Events                                    */
@@ -440,6 +442,15 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     // /**
     //  * @inheritdoc IDETFNFTVault
     //  */
+    /**
+     * @notice Owner (DETF) transfers foreign ERC-20 held by this vault (reserve LP custody).
+     */
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+        if (to == address(0) || address(token) == address(0)) revert NotAuthorized(address(0));
+        if (amount == 0) revert BaseSharesZero();
+        token.safeTransfer(to, amount);
+    }
+
     function convertToAssets(uint256 shares) external view returns (uint256 lpAmount) {
         return DETFNFTVaultRepo._convertToAssets(shares);
     }

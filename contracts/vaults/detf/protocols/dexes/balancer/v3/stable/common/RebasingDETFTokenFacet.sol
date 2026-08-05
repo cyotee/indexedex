@@ -25,7 +25,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](26);
+        funcs_ = new bytes4[](27);
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
         funcs_[2] = IERC20.transfer.selector;
@@ -52,6 +52,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[23] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
+        funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
     }
 
     function facetMetadata()
@@ -68,7 +69,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         interfaces_[3] = type(IStandardExchangeIn).interfaceId;
         interfaces_[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions_ = new bytes4[](26);
+        functions_ = new bytes4[](27);
         functions_[0] = IERC20.totalSupply.selector;
         functions_[1] = IERC20.balanceOf.selector;
         functions_[2] = IERC20.transfer.selector;
@@ -95,5 +96,6 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[23] = IStandardExchangeIn.exchangeIn.selector;
         functions_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         functions_[25] = IStandardExchangeOut.exchangeOut.selector;
+        functions_[26] = IRebasingClaimToken.transferHeldToken.selector;
     }
 }

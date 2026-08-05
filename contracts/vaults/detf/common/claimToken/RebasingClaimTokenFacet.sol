@@ -46,7 +46,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](26);
+        funcs_ = new bytes4[](27);
         // ERC20 functions
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
@@ -76,6 +76,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         funcs_[23] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
+        funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
     }
 
     /// @inheritdoc IFacet
@@ -93,7 +94,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         interfaces[3] = type(IStandardExchangeIn).interfaceId;
         interfaces[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions = new bytes4[](26);
+        functions = new bytes4[](27);
         functions[0] = IERC20.totalSupply.selector;
         functions[1] = IERC20.balanceOf.selector;
         functions[2] = IERC20.transfer.selector;
@@ -120,5 +121,6 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         functions[23] = IStandardExchangeIn.exchangeIn.selector;
         functions[24] = IStandardExchangeOut.previewExchangeOut.selector;
         functions[25] = IStandardExchangeOut.exchangeOut.selector;
+        functions[26] = IRebasingClaimToken.transferHeldToken.selector;
     }
 }

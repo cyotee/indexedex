@@ -6,6 +6,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC721Repo} from "@crane/contracts/tokens/ERC721/ERC721Repo.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiStepOwnableModifiers.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
@@ -26,6 +27,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 {
     using ComposedStableCommonDetfBondNFTVaultRepo for ComposedStableCommonDetfBondNFTVaultRepo.Storage;
     using ERC721Repo for ERC721Repo.Storage;
+    using BetterSafeERC20 for IERC20;
 
     event NewLock(
         uint256 indexed tokenId, address indexed recipient, uint256 shares, uint256 bonusMultiplier, uint256 unlockTime
@@ -319,6 +321,12 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
     function convertToAssets(uint256 shares) external view returns (uint256 lpAmount) {
         return ComposedStableCommonDetfBondNFTVaultRepo._convertToAssets(shares);
+    }
+
+    /// @inheritdoc IDETFNFTVault
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+        if (to == address(0) || address(token) == address(0) || amount == 0) revert BaseSharesZero();
+        token.safeTransfer(to, amount);
     }
 
     function reallocateDetfNftRewards(address recipient) external returns (uint256 amount) {

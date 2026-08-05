@@ -102,7 +102,7 @@ contracts/routers/balancerV3-uniswapV4/
 
   TestBase_BalancerV3UniswapV4CoordinatorRouter.sol
 
-test/foundry/spec/routers/balancerV3-uniswapV4/
+test/foundry/routers/spec/balancerV3-uniswapV4/
   BalancerV3UniswapV4CoordinatorRouter_Deploy.t.sol
   BalancerV3UniswapV4CoordinatorRouter_Admin.t.sol
   BalancerV3UniswapV4CoordinatorRouter_ExactIn_Stock.t.sol
@@ -658,7 +658,7 @@ coordinator = FactoryService.deployCoordinator(
 
 ```bash
 # Skeleton / admin
-forge test --match-path 'test/foundry/spec/routers/balancerV3-uniswapV4/*' -vv
+forge test --match-path 'test/foundry/routers/spec/balancerV3-uniswapV4/*' -vv
 
 # Narrow
 forge test --match-contract BalancerV3UniswapV4CoordinatorRouter_ExactIn_Stock -vvv

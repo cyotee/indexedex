@@ -18,7 +18,34 @@ import {
 
 /// @title IndexedExSERouterAdapter
 /// @dev Stack-safe assembly field reads for single-route encodings.
+///      Batch path avoids nested multi-dynamic `abi.decode` (stack-too-deep / `headStart`) by
+///      slicing the in-tuple `SESwapPathExactAmountIn[]` body and decoding it alone.
 library IndexedExSERouterAdapter {
+    /// @dev Locals for a single-route exact-in execute/query (one memory pointer on the EVM stack).
+    struct SingleRoute {
+        address router;
+        uint256 amountIn;
+        uint256 deadline;
+        address pool;
+        address tokenIn;
+        address tokenInVault;
+        address tokenOut;
+        address tokenOutVault;
+        uint256 minAmountOut;
+        bool wethIsEth;
+        bytes userData;
+    }
+
+    /// @dev Locals for a batch exact-in execute/query.
+    struct BatchRoute {
+        address router;
+        uint256 amountIn;
+        uint256 deadline;
+        IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[] paths;
+        bool wethIsEth;
+        bytes userData;
+    }
+
     function execute(address router, uint256 amountIn, uint256 deadline, bytes memory data) public {
         uint8 mode = _mode(data);
         if (mode == uint8(IBalancerV3UniswapV4CoordinatorRouter.StepCallMode.SingleExactIn)) {
@@ -76,90 +103,164 @@ library IndexedExSERouterAdapter {
         }
     }
 
-    function _executeSingle(address router, uint256 amountIn, uint256 deadline, bytes memory data) private {
-        // Build args in memory struct to avoid 11-local stack pressure at call site.
-        _swapSingle(
-            router,
-            amountIn,
-            deadline,
-            [
-                address(uint160(_word(data, 1))),
-                address(uint160(_word(data, 2))),
-                address(uint160(_word(data, 3))),
-                address(uint160(_word(data, 4))),
-                address(uint160(_word(data, 5)))
-            ],
-            _word(data, 6),
-            _word(data, 7) != 0,
-            _tailBytes(data, 8)
-        );
-    }
+    /* --------------------------------- Single -------------------------------- */
 
-    function _swapSingle(
-        address router,
-        uint256 amountIn,
-        uint256 deadline,
-        address[5] memory addrs,
-        uint256 minAmountOut,
-        bool wethIsEth,
-        bytes memory userData
-    ) private {
-        // addrs: pool, tokenIn, tokenInVault, tokenOut, tokenOutVault
-        IBalancerV3StandardExchangeRouterExactInSwap(router)
-            .swapSingleTokenExactIn(
-                addrs[0],
-                IERC20(addrs[1]),
-                IStandardExchangeProxy(addrs[2]),
-                IERC20(addrs[3]),
-                IStandardExchangeProxy(addrs[4]),
-                amountIn,
-                minAmountOut,
-                deadline,
-                wethIsEth,
-                userData
-            );
+    function _executeSingle(address router, uint256 amountIn, uint256 deadline, bytes memory data) private {
+        SingleRoute memory s;
+        s.router = router;
+        s.amountIn = amountIn;
+        s.deadline = deadline;
+        _fillSingleFromData(s, data);
+        _callSwapSingle(s);
     }
 
     function _querySingle(address router, uint256 amountIn, bytes memory data) private returns (uint256) {
-        return IBalancerV3StandardExchangeRouterExactInSwapQuery(router)
-            .querySwapSingleTokenExactIn(
-                address(uint160(_word(data, 1))),
-                IERC20(address(uint160(_word(data, 2)))),
-                IStandardExchangeProxy(address(uint160(_word(data, 3)))),
-                IERC20(address(uint160(_word(data, 4)))),
-                IStandardExchangeProxy(address(uint160(_word(data, 5)))),
-                amountIn,
-                address(this),
-                _tailBytes(data, 8)
+        SingleRoute memory s;
+        s.router = router;
+        s.amountIn = amountIn;
+        _fillSingleFromData(s, data);
+        return _callQuerySingle(s);
+    }
+
+    /// @dev Populate address/limit/userData fields from packed step data (indices 1..8).
+    function _fillSingleFromData(SingleRoute memory s, bytes memory data) private pure {
+        s.pool = address(uint160(_word(data, 1)));
+        s.tokenIn = address(uint160(_word(data, 2)));
+        s.tokenInVault = address(uint160(_word(data, 3)));
+        s.tokenOut = address(uint160(_word(data, 4)));
+        s.tokenOutVault = address(uint160(_word(data, 5)));
+        s.minAmountOut = _word(data, 6);
+        s.wethIsEth = _word(data, 7) != 0;
+        s.userData = _tailBytes(data, 8);
+    }
+
+    /// @dev Isolated call site: only the memory pointer stays live while ABI-encoding args.
+    function _callSwapSingle(SingleRoute memory s) private {
+        IBalancerV3StandardExchangeRouterExactInSwap(s.router)
+            .swapSingleTokenExactIn(
+                s.pool,
+                IERC20(s.tokenIn),
+                IStandardExchangeProxy(s.tokenInVault),
+                IERC20(s.tokenOut),
+                IStandardExchangeProxy(s.tokenOutVault),
+                s.amountIn,
+                s.minAmountOut,
+                s.deadline,
+                s.wethIsEth,
+                s.userData
             );
     }
 
+    function _callQuerySingle(SingleRoute memory s) private returns (uint256 amountOut) {
+        amountOut = IBalancerV3StandardExchangeRouterExactInSwapQuery(s.router)
+            .querySwapSingleTokenExactIn(
+                s.pool,
+                IERC20(s.tokenIn),
+                IStandardExchangeProxy(s.tokenInVault),
+                IERC20(s.tokenOut),
+                IStandardExchangeProxy(s.tokenOutVault),
+                s.amountIn,
+                address(this),
+                s.userData
+            );
+    }
+
+    /* --------------------------------- Batch --------------------------------- */
+
     function _executeBatch(address router, uint256 amountIn, uint256 deadline, bytes memory data) private {
-        (
-            ,
-            IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[] memory paths,
-            bool wethIsEth,
-            bytes memory userData
-        ) = abi.decode(
-            data, (uint8, IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[], bool, bytes)
-        );
-        if (paths.length != 1) revert IBalancerV3UniswapV4CoordinatorRouter.InvalidStepData();
-        paths[0].exactAmountIn = amountIn;
-        IBalancerV3StandardExchangeBatchRouterExactIn(router).swapExactIn(paths, deadline, wethIsEth, userData);
+        BatchRoute memory b = _decodeBatch(router, amountIn, deadline, data);
+        if (b.paths.length != 1) revert IBalancerV3UniswapV4CoordinatorRouter.InvalidStepData();
+        b.paths[0].exactAmountIn = b.amountIn;
+        _callSwapBatch(b);
     }
 
     function _queryBatch(address router, uint256 amountIn, bytes memory data) private returns (uint256 amountOut) {
-        (
-            ,
-            IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[] memory paths,,
-            bytes memory userData
-        ) = abi.decode(
-            data, (uint8, IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[], bool, bytes)
+        BatchRoute memory b = _decodeBatch(router, amountIn, 0, data);
+        if (b.paths.length != 1) revert IBalancerV3UniswapV4CoordinatorRouter.InvalidStepData();
+        b.paths[0].exactAmountIn = b.amountIn;
+        amountOut = _callQueryBatch(b);
+    }
+
+    /// @dev Decode `abi.encode(uint8 mode, paths[], bool wethIsEth, bytes userData)` without a nested
+    /// multi-dynamic `abi.decode` (that codegen hits stack-too-deep / `headStart` under via_ir=false).
+    /// Wire format is preserved: slice the in-tuple array body and decode `paths` alone.
+    function _decodeBatch(address router, uint256 amountIn, uint256 deadline, bytes memory data)
+        private
+        pure
+        returns (BatchRoute memory b)
+    {
+        b.router = router;
+        b.amountIn = amountIn;
+        b.deadline = deadline;
+
+        // word0 = mode (skipped), word1 = paths offset, word2 = wethIsEth, word3 = userData offset
+        uint256 pathsRel;
+        uint256 userRel;
+        bool wethIsEth;
+        assembly {
+            let p := add(data, 0x20)
+            pathsRel := mload(add(p, 0x20))
+            wethIsEth := mload(add(p, 0x40))
+            userRel := mload(add(p, 0x60))
+        }
+        b.wethIsEth = wethIsEth;
+        b.paths = _decodePathsSlice(data, pathsRel, userRel);
+        b.userData = _decodeUserDataSlice(data, userRel);
+    }
+
+    /// @dev In-tuple `T[]` body is `length || elems`. Standalone `abi.encode(T[])` is `offset || body`.
+    function _decodePathsSlice(bytes memory data, uint256 pathsRel, uint256 userRel)
+        private
+        pure
+        returns (IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[] memory paths)
+    {
+        uint256 pathsLen = userRel - pathsRel;
+        bytes memory wrapped = new bytes(32 + pathsLen);
+        assembly {
+            let w := add(wrapped, 0x20)
+            mstore(w, 0x20)
+            let src := add(add(data, 0x20), pathsRel)
+            let dst := add(w, 0x20)
+            let end := add(src, pathsLen)
+            for {} lt(src, end) {
+                src := add(src, 0x20)
+                dst := add(dst, 0x20)
+            } {
+                mstore(dst, mload(src))
+            }
+        }
+        paths = abi.decode(
+            wrapped, (IBalancerV3StandardExchangeBatchRouterExactIn.SESwapPathExactAmountIn[])
         );
-        if (paths.length != 1) revert IBalancerV3UniswapV4CoordinatorRouter.InvalidStepData();
-        paths[0].exactAmountIn = amountIn;
-        (uint256[] memory pathAmountsOut,,) =
-            IBalancerV3StandardExchangeBatchRouterExactIn(router).querySwapExactIn(paths, address(this), userData);
+    }
+
+    function _decodeUserDataSlice(bytes memory data, uint256 userRel) private pure returns (bytes memory userData) {
+        assembly {
+            let src := add(add(data, 0x20), userRel)
+            let len := mload(src)
+            userData := mload(0x40)
+            mstore(userData, len)
+            let d := add(userData, 0x20)
+            let s := add(src, 0x20)
+            let end := add(s, len)
+            for {} lt(s, end) {
+                s := add(s, 0x20)
+                d := add(d, 0x20)
+            } {
+                mstore(d, mload(s))
+            }
+            mstore(0x40, and(add(add(userData, add(0x20, len)), 0x1f), not(0x1f)))
+        }
+    }
+
+    function _callSwapBatch(BatchRoute memory b) private {
+        IBalancerV3StandardExchangeBatchRouterExactIn(b.router)
+            .swapExactIn(b.paths, b.deadline, b.wethIsEth, b.userData);
+    }
+
+    function _callQueryBatch(BatchRoute memory b) private returns (uint256 amountOut) {
+        (uint256[] memory pathAmountsOut,,) = IBalancerV3StandardExchangeBatchRouterExactIn(b.router)
+            .querySwapExactIn(b.paths, address(this), b.userData);
         amountOut = pathAmountsOut[0];
     }
 }

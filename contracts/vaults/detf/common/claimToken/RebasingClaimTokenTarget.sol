@@ -406,6 +406,16 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
 
     /**
      * @inheritdoc IRebasingClaimToken
+     * @dev Owner (DETF) pulls foreign ERC-20 held here (protocol reserve LP custody).
+     */
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+        if (to == address(0) || address(token) == address(0)) revert ZeroAmount();
+        if (amount == 0) revert ZeroAmount();
+        token.safeTransfer(to, amount);
+    }
+
+    /**
+     * @inheritdoc IRebasingClaimToken
      * @dev Only callable by the DETF diamond owner.
      */
     function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)

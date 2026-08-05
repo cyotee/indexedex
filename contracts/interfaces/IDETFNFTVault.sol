@@ -141,6 +141,13 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      */
     function convertToAssets(uint256 shares) external view returns (uint256 lpAmount);
 
+    /**
+     * @notice Owner (DETF) transfers a foreign ERC-20 held by this vault (e.g. reserve LP).
+     * @dev Used for physical LP custody: bond NFT holds user reserve LP; DETF may pull on
+     *      maturity close / sell-to-protocol migration.
+     */
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external;
+
     /* ---------------------------------------------------------------------- */
     /*                          Position Management                           */
     /* ---------------------------------------------------------------------- */

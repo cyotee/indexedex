@@ -484,14 +484,14 @@ forge test --match-path 'test/foundry/fork/**/constantProduct/single/**' -vv
 
 ## 8. Definition of Done (product + engineering)
 
-- [ ] Phases 0–6 green (hermetic)  
-- [ ] At least one fork lifecycle smoke green (or documented env block)  
-- [ ] PRD §15 testing expectations covered  
-- [ ] Preview == execution on closed-form routes (documented wei exceptions only)  
-- [ ] Debt-inclusive synthetic + realize-path matrix proven  
-- [ ] No SUT mocks; CREATE3 + registry path only  
-- [ ] Facet sizes acceptable  
-- [ ] PRD conflict check: plan still matches v0.5+  
+- [x] Phases 0–6 hermetic (product path) green under `FOUNDRY_PROFILE=uv4_single_se_cp_detf`  
+- [ ] At least one fork lifecycle smoke green (or documented env block) — **deferred** (Phase 6.1 / Phase 7 follow-through)  
+- [x] PRD §15 testing expectations covered for hermetic matrix (custody, Policy both regimes, compound, fee NFT, realize paths)  
+- [x] Preview == execution on closed-form mint/burn routes  
+- [x] Debt-inclusive synthetic + realize-path matrix proven  
+- [x] No SUT mocks; CREATE3 + registry path only  
+- [x] Facet sizes acceptable under dedicated profile  
+- [x] PRD conflict check: physical LP custody matches v0.5 LOCK (see Deviations)  
 
 ---
 
@@ -510,19 +510,62 @@ Prefer vertical slices with tests at each phase exit over big-bang coding.
 
 ---
 
-## 10. Revision history
+## 10. Implementation status (hermetic)
+
+| Phase | Status | Evidence |
+|-------|--------|----------|
+| 0 | [x] | Hook TestBase + SE wrapper reused |
+| 1 | [x] | Inert deploy; feeRecipientNftId != 0 when default bond terms set pre-deploy |
+| 2 | [x] | First bond → live; LP physically on bond NFT |
+| 3 | [x] | Mint/burn preview==exec; empty protocol LP after first-bond-only reverts |
+| 4 | [x] | Sell migrates LP NFT→claim; redeemClaim pulls protocol LP from claim |
+| 5 | [x] | Epoch lib units; compound assertGt protocol LP on claim after forced inventory |
+| 6.2–6.3 | [x] | Adversarial IsLocked + physical partition; Policy mint+burn regimes via real depth/skew |
+| 6.1 fork | [ ] | Deferred |
+
+**Verification command:**
+```bash
+FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test \
+  --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/*' -vv
+```
+**Last run:** 38 passed / 0 failed (hermetic suite).
+
+---
+
+## 11. Deviations (honest)
+
+| Area | Plan / PRD intent | Shipped | Why |
+|------|-------------------|---------|-----|
+| **Physical LP custody** | Protocol LP on rebasing; user bond LP on bond NFT | **Shipped** | `transferHeldToken` on claim + bond NFT; mint/compound → claim; bond join → bond NFT; sell migrates NFT→claim; burn/redeem/claimLiquidity pull then withdraw |
+| **convertToAssets** | NFT convert used diamond `reserveOfToken` only | **Updated** | Prefer NFT `balanceOf`; exclude protocol NFT effective shares when LP is physically on NFT (protocol LP on claim) |
+| **Fee-recipient NFT** | Soft try/catch → 0 if bond terms missing | **Still soft at deploy** | postDeploy still try/catch (no hard revert if feeTo/terms missing). **TestBase sets `setDefaultBondTerms` before first deploy** and hermetic asserts `feeRecipientNftId() != 0` |
+| **Foundry profile** | Default monorepo build | **`uv4_single_se_cp_detf`** | Default profile has pre-existing stack-too-deep elsewhere; dedicated profile for this family |
+| **Fork (6.1)** | Required DoD | **Deferred** | Hermetic product path complete; fork smoke is follow-through |
+| **Bond NFT path** | Plan mentioned `uniswap/v4/common/nft/` | Uses shared `detf/common/bondNft` + claim packages | Same packages as peers; Uni family wires via DFPkg postDeploy |
+| **Policy price test** | Real trades for both regimes | **Shipped** | Pair single-sided deposit raises synthetic; free seigniorage + external DETF deposit skew lowers it; Open is not used as sole mint/burn proof |
+
+**Previously rejected incomplete states (do not reintroduce):**
+- `_protocolLpHolder() = address(this)` diamond-only custody  
+- Policy mint proven only on Open  
+- Compound test that passes when `detfIn == 0`  
+- `feeRecipientNftId` left 0 with no hermetic assert  
+
+---
+
+## 12. Revision history
 
 | Version | Date | Notes |
 |---------|------|-------|
 | v0.1 | 2026-08-04 | Initial plan against PRD v0.5: phases, algorithms, file map, test matrix, gates |
+| v0.2 | 2026-08-05 | Hermetic Phases 0–6 product path complete; physical LP custody; Policy both regimes; forced compound; fee NFT assert; honest deviations |
 
 ---
 
-## 11. Acceptance
+## 13. Acceptance
 
 | Role | Sign-off |
 |------|----------|
 | Product | Pending (PRD v0.5+) |
-| Protocol / implementor | Pending — stamp before Phase 1 coding |
+| Protocol / implementor | Hermetic product path complete under profile; fork deferred |
 
-**Status:** Ready for implementor stamp; **Phase 0** may proceed immediately; **Phase 1+** after hook ABI usable in TestBase.
+**Status:** Hermetic Phases 0–6 (ex-fork) implemented and green under `FOUNDRY_PROFILE=uv4_single_se_cp_detf`.

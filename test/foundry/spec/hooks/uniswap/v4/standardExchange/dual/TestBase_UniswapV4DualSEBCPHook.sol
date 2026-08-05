@@ -1,29 +1,55 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
+import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+// Ensure PoolManager artifact is built under FOUNDRY_PROFILE=dual_se_buffer_cp_hook.
+import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
-import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {TestBase_ERC4626StandardExchange} from
-    "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+
+import {
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IDualHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    IUniswapV4DualStandardExchangeBufferConstantProductHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.sol";
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService as DualFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol";
 
 /**
  * @title TestBase_UniswapV4DualSEBCPHook
- * @notice Hermetic dual SE buffer CP hook: two real ERC-4626 SE legs + PoolManager + fee oracle.
+ * @notice Hermetic dual SE buffer CP hook: package → registry → hook factory + two ERC-4626 SE legs.
  */
 abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExchange {
+    using BetterEfficientHashLib for bytes;
+    using HookFactoryService for ICreate3FactoryProxy;
+
     SimpleMintableERC20 internal tokenA;
     SimpleMintableERC20 internal tokenB;
     SimpleYieldERC4626 internal vaultA;
@@ -31,6 +57,8 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
     address internal seA;
     address internal seB;
     IPoolManager internal pm;
+    IUniswapV4HookDiamondPackageCallBackFactory internal hookFactory;
+    IUniswapV4DualStandardExchangeBufferConstantProductHookPackage internal hookPkg;
     address internal hook;
     IDualHook internal dual;
     PoolKey internal poolKey;
@@ -39,8 +67,14 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
     uint160 internal constant SQRT_PRICE_1_1 = 79228162514264337593543950336;
     uint256 internal constant DUST = 10;
 
+    address internal constant PERMIT2_ADDR = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+
     function setUp() public virtual override {
         TestBase_ERC4626StandardExchange.setUp();
+
+        // Product PullLib uses the Uniswap well-known Permit2 address; etch hermetic bytecode there.
+        vm.etch(PERMIT2_ADDR, address(permit2).code);
+        permit2 = IPermit2(PERMIT2_ADDR);
 
         tokenA = new SimpleMintableERC20("TokenA", "TKA");
         tokenB = new SimpleMintableERC20("TokenB", "TKB");
@@ -49,22 +83,49 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
         seA = _deployERC4626SE(address(vaultA));
         seB = _deployERC4626SE(address(vaultB));
 
-        pm = IPoolManager(
-            vm.deployCode(
-                "lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol:PoolManager",
-                abi.encode(address(this))
-            )
+        pm = IPoolManager(address(new PoolManager(address(this))));
+
+        // --- Hook diamond factory ---
+        IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
+        IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
+        hookFactory = HookFactoryService.deployUniswapV4HookDiamondPackageCallBackFactory(
+            create3Factory,
+            IUniswapV4HookDiamondPackageCallBackFactory.InitArgs({
+                erc165Facet: facetReg.canonicalFacet(type(IERC165).interfaceId),
+                diamondLoupeFacet: facetReg.canonicalFacet(type(IDiamondLoupe).interfaceId),
+                erc8109IntrospectionFacet: facetReg.canonicalFacet(type(IERC8109Introspection).interfaceId),
+                postDeployHookFacet: facetReg.canonicalFacet(type(IPostDeployAccountHook).interfaceId),
+                hookFlagsFacet: hookFlagsFacet
+            })
+        );
+        vm.prank(owner);
+        IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
+
+        // --- Product package ---
+        IFacet hooksFacet = DualFactory.deployHooksFacet(create3Factory);
+        IFacet depositFacet = DualFactory.deployDepositFacet(create3Factory);
+        IFacet withdrawFacet = DualFactory.deployWithdrawFacet(create3Factory);
+        hookPkg = DualFactory.deployPackage(
+            IVaultRegistryDeployment(address(indexedexManager)),
+            owner,
+            IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                hooksFacet: hooksFacet,
+                depositFacet: depositFacet,
+                withdrawFacet: withdrawFacet,
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+            }),
+            abi.encode(type(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
         );
 
-        hook = DualFactory.deployHook(
-            create3Factory,
-            pm,
-            IVaultFeeOracleQuery(address(indexedexManager)),
-            seA,
-            address(tokenA),
-            seB,
-            address(tokenB)
-        );
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
+        uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
+        hook = DualFactory.deployHook(hookPkg, args, mineNonce);
         dual = IDualHook(hook);
 
         // Non-zero SE buffer usage fees for DoD (D70)
@@ -80,6 +141,21 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
         tokenA.approve(hook, type(uint256).max);
         tokenB.approve(hook, type(uint256).max);
         vm.stopPrank();
+    }
+
+    function _defaultPkgArgs()
+        internal
+        view
+        returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
+    {
+        return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(indexedexManager),
+            standardExchange0: seA,
+            token0: address(tokenA),
+            standardExchange1: seB,
+            token1: address(tokenB)
+        });
     }
 
     function _initPool() internal {
@@ -113,7 +189,11 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
     function _enableProtocolFee(uint256 feeWad) internal {
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setVaultDexSwapFee(hook, feeWad);
-        // feeTo already set on indexedex manager in IndexedexTest
         vm.stopPrank();
+    }
+
+    function _assertVaultRegistered() internal view {
+        assertTrue(IBasicVault(hook).vaultTokens().length == 2, "vaultTokens");
+        IStandardVault(hook).vaultConfig();
     }
 }

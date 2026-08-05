@@ -1,10 +1,16 @@
 # Implementation & Test Plan: Uniswap V4 Dual Standard Exchange Buffer Constant Product Hook
 
-**PRD (product law SoT):** [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md) (**v3.12 accepted / plan-ready**)  
-**This plan (implementor SoT once accepted):** rewrite of the premature draft; **do not** implement from the retired `UNISWAP_V4_DUAL_BUFFER_PRICING_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`.  
+> **Deploy path superseded.** Instance deploy is now the **hook diamond package** path.  
+> Implementors for package/factory work:  
+> [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_IMPLEMENTATION_AND_TEST_PLAN.md)  
+> Refactor PRD: [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_REFACTOR_PRD.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_HOOK_FACTORY_REFACTOR_PRD.md)  
+> CREATE3 monomorph / HookMiner sections below are **historical** only.
+
+**PRD (product law SoT):** [`UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`](./UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md) (**v3.12** — deploy superseded by hook-factory refactor)  
+**This plan:** monomorph-era phases; **do not** implement CREATE3 instance deploy from here.  
 **Package:** `contracts/hooks/uniswap/v4/standardExchange/dual/`  
-**Date:** 2026-08-03  
-**Status:** **Canonical plan — rewrite from PRD v3.12** (includes scaffold gap analysis + conformance path). **No code changes in this plan-only pass.**
+**Date:** 2026-08-03 (deploy supersession 2026-08-05)  
+**Status:** **Partially superseded** — product math still informative; **deploy/package path = hook-factory plan**.
 
 **Authority**
 

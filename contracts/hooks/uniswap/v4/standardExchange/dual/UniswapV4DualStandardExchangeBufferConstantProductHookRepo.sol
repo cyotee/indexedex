@@ -3,7 +3,9 @@ pragma solidity ^0.8.0;
 
 /**
  * @title UniswapV4DualStandardExchangeBufferConstantProductHookRepo
- * @notice Storage for dual SE buffer CP hook (LP ERC-20 + kLast + one-pool + reentrancy).
+ * @notice Diamond storage for dual SE buffer CP hook (bindings + kLast + one-pool + reentrancy).
+ * @dev LP ERC-20 uses shared ERC20Repo; vault tokens/reserves use MultiAssetBasicVaultRepo.
+ *      Bindings live in storage (diamond package) — not constructor immutables.
  */
 library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
@@ -18,14 +20,19 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
     uint256 internal constant ENTERED = 2;
 
     struct Layout {
-        uint256 totalSupply;
-        mapping(address => uint256) balanceOf;
-        mapping(address => mapping(address => uint256)) allowance;
-        string name;
-        string symbol;
+        // --- bindings (product-specific) ---
+        address poolManager;
+        address feeOracle;
+        address se0;
+        address token0;
+        address se1;
+        address token1;
+        address currency0;
+        address currency1;
         uint8 decimalsCurrency0;
         uint8 decimalsCurrency1;
-        bool metadataInitialized;
+        bool bindingsInitialized;
+        // --- AMM ---
         uint256 kLast;
         bool poolInitialized;
         uint256 reentrancyStatus;
@@ -38,19 +45,31 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         }
     }
 
-    function _setMetadata(
-        string memory name_,
-        string memory symbol_,
+    function _initializeBindings(
+        address poolManager_,
+        address feeOracle_,
+        address se0_,
+        address token0_,
+        address se1_,
+        address token1_,
+        address currency0_,
+        address currency1_,
         uint8 dec0,
         uint8 dec1
     ) internal {
         Layout storage l = _layout();
-        require(!l.metadataInitialized, "metadata set");
-        l.name = name_;
-        l.symbol = symbol_;
+        require(!l.bindingsInitialized, "bound");
+        l.poolManager = poolManager_;
+        l.feeOracle = feeOracle_;
+        l.se0 = se0_;
+        l.token0 = token0_;
+        l.se1 = se1_;
+        l.token1 = token1_;
+        l.currency0 = currency0_;
+        l.currency1 = currency1_;
         l.decimalsCurrency0 = dec0;
         l.decimalsCurrency1 = dec1;
-        l.metadataInitialized = true;
+        l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
     }
 }

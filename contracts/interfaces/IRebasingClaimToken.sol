@@ -162,6 +162,12 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
         external
         returns (uint256 sharesBurned);
 
+    /**
+     * @notice Owner (DETF) transfers a foreign ERC-20 held by this package (e.g. protocol reserve LP).
+     * @dev PRD LOCK: rebasing package holds protocol LP; DETF pulls before burn/claim unwind.
+     */
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external;
+
     /* ---------------------------------------------------------------------- */
     /*                              Events                                    */
     /* ---------------------------------------------------------------------- */
