@@ -54,7 +54,8 @@ library UniswapV4PositionRepo {
 
     function _initialize(Storage storage layout_, uint24 widthMultiplier_, bytes32 salt_) internal {
         require(widthMultiplier_ >= 1, "widthMultiplier must be >= 1");
-        layout_.strategy = StrategyConfig({widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: 1000});
+        layout_.strategy =
+            StrategyConfig({widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: 1000});
         layout_.centerPosition.salt = salt_;
         layout_.lowerWingPosition.salt = LOWER_WING_SALT;
         layout_.upperWingPosition.salt = UPPER_WING_SALT;
@@ -64,7 +65,11 @@ library UniswapV4PositionRepo {
         _initialize(_layout(), widthMultiplier_, salt_);
     }
 
-    function _position(Storage storage layout_, PositionKind kind_) internal view returns (PositionState storage position_) {
+    function _position(Storage storage layout_, PositionKind kind_)
+        internal
+        view
+        returns (PositionState storage position_)
+    {
         if (kind_ == PositionKind.Center) {
             return layout_.centerPosition;
         }
@@ -74,7 +79,9 @@ library UniswapV4PositionRepo {
         return layout_.upperWingPosition;
     }
 
-    function _createPositionIfNeeded(Storage storage layout_, PositionKind kind_, int24 tickLower_, int24 tickUpper_) internal {
+    function _createPositionIfNeeded(Storage storage layout_, PositionKind kind_, int24 tickLower_, int24 tickUpper_)
+        internal
+    {
         PositionState storage position_ = _position(layout_, kind_);
         if (position_.created) {
             return;
@@ -157,7 +164,8 @@ library UniswapV4PositionRepo {
     }
 
     function _liquidity(Storage storage layout_) internal view returns (uint128 liquidity_) {
-        return layout_.centerPosition.liquidity + layout_.lowerWingPosition.liquidity + layout_.upperWingPosition.liquidity;
+        return
+            layout_.centerPosition.liquidity + layout_.lowerWingPosition.liquidity + layout_.upperWingPosition.liquidity;
     }
 
     function _liquidity() internal view returns (uint128 liquidity_) {
@@ -197,7 +205,11 @@ library UniswapV4PositionRepo {
         return _positionTicks(_layout());
     }
 
-    function _positionTicks(Storage storage layout_, PositionKind kind_) internal view returns (int24 tickLower_, int24 tickUpper_) {
+    function _positionTicks(Storage storage layout_, PositionKind kind_)
+        internal
+        view
+        returns (int24 tickLower_, int24 tickUpper_)
+    {
         PositionState storage position_ = _position(layout_, kind_);
         tickLower_ = position_.tickLower;
         tickUpper_ = position_.tickUpper;

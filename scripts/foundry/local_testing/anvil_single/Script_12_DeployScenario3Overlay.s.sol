@@ -114,6 +114,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private uniswapV4StandardExchangeInQueryFacet;
     IFacet private uniswapV4StandardExchangePositionImportFacet;
     IFacet private uniswapV4StandardExchangeOutFacet;
+    IFacet private uniswapV4StandardExchangeLiquidReserveFacet;
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
@@ -271,6 +272,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
+        uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
@@ -359,6 +361,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 uniswapV4StandardExchangeInQueryFacet,
                 uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
+                uniswapV4StandardExchangeLiquidReserveFacet,
                 feeOracle,
                 vaultRegistry,
                 permit2,

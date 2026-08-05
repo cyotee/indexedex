@@ -485,7 +485,7 @@ forge test --match-path 'test/foundry/fork/**/constantProduct/single/**' -vv
 ## 8. Definition of Done (product + engineering)
 
 - [x] Phases 0–6 hermetic (product path) green under `FOUNDRY_PROFILE=uv4_single_se_cp_detf`  
-- [ ] At least one fork lifecycle smoke green (or documented env block) — **deferred** (Phase 6.1 / Phase 7 follow-through)  
+- [x] At least one fork lifecycle smoke green (or documented env block) — **Base fork green** under `FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork` (`test_FK1_fork_lifecycle_inert_firstBond_mint`)  
 - [x] PRD §15 testing expectations covered for hermetic matrix (custody, Policy both regimes, compound, fee NFT, realize paths)  
 - [x] Preview == execution on closed-form mint/burn routes  
 - [x] Debt-inclusive synthetic + realize-path matrix proven  
@@ -521,14 +521,18 @@ Prefer vertical slices with tests at each phase exit over big-bang coding.
 | 4 | [x] | Sell migrates LP NFT→claim; redeemClaim pulls protocol LP from claim |
 | 5 | [x] | Epoch lib units; compound assertGt protocol LP on claim after forced inventory |
 | 6.2–6.3 | [x] | Adversarial IsLocked + physical partition; Policy mint+burn regimes via real depth/skew |
-| 6.1 fork | [ ] | Deferred |
+| 6.1 fork | [x] | Base lifecycle: inert → first bond → mint; `FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork` |
+| 7.1–7.2 | partial | Shared-program pointer + epoch note (no product LOCK stamp — human product role) |
 
 **Verification command:**
 ```bash
 FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test \
   --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/*' -vv
+# fork:
+FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork forge test \
+  --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/*' -vv
 ```
-**Last run:** 38 passed / 0 failed (hermetic suite).
+**Last run:** 38 passed / 0 failed (hermetic suite). Fork: 1 passed (`test_FK1_fork_lifecycle_inert_firstBond_mint`).
 
 ---
 
@@ -540,9 +544,10 @@ FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test \
 | **convertToAssets** | NFT convert used diamond `reserveOfToken` only | **Updated** | Prefer NFT `balanceOf`; exclude protocol NFT effective shares when LP is physically on NFT (protocol LP on claim) |
 | **Fee-recipient NFT** | Soft try/catch → 0 if bond terms missing | **Still soft at deploy** | postDeploy still try/catch (no hard revert if feeTo/terms missing). **TestBase sets `setDefaultBondTerms` before first deploy** and hermetic asserts `feeRecipientNftId() != 0` |
 | **Foundry profile** | Default monorepo build | **`uv4_single_se_cp_detf`** | Default profile has pre-existing stack-too-deep elsewhere; dedicated profile for this family |
-| **Fork (6.1)** | Required DoD | **Deferred** | Hermetic product path complete; fork smoke is follow-through |
+| **Fork (6.1)** | Required DoD | **Shipped** | Base fork via `base_mainnet_alchemy` + production DFPkg path; Open mint after first bond (preview==exec). Profile `uv4_single_se_cp_detf_fork` (hermetic profile test path is hermetic-only) |
 | **Bond NFT path** | Plan mentioned `uniswap/v4/common/nft/` | Uses shared `detf/common/bondNft` + claim packages | Same packages as peers; Uni family wires via DFPkg postDeploy |
 | **Policy price test** | Real trades for both regimes | **Shipped** | Pair single-sided deposit raises synthetic; free seigniorage + external DETF deposit skew lowers it; Open is not used as sole mint/burn proof |
+| **Phase 7 product LOCK** | Product sign-off | **Not implementor** | Shared-program pointer added under `docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`; PRD remains unstamped until product role |
 
 **Previously rejected incomplete states (do not reintroduce):**
 - `_protocolLpHolder() = address(this)` diamond-only custody  
@@ -558,6 +563,7 @@ FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test \
 |---------|------|-------|
 | v0.1 | 2026-08-04 | Initial plan against PRD v0.5: phases, algorithms, file map, test matrix, gates |
 | v0.2 | 2026-08-05 | Hermetic Phases 0–6 product path complete; physical LP custody; Policy both regimes; forced compound; fee NFT assert; honest deviations |
+| v0.3 | 2026-08-05 | Phase 6.1 Base fork lifecycle green; Phase 7 shared-program epoch/fork pointer; product LOCK still pending |
 
 ---
 
@@ -565,7 +571,7 @@ FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test \
 
 | Role | Sign-off |
 |------|----------|
-| Product | Pending (PRD v0.5+) |
-| Protocol / implementor | Hermetic product path complete under profile; fork deferred |
+| Product | Pending (PRD v0.5+ LOCK stamp) |
+| Protocol / implementor | Hermetic Phases 0–6 + Base fork 6.1 green; Phase 7 product LOCK not claimed |
 
-**Status:** Hermetic Phases 0–6 (ex-fork) implemented and green under `FOUNDRY_PROFILE=uv4_single_se_cp_detf`.
+**Status:** Engineering DoD complete: hermetic under `uv4_single_se_cp_detf` + Base fork lifecycle under `uv4_single_se_cp_detf_fork`. Product LOCK / formal product acceptance remain human product role.

@@ -11,11 +11,24 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {UniswapV4StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
-import {UniswapV4StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
-import {UniswapV4StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol";
-import {UniswapV4StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
-import {UniswapV4StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol";
+import {
+    UniswapV4StandardExchangeInExecutionDelegate
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
+import {
+    UniswapV4StandardExchangeInFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
+import {
+    UniswapV4StandardExchangeInQueryFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol";
+import {
+    UniswapV4StandardExchangePositionImportFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
+import {
+    UniswapV4StandardExchangeOutFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol";
+import {
+    UniswapV4StandardExchangeLiquidReserveFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol";
 import {
     IUniswapV4StandardExchangeDFPkg,
     UniswapV4StandardExchangeDFPkg
@@ -82,6 +95,17 @@ library UniswapV4_Component_FactoryService {
         vm.label(address(instance), type(UniswapV4StandardExchangeOutFacet).name);
     }
 
+    function deployUniswapV4StandardExchangeLiquidReserveFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeLiquidReserveFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeLiquidReserveFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeLiquidReserveFacet).name);
+    }
+
     function deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
         IVaultRegistryDeployment vaultRegistry,
         IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit
@@ -108,6 +132,7 @@ library UniswapV4_Component_FactoryService {
         IFacet uniswapV4StandardExchangeInQueryFacet,
         IFacet uniswapV4StandardExchangePositionImportFacet,
         IFacet uniswapV4StandardExchangeOutFacet,
+        IFacet uniswapV4StandardExchangeLiquidReserveFacet,
         IVaultFeeOracleQuery vaultFeeOracleQuery,
         IVaultRegistryDeployment vaultRegistryDeployment,
         IPermit2 permit2,
@@ -122,6 +147,7 @@ library UniswapV4_Component_FactoryService {
         pkgInit.uniswapV4StandardExchangeInQueryFacet = uniswapV4StandardExchangeInQueryFacet;
         pkgInit.uniswapV4StandardExchangePositionImportFacet = uniswapV4StandardExchangePositionImportFacet;
         pkgInit.uniswapV4StandardExchangeOutFacet = uniswapV4StandardExchangeOutFacet;
+        pkgInit.uniswapV4StandardExchangeLiquidReserveFacet = uniswapV4StandardExchangeLiquidReserveFacet;
         pkgInit.vaultFeeOracleQuery = vaultFeeOracleQuery;
         pkgInit.vaultRegistryDeployment = vaultRegistryDeployment;
         pkgInit.permit2 = permit2;

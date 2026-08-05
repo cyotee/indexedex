@@ -31,8 +31,8 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
             UniswapV4StandardExchangeDFPkg(address(uniswapV4StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 9, "interface count");
-        assertEq(facets.length, 9, "facet count");
+        assertEq(interfaces.length, 10, "interface count");
+        assertEq(facets.length, 10, "facet count");
 
         assertEq(facets[0], address(erc20Facet), "erc20 facet");
         assertEq(facets[1], address(erc5267Facet), "erc5267 facet");
@@ -43,6 +43,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(facets[6], address(uniswapV4StandardExchangeInQueryFacet), "exchange in query facet");
         assertEq(facets[7], address(uniswapV4StandardExchangePositionImportFacet), "position import facet");
         assertEq(facets[8], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
+        assertEq(facets[9], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
     }
 
     function test_deployVault_registersVaultAndInitializesConfig() public {
@@ -70,7 +71,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(config.tokens.length, 2, "config token count");
         assertEq(config.tokens[0], expectedTokens[0], "config token0");
         assertEq(config.tokens[1], expectedTokens[1], "config token1");
-        assertEq(config.vaultTypes.length, 9, "vault types count");
+        assertEq(config.vaultTypes.length, 10, "vault types count");
         assertEq(config.contentsId, indexedexManager.calcContentsId(expectedTokens), "contents id");
 
         assertEq(IERC20Metadata(vault).symbol(), "UV4X", "symbol");
@@ -83,7 +84,11 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(token1Vaults[0], vault, "token1 registered vault");
     }
 
-    function _buildPoolKey(address token0Candidate, address token1Candidate) internal pure returns (PoolKey memory poolKey) {
+    function _buildPoolKey(address token0Candidate, address token1Candidate)
+        internal
+        pure
+        returns (PoolKey memory poolKey)
+    {
         (address token0, address token1) = token0Candidate < token1Candidate
             ? (token0Candidate, token1Candidate)
             : (token1Candidate, token0Candidate);

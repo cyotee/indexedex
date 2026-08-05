@@ -12,10 +12,15 @@ import {
     IUniswapV4StandardExchangePositionImport,
     UniswapV4StandardExchangeInTarget
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
-import {UniswapV4StandardExchangeInBase} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
+import {
+    UniswapV4StandardExchangeInBase
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
 
-contract UniswapV4StandardExchangePositionImportTarget is UniswapV4StandardExchangeInBase, IUniswapV4StandardExchangePositionImport {
+contract UniswapV4StandardExchangePositionImportTarget is
+    UniswapV4StandardExchangeInBase,
+    IUniswapV4StandardExchangePositionImport
+{
     function importPosition(
         IPositionManager positionManager,
         uint256 positionTokenId,
@@ -25,6 +30,8 @@ contract UniswapV4StandardExchangePositionImportTarget is UniswapV4StandardExcha
         uint256 deadline
     ) external nonReentrant returns (uint256 sharesOut) {
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
+        // D15 / T4e: position import hard-reverts while PoolManager is in-session.
+        _requireCanOpenPoolManagerUnlock();
         if (IERC20(address(this)).totalSupply() != 0 || UniswapV4PositionRepo._isPositionCreated()) {
             revert UniswapV4ExchangeIn_PositionImportUnavailable();
         }
@@ -43,7 +50,9 @@ contract UniswapV4StandardExchangePositionImportTarget is UniswapV4StandardExcha
         if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
 
         IERC721(address(positionManager)).transferFrom(owner, address(this), positionTokenId);
-        UniswapV4PositionRepo._initializeImportedPosition(positionManager, positionTokenId, info.tickLower(), info.tickUpper());
+        UniswapV4PositionRepo._initializeImportedPosition(
+            positionManager, positionTokenId, info.tickLower(), info.tickUpper()
+        );
         _refreshStoredLiquidity();
         _syncVaultReserves();
         ERC20Repo._mint(recipient, sharesOut);

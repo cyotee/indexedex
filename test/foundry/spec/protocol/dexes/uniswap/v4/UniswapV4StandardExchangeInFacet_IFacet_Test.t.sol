@@ -8,8 +8,12 @@ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IF
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {UniswapV4StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
-import {UniswapV4_Component_FactoryService} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
+import {
+    UniswapV4StandardExchangeInFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
+import {
+    UniswapV4_Component_FactoryService
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
 
 contract UniswapV4StandardExchangeInFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;

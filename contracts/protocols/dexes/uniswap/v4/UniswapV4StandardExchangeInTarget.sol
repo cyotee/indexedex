@@ -10,7 +10,9 @@ import {Address} from "@crane/contracts/utils/Address.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {UniswapV4StandardExchangeInBase} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
+import {
+    UniswapV4StandardExchangeInBase
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 
 interface IUniswapV4StandardExchangePositionImport {
     function importPosition(
@@ -40,19 +42,17 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         address recipient,
         bool pretransferred,
         uint256 deadline
-    )
-        external
-        nonReentrant
-        returns (uint256 amountOut)
-    {
+    ) external nonReentrant returns (uint256 amountOut) {
         _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
 
         address token0 = _token0();
         address token1 = _token1();
 
-        if ((address(tokenIn) == token0 && address(tokenOut) == token1)
-            || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
+        if (
+            (address(tokenIn) == token0 && address(tokenOut) == token1)
+                || (address(tokenIn) == token1 && address(tokenOut) == token0)
+        ) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = _executeDirectSwapIn(address(tokenIn), actualIn, recipient);
             if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
@@ -86,15 +86,22 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         return abi.decode(result, (uint256));
     }
 
-    function _delegateExecuteZapOutExactIn(address tokenOut, uint256 sharesBurned, uint256 minAmountOut, address recipient)
-        internal
-        returns (uint256 amountOut)
-    {
-        bytes memory result = UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
-            abi.encodeWithSignature(
-                "executeZapOutExactIn(address,uint256,uint256,address)", tokenOut, sharesBurned, minAmountOut, recipient
-            )
-        );
+    function _delegateExecuteZapOutExactIn(
+        address tokenOut,
+        uint256 sharesBurned,
+        uint256 minAmountOut,
+        address recipient
+    ) internal returns (uint256 amountOut) {
+        bytes memory result =
+            UNISWAP_V4_STANDARD_EXCHANGE_IN_EXECUTION_DELEGATE.functionDelegateCall(
+                abi.encodeWithSignature(
+                    "executeZapOutExactIn(address,uint256,uint256,address)",
+                    tokenOut,
+                    sharesBurned,
+                    minAmountOut,
+                    recipient
+                )
+            );
         return abi.decode(result, (uint256));
     }
 }

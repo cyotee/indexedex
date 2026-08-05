@@ -130,6 +130,19 @@ See PRD §0.4 / §12.1–12.2. Summary:
 
 ---
 
+## Family note — Uni V4 Single SE CP buffer (epoch expansion first adopter)
+
+| Field | Value |
+|-------|--------|
+| Package | `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/` |
+| Epoch form | Shipped for this family via `DETFEpochNaturalExpansionLib` (whole-epoch catch-up, debt-inclusive synthetic, realize only on bond / claimRewards / compound). Shared PRD still describes continuous `dt` as default for Balancer families until a formal shared amendment. |
+| Hermetic | `FOUNDRY_PROFILE=uv4_single_se_cp_detf` — Phases 0–6 product path green |
+| Fork (Phase 6.1) | `FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork` — Base lifecycle smoke green (`inert → first bond → mint`) |
+| Product law | Co-located `UniswapV4SingleStandardExchangeDETF_PRD.md` (not LOCK-stamped by implementor) |
+| Do not | Migrate all Balancer families to epoch form without shared PRD amendment; treat product LOCK as human product role |
+
+---
+
 ## Document control
 
 | Item | Value |
@@ -137,3 +150,4 @@ See PRD §0.4 / §12.1–12.2. Summary:
 | Created | 2026-07-29 |
 | Related | Threshold Modes program (orthogonal; already shipped) |
 | Next after all stages green | Mark PRD LOCKED if not already; update AGENTS.md common DETF expectations |
+| 2026-08-05 | Uni V4 Single SE CP family pointer: epoch expansion + Base fork smoke (see section above) |

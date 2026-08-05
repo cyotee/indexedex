@@ -12,7 +12,9 @@ import {
 import {
     UniswapV4StandardExchangePositionImportFacet
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
-import {UniswapV4_Component_FactoryService} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
+import {
+    UniswapV4_Component_FactoryService
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
 
 contract UniswapV4StandardExchangePositionImportFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;

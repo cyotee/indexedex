@@ -3,7 +3,9 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {UniswapV4StandardExchangeInQueryTarget} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol";
+import {
+    UniswapV4StandardExchangeInQueryTarget
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol";
 
 contract UniswapV4StandardExchangeInQueryFacet is UniswapV4StandardExchangeInQueryTarget, IFacet {
     function facetName() public pure override returns (string memory name) {

@@ -333,6 +333,30 @@ remappings = [
     "contracts/external/solady/=lib/crane/contracts/external/solady/",
 ]
 
+# Phase 6.1 Base fork lifecycle for Uni V4 Single SE CP DETF (same compile isolation as hermetic).
+# Run: FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork forge test -vv
+# Requires ALCHEMY_KEY (base_mainnet_alchemy) or BASE_RPC_URL.
+[profile.uv4_single_se_cp_detf_fork]
+src = 'contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
+test = 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
+out = 'out_uv4_single_se_cp_detf_fork'
+cache_path = 'cache_uv4_single_se_cp_detf_fork'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+ffi = true
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = true
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
 # Dual SE Buffer CP Hook package (Option B + two ERC-4626 SE + V4 PM + hook factory).
 # Run: FOUNDRY_PROFILE=dual_se_buffer_cp_hook forge test -vv
 # Plan verification also cites hook_factory; product suite uses this dedicated profile (peer of single_se_buffer_cp_hook).

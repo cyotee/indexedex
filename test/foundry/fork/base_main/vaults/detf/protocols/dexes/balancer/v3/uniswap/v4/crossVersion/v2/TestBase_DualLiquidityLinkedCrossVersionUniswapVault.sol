@@ -480,6 +480,7 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
         IFacet v4InQ = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         IFacet v4Import = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         IFacet v4Out = create3Factory.deployUniswapV4StandardExchangeOutFacet();
+        IFacet v4Liquid = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
         IFacet v2In = create3Factory.deployUniswapV2StandardExchangeInFacet();
         IFacet v2Out = create3Factory.deployUniswapV2StandardExchangeOutFacet();
 
@@ -494,6 +495,7 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
                 v4InQ,
                 v4Import,
                 v4Out,
+                v4Liquid,
                 indexedexManager,
                 indexedexManager,
                 permit2,

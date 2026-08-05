@@ -18,11 +18,15 @@ import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexe
 import {ModifyLiquidityParams, SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
+import {TransientStateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TransientStateLibrary.sol";
 import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
 import {SqrtPriceMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/SqrtPriceMath.sol";
 import {Position} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Position.sol";
+import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
 import {SafeCast} from "@crane/contracts/external/openzeppelin-contracts/utils/math/SafeCast.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
+import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
+import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -31,10 +35,14 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {UniswapV4PoolManagerAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolManagerAwareRepo.sol";
 import {UniswapV4PoolKeyAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolKeyAwareRepo.sol";
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
 import {UniswapV4QuoteService} from "contracts/protocols/dexes/uniswap/v4/UniswapV4QuoteService.sol";
+import {
+    IUniswapV4StandardExchangeLiquidReserve
+} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
 abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     using BetterSafeERC20 for IERC20;
@@ -96,6 +104,78 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     error UniswapV4Exchange_InsufficientOutput();
     error UniswapV4Exchange_TooMuchInput();
     error UniswapV4Exchange_ZeroAmount();
+    /// @notice Path requires a new PoolManager unlock while the manager is already in-session.
+    error UniswapV4Exchange_PoolManagerInteractionBlocked();
+    /// @notice Blocked amount-out cannot be covered by free local inventory of `token`.
+    error UniswapV4Exchange_InsufficientLocalReserve(address token, uint256 requested, uint256 available);
+
+    /// @dev Relative deadband: 5% of target free (D22).
+    uint256 internal constant LIQUID_RESERVE_RELATIVE_TOL_WAD = 0.05e18;
+
+    /**
+     * @notice True when this vault may open a new PoolManager `unlock` (manager idle).
+     * @dev D1: `canOpenPoolManagerUnlock() := !TransientStateLibrary.isUnlocked(poolManager)`.
+     *      Uniswap V4 uses unlocked = mid-batch; product copy prefers this positive gate.
+     */
+    function canOpenPoolManagerUnlock() public view virtual returns (bool) {
+        return !TransientStateLibrary.isUnlocked(_poolManager());
+    }
+
+    /// @dev Free ERC-20 balances of pool currencies on this diamond (D29). Never includes position math.
+    function _freeBalances() internal view returns (uint256 free0, uint256 free1) {
+        free0 = IERC20(_token0()).balanceOf(address(this));
+        free1 = IERC20(_token1()).balanceOf(address(this));
+    }
+
+    /// @dev Deployed amounts from managed/imported positions only.
+    function _deployedAmounts() internal view returns (uint256 amount0, uint256 amount1) {
+        return _positionAmounts();
+    }
+
+    /**
+     * @notice Live fee-oracle liquid reserve percentage (WAD). Always re-read; no vault cache (D20).
+     */
+    function _liveLiquidReservePercentage() internal view returns (uint256) {
+        return VaultFeeOracleQueryAwareRepo._feeOracle().liquidReservePercentageOfVault(address(this));
+    }
+
+    function _targetFree(uint256 total_i, uint256 liquidPct) internal pure returns (uint256) {
+        return (total_i * liquidPct) / ONE_WAD;
+    }
+
+    /// @dev Absolute floor: 10^max(0, decimals-6) (D22).
+    function _absoluteFloor(address token) internal view returns (uint256) {
+        uint8 decimals_;
+        try IERC20Metadata(token).decimals() returns (uint8 d) {
+            decimals_ = d;
+        } catch {
+            decimals_ = 18;
+        }
+        if (decimals_ <= 6) {
+            return 1;
+        }
+        return 10 ** uint256(decimals_ - 6);
+    }
+
+    /**
+     * @dev True when free_i is outside the deadband around targetFree_i (D22).
+     *      When tripped, rebalance moves free_i to targetFree_i (not merely to band edge).
+     */
+    function _shouldRebalanceToken(uint256 free_i, uint256 targetFree_i, uint256 floor_i) internal pure returns (bool) {
+        if (targetFree_i == 0) {
+            return free_i > floor_i;
+        }
+        uint256 deviation = free_i > targetFree_i ? free_i - targetFree_i : targetFree_i - free_i;
+        uint256 relativeTol = (targetFree_i * LIQUID_RESERVE_RELATIVE_TOL_WAD) / ONE_WAD;
+        uint256 tol = floor_i > relativeTol ? floor_i : relativeTol;
+        return deviation > tol;
+    }
+
+    function _requireCanOpenPoolManagerUnlock() internal view {
+        if (!canOpenPoolManagerUnlock()) {
+            revert UniswapV4Exchange_PoolManagerInteractionBlocked();
+        }
+    }
 
     function _poolManager() internal view returns (IPoolManager) {
         return UniswapV4PoolManagerAwareRepo._poolManager();
@@ -138,7 +218,12 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
             if (kind != UniswapV4PositionRepo.PositionKind.Center) {
                 return (0, 0, 0);
             }
-            return (UniswapV4PositionRepo._importedPositionManager().getPositionLiquidity(UniswapV4PositionRepo._importedPositionTokenId()), 0, 0);
+            return (
+                UniswapV4PositionRepo._importedPositionManager()
+                    .getPositionLiquidity(UniswapV4PositionRepo._importedPositionTokenId()),
+                0,
+                0
+            );
         }
 
         if (!UniswapV4PositionRepo._isPositionCreated(kind)) {
@@ -147,12 +232,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
 
         (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
         return StateLibrary.getPositionInfo(
-            _poolManager(),
-            _poolId(),
-            address(this),
-            tickLower,
-            tickUpper,
-            UniswapV4PositionRepo._salt(kind)
+            _poolManager(), _poolId(), address(this), tickLower, tickUpper, UniswapV4PositionRepo._salt(kind)
         );
     }
 
@@ -180,14 +260,20 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
 
     function _positionAmounts() internal view returns (uint256 amount0, uint256 amount1) {
         (uint256 centerAmount0, uint256 centerAmount1) = _positionAmounts(UniswapV4PositionRepo.PositionKind.Center);
-        (uint256 lowerWingAmount0, uint256 lowerWingAmount1) = _positionAmounts(UniswapV4PositionRepo.PositionKind.LowerWing);
-        (uint256 upperWingAmount0, uint256 upperWingAmount1) = _positionAmounts(UniswapV4PositionRepo.PositionKind.UpperWing);
+        (uint256 lowerWingAmount0, uint256 lowerWingAmount1) =
+            _positionAmounts(UniswapV4PositionRepo.PositionKind.LowerWing);
+        (uint256 upperWingAmount0, uint256 upperWingAmount1) =
+            _positionAmounts(UniswapV4PositionRepo.PositionKind.UpperWing);
 
         amount0 = centerAmount0 + lowerWingAmount0 + upperWingAmount0;
         amount1 = centerAmount1 + lowerWingAmount1 + upperWingAmount1;
     }
 
-    function _positionAmounts(UniswapV4PositionRepo.PositionKind kind) internal view returns (uint256 amount0, uint256 amount1) {
+    function _positionAmounts(UniswapV4PositionRepo.PositionKind kind)
+        internal
+        view
+        returns (uint256 amount0, uint256 amount1)
+    {
         if (!UniswapV4PositionRepo._isPositionCreated(kind)) {
             return (0, 0);
         }
@@ -214,16 +300,10 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
         }
 
         amount0 = SqrtPriceMath.getAmount0Delta(
-            TickMath.getSqrtPriceAtTick(tickLower),
-            TickMath.getSqrtPriceAtTick(tickUpper),
-            liquidity,
-            false
+            TickMath.getSqrtPriceAtTick(tickLower), TickMath.getSqrtPriceAtTick(tickUpper), liquidity, false
         );
         amount1 = SqrtPriceMath.getAmount1Delta(
-            TickMath.getSqrtPriceAtTick(tickLower),
-            TickMath.getSqrtPriceAtTick(tickUpper),
-            liquidity,
-            false
+            TickMath.getSqrtPriceAtTick(tickLower), TickMath.getSqrtPriceAtTick(tickUpper), liquidity, false
         );
 
         if (tick <= tickLower) {
@@ -231,18 +311,10 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
         } else if (tick >= tickUpper) {
             amount0 = 0;
         } else {
-            amount0 = SqrtPriceMath.getAmount0Delta(
-                sqrtPriceX96,
-                TickMath.getSqrtPriceAtTick(tickUpper),
-                liquidity,
-                false
-            );
-            amount1 = SqrtPriceMath.getAmount1Delta(
-                TickMath.getSqrtPriceAtTick(tickLower),
-                sqrtPriceX96,
-                liquidity,
-                false
-            );
+            amount0 =
+                SqrtPriceMath.getAmount0Delta(sqrtPriceX96, TickMath.getSqrtPriceAtTick(tickUpper), liquidity, false);
+            amount1 =
+                SqrtPriceMath.getAmount1Delta(TickMath.getSqrtPriceAtTick(tickLower), sqrtPriceX96, liquidity, false);
         }
     }
 
@@ -318,11 +390,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
             budgets.centerBudget1
         );
         (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96,
-            tick,
-            managedTicks.centerLower,
-            managedTicks.centerUpper,
-            plan.centerLiquidity
+            sqrtPriceX96, tick, managedTicks.centerLower, managedTicks.centerUpper, plan.centerLiquidity
         );
         plan.amount0Used += amount0;
         plan.amount1Used += amount1;
@@ -343,11 +411,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
             budgets.lowerWingBudget1
         );
         (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96,
-            tick,
-            managedTicks.lowerWingLower,
-            managedTicks.lowerWingUpper,
-            plan.lowerWingLiquidity
+            sqrtPriceX96, tick, managedTicks.lowerWingLower, managedTicks.lowerWingUpper, plan.lowerWingLiquidity
         );
         plan.amount0Used += amount0;
         plan.amount1Used += amount1;
@@ -368,11 +432,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
             0
         );
         (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96,
-            tick,
-            managedTicks.upperWingLower,
-            managedTicks.upperWingUpper,
-            plan.upperWingLiquidity
+            sqrtPriceX96, tick, managedTicks.upperWingLower, managedTicks.upperWingUpper, plan.upperWingLiquidity
         );
         plan.amount0Used += amount0;
         plan.amount1Used += amount1;
@@ -385,25 +445,13 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     {
         (uint160 sqrtPriceX96, int24 tick,,) = _slot0();
         (uint256 centerAmount0, uint256 centerAmount1) = _quotePositionWithdrawal(
-            sqrtPriceX96,
-            tick,
-            UniswapV4PositionRepo.PositionKind.Center,
-            sharesBurned,
-            totalShares
+            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares
         );
         (uint256 lowerWingAmount0, uint256 lowerWingAmount1) = _quotePositionWithdrawal(
-            sqrtPriceX96,
-            tick,
-            UniswapV4PositionRepo.PositionKind.LowerWing,
-            sharesBurned,
-            totalShares
+            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares
         );
         (uint256 upperWingAmount0, uint256 upperWingAmount1) = _quotePositionWithdrawal(
-            sqrtPriceX96,
-            tick,
-            UniswapV4PositionRepo.PositionKind.UpperWing,
-            sharesBurned,
-            totalShares
+            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares
         );
 
         amount0 = centerAmount0 + lowerWingAmount0 + upperWingAmount0;
@@ -437,17 +485,368 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token1()), reserve1);
     }
 
+    /**
+     * @dev Total reserves = free ERC-20 balances + deployed position amounts (D9/D29).
+     *      Free never double-counts position inventory; deployed never includes balanceOf.
+     */
     function _totalVaultReserves() internal view returns (uint256 reserve0, uint256 reserve1) {
-        return _positionAmounts();
+        (uint256 free0, uint256 free1) = _freeBalances();
+        (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
+        reserve0 = free0 + deployed0;
+        reserve1 = free1 + deployed1;
     }
 
     function _sqrtPriceLimit(bool zeroForOne) internal pure returns (uint160) {
         return zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1;
     }
 
+    /**
+     * @dev Every unlock entry requires interaction-free gate so a missed branch cannot nested-unlock.
+     */
     function _executeUnlock(OperationParams memory params) internal returns (BalanceDelta delta) {
+        _requireCanOpenPoolManagerUnlock();
         bytes memory result = _poolManager().unlock(abi.encode(params));
         delta = abi.decode(result, (BalanceDelta));
+    }
+
+    /**
+     * @dev Shares minted for a deposit of `amount0Added`/`amount1Added` against pre-deposit reserves.
+     *      First mint: amount0+amount1 (free-only OK). Subsequent single-sided: pro-rata that token's reserve.
+     *      Dual-sided: ConstProdUtils min-ratio quote.
+     */
+    function _sharesOutForDeposit(
+        uint256 amount0Added,
+        uint256 amount1Added,
+        uint256 totalSharesBefore,
+        uint256 reserve0Before,
+        uint256 reserve1Before
+    ) internal pure returns (uint256 sharesOut) {
+        if (amount0Added == 0 && amount1Added == 0) {
+            return 0;
+        }
+        if (totalSharesBefore == 0) {
+            return amount0Added + amount1Added;
+        }
+        if (amount0Added > 0 && amount1Added == 0) {
+            if (reserve0Before == 0) {
+                return amount0Added;
+            }
+            return (amount0Added * totalSharesBefore) / reserve0Before;
+        }
+        if (amount1Added > 0 && amount0Added == 0) {
+            if (reserve1Before == 0) {
+                return amount1Added;
+            }
+            return (amount1Added * totalSharesBefore) / reserve1Before;
+        }
+        return
+            ConstProdUtils._depositQuote(amount0Added, amount1Added, totalSharesBefore, reserve0Before, reserve1Before);
+    }
+
+    /**
+     * @dev Best-effort free↔deployed rebalance when interaction is free (D10/D11/D22/D28).
+     *      Never reverts the caller for soft failure: no-op when blocked; skip dust; no swaps.
+     */
+    function _rebalanceLiquidReserveBestEffort() internal {
+        if (!canOpenPoolManagerUnlock()) {
+            return;
+        }
+        _rebalanceLiquidReserveInternal();
+    }
+
+    struct RebalanceSnap {
+        uint256 liquidPct;
+        uint256 free0;
+        uint256 free1;
+        uint256 deployed0;
+        uint256 deployed1;
+        uint256 target0;
+        uint256 target1;
+    }
+
+    function _loadRebalanceSnap() internal view returns (RebalanceSnap memory s) {
+        s.liquidPct = _liveLiquidReservePercentage();
+        (s.free0, s.free1) = _freeBalances();
+        (s.deployed0, s.deployed1) = _deployedAmounts();
+        s.target0 = _targetFree(s.free0 + s.deployed0, s.liquidPct);
+        s.target1 = _targetFree(s.free1 + s.deployed1, s.liquidPct);
+    }
+
+    /**
+     * @dev Core rebalance: deploy excess free and/or remove to refill deficit (add/remove only).
+     * @return moved True if any liquidity was added or removed.
+     */
+    function _rebalanceLiquidReserveInternal() internal returns (bool moved) {
+        RebalanceSnap memory s = _loadRebalanceSnap();
+        uint256 floor0 = _absoluteFloor(_token0());
+        uint256 floor1 = _absoluteFloor(_token1());
+
+        if (!_shouldRebalanceToken(s.free0, s.target0, floor0) && !_shouldRebalanceToken(s.free1, s.target1, floor1)) {
+            return false;
+        }
+
+        // Deploy excess first (free > target).
+        {
+            uint256 excess0 = s.free0 > s.target0 ? s.free0 - s.target0 : 0;
+            uint256 excess1 = s.free1 > s.target1 ? s.free1 - s.target1 : 0;
+            if ((excess0 > 0 || excess1 > 0) && _deployExcessLiquidity(excess0, excess1)) {
+                moved = true;
+            }
+        }
+
+        // Refill deficit (free < target) via remove-liquidity; dual-token overshoot accepted (D28).
+        s = _loadRebalanceSnap();
+        {
+            uint256 needFree0 = s.free0 < s.target0 ? s.target0 - s.free0 : 0;
+            uint256 needFree1 = s.free1 < s.target1 ? s.target1 - s.free1 : 0;
+            if ((needFree0 > 0 || needFree1 > 0) && (s.deployed0 > 0 || s.deployed1 > 0)) {
+                if (_refillDeficitLiquidity(needFree0, needFree1, s.deployed0, s.deployed1)) {
+                    moved = true;
+                }
+            }
+        }
+
+        // Optional second deploy pass if remove overshot free on the other token.
+        if (moved && canOpenPoolManagerUnlock()) {
+            s = _loadRebalanceSnap();
+            uint256 excess0 = s.free0 > s.target0 ? s.free0 - s.target0 : 0;
+            uint256 excess1 = s.free1 > s.target1 ? s.free1 - s.target1 : 0;
+            if (
+                (_shouldRebalanceToken(s.free0, s.target0, floor0) && excess0 > 0)
+                    || (_shouldRebalanceToken(s.free1, s.target1, floor1) && excess1 > 0)
+            ) {
+                _deployExcessLiquidity(excess0, excess1);
+            }
+        }
+
+        if (moved) {
+            _emitRebalanceEvent(_liveLiquidReservePercentage());
+        }
+    }
+
+    function _emitRebalanceEvent(uint256 liquidPct) internal {
+        _refreshStoredLiquidity();
+        _syncVaultReserves();
+        (uint256 free0, uint256 free1) = _freeBalances();
+        (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
+        emit IUniswapV4StandardExchangeLiquidReserve.LiquidReserveRebalanced(
+            free0, free1, deployed0, deployed1, liquidPct
+        );
+    }
+
+    function _deployExcessLiquidity(uint256 excess0, uint256 excess1) internal returns (bool moved) {
+        if (excess0 == 0 && excess1 == 0) {
+            return false;
+        }
+        // Cap budgets to actual free (never pull from outside).
+        (uint256 free0, uint256 free1) = _freeBalances();
+        if (excess0 > free0) excess0 = free0;
+        if (excess1 > free1) excess1 = free1;
+        if (excess0 == 0 && excess1 == 0) {
+            return false;
+        }
+
+        if (UniswapV4PositionRepo._isImportedPosition()) {
+            return _deployExcessImported(excess0, excess1);
+        }
+
+        ManagedTicks memory managedTicks =
+            UniswapV4PositionRepo._isPositionCreated() ? _managedTicks() : _deriveManagedTicks();
+        _createManagedPositionsIfNeededCommon(managedTicks);
+
+        ManagedLiquidityPlan memory plan = _managedLiquidityPlan(managedTicks, excess0, excess1);
+        if (plan.centerLiquidity == 0 && plan.lowerWingLiquidity == 0 && plan.upperWingLiquidity == 0) {
+            return false;
+        }
+
+        if (plan.centerLiquidity > 0) {
+            _executeUnlock(
+                OperationParams({
+                    op: Operation.AddLiquidity,
+                    zeroForOne: false,
+                    amountSpecified: 0,
+                    tickLower: managedTicks.centerLower,
+                    tickUpper: managedTicks.centerUpper,
+                    liquidity: plan.centerLiquidity,
+                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
+                })
+            );
+            moved = true;
+        }
+        if (plan.lowerWingLiquidity > 0) {
+            _executeUnlock(
+                OperationParams({
+                    op: Operation.AddLiquidity,
+                    zeroForOne: false,
+                    amountSpecified: 0,
+                    tickLower: managedTicks.lowerWingLower,
+                    tickUpper: managedTicks.lowerWingUpper,
+                    liquidity: plan.lowerWingLiquidity,
+                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.LowerWing)
+                })
+            );
+            moved = true;
+        }
+        if (plan.upperWingLiquidity > 0) {
+            _executeUnlock(
+                OperationParams({
+                    op: Operation.AddLiquidity,
+                    zeroForOne: false,
+                    amountSpecified: 0,
+                    tickLower: managedTicks.upperWingLower,
+                    tickUpper: managedTicks.upperWingUpper,
+                    liquidity: plan.upperWingLiquidity,
+                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.UpperWing)
+                })
+            );
+            moved = true;
+        }
+    }
+
+    function _deployExcessImported(uint256 excess0, uint256 excess1) internal returns (bool moved) {
+        (int24 tickLower, int24 tickUpper) =
+            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
+        (uint160 sqrtPriceX96,,,) = _slot0();
+        uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
+            sqrtPriceX96,
+            TickMath.getSqrtPriceAtTick(tickLower),
+            TickMath.getSqrtPriceAtTick(tickUpper),
+            excess0,
+            excess1
+        );
+        if (liquidity == 0) {
+            return false;
+        }
+        // Imported growth uses PositionManager modifyLiquidities (unlock inside PM path).
+        // Only callable when free; gate already checked by caller.
+        _increaseImportedPositionCommon(liquidity, uint128(excess0), uint128(excess1));
+        return true;
+    }
+
+    function _refillDeficitLiquidity(uint256 need0, uint256 need1, uint256 deployed0, uint256 deployed1)
+        internal
+        returns (bool moved)
+    {
+        // Estimate share of deployed inventory to remove so free of short tokens rises toward target.
+        // Conservative: burn max(need0/deployed0, need1/deployed1) fraction of each position's liquidity.
+        uint256 fracWad;
+        if (need0 > 0 && deployed0 > 0) {
+            uint256 f0 = (need0 * ONE_WAD) / deployed0;
+            if (f0 > fracWad) fracWad = f0;
+        }
+        if (need1 > 0 && deployed1 > 0) {
+            uint256 f1 = (need1 * ONE_WAD) / deployed1;
+            if (f1 > fracWad) fracWad = f1;
+        }
+        if (fracWad == 0) {
+            return false;
+        }
+        // Cap at 100%.
+        if (fracWad > ONE_WAD) {
+            fracWad = ONE_WAD;
+        }
+
+        // Use a large "shares" scale so integer liquidity burns work for small fractions.
+        uint256 scale = 1e18;
+        uint256 burnShares = (fracWad * scale) / ONE_WAD;
+        if (burnShares == 0) {
+            burnShares = 1;
+        }
+
+        if (UniswapV4PositionRepo._isImportedPosition()) {
+            uint128 liq = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
+            uint128 toBurn = uint128((uint256(liq) * burnShares) / scale);
+            if (toBurn == 0) {
+                return false;
+            }
+            _burnImportedLiquidityCommon(toBurn);
+            return true;
+        }
+
+        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.Center, burnShares, scale)) {
+            moved = true;
+        }
+        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.LowerWing, burnShares, scale)) {
+            moved = true;
+        }
+        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.UpperWing, burnShares, scale)) {
+            moved = true;
+        }
+    }
+
+    function _burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind kind, uint256 burnShares, uint256 scale)
+        internal
+        returns (bool)
+    {
+        uint128 currentLiquidity = _currentLiquidity(kind);
+        if (currentLiquidity == 0) {
+            return false;
+        }
+        uint128 liquidityToBurn = uint128((uint256(currentLiquidity) * burnShares) / scale);
+        if (liquidityToBurn == 0) {
+            return false;
+        }
+        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
+        _executeUnlock(
+            OperationParams({
+                op: Operation.RemoveLiquidity,
+                zeroForOne: false,
+                amountSpecified: 0,
+                tickLower: tickLower,
+                tickUpper: tickUpper,
+                liquidity: liquidityToBurn,
+                salt: UniswapV4PositionRepo._salt(kind)
+            })
+        );
+        return true;
+    }
+
+    function _createManagedPositionsIfNeededCommon(ManagedTicks memory managedTicks) internal {
+        if (UniswapV4PositionRepo._isPositionCreated()) {
+            return;
+        }
+        UniswapV4PositionRepo._createPositionIfNeeded(
+            UniswapV4PositionRepo.PositionKind.Center, managedTicks.centerLower, managedTicks.centerUpper
+        );
+        UniswapV4PositionRepo._createPositionIfNeeded(
+            UniswapV4PositionRepo.PositionKind.LowerWing, managedTicks.lowerWingLower, managedTicks.lowerWingUpper
+        );
+        UniswapV4PositionRepo._createPositionIfNeeded(
+            UniswapV4PositionRepo.PositionKind.UpperWing, managedTicks.upperWingLower, managedTicks.upperWingUpper
+        );
+    }
+
+    function _increaseImportedPositionCommon(uint128 liquidity, uint128 amount0Max, uint128 amount1Max) internal {
+        address pm = address(UniswapV4PositionRepo._importedPositionManager());
+        Permit2AwareRepo._permit2().approve(_token0(), pm, type(uint160).max, type(uint48).max);
+        Permit2AwareRepo._permit2().approve(_token1(), pm, type(uint160).max, type(uint48).max);
+        IERC20(_token0()).approve(pm, amount0Max);
+        IERC20(_token1()).approve(pm, amount1Max);
+
+        bytes memory actions = abi.encodePacked(uint8(Actions.INCREASE_LIQUIDITY), uint8(Actions.SETTLE_PAIR));
+        bytes[] memory params = new bytes[](2);
+        params[0] = abi.encode(
+            UniswapV4PositionRepo._importedPositionTokenId(), uint256(liquidity), amount0Max, amount1Max, bytes("")
+        );
+        params[1] = abi.encode(_currency0(), _currency1());
+        UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
+
+        IERC20(_token0()).approve(pm, 0);
+        IERC20(_token1()).approve(pm, 0);
+    }
+
+    function _burnImportedLiquidityCommon(uint128 liquidityToBurn) internal {
+        bytes memory actions = abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR));
+        bytes[] memory params = new bytes[](2);
+        params[0] = abi.encode(
+            UniswapV4PositionRepo._importedPositionTokenId(),
+            uint256(liquidityToBurn),
+            uint128(0),
+            uint128(0),
+            bytes("")
+        );
+        params[1] = abi.encode(_currency0(), _currency1(), address(this));
+        UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(abi.encode(actions, params), block.timestamp);
     }
 
     function unlockCallback(bytes calldata data) external override returns (bytes memory) {
@@ -471,48 +870,51 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
 
     function _executeSwap(OperationParams memory params) internal returns (BalanceDelta delta) {
         PoolKey memory poolKey = _poolKey();
-        delta = _poolManager().swap(
-            poolKey,
-            SwapParams({
-                zeroForOne: params.zeroForOne,
-                amountSpecified: params.op == Operation.SwapExactIn
-                    ? -int256(params.amountSpecified)
-                    : int256(params.amountSpecified),
-                sqrtPriceLimitX96: _sqrtPriceLimit(params.zeroForOne)
-            }),
-            bytes("")
-        );
+        delta = _poolManager()
+            .swap(
+                poolKey,
+                SwapParams({
+                    zeroForOne: params.zeroForOne,
+                    amountSpecified: params.op == Operation.SwapExactIn
+                        ? -int256(params.amountSpecified)
+                        : int256(params.amountSpecified),
+                    sqrtPriceLimitX96: _sqrtPriceLimit(params.zeroForOne)
+                }),
+                bytes("")
+            );
 
         _settleSwapDelta(params.zeroForOne, delta);
     }
 
     function _executeAddLiquidity(OperationParams memory params) internal returns (BalanceDelta callerDelta) {
         PoolKey memory poolKey = _poolKey();
-        (callerDelta,) = _poolManager().modifyLiquidity(
-            poolKey,
-            ModifyLiquidityParams({
-                tickLower: params.tickLower,
-                tickUpper: params.tickUpper,
-                liquidityDelta: int256(uint256(params.liquidity)),
-                salt: params.salt
-            }),
-            bytes("")
-        );
+        (callerDelta,) = _poolManager()
+            .modifyLiquidity(
+                poolKey,
+                ModifyLiquidityParams({
+                    tickLower: params.tickLower,
+                    tickUpper: params.tickUpper,
+                    liquidityDelta: int256(uint256(params.liquidity)),
+                    salt: params.salt
+                }),
+                bytes("")
+            );
         _settleModifyLiquidityDelta(callerDelta);
     }
 
     function _executeRemoveLiquidity(OperationParams memory params) internal returns (BalanceDelta callerDelta) {
         PoolKey memory poolKey = _poolKey();
-        (callerDelta,) = _poolManager().modifyLiquidity(
-            poolKey,
-            ModifyLiquidityParams({
-                tickLower: params.tickLower,
-                tickUpper: params.tickUpper,
-                liquidityDelta: -int256(uint256(params.liquidity)),
-                salt: params.salt
-            }),
-            bytes("")
-        );
+        (callerDelta,) = _poolManager()
+            .modifyLiquidity(
+                poolKey,
+                ModifyLiquidityParams({
+                    tickLower: params.tickLower,
+                    tickUpper: params.tickUpper,
+                    liquidityDelta: -int256(uint256(params.liquidity)),
+                    salt: params.salt
+                }),
+                bytes("")
+            );
         _settleModifyLiquidityDelta(callerDelta);
     }
 
@@ -570,10 +972,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     function _quoteSwapOut(uint256 amountOut, bool zeroForOne) internal view returns (uint256 amountIn) {
         return UniswapV4QuoteService._quoteDirectExactOutput(
             UniswapV4QuoteService.DirectQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                zeroForOne: zeroForOne,
-                amount: amountOut
+                manager: _poolManager(), key: _poolKey(), zeroForOne: zeroForOne, amount: amountOut
             })
         );
     }
@@ -581,10 +980,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
     function _quoteSwapIn(uint256 amountIn, bool zeroForOne) internal view returns (uint256 amountOut) {
         return UniswapV4QuoteService._quoteDirectExactInput(
             UniswapV4QuoteService.DirectQuoteParams({
-                manager: _poolManager(),
-                key: _poolKey(),
-                zeroForOne: zeroForOne,
-                amount: amountIn
+                manager: _poolManager(), key: _poolKey(), zeroForOne: zeroForOne, amount: amountIn
             })
         );
     }
