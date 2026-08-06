@@ -276,7 +276,7 @@ export default function HomePage() {
           <div className="lg:col-span-5">
             <div className="landing-lab__panel p-6 md:p-8">
               <div className="landing-terminal-bar -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 px-4">
-                <span>// reserve_core.preview</span>
+                <span>{'// reserve_core.preview'}</span>
                 <span className="text-[var(--accent,#4FD44B)]">status=sim</span>
               </div>
               <ReserveCore />
@@ -395,7 +395,7 @@ export default function HomePage() {
                 className="landing-feature-hero block group overflow-hidden rounded-xl transition-shadow"
               >
                 <div className="landing-terminal-bar">
-                  <span>// protocol_detf</span>
+                  <span>{'// protocol_detf'}</span>
                   <span className="text-[var(--accent,#4FD44B)]">live</span>
                 </div>
                 <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -542,7 +542,7 @@ export default function HomePage() {
       {/* Closing strip */}
       <section className="pb-4">
         <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 font-mono text-[11px] leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          <div className="text-[var(--accent,#4FD44B)] opacity-90">// product_law</div>
+          <div className="text-[var(--accent,#4FD44B)] opacity-90">{'// product_law'}</div>
           <div className="mt-2 text-[var(--text-primary,#EDEDED)]">
             DETF = Decentralized ETF. many types. deploy inert. bond to go live.
             <br />
