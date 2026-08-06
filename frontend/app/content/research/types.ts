@@ -13,6 +13,9 @@ export type ResearchSection = {
   bullets?: string[]
   /** Composition diagram under the section body (optional). */
   diagram?: ResearchDiagramId
+  /** Mermaid flowchart source (optional; client-rendered). Use ConstProd, never a two-letter constant-product shorthand. */
+  mermaid?: string
+  mermaidCaption?: string
 }
 
 export type ResearchArticle = {

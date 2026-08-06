@@ -9,7 +9,7 @@ import { PageHeader } from '../components/ui/PageHeader'
 export const metadata: Metadata = {
   title: 'Research — IndexedEx',
   description:
-    'Measured claims and product education: DETF pattern, DETF types, bond vs mint, rate integrity, and Protocol DETF.',
+    'Measured claims and product education: DETF pattern, Uniswap V4 markets, DETF types, bond vs mint, rate integrity, and Protocol DETF.',
 }
 
 function formatDate(iso: string): string {

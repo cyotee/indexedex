@@ -2,6 +2,7 @@ import { bondVsMintArticle } from './articles/bond-vs-mint'
 import { detfArticle } from './articles/detf'
 import { detfTypesArticle } from './articles/detf-types'
 import { rateProvidersArticle } from './articles/rate-providers'
+import { uniswapV4MarketsArticle } from './articles/uniswap-v4-markets'
 import type { ResearchArticle } from './types'
 
 export type {
@@ -14,6 +15,7 @@ export type {
 /** All registered articles (published + draft). */
 export const RESEARCH_ARTICLES: ResearchArticle[] = [
   detfArticle,
+  uniswapV4MarketsArticle,
   detfTypesArticle,
   bondVsMintArticle,
   rateProvidersArticle,

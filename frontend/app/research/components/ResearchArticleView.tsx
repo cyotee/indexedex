@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { DetfCompositionDiagram } from './diagrams/DetfCompositionDiagram'
+import { MermaidDiagram } from './MermaidDiagram'
 
 function formatDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00.000Z`)
@@ -91,6 +92,9 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
               </ul>
             ) : null}
             {section.diagram ? <DetfCompositionDiagram id={section.diagram} /> : null}
+            {section.mermaid ? (
+              <MermaidDiagram chart={section.mermaid} caption={section.mermaidCaption} />
+            ) : null}
           </section>
         ))}
       </div>
