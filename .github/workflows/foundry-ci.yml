@@ -1,0 +1,102 @@
+# Foundry CI — hermetic (required) + fork (uses ALCHEMY_KEY repository secret).
+# Docs: docs/ci.md
+name: Foundry CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: foundry-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  hermetic:
+    name: Build + hermetic tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout (recursive submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Show forge version
+        run: forge --version
+
+      - name: Cache forge artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            out
+            cache_forge
+            ~/.svm
+          key: forge-hermetic-${{ runner.os }}-${{ hashFiles('foundry.toml', 'remappings.txt', 'lib/crane/**/*.sol') }}
+          restore-keys: |
+            forge-hermetic-${{ runner.os }}-
+
+      - name: Forge build (default profile)
+        run: forge build
+
+      - name: Forge test (CI hermetic profile)
+        # profile.ci inherits default (test/foundry/spec), sizes=false
+        run: FOUNDRY_PROFILE=ci forge test -vv
+
+  fork:
+    name: Fork tests (Alchemy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    # Soft-gate until the full fork suite is green with ALCHEMY_KEY + pins.
+    # Remove continue-on-error once fork job is reliably green, then mark required in branch protection.
+    continue-on-error: true
+    steps:
+      - name: Checkout (recursive submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Show forge version
+        run: forge --version
+
+      - name: Cache forge artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            out
+            cache_forge
+            ~/.svm
+          key: forge-fork-${{ runner.os }}-${{ hashFiles('foundry.toml', 'remappings.txt', 'lib/crane/**/*.sol') }}
+          restore-keys: |
+            forge-fork-${{ runner.os }}-
+
+      - name: Require ALCHEMY_KEY
+        env:
+          ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
+        run: |
+          if [ -z "${ALCHEMY_KEY}" ]; then
+            echo "::error::Repository secret ALCHEMY_KEY is not set (or not available to this run)."
+            echo "Add Settings → Secrets and variables → Actions → ALCHEMY_KEY (raw Alchemy API key only)."
+            echo "External fork PRs never receive secrets; hermetic job still gates those PRs."
+            exit 1
+          fi
+
+      - name: Forge test (CI fork profile)
+        env:
+          ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
+          # Optional pins for determinism (uncomment / set when known-good):
+          # BASE_FORK_BLOCK: "..."
+          # ETH_FORK_BLOCK: "..."
+        # profile.ci_fork inherits fork (test/foundry/fork), sizes=false
+        # foundry.toml [rpc_endpoints] substitute ${ALCHEMY_KEY} into base_mainnet_alchemy etc.
+        run: FOUNDRY_PROFILE=ci_fork forge test -vv

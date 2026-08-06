@@ -65,6 +65,45 @@ optimizer = true
 optimizer_runs = 1
 via_ir = false
 
+# ---------------------------------------------------------------------------
+# CI overlays (GitHub Actions). Quieter/faster (sizes=false).
+# Local: FOUNDRY_PROFILE=ci forge test
+#        FOUNDRY_PROFILE=ci_fork forge test   # requires ALCHEMY_KEY
+# See docs/ci.md
+#
+# Note: inherits= works for default→ci; non-default parents (fork) can fail to
+# apply test= in some Foundry versions, so ci_fork is explicit.
+# ---------------------------------------------------------------------------
+[profile.ci]
+inherits = "default"
+sizes = false
+
+[profile.ci_fork]
+src = 'contracts'
+out = 'out'
+libs = ['node_modules', 'lib']
+test = 'test/foundry/fork'
+cache_path = 'cache_forge'
+ffi = true
+fs_permissions = [
+    { access = "read-write", path = "./"}
+]
+ignored_error_codes = [
+    2394,
+    3860,
+    5574,
+    2072,
+    2968,
+    2018,
+    5667
+]
+solc = "0.8.35"
+ignored_warnings_from = ["lib/crane/"]
+sizes = false
+optimizer = true
+optimizer_runs = 1
+via_ir = false
+
 # [profile.default.solc]
 # verbosity = 1
 
@@ -253,6 +292,90 @@ via_ir = false
 ffi = true
 fs_permissions = [{ access = "read-write", path = "./"}]
 sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
+# SE Weighted Buffer Hook package (n∈[2,8] weighted + ≥1 SE + dual scale + hook factory).
+# Run: FOUNDRY_PROFILE=se_weighted_buffer_hook forge test -vv
+# Plan verification also cites hook_factory; product suite uses this dedicated profile (peer of se_orbital_buffer_hook).
+[profile.se_weighted_buffer_hook]
+src = 'contracts/hooks/uniswap/v4/standardExchange/weighted'
+test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted'
+out = 'out_se_weighted_buffer_hook'
+cache_path = 'cache_se_weighted_buffer_hook'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+# Large Target (dual-scale weighted + SE buffer + MultiAssetLiquidity + SE I/O) exceeds legacy codegen stack.
+via_ir = true
+ffi = true
+gas_limit = 30000000000
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
+# SE Orbital Buffer Hook package (3-asset sphere + optional SE/RP + hook factory).
+# Run: FOUNDRY_PROFILE=se_orbital_buffer_hook forge test -vv
+# Plan verification also cites hook_factory; product suite uses this dedicated profile.
+[profile.se_orbital_buffer_hook]
+src = 'contracts/hooks/uniswap/v4/standardExchange/orbital'
+test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital'
+out = 'out_se_orbital_buffer_hook'
+cache_path = 'cache_se_orbital_buffer_hook'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+# Large Target (sphere + SE composition + zap + SE I/O) exceeds legacy codegen stack.
+via_ir = true
+ffi = true
+gas_limit = 30000000000
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+remappings = [
+    "forge-std/=lib/crane/lib/forge-std/src/",
+    "@crane/=lib/crane/",
+    "contracts/=contracts/",
+    "contracts/solady/=lib/crane/contracts/external/solady/",
+    "contracts/external/solady/=lib/crane/contracts/external/solady/",
+]
+
+
+# Uni V4 Orbital SE Buffer DETF (imports orbital hook → needs via_ir).
+# Run: FOUNDRY_PROFILE=se_orbital_detf forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/**' -vv
+[profile.se_orbital_detf]
+# Narrow: DETF package + hook package are imported by tests; avoid full monorepo solc graph.
+src = 'contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital'
+test = 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital'
+out = 'out_se_orbital_detf'
+cache_path = 'cache_se_orbital_detf'
+libs = ['node_modules', 'lib']
+solc = "0.8.35"
+optimizer = true
+optimizer_runs = 1
+via_ir = true
+ffi = true
+gas_limit = 30000000000
+fs_permissions = [{ access = "read-write", path = "./"}]
+sizes = false
+# Extra paths pulled as import dependencies (hook, common, vaults, manager, etc.)
+skip = [
+    'contracts/protocols/**',
+    'contracts/frontend/**',
+    'scripts/**',
+]
 remappings = [
     "forge-std/=lib/crane/lib/forge-std/src/",
     "@crane/=lib/crane/",

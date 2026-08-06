@@ -8,7 +8,10 @@ One row per completed research run. **Narrative** lives under `research/scenario
 **Reproduce Mode C:** `./research/run_mode_c.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce rateProviderCompare:** `./research/run_rate_provider_compare.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce Single SE DETF Phase 3:** `./research/run_detf_single_se.sh` (`FOUNDRY_PROFILE=default`)  
-**Reproduce DualLiquidity research:** `./research/run_dual_liquidity_research.sh` (Base fork)
+**Reproduce DualLiquidity research:** `./research/run_dual_liquidity_research.sh` (Base fork)  
+**Reproduce Uni V4 Orbital Hook:** `./research/run_uniswap_v4_orbital_hook.sh` (`FOUNDRY_PROFILE=orbital --via-ir`)  
+**Reproduce Uni V4 CP DETF (D0–D1):** `./research/run_uniswap_v4_cp_detf.sh` (`FOUNDRY_PROFILE=uv4_single_se_cp_detf --via-ir`)  
+**Portfolio program:** [`scenarios/uniswapV4/PROGRAM.md`](scenarios/uniswapV4/PROGRAM.md)
 
 | Date | Product | Mode | Scenario doc | Artifact dir | Status | One-line finding |
 |------|---------|------|--------------|--------------|--------|------------------|
@@ -55,6 +58,14 @@ One row per completed research run. **Narrative** lives under `research/scenario
 | 2026-07-30 | detf/singleSe | D7 bondVsMint | FINDINGS | `D7_bondVsMint` | PASS | free holder no expansion airdrop |
 | 2026-07-30 | detf/singleSe | D8 naturalExpansion | FINDINGS | `D8_naturalExpansion` | PASS | Policy supply ↑ after warp; Open twin no |
 | 2026-07-30 | detf/singleSe | D9 protocolCompound | FINDINGS | `D9_protocolCompound` | PASS | protocol BPT principal ↑ |
+| 2026-08-06 | uniswapV4/hooks/orbital | H0–H2 | [`scenarios/uniswapV4/hooks/orbital/FINDINGS.md`](scenarios/uniswapV4/hooks/orbital/FINDINGS.md) | `out/uniswapV4/hooks/orbital/` | **core done** | H0 seed; H1 midIndex01 ±~9–10%; H2 preview==exec exact six dirs |
+| 2026-08-06 | uniswapV4/hooks/orbital | H0 smoke | FINDINGS | `H0_smoke` | PASS | radius 0→post-seed; production path |
+| 2026-08-06 | uniswapV4/hooks/orbital | H1 demand 01/10 | FINDINGS | `H1_demand_01` / `H1_demand_10` | PASS | opposite mid paths under opposite demand |
+| 2026-08-06 | uniswapV4/hooks/orbital | H2 preview | FINDINGS | `H2_preview` | PASS | preview==exec all six doors |
+| 2026-08-06 | uniswapV4/detf/cpSingle | D0–D1 | [`…/standardExchangeCpSingle/FINDINGS.md`](scenarios/uniswapV4/detf/standardExchangeCpSingle/FINDINGS.md) | `out/.../standardExchangeCpSingle/` | **partial** | D0 inert PASS; D1 first bond → live PASS |
+| 2026-08-06 | uniswapV4/detf/cpSingle | D0 inert | FINDINGS | `D0_inert` | PASS | inert; defaults 1.05/0.95; mint reverts |
+| 2026-08-06 | uniswapV4/detf/cpSingle | D1 firstBond | FINDINGS | `D1_firstBond` | PASS | live; bond NFT LP principal ~99.95e18 |
+| 2026-08-06 | uniswapV4 portfolio | program | [`PROGRAM.md`](scenarios/uniswapV4/PROGRAM.md) | — | **active** | maturity-gated multi-product research |
 
 ## Reconstruction checklist (any scenario)
 

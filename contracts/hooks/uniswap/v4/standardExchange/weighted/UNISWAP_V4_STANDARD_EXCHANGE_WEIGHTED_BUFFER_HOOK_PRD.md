@@ -2,20 +2,21 @@
 
 **Name:** `UniswapV4StandardExchangeWeightedBufferHook`  
 **Date:** 2026-08-05  
-**Status:** **Draft v0.5 — product law (plan-ready)**  
+**Status:** **Draft v0.6 — product law (plan-ready)**  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/weighted/`  
 **Package kind:** IndexedEx **Uniswap V4 hook diamond package** that is **also** a vault-compatible multi-asset surface. Instance deploys via the **shared Hook Diamond Package Callback Factory** + Vault Registry `deployHookVault` (CREATE2-mined proxy). **Not** a concentrated-liquidity (CL) reimplementation. **Not** the raw-inventory monomorph `UniswapV4WeightedSwapHook` under `contracts/hooks/uniswap/v4/weighted/`.
 
 **Decision ID note:** `D*`, `O*`, `Q*`, and `P*` IDs are **stable keys**, not document order.  
 **v0.2–v0.4:** P1–P6, Q7–Q18 (see revision log).  
-**v0.5 locks:** Q19–Q24 — MultiAssetLiquidity ABI = hook 1:1; inventory WAD via per-asset `decimals()`; D42a ship-if-closed-form; partial-book floor order; event fields; LP pull = transferFrom else Permit2 **AllowanceTransfer only** (no SignatureTransfer on joins).
+**v0.5 locks:** Q19–Q24 — MultiAssetLiquidity ABI = hook 1:1; inventory WAD via per-asset `decimals()`; D42a ship-if-closed-form; partial-book floor order; event fields; LP pull = transferFrom else Permit2 **AllowanceTransfer only** (no SignatureTransfer on joins).  
+**v0.6 locks (clarity review):** Q25–Q28 — dual `baseScale` (inventory vs rated); live SE `balanceOf` is book; join exact-BPT-out required if Weighted peer has it; scrub multi-leg “zap” wording (aliases only).
 
 **Authority (normative):**
 
 | Layer | Role |
 |-------|------|
-| **This PRD** | Product law for SE-buffered weighted topology, per-leg optional SE + optional rate provider, swap-only rate scaling, native LP accounting, buffer/unwrap, full weighted join/exit surface, zap-in, SE In/Out (+ zap-out and multi-token SE liquidity extensions), fees, deploy shape |
-| **Implementation plan** (follow-on) | Source of truth for coding phases once written against this PRD |
+| **This PRD** | Product law for SE-buffered weighted topology, per-leg optional SE + optional rate provider, swap-only rate scaling, native LP accounting, buffer/unwrap, full weighted join/exit surface, one-token single-asset aliases, SE In/Out (+ MultiAssetLiquidity), fees, deploy shape |
+| **Implementation plan** | Implementor SoT for phases/tests once accepted: [`UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md) (**v1.0**) |
 | Weighted product PRD | **Curve / weights / doors / partial book / join-exit surface / fee dual-channel / caps / settle** behavioral reference — do **not** subclass; do **not** copy monomorph CREATE3 factory law |
 | Dual SE Buffer CP PRD | **Buffer / unwrap / claim-in composition / buffer-last process** reference — do **not** subclass; adapt from 2-leg CP to **n-leg weighted** |
 | SE Orbital Buffer PRD | **Multi-leg optional SE slots, distinct SE binding, diamond package shape, SE In/Out funding, vault discovery** process/shape reference — do **not** subclass; curve is **weighted**, not sphere; **this product requires ≥1 SE** (not zero-SE pure raw) |
@@ -57,22 +58,23 @@
 | **Standard Exchange / SE** | Bound `IStandardExchange` for a leg; **at most one SE per token**; optional per leg; **at least one** non-zero SE in the instance; **non-zero SE addresses pairwise distinct** |
 | **SE claim / claim supply** | Pool-token value of hook-held SE shares via fee-inclusive SE unwrap preview: \(c_i = \mathrm{previewExchangeIn}(SE_i,\ seBal_i,\ token_i)\) |
 | **Rate provider** | Optional Balancer-style `IRateProvider` **per SE leg only** (`address(0)` = none). Purpose: **accurately value SE vault inventory as the pair token** for **swap pricing**. Must be consistent with that leg’s pair token (share → pair-token units @ 1e18) |
-| **Native inventory / native balance** | Physical book for **all liquidity accounting**: raw face ERC-20 for raw legs; **SE vault share balance** for buffered legs. LP mint/burn, join/exit, first-mint \(V\), and `kLast` use **only** these units (plus decimal→WAD). **Not** live SE claim, **not** `getRate()`. Changing SE share price / claim / RP **must not** by itself mint/burn LP or rewrite ownership |
-| **Rated balance \(b_i^{\mathrm{rated}}\)** | Balance fed into **WeightedMath for swaps only** (V4 doors, SE In/Out swap paths, internal swap legs if any): face / shares×rate / claim per §4.3. **Never** enters join/exit/zap LP algebra |
-| **One-token entry / exit** | Balancer **single-asset** join/exit on the native inventory domain. **`depositSingle` is an alias** of single-asset join (no multi-leg internal rebalance). **`withdrawSingle`** aliases single-asset exit (exact BPT in). Exact-token-out single-asset exit only if closed-form exists (Q9) |
-| **Inventory** | Physical holdings: raw ERC-20 for raw legs; SE share balances for buffered legs |
+| **Native inventory / native balance** | Physical book for **all liquidity accounting**: raw face ERC-20 for raw legs; **live SE vault share `balanceOf(hook)`** for buffered legs (Q26). LP mint/burn, join/exit, first-mint \(V\), and `kLast` use **only** these units (plus inventory decimal→WAD). **Not** live SE claim, **not** `getRate()`. Changing SE share price / claim / RP **must not** by itself mint/burn LP or rewrite ownership |
+| **Rated balance \(b_i^{\mathrm{rated}}\)** | Balance fed into **WeightedMath for swaps only** (V4 doors, SE In/Out swap paths): face / shares×rate / claim per §4.3, then **pair-token** decimal→WAD. **Never** enters join/exit LP algebra |
+| **Inventory scale / rated scale (Q25)** | **Two independent WAD maps.** **Inventory:** raw face → WAD via pair-token `decimals()`; SE shares → WAD via **share-token** `decimals()`. **Rated (swaps):** pair-token units (face / claim / `seBal×rate`) → WAD via **pair-token** `decimals()` always. Never use share decimals to scale rated pairUnits |
+| **One-token entry / exit** | Balancer **single-asset** join/exit on the native inventory domain. **`depositSingle` is an alias** of single-asset join (no multi-leg internal rebalance). **`withdrawSingle`** aliases single-asset exit (exact BPT in). Exact-token-out single-asset exit only if closed-form exists (Q9 / D42a). Exact-BPT-out single-asset **join** required if Weighted peer exposes it (Q27 / D42b) |
+| **Inventory** | Physical holdings: raw ERC-20 for raw legs; **live** SE share balances for buffered legs |
 | **Hook LP / shares** | Fungible ERC-20 on **this** hook (18 decimals). API params named `shares` mean **hook LP**, never SE vault shares |
 | **Full book** | All \(n\) **native inventory** legs \(> 0\) (and, for swap-live directed pairs, rated balances \(> 0\)) — mirror weighted “full book” |
 | **Partial book** | At least one leg has native inventory \(= 0\) (and `totalSupply > 0` after seed). Dual-mode rules mirror weighted §4.7 |
 | **Factory doors** | All \(\binom{n}{2}\) Uni V4 pair pools created at deploy: `fee = DYNAMIC_FEE_FLAG`, `tickSpacing = TICK_SPACING` (1), `hooks = this`. **Only** these keys may initialize against the hook |
 | **Buffer-last** | Quote / size / residual math on **pre-buffer** book; execute non-buffer moves; **buffer pair→SE as final SE inventory step**; then LP mint / `kLast` from **post-buffer** native inventory |
 | **Claim-in / claim-out** | SE fee-inclusive preview of how much **SE shares** a raw pool-token buffer mints / how much token an unwrap delivers — not assumed 1:1 with raw amount |
-| **Zap-eligible** | Full book **and** `totalSupply > MINIMUM_LIQUIDITY` (same gate as Weighted full-book single-asset paths) |
-| **Zap-in (alias)** | **`depositSingle` ≡ Balancer single-asset join** (exact token in → BPT out, taxable). **No** multi-leg internal rebalance. Name kept for SE/UX familiarity |
-| **Zap-out exact shares (alias)** | **`withdrawSingle` ≡ Balancer single-asset exit** (exact BPT in → one token out). **No** multi-leg force-sell basket |
-| **Zap-out exact out** | **`withdrawSingleExactOut` ≡ Balancer single-asset exact-token-out** **only if** WeightedMath / BasePoolMath peer admits a **closed-form** path with preview==exec. If not, **omit from v1 DoD** (Q9) — do **not** binary-search |
-| **IStandardExchangeMultiAssetLiquidity** | Dedicated SE-family extension interface for multi-token deposit/withdraw + zap-in/out. Canonical `IStandardExchangeIn` / `Out` remain **swap-only** |
-| **DoD** | Definition of Done — package complete when §11 is satisfied |
+| **Single-asset eligible** | Full book **and** `totalSupply > MINIMUM_LIQUIDITY` (same gate as Weighted full-book single-asset paths). Prefer this term over “zap-eligible” |
+| **depositSingle (alias)** | **`depositSingle` ≡ Balancer single-asset join** (exact token in → BPT out, taxable). **No** multi-leg internal rebalance. Legacy UX name “zap-in” means **only** this alias — **not** dual/orbital multi-leg force-buy |
+| **withdrawSingle (alias)** | **`withdrawSingle` ≡ Balancer single-asset exit** (exact BPT in → one token out). **No** multi-leg force-sell basket. Legacy UX name “zap-out” means **only** this alias |
+| **withdrawSingleExactOut** | **`withdrawSingleExactOut` ≡ Balancer single-asset exact-token-out** **only if** WeightedMath / BasePoolMath peer admits a **closed-form** path with preview==exec. If not, **omit from v1 DoD** (Q9) — do **not** binary-search |
+| **IStandardExchangeMultiAssetLiquidity** | Dedicated SE-family extension interface for multi-token deposit/withdraw + one-token aliases. Canonical `IStandardExchangeIn` / `Out` remain **swap-only** |
+| **DoD** | Definition of Done — package complete when **§8** is satisfied |
 
 **Role naming:** use `token(i)`, `standardExchange(i)`, `rateProvider(i)`, `nativeReserve(i)`, `ratedBalance(i)` — **no** brand tickers; **no** DETF-specific type names on the hook ABI.
 
@@ -94,8 +96,8 @@ Ship a **production-first Uniswap V4 hook package** that:
 6. **Buffers** pool tokens into the bound SE on liquidity add and on swap token-in when that leg is buffered; **unwraps** SE → pool token on liquidity remove and on swap token-out when that leg is buffered — **buffer-last** and share/claim composition (dual / SE Orbital process peer).
 7. Holds inventory as: **raw ERC-20** for raw legs + **SE shares** for buffered legs. Pool currencies remain the \(n\) tokens — **never** SE share addresses.
 8. Mints a **single fungible ERC-20 LP** representing pro-rata claim on all inventory components (raw balances + SE share balances).
-9. Mirrors the **full weighted join/exit surface** of the unbuffered Weighted Hook as closely as feasible: proportional, single-asset, unbalanced multi-asset, exact-BPT-out joins; matching exits; invariant-ratio and max-in/out caps; **partial book** dual mode.
-10. Provides one-token LP paths as **Balancer single-asset join/exit** with UX aliases **`depositSingle` / `withdrawSingle`** (and exact-out only if closed-form — Q9). **No** multi-leg internal rebalance “zap” (unlike dual / SE Orbital).
+9. Mirrors the **full weighted join/exit surface** of the unbuffered Weighted Hook as closely as feasible: proportional, single-asset (exact-in **and** exact-BPT-out joins when the Weighted peer has them — Q27), unbalanced multi-asset; matching exits; invariant-ratio and max-in/out caps; **partial book** dual mode.
+10. Provides one-token LP paths as **Balancer single-asset join/exit** with UX aliases **`depositSingle` / `withdrawSingle`** (and exit exact-token-out only if closed-form — Q9). **No** multi-leg internal rebalance (unlike dual / SE Orbital multi-leg zaps).
 11. Exposes **`IStandardExchangeIn` / `IStandardExchangeOut`** for tokenᵢ ↔ tokenⱼ **swaps**, **plus** **`IStandardExchangeMultiAssetLiquidity`** mirroring the **full** weighted join/exit matrix including one-token aliases (§5.4).
 12. Settles public swaps via **`beforeSwap` + `beforeSwapReturnDelta`** — pattern-copy settle; **no** inheritance of OZ/`BaseHook` / `BaseTokenWrapperHook` / `DeltaResolver`.
 13. Deploys as an **immutable hook diamond package** via registry `deployHookVault` + shared hook factory (CREATE2 + `mineNonce`); initializes **all** factory doors in postDeploy.
@@ -119,18 +121,18 @@ Inventory after liquidity:
   hook holds SE_A shares + face B + SE_C shares + face D
   free A/C on hook is dust only (refunded after liquidity ops)
 
-Rated balances for SWAPS (when RP set on SE leg):
-  b_A_rated = scale( seBal_A * getRate(RP_A) / 1e18 )   // SE valued as A
-  b_B_rated = scale( face_B )
-  b_C_rated = scale( claim_C )                            // no RP → SE claim
-  b_D_rated = scale( face_D )
+Rated balances for SWAPS (when RP set on SE leg) — pair-token scale only (Q25):
+  b_A_rated = ratedScale_A( seBal_A * getRate(RP_A) / 1e18 )   // SE valued as A
+  b_B_rated = ratedScale_B( face_B )
+  b_C_rated = ratedScale_C( claim_C )                            // no RP → SE claim
+  b_D_rated = ratedScale_D( face_D )
   WeightedMath exact-in/out on (b_in, w_in, b_out, w_out) only
 
-LP joins/exits (NO getRate, NO live claim in algebra):
-  inventory = face(B), face(D), seBal(SE_A), seBal(SE_C)
+LP joins/exits (NO getRate, NO live claim in algebra) — invScale face|share (Q25/Q26):
+  inventory = face(B), face(D), live seBal(SE_A), live seBal(SE_C)
   user-facing amounts = pair tokens; buffer-last / unwrap at edges
   LP ownership is pro-rata of inventory shares/face — SE yield ↑ claim
-  does NOT mint/burn LP by itself (Q7)
+  does NOT mint/burn LP by itself (Q7); SE share donations dilute (Q26)
 
 --- First mint (full book preferred) ---
 joinProportional / multi-amount with all legs > 0 preferred
@@ -185,7 +187,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 | Layer | Role |
 |-------|------|
 | Uniswap V4 | \(\binom{n}{2}\) pair pool identities; **swaps** + currency settlement via hook deltas |
-| Hook | Binding (tokens + weights + optional SE + optional RP), full weighted LP surface, zap-in/out, SE In/Out (+ extensions), weighted math, per-leg buffer/unwrap, `beforeSwap` |
+| Hook | Binding (tokens + weights + optional SE + optional RP), full weighted LP surface, one-token single-asset aliases, SE In/Out (+ MultiAssetLiquidity), weighted math, per-leg buffer/unwrap, `beforeSwap` |
 | SE vault(s) | Yield-bearing inventory for each **buffered** leg (at most one SE per token; ≥1 required) |
 | Rate provider(s) | Optional **swap-side** valuation of SE shares as pair token |
 | Concentrated liquidity | **Not used** — native `modifyLiquidity` **forbidden** |
@@ -212,7 +214,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 | Trading fee | Live `dexSwapFeeOfVault(this)` WAD; Balancer **input** residual; 0 allowed |
 | Protocol growth | Live `usageFeeOfVault(this)` → mint LP to live `feeTo()` on add **and** remove; `rootK` from full/partial measures (§4.5) |
 | V4 PoolKey.fee | **`DYNAMIC_FEE_FLAG`** |
-| Deposit / withdraw | Full weighted join/exit surface; one-token paths = Balancer single-asset (aliases depositSingle/withdrawSingle) |
+| Deposit / withdraw | Full weighted join/exit surface; one-token paths = Balancer single-asset (**aliases** `depositSingle` / `withdrawSingle`; not multi-leg rebalance) |
 | SE surface | SE In/Out swaps **+** `IStandardExchangeMultiAssetLiquidity` **full** join/exit matrix (§5.4 / Q10) |
 | poolManager / feeOracle | **Factory immutables** — shared by all hooks from that factory (Q11); not per-PkgArgs |
 | Deploy path | Hook diamond package → registry `deployHookVault` → shared hook factory |
@@ -221,7 +223,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 
 - Not the raw `UniswapV4WeightedSwapHook` monomorph (no SE requirement; CREATE3 factory; no SE In/Out product surface).
 - Not Dual SE BCP (not CP; not one-pool-only; n may exceed 2).
-- Not SE Orbital Buffer (not sphere; not fixed n=3; **requires ≥1 SE**; **includes zap-out**).
+- Not SE Orbital Buffer (not sphere; not fixed n=3; **requires ≥1 SE**; **includes** one-token single-asset exit aliases — **not** multi-leg force-sell zap).
 - Not a wrapper-only buffer hook (`underlying ↔ SE` without multi-asset AMM).
 - Not Uni V4 concentrated liquidity / Position Manager LP.
 - Not a DETF, bond NFT, or rebasing claim package (consumers may compose later — **out of this PRD**).
@@ -238,7 +240,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 3. Morpho / non-SE buffering primitives inside this package.  
 4. Native ETH as a pool currency (use WETH).  
 5. Fee-on-transfer / rebasing **pool tokens** (unsupported).  
-6. Binary-search solvers as primary product law — closed Balancer / closed-form zap only.  
+6. Binary-search solvers as primary product law — closed Balancer / closed-form single-asset paths only.  
 7. Auto-deploying SE vaults or rate providers inside the package.  
 8. Owner / pause / admin surface on the **hook instance** after deploy (immutable diamond; fees via oracle only).  
 9. Hook/protocol ERC-20 skim buckets (growth is LP mint only; trade residual stays in book).  
@@ -248,7 +250,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 13. Rate provider on **raw** legs (RP only valid when SE is set).  
 14. Multiple concurrent SEs for the same token **or** the same SE address on multiple legs.  
 15. Package-owned global token↔SE registry (binding is **instance-local**).  
-16. Mapping canonical `exchangeIn` → mint LP or `exchangeOut` → burn LP without going through the **extended** multi-token / zap selectors (swap selectors remain swap-only).  
+16. Mapping canonical `exchangeIn` → mint LP or `exchangeOut` → burn LP without going through the **extended** multi-token / single-asset liquidity selectors (swap selectors remain swap-only).  
 17. Zero-SE deployments (must use raw Weighted Hook).  
 18. Subclassing peer hook contracts.  
 19. Bare monomorph CREATE3 / HookMinerCreate3 as production instance path.  
@@ -264,8 +266,9 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 | SE requirement | N/A | **≥1** SE leg required |
 | Rate on LP | Optional RP scales **all** algebra including LP | RP **swap-only**; LP on **native** inventory |
 | Rate on swaps | Optional RP on any token | Optional RP **only on SE legs**; SE claim when buffered + no RP |
-| One-token LP | Single-asset join only | Same Balancer single-asset; **aliases** `depositSingle` / `withdrawSingle` (no multi-leg zap) |
+| One-token LP | Single-asset join only | Same Balancer single-asset; **aliases** `depositSingle` / `withdrawSingle` (no multi-leg rebalance) |
 | Exact-out one-token exit | Balancer peer | Only if closed-form (Q9); else **out of v1** |
+| Exact-BPT-out single-asset join | Weighted peer | **Required if Weighted peer has it** (Q27 / D42b) — not optional Phase-0 omit |
 | PM / feeOracle | Factory immutables | **Same** (Q11) |
 | SE In/Out | Not present | **Required** + multi-token SE liquidity extensions |
 | Deploy | CREATE3 monomorph factory | Hook diamond package + registry + hook factory |
@@ -302,7 +305,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D16 | Donate | **Forbidden** — `beforeDonate` **reverts** |
 | D17 | Package shape | **Hook diamond package** (`IUniswapV4HookDiamondPackage` + vault surfaces). Facets via CREATE3; instance via CREATE2 mine + hook factory. **Immutable** after postDeploy (no live `diamondCut`) |
 | D18 | Hook inheritance | **No** inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver` — full **pattern-copy** settle. May use Crane facet bases for diamond plumbing |
-| D19 | Shared facets | Cut **ERC20PermitDFPkg** facets (`ERC20Facet` + `ERC5267Facet` + `ERC2612Facet`) + MultiAsset Basic/Standard vault facets for LP + discovery. Product facets = hooks + book + join/exit/zap + SE buffer routes only |
+| D19 | Shared facets | Cut **ERC20PermitDFPkg** facets (`ERC20Facet` + `ERC5267Facet` + `ERC2612Facet`) + MultiAsset Basic/Standard vault facets for LP + discovery. Product facets = hooks + book + join/exit + SE buffer routes only |
 | D19a | Full type/file names | Full product names on contracts/files; short labels OK in prose. LP symbol prefix may be short (D46) |
 
 ### 3.2 AMM, reserves, SE composition, rates
@@ -310,17 +313,17 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | # | Decision | Value |
 |---|----------|--------|
 | D20 | AMM model | **Balancer WeightedMath** on **rated** balances for **swaps** (and swap previews / SE In/Out swap paths). **Not** StableSwap / Orbital / CP |
-| D21 | Native inventory SoT | **Repo** authoritative: `nativeReserve[i]` = intentional **raw face** **or** intentional **SE share balance**. Donations of inventory assets **dilute** LPs; stray unrelated ERC-20s **ignored**. Free pair-token dust on buffered legs is **not** native reserve |
-| D22 | Rated balance (swaps **only**) | For each leg \(i\), pair-token valuation then decimal→WAD scale: **(a)** raw → face; **(b)** buffered + RP → `seBal * getRate() / 1e18` (**fail-closed**); **(c)** buffered + no RP → SE **claim** via fee-inclusive unwrap preview. **Do not** also multiply claim by RP. **Do not** use free `token.balanceOf(hook)` for buffered legs. **Never used for LP mint/burn / kLast** |
-| D23 | LP domain (Q7) | **All liquidity ops** (join/exit/first-mint/`kLast`/one-token aliases): **inventory only** — raw face or **SE share balances**. **No** `getRate()`. **No** live claim in LP algebra. User-facing deposit/withdraw amounts are **pair tokens** at the edge (buffer/unwrap). **SE yield / RP changes do not mint or burn LP** and do not rewrite ownership. Taxable unbalanced join fees use inventory-domain Balancer taxable logic |
-| D23a | Inventory WAD (Q20) | `toWad` / `baseScale` per Weighted peer: **`baseScale_i = 10^(36 - decimals_i)`**. Raw leg `decimals_i` = pair-token `IERC20.decimals()`. SE leg `decimals_i` = **`IERC20(SE_i).decimals()`** (share token). Fail if decimals out of **[6, 18]** (same band as pair tokens) or `decimals()` reverts. **No** claim/RP in this scale |
-| D24 | Growth measure domain | \(k\) / `kLast` on **inventory-domain** weighted product (or partial interim) — face WAD and **share** WAD per leg decimals — **not** claim, **not** RP. SE yield that increases claim without changing share balance does **not** by itself update \(V\) for growth until inventory moves |
-| D25 | Yield in **swap** price | Re-read SE balances + claim and/or rate each **swap** quote; SE profit / rate moves **swap** mid without a swap. LP token supply/ownership unchanged until a liquidity op |
+| D21 | Native inventory SoT (Q26) | **Book = live balances of inventory assets.** Raw leg: intentional face tracked in Repo and expected to match `token.balanceOf(hook)` for that inventory (donations of **inventory** assets **dilute** LPs). Buffered leg: **`IERC20(SE_i).balanceOf(hook)` is the book** — SE share donations **dilute** LPs; free pair-token dust on buffered legs is **not** native reserve. Stray unrelated ERC-20s **ignored**. Repo may cache last intentional amounts for events/accounting, but **views, LP algebra, growth, and swap composition re-read live inventory balances** when the next step needs post-inventory state (O10) |
+| D22 | Rated balance (swaps **only**) | For each leg \(i\), compute **pair-token units** then scale with **pair-token** `baseScale` (Q25): **(a)** raw → face; **(b)** buffered + RP → `seBal * getRate() / 1e18` (**fail-closed**); **(c)** buffered + no RP → SE **claim** via fee-inclusive unwrap preview. **Do not** also multiply claim by RP. **Do not** use free pair-token `token.balanceOf(hook)` for buffered legs. **Never used for LP mint/burn / kLast** |
+| D23 | LP domain (Q7) | **All liquidity ops** (join/exit/first-mint/`kLast`/one-token aliases): **inventory only** — raw face or **live SE share balances**. **No** `getRate()`. **No** live claim in LP algebra. User-facing deposit/withdraw amounts are **pair tokens** at the edge (buffer/unwrap). **SE yield / RP changes do not mint or burn LP** and do not rewrite ownership. Taxable unbalanced join fees use inventory-domain Balancer taxable logic |
+| D23a | Dual WAD scales (Q20 / Q25) | Two maps: **(1) Inventory WAD** — `invScale_i = 10^(36 - invDecimals_i)` where raw legs use pair-token `decimals()`, SE legs use **`IERC20(SE_i).decimals()`** (share token). Used for join/exit/`V_inv`/`kLast`. **(2) Rated WAD** — `ratedScale_i = 10^(36 - pairDecimals_i)` where **every** leg uses that leg’s **pair-token** `decimals()`. Used only after pairUnits are in pair-token space (face / claim / seBal×rate). Fail if any used `decimals()` out of **[6, 18]** or reverts. **No** claim/RP inside inventory scale |
+| D24 | Growth measure domain | \(k\) / `kLast` on **inventory-domain** weighted product (or partial interim) — face WAD and **share** WAD via **inventory** scales — **not** claim, **not** RP, **not** pair-token mark-to-market. SE yield that increases claim without changing share balance does **not** by itself update \(V\) for growth until inventory moves |
+| D25 | Yield in **swap** price | Re-read **live** SE share balances + claim and/or rate each **swap** quote; SE profit / rate moves **swap** mid without a swap. LP token supply/ownership unchanged until a liquidity op |
 | D26 | Swap ratio caps | Balancer **`_MAX_IN_RATIO` / `_MAX_OUT_RATIO` = 30%** of **rated** trade-leg balances |
-| D27 | Invariant ratio caps | Balancer-style **max growth ~300%** / **min shrink ~70%** on unbalanced add/remove (native domain) |
-| D28 | Share / claim composition | For buffered **tokenIn**: map raw amountIn → SE shares (buffer preview) → **rated inflow** via rate (if RP) or claim delta (if no RP). Never feed raw amountIn into WeightedMath as if 1:1 under SE fees. Buffered **tokenOut**: invert rated → shares/claim → native token. Raw legs: face amounts. Same composition for V4 swaps, zap internal swaps, and SE In/Out swaps |
+| D27 | Invariant ratio caps | Balancer-style **max growth ~300%** / **min shrink ~70%** on unbalanced add/remove (inventory domain) |
+| D28 | Share / claim composition | For buffered **tokenIn**: map raw amountIn → SE shares (buffer preview) → **rated inflow** via rate (if RP) or claim delta (if no RP). Never feed raw amountIn into WeightedMath as if 1:1 under SE fees. Buffered **tokenOut**: invert rated → shares/claim → native token. Raw legs: face amounts. Same composition for V4 swaps and SE In/Out swaps (**no** multi-leg internal rebalance paths) |
 | D28a | SE exact-out / invert unsupported | If a bound SE **does not support** the required exact-out (or invert) route for buffer/unwrap composition on a path, the **entire transaction reverts**. No partial fill; no approximate solver |
-| D29 | Buffer-last | Normative multipath / join / zap process: quote/size on pre-buffer book → inventory moves → **buffer all SE legs last** (binding index order) → mint / `kLast` on post-buffer native inventory. Do **not** re-quote weighted mid-flight after buffer |
+| D29 | Buffer-last | Normative multipath / join / single-asset process: quote/size on pre-buffer book → inventory moves → **buffer all SE legs last** (binding index order) → mint / `kLast` on post-buffer native inventory. Do **not** re-quote weighted mid-flight after buffer |
 | D30 | SE I/O to bound vaults | Bound SE: `exchangeIn` / `exchangeOut` only; tight minOut/maxIn = fee-inclusive SE preview; SE deadline `block.timestamp` if required. Under-delivery or missing route → **full tx revert** (D28a) |
 | D31 | SE usage fees | **Orthogonal** to product design. Inside SE previews/execution only. Product fees = trading residual + growth mint |
 | D32 | Free pair dust | **`MAX_DUST_WEI = 10`**. After liquidity ops, free balances of **buffered** pool tokens **> 10 wei** **refund to `msg.sender`**. Raw-leg intentional inventory is **not** refunded |
@@ -334,20 +337,21 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D35 | LP token | Single fungible **ERC-20 on the hook** (proxy is LP); decimals **18**; free transfer; EIP-2612 via shared facets |
 | D36 | LP ownership | Pro-rata of **all inventory components** (raw balances + SE share balances) |
 | D37 | MINIMUM_LIQUIDITY | **1000** LP wei to `address(0)` on first mint; **never burned** |
-| D38 | Join surface (full book) | Mirror Weighted / Balancer on **inventory domain**: (1) proportional multi-asset; (2) **single-asset** exact-in and exact-BPT-out; (3) **unbalanced multi-asset**; (4) exact-BPT-out unbalanced as peer supports. Taxable fee + invariant ratio caps. Buffer-last on SE legs. User pulls **pair tokens** |
+| D38 | Join surface (full book) | Mirror Weighted / Balancer on **inventory domain**: (1) proportional multi-asset; (2) **single-asset** exact-in **and** exact-BPT-out (**required** when Weighted peer has them — D42b); (3) **unbalanced multi-asset**; (4) exact-BPT-out unbalanced as peer supports. Taxable fee + invariant ratio caps. Buffer-last on SE legs. User pulls **pair tokens** |
 | D39 | Exit surface (full book) | Mirror Weighted / Balancer: proportional exact BPT in; single-asset exact BPT in; exact token out **only if closed-form** (D42a); unbalanced multi where peer supports; ratio caps; **post-state all inventory reserves > 0** (D48). Unwrap SE legs to pair tokens |
 | D40 | Partial book (Q22) | **Allowed** — mirror Weighted §4.7 / P3 on **inventory**. First mint ≥2 positive legs for \(n \ge 3\); \(n=2\) both legs. Full unbalanced only when full book. **Single-asset aliases forbidden while partial**. Seed zeros with full maxes. **Floor order:** process legs in **binding index ascending**; within each leg apply floor division before the next leg (face-or-shares unit already chosen per leg). Plan may only list numeric test vectors — **not** change this ordering |
-| D41 | One-token entry (Q8) | **`depositSingle` ≡ `joinSingleAssetExactIn`** (and exact-BPT-out single-asset peer). **Required v1** when full book. **No** multi-leg internal rebalance. Taxable Balancer single-asset economics. Mint LP to **`to`** (Q12) |
+| D41 | One-token entry (Q8) | **`depositSingle` ≡ `joinSingleAssetExactIn`**. Exact-BPT-out single-asset join = **`joinSingleAssetExactOut`** per D42b (not an optional omit). **Required v1** when full book. **No** multi-leg internal rebalance. Taxable Balancer single-asset economics. Mint LP to **`to`** (Q12) |
 | D42 | One-token exit exact BPT (Q8) | **`withdrawSingle` ≡ single-asset exit exact BPT in → one `tokenOut`**. Burn **`msg.sender`** LP; pay pair tokens to **`to`**. Full book only; floors D48 |
-| D42a | One-token exit exact out (Q9 / Q21) | **Implementation plan Phase 0:** audit Crane `WeightedMath` / `BasePoolMath` for closed-form single-token exact-out. **If yes** → ship `withdrawSingleExactOut` + bit-exact preview on hook **and** MultiAssetLiquidity. **If no** → **omit from v1 DoD entirely** (exact BPT-in `withdrawSingle` remains). **Never** binary-search. Phase 0 outcome is recorded in the plan checklist (not a product redesign) |
-| D43 | No multi-leg zap | **Forbidden in v1:** dual-style internal multi-leg rebalance for single-asset deposit/withdraw. One-token paths are **only** Balancer single-asset join/exit |
+| D42a | One-token exit exact out (Q9 / Q21) | **Implementation plan Phase 0:** audit Crane `WeightedMath` / `BasePoolMath` for closed-form single-token exact-out. **If yes** → ship `withdrawSingleExactOut` + bit-exact preview on hook **and** MultiAssetLiquidity. **If no** → **omit from v1 DoD entirely** (exact BPT-in `withdrawSingle` remains). **Never** binary-search. Phase 0 outcome is recorded in the plan checklist (not a product redesign). **Does not** apply to exact-BPT-out **joins** (see D42b) |
+| D42b | Exact-BPT-out single-asset join (Q27) | **`joinSingleAssetExactOut`** (BPT out → token in) is **required in v1 if the Weighted peer exposes it** (it does: Weighted D33). Ship with bit-exact preview on hook **and** MultiAssetLiquidity. **Not** Phase-0 optional omit. Distinct from D42a exit exact-token-out |
+| D43 | No multi-leg rebalance “zap” | **Forbidden in v1:** dual/orbital-style internal multi-leg rebalance for single-asset deposit/withdraw. One-token paths are **only** Balancer single-asset join/exit. Do **not** use “zap” to mean multi-leg force-buy/sell |
 | D44 | First mint | Preferred all \(n > 0\); partial seed per D40. **Not** via one-token join. **`shares = V_inv − MINIMUM_LIQUIDITY`** where \(V_inv\) is inventory-domain weighted invariant (face WAD / **share** WAD — Q7/P2); dead MIN to `address(0)`; buffer-last; no protocol mint while `kLast == 0` |
 | D45 | Funding (LP) (Q24) | **ERC-20 `transferFrom`** when allowance to hook is sufficient; else **Permit2 AllowanceTransfer only** (`permit2.transferFrom` — user must approve Permit2 → hook). **No SignatureTransfer on LP joins** (no `permit2Data` signature blob on join ABI). Same pull law for MultiAssetLiquidity deposits. **Refunds → `msg.sender`**. **LP minted to `to`** (Q12). Exit burns **`msg.sender` LP only**. (SE In/Out funding remains D53 BasicVaultCommon peer.) |
 | D46 | LP name/symbol (Q14) | Auto **`SEWGT-{s0}-…-{s_{n-1}}`**. Prefix **`SEWGT`** locked (not a Solidity type name). **Hard caps:** symbol ≤ **32** chars; name ≤ **64** chars. Truncate middle token symbols with `..` when over cap; if still over → **address-fragment fallback** `SEWGT-{hookAddress hex slice}`. Cache at init |
-| D47 | LP deadline | All LP **mutators** (join/exit/zap) take **`deadline`** and **`require(block.timestamp <= deadline)`** |
+| D47 | LP deadline | All LP **mutators** (join/exit/one-token aliases) take **`deadline`** and **`require(block.timestamp <= deadline)`** |
 | D48 | Full-book exit floors | While mode is **FullProduct**, any remove must leave **all \(n\) native reserves \(> 0\)**. Zeroing a leg via full-book exit **reverts**. Partial book is entered only via **partial first mint / seed path**, not by draining a full book leg |
-| D49 | Reentrancy | One global non-reentrant lock on join/exit/zap/SE surfaces **and** `beforeSwap` body (after PM sender check) |
-| D50 | Preview fidelity | **Bit-exact** `preview* == execution` at same oracle fee reads, same SE previews, same rate reads, same ceil/floor path (incl. zap + SE In/Out + multi-token SE liquidity) |
+| D49 | Reentrancy | One global non-reentrant lock on join/exit/one-token/SE surfaces **and** `beforeSwap` body (after PM sender check) |
+| D50 | Preview fidelity | **Bit-exact** `preview* == execution` at same oracle fee reads, same SE previews, same rate reads, same ceil/floor path (incl. one-token aliases + SE In/Out + multi-token SE liquidity) |
 
 ### 3.4 SE In/Out and interface extensions
 
@@ -356,10 +360,10 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D51 | SE In/Out swaps | **Required v1:** implement `IStandardExchangeIn` + `IStandardExchangeOut` for exact-in/out **tokenᵢ ↔ tokenⱼ** (`i ≠ j`, both bound) against the **same** rated weighted book as public V4 swaps. **Internal settle** (no PoolManager unlock). **Not** LP mint/burn on these selectors. Previews required and bit-exact |
 | D52 | SE In/Out token domain | Only the \(n\) bound pool tokens. Revert if token is SE share address, unbound, or same token in/out |
 | D53 | SE In/Out funding | **Canonical** pull when `!pretransferred`: BasicVaultCommon peer — ERC-20 `transferFrom` if allowance to hook, else Permit2 **AllowanceTransfer**. `pretransferred` requires balance already on hook. **No** SignatureTransfer on canonical SE In/Out ABI. Hook is Permit2-aware |
-| D54 | SE one-token aliases | **Required v1** on **`IStandardExchangeMultiAssetLiquidity`**: **identical** selectors/args to hook `depositSingle` / `withdrawSingle` (and D42a iff shipped). Shared Target implementation |
+| D54 | SE one-token aliases | **Required v1** on **`IStandardExchangeMultiAssetLiquidity`**: **identical** selectors/args to hook `depositSingle` / `withdrawSingle` / `joinSingleAssetExactOut` (D42b) / (D42a iff shipped). Shared Target implementation |
 | D55 | Multi-token SE liquidity (Q10 / Q19) | **Required v1:** **`IStandardExchangeMultiAssetLiquidity` mirrors the hook liquidity ABI 1:1** — same function names, argument order, and return types. Thin facade over shared Target. **Not** merged into In/Out. No DETF-specific names |
-| D55a | Frozen liquidity function names | **Normative external names (hook + MultiAssetLiquidity):** `joinProportional`, `joinSingleAssetExactIn`, `joinSingleAssetExactOut` (BPT out → token in, if peer supports closed-form), `joinUnbalanced`, `exitProportional`, `exitSingleAssetExactBptIn`, `exitSingleAssetExactTokenOut` (**only if D42a ships**), plus aliases `depositSingle` → same impl as `joinSingleAssetExactIn`, `withdrawSingle` → same impl as `exitSingleAssetExactBptIn`, `withdrawSingleExactOut` → same as `exitSingleAssetExactTokenOut` iff shipped. Each mutator has matching `preview*`. Args always include `to`, `deadline`, and slippage mins as applicable. **No** `permit2Data` arg (Q24) |
-| D56 | SE liquidity ≠ swap | Multi-token deposit/withdraw and zap-in/out **mint/burn hook LP**. Canonical two-token `exchangeIn`/`exchangeOut` remain **swap-only** (D51) |
+| D55a | Frozen liquidity function names | **Normative external names (hook + MultiAssetLiquidity):** `joinProportional`, `joinSingleAssetExactIn`, **`joinSingleAssetExactOut` (required — D42b / Weighted peer)**, `joinUnbalanced`, `exitProportional`, `exitSingleAssetExactBptIn`, `exitSingleAssetExactTokenOut` (**only if D42a ships**), plus aliases `depositSingle` → same impl as `joinSingleAssetExactIn`, `withdrawSingle` → same impl as `exitSingleAssetExactBptIn`, `withdrawSingleExactOut` → same as `exitSingleAssetExactTokenOut` iff shipped. Each mutator has matching `preview*`. Args always include `to`, `deadline`, and slippage mins as applicable. **No** `permit2Data` arg (Q24) |
+| D56 | SE liquidity ≠ swap | Multi-token deposit/withdraw and one-token aliases **mint/burn hook LP**. Canonical two-token `exchangeIn`/`exchangeOut` remain **swap-only** (D51) |
 
 ### 3.5 Fees, protocol growth, ops
 
@@ -370,7 +374,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D58 | Trading fee → V4 units | Floor map WAD → pips + `OVERRIDE_FEE_FLAG` on `beforeSwap`. Economic SoT = hook residual — **no double-haircut** |
 | D59 | Protocol growth fee | **Yes** — Uni V2–style. Live `usageFeeOfVault(this)`; mint LP to live `feeTo()` on add/remove when fee-on. **Not** on every swap |
 | D60 | fee-on predicate | `feeTo != 0 && usageFeeWad != 0 && usageFeeWad < 1e18 && ownerFeeShare != 0` with `ownerFeeShare = usageFeeWad * 100_000 / 1e18` (floor) |
-| D61 | `kLast` measure | **Full book:** \(k = V_inv = \prod b_i^{w_i}\) on **inventory** WAD (face / SE shares — Q7); **`rootK = V_inv` (literal)**. **Partial:** interim product on positive inventory legs; `kLast` + `kLastMode`. Cross-mode: no mint from incompatible `kLast` |
+| D61 | `kLast` measure | **Full book:** \(k = V_inv = \prod b_i^{w_i}\) on **inventory** WAD (face / **live** SE shares — Q7/Q26); **`rootK = V_inv` (literal)**. **Partial:** interim product on positive inventory legs; `kLast` + `kLastMode`. Cross-mode: no mint from incompatible `kLast` |
 | D62 | Growth timing | Protocol mint from **pre-intake** \(k\) on add; mint before user burn on remove; set `kLast` post-op when fee-on. Swaps do not mint protocol LP or update `kLast` |
 | D63 | Previews + growth | LP previews **simulate** protocol mint dilution when fee-on |
 | D64 | Tick spacing | Package constant **`TICK_SPACING = 1`**. `beforeInitialize` enforces |
@@ -390,7 +394,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D72a | ensurePairPools (Q15) | **Required** permissionless **`ensurePairPools(hook)`** (package and/or factory helper path). Creates/initializes any missing factory doors for an already-deployed hook. Does **not** pull tokens or mint LP. Idempotent for already-initialized doors |
 | D72b | Events minimum fields (Q23) | **Join / Exit / MultiAsset same:** `sender`, `to`, `shares` (minted or burned), `int256[] deltas` (binding order; pair-token amounts at user edge — positive in for joins, positive out for exits), `protocolSharesMinted` (0 if none). **DepositSingle:** `sender`, `to`, `token`, `amountIn`, `shares`, `protocolSharesMinted`. **WithdrawSingle:** `sender`, `to`, `token`, `amountOut`, `shares`, `protocolSharesMinted`. **WithdrawSingleExactOut** (iff shipped): `sender`, `to`, `token`, `amountOut`, `sharesBurned`, `protocolSharesMinted`. **ProtocolFeeMinted:** `feeTo`, `shares`. **EnsurePairPools:** `hook`, `doorsEnsured` (uint256 count). **No** product-level `Swap` event. SE MultiAssetLiquidity emits the **same** events as the underlying join/exit |
 | D73 | Deposit vs pool init | LP add/remove/previews **do not require** V4 initialize. **Swaps** require first-minted book, initialized directed pair pool, both trade-leg native + rated \(> 0\) |
-| D74 | Vault discovery | **Required v1:** `IBasicVault` + `IStandardVault` multi-asset discovery: `vaultTokens()` = binding tokens; **`reserveOfToken(token_i)`** = **raw face** for raw legs; **SE share balance** (`IERC20(SE_i).balanceOf(hook)`) for buffered legs (P4). **Not** free pair-token dust; **not** SE claim; **not** shares×rate. Consumers that need pair-token units use `seClaim(i)` / `ratedBalance(i)` / previews |
+| D74 | Vault discovery | **Required v1:** `IBasicVault` + `IStandardVault` multi-asset discovery: `vaultTokens()` = binding tokens; **`reserveOfToken(token_i)`** = **raw face** for raw legs; **live SE share balance** (`IERC20(SE_i).balanceOf(hook)`) for buffered legs (P4 / Q26). **Not** free pair-token dust; **not** SE claim; **not** shares×rate. Consumers that need pair-token units use `seClaim(i)` / `ratedBalance(i)` / previews |
 | D75 | Test matrix (min) (Q17) | Production-first; real V4 PM; real Vault Fee Oracle with defaults; real SE ports / ERC-4626 Wrapper SE. **Hermetic \(n \in \{2,3,4,8\}\) all required** (n=8 = 28 doors — must run). Also: (a) **1 SE** + raw rest; (b) **all legs SE**; (c) mixed; (d) RP zero/non-zero; partial book; first mint `V−MIN`; full join/exit; single-asset aliases; SE In/Out; MultiAssetLiquidity full matrix; gross buffer on swaps (Q16); `reserveOfToken` shares; protocol growth; rate fail-closed; `ensurePairPools`. **No** mock hook / mock SE SUT |
 | D76 | Fork DoD (Q18) | **Ethereum + Base + Robinhood (4663) all required, equal priority** after hermetic. Production PM/Permit2/fee oracle when present; deploy-if-missing production-equivalent |
 | D77 | DETF coupling | Fully independent product/test surface — **no DETF work in this PRD** |
@@ -400,17 +404,17 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 
 | ID | Topic | Value |
 |----|--------|-------|
-| O1 | Native / rated views | Required public `nativeReserve(uint8 i)` / `nativeReserves()`; `ratedBalance(uint8 i)` / `ratedBalances()`; also per-token `reserveOfToken` |
+| O1 | Native / rated views | Required public `nativeReserve(uint8 i)` / `nativeReserves()`; `ratedBalance(uint8 i)` / `ratedBalances()`; also per-token `reserveOfToken` — native/SE views re-read **live** inventory balances (Q26) |
 | O2 | SE / RP views | `standardExchange(uint8 i)`, `rateProvider(uint8 i)`, `isBuffered(uint8 i)`, `seClaim(uint8 i)`, `seBalance(uint8 i)` |
-| O3 | One-token aliases | `depositSingle` + `withdrawSingle` required (= single-asset join/exit); `withdrawSingleExactOut` only if Q9 closed-form |
-| O4 | Internal settle | Buffer/unwrap helpers shared; V4 swaps settle via PM deltas; zap + SE surfaces **do not** unlock PM for curve settle |
+| O3 | One-token aliases | `depositSingle` + `withdrawSingle` required (= single-asset join/exit); `joinSingleAssetExactOut` required (D42b); `withdrawSingleExactOut` only if Q9 closed-form |
+| O4 | Internal settle | Buffer/unwrap helpers shared; V4 swaps settle via PM deltas; LP + SE surfaces **do not** unlock PM for curve settle |
 | O5 | Rate fail-closed | Non-zero RP: failed `getRate` or non-positive rate **reverts** any path that needs that leg’s **rated** balance |
 | O6 | Multi-SE buffer order | Binding index order after all used amounts finalized |
 | O7 | Swap inventory order | Take tokenIn → weighted settle amounts → buffer tokenIn if SE → unwrap/pay tokenOut if SE; never leave free buffered-token inventory as book |
 | O8 | LP ERC-20 location | Same mined hook proxy |
-| O9 | Math library | Pure Math: WeightedMath wrappers, scale, growth, zap multi-leg split, native join/exit helpers — **no** SE external calls inside pure Math |
-| O10 | Inventory re-read | Re-read SE balances + claims + rates when next step needs post-inventory state. **Do not** re-solve weighted mid-flight after buffer (buffer-last) |
-| O11 | Adversarial DoD | Reentrancy (LP↔swap↔SE), donation dilution, `feeTo` non-receivable, SE revert mid-buffer/zap, RP fail-closed, partial-book drain attempts, distinct-SE / zero-SE binding rejects, full-book zero-leg exit |
+| O9 | Math library | Pure Math: WeightedMath wrappers, **dual** scale helpers (inventory vs rated — Q25), growth, native join/exit helpers — **no** SE external calls inside pure Math; **no** multi-leg rebalance “zap split” helper |
+| O10 | Inventory re-read | Re-read **live** SE share balances + claims + rates when next step needs post-inventory state. **Do not** re-solve weighted mid-flight after buffer (buffer-last) |
+| O11 | Adversarial DoD | Reentrancy (LP↔swap↔SE), donation dilution (incl. SE share donations), `feeTo` non-receivable, SE revert mid-buffer/join, RP fail-closed, partial-book drain attempts, distinct-SE / zero-SE binding rejects, full-book zero-leg exit |
 | O12 | SE multi-token ABI | Interface name **locked:** `IStandardExchangeMultiAssetLiquidity`. Selectors/args **= hook liquidity ABI 1:1** (Q19 / D55) |
 
 ### 3.8 Stakeholder pins (P1–P6) — **LOCKED** v0.2
@@ -420,11 +424,11 @@ Former “residual opens.” Product law below; implementation plan freezes only
 | # | Topic | Locked value |
 |---|--------|--------------|
 | **P1** | Multi-token SE interface | **New `IStandardExchangeMultiAssetLiquidity`**. Canonical In/Out stay swap-only. **Selectors = hook liquidity ABI 1:1** (Q19) |
-| **P2** | First-mint shares | **`shares = V_inv − MINIMUM_LIQUIDITY`**. \(V_inv =\) WeightedMath `computeInvariantDown` on **inventory** WAD: face for raw; **SE share balance** for buffered (Q7 — **not** claim, **not** RP). `MINIMUM_LIQUIDITY = 1000` → `address(0)` |
+| **P2** | First-mint shares | **`shares = V_inv − MINIMUM_LIQUIDITY`**. \(V_inv =\) WeightedMath `computeInvariantDown` on **inventory** WAD: face for raw; **live SE share balance** for buffered (Q7/Q26 — **not** claim, **not** RP). `MINIMUM_LIQUIDITY = 1000` → `address(0)` |
 | **P3** | Partial-book mint | **Mirror Weighted §4.7 sketch** on inventory legs. Plan freezes bit-exact ordering/rounding only |
-| **P4** | `reserveOfToken` buffered | **SE share balance**. Raw legs = face. Claim/rated = separate getters |
-| **P5** | One-token / “zap” model (superseded v0.2 multi-leg) | **v0.3:** Balancer **single-asset join/exit only** (Q8). `depositSingle`/`withdrawSingle` are **aliases**. Multi-leg force-sell zap **out**. Exact-out exit **only if closed-form** else drop (Q9) |
-| **P6** | Events (minimum DoD) | Weighted peer join/exit; `ProtocolFeeMinted`; `DepositSingle` / `WithdrawSingle` (alias events OK if same as join/exit); `WithdrawSingleExactOut` only if shipped; **no** required `ZapSwap` (no multi-leg internal zap); SE multi-token events; factory deploy/ensure. V4 Swap logs for public swaps |
+| **P4** | `reserveOfToken` buffered | **Live SE share `balanceOf(hook)`**. Raw legs = face. Claim/rated = separate getters |
+| **P5** | One-token model (superseded v0.2 multi-leg) | **v0.3+:** Balancer **single-asset join/exit only** (Q8). `depositSingle`/`withdrawSingle` are **aliases**. Multi-leg force-buy/sell **out**. Exact-out **exit** **only if closed-form** else drop (Q9). Exact-BPT-out **join** required if Weighted peer has it (Q27) |
+| **P6** | Events (minimum DoD) | Weighted peer join/exit; `ProtocolFeeMinted`; `DepositSingle` / `WithdrawSingle` (alias events OK if same as join/exit); `WithdrawSingleExactOut` only if shipped; **no** multi-leg rebalance events; SE multi-token events; factory deploy/ensure. V4 Swap logs for public swaps |
 
 ### 3.9 Stakeholder pins (Q7–Q12) — **LOCKED** v0.3
 
@@ -453,11 +457,20 @@ Former “residual opens.” Product law below; implementation plan freezes only
 | # | Topic | Locked value |
 |---|--------|--------------|
 | **Q19** | MultiAssetLiquidity ABI | **Mirror hook liquidity surface 1:1** (names, args, returns). Thin shared Target facade |
-| **Q20** | Inventory WAD | Per-leg `IERC20.decimals()` → `baseScale = 10^(36-decimals)`; SE legs use **share token** decimals; band **[6,18]** |
-| **Q21** | D42a exact-out | Phase 0 Crane audit: **ship if closed-form else omit v1** — no search |
+| **Q20** | Inventory WAD | Per-leg inventory-asset `IERC20.decimals()` → `invScale = 10^(36-decimals)`; SE legs use **share token** decimals; band **[6,18]** (superseded for dual-scale detail by Q25) |
+| **Q21** | D42a exact-out **exit** | Phase 0 Crane audit: **ship if closed-form else omit v1** — no search. Does **not** cover join exact-BPT-out (Q27) |
 | **Q22** | Partial seed order | Weighted §4.7 on inventory; **binding-index ascending**; floor per leg before next |
 | **Q23** | Event fields | **D72b** field lists (join/exit deltas, one-token events, ProtocolFeeMinted, EnsurePairPools) |
 | **Q24** | LP Permit2 | **`transferFrom` if allowance else Permit2 AllowanceTransfer only** — **no** SignatureTransfer / no `permit2Data` on joins |
+
+### 3.12 Stakeholder pins (Q25–Q28) — **LOCKED** v0.6 (clarity review)
+
+| # | Topic | Locked value |
+|---|--------|--------------|
+| **Q25** | Dual `baseScale` | **Inventory WAD** uses face or **SE share** decimals. **Rated WAD** always uses **pair-token** decimals after pairUnits are in pair-token space. Two explicit scale maps — never one conflated `baseScale[i]` |
+| **Q26** | Live book | Buffered leg book = **`IERC20(SE).balanceOf(hook)`** (donations dilute). Raw leg inventory donations dilute. Free pair dust on SE legs is not book. Views/LP/swaps re-read live inventory |
+| **Q27** | Join exact-BPT-out | **`joinSingleAssetExactOut` required if Weighted peer has it** (Weighted D33) — ship with bit-exact preview; **not** Phase-0 omit like D42a exit exact-token-out |
+| **Q28** | “Zap” vocabulary | Product law = Balancer single-asset aliases only. Scrub multi-leg zap wording; legacy “zap-in/out” means **only** `depositSingle` / `withdrawSingle` |
 
 ---
 
@@ -515,43 +528,50 @@ Pool t_{n-2}/t_{n-1} ──┘
 
 ```text
 RATE_PRECISION = 1e18
-baseScale[i]   = 10^(36 - decimals(token_i))   // weighted peer
 
-// --- NATIVE inventory (LP, kLast, full-book floors) ---
+// TWO independent scale maps (Q25) — never one conflated baseScale[i]:
+//   invScale[i]   = 10^(36 - invDecimals[i])
+//     raw:   invDecimals = pair-token IERC20.decimals()
+//     SE:    invDecimals = IERC20(SE).decimals()          // SHARE token
+//   ratedScale[i] = 10^(36 - pairDecimals[i])
+//     always pair-token IERC20.decimals() for leg i
+//   Fail if decimals out of [6,18] or decimals() reverts
+
+// --- NATIVE inventory (LP, kLast, full-book floors) — Q26 live book ---
 for i in 0..n-1:
   if standardExchange[i] == 0:
-      native[i] = Repo.rawReserve[token_i]           // face ERC-20
+      native[i] = live face inventory of token_i       // donations dilute
   else:
-      native_shares[i] = IERC20(SE_i).balanceOf(hook) // SE shares as inventory unit
+      native_shares[i] = IERC20(SE_i).balanceOf(hook) // LIVE shares; donations dilute
       // Pair-token claim (for views / unwrap sizing; NOT multiplied by RP):
       claim[i] = previewExchangeIn(SE_i, native_shares[i], token_i)
 
-// Join/exit / V_inv / kLast (Q7 / D23 / Q20) — INVENTORY ONLY
-//   - Raw legs: face → WAD via pair-token IERC20.decimals()
-//   - Buffered legs: SE **share** balances → WAD via IERC20(SE).decimals()
-//   - baseScale_i = 10^(36 - decimals_i); decimals in [6,18] or revert
-//   - User edge: pair tokens in/out; buffer-last / unwrap at boundaries
-//   - getRate() and live claim MUST NOT enter LP algebra
-//   - SE yield changing claim/share price does NOT mint/burn LP by itself
+// Join/exit / V_inv / kLast (Q7 / D23 / Q20 / Q25) — INVENTORY ONLY
+//   invWad[i] = floor(native_amount_i * invScale[i] / 1e18)
+//     raw: native_amount = face; SE: native_amount = live share balance
+//   User edge: pair tokens in/out; buffer-last / unwrap at boundaries
+//   getRate() and live claim MUST NOT enter LP algebra
+//   SE yield changing claim/share price does NOT mint/burn LP by itself
 //
-// vault reserveOfToken(token_i) (D74 / P4):
+// vault reserveOfToken(token_i) (D74 / P4 / Q26):
 //   raw leg  → face reserve
-//   SE leg   → seBal shares (NOT claim, NOT rated)
+//   SE leg   → live seBal shares (NOT claim, NOT rated)
 
 // --- RATED balances (SWAPS only + swap previews + SE swap paths) ---
 for i in 0..n-1:
   if standardExchange[i] == 0:
-      pairUnits = native[i]                          // face
+      pairUnits = native[i]                          // face (pair-token units)
   else if rateProvider[i] != 0:
       rate = IRateProvider(rateProvider[i]).getRate() // fail-closed; pair-token per share
       pairUnits = native_shares[i] * rate / 1e18     // RP IS share→token conversion
   else:
-      pairUnits = claim[i]                           // SE claim, no RP
+      pairUnits = claim[i]                           // SE claim, no RP (pair-token units)
 
-  rated[i] = floor(pairUnits * baseScale[i] / 1e18)  // 1e18 domain for swap WeightedMath
+  // ALWAYS pair-token scale — never share decimals on rated:
+  rated[i] = floor(pairUnits * ratedScale[i] / 1e18)
 ```
 
-**Note (mixed inventory units):** \(V_inv\) multiplies WAD(face) and WAD(shares) across legs. That is **intentional** under Q7 (inventory co-ownership, not mark-to-market claim). Swap pricing separately uses rated pair-token units. Implementors must not “fix” LP domain by reintroducing claim/RP.
+**Note (mixed inventory units):** \(V_inv\) multiplies WAD(face) and WAD(shares) across legs. That is **intentional** under Q7 (inventory co-ownership, not mark-to-market claim). Swap pricing separately uses rated **pair-token** units with **pair-token** scale. Implementors must not “fix” LP domain by reintroducing claim/RP, and must not scale rated pairUnits with SE share decimals.
 
 **RP validation intent:** RP only on SE legs; values shares as pair token for **swaps**. Runtime fail-closed on bad rates.
 
@@ -582,13 +602,13 @@ Exact-out dual with ceil gross-up of input fee (weighted peer); buffer/credit th
 | Channel | Oracle API | When | Destination |
 |---------|------------|------|-------------|
 | **Trading** | `dexSwapFeeOfVault(this)` | Every swap (+ previews) | Residual in **input** inventory |
-| **Protocol growth** | `usageFeeOfVault(this)` | Every join/exit/zap | **Mint LP → live `feeTo()`** |
+| **Protocol growth** | `usageFeeOfVault(this)` | Every join/exit/one-token | **Mint LP → live `feeTo()`** |
 
 ```text
-// Full book growth measure (native domain — D24 / D61):
-//   k = V = prod b_i^w_i   (native pair-token WAD, no RP)
-//   rootK = V
-// Partial: interim product on positive native legs
+// Full book growth measure (inventory domain — D24 / D61 / Q25):
+//   k = V_inv = prod invWad_i^w_i   (face WAD and/or SE-share WAD — no claim, no RP)
+//   rootK = V_inv
+// Partial: interim product on positive inventory legs
 // protocolLp algebra: weighted / ConstProdUtils peer (FEE_DENOMINATOR = 100_000)
 ```
 
@@ -600,7 +620,7 @@ When **all** native inventories \(> 0\) and `totalSupply > MINIMUM_LIQUIDITY` (o
 
 #### 4.6.0 Protocol mint first
 
-On every join/exit/zap: if fee-on and same `kLastMode` and `kLast != 0`, mint protocol LP from pre-op \(V\) vs `kLast`. User share math uses **post-protocol** `totalSupply`.
+On every join/exit/one-token path: if fee-on and same `kLastMode` and `kLast != 0`, mint protocol LP from pre-op \(V_inv\) vs `kLast`. User share math uses **post-protocol** `totalSupply`.
 
 #### 4.6.1 First mint
 
@@ -612,7 +632,8 @@ require totalSupply == 0
 
 Pull pair tokens
 // Map each leg to inventory delta: raw face credit OR SE shares via buffer preview
-invWad[i] = toWad(inventoryAmount_i)  // face or shares — Q7
+// After buffer-last, inv amounts = live face | live SE share balances (Q26)
+invWad[i] = toInvWad(inventoryAmount_i)  // invScale: face or share decimals — Q7/Q25
 V_inv = WeightedMath.computeInvariantDown(weights, invWad)
 require V_inv > MINIMUM_LIQUIDITY
 shares = V_inv - MINIMUM_LIQUIDITY   // P2 / D44
@@ -624,16 +645,17 @@ Buffer-last SE legs; credit raw legs; mint MIN to address(0); mint user LP to `t
 Behavioral peer: Weighted PRD §4.6 on **inventory** domain (Q7), then:
 
 ```text
-// Size share mint/burn from inventory balances (face | SE shares)
+// Size share mint/burn from live inventory balances (face | SE shares)
 // User edge always pair tokens: buffer-last SE legs; unwrap on exit
 // Join: mint LP to `to`; refund unused pair tokens to msg.sender (Q12)
 // Exit: burn msg.sender LP; pay pair tokens to `to`
 // Full-book exit floors: all inventory reserves remain > 0 (D48)
+// joinSingleAssetExactOut required (D42b / Weighted peer)
 ```
 
 #### 4.6.3 One-token entry — `depositSingle` ≡ single-asset join (Q8)
 
-**Eligibility:** full book (Weighted single-asset rules).
+**Eligibility:** full book (Weighted single-asset rules) — “single-asset eligible,” not multi-leg zap.
 
 ```text
 1) Protocol growth mint if fee-on
@@ -641,7 +663,7 @@ Behavioral peer: Weighted PRD §4.6 on **inventory** domain (Q7), then:
 3) Balancer single-asset exact-in join on inventory domain (taxable)
 4) Buffer-last if tokenIn is SE leg; else credit raw face
 5) Mint LP to `to`; set kLast; refund dust
-// NO multi-leg internal swaps
+// NO multi-leg internal rebalance
 ```
 
 #### 4.6.4 One-token exit — `withdrawSingle` ≡ single-asset exact BPT in (Q8)
@@ -685,8 +707,9 @@ exchangeIn / exchangeOut (token_i ↔ token_j)
   → internal settle; NEVER mint/burn LP
 
 // IStandardExchangeMultiAssetLiquidity — FULL join/exit matrix (Q10)
-// proportional / unbalanced / single-asset + depositSingle/withdrawSingle aliases
-// optional exact-out single-asset only if D42a shipped
+// proportional / unbalanced / single-asset (incl. joinSingleAssetExactOut — D42b)
+// + depositSingle/withdrawSingle aliases
+// optional exit exact-token-out only if D42a shipped
 // Previews bit-exact; selectors frozen in plan
 ```
 
@@ -721,8 +744,8 @@ contracts/hooks/uniswap/v4/standardExchange/weighted/
 
   facets/
     …HooksFacet.sol
-    …LiquidityFacet.sol          # join/exit/zap
-    …SeFacet.sol                 # SE In/Out + multi-token + zap SE surface
+    …LiquidityFacet.sol          # join/exit + one-token aliases
+    …SeFacet.sol                 # SE In/Out + MultiAssetLiquidity facade
     …
 
   UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol
@@ -758,7 +781,7 @@ dexSwapFee(), usageFee(), feeTo(), kLast(), kLastMode()
 
 // LP ERC-20 + EIP-2612 (shared facets)
 // Liquidity mutators (D55a): joinProportional, joinSingleAssetExactIn,
-//   joinSingleAssetExactOut (if closed-form), joinUnbalanced,
+//   joinSingleAssetExactOut (required — D42b), joinUnbalanced,
 //   exitProportional, exitSingleAssetExactBptIn,
 //   exitSingleAssetExactTokenOut (iff D42a),
 //   depositSingle, withdrawSingle, withdrawSingleExactOut (aliases),
@@ -776,9 +799,9 @@ dexSwapFee(), usageFee(), feeTo(), kLast(), kLastMode()
 |------------|----|-------|
 | `IStandardExchangeIn` / `Out` | **Required** | Swap-only; rated book |
 | **`IStandardExchangeMultiAssetLiquidity`** | **Required** | **Same names/args as hook** (D55a) |
-| Full join/exit matrix | **Required** | D55a list |
+| Full join/exit matrix | **Required** | D55a list incl. **`joinSingleAssetExactOut`** (D42b) |
 | One-token aliases | **Required** | `depositSingle` / `withdrawSingle` |
-| Exact-out one-token | **Iff D42a** | `withdrawSingleExactOut` |
+| Exact-token-out exit | **Iff D42a** | `withdrawSingleExactOut` only |
 | Previews | **Required** | Bit-exact |
 
 ### 5.5 Events / errors (minimum) — P6 + Q23 / D72b locked
@@ -827,20 +850,20 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 2. Real Uni V4 PoolManager (Crane port / hermetic).  
 3. Real Vault Fee Oracle with defaults.  
 4. Real SE legs (ERC-4626 Wrapper SE and/or production ports).  
-5. Cover: inert deploy; ≥1 SE; distinct SE; RP-only-on-SE; first mint inventory `V−MIN`; partial book; full join/exit; single-asset aliases; **no** multi-leg zap; SE In/Out; MultiAssetLiquidity full matrix; rated swaps ±RP; **gross** buffer on swaps; LP inventory domain; `reserveOfToken` = shares; buffer-last; protocol growth; preview==execution; reentrancy; factory PM/oracle; postDeploy + **ensurePairPools**; hermetic **\(n\in\{2,3,4,8\}\)**; fork **Ethereum + Base + 4663**.
+5. Cover: inert deploy; ≥1 SE; distinct SE; RP-only-on-SE; first mint inventory `V−MIN`; partial book; full join/exit incl. **`joinSingleAssetExactOut`**; single-asset aliases; **no** multi-leg rebalance; SE In/Out; MultiAssetLiquidity full matrix; rated swaps ±RP with **pair-token** scale; **gross** buffer on swaps; LP inventory domain + **live** SE `balanceOf` book; `reserveOfToken` = shares; buffer-last; protocol growth; preview==execution; donation dilution; reentrancy; factory PM/oracle; postDeploy + **ensurePairPools**; hermetic **\(n\in\{2,3,4,8\}\)**; fork **Ethereum + Base + 4663**.
 
 ---
 
 ## 8. Definition of Done
 
-- [ ] Product PRD **v0.5+** accepted (this file).  
-- [ ] Implementation + test plan written from this PRD (`D78`) — Phase 0 D42a audit only discretionary ship/omit per Q21.  
-- [ ] Package implements D1–D78 + P1–P6 + Q7–Q24.  
+- [ ] Product PRD **v0.6+** accepted (this file).  
+- [ ] Implementation + test plan accepted (`D78` / plan v1.0) — Phase 0a D42a audit only discretionary ship/omit for **exit** exact-token-out per Q21.  
+- [ ] Package implements D1–D78 + D42b + P1–P6 + Q7–Q28.  
 - [ ] Deploy: Package → Vault Registry → Hook Diamond Factory; postDeploy doors + **ensurePairPools**.  
 - [ ] `PRODUCT_ID` full type name; LP caps; factory PM+oracle.  
 - [ ] ≥1 SE; distinct SEs; RP optional on SE only.  
-- [ ] Swaps rated + gross buffer; LP inventory WAD via decimals (Q20); no multi-leg zap.  
-- [ ] MultiAssetLiquidity = hook ABI 1:1 (Q19); LP pull AllowanceTransfer-only (Q24).  
+- [ ] Swaps rated + gross buffer; dual scale (Q25); live SE book (Q26); no multi-leg rebalance (Q28).  
+- [ ] `joinSingleAssetExactOut` shipped (Q27); MultiAssetLiquidity = hook ABI 1:1 (Q19); LP pull AllowanceTransfer-only (Q24).  
 - [ ] Events D72b; partial-book floor order Q22; hermetic \(n\in\{2,3,4,8\}\); forks ETH+Base+4663.  
 - [ ] Dual-channel fees; no DETF.
 
@@ -859,16 +882,17 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 
 | Version | Date | Notes |
 |---------|------|-------|
-| **v0.1** | 2026-08-05 | Initial PRD from stakeholder lock pass: optional SE/RP with **≥1 SE**; \(n\in[2,8]\); distinct SE per token; Balancer `IRateProvider` **swap-only**; LP native domain; partial book + full weighted join/exit; zap-in **and** zap-out; dual-channel fee oracle; DYNAMIC_FEE_FLAG + all doors; hook diamond package deploy; SE In/Out + multi-token SE liquidity extensions; no DETF; non-goals locked |
+| **v0.1** | 2026-08-05 | Initial PRD from stakeholder lock pass: optional SE/RP with **≥1 SE**; \(n\in[2,8]\); distinct SE per token; Balancer `IRateProvider` **swap-only**; LP native domain; partial book + full weighted join/exit; one-token aliases; dual-channel fee oracle; DYNAMIC_FEE_FLAG + all doors; hook diamond package deploy; SE In/Out + multi-token SE liquidity extensions; no DETF; non-goals locked |
 | **v0.2** | 2026-08-05 | Lock residual P1–P6 |
 | **v0.3** | 2026-08-05 | Q7–Q12: LP inventory = SE shares/face; single-asset aliases; MultiAssetLiquidity full matrix; factory PM+oracle; recipients |
 | **v0.4** | 2026-08-05 | Q13–Q18: PRODUCT_ID; LP caps; ensurePairPools; gross buffer; n∈{2,3,4,8}; forks ETH+Base+4663 |
 | **v0.5** | 2026-08-05 | Q19–Q24: MultiAssetLiquidity=hook ABI 1:1; inventory WAD per decimals; D42a ship-if-closed-form; partial floor order; event fields D72b; LP Permit2 AllowanceTransfer only (no SignatureTransfer) |
+| **v0.6** | 2026-08-05 | Clarity review: Q25 dual inv/rated scales; Q26 live SE `balanceOf` is book; Q27 `joinSingleAssetExactOut` required if Weighted peer has it; Q28 scrub multi-leg “zap” wording; fix DoD § ref; growth measure wording |
 
 ---
 
 ## 11. Next step
 
-Write **`UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`** from this PRD. **Only remaining implementor branch:** Phase 0 closed-form audit → ship or omit `withdrawSingleExactOut` (Q21). Everything else is locked product law.
+Implementation plan is co-located: [`UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md) (**v1.0**). **Only remaining implementor branch:** Phase 0a closed-form audit → ship or omit **`withdrawSingleExactOut`** / exit exact-token-out (Q21 / D42a). **`joinSingleAssetExactOut` is required** (Q27). Everything else is locked product law — implement per plan phases 0–K.
 
-**End of PRD — UniswapV4StandardExchangeWeightedBufferHook (Draft v0.5)**
+**End of PRD — UniswapV4StandardExchangeWeightedBufferHook (Draft v0.6)**

@@ -2,20 +2,17 @@
 
 Static public landing for the **DETF product story** — Olympus lineage productized, not a fork cosplay.
 
-## Live URL (GitHub Pages)
+## Hosting
+
+**GitHub Pages is dropped** for this repo (no deploy workflow). This folder is a static site you can host elsewhere or open locally.
 
 | Field | Value |
 |-------|--------|
-| **Site** | https://cyotee.github.io/indexedex/ |
-| **How DETFs work** | https://cyotee.github.io/indexedex/how-detfs-work.html |
-| **Uniswap V4 markets** | https://cyotee.github.io/indexedex/uniswap-v4.html |
-| **Technical note (builders)** | https://cyotee.github.io/indexedex/technical-note.html |
-| **Legacy `/litepaper.html`** | Redirects to the product report |
-| **Optional PDF** | https://cyotee.github.io/indexedex/DETF_LITEOBAPER.pdf |
 | **Source dir** | this folder (`marketing/research-site/`) |
-| **Workflow** | `.github/workflows/deploy-research-pages.yml` |
+| **Entry** | `index.html` |
+| **Other pages** | `how-detfs-work.html`, `uniswap-v4.html`, `technical-note.html`, optional PDF |
 
-Redeploys on push to `main` when this folder (or the workflow) changes, or via **Actions → Deploy research site to GitHub Pages → Run workflow**.
+Local preview: open `index.html` in a browser, or serve the directory with any static file server.
 
 ## Voice
 

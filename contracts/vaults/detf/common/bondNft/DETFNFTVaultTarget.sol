@@ -70,28 +70,49 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         nonReentrant
         returns (uint256 tokenId)
     {
-        if (shares == 0) revert BaseSharesZero();
+        // Peer path: original = effective base = shares (LP); bonus applied to both.
+        tokenId = _createPositionInternal(shares, shares, lockDuration, recipient);
+    }
+
+    /// @notice Open bond with LP principal + separate reward-weight base (before lock bonus).
+    function createPositionWithEffectiveBase(
+        uint256 originalShares,
+        uint256 effectiveBase,
+        uint256 lockDuration,
+        address recipient
+    ) external onlyOwner nonReentrant returns (uint256 tokenId) {
+        tokenId = _createPositionInternal(originalShares, effectiveBase, lockDuration, recipient);
+    }
+
+    function _createPositionInternal(
+        uint256 originalShares_,
+        uint256 effectiveBase_,
+        uint256 lockDuration_,
+        address recipient_
+    ) private returns (uint256 tokenId) {
+        if (originalShares_ == 0) revert BaseSharesZero();
+        if (effectiveBase_ == 0) revert BaseSharesZero();
 
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
-        _validateLockDuration(layoutStruct, lockDuration);
+        _validateLockDuration(layoutStruct, lockDuration_);
 
-        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration);
-
-        // Update global rewards before creating position
+        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration_);
         DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
-        // Calculate effective shares with bonus
-        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(shares, bonusMultiplier);
+        // Reward ledger weight = effectiveBase * lock bonus (PRD open-time mids path).
+        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(effectiveBase_, bonusMultiplier);
 
-        // Mint NFT
-        tokenId = ERC721Repo._mint(recipient);
-
-        // Create position with current reward debt
+        tokenId = ERC721Repo._mint(recipient_);
         DETFNFTVaultRepo._createPosition(
-            layoutStruct, tokenId, shares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
+            layoutStruct,
+            tokenId,
+            originalShares_,
+            effectiveShares,
+            bonusMultiplier,
+            block.timestamp + lockDuration_
         );
 
-        emit NewLock(tokenId, recipient, shares, bonusMultiplier, block.timestamp + lockDuration);
+        emit NewLock(tokenId, recipient_, originalShares_, bonusMultiplier, block.timestamp + lockDuration_);
     }
 
     /// @notice Mints and records the protocol-owned NFT (once).
@@ -178,13 +199,13 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     //  * @inheritdoc IDETFNFTVault
     //  */
     function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
-        // Validate ownership
+        // Bond holder OR package owner (DETF diamond orchestrating holder claim).
         address owner = ERC721Repo._ownerOf(tokenId);
-        if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender)) {
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender) && msg.sender != address(layoutStruct.detf)) {
             revert NotBondHolder(owner, msg.sender);
         }
 
-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
         DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
         rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);

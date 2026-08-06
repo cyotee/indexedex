@@ -1,0 +1,11 @@
+{
+  "campaign": "uniswapV4/hooks/orbital",
+  "runId": "H0_smoke",
+  "product": "orbitalSwapHook",
+  "profileHint": "orbital",
+  "gitCommit": "becd04d0601c96dcd318220e5dbeaccca37f60e4",
+  "gitCommitShort": "becd04d",
+  "forgeVersion": "forge Version: 1.5.1-stable",
+  "stampedAtUtc": "2026-08-06T13:13:35Z",
+  "script": "scripts/foundry/research/uniswapV4/hooks/orbital/Script_H0_Smoke.s.sol:Script_H0_Smoke"
+}

@@ -10,7 +10,9 @@
   "scripts": {
     "test": "yarn test:default",
     "test:default": "forge test",
+    "test:ci": "FOUNDRY_PROFILE=ci forge test",
     "test:fork": "FOUNDRY_PROFILE=fork forge test",
+    "test:ci-fork": "FOUNDRY_PROFILE=ci_fork forge test",
     "compile": "clear && forge compile --sizes",
     "coverage": "forge coverage",
     "list": "task-master list",

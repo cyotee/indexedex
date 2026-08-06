@@ -164,6 +164,16 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
         external
         returns (uint256 tokenId);
 
+    /// @notice Open bond with LP principal + separate reward-weight base (before lock bonus).
+    /// @param originalShares Fungible LP principal (sell/close unwind units).
+    /// @param effectiveBase Reward weight base before lock bonus (e.g. rateAsset mid WAD).
+    function createPositionWithEffectiveBase(
+        uint256 originalShares,
+        uint256 effectiveBase,
+        uint256 lockDuration,
+        address recipient
+    ) external returns (uint256 tokenId);
+
     /// @notice Mints and records the protocol-owned NFT (once).
     /// @dev Expected to be called during package post-deploy/initialization.
     function initializeDETFNFT() external returns (uint256 tokenId);

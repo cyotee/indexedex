@@ -30,6 +30,22 @@ library DETFBondLifecycleLib {
         tokenId_ = vault_.createPosition(shares_, lockDuration_, recipient_);
     }
 
+    /// @notice Open bond with LP principal + rateAsset mid (or other) reward base before lock bonus.
+    function _createBondPositionWithEffectiveBase(
+        IDetfSelfNftInventoryPolicy vault_,
+        uint256 originalShares_,
+        uint256 effectiveBase_,
+        uint256 lockDuration_,
+        address recipient_
+    ) internal returns (uint256 tokenId_) {
+        if (recipient_ == address(0)) {
+            recipient_ = msg.sender;
+        }
+        tokenId_ = vault_.createPositionWithEffectiveBase(
+            originalShares_, effectiveBase_, lockDuration_, recipient_
+        );
+    }
+
     function _sellPositionToRebasingClaim(
         IDetfSelfNftInventoryPolicy vault_,
         IRebasingClaimToken rebasingClaimToken_,

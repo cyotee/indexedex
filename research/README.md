@@ -24,7 +24,30 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 | [`scenarios/cca/CCA_Rehearsal_PRD.md`](./scenarios/cca/CCA_Rehearsal_PRD.md) | **PRD (planned):** Uniswap CCA rehearsal for RICH auction ads + post-clear product path |
 | [`scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md`](./scenarios/cca/CCA_Rehearsal_IMPLEMENTATION_AND_TEST_PLAN.md) | **Plan (planned):** Phase 0 addresses → Mode A/B/C → FINDINGS |
 | [`scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md`](./scenarios/uniswapV2Se/rateProviderCompare/RateProvider_Comparative_PRD.md) | PRD for rate provider comparative |
+| [`scenarios/uniswapV4/PROGRAM.md`](./scenarios/uniswapV4/PROGRAM.md) | **ACTIVE:** Uni V4 hooks + DETF research portfolio |
+| [`scenarios/uniswapV4/MATURITY.md`](./scenarios/uniswapV4/MATURITY.md) | Maturity / research gate matrix |
+| [`scenarios/uniswapV4/hooks/orbital/FINDINGS.md`](./scenarios/uniswapV4/hooks/orbital/FINDINGS.md) | Orbital hook H0–H2 findings |
+| [`scenarios/uniswapV4/detf/standardExchangeCpSingle/FINDINGS.md`](./scenarios/uniswapV4/detf/standardExchangeCpSingle/FINDINGS.md) | Uni V4 CP DETF D0+ findings |
 | `out/` | **Generated** JSONL + PNGs (gitignored) — recreate with runners |
+
+## Reproduce Uni V4 Orbital Hook (H0–H2)
+
+```bash
+./research/run_uniswap_v4_orbital_hook.sh              # FOUNDRY_PROFILE=orbital --via-ir
+./research/run_uniswap_v4_orbital_hook.sh --h0
+./research/run_uniswap_v4_orbital_hook.sh --plot-only
+```
+
+Artifacts: `research/out/uniswapV4/hooks/orbital/`. Findings: [`scenarios/uniswapV4/hooks/orbital/FINDINGS.md`](./scenarios/uniswapV4/hooks/orbital/FINDINGS.md).
+
+## Reproduce Uni V4 CP Single DETF (D0–D1 partial)
+
+```bash
+./research/run_uniswap_v4_cp_detf.sh                   # FOUNDRY_PROFILE=uv4_single_se_cp_detf --via-ir
+./research/run_uniswap_v4_cp_detf.sh --d0
+```
+
+Artifacts: `research/out/uniswapV4/detf/standardExchangeCpSingle/`.
 
 ## Reproduce rateProviderCompare (R+ vs R−)
 

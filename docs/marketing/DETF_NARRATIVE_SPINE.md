@@ -311,7 +311,7 @@ Smart-contract and market risk apply. Read docs and research; this is not financ
 
 > Built by the original developer of Olympus. The DETF productizes a familiar design class — reserve-backed seigniorage, bonding into protocol-owned depth, optional mint/burn policy — so many baskets can each be their own monetary unit. A DETF is not OlympusDAO, not the OHM token, and not a claim on any DAO treasury.
 
-**Public site campaign tone (GitHub Pages / social, when approved):** lean **new product, not a fork** — “Olympus made the meme; DETFs make the product.” Keep the not-OHM / not-DAO disclaimers in body or footer. Prefer pithy, slightly meme energy on `marketing/research-site/`; keep in-app Research more lab-neutral unless product asks otherwise.
+**Public site campaign tone (static teaser / social, when approved):** lean **new product, not a fork** — “Olympus made the meme; DETFs make the product.” Keep the not-OHM / not-DAO disclaimers in body or footer. Prefer pithy, slightly meme energy on `marketing/research-site/`; keep in-app Research more lab-neutral unless product asks otherwise.
 
 **Launch map (customer pages, 2026 ship):** only Uniswap V4 **pair** (ConstProd buffer), **triangle** (orbital), and **weighted** market rails + matching DETFs. Do not list dual-vault pairs, four-asset stable books, or Balancer-family DETFs as this launch set on public marketing pages.
 

@@ -13,6 +13,16 @@ interface IDetfBondInventoryPolicy {
         external
         returns (uint256 tokenId);
 
+    /// @notice Open bond with separate principal (LP) and reward-weight base (before lock bonus).
+    /// @dev originalShares = fungible LP principal; effectiveBase * lockBonus = reward ledger weight.
+    ///      Orbital DETF uses rateAsset open-time mids as effectiveBase; CP may keep createPosition(lp).
+    function createPositionWithEffectiveBase(
+        uint256 originalShares,
+        uint256 effectiveBase,
+        uint256 lockDuration,
+        address recipient
+    ) external returns (uint256 tokenId);
+
     function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         returns (uint256 principalShares, uint256 rewardsClaimed);
