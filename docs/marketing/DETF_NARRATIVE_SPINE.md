@@ -313,7 +313,7 @@ Smart-contract and market risk apply. Read docs and research; this is not financ
 
 **Public site campaign tone (GitHub Pages / social, when approved):** lean **new product, not a fork** — “Olympus made the meme; DETFs make the product.” Keep the not-OHM / not-DAO disclaimers in body or footer. Prefer pithy, slightly meme energy on `marketing/research-site/`; keep in-app Research more lab-neutral unless product asks otherwise.
 
-**Launch map (customer pages, 2026 ship):** only Uniswap V4 **pair** (CP buffer), **triangle** (orbital), and **weighted** market rails + matching DETFs. Do not list dual-vault pairs, four-asset stable books, or Balancer-family DETFs as this launch set on public marketing pages.
+**Launch map (customer pages, 2026 ship):** only Uniswap V4 **pair** (ConstProd buffer), **triangle** (orbital), and **weighted** market rails + matching DETFs. Do not list dual-vault pairs, four-asset stable books, or Balancer-family DETFs as this launch set on public marketing pages.
 
 ### 9.2 Chain / venue language
 

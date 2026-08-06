@@ -154,7 +154,7 @@ graph TD
             <pre class="mermaid">
 graph TD
     DETF["DETF share · ERC-20"]
-    Hook["Uni V4 CP buffer market"]
+    Hook["Uni V4 ConstProd buffer market"]
     Free["Free leg · DETF raw inventory"]
     Pair["Pair / cash token"]
     SE["Strategy vault · SE claim"]
@@ -296,7 +296,7 @@ graph TD
           <ul>
             <li>
               <strong>Pair DETF</strong> — share is the free leg; pair token is the cash leg
-              (optionally vault-buffered). Bond principal = fungible CP LP.
+              (optionally vault-buffered). Bond principal = fungible ConstProd LP.
             </li>
             <li>
               <strong>Triangle DETF</strong> — share + two external legs on the orbital book.
@@ -312,8 +312,8 @@ graph TD
             <pre class="mermaid">
 graph LR
     subgraph Pair["Pair family"]
-      P_DETF["Pair DETF"] --> P_MKT["CP buffer market"]
-      P_MKT --> P_LP["CP LP"]
+      P_DETF["Pair DETF"] --> P_MKT["ConstProd buffer market"]
+      P_MKT --> P_LP["ConstProd LP"]
     end
     subgraph Triangle["Triangle family"]
       T_DETF["Triangle DETF"] --> T_MKT["Orbital book"]
