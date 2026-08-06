@@ -1,8 +1,8 @@
-# Deploy marketing/research-site (static DETF research landing + litepaper PDF)
-# to GitHub Pages: https://cyotee.github.io/indexedex/
+# Deploy marketing/research-site to GitHub Pages: https://cyotee.github.io/indexedex/
 #
-# Uses gh-pages branch publish (peaceiris) instead of actions/deploy-pages.
-# Official deploy-pages was hanging in deployment_queued / in_progress for this repo.
+# Dual publish:
+# 1) peaceiris → gh-pages branch (static backup / raw content)
+# 2) actions/deploy-pages → official GitHub Pages environment (when not hung)
 name: Deploy research site to GitHub Pages
 
 on:
@@ -15,6 +15,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
@@ -22,12 +24,19 @@ concurrency:
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publish marketing/research-site to gh-pages
+      - name: Ensure .nojekyll
+        run: touch marketing/research-site/.nojekyll
+
+      - name: Publish to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -35,3 +44,15 @@ jobs:
           force_orphan: true
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: marketing/research-site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
