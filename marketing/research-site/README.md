@@ -40,7 +40,7 @@ Do **not** advertise dual-vault pairs, four-asset stable books, or Balancer fami
 |------|----------|---------|
 | `index.html` | Prospective customers | Home: story, product, launch lineup |
 | `how-detfs-work.html` | Prospective customers | Short product report |
-| `uniswap-v4.html` | Prospective customers | Three Uniswap V4 launch markets |
+| `uniswap-v4.html` | Prospective customers | Three Uniswap V4 launch markets + Mermaid structure diagrams |
 | `technical-note.html` | Builders / researchers | Optional mechanism depth (archive) |
 | `litepaper.html` | Bookmarks / old links | Soft redirect to product report |
 

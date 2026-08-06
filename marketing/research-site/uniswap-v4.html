@@ -6,12 +6,12 @@
     <title>Uniswap V4 Markets — IndexedEx</title>
     <meta
       name="description"
-      content="Launch markets for DETFs on Uniswap V4: pair constant-product buffer, triangle orbital book, weighted multi-asset book. Composition diagrams for each rail."
+      content="Launch markets for DETFs on Uniswap V4: pair constant-product buffer, triangle orbital book, weighted multi-asset book. Mermaid structure diagrams for each rail."
     />
     <meta property="og:title" content="Uniswap V4 Markets — IndexedEx" />
     <meta
       property="og:description"
-      content="Three Uniswap V4 market rails for DETFs: pair, triangle, weighted — with composition diagrams."
+      content="Three Uniswap V4 market rails for DETFs: pair, triangle, weighted — with Mermaid structure diagrams."
     />
     <meta property="og:type" content="article" />
     <meta name="theme-color" content="#0B1220" />
@@ -64,8 +64,8 @@
           <a class="btn btn-ghost" href="#three">The three rails</a>
         </div>
         <p class="fine paper-note">
-          Product language only. Composition diagrams use the same visual system as in-app DETF
-          research notes. No package names. No promised APY.
+          Structure diagrams below are Mermaid graphs — same style as the nested-pool / DETF
+          composition diagrams in the repo docs. Product language only. No package names. No promised APY.
         </p>
       </header>
 
@@ -104,63 +104,38 @@
           <h2>How DETF sits on a market</h2>
           <p>
             Same stack on every launch family. You hold the DETF share. The reserve is a Uniswap&nbsp;V4
-            market book (hook LP). External cash can optionally sit in a strategy vault under a leg.
-            Bond principal is that fungible LP — not a separate listing oracle.
+            market book. External cash can optionally sit in a strategy vault under a leg. Bond
+            principal is the market’s fungible LP — not a separate listing oracle.
           </p>
 
-          <figure class="comp-diagram" aria-label="Composition: DETF on Uniswap V4 market stack">
-            <div class="comp-diagram-head">
-              <p class="comp-diagram-kicker">Composition</p>
-              <p class="comp-diagram-title">DETF on a Uniswap V4 market reserve</p>
-            </div>
-            <div class="comp-diagram-canvas">
-              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
-              <div class="comp-stack-row">
-                <div class="comp-stack-card layer-product">
-                  <p class="stack-kicker">Product</p>
-                  <p class="stack-title">DETF</p>
-                  <p class="stack-sub">
-                    Bond · mint · burn · claim (when wired). Policy or Open at deploy. Diamond is the
-                    share token.
-                  </p>
-                </div>
-                <div class="comp-connector" aria-hidden="true">
-                  <div class="comp-connector-line"></div>
-                  <span class="comp-connector-label">reserve =</span>
-                  <div class="comp-connector-line"></div>
-                  <div class="comp-connector-arrow"></div>
-                </div>
-                <div class="comp-stack-card layer-market">
-                  <p class="stack-kicker">Market rail · Uniswap V4</p>
-                  <p class="stack-title">Shared book + fungible LP</p>
-                  <p class="stack-sub">
-                    Pair, triangle, or weighted inventory. Pair doors for swaps. LP is bond principal.
-                  </p>
-                </div>
-                <div class="comp-connector" aria-hidden="true">
-                  <div class="comp-connector-line"></div>
-                  <span class="comp-connector-label">optional</span>
-                  <div class="comp-connector-line"></div>
-                  <div class="comp-connector-arrow"></div>
-                </div>
-                <div class="comp-stack-card layer-vault">
-                  <p class="stack-kicker">Strategy vault</p>
-                  <p class="stack-title">Standard Exchange under a cash leg</p>
-                  <p class="stack-sub">
-                    Buffer pair tokens into a vault claim when the rail supports it. Vault is inventory —
-                    not a second mystery pool currency.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <p class="comp-diagram-caption">
+          <figure class="mermaid-figure">
+            <pre class="mermaid">
+graph TD
+    User["You hold DETF share · ERC-20"]
+    DETF["DETF product<br/>bond · mint · burn · claim"]
+    Market["Uniswap V4 market rail<br/>shared book + fungible LP"]
+    SE["Strategy vault · optional<br/>Standard Exchange under cash leg"]
+    PairDoor["Pair doors<br/>routers already understand"]
+
+    User --> DETF
+    DETF -->|"reserve ="| Market
+    Market --> PairDoor
+    Market -->|"optional buffer"| SE
+
+    classDef product fill:#1a2744,stroke:#5b8cff,color:#e8eef9,stroke-width:2px
+    classDef market fill:#122a2a,stroke:#3dd6c6,color:#e8eef9,stroke-width:2px
+    classDef vault fill:#2a1f0f,stroke:#f0b429,color:#fef3c7,stroke-width:2px
+    classDef user fill:#151f33,stroke:#9aa8c0,color:#e8eef9
+
+    class User user
+    class DETF product
+    class Market,PairDoor market
+    class SE vault
+            </pre>
+            <figcaption>
               One product pattern, three reserve shapes. Markets are the book; DETFs are the monetary
-              unit on top. Not a wrap/unwrap kiosk with no LP.
-            </p>
+              unit on top.
+            </figcaption>
           </figure>
         </section>
 
@@ -175,69 +150,39 @@
             <strong>one fungible LP</strong>. Traders still see a simple pair (share ↔ cash).
           </p>
 
-          <figure class="comp-diagram" aria-label="Composition: Pair DETF on CP buffer market">
-            <div class="comp-diagram-head">
-              <p class="comp-diagram-kicker">Composition</p>
-              <p class="comp-diagram-title">Pair DETF · constant-product buffer reserve</p>
-            </div>
-            <div class="comp-diagram-canvas">
-              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
+          <figure class="mermaid-figure">
+            <pre class="mermaid">
+graph TD
+    DETF["DETF share · ERC-20"]
+    Hook["Uni V4 CP buffer market"]
+    Free["Free leg · DETF raw inventory"]
+    Pair["Pair / cash token"]
+    SE["Strategy vault · SE claim"]
+    LP["Fungible LP · bond principal"]
+    Door["Door · DETF ↔ pair"]
 
-              <div class="comp-pool">
-                <p class="comp-pool-label">Uniswap V4 · CP buffer market (fungible LP = bond principal)</p>
-                <div class="comp-legs">
-                  <div class="comp-leg comp-leg-accent">
-                    <p class="comp-leg-title">DETF (self)</p>
-                    <p class="comp-leg-sub">Free / raw leg held in the book</p>
-                    <span class="comp-leg-pill">Share leg</span>
-                  </div>
-                  <div class="comp-plus" aria-hidden="true">+</div>
-                  <div class="comp-leg comp-leg-amber">
-                    <p class="comp-leg-title">Pair token</p>
-                    <p class="comp-leg-sub">Cash leg — buffered into a strategy vault</p>
-                    <span class="comp-leg-pill">Cash leg</span>
-                  </div>
-                </div>
-                <div class="comp-weight-bar" role="img" aria-label="Constant product: free inventory times vault claim">
-                  <span class="w-accent" style="width: 50%"></span>
-                  <span class="w-amber" style="width: 50%"></span>
-                </div>
-                <div class="comp-weight-labels">
-                  <span class="lbl-accent">Free inventory</span>
-                  <span class="lbl-amber">× vault claim (cash)</span>
-                </div>
-                <div class="comp-doors">
-                  <span class="comp-door">Door · DETF ↔ pair</span>
-                </div>
-              </div>
+    DETF -->|"self-leg"| Free
+    Free --> Hook
+    Pair --> Hook
+    Pair -->|"buffers into"| SE
+    SE -->|"virtual cash reserve"| Hook
+    Hook --> LP
+    Hook --> Door
 
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <span class="comp-connector-label">cash buffers into</span>
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
+    classDef product fill:#1a2744,stroke:#5b8cff,color:#e8eef9,stroke-width:2px
+    classDef market fill:#122a2a,stroke:#3dd6c6,color:#e8eef9,stroke-width:2px
+    classDef vault fill:#2a1f0f,stroke:#f0b429,color:#fef3c7,stroke-width:2px
+    classDef leg fill:#151f33,stroke:#7aa2ff,color:#e8eef9
 
-              <div class="comp-se-box">
-                <h4>Strategy vault (Standard Exchange)</h4>
-                <p>
-                  Pair tokens land as vault claim under the cash leg. Mid and depth use free DETF
-                  inventory × that claim — not idle free cash as the book.
-                </p>
-                <div class="comp-chips">
-                  <span>Example · USDC vault</span>
-                  <span>Example · WETH vault</span>
-                </div>
-              </div>
-            </div>
-            <p class="comp-diagram-caption">
-              Best for: one share, one cash leg, real CP depth. First bond opens the reserve; LP is
-              bond principal. Mint/burn follow Policy or Open when live.
-            </p>
+    class DETF product
+    class Free,Pair leg
+    class Hook,Door,LP market
+    class SE vault
+            </pre>
+            <figcaption>
+              Pair DETF: free DETF inventory × vaulted cash claim. First bond opens the reserve; LP
+              is bond principal. Mint/burn follow Policy or Open when live.
+            </figcaption>
           </figure>
           <p><span class="status-pill">Launch rail</span></p>
 
@@ -248,60 +193,46 @@
             One fungible LP over all three legs — capital is not split across three lonely pools.
           </p>
 
-          <figure class="comp-diagram" aria-label="Composition: Triangle DETF on orbital market">
-            <div class="comp-diagram-head">
-              <p class="comp-diagram-kicker">Composition</p>
-              <p class="comp-diagram-title">Triangle DETF · orbital / sphere reserve</p>
-            </div>
-            <div class="comp-diagram-canvas">
-              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
+          <figure class="mermaid-figure">
+            <pre class="mermaid">
+graph TD
+    DETF["DETF share · ERC-20"]
+    Book["Uni V4 orbital book<br/>one shared inventory"]
+    LegD["Leg · DETF self"]
+    LegA["Leg · Pair A"]
+    LegB["Leg · Pair B"]
+    DoorDA["Door · DETF ↔ A"]
+    DoorDB["Door · DETF ↔ B"]
+    DoorAB["Door · A ↔ B"]
+    LP["Fungible LP · bond principal"]
+    SEA["Optional SE under Pair A"]
+    SEB["Optional SE under Pair B"]
 
-              <div class="comp-pool">
-                <p class="comp-pool-label">Uniswap V4 · orbital book (one inventory · three doors · fungible LP)</p>
-                <div class="comp-legs">
-                  <div class="comp-leg comp-leg-accent">
-                    <p class="comp-leg-title">DETF (self)</p>
-                    <p class="comp-leg-sub">Raw self-leg in the sphere</p>
-                    <span class="comp-leg-pill">Share</span>
-                  </div>
-                  <div class="comp-plus" aria-hidden="true">+</div>
-                  <div class="comp-leg comp-leg-amber">
-                    <p class="comp-leg-title">Pair A</p>
-                    <p class="comp-leg-sub">External underlying · optional vault buffer</p>
-                    <span class="comp-leg-pill">External</span>
-                  </div>
-                  <div class="comp-plus" aria-hidden="true">+</div>
-                  <div class="comp-leg comp-leg-amber">
-                    <p class="comp-leg-title">Pair B</p>
-                    <p class="comp-leg-sub">External underlying · optional vault buffer</p>
-                    <span class="comp-leg-pill">External</span>
-                  </div>
-                </div>
-                <div class="comp-weight-bar" role="img" aria-label="Shared three-asset inventory">
-                  <span class="w-accent" style="width: 34%"></span>
-                  <span class="w-amber" style="width: 33%"></span>
-                  <span class="w-teal" style="width: 33%"></span>
-                </div>
-                <div class="comp-weight-labels">
-                  <span class="lbl-accent">DETF</span>
-                  <span class="lbl-amber">Pair A</span>
-                  <span class="lbl-teal">Pair B</span>
-                </div>
-                <div class="comp-doors">
-                  <span class="comp-door">Door · DETF ↔ A</span>
-                  <span class="comp-door">Door · DETF ↔ B</span>
-                  <span class="comp-door">Door · A ↔ B</span>
-                </div>
-              </div>
-            </div>
-            <p class="comp-diagram-caption">
-              Best for: DETF + two underlyings that should co-exist. One orbit, shared depth — not
-              three fragmented books or forced multi-hop tax for no reason.
-            </p>
+    DETF -->|"self-leg"| LegD
+    LegD --> Book
+    LegA --> Book
+    LegB --> Book
+    Book --> DoorDA
+    Book --> DoorDB
+    Book --> DoorAB
+    Book --> LP
+    LegA -.-> SEA
+    LegB -.-> SEB
+
+    classDef product fill:#1a2744,stroke:#5b8cff,color:#e8eef9,stroke-width:2px
+    classDef market fill:#122a2a,stroke:#3dd6c6,color:#e8eef9,stroke-width:2px
+    classDef vault fill:#2a1f0f,stroke:#f0b429,color:#fef3c7,stroke-width:2px
+    classDef leg fill:#151f33,stroke:#7aa2ff,color:#e8eef9
+
+    class DETF product
+    class LegD,LegA,LegB leg
+    class Book,DoorDA,DoorDB,DoorAB,LP market
+    class SEA,SEB vault
+            </pre>
+            <figcaption>
+              Triangle DETF: DETF + two underlyings on one orbit. Shared depth — not three fragmented
+              books.
+            </figcaption>
           </figure>
           <p><span class="status-pill">Launch rail</span></p>
 
@@ -310,106 +241,49 @@
             Two to eight tokens with a <strong>weight vector fixed at deploy</strong>. Every pair of
             tokens gets a door into the <strong>same weighted book</strong>. Joins and exits follow
             weighted-pool economics — intentional basket math, not pretend-equal stables. External
-            legs can optionally buffer into strategy vaults.
+            legs can optionally buffer into strategy vaults (≥1 SE in the product model).
           </p>
 
-          <figure class="comp-diagram" aria-label="Composition: Weighted basket DETF">
-            <div class="comp-diagram-head">
-              <p class="comp-diagram-kicker">Composition</p>
-              <p class="comp-diagram-title">Weighted basket DETF · multi-asset reserve</p>
-            </div>
-            <div class="comp-diagram-canvas">
-              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
+          <figure class="mermaid-figure">
+            <pre class="mermaid">
+graph TD
+    DETF["DETF share · ERC-20"]
+    Book["Uni V4 weighted book<br/>weights fixed at deploy"]
+    LegD["Leg · DETF self · raw"]
+    Ext1["External leg 1"]
+    Ext2["External leg 2"]
+    ExtN["External leg n · up to 7"]
+    Doors["All pair doors → same book"]
+    LP["Fungible LP · bond principal"]
+    SE1["SE vault under Ext 1"]
+    SE2["SE vault under Ext 2 · optional"]
+    Bare["Bare ERC-20 external · optional"]
 
-              <div class="comp-pool">
-                <p class="comp-pool-label">
-                  Uniswap V4 · weighted book — DETF + up to 7 external legs (example filled · open capacity)
-                </p>
-                <div class="comp-legs-row" role="list">
-                  <div class="comp-leg-detf-slim" role="listitem">
-                    <p class="comp-leg-title">DETF</p>
-                    <p class="comp-leg-sub">self</p>
-                  </div>
-                  <div class="comp-leg-slot" role="listitem">
-                    <p class="slot-id">Ext 1</p>
-                    <p class="slot-sub">filled</p>
-                  </div>
-                  <div class="comp-leg-slot" role="listitem">
-                    <p class="slot-id">Ext 2</p>
-                    <p class="slot-sub">filled</p>
-                  </div>
-                  <div class="comp-leg-slot" role="listitem">
-                    <p class="slot-id">Ext 3</p>
-                    <p class="slot-sub">filled</p>
-                  </div>
-                  <div class="comp-leg-slot open" role="listitem">
-                    <p class="slot-id">Ext 4</p>
-                    <p class="slot-sub">open</p>
-                  </div>
-                  <div class="comp-leg-slot open" role="listitem">
-                    <p class="slot-id">Ext 5</p>
-                    <p class="slot-sub">open</p>
-                  </div>
-                  <div class="comp-leg-slot open" role="listitem">
-                    <p class="slot-id">Ext 6</p>
-                    <p class="slot-sub">open</p>
-                  </div>
-                  <div class="comp-leg-slot open" role="listitem">
-                    <p class="slot-id">Ext 7</p>
-                    <p class="slot-sub">open</p>
-                  </div>
-                </div>
-                <div
-                  class="comp-weight-bar"
-                  role="img"
-                  aria-label="Illustrative weights: about 40% DETF, rest external"
-                >
-                  <span class="w-accent" style="width: 40%"></span>
-                  <span class="w-amber" style="width: 25%"></span>
-                  <span class="w-amber" style="width: 20%"></span>
-                  <span class="w-teal" style="width: 15%"></span>
-                </div>
-                <div class="comp-weight-labels">
-                  <span class="lbl-accent">~40% DETF</span>
-                  <span class="lbl-amber">~25% Ext 1</span>
-                  <span class="lbl-amber">~20% Ext 2</span>
-                  <span class="lbl-teal">~15% Ext 3</span>
-                </div>
-                <div class="comp-doors">
-                  <span class="comp-door">All pair doors → same weighted book</span>
-                </div>
-              </div>
+    DETF -->|"self-leg"| LegD
+    LegD --> Book
+    Ext1 --> Book
+    Ext2 --> Book
+    ExtN --> Book
+    Book --> Doors
+    Book --> LP
+    Ext1 -->|"buffers"| SE1
+    Ext2 -.-> SE2
+    ExtN -.-> Bare
 
-              <div class="comp-connector" aria-hidden="true">
-                <div class="comp-connector-line"></div>
-                <span class="comp-connector-label">external legs may buffer</span>
-                <div class="comp-connector-line"></div>
-                <div class="comp-connector-arrow"></div>
-              </div>
+    classDef product fill:#1a2744,stroke:#5b8cff,color:#e8eef9,stroke-width:2px
+    classDef market fill:#122a2a,stroke:#3dd6c6,color:#e8eef9,stroke-width:2px
+    classDef vault fill:#2a1f0f,stroke:#f0b429,color:#fef3c7,stroke-width:2px
+    classDef leg fill:#151f33,stroke:#7aa2ff,color:#e8eef9
 
-              <div class="comp-se-box">
-                <h4>Optional strategy vaults per external leg</h4>
-                <p>
-                  At least one external leg uses a Standard Exchange in the product model. Bare ERC-20
-                  external legs are allowed alongside vaulted ones. Weights are fixed at deploy —
-                  illustrative bar only.
-                </p>
-                <div class="comp-chips">
-                  <span>≥1 SE required</span>
-                  <span>Bare legs ok</span>
-                  <span>Weights immutable</span>
-                </div>
-              </div>
-            </div>
-            <p class="comp-diagram-caption">
-              Best for: intentional baskets where equal units would be a lie. Filled slots are an
-              example; dashed slots are open capacity (up to 7 externals). Bond principal = weighted
-              fungible LP.
-            </p>
+    class DETF product
+    class LegD,Ext1,Ext2,ExtN,Bare leg
+    class Book,Doors,LP market
+    class SE1,SE2 vault
+            </pre>
+            <figcaption>
+              Weighted basket DETF: DETF + m external legs (1–7), deploy-time weights, optional SE
+              buffers (≥1 SE). Bond principal = weighted fungible LP.
+            </figcaption>
           </figure>
           <p><span class="status-pill">Launch rail</span></p>
         </section>
@@ -433,6 +307,35 @@
               Bond principal = fungible weighted LP.
             </li>
           </ul>
+
+          <figure class="mermaid-figure">
+            <pre class="mermaid">
+graph LR
+    subgraph Pair["Pair family"]
+      P_DETF["Pair DETF"] --> P_MKT["CP buffer market"]
+      P_MKT --> P_LP["CP LP"]
+    end
+    subgraph Triangle["Triangle family"]
+      T_DETF["Triangle DETF"] --> T_MKT["Orbital book"]
+      T_MKT --> T_LP["Triangle LP"]
+    end
+    subgraph Weighted["Weighted family"]
+      W_DETF["Weighted DETF"] --> W_MKT["Weighted book"]
+      W_MKT --> W_LP["Weighted LP"]
+    end
+
+    classDef product fill:#1a2744,stroke:#5b8cff,color:#e8eef9,stroke-width:2px
+    classDef market fill:#122a2a,stroke:#3dd6c6,color:#e8eef9,stroke-width:2px
+
+    class P_DETF,T_DETF,W_DETF product
+    class P_MKT,T_MKT,W_MKT,P_LP,T_LP,W_LP market
+            </pre>
+            <figcaption>
+              Three launch families: each DETF maps 1:1 onto its market rail; bond principal is that
+              rail’s fungible LP.
+            </figcaption>
+          </figure>
+
           <p>
             Same product moves everywhere: <strong>bond</strong> to go live,
             <strong>mint / burn</strong> under Policy or Open, hold or claim when wired. Details:
@@ -464,7 +367,7 @@
               <strong>Not a registered fund</strong> — same honesty bar as the DETF product pages.
             </li>
             <li>
-              <strong>Diagrams are educational.</strong> Weights and filled slots are illustrative.
+              <strong>Diagrams are educational.</strong> Node labels describe product structure.
               Live instances set their own deploy-time config.
             </li>
           </ul>
@@ -525,8 +428,39 @@
       </div>
       <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
     </footer>
+
     <script>
       document.getElementById('y').textContent = String(new Date().getFullYear())
+    </script>
+    <!-- Mermaid: same diagram language as docs/nested_liquidity_pools_* and docs/detf_* -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+        securityLevel: 'loose',
+        flowchart: {
+          curve: 'basis',
+          padding: 12,
+          htmlLabels: true,
+          nodeSpacing: 28,
+          rankSpacing: 36,
+          useMaxWidth: true,
+        },
+        themeVariables: {
+          darkMode: true,
+          background: '#0b1220',
+          primaryColor: '#1a2744',
+          primaryTextColor: '#e8eef9',
+          primaryBorderColor: '#5b8cff',
+          secondaryColor: '#122a2a',
+          tertiaryColor: '#151f33',
+          lineColor: '#6b7a94',
+          fontFamily: 'DM Sans, system-ui, sans-serif',
+          fontSize: '14px',
+        },
+      })
+      await mermaid.run({ querySelector: '.mermaid' })
     </script>
   </body>
 </html>

@@ -17,7 +17,8 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  # Allow a newer push to supersede a hung deploy-pages queue.
+  cancel-in-progress: true
 
 jobs:
   deploy:
