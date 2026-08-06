@@ -6,12 +6,12 @@
     <title>Uniswap V4 Markets — IndexedEx</title>
     <meta
       name="description"
-      content="Launch markets for DETFs on Uniswap V4: pair constant-product buffer, triangle orbital book, weighted multi-asset book. Real reserves for Decentralized ETFs."
+      content="Launch markets for DETFs on Uniswap V4: pair constant-product buffer, triangle orbital book, weighted multi-asset book. Composition diagrams for each rail."
     />
     <meta property="og:title" content="Uniswap V4 Markets — IndexedEx" />
     <meta
       property="og:description"
-      content="Three Uniswap V4 market rails for DETFs: pair, triangle, weighted. Not every AMM everywhere — the launch set."
+      content="Three Uniswap V4 market rails for DETFs: pair, triangle, weighted — with composition diagrams."
     />
     <meta property="og:type" content="article" />
     <meta name="theme-color" content="#0B1220" />
@@ -60,10 +60,12 @@
         <div class="hero-ctas">
           <a class="btn" href="./">Home</a>
           <a class="btn btn-ghost" href="./how-detfs-work.html">How DETFs work</a>
+          <a class="btn btn-ghost" href="#stack">Stack</a>
           <a class="btn btn-ghost" href="#three">The three rails</a>
         </div>
         <p class="fine paper-note">
-          Product language only. No package names. No promised APY. Shipping as each rail is ready.
+          Product language only. Composition diagrams use the same visual system as in-app DETF
+          research notes. No package names. No promised APY.
         </p>
       </header>
 
@@ -72,6 +74,7 @@
           <h2 class="toc-title">Contents</h2>
           <ol>
             <li><a href="#why">Why Uniswap V4</a></li>
+            <li><a href="#stack">How DETF sits on a market</a></li>
             <li><a href="#three">The three rails</a></li>
             <li><a href="#detf">How this meets DETFs</a></li>
             <li><a href="#status">Status and honesty</a></li>
@@ -97,53 +100,317 @@
           </p>
         </section>
 
+        <section id="stack">
+          <h2>How DETF sits on a market</h2>
+          <p>
+            Same stack on every launch family. You hold the DETF share. The reserve is a Uniswap&nbsp;V4
+            market book (hook LP). External cash can optionally sit in a strategy vault under a leg.
+            Bond principal is that fungible LP — not a separate listing oracle.
+          </p>
+
+          <figure class="comp-diagram" aria-label="Composition: DETF on Uniswap V4 market stack">
+            <div class="comp-diagram-head">
+              <p class="comp-diagram-kicker">Composition</p>
+              <p class="comp-diagram-title">DETF on a Uniswap V4 market reserve</p>
+            </div>
+            <div class="comp-diagram-canvas">
+              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+              <div class="comp-stack-row">
+                <div class="comp-stack-card layer-product">
+                  <p class="stack-kicker">Product</p>
+                  <p class="stack-title">DETF</p>
+                  <p class="stack-sub">
+                    Bond · mint · burn · claim (when wired). Policy or Open at deploy. Diamond is the
+                    share token.
+                  </p>
+                </div>
+                <div class="comp-connector" aria-hidden="true">
+                  <div class="comp-connector-line"></div>
+                  <span class="comp-connector-label">reserve =</span>
+                  <div class="comp-connector-line"></div>
+                  <div class="comp-connector-arrow"></div>
+                </div>
+                <div class="comp-stack-card layer-market">
+                  <p class="stack-kicker">Market rail · Uniswap V4</p>
+                  <p class="stack-title">Shared book + fungible LP</p>
+                  <p class="stack-sub">
+                    Pair, triangle, or weighted inventory. Pair doors for swaps. LP is bond principal.
+                  </p>
+                </div>
+                <div class="comp-connector" aria-hidden="true">
+                  <div class="comp-connector-line"></div>
+                  <span class="comp-connector-label">optional</span>
+                  <div class="comp-connector-line"></div>
+                  <div class="comp-connector-arrow"></div>
+                </div>
+                <div class="comp-stack-card layer-vault">
+                  <p class="stack-kicker">Strategy vault</p>
+                  <p class="stack-title">Standard Exchange under a cash leg</p>
+                  <p class="stack-sub">
+                    Buffer pair tokens into a vault claim when the rail supports it. Vault is inventory —
+                    not a second mystery pool currency.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p class="comp-diagram-caption">
+              One product pattern, three reserve shapes. Markets are the book; DETFs are the monetary
+              unit on top. Not a wrap/unwrap kiosk with no LP.
+            </p>
+          </figure>
+        </section>
+
         <section id="three">
           <h2>The three rails</h2>
 
-          <h3>1. Pair market · constant-product buffer</h3>
+          <h3 id="pair">1. Pair market · constant-product buffer</h3>
           <p>
-            Two-asset constant-product energy: one <strong>free token</strong> (often the DETF share)
+            Two-asset constant-product energy: one <strong>free token</strong> (the DETF share)
             held in the book, and one <strong>pair / cash token</strong> that can buffer into a
-            strategy vault. Effective depth is free inventory × vault claim — yield on the vaulted
-            leg can deepen the cash side. Liquidity providers mint <strong>one fungible LP</strong>.
-            Single-sided deposit and withdraw rebalance through the book when live.
+            strategy vault. Effective depth is free inventory × vault claim. Liquidity providers mint
+            <strong>one fungible LP</strong>. Traders still see a simple pair (share ↔ cash).
           </p>
-          <p>
-            Traders still see a simple pair (share ↔ cash). The vault is inventory under the cash
-            leg — not a second mystery currency on the pool.
-          </p>
-          <p>
-            <strong>For whom:</strong> list one share against one pair with real CP depth and LP that
-            can be bond principal — not a wrap/unwrap kiosk with no book.
-          </p>
+
+          <figure class="comp-diagram" aria-label="Composition: Pair DETF on CP buffer market">
+            <div class="comp-diagram-head">
+              <p class="comp-diagram-kicker">Composition</p>
+              <p class="comp-diagram-title">Pair DETF · constant-product buffer reserve</p>
+            </div>
+            <div class="comp-diagram-canvas">
+              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+
+              <div class="comp-pool">
+                <p class="comp-pool-label">Uniswap V4 · CP buffer market (fungible LP = bond principal)</p>
+                <div class="comp-legs">
+                  <div class="comp-leg comp-leg-accent">
+                    <p class="comp-leg-title">DETF (self)</p>
+                    <p class="comp-leg-sub">Free / raw leg held in the book</p>
+                    <span class="comp-leg-pill">Share leg</span>
+                  </div>
+                  <div class="comp-plus" aria-hidden="true">+</div>
+                  <div class="comp-leg comp-leg-amber">
+                    <p class="comp-leg-title">Pair token</p>
+                    <p class="comp-leg-sub">Cash leg — buffered into a strategy vault</p>
+                    <span class="comp-leg-pill">Cash leg</span>
+                  </div>
+                </div>
+                <div class="comp-weight-bar" role="img" aria-label="Constant product: free inventory times vault claim">
+                  <span class="w-accent" style="width: 50%"></span>
+                  <span class="w-amber" style="width: 50%"></span>
+                </div>
+                <div class="comp-weight-labels">
+                  <span class="lbl-accent">Free inventory</span>
+                  <span class="lbl-amber">× vault claim (cash)</span>
+                </div>
+                <div class="comp-doors">
+                  <span class="comp-door">Door · DETF ↔ pair</span>
+                </div>
+              </div>
+
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <span class="comp-connector-label">cash buffers into</span>
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+
+              <div class="comp-se-box">
+                <h4>Strategy vault (Standard Exchange)</h4>
+                <p>
+                  Pair tokens land as vault claim under the cash leg. Mid and depth use free DETF
+                  inventory × that claim — not idle free cash as the book.
+                </p>
+                <div class="comp-chips">
+                  <span>Example · USDC vault</span>
+                  <span>Example · WETH vault</span>
+                </div>
+              </div>
+            </div>
+            <p class="comp-diagram-caption">
+              Best for: one share, one cash leg, real CP depth. First bond opens the reserve; LP is
+              bond principal. Mint/burn follow Policy or Open when live.
+            </p>
+          </figure>
           <p><span class="status-pill">Launch rail</span></p>
 
-          <h3>2. Triangle market · orbital book</h3>
+          <h3 id="triangle">2. Triangle market · orbital book</h3>
           <p>
             Three tokens, one shared inventory, three pair doors into the same book. Pricing uses a
             spherical / orbital curve so a trade on any pair accounts for the third asset’s state.
             One fungible LP over all three legs — capital is not split across three lonely pools.
           </p>
-          <p>
-            <strong>For whom:</strong> DETF + two underlyings that should co-exist; multi-asset
-            triangles that should not pay fragmented depth or forced multi-hop tax for no reason.
-          </p>
+
+          <figure class="comp-diagram" aria-label="Composition: Triangle DETF on orbital market">
+            <div class="comp-diagram-head">
+              <p class="comp-diagram-kicker">Composition</p>
+              <p class="comp-diagram-title">Triangle DETF · orbital / sphere reserve</p>
+            </div>
+            <div class="comp-diagram-canvas">
+              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+
+              <div class="comp-pool">
+                <p class="comp-pool-label">Uniswap V4 · orbital book (one inventory · three doors · fungible LP)</p>
+                <div class="comp-legs">
+                  <div class="comp-leg comp-leg-accent">
+                    <p class="comp-leg-title">DETF (self)</p>
+                    <p class="comp-leg-sub">Raw self-leg in the sphere</p>
+                    <span class="comp-leg-pill">Share</span>
+                  </div>
+                  <div class="comp-plus" aria-hidden="true">+</div>
+                  <div class="comp-leg comp-leg-amber">
+                    <p class="comp-leg-title">Pair A</p>
+                    <p class="comp-leg-sub">External underlying · optional vault buffer</p>
+                    <span class="comp-leg-pill">External</span>
+                  </div>
+                  <div class="comp-plus" aria-hidden="true">+</div>
+                  <div class="comp-leg comp-leg-amber">
+                    <p class="comp-leg-title">Pair B</p>
+                    <p class="comp-leg-sub">External underlying · optional vault buffer</p>
+                    <span class="comp-leg-pill">External</span>
+                  </div>
+                </div>
+                <div class="comp-weight-bar" role="img" aria-label="Shared three-asset inventory">
+                  <span class="w-accent" style="width: 34%"></span>
+                  <span class="w-amber" style="width: 33%"></span>
+                  <span class="w-teal" style="width: 33%"></span>
+                </div>
+                <div class="comp-weight-labels">
+                  <span class="lbl-accent">DETF</span>
+                  <span class="lbl-amber">Pair A</span>
+                  <span class="lbl-teal">Pair B</span>
+                </div>
+                <div class="comp-doors">
+                  <span class="comp-door">Door · DETF ↔ A</span>
+                  <span class="comp-door">Door · DETF ↔ B</span>
+                  <span class="comp-door">Door · A ↔ B</span>
+                </div>
+              </div>
+            </div>
+            <p class="comp-diagram-caption">
+              Best for: DETF + two underlyings that should co-exist. One orbit, shared depth — not
+              three fragmented books or forced multi-hop tax for no reason.
+            </p>
+          </figure>
           <p><span class="status-pill">Launch rail</span></p>
 
-          <h3>3. Weighted market · multi-asset book</h3>
+          <h3 id="weighted">3. Weighted market · multi-asset book</h3>
           <p>
             Two to eight tokens with a <strong>weight vector fixed at deploy</strong>. Every pair of
             tokens gets a door into the <strong>same weighted book</strong>. Joins and exits follow
-            weighted-pool economics — intentional basket math, not pretend-equal stables.
+            weighted-pool economics — intentional basket math, not pretend-equal stables. External
+            legs can optionally buffer into strategy vaults.
           </p>
-          <p>
-            External legs can optionally buffer into strategy vaults. Pair doors still look like
-            normal Uni&nbsp;V4 pairs; the book underneath is shared.
-          </p>
-          <p>
-            <strong>For whom:</strong> baskets where equal units would be a lie — sector mixes,
-            intentional crypto weights, multi-leg stories with a clear target mix.
-          </p>
+
+          <figure class="comp-diagram" aria-label="Composition: Weighted basket DETF">
+            <div class="comp-diagram-head">
+              <p class="comp-diagram-kicker">Composition</p>
+              <p class="comp-diagram-title">Weighted basket DETF · multi-asset reserve</p>
+            </div>
+            <div class="comp-diagram-canvas">
+              <div class="comp-hold"><span>You hold → DETF share (ERC-20)</span></div>
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+
+              <div class="comp-pool">
+                <p class="comp-pool-label">
+                  Uniswap V4 · weighted book — DETF + up to 7 external legs (example filled · open capacity)
+                </p>
+                <div class="comp-legs-row" role="list">
+                  <div class="comp-leg-detf-slim" role="listitem">
+                    <p class="comp-leg-title">DETF</p>
+                    <p class="comp-leg-sub">self</p>
+                  </div>
+                  <div class="comp-leg-slot" role="listitem">
+                    <p class="slot-id">Ext 1</p>
+                    <p class="slot-sub">filled</p>
+                  </div>
+                  <div class="comp-leg-slot" role="listitem">
+                    <p class="slot-id">Ext 2</p>
+                    <p class="slot-sub">filled</p>
+                  </div>
+                  <div class="comp-leg-slot" role="listitem">
+                    <p class="slot-id">Ext 3</p>
+                    <p class="slot-sub">filled</p>
+                  </div>
+                  <div class="comp-leg-slot open" role="listitem">
+                    <p class="slot-id">Ext 4</p>
+                    <p class="slot-sub">open</p>
+                  </div>
+                  <div class="comp-leg-slot open" role="listitem">
+                    <p class="slot-id">Ext 5</p>
+                    <p class="slot-sub">open</p>
+                  </div>
+                  <div class="comp-leg-slot open" role="listitem">
+                    <p class="slot-id">Ext 6</p>
+                    <p class="slot-sub">open</p>
+                  </div>
+                  <div class="comp-leg-slot open" role="listitem">
+                    <p class="slot-id">Ext 7</p>
+                    <p class="slot-sub">open</p>
+                  </div>
+                </div>
+                <div
+                  class="comp-weight-bar"
+                  role="img"
+                  aria-label="Illustrative weights: about 40% DETF, rest external"
+                >
+                  <span class="w-accent" style="width: 40%"></span>
+                  <span class="w-amber" style="width: 25%"></span>
+                  <span class="w-amber" style="width: 20%"></span>
+                  <span class="w-teal" style="width: 15%"></span>
+                </div>
+                <div class="comp-weight-labels">
+                  <span class="lbl-accent">~40% DETF</span>
+                  <span class="lbl-amber">~25% Ext 1</span>
+                  <span class="lbl-amber">~20% Ext 2</span>
+                  <span class="lbl-teal">~15% Ext 3</span>
+                </div>
+                <div class="comp-doors">
+                  <span class="comp-door">All pair doors → same weighted book</span>
+                </div>
+              </div>
+
+              <div class="comp-connector" aria-hidden="true">
+                <div class="comp-connector-line"></div>
+                <span class="comp-connector-label">external legs may buffer</span>
+                <div class="comp-connector-line"></div>
+                <div class="comp-connector-arrow"></div>
+              </div>
+
+              <div class="comp-se-box">
+                <h4>Optional strategy vaults per external leg</h4>
+                <p>
+                  At least one external leg uses a Standard Exchange in the product model. Bare ERC-20
+                  external legs are allowed alongside vaulted ones. Weights are fixed at deploy —
+                  illustrative bar only.
+                </p>
+                <div class="comp-chips">
+                  <span>≥1 SE required</span>
+                  <span>Bare legs ok</span>
+                  <span>Weights immutable</span>
+                </div>
+              </div>
+            </div>
+            <p class="comp-diagram-caption">
+              Best for: intentional baskets where equal units would be a lie. Filled slots are an
+              example; dashed slots are open capacity (up to 7 externals). Bond principal = weighted
+              fungible LP.
+            </p>
+          </figure>
           <p><span class="status-pill">Launch rail</span></p>
         </section>
 
@@ -195,6 +462,10 @@
             </li>
             <li>
               <strong>Not a registered fund</strong> — same honesty bar as the DETF product pages.
+            </li>
+            <li>
+              <strong>Diagrams are educational.</strong> Weights and filled slots are illustrative.
+              Live instances set their own deploy-time config.
             </li>
           </ul>
         </section>
