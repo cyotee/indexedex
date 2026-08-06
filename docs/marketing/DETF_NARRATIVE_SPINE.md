@@ -311,6 +311,10 @@ Smart-contract and market risk apply. Read docs and research; this is not financ
 
 > Built by the original developer of Olympus. The DETF productizes a familiar design class — reserve-backed seigniorage, bonding into protocol-owned depth, optional mint/burn policy — so many baskets can each be their own monetary unit. A DETF is not OlympusDAO, not the OHM token, and not a claim on any DAO treasury.
 
+**Public site campaign tone (GitHub Pages / social, when approved):** lean **new product, not a fork** — “Olympus made the meme; DETFs make the product.” Keep the not-OHM / not-DAO disclaimers in body or footer. Prefer pithy, slightly meme energy on `marketing/research-site/`; keep in-app Research more lab-neutral unless product asks otherwise.
+
+**Launch map (customer pages, 2026 ship):** only Uniswap V4 **pair** (CP buffer), **triangle** (orbital), and **weighted** market rails + matching DETFs. Do not list dual-vault pairs, four-asset stable books, or Balancer-family DETFs as this launch set on public marketing pages.
+
 ### 9.2 Chain / venue language
 
 Comms may be **venue-forward** (e.g. Robinhood Chain first → Base + Ethereum) or **brand-silent**. See `marketing/README.md` and `docs/ROBINHOOD_LAUNCH_PLAN.md`. Pick one track per campaign week; do not mix venue tags into brand-silent posts.
@@ -404,6 +408,7 @@ Use when preparing landing + research for ship.
 
 | Date | Note |
 |------|------|
+| 2026-08-06 | Public GitHub Pages rewrite: Olympus→DETF product tone; launch map locked to Uni V4 pair / triangle / weighted only. |
 | 2026-07-27 | Initial spine: positioning, desirability, lifecycle, Policy/Open copy law, R3 landing outline, research update targets, disclaimers, copy bank. |
 | 2026-07-27 | Shipped in-app: `frontend/app/content/research/articles/detf.ts` Policy/Open update; R3 landing rewrite on `frontend/app/page.tsx`. |
 | 2026-07-27 | Marked R2/R3 shipped in `frontend/ROADMAP.md` + `RESEARCH_SECTION_DESIGN.md`. Synced `marketing/research-site/`, `marketing/X_POSTS.md`, `marketing/README.md` to Policy/Open. |

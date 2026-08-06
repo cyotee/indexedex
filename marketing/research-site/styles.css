@@ -205,9 +205,9 @@ main {
 
 .hero h1 {
   margin: 0 auto;
-  max-width: 16ch;
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  line-height: 1.08;
+  max-width: 26ch;
+  font-size: clamp(2.15rem, 5vw, 3.45rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
   font-weight: 700;
 }
@@ -229,6 +229,50 @@ main {
 
 .lede strong {
   color: var(--text);
+}
+
+.lede-punch {
+  margin-top: 0.65rem !important;
+  font-size: 1.15rem !important;
+  font-weight: 600;
+  color: var(--text) !important;
+  letter-spacing: -0.01em;
+}
+
+.pull-quote {
+  margin: 0;
+  padding: 1.35rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(91, 140, 255, 0.28);
+  border-left: 3px solid var(--accent-2);
+  background: linear-gradient(
+    135deg,
+    rgba(61, 214, 198, 0.08),
+    rgba(91, 140, 255, 0.1)
+  );
+}
+
+.pull-quote p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.55;
+}
+
+.pull-quote strong {
+  color: var(--text);
+}
+
+.pull-quote em {
+  font-style: normal;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.strip-meme p {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
 }
 
 .hero-ctas {
