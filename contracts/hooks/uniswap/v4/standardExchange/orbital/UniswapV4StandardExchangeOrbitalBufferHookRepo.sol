@@ -56,42 +56,45 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         }
     }
 
-    function _initializeBindings(
-        address poolManager_,
-        address feeOracle_,
-        address token0_,
-        address token1_,
-        address token2_,
-        address se0_,
-        address se1_,
-        address se2_,
-        address rp0_,
-        address rp1_,
-        address rp2_,
-        uint8 d0,
-        uint8 d1,
-        uint8 d2,
-        int24 tickSpacing_,
-        uint160 sqrtPriceX96_
-    ) internal {
+    /// @dev Packed init bindings (avoids stack-too-deep under legacy codegen without viaIR).
+    struct BindingsInit {
+        address poolManager;
+        address feeOracle;
+        address token0;
+        address token1;
+        address token2;
+        address se0;
+        address se1;
+        address se2;
+        address rp0;
+        address rp1;
+        address rp2;
+        uint8 decimals0;
+        uint8 decimals1;
+        uint8 decimals2;
+        int24 tickSpacing;
+        uint160 sqrtPriceX96;
+    }
+
+    function _initializeBindings(BindingsInit memory b) internal {
         Layout storage l = _layout();
         require(!l.bindingsInitialized, "bound");
-        l.poolManager = poolManager_;
-        l.feeOracle = feeOracle_;
-        l.token0 = token0_;
-        l.token1 = token1_;
-        l.token2 = token2_;
-        l.se0 = se0_;
-        l.se1 = se1_;
-        l.se2 = se2_;
-        l.rp0 = rp0_;
-        l.rp1 = rp1_;
-        l.rp2 = rp2_;
-        l.decimals0 = d0;
-        l.decimals1 = d1;
-        l.decimals2 = d2;
-        l.tickSpacing = tickSpacing_;
-        l.sqrtPriceX96 = sqrtPriceX96_;
+        l.poolManager = b.poolManager;
+        l.feeOracle = b.feeOracle;
+        l.token0 = b.token0;
+        l.token1 = b.token1;
+        l.token2 = b.token2;
+        l.se0 = b.se0;
+        l.se1 = b.se1;
+        l.se2 = b.se2;
+        l.rp0 = b.rp0;
+        l.rp1 = b.rp1;
+        l.rp2 = b.rp2;
+        l.decimals0 = b.decimals0;
+        l.decimals1 = b.decimals1;
+        l.decimals2 = b.decimals2;
+        l.tickSpacing = b.tickSpacing;
+        l.sqrtPriceX96 = b.sqrtPriceX96;
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
     }

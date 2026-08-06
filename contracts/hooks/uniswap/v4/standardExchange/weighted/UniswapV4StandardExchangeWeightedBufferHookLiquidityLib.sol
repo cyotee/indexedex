@@ -10,89 +10,154 @@ library UniswapV4StandardExchangeWeightedBufferHookLiquidityLib {
     error ZeroAmount();
     error Slippage();
 
-    function partialJoin(
-        uint256[] memory weights,
-        uint256[] memory invScales,
-        uint256[] memory natives,
-        uint256[] memory invIn,
-        uint256[] memory pairAmounts,
-        address[] memory ses,
-        uint256 supply
-    ) external pure returns (uint256 shares, uint256[] memory usedPair) {
-        uint256 n = weights.length;
-        usedPair = new uint256[](n);
-        uint256 minShares = type(uint256).max;
-        bool anyProp;
-        bool anySeed;
+    /// @dev Packed partial-join inputs (avoids stack-too-deep under legacy codegen).
+    struct PartialJoinArgs {
+        uint256[] weights;
+        uint256[] invScales;
+        uint256[] natives;
+        uint256[] invIn;
+        uint256[] pairAmounts;
+        address[] ses;
+        uint256 supply;
+    }
+
+    struct PartialJoinResult {
+        uint256 shares;
+        uint256[] usedPair;
+    }
+
+    /// @notice Partial join shares + used pair (packed args for legacy codegen stack).
+    function partialJoin(PartialJoinArgs memory a)
+        external
+        pure
+        returns (PartialJoinResult memory r)
+    {
+        uint256 n = a.weights.length;
+        r.usedPair = new uint256[](n);
+
+        (uint256 minShares, bool anyProp, bool anySeed) = _scanProportional(a, r.usedPair);
+        if (anyProp) {
+            if (minShares == 0 || minShares == type(uint256).max) revert ZeroAmount();
+            _fillProportionalUsed(a, r.usedPair, minShares);
+        }
+        if (!anySeed && !anyProp) revert ZeroAmount();
+        if (!anySeed) {
+            r.shares = minShares;
+            if (r.shares == 0) revert ZeroAmount();
+            return r;
+        }
+        r.shares = _seedPathShares(a, r.usedPair);
+    }
+
+    /// @dev Seed zeros + proportional min-share scan; writes seed usedPair slots.
+    function _scanProportional(PartialJoinArgs memory a, uint256[] memory usedPair)
+        private
+        pure
+        returns (uint256 minShares, bool anyProp, bool anySeed)
+    {
+        minShares = type(uint256).max;
+        uint256 n = a.weights.length;
         for (uint256 i; i < n; ++i) {
-            if (natives[i] == 0 && invIn[i] > 0) {
-                usedPair[i] = pairAmounts[i];
+            if (a.natives[i] == 0 && a.invIn[i] > 0) {
+                usedPair[i] = a.pairAmounts[i];
                 anySeed = true;
-            } else if (natives[i] > 0 && invIn[i] > 0) {
-                uint256 s = (Math.scaleTo(invIn[i], invScales[i]) * supply)
-                    / Math.scaleTo(natives[i], invScales[i]);
+            } else if (a.natives[i] > 0 && a.invIn[i] > 0) {
+                uint256 s = _legShares(a, i);
                 if (s < minShares) minShares = s;
                 anyProp = true;
             }
         }
-        if (anyProp) {
-            if (minShares == 0 || minShares == type(uint256).max) revert ZeroAmount();
-            for (uint256 i; i < n; ++i) {
-                if (natives[i] > 0 && invIn[i] > 0) {
-                    uint256 usedInv = Math.descale(
-                        Math.proportionalUsedScaled(
-                            minShares, Math.scaleTo(natives[i], invScales[i]), supply
-                        ),
-                        invScales[i]
-                    );
-                    if (usedInv == 0) revert ZeroAmount();
-                    usedPair[i] = (pairAmounts[i] * usedInv) / invIn[i];
-                }
+    }
+
+    function _legShares(PartialJoinArgs memory a, uint256 i) private pure returns (uint256) {
+        return (Math.scaleTo(a.invIn[i], a.invScales[i]) * a.supply)
+            / Math.scaleTo(a.natives[i], a.invScales[i]);
+    }
+
+    function _fillProportionalUsed(
+        PartialJoinArgs memory a,
+        uint256[] memory usedPair,
+        uint256 minShares
+    ) private pure {
+        uint256 n = a.weights.length;
+        for (uint256 i; i < n; ++i) {
+            if (a.natives[i] > 0 && a.invIn[i] > 0) {
+                uint256 usedInv = Math.descale(
+                    Math.proportionalUsedScaled(
+                        minShares, Math.scaleTo(a.natives[i], a.invScales[i]), a.supply
+                    ),
+                    a.invScales[i]
+                );
+                if (usedInv == 0) revert ZeroAmount();
+                usedPair[i] = (a.pairAmounts[i] * usedInv) / a.invIn[i];
             }
         }
-        if (!anySeed && !anyProp) revert ZeroAmount();
-        if (!anySeed) {
-            shares = minShares;
-            if (shares == 0) revert ZeroAmount();
-            return (shares, usedPair);
-        }
-        // seed path: interim k growth or NAV
+    }
+
+    function _seedPathShares(PartialJoinArgs memory a, uint256[] memory usedPair)
+        private
+        pure
+        returns (uint256 shares)
+    {
+        uint256 n = a.weights.length;
         uint256[] memory before = new uint256[](n);
         uint256[] memory after_ = new uint256[](n);
+        _fillBeforeAfter(a, usedPair, before, after_);
+
+        uint256 kBefore = Math.computeInterimK(a.weights, before);
+        uint256 kAfter = Math.computeInterimK(a.weights, after_);
+        if (kAfter > kBefore) {
+            return Math.partialJoinSharesFromK(a.supply, kBefore, kAfter);
+        }
+        return _navShares(a, usedPair, before);
+    }
+
+    function _fillBeforeAfter(
+        PartialJoinArgs memory a,
+        uint256[] memory usedPair,
+        uint256[] memory before,
+        uint256[] memory after_
+    ) private pure {
+        uint256 n = a.weights.length;
         for (uint256 i; i < n; ++i) {
-            before[i] = Math.scaleTo(natives[i], invScales[i]);
-            if (natives[i] == 0 && invIn[i] > 0) {
-                after_[i] = Math.scaleTo(invIn[i], invScales[i]);
+            before[i] = Math.scaleTo(a.natives[i], a.invScales[i]);
+            if (a.natives[i] == 0 && a.invIn[i] > 0) {
+                after_[i] = Math.scaleTo(a.invIn[i], a.invScales[i]);
             } else if (usedPair[i] > 0) {
-                uint256 usedInv = ses[i] == address(0)
-                    ? usedPair[i]
-                    : (invIn[i] * usedPair[i]) / (pairAmounts[i] == 0 ? 1 : pairAmounts[i]);
-                after_[i] = before[i] + Math.scaleTo(usedInv, invScales[i]);
+                uint256 usedInv = _usedInvAt(a, usedPair, i);
+                after_[i] = before[i] + Math.scaleTo(usedInv, a.invScales[i]);
             } else {
                 after_[i] = before[i];
             }
         }
-        uint256 kBefore = Math.computeInterimK(weights, before);
-        uint256 kAfter = Math.computeInterimK(weights, after_);
-        if (kAfter > kBefore) {
-            shares = Math.partialJoinSharesFromK(supply, kBefore, kAfter);
-            return (shares, usedPair);
-        }
+    }
+
+    function _usedInvAt(PartialJoinArgs memory a, uint256[] memory usedPair, uint256 i)
+        private
+        pure
+        returns (uint256)
+    {
+        if (usedPair[i] == 0) return 0;
+        if (a.ses[i] == address(0)) return usedPair[i];
+        uint256 denom = a.pairAmounts[i] == 0 ? 1 : a.pairAmounts[i];
+        return (a.invIn[i] * usedPair[i]) / denom;
+    }
+
+    function _navShares(
+        PartialJoinArgs memory a,
+        uint256[] memory usedPair,
+        uint256[] memory before
+    ) private pure returns (uint256 shares) {
         uint256 vIn;
         uint256 vBook;
+        uint256 n = a.weights.length;
         for (uint256 i; i < n; ++i) {
-            uint256 usedInv = usedPair[i] == 0
-                ? 0
-                : (
-                    ses[i] == address(0)
-                        ? usedPair[i]
-                        : (invIn[i] * usedPair[i]) / (pairAmounts[i] == 0 ? 1 : pairAmounts[i])
-                );
-            vBook += (before[i] * weights[i]) / Math.WAD;
-            vIn += (Math.scaleTo(usedInv, invScales[i]) * weights[i]) / Math.WAD;
+            uint256 usedInv = _usedInvAt(a, usedPair, i);
+            vBook += (before[i] * a.weights[i]) / Math.WAD;
+            vIn += (Math.scaleTo(usedInv, a.invScales[i]) * a.weights[i]) / Math.WAD;
         }
         if (vBook == 0 || vIn == 0) revert ZeroAmount();
-        shares = (supply * vIn) / vBook;
+        shares = (a.supply * vIn) / vBook;
         if (shares == 0) revert ZeroAmount();
     }
 }

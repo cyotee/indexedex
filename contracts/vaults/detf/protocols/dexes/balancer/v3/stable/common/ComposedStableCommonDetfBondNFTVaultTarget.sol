@@ -41,22 +41,51 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         nonReentrant
         returns (uint256 tokenId)
     {
-        if (shares == 0) revert BaseSharesZero();
+        // Peer path: original = effective base = shares (LP); bonus applied to both.
+        tokenId = _createPositionInternal(shares, shares, lockDuration, recipient);
+    }
 
-        ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
-        _validateLockDuration(layoutStruct, lockDuration);
+    /// @notice Open bond with LP principal + separate reward-weight base (before lock bonus).
+    /// @dev Shared inventory surface (`IDetfBondInventoryPolicy`). Equal args ≡ createPosition.
+    function createPositionWithEffectiveBase(
+        uint256 originalShares,
+        uint256 effectiveBase,
+        uint256 lockDuration,
+        address recipient
+    ) external onlyOwner nonReentrant returns (uint256 tokenId) {
+        tokenId = _createPositionInternal(originalShares, effectiveBase, lockDuration, recipient);
+    }
 
-        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration);
+    function _createPositionInternal(
+        uint256 originalShares_,
+        uint256 effectiveBase_,
+        uint256 lockDuration_,
+        address recipient_
+    ) private returns (uint256 tokenId) {
+        if (originalShares_ == 0) revert BaseSharesZero();
+        if (effectiveBase_ == 0) revert BaseSharesZero();
+
+        ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct =
+            ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
+        _validateLockDuration(layoutStruct, lockDuration_);
+
+        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration_);
         ComposedStableCommonDetfBondNFTVaultRepo._updateGlobalRewards(layoutStruct);
 
-        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(shares, bonusMultiplier);
-        tokenId = ERC721Repo._mint(recipient);
+        // Reward ledger weight = effectiveBase * lock bonus (shared DETF inventory law).
+        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(effectiveBase_, bonusMultiplier);
+        tokenId = ERC721Repo._mint(recipient_);
 
         ComposedStableCommonDetfBondNFTVaultRepo._createPosition(
-            layoutStruct, tokenId, shares, effectiveShares, bonusMultiplier, block.timestamp + lockDuration
+            layoutStruct,
+            tokenId,
+            originalShares_,
+            effectiveShares,
+            bonusMultiplier,
+            block.timestamp + lockDuration_
         );
 
-        emit NewLock(tokenId, recipient, shares, bonusMultiplier, block.timestamp + lockDuration);
+        emit NewLock(tokenId, recipient_, originalShares_, bonusMultiplier, block.timestamp + lockDuration_);
     }
 
     function initializeDETFNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {

@@ -270,24 +270,24 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     }
 
     function _initProductBindings(PkgArgs memory a) private {
-        Repo._initializeBindings(
-            a.poolManager,
-            a.feeOracle,
-            a.token0,
-            a.token1,
-            a.token2,
-            a.se0,
-            a.se1,
-            a.se2,
-            a.rp0,
-            a.rp1,
-            a.rp2,
-            _readDecimals(a.token0),
-            _readDecimals(a.token1),
-            _readDecimals(a.token2),
-            a.tickSpacing,
-            a.sqrtPriceX96
-        );
+        Repo.BindingsInit memory b;
+        b.poolManager = a.poolManager;
+        b.feeOracle = a.feeOracle;
+        b.token0 = a.token0;
+        b.token1 = a.token1;
+        b.token2 = a.token2;
+        b.se0 = a.se0;
+        b.se1 = a.se1;
+        b.se2 = a.se2;
+        b.rp0 = a.rp0;
+        b.rp1 = a.rp1;
+        b.rp2 = a.rp2;
+        b.decimals0 = _readDecimals(a.token0);
+        b.decimals1 = _readDecimals(a.token1);
+        b.decimals2 = _readDecimals(a.token2);
+        b.tickSpacing = a.tickSpacing;
+        b.sqrtPriceX96 = a.sqrtPriceX96;
+        Repo._initializeBindings(b);
     }
 
     function _lpName(address t0, address t1, address t2) private view returns (string memory) {

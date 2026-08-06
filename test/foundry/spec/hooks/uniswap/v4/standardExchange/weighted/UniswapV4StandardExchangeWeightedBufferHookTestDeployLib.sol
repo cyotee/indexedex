@@ -25,6 +25,15 @@ import {
 
 /// @dev External lib to keep concrete test contracts under via_ir stack limits.
 library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
+    /// @dev Packed vault-component facets for package deploy (stack-safe under legacy codegen).
+    struct VaultFacets {
+        IFacet erc20Facet;
+        IFacet erc5267Facet;
+        IFacet erc2612Facet;
+        IFacet multiAssetBasicVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
+    }
+
     function deployFactoryAndPackage(
         ICreate3FactoryProxy create3Factory,
         address owner,
@@ -41,6 +50,35 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
             IUniswapV4StandardExchangeWeightedBufferHookPackage hookPkg
         )
     {
+        VaultFacets memory vf;
+        vf.erc20Facet = erc20Facet;
+        vf.erc5267Facet = erc5267Facet;
+        vf.erc2612Facet = erc2612Facet;
+        vf.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        vf.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        return _deployFactoryAndPackage(create3Factory, owner, indexedexManager, vf);
+    }
+
+    function _deployFactoryAndPackage(
+        ICreate3FactoryProxy create3Factory,
+        address owner,
+        address indexedexManager,
+        VaultFacets memory vf
+    )
+        private
+        returns (
+            IUniswapV4HookDiamondPackageCallBackFactory hookFactory,
+            IUniswapV4StandardExchangeWeightedBufferHookPackage hookPkg
+        )
+    {
+        hookFactory = _deployHookFactory(create3Factory);
+        hookPkg = _deployPackage(create3Factory, owner, indexedexManager, vf);
+    }
+
+    function _deployHookFactory(ICreate3FactoryProxy create3Factory)
+        private
+        returns (IUniswapV4HookDiamondPackageCallBackFactory hookFactory)
+    {
         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
         IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
         hookFactory = HookFactoryService.deployUniswapV4HookDiamondPackageCallBackFactory(
@@ -53,24 +91,43 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
                 hookFlagsFacet: hookFlagsFacet
             })
         );
+    }
+
+    function _deployPackage(
+        ICreate3FactoryProxy create3Factory,
+        address owner,
+        address indexedexManager,
+        VaultFacets memory vf
+    ) private returns (IUniswapV4StandardExchangeWeightedBufferHookPackage hookPkg) {
+        IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init =
+            _buildPkgInit(create3Factory, indexedexManager, vf);
         // caller must prank owner for setHookDiamondPackageFactory + deployPackage
         hookPkg = PkgFactory.deployPackage(
             IVaultRegistryDeployment(indexedexManager),
             owner,
-            IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
-                vaultRegistryDeployment: IVaultRegistryDeployment(indexedexManager),
-                vaultFeeOracleQuery: IVaultFeeOracleQuery(indexedexManager),
-                liquidityFacet: PkgFactory.deployLiquidityFacet(create3Factory),
-                seFacet: PkgFactory.deploySeFacet(create3Factory),
-                hooksFacet: PkgFactory.deployHooksFacet(create3Factory),
-                erc20Facet: erc20Facet,
-                erc5267Facet: erc5267Facet,
-                erc2612Facet: erc2612Facet,
-                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
+            init,
             keccak256(abi.encode(type(IUniswapV4StandardExchangeWeightedBufferHookPackage).name, "v1"))
         );
+    }
+
+    function _buildPkgInit(
+        ICreate3FactoryProxy create3Factory,
+        address indexedexManager,
+        VaultFacets memory vf
+    )
+        private
+        returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init)
+    {
+        init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
+        init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
+        init.liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
+        init.seFacet = PkgFactory.deploySeFacet(create3Factory);
+        init.hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
+        init.erc20Facet = vf.erc20Facet;
+        init.erc5267Facet = vf.erc5267Facet;
+        init.erc2612Facet = vf.erc2612Facet;
+        init.multiAssetBasicVaultFacet = vf.multiAssetBasicVaultFacet;
+        init.multiAssetStandardVaultFacet = vf.multiAssetStandardVaultFacet;
     }
 
     function deployHookInstance(

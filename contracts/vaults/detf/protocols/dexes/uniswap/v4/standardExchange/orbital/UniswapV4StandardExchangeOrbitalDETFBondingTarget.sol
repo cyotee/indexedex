@@ -352,6 +352,12 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
     /*                                Claim                                   */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Pair residual after remove + DETF redeposit (packed to free redeemClaim stack).
+    struct ClaimResidual {
+        uint256 a0;
+        uint256 a1;
+    }
+
     /// @notice IUniswapV4StandardExchangeOrbitalDETF surface
     function redeemClaim(
         uint256 claimAmount_,
@@ -364,6 +370,14 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
+        uint256 lpOut_ = _burnClaimPullProtocolLp(claimAmount_);
+        ClaimResidual memory res = _removeAndRedepositClaimLp(lpOut_);
+        amountOut_ = _settleClaimResidual(tokenOut_, res, recipient_);
+
+        if (amountOut_ < minOut_) revert Repo.SlippageExceeded(minOut_, amountOut_);
+    }
+
+    function _burnClaimPullProtocolLp(uint256 claimAmount_) private returns (uint256 lpOut_) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
 
@@ -371,32 +385,39 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         if (principalLp_ == 0) revert Repo.ZeroAmount();
 
         uint256 protocolLp_ = _protocolLp();
-        uint256 lpOut_ = principalLp_ < protocolLp_ ? principalLp_ : protocolLp_;
+        lpOut_ = principalLp_ < protocolLp_ ? principalLp_ : protocolLp_;
         if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
         _pullProtocolLp(lpOut_);
+    }
 
-        (uint256 aDetf_, uint256 a0_, uint256 a1_) = _removeLiquidity(lpOut_, address(this));
+    function _removeAndRedepositClaimLp(uint256 lpOut_) private returns (ClaimResidual memory res) {
+        uint256 aDetf_;
+        (aDetf_, res.a0, res.a1) = _removeLiquidity(lpOut_, address(this));
         _redepositDetfSelfLeg(aDetf_);
+    }
 
-        address p0_ = address(s.pairToken0);
-        address p1_ = address(s.pairToken1);
-        address rate_ = address(s.rateAsset);
-
-        if (address(tokenOut_) == p0_ || address(tokenOut_) == p1_) {
-            amountOut_ = _consolidateTo(address(tokenOut_), a0_, a1_);
+    function _settleClaimResidual(IERC20 tokenOut_, ClaimResidual memory res, address recipient_)
+        private
+        returns (uint256 amountOut_)
+    {
+        Repo.Storage storage s = Repo._layoutStruct();
+        address tout = address(tokenOut_);
+        if (tout == address(s.pairToken0) || tout == address(s.pairToken1)) {
+            amountOut_ = _consolidateTo(tout, res.a0, res.a1);
             if (amountOut_ > 0) tokenOut_.safeTransfer(recipient_, amountOut_);
-        } else if (_isShareOrSeTokenOut(tokenOut_)) {
-            address mid_ = _pairForShareOut(tokenOut_);
-            uint256 midAmt_ = _consolidateTo(mid_, a0_, a1_);
-            amountOut_ = _seWrap(mid_, midAmt_, tokenOut_, recipient_);
-        } else if (address(tokenOut_) == rate_) {
-            amountOut_ = _consolidateTo(rate_, a0_, a1_);
-            if (amountOut_ > 0) tokenOut_.safeTransfer(recipient_, amountOut_);
-        } else {
-            revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
+            return amountOut_;
         }
-
-        if (amountOut_ < minOut_) revert Repo.SlippageExceeded(minOut_, amountOut_);
+        if (_isShareOrSeTokenOut(tokenOut_)) {
+            address mid_ = _pairForShareOut(tokenOut_);
+            uint256 midAmt_ = _consolidateTo(mid_, res.a0, res.a1);
+            return _seWrap(mid_, midAmt_, tokenOut_, recipient_);
+        }
+        if (tout == address(s.rateAsset)) {
+            amountOut_ = _consolidateTo(tout, res.a0, res.a1);
+            if (amountOut_ > 0) tokenOut_.safeTransfer(recipient_, amountOut_);
+            return amountOut_;
+        }
+        revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
     }
 
     /// @notice IUniswapV4StandardExchangeOrbitalDETF surface

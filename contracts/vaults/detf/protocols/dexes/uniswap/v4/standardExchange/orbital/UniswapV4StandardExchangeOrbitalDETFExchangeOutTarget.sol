@@ -28,6 +28,13 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
 {
     using BetterSafeERC20 for IERC20;
 
+    /// @dev Residual after multipath remove, before DETF redeposit (stack packing).
+    struct BurnExecResidual {
+        uint256 aDetf;
+        uint256 a0;
+        uint256 a1;
+    }
+
     /// @dev Atomic burn order freeze (plan §4.8): pull+burn → usage fee already in seigniorage path for mint;
     ///      for burn: apply usage fee on DETF burned (fee DETF to feeTo), then remove, redeposit, consolidate, pay.
     function _burnDetfExactIn(
@@ -43,33 +50,38 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
             revert Repo.BurningNotAllowed(_syntheticPrice(), Repo._layoutStruct().burnThreshold);
         }
         if (recipient_ == address(0)) recipient_ = msg.sender;
-
-        Repo.Storage storage s = Repo._layoutStruct();
-        address p0_ = address(s.pairToken0);
-        address p1_ = address(s.pairToken1);
-        if (address(tokenOut_) != p0_ && address(tokenOut_) != p1_) {
-            // Optional SE unwrap matrix: tokenOut = vaultShare via pair residual + SE exchangeIn.
-            if (!_isShareOrSeTokenOut(tokenOut_)) {
-                revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
-            }
-        }
+        _requireBurnTokenOut(tokenOut_);
 
         if (!pretransferred_) {
             IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
         }
 
-        // Burn usage fee: split DETF burned → feeTo keeps fee DETF; principal burn amount after fee.
+        uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
+        BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
+        amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
+    }
+
+    function _requireBurnTokenOut(IERC20 tokenOut_) private view {
+        if (!_isBurnTokenOutSupported(tokenOut_)) {
+            revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
+        }
+    }
+
+    function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {
         (uint256 afterFee_, uint256 feeTo_) = _splitBurnUsageFee(detfIn_);
         if (feeTo_ > 0) {
             IERC20(address(this)).safeTransfer(_feeTo(), feeTo_);
         }
-        uint256 burnPrincipal_ = afterFee_;
+        burnPrincipal_ = afterFee_;
         if (burnPrincipal_ == 0) revert Repo.ZeroAmount();
+    }
 
+    function _burnAndRemoveProtocolLp(uint256 burnPrincipal_)
+        private
+        returns (BurnExecResidual memory res)
+    {
         // Does NOT call _realizeExpansionIfNeeded.
-        uint256 pending_ = _previewPendingExpansionMint();
-        uint256 supply_ = ERC20Repo._totalSupply();
-        uint256 effectiveSupply_ = supply_ + pending_;
+        uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
         uint256 protocolLp_ = _protocolLp();
         if (protocolLp_ == 0 || effectiveSupply_ == 0) revert Repo.EmptyProtocolLp();
 
@@ -78,31 +90,29 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
 
         _burnDetf(address(this), burnPrincipal_);
         _ensureProtocolLpOnDiamond(lpOut_);
+        (res.aDetf, res.a0, res.a1) = _removeLiquidity(lpOut_, address(this));
+    }
 
-        (uint256 aDetf_, uint256 a0_, uint256 a1_) = _removeLiquidity(lpOut_, address(this));
-
-        // Preview freeze: residual consolidate uses pre-redeposit book (previewRemove + sphere).
+    function _settleBurnResidual(
+        IERC20 tokenOut_,
+        BurnExecResidual memory res,
+        address recipient_,
+        uint256 minOut_
+    ) private returns (uint256 amountOut_) {
         // Consolidate residual pairs BEFORE redeposit so preview == execution bit-exact (few-wei only).
+        Repo.Storage storage s = Repo._layoutStruct();
         address outToken_ = address(tokenOut_);
-        if (outToken_ == p0_ || outToken_ == p1_) {
-            amountOut_ = _consolidateTo(outToken_, a0_, a1_);
+        if (outToken_ == address(s.pairToken0) || outToken_ == address(s.pairToken1)) {
+            amountOut_ = _consolidateTo(outToken_, res.a0, res.a1);
+            _redepositDetfSelfLeg(res.aDetf);
+            if (amountOut_ > 0) IERC20(outToken_).safeTransfer(recipient_, amountOut_);
         } else {
             address midPair_ = _pairForShareOut(tokenOut_);
-            uint256 mid_ = _consolidateTo(midPair_, a0_, a1_);
+            uint256 mid_ = _consolidateTo(midPair_, res.a0, res.a1);
             amountOut_ = _seWrap(midPair_, mid_, tokenOut_, recipient_);
             // seWrap already sent to recipient when tokenOut is share/SE
-            if (amountOut_ < minOut_) {
-                revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
-            }
-            // Redeposit DETF after residual settle (do not burn; do not pay to burner).
-            _redepositDetfSelfLeg(aDetf_);
-            return amountOut_;
+            _redepositDetfSelfLeg(res.aDetf);
         }
-
-        // Redeposit returned DETF after residual FX (preview does not pay DETF out).
-        _redepositDetfSelfLeg(aDetf_);
-
-        if (amountOut_ > 0) IERC20(outToken_).safeTransfer(recipient_, amountOut_);
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
@@ -161,75 +171,96 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         );
     }
 
+    /// @dev Pair residual after preview-remove (DETF leg assumed redeposited).
+    struct BurnPreviewResidual {
+        address hookAddr;
+        address p0;
+        address p1;
+        uint256 lpOut;
+        uint256 ap0;
+        uint256 ap1;
+    }
+
     function _previewBurnDetfExactIn(uint256 detfIn_, IERC20 tokenOut_)
         internal
         view
         returns (uint256 amountOut_)
     {
         if (!Repo._layoutStruct().isReserveLive) return 0;
-        Repo.Storage storage s = Repo._layoutStruct();
-        address p0_ = address(s.pairToken0);
-        address p1_ = address(s.pairToken1);
-        if (address(tokenOut_) != p0_ && address(tokenOut_) != p1_ && !_isShareOrSeTokenOut(tokenOut_)) {
-            return 0;
+        if (!_isBurnTokenOutSupported(tokenOut_)) return 0;
+
+        BurnPreviewResidual memory r = _loadBurnPreviewResidual(detfIn_);
+        if (r.lpOut == 0) return 0;
+
+        address tout = address(tokenOut_);
+        if (tout == r.p0 || tout == r.p1) {
+            return _previewConsolidatePairOut(r, tout);
         }
+        return _previewConsolidateShareOut(r, tokenOut_);
+    }
+
+    function _isBurnTokenOutSupported(IERC20 tokenOut_) private view returns (bool) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        address tout = address(tokenOut_);
+        return tout == address(s.pairToken0) || tout == address(s.pairToken1)
+            || _isShareOrSeTokenOut(tokenOut_);
+    }
+
+    function _loadBurnPreviewResidual(uint256 detfIn_)
+        private
+        view
+        returns (BurnPreviewResidual memory r)
+    {
+        Repo.Storage storage s = Repo._layoutStruct();
+        r.p0 = address(s.pairToken0);
+        r.p1 = address(s.pairToken1);
 
         (uint256 afterFee_,) = _splitBurnUsageFee(detfIn_);
-        if (afterFee_ == 0) return 0;
+        if (afterFee_ == 0) return r;
 
-        uint256 pending_ = _previewPendingExpansionMint();
-        uint256 supply_ = ERC20Repo._totalSupply();
-        uint256 effectiveSupply_ = supply_ + pending_;
+        uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
         uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0) return 0;
-        uint256 lpOut_ = afterFee_ * protocolLp_ / effectiveSupply_;
-        if (lpOut_ == 0) return 0;
+        if (protocolLp_ == 0 || effectiveSupply_ == 0) return r;
+        r.lpOut = afterFee_ * protocolLp_ / effectiveSupply_;
+        if (r.lpOut == 0) return r;
 
-        IHook hook_ = IHook(s.reserveHook);
-        (uint256 a0_, uint256 a1_, uint256 a2_) = hook_.previewRemoveLiquidity(lpOut_);
-        (uint256 aDetf_, uint256 ap0_, uint256 ap1_) = _unpackBinding(a0_, a1_, a2_);
-        // Preview assumes redeposit succeeds (no DETF paid out).
-        aDetf_; // silence — redeposited
+        r.hookAddr = s.reserveHook;
+        (uint256 a0_, uint256 a1_, uint256 a2_) = IHook(r.hookAddr).previewRemoveLiquidity(r.lpOut);
+        // aDetf_ discarded — preview assumes redeposit succeeds (no DETF paid out).
+        (, r.ap0, r.ap1) = _unpackBinding(a0_, a1_, a2_);
+    }
 
-        // Residual sphere on post-remove book (external lib — matches remove-then-consolidate).
-        address hookAddr_ = address(hook_);
-        if (address(tokenOut_) == p0_ || address(tokenOut_) == p1_) {
-            if (address(tokenOut_) == p0_) {
-                amountOut_ = ap0_;
-                if (ap1_ > RESIDUAL_DUST) {
-                    amountOut_ += BurnPreviewLib.previewSphereExactInPostRemove(
-                        hookAddr_, lpOut_, p1_, p0_, ap1_
-                    );
-                }
-            } else {
-                amountOut_ = ap1_;
-                if (ap0_ > RESIDUAL_DUST) {
-                    amountOut_ += BurnPreviewLib.previewSphereExactInPostRemove(
-                        hookAddr_, lpOut_, p0_, p1_, ap0_
-                    );
-                }
+    function _previewConsolidatePairOut(BurnPreviewResidual memory r, address tokenOut_)
+        private
+        view
+        returns (uint256 amountOut_)
+    {
+        if (tokenOut_ == r.p0) {
+            amountOut_ = r.ap0;
+            if (r.ap1 > RESIDUAL_DUST) {
+                amountOut_ += BurnPreviewLib.previewSphereExactInPostRemove(
+                    r.hookAddr, r.lpOut, r.p1, r.p0, r.ap1
+                );
             }
             return amountOut_;
         }
-
-        address mid_ = _pairForShareOut(tokenOut_);
-        uint256 midAmt_;
-        if (mid_ == p0_) {
-            midAmt_ = ap0_;
-            if (ap1_ > RESIDUAL_DUST) {
-                midAmt_ += BurnPreviewLib.previewSphereExactInPostRemove(
-                    hookAddr_, lpOut_, p1_, p0_, ap1_
-                );
-            }
-        } else {
-            midAmt_ = ap1_;
-            if (ap0_ > RESIDUAL_DUST) {
-                midAmt_ += BurnPreviewLib.previewSphereExactInPostRemove(
-                    hookAddr_, lpOut_, p0_, p1_, ap0_
-                );
-            }
+        amountOut_ = r.ap1;
+        if (r.ap0 > RESIDUAL_DUST) {
+            amountOut_ += BurnPreviewLib.previewSphereExactInPostRemove(
+                r.hookAddr, r.lpOut, r.p0, r.p1, r.ap0
+            );
         }
-        address se_ = mid_ == p0_ ? address(s.standardExchange0) : address(s.standardExchange1);
+    }
+
+    function _previewConsolidateShareOut(BurnPreviewResidual memory r, IERC20 tokenOut_)
+        private
+        view
+        returns (uint256)
+    {
+        address mid_ = _pairForShareOut(tokenOut_);
+        uint256 midAmt_ = _previewConsolidatePairOut(r, mid_);
+        Repo.Storage storage s = Repo._layoutStruct();
+        address se_ = mid_ == r.p0 ? address(s.standardExchange0) : address(s.standardExchange1);
         if (se_ == address(0)) return 0;
         try IStandardExchangeIn(se_).previewExchangeIn(IERC20(mid_), midAmt_, tokenOut_) returns (uint256 o_) {
             return o_;

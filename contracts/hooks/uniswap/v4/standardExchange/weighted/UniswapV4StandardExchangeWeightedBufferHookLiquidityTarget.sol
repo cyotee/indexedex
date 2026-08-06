@@ -175,9 +175,17 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         for (uint8 i; i < n; ++i) {
             natives[i] = _nativeAt(i);
         }
-        (shares, usedPair) = LiqLib.partialJoin(
-            l.weights, l.invScales, natives, invIn, pairAmounts, l.standardExchanges, supply
-        );
+        LiqLib.PartialJoinArgs memory a;
+        a.weights = l.weights;
+        a.invScales = l.invScales;
+        a.natives = natives;
+        a.invIn = invIn;
+        a.pairAmounts = pairAmounts;
+        a.ses = l.standardExchanges;
+        a.supply = supply;
+        LiqLib.PartialJoinResult memory r = LiqLib.partialJoin(a);
+        shares = r.shares;
+        usedPair = r.usedPair;
     }
 
     function _commitJoin(uint256[] memory pairUsed, address to, uint256 shares, bool firstMint)
