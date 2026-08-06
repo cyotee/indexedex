@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How DETFs Work — IndexedEx</title>
+    <meta
+      name="description"
+      content="DETF = Decentralized ETF. The product Olympus’s design class deserved: real reserves, bond to go live, Policy or Open mint/burn. Not a fund. Not a fork."
+    />
+    <meta property="og:title" content="How DETFs Work — IndexedEx" />
+    <meta
+      property="og:description"
+      content="Plain-language product report: what a DETF is, how bond mint and burn work, and the three Uniswap V4 launch types."
+    />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#0B1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="paper-page">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="./">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>IndexedEx</strong>
+          <span>DETF</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="./">Home</a>
+        <a href="./#story">Story</a>
+        <a href="./#product">Product</a>
+        <a href="./#lineup">Launch</a>
+        <a href="./how-detfs-work.html" aria-current="page">How it works</a>
+        <a href="./uniswap-v4.html">Markets</a>
+        <a href="./#disclaimers" class="nav-muted">Disclaimers</a>
+      </nav>
+      <a class="btn btn-sm" href="./">Home</a>
+    </header>
+
+    <main class="paper-main">
+      <header class="paper-hero">
+        <p class="eyebrow">Product report · short version</p>
+        <h1>How DETFs work</h1>
+        <p class="lede">
+          <strong>DETF</strong> means <strong>Decentralized ETF</strong> — the D is decentralized,
+          not a registered securities fund. This is the plain-language product report: what it is,
+          what you do, what we’re launching, and what we refuse to promise.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn btn-ghost" href="./">Back to home</a>
+          <a class="btn btn-ghost" href="./uniswap-v4.html">Uniswap V4 markets</a>
+        </div>
+        <p class="fine paper-note">
+          Built by the original developer of Olympus. Category lineage — not OlympusDAO, not OHM.
+        </p>
+      </header>
+
+      <article class="paper-body">
+        <nav class="paper-toc" aria-label="Contents">
+          <h2 class="toc-title">Contents</h2>
+          <ol>
+            <li><a href="#why">Why this exists</a></li>
+            <li><a href="#what">What a DETF is</a></li>
+            <li><a href="#moves">Bond · mint · burn</a></li>
+            <li><a href="#modes">Policy vs Open</a></li>
+            <li><a href="#lineup">Launch types</a></li>
+            <li><a href="#value">Where value can come from</a></li>
+            <li><a href="#risks">Risks and non-claims</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="why">1. Why this exists</h2>
+        <p>
+          Olympus showed that people would bond into shared depth for a protocol money unit. It also
+          showed the limits of one global token and vibes-only policy. A
+          <strong>DETF</strong> keeps the good parts — real reserve, bonding, mint/burn rules — and
+          turns them into a <strong>product you can create many times</strong>, one basket at a time.
+        </p>
+        <p>
+          Short version: <strong>not a fork of a moment. A product class.</strong>
+        </p>
+        <p>
+          <strong>This is not a registered securities ETF.</strong> “Decentralized ETF” means
+          basket-like onchain reserve + share — not an SEC fund, and not legal ownership of offchain
+          stocks or bonds.
+        </p>
+
+        <h2 id="what">2. What a DETF is (one screen)</h2>
+        <ul>
+          <li>
+            <strong>One onchain share</strong> — the unit you hold, transfer, and trade when markets
+            exist.
+          </li>
+          <li>
+            <strong>A real reserve</strong> — the market book (pair, triangle, or weighted) that
+            backs and prices the unit.
+          </li>
+          <li>
+            <strong>A bond path</strong> — first bond opens a closed unit and builds shared depth;
+            more bonds can deepen it.
+          </li>
+          <li>
+            <strong>Mint and burn</strong> — primary market into or out of the DETF against that
+            reserve, under rules fixed at deploy.
+          </li>
+        </ul>
+        <p>
+          Pricing is not a private spreadsheet. The reserve is the engine.
+        </p>
+
+        <h2 id="moves">3. Bond · mint · burn</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>State</th>
+                <th>What you can do</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Closed</strong></td>
+                <td>Primary mint and burn blocked — unit not live yet</td>
+              </tr>
+              <tr>
+                <td><strong>Live</strong> (after first successful bond)</td>
+                <td>Mint and burn follow Policy or Open; more bonds can deepen depth</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>After open, the loop is simple:</p>
+        <ol>
+          <li><strong>Bond</strong> — add capital / deepen shared reserve under onchain terms.</li>
+          <li><strong>Mint or burn</strong> — move between external assets (or vault shares) and DETF when rules allow.</li>
+          <li><strong>Hold, claim, or trade</strong> — free share, bond rewards while locked where wired, or secondary market when available.</li>
+        </ol>
+        <p>
+          Waiting for the calendar does not open a closed unit. The first bond does.
+        </p>
+        <figure class="paper-figure">
+          <img
+            src="./figures/F1_lifecycle.png"
+            alt="From a closed DETF unit to an open market via the first bond."
+            loading="lazy"
+          />
+          <figcaption>Closed until first bond — then a live market.</figcaption>
+        </figure>
+
+        <h2 id="modes">4. Policy vs Open</h2>
+        <p>
+          Mode is chosen at deploy. It is explicit — not “zero numbers mean open.”
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th><strong>Policy</strong> (default)</th>
+                <th><strong>Open</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mint when live</td>
+                <td>Only when the unit is <strong>rich</strong> vs its reserve</td>
+                <td>Anytime (product routes still apply)</td>
+              </tr>
+              <tr>
+                <td>Burn when live</td>
+                <td>Only when the unit is <strong>cheap</strong> vs its reserve</td>
+                <td>Anytime</td>
+              </tr>
+              <tr>
+                <td>Quiet middle</td>
+                <td>Primary mint/burn sit out; secondary / reserve still exist</td>
+                <td>No price quiet band for primary mint/burn</td>
+              </tr>
+              <tr>
+                <td>Common defaults</td>
+                <td>About +5% rich / −5% cheap vs an abstract 1.0</td>
+                <td>Numbers may be stored; price limits are not applied</td>
+              </tr>
+              <tr>
+                <td>Extra supply over time</td>
+                <td>Possible when rich — to <strong>bond holders only</strong></td>
+                <td><strong>Never</strong></td>
+              </tr>
+              <tr>
+                <td>Peg / return promise?</td>
+                <td>No</td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <strong>Open</strong> is not freer yield. It only removes price limits on primary mint and
+          burn. Fees can still apply. It does not run natural expansion.
+        </p>
+        <figure class="paper-figure">
+          <img
+            src="./figures/F2_synthetic_thresholds.png"
+            alt="Rich, quiet, and cheap bands under Policy."
+            loading="lazy"
+          />
+          <figcaption>
+            Under Policy: mint above rich, burn below cheap, quiet in the middle.
+          </figcaption>
+        </figure>
+
+        <h2 id="lineup">5. Launch types (this release)</h2>
+        <p>
+          Same DETF law. Different reserve shape. We’re launching with three designs on
+          <strong>Uniswap&nbsp;V4</strong> — each paired with a matching market rail.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Reserve shape</th>
+                <th>Choose when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Pair DETF</strong></td>
+                <td>Share ↔ one pair (constant-product buffer)</td>
+                <td>One cash leg, simple story, real ConstProd depth</td>
+              </tr>
+              <tr>
+                <td><strong>Triangle DETF</strong></td>
+                <td>Three assets, one orbital / sphere book</td>
+                <td>DETF + two underlyings that should share inventory</td>
+              </tr>
+              <tr>
+                <td><strong>Weighted basket DETF</strong></td>
+                <td>Multi-asset weighted book, fixed weights at deploy</td>
+                <td>Intentional weights — not pretend-equal units</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Bond principal is the fungible LP on that Uniswap&nbsp;V4 market. Market details:
+          <a href="./uniswap-v4.html">Uniswap V4 markets</a>.
+        </p>
+
+        <h2 id="value">6. Where value can come from (honest)</h2>
+        <ul>
+          <li><strong>Reserve composition</strong> — what sits in the book, and at what weights.</li>
+          <li><strong>Bonding</strong> — participation in shared depth under published terms.</li>
+          <li><strong>Fees</strong> — when the product applies them (sizes are not guarantees).</li>
+          <li><strong>Secondary markets</strong> — trading the share when liquidity exists.</li>
+        </ul>
+        <p>
+          <strong>Do not expect:</strong> automatic yield, rebase “return,” locked APY, or “always
+          above peg.” Bond rewards while locked (when wired) are not free-airdrop expansion to
+          unlocked holders. Open never expands supply that way.
+        </p>
+        <figure class="paper-figure">
+          <img
+            src="./figures/F7_bond_vs_mint.png"
+            alt="Bond reward path versus free unlocked DETF holder."
+            loading="lazy"
+          />
+          <figcaption>
+            Bond path can earn rewards while locked. Free unlocked holders do not get expansion airdrops by default.
+          </figcaption>
+        </figure>
+
+        <h2 id="risks">7. Risks and non-claims</h2>
+        <ol>
+          <li><strong>Not a registered securities ETF</strong> — no legal ownership of offchain underlyings.</li>
+          <li><strong>Not OlympusDAO / not OHM</strong> — product lineage, not affiliation or treasury claim.</li>
+          <li><strong>No peg, APY, or coupon guarantee</strong> — Policy bands and expansion are mechanisms.</li>
+          <li><strong>Open</strong> removes price limits only — not fees, not returns, not expansion.</li>
+          <li><strong>Market risk remains</strong> — inventory, volatility, and adverse selection still apply.</li>
+          <li><strong>Immutable units</strong> — misconfigured launches are abandoned, not silently rescued.</li>
+          <li><strong>Eligibility</strong> — some underlyings may be restricted by issuer or venue; users own compliance.</li>
+        </ol>
+
+        <div class="callout">
+          <h3>Keep going</h3>
+          <p>
+            <a class="btn" href="./">Home</a>
+            <a class="btn btn-ghost" href="./uniswap-v4.html" style="margin-left: 0.5rem"
+              >Markets</a
+            >
+          </p>
+        </div>
+
+        <section id="disclaimers" class="section-legal paper-disclaimers">
+          <h2>Disclaimers</h2>
+          <ul>
+            <li>
+              <strong>Not a registered ETF.</strong> “Decentralized ETF” describes a product pattern —
+              not an offer of a securities fund share.
+            </li>
+            <li>
+              <strong>No ownership of offchain underlyings.</strong> Holding a DETF does not convey
+              legal title to stocks, bonds, or other offchain instruments.
+            </li>
+            <li>
+              <strong>No performance promises.</strong> Not investment, legal, or tax advice. Smart
+              contracts and markets involve loss of funds.
+            </li>
+            <li>
+              <strong>Status.</strong> Launch families ship as they are ready. Live addresses and
+              audits will be linked when published.
+            </li>
+          </ul>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div><strong>IndexedEx</strong> · DETF</div>
+      <div class="footer-links">
+        <a href="./">Home</a>
+        <a href="./#story">Story</a>
+        <a href="./#product">Product</a>
+        <a href="./#lineup">Launch</a>
+        <a href="./how-detfs-work.html">How it works</a>
+        <a href="./uniswap-v4.html">Markets</a>
+        <a href="./#disclaimers">Disclaimers</a>
+      </div>
+      <p class="fine">© <span id="y"></span> IndexedEx contributors. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.getElementById('y').textContent = String(new Date().getFullYear())
+    </script>
+  </body>
+</html>
