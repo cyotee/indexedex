@@ -1,5 +1,8 @@
 # Deploy marketing/research-site (static DETF research landing + litepaper PDF)
 # to GitHub Pages: https://cyotee.github.io/indexedex/
+#
+# Uses gh-pages branch publish (peaceiris) instead of actions/deploy-pages.
+# Official deploy-pages was hanging in deployment_queued / in_progress for this repo.
 name: Deploy research site to GitHub Pages
 
 on:
@@ -11,33 +14,24 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
-  # Allow a newer push to supersede a hung deploy-pages queue.
   cancel-in-progress: true
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Publish marketing/research-site to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: marketing/research-site
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./marketing/research-site
+          force_orphan: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
