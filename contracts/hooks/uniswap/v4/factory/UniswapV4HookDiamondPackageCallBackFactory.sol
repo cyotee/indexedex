@@ -108,18 +108,16 @@ contract UniswapV4HookDiamondPackageCallBackFactory is
         return Create2Lib.predictAddress(address(this), PROXY_INIT_HASH, ctx.packageSalt, mineNonce);
     }
 
-    /// @notice Gas-risky auto-mine from mineNonce 0. Prefer deployWithMineNonce in production.
+    /// @notice Auto-mine from mineNonce 0 then deploy. Prefer deployWithMineNonce in production.
+    /// @dev Uses Create2Lib.findMineNonce (assembly, no per-iteration memory growth).
     function deploy(IUniswapV4HookDiamondPackage pkg, bytes calldata pkgArgs) public returns (address) {
         DeployCtx memory ctx = _prepare(pkg, pkgArgs);
-        for (uint256 n = 0; n < MAX_LOOP; ++n) {
-            address predicted =
-                Create2Lib.predictAddress(address(this), PROXY_INIT_HASH, ctx.packageSalt, n);
-            if ((uint160(predicted) & FLAG_MASK) != ctx.requiredFlags) continue;
-            ctx.mineNonce = n;
-            ctx.predicted = predicted;
-            return _deployAt(ctx);
-        }
-        revert HookMineExhausted();
+        ctx.mineNonce = Create2Lib.findMineNonce(
+            address(this), PROXY_INIT_HASH, ctx.packageSalt, ctx.requiredFlags, MAX_LOOP
+        );
+        ctx.predicted =
+            Create2Lib.predictAddress(address(this), PROXY_INIT_HASH, ctx.packageSalt, ctx.mineNonce);
+        return _deployAt(ctx);
     }
 
     function deployWithMineNonce(IUniswapV4HookDiamondPackage pkg, bytes calldata pkgArgs, uint256 mineNonce)

@@ -352,6 +352,10 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
             if (a.rateProviders[i] != address(0) && a.standardExchanges[i] == address(0)) {
                 revert RateProviderWithoutSE();
             }
+            // Decimals gate early (processArgs) so invalid configs never enter auto-mine / init.
+            uint8 pd = _readDecimals(a.tokens[i]);
+            if (pd < 6 || pd > 18) revert InvalidDecimals();
+
             if (a.standardExchanges[i] != address(0)) {
                 unchecked {
                     ++seCount;
@@ -366,6 +370,8 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
                     }
                 }
                 _requireSeOwnsToken(a.standardExchanges[i], a.tokens[i]);
+                uint8 sd = _readDecimals(a.standardExchanges[i]);
+                if (sd < 6 || sd > 18) revert InvalidDecimals();
             }
         }
         if (weightSum != Math.WAD) revert WeightsSum();
