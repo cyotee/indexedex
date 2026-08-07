@@ -28,9 +28,9 @@ for arg in "$@"; do
 done
 
 export MPLBACKEND="${MPLBACKEND:-Agg}"
-# Narrow orbital profile + via-ir (stack-too-deep on research fixture inheritance without IR).
-export FOUNDRY_PROFILE="${FOUNDRY_PROFILE:-orbital}"
-export FORGE_VIA_IR="${FORGE_VIA_IR:-1}"
+# Default hermetic profile only (via_ir forbidden; see docs/ci.md Profile law).
+export FOUNDRY_PROFILE="${FOUNDRY_PROFILE:-default}"
+export FORGE_VIA_IR="${FORGE_VIA_IR:-0}"
 echo "  FOUNDRY_PROFILE=$FOUNDRY_PROFILE FORGE_VIA_IR=$FORGE_VIA_IR"
 
 BASE="scripts/foundry/research/uniswapV4/hooks/orbital"

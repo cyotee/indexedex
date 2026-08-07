@@ -20,8 +20,7 @@ import {
 } from "@crane/contracts/external/uniswap/universal-router/libraries/Commands.sol";
 
 /// @notice M0 smoke: vendored Uniswap Universal Router (2.1.1) deploys and exposes execute.
-/// @dev Run with: FOUNDRY_PROFILE=research forge test --match-contract UniversalRouter_VendorSmoke -vv
-///      (via_ir required for UR + large graphs). Narrow FOUNDRY_PROFILE=universal_router builds the UR tree alone.
+/// @dev Hermetic under default profile: forge test --match-contract UniversalRouter_VendorSmoke -vv
 contract UniversalRouter_VendorSmoke_Test is Test {
     function test_vendorDeployAndCommandsConstant() public {
         IPermit2 permit2 = IPermit2(address(new BetterPermit2()));

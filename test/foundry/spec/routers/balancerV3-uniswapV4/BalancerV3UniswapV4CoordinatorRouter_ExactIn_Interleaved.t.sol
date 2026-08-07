@@ -21,10 +21,10 @@ import {
 } from "contracts/routers/balancerV3-uniswapV4/BalancerV3UniswapV4CoordinatorRouter_FactoryService.sol";
 import {
     CoordinatorSeRouterDeployLib
-} from "test/foundry/routers/spec/balancerV3-uniswapV4/helpers/CoordinatorSeRouterDeployLib.sol";
+} from "test/foundry/spec/routers/balancerV3-uniswapV4/helpers/CoordinatorSeRouterDeployLib.sol";
 import {
     CoordinatorWitnessSignLib
-} from "test/foundry/routers/spec/balancerV3-uniswapV4/helpers/CoordinatorWitnessSignLib.sol";
+} from "test/foundry/spec/routers/balancerV3-uniswapV4/helpers/CoordinatorWitnessSignLib.sol";
 
 /// @notice T9 interleaved multi-family exact-in + T26 donation-safe ledger.
 contract BalancerV3UniswapV4CoordinatorRouter_ExactIn_Interleaved_Test is TestBase_BalancerV3_8020WeightedPool {

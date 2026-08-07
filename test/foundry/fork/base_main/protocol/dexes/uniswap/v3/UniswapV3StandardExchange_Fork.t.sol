@@ -27,7 +27,6 @@ import {
  */
 contract UniswapV3StandardExchange_Fork_Test is TestBase_BaseFork, TestBase_Permit2, TestBase_VaultComponents {
     using UniswapV3_Component_FactoryService for ICreate3FactoryProxy;
-    using UniswapV3_Component_FactoryService for IFacet;
     using UniswapV3_Component_FactoryService for IIndexedexManagerProxy;
 
     // Base mainnet Uniswap V3 factory
@@ -45,36 +44,43 @@ contract UniswapV3StandardExchange_Fork_Test is TestBase_BaseFork, TestBase_Perm
         TestBase_Permit2.setUp();
         TestBase_VaultComponents.setUp();
 
-        IUniswapV3Factory factory = IUniswapV3Factory(UNI_V3_FACTORY);
-        address poolAddr = factory.getPool(WETH, USDC, FEE);
-        require(poolAddr != address(0), "pool missing");
-        pool = IUniswapV3Pool(poolAddr);
-
-        IFacet inFacet = create3Factory.deployUniswapV3StandardExchangeInFacet();
-        IFacet inQueryFacet = create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
-        IFacet outFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
-        IFacet importFacet = create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
-
-        vm.startPrank(owner);
-        pkg = indexedexManager.deployUniswapV3StandardExchangeDFPkg(
-            erc20Facet.buildArgsUniswapV3StandardExchangePkgInit(
-                erc5267Facet,
-                erc2612Facet,
-                multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet,
-                inFacet,
-                inQueryFacet,
-                outFacet,
-                importFacet,
-                indexedexManager,
-                indexedexManager,
-                permit2,
-                factory
-            )
-        );
-        vm.stopPrank();
-
+        pool = _resolveLivePool();
+        pkg = _deployPkg(IUniswapV3Factory(UNI_V3_FACTORY));
         vault = IStandardExchangeProxy(pkg.deployVault(pool, 10));
+    }
+
+    function _resolveLivePool() private view returns (IUniswapV3Pool livePool) {
+        address poolAddr = IUniswapV3Factory(UNI_V3_FACTORY).getPool(WETH, USDC, FEE);
+        require(poolAddr != address(0), "pool missing");
+        livePool = IUniswapV3Pool(poolAddr);
+    }
+
+    /// @dev Build PkgInit via sequential field writes (avoids 13-arg stack-too-deep under fork inheritance).
+    function _deployPkg(IUniswapV3Factory factory_) private returns (IUniswapV3StandardExchangeDFPkg deployed) {
+        IUniswapV3StandardExchangeDFPkg.PkgInit memory init = _buildPkgInit(factory_);
+        vm.startPrank(owner);
+        deployed = indexedexManager.deployUniswapV3StandardExchangeDFPkg(init);
+        vm.stopPrank();
+    }
+
+    function _buildPkgInit(IUniswapV3Factory factory_)
+        private
+        returns (IUniswapV3StandardExchangeDFPkg.PkgInit memory init)
+    {
+        init.erc20Facet = erc20Facet;
+        init.erc5267Facet = erc5267Facet;
+        init.erc2612Facet = erc2612Facet;
+        init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        init.uniswapV3StandardExchangeInFacet = create3Factory.deployUniswapV3StandardExchangeInFacet();
+        init.uniswapV3StandardExchangeInQueryFacet = create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
+        init.uniswapV3StandardExchangeOutFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
+        init.uniswapV3StandardExchangePositionImportFacet =
+            create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
+        init.vaultFeeOracleQuery = indexedexManager;
+        init.vaultRegistryDeployment = indexedexManager;
+        init.permit2 = permit2;
+        init.uniswapV3Factory = factory_;
     }
 
     function test_fork_directSwap_and_zap() public {

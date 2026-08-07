@@ -213,11 +213,12 @@ contract BalancerV3UniswapV4CoordinatorRouter_LedgerAndRescue_Test is TestBase_B
 }
 
 /// @dev On transferFrom, re-enters coordinator.queryExactIn (shared nonReentrant) and emits SawIsLocked.
+/// Stores reenter calldata as bytes so nested RouteStep[] is not copied into storage (legacy solc ban).
 contract HostileReenterERC20 is SimpleMintableERC20 {
     event SawIsLocked();
 
     IBalancerV3UniswapV4CoordinatorRouter public target;
-    IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams internal reenterParams;
+    bytes internal reenterCalldata;
     bool public armed;
 
     constructor(string memory n, string memory s) SimpleMintableERC20(n, s) {}
@@ -226,7 +227,9 @@ contract HostileReenterERC20 is SimpleMintableERC20 {
         external
     {
         target = IBalancerV3UniswapV4CoordinatorRouter(coordinator_);
-        reenterParams = params_;
+        reenterCalldata = abi.encodeWithSelector(
+            IBalancerV3UniswapV4CoordinatorRouter.queryExactIn.selector, params_
+        );
         armed = true;
     }
 
@@ -239,8 +242,7 @@ contract HostileReenterERC20 is SimpleMintableERC20 {
         _transfer(from, to, amount);
         if (armed) {
             armed = false;
-            (bool ok, bytes memory reason) =
-                address(target).call(abi.encodeWithSelector(target.queryExactIn.selector, reenterParams));
+            (bool ok, bytes memory reason) = address(target).call(reenterCalldata);
             if (!ok && reason.length >= 4) {
                 bytes4 sel;
                 assembly {

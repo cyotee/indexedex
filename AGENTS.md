@@ -240,20 +240,35 @@ For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md) (ref
 
 ## Build & Test Commands
 
+**Foundry profiles (only two):** see [`docs/ci.md`](docs/ci.md) Profile law.
+
+| Profile | Use for | Command |
+|---------|---------|---------|
+| **default** | Hermetic / local (`test/foundry/spec`) | `forge test` |
+| **fork** | Fork suite (`test/foundry/fork`) | `FOUNDRY_PROFILE=fork forge test` |
+
+Do **not** add package-specific Foundry profiles. Focus with `--match-path` / `--match-contract`. **`via_ir` is forbidden.**
+
 ```bash
 # Build
 forge build
 forge build --sizes         # with contract size output
 
-# Run all tests
+# Hermetic (default profile → test/foundry/spec)
 forge test
 forge test -vvv             # verbose output
 forge test -vvvv            # full stack trace
 
-# Run specific tests
-forge test --match-path test/foundry/spec/protocol/...
+# Run specific tests (no custom FOUNDRY_PROFILE)
+forge test --match-path 'test/foundry/spec/protocol/**'
+forge test --match-path 'test/foundry/spec/routers/**'
 forge test --match-test testFunctionName
 forge test --match-contract ContractNameTest
+
+# Fork (needs ALCHEMY_KEY)
+export ALCHEMY_KEY=...
+FOUNDRY_PROFILE=fork forge test -vv
+FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/**' -vv
 
 # Format Solidity
 forge fmt

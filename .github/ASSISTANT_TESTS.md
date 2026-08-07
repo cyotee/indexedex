@@ -15,8 +15,8 @@ Policy checks
 
 CI
 - CI must run `forge build` and hermetic `forge test` and fail the PR if those fail.
-- Workflow: `.github/workflows/foundry-ci.yml` (see `docs/ci.md`).
-  - Hermetic: `FOUNDRY_PROFILE=ci forge test` (no secrets).
-  - Fork: `FOUNDRY_PROFILE=ci_fork forge test` with repository secret `ALCHEMY_KEY` (raw key only).
+- Workflow: `.github/workflows/foundry-ci.yml` (see `docs/ci.md` Profile law).
+  - Hermetic only: `forge test` under **default** (`test/foundry/spec`) — no secrets.
+  - Fork suites (`FOUNDRY_PROFILE=fork`) are **not** run on Actions; run them locally with `ALCHEMY_KEY`.
 - Do not mock SUT vaults/manager/registry in new tests; prefer production-first TestBases.
-- Package-isolated profiles (`FOUNDRY_PROFILE=…` in `foundry.toml`) are not all run on every PR; add matrix jobs intentionally.
+- **Do not add package Foundry profiles.** Focus with `--match-path` / `--match-contract` only.

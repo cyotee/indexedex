@@ -9,7 +9,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-// Ensure PoolManager artifact is built under FOUNDRY_PROFILE=dual_se_buffer_cp_hook.
+// Ensure PoolManager artifact is built under the default hermetic profile.
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";

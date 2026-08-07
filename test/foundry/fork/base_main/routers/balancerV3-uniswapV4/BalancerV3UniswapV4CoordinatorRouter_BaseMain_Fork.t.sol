@@ -17,7 +17,7 @@ import {
 } from "contracts/routers/balancerV3-uniswapV4/BalancerV3UniswapV4CoordinatorRouter_FactoryService.sol";
 
 /// @notice Base-main fork smoke: deploy Coordinator + live venue hop (stock Balancer when code present).
-/// @dev FOUNDRY_PROFILE=coordinator_fork forge test --match-path 'test/foundry/fork/base_main/routers/balancerV3-uniswapV4/*' --fork-url base_mainnet_alchemy -vv
+/// @dev FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/routers/balancerV3-uniswapV4/*' -vv
 contract BalancerV3UniswapV4CoordinatorRouter_BaseMain_Fork_Test is CraneTest {
     using BalancerV3UniswapV4CoordinatorRouter_FactoryService for *;
 

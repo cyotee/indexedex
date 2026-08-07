@@ -2,57 +2,48 @@
 
 How GitHub Actions and local Foundry profiles line up for IndexedEx.
 
+## Profile law (mandatory)
+
+IndexedEx uses **exactly two** Foundry product profiles:
+
+| Profile | Role | `test=` | RPC |
+|---------|------|---------|-----|
+| **`default`** | Hermetic / local | `test/foundry/spec` | none |
+| **`fork`** | Network forks | `test/foundry/fork` | `ALCHEMY_KEY` (or full RPC URLs) |
+
+**Rules for agents and humans:**
+
+1. Do **not** add new `[profile.*]` entries for package isolation.
+2. Focus a suite with `forge test --match-path '…/**'` or `--match-contract`, not a custom profile.
+3. Hermetic tests **must** live under `test/foundry/spec/**`.
+4. Fork tests **must** live under `test/foundry/fork/**`.
+5. **`via_ir = false` always.** Fix stack-too-deep with structs / helper frames (see Crane code-style skill). Never re-enable IR.
+6. Contract size output: `forge build --sizes` when needed (`sizes = false` on both profiles for quiet logs).
+
 ## What runs on GitHub
 
 | Workflow | File | When | Secret |
 |----------|------|------|--------|
 | **Foundry CI — hermetic** | `.github/workflows/foundry-ci.yml` | push `main`, PRs, manual | none |
-| **Foundry CI — fork** | same | same | **Repository secret** `ALCHEMY_KEY` |
 
-GitHub Pages for the research teaser site has been **dropped** (no Pages workflow). Static assets under `marketing/research-site/` may remain for other hosts; they are not deployed from this repo’s Actions.
-
-### Required vs soft
-
-- **Hermetic** (`FOUNDRY_PROFILE=ci`): intended **required** check for merge confidence. No RPC key.
-- **Fork** (`FOUNDRY_PROFILE=ci_fork`): uses Alchemy; currently **`continue-on-error: true`** until the suite is reliably green. Then remove soft-gate and require the check in branch protection.
-
-External PRs from forks **do not** receive repository secrets. Hermetic still runs; fork job fails the “require key” step (soft) without leaking secrets.
-
-## Repository secret
-
-| Field | Value |
-|-------|--------|
-| **Name** | `ALCHEMY_KEY` |
-| **Secret** | Raw Alchemy API key only (not the full URL, not `ALCHEMY_KEY=...`) |
-
-`foundry.toml` builds URLs:
-
-```text
-https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}
-https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}
-```
-
-Use a dedicated Alchemy app for CI when possible (rate limits / rotation).
+- **Hermetic only:** `forge build` + `forge test` under the **default** profile (`test/foundry/spec`). Intended required check for merge confidence.
+- **Fork profile is not run on Actions.** Run `FOUNDRY_PROFILE=fork forge test` locally (or elsewhere) with your own RPC key. No `ALCHEMY_KEY` repository secret is required for CI.
 
 ## Local commands
 
 ```bash
-# Hermetic (default suite under test/foundry/spec)
+# Hermetic (default suite under test/foundry/spec) — same as CI
 forge build
-forge test
-# same knobs as CI:
-FOUNDRY_PROFILE=ci forge test -vv
+forge test -vv
 
-# Fork suite (test/foundry/fork) — needs ALCHEMY_KEY in env or .env
+# Focus a package without a custom profile
+forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/**' -vv
+forge test --match-path 'test/foundry/spec/routers/**' -vv
+
+# Fork suite (local only; test/foundry/fork) — needs ALCHEMY_KEY in env or .env
 export ALCHEMY_KEY=your_raw_key
 FOUNDRY_PROFILE=fork forge test -vv
-# or CI overlay:
-FOUNDRY_PROFILE=ci_fork forge test -vv
-
-# Optional package isolation (not all run in default CI)
-FOUNDRY_PROFILE=hook_factory forge test -vv
-FOUNDRY_PROFILE=coordinator forge test -vv
-# see foundry.toml for the full list
+FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/**' -vv
 ```
 
 Foundry loads a root `.env` if present (do not commit it). Example vars:
@@ -67,17 +58,14 @@ BASE_RPC_URL=
 ETH_RPC_URL=
 ```
 
-## Profiles (foundry.toml)
+`foundry.toml` `[rpc_endpoints]` uses aliases such as:
 
-| Profile | Role |
-|---------|------|
-| `default` | Hermetic; `test/foundry/spec` |
-| `fork` | Fork; `test/foundry/fork` |
-| `ci` | Inherits `default`, `sizes = false` (CI logs) |
-| `ci_fork` | Same as `fork` (`test/foundry/fork`) with `sizes = false` (explicit; non-default `inherits` is unreliable on some Foundry versions) |
-| package profiles | Isolated `via_ir` / narrow trees (`orbital`, `coordinator`, hooks, DETFs, …) — run via `FOUNDRY_PROFILE=…` |
+```text
+base_mainnet_alchemy = "https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
+ethereum_mainnet_alchemy = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
+```
 
-Do not merge all package profiles into default; CI should add them as an explicit matrix later if needed.
+Fork TestBases pass the **alias** (e.g. `base_mainnet_alchemy`) into `vm.createSelectFork`.
 
 ## Submodules
 
@@ -87,8 +75,9 @@ CI checks out with `submodules: recursive` (`lib/crane` + nested forge-std / OZ 
 git submodule update --init --recursive
 ```
 
-## Adding a new package suite to CI
+## Adding a new test suite
 
-1. Keep a dedicated `[profile.<name>]` in `foundry.toml` if isolation is required.
-2. Add a matrix job (or new job) in `foundry-ci.yml` that runs `FOUNDRY_PROFILE=<name> forge test -vv`.
-3. Do not fold `via_ir` packages into `profile.default` “for convenience.”
+1. Put hermetic tests under `test/foundry/spec/…` or fork tests under `test/foundry/fork/…`.
+2. Run under **default** or **`FOUNDRY_PROFILE=fork`** only.
+3. CI only runs hermetic (`default`). Do not re-add a fork job to Actions without an explicit decision.
+4. Never set `via_ir = true`.

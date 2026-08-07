@@ -63,23 +63,24 @@ contract TestBase_UniswapV3StandardExchange is
         uniswapV3StandardExchangeOutFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
         uniswapV3StandardExchangePositionImportFacet = create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
 
+        // Sequential PkgInit field writes — avoids 13-arg stack-too-deep under heavy TestBase inheritance.
+        IUniswapV3StandardExchangeDFPkg.PkgInit memory pkgInit;
+        pkgInit.erc20Facet = erc20Facet;
+        pkgInit.erc5267Facet = erc5267Facet;
+        pkgInit.erc2612Facet = erc2612Facet;
+        pkgInit.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        pkgInit.uniswapV3StandardExchangeInFacet = uniswapV3StandardExchangeInFacet;
+        pkgInit.uniswapV3StandardExchangeInQueryFacet = uniswapV3StandardExchangeInQueryFacet;
+        pkgInit.uniswapV3StandardExchangeOutFacet = uniswapV3StandardExchangeOutFacet;
+        pkgInit.uniswapV3StandardExchangePositionImportFacet = uniswapV3StandardExchangePositionImportFacet;
+        pkgInit.vaultFeeOracleQuery = indexedexManager;
+        pkgInit.vaultRegistryDeployment = indexedexManager;
+        pkgInit.permit2 = permit2;
+        pkgInit.uniswapV3Factory = uniswapV3Factory;
+
         vm.startPrank(owner);
-        uniswapV3StandardExchangeDFPkg = indexedexManager.deployUniswapV3StandardExchangeDFPkg(
-            erc20Facet.buildArgsUniswapV3StandardExchangePkgInit(
-                erc5267Facet,
-                erc2612Facet,
-                multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet,
-                uniswapV3StandardExchangeInFacet,
-                uniswapV3StandardExchangeInQueryFacet,
-                uniswapV3StandardExchangeOutFacet,
-                uniswapV3StandardExchangePositionImportFacet,
-                indexedexManager,
-                indexedexManager,
-                permit2,
-                uniswapV3Factory
-            )
-        );
+        uniswapV3StandardExchangeDFPkg = indexedexManager.deployUniswapV3StandardExchangeDFPkg(pkgInit);
         vm.stopPrank();
     }
 

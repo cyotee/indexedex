@@ -17,8 +17,9 @@ for arg in "$@"; do
   esac
 done
 
-export FOUNDRY_PROFILE="${FOUNDRY_PROFILE:-uv4_single_se_cp_detf}"
-export FORGE_VIA_IR="${FORGE_VIA_IR:-1}"
+# Default hermetic profile only (via_ir forbidden; see docs/ci.md Profile law).
+export FOUNDRY_PROFILE="${FOUNDRY_PROFILE:-default}"
+export FORGE_VIA_IR="${FORGE_VIA_IR:-0}"
 echo "  FOUNDRY_PROFILE=$FOUNDRY_PROFILE FORGE_VIA_IR=$FORGE_VIA_IR"
 
 BASE="scripts/foundry/research/uniswapV4/detf/standardExchangeCpSingle"

@@ -1,15 +1,18 @@
+# Foundry profiles — ONLY two product gates (see docs/ci.md "Profile law").
+# - default: hermetic / local  → test/foundry/spec
+# - fork:    network forks     → test/foundry/fork  (needs ALCHEMY_KEY / RPC)
+# Do NOT add package profiles. Focus with --match-path / --match-contract.
+# NEVER enable via_ir — fix stack-too-deep with structs / helper frames.
+
 [profile.default]
 src = 'contracts'
 out = 'out'
 libs = ['node_modules', 'lib']
 test = 'test/foundry/spec'
-cache_path  = 'cache_forge'
+cache_path = 'cache_forge'
 ffi = true
 fs_permissions = [
     { access = "read-write", path = "./"}
-    # { access = "write", path = "./reports" },
-    # { access = "read", path = "./out" },
-    # { access = "read", path = "./config" }
 ]
 ignored_error_codes = [
     2394,
@@ -23,62 +26,19 @@ ignored_error_codes = [
     # Unused function parameter. Remove or comment out the variable name to silence this warning.
     5667
 ]
-# block_gas_limit = "9223372036854775807"
-# evm_version = 'prague'
 solc = "0.8.35"
 ignored_warnings_from = ["lib/crane/"]
-# Print the sizes of the compiled contracts
-sizes = true
-# Enables or disables the optimizer
+# sizes=false keeps CI/local logs quiet; use `forge build --sizes` when measuring.
+sizes = false
 optimizer = true
-# optimizer_runs = 4294967295
-# CamelotFactory requires 16683 to fit within execution code size limits
-# optimizer_runs = 16683
-# optimizer_runs = 2000
 optimizer_runs = 1
 # NEVER enable via_ir - use structs to fix stack-too-deep instead
 via_ir = false
+# Headroom for auto-mine / dense hook-package deploys under the full hermetic suite.
+gas_limit = 30000000000
 
+# Explicit fork gate (do not rely on inherits for test= path — flaky on some Foundry versions).
 [profile.fork]
-src = 'contracts'
-out = 'out'
-libs = ['node_modules', 'lib']
-test = 'test/foundry/fork'
-cache_path  = 'cache_forge'
-ffi = true
-fs_permissions = [
-    { access = "read-write", path = "./"}
-]
-ignored_error_codes = [
-    2394,
-    3860,
-    5574,
-    2072,
-    2968,
-    2018,
-    5667
-]
-solc = "0.8.35"
-ignored_warnings_from = ["lib/crane/"]
-sizes = true
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-
-# ---------------------------------------------------------------------------
-# CI overlays (GitHub Actions). Quieter/faster (sizes=false).
-# Local: FOUNDRY_PROFILE=ci forge test
-#        FOUNDRY_PROFILE=ci_fork forge test   # requires ALCHEMY_KEY
-# See docs/ci.md
-#
-# Note: inherits= works for default→ci; non-default parents (fork) can fail to
-# apply test= in some Foundry versions, so ci_fork is explicit.
-# ---------------------------------------------------------------------------
-[profile.ci]
-inherits = "default"
-sizes = false
-
-[profile.ci_fork]
 src = 'contracts'
 out = 'out'
 libs = ['node_modules', 'lib']
@@ -103,9 +63,7 @@ sizes = false
 optimizer = true
 optimizer_runs = 1
 via_ir = false
-
-# [profile.default.solc]
-# verbosity = 1
+gas_limit = 30000000000
 
 [profile.default.fmt]
 skip = ["lib/"]
@@ -177,380 +135,4 @@ robinhood_testnet_public = "https://rpc.testnet.chain.robinhood.com"
 robinhood_testnet_alchemy = "https://robinhood-testnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
 # Research harness scripts only (Mode A/C telemetry). Allows via_ir for stack headroom
 # in large TestBase inheritance trees. Do NOT use for production contract builds.
-[profile.research]
-src = 'contracts'
-out = 'out'
-libs = ['node_modules', 'lib']
-test = 'test/foundry/spec'
-cache_path = 'cache_forge_research'
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-solc = "0.8.35"
-ignored_warnings_from = ["lib/crane/"]
-optimizer = true
-optimizer_runs = 1
-via_ir = true
 
-# Uniswap Universal Router port (vendored under lib/crane/.../universal-router).
-# Upstream requires via_ir; narrow src avoids compiling the whole monorepo.
-# Coordinator production facets should import only IUniversalRouter / Commands under default profile.
-[profile.universal_router]
-src = 'lib/crane/contracts/external/uniswap/universal-router'
-out = 'out_universal_router'
-libs = ['node_modules', 'lib']
-# Isolate UR tree + dedicated smoke tests (avoids monorepo stack-too-deep under via_ir).
-test = 'test/foundry/routers/spec/universal_router_port'
-cache_path = 'cache_universal_router'
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-solc = "0.8.35"
-ignored_warnings_from = ["lib/crane/"]
-optimizer = true
-optimizer_runs = 1
-via_ir = true
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-]
-
-# Coordinator Router package + hermetic specs (via_ir for UR + diamond stack headroom).
-# Import graph only — does not set src=contracts (avoids unrelated monorepo stack-too-deep).
-# Tests live under test/foundry/routers/ (not test/foundry/spec/) so default via_ir=false
-# does not codegen Universal Router (UR still needs via_ir upstream).
-[profile.coordinator]
-src = 'contracts/routers/balancerV3-uniswapV4'
-out = 'out_coordinator'
-libs = ['node_modules', 'lib']
-test = 'test/foundry/routers/spec/balancerV3-uniswapV4'
-cache_path = 'cache_coordinator'
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-solc = "0.8.35"
-ignored_warnings_from = ["lib/crane/"]
-optimizer = true
-optimizer_runs = 1
-via_ir = true
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-]
-
-[profile.coordinator_fork]
-src = 'contracts/routers/balancerV3-uniswapV4'
-out = 'out_coordinator'
-libs = ['node_modules', 'lib']
-test = 'test/foundry/fork/base_main/routers/balancerV3-uniswapV4'
-cache_path = 'cache_coordinator_fork'
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-solc = "0.8.35"
-ignored_warnings_from = ["lib/crane/"]
-optimizer = true
-optimizer_runs = 1
-via_ir = true
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-]
-
-# Narrow profile for generic ERC-4626 SE (import-graph only; no new remap aliases).
-[profile.se_erc4626]
-src = 'contracts/vaults/standard/erc4626'
-test = 'test/foundry/fork/eth_main/vaults/standard/erc4626'
-out = 'out_se_erc4626'
-cache_path = 'cache_se_erc4626'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Narrow profile for Uniswap V4 Orbital Swap Hook (import-graph only).
-[profile.orbital]
-src = 'contracts/hooks/uniswap/v4/orbital'
-test = 'test/foundry/spec/hooks/uniswap/v4/orbital'
-out = 'out_orbital'
-cache_path = 'cache_orbital'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# SE Weighted Buffer Hook package (n∈[2,8] weighted + ≥1 SE + dual scale + hook factory).
-# Run: FOUNDRY_PROFILE=se_weighted_buffer_hook forge test -vv
-# Plan verification also cites hook_factory; product suite uses this dedicated profile (peer of se_orbital_buffer_hook).
-[profile.se_weighted_buffer_hook]
-src = 'contracts/hooks/uniswap/v4/standardExchange/weighted'
-test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted'
-out = 'out_se_weighted_buffer_hook'
-cache_path = 'cache_se_weighted_buffer_hook'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-# Large Target (dual-scale weighted + SE buffer + MultiAssetLiquidity + SE I/O) exceeds legacy codegen stack.
-via_ir = true
-ffi = true
-gas_limit = 30000000000
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# SE Orbital Buffer Hook package (3-asset sphere + optional SE/RP + hook factory).
-# Run: FOUNDRY_PROFILE=se_orbital_buffer_hook forge test -vv
-# Plan verification also cites hook_factory; product suite uses this dedicated profile.
-[profile.se_orbital_buffer_hook]
-src = 'contracts/hooks/uniswap/v4/standardExchange/orbital'
-test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital'
-out = 'out_se_orbital_buffer_hook'
-cache_path = 'cache_se_orbital_buffer_hook'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-# Large Target (sphere + SE composition + zap + SE I/O) exceeds legacy codegen stack.
-via_ir = true
-ffi = true
-gas_limit = 30000000000
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-
-# Uni V4 Orbital SE Buffer DETF (imports orbital hook → needs via_ir).
-# Run: FOUNDRY_PROFILE=se_orbital_detf forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/**' -vv
-[profile.se_orbital_detf]
-# Narrow: DETF package + hook package are imported by tests; avoid full monorepo solc graph.
-src = 'contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital'
-test = 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital'
-out = 'out_se_orbital_detf'
-cache_path = 'cache_se_orbital_detf'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = true
-ffi = true
-gas_limit = 30000000000
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-# Extra paths pulled as import dependencies (hook, common, vaults, manager, etc.)
-skip = [
-    'contracts/protocols/**',
-    'contracts/frontend/**',
-    'scripts/**',
-]
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Quad Stable Swap Hook package (hook diamond factory path).
-# Run: FOUNDRY_PROFILE=quad_stable forge test -vv
-# Peer of orbital / single_se_buffer_cp_hook; plan also cites hook_factory for shared factory suite.
-[profile.quad_stable]
-src = 'contracts/hooks/uniswap/v4/stable/quad'
-test = 'test/foundry/spec/hooks/uniswap/v4/stable/quad'
-out = 'out_quad_stable'
-cache_path = 'cache_quad_stable'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-gas_limit = 30000000000
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Single SE Buffer CP Hook package (Option B + ERC-4626 SE + V4 PM).
-# Run: FOUNDRY_PROFILE=single_se_buffer_cp_hook forge test -vv
-[profile.single_se_buffer_cp_hook]
-src = 'contracts/hooks/uniswap/v4/standardExchange/constantProduct/single'
-test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single'
-out = 'out_single_se_buffer_cp_hook'
-cache_path = 'cache_single_se_buffer_cp_hook'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Uni V4 Single SE CP-buffer DETF (true DETF family + hook dep + epoch expansion lib).
-# Run: FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test -vv
-# Includes epoch lib pure unit tests under test/foundry/spec/vaults/detf/common/core/.
-[profile.uv4_single_se_cp_detf]
-src = 'contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
-test = 'test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
-out = 'out_uv4_single_se_cp_detf'
-cache_path = 'cache_uv4_single_se_cp_detf'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = true
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Phase 6.1 Base fork lifecycle for Uni V4 Single SE CP DETF (same compile isolation as hermetic).
-# Run: FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork forge test -vv
-# Requires ALCHEMY_KEY (base_mainnet_alchemy) or BASE_RPC_URL.
-[profile.uv4_single_se_cp_detf_fork]
-src = 'contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
-test = 'test/foundry/fork/base_main/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single'
-out = 'out_uv4_single_se_cp_detf_fork'
-cache_path = 'cache_uv4_single_se_cp_detf_fork'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = true
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Dual SE Buffer CP Hook package (Option B + two ERC-4626 SE + V4 PM + hook factory).
-# Run: FOUNDRY_PROFILE=dual_se_buffer_cp_hook forge test -vv
-# Plan verification also cites hook_factory; product suite uses this dedicated profile (peer of single_se_buffer_cp_hook).
-[profile.dual_se_buffer_cp_hook]
-src = 'contracts/hooks/uniswap/v4/standardExchange/dual'
-test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/dual'
-out = 'out_dual_se_buffer_cp_hook'
-cache_path = 'cache_dual_se_buffer_cp_hook'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Single SE Buffer Hook package (Option B + Crane ERC4626 + V4 PM).
-# Run: FOUNDRY_PROFILE=single_se_buffer_hook forge test -vv
-# Plan also cites hook_factory; product suite uses this dedicated profile (peer of single_se_buffer_cp_hook).
-[profile.single_se_buffer_hook]
-src = 'contracts/hooks/uniswap/v4/standardExchange/single'
-# Package hermetic suite + co-located fork smokes under this tree (profile isolation).
-test = 'test/foundry/spec/hooks/uniswap/v4/standardExchange/single'
-out = 'out_single_se_buffer_hook'
-cache_path = 'cache_single_se_buffer_hook'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-# Auto-mine deployVaultAutoMine may need >1e9 gas when flags are sparse.
-gas_limit = 30000000000
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]
-
-# Narrow profile for Uniswap V4 Hook Diamond Package Callback Factory.
-# Run: FOUNDRY_PROFILE=hook_factory forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/factory/**'
-# Fork FK* smokes live under the same test tree as *_Fork.t.sol siblings.
-[profile.hook_factory]
-src = 'contracts/hooks/uniswap/v4/factory'
-test = 'test/foundry/spec/hooks/uniswap/v4/factory'
-out = 'out_hook_factory'
-cache_path = 'cache_hook_factory'
-libs = ['node_modules', 'lib']
-solc = "0.8.35"
-optimizer = true
-optimizer_runs = 1
-via_ir = false
-ffi = true
-fs_permissions = [{ access = "read-write", path = "./"}]
-sizes = false
-remappings = [
-    "forge-std/=lib/crane/lib/forge-std/src/",
-    "@crane/=lib/crane/",
-    "contracts/=contracts/",
-    "contracts/solady/=lib/crane/contracts/external/solady/",
-    "contracts/external/solady/=lib/crane/contracts/external/solady/",
-]

@@ -9,8 +9,8 @@ One row per completed research run. **Narrative** lives under `research/scenario
 **Reproduce rateProviderCompare:** `./research/run_rate_provider_compare.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce Single SE DETF Phase 3:** `./research/run_detf_single_se.sh` (`FOUNDRY_PROFILE=default`)  
 **Reproduce DualLiquidity research:** `./research/run_dual_liquidity_research.sh` (Base fork)  
-**Reproduce Uni V4 Orbital Hook:** `./research/run_uniswap_v4_orbital_hook.sh` (`FOUNDRY_PROFILE=orbital --via-ir`)  
-**Reproduce Uni V4 CP DETF (D0–D1):** `./research/run_uniswap_v4_cp_detf.sh` (`FOUNDRY_PROFILE=uv4_single_se_cp_detf --via-ir`)  
+**Reproduce Uni V4 Orbital Hook:** `./research/run_uniswap_v4_orbital_hook.sh` (`FOUNDRY_PROFILE=default`)  
+**Reproduce Uni V4 CP DETF (D0–D1):** `./research/run_uniswap_v4_cp_detf.sh` (`FOUNDRY_PROFILE=default`)  
 **Portfolio program:** [`scenarios/uniswapV4/PROGRAM.md`](scenarios/uniswapV4/PROGRAM.md)
 
 | Date | Product | Mode | Scenario doc | Artifact dir | Status | One-line finding |

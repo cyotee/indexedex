@@ -271,12 +271,15 @@ Related skills:
 ## Resolution (fill when fixed)
 
 - **Date:** 2026-08-06
-- **Strategy used (A/B/C):** **B** — structs + helper frames (no default `via_ir`)
-- **PR / commit:** (local working tree; commit with Composed Stable inventory fix)
+- **Strategy used (A/B/C):** **B** — structs + helper frames (no `via_ir` anywhere)
+- **PR / commit:** product stack packs in `95cc676`; UR/coordinator no-IR follow-up in working tree
 - **Commands verified:**
-  - `FOUNDRY_PROFILE=se_orbital_buffer_hook` with temporary `via_ir = false` → **Compiler run successful**
-  - Package profile restored to `via_ir = true` for suite speed
+  - `FOUNDRY_PROFILE=se_orbital_buffer_hook|se_orbital_detf|se_weighted_buffer_hook forge build` with `via_ir = false` → **success**
+  - `FOUNDRY_PROFILE=universal_router forge build` (`via_ir = false`) → **success** after ChainedActions / V2 / V3 stack frames
+  - `FOUNDRY_PROFILE=coordinator forge build` (`via_ir = false`) → **success** after hostile-token test stored reenter calldata as `bytes` (no nested `RouteStep[]` storage copy)
+  - All `foundry.toml` profiles set **`via_ir = false`** (project law)
 - **Notes / residual risks:**
-  - Stack pressure fixed in Target (swap previews, zap plan, multipath shares), Math (`zapSplitWad` / residual search), Repo/DFPkg (`BindingsInit`).
-  - Default monorepo `forge build` still heavy (~2k files); package-local no-IR compile is the decisive proof for this blocker.
-  - Composed Stable `createPositionWithEffectiveBase` remains in WT and should ship together.
+  - Product stack pressure fixed earlier in Orbital SE hook/DETF + Weighted buffer Targets.
+  - Universal Router Crane port diverges from upstream only for stack-safe call frames (see UR `VENDOR.md`).
+  - Package profiles remain for **narrow `src`/`test` iteration**, not for viaIR.
+  - Full default monorepo `forge build --force` is slow (~2k files); use package builds as fast proof, force-default as CI gate.

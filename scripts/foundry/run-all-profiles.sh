@@ -1,28 +1,21 @@
 #!/usr/bin/env bash
-# One command per Foundry profile (including default).
+# Two Foundry gates only (see docs/ci.md Profile law).
 # Run from repo root: lib/indexedex
 # Usage: bash scripts/foundry/run-all-profiles.sh
-# Or copy/paste individual lines below.
+#
+# Focus a subtree without inventing profiles:
+#   forge test --match-path 'test/foundry/spec/hooks/.../**' -vv
+#   FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/.../**' -vv
 
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
-# --- default (no FOUNDRY_PROFILE) ---
+echo "=== hermetic (default profile → test/foundry/spec) ==="
 forge test -vv
 
-# --- hermetic / package profiles ---
-FOUNDRY_PROFILE=research forge test -vv
-FOUNDRY_PROFILE=universal_router forge test -vv
-FOUNDRY_PROFILE=coordinator forge test -vv
-FOUNDRY_PROFILE=orbital forge test -vv
-FOUNDRY_PROFILE=quad_stable forge test -vv
-FOUNDRY_PROFILE=single_se_buffer_cp_hook forge test -vv
-FOUNDRY_PROFILE=dual_se_buffer_cp_hook forge test -vv
-FOUNDRY_PROFILE=single_se_buffer_hook forge test -vv
-FOUNDRY_PROFILE=hook_factory forge test -vv
-FOUNDRY_PROFILE=uv4_single_se_cp_detf forge test -vv
-
-# --- fork profiles (require RPC) ---
+echo "=== fork (FOUNDRY_PROFILE=fork → test/foundry/fork; requires ALCHEMY_KEY) ==="
+if [[ -z "${ALCHEMY_KEY:-}" ]]; then
+  echo "ALCHEMY_KEY not set; skipping fork suite."
+  exit 0
+fi
 FOUNDRY_PROFILE=fork forge test -vv
-FOUNDRY_PROFILE=coordinator_fork forge test -vv
-FOUNDRY_PROFILE=se_erc4626 forge test -vv

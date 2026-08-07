@@ -33,7 +33,7 @@ Production-first experiments as **Foundry scripts** (not tests): drive real vaul
 ## Reproduce Uni V4 Orbital Hook (H0–H2)
 
 ```bash
-./research/run_uniswap_v4_orbital_hook.sh              # FOUNDRY_PROFILE=orbital --via-ir
+./research/run_uniswap_v4_orbital_hook.sh              # FOUNDRY_PROFILE=default
 ./research/run_uniswap_v4_orbital_hook.sh --h0
 ./research/run_uniswap_v4_orbital_hook.sh --plot-only
 ```
@@ -43,7 +43,7 @@ Artifacts: `research/out/uniswapV4/hooks/orbital/`. Findings: [`scenarios/uniswa
 ## Reproduce Uni V4 CP Single DETF (D0–D1 partial)
 
 ```bash
-./research/run_uniswap_v4_cp_detf.sh                   # FOUNDRY_PROFILE=uv4_single_se_cp_detf --via-ir
+./research/run_uniswap_v4_cp_detf.sh                   # FOUNDRY_PROFILE=default
 ./research/run_uniswap_v4_cp_detf.sh --d0
 ```
 
