@@ -23,6 +23,7 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
 import {ReentrantMockERC20} from "contracts/test/stubs/ReentrantMockERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -180,6 +181,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
 
     function test_reentrancy_addLiquidity_duringTransferFrom_reverts() public {
         // Hostile token2 re-enters addLiquidity mid-pull; nonReentrant must abort outer mint.
+        // Min-SE: bind a real ERC-4626 SE on leg0; reentrancy still targets raw hostile leg pull.
         ReentrantMockERC20 hostile = new ReentrantMockERC20("HOST", "HOST", 18);
         SimpleMintableERC20 t0 = new SimpleMintableERC20("A", "A");
         SimpleMintableERC20 t1 = new SimpleMintableERC20("B", "B");
@@ -188,6 +190,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
                 && address(t0) != address(hostile),
             "addr"
         );
+        SimpleYieldERC4626 v0 = new SimpleYieldERC4626(t0);
+        address seLeg0 = _deployERC4626SE(address(v0));
 
         IPoolManager pm2 = IPoolManager(address(new PoolManager(address(this))));
         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
@@ -200,7 +204,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             token0: address(t0),
             token1: address(t1),
             token2: address(hostile),
-            se0: address(0),
+            se0: seLeg0,
             se1: address(0),
             se2: address(0),
             rp0: address(0),

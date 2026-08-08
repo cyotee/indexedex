@@ -30,9 +30,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_DeployTest is
         assertEq(orbital.token0(), address(token0));
         assertEq(orbital.token1(), address(token1));
         assertEq(orbital.token2(), address(token2));
-        assertEq(orbital.standardExchange(0), address(0));
+        // Min-SE default: leg0 buffered
+        assertEq(orbital.standardExchange(0), se0);
         assertEq(orbital.standardExchange(1), address(0));
         assertEq(orbital.standardExchange(2), address(0));
+        assertTrue(orbital.isBuffered(0));
     }
 
     function test_lpSymbol_SEORB_prefix() public view {

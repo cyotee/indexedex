@@ -27,9 +27,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](2);
+        funcs = new bytes4[](4);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.removeLiquidity.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.previewRemoveLiquidity.selector;
+        // B6 SE-share multipath withdraw
+        funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.withdrawFlexible.selector;
+        funcs[3] = IUniswapV4StandardExchangeOrbitalBufferHook.previewWithdrawFlexible.selector;
     }
 
     function facetMetadata()

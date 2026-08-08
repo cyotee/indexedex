@@ -47,7 +47,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
 
     function test_rp_withoutSe_reverts() public {
         StaticRateProvider rp = new StaticRateProvider(1e18);
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
+        // Min-SE: keep se1 so package still has ≥1 SE; put RP on raw leg0.
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
+            _argsWithSE(false, true, false);
         args.rp0 = address(rp);
         vm.expectRevert();
         hookPkg.processArgs(abi.encode(args));

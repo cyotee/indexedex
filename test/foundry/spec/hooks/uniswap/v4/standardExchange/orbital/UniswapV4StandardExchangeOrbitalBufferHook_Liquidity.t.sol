@@ -31,9 +31,13 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LiquidityTest is
         uint256 shares = _seedThreeLeg(100 ether);
         assertGt(shares, 0);
         (uint256 e0, uint256 e1, uint256 e2) = orbital.effectiveReserves();
-        assertEq(e0, 100 ether);
+        // Default config buffers leg0: SE claim of buffer output tracks face (not always 1:1).
+        assertGt(e0, 0);
+        assertGt(orbital.seBalance(0), 0);
+        assertEq(orbital.rawReserve(0), 0);
         assertEq(e1, 100 ether);
         assertEq(e2, 100 ether);
+        assertGt(orbital.radius(), 0);
     }
 
     function test_firstMint_oneLeg_reverts() public {

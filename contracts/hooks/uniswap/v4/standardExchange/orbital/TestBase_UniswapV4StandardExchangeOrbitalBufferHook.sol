@@ -53,7 +53,7 @@ import {
  * @title TestBase_UniswapV4StandardExchangeOrbitalBufferHook
  * @notice Package path TestBase: ERC-4626 SE matrix + hook factory + registry deployHookVault + three doors.
  * @dev Ladder: CraneTest → IndexedexTest → VaultComponents → ERC4626 SE → this.
- *      Default config: 0 SE (raw-only). Override _seConfig / redeploy for 1–3 SE rows.
+ *      Default config: ≥1 SE (leg0 buffered) — min-SE remediation. Override for 2–3 SE rows.
  */
 abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBase_ERC4626StandardExchange {
     using BetterEfficientHashLib for bytes;
@@ -166,6 +166,10 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         token0.approve(hook, type(uint256).max);
         token1.approve(hook, type(uint256).max);
         token2.approve(hook, type(uint256).max);
+        // B6: SE vault shares may be deposited as LP units
+        IERC20(se0).approve(hook, type(uint256).max);
+        IERC20(se1).approve(hook, type(uint256).max);
+        IERC20(se2).approve(hook, type(uint256).max);
         token0.approve(address(swapRouter), type(uint256).max);
         token1.approve(address(swapRouter), type(uint256).max);
         token2.approve(address(swapRouter), type(uint256).max);
@@ -185,8 +189,31 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         poolKey02 = PairPoolLib.pairKey(address(token0), address(token2), spacing, IHooks(hook));
     }
 
-    /// @notice Default: 0 SE (raw-only orbital path).
+    /// @notice Default: min SE — leg0 buffered (H7 remediation). Raw-only rejected by package.
     function _defaultPkgArgs()
+        internal
+        view
+        returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
+    {
+        return IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(indexedexManager),
+            token0: address(token0),
+            token1: address(token1),
+            token2: address(token2),
+            se0: se0,
+            se1: address(0),
+            se2: address(0),
+            rp0: address(0),
+            rp1: address(0),
+            rp2: address(0),
+            tickSpacing: 0,
+            sqrtPriceX96: 0
+        });
+    }
+
+    /// @notice Base args with no SEs (invalid under min-SE; for reject tests only).
+    function _argsZeroSE()
         internal
         view
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
@@ -213,10 +240,31 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         view
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory a)
     {
-        a = _defaultPkgArgs();
+        a = _argsZeroSE();
         if (b0) a.se0 = se0;
         if (b1) a.se1 = se1;
         if (b2) a.se2 = se2;
+    }
+
+    /// @notice Mint pair into SE, leave SE shares on `user` (B6 funding helper).
+    function _mintSeSharesToUser(address se, SimpleMintableERC20 token, uint256 pairAmount)
+        internal
+        returns (uint256 seShares)
+    {
+        token.mint(user, pairAmount);
+        vm.startPrank(user);
+        token.approve(se, type(uint256).max);
+        seShares = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(token)),
+            pairAmount,
+            IERC20(se),
+            0,
+            user,
+            false,
+            block.timestamp + 1 hours
+        );
+        IERC20(se).approve(hook, type(uint256).max);
+        vm.stopPrank();
     }
 
     function _addLiquidity(uint256 a0, uint256 a1, uint256 a2)

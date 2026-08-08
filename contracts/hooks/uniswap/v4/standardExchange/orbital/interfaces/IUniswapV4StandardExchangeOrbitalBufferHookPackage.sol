@@ -24,6 +24,8 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
     error SameStandardExchange();
     error RateProviderWithoutSE();
     error InvalidSE();
+    /// @notice Remediation min-SE: at least one non-zero standardExchange is required (H7).
+    error MinOneStandardExchange();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;

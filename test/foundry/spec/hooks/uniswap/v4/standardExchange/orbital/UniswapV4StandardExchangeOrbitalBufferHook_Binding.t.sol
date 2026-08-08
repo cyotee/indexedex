@@ -14,10 +14,18 @@ import {
 contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 {
-    function test_binding_0se_rawOnly() public view {
-        assertFalse(orbital.isBuffered(0));
+    function test_binding_default_minOneSE() public view {
+        // Default deploy: ≥1 SE (leg0) per min-SE remediation.
+        assertTrue(orbital.isBuffered(0));
         assertFalse(orbital.isBuffered(1));
         assertFalse(orbital.isBuffered(2));
+        assertEq(orbital.standardExchange(0), se0);
+    }
+
+    function test_binding_reject_zeroSE() public {
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsZeroSE();
+        vm.expectRevert();
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_binding_1se_leg0() public {
@@ -59,16 +67,15 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
     }
 
     function test_binding_reject_sameSE() public {
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
-        args.se0 = se0;
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
         args.se1 = se0; // same SE on two legs — reject
         vm.expectRevert();
         hookPkg.processArgs(abi.encode(args));
     }
 
     function test_binding_reject_rpWithoutSE() public {
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
-        args.rp0 = address(0xB0B); // RP without SE
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
+        args.rp1 = address(0xB0B); // RP on raw leg without SE
         vm.expectRevert();
         hookPkg.processArgs(abi.encode(args));
     }

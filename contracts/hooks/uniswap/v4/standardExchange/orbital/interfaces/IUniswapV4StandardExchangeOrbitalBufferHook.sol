@@ -56,6 +56,35 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook {
     );
     event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
 
+    /// @notice B6: multipath deposit with pair token and/or SE vault share per leg.
+    event DepositFlexible(
+        address indexed provider,
+        address indexed to,
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 amount2,
+        bool amount2IsSeShare,
+        uint256 used0,
+        uint256 used1,
+        uint256 used2,
+        uint256 shares
+    );
+
+    /// @notice B6: multipath withdraw paying pair tokens and/or SE vault shares per leg.
+    event WithdrawFlexible(
+        address indexed provider,
+        address indexed to,
+        uint256 shares,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2,
+        uint256 amount0,
+        uint256 amount1,
+        uint256 amount2
+    );
+
     function poolManager() external view returns (IPoolManager);
     function feeOracle() external view returns (IVaultFeeOracleQuery);
     function token0() external view returns (address);
@@ -143,4 +172,47 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook {
         uint256 a2Min,
         uint256 deadline
     ) external returns (uint256 a0, uint256 a1, uint256 a2);
+
+    /// @notice B6: multipath deposit with pair token and/or SE vault share per pool-order leg.
+    /// @dev amount*IsSeShare selects SE for that leg vs pair token. Raw legs must pass false.
+    function depositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 amount2,
+        bool amount2IsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2);
+
+    /// @notice B6: multipath withdraw paying pair tokens and/or SE vault shares per pool-order leg.
+    function withdrawFlexible(
+        uint256 shares,
+        address to,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2,
+        uint256 a0Min,
+        uint256 a1Min,
+        uint256 a2Min,
+        uint256 deadline
+    ) external returns (uint256 a0, uint256 a1, uint256 a2);
+
+    function previewDepositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 amount2,
+        bool amount2IsSeShare
+    ) external view returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2);
+
+    function previewWithdrawFlexible(
+        uint256 shares,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) external view returns (uint256 a0, uint256 a1, uint256 a2);
 }

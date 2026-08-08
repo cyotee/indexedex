@@ -356,6 +356,10 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         ) {
             revert RateProviderWithoutSE();
         }
+        // Min SE (remediation H7): ≥1 buffered leg required — zero-SE raw-only rejected.
+        if (a.se0 == address(0) && a.se1 == address(0) && a.se2 == address(0)) {
+            revert MinOneStandardExchange();
+        }
         // Non-zero SEs pairwise distinct
         if (a.se0 != address(0) && a.se0 == a.se1) revert SameStandardExchange();
         if (a.se0 != address(0) && a.se0 == a.se2) revert SameStandardExchange();

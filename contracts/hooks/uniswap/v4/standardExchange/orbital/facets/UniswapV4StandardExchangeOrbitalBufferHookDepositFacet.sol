@@ -27,12 +27,15 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDepositFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](5);
+        funcs = new bytes4[](7);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.addLiquidity.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.depositSingle.selector;
         funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.previewAddLiquidity.selector;
         funcs[3] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositSingle.selector;
         funcs[4] = IUniswapV4StandardExchangeOrbitalBufferHook.previewZapSplit.selector;
+        // B6 SE-share multipath deposit
+        funcs[5] = IUniswapV4StandardExchangeOrbitalBufferHook.depositFlexible.selector;
+        funcs[6] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositFlexible.selector;
     }
 
     function facetMetadata()

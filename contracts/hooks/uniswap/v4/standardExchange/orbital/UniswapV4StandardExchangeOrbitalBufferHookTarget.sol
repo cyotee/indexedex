@@ -75,6 +75,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
     error NotZapEligible();
     error InvalidIndex();
     error InsufficientPretransfer();
+    /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
+    error InvalidSeShareLeg();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -988,6 +990,81 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         return _previewZapSplit(tokenIn, amountIn);
     }
 
+    /// @notice B6: multipath deposit with pair token and/or SE vault share per leg.
+    function depositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 amount2,
+        bool amount2IsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+        DepositFlexibleVars memory v;
+        v.amount0 = amount0;
+        v.amount0IsSeShare = amount0IsSeShare;
+        v.amount1 = amount1;
+        v.amount1IsSeShare = amount1IsSeShare;
+        v.amount2 = amount2;
+        v.amount2IsSeShare = amount2IsSeShare;
+        v.to = to;
+        v.sharesMin = sharesMin;
+        return _depositFlexible(v, deadline);
+    }
+
+    /// @notice B6: multipath withdraw paying pair tokens and/or SE vault shares per leg.
+    function withdrawFlexible(
+        uint256 shares,
+        address to,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2,
+        uint256 a0Min,
+        uint256 a1Min,
+        uint256 a2Min,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
+        WithdrawFlexibleVars memory w;
+        w.shares = shares;
+        w.to = to;
+        w.receiveSeShare0 = receiveSeShare0;
+        w.receiveSeShare1 = receiveSeShare1;
+        w.receiveSeShare2 = receiveSeShare2;
+        w.a0Min = a0Min;
+        w.a1Min = a1Min;
+        w.a2Min = a2Min;
+        return _withdrawFlexible(w, deadline);
+    }
+
+    function previewDepositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 amount2,
+        bool amount2IsSeShare
+    ) external view returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+        DepositFlexibleVars memory v;
+        v.amount0 = amount0;
+        v.amount0IsSeShare = amount0IsSeShare;
+        v.amount1 = amount1;
+        v.amount1IsSeShare = amount1IsSeShare;
+        v.amount2 = amount2;
+        v.amount2IsSeShare = amount2IsSeShare;
+        return _previewDepositFlexible(v);
+    }
+
+    function previewWithdrawFlexible(
+        uint256 shares,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) external view returns (uint256 a0, uint256 a1, uint256 a2) {
+        return _previewWithdrawFlexible(shares, receiveSeShare0, receiveSeShare1, receiveSeShare2);
+    }
+
     function _computeAdd(uint256 a0Max, uint256 a1Max, uint256 a2Max, uint256 supply)
         internal
         view
@@ -1195,7 +1272,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline,
-        bytes calldata permit2Data
+        bytes memory permit2Data
     ) internal returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
@@ -1352,6 +1429,423 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         _snapshotKLastIfFeeOn();
         _refundConservation(msg.sender);
         _syncVaultReserves();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    B6: flexible SE-share / pair multipath LP           */
+    /* ---------------------------------------------------------------------- */
+
+    /// @dev Stack-safe frame for flexible deposit (B6).
+    struct DepositFlexibleVars {
+        uint256 amount0;
+        bool amount0IsSeShare;
+        uint256 amount1;
+        bool amount1IsSeShare;
+        uint256 amount2;
+        bool amount2IsSeShare;
+        address to;
+        uint256 sharesMin;
+        uint256 used0;
+        uint256 used1;
+        uint256 used2;
+        uint256 shares;
+    }
+
+    /// @dev Stack-safe frame for flexible withdraw (B6).
+    struct WithdrawFlexibleVars {
+        uint256 shares;
+        address to;
+        bool receiveSeShare0;
+        bool receiveSeShare1;
+        bool receiveSeShare2;
+        uint256 a0Min;
+        uint256 a1Min;
+        uint256 a2Min;
+        uint256 a0;
+        uint256 a1;
+        uint256 a2;
+    }
+
+    function _depositFlexible(DepositFlexibleVars memory v, uint256 deadline)
+        internal
+        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
+    {
+        // Pure pair path: reuse existing multipath deposit (empty Permit2 = transferFrom).
+        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
+            bytes memory emptyPermit2;
+            (shares, used0, used1, used2) = _addLiquidity(
+                v.amount0, v.amount1, v.amount2, v.to, v.sharesMin, deadline, emptyPermit2
+            );
+            v.used0 = used0;
+            v.used1 = used1;
+            v.used2 = used2;
+            v.shares = shares;
+            _emitDepositFlexible(v);
+            return (shares, used0, used1, used2);
+        }
+
+        _requireDeadline(deadline);
+        if (v.to == address(0)) revert ZeroAddress();
+        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
+
+        _maybeMintProtocolFee();
+        uint256 supply = _totalSupply();
+        _fillComputeAddFlexible(v, supply);
+        if (v.shares < v.sharesMin) revert InsufficientSharesOut();
+
+        _pullFlexible(v);
+        _bufferFlexibleUsed(v);
+        _applyAdd(supply, v.shares, v.used0, v.used1, v.used2, v.to);
+        _refundConservation(msg.sender);
+        _emitDepositFlexible(v);
+        return (v.shares, v.used0, v.used1, v.used2);
+    }
+
+    function _emitDepositFlexible(DepositFlexibleVars memory v) private {
+        emit DepositFlexible(
+            msg.sender,
+            v.to,
+            v.amount0,
+            v.amount0IsSeShare,
+            v.amount1,
+            v.amount1IsSeShare,
+            v.amount2,
+            v.amount2IsSeShare,
+            v.used0,
+            v.used1,
+            v.used2,
+            v.shares
+        );
+    }
+
+    function _withdrawFlexible(WithdrawFlexibleVars memory w, uint256 deadline)
+        internal
+        returns (uint256 a0, uint256 a1, uint256 a2)
+    {
+        if (!w.receiveSeShare0 && !w.receiveSeShare1 && !w.receiveSeShare2) {
+            (a0, a1, a2) =
+                _removeLiquidity(w.shares, w.to, w.a0Min, w.a1Min, w.a2Min, deadline);
+            emit WithdrawFlexible(msg.sender, w.to, w.shares, false, false, false, a0, a1, a2);
+            return (a0, a1, a2);
+        }
+
+        _requireDeadline(deadline);
+        _requireNonZero(w.shares);
+        if (w.to == address(0)) revert ZeroAddress();
+        _validateSeShareFlags(w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2);
+
+        _maybeMintProtocolFee();
+        if (w.shares > _balanceOf(msg.sender)) revert InsufficientSharesOut();
+
+        (a0, a1, a2) = _proRataOutFlexible(
+            w.shares, w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2
+        );
+        if (a0 < w.a0Min || a1 < w.a1Min || a2 < w.a2Min) revert InsufficientTokenOut();
+
+        _burnAndPayFlexible(w.shares, w.to, w.receiveSeShare0, w.receiveSeShare1, w.receiveSeShare2);
+        emit WithdrawFlexible(
+            msg.sender,
+            w.to,
+            w.shares,
+            w.receiveSeShare0,
+            w.receiveSeShare1,
+            w.receiveSeShare2,
+            a0,
+            a1,
+            a2
+        );
+    }
+
+    function _previewDepositFlexible(DepositFlexibleVars memory v)
+        internal
+        view
+        returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
+    {
+        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
+            return _previewAddLiquidity(v.amount0, v.amount1, v.amount2);
+        }
+        _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
+        (, uint256 supplyAfter) = _previewProtocolMintShares();
+        _fillComputeAddFlexible(v, supplyAfter);
+        return (v.shares, v.used0, v.used1, v.used2);
+    }
+
+    function _previewWithdrawFlexible(
+        uint256 shares_,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) internal view returns (uint256 a0, uint256 a1, uint256 a2) {
+        if (!receiveSeShare0 && !receiveSeShare1 && !receiveSeShare2) {
+            return _previewRemoveLiquidity(shares_);
+        }
+        _requireNonZero(shares_);
+        _validateSeShareFlags(receiveSeShare0, receiveSeShare1, receiveSeShare2);
+        (uint256 protocolLp, uint256 supplyAfter) = _previewProtocolMintShares();
+        protocolLp;
+        return _proRataOutFlexibleAtSupply(
+            shares_, supplyAfter, receiveSeShare0, receiveSeShare1, receiveSeShare2
+        );
+    }
+
+    function _validateSeShareFlags(bool f0, bool f1, bool f2) private view {
+        Repo.Layout storage l = Repo._layout();
+        if (f0 && l.se0 == address(0)) revert InvalidSeShareLeg();
+        if (f1 && l.se1 == address(0)) revert InvalidSeShareLeg();
+        if (f2 && l.se2 == address(0)) revert InvalidSeShareLeg();
+    }
+
+    /// @notice Offered input → effective native (claim/rate for SE shares; buffer claim-in for pair).
+    function _offeredEffectiveNative(uint8 i, uint256 amount, bool isSeShare)
+        private
+        view
+        returns (uint256)
+    {
+        if (amount == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        address se = Repo._seAt(l, i);
+        address token = Repo._tokenAt(l, i);
+        address rp = Repo._rpAt(l, i);
+        if (isSeShare) {
+            if (rp != address(0)) {
+                return (amount * ClaimLib.getRateFailClosed(rp)) / 1e18;
+            }
+            return ClaimLib.seClaimOf(se, token, amount);
+        }
+        return _previewClaimInAt(i, amount);
+    }
+
+    /// @dev Scratch frame for flexible compute (keeps stack shallow — no via_ir).
+    struct FlexScratch {
+        uint256 o0;
+        uint256 o1;
+        uint256 o2;
+        uint256 e0;
+        uint256 e1;
+        uint256 e2;
+        uint256 supply;
+    }
+
+    /// @dev Writes shares/used* into `v` from offered amounts + SE-share flags.
+    function _fillComputeAddFlexible(DepositFlexibleVars memory v, uint256 supply) private view {
+        FlexScratch memory s;
+        s.supply = supply;
+        s.o0 = _offeredEffectiveNative(0, v.amount0, v.amount0IsSeShare);
+        s.o1 = _offeredEffectiveNative(1, v.amount1, v.amount1IsSeShare);
+        s.o2 = _offeredEffectiveNative(2, v.amount2, v.amount2IsSeShare);
+
+        if (supply == 0) {
+            _fillFirstMintFlexible(v, s);
+            return;
+        }
+
+        (s.e0, s.e1, s.e2) = _effectiveWad();
+        if (s.e0 > 0 && s.e1 > 0 && s.e2 > 0) {
+            _fillFullBookFlexible(v, s);
+            return;
+        }
+
+        if (Repo._layout().R == 0) revert NotLive();
+        _fillPartialFlexible(v, s);
+    }
+
+    function _fillFirstMintFlexible(DepositFlexibleVars memory v, FlexScratch memory s)
+        private
+        view
+    {
+        uint256 nPos;
+        if (v.amount0 > 0) nPos++;
+        if (v.amount1 > 0) nPos++;
+        if (v.amount2 > 0) nPos++;
+        if (nPos < 2) revert FirstMintRequiresTwoLegs();
+        v.used0 = v.amount0;
+        v.used1 = v.amount1;
+        v.used2 = v.amount2;
+        Repo.Layout storage l = Repo._layout();
+        v.shares = Math.firstMintShares(
+            _toWad(l.token0, s.o0) + _toWad(l.token1, s.o1) + _toWad(l.token2, s.o2)
+        );
+    }
+
+    function _fillFullBookFlexible(DepositFlexibleVars memory v, FlexScratch memory s)
+        private
+        view
+    {
+        if (v.amount0 == 0 || v.amount1 == 0 || v.amount2 == 0) revert FullBookRequiresThreeLegs();
+        if (s.o0 == 0 || s.o1 == 0 || s.o2 == 0) revert ZeroAmount();
+        v.shares = _fullBookSharesFromOffered(s);
+        if (v.shares == 0) revert ZeroAmount();
+        v.used0 = _mapUsedInput(v.amount0, s.o0, 0, v.shares, s.e0, s.supply);
+        v.used1 = _mapUsedInput(v.amount1, s.o1, 1, v.shares, s.e1, s.supply);
+        v.used2 = _mapUsedInput(v.amount2, s.o2, 2, v.shares, s.e2, s.supply);
+        if (v.used0 == 0 || v.used1 == 0 || v.used2 == 0) revert ZeroAmount();
+    }
+
+    function _fullBookSharesFromOffered(FlexScratch memory s) private view returns (uint256 shares_) {
+        Repo.Layout storage l = Repo._layout();
+        shares_ = (_toWad(l.token0, s.o0) * s.supply) / s.e0;
+        uint256 s1 = (_toWad(l.token1, s.o1) * s.supply) / s.e1;
+        if (s1 < shares_) shares_ = s1;
+        uint256 s2 = (_toWad(l.token2, s.o2) * s.supply) / s.e2;
+        if (s2 < shares_) shares_ = s2;
+    }
+
+    function _mapUsedInput(
+        uint256 amount,
+        uint256 offeredEff,
+        uint8 i,
+        uint256 shares_,
+        uint256 eWad,
+        uint256 supply
+    ) private view returns (uint256 used) {
+        address token = Repo._tokenAt(Repo._layout(), i);
+        uint256 uEff = _fromWadFloor(token, Math.fullBookUsedWad(shares_, eWad, supply));
+        used = (amount * uEff) / offeredEff;
+    }
+
+    function _fillPartialFlexible(DepositFlexibleVars memory v, FlexScratch memory s) private view {
+        uint256 e0n = _effectiveNativeAt(0);
+        uint256 e1n = _effectiveNativeAt(1);
+        uint256 e2n = _effectiveNativeAt(2);
+        (uint256 u0, uint256 u1, uint256 u2) = _partialUsed(s.o0, s.o1, s.o2, e0n, e1n, e2n);
+        v.shares = _partialNavShares(s.supply, e0n, e1n, e2n, u0, u1, u2);
+        v.used0 = s.o0 > 0 ? (v.amount0 * u0) / s.o0 : 0;
+        v.used1 = s.o1 > 0 ? (v.amount1 * u1) / s.o1 : 0;
+        v.used2 = s.o2 > 0 ? (v.amount2 * u2) / s.o2 : 0;
+    }
+
+    function _partialNavShares(
+        uint256 supply,
+        uint256 e0n,
+        uint256 e1n,
+        uint256 e2n,
+        uint256 u0,
+        uint256 u1,
+        uint256 u2
+    ) private view returns (uint256) {
+        Math.SphereNavArgs memory nav;
+        nav.supply = supply;
+        nav.R = Repo._layout().R;
+        Repo.Layout storage l = Repo._layout();
+        nav.r0Wad = _toWad(l.token0, e0n);
+        nav.r1Wad = _toWad(l.token1, e1n);
+        nav.r2Wad = _toWad(l.token2, e2n);
+        nav.used0Wad = _toWad(l.token0, u0);
+        nav.used1Wad = _toWad(l.token1, u1);
+        nav.used2Wad = _toWad(l.token2, u2);
+        return Math.sphereNavShares(nav);
+    }
+
+    function _pullFlexible(DepositFlexibleVars memory v) private {
+        Repo.Layout storage l = Repo._layout();
+        if (v.used0 > 0) {
+            address t0 = v.amount0IsSeShare ? l.se0 : l.token0;
+            IERC20(t0).safeTransferFrom(msg.sender, address(this), v.used0);
+        }
+        if (v.used1 > 0) {
+            address t1 = v.amount1IsSeShare ? l.se1 : l.token1;
+            IERC20(t1).safeTransferFrom(msg.sender, address(this), v.used1);
+        }
+        if (v.used2 > 0) {
+            address t2 = v.amount2IsSeShare ? l.se2 : l.token2;
+            IERC20(t2).safeTransferFrom(msg.sender, address(this), v.used2);
+        }
+    }
+
+    function _bufferFlexibleUsed(DepositFlexibleVars memory v) private {
+        if (!v.amount0IsSeShare && v.used0 > 0) _bufferToken(Repo._layout().token0, v.used0);
+        if (!v.amount1IsSeShare && v.used1 > 0) _bufferToken(Repo._layout().token1, v.used1);
+        if (!v.amount2IsSeShare && v.used2 > 0) _bufferToken(Repo._layout().token2, v.used2);
+    }
+
+    function _proRataOutFlexible(
+        uint256 shares,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) private view returns (uint256 a0, uint256 a1, uint256 a2) {
+        return _proRataOutFlexibleAtSupply(
+            shares, _totalSupply(), receiveSeShare0, receiveSeShare1, receiveSeShare2
+        );
+    }
+
+    function _proRataOutFlexibleAtSupply(
+        uint256 shares,
+        uint256 supply,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) private view returns (uint256 a0, uint256 a1, uint256 a2) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.se0 == address(0)) {
+            a0 = (shares * l.reserves[l.token0]) / supply;
+        } else {
+            uint256 seOut = (shares * IERC20(l.se0).balanceOf(address(this))) / supply;
+            a0 = receiveSeShare0 ? seOut : ClaimLib.previewUnwrapShares(l.se0, l.token0, seOut);
+        }
+        if (l.se1 == address(0)) {
+            a1 = (shares * l.reserves[l.token1]) / supply;
+        } else {
+            uint256 seOut = (shares * IERC20(l.se1).balanceOf(address(this))) / supply;
+            a1 = receiveSeShare1 ? seOut : ClaimLib.previewUnwrapShares(l.se1, l.token1, seOut);
+        }
+        if (l.se2 == address(0)) {
+            a2 = (shares * l.reserves[l.token2]) / supply;
+        } else {
+            uint256 seOut = (shares * IERC20(l.se2).balanceOf(address(this))) / supply;
+            a2 = receiveSeShare2 ? seOut : ClaimLib.previewUnwrapShares(l.se2, l.token2, seOut);
+        }
+    }
+
+    function _burnAndPayFlexible(
+        uint256 shares,
+        address to,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        bool receiveSeShare2
+    ) private {
+        Repo.Layout storage l = Repo._layout();
+        uint256 supply = _totalSupply();
+        _burnLp(msg.sender, shares);
+
+        _payFlexibleLeg(0, shares, supply, to, receiveSeShare0);
+        _payFlexibleLeg(1, shares, supply, to, receiveSeShare1);
+        _payFlexibleLeg(2, shares, supply, to, receiveSeShare2);
+
+        if (_totalSupply() == 0) {
+            l.L_SQUARED = 0;
+        } else {
+            _recomputeL2();
+        }
+        _snapshotKLastIfFeeOn();
+        _refundConservation(msg.sender);
+        _syncVaultReserves();
+    }
+
+    function _payFlexibleLeg(
+        uint8 i,
+        uint256 shares,
+        uint256 supply,
+        address to,
+        bool receiveSeShare
+    ) private {
+        Repo.Layout storage l = Repo._layout();
+        address se = Repo._seAt(l, i);
+        address token = Repo._tokenAt(l, i);
+        if (se == address(0)) {
+            uint256 amt = (shares * l.reserves[token]) / supply;
+            l.reserves[token] -= amt;
+            if (amt > 0) IERC20(token).safeTransfer(to, amt);
+            return;
+        }
+        uint256 seOut = (shares * IERC20(se).balanceOf(address(this))) / supply;
+        if (seOut == 0) return;
+        if (receiveSeShare) {
+            IERC20(se).safeTransfer(to, seOut);
+        } else {
+            uint256 pairOut = _unwrapSeShares(token, seOut);
+            if (pairOut > 0) IERC20(token).safeTransfer(to, pairOut);
+        }
     }
 
     function _previewAddLiquidity(uint256 a0Max, uint256 a1Max, uint256 a2Max)
@@ -1952,7 +2446,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
     /*                              Permit2 / pull                            */
     /* ---------------------------------------------------------------------- */
 
-    function _pullLegs(uint256 u0, uint256 u1, uint256 u2, bytes calldata permit2Data) internal {
+    function _pullLegs(uint256 u0, uint256 u1, uint256 u2, bytes memory permit2Data) internal {
         address t0 = token0();
         address t1 = token1();
         address t2 = token2();
@@ -1965,7 +2459,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
 
         uint8 mode = uint8(permit2Data[0]);
         if (permit2Data.length >= 32) {
-            mode = abi.decode(permit2Data[:32], (uint8));
+            uint256 raw;
+            assembly {
+                raw := mload(add(permit2Data, 0x20))
+            }
+            mode = uint8(raw);
         }
 
         if (mode == 0) {
