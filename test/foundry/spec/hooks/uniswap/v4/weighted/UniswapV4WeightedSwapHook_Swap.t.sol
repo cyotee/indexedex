@@ -38,7 +38,7 @@ contract UniswapV4WeightedSwapHook_Swap_Test is TestBase_UniswapV4WeightedSwapHo
         (address hook, MintableDec t0, MintableDec t1) = _deployN2();
         _joinFullN2(hook, t0, t1, 10_000);
 
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         uint256 amountIn = _raw(t0, 10);
         uint256 preview =
             IUniswapV4WeightedSwapHook(hook).previewSwapExactIn(address(t0), address(t1), amountIn);

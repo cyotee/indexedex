@@ -8,13 +8,16 @@ import {
 import {
     IUniswapV4WeightedSwapHook
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHook.sol";
-import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {
-    UniswapV4WeightedSwapHook_FactoryService as FactoryService
+    IUniswapV4WeightedSwapHookPackage
+} from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHookPackage.sol";
+import {
+    UniswapV4WeightedSwapHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 contract UniswapV4WeightedSwapHook_Deploy_Test is TestBase_UniswapV4WeightedSwapHook {
-    function test_D1_deployN2_flagsAndImmutables() public {
+    function test_D1_deployN2_flagsAndBindings() public {
         (address hook, MintableDec t0, MintableDec t1) = _deployN2();
         IUniswapV4WeightedSwapHook h = IUniswapV4WeightedSwapHook(hook);
         assertEq(address(h.poolManager()), address(pm));
@@ -25,10 +28,12 @@ contract UniswapV4WeightedSwapHook_Deploy_Test is TestBase_UniswapV4WeightedSwap
         uint256[] memory w = h.getNormalizedWeights();
         assertEq(w[0] + w[1], 1e18);
         // hook address encodes required flags
-        uint160 flags = FactoryService.requiredFlags();
+        uint160 flags = PkgFactory.requiredFlags();
         assertEq(uint160(hook) & flags, flags);
         // isFullBook false before mint
         assertFalse(h.isFullBook());
+        // registered as vault
+        assertTrue(_registry().isVault(hook));
     }
 
     function test_D2_invalidWeightSumReverts() public {
@@ -42,16 +47,18 @@ contract UniswapV4WeightedSwapHook_Deploy_Test is TestBase_UniswapV4WeightedSwap
         weights[0] = 5e17;
         weights[1] = 4e17; // sum != 1e18
         address[] memory providers = new address[](2);
-        FactoryService.DeployParams memory p;
-        p.create3Factory = create3Factory;
-        p.poolManager = pm;
-        p.feeOracle = vaultFeeOracle;
-        p.tokens = tokens;
-        p.weights = weights;
-        p.rateProviders = providers;
-        (uint256 mineNonce,) = FactoryService.mineNonceFor(p);
-        vm.expectRevert();
-        factory.deployWithMineNonce(tokens, weights, providers, "", mineNonce);
+        IUniswapV4WeightedSwapHookPackage.PkgArgs memory args = IUniswapV4WeightedSwapHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(vaultFeeOracle),
+            tokens: tokens,
+            weights: weights,
+            rateProviders: providers,
+            tickSpacing: 0,
+            sqrtPriceX96: 0
+        });
+        // Package processArgs validates binding before mine/deploy.
+        vm.expectRevert(IUniswapV4WeightedSwapHookPackage.InvalidWeight.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_D3_unsortedTokensRevert() public {
@@ -66,34 +73,27 @@ contract UniswapV4WeightedSwapHook_Deploy_Test is TestBase_UniswapV4WeightedSwap
         weights[0] = 5e17;
         weights[1] = 5e17;
         address[] memory providers = new address[](2);
-        FactoryService.DeployParams memory p;
-        p.create3Factory = create3Factory;
-        p.poolManager = pm;
-        p.feeOracle = vaultFeeOracle;
-        p.tokens = tokens;
-        p.weights = weights;
-        p.rateProviders = providers;
-        // mine may still find nonce; deploy must revert on validation
-        // If salt mine uses tokens as-is, just call deploy with nonce 0 after expect
-        vm.expectRevert();
-        factory.deployWithMineNonce(tokens, weights, providers, "", 0);
+        IUniswapV4WeightedSwapHookPackage.PkgArgs memory args = IUniswapV4WeightedSwapHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(vaultFeeOracle),
+            tokens: tokens,
+            weights: weights,
+            rateProviders: providers,
+            tickSpacing: 0,
+            sqrtPriceX96: 0
+        });
+        vm.expectRevert(IUniswapV4WeightedSwapHookPackage.InvalidTokenOrder.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_D4_lpMetadataPrefix() public {
         (address hook,,) = _deployN2();
-        // name/symbol via IERC20Metadata
-        string memory sym = IERC20Meta(hook).symbol();
+        string memory sym = IERC20Metadata(hook).symbol();
         assertTrue(bytes(sym).length >= 4);
-        // WGT- prefix
         bytes memory b = bytes(sym);
         assertEq(b[0], "W");
         assertEq(b[1], "G");
         assertEq(b[2], "T");
         assertEq(b[3], "-");
     }
-}
-
-interface IERC20Meta {
-    function symbol() external view returns (string memory);
-    function name() external view returns (string memory);
 }

@@ -1,36 +1,63 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
+import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
+import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
+
 import {
-    UniswapV4WeightedSwapHookFactory
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookFactory.sol";
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
-    UniswapV4WeightedSwapHook_FactoryService as FactoryService
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol";
+    UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
+} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
     IUniswapV4WeightedSwapHook
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHook.sol";
+import {
+    IUniswapV4WeightedSwapHookPackage
+} from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHookPackage.sol";
+import {
+    UniswapV4WeightedSwapHook_FactoryService as PkgFactory
+} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol";
+import {
+    UniswapV4WeightedSwapHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookPairPoolLib.sol";
 import {
     UniswapV4WeightedSwapHookMath as Math
 } from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookMath.sol";
 
 /**
  * @title TestBase_UniswapV4WeightedSwapHook
- * @notice Gold TestBase: factory-only deploy, real PM, real Vault Fee Oracle on manager.
- * @dev Production-first. No mocks of hook/factory/Math/Repo/oracle/PoolManager under test.
+ * @notice Package path TestBase: hook factory + registry deployHookVault + pair doors.
+ * @dev Ladder: CraneTest → IndexedexTest → TestBase_VaultComponents → this.
+ *      Production-first. No mocks of hook/package/factory/Math/Repo/oracle/PoolManager under test.
  */
-abstract contract TestBase_UniswapV4WeightedSwapHook is IndexedexTest {
+abstract contract TestBase_UniswapV4WeightedSwapHook is TestBase_VaultComponents {
+    using BetterEfficientHashLib for bytes;
+    using HookFactoryService for ICreate3FactoryProxy;
+
     IPoolManager internal pm;
-    UniswapV4WeightedSwapHookFactory internal factory;
+    IUniswapV4HookDiamondPackageCallBackFactory internal hookFactory;
+    IUniswapV4WeightedSwapHookPackage internal hookPkg;
     IVaultFeeOracleQuery internal vaultFeeOracle;
 
     address internal user = address(0xBEEF);
@@ -40,15 +67,9 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is IndexedexTest {
     uint256 internal constant DEMO_USAGE_FEE = 5e16; // 5% of growth share algebra
 
     function setUp() public virtual override {
-        IndexedexTest.setUp();
+        TestBase_VaultComponents.setUp();
 
-        pm = IPoolManager(
-            vm.deployCode(
-                "lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol:PoolManager",
-                abi.encode(address(this))
-            )
-        );
-
+        pm = IPoolManager(address(new PoolManager(address(this))));
         vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         feeRecipient = address(feeCollector);
 
@@ -58,8 +79,41 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is IndexedexTest {
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(DEMO_USAGE_FEE);
         vm.stopPrank();
 
-        factory = new UniswapV4WeightedSwapHookFactory(create3Factory, pm, vaultFeeOracle);
-        IOperable(address(create3Factory)).setOperator(address(factory), true);
+        // --- Shared hook diamond factory ---
+        IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
+        IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
+        hookFactory = HookFactoryService.deployUniswapV4HookDiamondPackageCallBackFactory(
+            create3Factory,
+            IUniswapV4HookDiamondPackageCallBackFactory.InitArgs({
+                erc165Facet: facetReg.canonicalFacet(type(IERC165).interfaceId),
+                diamondLoupeFacet: facetReg.canonicalFacet(type(IDiamondLoupe).interfaceId),
+                erc8109IntrospectionFacet: facetReg.canonicalFacet(type(IERC8109Introspection).interfaceId),
+                postDeployHookFacet: facetReg.canonicalFacet(type(IPostDeployAccountHook).interfaceId),
+                hookFlagsFacet: hookFlagsFacet
+            })
+        );
+        vm.prank(owner);
+        IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
+
+        // --- Product package ---
+        IFacet hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
+        IFacet liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
+        hookPkg = PkgFactory.deployPackage(
+            IVaultRegistryDeployment(address(indexedexManager)),
+            owner,
+            IUniswapV4WeightedSwapHookPackage.PkgInit({
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                hooksFacet: hooksFacet,
+                liquidityFacet: liquidityFacet,
+                erc20Facet: erc20Facet,
+                erc5267Facet: erc5267Facet,
+                erc2612Facet: erc2612Facet,
+                multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+            }),
+            abi.encode(type(IUniswapV4WeightedSwapHookPackage).name, "v1")._hash()
+        );
     }
 
     /* ---------------------------------------------------------------------- */
@@ -71,16 +125,18 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is IndexedexTest {
         uint256[] memory weights,
         address[] memory providers
     ) internal returns (address hook, PoolKey[] memory keys) {
-        FactoryService.DeployParams memory p;
-        p.create3Factory = create3Factory;
-        p.poolManager = pm;
-        p.feeOracle = vaultFeeOracle;
-        p.tokens = tokens;
-        p.weights = weights;
-        p.rateProviders = providers;
-        p.saltNamespace = "";
-        (uint256 mineNonce,) = FactoryService.mineNonceFor(p);
-        (hook, keys) = factory.deployWithMineNonce(tokens, weights, providers, "", mineNonce);
+        IUniswapV4WeightedSwapHookPackage.PkgArgs memory args = IUniswapV4WeightedSwapHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(vaultFeeOracle),
+            tokens: tokens,
+            weights: weights,
+            rateProviders: providers,
+            tickSpacing: 0,
+            sqrtPriceX96: 0
+        });
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        keys = PairPoolLib.computePairKeys(tokens, hook, int24(int256(Math.TICK_SPACING)));
     }
 
     function _deployN2() internal returns (address hook, MintableDec t0, MintableDec t1) {
@@ -183,6 +239,36 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is IndexedexTest {
         (shares,) = IUniswapV4WeightedSwapHook(hook).joinProportional(
             amounts, user, 0, block.timestamp + 1 hours, ""
         );
+    }
+
+    function _pairPoolKeys(address hook) internal view returns (PoolKey[] memory) {
+        return PairPoolLib.computePairKeys(
+            IUniswapV4WeightedSwapHook(hook).tokens(), hook, int24(int256(Math.TICK_SPACING))
+        );
+    }
+
+    function _poolKeyFor(address a, address b, address hook) internal pure returns (PoolKey memory key) {
+        (address c0, address c1) = a < b ? (a, b) : (b, a);
+        key = PoolKey({
+            currency0: Currency.wrap(c0),
+            currency1: Currency.wrap(c1),
+            fee: LPFeeLibrary.DYNAMIC_FEE_FLAG,
+            tickSpacing: int24(int256(Math.TICK_SPACING)),
+            hooks: IHooks(hook)
+        });
+    }
+
+    function _registry() internal view returns (IVaultRegistryVaultQuery) {
+        return IVaultRegistryVaultQuery(address(indexedexManager));
+    }
+
+    function _requiredFlags() internal pure returns (uint160) {
+        return PkgFactory.requiredFlags();
+    }
+
+    function _assertPoolLive(PoolKey memory key) internal view {
+        assertTrue(PairPoolLib.isPoolLive(pm, key), "pair door not initialized on PoolManager");
+        assertEq(key.fee, LPFeeLibrary.DYNAMIC_FEE_FLAG, "DYNAMIC_FEE");
     }
 
     function _sortThree(MintableDec a, MintableDec b, MintableDec c)

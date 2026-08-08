@@ -9,9 +9,6 @@ import {
 import {
     IUniswapV4WeightedSwapHook
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHook.sol";
-import {
-    UniswapV4WeightedSwapHook_FactoryService as FactoryService
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol";
 
 contract UniswapV4WeightedSwapHook_Rates_Test is TestBase_UniswapV4WeightedSwapHook {
     function test_R1_rateProviderPath() public {

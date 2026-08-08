@@ -38,10 +38,6 @@ import {
  * @dev Settle pattern-copy from dual/orbital. rootK = V. Partial dual-mode O4.
  */
 abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCommon, IHooks {
-    constructor(IPoolManager poolManager_, IVaultFeeOracleQuery feeOracle_)
-        UniswapV4WeightedSwapHookCommon(poolManager_, feeOracle_)
-    {}
-
     function getHookPermissions() public pure returns (Hooks.Permissions memory) {
         return Hooks.Permissions({
             beforeInitialize: true,
@@ -146,7 +142,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         address tokenIn = params.zeroForOne ? c0 : c1;
         address tokenOut = params.zeroForOne ? c1 : c0;
 
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) {
             _unlock();
             revert InvalidFeeWad();
@@ -217,6 +213,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (amountOut >= l.reserves[j]) revert WouldZeroReserve();
         l.reserves[j] -= amountOut;
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
+        _syncVaultReserves();
         feeWad;
     }
 
@@ -233,6 +230,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         l.reserves[i] += amountIn;
         l.reserves[j] -= amountOut;
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
+        _syncVaultReserves();
         feeWad;
     }
 
@@ -249,7 +247,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (l.reserves[i] == 0 || l.reserves[j] == 0) revert SwapNotLive();
         uint256 rateIn = _effectiveRate(i);
         uint256 rateOut = _effectiveRate(j);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256 balInS = Math.scaleTo(l.reserves[i], rateIn);
         uint256 balOutS = Math.scaleTo(l.reserves[j], rateOut);
@@ -273,7 +271,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (amountOut >= l.reserves[j]) revert WouldZeroReserve();
         uint256 rateIn = _effectiveRate(i);
         uint256 rateOut = _effectiveRate(j);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256 balInS = Math.scaleTo(l.reserves[i], rateIn);
         uint256 balOutS = Math.scaleTo(l.reserves[j], rateOut);
@@ -296,7 +294,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (mode != l.kLastMode) return 0;
 
         // rootKLast = stored k (rootK = V or interim k, both stored as k itself)
-        protocolLp = Math.protocolLpShares(l.totalSupply, rootK, l.kLast, ownerFeeShare);
+        protocolLp = Math.protocolLpShares(_totalSupply(), rootK, l.kLast, ownerFeeShare);
         if (protocolLp > 0) {
             _mint(feeTo_, protocolLp);
             emit IUniswapV4WeightedSwapHook.ProtocolFeeMinted(feeTo_, protocolLp);
@@ -322,7 +320,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         returns (uint256 protocolLp, uint256 supplyAfter)
     {
         Repo.Layout storage l = Repo._layout();
-        supplyAfter = l.totalSupply;
+        supplyAfter = _totalSupply();
         (bool feeOn,, uint256 ownerFeeShare,) = _feeOnAndShare();
         if (!feeOn || l.kLast == 0) return (0, supplyAfter);
 
@@ -330,8 +328,8 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         (uint8 mode,, uint256 rootK) = _measureK(rates);
         if (mode != l.kLastMode) return (0, supplyAfter);
 
-        protocolLp = Math.protocolLpShares(l.totalSupply, rootK, l.kLast, ownerFeeShare);
-        supplyAfter = l.totalSupply + protocolLp;
+        protocolLp = Math.protocolLpShares(_totalSupply(), rootK, l.kLast, ownerFeeShare);
+        supplyAfter = _totalSupply() + protocolLp;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -351,7 +349,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (amounts.length != l.numTokens) revert InvalidN();
 
         _maybeMintProtocolFee();
-        bool first = l.totalSupply == 0;
+        bool first = _totalSupply() == 0;
         (shares, used) = _computeJoinProportional(amounts);
         if (shares < sharesMin) revert Slippage();
         _commitJoin(used, to, shares, permit2Data, first);
@@ -363,7 +361,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         returns (uint256 shares, uint256[] memory used)
     {
         Repo.Layout storage l = Repo._layout();
-        uint256 supply = l.totalSupply;
+        uint256 supply = _totalSupply();
         uint256[] memory rates = _loadRates();
         if (supply == 0) {
             return _firstMint(amounts, rates);
@@ -521,7 +519,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (to == address(0)) revert ZeroAddress();
         Repo.Layout storage l = Repo._layout();
         if (amounts.length != l.numTokens) revert InvalidN();
-        if (l.totalSupply == 0) {
+        if (_totalSupply() == 0) {
             return _joinUnbalancedFirst(amounts, to, sharesMin, permit2Data);
         }
         if (!Math.isFullBookReserves(l.reserves)) revert NotFullBook();
@@ -545,11 +543,11 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
 
     function _quoteUnbalancedJoin(uint256[] memory amounts) internal view returns (uint256 shares) {
         Repo.Layout storage l = Repo._layout();
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         shares = Math.unbalancedJoinShares(
-            _scaleReserves(rates), _scaleAmounts(amounts, rates), l.weights, l.totalSupply, feeWad
+            _scaleReserves(rates), _scaleAmounts(amounts, rates), l.weights, _totalSupply(), feeWad
         );
     }
 
@@ -569,6 +567,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             _mint(address(0), Math.MINIMUM_LIQUIDITY);
         }
         _mint(to, shares);
+        _syncVaultReserves();
         _snapshotKLastIfFeeOn();
         emit IUniswapV4WeightedSwapHook.LiquidityJoined(msg.sender, to, shares, amounts);
     }
@@ -585,7 +584,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (to == address(0)) revert ZeroAddress();
         if (amountIn == 0) revert ZeroAmount();
         Repo.Layout storage l = Repo._layout();
-        if (l.totalSupply == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
 
         _maybeMintProtocolFee();
         shares = _quoteSingleJoinExactIn(tokenIn, amountIn);
@@ -597,6 +596,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         _pullAmounts(used, permit2Data);
         l.reserves[idx] += amountIn;
         _mint(to, shares);
+        _syncVaultReserves();
         _snapshotKLastIfFeeOn();
         emit IUniswapV4WeightedSwapHook.LiquidityJoined(msg.sender, to, shares, used);
     }
@@ -608,7 +608,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
     {
         Repo.Layout storage l = Repo._layout();
         uint256 idx = _tokenIndex(tokenIn);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         shares = Math.singleJoinExactInShares(
@@ -616,7 +616,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             l.weights,
             idx,
             Math.scaleTo(amountIn, rates[idx]),
-            l.totalSupply,
+            _totalSupply(),
             feeWad
         );
     }
@@ -633,7 +633,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (to == address(0)) revert ZeroAddress();
         if (sharesOut == 0) revert ZeroAmount();
         Repo.Layout storage l = Repo._layout();
-        if (l.totalSupply == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
 
         _maybeMintProtocolFee();
         amountIn = _quoteSingleJoinExactOut(tokenIn, sharesOut);
@@ -645,6 +645,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         _pullAmounts(used, permit2Data);
         l.reserves[idx] += amountIn;
         _mint(to, sharesOut);
+        _syncVaultReserves();
         _snapshotKLastIfFeeOn();
         emit IUniswapV4WeightedSwapHook.LiquidityJoined(msg.sender, to, sharesOut, used);
     }
@@ -656,11 +657,11 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
     {
         Repo.Layout storage l = Repo._layout();
         uint256 idx = _tokenIndex(tokenIn);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         uint256 aS = Math.singleJoinExactOutAmountIn(
-            _scaleReserves(rates), l.weights, idx, sharesOut, l.totalSupply, feeWad
+            _scaleReserves(rates), l.weights, idx, sharesOut, _totalSupply(), feeWad
         );
         amountIn = Math.descaleUp(aS, rates[idx]);
     }
@@ -682,7 +683,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         _maybeMintProtocolFee();
         Repo.Layout storage l = Repo._layout();
         if (amountsMin.length != l.numTokens) revert InvalidN();
-        uint256 supply = l.totalSupply;
+        uint256 supply = _totalSupply();
         amounts = Math.proportionalExitAmounts(shares, l.reserves, supply);
         for (uint256 i; i < l.numTokens; ++i) {
             if (amounts[i] < amountsMin[i]) revert Slippage();
@@ -700,8 +701,9 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             l.reserves[i] -= amounts[i];
             _push(l.tokens[i], to, amounts[i]);
         }
+        _syncVaultReserves();
         // partial exit: require at least one positive if supply remains
-        if (l.totalSupply > Math.MINIMUM_LIQUIDITY) {
+        if (_totalSupply() > Math.MINIMUM_LIQUIDITY) {
             bool any;
             for (uint256 i; i < l.numTokens; ++i) {
                 if (l.reserves[i] > 0) {
@@ -740,6 +742,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             if (l.reserves[i] == 0) revert WouldZeroReserve();
         }
         _push(tokenOut, to, amountOut);
+        _syncVaultReserves();
         _snapshotKLastIfFeeOn();
         uint256[] memory amts = new uint256[](l.numTokens);
         amts[idx] = amountOut;
@@ -753,11 +756,11 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
     {
         Repo.Layout storage l = Repo._layout();
         uint256 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         uint256 outS = Math.singleExitExactInAmountOut(
-            _scaleReserves(rates), l.weights, idx, sharesIn, l.totalSupply, feeWad
+            _scaleReserves(rates), l.weights, idx, sharesIn, _totalSupply(), feeWad
         );
         amountOut = Math.descale(outS, rates[idx]);
     }
@@ -787,6 +790,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             if (l.reserves[i] == 0) revert WouldZeroReserve();
         }
         _push(tokenOut, to, amountOut);
+        _syncVaultReserves();
         _snapshotKLastIfFeeOn();
         uint256[] memory amts = new uint256[](l.numTokens);
         amts[idx] = amountOut;
@@ -800,7 +804,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
     {
         Repo.Layout storage l = Repo._layout();
         uint256 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         sharesIn = Math.singleExitExactOutSharesIn(
@@ -808,7 +812,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             l.weights,
             idx,
             Math.scaleToUp(amountOut, rates[idx]),
-            l.totalSupply,
+            _totalSupply(),
             feeWad
         );
     }
@@ -826,7 +830,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (amounts.length != l.numTokens) revert InvalidN();
         (, uint256 supplyAfter) = _previewProtocolMintShares();
         uint256[] memory rates = _loadRates();
-        if (l.totalSupply == 0) {
+        if (_totalSupply() == 0) {
             return _firstMint(amounts, rates);
         }
         if (Math.isFullBookReserves(l.reserves)) {
@@ -838,7 +842,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
     function _previewJoinUnbalanced(uint256[] memory amounts) internal view returns (uint256 shares) {
         Repo.Layout storage l = Repo._layout();
         if (amounts.length != l.numTokens) revert InvalidN();
-        if (l.totalSupply == 0) {
+        if (_totalSupply() == 0) {
             uint256[] memory rates0 = _loadRates();
             (shares,) = _firstMint(amounts, rates0);
             return shares;
@@ -846,7 +850,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (!Math.isFullBookReserves(l.reserves)) revert NotFullBook();
         (, uint256 supplyAfter) = _previewProtocolMintShares();
         uint256[] memory rates = _loadRates();
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rS = _scaleReserves(rates);
         uint256[] memory aS = _scaleAmounts(amounts, rates);
@@ -859,13 +863,13 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         returns (uint256 shares)
     {
         Repo.Layout storage l = Repo._layout();
-        if (l.totalSupply == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
         if (amountIn == 0) revert ZeroAmount();
         // growth-aware: use post-protocol supply via temporary math with supplyAfter
         (uint256 protocolLp, uint256 supplyAfter) = _previewProtocolMintShares();
         protocolLp;
         uint256 idx = _tokenIndex(tokenIn);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         shares = Math.singleJoinExactInShares(
@@ -884,11 +888,11 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         returns (uint256 amountIn)
     {
         Repo.Layout storage l = Repo._layout();
-        if (l.totalSupply == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(l.reserves)) revert NotFullBook();
         if (sharesOut == 0) revert ZeroAmount();
         (, uint256 supplyAfter) = _previewProtocolMintShares();
         uint256 idx = _tokenIndex(tokenIn);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         uint256 aS = Math.singleJoinExactOutAmountIn(
@@ -918,7 +922,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (sharesIn == 0) revert ZeroAmount();
         (, uint256 supplyAfter) = _previewProtocolMintShares();
         uint256 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         uint256 outS = Math.singleExitExactInAmountOut(
@@ -937,7 +941,7 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
         if (amountOut == 0) revert ZeroAmount();
         (, uint256 supplyAfter) = _previewProtocolMintShares();
         uint256 idx = _tokenIndex(tokenOut);
-        uint256 feeWad = _feeOracle.dexSwapFeeOfVault(address(this));
+        uint256 feeWad = feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory rates = _loadRates();
         sharesIn = Math.singleExitExactOutSharesIn(
@@ -1012,5 +1016,144 @@ abstract contract UniswapV4WeightedSwapHookTarget is UniswapV4WeightedSwapHookCo
             ++k;
         }
         ISignatureTransfer(PERMIT2).permitTransferFrom(permit, details, msg.sender, signature);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    IUniswapV4WeightedSwapHook surface                  */
+    /* ---------------------------------------------------------------------- */
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+    }
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+    }
+
+    function previewJoinProportional(uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts)
+    {
+        return _previewJoinProportional(amounts);
+    }
+
+    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewJoinSingleExactIn(tokenIn, amountIn);
+    }
+
+    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewJoinSingleExactOut(tokenIn, sharesOut);
+    }
+
+    function previewJoinUnbalanced(uint256[] calldata amounts) external view returns (uint256) {
+        return _previewJoinUnbalanced(amounts);
+    }
+
+    function previewExitProportional(uint256 shares) external view returns (uint256[] memory) {
+        return _previewExitProportional(shares);
+    }
+
+    function previewExitSingleAssetExactIn(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewExitSingleExactIn(tokenOut, sharesIn);
+    }
+
+    function previewExitSingleAssetExactOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256)
+    {
+        return _previewExitSingleExactOut(tokenOut, amountOut);
+    }
+
+    function joinProportional(
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
+        return _joinProportional(amounts, to, sharesMin, deadline, permit2Data);
+    }
+
+    function joinSingleAssetExactIn(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external nonReentrant returns (uint256 shares) {
+        return _joinSingleExactIn(tokenIn, amountIn, to, sharesMin, deadline, permit2Data);
+    }
+
+    function joinSingleAssetExactOut(
+        address tokenIn,
+        uint256 sharesOut,
+        address to,
+        uint256 amountInMax,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external nonReentrant returns (uint256 amountIn) {
+        return _joinSingleExactOut(tokenIn, sharesOut, to, amountInMax, deadline, permit2Data);
+    }
+
+    function joinUnbalanced(
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external nonReentrant returns (uint256 shares) {
+        return _joinUnbalanced(amounts, to, sharesMin, deadline, permit2Data);
+    }
+
+    function exitProportional(
+        uint256 shares,
+        address to,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external nonReentrant returns (uint256[] memory amounts) {
+        return _exitProportional(shares, to, amountsMin, deadline);
+    }
+
+    function exitSingleAssetExactIn(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        return _exitSingleExactIn(tokenOut, sharesIn, to, amountOutMin, deadline);
+    }
+
+    function exitSingleAssetExactOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 sharesIn) {
+        return _exitSingleExactOut(tokenOut, amountOut, to, sharesInMax, deadline);
     }
 }

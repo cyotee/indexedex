@@ -6,3 +6,4 @@ contracts/external/solady/=lib/crane/contracts/external/solady/
 contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/
 tests/=lib/crane/test/foundry/spec/protocols/lending/aave/v4/
 battlechain-lib/=lib/crane/lib/battlechain-lib/src/
+@battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/src/

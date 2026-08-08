@@ -3,8 +3,10 @@ pragma solidity ^0.8.0;
 
 /**
  * @title UniswapV4WeightedSwapHookRepo
- * @notice Namespaced storage: reserves, kLast, ERC-20 LP (balance on address(0) OK), reentrancy.
- * @dev Slot: ERC-7201-style keccak of "indexedex.hooks.uv4.weighted.swap.storage"
+ * @notice Diamond storage for weighted hook: bindings, reserves, kLast, lock.
+ * @dev Slot: indexedex.hooks.uv4.weighted.swap.storage
+ *      LP ERC-20 uses shared ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo.
+ *      Bindings written in package initAccount — no constructor immutables.
  */
 library UniswapV4WeightedSwapHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
@@ -17,22 +19,22 @@ library UniswapV4WeightedSwapHookRepo {
     uint256 internal constant MINIMUM_LIQUIDITY = 1000;
 
     struct Layout {
-        /// @dev Binding length n; dynamic length set once at ctor.
-        uint256[] reserves;
+        // --- bindings (immortal instance identity) ---
+        address poolManager;
+        address feeOracle;
         address[] tokens;
         uint256[] weights;
         address[] rateProviders;
         uint256[] baseScales;
         uint8 numTokens;
+        bool bindingInitialized;
+        // --- pool ensure process args (not in salt) ---
+        int24 tickSpacing;
+        uint160 sqrtPriceX96;
+        // --- book ---
+        uint256[] reserves;
         uint256 kLast;
         uint8 kLastMode; // 0 FullProduct, 1 PartialInterim
-        uint256 totalSupply;
-        mapping(address => uint256) balanceOf;
-        mapping(address => mapping(address => uint256)) allowance;
-        mapping(address => uint256) nonces;
-        string name;
-        string symbol;
-        bool bindingInitialized;
         uint256 reentrancyStatus;
     }
 
@@ -43,25 +45,29 @@ library UniswapV4WeightedSwapHookRepo {
         }
     }
 
-    function _initBinding(
+    function _initializeBindings(
+        address poolManager_,
+        address feeOracle_,
         address[] memory tokens_,
         uint256[] memory weights_,
         address[] memory rateProviders_,
         uint256[] memory baseScales_,
-        string memory name_,
-        string memory symbol_
+        int24 tickSpacing_,
+        uint160 sqrtPriceX96_
     ) internal {
         Layout storage l = _layout();
         require(!l.bindingInitialized, "binding set");
         uint8 n = uint8(tokens_.length);
+        l.poolManager = poolManager_;
+        l.feeOracle = feeOracle_;
         l.numTokens = n;
         l.tokens = tokens_;
         l.weights = weights_;
         l.rateProviders = rateProviders_;
         l.baseScales = baseScales_;
         l.reserves = new uint256[](n);
-        l.name = name_;
-        l.symbol = symbol_;
+        l.tickSpacing = tickSpacing_;
+        l.sqrtPriceX96 = sqrtPriceX96_;
         l.bindingInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
     }

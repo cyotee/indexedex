@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     UniswapV4WeightedSwapHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookRepo.sol";
@@ -21,8 +23,9 @@ import {
 
 /**
  * @title UniswapV4WeightedSwapHookCommon
- * @notice Immutables (PM + feeOracle), rates fail-closed, pull/push, take/settle, fee-on growth.
- * @dev No BaseHook / DeltaResolver inheritance.
+ * @notice Shared helpers: rates fail-closed, pull/push, take/settle, fee-on growth, LP via ERC20Repo.
+ * @dev No constructor immutables. Bindings live in Repo (initAccount). No BaseHook inheritance.
+ *      `reserves()` public surface is MultiAssetBasicVaultFacet (selector collision avoided).
  */
 abstract contract UniswapV4WeightedSwapHookCommon {
     using SafeERC20 for IERC20;
@@ -54,27 +57,16 @@ abstract contract UniswapV4WeightedSwapHookCommon {
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 
-    IPoolManager internal immutable _poolManager;
-    IVaultFeeOracleQuery internal immutable _feeOracle;
-
-    constructor(IPoolManager poolManager_, IVaultFeeOracleQuery feeOracle_) {
-        if (address(poolManager_) == address(0) || address(feeOracle_) == address(0)) {
-            revert ZeroAddress();
-        }
-        _poolManager = poolManager_;
-        _feeOracle = feeOracle_;
-    }
-
     /* ---------------------------------------------------------------------- */
     /*                              public views                              */
     /* ---------------------------------------------------------------------- */
 
     function poolManager() public view virtual returns (IPoolManager) {
-        return _poolManager;
+        return IPoolManager(Repo._layout().poolManager);
     }
 
     function feeOracle() public view virtual returns (IVaultFeeOracleQuery) {
-        return _feeOracle;
+        return IVaultFeeOracleQuery(Repo._layout().feeOracle);
     }
 
     function numTokens() public view virtual returns (uint8) {
@@ -97,24 +89,20 @@ abstract contract UniswapV4WeightedSwapHookCommon {
         return Repo._layout().rateProviders[index];
     }
 
-    function reserves() public view virtual returns (uint256[] memory) {
-        return Repo._layout().reserves;
-    }
-
     function reserveOf(address token_) public view virtual returns (uint256) {
         return Repo._layout().reserves[_tokenIndex(token_)];
     }
 
     function dexSwapFee() public view virtual returns (uint256) {
-        return _feeOracle.dexSwapFeeOfVault(address(this));
+        return IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
     }
 
     function usageFee() public view virtual returns (uint256) {
-        return _feeOracle.usageFeeOfVault(address(this));
+        return IVaultFeeOracleQuery(Repo._layout().feeOracle).usageFeeOfVault(address(this));
     }
 
     function feeTo() public view virtual returns (address) {
-        return address(_feeOracle.feeTo());
+        return address(IVaultFeeOracleQuery(Repo._layout().feeOracle).feeTo());
     }
 
     function kLast() public view virtual returns (uint256) {
@@ -135,6 +123,14 @@ abstract contract UniswapV4WeightedSwapHookCommon {
 
     function permit2() public pure virtual returns (address) {
         return PERMIT2;
+    }
+
+    function pairPoolTickSpacing() public view virtual returns (int24) {
+        return Repo._layout().tickSpacing;
+    }
+
+    function pairPoolSqrtPriceX96() public view virtual returns (uint160) {
+        return Repo._layout().sqrtPriceX96;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -266,8 +262,9 @@ abstract contract UniswapV4WeightedSwapHookCommon {
         view
         returns (bool feeOn, address feeTo_, uint256 ownerFeeShare, uint256 usageFeeWad)
     {
-        feeTo_ = address(_feeOracle.feeTo());
-        usageFeeWad = _feeOracle.usageFeeOfVault(address(this));
+        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(Repo._layout().feeOracle);
+        feeTo_ = address(oracle.feeTo());
+        usageFeeWad = oracle.usageFeeOfVault(address(this));
         ownerFeeShare = (usageFeeWad * Repo.FEE_DENOMINATOR) / Math.WAD;
         feeOn = feeTo_ != address(0) && usageFeeWad != 0 && usageFeeWad < Math.WAD
             && ownerFeeShare != 0;
@@ -297,7 +294,7 @@ abstract contract UniswapV4WeightedSwapHookCommon {
     /* ---------------------------------------------------------------------- */
 
     function _onlyPoolManager() internal view {
-        if (msg.sender != address(_poolManager)) revert NotPoolManager();
+        if (msg.sender != Repo._layout().poolManager) revert NotPoolManager();
     }
 
     function _requireDeadline(uint256 deadline) internal view {
@@ -333,17 +330,18 @@ abstract contract UniswapV4WeightedSwapHookCommon {
 
     function _take(Currency currency, address recipient, uint256 amount) internal {
         if (amount == 0) return;
-        _poolManager.take(currency, recipient, amount);
+        IPoolManager(Repo._layout().poolManager).take(currency, recipient, amount);
     }
 
     function _settle(Currency currency, uint256 amount) internal {
         if (amount == 0) return;
-        _poolManager.sync(currency);
+        IPoolManager pm = IPoolManager(Repo._layout().poolManager);
+        pm.sync(currency);
         _callOptionalReturn(
             Currency.unwrap(currency),
-            abi.encodeWithSelector(IERC20.transfer.selector, address(_poolManager), amount)
+            abi.encodeWithSelector(IERC20.transfer.selector, address(pm), amount)
         );
-        _poolManager.settle();
+        pm.settle();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -369,24 +367,27 @@ abstract contract UniswapV4WeightedSwapHookCommon {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*                              ERC-20 mint/burn                          */
+    /*                         ERC-20 mint/burn (shared)                      */
     /* ---------------------------------------------------------------------- */
 
-    function _mint(address to, uint256 amount) internal virtual {
-        Repo.Layout storage l = Repo._layout();
-        l.totalSupply += amount;
-        l.balanceOf[to] += amount;
-        _emitTransfer(address(0), to, amount);
+    function _mint(address to, uint256 amount) internal {
+        if (amount == 0) return;
+        ERC20Repo._mint(to, amount);
     }
 
-    function _burn(address from, uint256 amount) internal virtual {
-        Repo.Layout storage l = Repo._layout();
-        uint256 bal = l.balanceOf[from];
-        if (amount > bal) revert InsufficientLP();
-        l.balanceOf[from] = bal - amount;
-        l.totalSupply -= amount;
-        _emitTransfer(from, address(0), amount);
+    function _burn(address from, uint256 amount) internal {
+        if (amount > ERC20Repo._balanceOf(from)) revert InsufficientLP();
+        ERC20Repo._burn(from, amount);
     }
 
-    function _emitTransfer(address from, address to, uint256 amount) internal virtual;
+    function _totalSupply() internal view returns (uint256) {
+        return ERC20Repo._totalSupply();
+    }
+
+    function _syncVaultReserves() internal {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < l.numTokens; ++i) {
+            MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), l.reserves[i]);
+        }
+    }
 }

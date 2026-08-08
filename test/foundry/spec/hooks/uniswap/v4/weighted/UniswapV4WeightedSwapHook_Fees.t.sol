@@ -31,7 +31,7 @@ contract UniswapV4WeightedSwapHook_Fees_Test is TestBase_UniswapV4WeightedSwapHo
         uint256 kBefore = IUniswapV4WeightedSwapHook(hook).kLast();
         assertGt(kBefore, 0);
 
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         bool zeroForOne = address(t0) == Currency.unwrap(key.currency0);
         uint256 amountIn = _raw(t0, 100);
         vm.startPrank(user);
@@ -89,7 +89,7 @@ contract UniswapV4WeightedSwapHook_Fees_Test is TestBase_UniswapV4WeightedSwapHo
         (address hook, MintableDec t0, MintableDec t1) = _deployN2();
         uint256 shares = _joinFullN2(hook, t0, t1, 10_000);
 
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         bool zeroForOne = address(t0) == Currency.unwrap(key.currency0);
         vm.startPrank(user);
         t0.approve(address(swapRouter), type(uint256).max);

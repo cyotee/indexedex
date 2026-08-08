@@ -8,9 +8,6 @@ import {
 import {
     IUniswapV4WeightedSwapHook
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHook.sol";
-import {
-    UniswapV4WeightedSwapHook
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
@@ -21,7 +18,7 @@ import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 contract UniswapV4WeightedSwapHook_Safety_Test is TestBase_UniswapV4WeightedSwapHook {
     function test_X1_clLiquidityBlocked() public {
         (address hook, MintableDec t0, MintableDec t1) = _deployN2();
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         ModifyLiquidityParams memory p;
         p.tickLower = -100;
         p.tickUpper = 100;
@@ -36,7 +33,7 @@ contract UniswapV4WeightedSwapHook_Safety_Test is TestBase_UniswapV4WeightedSwap
 
     function test_X2_donateBlocked() public {
         (address hook,,) = _deployN2();
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         vm.prank(address(pm));
         vm.expectRevert();
         IHooks(hook).beforeDonate(address(this), key, 1, 1, "");
@@ -53,7 +50,7 @@ contract UniswapV4WeightedSwapHook_Safety_Test is TestBase_UniswapV4WeightedSwap
 
     function test_X4_notPoolManagerRevertsOnCallback() public {
         (address hook,,) = _deployN2();
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         vm.expectRevert();
         IHooks(hook).beforeInitialize(address(this), key, 0);
     }

@@ -35,6 +35,7 @@ interface IUniswapV4WeightedSwapHook {
     function getNormalizedWeights() external view returns (uint256[] memory);
     function rateProvider(uint256 index) external view returns (address);
     function effectiveRate(uint256 index) external view returns (uint256);
+    /// @dev Also available via IBasicVault.reserves (MultiAssetBasicVaultFacet). Same selector.
     function reserves() external view returns (uint256[] memory);
     function reserveOf(address token) external view returns (uint256);
     function dexSwapFee() external view returns (uint256);
@@ -43,6 +44,11 @@ interface IUniswapV4WeightedSwapHook {
     function kLast() external view returns (uint256);
     function kLastMode() external view returns (KLastMode);
     function isFullBook() external view returns (bool);
+    function permit2() external pure returns (address);
+    /// @notice Process-only pair-door tick spacing (not part of salt identity).
+    function pairPoolTickSpacing() external view returns (int24);
+    /// @notice Process-only pair-door init sqrtPriceX96 (not part of salt identity).
+    function pairPoolSqrtPriceX96() external view returns (uint160);
 
     function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
         external
