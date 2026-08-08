@@ -26,8 +26,10 @@ IndexedEx uses **exactly two** Foundry product profiles:
 |----------|------|------|--------|
 | **Foundry CI — hermetic** | `.github/workflows/foundry-ci.yml` | push `main`, PRs, manual | none |
 
-- **Hermetic only:** `forge build` + `forge test` under the **default** profile (`test/foundry/spec`). Intended required check for merge confidence.
-- **Fork profile is not run on Actions.** Run `FOUNDRY_PROFILE=fork forge test` locally (or elsewhere) with your own RPC key. No `ALCHEMY_KEY` repository secret is required for CI.
+- **Hermetic only:** `forge build` + `forge test` under the **default** profile (`test/foundry/spec`).
+- **Fork profile is never run on Actions** (`FOUNDRY_PROFILE=fork` / `test/foundry/fork/**`). Run those **locally** with your own RPC key when needed.
+- CI also **excludes** misplaced `**/fork/**` and `*Fork*` contracts under `spec` that call `createSelectFork`, and forces empty `ALCHEMY_KEY` / `*_RPC_URL` so Actions cannot hit Alchemy rate limits.
+- **Vercel is independent of this workflow.** Frontend deploys from the Git integration on push; they are **not** gated on Foundry CI success.
 
 ## Local commands
 

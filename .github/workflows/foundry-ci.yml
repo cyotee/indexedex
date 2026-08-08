@@ -1,5 +1,12 @@
 # Foundry CI — hermetic only (default profile → test/foundry/spec).
-# Fork suites (FOUNDRY_PROFILE=fork) are local/manual; not run on Actions.
+#
+# Intentionally does NOT run FOUNDRY_PROFILE=fork (test/foundry/fork).
+# Also excludes misplaced *Fork* / **/fork/** cases under spec that call
+# createSelectFork, so CI never hammers Alchemy/RPC rate limits.
+#
+# This workflow does not control Vercel: frontend deploys from Git integration
+# on push; they are not gated on this job.
+#
 # Docs: docs/ci.md
 name: Foundry CI
 
@@ -21,6 +28,15 @@ jobs:
     name: Build + hermetic tests
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    # Never inject RPC credentials — even if org secrets exist with these names.
+    env:
+      ALCHEMY_KEY: ""
+      BASE_RPC_URL: ""
+      ETH_RPC_URL: ""
+      ROBINHOOD_RPC_URL: ""
+      FOUNDRY_ETH_RPC_URL: ""
+      FOUNDRY_BASE_RPC_URL: ""
+      FOUNDRY_ROBINHOOD_RPC_URL: ""
     steps:
       - name: Checkout (recursive submodules)
         uses: actions/checkout@v4
@@ -47,6 +63,14 @@ jobs:
       - name: Forge build (default profile)
         run: forge build
 
-      - name: Forge test (hermetic / default profile)
-        # default → test/foundry/spec (sizes=false in foundry.toml)
-        run: forge test -vv
+      - name: Forge test (hermetic only — no fork / no RPC)
+        # default profile → test/foundry/spec (sizes=false in foundry.toml)
+        # Exclude misplaced fork suites under spec (createSelectFork / live RPC):
+        #   --no-match-path  → any **/fork/** directory
+        #   --no-match-contract → *Fork* / *ForkSmoke* contract names
+        # (forge allows only one of each flag). True fork suite remains local:
+        #   FOUNDRY_PROFILE=fork forge test
+        run: >
+          forge test -vv
+          --no-match-path '**/fork/**'
+          --no-match-contract 'Fork'
