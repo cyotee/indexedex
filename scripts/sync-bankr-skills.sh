@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# Sync Bankr skills into agent skill directories for Claude Code, OpenCode, and Grok Build.
+# Sync Bankr skills for the parent DeFi workspace — NOT into IndexedEx skill trees.
 #
-# Canonical store: lib/bankr-skills/
-# Destinations:
-#   .claude/skills/  — Claude Code (Grok Build also scans this by default)
-#   .opencode/skills/ — OpenCode
-#   .grok/skills/     — Grok Build project skills
+# Canonical store (still vendored here for refresh): lib/bankr-skills/
+# Destinations (parent workspace, so IndexedEx sessions stay lean):
+#   ../../.claude/skills/   — Claude Code under projects-defi
+#   ../../.opencode/skills/ — OpenCode under projects-defi
+#   ../../.grok/skills/     — Grok Build under projects-defi
+#
+# IndexedEx keeps only Crane + IndexedEx-local skills under .claude/.grok/.opencode.
+# Override dest with BANKR_SKILLS_DEST_ROOT if needed.
 #
 # Usage:
 #   ./scripts/sync-bankr-skills.sh              # sync from vendored lib/bankr-skills
@@ -19,10 +22,13 @@ REPO_URL="https://github.com/BankrBot/skills.git"
 ETHSKILLS_URL="https://github.com/austintgriffith/ethskills.git"
 BASE_SKILLS_URL="https://github.com/base/base-skills.git"
 UNISWAP_AI_URL="https://github.com/Uniswap/uniswap-ai.git"
+# Parent of daosys/lib/indexedex → projects-defi (…/projects-defi/daosys/lib/indexedex)
+DEFAULT_DEST_ROOT="$(cd "$ROOT/../../.." && pwd)"
+DEST_ROOT="${BANKR_SKILLS_DEST_ROOT:-$DEFAULT_DEST_ROOT}"
 DESTS=(
-  "$ROOT/.claude/skills"
-  "$ROOT/.opencode/skills"
-  "$ROOT/.grok/skills"
+  "$DEST_ROOT/.claude/skills"
+  "$DEST_ROOT/.opencode/skills"
+  "$DEST_ROOT/.grok/skills"
 )
 
 rewrite_skill_name() {
@@ -64,16 +70,14 @@ refresh_vendor() {
 Source: https://github.com/BankrBot/skills
 Install / refresh: `./scripts/sync-bankr-skills.sh`
 
-These skill packages are synced into:
-- `.claude/skills/` (Claude Code; Grok Build also scans this)
-- `.opencode/skills/` (OpenCode)
-- `.grok/skills/` (Grok Build project skills)
+These skill packages are synced into the parent DeFi workspace
+(projects-defi/.claude|/.opencode|/.grok/skills), not into IndexedEx agent dirs.
 
 External stubs (EthSkills, Base, Uniswap) are expanded from their upstream repos
 via `./scripts/sync-bankr-skills.sh --expand-stubs` (also runs on `--refresh`).
 
 Do not edit skill content here for long-lived customizations; re-sync will overwrite.
-For project-specific agent skills, put them directly under `.claude/skills/` (and mirror to OpenCode/Grok as needed).
+IndexedEx-local skills stay under IndexedEx `.claude/skills/` (mirrored to OpenCode/Grok).
 EOF
   (
     cd "$tmp/bankr-skills"

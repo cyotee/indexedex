@@ -136,7 +136,7 @@ indexedex/
 ├── .cartographer/                      # Code-graph artifacts (graph.sqlite, briefs, map)
 ├── docs/                               # Documentation (this map, components, reviews)
 ├── prds/ , PRD.md                      # Product requirements
-└── AGENTS.md                           # AI agent instructions
+└── CLAUDE.md                           # AI agent router (full law: docs/agent/INDEXEDEX_AGENT_LAW.md)
 ```
 
 ## Module Guide
@@ -221,7 +221,7 @@ indexedex/
 Reserve tracking without complex mechanics. Basic: `BasicVault{Repo,Common,Facet,Target}`, `MultiAssetBasicVault*`, `ERC4626BasedBasicVaultFacet`. Standard (fee-aware): `StandardVault{Repo,Target}`, `ERC4626StandardVaultFacet`, `MultiAssetStandardVaultFacet`, `WeightedPoolReserveVaultRepo`, with `standard/exchange/IStandardExchange{In,Out}.sol`.
 
 #### DETF (`vaults/detf/`) ★ RESTRUCTURED (2026-07-31 directory reorg)
-Two-axis layout (see `DETF_DIRECTORY_REORGANIZATION_PRD.md` + `AGENTS.md`):
+Two-axis layout (see `DETF_DIRECTORY_REORGANIZATION_PRD.md` + `CLAUDE.md` / `docs/agent/INDEXEDEX_AGENT_LAW.md`):
 
 - **`common/`** — shared true-DETF infrastructure:
   - **`common/core/`** — libs: `DETFBondLifecycleLib`, `DETFBondNFTMathLib`, `DETFMintSplitLib`, `DETFPreviewLib`, `DETFThresholdPolicy`, `DETFUsageFeeLib`, `DETFProtocolCompoundLib`, `DETFNaturalExpansionLib`, `DETFBalancerScaleLib`, `DETFSafeTransferLib`.

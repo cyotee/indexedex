@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|run_terminal_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'PY'\nimport json,sys,re\nraw=sys.stdin.read()\ntry:\n    data=json.loads(raw) if raw.strip() else {}\nexcept Exception:\n    data={}\ncmd=(data.get('tool_input') or data.get('input') or {})\nif isinstance(cmd, dict):\n    c=cmd.get('command') or cmd.get('cmd') or ''\nelse:\n    c=str(cmd)\n# Fail open unless clear footgun; permission deny is primary. Block only extreme patterns.\nblocked=[\n    r'\\brm\\s+-rf\\s+/(?!tmp|var/folders|Users/[^/]+/.*\\.cache)',\n    r'git\\s+push\\s+.*--force',\n    r'git\\s+push\\s+-f\\b',\n    r'git\\s+reset\\s+--hard\\b',\n]\nfor pat in blocked:\n    if re.search(pat, c):\n        print(json.dumps({'decision':'deny','reason':f'Blocked by IndexedEx safety hook: matched {pat}'}))\n        sys.exit(0)\nprint(json.dumps({'decision':'allow'}))\nPY",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

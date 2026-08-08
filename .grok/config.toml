@@ -1,0 +1,102 @@
+# IndexedEx project harness (Grok Build)
+# Loaded when CWD is under this repo and the folder is trusted.
+# Sections honored at project scope: [mcp_servers], [plugins], [permission]
+# (and [mcp] max_output_bytes). Other keys may be ignored — keep global UI/models in ~/.grok/config.toml.
+
+# -----------------------------------------------------------------------------
+# MCP — Playwright only (effective) for this repo
+#
+# Cursor/global MCP entries in ~/.cursor/mcp.json are NOT deleted (Godot and
+# other machines stay intact). Grok still *discovers* those servers from compat
+# sources; project `[mcp_servers.*.enabled = false]` only sticky-disables
+# servers *defined* in Grok TOML, not Cursor JSON.
+#
+# Project-scoped enforcement: deny non-Playwright MCP tools below so agents
+# cannot call them while working in IndexedEx. To also skip connecting a server
+# in *all* projects, use personal `grok mcp disable <name>` (writes user config).
+# -----------------------------------------------------------------------------
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+enabled = true
+
+# -----------------------------------------------------------------------------
+# Plugins — quiet game / low-signal surfaces in this monorepo
+# -----------------------------------------------------------------------------
+[plugins]
+disabled = [
+  "boardgame-io",
+]
+
+# -----------------------------------------------------------------------------
+# Permissions — deny footguns; allow common forge/git paths under ask/auto mode
+# deny > ask > allow. Global permission_mode should not be always-approve.
+# -----------------------------------------------------------------------------
+[permission]
+allow = [
+  "Bash(forge test *)",
+  "Bash(forge build *)",
+  "Bash(forge fmt *)",
+  "Bash(forge snapshot *)",
+  "Bash(forge script *)",
+  "Bash(git status *)",
+  "Bash(git diff *)",
+  "Bash(git log *)",
+  "Bash(git branch *)",
+  "Bash(git show *)",
+  "Bash(git rev-parse *)",
+  "Bash(git add *)",
+  "Bash(git commit *)",
+  "Bash(git stash *)",
+  "Bash(git fetch *)",
+  "Bash(git pull *)",
+  "Bash(git checkout *)",
+  "Bash(git switch *)",
+  "Bash(git restore *)",
+  "Bash(git merge *)",
+  "Bash(ls *)",
+  "Bash(rg *)",
+  "Bash(grep *)",
+  "Bash(find *)",
+  "Bash(wc *)",
+  "Bash(cat *)",
+  "Bash(head *)",
+  "Bash(tail *)",
+  "Bash(python3 *)",
+  "Bash(node *)",
+  "Bash(npm *)",
+  "Bash(npx *)",
+  "Bash(./scripts/*)",
+  "Bash(scripts/*)",
+]
+deny = [
+  "Bash(rm -rf *)",
+  "Bash(rm -rf /*)",
+  "Bash(git push --force *)",
+  "Bash(git push -f *)",
+  "Bash(git reset --hard *)",
+  "Bash(git clean -fd *)",
+  "Bash(git clean -fdx *)",
+  "Bash(mkfs *)",
+  "Bash(dd if=*)",
+  # Non-Playwright MCP (leave ~/.cursor/mcp.json etc. intact for other repos)
+  "MCPTool(browsermcp__*)",
+  "MCPTool(browser-tools-mcp__*)",
+  "MCPTool(TAV2__*)",
+  "MCPTool(openrouterai__*)",
+  "MCPTool(graphiti-stdio__*)",
+  "MCPTool(graphiti-sse__*)",
+  "MCPTool(task-master-ai__*)",
+  # vercel MCP left allowed — frontend deploys to Vercel
+]
+
+# -----------------------------------------------------------------------------
+# Skills — disable global game/engine skills in this repo when project [skills]
+# is honored. Bankr catalogs are removed from this tree (synced to projects-defi).
+# -----------------------------------------------------------------------------
+[skills]
+disabled = [
+  "godot",
+  "godot-development",
+  "accelerator-usage",
+]
