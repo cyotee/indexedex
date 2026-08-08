@@ -6,6 +6,7 @@ npm workspaces under `frontend/`:
 |------|---------|------|
 | `apps/indexedex` | `@indexedex/app-indexedex` | IndexedEx site (blue) — https://indexedex.vercel.app |
 | `apps/pachira` | `@indexedex/app-pachira` | Pachira site (green) — https://pachirav2.vercel.app |
+| `apps/dtf` | `@indexedex/app-dtf` | Down To Finance — https://dtfinance.vercel.app (`dtfinance`) |
 | `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains, registry, swap helpers |
 
 ## Local development

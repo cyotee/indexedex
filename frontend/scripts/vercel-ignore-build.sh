@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Vercel "Ignored Build Step" for multi-app frontend monorepo.
 #
-# Usage: bash scripts/vercel-ignore-build.sh <indexedex|pachira>
+# Usage: bash scripts/vercel-ignore-build.sh <indexedex|pachira|dtf>
 # Exit 0 → skip deploy; Exit 1 → build.
 #
 # Rebuild when this app, packages/protocol, or shared workspace root files change.
@@ -13,6 +13,7 @@ if [[ -z "$APP_NAME" ]]; then
   # Fallback: detect from Vercel project name if set
   case "${VERCEL_PROJECT_NAME:-}" in
     *pachira*) APP_NAME=pachira ;;
+    *dtf*|*dtfinance*|*down-to-finance*|*downtofinance*) APP_NAME=dtf ;;
     *) APP_NAME=indexedex ;;
   esac
 fi

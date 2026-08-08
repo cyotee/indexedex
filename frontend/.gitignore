@@ -38,3 +38,5 @@ next-env.d.ts
 apps/*/.next/
 apps/*/playwright-report/
 apps/*/test-results/
+
+apps/*/node_modules.local.bak
