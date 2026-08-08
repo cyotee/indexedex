@@ -221,3 +221,16 @@ cd frontend && npm run typecheck
 | Add a brand-new chain id                                               | `addresses/index.ts`, `lib/networkSelection.tsx`, `providers.tsx`. Possibly `lib/addressArtifacts.ts` if the chain needs id-resolution.    |
 | Add a brand-new bucket / `*.tokenlist.json` filename                   | `tokenlists.config.ts`, then `lib/menuConfig.ts` for each surface the bucket should appear in.                                              |
 | Add a bucket whose tokens need a UI behavior that doesn't exist yet    | All of the above, plus new renderer/`type` plumbing in the relevant menu/page components.                                                  |
+
+## Vercel (production)
+
+Project: **indexedex** on Vercel (`cyotees-projects/indexedex`).
+
+| Setting | Value |
+|--------|--------|
+| Git repo | `cyotee/indexedex` → production branch `main` |
+| Root Directory | `frontend` |
+| Framework | Next.js |
+| Ignored Build Step | `frontend/scripts/vercel-ignore-build.sh` (skip when `frontend/` is unchanged) |
+
+Pushes to `main` that touch `frontend/` deploy automatically. Unrelated monorepo commits are skipped. Config: `frontend/vercel.json`.
