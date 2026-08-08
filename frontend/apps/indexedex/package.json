@@ -1,0 +1,9 @@
+{
+  "name": "@indexedex/app-indexedex",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'apps/indexedex not yet migrated (PR3); use npm run dev from frontend root'",
+    "build": "echo 'apps/indexedex not yet migrated (PR3); use npm run build from frontend root'"
+  }
+}

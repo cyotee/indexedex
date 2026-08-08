@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "indexedex-frontend",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -16,7 +16,12 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install chromium",
     "check": "npm run lint && npm run typecheck && npm run test",
-    "hooks": "npx wagmi generate"
+    "hooks": "npx wagmi generate",
+    "dev:indexedex": "node scripts/next.mjs dev --kill-port 3000",
+    "dev:pachira": "node scripts/next.mjs dev --kill-port 3001 -- -p 3001",
+    "build:indexedex": "npm run build",
+    "build:pachira": "npm run build",
+    "typecheck:protocol": "npm run typecheck -w @indexedex/protocol"
   },
   "dependencies": {
     "@tanstack/react-query": "5.45.1",
@@ -28,7 +33,8 @@
     "tevm": "^1.0.0-next.149",
     "viem": "^2.43.5",
     "voltaire": "npm:@tevm/voltaire",
-    "wagmi": "^3.0.0"
+    "wagmi": "^3.0.0",
+    "@indexedex/protocol": "*"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
@@ -51,5 +57,9 @@
     "typescript": "5.4.5",
     "utf-8-validate": "^5.0.2",
     "vitest": "^4.1.8"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

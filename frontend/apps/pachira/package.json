@@ -1,0 +1,9 @@
+{
+  "name": "@indexedex/app-pachira",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'apps/pachira not yet migrated (PR3)'",
+    "build": "echo 'apps/pachira not yet migrated (PR3)'"
+  }
+}
