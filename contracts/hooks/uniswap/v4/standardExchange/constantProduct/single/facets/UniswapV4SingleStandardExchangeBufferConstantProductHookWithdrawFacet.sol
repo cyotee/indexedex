@@ -22,11 +22,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet i
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](4);
+        funcs = new bytes4[](6);
         funcs[0] = IHook.withdraw.selector;
         funcs[1] = IHook.withdrawSingle.selector;
         funcs[2] = IHook.previewWithdraw.selector;
         funcs[3] = IHook.previewWithdrawSingle.selector;
+        funcs[4] = IHook.withdrawSeShares.selector;
+        funcs[5] = IHook.previewWithdrawSeShares.selector;
     }
 
     function facetMetadata()

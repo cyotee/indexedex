@@ -22,7 +22,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](9);
+        funcs = new bytes4[](11);
         funcs[0] = IHook.deposit.selector;
         funcs[1] = IHook.depositSingle.selector;
         funcs[2] = IHook.depositWithPermit2Signature.selector;
@@ -32,6 +32,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
         funcs[6] = IHook.previewDeposit.selector;
         funcs[7] = IHook.previewDepositSingle.selector;
         funcs[8] = IHook.previewZapSplit.selector;
+        funcs[9] = IHook.depositWithSeShares.selector;
+        funcs[10] = IHook.previewDepositWithSeShares.selector;
     }
 
     function facetMetadata()

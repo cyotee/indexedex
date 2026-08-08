@@ -34,19 +34,39 @@ import {
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib as PullLib
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol";
-import {
-    IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
- * @notice Product logic only: CP hooks, liquidity, SE In/Out, product views.
- * @dev LP ERC-20, IBasicVault, IStandardVault are cut as shared facets on the diamond.
+ * @notice Legacy monomorph product logic (reference). Production cuts Deposit/Withdraw/Se Targets.
+ * @dev Does **not** implement `IHook` — diamond facets are SoT for the public product ABI (incl. B6).
+ *      LP ERC-20, IBasicVault, IStandardVault are cut as shared facets on the diamond.
  *      LP supply/balances use ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo
  *      (pair reserve accounting = virtual SE claim; raw = face inventory).
  */
-abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget is IHooks, IHook {
+abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget is IHooks {
     using SafeERC20 for IERC20;
+
+    event Deposit(
+        address indexed sender,
+        address indexed to,
+        uint256 amount0,
+        uint256 amount1,
+        uint256 used0,
+        uint256 used1,
+        uint256 lpAmount
+    );
+    event DepositSingle(
+        address indexed sender, address indexed to, address tokenIn, uint256 amountIn, uint256 lpAmount
+    );
+    event Withdraw(
+        address indexed sender, address indexed to, uint256 lpAmount, uint256 amount0, uint256 amount1
+    );
+    event WithdrawSingle(
+        address indexed sender, address indexed to, uint256 lpAmount, address tokenOut, uint256 amountOut
+    );
+    event ZapSwap(
+        address indexed sender, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut
+    );
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 

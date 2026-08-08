@@ -42,6 +42,26 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
         uint256 amountOut
     );
 
+    /// @notice B6 proportional deposit with SE vault shares for the buffered leg.
+    event DepositSeShares(
+        address indexed sender,
+        address indexed to,
+        uint256 amountRaw,
+        uint256 amountSe,
+        uint256 usedRaw,
+        uint256 usedSe,
+        uint256 lpAmount
+    );
+
+    /// @notice B6 proportional withdraw paying rawToken + SE vault shares (no unwrap).
+    event WithdrawSeShares(
+        address indexed sender,
+        address indexed to,
+        uint256 lpAmount,
+        uint256 amountRaw,
+        uint256 amountSe
+    );
+
     event ZapSwap(
         address indexed sender,
         address tokenIn,
@@ -125,6 +145,25 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
         external
         returns (uint256 amountOut);
 
+    /// @notice B6: proportional deposit with face rawToken + SE vault shares for the buffered leg.
+    /// @dev No pair→SE buffer; SE shares enter inventory directly. Book uses claim of SE shares.
+    function depositWithSeShares(
+        uint256 amountRaw,
+        uint256 amountSe,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) external returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe);
+
+    /// @notice B6: proportional withdraw paying face rawToken + SE vault shares (no SE unwrap).
+    function withdrawSeShares(
+        uint256 lpAmount,
+        address to,
+        uint256 minAmountRaw,
+        uint256 minAmountSe,
+        uint256 deadline
+    ) external returns (uint256 amountRaw, uint256 amountSe);
+
     // --- Previews ---
     function previewDeposit(uint256 amount0, uint256 amount1)
         external
@@ -141,6 +180,16 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
     function previewWithdraw(uint256 lpAmount) external view returns (uint256 amount0, uint256 amount1);
 
     function previewWithdrawSingle(uint256 lpAmount, address tokenOut) external view returns (uint256 amountOut);
+
+    function previewDepositWithSeShares(uint256 amountRaw, uint256 amountSe)
+        external
+        view
+        returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe);
+
+    function previewWithdrawSeShares(uint256 lpAmount)
+        external
+        view
+        returns (uint256 amountRaw, uint256 amountSe);
 
     function previewSwapExactIn(bool zeroForOne, uint256 amountIn) external view returns (uint256 amountOut);
 

@@ -50,6 +50,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
 
     event Deposit(address indexed sender, address indexed to, uint256 amount0, uint256 amount1, uint256 used0, uint256 used1, uint256 lpAmount);
     event DepositSingle(address indexed sender, address indexed to, address tokenIn, uint256 amountIn, uint256 lpAmount);
+    event DepositSeShares(
+        address indexed sender,
+        address indexed to,
+        uint256 amountRaw,
+        uint256 amountSe,
+        uint256 usedRaw,
+        uint256 usedSe,
+        uint256 lpAmount
+    );
     event Withdraw(address indexed sender, address indexed to, uint256 lpAmount, uint256 amount0, uint256 amount1);
     event WithdrawSingle(address indexed sender, address indexed to, uint256 lpAmount, address tokenOut, uint256 amountOut);
     event ZapSwap(address indexed sender, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
@@ -453,6 +462,21 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         PullLib.pullPermit2AllowanceSingle(tokenIn, amountIn);
         return _depositSingle(tokenIn, amountIn, to, minLpAmount, deadline);
     }
+
+    /// @notice B6: deposit face rawToken + SE vault shares for the buffered leg (no pair buffer).
+    function depositWithSeShares(
+        uint256 amountRaw,
+        uint256 amountSe,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe) {
+        Repo.Layout storage l = Repo._layout();
+        PullLib.pullErc20Single(l.rawToken, amountRaw);
+        PullLib.pullErc20Single(l.standardExchange, amountSe);
+        return _depositWithSeShares(amountRaw, amountSe, to, minLpAmount, deadline);
+    }
+
     function _deposit(
         uint256 amount0,
         uint256 amount1,
@@ -576,6 +600,111 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         lpAmount = Math.mintSharesLater(dxN, dyN, xN, yN, ERC20Repo._totalSupply());
         if (lpAmount == 0) revert InsufficientLpOut();
         _mintLp(to, lpAmount);
+    }
+
+    /// @dev B6 proportional deposit: raw face + SE shares; book uses claim of SE shares (anti-skew).
+    function _depositWithSeShares(
+        uint256 amountRaw,
+        uint256 amountSe,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) internal returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountRaw);
+        _requireNonZero(amountSe);
+        _mintProtocolFeeIfNeeded();
+
+        if (ERC20Repo._totalSupply() == 0) {
+            usedRaw = amountRaw;
+            usedSe = amountSe;
+            lpAmount = _firstMintSeShares(to);
+        } else {
+            (lpAmount, usedRaw, usedSe) = _laterMintSeShares(amountRaw, amountSe, to);
+        }
+
+        if (lpAmount < minLpAmount) revert InsufficientLpOut();
+        _syncReserves();
+        _setKLastPostOp();
+        _refundPairDust(msg.sender);
+        emit DepositSeShares(msg.sender, to, amountRaw, amountSe, usedRaw, usedSe, lpAmount);
+    }
+
+    function _firstMintSeShares(address to) internal returns (uint256 lpAmount) {
+        // Inventory already on hook (pulled SE + raw); no buffer.
+        Repo.Layout storage l = Repo._layout();
+        uint256 geometric = Math.mintSharesFirst(
+            Math.toWad(reserveCurrency0(), l.decimalsCurrency0),
+            Math.toWad(reserveCurrency1(), l.decimalsCurrency1)
+        );
+        if (geometric <= Repo.MINIMUM_LIQUIDITY) revert InsufficientLpOut();
+        lpAmount = geometric - Repo.MINIMUM_LIQUIDITY;
+        _mintLp(address(0), Repo.MINIMUM_LIQUIDITY);
+        _mintLp(to, lpAmount);
+    }
+
+    function _laterMintSeShares(uint256 amountRaw, uint256 amountSe, address to)
+        internal
+        returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe)
+    {
+        (uint256 rawBefore, uint256 seClaimBefore, uint256 claimOffered) =
+            _seDepositPrePullBook(amountRaw, amountSe);
+        if (rawBefore == 0 || seClaimBefore == 0) revert NotLive();
+        if (claimOffered == 0) revert ZeroAmount();
+
+        uint256 usedClaim;
+        (usedRaw, usedClaim) =
+            _clampToReserveRatioFrom(rawBefore, seClaimBefore, amountRaw, claimOffered);
+        // Linear in SE unwrap claim for ERC-4626-style SE (claim of subset of shares).
+        usedSe = (amountSe * usedClaim) / claimOffered;
+        if (usedSe == 0 || usedRaw == 0) revert ZeroAmount();
+
+        _refundSeDepositExcess(amountRaw, amountSe, usedRaw, usedSe);
+        lpAmount = _mintFromDeltas(_poolOrderX(rawBefore, seClaimBefore), _poolOrderY(rawBefore, seClaimBefore), to);
+    }
+
+    function _seDepositPrePullBook(uint256 amountRaw, uint256 amountSe)
+        internal
+        view
+        returns (uint256 rawBefore, uint256 seClaimBefore, uint256 claimOffered)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 seBalAfter = IERC20(l.standardExchange).balanceOf(address(this));
+        if (seBalAfter < amountSe) revert ZeroAmount();
+        rawBefore = IERC20(l.rawToken).balanceOf(address(this)) - amountRaw;
+        seClaimBefore = _previewSeClaimOfBal(seBalAfter - amountSe);
+        claimOffered = _previewSeClaimOfBal(amountSe);
+    }
+
+    function _refundSeDepositExcess(
+        uint256 amountRaw,
+        uint256 amountSe,
+        uint256 usedRaw,
+        uint256 usedSe
+    ) internal {
+        Repo.Layout storage l = Repo._layout();
+        if (amountRaw > usedRaw) {
+            IERC20(l.rawToken).safeTransfer(msg.sender, amountRaw - usedRaw);
+        }
+        if (amountSe > usedSe) {
+            IERC20(l.standardExchange).safeTransfer(msg.sender, amountSe - usedSe);
+        }
+    }
+
+    function _poolOrderX(uint256 rawAmt, uint256 seClaimAmt) internal view returns (uint256) {
+        return Repo._layout().currency0 == Repo._layout().rawToken ? rawAmt : seClaimAmt;
+    }
+
+    function _poolOrderY(uint256 rawAmt, uint256 seClaimAmt) internal view returns (uint256) {
+        return Repo._layout().currency0 == Repo._layout().rawToken ? seClaimAmt : rawAmt;
+    }
+
+    function _previewSeClaimOfBal(uint256 seBal) internal view returns (uint256) {
+        if (seBal == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+            IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
+        );
     }
 
     function _depositSingle(
@@ -843,6 +972,66 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         returns (uint256 amountToSwap, uint256 amountOtherOut, uint256 amountKeptIn)
     {
         return _previewZapSplit(tokenIn, amountIn);
+    }
+
+    /// @notice B6 preview: raw + SE shares proportional deposit (no buffer fee path).
+    function previewDepositWithSeShares(uint256 amountRaw, uint256 amountSe)
+        external
+        view
+        returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe)
+    {
+        _requireNonZero(amountRaw);
+        _requireNonZero(amountSe);
+        uint256 claimOffered = _previewSeClaimOfBal(amountSe);
+        if (claimOffered == 0) return (0, 0, 0);
+
+        if (ERC20Repo._totalSupply() == 0) {
+            usedRaw = amountRaw;
+            usedSe = amountSe;
+            lpAmount = _previewFirstMintSeShares(usedRaw, claimOffered);
+            return (lpAmount, usedRaw, usedSe);
+        }
+
+        return _previewLaterMintSeShares(amountRaw, amountSe, claimOffered);
+    }
+
+    function _previewFirstMintSeShares(uint256 usedRaw, uint256 claimOffered)
+        internal
+        view
+        returns (uint256 lpAmount)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 r0 = _poolOrderX(usedRaw, claimOffered);
+        uint256 r1 = _poolOrderY(usedRaw, claimOffered);
+        uint256 geometric =
+            Math.mintSharesFirst(Math.toWad(r0, l.decimalsCurrency0), Math.toWad(r1, l.decimalsCurrency1));
+        if (geometric <= Repo.MINIMUM_LIQUIDITY) return 0;
+        return geometric - Repo.MINIMUM_LIQUIDITY;
+    }
+
+    function _previewLaterMintSeShares(uint256 amountRaw, uint256 amountSe, uint256 claimOffered)
+        internal
+        view
+        returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
+        uint256 seClaim = _seClaim();
+        if (rawBal == 0 || seClaim == 0) revert NotLive();
+        uint256 usedClaim;
+        (usedRaw, usedClaim) = _clampToReserveRatioFrom(rawBal, seClaim, amountRaw, claimOffered);
+        usedSe = (amountSe * usedClaim) / claimOffered;
+        if (usedSe == 0 || usedRaw == 0) return (0, usedRaw, usedSe);
+
+        uint256 dx = _poolOrderX(usedRaw, usedClaim);
+        uint256 dy = _poolOrderY(usedRaw, usedClaim);
+        lpAmount = Math.mintSharesLater(
+            Math.toWad(dx, l.decimalsCurrency0),
+            Math.toWad(dy, l.decimalsCurrency1),
+            Math.toWad(reserveCurrency0(), l.decimalsCurrency0),
+            Math.toWad(reserveCurrency1(), l.decimalsCurrency1),
+            _supplyAfterProtocolMint()
+        );
     }
 
     function _previewZapSplit(address tokenIn, uint256 amountIn)

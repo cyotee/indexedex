@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {
     TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook as TestBase
@@ -209,5 +210,149 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         assertEq(single.tradingFeePercent(), 300);
         assertEq(single.tradingFeeDenominator(), 100_000);
         assertEq(single.permit2(), 0x000000000022D473030F116dDEE9F6B43aC78BA3);
+    }
+
+    // --- B6 SE-share LP units ---
+
+    function test_B6_depositWithSeShares_firstMint_mintsLp() public {
+        _initPool();
+        uint256 seShares = _mintSeSharesToUser(100 ether);
+        assertGt(seShares, 0);
+
+        (uint256 predLp, uint256 predRaw, uint256 predSe) =
+            single.previewDepositWithSeShares(100 ether, seShares);
+        assertGt(predLp, 0);
+        assertEq(predRaw, 100 ether);
+        assertEq(predSe, seShares);
+
+        uint256 seBefore = IERC20(se).balanceOf(user);
+        uint256 lp = _depositBothSeShares(100 ether, seShares);
+        assertEq(lp, predLp);
+        assertEq(IERC20(hook).balanceOf(user), lp);
+        assertEq(IERC20(se).balanceOf(user), seBefore - seShares);
+        // Free pair not book; SE held on hook
+        assertLe(pairToken.balanceOf(hook), DUST);
+        assertGt(IERC20(se).balanceOf(hook), 0);
+        assertTrue(single.isLive());
+        assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)));
+    }
+
+    function test_B6_depositWithSeShares_subsequent_previewEqualsExec() public {
+        _seedLiveLiquidity();
+        uint256 seShares = _mintSeSharesToUser(50 ether);
+
+        (uint256 predLp, uint256 predRaw, uint256 predSe) =
+            single.previewDepositWithSeShares(50 ether, seShares);
+        uint256 seBefore = IERC20(se).balanceOf(user);
+        uint256 rawBefore = rawToken.balanceOf(user);
+        uint256 claimBefore = single.seClaimSupply();
+
+        vm.prank(user);
+        (uint256 lp, uint256 usedRaw, uint256 usedSe) =
+            single.depositWithSeShares(50 ether, seShares, user, 0, block.timestamp + 1);
+
+        assertApproxEqRel(lp, predLp, 0.02e18);
+        assertEq(usedRaw, predRaw);
+        assertEq(usedSe, predSe);
+        assertEq(rawToken.balanceOf(user), rawBefore - usedRaw);
+        assertEq(IERC20(se).balanceOf(user), seBefore - usedSe);
+        // Virtual pair (claim) rose; free pair remains dust
+        assertGt(single.seClaimSupply(), claimBefore);
+        assertLe(pairToken.balanceOf(hook), DUST);
+    }
+
+    function test_B6_withdrawSeShares_paysSeAndRaw_previewEqualsExec() public {
+        _initPool();
+        uint256 seShares = _mintSeSharesToUser(100 ether);
+        uint256 lp = _depositBothSeShares(100 ether, seShares);
+        assertGt(lp, 0);
+
+        uint256 burn = lp / 2;
+        (uint256 predRaw, uint256 predSe) = single.previewWithdrawSeShares(burn);
+        assertGt(predRaw, 0);
+        assertGt(predSe, 0);
+
+        uint256 rawBefore = rawToken.balanceOf(user);
+        uint256 seBefore = IERC20(se).balanceOf(user);
+        vm.prank(user);
+        (uint256 amountRaw, uint256 amountSe) =
+            single.withdrawSeShares(burn, user, 0, 0, block.timestamp + 1);
+
+        assertEq(amountRaw, predRaw);
+        assertEq(amountSe, predSe);
+        assertEq(rawToken.balanceOf(user) - rawBefore, amountRaw);
+        assertEq(IERC20(se).balanceOf(user) - seBefore, amountSe);
+        // No forced unwrap — free pair stays dust
+        assertLe(pairToken.balanceOf(hook), DUST);
+    }
+
+    function test_B6_pairDepositStillWorks_alongsideSeSharePath() public {
+        _seedLiveLiquidity();
+        // Pair-token path unchanged
+        uint256 lpPair = _depositBoth(25 ether, 25 ether);
+        assertGt(lpPair, 0);
+
+        // SE-share path also works on live book
+        uint256 seShares = _mintSeSharesToUser(25 ether);
+        uint256 lpSe = _depositBothSeShares(25 ether, seShares);
+        assertGt(lpSe, 0);
+
+        // Withdraw pair path still unwraps to pair
+        uint256 burn = lpPair / 2;
+        uint256 pairBefore = pairToken.balanceOf(user);
+        vm.prank(user);
+        single.withdraw(burn, user, 0, 0, block.timestamp + 1);
+        assertGt(pairToken.balanceOf(user), pairBefore);
+    }
+
+    function test_B6_antiSkew_seShareDepositVsPairBuffer_similarLp() public {
+        // Seed identical books on two sequential deposits of equal economic size.
+        // First: pair buffer path. Second user deposit of SE shares with claim ≈ same pair amount.
+        _seedLiveLiquidity();
+
+        // Measure LP from pair deposit of 40 raw + 40 pair (buffered)
+        uint256 a0 = _amountForCurrency(single.currency0(), 40 ether, 40 ether);
+        uint256 a1 = _amountForCurrency(single.currency1(), 40 ether, 40 ether);
+        vm.prank(user);
+        (uint256 lpPair,,) = single.deposit(a0, a1, user, 0, block.timestamp + 1);
+
+        // Mint SE from 40 pair; deposit 40 raw + those SE shares
+        uint256 seShares = _mintSeSharesToUser(40 ether);
+        // Claim of seShares ≈ 40 pair (fee-less ERC-4626 wrapper)
+        uint256 claim = IStandardExchangeIn(se).previewExchangeIn(
+            IERC20(se), seShares, IERC20(address(pairToken))
+        );
+        assertApproxEqRel(claim, 40 ether, 0.01e18);
+
+        vm.prank(user);
+        (uint256 lpSe,,) = single.depositWithSeShares(40 ether, seShares, user, 0, block.timestamp + 1);
+
+        // Anti-skew: SE-share in must not false-reprice vs pair-then-buffer (within dust/fee).
+        // Second deposit is slightly different book; allow modest relative drift.
+        assertApproxEqRel(lpSe, lpPair, 0.05e18);
+        assertLe(pairToken.balanceOf(hook), DUST);
+    }
+
+    function test_B6_depositWithSeShares_zero_reverts() public {
+        _initPool();
+        uint256 seShares = _mintSeSharesToUser(10 ether);
+        vm.prank(user);
+        vm.expectRevert();
+        single.depositWithSeShares(0, seShares, user, 0, block.timestamp + 1);
+        vm.prank(user);
+        vm.expectRevert();
+        single.depositWithSeShares(10 ether, 0, user, 0, block.timestamp + 1);
+    }
+
+    function test_B6_withdrawSeShares_deadlineAndMin_reverts() public {
+        _initPool();
+        uint256 seShares = _mintSeSharesToUser(50 ether);
+        uint256 lp = _depositBothSeShares(50 ether, seShares);
+        vm.prank(user);
+        vm.expectRevert();
+        single.withdrawSeShares(lp / 2, user, 0, 0, block.timestamp - 1);
+        vm.prank(user);
+        vm.expectRevert();
+        single.withdrawSeShares(lp / 2, user, type(uint256).max, 0, block.timestamp + 1);
     }
 }

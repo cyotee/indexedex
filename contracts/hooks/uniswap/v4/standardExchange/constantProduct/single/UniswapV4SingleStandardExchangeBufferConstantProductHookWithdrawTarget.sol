@@ -52,6 +52,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     event DepositSingle(address indexed sender, address indexed to, address tokenIn, uint256 amountIn, uint256 lpAmount);
     event Withdraw(address indexed sender, address indexed to, uint256 lpAmount, uint256 amount0, uint256 amount1);
     event WithdrawSingle(address indexed sender, address indexed to, uint256 lpAmount, address tokenOut, uint256 amountOut);
+    event WithdrawSeShares(
+        address indexed sender, address indexed to, uint256 lpAmount, uint256 amountRaw, uint256 amountSe
+    );
     event ZapSwap(address indexed sender, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);
 
 
@@ -407,6 +410,18 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     ) external nonReentrant returns (uint256 amountOut) {
         return _withdrawSingle(lpAmount, tokenOut, to, minAmountOut, deadline);
     }
+
+    /// @notice B6: proportional withdraw paying rawToken + SE vault shares (no unwrap).
+    function withdrawSeShares(
+        uint256 lpAmount,
+        address to,
+        uint256 minAmountRaw,
+        uint256 minAmountSe,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountRaw, uint256 amountSe) {
+        return _withdrawSeShares(lpAmount, to, minAmountRaw, minAmountSe, deadline);
+    }
+
     function _withdraw(
         uint256 lpAmount,
         address to,
@@ -441,6 +456,33 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         uint256 supply = ERC20Repo._totalSupply();
         rawOut = (IERC20(l.rawToken).balanceOf(address(this)) * lpAmount) / supply;
         seOut = (IERC20(l.standardExchange).balanceOf(address(this)) * lpAmount) / supply;
+    }
+
+    function _withdrawSeShares(
+        uint256 lpAmount,
+        address to,
+        uint256 minAmountRaw,
+        uint256 minAmountSe,
+        uint256 deadline
+    ) internal returns (uint256 amountRaw, uint256 amountSe) {
+        _requireDeadline(deadline);
+        _requireNonZero(lpAmount);
+        _mintProtocolFeeIfNeeded();
+
+        Repo.Layout storage l = Repo._layout();
+        if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
+
+        (amountRaw, amountSe) = _proRataRawAndSe(lpAmount);
+        _burnLp(msg.sender, lpAmount);
+
+        if (amountRaw > 0) IERC20(l.rawToken).safeTransfer(to, amountRaw);
+        if (amountSe > 0) IERC20(l.standardExchange).safeTransfer(to, amountSe);
+
+        if (amountRaw < minAmountRaw || amountSe < minAmountSe) revert InsufficientTokenOut();
+        _syncReserves();
+        _setKLastPostOp();
+        _refundPairDust(msg.sender);
+        emit WithdrawSeShares(msg.sender, to, lpAmount, amountRaw, amountSe);
     }
 
     function _orderAmounts(uint256 rawAmt, uint256 pairAmt)
@@ -580,6 +622,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         uint256 seOut =
             (IERC20(Repo._layout().standardExchange).balanceOf(address(this)) * lpAmount) / supply;
         return _orderAmounts(rawOut, seOut == 0 ? 0 : _previewUnwrapSe(seOut));
+    }
+
+    /// @notice B6 preview: pro-rata raw + SE shares (no unwrap).
+    function previewWithdrawSeShares(uint256 lpAmount)
+        external
+        view
+        returns (uint256 amountRaw, uint256 amountSe)
+    {
+        uint256 supply = _supplyAfterProtocolMint();
+        if (lpAmount == 0 || supply == 0) return (0, 0);
+        if (ERC20Repo._totalSupply() == 0) return (0, 0);
+        amountRaw = (IERC20(Repo._layout().rawToken).balanceOf(address(this)) * lpAmount) / supply;
+        amountSe =
+            (IERC20(Repo._layout().standardExchange).balanceOf(address(this)) * lpAmount) / supply;
     }
 
     function previewWithdrawSingle(uint256 lpAmount, address tokenOut)

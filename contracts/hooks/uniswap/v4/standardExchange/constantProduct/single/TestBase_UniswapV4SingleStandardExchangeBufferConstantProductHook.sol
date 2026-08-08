@@ -134,7 +134,33 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         vm.startPrank(user);
         rawToken.approve(hook, type(uint256).max);
         pairToken.approve(hook, type(uint256).max);
+        IERC20(se).approve(hook, type(uint256).max);
+        IERC20(se).approve(se, type(uint256).max);
         vm.stopPrank();
+    }
+
+    /// @notice Mint pair, buffer into SE, leave SE shares on `user` (B6 funding helper).
+    function _mintSeSharesToUser(uint256 pairAmount) internal returns (uint256 seShares) {
+        pairToken.mint(user, pairAmount);
+        vm.startPrank(user);
+        pairToken.approve(se, type(uint256).max);
+        seShares = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)),
+            pairAmount,
+            IERC20(se),
+            0,
+            user,
+            false,
+            block.timestamp
+        );
+        IERC20(se).approve(hook, type(uint256).max);
+        vm.stopPrank();
+    }
+
+    /// @notice B6 proportional deposit: face raw + SE vault shares for buffered leg.
+    function _depositBothSeShares(uint256 amtRaw, uint256 amtSe) internal returns (uint256 lp) {
+        vm.prank(user);
+        (lp,,) = single.depositWithSeShares(amtRaw, amtSe, user, 0, block.timestamp + 1 hours);
     }
 
     function _defaultPkgArgs() internal view returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory) {
