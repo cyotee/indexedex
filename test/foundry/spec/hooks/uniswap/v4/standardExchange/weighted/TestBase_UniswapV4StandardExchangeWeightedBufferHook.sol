@@ -18,6 +18,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -330,5 +331,43 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         _swapExactIn(address(token0), address(token1), 1 ether);
         vm.prank(user);
         weighted.depositSingle(address(token1), 5 ether, user, 0, block.timestamp + 1 hours);
+    }
+
+    /// @notice Mint pair, buffer into SE, leave SE shares on `user` (B6 funding helper).
+    function _userAcquireSeShares(address se, SimpleMintableERC20 pairToken, uint256 pairAmt)
+        internal
+        returns (uint256 seOut)
+    {
+        pairToken.mint(user, pairAmt);
+        vm.startPrank(user);
+        pairToken.approve(se, type(uint256).max);
+        seOut = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)),
+            pairAmt,
+            IERC20(se),
+            0,
+            user,
+            false,
+            block.timestamp + 1 hours
+        );
+        IERC20(se).approve(hook, type(uint256).max);
+        vm.stopPrank();
+    }
+
+    /// @notice B6 first mint: SE shares on buffered leg0 + pair face on raw leg1.
+    function _firstMintSeShareBuffered(uint256 pairForSe, uint256 rawAmt)
+        internal
+        returns (uint256 shares, uint256 seUsed)
+    {
+        uint256 seAmt = _userAcquireSeShares(se0, token0, pairForSe);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = seAmt;
+        amounts[1] = rawAmt;
+        bool[] memory isSe = new bool[](2);
+        isSe[0] = true;
+        isSe[1] = false;
+        vm.prank(user);
+        (shares,) = weighted.joinProportionalFlexible(amounts, isSe, user, 0, block.timestamp + 1 days);
+        seUsed = seAmt;
     }
 }

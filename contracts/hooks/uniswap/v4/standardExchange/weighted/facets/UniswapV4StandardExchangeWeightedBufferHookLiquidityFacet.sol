@@ -23,7 +23,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](20);
+        funcs = new bytes4[](32);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.joinProportional.selector;
         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinUnbalanced.selector;
@@ -44,6 +44,19 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet is
         funcs[17] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingle.selector;
         funcs[18] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleExactOut.selector;
         funcs[19] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleExactOut.selector;
+        // B6 flexible SE-share LP
+        funcs[20] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportionalFlexible.selector;
+        funcs[21] = IUniswapV4StandardExchangeWeightedBufferHook.joinProportionalFlexible.selector;
+        funcs[22] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitProportionalFlexible.selector;
+        funcs[23] = IUniswapV4StandardExchangeWeightedBufferHook.exitProportionalFlexible.selector;
+        funcs[24] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactInFlexible.selector;
+        funcs[25] = IUniswapV4StandardExchangeWeightedBufferHook.joinSingleAssetExactInFlexible.selector;
+        funcs[26] = IUniswapV4StandardExchangeWeightedBufferHook.previewDepositSingleFlexible.selector;
+        funcs[27] = IUniswapV4StandardExchangeWeightedBufferHook.depositSingleFlexible.selector;
+        funcs[28] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactBptInFlexible.selector;
+        funcs[29] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptInFlexible.selector;
+        funcs[30] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleFlexible.selector;
+        funcs[31] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleFlexible.selector;
     }
 
     function facetMetadata()

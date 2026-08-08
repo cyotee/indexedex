@@ -78,6 +78,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     error UnwrapFailed();
     error MaxInRatio();
     error MaxOutRatio();
+    /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
+    error SeShareNotBuffered();
+    error ArrayLengthMismatch();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();

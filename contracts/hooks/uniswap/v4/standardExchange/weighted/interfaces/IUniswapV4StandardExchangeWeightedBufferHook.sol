@@ -11,6 +11,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
  *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
  *      Multi-token liquidity also on IStandardExchangeMultiAssetLiquidity (1:1 with this surface).
  *      No permit2Data on join ABI (Q24) — transferFrom if allowance else Permit2 AllowanceTransfer.
+ *      B6: *Flexible paths accept pair token and/or SE vault share per buffered leg.
  */
 interface IUniswapV4StandardExchangeWeightedBufferHook {
     enum KLastMode {
@@ -58,6 +59,47 @@ interface IUniswapV4StandardExchangeWeightedBufferHook {
     );
     event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
     event PairPoolsEnsured(address indexed hook, uint256 doorsEnsured);
+
+    /// @notice B6 proportional join with per-leg pair vs SE-share units (`amountIsSeShare`).
+    event JoinFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        uint256[] amounts,
+        bool[] amountIsSeShare,
+        uint256[] usedAmounts,
+        uint256 protocolSharesMinted
+    );
+
+    /// @notice B6 proportional exit paying pair and/or SE shares per leg (`receiveSeShare`).
+    event ExitFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        bool[] receiveSeShare,
+        uint256[] amounts,
+        uint256 protocolSharesMinted
+    );
+
+    event DepositSingleFlexible(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+
+    event WithdrawSingleFlexible(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountOut,
+        bool receiveSeShare,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
 
     /* ------------------------------- Binding -------------------------------- */
 
@@ -154,6 +196,37 @@ interface IUniswapV4StandardExchangeWeightedBufferHook {
         view
         returns (uint256 sharesIn);
 
+    /// @notice B6: proportional join preview; `amountIsSeShare[i]` selects SE vault share vs pair for leg i.
+    function previewJoinProportionalFlexible(uint256[] calldata amounts, bool[] calldata amountIsSeShare)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function previewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
+        external
+        view
+        returns (uint256[] memory amounts);
+
+    function previewJoinSingleAssetExactInFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewDepositSingleFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewExitSingleAssetExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewWithdrawSingleFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        external
+        view
+        returns (uint256 amountOut);
+
     /* ------------------------------ Liquidity ------------------------------- */
 
     function joinProportional(
@@ -226,4 +299,60 @@ interface IUniswapV4StandardExchangeWeightedBufferHook {
         uint256 sharesInMax,
         uint256 deadline
     ) external returns (uint256 sharesIn);
+
+    /* ------------------------- B6: SE-share flexible LP ------------------------- */
+
+    /// @notice B6 proportional join: per leg pair token and/or SE vault share (buffered legs only).
+    function joinProportionalFlexible(
+        uint256[] calldata amounts,
+        bool[] calldata amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares, uint256[] memory usedAmounts);
+
+    /// @notice B6 proportional exit: pay pair tokens and/or SE vault shares per buffered leg.
+    function exitProportionalFlexible(
+        uint256 shares,
+        address to,
+        bool[] calldata receiveSeShare,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function joinSingleAssetExactInFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function depositSingleFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function exitSingleAssetExactBptInFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function withdrawSingleFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
 }
