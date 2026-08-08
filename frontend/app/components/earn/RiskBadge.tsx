@@ -2,7 +2,7 @@ import { Badge } from '../ui/Badge'
 import {
   RISK_LEVEL_LABEL,
   type RiskLevel,
-} from '../../lib/earn/riskFromTags'
+} from '@indexedex/protocol/earn/riskFromTags'
 
 const TONE: Record<RiskLevel, 'accent' | 'info' | 'warning'> = {
   conservative: 'accent',

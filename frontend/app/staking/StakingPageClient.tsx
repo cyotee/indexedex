@@ -8,18 +8,18 @@ import { useSearchParams } from 'next/navigation'
 import WalletStatusBanner from '../components/WalletStatusBanner'
 import { AddressLink } from '../components/ui/AddressLink'
 import { PageHeader } from '../components/ui/PageHeader'
-import { CHAIN_ID_SEPOLIA, getAddressArtifacts } from '../lib/addressArtifacts'
+import { CHAIN_ID_SEPOLIA, getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
 import { isDebugLabEnabled } from '../lib/lab'
 import useChainResolution from '../lib/hooks/useChainResolution'
 import useRouterBytecode from '../lib/hooks/useRouterBytecode'
 import { useStakingContractReads } from '../lib/hooks/useStakingContractReads'
-import { protocolDetfAbi } from '../lib/protocolDetfAbi'
+import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
 import {
   getFeaturedFeeDetfsForChain,
   getProtocolDetfsForChain,
   type Address,
   type TokenListEntry,
-} from '../lib/tokenlists'
+} from '@indexedex/protocol/tokenlists'
 import BondSection from './sections/BondSection'
 import BurnChirSection from './sections/BurnChirSection'
 import DetfSelectorSection from './sections/DetfSelectorSection'

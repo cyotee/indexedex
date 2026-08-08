@@ -13,7 +13,7 @@ abstract contract LocalTestingSuperSimBase is Script {
     string internal constant DEFAULT_ETHEREUM_DIR = "deployments/local_testing/supersim/ethereum";
     string internal constant DEFAULT_BASE_DIR = "deployments/local_testing/supersim/base";
     string internal constant DEFAULT_SHARED_DIR = "deployments/local_testing/supersim/shared";
-    string internal constant DEFAULT_FRONTEND_DIR = "frontend/app/addresses/local_testing_supersim";
+    string internal constant DEFAULT_FRONTEND_DIR = "frontend/packages/protocol/src/addresses/local_testing_supersim";
 
     function _configureLocalTestingSuperSimEnv() internal {
         _setEnvIfMissing("SUPERSIM_ROOT_OUT_DIR", DEFAULT_ROOT);

@@ -8,8 +8,8 @@ import { erc20Abi } from 'viem'
 import { formatUnits, parseUnits } from 'viem'
 import DebugPanel from '../components/DebugPanel'
 import { debugError, debugLog } from '../lib/debug'
-import { usePreferredBrowserChainId } from '../lib/browserChain'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { usePreferredBrowserChainId } from '@indexedex/protocol/browserChain'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 // Import generated hooks
 import { 
@@ -24,7 +24,7 @@ import {
 } from '../generated'
 
 // Import addresses from the new structure
-import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOST, CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '../lib/addressArtifacts'
+import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOST, CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '@indexedex/protocol/addressArtifacts'
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
@@ -35,8 +35,8 @@ import {
   type PoolOption,
   type TokenOption,
   type Address
-} from '../lib/tokenlists'
-import { resolveAppChain } from '../lib/runtimeChains'
+} from '@indexedex/protocol/tokenlists'
+import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
 // Types for batch swap operations
 interface SwapPathStep {

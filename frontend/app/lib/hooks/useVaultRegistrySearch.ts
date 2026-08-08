@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useReadContract } from 'wagmi'
 
-import { getVaultRegistryAddress } from '../registry/getVaultRegistryAddress'
+import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRegistryAddress'
 import {
   filtersFromParsedEntry,
   parseUserSearchEntry,
@@ -11,9 +11,9 @@ import {
   type KnownTokenHint,
   type ParsedUserEntry,
   type RegistryQuerySpec,
-} from '../registry/pickRegistryQuery'
-import { vaultRegistryQueryAbi } from '../registry/vaultRegistryAbi'
-import type { DeploymentEnvironment } from '../addressArtifacts'
+} from '@indexedex/protocol/registry/pickRegistryQuery'
+import { vaultRegistryQueryAbi } from '@indexedex/protocol/registry/vaultRegistryAbi'
+import type { DeploymentEnvironment } from '@indexedex/protocol/addressArtifacts'
 
 export type UseVaultRegistrySearchArgs = {
   chainId: number

@@ -1,6 +1,6 @@
 'use client'
 
-import type { EarnProductType } from '../../lib/earn/types'
+import type { EarnProductType } from '@indexedex/protocol/earn/types'
 
 export type EarnTypeFilter = EarnProductType | 'all'
 

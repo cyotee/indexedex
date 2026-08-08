@@ -8,13 +8,13 @@ import { erc20Abi } from 'viem'
 import { formatUnits, parseUnits } from 'viem'
 import DebugPanel from '../components/DebugPanel'
 
-import { getAddressArtifacts } from '../lib/addressArtifacts'
+import { getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
 import {
   getMintableTestTokensForChain,
   type TokenOption
-} from '../lib/tokenlists'
-import { resolveAppChain } from '../lib/runtimeChains'
-import { useSelectedNetwork } from '../lib/networkSelection'
+} from '@indexedex/protocol/tokenlists'
+import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 const erc20MinterFacadeAbi = [
   {

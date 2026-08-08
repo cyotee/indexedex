@@ -1,4 +1,4 @@
-import { resolveRiskLevel } from './riskFromTags'
+import { resolveRiskLevel } from '@indexedex/protocol/earn/riskFromTags'
 import type {
   Address,
   EarnCatalogInputs,
@@ -6,7 +6,7 @@ import type {
   EarnProduct,
   EarnProductInput,
   EarnProductType,
-} from './types'
+} from '@indexedex/protocol/earn/types'
 
 function isHexAddress(value: string): value is Address {
   return /^0x[0-9a-fA-F]{40}$/.test(value)

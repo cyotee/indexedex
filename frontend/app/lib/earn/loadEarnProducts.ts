@@ -1,16 +1,16 @@
 import {
   getDefaultDeploymentEnvironment,
   type DeploymentEnvironment,
-} from '../addressArtifacts'
+} from '@indexedex/protocol/addressArtifacts'
 import {
   getFeaturedFeeDetfsForChain,
   getProtocolDetfsForChain,
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
   type TokenListEntry,
-} from '../tokenlists'
+} from '@indexedex/protocol/tokenlists'
 import { assembleEarnProducts, filterEarnProducts, resolveFeaturedProducts, parseFeaturedAddressList } from './assembleEarnProducts'
-import type { EarnFilterOptions, EarnProduct, EarnProductInput } from './types'
+import type { EarnFilterOptions, EarnProduct, EarnProductInput } from '@indexedex/protocol/earn/types'
 
 function toInput(entry: TokenListEntry): EarnProductInput {
   return {

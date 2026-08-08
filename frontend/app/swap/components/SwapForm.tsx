@@ -1,8 +1,8 @@
 // Swap Form UI Component
 // Extracted from page.tsx to reduce file size
 
-import type { PoolOption, TokenOption } from '../../lib/tokenlists'
-import type { BuildArgsOutput } from '../../lib/swap/types'
+import type { PoolOption, TokenOption } from '@indexedex/protocol/tokenlists'
+import type { BuildArgsOutput } from '@indexedex/protocol/swap/types'
 
 interface SwapFormProps {
   // Token selection

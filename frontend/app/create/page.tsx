@@ -3,7 +3,7 @@
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { useMemo, useState, useCallback } from 'react'
 import DebugPanel from '../components/DebugPanel'
-import { getFactories, getFactoryFunctions, type ContractListFactory, type ContractListArgument, type ContractListArgUI, buildOptionsFromUI, resolveLabel } from '../lib/contractlists'
+import { getFactories, getFactoryFunctions, type ContractListFactory, type ContractListArgument, type ContractListArgUI, buildOptionsFromUI, resolveLabel } from '@indexedex/protocol/contractlists'
 import { erc20Abi, parseUnits } from 'viem'
 import { explorerAddressUrl } from '../lib/explorer'
 import {
@@ -12,7 +12,7 @@ import {
     useSimulateUniswapV2StandardExchangeDfPkgDeployVault,
     useWatchVaultRegistryDeploymentFacetNewVaultEvent
 } from '../generated'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 function ContractFunctionSelectField({
     arg,

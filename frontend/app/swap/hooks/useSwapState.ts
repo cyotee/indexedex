@@ -2,8 +2,8 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
 import { parseUnits } from 'viem'
-import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOST, CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '../../lib/addressArtifacts'
-import { usePreferredBrowserChainId } from '../../lib/browserChain'
+import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOST, CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '@indexedex/protocol/addressArtifacts'
+import { usePreferredBrowserChainId } from '@indexedex/protocol/browserChain'
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
@@ -15,9 +15,9 @@ import {
   type PoolOption,
   type TokenOption,
   type Address
-} from '../../lib/tokenlists'
-import { buildExactInArgs, buildExactOutArgs, ZERO_ADDR } from '../../lib/swap/buildArgs'
-import type { PoolType, BuildArgsOutput } from '../../lib/swap/types'
+} from '@indexedex/protocol/tokenlists'
+import { buildExactInArgs, buildExactOutArgs, ZERO_ADDR } from '@indexedex/protocol/swap/buildArgs'
+import type { PoolType, BuildArgsOutput } from '@indexedex/protocol/swap/types'
 
 export interface SwapState {
   // Wallet & chain

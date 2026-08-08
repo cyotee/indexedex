@@ -31,18 +31,18 @@ import DebugPanel from '../components/DebugPanel'
 import { ActionCta } from '../components/ui/ActionCta'
 import { Card } from '../components/ui/Card'
 import { debugError, debugLog } from '../lib/debug'
-import { usePreferredBrowserChainId } from '../lib/browserChain'
+import { usePreferredBrowserChainId } from '@indexedex/protocol/browserChain'
 import {
   resolveWalletGate,
   type PendingLeg,
 } from '../lib/tx/actionState'
 import { parseContractError } from '../lib/tx/parseContractError'
 
-import { hasBytecode, isZeroAddress } from '../lib/onchain'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { hasBytecode, isZeroAddress } from '@indexedex/protocol/onchain'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { parseLaunchQuery } from '../lib/earn/launchQuery'
 
-import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '../lib/permit2-signature'
+import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '@indexedex/protocol/permit2-signature'
 
 import {
   CHAIN_ID_ANVIL,
@@ -52,7 +52,7 @@ import {
   getAddressArtifacts,
   isSupportedChainId,
   resolveArtifactsChainId,
-} from '../lib/addressArtifacts'
+} from '@indexedex/protocol/addressArtifacts'
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
@@ -66,8 +66,8 @@ import {
   type PoolOption,
   type TokenOption,
   type Address
-} from '../lib/tokenlists'
-import { CHAIN_ID_SEPOLIA } from '../addresses'
+} from '@indexedex/protocol/tokenlists'
+import { CHAIN_ID_SEPOLIA } from '@indexedex/protocol/addresses'
 import {
   resolveRoute,
   type BalancerRouteName,

@@ -6,7 +6,7 @@ import {
   resolveFeaturedProducts,
 } from './assembleEarnProducts'
 import { parseLaunchQuery } from './launchQuery'
-import type { EarnProduct } from './types'
+import type { EarnProduct } from '@indexedex/protocol/earn/types'
 
 const A = '0x1111111111111111111111111111111111111111'
 const B = '0x2222222222222222222222222222222222222222'

@@ -17,9 +17,9 @@ import {
 } from 'wagmi'
 
 import { useApprovalFlow } from '../../lib/hooks/useApprovalFlow'
-import { getAddressArtifacts } from '../../lib/addressArtifacts'
-import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment'
-import { swapExactInAbi } from '../../lib/swapAbis'
+import { getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
+import { swapExactInAbi } from '@indexedex/protocol/swapAbis'
 import {
   buildStrategyVaultDepositArgs,
   buildStrategyVaultWithdrawArgs,
@@ -34,7 +34,7 @@ import {
   toVaultDepositQueryArgs,
   toVaultWithdrawQueryArgs,
 } from '../../lib/earn/toVaultSwapQueryArgs'
-import type { EarnProduct } from '../../lib/earn/types'
+import type { EarnProduct } from '@indexedex/protocol/earn/types'
 import {
   resolveWalletGate,
   type PendingLeg,

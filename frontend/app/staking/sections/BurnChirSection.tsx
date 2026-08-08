@@ -10,9 +10,9 @@ import SlippageInput from '../../components/SlippageInput'
 import { balancerV3StandardExchangeRouterExactInSwapFacetAbi } from '../../generated'
 import { useApprovalFlow, type WriteContractAsync as WriteContractAsyncType } from '../../lib/hooks/useApprovalFlow'
 import { usePermit2Nonce } from '../../lib/hooks/usePermit2Nonce'
-import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '../../lib/permit2-signature'
-import { protocolDetfAbi } from '../../lib/protocolDetfAbi'
-import { swapExactInAbi } from '../../lib/swapAbis'
+import { buildPermit2WitnessDigest, buildPermitIntentKey, createWitnessFromSwapParams, getPermit2TypedData } from '@indexedex/protocol/permit2-signature'
+import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
+import { swapExactInAbi } from '@indexedex/protocol/swapAbis'
 
 type StoredPermitSignature = {
   signature: `0x${string}`

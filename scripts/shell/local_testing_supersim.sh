@@ -70,7 +70,7 @@ SUPERSIM_LOGS_DIR="${SUPERSIM_LOGS_DIR:-$REPO_ROOT/deployments/local_testing/run
 SUPERSIM_ETHEREUM_OUT_DIR="${SUPERSIM_ETHEREUM_OUT_DIR:-deployments/local_testing/supersim/ethereum}"
 SUPERSIM_BASE_OUT_DIR="${SUPERSIM_BASE_OUT_DIR:-deployments/local_testing/supersim/base}"
 SUPERSIM_SHARED_OUT_DIR="${SUPERSIM_SHARED_OUT_DIR:-deployments/local_testing/supersim/shared}"
-SUPERSIM_FRONTEND_ARTIFACTS_DIR="${SUPERSIM_FRONTEND_ARTIFACTS_DIR:-frontend/app/addresses/local_testing_supersim}"
+SUPERSIM_FRONTEND_ARTIFACTS_DIR="${SUPERSIM_FRONTEND_ARTIFACTS_DIR:-frontend/packages/protocol/src/addresses/local_testing_supersim}"
 
 SUPERSIM_ETHEREUM_RPC_URL="${SUPERSIM_ETHEREUM_RPC_URL:-http://${SUPERSIM_HOST}:${SUPERSIM_L1_PORT}}"
 SUPERSIM_BASE_RPC_URL="${SUPERSIM_BASE_RPC_URL:-http://${SUPERSIM_HOST}:${SUPERSIM_BASE_PORT}}"

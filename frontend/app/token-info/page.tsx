@@ -4,16 +4,16 @@ import { useMemo } from 'react'
 import { useAccount, useBalance, useReadContract, useReadContracts } from 'wagmi'
 import { erc20Abi, formatUnits } from 'viem'
 import { debugWarn } from '../lib/debug'
-import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 import {
   CHAIN_ID_SEPOLIA,
   getAddressArtifacts,
-} from '../lib/addressArtifacts'
-import { selectFromMenu } from '../lib/tokenlists'
-import { resolveLabel } from '../lib/tokenlistCompose'
-import type { TokenListEntry } from '../lib/tokenlists'
+} from '@indexedex/protocol/addressArtifacts'
+import { selectFromMenu } from '@indexedex/protocol/tokenlists'
+import { resolveLabel } from '@indexedex/protocol/tokenlistCompose'
+import type { TokenListEntry } from '@indexedex/protocol/tokenlists'
 
 export default function TokenInfoPage() {
   const { address, isConnected } = useAccount()

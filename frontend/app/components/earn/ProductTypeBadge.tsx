@@ -1,5 +1,5 @@
 import { Badge } from '../ui/Badge'
-import { EARN_PRODUCT_TYPE_LABEL, type EarnProductType } from '../../lib/earn/types'
+import { EARN_PRODUCT_TYPE_LABEL, type EarnProductType } from '@indexedex/protocol/earn/types'
 
 export function ProductTypeBadge({ type }: { type: EarnProductType }) {
   const tone =

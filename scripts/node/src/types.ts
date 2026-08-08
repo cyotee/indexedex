@@ -34,7 +34,7 @@ export interface InputEntry {
 export interface AggregatorConfig {
   /** Root for fragment inputs. Typically "deployments". */
   inputRoot: string
-  /** Root for Token List outputs. Typically "frontend/app/addresses". */
+  /** Root for Token List outputs. Typically "frontend/packages/protocol/src/addresses". */
   outputRoot: string
   /** Each input is a deploy directory mapped to a chain id. */
   inputs: InputEntry[]

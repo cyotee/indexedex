@@ -9,14 +9,14 @@ import { http } from 'viem';
 import {
   DeploymentEnvironmentContext,
   DEFAULT_DEPLOYMENT_ENVIRONMENT,
-} from './lib/deploymentEnvironment';
-import { setDefaultDeploymentEnvironment } from './lib/addressArtifacts';
+} from '@indexedex/protocol/deploymentEnvironment';
+import { setDefaultDeploymentEnvironment } from '@indexedex/protocol/addressArtifacts';
 import {
   DEFAULT_SELECTED_CHAIN_ID,
   isCanonicalArtifactChainId,
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
-} from './lib/networkSelection';
+} from '@indexedex/protocol/networkSelection';
 import { BrandProvider } from './lib/brandContext';
 
 const queryClient = new QueryClient();

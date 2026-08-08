@@ -6,8 +6,8 @@ import { createUseReadContract } from 'wagmi/codegen'
 import DebugPanel from '../components/DebugPanel'
 
 // Token list helpers
-import { getBalancerPoolTokensForChain, getStrategyVaultTokensForChain } from '../lib/tokenlists'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { getBalancerPoolTokensForChain, getStrategyVaultTokensForChain } from '@indexedex/protocol/tokenlists'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 // Define the interfaces we'll be using
 const IPoolInfoABI = [

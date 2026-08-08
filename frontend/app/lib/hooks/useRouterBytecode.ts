@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { isAddress, type PublicClient } from 'viem'
 
-import { hasBytecode } from '../onchain'
+import { hasBytecode } from '@indexedex/protocol/onchain'
 
 type UseRouterBytecodeParams = {
   publicClient: PublicClient | null | undefined

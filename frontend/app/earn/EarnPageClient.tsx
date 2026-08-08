@@ -14,20 +14,20 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { Button } from '../components/ui/Button'
 import { filterEarnProducts } from '../lib/earn/assembleEarnProducts'
 import { loadEarnProductsForChain, loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
-import type { EarnProductType } from '../lib/earn/types'
-import { useSelectedNetwork } from '../lib/networkSelection'
-import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
+import type { EarnProductType } from '@indexedex/protocol/earn/types'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 import { useVaultRegistrySearch } from '../lib/hooks/useVaultRegistrySearch'
 import {
   mapRegistryAddressesToRows,
   preferredToRows,
   type VaultSearchRow,
-} from '../lib/registry/mapRegistryToRows'
+} from '@indexedex/protocol/registry/mapRegistryToRows'
 import {
   feeDetfStakingHref,
   getBaseTokensForChain,
   isFeaturedFeeDetfAddress,
-} from '../lib/tokenlists'
+} from '@indexedex/protocol/tokenlists'
 
 function parseTypeParam(raw: string | null): EarnTypeFilter {
   if (raw === 'strategy' || raw === 'protocol-detf') return raw

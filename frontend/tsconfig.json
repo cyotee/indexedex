@@ -28,6 +28,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@indexedex/protocol": [
+        "./packages/protocol/src/index.ts"
+      ],
+      "@indexedex/protocol/*": [
+        "./packages/protocol/src/*"
       ]
     }
   },

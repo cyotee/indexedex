@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_SEPOLIA } from '../../addresses'
-import feeList11155111 from '../../addresses/chain/11155111/featured-fee-detfs.tokenlist.json'
-import feeList84532 from '../../addresses/chain/84532/featured-fee-detfs.tokenlist.json'
+import { CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_SEPOLIA } from '@indexedex/protocol/addresses'
+import feeList11155111 from '@indexedex/protocol/addresses/chain/11155111/featured-fee-detfs.tokenlist.json'
+import feeList84532 from '@indexedex/protocol/addresses/chain/84532/featured-fee-detfs.tokenlist.json'
 
 describe('featured-fee-detfs tokenlist + Earn exclude', () => {
   afterEach(() => {
@@ -10,7 +10,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
   })
 
   it('parses featured-fee-detfs list for Sepolia with valid non-zero addresses', async () => {
-    const { getFeaturedFeeDetfsForChain } = await import('../tokenlists')
+    const { getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const list = getFeaturedFeeDetfsForChain(CHAIN_ID_SEPOLIA, 'local_testing')
     const expected = (feeList11155111.tokens as Array<{ address: string }>).map((t) =>
       t.address.toLowerCase(),
@@ -25,7 +25,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
   })
 
   it('parses featured-fee-detfs list for Base Sepolia', async () => {
-    const { getFeaturedFeeDetfsForChain } = await import('../tokenlists')
+    const { getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const list = getFeaturedFeeDetfsForChain(CHAIN_ID_BASE_SEPOLIA, 'public_sepolia')
     const expected = (feeList84532.tokens as Array<{ address: string }>).map((t) =>
       t.address.toLowerCase(),
@@ -34,7 +34,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
   })
 
   it('isFeaturedFeeDetfAddress matches list membership case-insensitively', async () => {
-    const { isFeaturedFeeDetfAddress, getFeaturedFeeDetfsForChain } = await import('../tokenlists')
+    const { isFeaturedFeeDetfAddress, getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const [hero] = getFeaturedFeeDetfsForChain(CHAIN_ID_SEPOLIA, 'local_testing')
     expect(hero).toBeTruthy()
     expect(isFeaturedFeeDetfAddress(CHAIN_ID_SEPOLIA, 'local_testing', hero.address)).toBe(true)
@@ -52,7 +52,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
 
   it('Earn catalog excludes featured fee-detf addresses', async () => {
     const { loadEarnProductsForChain } = await import('./loadEarnProducts')
-    const { getFeaturedFeeDetfsForChain } = await import('../tokenlists')
+    const { getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const feeAddrs = new Set(
       getFeaturedFeeDetfsForChain(CHAIN_ID_SEPOLIA, 'local_testing').map((t) =>
         t.address.toLowerCase(),
@@ -68,7 +68,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
 
   it('loadFeaturedFeeDetfs returns up to max cards in list order', async () => {
     const { loadFeaturedFeeDetfs } = await import('./loadEarnProducts')
-    const { getFeaturedFeeDetfsForChain } = await import('../tokenlists')
+    const { getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const full = getFeaturedFeeDetfsForChain(CHAIN_ID_SEPOLIA, 'local_testing')
     const featured = loadFeaturedFeeDetfs(CHAIN_ID_SEPOLIA, 'local_testing', 3)
     expect(featured.length).toBe(Math.min(3, full.length))
@@ -78,7 +78,7 @@ describe('featured-fee-detfs tokenlist + Earn exclude', () => {
   })
 
   it('feeDetfStakingHref points at staking with detf query', async () => {
-    const { feeDetfStakingHref } = await import('../tokenlists')
+    const { feeDetfStakingHref } = await import('@indexedex/protocol/tokenlists')
     const addr = '0xD6359e57572AF5685AbE48C6Fd928826c887096f'
     expect(feeDetfStakingHref(addr)).toBe(`/staking?detf=${addr}`)
   })

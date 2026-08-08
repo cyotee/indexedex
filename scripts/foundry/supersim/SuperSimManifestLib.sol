@@ -42,7 +42,7 @@ library SuperSimManifestLib {
 
     function frontendOutDir(Vm vm, string memory chainRole) internal view returns (string memory) {
         return string.concat(
-            envStringOr(vm, "SUPERSIM_FRONTEND_ARTIFACTS_DIR", "frontend/app/addresses/supersim_sepolia"),
+            envStringOr(vm, "SUPERSIM_FRONTEND_ARTIFACTS_DIR", "frontend/packages/protocol/src/addresses/supersim_sepolia"),
             "/",
             chainRole
         );

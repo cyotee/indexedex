@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { CHAIN_ID_SEPOLIA } from '../addresses'
-import strategyList from '../addresses/chain/11155111/strategy-vaults.tokenlist.json'
-import protocolList from '../addresses/chain/11155111/protocol-detfs.tokenlist.json'
+import { CHAIN_ID_SEPOLIA } from '@indexedex/protocol/addresses'
+import strategyList from '@indexedex/protocol/addresses/chain/11155111/strategy-vaults.tokenlist.json'
+import protocolList from '@indexedex/protocol/addresses/chain/11155111/protocol-detfs.tokenlist.json'
 
 /**
  * Wave 1.5 — prove local_testing env resolves platform overrides + chain tokenlists.
@@ -14,7 +14,7 @@ describe('local_testing address artifacts', () => {
   })
 
   it('getArtifactBundle registers local_testing for Sepolia', async () => {
-    const { getArtifactBundle } = await import('../addresses')
+    const { getArtifactBundle } = await import('@indexedex/protocol/addresses')
     const bundle = getArtifactBundle('local_testing', CHAIN_ID_SEPOLIA)
     expect(bundle).not.toBeNull()
     expect(bundle!.environment).toBe('local_testing')
@@ -22,7 +22,9 @@ describe('local_testing address artifacts', () => {
   })
 
   it('getAddressArtifacts(local_testing) returns platform with router/permit2 from chain override', async () => {
-    const { getAddressArtifacts, setDefaultDeploymentEnvironment } = await import('./addressArtifacts')
+    const { getAddressArtifacts, setDefaultDeploymentEnvironment } = await import(
+      '@indexedex/protocol/addressArtifacts'
+    )
     setDefaultDeploymentEnvironment('local_testing')
     const arts = getAddressArtifacts(CHAIN_ID_SEPOLIA, 'local_testing')
     const platform = arts.platform as Record<string, unknown>
@@ -49,7 +51,7 @@ describe('local_testing address artifacts', () => {
 
   it('Earn catalog under local_testing does not include featured fee-detf protocol addresses', async () => {
     const { loadEarnProductsForChain } = await import('./earn/loadEarnProducts')
-    const { getFeaturedFeeDetfsForChain } = await import('./tokenlists')
+    const { getFeaturedFeeDetfsForChain } = await import('@indexedex/protocol/tokenlists')
     const products = loadEarnProductsForChain(CHAIN_ID_SEPOLIA, 'local_testing')
     const feeAddrs = new Set(
       getFeaturedFeeDetfsForChain(CHAIN_ID_SEPOLIA, 'local_testing').map((t) =>

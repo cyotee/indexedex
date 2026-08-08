@@ -6,7 +6,7 @@ import type { Chain } from 'viem'
 import {
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_SEPOLIA,
-} from '../addresses'
+} from './addresses'
 
 export function resolveAppChain(chainId?: number | null): Chain {
   switch (chainId) {

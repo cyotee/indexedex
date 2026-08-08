@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { CHAIN_ID_SEPOLIA } from '../addressArtifacts'
+import { CHAIN_ID_SEPOLIA } from '@indexedex/protocol/addressArtifacts'
 import {
   filterEarnProducts,
   loadEarnProductsForChain,
   loadFeaturedEarnProducts,
   findEarnProduct,
 } from './loadEarnProducts'
-import strategyList from '../../addresses/chain/11155111/strategy-vaults.tokenlist.json'
+import strategyList from '@indexedex/protocol/addresses/chain/11155111/strategy-vaults.tokenlist.json'
 
 /**
  * Integration-style unit tests: drive real loadEarnProductsForChain against

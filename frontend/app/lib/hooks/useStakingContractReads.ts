@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { erc20Abi, formatUnits, zeroAddress } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import { protocolDetfAbi } from '../protocolDetfAbi'
+import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
 
 type PlatformAddresses = {
   protocolDetf?: string

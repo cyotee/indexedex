@@ -76,7 +76,7 @@ SENDER="${SENDER:-$DEV_ADDRESS}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 DEPLOYMENTS_DIR="${DEPLOYMENTS_DIR:-deployments/anvil_sepolia}"
-FRONTEND_ARTIFACTS_DIR="${FRONTEND_ARTIFACTS_DIR:-frontend/app/addresses/anvil_sepolia}"
+FRONTEND_ARTIFACTS_DIR="${FRONTEND_ARTIFACTS_DIR:-frontend/packages/protocol/src/addresses/anvil_sepolia}"
 FRONTEND_CHAIN_ID="${FRONTEND_CHAIN_ID:-31337}"
 SKIP_FRONTEND_SYNC="${SKIP_FRONTEND_SYNC:-0}"
 export OUT_DIR_OVERRIDE="${OUT_DIR_OVERRIDE:-$DEPLOYMENTS_DIR}"
@@ -331,7 +331,7 @@ sync_frontend_artifacts() {
 
     # Sync platform address map into the frontend.
     # Merge all deployment stage JSONs (plus deployment_summary.json) into
-    # frontend/app/addresses/anvil_sepolia/base_deployments.json.
+    # frontend/packages/protocol/src/addresses/anvil_sepolia/base_deployments.json.
     python3 - "$deployments_dir" "$frontend_dir" "$frontend_chain_id" <<'PY'
 import glob
 import json

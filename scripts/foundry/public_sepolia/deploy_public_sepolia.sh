@@ -21,7 +21,7 @@ fi
 #   PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR  Ethereum deployment output. Defaults to deployments/public_sepolia/ethereum
 #   PUBLIC_SEPOLIA_BASE_OUT_DIR      Base deployment output. Defaults to deployments/public_sepolia/base
 #   PUBLIC_SEPOLIA_SHARED_OUT_DIR    Shared output. Defaults to deployments/public_sepolia/shared
-#   PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR  Frontend artifacts. Defaults to frontend/app/addresses/public_sepolia
+#   PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR  Frontend artifacts. Defaults to frontend/packages/protocol/src/addresses/public_sepolia
 #   PUBLIC_SEPOLIA_FRONTEND_ETHEREUM_TOKENLIST_PREFIX  Optional Ethereum tokenlist prefix for frontend export.
 #   PUBLIC_SEPOLIA_FRONTEND_ETHEREUM_CONTRACTLIST_PREFIX  Optional Ethereum contractlist prefix for frontend export.
 #   PUBLIC_SEPOLIA_FRONTEND_BASE_TOKENLIST_PREFIX  Optional Base tokenlist prefix for frontend export.
@@ -72,7 +72,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR="${PUBLIC_SEPOLIA_ETHEREUM_OUT_DIR:-deployments/public_sepolia/ethereum}"
 PUBLIC_SEPOLIA_BASE_OUT_DIR="${PUBLIC_SEPOLIA_BASE_OUT_DIR:-deployments/public_sepolia/base}"
 PUBLIC_SEPOLIA_SHARED_OUT_DIR="${PUBLIC_SEPOLIA_SHARED_OUT_DIR:-deployments/public_sepolia/shared}"
-PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR="${PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR:-frontend/app/addresses/public_sepolia}"
+PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR="${PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR:-frontend/packages/protocol/src/addresses/public_sepolia}"
 PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_BASENAME="$(basename "$PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_DIR")"
 
 if [[ "$PUBLIC_SEPOLIA_FRONTEND_ARTIFACTS_BASENAME" == "supersim_sepolia" ]]; then

@@ -20,11 +20,11 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { Stat } from '../../components/ui/Stat'
 import { TabPanel, Tabs } from '../../components/ui/Tabs'
 import { findEarnProduct } from '../../lib/earn/loadEarnProducts'
-import { RISK_LEVEL_LABEL } from '../../lib/earn/riskFromTags'
+import { RISK_LEVEL_LABEL } from '@indexedex/protocol/earn/riskFromTags'
 import { isEarnDetfEmbedEnabled } from '../../lib/lab'
-import { useSelectedNetwork } from '../../lib/networkSelection'
-import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment'
-import { feeDetfStakingHref, isFeaturedFeeDetfAddress } from '../../lib/tokenlists'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
+import { feeDetfStakingHref, isFeaturedFeeDetfAddress } from '@indexedex/protocol/tokenlists'
 
 const vaultAbi = [
   {

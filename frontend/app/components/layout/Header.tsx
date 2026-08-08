@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { useAccount, useChainId, useConnect, useConnection, useDisconnect, useSwitchChain } from 'wagmi';
 import { baseSepolia, sepolia } from 'wagmi/chains';
 
-import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '../../lib/addressArtifacts';
-import { useDeploymentEnvironment } from '../../lib/deploymentEnvironment';
-import { useSelectedNetwork } from '../../lib/networkSelection';
+import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts';
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment';
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection';
 import { useBrand } from '../../lib/brandContext';
 
 type HeaderChainOption = 'ethereum' | 'base';

@@ -271,7 +271,7 @@ async function migrate(addressesRoot: string, timestamp: string): Promise<void> 
 
 async function main() {
   const repoRoot = process.env.INDEXEDEX_REPO_ROOT ?? process.cwd()
-  const addressesRoot = join(repoRoot, 'frontend/app/addresses')
+  const addressesRoot = join(repoRoot, 'frontend/packages/protocol/src/addresses')
   const timestamp = new Date().toISOString()
   console.log(`Migrating legacy tokenlists under ${addressesRoot}`)
   await migrate(addressesRoot, timestamp)

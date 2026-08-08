@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react'
 import {
   DEPLOYMENT_ENVIRONMENTS,
   type DeploymentEnvironment,
-} from '../addresses'
+} from './addresses'
 
 export const DEPLOYMENT_ENVIRONMENT_STORAGE_KEY = 'indexedex:deployment-environment'
 export const DEFAULT_DEPLOYMENT_ENVIRONMENT: DeploymentEnvironment =

@@ -7,11 +7,11 @@ import {
   CHAIN_ID_SEPOLIA,
   isSupportedChainId,
   resolveArtifactsChainId,
-} from '../addressArtifacts'
-import { useBrowserChainId, useConnectedWalletChainId } from '../browserChain'
-import { useDeploymentEnvironment } from '../deploymentEnvironment'
-import { useSelectedNetwork } from '../networkSelection'
-import { resolveAppChain } from '../runtimeChains'
+} from '@indexedex/protocol/addressArtifacts'
+import { useBrowserChainId, useConnectedWalletChainId } from '@indexedex/protocol/browserChain'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
 export type ChainSources = {
   account: number | undefined

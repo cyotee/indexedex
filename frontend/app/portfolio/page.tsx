@@ -22,10 +22,10 @@ import { Card } from '../components/ui/Card'
 import { EmptyState } from '../components/ui/EmptyState'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Stat } from '../components/ui/Stat'
-import { useBrowserChainId, useConnectedWalletChainId } from '../lib/browserChain'
+import { useBrowserChainId, useConnectedWalletChainId } from '@indexedex/protocol/browserChain'
 import { useBrand } from '../lib/brandContext'
-import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
-import { useSelectedNetwork } from '../lib/networkSelection'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { formatBondAmount } from '../lib/portfolio/formatBondAmount'
 import type { SharePositionInput } from '../lib/portfolio/sanitizeShareFields'
 import type { BondNftMetadata, BondPosition, TokenBalance } from '../lib/portfolio/types'
@@ -34,7 +34,7 @@ import {
   CHAIN_ID_SEPOLIA,
   isSupportedChainId,
   resolveArtifactsChainId,
-} from '../lib/addressArtifacts'
+} from '@indexedex/protocol/addressArtifacts'
 import { loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
 import {
   feeDetfStakingHref,
@@ -43,8 +43,8 @@ import {
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
   type TokenListEntry,
-} from '../lib/tokenlists'
-import { resolveAppChain } from '../lib/runtimeChains'
+} from '@indexedex/protocol/tokenlists'
+import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
 const ZERO = BigInt(0)
 

@@ -250,7 +250,7 @@ synthesize_platform() {
     log_info "No stage JSONs yet — skipping platform synthesis"
     return 0
   fi
-  local out="$REPO_ROOT/frontend/app/addresses/chain/$ANVIL_CHAIN_ID/platform.json"
+  local out="$REPO_ROOT/frontend/packages/protocol/src/addresses/chain/$ANVIL_CHAIN_ID/platform.json"
   mkdir -p "$(dirname "$out")"
   log_info "Synthesizing chain platform -> $(realpath --relative-to="$REPO_ROOT" "$out" 2>/dev/null || echo "$out")"
   jq -s --argjson cid "$ANVIL_CHAIN_ID" \

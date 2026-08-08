@@ -1,4 +1,4 @@
-import type { TokenListEntry } from '../tokenlists'
+import type { TokenListEntry } from '@indexedex/protocol/tokenlists'
 
 export type TokenBalance = {
   token: TokenListEntry

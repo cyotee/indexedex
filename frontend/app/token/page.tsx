@@ -9,9 +9,9 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { AddressLink } from '../components/ui/AddressLink'
 import { getLaunchTokenAddress } from '../lib/lab'
 import { loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
-import { feeDetfStakingHref } from '../lib/tokenlists'
-import { useSelectedNetwork } from '../lib/networkSelection'
-import { useDeploymentEnvironment } from '../lib/deploymentEnvironment'
+import { feeDetfStakingHref } from '@indexedex/protocol/tokenlists'
+import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 
 export default function TokenPage() {
   const launchToken = getLaunchTokenAddress()
