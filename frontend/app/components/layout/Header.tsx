@@ -338,7 +338,7 @@ async function inspectSwitchContext(
 }
 
 export function Header() {
-  const { brand, brandId, locked: brandLocked, toggleBrand } = useBrand();
+  const { brand, brandId } = useBrand();
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { connectAsync, connectors, status, error } = useConnect();
@@ -869,23 +869,6 @@ export function Header() {
                 </div>
               ) : null}
             </div>
-            {!brandLocked ? (
-              <button
-                onClick={toggleBrand}
-                className={controlBtnClass}
-                aria-label="Switch brand theme"
-                title="Same layout — Pachira (green) or IndexedEx (dark blue)"
-              >
-                Brand: {brandId === 'pachira' ? 'Pachira' : 'IndexedEx'}
-              </button>
-            ) : (
-              <span
-                className={`${controlBtnClass} opacity-80`}
-                title="Brand locked for this deploy"
-              >
-                {brand.name}
-              </span>
-            )}
             {isConnected ? (
               <button
                 onClick={() => disconnect()}

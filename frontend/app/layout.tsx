@@ -28,18 +28,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               (function(){
-                try {
-                  var locked = ${JSON.stringify(process.env.NEXT_PUBLIC_BRAND_LOCKED === 'true')};
-                  var def = ${JSON.stringify(getDefaultBrandId())};
-                  var saved = localStorage.getItem('style-theme');
-                  var theme = locked ? def
-                    : (saved === 'indexedex' || saved === 'current') ? 'indexedex'
-                    : (saved === 'pachira' ? 'pachira' : def);
-                  document.documentElement.setAttribute('data-theme', theme);
-                  document.documentElement.setAttribute('data-brand', theme);
-                } catch (e) {
-                  document.documentElement.setAttribute('data-theme', ${JSON.stringify(getDefaultBrandId())});
-                }
+                var theme = ${JSON.stringify(getDefaultBrandId())};
+                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.setAttribute('data-brand', theme);
               })();
             `,
           }}

@@ -1,18 +1,16 @@
 /**
  * Dual product branding: same layout, different name + theme tokens.
  *
- * - pachira   → green theme (existing look)
+ * Brand is chosen at **build/deploy time** via env (not a runtime UI toggle):
+ *   NEXT_PUBLIC_DEFAULT_BRAND=pachira|indexedex
+ *
+ * - pachira   → green theme
  * - indexedex → dark blue theme
  *
- * Deploy defaults:
- *   NEXT_PUBLIC_DEFAULT_BRAND=pachira|indexedex
- * Optional lock (hide toggle on a dedicated deploy):
- *   NEXT_PUBLIC_BRAND_LOCKED=true
+ * Configure per Vercel project so each site is a single brand for test users.
  */
 
 export type BrandId = 'pachira' | 'indexedex'
-
-export const BRAND_STORAGE_KEY = 'style-theme'
 
 export type BrandDefinition = {
   id: BrandId
@@ -50,20 +48,19 @@ export const BRANDS: Record<BrandId, BrandDefinition> = {
   },
 }
 
-/** Normalize legacy storage values (`current` → indexedex). */
+/** Normalize unknown / legacy values (`current` → indexedex). */
 export function normalizeBrandId(raw: string | null | undefined): BrandId {
   if (raw === 'indexedex' || raw === 'current') return 'indexedex'
+  if (raw === 'pachira') return 'pachira'
   return 'pachira'
 }
 
+/**
+ * Active brand for this build. Baked from NEXT_PUBLIC_DEFAULT_BRAND at build time.
+ * Defaults to pachira when unset (local dev convenience).
+ */
 export function getDefaultBrandId(): BrandId {
-  const fromEnv = process.env.NEXT_PUBLIC_DEFAULT_BRAND
-  if (fromEnv === 'indexedex' || fromEnv === 'pachira') return fromEnv
-  return 'pachira'
-}
-
-export function isBrandLocked(): boolean {
-  return process.env.NEXT_PUBLIC_BRAND_LOCKED === 'true'
+  return normalizeBrandId(process.env.NEXT_PUBLIC_DEFAULT_BRAND)
 }
 
 export function getBrand(id: BrandId = getDefaultBrandId()): BrandDefinition {
@@ -77,28 +74,4 @@ export function applyBrandToDocument(id: BrandId) {
   if (typeof document.title === 'string') {
     document.title = BRANDS[id].title
   }
-}
-
-export function readStoredBrandId(): BrandId {
-  if (typeof window === 'undefined') return getDefaultBrandId()
-  try {
-    if (isBrandLocked()) return getDefaultBrandId()
-    return normalizeBrandId(window.localStorage.getItem(BRAND_STORAGE_KEY))
-  } catch {
-    return getDefaultBrandId()
-  }
-}
-
-export function writeStoredBrandId(id: BrandId) {
-  if (typeof window === 'undefined') return
-  if (isBrandLocked()) return
-  try {
-    window.localStorage.setItem(BRAND_STORAGE_KEY, id)
-  } catch {
-    // ignore
-  }
-}
-
-export function otherBrand(id: BrandId): BrandId {
-  return id === 'pachira' ? 'indexedex' : 'pachira'
 }
