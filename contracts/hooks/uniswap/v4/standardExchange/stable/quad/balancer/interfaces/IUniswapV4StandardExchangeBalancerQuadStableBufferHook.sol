@@ -1,0 +1,218 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.0;
+
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+
+/**
+ * @title IUniswapV4StandardExchangeBalancerQuadStableBufferHook
+ * @notice Public product surface: 4-asset Balancer StableMath book with ≥1 SE buffer legs.
+ * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
+ *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
+ *      Multi-token liquidity also on IStandardExchangeMultiAssetLiquidity (1:1 with this surface).
+ *      No permit2Data on join ABI — transferFrom if allowance else Permit2 AllowanceTransfer.
+ *      Phase 0 OMIT: joinSingleAssetExactOut / exitSingleAssetExactTokenOut / joinUnbalanced → InvalidRoute.
+ */
+interface IUniswapV4StandardExchangeBalancerQuadStableBufferHook {
+    error InvalidRoute();
+
+    event Join(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        int256[4] deltas,
+        uint256 protocolSharesMinted
+    );
+    event Exit(
+        address indexed sender,
+        address indexed to,
+        uint256 shares,
+        int256[4] deltas,
+        uint256 protocolSharesMinted
+    );
+    event DepositSingle(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountIn,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+    event WithdrawSingle(
+        address indexed sender,
+        address indexed to,
+        address token,
+        uint256 amountOut,
+        uint256 shares,
+        uint256 protocolSharesMinted
+    );
+    event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
+    event PairPoolsEnsured(address indexed hook, uint256 doorsEnsured);
+
+    /* ------------------------------- Binding -------------------------------- */
+
+    function poolManager() external view returns (IPoolManager);
+    function feeOracle() external view returns (IVaultFeeOracleQuery);
+    function permit2() external view returns (address);
+    function numTokens() external view returns (uint8);
+    function tokens() external view returns (address[] memory);
+    function token(uint256 index) external view returns (address);
+    function baseAmp() external view returns (uint256);
+    function getCurrentAmp() external view returns (uint256);
+    function standardExchange(uint256 index) external view returns (address);
+    function rateProvider(uint256 index) external view returns (address);
+    function isBuffered(uint256 index) external view returns (bool);
+
+    /* --------------------------- Inventory / rated -------------------------- */
+
+    function nativeReserve(uint256 index) external view returns (uint256);
+    function nativeReserves() external view returns (uint256[] memory);
+    function ratedBalance(uint256 index) external view returns (uint256);
+    function ratedBalances() external view returns (uint256[] memory);
+    function seBalance(uint256 index) external view returns (uint256);
+    function seClaim(uint256 index) external view returns (uint256);
+    function invScale(uint256 index) external view returns (uint256);
+    function ratedScale(uint256 index) external view returns (uint256);
+
+    /* -------------------------------- Fees ---------------------------------- */
+
+    function dexSwapFee() external view returns (uint256);
+    function usageFee() external view returns (uint256);
+    function feeTo() external view returns (address);
+    function kLast() external view returns (uint256);
+    function isFullBook() external view returns (bool);
+
+    /* ----------------------------- Pair doors ------------------------------- */
+
+    function ensurePairPools() external returns (uint256 doorsEnsured);
+    function pairDoorCount() external view returns (uint256);
+
+    /* ------------------------------ Previews -------------------------------- */
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn);
+
+    function previewJoinProportional(uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
+        external
+        view
+        returns (uint256 amountIn);
+
+    function previewJoinUnbalanced(uint256[] calldata amounts) external view returns (uint256 shares);
+
+    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts);
+
+    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 sharesIn);
+
+    function previewDepositSingle(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 shares);
+
+    function previewWithdrawSingle(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut);
+
+    function previewWithdrawSingleExactOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 sharesIn);
+
+    /* ------------------------------ Liquidity ------------------------------- */
+
+    function joinProportional(
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares, uint256[] memory usedAmounts);
+
+    function joinSingleAssetExactIn(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function joinSingleAssetExactOut(
+        address tokenIn,
+        uint256 sharesOut,
+        address to,
+        uint256 amountInMax,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
+    function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
+        external
+        returns (uint256 shares);
+
+    function exitProportional(uint256 shares, address to, uint256[] calldata amountsMin, uint256 deadline)
+        external
+        returns (uint256[] memory amounts);
+
+    function exitSingleAssetExactBptIn(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external returns (uint256 sharesIn);
+
+    function depositSingle(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external returns (uint256 shares);
+
+    function withdrawSingle(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    function withdrawSingleExactOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external returns (uint256 sharesIn);
+}
