@@ -68,3 +68,27 @@ None for remediation efforts. All W1–W2 efforts INTEGRATED.
 ---
 
 *End of run report.*
+
+---
+
+
+---
+
+## Hermetic forge re-run on main `da3a993`
+
+Package-scoped tests re-executed on PRIMARY after all integrations (logs: implementer scratch `forge-*.log`):
+
+| Effort | Log | Result |
+|--------|-----|--------|
+| W1-CURVE unbuf | forge-W1-CURVE-unbuf.log | **PASS** 53/53 |
+| W1-CURVE SE | forge-W1-CURVE-se.log | **PASS** 67/67 |
+| W1-H3 | forge-W1-H3.log | **PASS** 60/60 |
+| W2-BAL-UNBUF | forge-W2-BAL-UNBUF.log | **PASS** 52/52 |
+| W2-BAL-SE | forge-W2-BAL-SE.log | **PASS** 59/59 |
+| W2-H5 | forge-W2-H5.log | **PASS** 54/54 |
+| W2-H6 | forge-W2-H6.log | **PASS** 29/29 |
+| W2-H7 | forge-W2-H7.log | **PASS** 72/72 |
+| W2-H8 | forge-W2-H8.log | **PASS** 62/62 |
+| W2-H9-CURVE-B6 | forge-W2-H9-CURVE-B6.log | **PASS** 67/67 |
+
+All INTEGRATED efforts green on shipped package paths (0 failures).
