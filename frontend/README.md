@@ -230,7 +230,7 @@ Same `frontend/` builds twice, once per Vercel project. Brand is **deploy-time o
 | Project | Public URL | Env |
 |---------|------------|-----|
 | **indexedex** | https://indexedex.vercel.app | `NEXT_PUBLIC_DEFAULT_BRAND=indexedex` |
-| **pachira** | https://pachira-cyotees-projects.vercel.app | `NEXT_PUBLIC_DEFAULT_BRAND=pachira` |
+| **pachira** | https://pachirav2.vercel.app | `NEXT_PUBLIC_DEFAULT_BRAND=pachira` |
 
 Shared settings (both projects):
 
