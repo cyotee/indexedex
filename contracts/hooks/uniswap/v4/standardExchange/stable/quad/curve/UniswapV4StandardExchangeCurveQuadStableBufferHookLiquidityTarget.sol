@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -19,7 +21,8 @@ import {
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget
  * @notice Join/exit + one-token aliases on inventory domain (StableSwap single-asset + prop).
- * @dev Phase 0 OMIT: joinSingleAssetExactOut / exitSingleAssetExactTokenOut / joinUnbalanced → InvalidRoute.
+ * @dev Firm M2: joinUnbalanced / joinSingleAssetExactOut / exitSingleAssetExactTokenOut shipped closed-form.
+ *      B6: flexible SE-share / pair LP paths with per-leg flags.
  *      Full book only for single-asset and post-seed proportional. First mint requires all four > 0.
  */
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget is
@@ -140,54 +143,221 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
         );
     }
 
-    /* ----------------------------- Phase 0 OMIT ----------------------------- */
+    /* ----------------------- firm: unbalanced join -------------------------- */
 
-    function previewJoinUnbalanced(uint256[] calldata) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+    function previewJoinUnbalanced(uint256[] calldata amounts) public view returns (uint256 shares) {
+        return _quoteUnbalancedJoin(amounts, _previewSupplyAfterProtocolMint());
     }
 
-    function joinUnbalanced(uint256[] calldata, address, uint256, uint256)
+    function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
         public
-        pure
-        returns (uint256)
+        nonReentrant
+        returns (uint256 shares)
     {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        _requireAmountsLen4(amounts);
+        uint256 protocolShares = _maybeMintProtocolFee();
+        if (_totalSupply() == 0) {
+            // First mint: require all four edge amounts > 0 (same as proportional first mint).
+            (shares,) = _computeJoinProportional(amounts, 0);
+            if (shares < sharesMin) revert Slippage();
+            uint256[4] memory used = _toFixed4(amounts);
+            _commitJoin(used, to, shares, true, protocolShares);
+            return shares;
+        }
+        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        shares = _quoteUnbalancedJoin(amounts, _totalSupply());
+        if (shares < sharesMin) revert Slippage();
+        uint256[4] memory used = _toFixed4(amounts);
+        _commitJoin(used, to, shares, false, protocolShares);
     }
 
-    function previewJoinSingleAssetExactOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+    function _quoteUnbalancedJoin(uint256[] memory pairAmounts, uint256 supply)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        _requireAmountsLen4(pairAmounts);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256[4] memory pairIn = _toFixed4(pairAmounts);
+        uint256[4] memory invIn = _pairToInvPreview(pairIn);
+        shares = Math.unbalancedJoinShares(
+            _invWadAll(), _scaleInv(invIn), _amp(), supply, feeWad
+        );
     }
 
-    function joinSingleAssetExactOut(address, uint256, address, uint256, uint256)
+    /* -------------------- firm: single-asset exact LP out ------------------- */
+
+    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
         public
-        pure
-        returns (uint256)
+        view
+        returns (uint256 amountIn)
     {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        return _quoteSingleJoinExactOut(tokenIn, sharesOut, _previewSupplyAfterProtocolMint());
     }
 
-    function previewExitSingleAssetExactTokenOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+    function joinSingleAssetExactOut(
+        address tokenIn,
+        uint256 sharesOut,
+        address to,
+        uint256 amountInMax,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        if (sharesOut == 0) revert ZeroAmount();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        uint256 protocolShares = _maybeMintProtocolFee();
+        amountIn = _quoteSingleJoinExactOut(tokenIn, sharesOut, _totalSupply());
+        if (amountIn > amountInMax) revert Slippage();
+        uint8 idx = _tokenIndex(tokenIn);
+        uint256[4] memory used;
+        used[idx] = amountIn;
+        _pullAmounts(used);
+        _bufferLast(used);
+        _mintLp(to, sharesOut);
+        _snapshotKLastIfFeeOn();
+        _refundBufferedDust();
+        _syncVaultReserves();
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.DepositSingle(
+            msg.sender, to, tokenIn, amountIn, sharesOut, protocolShares
+        );
     }
 
-    function exitSingleAssetExactTokenOut(address, uint256, address, uint256, uint256)
+    function _quoteSingleJoinExactOut(address tokenIn, uint256 sharesOut, uint256 supply)
+        internal
+        view
+        returns (uint256 amountIn)
+    {
+        uint8 idx = _tokenIndex(tokenIn);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        Repo.Layout storage l = Repo._layout();
+        uint256 aS = Math.singleJoinExactOutAmountIn(
+            _invWadAll(), idx, sharesOut, _amp(), supply, feeWad
+        );
+        uint256 invNeeded = Math.descaleUp(aS, l.invScales[idx]);
+        if (l.standardExchanges[idx] == address(0)) {
+            amountIn = invNeeded;
+        } else {
+            // Invert buffer preview: pair such that SE shares ≈ invNeeded (closed-form, no binary search).
+            address se = l.standardExchanges[idx];
+            address t = l.tokens[idx];
+            amountIn = invNeeded;
+            uint256 got = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amountIn, IERC20(se));
+            if (got < invNeeded && got > 0) {
+                amountIn = (invNeeded * amountIn + got - 1) / got;
+            }
+        }
+    }
+
+    /* ----------------- firm: single-asset exact token out exit -------------- */
+
+    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
         public
-        pure
-        returns (uint256)
+        view
+        returns (uint256 sharesIn)
     {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        return _quoteExitSingleExactTokenOut(tokenOut, amountOut, _previewSupplyAfterProtocolMint());
     }
 
-    function previewWithdrawSingleExactOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+    function exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 sharesIn) {
+        sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
     }
 
-    function withdrawSingleExactOut(address, uint256, address, uint256, uint256)
+    function previewWithdrawSingleExactOut(address tokenOut, uint256 amountOut)
         public
-        pure
-        returns (uint256)
+        view
+        returns (uint256 sharesIn)
     {
-        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        return previewExitSingleAssetExactTokenOut(tokenOut, amountOut);
+    }
+
+    function withdrawSingleExactOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 sharesIn) {
+        sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
+    }
+
+    function _exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) internal returns (uint256 sharesIn) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        if (amountOut == 0) revert ZeroAmount();
+        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        uint256 protocolShares = _maybeMintProtocolFee();
+        sharesIn = _quoteExitSingleExactTokenOut(tokenOut, amountOut, _totalSupply());
+        if (sharesIn > sharesInMax) revert Slippage();
+        uint8 idx = _tokenIndex(tokenOut);
+        Repo.Layout storage l = Repo._layout();
+        uint256 invOut;
+        if (l.standardExchanges[idx] == address(0)) {
+            invOut = amountOut;
+        } else {
+            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
+                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
+            );
+        }
+        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
+        _burnLp(msg.sender, sharesIn);
+        if (l.standardExchanges[idx] != address(0)) {
+            _unwrapExactTokenOut(idx, amountOut, to);
+        } else {
+            _debitRawIntentional(idx, invOut);
+            IERC20(tokenOut).safeTransfer(to, invOut);
+        }
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (_nativeAt(i) == 0) revert WouldZeroReserve();
+        }
+        _snapshotKLastIfFeeOn();
+        _syncVaultReserves();
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingleExactOut(
+            msg.sender, to, tokenOut, amountOut, sharesIn, protocolShares
+        );
+    }
+
+    function _quoteExitSingleExactTokenOut(address tokenOut, uint256 amountOut, uint256 supply)
+        internal
+        view
+        returns (uint256 sharesIn)
+    {
+        uint8 idx = _tokenIndex(tokenOut);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        Repo.Layout storage l = Repo._layout();
+        uint256 invOut;
+        if (l.standardExchanges[idx] == address(0)) {
+            invOut = amountOut;
+        } else {
+            invOut = IStandardExchangeOut(l.standardExchanges[idx]).previewExchangeOut(
+                IERC20(l.standardExchanges[idx]), IERC20(tokenOut), amountOut
+            );
+        }
+        sharesIn = Math.singleExitExactTokenOutSharesIn(
+            _invWadAll(),
+            idx,
+            Math.scaleToUp(invOut, l.invScales[idx]),
+            _amp(),
+            supply,
+            feeWad
+        );
     }
 
     /* -------------------------- single-asset join --------------------------- */
@@ -434,5 +604,420 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTar
         inv[idx] = invOut;
         uint256[4] memory pair = _invToPairOutPreview(inv);
         amountOut = pair[idx];
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                    B6: flexible SE-share / pair LP                     */
+    /* ---------------------------------------------------------------------- */
+
+    function previewJoinProportionalFlexible(uint256[] calldata amounts, bool[] calldata amountIsSeShare)
+        public
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts)
+    {
+        return _computeJoinProportionalFlexible(amounts, amountIsSeShare, _previewSupplyAfterProtocolMint());
+    }
+
+    function joinProportionalFlexible(
+        uint256[] calldata amounts,
+        bool[] calldata amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        _validateSeShareFlags(amountIsSeShare);
+        uint256 protocolShares = _maybeMintProtocolFee();
+        bool first = _totalSupply() == 0;
+        (shares, usedAmounts) = _computeJoinProportionalFlexible(amounts, amountIsSeShare, _totalSupply());
+        if (shares < sharesMin) revert Slippage();
+        _commitJoinFlexible(usedAmounts, amountIsSeShare, to, shares, first, protocolShares);
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.JoinFlexible(
+            msg.sender, to, shares, amounts, amountIsSeShare, usedAmounts, protocolShares
+        );
+    }
+
+    function _computeJoinProportionalFlexible(
+        uint256[] memory amounts,
+        bool[] memory amountIsSeShare,
+        uint256 supply
+    ) internal view returns (uint256 shares, uint256[] memory used) {
+        _requireAmountsLen4(amounts);
+        if (amountIsSeShare.length != Repo.N_TOKENS) revert ArrayLengthMismatch();
+        _validateSeShareFlags(amountIsSeShare);
+        uint256[4] memory edge = _toFixed4(amounts);
+        uint256[4] memory invIn = _edgeToInvPreview(edge, amountIsSeShare);
+        if (supply == 0) {
+            return _firstMint(invIn, edge);
+        }
+        uint256[4] memory natives = _nativeAll();
+        if (!Math.isFullBookReserves(natives)) revert NotFullBook();
+        return _fullPropJoin(edge, invIn, supply);
+    }
+
+    /// @dev Map user edge amounts → inventory deltas (SE shares or face). SE-share legs pass through.
+    function _edgeToInvPreview(uint256[4] memory amounts, bool[] memory amountIsSeShare)
+        internal
+        view
+        returns (uint256[4] memory invDeltas)
+    {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (amounts[i] == 0) continue;
+            if (amountIsSeShare[i]) {
+                invDeltas[i] = amounts[i];
+            } else {
+                address se = l.standardExchanges[i];
+                if (se == address(0)) {
+                    invDeltas[i] = amounts[i];
+                } else {
+                    invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
+                        IERC20(l.tokens[i]), amounts[i], IERC20(se)
+                    );
+                }
+            }
+        }
+    }
+
+    function _validateSeShareFlags(bool[] memory flags) internal view {
+        if (flags.length != Repo.N_TOKENS) revert ArrayLengthMismatch();
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (flags[i] && l.standardExchanges[i] == address(0)) revert SeShareNotBuffered();
+        }
+    }
+
+    function _commitJoinFlexible(
+        uint256[] memory usedAmounts,
+        bool[] memory amountIsSeShare,
+        address to,
+        uint256 shares,
+        bool firstMint,
+        uint256 protocolSharesMinted
+    ) internal {
+        Repo.Layout storage l = Repo._layout();
+        // Pull edge units (pair or SE share), then buffer-last pair legs only.
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (usedAmounts[i] == 0) continue;
+            if (amountIsSeShare[i]) {
+                _pull(l.standardExchanges[i], usedAmounts[i]);
+            } else {
+                _pull(l.tokens[i], usedAmounts[i]);
+            }
+        }
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (usedAmounts[i] == 0 || amountIsSeShare[i]) continue;
+            _bufferToken(i, usedAmounts[i]);
+        }
+        if (firstMint) {
+            _mintLp(address(0), Math.MINIMUM_LIQUIDITY);
+        }
+        _mintLp(to, shares);
+        _snapshotKLastIfFeeOn();
+        _refundBufferedDust();
+        _syncVaultReserves();
+        // silence unused when no event from caller
+        protocolSharesMinted;
+    }
+
+    function previewExitProportionalFlexible(uint256 shares, bool[] calldata receiveSeShare)
+        public
+        view
+        returns (uint256[] memory amounts)
+    {
+        _validateSeShareFlags(receiveSeShare);
+        uint256[4] memory natives = _nativeAll();
+        uint256[4] memory invOut =
+            Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
+        amounts = Math.toDynamic(_invToEdgeOutPreview(invOut, receiveSeShare));
+    }
+
+    function exitProportionalFlexible(
+        uint256 shares,
+        address to,
+        bool[] calldata receiveSeShare,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256[] memory amounts) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        if (shares == 0) revert ZeroAmount();
+        _validateSeShareFlags(receiveSeShare);
+        _requireAmountsLen4(amountsMin);
+        uint256 protocolShares = _maybeMintProtocolFee();
+        uint256[4] memory invOut = Math.proportionalExitAmounts(shares, _nativeAll(), _totalSupply());
+        _requireExitFloors(invOut);
+        uint256[4] memory edgeOut = _invToEdgeOutPreview(invOut, receiveSeShare);
+        _requireEdgeMins(edgeOut, amountsMin);
+        _burnLp(msg.sender, shares);
+        _payExitFlexibleLegs(invOut, receiveSeShare, to);
+        _requirePostFullBook();
+        _snapshotKLastIfFeeOn();
+        _syncVaultReserves();
+        amounts = Math.toDynamic(edgeOut);
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.ExitFlexible(
+            msg.sender, to, shares, receiveSeShare, amounts, protocolShares
+        );
+    }
+
+    function _requireExitFloors(uint256[4] memory invOut) internal view {
+        uint256[4] memory natives = _nativeAll();
+        for (uint256 i; i < Repo.N_TOKENS; ++i) {
+            if (invOut[i] >= natives[i]) revert WouldZeroReserve();
+        }
+    }
+
+    function _requireEdgeMins(uint256[4] memory edgeOut, uint256[] calldata amountsMin) internal pure {
+        for (uint256 i; i < Repo.N_TOKENS; ++i) {
+            if (edgeOut[i] < amountsMin[i]) revert Slippage();
+        }
+    }
+
+    function _requirePostFullBook() internal view {
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (_nativeAt(i) == 0) revert WouldZeroReserve();
+        }
+    }
+
+    function _payExitFlexibleLegs(uint256[4] memory invOut, bool[] memory receiveSeShare, address to)
+        internal
+    {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            uint256 amt = invOut[i];
+            if (amt == 0) continue;
+            address se = l.standardExchanges[i];
+            if (se != address(0)) {
+                if (receiveSeShare[i]) {
+                    IERC20(se).safeTransfer(to, amt);
+                } else {
+                    _unwrapSeShares(i, amt, to);
+                }
+            } else {
+                _debitRawIntentional(i, amt);
+                IERC20(l.tokens[i]).safeTransfer(to, amt);
+            }
+        }
+    }
+
+    function _invToEdgeOutPreview(uint256[4] memory invOut, bool[] memory receiveSeShare)
+        internal
+        view
+        returns (uint256[4] memory edgeOut)
+    {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (invOut[i] == 0) continue;
+            address se = l.standardExchanges[i];
+            if (se == address(0)) {
+                edgeOut[i] = invOut[i];
+            } else if (receiveSeShare[i]) {
+                edgeOut[i] = invOut[i];
+            } else {
+                edgeOut[i] = IStandardExchangeIn(se).previewExchangeIn(
+                    IERC20(se), invOut[i], IERC20(l.tokens[i])
+                );
+            }
+        }
+    }
+
+    function previewJoinSingleAssetExactInFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        public
+        view
+        returns (uint256 shares)
+    {
+        return _quoteSingleJoinExactInFlexible(tokenIn, amountIn, amountIsSeShare, _previewSupplyAfterProtocolMint());
+    }
+
+    function joinSingleAssetExactInFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 shares) {
+        shares = _joinSingleAssetExactInFlexible(tokenIn, amountIn, amountIsSeShare, to, sharesMin, deadline);
+    }
+
+    function depositSingleFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 shares) {
+        shares = _joinSingleAssetExactInFlexible(tokenIn, amountIn, amountIsSeShare, to, sharesMin, deadline);
+    }
+
+    function previewDepositSingleFlexible(address tokenIn, uint256 amountIn, bool amountIsSeShare)
+        public
+        view
+        returns (uint256 shares)
+    {
+        return previewJoinSingleAssetExactInFlexible(tokenIn, amountIn, amountIsSeShare);
+    }
+
+    function _joinSingleAssetExactInFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) internal returns (uint256 shares) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        if (amountIn == 0) revert ZeroAmount();
+        if (_totalSupply() == 0 || !Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        uint8 idx = _tokenIndex(tokenIn);
+        if (amountIsSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
+            revert SeShareNotBuffered();
+        }
+        uint256 protocolShares = _maybeMintProtocolFee();
+        shares = _quoteSingleJoinExactInFlexible(tokenIn, amountIn, amountIsSeShare, _totalSupply());
+        if (shares < sharesMin) revert Slippage();
+        uint256[] memory used = new uint256[](Repo.N_TOKENS);
+        used[idx] = amountIn;
+        bool[] memory flags = new bool[](Repo.N_TOKENS);
+        flags[idx] = amountIsSeShare;
+        _commitJoinFlexible(used, flags, to, shares, false, protocolShares);
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.DepositSingleFlexible(
+            msg.sender, to, tokenIn, amountIn, amountIsSeShare, shares, protocolShares
+        );
+    }
+
+    function _quoteSingleJoinExactInFlexible(
+        address tokenIn,
+        uint256 amountIn,
+        bool amountIsSeShare,
+        uint256 supply
+    ) internal view returns (uint256 shares) {
+        uint8 idx = _tokenIndex(tokenIn);
+        if (amountIsSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
+            revert SeShareNotBuffered();
+        }
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256[4] memory edge;
+        edge[idx] = amountIn;
+        bool[] memory flags = new bool[](Repo.N_TOKENS);
+        flags[idx] = amountIsSeShare;
+        uint256[4] memory invIn = _edgeToInvPreview(edge, flags);
+        shares = Math.singleJoinExactInShares(
+            _invWadAll(),
+            Math.scaleTo(invIn[idx], Repo._layout().invScales[idx]),
+            idx,
+            _amp(),
+            supply,
+            feeWad
+        );
+    }
+
+    function previewExitSingleAssetExactBptInFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare
+    ) public view returns (uint256 amountOut) {
+        return _quoteExitSingleExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
+    }
+
+    function exitSingleAssetExactBptInFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 amountOut) {
+        amountOut = _exitSingleAssetExactBptInFlexible(
+            tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
+        );
+    }
+
+    function withdrawSingleFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 amountOut) {
+        amountOut = _exitSingleAssetExactBptInFlexible(
+            tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
+        );
+    }
+
+    function previewWithdrawSingleFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        public
+        view
+        returns (uint256 amountOut)
+    {
+        return previewExitSingleAssetExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
+    }
+
+    function _exitSingleAssetExactBptInFlexible(
+        address tokenOut,
+        uint256 sharesIn,
+        bool receiveSeShare,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) internal returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        if (sharesIn == 0) revert ZeroAmount();
+        if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        uint8 idx = _tokenIndex(tokenOut);
+        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
+            revert SeShareNotBuffered();
+        }
+        uint256 protocolShares = _maybeMintProtocolFee();
+        amountOut = _quoteExitSingleExactBptInFlexible(tokenOut, sharesIn, receiveSeShare);
+        if (amountOut < amountOutMin) revert Slippage();
+        uint256 invOut = _singleExitInvOut(idx, sharesIn);
+        if (invOut >= _nativeAt(idx)) revert WouldZeroReserve();
+        _burnLp(msg.sender, sharesIn);
+        Repo.Layout storage l = Repo._layout();
+        if (l.standardExchanges[idx] != address(0)) {
+            if (receiveSeShare) {
+                IERC20(l.standardExchanges[idx]).safeTransfer(to, invOut);
+            } else {
+                _unwrapSeShares(idx, invOut, to);
+            }
+        } else {
+            _debitRawIntentional(idx, invOut);
+            IERC20(tokenOut).safeTransfer(to, invOut);
+        }
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (_nativeAt(i) == 0) revert WouldZeroReserve();
+        }
+        _snapshotKLastIfFeeOn();
+        _syncVaultReserves();
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingleFlexible(
+            msg.sender, to, tokenOut, amountOut, receiveSeShare, sharesIn, protocolShares
+        );
+    }
+
+    function _quoteExitSingleExactBptInFlexible(address tokenOut, uint256 sharesIn, bool receiveSeShare)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
+        uint8 idx = _tokenIndex(tokenOut);
+        if (receiveSeShare && Repo._layout().standardExchanges[idx] == address(0)) {
+            revert SeShareNotBuffered();
+        }
+        uint256 invOut = _singleExitInvOut(idx, sharesIn);
+        if (receiveSeShare || Repo._layout().standardExchanges[idx] == address(0)) {
+            amountOut = invOut;
+        } else {
+            address se = Repo._layout().standardExchanges[idx];
+            amountOut = IStandardExchangeIn(se).previewExchangeIn(
+                IERC20(se), invOut, IERC20(tokenOut)
+            );
+        }
     }
 }

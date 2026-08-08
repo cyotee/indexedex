@@ -58,6 +58,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     error BufferFailed();
     error UnwrapFailed();
     error InvalidN();
+    /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
+    error SeShareNotBuffered();
+    error ArrayLengthMismatch();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();

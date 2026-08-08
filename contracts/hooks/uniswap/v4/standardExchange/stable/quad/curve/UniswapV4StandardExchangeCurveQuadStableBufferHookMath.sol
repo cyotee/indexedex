@@ -350,7 +350,12 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         }
 
         uint256 D0 = _getD(invWad, amp);
-        uint256[4] memory newXp = invWad;
+        // Deep-copy: memory→memory assignment is a reference (would mutate invWad).
+        uint256[4] memory newXp;
+        newXp[0] = invWad[0];
+        newXp[1] = invWad[1];
+        newXp[2] = invWad[2];
+        newXp[3] = invWad[3];
         newXp[tokenInIndex] = invWad[tokenInIndex] + amountInWad;
         uint256 D1 = _getD(newXp, amp);
         if (D1 <= D0) revert MathDomain();
@@ -402,6 +407,133 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         amountOutWad = amountOut - feeAmount;
         if (amountOutWad == 0) revert ZeroAmount();
         // Full-book floor: remaining > 0
+        if (invWad[tokenOutIndex] <= amountOutWad) revert WouldZeroReserve();
+    }
+
+    /**
+     * @notice Unbalanced multi-asset join (inventory WAD) with taxable fee above proportional ideal.
+     * @dev Closed-form Curve D growth; same fee channel as singleJoinExactIn (dexSwapFee).
+     *      Zero-leg amounts allowed; at least one positive required.
+     */
+    function unbalancedJoinShares(
+        uint256[4] memory invWad,
+        uint256[4] memory amountsWad,
+        uint256 amp,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) internal pure returns (uint256 shares) {
+        if (supply == 0) revert MathDomain();
+        if (swapFeeWad >= WAD) revert InvalidFeeWad();
+        if (countPositive(amountsWad) == 0) revert ZeroAmount();
+        for (uint256 i; i < N_TOKENS; ++i) {
+            if (invWad[i] == 0) revert MathDomain();
+        }
+
+        uint256 D0 = _getD(invWad, amp);
+        // Deep-copy: memory→memory assignment is a reference (would mutate invWad).
+        uint256[4] memory newXp;
+        newXp[0] = invWad[0] + amountsWad[0];
+        newXp[1] = invWad[1] + amountsWad[1];
+        newXp[2] = invWad[2] + amountsWad[2];
+        newXp[3] = invWad[3] + amountsWad[3];
+        uint256 D1 = _getD(newXp, amp);
+        if (D1 <= D0) revert MathDomain();
+
+        // Fee on each leg's excess over ideal proportional contribution of D growth.
+        for (uint256 i; i < N_TOKENS; ++i) {
+            if (amountsWad[i] == 0) continue;
+            uint256 idealAmount = (invWad[i] * (D1 - D0)) / D0;
+            uint256 taxable = amountsWad[i] > idealAmount ? amountsWad[i] - idealAmount : 0;
+            uint256 feeAmount = mulUp(taxable, swapFeeWad);
+            newXp[i] = invWad[i] + amountsWad[i] - feeAmount;
+        }
+        uint256 D2 = _getD(newXp, amp);
+        if (D2 <= D0) revert MathDomain();
+        shares = (supply * (D2 - D0)) / D0;
+        if (shares == 0) revert ZeroAmount();
+    }
+
+    /**
+     * @notice Single-asset exact-LP-out join: inventory WAD amountIn for `sharesOut` (pool-favoring fee).
+     * @dev Target post-fee D from supply growth; invert via `_getYd`; gross-up taxable vs proportional ideal.
+     */
+    function singleJoinExactOutAmountIn(
+        uint256[4] memory invWad,
+        uint256 tokenInIndex,
+        uint256 sharesOut,
+        uint256 amp,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) internal pure returns (uint256 amountInWad) {
+        if (supply == 0 || sharesOut == 0) revert ZeroAmount();
+        if (swapFeeWad >= WAD) revert InvalidFeeWad();
+        if (tokenInIndex >= N_TOKENS) revert MathDomain();
+        for (uint256 i; i < N_TOKENS; ++i) {
+            if (invWad[i] == 0) revert MathDomain();
+        }
+
+        uint256 D0 = _getD(invWad, amp);
+        // Target post-fee invariant so sharesOut ≈ supply * (D2 - D0) / D0.
+        uint256 D2 = (D0 * (supply + sharesOut)) / supply;
+        if (D2 <= D0) revert MathDomain();
+
+        uint256 yNew = _getYd(tokenInIndex, invWad, amp, D2);
+        if (yNew <= invWad[tokenInIndex]) revert MathDomain();
+        uint256 amountEff = yNew - invWad[tokenInIndex];
+        uint256 ideal = (invWad[tokenInIndex] * sharesOut) / supply;
+
+        if (swapFeeWad == 0 || amountEff <= ideal) {
+            amountInWad = amountEff;
+        } else {
+            // amountIn - mulUp(amountIn - ideal, fee) ≈ amountEff
+            // amountIn = (amountEff * WAD - ideal * fee) / (WAD - fee)  (ceil)
+            uint256 num = amountEff * WAD - ideal * swapFeeWad;
+            uint256 den = WAD - swapFeeWad;
+            amountInWad = (num + den - 1) / den;
+        }
+        if (amountInWad == 0) revert ZeroAmount();
+    }
+
+    /**
+     * @notice Single-asset exact-token-out exit: sharesIn to receive `amountOutWad` net (pool-favoring).
+     * @dev Gross-up for taxable fee, reduce balance, shares from D contraction.
+     */
+    function singleExitExactTokenOutSharesIn(
+        uint256[4] memory invWad,
+        uint256 tokenOutIndex,
+        uint256 amountOutWad,
+        uint256 amp,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) internal pure returns (uint256 sharesIn) {
+        if (amountOutWad == 0 || supply == 0) revert ZeroAmount();
+        if (swapFeeWad >= WAD) revert InvalidFeeWad();
+        if (tokenOutIndex >= N_TOKENS) revert MathDomain();
+        for (uint256 i; i < N_TOKENS; ++i) {
+            if (invWad[i] == 0) revert MathDomain();
+        }
+
+        // Pool-favoring: treat full amountOut as taxable for gross-up when fee > 0.
+        uint256 amountOutGross = amountOutWad;
+        if (swapFeeWad != 0) {
+            amountOutGross = grossUpExactOut(amountOutWad, swapFeeWad);
+        }
+        if (amountOutGross >= invWad[tokenOutIndex]) revert WouldZeroReserve();
+
+        // Deep-copy: memory→memory assignment is a reference (would mutate invWad).
+        uint256[4] memory newXp;
+        newXp[0] = invWad[0];
+        newXp[1] = invWad[1];
+        newXp[2] = invWad[2];
+        newXp[3] = invWad[3];
+        newXp[tokenOutIndex] = invWad[tokenOutIndex] - amountOutGross;
+        uint256 D0 = _getD(invWad, amp);
+        uint256 D1 = _getD(newXp, amp);
+        if (D1 == 0 || D1 >= D0) revert MathDomain();
+        sharesIn = (supply * (D0 - D1)) / D0;
+        if (sharesIn == 0) revert ZeroAmount();
+        if (sharesIn >= supply) revert MathDomain();
+        // Full-book floor after exit
         if (invWad[tokenOutIndex] <= amountOutWad) revert WouldZeroReserve();
     }
 
