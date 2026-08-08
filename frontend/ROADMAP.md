@@ -8,7 +8,7 @@
 | **Wave 2 design SoT** | [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) (**rev 2** — implemented) |
 | **Narrative spine** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) |
 | **Working directory** | `frontend/` |
-| **Multi-site architecture** | [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md) — npm workspaces, `apps/indexedex` + `apps/pachira`, shared `@indexedex/protocol` (**implementation PRD; parallel worktree OK**) |
+| **Multi-site architecture** | [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md) · [IMPLEMENTATION_PLAN](./MULTI_APP_MONOREPO_IMPLEMENTATION_PLAN.md) · [AGENT_PROMPT](./MULTI_APP_MONOREPO_AGENT_PROMPT.md) |
 
 **Cold-start rule:** Open **this file first** for frontend product work. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated).
 

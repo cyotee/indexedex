@@ -6,8 +6,10 @@
 | **Working directory** | `frontend/` (repo root for git is still IndexedEx monorepo root) |
 | **Audience** | Implementation agents in an **isolated git worktree** (parallel to other agents) |
 | **Related** | [README.md](./README.md), [ROADMAP.md](./ROADMAP.md), Vercel projects `indexedex` + `pachira` |
+| **Implementation plan** | [MULTI_APP_MONOREPO_IMPLEMENTATION_PLAN.md](./MULTI_APP_MONOREPO_IMPLEMENTATION_PLAN.md) |
+| **Copy-paste agent prompt** | [MULTI_APP_MONOREPO_AGENT_PROMPT.md](./MULTI_APP_MONOREPO_AGENT_PROMPT.md) |
 
-**Cold-start:** Read this entire PRD before editing. Do not re-open dual-brand env skinning as the long-term model. Do not invent a second contract/address stack per site.
+**Cold-start:** Read this entire PRD before editing. For execution order, worktree creation, rebase, and fast-forward land onto `main`, follow the **implementation plan** and/or the **agent prompt**. Do not re-open dual-brand env skinning as the long-term model. Do not invent a second contract/address stack per site.
 
 ---
 
