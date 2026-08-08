@@ -28,36 +28,36 @@ import {
     UniswapV4HookDiamondCreate2Lib as Create2Lib
 } from "contracts/hooks/uniswap/v4/factory/libs/UniswapV4HookDiamondCreate2Lib.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookRepo.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookMath as Math
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookMath.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib as PairPoolLib
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookDFPkg
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg
  * @notice Hook diamond package: ERC20Permit LP + MultiAsset vault + SE Quad Stable product facets.
  * @dev deployVault → registry.deployHookVault → hook CREATE2 factory. Salt excludes package address.
  *      postDeploy ensures all 6 pair doors with DYNAMIC_FEE_FLAG.
  */
-contract UniswapV4StandardExchangeQuadStableBufferHookDFPkg is
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage
+contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
 {
     using BetterEfficientHashLib for bytes;
 
-    bytes32 public constant PRODUCT_ID = keccak256("UniswapV4StandardExchangeQuadStableBufferHook");
+    bytes32 public constant PRODUCT_ID = keccak256("UniswapV4StandardExchangeCurveQuadStableBufferHook");
     bytes4 public constant HOOK_VAULT_TYPE =
-        bytes4(keccak256("UniswapV4StandardExchangeQuadStableBufferHook"));
+        bytes4(keccak256("UniswapV4StandardExchangeCurveQuadStableBufferHook"));
 
     IVaultRegistryDeployment public immutable VAULT_REGISTRY_DEPLOYMENT;
     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
@@ -69,7 +69,7 @@ contract UniswapV4StandardExchangeQuadStableBufferHookDFPkg is
     IFacet public immutable ERC2612_FACET;
     IFacet public immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet public immutable MULTI_ASSET_STANDARD_VAULT_FACET;
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage private immutable SELF;
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage private immutable SELF;
 
     constructor(PkgInit memory init) {
         if (
@@ -122,7 +122,7 @@ contract UniswapV4StandardExchangeQuadStableBufferHookDFPkg is
     }
 
     function packageName() public pure returns (string memory) {
-        return type(UniswapV4StandardExchangeQuadStableBufferHookDFPkg).name;
+        return type(UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg).name;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
@@ -298,15 +298,15 @@ contract UniswapV4StandardExchangeQuadStableBufferHookDFPkg is
     }
 
     function postDeploy(address proxy) public returns (bool) {
-        IUniswapV4StandardExchangeQuadStableBufferHook h =
-            IUniswapV4StandardExchangeQuadStableBufferHook(proxy);
+        IUniswapV4StandardExchangeCurveQuadStableBufferHook h =
+            IUniswapV4StandardExchangeCurveQuadStableBufferHook(proxy);
         address[] memory toks = h.tokens();
         PairPoolLib.ensureAllPairPools(h.poolManager(), proxy, toks, 0);
         return true;
     }
 
     function name() public pure returns (string memory) {
-        return "UniswapV4StandardExchangeQuadStableBufferHook";
+        return "UniswapV4StandardExchangeCurveQuadStableBufferHook";
     }
 
     function vaultFeeTypeIds() public pure returns (bytes32) {

@@ -9,12 +9,12 @@ import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookClaimLib
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib
  * @notice SE buffer / unwrap + claim / rate helpers (external lib keeps diamond under EIP-170).
  * @dev Buffer uses exchangeIn(pair→SE); unwrap uses exchangeIn(SE→pair) with exchangeOut fallback.
  *      High-level library calls use DELEGATECALL so address(this) remains the hook.
  */
-library UniswapV4StandardExchangeQuadStableBufferHookClaimLib {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     using SafeERC20 for IERC20;
 
     error BufferFailed();

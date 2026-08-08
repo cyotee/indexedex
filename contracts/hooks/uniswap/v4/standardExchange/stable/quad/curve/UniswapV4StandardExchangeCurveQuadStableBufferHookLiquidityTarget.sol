@@ -4,26 +4,26 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookRepo.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookMath as Math
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookMath.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookTarget.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget
  * @notice Join/exit + one-token aliases on inventory domain (StableSwap single-asset + prop).
  * @dev Phase 0 OMIT: joinSingleAssetExactOut / exitSingleAssetExactTokenOut / joinUnbalanced → InvalidRoute.
  *      Full book only for single-asset and post-seed proportional. First mint requires all four > 0.
  */
-abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget is
-    UniswapV4StandardExchangeQuadStableBufferHookTarget
+abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget is
+    UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
 {
     using SafeERC20 for IERC20;
 
@@ -135,7 +135,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         for (uint256 i; i < Repo.N_TOKENS; ++i) {
             deltas[i] = int256(pairUsed[i]);
         }
-        emit IUniswapV4StandardExchangeQuadStableBufferHook.Join(
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.Join(
             msg.sender, to, shares, deltas, protocolSharesMinted
         );
     }
@@ -143,7 +143,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
     /* ----------------------------- Phase 0 OMIT ----------------------------- */
 
     function previewJoinUnbalanced(uint256[] calldata) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function joinUnbalanced(uint256[] calldata, address, uint256, uint256)
@@ -151,11 +151,11 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         pure
         returns (uint256)
     {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function previewJoinSingleAssetExactOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function joinSingleAssetExactOut(address, uint256, address, uint256, uint256)
@@ -163,11 +163,11 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         pure
         returns (uint256)
     {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function previewExitSingleAssetExactTokenOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function exitSingleAssetExactTokenOut(address, uint256, address, uint256, uint256)
@@ -175,11 +175,11 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         pure
         returns (uint256)
     {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function previewWithdrawSingleExactOut(address, uint256) public pure returns (uint256) {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     function withdrawSingleExactOut(address, uint256, address, uint256, uint256)
@@ -187,7 +187,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         pure
         returns (uint256)
     {
-        revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
     }
 
     /* -------------------------- single-asset join --------------------------- */
@@ -251,7 +251,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         _snapshotKLastIfFeeOn();
         _refundBufferedDust();
         _syncVaultReserves();
-        emit IUniswapV4StandardExchangeQuadStableBufferHook.DepositSingle(
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.DepositSingle(
             msg.sender, to, tokenIn, amountIn, shares, protocolShares
         );
     }
@@ -335,7 +335,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
             deltas[i] = -int256(pairOut[i]);
         }
         amounts = Math.toDynamic(pairOut);
-        emit IUniswapV4StandardExchangeQuadStableBufferHook.Exit(
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.Exit(
             msg.sender, to, shares, deltas, protocolShares
         );
     }
@@ -408,7 +408,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget i
         }
         _snapshotKLastIfFeeOn();
         _syncVaultReserves();
-        emit IUniswapV4StandardExchangeQuadStableBufferHook.WithdrawSingle(
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.WithdrawSingle(
             msg.sender, to, tokenOut, amountOut, sharesIn, protocolShares
         );
     }

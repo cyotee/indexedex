@@ -17,22 +17,22 @@ import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Ba
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookRepo.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookMath as Math
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookMath.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookTarget.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookHooksTarget
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget
  * @notice IHooks callbacks + rated StableSwap V4 swaps (beforeSwap + beforeSwapReturnDelta).
  * @dev No BaseHook inheritance. Fee-net curve on input residual; gross buffer SE in last.
  */
-abstract contract UniswapV4StandardExchangeQuadStableBufferHookHooksTarget is
-    UniswapV4StandardExchangeQuadStableBufferHookTarget,
+abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget is
+    UniswapV4StandardExchangeCurveQuadStableBufferHookTarget,
     IHooks
 {
     using SafeERC20 for IERC20;

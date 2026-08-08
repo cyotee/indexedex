@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_VaultViews is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_VaultViews is TestBase {
     function test_reserveOfToken_isLiveSharesOrFace() public {
         _firstMintEqual(100 ether);
         assertEq(IBasicVault(hook).reserveOfToken(address(token0)), quad.seBalance(0));

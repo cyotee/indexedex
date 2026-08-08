@@ -5,7 +5,7 @@ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfac
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
 /**
- * @title IUniswapV4StandardExchangeQuadStableBufferHook
+ * @title IUniswapV4StandardExchangeCurveQuadStableBufferHook
  * @notice Public product surface: 4-asset StableSwap book with ≥1 SE buffer legs.
  * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
  *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
@@ -13,7 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
  *      No permit2Data on join ABI — transferFrom if allowance else Permit2 AllowanceTransfer.
  *      Phase 0 OMIT: joinSingleAssetExactOut / exitSingleAssetExactTokenOut / joinUnbalanced → InvalidRoute.
  */
-interface IUniswapV4StandardExchangeQuadStableBufferHook {
+interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
     error InvalidRoute();
 
     event Join(

@@ -18,26 +18,26 @@ import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookHooksFacet
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/facets/UniswapV4StandardExchangeQuadStableBufferHookHooksFacet.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/facets/UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookSeFacet
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/facets/UniswapV4StandardExchangeQuadStableBufferHookSeFacet.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookDFPkg.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHook_FactoryService
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService
  * @notice CREATE3 product facets + registry deployPkg; mineNonce for hook CREATE2.
  */
-library UniswapV4StandardExchangeQuadStableBufferHook_FactoryService {
+library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     using BetterEfficientHashLib for bytes;
 
     /// forge-lint: disable-next-line(screaming-snake-case-const)
@@ -45,49 +45,49 @@ library UniswapV4StandardExchangeQuadStableBufferHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeQuadStableBufferHookHooksFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeQuadStableBufferHookHooksFacet).name)._hash()
+            type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).name)._hash()
         );
-        vm.label(address(facet), type(UniswapV4StandardExchangeQuadStableBufferHookHooksFacet).name);
+        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).name);
     }
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet).name)._hash()
+            type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).name)._hash()
         );
-        vm.label(address(facet), type(UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet).name);
+        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).name);
     }
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeQuadStableBufferHookSeFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeQuadStableBufferHookSeFacet).name)._hash()
+            type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).name)._hash()
         );
-        vm.label(address(facet), type(UniswapV4StandardExchangeQuadStableBufferHookSeFacet).name);
+        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).name);
     }
 
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgInit memory init,
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init,
         bytes32 salt
-    ) internal returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage pkg) {
+    ) internal returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage pkg) {
         vm.prank(owner);
-        pkg = IUniswapV4StandardExchangeQuadStableBufferHookPackage(
+        pkg = IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage(
             registry.deployPkg(
-                type(UniswapV4StandardExchangeQuadStableBufferHookDFPkg).creationCode,
+                type(UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg).creationCode,
                 abi.encode(init),
                 salt
             )
         );
-        vm.label(address(pkg), type(UniswapV4StandardExchangeQuadStableBufferHookDFPkg).name);
+        vm.label(address(pkg), type(UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg).name);
     }
 
     function findMineNonce(
         IUniswapV4HookDiamondPackageCallBackFactory factory,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage pkg,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory args
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage pkg,
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory args
     ) internal returns (uint256 mineNonce) {
         return HookFactoryService.findMineNonce(
             factory, IUniswapV4HookDiamondPackage(address(pkg)), abi.encode(args)
@@ -95,8 +95,8 @@ library UniswapV4StandardExchangeQuadStableBufferHook_FactoryService {
     }
 
     function deployHook(
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage pkg,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory args,
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage pkg,
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory args,
         uint256 mineNonce
     ) internal returns (address vault) {
         return pkg.deployVault(args, mineNonce);

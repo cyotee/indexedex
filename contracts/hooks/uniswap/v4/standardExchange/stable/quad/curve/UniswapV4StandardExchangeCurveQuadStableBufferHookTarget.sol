@@ -15,25 +15,25 @@ import {IAllowanceTransfer} from
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookRepo.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookMath as Math
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookMath.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib as PairPoolLib
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookTarget
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
  * @notice Shared book/guards/buffer helpers for 4-asset StableSwap SE buffer facets.
  * @dev No BaseHook inheritance. Fixed N=4; no weights; no partial-book KLast modes.
  *      LP via ERC20Repo; inventory = face | live SE shares; kLast = geoMean4(invWad).
  */
-abstract contract UniswapV4StandardExchangeQuadStableBufferHookTarget {
+abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     using SafeERC20 for IERC20;
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
@@ -204,7 +204,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookTarget {
         doorsEnsured = PairPoolLib.ensureAllPairPools(
             IPoolManager(l.poolManager), address(this), l.tokens, 0
         );
-        emit IUniswapV4StandardExchangeQuadStableBufferHook.PairPoolsEnsured(address(this), doorsEnsured);
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.PairPoolsEnsured(address(this), doorsEnsured);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -386,7 +386,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookTarget {
         protocolLp = Math.protocolLpShares(_totalSupply(), rootKNow, l.kLast, ownerFeeShare);
         if (protocolLp > 0) {
             _mintLp(feeTo_, protocolLp);
-            emit IUniswapV4StandardExchangeQuadStableBufferHook.ProtocolFeeMinted(feeTo_, protocolLp);
+            emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.ProtocolFeeMinted(feeTo_, protocolLp);
         }
     }
 

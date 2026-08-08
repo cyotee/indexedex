@@ -2,21 +2,21 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookMath as Math
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookMath.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
 import {
     MintableERC20Decimals
-} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/MintableERC20Decimals.sol";
+} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/MintableERC20Decimals.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_Scale is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
     function test_geoMean4_firstMintDomain() public pure {
         uint256 g = Math.geometricMean4(1e18, 1e18, 1e18, 1e18);
         assertEq(g, 1e18);

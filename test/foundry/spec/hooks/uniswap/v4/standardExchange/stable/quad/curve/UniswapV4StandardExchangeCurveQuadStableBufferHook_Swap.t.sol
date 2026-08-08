@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_Swap is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Swap is TestBase {
     function test_swapExactIn_onePair_previewEqualsExec() public {
         _firstMintEqual(1_000 ether);
         uint256 amountIn = 5 ether;

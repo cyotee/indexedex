@@ -2,7 +2,7 @@
 
 **PRD (product law SoT):** [`UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_PRD.md`](./UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_PRD.md) (**LOCKED v0.2**)  
 **This plan (implementor SoT):** greenfield package under `standardExchange/stable/quad/` — **no** existing scaffold (PRD only).  
-**Package:** `contracts/hooks/uniswap/v4/standardExchange/stable/quad/`  
+**Package:** `contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/`  
 **Date:** 2026-08-07  
 **Status:** **Canonical plan — aligned to PRD LOCKED v0.2**. Ready for implementor stamp, then code. **No production code in this doc-only pass.**
 
@@ -33,7 +33,7 @@
 
 | Lock | Value |
 |------|--------|
-| Product name | `UniswapV4StandardExchangeQuadStableBufferHook` (D1) |
+| Product name | `UniswapV4StandardExchangeCurveQuadStableBufferHook` (D1) |
 | Deploy | **Hook diamond package only** — registry `deployHookVault` + shared hook factory CREATE2 mine (D71). **Not** monomorph CREATE3 product factory |
 | Assets | **Exactly four** pool tokens; strict address ascending; decimals **[6, 18]** (D4, D9) |
 | SEs | Optional per leg; **≥1 required**; non-zero SEs **pairwise distinct** (D5–D5b, Q1) |
@@ -54,7 +54,7 @@
 | LP pull | `transferFrom` if allowance else Permit2 **AllowanceTransfer only** — no SignatureTransfer / no `permit2Data` (D47) |
 | PM + feeOracle | **Factory immutables only** (D8) |
 | Doors | postDeploy all **6** pairs + permissionless `ensurePairPools` (D75–D75a) |
-| PRODUCT_ID | `"UniswapV4StandardExchangeQuadStableBufferHook"` (D73) |
+| PRODUCT_ID | `"UniswapV4StandardExchangeCurveQuadStableBufferHook"` (D73) |
 | LP symbol prefix | **`SEQS`** (D46); symbol ≤32, name ≤64 |
 | Forks | **Ethereum + Base + Robinhood (4663)** all required, equal priority (D79) |
 | Test SE | Production ERC-4626 **wrapper** SE(s) + mintable tokens; matrix 1–4 SE + RP on/off (D78) |
@@ -95,7 +95,7 @@
 
 ## 1. Scope (v1 DoD)
 
-Implement production-first package **`UniswapV4StandardExchangeQuadStableBufferHook`**:
+Implement production-first package **`UniswapV4StandardExchangeCurveQuadStableBufferHook`**:
 
 1. Bind **exactly four** ERC-20s + optional `standardExchange[4]` + optional `rateProvider[4]` + immutable `baseAmp`; `poolManager` + `feeOracle` from **factory immutables**. Permit2 = Uniswap well-known constant (not binding arg).  
 2. **≥1** non-zero SE; non-zero SEs pairwise distinct; RP only where SE set; tokens address-ascending, decimals [6,18].  
@@ -131,34 +131,34 @@ Implement production-first package **`UniswapV4StandardExchangeQuadStableBufferH
 ## 2. File map (target)
 
 ```text
-contracts/hooks/uniswap/v4/standardExchange/stable/quad/
+contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/
   UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_PRD.md
   UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md  # this file
 
   interfaces/
-    IUniswapV4StandardExchangeQuadStableBufferHook.sol
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol
       // product surface + documents In/Out + MultiAssetLiquidity + vault discovery
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol
       // IUniswapV4HookDiamondPackage + IStandardVaultPkg + PkgInit/PkgArgs
 
-  UniswapV4StandardExchangeQuadStableBufferHookDFPkg.sol
-  UniswapV4StandardExchangeQuadStableBufferHook_FactoryService.sol
-  UniswapV4StandardExchangeQuadStableBufferHookRepo.sol
-  UniswapV4StandardExchangeQuadStableBufferHookMath.sol       # pure: dual scale, StableSwap getD/getY, geoMean4, growth, join/exit helpers
-  UniswapV4StandardExchangeQuadStableBufferHookClaimLib.sol  # SE claim + rate + buffer/unwrap (external)
-  UniswapV4StandardExchangeQuadStableBufferHookPullLib.sol   # optional: transferFrom / Permit2 AllowanceTransfer
-  UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib.sol  # optional: six-door key builders / ensure helpers
-  UniswapV4StandardExchangeQuadStableBufferHookTarget.sol    # shared book/guards (or split Targets)
-  UniswapV4StandardExchangeQuadStableBufferHookLiquidityTarget.sol
-  UniswapV4StandardExchangeQuadStableBufferHookSeTarget.sol  # SE In/Out + MultiAssetLiquidity facade
-  UniswapV4StandardExchangeQuadStableBufferHookHooksTarget.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol       # pure: dual scale, StableSwap getD/getY, geoMean4, growth, join/exit helpers
+  UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol  # SE claim + rate + buffer/unwrap (external)
+  UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib.sol   # optional: transferFrom / Permit2 AllowanceTransfer
+  UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol  # optional: six-door key builders / ensure helpers
+  UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol    # shared book/guards (or split Targets)
+  UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityTarget.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol  # SE In/Out + MultiAssetLiquidity facade
+  UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol
 
   facets/
-    UniswapV4StandardExchangeQuadStableBufferHookLiquidityFacet.sol
-    UniswapV4StandardExchangeQuadStableBufferHookSeFacet.sol
-    UniswapV4StandardExchangeQuadStableBufferHookHooksFacet.sol
+    UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol
+    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol
 
-  TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol
+  TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol
 ```
 
 **Shared SE interface (existing — cut into diamond):**
@@ -192,37 +192,37 @@ contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol
 **Tests (canonical names):**
 
 ```text
-test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/
-  UniswapV4StandardExchangeQuadStableBufferHook_Deploy.t.sol
-  UniswapV4StandardExchangeQuadStableBufferHook_Binding.t.sol        # 4 tokens, ≥1 SE, distinct SE, RP rules, amp bounds
-  UniswapV4StandardExchangeQuadStableBufferHook_Scale.t.sol          # dual inv/rated scale; mixed 6/18 decimals
-  UniswapV4StandardExchangeQuadStableBufferHook_Liquidity.t.sol      # first mint geoMean / prop join/exit / floors
-  UniswapV4StandardExchangeQuadStableBufferHook_SingleAsset.t.sol    # depositSingle / withdrawSingle + taxable fee
-  UniswapV4StandardExchangeQuadStableBufferHook_InvalidRoute.t.sol   # Phase-0-omitted selectors revert InvalidRoute
-  UniswapV4StandardExchangeQuadStableBufferHook_Swap.t.sol           # 6 doors × directed pairs; gross buffer; rated book
-  UniswapV4StandardExchangeQuadStableBufferHook_SeExchange.t.sol     # IStandardExchangeIn/Out
-  UniswapV4StandardExchangeQuadStableBufferHook_MultiAssetLiq.t.sol  # full shared interface + facade
-  UniswapV4StandardExchangeQuadStableBufferHook_Buffer.t.sol         # buffer-last, dust, claim≠raw
-  UniswapV4StandardExchangeQuadStableBufferHook_RateProvider.t.sol   # RP on/off, fail-closed, swap-only
-  UniswapV4StandardExchangeQuadStableBufferHook_Fees.t.sol           # dual-channel trading + growth + single-asset tax
-  UniswapV4StandardExchangeQuadStableBufferHook_Preview.t.sol        # bit-exact previews
-  UniswapV4StandardExchangeQuadStableBufferHook_Permit2.t.sol        # LP + SE AllowanceTransfer paths
-  UniswapV4StandardExchangeQuadStableBufferHook_VaultViews.t.sol     # IBasicVault + IStandardVault; reserveOfToken=shares
-  UniswapV4StandardExchangeQuadStableBufferHook_EnsureDoors.t.sol    # ensurePairPools
-  UniswapV4StandardExchangeQuadStableBufferHook_MathWitness.t.sol    # optional pure-Math zero-witness (I7)
-  UniswapV4StandardExchangeQuadStableBufferHook_ExactOut.t.sol       # ONLY if Phase 0 SHIPs exact-out variants
-  UniswapV4StandardExchangeQuadStableBufferHook_Unbalanced.t.sol     # ONLY if Phase 0 SHIPs joinUnbalanced
-  UniswapV4StandardExchangeQuadStableBufferHook_Adversarial.t.sol    # O11 suite
-  UniswapV4StandardExchangeQuadStableBufferHook_SeMatrix.t.sol       # 1/2/3/4 SE configs
+test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy.t.sol
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Binding.t.sol        # 4 tokens, ≥1 SE, distinct SE, RP rules, amp bounds
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale.t.sol          # dual inv/rated scale; mixed 6/18 decimals
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Liquidity.t.sol      # first mint geoMean / prop join/exit / floors
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_SingleAsset.t.sol    # depositSingle / withdrawSingle + taxable fee
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_InvalidRoute.t.sol   # Phase-0-omitted selectors revert InvalidRoute
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Swap.t.sol           # 6 doors × directed pairs; gross buffer; rated book
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_SeExchange.t.sol     # IStandardExchangeIn/Out
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_MultiAssetLiq.t.sol  # full shared interface + facade
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Buffer.t.sol         # buffer-last, dust, claim≠raw
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_RateProvider.t.sol   # RP on/off, fail-closed, swap-only
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Fees.t.sol           # dual-channel trading + growth + single-asset tax
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Preview.t.sol        # bit-exact previews
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Permit2.t.sol        # LP + SE AllowanceTransfer paths
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_VaultViews.t.sol     # IBasicVault + IStandardVault; reserveOfToken=shares
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_EnsureDoors.t.sol    # ensurePairPools
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_MathWitness.t.sol    # optional pure-Math zero-witness (I7)
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_ExactOut.t.sol       # ONLY if Phase 0 SHIPs exact-out variants
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Unbalanced.t.sol     # ONLY if Phase 0 SHIPs joinUnbalanced
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial.t.sol    # O11 suite
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrix.t.sol       # 1/2/3/4 SE configs
 
-test/foundry/fork/eth_main/hooks/uniswap/v4/standardExchange/stable/quad/
-  UniswapV4StandardExchangeQuadStableBufferHook_Ethereum.t.sol
+test/foundry/fork/eth_main/hooks/uniswap/v4/standardExchange/stable/quad/curve/
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Ethereum.t.sol
 
-test/foundry/fork/base_main/hooks/uniswap/v4/standardExchange/stable/quad/
-  UniswapV4StandardExchangeQuadStableBufferHook_Base.t.sol
+test/foundry/fork/base_main/hooks/uniswap/v4/standardExchange/stable/quad/curve/
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Base.t.sol
 
-test/foundry/fork/robinhood_4663/hooks/uniswap/v4/standardExchange/stable/quad/
-  UniswapV4StandardExchangeQuadStableBufferHook_Robinhood.t.sol
+test/foundry/fork/robinhood_4663/hooks/uniswap/v4/standardExchange/stable/quad/curve/
+  UniswapV4StandardExchangeCurveQuadStableBufferHook_Robinhood.t.sol
 ```
 
 Prefer **`FOUNDRY_PROFILE=hook_factory`** (or repo equivalent) for this tree when factory/registry stack requires it. Default profile remains hermetic `test/foundry/spec/**`.
@@ -249,7 +249,7 @@ Prefer **`FOUNDRY_PROFILE=hook_factory`** (or repo equivalent) for this tree whe
 | Single-asset tax | N/A (zap) | `dexSwapFee` taxable | N/A | **`dexSwapFee` taxable** |
 | Growth measure | Peer | Inventory \(V_{inv}\) | Effective sphere \(k\) | **Inventory product / geo measure (I1 freeze)** |
 | LP prefix | Peer | `SEWGT` | `SEORB-` | **`SEQS`** |
-| PRODUCT_ID | monomorph | weighted full name | orbital full name | **`UniswapV4StandardExchangeQuadStableBufferHook`** |
+| PRODUCT_ID | monomorph | weighted full name | orbital full name | **`UniswapV4StandardExchangeCurveQuadStableBufferHook`** |
 | Zero-witness | Allowed product-wise | Partial book modes | Peer | **Defensive solver only** |
 | Zero SE | Yes (product itself) | Forbidden | Allowed | **Forbidden — use raw Quad** |
 
@@ -329,7 +329,7 @@ for i in 0..3:
 
 ### 4.4 StableSwap math (pure Math — pattern-copy raw-quad, adapt domains)
 
-**Behavioral peer:** raw `UniswapV4QuadStableSwapHookMath` classic Curve form (not StableSwapNG, not Balancer StableMath unless Phase 0 finds a superior closed-form single-asset peer).
+**Behavioral peer:** raw `UniswapV4CurveQuadStableSwapHookMath` classic Curve form (not StableSwapNG, not Balancer StableMath unless Phase 0 finds a superior closed-form single-asset peer).
 
 ```text
 N_TOKENS = 4
@@ -521,7 +521,7 @@ Mask against `Hooks.ALL_HOOK_MASK` in factory (I4). CL add/remove and donate alw
    - RP non-zero **only if** SE non-zero  
    - `0 < baseAmp < MAX_AMP`  
 5. **DFPkg:**  
-   - `PRODUCT_ID = "UniswapV4StandardExchangeQuadStableBufferHook"`  
+   - `PRODUCT_ID = "UniswapV4StandardExchangeCurveQuadStableBufferHook"`  
    - `requiredHookFlags()` = §4.8 mask  
    - `packageSalt` = PRODUCT_ID + binding fields (**tokens, SEs, RPs, baseAmp**) + factory-scope identity — **no** package/facet addresses; **no** PM/oracle in salt if factory-immutable (D73)  
    - `deployVault(args, mineNonce)` → `registry.deployHookVault`  
@@ -689,7 +689,7 @@ Each: production PM/Permit2/fee oracle when present; deploy-if-missing productio
 | LP decimals | `18` |
 | LP symbol prefix | `SEQS` |
 | Symbol / name caps | 32 / 64 |
-| `PRODUCT_ID` | `"UniswapV4StandardExchangeQuadStableBufferHook"` |
+| `PRODUCT_ID` | `"UniswapV4StandardExchangeCurveQuadStableBufferHook"` |
 | Permit2 | `0x000000000022D473030F116dDEE9F6B43aC78BA3` |
 | Fee denominator (growth) | `100_000` |
 | Decimals band | `[6, 18]` |
@@ -800,7 +800,7 @@ Every shipped mutator has a matching `preview*` with **bit-exact** equality at t
 
 Mirror PRD §8. Package is **done** when:
 
-- [x] Files under `contracts/hooks/uniswap/v4/standardExchange/stable/quad/` (facets, Repo, Target, Math, DFPkg, FactoryService, interfaces, TestBase).  
+- [x] Files under `contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/` (facets, Repo, Target, Math, DFPkg, FactoryService, interfaces, TestBase).  
 - [x] Deploy path: facets CREATE3; instance via `deployHookVault` + shared hook factory; **all six** doors in postDeploy; `ensurePairPools`.  
 - [x] Binding: four ascending tokens; ≥1 SE; distinct SEs; RP only on SE legs; immutable `baseAmp`.  
 - [x] First mint: all four legs; inventory geo-mean − MIN; buffer-last.  

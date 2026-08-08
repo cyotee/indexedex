@@ -10,12 +10,12 @@ import {
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
 
 /**
- * @title IUniswapV4StandardExchangeQuadStableBufferHookPackage
+ * @title IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
  * @notice DFPkg interface for SE Quad Stable Buffer Hook (hook diamond package).
  * @dev PkgInit / PkgArgs on interface (Crane rule). Exactly four tokens; ≥1 SE; immutable baseAmp.
  *      Deploy: package → registry.deployHookVault → shared hook CREATE2 factory.
  */
-interface IUniswapV4StandardExchangeQuadStableBufferHookPackage is
+interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
     IUniswapV4HookDiamondPackage,
     IStandardVaultPkg
 {

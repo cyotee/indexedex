@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
 /**
  * @notice Equal-priority smoke for ETH / Base / RH — real product path.
  */
-contract UniswapV4StandardExchangeQuadStableBufferHook_ForkSmoke is
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_ForkSmoke is
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
 {
     function test_smoke_eth_main_path() public {
         try vm.envString("FOUNDRY_ETH_RPC_URL") returns (string memory) {} catch {}

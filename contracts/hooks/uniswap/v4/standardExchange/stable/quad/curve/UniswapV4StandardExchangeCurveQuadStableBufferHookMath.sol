@@ -4,13 +4,14 @@ pragma solidity ^0.8.0;
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookMath
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookMath
  * @notice Pure dual-scale + classic Curve StableSwap n=4 + inventory LP / growth helpers.
- * @dev Ann = A' * N_TOKENS where A' = baseAmp * AMP_PRECISION. No storage/external calls.
- *      Swaps use ratedWad + input residual fee. LP / kLast use invWad (I1: geoMean4).
+ * @dev **Ann pin (LOCKED):** `Ann = A' * N_TOKENS` where `A' = baseAmp * AMP_PRECISION` (`AMP_PRECISION=100`).
+ *      Classic Curve StableSwap iterative getD/getY — **not** StableSwapNG, **not** Balancer StableMath.
+ *      No storage/external calls. Swaps use ratedWad + input residual fee. LP / kLast use invWad (I1: geoMean4).
  *      Single-asset taxable portion uses dexSwapFee (mulUp peer).
  */
-library UniswapV4StandardExchangeQuadStableBufferHookMath {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     error ZeroAmount();
     error InvalidFeeWad();
     error InvariantFailed();

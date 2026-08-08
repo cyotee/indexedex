@@ -17,14 +17,14 @@ import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHook_FactoryService as PkgFactory
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHook_FactoryService.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as PkgFactory
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol";
 
 /// @dev External lib to keep concrete test contracts under via_ir stack limits.
-library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib {
     struct VaultFacets {
         IFacet erc20Facet;
         IFacet erc5267Facet;
@@ -46,7 +46,7 @@ library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
         external
         returns (
             IUniswapV4HookDiamondPackageCallBackFactory hookFactory,
-            IUniswapV4StandardExchangeQuadStableBufferHookPackage hookPkg
+            IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage hookPkg
         )
     {
         VaultFacets memory vf;
@@ -67,7 +67,7 @@ library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
         private
         returns (
             IUniswapV4HookDiamondPackageCallBackFactory hookFactory,
-            IUniswapV4StandardExchangeQuadStableBufferHookPackage hookPkg
+            IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage hookPkg
         )
     {
         hookFactory = _deployHookFactory(create3Factory);
@@ -97,14 +97,14 @@ library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
         address owner,
         address indexedexManager,
         VaultFacets memory vf
-    ) private returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage hookPkg) {
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgInit memory init =
+    ) private returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage hookPkg) {
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init =
             _buildPkgInit(create3Factory, indexedexManager, vf);
         hookPkg = PkgFactory.deployPackage(
             IVaultRegistryDeployment(indexedexManager),
             owner,
             init,
-            keccak256(abi.encode(type(IUniswapV4StandardExchangeQuadStableBufferHookPackage).name, "v1"))
+            keccak256(abi.encode(type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name, "v1"))
         );
     }
 
@@ -114,7 +114,7 @@ library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
         VaultFacets memory vf
     )
         private
-        returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgInit memory init)
+        returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init)
     {
         init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
@@ -130,8 +130,8 @@ library UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib {
 
     function deployHookInstance(
         IUniswapV4HookDiamondPackageCallBackFactory hookFactory,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage hookPkg,
-        IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory args
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage hookPkg,
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory args
     ) external returns (address hook) {
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);

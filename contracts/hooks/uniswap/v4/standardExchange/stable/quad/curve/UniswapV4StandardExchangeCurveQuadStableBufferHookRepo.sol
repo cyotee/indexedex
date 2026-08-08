@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookRepo
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookRepo
  * @notice Diamond storage: 4-token binding, optional SE/RP per leg, dual scales, kLast, lock.
  * @dev Slot: indexedex.hooks.uv4.se.stable.quad.buffer.storage
  *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
@@ -12,7 +12,7 @@ pragma solidity ^0.8.0;
  *      (free_raw = bal - rawReserves; inventory cannot fund pretransfer).
  *      I1 freeze: kLast = geometricMean4(invWad0..3).
  */
-library UniswapV4StandardExchangeQuadStableBufferHookRepo {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("indexedex.hooks.uv4.se.stable.quad.buffer.storage")) - 1)
     ) & ~bytes32(uint256(0xff));

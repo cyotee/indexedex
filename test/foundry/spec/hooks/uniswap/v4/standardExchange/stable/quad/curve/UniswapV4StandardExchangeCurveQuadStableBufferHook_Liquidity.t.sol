@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_Liquidity is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Liquidity is TestBase {
     function test_propJoinExit_previewEqualsExec() public {
         _firstMintEqual(500 ether);
         uint256[] memory amounts = new uint256[](4);
@@ -53,21 +53,21 @@ contract UniswapV4StandardExchangeQuadStableBufferHook_Liquidity is TestBase {
 
     function test_invalidRoute_omitPaths() public {
         _firstMintEqual(200 ether);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.previewJoinUnbalanced(new uint256[](4));
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.joinUnbalanced(new uint256[](4), user, 0, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.previewJoinSingleAssetExactOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.joinSingleAssetExactOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.previewExitSingleAssetExactTokenOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.exitSingleAssetExactTokenOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.previewWithdrawSingleExactOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute.selector);
+        vm.expectRevert(IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute.selector);
         quad.withdrawSingleExactOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
     }
 }

@@ -11,10 +11,10 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib
  * @notice Ensure all 6 pair doors for fixed n=4 with DYNAMIC_FEE_FLAG, tickSpacing=1, hooks=this.
  */
-library UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib {
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
 

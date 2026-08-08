@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
 /**
  * @notice FK Robinhood 4663: createSelectFork when RH RPC/ALCHEMY present; else honest skip + hermetic smoke.
  */
-contract UniswapV4StandardExchangeQuadStableBufferHook_Robinhood is
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Robinhood is
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
 {
     bool internal forked;
 

@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage as IPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IPkg
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
@@ -14,7 +14,7 @@ import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol"
 /**
  * @notice H1–H2 deploy + binding rejects; six doors; first mint.
  */
-contract UniswapV4StandardExchangeQuadStableBufferHook_Deploy is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
     function test_deploy_bindsFourTokens_withOneSE() public view {
         assertEq(quad.numTokens(), 4);
         assertEq(quad.token(0), address(token0));

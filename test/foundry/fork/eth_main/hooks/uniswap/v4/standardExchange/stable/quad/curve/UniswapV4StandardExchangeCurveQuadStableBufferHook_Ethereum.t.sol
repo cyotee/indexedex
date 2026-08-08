@@ -2,16 +2,16 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHook_Ethereum
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHook_Ethereum
  * @notice FK: when ETH RPC / ALCHEMY_KEY present, createSelectFork then product smoke.
  *         When unset, records skip honestly (no fake green fork).
  */
-contract UniswapV4StandardExchangeQuadStableBufferHook_Ethereum is
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Ethereum is
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
 {
     bool internal forked;
 

@@ -8,15 +8,15 @@ import {
     IStandardExchangeMultiAssetLiquidity
 } from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookSeTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookSeTarget.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHookSeFacet is
-    UniswapV4StandardExchangeQuadStableBufferHookSeTarget,
+contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet is
+    UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
-        return type(UniswapV4StandardExchangeQuadStableBufferHookSeFacet).name;
+        return type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).name;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_Fees is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Fees is TestBase {
     function test_singleAsset_taxable_withDexFee() public {
         _firstMintEqual(500 ether);
         _ensureFeeTo();

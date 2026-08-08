@@ -31,27 +31,27 @@ import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHookPackage.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHook_FactoryService as PkgFactory
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHook_FactoryService.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as PkgFactory
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib as DeployLib
-} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookTestDeployLib.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib as DeployLib
+} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib as PairPoolLib
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 
 /**
- * @title TestBase_UniswapV4StandardExchangeQuadStableBufferHook
+ * @title TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
  * @notice Package path: ERC-4626 SE + hook factory + registry deployHookVault.
  * @dev Default: 4 tokens, SE on leg 0, baseAmp=100 (A'=10000). Matrix helpers for 1–4 SE.
  */
-abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is TestBase_ERC4626StandardExchange {
+abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is TestBase_ERC4626StandardExchange {
     using BetterEfficientHashLib for bytes;
     using HookFactoryService for ICreate3FactoryProxy;
 
@@ -80,11 +80,11 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
 
     IPoolManager internal pm;
     IUniswapV4HookDiamondPackageCallBackFactory internal hookFactory;
-    IUniswapV4StandardExchangeQuadStableBufferHookPackage internal hookPkg;
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage internal hookPkg;
     address internal hook;
-    IUniswapV4StandardExchangeQuadStableBufferHook internal quad;
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook internal quad;
     // alias used by some tests copied from weighted
-    IUniswapV4StandardExchangeQuadStableBufferHook internal weighted;
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook internal weighted;
     WrapperExactOutRouter internal swapRouter;
     PoolKey internal poolKey01;
 
@@ -164,11 +164,11 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
         vm.stopPrank();
     }
 
-    function _deployHookWithArgs(IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory args)
+    function _deployHookWithArgs(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory args)
         internal
     {
         hook = DeployLib.deployHookInstance(hookFactory, hookPkg, args);
-        quad = IUniswapV4StandardExchangeQuadStableBufferHook(hook);
+        quad = IUniswapV4StandardExchangeCurveQuadStableBufferHook(hook);
         weighted = quad;
         poolKey01 = PairPoolLib.pairKey(args.tokens[0], args.tokens[1], 1, IHooks(hook));
     }
@@ -177,7 +177,7 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
     function _defaultPkgArgs()
         internal
         view
-        returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory)
+        returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory)
     {
         address[4] memory toks;
         toks[0] = address(token0);
@@ -187,7 +187,7 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
         address[4] memory ses;
         ses[0] = se0;
         address[4] memory rps;
-        return IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs({
+        return IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs({
             poolManager: address(pm),
             feeOracle: address(indexedexManager),
             tokens: toks,
@@ -239,7 +239,7 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
         bool zeroForOne = tokenIn < tokenOut;
         PoolKey memory key = PairPoolLib.pairKey(tokenIn, tokenOut, 1, IHooks(hook));
         // Bound maxAmountIn to a real preview (type(uint256).max would transferFrom entire max).
-        uint256 previewIn = IUniswapV4StandardExchangeQuadStableBufferHook(hook).previewSwapExactOut(
+        uint256 previewIn = IUniswapV4StandardExchangeCurveQuadStableBufferHook(hook).previewSwapExactOut(
             tokenIn, tokenOut, amountOut
         );
         uint256 maxIn = previewIn + (previewIn / 10) + 1 ether; // slack for fee/rounding
@@ -256,7 +256,7 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
     function _argsSeCount(uint8 seCount)
         internal
         view
-        returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory a)
+        returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a)
     {
         require(seCount >= 1 && seCount <= 4, "seCount");
         a.poolManager = address(pm);
@@ -277,7 +277,7 @@ abstract contract TestBase_UniswapV4StandardExchangeQuadStableBufferHook is Test
         address[4] memory ses,
         address[4] memory rps,
         uint256 baseAmp
-    ) internal view returns (IUniswapV4StandardExchangeQuadStableBufferHookPackage.PkgArgs memory a) {
+    ) internal view returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.tokens = toks;

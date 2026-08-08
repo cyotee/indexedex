@@ -6,23 +6,23 @@ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookRepo as Repo
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookRepo.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookHooksTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookHooksTarget.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookSeTarget
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
  * @notice SE In/Out swap-only surface (rated StableSwap book, internal settle).
  * @dev MultiAssetLiquidity selectors live on LiquidityFacet (same functions as product join/exit).
  *      pretransferred=true requires free funding only (orbital peer) — cannot drain inventory.
  */
-abstract contract UniswapV4StandardExchangeQuadStableBufferHookSeTarget is
-    UniswapV4StandardExchangeQuadStableBufferHookHooksTarget,
+abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
+    UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget,
     IStandardExchangeIn,
     IStandardExchangeOut
 {
@@ -50,7 +50,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookSeTarget is
         if (recipient == address(0)) revert ZeroAddress();
         address tin = address(tokenIn);
         address tout = address(tokenOut);
-        if (tin == tout) revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        if (tin == tout) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
         _tokenIndex(tin);
         _tokenIndex(tout);
 
@@ -105,7 +105,7 @@ abstract contract UniswapV4StandardExchangeQuadStableBufferHookSeTarget is
         if (recipient == address(0)) revert ZeroAddress();
         address tin = address(tokenIn);
         address tout = address(tokenOut);
-        if (tin == tout) revert IUniswapV4StandardExchangeQuadStableBufferHook.InvalidRoute();
+        if (tin == tout) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert Slippage();
 

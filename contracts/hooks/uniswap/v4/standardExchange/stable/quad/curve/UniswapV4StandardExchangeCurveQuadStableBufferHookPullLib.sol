@@ -7,11 +7,11 @@ import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 
 /**
- * @title UniswapV4StandardExchangeQuadStableBufferHookPullLib
+ * @title UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib
  * @notice LP / SE funding: transferFrom if allowance else Permit2 AllowanceTransfer only.
  * @dev No SignatureTransfer / no permit2Data on join ABI.
  */
-library UniswapV4StandardExchangeQuadStableBufferHookPullLib {
+library UniswapV4StandardExchangeCurveQuadStableBufferHookPullLib {
     using SafeERC20 for IERC20;
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;

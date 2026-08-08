@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import {
-    TestBase_UniswapV4StandardExchangeQuadStableBufferHook as TestBase
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/TestBase_UniswapV4StandardExchangeQuadStableBufferHook.sol";
+    TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
-    IUniswapV4StandardExchangeQuadStableBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/interfaces/IUniswapV4StandardExchangeQuadStableBufferHook.sol";
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -15,16 +15,16 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {ModifyLiquidityParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {
-    UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib as PairPoolLib
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/UniswapV4StandardExchangeQuadStableBufferHookPairPoolLib.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 import {
     HostileReentrantERC20
-} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/HostileReentrantERC20.sol";
+} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/HostileReentrantERC20.sol";
 
-contract UniswapV4StandardExchangeQuadStableBufferHook_Adversarial is TestBase {
+contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestBase {
     function test_donation_seShares_dilutesJoin() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
@@ -153,7 +153,7 @@ contract UniswapV4StandardExchangeQuadStableBufferHook_Adversarial is TestBase {
         assertGt(okShares, 0, "control depositSingle works");
 
         bytes memory reentry = abi.encodeWithSelector(
-            IUniswapV4StandardExchangeQuadStableBufferHook.depositSingle.selector,
+            IUniswapV4StandardExchangeCurveQuadStableBufferHook.depositSingle.selector,
             address(hostile),
             uint256(1 ether),
             user,
