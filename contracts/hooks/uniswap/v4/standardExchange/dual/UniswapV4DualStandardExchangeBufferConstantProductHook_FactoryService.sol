@@ -27,6 +27,9 @@ import {
     UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol";
 import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol";
+import {
     UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol";
 import {
@@ -66,6 +69,14 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
             abi.encode(type(UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet).name)._hash()
         );
         vm.label(address(facet), type(UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet).name);
+    }
+
+    function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet).creationCode,
+            abi.encode(type(UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet).name);
     }
 
     function deployPackage(

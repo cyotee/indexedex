@@ -17,6 +17,8 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
@@ -34,7 +36,7 @@ import {
  * @notice Option B DFPkg: ERC20Permit LP facets + MultiAsset vault facets + product facets.
  * @dev deployVault → registry.deployHookVault → hook CREATE2 factory. Salt excludes package address.
  *      Salt sorts legs by pair-token address so free ctor order yields the same instance.
- *      SE In/Out residual (D-SE): vault registration required; pair SE surface deferred.
+ *      M3: seFacet declares IStandardExchangeIn / Out for pair0↔pair1.
  */
 contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     IUniswapV4DualStandardExchangeBufferConstantProductHookPackage
@@ -50,6 +52,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     IFacet public immutable HOOKS_FACET;
     IFacet public immutable DEPOSIT_FACET;
     IFacet public immutable WITHDRAW_FACET;
+    IFacet public immutable SE_FACET;
     IFacet public immutable ERC20_FACET;
     IFacet public immutable ERC5267_FACET;
     IFacet public immutable ERC2612_FACET;
@@ -62,8 +65,9 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
             address(init.vaultRegistryDeployment) == address(0)
                 || address(init.vaultFeeOracleQuery) == address(0)
                 || address(init.hooksFacet) == address(0) || address(init.depositFacet) == address(0)
-                || address(init.withdrawFacet) == address(0) || address(init.erc20Facet) == address(0)
-                || address(init.erc5267Facet) == address(0) || address(init.erc2612Facet) == address(0)
+                || address(init.withdrawFacet) == address(0) || address(init.seFacet) == address(0)
+                || address(init.erc20Facet) == address(0) || address(init.erc5267Facet) == address(0)
+                || address(init.erc2612Facet) == address(0)
                 || address(init.multiAssetBasicVaultFacet) == address(0)
                 || address(init.multiAssetStandardVaultFacet) == address(0)
         ) {
@@ -74,6 +78,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         HOOKS_FACET = init.hooksFacet;
         DEPOSIT_FACET = init.depositFacet;
         WITHDRAW_FACET = init.withdrawFacet;
+        SE_FACET = init.seFacet;
         ERC20_FACET = init.erc20Facet;
         ERC5267_FACET = init.erc5267Facet;
         ERC2612_FACET = init.erc2612Facet;
@@ -117,19 +122,21 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        // ERC20Permit + vault + product type. SE In/Out residual (not declared).
-        interfaces = new bytes4[](7);
+        // ERC20Permit + vault + product type + M3 SE In/Out.
+        interfaces = new bytes4[](9);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
         interfaces[3] = type(IERC5267).interfaceId;
         interfaces[4] = type(IBasicVault).interfaceId;
         interfaces[5] = type(IStandardVault).interfaceId;
-        interfaces[6] = HOOK_VAULT_TYPE;
+        interfaces[6] = type(IStandardExchangeIn).interfaceId;
+        interfaces[7] = type(IStandardExchangeOut).interfaceId;
+        interfaces[8] = HOOK_VAULT_TYPE;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](8);
+        facets = new address[](9);
         facets[0] = address(ERC20_FACET);
         facets[1] = address(ERC5267_FACET);
         facets[2] = address(ERC2612_FACET);
@@ -138,6 +145,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         facets[5] = address(HOOKS_FACET);
         facets[6] = address(DEPOSIT_FACET);
         facets[7] = address(WITHDRAW_FACET);
+        facets[8] = address(SE_FACET);
     }
 
     function packageMetadata()
@@ -151,7 +159,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](8);
+        cuts = new IDiamond.FacetCut[](9);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
             action: IDiamond.FacetCutAction.Add,
@@ -191,6 +199,11 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
             facetAddress: address(WITHDRAW_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: WITHDRAW_FACET.facetFuncs()
+        });
+        cuts[8] = IDiamond.FacetCut({
+            facetAddress: address(SE_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: SE_FACET.facetFuncs()
         });
     }
 

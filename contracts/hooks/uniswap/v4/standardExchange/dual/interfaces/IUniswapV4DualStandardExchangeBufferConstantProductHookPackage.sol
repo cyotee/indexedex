@@ -14,8 +14,8 @@ import {
  * @notice DFPkg interface for Dual SE Buffer CP Hook (Option B hook diamond).
  * @dev PkgInit / PkgArgs on interface (Crane rule). Shared LP token facets match
  *      ERC20PermitDFPkg (ERC20 + ERC5267 + ERC2612) plus MultiAsset vault facets.
- *      SE In/Out surface: residual (D-SE) — vault registration is DoD; pair0↔pair1 SE
- *      methods deferred (swap previews remain on product surface).
+ *      M3: seFacet cuts IStandardExchangeIn / Out for pair0↔pair1 book surface.
+ *      B6: deposit/withdraw facets include flexible pair and/or SE-share LP paths.
  */
 interface IUniswapV4DualStandardExchangeBufferConstantProductHookPackage is
     IUniswapV4HookDiamondPackage,
@@ -32,6 +32,8 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHookPackage is
         IFacet hooksFacet;
         IFacet depositFacet;
         IFacet withdrawFacet;
+        /// @dev M3: IStandardExchangeIn / Out selectors.
+        IFacet seFacet;
         /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
         IFacet erc20Facet;
         IFacet erc5267Facet;
@@ -54,6 +56,7 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHookPackage is
     function HOOKS_FACET() external view returns (IFacet);
     function DEPOSIT_FACET() external view returns (IFacet);
     function WITHDRAW_FACET() external view returns (IFacet);
+    function SE_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);
 
     /// @notice Product path: package → Vault Registry.deployHookVault → hook factory.

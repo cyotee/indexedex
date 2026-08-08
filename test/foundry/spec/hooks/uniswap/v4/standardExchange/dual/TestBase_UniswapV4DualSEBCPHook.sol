@@ -17,6 +17,8 @@ import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Curren
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
@@ -105,6 +107,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
         IFacet hooksFacet = DualFactory.deployHooksFacet(create3Factory);
         IFacet depositFacet = DualFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = DualFactory.deployWithdrawFacet(create3Factory);
+        IFacet seFacet = DualFactory.deploySeFacet(create3Factory);
         hookPkg = DualFactory.deployPackage(
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
@@ -114,6 +117,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
                 hooksFacet: hooksFacet,
                 depositFacet: depositFacet,
                 withdrawFacet: withdrawFacet,
+                seFacet: seFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
@@ -184,6 +188,27 @@ abstract contract TestBase_UniswapV4DualSEBCPHook is TestBase_ERC4626StandardExc
         uint256 a1 = _amountForCurrency(dual.currency1(), amtA, amtB);
         vm.prank(user);
         (lp,,) = dual.deposit(a0, a1, user, 0, block.timestamp + 1 hours);
+    }
+
+    /// @dev Mint pair tokens, exchange into SE shares for `user` (B6 LP funding).
+    function _userAcquireSeShares(address se, SimpleMintableERC20 pairToken, uint256 pairAmt)
+        internal
+        returns (uint256 seOut)
+    {
+        pairToken.mint(user, pairAmt);
+        vm.startPrank(user);
+        pairToken.approve(se, type(uint256).max);
+        seOut = IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)),
+            pairAmt,
+            IERC20(se),
+            0,
+            user,
+            false,
+            block.timestamp + 1 hours
+        );
+        IERC20(se).approve(hook, type(uint256).max);
+        vm.stopPrank();
     }
 
     function _enableProtocolFee(uint256 feeWad) internal {

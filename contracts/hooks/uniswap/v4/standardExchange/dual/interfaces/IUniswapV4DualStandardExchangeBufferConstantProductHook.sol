@@ -6,6 +6,8 @@ pragma solidity ^0.8.0;
  * @notice Dual SE buffer + constant-product pricing hook (pair-token pool).
  * @dev LP ERC-20 is the same contract. Liquidity amount0/amount1 = pool currency0/currency1.
  *      Product law: UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md v3.12.
+ *      B6: depositFlexible / withdrawFlexible accept pair token and/or SE vault share per leg.
+ *      M3: diamond also cuts IStandardExchangeIn / IStandardExchangeOut for pair0↔pair1 book swaps.
  */
 interface IUniswapV4DualStandardExchangeBufferConstantProductHook {
     event Deposit(
@@ -24,10 +26,32 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHook {
         uint256 lpAmount
     );
 
+    event DepositFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        uint256 used0,
+        uint256 used1,
+        uint256 lpAmount
+    );
+
     event Withdraw(
         address indexed sender,
         address indexed to,
         uint256 lpAmount,
+        uint256 amount0,
+        uint256 amount1
+    );
+
+    event WithdrawFlexible(
+        address indexed sender,
+        address indexed to,
+        uint256 lpAmount,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
         uint256 amount0,
         uint256 amount1
     );
@@ -123,6 +147,29 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHook {
         uint256 deadline
     ) external returns (uint256 amount0, uint256 amount1);
 
+    /// @notice B6: proportional deposit with pair token and/or SE vault share per pool leg.
+    /// @dev amount*IsSeShare selects SE for that currency (seFor(currency*)) vs pair token.
+    function depositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare,
+        address to,
+        uint256 minLpAmount,
+        uint256 deadline
+    ) external returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    /// @notice B6: proportional withdraw paying pair tokens and/or SE vault shares per pool leg.
+    function withdrawFlexible(
+        uint256 lpAmount,
+        address to,
+        bool receiveSeShare0,
+        bool receiveSeShare1,
+        uint256 minAmount0,
+        uint256 minAmount1,
+        uint256 deadline
+    ) external returns (uint256 amount0, uint256 amount1);
+
     // --- Previews ---
     function previewDeposit(uint256 amount0, uint256 amount1)
         external
@@ -140,6 +187,18 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHook {
         returns (uint256 amountToSwap, uint256 amountOtherOut, uint256 amountKeptIn);
 
     function previewWithdraw(uint256 lpAmount)
+        external
+        view
+        returns (uint256 amount0, uint256 amount1);
+
+    function previewDepositFlexible(
+        uint256 amount0,
+        bool amount0IsSeShare,
+        uint256 amount1,
+        bool amount1IsSeShare
+    ) external view returns (uint256 lpAmount, uint256 used0, uint256 used1);
+
+    function previewWithdrawFlexible(uint256 lpAmount, bool receiveSeShare0, bool receiveSeShare1)
         external
         view
         returns (uint256 amount0, uint256 amount1);
