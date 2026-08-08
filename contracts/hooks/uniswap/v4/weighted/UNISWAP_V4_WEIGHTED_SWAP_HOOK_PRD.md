@@ -27,7 +27,7 @@
   Join/exit unbalanced helpers:  
   `lib/crane/contracts/external/balancer/v3/vault/contracts/BasePoolMath.sol`
 - IndexedEx multi-door hook peers:  
-  - Quad Stable: `contracts/hooks/uniswap/v4/stable/quad/UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_PRD.md` (doors + factory shape + ecosystem CREATE3)  
+  - Quad Stable: `contracts/hooks/uniswap/v4/stable/quad/curve/UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_PRD.md` (doors + factory shape + ecosystem CREATE3)  
   - Orbital: `contracts/hooks/uniswap/v4/orbital/UNISWAP_V4_ORBITAL_SWAP_HOOK_PRD.md` (fee oracle dual channel, `kLast`, partial-book dual mode, Permit2, DYNAMIC_FEE_FLAG, LP deadline / burn rules)
 
 **Sibling packages (do not conflate):**

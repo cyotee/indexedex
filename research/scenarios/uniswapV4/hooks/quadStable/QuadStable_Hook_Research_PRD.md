@@ -2,8 +2,8 @@
 
 **Status:** ACTIVE — Phase 0 (2026-08-06)  
 **Campaign id:** `uniswapV4/hooks/quadStable`  
-**Product:** `contracts/hooks/uniswap/v4/stable/quad/`  
-**TestBase:** `TestBase_UniswapV4QuadStableSwapHook.sol`  
+**Product:** `contracts/hooks/uniswap/v4/stable/quad/curve/`  
+**TestBase:** `TestBase_UniswapV4CurveQuadStableSwapHook.sol`  
 **Profile:** `quad_stable`  
 **Artifacts:** `research/out/uniswapV4/hooks/quadStable/`
 
