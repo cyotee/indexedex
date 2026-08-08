@@ -259,12 +259,12 @@ npm run build:pachira
 
 ## 5. Definition of done (program)
 
-- [ ] Work executed only in worktree branch `frontend/multi-app-monorepo` until land.
-- [ ] `frontend/` npm workspaces: `apps/indexedex`, `apps/pachira`, `packages/protocol`.
-- [ ] Protocol single-sourced; no dual address trees.
-- [ ] Site=app; no brand toggle product surface.
-- [ ] `build:indexedex` and `build:pachira` succeed.
-- [ ] IndexedEx e2e runnable (Option A).
+- [x] Work executed only in worktree branch `frontend/multi-app-monorepo` until land.
+- [x] `frontend/` npm workspaces: `apps/indexedex`, `apps/pachira`, `packages/protocol`.
+- [x] Protocol single-sourced; no dual address trees.
+- [x] Site=app; no brand toggle product surface.
+- [x] `build:indexedex` and `build:pachira` succeed.
+- [x] IndexedEx e2e runnable (Option A).
 - [ ] Branch rebased onto latest `origin/main`.
 - [ ] `main` **fast-forwarded** to feature tip and pushed (`origin/main` linear).
 - [ ] Worktree removed (or documented for operator).

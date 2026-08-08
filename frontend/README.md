@@ -1,32 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-wagmi`](https://github.com/wevm/wagmi/tree/main/packages/create-wagmi).
+# IndexedEx frontend monorepo
 
-## Product roadmap (agents)
+npm workspaces under `frontend/`:
 
-| Doc | Role |
-|-----|------|
-| **[ROADMAP.md](./ROADMAP.md)** | **Entry point** — status, next phase, **no-deploy**, do-not-reopen |
-| [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) | Wave 2 fee-accrual DETF narrative (**design draft** — owner sign-off → build) |
-| [FRONTEND_REDESIGN_DESIGN.md](./FRONTEND_REDESIGN_DESIGN.md) | Product / architecture source of truth (rev 8) |
-| [WAVE1_5_ANVIL_AND_EMBED_PLAN.md](./WAVE1_5_ANVIL_AND_EMBED_PLAN.md) | Wave 1.5 local verify + lab embed (**closed**) |
-| [WAVE1_IMPLEMENTATION_PLAN.md](./WAVE1_IMPLEMENTATION_PLAN.md) | Foundation (**done**) |
-| [WAVE1_UI_POLISH_IMPLEMENTATION_PLAN.md](./WAVE1_UI_POLISH_IMPLEMENTATION_PLAN.md) | UI polish (**done**) |
+| Path | Package | Role |
+|------|---------|------|
+| `apps/indexedex` | `@indexedex/app-indexedex` | IndexedEx site (blue) — https://indexedex.vercel.app |
+| `apps/pachira` | `@indexedex/app-pachira` | Pachira site (green) — https://pachirav2.vercel.app |
+| `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains, registry, swap helpers |
+
+## Local development
+
+```bash
+cd frontend
+npm install
+npm run dev:indexedex   # http://localhost:3000
+npm run dev:pachira     # http://localhost:3001
+npm run build:indexedex
+npm run build:pachira
+npm test                # IndexedEx unit tests
+npm run test:e2e        # Playwright — IndexedEx only (Option A)
+```
+
+**Site = app:** each app hardcodes its theme/name/logo. Do not use `NEXT_PUBLIC_DEFAULT_BRAND` to choose a site.
+
+**Vercel Root Directory:**
+
+- Project `indexedex` → `frontend/apps/indexedex`
+- Project `pachira` → `frontend/apps/pachira`
+
+Ignore build: `bash ../../scripts/vercel-ignore-build.sh <indexedex|pachira>` (skips when neither that app nor `packages/protocol` / workspace root changed).
+
+Product law: [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md).
 
 ---
+
 
 ## How Token Lists reach the UI
 
 Token addresses come from chain-keyed Token List files under
-`app/addresses/chain/<chainId>/`. Two pieces of plumbing load them:
+`packages/protocol/src/addresses/chain/<chainId>/`. Two pieces of plumbing load them:
 
-- `app/lib/tokenlistRegistry.ts` re-exports `GENERATED_LIST_REGISTRY` from
+- `packages/protocol/src/tokenlistRegistry.ts` re-exports `GENERATED_LIST_REGISTRY` from
   `tokenlistRegistry.generated.ts`. That generated file is produced by the
   Node aggregator (`scripts/node/build-tokenlists`) by scanning every
   `chain/<id>/<bucket>.tokenlist.json` it finds.
-- `app/lib/addressArtifacts.ts` re-exports `GENERATED_CHAIN_PLATFORM_OVERRIDES`
+- `packages/protocol/src/addressArtifacts.ts` re-exports `GENERATED_CHAIN_PLATFORM_OVERRIDES`
   from `chainPlatformOverrides.generated.ts`, which the same aggregator emits
   by scanning every `chain/<id>/platform.json`.
 
-So **dropping new tokenlist files into `app/addresses/chain/<id>/` and
+So **dropping new tokenlist files into `packages/protocol/src/addresses/chain/<id>/` and
 re-running the aggregator is enough to expose them to the registry**. The two
 generated `.ts` files are checked in.
 
@@ -41,12 +63,12 @@ Follow these so the auto-discovery generator picks files up without ambiguity.
 
 | Location                                              | Convention                                                                 |
 |-------------------------------------------------------|----------------------------------------------------------------------------|
-| `app/addresses/chain/<chainId>/`                      | `<chainId>` is the numeric chain id only — no prefix, no separators.       |
-| `app/addresses/chain/<chainId>/<bucket-id>.tokenlist.json` | `<bucket-id>` is kebab-case, matches the `id` field of a bucket in `tokenlists.config.ts`. |
-| `app/addresses/chain/<chainId>/platform.json`         | Literal filename.                                                          |
+| `packages/protocol/src/addresses/chain/<chainId>/`                      | `<chainId>` is the numeric chain id only — no prefix, no separators.       |
+| `packages/protocol/src/addresses/chain/<chainId>/<bucket-id>.tokenlist.json` | `<bucket-id>` is kebab-case, matches the `id` field of a bucket in `tokenlists.config.ts`. |
+| `packages/protocol/src/addresses/chain/<chainId>/platform.json`         | Literal filename.                                                          |
 | Bucket `id` (in `tokenlists.config.ts`)               | kebab-case (`base-tokens`, `balancer-v3-pools`, `aerodrome-pools`).        |
 | Fragment `includeTypeDirs` (in `tokenlists.config.ts`)| `<category>/<camelCaseSubcategory>` (`pools/balancerV3`, `vaults/strategy`).|
-| `app/addresses/<environment>/` (env-keyed artifacts)  | snake_case environment name matching `DeploymentEnvironment`.              |
+| `packages/protocol/src/addresses/<environment>/` (env-keyed artifacts)  | snake_case environment name matching `DeploymentEnvironment`.              |
 
 ---
 
@@ -56,16 +78,16 @@ The registry side is automatic. The wallet / app side still needs manual
 wiring because each chain id is a typed value that flows through several
 modules.
 
-### 1. Get the tokenlist files into `app/addresses/chain/<NEW_ID>/`
+### 1. Get the tokenlist files into `packages/protocol/src/addresses/chain/<NEW_ID>/`
 
 Either run the aggregator (`cd scripts/node && npm run build-tokenlists`) so
 it emits the chain directory for you, or hand-drop `<bucket-id>.tokenlist.json`
 files and a `platform.json` following the naming conventions above. The
 aggregator-driven path is preferred because it also regenerates
-`app/lib/tokenlistRegistry.generated.ts` and
+`packages/protocol/src/tokenlistRegistry.generated.ts` and
 `app/lib/chainPlatformOverrides.generated.ts` so the registry sees the chain.
 
-### 2. Declare the chain in `app/addresses/index.ts`
+### 2. Declare the chain in `packages/protocol/src/addresses/index.ts`
 
 - Add a `CHAIN_ID_<NAME>` constant for the numeric id.
 - Extend the `CanonicalArtifactChainId` union to include it.
@@ -75,12 +97,12 @@ aggregator-driven path is preferred because it also regenerates
   bundle at runtime, so the bundle's other fields (router, vault, etc.) are
   what matter here.
 
-### 3. Allowlist the chain in `app/lib/networkSelection.tsx`
+### 3. Allowlist the chain in `packages/protocol/src/networkSelection.tsx`
 
 Add the new constant to the comparison in `isCanonicalArtifactChainId`. This
 gates which chain ids the nav-bar selector and `localStorage` accept.
 
-### 4. (Only if needed) Add a resolver case in `app/lib/addressArtifacts.ts`
+### 4. (Only if needed) Add a resolver case in `packages/protocol/src/addressArtifacts.ts`
 
 `resolveArtifactsChainId` maps the wallet's reported chain id to a canonical
 artifact chain id. The default cases handle Sepolia, Base Sepolia, Anvil
@@ -89,7 +111,7 @@ Base Sepolia under `supersim_sepolia`). Only edit this if your new chain
 needs the same kind of indirection — e.g. a local fork that should be served
 artifacts from a different canonical chain id.
 
-### 5. Wire the chain into the Wagmi config in `app/providers.tsx`
+### 5. Wire the chain into the Wagmi config in `apps/indexedex/app/providers.tsx`
 
 - Import the chain from `wagmi/chains` (or `defineChain` if it's not built-in).
 - Add it to the `chains: [...]` array passed to `createConfig`.
@@ -127,7 +149,7 @@ kebab-case `<bucket-id>` that isn't already used by a bucket in
   `<category>/<camelCaseSubcategory>`.
 
 Both must be unused. Skim `tokenlists.config.ts` for existing bucket ids and
-`includeTypeDirs`, and check `app/addresses/chain/*/` for existing
+`includeTypeDirs`, and check `packages/protocol/src/addresses/chain/*/` for existing
 `*.tokenlist.json` filenames.
 
 ### 2. Register the bucket in `tokenlists.config.ts`
@@ -163,13 +185,13 @@ cd scripts/node && npm run build-tokenlists -- --config ../../tokenlists.config.
 
 After this:
 
-- `app/addresses/chain/<chainId>/my-family-vaults.tokenlist.json` exists for
+- `packages/protocol/src/addresses/chain/<chainId>/my-family-vaults.tokenlist.json` exists for
   every chain that emitted matching fragments.
-- `app/lib/tokenlistRegistry.generated.ts` includes a static import of the
+- `packages/protocol/src/tokenlistRegistry.generated.ts` includes a static import of the
   new file for every chain that has one.
-- `getListRefs(chainId)` (from `app/lib/tokenlistRegistry.ts`) now returns the
+- `getListRefs(chainId)` (from `packages/protocol/src/tokenlistRegistry.ts`) now returns the
   new bucket — meaning anything that iterates `getListRefs` generically (e.g.
-  `app/lib/tokenlists.ts` composition, `/token-info`'s balance grid) shows it
+  `packages/protocol/src/tokenlists.ts` composition, `/token-info`'s balance grid) shows it
   with no further edits.
 
 ### 5. Wire the bucket into menu surfaces (`app/lib/menuConfig.ts`)

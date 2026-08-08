@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | **LOCKED for implementation** (product decisions fixed 2026-08-08) |
+| **Status** | **Shipped** (implemented 2026-08-08) |
 | **Working directory** | `frontend/` (repo root for git is still IndexedEx monorepo root) |
 | **Audience** | Implementation agents in an **isolated git worktree** (parallel to other agents) |
 | **Related** | [README.md](./README.md), [ROADMAP.md](./ROADMAP.md), Vercel projects `indexedex` + `pachira` |
@@ -302,11 +302,11 @@ Pre-migration Root Directory is `frontend`. Post-migration must be `frontend/app
 
 ## 14. Definition of done (whole program)
 
-- [ ] `frontend/` is npm workspaces with `apps/indexedex`, `apps/pachira`, `packages/protocol`.
-- [ ] `@indexedex/protocol` owns addresses/ABIs/registry/chain/swap-builder sources; apps consume it.
-- [ ] No dual-brand runtime toggle; each app has fixed site identity.
-- [ ] `npm run build:indexedex` and `npm run build:pachira` succeed.
-- [ ] IndexedEx e2e (Option A) still runnable.
+- [x] `frontend/` is npm workspaces with `apps/indexedex`, `apps/pachira`, `packages/protocol`.
+- [x] `@indexedex/protocol` owns addresses/ABIs/registry/chain/swap-builder sources; apps consume it.
+- [x] No dual-brand runtime toggle; each app has fixed site identity.
+- [x] `npm run build:indexedex` and `npm run build:pachira` succeed.
+- [x] IndexedEx e2e (Option A) still runnable.
 - [ ] Vercel roots point at the two apps; production URLs:
   - https://indexedex.vercel.app  
   - https://pachirav2.vercel.app  
@@ -328,5 +328,6 @@ Pre-migration Root Directory is `frontend`. Post-migration must be `frontend/app
 | Date | Note |
 |------|------|
 | 2026-08-08 | PRD written; decisions D1–D7 locked; ready for parallel worktree implementation |
+| 2026-08-08 | **Shipped**: workspaces, protocol package, dual apps, site=app; Vercel roots may need operator confirm |
 
 **Implementing agent:** set status to **In progress** when starting PR1; **Shipped** when §14 is complete.

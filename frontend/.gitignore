@@ -33,3 +33,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Multi-app monorepo
+apps/*/.next/
+apps/*/playwright-report/
+apps/*/test-results/

@@ -1,7 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "ignoreCommand": "bash -c 'f=frontend/scripts/vercel-ignore-build.sh; [ -f \"$f\" ] || f=scripts/vercel-ignore-build.sh; bash \"$f\"'"
-}
