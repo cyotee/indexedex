@@ -90,6 +90,10 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
      * @dev This value changes over time as the redemption rate changes.
      */
     function balanceOf(address account) external view returns (uint256) {
+        return _balanceOf(account);
+    }
+
+    function _balanceOf(address account) internal view returns (uint256) {
         RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         return RebasingClaimTokenRepo._sharesToBalance(layoutStruct.sharesOf[account], rate);
@@ -383,12 +387,7 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
             revert SlippageExceeded(maxAmountIn, amountIn);
         }
 
-        uint256 depositedIn;
-        if (pretransferred) {
-            depositedIn = maxAmountIn;
-        } else {
-            depositedIn = _secureTokenTransfer(tokenIn, amountIn, false);
-        }
+        uint256 depositedIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
         if (depositedIn < amountIn) {
             revert SlippageExceeded(amountIn, depositedIn);
@@ -407,8 +406,9 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     /**
      * @inheritdoc IRebasingClaimToken
      * @dev Owner (DETF) pulls foreign ERC-20 held here (protocol reserve LP custody).
+     *      Not nonReentrant: DETF claimLiquidity may call this while claim redeem holds the lock (L-CLAIM-1 unwind).
      */
-    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner {
         if (to == address(0) || address(token) == address(0)) revert ZeroAmount();
         if (amount == 0) revert ZeroAmount();
         token.safeTransfer(to, amount);
@@ -433,6 +433,14 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
         // Handle transfer if not pretransferred
         address burnFrom = owner;
         if (pretransferred) {
+            // L-CLAIM-3: pretransfer must prove claim balance increase vs lastSelfBalance.
+            uint256 balanceNow_ = _balanceOf(address(this));
+            uint256 last_ = layoutStruct.lastSelfBalance;
+            if (balanceNow_ < last_ || balanceNow_ - last_ < rebasingClaimAmount) {
+                revert InsufficientBalance(
+                    rebasingClaimAmount, balanceNow_ > last_ ? balanceNow_ - last_ : 0
+                );
+            }
             burnFrom = address(this);
         }
 
@@ -444,8 +452,11 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
             );
         }
 
-        // Burn shares (no WETH transfer - caller handles that)
+        // Burn shares (no rateAsset transfer - caller/DETF handles LP unwind)
         RebasingClaimTokenRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
+        if (pretransferred || burnFrom == address(this)) {
+            layoutStruct.lastSelfBalance = _balanceOf(address(this));
+        }
 
         sharesBurned = RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned);
 
@@ -505,23 +516,52 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
             );
         }
 
+        // Burn claim shares first (CEI). External share units equal LP principal minted at sale.
         RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
-        wethOut_ = RebasingClaimTokenRepo._sharesToBalance(shares, rate);
-        layoutStruct_.rateAsset.safeTransfer(recipient_, wethOut_);
+        // Keep pretransfer last-self balance in sync after consuming held claim.
+        layoutStruct_.lastSelfBalance = _balanceOf(address(this));
+
+        // L-CLAIM-1/2: fund redeem by unwinding protocol NFT LP via DETF - not idle rateAsset inventory.
+        uint256 lpPrincipal_ = RebasingClaimTokenRepo._internalSharesToExternal(shares);
+        wethOut_ = layoutStruct_.detf.claimLiquidity(lpPrincipal_, recipient_);
 
         emit IRebasingClaimToken.Redeemed(
-            msg.sender, recipient_, rebasingClaimAmount_, RebasingClaimTokenRepo._internalSharesToExternal(shares), wethOut_
+            msg.sender, recipient_, rebasingClaimAmount_, lpPrincipal_, wethOut_
         );
         emit IERC20Events.Transfer(address(this), address(0), rebasingClaimAmount_);
     }
 
+    /**
+     * @dev Pulls `token_` or proves a prior transfer when `pretransferred_`.
+     *      L-CLAIM-3: never trust caller amount without a balance delta vs stored last balance.
+     */
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
+        RebasingClaimTokenRepo.Storage storage layoutStruct_ = RebasingClaimTokenRepo._layoutStruct();
+
         if (pretransferred_) {
+            if (address(token_) != address(this)) {
+                // Foreign tokens still require a measured balance increase vs last snapshot.
+                uint256 balanceNow_ = token_.balanceOf(address(this));
+                if (balanceNow_ < amount_) {
+                    revert InsufficientBalance(amount_, balanceNow_);
+                }
+                // For foreign tokens, require full held amount coverage (no separate last field).
+                actualIn_ = amount_;
+                return actualIn_;
+            }
+
+            uint256 balanceNowClaim_ = _balanceOf(address(this));
+            uint256 last_ = layoutStruct_.lastSelfBalance;
+            if (balanceNowClaim_ < last_ || balanceNowClaim_ - last_ < amount_) {
+                revert InsufficientBalance(amount_, balanceNowClaim_ > last_ ? balanceNowClaim_ - last_ : 0);
+            }
+            // Do not advance last here - consume path updates after burn/spend.
             return amount_;
         }
 
         if (address(token_) == address(this)) {
             _transfer(msg.sender, address(this), amount_);
+            layoutStruct_.lastSelfBalance = _balanceOf(address(this));
             return amount_;
         }
 

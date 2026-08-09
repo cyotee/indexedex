@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -95,7 +97,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
         // Mint full gross to this, then join DETF leg + vault shares; user/protocol/fee get DETF balances after.
         // Pattern: mint user+fee+protocol DETF; join only the curve-paired DETF amount into reserve with shares.
         // Gross DETF is the curve output; user receives userDetf free of reserve join pairing.
-        // Peer pattern mints CHIR to user while adding vault shares (and sometimes DETF) to pool.
+        // Peer pattern mints DETF to user while adding vault shares (and sometimes DETF) to pool.
         // Here: mint gross DETF to this contract, join (detfAmount for weight pairing + vault shares),
         // transfer user/fee/protocol slices from the unjoined remainder... 
 

@@ -617,7 +617,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         returns (uint256 amountOut)
     {
         _requireNonZero(amountIn);
-        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        // L-FEE-3 / single-source: use the feeWad already loaded for this swap (do not re-fetch).
+        amountOut = _previewSwapExactInWithFee(tokenIn, tokenOut, amountIn, feeWad);
         // Debit out inventory (unwrap if SE) before buffer-in (caller takes in then buffers)
         if (_seOf(tokenOut) != address(0)) {
             _unwrapExactTokenOut(tokenOut, amountOut);
@@ -627,7 +628,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
             Repo._layout().reserves[tokenOut] = rOut - amountOut;
         }
         _requirePostUnderRadius();
-        feeWad;
     }
 
     function _swapExactOutExecute(address tokenIn, address tokenOut, uint256 amountOut, uint256 feeWad)
@@ -635,7 +635,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         returns (uint256 amountIn)
     {
         _requireNonZero(amountOut);
-        amountIn = _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        // L-FEE-3 / single-source: use the feeWad already loaded for this swap (do not re-fetch).
+        amountIn = _previewSwapExactOutWithFee(tokenIn, tokenOut, amountOut, feeWad);
         if (_seOf(tokenOut) != address(0)) {
             _unwrapExactTokenOut(tokenOut, amountOut);
         } else {
@@ -644,7 +645,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
             Repo._layout().reserves[tokenOut] = rOut - amountOut;
         }
         _requirePostUnderRadius();
-        feeWad;
     }
 
     function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
@@ -692,8 +692,21 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         view
         returns (uint256 amountOut)
     {
-        _requireNonZero(amountIn);
         SwapLiveCtx memory ctx = _loadSwapLiveCtx(tokenIn, tokenOut);
+        return _previewSwapExactInWithFee(tokenIn, tokenOut, amountIn, ctx.feeWad);
+    }
+
+    /// @dev Fee-threaded exact-in quote (single source with beforeSwap / execute feeWad).
+    function _previewSwapExactInWithFee(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 feeWad
+    ) internal view returns (uint256 amountOut) {
+        _requireNonZero(amountIn);
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        SwapLiveCtx memory ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        ctx.feeWad = feeWad;
 
         uint256 dInNative = _faceInToEffectiveNative(tokenIn, amountIn);
         uint256 dxNet = Math.applyTradingFeeNet(_toWad(tokenIn, dInNative), ctx.feeWad);
@@ -708,8 +721,21 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         view
         returns (uint256 amountIn)
     {
-        _requireNonZero(amountOut);
         SwapLiveCtx memory ctx = _loadSwapLiveCtx(tokenIn, tokenOut);
+        return _previewSwapExactOutWithFee(tokenIn, tokenOut, amountOut, ctx.feeWad);
+    }
+
+    /// @dev Fee-threaded exact-out quote (single source with beforeSwap / execute feeWad).
+    function _previewSwapExactOutWithFee(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 feeWad
+    ) internal view returns (uint256 amountIn) {
+        _requireNonZero(amountOut);
+        if (feeWad >= Math.WAD) revert Math.MathDomain();
+        SwapLiveCtx memory ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        ctx.feeWad = feeWad;
         if (amountOut >= ctx.eOutNative) revert Math.Drain();
 
         uint256 dOutNative = _faceOutToEffectiveNative(tokenOut, amountOut);
@@ -726,14 +752,23 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         view
         returns (SwapLiveCtx memory ctx)
     {
+        ctx = _loadSwapLiveCtxBook(tokenIn, tokenOut);
+        ctx.feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (ctx.feeWad >= Math.WAD) revert Math.MathDomain();
+    }
+
+    /// @dev Live book without re-fetching fee (callers that already hold feeWad use this + set fee).
+    function _loadSwapLiveCtxBook(address tokenIn, address tokenOut)
+        private
+        view
+        returns (SwapLiveCtx memory ctx)
+    {
         Repo.Layout storage l = Repo._layout();
         if (l.R == 0) revert NotLive();
         uint256 eIn = _effectiveNativeOf(tokenIn);
         ctx.eOutNative = _effectiveNativeOf(tokenOut);
         if (eIn == 0 || ctx.eOutNative == 0) revert NotLive();
         ctx.tokenZ = _witnessAndLegs(tokenIn, tokenOut);
-        ctx.feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (ctx.feeWad >= Math.WAD) revert Math.MathDomain();
     }
 
     function _loadSphereLegs(address tokenIn, address tokenOut, address tokenZ)
@@ -1452,6 +1487,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
     }
 
     /// @dev Stack-safe frame for flexible withdraw (B6).
+    /// @dev L-STRUCT-2: dropped unused a0/a1/a2 outs (return values only).
     struct WithdrawFlexibleVars {
         uint256 shares;
         address to;
@@ -1461,9 +1497,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         uint256 a0Min;
         uint256 a1Min;
         uint256 a2Min;
-        uint256 a0;
-        uint256 a1;
-        uint256 a2;
     }
 
     function _depositFlexible(DepositFlexibleVars memory v, uint256 deadline)
@@ -1964,7 +1997,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         internal
         returns (uint256 amountOut)
     {
-        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        // Single-source fee with zap plan (do not re-fetch oracle fee inside preview).
+        amountOut = _previewSwapExactInWithFee(tokenIn, tokenOut, amountIn, feeWad);
         if (_seOf(tokenOut) != address(0)) {
             _unwrapExactTokenOut(tokenOut, amountOut);
         } else {
@@ -1976,7 +2010,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
             Repo._layout().reserves[tokenIn] += amountIn;
         }
         _recomputeL2();
-        feeWad;
     }
 
     function _otherIdx(uint8 inIdx) private pure returns (uint8 j, uint8 k) {

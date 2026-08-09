@@ -19,14 +19,8 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IDetfErrors {
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);
     error DETFNFTCannotBeUnlocked(uint256 tokenId);
-    error DETFNFTSold();
 
-    struct LockInfo {
-        uint256 sharesAwarded;
-        uint256 rewardPerShare;
-        uint256 bonusPercentage;
-        uint256 unlockTime;
-    }
+
 
     function _bondTerms() internal view returns (BondTerms memory terms) {
         terms = DETFBondNFTMathLib._bondTerms(address(this));

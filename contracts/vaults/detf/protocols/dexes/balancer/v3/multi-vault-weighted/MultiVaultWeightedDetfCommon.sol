@@ -26,6 +26,7 @@ import {
 } from "@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol";
 import {DETFThresholdPolicy, ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
@@ -54,13 +55,7 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
 
     error NotSelf();
     error CompoundJoinProducedZeroBpt();
-
-    struct MintSplit {
-        uint256 grossDetf;
-        uint256 userDetf;
-        uint256 feeToDetf;
-        uint256 inventoryDetf;
-    }
+// L-STRUCT-1: MintSplit from detf/common/core/DETFMintSplit.sol
 
     function _requireReserveLive() internal view {
         if (!MultiVaultWeightedDetfRepo._layoutStruct().isReserveLive) {

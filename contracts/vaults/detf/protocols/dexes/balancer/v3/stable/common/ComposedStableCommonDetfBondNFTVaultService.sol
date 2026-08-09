@@ -10,8 +10,6 @@ import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/pr
 
 library ComposedStableCommonDetfBondNFTVaultService {
     struct HarvestParams {
-        uint256 tokenId;
-        address recipient;
         uint256 effectiveShares;
         uint256 rewardPerShares;
         uint256 paidPerShare;
@@ -23,7 +21,6 @@ library ComposedStableCommonDetfBondNFTVaultService {
     }
 
     struct RedeemParams {
-        uint256 tokenId;
         address recipient;
         address caller;
         address detf;

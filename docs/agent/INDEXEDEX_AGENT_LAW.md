@@ -9,6 +9,21 @@ This file provides guidance to AI Agents when working with code in this reposito
 If PROGRESS.md exists in the project root, read it for cross-session context before starting work.
 **Frontend product / redesign roadmap:** start at [`frontend/ROADMAP.md`](frontend/ROADMAP.md) (not root `PROGRESS.md`, which may only hold historical notes + a pointer).
 
+## Discovery (maps, inventory, skills)
+
+Cold-start findability — open these before grepping the monorepo:
+
+| Need | Open |
+|------|------|
+| Primary codebase map | [`docs/CODEBASE_MAP.md`](../CODEBASE_MAP.md) |
+| Task → skill / law / path | [`docs/agent/AGENT_NAVIGATION_INDEX.md`](./AGENT_NAVIGATION_INDEX.md) |
+| Package content inventory | [`docs/agent/INDEXEDEX_CONTENT_INVENTORY.md`](./INDEXEDEX_CONTENT_INVENTORY.md) |
+| Skill catalog | [`docs/agent/SKILL_CATALOG.md`](./SKILL_CATALOG.md) |
+| Crane capabilities | [`lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md`](../../lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md) |
+| Cartographer on PATH | [`scripts/install-cartographer.sh`](../../scripts/install-cartographer.sh) |
+
+Always-on routers stay lean; this Discovery block is the deep entry into inventories.
+
 ## Required Reading
 
 **You MUST read in this order:**

@@ -61,7 +61,8 @@ library DetfComponentFactoryService {
         });
     }
 
-    function buildRICHIRPkgInit(
+    /// @notice Build rebasing claim token package init (role-safe name; L-NAME-1).
+    function buildRebasingClaimTokenPkgInit(
         IFacet erc20Facet,
         IFacet erc5267Facet,
         IFacet erc2612Facet,
@@ -75,5 +76,18 @@ library DetfComponentFactoryService {
             rebasingClaimTokenFacet: rebasingClaimTokenFacet,
             diamondFactory: diamondFactory
         });
+    }
+
+    /// @dev Deprecated alias — use `buildRebasingClaimTokenPkgInit`.
+    function buildRICHIRPkgInit(
+        IFacet erc20Facet,
+        IFacet erc5267Facet,
+        IFacet erc2612Facet,
+        IFacet rebasingClaimTokenFacet,
+        IDiamondPackageCallBackFactory diamondFactory
+    ) internal pure returns (IRebasingClaimTokenDFPkg.PkgInit memory pkgInit) {
+        return buildRebasingClaimTokenPkgInit(
+            erc20Facet, erc5267Facet, erc2612Facet, rebasingClaimTokenFacet, diamondFactory
+        );
     }
 }

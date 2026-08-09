@@ -55,7 +55,6 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         uint256 nextTokenId;
         uint256 detfNFTId;
         uint256 feeRecipientNFTId;
-        bool detfNFTSold;
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -159,22 +158,6 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _deploymentTimestamp() internal view returns (uint256) {
         return _deploymentTimestamp(_layoutStruct());
-    }
-
-    function _setDETFNFTSold(Storage storage layoutStruct_, bool sold_) internal {
-        layoutStruct_.detfNFTSold = sold_;
-    }
-
-    function _setDETFNFTSold(bool sold_) internal {
-        _setDETFNFTSold(_layoutStruct(), sold_);
-    }
-
-    function _detfNFTSold(Storage storage layoutStruct_) internal view returns (bool) {
-        return layoutStruct_.detfNFTSold;
-    }
-
-    function _detfNFTSold() internal view returns (bool) {
-        return _detfNFTSold(_layoutStruct());
     }
 
     function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {

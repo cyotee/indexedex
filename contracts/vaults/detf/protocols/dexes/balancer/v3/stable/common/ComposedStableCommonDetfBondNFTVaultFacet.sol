@@ -20,7 +20,7 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](28);
+        funcs_ = new bytes4[](29);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
@@ -42,13 +42,14 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
         funcs_[18] = IDETFNFTVault.isUnlocked.selector;
         funcs_[19] = IDETFNFTVault.convertToShares.selector;
         funcs_[20] = IDETFNFTVault.convertToAssets.selector;
-        funcs_[21] = IDETFNFTVault.markDETFNFTSold.selector;
-        funcs_[22] = IDETFNFTVault.reallocateDetfNftRewards.selector;
-        funcs_[23] = IERC721Metadata.tokenURI.selector;
-        funcs_[24] = IDetfFeeRecipientInventoryPolicy.feeRecipientNFTId.selector;
-        funcs_[25] = IComposedStableCommonDetfBondNFTVault.deploymentTimestamp.selector;
-        funcs_[26] = IDetfFeeRecipientInventoryPolicy.addToFeeRecipientNFT.selector;
-        funcs_[27] = IDETFNFTVault.transferHeldToken.selector;
+        funcs_[21] = IDETFNFTVault.reallocateDetfNftRewards.selector;
+        funcs_[22] = IERC721Metadata.tokenURI.selector;
+        funcs_[23] = IDetfFeeRecipientInventoryPolicy.feeRecipientNFTId.selector;
+        funcs_[24] = IComposedStableCommonDetfBondNFTVault.deploymentTimestamp.selector;
+        funcs_[25] = IDetfFeeRecipientInventoryPolicy.addToFeeRecipientNFT.selector;
+        funcs_[26] = IDETFNFTVault.transferHeldToken.selector;
+        funcs_[27] = IDETFNFTVault.lockInfoOf.selector;
+        funcs_[28] = IDETFNFTVault.rewardPerShares.selector;
     }
 
     function facetMetadata()

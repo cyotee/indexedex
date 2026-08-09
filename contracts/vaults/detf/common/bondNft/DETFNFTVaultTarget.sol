@@ -48,14 +48,6 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         uint256 indexed tokenId, address indexed recipient, uint256 shares, uint256 bonusMultiplier, uint256 unlockTime
     );
 
-    event DETFNFTSaleMarked(uint256 indexed tokenId);
-
-    /* ---------------------------------------------------------------------- */
-    /*                          State Variables                               */
-    /* ---------------------------------------------------------------------- */
-
-    // NOTE: `detfNFTSold` moved to DETFNFTVaultRepo for upgrade-safe storage.
-
     /* ---------------------------------------------------------------------- */
     /*                       Create Position (Owner Only)                     */
     /* ---------------------------------------------------------------------- */
@@ -149,7 +141,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         // Validate caller using service struct
         {
             DETFNFTVaultService.RedeemParams memory params = DETFNFTVaultService.RedeemParams({
-                tokenId: tokenId, recipient: recipient, caller: msg.sender, detf: address(layoutStruct.detf)
+                recipient: recipient, caller: msg.sender, detf: address(layoutStruct.detf)
             });
             address owner = ERC721Repo._ownerOf(tokenId);
             if (!DETFNFTVaultService._validateRedeemCaller(params, owner)) {
@@ -221,10 +213,8 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         internal
         returns (uint256 rewards_)
     {
-        // Build params struct to reduce stack usage
+        // Build params struct to reduce stack usage (math fields only)
         DETFNFTVaultService.HarvestParams memory params = DETFNFTVaultService.HarvestParams({
-            tokenId: tokenId_,
-            recipient: recipient_,
             effectiveShares: layoutStruct_.effectiveSharesOf[tokenId_],
             rewardPerShares: layoutStruct_.rewardPerShares,
             paidPerShare: layoutStruct_.userRewardPerSharePaid[tokenId_]
@@ -305,19 +295,6 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         ERC721Repo._burn(tokenId);
     }
 
-    /**
-     * @notice Marks the protocol NFT as sold.
-     * @dev Called when rebasing claim token is minted against this position.
-     */
-    function markDETFNFTSold(uint256 tokenId) external onlyOwner {
-        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
-            revert DETFNFTRestricted(tokenId);
-        }
-
-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
-        DETFNFTVaultRepo._setDETFNFTSold(layoutStruct, true);
-        emit DETFNFTSaleMarked(tokenId);
-    }
 
     /* ---------------------------------------------------------------------- */
     /*                          View Functions                                */
@@ -340,7 +317,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     /**
      * @notice Returns the lock info for a position.
      */
-    function lockInfoOf(uint256 tokenId) external view returns (LockInfo memory info) {
+    function lockInfoOf(uint256 tokenId) external view returns (IDETFNFTVault.LockInfo memory info) {
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
         uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
@@ -383,13 +360,6 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
      */
     function detf() external view returns (IDetf) {
         return DETFNFTVaultRepo._detf();
-    }
-
-    /**
-     * @notice Returns whether the protocol NFT has been sold.
-     */
-    function detfNFTSold() external view returns (bool) {
-        return DETFNFTVaultRepo._detfNFTSold();
     }
 
     /**
@@ -479,7 +449,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     // /**
     //  * @inheritdoc IDETFNFTVault
     //  */
-    function reallocateDetfNftRewards(address recipient) external returns (uint256 amount) {
+    function reallocateDetfNftRewards(address recipient) external nonReentrant returns (uint256 amount) {
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
         // Allow FeeCollector or the DETF diamond itself to collect the detf-owned NFT's accrued reward-token share.

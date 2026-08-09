@@ -1,24 +1,24 @@
 {
   "schemaVersion": "cartographer.graph.v2",
-  "root": "/Users/cyotee/Development/github-cyotee/indexedex",
-  "generatedAt": "2026-06-21T17:38:26.306Z",
+  "root": "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex",
+  "generatedAt": "2026-08-09T12:14:20.462Z",
   "scanner": {
     "name": "cartographer",
     "version": "0.1.0"
   },
   "git": {
-    "commit": "495ea8b897f418c1dcb8bac71884796dc22a144d",
+    "commit": "fb5eccf2f9d74b34d928e117b87f41310bf2cf64",
     "dirty": true,
-    "trackedFiles": 2583,
-    "untrackedFiles": 1,
-    "modifiedFiles": 1,
+    "trackedFiles": 5706,
+    "untrackedFiles": 9,
+    "modifiedFiles": 2,
     "deletedFiles": 0
   },
   "totals": {
-    "files": 2351,
-    "packages": 4,
-    "nodes": 3070,
-    "edges": 3554,
+    "files": 5413,
+    "packages": 10,
+    "nodes": 7266,
+    "edges": 10342,
     "findings": 0
   },
   "ignorePatterns": [
@@ -47,7 +47,7 @@
     "source": "syntax",
     "confidence": "parser-backed",
     "freshness": "fresh",
-    "snapshotCommit": "495ea8b897f418c1dcb8bac71884796dc22a144d",
+    "snapshotCommit": "fb5eccf2f9d74b34d928e117b87f41310bf2cf64",
     "scannerVersion": "0.1.0"
   }
 }

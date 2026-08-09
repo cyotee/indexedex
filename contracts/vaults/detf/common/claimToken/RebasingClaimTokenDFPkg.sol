@@ -43,7 +43,7 @@ interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
     }
 
     struct PkgArgs {
-        /// @notice The DETF diamond (CHIR)
+        /// @notice The DETF diamond
         IDetf detf;
         /// @notice The Protocol NFT Vault contract
         IDETFNFTVault nftVault;
