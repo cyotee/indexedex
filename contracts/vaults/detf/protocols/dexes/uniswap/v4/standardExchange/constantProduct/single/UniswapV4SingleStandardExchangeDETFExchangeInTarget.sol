@@ -81,9 +81,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is
         }
         uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
         address se_ = address(Repo._layoutStruct().standardExchangeVault);
-        tokenIn_.safeTransfer(se_, pulled_);
+        // Nested SE: forceApprove + pretransferred=false so SE _pullToken observes in-window delta.
+        tokenIn_.forceApprove(se_, pulled_);
         amountOut_ = Repo._layoutStruct().standardExchangeVault.exchangeIn(
-            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, true, deadline_
+            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, false, deadline_
         );
     }
 

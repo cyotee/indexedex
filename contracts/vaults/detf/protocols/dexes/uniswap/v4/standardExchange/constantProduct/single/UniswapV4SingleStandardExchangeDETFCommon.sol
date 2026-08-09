@@ -36,6 +36,7 @@ import {
 import {
     IUniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @title UniswapV4SingleStandardExchangeDETFCommon
 /// @notice Shared pricing, gates, mint split, hook LP helpers, epoch expansion, compound.
@@ -475,11 +476,24 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
     /*                              Transfers                                 */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Delta-based pull (L-GAPS-9/10/12). Pretransfer credits claimed only when
+    ///      claimed <= observedDelta; shortfalls revert TransferDeltaInsufficient.
+    ///      Absolute inventory without in-window delta is never free-credited.
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        if (pretransferred_) return amount_;
         uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actual_ = token_.balanceOf(address(this)) - before_;
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+        }
+        uint256 observedDelta_ = token_.balanceOf(address(this)) - before_;
+        if (pretransferred_) {
+            if (amount_ > observedDelta_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta_);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
+            return amount_;
+        }
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
+        return observedDelta_;
     }
 
     function _feeTo() internal view returns (address) {
@@ -506,9 +520,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         }
         uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
         if (address(tokenIn_) == address(s.standardExchangeVaultShare) || _isAllowlistedTokenIn(tokenIn_)) {
-            tokenIn_.safeTransfer(address(s.standardExchangeVault), pulled_);
+            // Nested SE pull must observe inbound delta under L-GAPS-9: approve + pull, not transfer+true.
+            tokenIn_.forceApprove(address(s.standardExchangeVault), pulled_);
             pairAmount_ = IStandardExchangeIn(address(s.standardExchangeVault)).exchangeIn(
-                tokenIn_, pulled_, s.pairToken, 0, address(this), true, deadline_
+                tokenIn_, pulled_, s.pairToken, 0, address(this), false, deadline_
             );
             return pairAmount_;
         }

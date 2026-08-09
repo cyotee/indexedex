@@ -45,12 +45,12 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }
 
-        if (!pretransferred_) {
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
-        }
+        // Delta-safe detfToken pull: pretransfer without inbound delta cannot free-extract
+        // diamond inventory (L-GAPS-9; mirrors Balancer Single SE burn fix).
+        uint256 actualIn_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
 
         // L-FEE-2: take usage fee before burn principal (transfer fee shares to feeTo).
-        uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
+        uint256 burnPrincipal_ = _takeBurnUsageFee(actualIn_);
 
         // Debt-inclusive burn: lpOut = burnPrincipal * protocolLp / (totalSupply + pending)
         // Does NOT call _realizeExpansionIfNeeded.
