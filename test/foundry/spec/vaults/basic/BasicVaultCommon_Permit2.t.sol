@@ -8,6 +8,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterPermit2} from "@crane/contracts/protocols/utils/permit2/BetterPermit2.sol";
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @notice Local harness (unique name) to avoid duplicate symbol conflicts with other test files.
 contract BasicVaultCommonPermit2Harness is BasicVaultCommon {
@@ -162,22 +163,31 @@ contract BasicVaultCommon_Permit2 is Test {
         assertEq(IERC20(address(feeToken)).balanceOf(address(harness)), expectedNet);
     }
 
-    /// @notice Pretransferred path (using harness initialized with BetterPermit2) returns amount_ directly.
+    /// @notice Pretransferred with inventory but no in-call transfer → delta 0 → shared error.
+    /// @dev Inverts former free-credit theater under Permit2-initialized harness.
     function test_pretransferred_returnsAmount() public {
         token.mint(address(harness), DUST + DEPOSIT);
+        assertGe(token.balanceOf(address(harness)), DEPOSIT);
 
         vm.prank(alice);
-        uint256 actual = harness.secureTokenTransfer(token, DEPOSIT, true);
-
-        assertEq(actual, DEPOSIT, "pretransferred should return amount_ directly");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
+            )
+        );
+        harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 
-    /// @notice Pretransferred path reverts when vault has insufficient balance.
+    /// @notice Pretransferred shortfall uses ISecurePullErrors.TransferDeltaInsufficient (exact selector + args).
     function test_pretransferred_insufficientBalance_reverts() public {
         token.mint(address(harness), DEPOSIT - 1);
 
         vm.prank(alice);
-        vm.expectRevert("BasicVaultCommon: insufficient pretransferred balance");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
+            )
+        );
         harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 }

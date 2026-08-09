@@ -44,10 +44,12 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
     }
 
     /**
-     * @dev Aerodrome vaults may intentionally hold token0/token1 dust from fee compounding.
-     *      When `pretransferred == true` we must ensure the caller cannot "pay" using that dust.
-     *      We therefore reserve the tracked excess amounts and only allow pretransfer credit
-     *      against `balanceOf(this) - reserved`.
+     * @dev Delta-based secure pull (L-GAPS-9/10). Aerodrome may hold token0/token1 dust from
+     *      fee compounding (`_excessToken*`), but pretransfer credit MUST NOT use absolute
+     *      `available = balance - reserved`. With pure delta, reserved/inventory dust is not
+     *      part of `observedDelta`, so free credit of inventory is already blocked.
+     *      Excess tracking remains for compound product logic only.
+     *      Pretransfer shortfalls revert `ISecurePullErrors.TransferDeltaInsufficient`.
      */
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountTokenToDeposit, bool pretransferred)
         internal
@@ -55,26 +57,10 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         override
         returns (uint256 actualIn)
     {
-        if (pretransferred) {
-            uint256 reserved;
-            address tokenAddr = address(tokenIn);
-
-            if (tokenAddr == ConstProdReserveVaultRepo._token0()) {
-                reserved = AerodromeStandardExchangeRepo._excessToken0();
-            } else if (tokenAddr == ConstProdReserveVaultRepo._token1()) {
-                reserved = AerodromeStandardExchangeRepo._excessToken1();
-            }
-
-            // Underflow-safe: if reserved > balance, available becomes 0 and will fail the check.
-            uint256 bal = tokenIn.balanceOf(address(this));
-            uint256 available = bal > reserved ? bal - reserved : 0;
-            require(
-                available >= amountTokenToDeposit,
-                "BasicVaultCommon: insufficient pretransferred balance"
-            );
-            return amountTokenToDeposit;
-        }
-
+        // Same delta pattern as BasicVaultCommon: measure balBefore; pull only when
+        // !pretransferred; if pretransferred and claimed > delta → TransferDeltaInsufficient;
+        // else return claimed (pretransfer) or observedDelta (!pretransfer).
+        // Reserved dust is intentionally ignored for credit — only in-window delta counts.
         return super._secureTokenTransfer(tokenIn, amountTokenToDeposit, pretransferred);
     }
 

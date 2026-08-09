@@ -5,49 +5,58 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 // tag::BasicVaultCommon[]
 /**
  * @title BasicVaultCommon - Behavior common to call vaults.
  * @author cyotee doge <not_cyotee@proton.me>
  */
-contract BasicVaultCommon {
+contract BasicVaultCommon is ISecurePullErrors {
     using BetterSafeERC20 for IERC20;
 
     // tag::_secureTokenTransfer(address_uint256_bool)[]
     /**
-     * @notice Securely transfers tokens into the vault, handling pretransfers and fee-on-transfer tokens.
-     * @dev Uses balance-delta accounting to return only the amount received in this call,
-     *      not the vault's entire held balance. This prevents over-crediting when the vault
-     *      holds pre-existing dust or reserve balances.
+     * @notice Securely pulls tokens into the vault using balance-delta accounting.
+     * @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
+     *      - `!pretransferred`: pulls via ERC20 allowance or Permit2, then returns the
+     *        actual inbound delta (fee-on-transfer safe; may be less than claimed).
+     *      - `pretransferred`: performs no in-call transfer. Credits exactly `claimed` only
+     *        when `claimed <= observedDelta`; otherwise reverts
+     *        `TransferDeltaInsufficient(claimed, observedDelta)`. Absolute `balanceOf >= claimed`
+     *        without a positive in-window delta is forbidden (blocks free inventory credit / I1).
+     *        Surplus delta is not credited (donations must not lock honest deposits; no exact-delta grief).
      * @param tokenIn The token to transfer into the vault.
-     * @param amountTokenToDeposit The amount of the token to transfer into the vault.
-     * @param pretransferred Boolean indicating if the tokens have already been transferred to the vault.
-     * @return actualIn The actual amount of tokens received by the vault (delta, not absolute balance).
+     * @param amountTokenToDeposit Claimed amount to pull / credit.
+     * @param pretransferred When true, no transfer is performed in this call; credit requires
+     *        a non-short observed delta in the pull window.
+     * @return actualIn Credited amount: claimed when pretransferred and delta-sufficient;
+     *         otherwise the observed inbound delta.
      */
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountTokenToDeposit, bool pretransferred)
         internal
         virtual
         returns (uint256 actualIn)
     {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            if (tokenIn.allowance(msg.sender, address(this)) < amountTokenToDeposit) {
+                Permit2AwareRepo._permit2()
+                    .transferFrom(msg.sender, address(this), uint160(amountTokenToDeposit), address(tokenIn));
+            } else {
+                tokenIn.safeTransferFrom(msg.sender, address(this), amountTokenToDeposit);
+            }
+        }
+        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
         if (pretransferred) {
-            require(
-                tokenIn.balanceOf(address(this)) >= amountTokenToDeposit,
-                "BasicVaultCommon: insufficient pretransferred balance"
-            );
+            if (amountTokenToDeposit > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountTokenToDeposit, observedDelta);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief)
             return amountTokenToDeposit;
         }
-
-        uint256 balBefore = tokenIn.balanceOf(address(this));
-
-        if (tokenIn.allowance(msg.sender, address(this)) < amountTokenToDeposit) {
-            Permit2AwareRepo._permit2()
-                .transferFrom(msg.sender, address(this), uint160(amountTokenToDeposit), address(tokenIn));
-        } else {
-            tokenIn.safeTransferFrom(msg.sender, address(this), amountTokenToDeposit);
-        }
-
-        actualIn = tokenIn.balanceOf(address(this)) - balBefore;
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < amount)
+        return observedDelta;
     }
 
     /**

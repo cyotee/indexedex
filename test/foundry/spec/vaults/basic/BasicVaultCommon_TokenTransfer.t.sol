@@ -8,6 +8,7 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                               Mock Tokens                                  */
@@ -177,31 +178,37 @@ contract BasicVaultCommon_TokenTransfer_Test is Test {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  US-IDXEX-035.2: Pretransferred mode                                   */
+    /*  US-IDXEX-035.2: Pretransferred mode (delta law / L-GAPS-9)            */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Pretransferred path returns amount_ without performing transfer.
+    /// @notice Pretransferred with inventory but no in-call transfer → delta 0 → shared error.
+    /// @dev Inverts former free-credit theater: absolute inventory must not fund claimed.
     function test_secureTokenTransfer_pretransferred_returnsAmount() public {
-        // Transfer tokens to harness beforehand (simulating pre-transfer)
+        // Seed inventory (and dust) so absolute balance >= claimed — must still fail.
         token.mint(address(harness), DEPOSIT);
-
-        // Also seed dust to ensure pretransferred doesn't read balance
         token.mint(address(harness), DUST);
+        assertGe(token.balanceOf(address(harness)), DEPOSIT);
 
         vm.prank(alice);
-        uint256 actual = harness.secureTokenTransfer(token, DEPOSIT, true);
-
-        // Pretransferred should return the stated amount, regardless of balance
-        assertEq(actual, DEPOSIT, "pretransferred should return amount_ directly");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
+            )
+        );
+        harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 
-    /// @notice Pretransferred path reverts when vault has insufficient balance.
+    /// @notice Pretransferred shortfall: claimed > observedDelta (delta 0 with partial inventory).
     function test_secureTokenTransfer_pretransferred_insufficientBalance_reverts() public {
-        // Vault has less than the claimed amount
+        // Vault has inventory but no in-call inbound delta
         token.mint(address(harness), DEPOSIT - 1);
 
         vm.prank(alice);
-        vm.expectRevert("BasicVaultCommon: insufficient pretransferred balance");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
+            )
+        );
         harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 
