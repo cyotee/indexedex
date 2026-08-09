@@ -5,6 +5,12 @@ Lean, always-on instructions for agents in this monorepo. **Full product law** (
 | Need | Open |
 |------|------|
 | Full IndexedEx agent law (ex-`AGENTS.md`) | [`docs/agent/INDEXEDEX_AGENT_LAW.md`](docs/agent/INDEXEDEX_AGENT_LAW.md) |
+| Primary codebase map | [`docs/CODEBASE_MAP.md`](docs/CODEBASE_MAP.md) |
+| Task navigation index | [`docs/agent/AGENT_NAVIGATION_INDEX.md`](docs/agent/AGENT_NAVIGATION_INDEX.md) |
+| Content inventory (packages) | [`docs/agent/INDEXEDEX_CONTENT_INVENTORY.md`](docs/agent/INDEXEDEX_CONTENT_INVENTORY.md) |
+| Skill catalog | [`docs/agent/SKILL_CATALOG.md`](docs/agent/SKILL_CATALOG.md) |
+| Crane capability inventory | [`lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md`](lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md) |
+| Cartographer install (PATH) | [`scripts/install-cartographer.sh`](scripts/install-cartographer.sh) |
 | Frontend redesign / active UI work | [`frontend/ROADMAP.md`](frontend/ROADMAP.md) (not root `PROGRESS.md`) |
 | Crane framework | `lib/crane/AGENTS.md` + skills under `lib/crane/.claude/skills/` |
 | Family product law | Co-located `*_PRD.md` / impl plans next to the package |
