@@ -6,6 +6,7 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     ReentrancyLockModifiers
 } from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
@@ -353,16 +354,25 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget i
         _joinReserveOut(vaultShare_, maxIn_, bptOut_);
     }
 
-    /// @dev Pulls exactly `amountIn_` from the caller, or refunds any pretransferred excess.
+    /// @dev Delta-based secure pull for exact-out (L-GAPS-9/10 / ISecurePullErrors).
+    ///      Measures `observedDelta` over the pull window. Pretransfer requires
+    ///      `amountIn_ <= observedDelta` and credits exactly `amountIn_` — never spends absolute
+    ///      inventory and never refunds surplus from free holdings (`held - amountIn` was free
+    ///      extract of donations). `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_`.
     function _receiveOut(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {
+        uint256 before_ = tokenIn_.balanceOf(address(this));
         if (!pretransferred_) {
             tokenIn_.transferFrom(msg.sender, address(this), amountIn_);
-        } else {
-            uint256 held_ = tokenIn_.balanceOf(address(this));
-            if (held_ > amountIn_) {
-                tokenIn_.transfer(msg.sender, held_ - amountIn_);
-            }
         }
+        uint256 observedDelta_ = tokenIn_.balanceOf(address(this)) - before_;
+        if (pretransferred_) {
+            if (amountIn_ > observedDelta_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, observedDelta_);
+            }
+            // Credit exactly claimed; do not refund absolute surplus (donation extract forbidden).
+            return;
+        }
+        // !pretransferred: transferFrom already executed for amountIn_ (standard ERC20 path).
     }
 
     function _enforceMax(uint256 amountIn_, uint256 maxAmountIn_) private pure {

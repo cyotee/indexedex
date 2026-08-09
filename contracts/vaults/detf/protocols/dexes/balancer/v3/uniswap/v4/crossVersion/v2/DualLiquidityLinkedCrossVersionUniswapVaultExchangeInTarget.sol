@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
@@ -460,11 +461,27 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget is
     /*                          Shared execution helpers                      */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev Pulls `amountIn_` of `tokenIn_` from the caller unless already pretransferred.
+    /// @dev Delta-based secure pull (L-GAPS-9/10 / ISecurePullErrors).
+    ///      Measures `observedDelta` over the pull window. Pretransfer credits exactly `amountIn_`
+    ///      only when `amountIn_ <= observedDelta`; otherwise reverts
+    ///      `TransferDeltaInsufficient(amountIn_, observedDelta)`. Absolute inventory without a
+    ///      positive in-window delta is never free-credited (blocks donation / residual free mint).
+    ///      `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_` (package continues to
+    ///      account with claimed amountIn for standard tokens).
     function _receive(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {
+        uint256 before_ = tokenIn_.balanceOf(address(this));
         if (!pretransferred_) {
             tokenIn_.transferFrom(msg.sender, address(this), amountIn_);
         }
+        uint256 observedDelta_ = tokenIn_.balanceOf(address(this)) - before_;
+        if (pretransferred_) {
+            if (amountIn_ > observedDelta_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, observedDelta_);
+            }
+            // Credit exactly claimed; do not refund surplus (no exact-delta grief).
+            return;
+        }
+        // !pretransferred: transferFrom already executed for amountIn_ (standard ERC20 path).
     }
 
     /// @dev Deposit-path nested leg hop: routes output to this contract with a block-scoped deadline

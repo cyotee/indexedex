@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {DualLiquidityLinkedCrossVersionUniswapVaultRepo} from
     "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol";
 import {
@@ -107,16 +108,22 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Deposits is
         assertApproxEqAbs(minted, preview, 1e6, "multi-hop common deposit preview ~ execution");
     }
 
-    /// @notice The pretransferred funding path: send tokenB first, then deposit with pretransferred=true.
-    function test_depositPretransferred_mintsShares() public {
+    /// @notice L-GAPS-9: transfer-before-call + pretransferred=true is outside the pull window.
+    ///         Absolute inventory must not free-credit a mint (TransferDeltaInsufficient(claimed, 0)).
+    ///         Honest path remains approve + pretransferred=false (see other deposit tests).
+    function test_depositPretransferred_noInCallTransfer_revertsDelta0() public {
         _fund(tokenB, depositor, LEG_SEED);
         vm.startPrank(depositor);
         tokenB.transfer(linkedVault, LEG_SEED);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, LEG_SEED, uint256(0)
+            )
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             tokenB, LEG_SEED, shareToken, 0, depositor, true, block.timestamp
         );
         vm.stopPrank();
-        assertGt(minted, 0, "pretransferred deposit mints shares");
     }
 
     /* -------------------------------- Guards ------------------------------- */
