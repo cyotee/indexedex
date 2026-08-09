@@ -39,12 +39,11 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeOutTarget is MixedBuffe
             revert MixedBufferMultiVaultStableDetfRepo.InvalidRoute(address(this), address(tokenOut_));
         }
 
-        if (!pretransferred_) {
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
-        }
-
-        uint256 bptIn_ = _bptForDetfShares(detfIn_);
-        _burnDetf(address(this), detfIn_);
+        // Delta-safe detfToken pull: pretransfer without inbound delta cannot free-extract
+        // diamond inventory (L-GAPS-9; mirrors SingleSE / MultiVault burn fix).
+        uint256 actualIn_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
+        uint256 bptIn_ = _bptForDetfShares(actualIn_);
+        _burnDetf(address(this), actualIn_);
 
         (uint256 detfLeg_, uint256 bufferOut_, uint256[] memory vaultSharesOut_) = _exitReserveProportional(bptIn_);
 

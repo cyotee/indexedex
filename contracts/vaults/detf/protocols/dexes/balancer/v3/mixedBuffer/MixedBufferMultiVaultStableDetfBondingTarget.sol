@@ -284,9 +284,11 @@ abstract contract MixedBufferMultiVaultStableDetfBondingTarget is
         MixedBufferMultiVaultStableDetfRepo.Storage storage s =
             MixedBufferMultiVaultStableDetfRepo._layoutStruct();
         IERC20 share_ = s.vaultShares[legIndex_];
-        share_.safeTransfer(address(s.underlyingVaults[legIndex_]), shareAmt_);
+        // Nested SE must pull in-call (pretransferred=false) so L-GAPS-9 delta is observed.
+        // transfer-then-pretransfer=true is free-inventory from the nested vault's perspective.
+        share_.forceApprove(address(s.underlyingVaults[legIndex_]), shareAmt_);
         bufferOut_ = s.underlyingVaults[legIndex_].exchangeIn(
-            share_, shareAmt_, s.bufferToken, 0, address(this), true, deadline_
+            share_, shareAmt_, s.bufferToken, 0, address(this), false, deadline_
         );
     }
 }
