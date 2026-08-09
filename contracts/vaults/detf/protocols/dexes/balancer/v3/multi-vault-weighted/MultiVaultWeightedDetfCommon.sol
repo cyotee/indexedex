@@ -37,6 +37,7 @@ import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventor
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @title MultiVaultWeightedDetfCommon
 /// @notice Shared helpers: pricing, thresholds, multi-leg reserve join/exit, bond lock clamp, protocol compound.
@@ -439,11 +440,27 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
         );
     }
 
+    /// @notice Secure pull with package-local delta accounting (L-GAPS-9/10/12).
+    /// @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
+    ///      - `pretransferred`: no in-call transfer; credits `amount_` only when
+    ///        `amount_ <= observedDelta`, else reverts `TransferDeltaInsufficient`.
+    ///        Absolute inventory without a positive in-window delta is forbidden (I1).
+    ///      - `!pretransferred`: pulls via transferFrom, returns observed delta (FoT-safe).
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        if (pretransferred_) return amount_;
         uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actual_ = token_.balanceOf(address(this)) - before_;
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+        }
+        uint256 observedDelta = token_.balanceOf(address(this)) - before_;
+        if (pretransferred_) {
+            if (amount_ > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
+            return amount_;
+        }
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < amount_).
+        return observedDelta;
     }
 
     function _feeTo() internal view returns (address) {

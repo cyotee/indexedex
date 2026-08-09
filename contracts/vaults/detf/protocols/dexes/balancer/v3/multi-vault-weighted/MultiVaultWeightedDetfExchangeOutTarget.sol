@@ -10,6 +10,7 @@ import {
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @title MultiVaultWeightedDetfExchangeOutTarget
 /// @notice Exact-in burn of DETF to a configured vault share. Exact-out binary-search routes revert InvalidRoute.
@@ -37,8 +38,15 @@ abstract contract MultiVaultWeightedDetfExchangeOutTarget is MultiVaultWeightedD
             revert MultiVaultWeightedDetfRepo.InvalidRoute(address(this), address(tokenOut_));
         }
 
+        // Delta-secure detfToken pull: never free-burn diamond inventory (L-GAPS-9).
+        IERC20 detfToken_ = IERC20(address(this));
+        uint256 before_ = detfToken_.balanceOf(address(this));
         if (!pretransferred_) {
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
+            detfToken_.safeTransferFrom(msg.sender, address(this), detfIn_);
+        }
+        uint256 observedDelta = detfToken_.balanceOf(address(this)) - before_;
+        if (detfIn_ > observedDelta) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(detfIn_, observedDelta);
         }
 
         uint256 bptIn_ = _bptForDetfShares(detfIn_);
