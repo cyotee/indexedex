@@ -18,6 +18,7 @@ import {Math} from '@crane/contracts/utils/Math.sol';
 
 import {IVault} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol';
 import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
+import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
 import {IStandardExchangeErrors} from 'contracts/interfaces/IStandardExchangeErrors.sol';
 import {DETFMintSplitLib} from 'contracts/vaults/detf/common/core/DETFMintSplitLib.sol';
 import {DETFThresholdPolicy, ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPolicy.sol';
@@ -294,14 +295,28 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         split_ = _splitMintAmount(_previewMintAmount(poolBptAmount_, depositToStablePool_));
     }
 
+    /**
+     * @dev Delta-based secure pull (L-GAPS-9/10 / ISecurePullErrors).
+     *      Measures observedDelta over the pull window. Pretransfer credits claimed only when
+     *      claimed <= observedDelta; otherwise reverts TransferDeltaInsufficient.
+     *      Absolute inventory without a positive in-window delta is forbidden (blocks free credit).
+     *      !pretransferred returns observedDelta (FoT-safe). No exact-delta lock on surplus.
+     */
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
+        uint256 balanceBefore = token_.balanceOf(address(this));
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+        }
+        uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
         if (pretransferred_) {
+            if (amount_ > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief)
             return amount_;
         }
-
-        uint256 balanceBefore = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actualIn_ = token_.balanceOf(address(this)) - balanceBefore;
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < amount)
+        return observedDelta;
     }
 
     function _approvePermit2Spend(IERC20 token_, uint256 amount_, bool exactOut_) internal {
@@ -346,16 +361,17 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         IERC20 reservePoolToken = IERC20(address(ComposedStableCommonDetfRepo._reservePool(layoutStruct_)));
         uint256 balanceBefore = reservePoolToken.balanceOf(address(this));
 
-        selection_.poolBptToken.transfer(
-            address(ComposedStableCommonDetfRepo._reservePoolEntryRouter(layoutStruct_)), poolBptOut_
-        );
+        // Nested SE must pull in-call (pretransferred=false) so L-GAPS-9 delta is observed.
+        // transfer-then-pretransfer=true is free-inventory from the nested vault's perspective.
+        address reserveRouter_ = address(ComposedStableCommonDetfRepo._reservePoolEntryRouter(layoutStruct_));
+        selection_.poolBptToken.forceApprove(reserveRouter_, poolBptOut_);
         ComposedStableCommonDetfRepo._reservePoolEntryRouter(layoutStruct_).exchangeIn(
             selection_.poolBptToken,
             poolBptOut_,
             reservePoolToken,
             0,
             address(this),
-            true,
+            false,
             deadline_
         );
 
@@ -369,25 +385,26 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         uint256 amountIn_,
         uint256 deadline_
     ) internal returns (uint256 poolBptOut_) {
-        tokenIn_.transfer(address(route_.underlyingVault), amountIn_);
+        // Nested SE/router pulls must use transferFrom (pretransferred=false) for delta credit.
+        tokenIn_.forceApprove(address(route_.underlyingVault), amountIn_);
         uint256 vaultTokenOut = route_.underlyingVault.exchangeIn(
             tokenIn_,
             amountIn_,
             route_.vaultToken,
             0,
             address(this),
-            true,
+            false,
             deadline_
         );
 
-        route_.vaultToken.transfer(address(selection_.poolRouter), vaultTokenOut);
+        route_.vaultToken.forceApprove(address(selection_.poolRouter), vaultTokenOut);
         poolBptOut_ = selection_.poolRouter.exchangeIn(
             route_.vaultToken,
             vaultTokenOut,
             selection_.poolBptToken,
             0,
             address(this),
-            true,
+            false,
             deadline_
         );
     }
@@ -401,14 +418,14 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     ) internal returns (uint256 vaultTokenAmountOut_) {
         IStandardExchangeIn poolExitPricer = _selectedPoolExitPricerIn(exitFromStablePool_);
 
-        poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+        poolBptToken_.forceApprove(address(poolExitPricer), poolBptAmountOut_);
         vaultTokenAmountOut_ = poolExitPricer.exchangeIn(
             poolBptToken_,
             poolBptAmountOut_,
             vaultToken_,
             0,
             address(this),
-            true,
+            false,
             deadline_
         );
     }
@@ -423,14 +440,14 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     ) internal returns (uint256 poolBptAmountIn_) {
         IStandardExchangeOut poolExitPricer = _selectedPoolExitPricerOut(exitFromStablePool_);
 
-        poolBptToken_.safeTransfer(address(poolExitPricer), poolBptAmountOut_);
+        poolBptToken_.forceApprove(address(poolExitPricer), poolBptAmountOut_);
         poolBptAmountIn_ = poolExitPricer.exchangeOut(
             poolBptToken_,
             poolBptAmountOut_,
             vaultToken_,
             vaultTokenAmountOut_,
             address(this),
-            true,
+            false,
             deadline_
         );
     }
@@ -447,14 +464,14 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
             return vaultTokenAmountOut_;
         }
 
-        route_.vaultToken.transfer(address(route_.underlyingVault), vaultTokenAmountOut_);
+        route_.vaultToken.forceApprove(address(route_.underlyingVault), vaultTokenAmountOut_);
         amountOut_ = route_.underlyingVault.exchangeIn(
             route_.vaultToken,
             vaultTokenAmountOut_,
             tokenOut_,
             0,
             recipient_,
-            true,
+            false,
             deadline_
         );
     }
@@ -472,13 +489,15 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         }
 
         IStandardExchangeOut underlyingVault = IStandardExchangeOut(address(route_.underlyingVault));
+        uint256 vaultTokenBal_ = route_.vaultToken.balanceOf(address(this));
+        route_.vaultToken.forceApprove(address(underlyingVault), vaultTokenBal_);
         vaultTokenAmountIn_ = underlyingVault.exchangeOut(
             route_.vaultToken,
-            route_.vaultToken.balanceOf(address(this)),
+            vaultTokenBal_,
             tokenOut_,
             amountOut_,
             recipient_,
-            true,
+            false,
             deadline_
         );
 

@@ -11,6 +11,7 @@ import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/Reentr
 import {MultiStepOwnableModifiers} from '@crane/contracts/access/ERC8023/MultiStepOwnableModifiers.sol';
 
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
+import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
@@ -202,12 +203,8 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             revert SlippageExceeded(maxAmountIn, amountIn);
         }
 
-        uint256 depositedIn;
-        if (pretransferred) {
-            depositedIn = maxAmountIn;
-        } else {
-            depositedIn = _secureTokenTransfer(tokenIn, amountIn, false);
-        }
+        // Always measure delta (L-GAPS-9/10). Pretransferred free credit of idle inventory is forbidden.
+        uint256 depositedIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
         if (depositedIn < amountIn) {
             revert SlippageExceeded(amountIn, depositedIn);
@@ -406,19 +403,32 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         emit IERC20Events.Transfer(address(this), address(0), rebasingClaimAmount_);
     }
 
+    /**
+     * @dev Delta-based secure pull (L-GAPS-9/10). Blocks free credit of idle inventory via
+     *      pretransferred=true with no in-call transfer (I1). Self-token pulls use internal
+     *      `_transfer` so share accounting stays consistent; foreign tokens use safeTransferFrom.
+     */
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
-        if (pretransferred_) {
-            return amount_;
-        }
-
-        if (address(token_) == address(this)) {
-            _transfer(msg.sender, address(this), amount_);
-            return amount_;
-        }
-
         uint256 balanceBefore = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actualIn_ = token_.balanceOf(address(this)) - balanceBefore;
+        if (!pretransferred_) {
+            if (address(token_) == address(this)) {
+                _transfer(msg.sender, address(this), amount_);
+            } else {
+                token_.safeTransferFrom(msg.sender, address(this), amount_);
+            }
+        }
+        uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
+        if (pretransferred_) {
+            if (amount_ > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta);
+            }
+            return amount_;
+        }
+        // Self-token transfer is exact (share accounting); foreign may be FoT-short.
+        if (address(token_) == address(this)) {
+            return amount_;
+        }
+        return observedDelta;
     }
 
     function _getCurrentRedemptionRate(RebasingDETFTokenRepo.Storage storage layoutStruct_) internal view returns (uint256) {
