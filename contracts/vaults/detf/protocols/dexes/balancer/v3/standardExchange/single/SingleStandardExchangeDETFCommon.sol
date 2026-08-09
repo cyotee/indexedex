@@ -45,6 +45,7 @@ import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDis
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @title SingleStandardExchangeDETFCommon
 /// @notice Shared helpers: pricing, thresholds, reserve join/exit, allowlist, bond lock clamp, protocol compound.
@@ -460,11 +461,24 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     /*                              Transfers                                 */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Delta-based pull (L-GAPS-9/10/12). Pretransfer credits claimed only when
+    ///      claimed <= observedDelta; shortfalls revert TransferDeltaInsufficient.
+    ///      Absolute inventory without in-window delta is never free-credited.
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        if (pretransferred_) return amount_;
         uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actual_ = token_.balanceOf(address(this)) - before_;
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+        }
+        uint256 observedDelta_ = token_.balanceOf(address(this)) - before_;
+        if (pretransferred_) {
+            if (amount_ > observedDelta_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta_);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
+            return amount_;
+        }
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
+        return observedDelta_;
     }
 
     function _feeTo() internal view returns (address) {

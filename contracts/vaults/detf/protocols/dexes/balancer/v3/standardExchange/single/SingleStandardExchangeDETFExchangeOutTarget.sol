@@ -35,13 +35,12 @@ abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardE
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
-        if (!pretransferred_) {
-            // pull DETF via transferFrom
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
-        }
+        // Delta-safe detfToken pull: pretransfer without inbound delta cannot free-extract
+        // diamond inventory (L-GAPS-9; mirrors MultiVault burn fix).
+        uint256 actualIn_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
         // Compute BPT claim against pre-burn supply so previewExchangeIn matches execution.
-        uint256 bptIn_ = _bptForDetfShares(detfIn_);
-        _burnDetf(address(this), detfIn_);
+        uint256 bptIn_ = _bptForDetfShares(actualIn_);
+        _burnDetf(address(this), actualIn_);
 
         (uint256 detfLeg_, uint256 vaultSharesOut_) = _exitReserveProportional(bptIn_);
 
