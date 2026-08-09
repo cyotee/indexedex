@@ -111,6 +111,12 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
      */
     function previewRedeem(uint256 rebasingClaimAmount) external view returns (uint256 wethOut);
 
+    /**
+     * @notice Refreshes the cached redemption rate from the protocol NFT reserve path.
+     * @dev Permissionless poke; no-op when rate is unchanged.
+     */
+    function updateRedemptionRate() external;
+
     /* ---------------------------------------------------------------------- */
     /*                          Minting Operations                            */
     /* ---------------------------------------------------------------------- */

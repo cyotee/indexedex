@@ -338,12 +338,12 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         Repo.Storage storage s = Repo._layoutStruct();
         if (recipient_ == address(0)) recipient_ = msg.sender;
         _realizeExpansionIfNeeded();
-        // Holder-only user path; DETF diamond is authorized on NFT as package owner.
+        // L-REW-1: owner-only; non-owner reverts (no soft-success).
         address holder_ = s.bondNftVault.ownerOf(tokenId_);
         if (msg.sender != holder_) {
-            _tryCompoundProtocolRewards();
-            return 0;
+            revert Repo.NotAuthorized(msg.sender);
         }
+        // L-REW-2/3: execute claim; return 0 only when allowed and no rewards.
         rewards_ = s.bondNftVault.claimRewards(tokenId_, recipient_);
         _tryCompoundProtocolRewards();
     }

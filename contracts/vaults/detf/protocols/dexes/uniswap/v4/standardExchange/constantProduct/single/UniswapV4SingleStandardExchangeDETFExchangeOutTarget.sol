@@ -14,9 +14,11 @@ import {
 import {
     UniswapV4SingleStandardExchangeDETFRepo as Repo
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETFRepo.sol";
+import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
 
 /// @title UniswapV4SingleStandardExchangeDETFExchangeOutTarget
 /// @notice Primary burn: free DETF → pair only. Uses effectiveSupply; does NOT realize expansion.
+/// @dev L-FEE-1/2: usage fee on burn is paid to `feeTo()` (peer pattern with orbital/weighted).
 abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
     UniswapV4SingleStandardExchangeDETFCommon
 {
@@ -47,7 +49,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
             IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
         }
 
-        // Debt-inclusive burn: lpOut = detfBurned * protocolLp / (totalSupply + pending)
+        // L-FEE-2: take usage fee before burn principal (transfer fee shares to feeTo).
+        uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
+
+        // Debt-inclusive burn: lpOut = burnPrincipal * protocolLp / (totalSupply + pending)
         // Does NOT call _realizeExpansionIfNeeded.
         uint256 pending_ = _previewPendingExpansionMint();
         uint256 supply_ = ERC20Repo._totalSupply();
@@ -55,16 +60,26 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
         uint256 protocolLp_ = _protocolLp();
         if (protocolLp_ == 0 || effectiveSupply_ == 0) revert Repo.EmptyProtocolLp();
 
-        uint256 lpOut_ = detfIn_ * protocolLp_ / effectiveSupply_;
+        uint256 lpOut_ = burnPrincipal_ * protocolLp_ / effectiveSupply_;
         if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
 
-        _burnDetf(address(this), detfIn_);
+        _burnDetf(address(this), burnPrincipal_);
         _ensureProtocolLpOnDiamond(lpOut_);
         amountOut_ = _withdrawSinglePair(lpOut_, recipient_);
 
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+    }
+
+    function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {
+        (uint256 afterFee_, uint256 feeAmt_) = DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
+        if (feeAmt_ > 0) {
+            // Peer path: fee portion of deposited DETF goes to feeTo (fee shares).
+            IERC20(address(this)).safeTransfer(_feeTo(), feeAmt_);
+        }
+        burnPrincipal_ = afterFee_;
+        if (burnPrincipal_ == 0) revert Repo.ZeroAmount();
     }
 
     function _previewBurnDetfExactIn(uint256 detfIn_, IERC20 tokenOut_)
@@ -75,12 +90,16 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
         if (!Repo._layoutStruct().isReserveLive) return 0;
         Repo.Storage storage s = Repo._layoutStruct();
         if (address(tokenOut_) != address(s.pairToken)) return 0;
+        if (detfIn_ == 0) return 0;
+        // L-FEE-3 / L-PREV-1: preview includes the same usage fee as execute.
+        (uint256 burnPrincipal_,) = DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
+        if (burnPrincipal_ == 0) return 0;
         uint256 pending_ = _previewPendingExpansionMint();
         uint256 supply_ = ERC20Repo._totalSupply();
         uint256 effectiveSupply_ = supply_ + pending_;
         uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0 || detfIn_ == 0) return 0;
-        uint256 lpOut_ = detfIn_ * protocolLp_ / effectiveSupply_;
+        if (protocolLp_ == 0 || effectiveSupply_ == 0) return 0;
+        uint256 lpOut_ = burnPrincipal_ * protocolLp_ / effectiveSupply_;
         if (lpOut_ == 0) return 0;
         amountOut_ = IHook(s.reserveHook).previewWithdrawSingle(lpOut_, address(s.pairToken));
     }

@@ -1452,6 +1452,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
     }
 
     /// @dev Stack-safe frame for flexible withdraw (B6).
+    /// @dev L-STRUCT-2: dropped unused a0/a1/a2 outs (return values only).
     struct WithdrawFlexibleVars {
         uint256 shares;
         address to;
@@ -1461,9 +1462,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         uint256 a0Min;
         uint256 a1Min;
         uint256 a2Min;
-        uint256 a0;
-        uint256 a1;
-        uint256 a2;
     }
 
     function _depositFlexible(DepositFlexibleVars memory v, uint256 deadline)

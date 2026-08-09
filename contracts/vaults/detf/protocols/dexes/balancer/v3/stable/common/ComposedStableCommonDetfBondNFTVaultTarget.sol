@@ -33,8 +33,6 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         uint256 indexed tokenId, address indexed recipient, uint256 shares, uint256 bonusMultiplier, uint256 unlockTime
     );
 
-    event DETFNFTSaleMarked(uint256 indexed tokenId);
-
     function createPosition(uint256 shares, uint256 lockDuration, address recipient)
         external
         onlyOwner
@@ -115,7 +113,6 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         {
             ComposedStableCommonDetfBondNFTVaultService.RedeemParams memory params =
                 ComposedStableCommonDetfBondNFTVaultService.RedeemParams({
-                    tokenId: tokenId,
                     recipient: recipient,
                     caller: msg.sender,
                     detf: address(layoutStruct.detf)
@@ -174,8 +171,6 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
     ) internal returns (uint256 rewards_) {
         ComposedStableCommonDetfBondNFTVaultService.HarvestParams memory params =
             ComposedStableCommonDetfBondNFTVaultService.HarvestParams({
-                tokenId: tokenId_,
-                recipient: recipient_,
                 effectiveShares: layoutStruct_.effectiveSharesOf[tokenId_],
                 rewardPerShares: layoutStruct_.rewardPerShares,
                 paidPerShare: layoutStruct_.userRewardPerSharePaid[tokenId_]
@@ -248,16 +243,6 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ERC721Repo._burn(tokenId);
     }
 
-    function markDETFNFTSold(uint256 tokenId) external onlyOwner {
-        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId()) {
-            revert DETFNFTRestricted(tokenId);
-        }
-
-        ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
-        ComposedStableCommonDetfBondNFTVaultRepo._setDETFNFTSold(layoutStruct, true);
-        emit DETFNFTSaleMarked(tokenId);
-    }
-
     function getPosition(uint256 tokenId) external view returns (IDETFNFTVault.Position memory) {
         return _getPosition(tokenId);
     }
@@ -266,7 +251,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         return ComposedStableCommonDetfBondNFTVaultRepo._earned(tokenId);
     }
 
-    function lockInfoOf(uint256 tokenId) external view returns (LockInfo memory info) {
+    function lockInfoOf(uint256 tokenId) external view returns (IDETFNFTVault.LockInfo memory info) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
         uint256 originalShares = ComposedStableCommonDetfBondNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
@@ -297,10 +282,6 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
     function detf() external view returns (IDetf) {
         return ComposedStableCommonDetfBondNFTVaultRepo._detf();
-    }
-
-    function detfNFTSold() external view returns (bool) {
-        return ComposedStableCommonDetfBondNFTVaultRepo._detfNFTSold();
     }
 
     function lpToken() external view returns (IERC20) {
@@ -358,7 +339,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         token.safeTransfer(to, amount);
     }
 
-    function reallocateDetfNftRewards(address recipient) external returns (uint256 amount) {
+    function reallocateDetfNftRewards(address recipient) external nonReentrant returns (uint256 amount) {
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
         // Allow fee collector, configured protocol DETF address, or bond-vault owner (DETF diamond

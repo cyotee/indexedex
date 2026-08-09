@@ -20,6 +20,7 @@ import {
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 import {
@@ -45,13 +46,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
     event NaturalSupplyExpanded(uint256 mintAmount, uint256 syntheticPrice, uint256 timestamp);
     event ProtocolRewardsCompounded(uint256 detfDonated);
     event ListingOraclePoked(int24 tick, uint256 blockNumber);
-
-    struct MintSplit {
-        uint256 grossDetf;
-        uint256 userDetf;
-        uint256 feeToDetf;
-        uint256 inventoryDetf;
-    }
+// L-STRUCT-1: MintSplit from detf/common/core/DETFMintSplit.sol
 
     function _s() internal pure returns (UniswapV4SingleStandardExchangeDETFRepo.Storage storage) {
         return UniswapV4SingleStandardExchangeDETFRepo._layoutStruct();

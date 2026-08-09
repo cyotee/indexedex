@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -150,6 +152,12 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
     /// @inheritdoc IUniswapV4SingleStandardExchangeDETFBonding
     function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
         if (recipient == address(0)) recipient = msg.sender;
+        // L-REW-1: owner-only.
+        address holder_ = IUniV4DetfBondNft(_s().bondNft).ownerOf(tokenId);
+        if (msg.sender != holder_) {
+            revert UniswapV4SingleStandardExchangeDETFRepo.NotAuthorized(msg.sender);
+        }
+        // L-REW-2/3: execute; return 0 only when allowed and zero rewards.
         rewards = IUniV4DetfBondNft(_s().bondNft).claimRewards(tokenId, recipient);
         _tryCompoundProtocolRewards();
     }

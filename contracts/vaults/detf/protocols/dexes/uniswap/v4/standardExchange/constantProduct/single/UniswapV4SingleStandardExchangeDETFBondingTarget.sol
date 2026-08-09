@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
@@ -229,23 +231,13 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         Repo.Storage storage s = Repo._layoutStruct();
         if (recipient_ == address(0)) recipient_ = msg.sender;
         _realizeExpansionIfNeeded();
-        // Holder calls NFT directly for harvest; DETF realizes expansion first so pending is current.
-        // When called by holder: use external NFT claim (msg.sender = holder on NFT only if user calls NFT).
-        // Bridge: require holder, update global rewards via owner path, then holder-side claim via NFT.
+        // L-REW-1: owner-only; non-owner reverts (no soft-success).
         address holder_ = s.bondNftVault.ownerOf(tokenId_);
         if (msg.sender != holder_) {
-            // Allow DETF-only realize+compound when not holder (permissionless expand touch).
-            _tryCompoundProtocolRewards();
-            return 0;
+            revert Repo.NotAuthorized(msg.sender);
         }
-        // Holder path: claim on NFT (user is msg.sender to DETF; NFT still sees DETF).
-        // Prefer user call bondNft.claimRewards after this when NFT does not whitelist DETF.
-        // Use pending as return if claim reverts; try harvest via NFT owner privilege not available.
-        try s.bondNftVault.claimRewards(tokenId_, recipient_) returns (uint256 r_) {
-            rewards_ = r_;
-        } catch {
-            rewards_ = s.bondNftVault.pendingRewards(tokenId_);
-        }
+        // L-REW-2/3: no try/catch soft-fail; return 0 only when allowed and zero rewards.
+        rewards_ = s.bondNftVault.claimRewards(tokenId_, recipient_);
         _tryCompoundProtocolRewards();
     }
 

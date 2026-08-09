@@ -45,8 +45,8 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
     }
 
     /// @inheritdoc IFacet
-    function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](27);
+    function facetFuncs() public pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](28);
         // ERC20 functions
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
@@ -77,6 +77,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         funcs_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
         funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
+        funcs_[27] = IRebasingClaimToken.updateRedemptionRate.selector;
     }
 
     /// @inheritdoc IFacet
@@ -94,33 +95,6 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         interfaces[3] = type(IStandardExchangeIn).interfaceId;
         interfaces[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions = new bytes4[](27);
-        functions[0] = IERC20.totalSupply.selector;
-        functions[1] = IERC20.balanceOf.selector;
-        functions[2] = IERC20.transfer.selector;
-        functions[3] = IERC20.allowance.selector;
-        functions[4] = IERC20.approve.selector;
-        functions[5] = IERC20.transferFrom.selector;
-        functions[6] = IERC20Metadata.name.selector;
-        functions[7] = IERC20Metadata.symbol.selector;
-        functions[8] = IERC20Metadata.decimals.selector;
-        functions[9] = IRebasingClaimToken.sharesOf.selector;
-        functions[10] = IRebasingClaimToken.totalShares.selector;
-        functions[11] = IRebasingClaimToken.redemptionRate.selector;
-        functions[12] = IRebasingClaimToken.detf.selector;
-        functions[13] = IRebasingClaimToken.setDetf.selector;
-        functions[14] = IRebasingClaimToken.detfNFTId.selector;
-        functions[15] = IRebasingClaimToken.rateAsset.selector;
-        functions[16] = IRebasingClaimToken.convertToShares.selector;
-        functions[17] = IRebasingClaimToken.convertToClaim.selector;
-        functions[18] = IRebasingClaimToken.previewRedeem.selector;
-        functions[19] = IRebasingClaimToken.mintFromNFTSale.selector;
-        functions[20] = IRebasingClaimToken.redeem.selector;
-        functions[21] = IRebasingClaimToken.burnShares.selector;
-        functions[22] = IStandardExchangeIn.previewExchangeIn.selector;
-        functions[23] = IStandardExchangeIn.exchangeIn.selector;
-        functions[24] = IStandardExchangeOut.previewExchangeOut.selector;
-        functions[25] = IStandardExchangeOut.exchangeOut.selector;
-        functions[26] = IRebasingClaimToken.transferHeldToken.selector;
+        functions = facetFuncs();
     }
 }

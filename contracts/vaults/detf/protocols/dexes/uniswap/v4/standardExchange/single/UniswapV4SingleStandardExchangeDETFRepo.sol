@@ -30,6 +30,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
     error PartialCloseNotSupported();
     error InvalidBondToken();
     error SlippageExceeded(uint256 minOut, uint256 actual);
+    error NotAuthorized(address caller);
 
     bytes32 internal constant STORAGE_SLOT =
         keccak256("vault.detf.uniswap.v4.standardExchange.single.repo");

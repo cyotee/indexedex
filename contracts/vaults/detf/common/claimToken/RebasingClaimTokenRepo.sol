@@ -47,7 +47,7 @@ library RebasingClaimTokenRepo {
     }
 
     struct Storage {
-        /// @notice The DETF diamond (CHIR)
+        /// @notice The DETF diamond
         IDetf detf;
 
         /// @notice The Protocol NFT Vault contract
@@ -70,6 +70,10 @@ library RebasingClaimTokenRepo {
 
         /// @notice Last block when redemption rate was updated
         uint256 lastRateUpdateBlock;
+
+        /// @notice Last observed claim-token balance held by this diamond (pretransfer proof).
+        /// @dev L-CLAIM-3: `pretransferred=true` requires balanceNow - lastSelfBalance >= amount.
+        uint256 lastSelfBalance;
     }
 
     /* ---------------------------------------------------------------------- */

@@ -381,11 +381,12 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         if (recipient_ == address(0)) recipient_ = msg.sender;
         // Realize on fresh stack to avoid n-leg FD StackOverflow after deep bond paths.
         try this.realizeExpansionExternal() {} catch {}
+        // L-REW-1: owner-only; non-owner reverts (no soft-success).
         address holder_ = s.bondNftVault.ownerOf(tokenId_);
         if (msg.sender != holder_) {
-            _tryCompoundProtocolRewards();
-            return 0;
+            revert Repo.NotAuthorized(msg.sender);
         }
+        // L-REW-2/3: execute claim; return 0 only when allowed and no rewards.
         rewards_ = s.bondNftVault.claimRewards(tokenId_, recipient_);
         _tryCompoundProtocolRewards();
     }

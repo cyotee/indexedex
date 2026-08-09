@@ -45,7 +45,7 @@ string constant SVG_SHARES_PREFIX =
     '</text><rect x="50" y="120" width="300" height="80" rx="5" ry="5" fill="none" stroke="#00ff00"/><text x="200" y="150" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Shares: ';
 
 string constant SVG_REWARDS_PREFIX =
-    '</text><text x="200" y="180" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Pending CHIR: ';
+    '</text><text x="200" y="180" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Pending rewards: ';
 
 string constant SVG_TEXT_CLOSE = "</text>";
 string constant SVG_IMAGE_CLOSE = "</svg>";
@@ -96,8 +96,6 @@ library DETFNFTVaultRepo {
         uint256 nextTokenId;
         /// @notice Protocol-owned NFT token ID (has no unlock time)
         uint256 detfNFTId;
-        /// @notice Whether the protocol NFT has been sold (backing rebasing claim token)
-        bool detfNFTSold;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -188,26 +186,6 @@ library DETFNFTVaultRepo {
 
     function _detfNFTId() internal view returns (uint256) {
         return _detfNFTId(_layoutStruct());
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                        Protocol NFT Sold Flag                           */
-    /* ---------------------------------------------------------------------- */
-
-    function _setDETFNFTSold(Storage storage layoutStruct_, bool sold_) internal {
-        layoutStruct_.detfNFTSold = sold_;
-    }
-
-    function _setDETFNFTSold(bool sold_) internal {
-        _setDETFNFTSold(_layoutStruct(), sold_);
-    }
-
-    function _detfNFTSold(Storage storage layoutStruct_) internal view returns (bool) {
-        return layoutStruct_.detfNFTSold;
-    }
-
-    function _detfNFTSold() internal view returns (bool) {
-        return _detfNFTSold(_layoutStruct());
     }
 
     /* ---------------------------------------------------------------------- */

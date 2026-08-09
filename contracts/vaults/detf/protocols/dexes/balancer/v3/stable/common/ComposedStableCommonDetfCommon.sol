@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
+
 import {
     StablePoolImmutableData,
     StablePoolDynamicData,
@@ -97,7 +98,7 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         bool foundPath;
         ExactInUnwindSelection selection;
     }
-
+    /// @dev Family-local split (3 fields, *Out names) — not equivalent to shared UniV4 MintSplit.
     struct MintSplit {
         uint256 grossDetfOut;
         uint256 userDetfOut;

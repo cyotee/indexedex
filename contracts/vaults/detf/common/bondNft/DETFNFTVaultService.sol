@@ -22,10 +22,8 @@ library DETFNFTVaultService {
     /*                              Structs                                   */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Parameters for harvesting rewards
+    /// @notice Parameters for harvesting rewards (math inputs only; L-STRUCT-2)
     struct HarvestParams {
-        uint256 tokenId;
-        address recipient;
         uint256 effectiveShares;
         uint256 rewardPerShares;
         uint256 paidPerShare;
@@ -37,9 +35,8 @@ library DETFNFTVaultService {
         bool hasRewards;
     }
 
-    /// @notice Parameters for redemption
+    /// @notice Parameters for redemption caller validation (L-STRUCT-2: no unused tokenId)
     struct RedeemParams {
-        uint256 tokenId;
         address recipient;
         address caller;
         address detf;

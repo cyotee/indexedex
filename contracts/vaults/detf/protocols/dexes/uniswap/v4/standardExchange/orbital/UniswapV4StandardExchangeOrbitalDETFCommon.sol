@@ -21,6 +21,7 @@ import {
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
@@ -58,12 +59,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
     error NotSelf();
     error CompoundJoinProducedZeroLp();
 
-    struct MintSplit {
-        uint256 grossDetf;
-        uint256 userDetf;
-        uint256 feeToDetf;
-        uint256 inventoryDetf;
-    }
+    // L-STRUCT-1: MintSplit imported from detf/common/core/DETFMintSplit.sol
 
     struct PairLegRating {
         uint8 fundedPairLeg; // 0 or 1

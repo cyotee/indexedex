@@ -34,18 +34,6 @@ abstract contract DETFNFTVaultCommon is IDetfErrors {
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);
     error DETFNFTCannotBeUnlocked(uint256 tokenId);
-    error DETFNFTSold();
-
-    /* ---------------------------------------------------------------------- */
-    /*                          Lock Info Struct                              */
-    /* ---------------------------------------------------------------------- */
-
-    struct LockInfo {
-        uint256 sharesAwarded;
-        uint256 rewardPerShare;
-        uint256 bonusPercentage;
-        uint256 unlockTime;
-    }
 
     /* ---------------------------------------------------------------------- */
     /*                          Bond Terms Helper                             */
