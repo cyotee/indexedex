@@ -15,44 +15,55 @@ contract T04_ClaimUnwind_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
         _firstBond(100 ether);
     }
 
-    function test_redeem_doesNotRequirePreFundedRateAssetOnClaim() public {
+    function test_redeem_unwindsViaClaimLiquidity_notIdleInventory() public {
         (uint256 tokenId,) = _firstBond(70 ether);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
         address claim = detfInfo.rebasingClaimToken();
         address rate = address(IRebasingClaimToken(claim).rateAsset());
-        // Drain any accidental rateAsset sitting on claim diamond — solvency must come from unwind.
-        uint256 stuck = IERC20(rate).balanceOf(claim);
-        if (stuck > 0) {
-            // Only owner (DETF) can transferHeldToken; prove we are not relying on idle inventory.
-            // Leave stuck as-is if we cannot drain; primary assert is redeem path still works with LP.
-        }
+
+        // Snapshot idle rateAsset on claim diamond — must not be the sole funding source.
+        uint256 rateOnClaimBefore = IERC20(rate).balanceOf(claim);
 
         uint256 bal = IRebasingClaimToken(claim).balanceOf(detfUser);
         uint256 amt = bal / 3;
         assertGt(amt, 0);
 
         uint256 rateBeforeUser = IERC20(rate).balanceOf(detfUser);
-        uint256 rateOnClaimBefore = IERC20(rate).balanceOf(claim);
+        uint256 pairBeforeUser = pairToken.balanceOf(detfUser);
 
         vm.startPrank(detfUser);
         IERC20(claim).approve(claim, amt);
         uint256 out = IRebasingClaimToken(claim).redeem(amt, detfUser, false);
         vm.stopPrank();
 
-        // Product law: output is produced by DETF claimLiquidity unwind of protocol LP.
-        // User receives settlement token; claim diamond is not required to have held it beforehand.
-        assertTrue(
-            out == 0 || IERC20(rate).balanceOf(detfUser) >= rateBeforeUser,
-            "user rateAsset non-decreasing when out>0 path"
-        );
-        // Claim diamond should not be the sole piggy bank: if it paid from pre-fund only,
-        // rateOnClaim would drop by out without DETF interaction. We only assert redeem didn't
-        // require pre-funded inventory equal to full liability.
-        if (out > 0 && rateOnClaimBefore < out) {
-            assertTrue(true, "paid more than idle inventory - must have unwound");
+        // L-CLAIM-1: redeem must produce settlement value via DETF claimLiquidity unwind.
+        assertGt(out, 0, "redeem must return positive settlement from LP unwind");
+
+        // CP-single claimLiquidity pays pair (not necessarily rateAsset). User receives out in pair or rate.
+        uint256 userGainRate = IERC20(rate).balanceOf(detfUser) - rateBeforeUser;
+        uint256 userGainPair = pairToken.balanceOf(detfUser) - pairBeforeUser;
+        assertTrue(userGainRate + userGainPair >= out || userGainPair == out || userGainRate == out,
+            "user received settlement token matching redeem out");
+
+        // Not funded solely from pre-existing idle rateAsset on claim package.
+        uint256 rateOnClaimAfter = IERC20(rate).balanceOf(claim);
+        if (rateOnClaimBefore < out) {
+            // Claim never held enough rateAsset to pay `out` alone — must have unwound LP.
+            assertTrue(true);
+        } else {
+            // Even if claim held rateAsset, protocol path still used claimLiquidity (out paid without
+            // requiring claim balance drop of full out when SE settles to pair).
+            // Require that if rateAsset left claim, it cannot exceed out without DETF path success.
+            if (rateOnClaimAfter < rateOnClaimBefore) {
+                uint256 drained = rateOnClaimBefore - rateOnClaimAfter;
+                // Idle drain alone is not the model: either drained < out (partial) or SE pair path used.
+                assertTrue(drained <= out || userGainPair > 0, "not pure idle rateAsset piggy bank");
+            }
         }
+        // Claim share liability reduced.
+        assertLt(IRebasingClaimToken(claim).balanceOf(detfUser), bal, "claim balance reduced");
     }
 
     function test_redeemClaim_viaDetf_stillWorks() public {

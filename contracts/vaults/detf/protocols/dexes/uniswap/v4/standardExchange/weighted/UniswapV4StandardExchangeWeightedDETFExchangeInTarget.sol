@@ -99,9 +99,11 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeInTarget is
             }
         }
         if (se_ == address(0)) revert Repo.InvalidRoute(tokenIn_, tokenOut_);
-        tokenIn_.safeTransfer(se_, pulled_);
+        // SE `_securePull` measures balance *delta* during the call — do not pre-fund then
+        // pass pretransferred=true (delta would be 0). Approve + transferFrom path.
+        tokenIn_.forceApprove(se_, pulled_);
         amountOut_ = IStandardExchangeIn(se_).exchangeIn(
-            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, true, deadline_
+            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, false, deadline_
         );
     }
 
@@ -147,6 +149,35 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeInTarget is
             uint256 gross_ = _quoteDetfAgainstReserve(r_.fundedProductIndex, pairBoosted_);
             return _splitMintedDetf(gross_).userDetf;
         }
+        // L-PREV-1: SE passthrough preview must match execute (delegate to underlying SE).
+        if (_isAllowlistedTokenIn(tokenIn_) && _isAllowlistedTokenIn(tokenOut_)) {
+            return _previewSePassthrough(tokenIn_, amountIn_, tokenOut_);
+        }
         return 0;
+    }
+
+    /// @dev Mirrors `_sePassthrough` SE resolution; quotes via SE `previewExchangeIn`.
+    function _previewSePassthrough(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+        private
+        view
+        returns (uint256 amountOut_)
+    {
+        if (amountIn_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        address se_;
+        for (uint8 i; i < s.m; ++i) {
+            if (
+                address(tokenIn_) == address(s.pairTokens[i]) || address(tokenIn_) == address(s.vaultShares[i])
+                    || (
+                        address(s.standardExchanges[i]) != address(0)
+                            && _tokenInSeTokens(tokenIn_, address(s.standardExchanges[i]))
+                    )
+            ) {
+                se_ = address(s.standardExchanges[i]);
+                break;
+            }
+        }
+        if (se_ == address(0)) return 0;
+        return IStandardExchangeIn(se_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
     }
 }
