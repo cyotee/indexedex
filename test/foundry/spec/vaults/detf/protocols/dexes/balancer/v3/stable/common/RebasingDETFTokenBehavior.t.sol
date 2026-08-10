@@ -10,6 +10,7 @@ import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.so
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
+import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
 import {
     ComposedStableCommonDetf_Component_FactoryService
@@ -280,6 +281,96 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         assertEq(token.totalShares(), 6, 'total shares after burn');
         assertEq(token.sharesOf(address(token)), 0, 'token escrow shares burned');
         assertEq(token.sharesOf(alice), 6, 'alice remaining shares');
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  Catalog I — secure pull free-credit (proxy surface, L-GAPS-9/10)      */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice I1 redeem: inventory on RebasingDETF proxy without in-call transfer cannot free-redeem.
+    function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
+        vm.prank(owner);
+        token.mintFromNFTSale(10, address(token));
+
+        uint256 claimed = 4 ether;
+        uint256 balBefore = token.balanceOf(address(token));
+
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
+            )
+        );
+        token.redeem(claimed, alice, true);
+
+        assertEq(token.balanceOf(address(token)), balBefore, 'I1 must not consume inventory');
+        assertEq(weth.balanceOf(alice), 0, 'I1 no free weth');
+    }
+
+    /// @notice I1 exchangeIn: same gate on SE surface via production proxy.
+    function test_I1_pretransferred_exchangeIn_inventoryNoInCallTransfer_revertsDelta0() public {
+        vm.prank(owner);
+        token.mintFromNFTSale(10, address(token));
+
+        uint256 claimed = 4 ether;
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
+            )
+        );
+        IStandardExchangeIn(address(token)).exchangeIn(
+            IERC20(address(token)), claimed, IERC20(address(weth)), 0, alice, true, block.timestamp + 1
+        );
+    }
+
+    /// @notice I2: transfer-before-call is outside the pull window (observedDelta 0).
+    function test_I2_pretransferred_transferBeforeCall_revertsDelta0() public {
+        vm.prank(owner);
+        token.mintFromNFTSale(10, alice);
+
+        uint256 claimed = 4 ether;
+        vm.prank(alice);
+        token.transfer(address(token), claimed);
+
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
+            )
+        );
+        token.redeem(claimed, alice, true);
+    }
+
+    /// @notice I3: residual held claim cannot fund a second free pretransfer redeem.
+    function test_I3_residualInventory_cannotFundSecondFreePretransfer() public {
+        vm.prank(owner);
+        token.mintFromNFTSale(5, address(token));
+        vm.prank(owner);
+        token.mintFromNFTSale(10, alice);
+
+        uint256 claimed = 4 ether;
+        vm.prank(alice);
+        uint256 out_ = token.redeem(claimed, bob, false);
+        assertGt(out_, 0);
+
+        uint256 residual_ = token.balanceOf(address(token));
+        if (residual_ < claimed) {
+            vm.prank(owner);
+            token.mintFromNFTSale(10, address(token));
+            residual_ = token.balanceOf(address(token));
+        }
+        assertGe(residual_, claimed);
+
+        vm.prank(alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
+            )
+        );
+        token.redeem(claimed, alice, true);
+
+        assertEq(token.balanceOf(address(token)), residual_, 'I3 residual preserved');
     }
 
     function _mockPosition(uint256 originalShares_) internal {

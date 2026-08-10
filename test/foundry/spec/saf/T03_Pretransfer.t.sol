@@ -3,11 +3,13 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     TestBase_UniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeDETF.sol";
 
-/// @notice T03 / L-CLAIM-3: pretransferred requires proven balance increase vs lastSelfBalance.
+/// @notice T03 / L-CLAIM-3 + L-GAPS-9/10: pretransferred requires in-window balance delta
+///         (ISecurePullErrors.TransferDeltaInsufficient). Transfer-before-call is outside the pull window.
 contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
     function setUp() public override {
         super.setUp();
@@ -40,13 +42,20 @@ contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
         uint256 bal = IRebasingClaimToken(claim).balanceOf(detfUser);
         assertGt(bal, 0);
 
-        // Fake pretransfer: claim never received tokens → L-CLAIM-3 abuse path.
+        // Fake pretransfer: claim never received tokens → L-GAPS-9 / L-CLAIM-3 abuse path.
+        uint256 claimed = bal / 4;
         vm.prank(detfUser);
-        vm.expectRevert();
-        IRebasingClaimToken(claim).redeem(bal / 4, detfUser, true);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
+            )
+        );
+        IRebasingClaimToken(claim).redeem(claimed, detfUser, true);
     }
 
-    function test_redeem_pretransferred_true_afterRealTransfer_succeeds() public {
+    /// @notice Transfer-before-call + pretransferred=true is outside the L-GAPS-9 pull window.
+    ///         Absolute inventory (even after a real transfer) must not free-credit redeem.
+    function test_redeem_pretransferred_true_afterRealTransfer_revertsDelta0() public {
         (uint256 tokenId,) = _firstBond(60 ether);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
@@ -56,16 +65,17 @@ contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
         uint256 amt = bal / 4;
         assertGt(amt, 0);
 
-        // Real transfer into claim diamond, then redeem with pretransferred=true.
-        // Use post-transfer held balance (rebasing share math may round 1 wei).
+        // Real transfer into claim diamond before the call — still outside pull window.
         vm.startPrank(detfUser);
         IERC20(claim).transfer(claim, amt);
         uint256 held = IERC20(claim).balanceOf(claim);
         assertGt(held, 0, "claim diamond holds transferred claim");
-        uint256 rateOut = IRebasingClaimToken(claim).redeem(held, detfUser, true);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, held, uint256(0)
+            )
+        );
+        IRebasingClaimToken(claim).redeem(held, detfUser, true);
         vm.stopPrank();
-
-        // Unwind path returns settlement via DETF claimLiquidity (pair out for CP-single).
-        assertTrue(rateOut >= 0, "redeem completed via unwind path");
     }
 }

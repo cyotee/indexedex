@@ -71,8 +71,8 @@ library RebasingClaimTokenRepo {
         /// @notice Last block when redemption rate was updated
         uint256 lastRateUpdateBlock;
 
-        /// @notice Last observed claim-token balance held by this diamond (pretransfer proof).
-        /// @dev L-CLAIM-3: `pretransferred=true` requires balanceNow - lastSelfBalance >= amount.
+        /// @notice Legacy last-self balance slot (unused). Secure pull uses in-call balance delta
+        ///         (L-GAPS-9/10 / ISecurePullErrors). Kept for storage layout compatibility.
         uint256 lastSelfBalance;
     }
 

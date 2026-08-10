@@ -19,6 +19,7 @@ import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiSt
 /* -------------------------------------------------------------------------- */
 
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
@@ -430,17 +431,10 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         uint256 internalSharesBurned = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate);
 
-        // Handle transfer if not pretransferred
+        // L-GAPS-9/10 / L-CLAIM-3: pretransferred burns only shares already held on this diamond.
+        // Owner-only path; redeem/exchange use _secureTokenTransfer delta gate for free-credit.
         address burnFrom = owner;
         if (pretransferred) {
-            // L-CLAIM-3: pretransfer must prove claim balance increase vs lastSelfBalance.
-            uint256 balanceNow_ = _balanceOf(address(this));
-            uint256 last_ = layoutStruct.lastSelfBalance;
-            if (balanceNow_ < last_ || balanceNow_ - last_ < rebasingClaimAmount) {
-                revert InsufficientBalance(
-                    rebasingClaimAmount, balanceNow_ > last_ ? balanceNow_ - last_ : 0
-                );
-            }
             burnFrom = address(this);
         }
 
@@ -454,9 +448,6 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
 
         // Burn shares (no rateAsset transfer - caller/DETF handles LP unwind)
         RebasingClaimTokenRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
-        if (pretransferred || burnFrom == address(this)) {
-            layoutStruct.lastSelfBalance = _balanceOf(address(this));
-        }
 
         sharesBurned = RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned);
 
@@ -518,8 +509,6 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
 
         // Burn claim shares first (CEI). External share units equal LP principal minted at sale.
         RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
-        // Keep pretransfer last-self balance in sync after consuming held claim.
-        layoutStruct_.lastSelfBalance = _balanceOf(address(this));
 
         // L-CLAIM-1/2: fund redeem by unwinding protocol NFT LP via DETF - not idle rateAsset inventory.
         uint256 lpPrincipal_ = RebasingClaimTokenRepo._internalSharesToExternal(shares);
@@ -532,42 +521,34 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     }
 
     /**
-     * @dev Pulls `token_` or proves a prior transfer when `pretransferred_`.
-     *      L-CLAIM-3: never trust caller amount without a balance delta vs stored last balance.
+     * @dev Delta-based secure pull (L-GAPS-9/10 / L-CLAIM-3 / ISecurePullErrors).
+     *      Blocks free credit of idle inventory via pretransferred=true with no in-call transfer (I1).
+     *      Absolute `balanceOf >= claimed` without a positive in-window delta is forbidden.
+     *      Self-token pulls use internal `_transfer` so share accounting stays consistent;
+     *      foreign tokens use safeTransferFrom (FoT-safe observed delta).
      */
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actualIn_) {
-        RebasingClaimTokenRepo.Storage storage layoutStruct_ = RebasingClaimTokenRepo._layoutStruct();
-
-        if (pretransferred_) {
-            if (address(token_) != address(this)) {
-                // Foreign tokens still require a measured balance increase vs last snapshot.
-                uint256 balanceNow_ = token_.balanceOf(address(this));
-                if (balanceNow_ < amount_) {
-                    revert InsufficientBalance(amount_, balanceNow_);
-                }
-                // For foreign tokens, require full held amount coverage (no separate last field).
-                actualIn_ = amount_;
-                return actualIn_;
-            }
-
-            uint256 balanceNowClaim_ = _balanceOf(address(this));
-            uint256 last_ = layoutStruct_.lastSelfBalance;
-            if (balanceNowClaim_ < last_ || balanceNowClaim_ - last_ < amount_) {
-                revert InsufficientBalance(amount_, balanceNowClaim_ > last_ ? balanceNowClaim_ - last_ : 0);
-            }
-            // Do not advance last here - consume path updates after burn/spend.
-            return amount_;
-        }
-
-        if (address(token_) == address(this)) {
-            _transfer(msg.sender, address(this), amount_);
-            layoutStruct_.lastSelfBalance = _balanceOf(address(this));
-            return amount_;
-        }
-
         uint256 balanceBefore = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actualIn_ = token_.balanceOf(address(this)) - balanceBefore;
+        if (!pretransferred_) {
+            if (address(token_) == address(this)) {
+                _transfer(msg.sender, address(this), amount_);
+            } else {
+                token_.safeTransferFrom(msg.sender, address(this), amount_);
+            }
+        }
+        uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
+        if (pretransferred_) {
+            if (amount_ > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
+            return amount_;
+        }
+        // Self-token transfer is exact (share accounting); foreign may be FoT-short.
+        if (address(token_) == address(this)) {
+            return amount_;
+        }
+        return observedDelta;
     }
 
     /**
