@@ -221,7 +221,7 @@ abstract contract VaultRegistryVaultQueryTarget is IVaultRegistryVaultQuery {
         return VaultRegistryVaultRepo._bondFeeIdOfVault(vault);
     }
 
-    function seeigniorageTermsTypeId(address vault) external view returns (bytes4 vaultSeigniorageTermsTypeId_) {
+    function vaultSeigniorageTermsTypeId(address vault) external view returns (bytes4 vaultSeigniorageTermsTypeId_) {
         return VaultRegistryVaultRepo._seigniorageIncentiveIdOfVault(vault);
     }
 

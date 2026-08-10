@@ -194,6 +194,10 @@ contract VaultRegistry_Registration_Test is IndexedexTest {
         assertEq(vaultQuery.vaultUsageFeeTypeId(vault1), bytes4(0x11111111), "usage fee type should match");
         assertEq(vaultQuery.vaultDexTermsTypeId(vault1), bytes4(0x22222222), "dex fee type should match");
         assertEq(vaultQuery.vaultBondTermsTypeId(vault1), bytes4(0x33333333), "bond fee type should match");
+        assertEq(
+            vaultQuery.vaultSeigniorageTermsTypeId(vault1), bytes4(0x44444444), "seigniorage fee type should match"
+        );
+        assertEq(vaultQuery.vaultLendingTermsTypeId(vault1), bytes4(0x55555555), "lending fee type should match");
     }
 
     /// @notice registerVault emits NewVault, NewVaultOfType, and NewVaultOfToken events.

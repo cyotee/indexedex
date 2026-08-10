@@ -20,7 +20,7 @@ contract VaultRegistryVaultQueryFacet is VaultRegistryVaultQueryTarget, IFacet {
      * @return selectors Array of 4-byte function selectors
      */
     function facetFuncs() public pure override returns (bytes4[] memory selectors) {
-        selectors = new bytes4[](21);
+        selectors = new bytes4[](22);
         selectors[0] = IVaultRegistryVaultQuery.vaults.selector;
         selectors[1] = IVaultRegistryVaultQuery.isVault.selector;
         selectors[2] = IVaultRegistryVaultQuery.vaultTokens.selector;
@@ -41,7 +41,8 @@ contract VaultRegistryVaultQueryFacet is VaultRegistryVaultQueryTarget, IFacet {
         selectors[17] = IVaultRegistryVaultQuery.vaultUsageFeeTypeId.selector;
         selectors[18] = IVaultRegistryVaultQuery.vaultDexTermsTypeId.selector;
         selectors[19] = IVaultRegistryVaultQuery.vaultBondTermsTypeId.selector;
-        selectors[20] = IVaultRegistryVaultQuery.vaultLendingTermsTypeId.selector;
+        selectors[20] = IVaultRegistryVaultQuery.vaultSeigniorageTermsTypeId.selector;
+        selectors[21] = IVaultRegistryVaultQuery.vaultLendingTermsTypeId.selector;
     }
 
     function facetMetadata()

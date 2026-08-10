@@ -197,5 +197,7 @@ interface IVaultRegistryVaultQuery is IVaultRegistryEvents {
 
     function vaultBondTermsTypeId(address vault) external view returns (bytes4 vaultBondTermsTypeId_);
 
+    function vaultSeigniorageTermsTypeId(address vault) external view returns (bytes4 vaultSeigniorageTermsTypeId_);
+
     function vaultLendingTermsTypeId(address vault) external view returns (bytes4 vaultLendingTermsTypeId_);
 }
