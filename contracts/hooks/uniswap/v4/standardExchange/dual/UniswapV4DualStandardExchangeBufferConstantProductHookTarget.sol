@@ -10,6 +10,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     toBeforeSwapDelta,
@@ -520,11 +521,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookTarget i
         _requireNonZero(amountIn);
         if (recipient == address(0)) revert ZeroAddress();
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
+        // Quote on pre-pull book so inventory does not reprice the trade mid-path.
         amountOut = _previewSwapExactIn(zfo, amountIn);
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
-        if (!pretransferred) {
-            IERC20(address(tokenIn)).safeTransferFrom(msg.sender, address(this), amountIn);
-        }
+        // L-GAPS-11 / ISecurePullErrors: pretransfer credits claimed only when in-window
+        // delta covers it — blocks free extract of dual SE book / pair inventory. Leftover
+        // spendable economics unchanged (surplus delta not exact-matched).
+        _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
         _executeBookSwap(zfo, amountIn, amountOut, recipient);
     }
 
@@ -552,12 +555,35 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookTarget i
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         amountIn = _previewSwapExactOut(zfo, amountOut);
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
-        if (!pretransferred) {
-            IERC20(address(tokenIn)).safeTransferFrom(msg.sender, address(this), amountIn);
-        } else if (maxAmountIn > amountIn) {
-            IERC20(address(tokenIn)).safeTransfer(msg.sender, maxAmountIn - amountIn);
+        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
+        // (never absolute maxAmountIn - amountIn from free inventory / SE book).
+        uint256 observedDelta = _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
+        if (pretransferred && observedDelta > amountIn) {
+            IERC20(address(tokenIn)).safeTransfer(msg.sender, observedDelta - amountIn);
         }
         _executeBookSwap(zfo, amountIn, amountOut, recipient);
+    }
+
+    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; BasicVaultCommon peer).
+    ///      Measures `observedDelta` over the pull window. Pretransfer credits exactly `claimed`
+    ///      only when `claimed <= observedDelta`; otherwise reverts
+    ///      `TransferDeltaInsufficient(claimed, observedDelta)`. Absolute inventory without a
+    ///      positive in-window delta cannot free-extract dual SE book / pair face (I1). Surplus
+    ///      delta is not exact-matched (leftover spendable / no exact-delta grief).
+    function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
+        internal
+        returns (uint256 observedDelta)
+    {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            tokenIn.safeTransferFrom(msg.sender, address(this), claimed);
+        }
+        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (pretransferred) {
+            if (claimed > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
+            }
+        }
     }
 
     /* ---------------------------------------------------------------------- */
