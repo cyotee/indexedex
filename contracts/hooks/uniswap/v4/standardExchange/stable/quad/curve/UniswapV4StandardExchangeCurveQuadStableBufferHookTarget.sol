@@ -13,6 +13,7 @@ import {IRateProvider} from
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
@@ -250,6 +251,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     /// @notice Free pool-token balance eligible for pretransfer funding (orbital/weighted peer).
     /// @dev SE legs: full face balance is free (pair never book). Raw legs: bal − intentional
     ///      `rawReserves` only — inventory cannot fund pretransfer (prevents book drain).
+    /// @notice Free pool-token face above intentional raw book (conservation helpers).
+    /// @dev Not used for SE pretransfer credit — L-GAPS-11 delta-gates via `_securePull`.
     function _freeTokenBalance(address token_) internal view returns (uint256 free) {
         uint8 i = _tokenIndex(token_);
         Repo.Layout storage l = Repo._layout();
@@ -261,8 +264,21 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         return bal > book ? bal - book : 0;
     }
 
-    function _requirePretransferred(address token_, uint256 amount) internal view {
-        if (_freeTokenBalance(token_) < amount) revert InsufficientPretransfer();
+    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; CP SE buffer peer).
+    function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
+        internal
+        returns (uint256 observedDelta)
+    {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            _pull(address(tokenIn), claimed);
+        }
+        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (pretransferred) {
+            if (claimed > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
+            }
+        }
     }
 
     /// @dev Credit intentional raw book after funded intake (join/swap/pretransfer consume free).

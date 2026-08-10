@@ -10,6 +10,7 @@ import {
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {ModifyLiquidityParams} from
@@ -24,7 +25,17 @@ import {
     HostileReentrantERC20
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/HostileReentrantERC20.sol";
 
+/**
+ * @dev Catalog I1/I3: pretransfer must not free-extract SE book / free inventory (L-GAPS-11 / WP-I-HOOK-SEBUF-001).
+ */
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is TestBase {
+    address internal attacker;
+
+    function setUp() public virtual override {
+        super.setUp();
+        attacker = makeAddr("attacker");
+    }
+
     function test_donation_seShares_dilutesJoin() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
@@ -204,28 +215,191 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
+    /* ---------------------------------------------------------------------- */
+    /*  I1 / I3 — pretransfer delta gate (L-GAPS-11)                          */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice I1 raw→raw: donate free raw; unfunded pretransfer cannot free-extract book.
+    function test_I1_pretransferred_rawToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
+        _firstMintEqual(200 ether);
+        uint256 claimed_ = 5 ether;
+        token1.mint(attacker, claimed_);
+        vm.prank(attacker);
+        token1.transfer(hook, claimed_);
+
+        uint256 outAttBefore_ = token2.balanceOf(attacker);
+        uint256 face1Before_ = token1.balanceOf(hook);
+        uint256 n2Before_ = quad.nativeReserve(2);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(token2.balanceOf(attacker), outAttBefore_, "I1: no free extract");
+        assertEq(token1.balanceOf(hook), face1Before_, "I1: free raw unmoved");
+        assertEq(quad.nativeReserve(2), n2Before_, "I1: book not free-spent");
+    }
+
+    /// @notice I1 SE-face→raw: donate free SE-face; unfunded pretransfer cannot free-extract.
+    function test_I1_pretransferred_seFaceToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
+        _firstMintEqual(200 ether);
+        uint256 claimed_ = 5 ether;
+        token0.mint(attacker, claimed_);
+        vm.prank(attacker);
+        token0.transfer(hook, claimed_);
+        assertEq(token0.balanceOf(hook), claimed_, "SE face inventory on hook");
+
+        uint256 se0Before_ = IERC20(se0).balanceOf(hook);
+        uint256 outAttBefore_ = token1.balanceOf(attacker);
+        uint256 faceBefore_ = token0.balanceOf(hook);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)),
+            claimed_,
+            IERC20(address(token1)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(token1.balanceOf(attacker), outAttBefore_, "I1: no free raw extract");
+        assertEq(IERC20(se0).balanceOf(hook), se0Before_, "I1: SE book not free-spent");
+        assertEq(token0.balanceOf(hook), faceBefore_, "I1: face inventory unmoved");
+    }
+
+    /// @notice I1 exact-out: unfunded pretransfer reverts with delta 0.
+    function test_I1_pretransferred_exchangeOut_revertsDelta0() public {
+        _firstMintEqual(200 ether);
+        uint256 wantOut_ = 1 ether;
+
+        token1.mint(attacker, 50 ether);
+        vm.prank(attacker);
+        token1.transfer(hook, 50 ether);
+
+        uint256 needIn_ = IStandardExchangeOut(hook).previewExchangeOut(
+            IERC20(address(token1)), IERC20(address(token2)), wantOut_
+        );
+        assertGt(needIn_, 0);
+
+        uint256 outAttBefore_ = token2.balanceOf(attacker);
+        uint256 face1Before_ = token1.balanceOf(hook);
+        uint256 n2Before_ = quad.nativeReserve(2);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, needIn_, uint256(0)
+            )
+        );
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)),
+            needIn_,
+            IERC20(address(token2)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(token2.balanceOf(attacker), outAttBefore_, "I1 out: no free extract");
+        assertEq(token1.balanceOf(hook), face1Before_, "I1 out: free raw unmoved");
+        assertEq(quad.nativeReserve(2), n2Before_, "I1 out: book intact");
+    }
+
+    /// @notice I3: residual free raw after honest path cannot fund second free pretransfer.
+    function test_I3_residualInventory_cannotFundSecondFreePretransfer_rawToRaw() public {
+        _firstMintEqual(200 ether);
+
+        uint256 residualSeed_ = 4 ether;
+        token1.mint(address(this), residualSeed_);
+        token1.transfer(hook, residualSeed_);
+
+        uint256 honestIn_ = 3 ether;
+        vm.prank(user);
+        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            honestIn_,
+            IERC20(address(token2)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+        assertGt(out_, 0, "honest raw->raw ok");
+
+        uint256 residual_ = token1.balanceOf(hook);
+        assertGe(residual_, residualSeed_, "residual free raw remains");
+        uint256 n2Before_ = quad.nativeReserve(2);
+        uint256 outAttBefore_ = token2.balanceOf(attacker);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            residualSeed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(token1.balanceOf(hook), residual_, "I3 residual unmoved");
+        assertEq(quad.nativeReserve(2), n2Before_, "I3 book not free-spent");
+        assertEq(token2.balanceOf(attacker), outAttBefore_, "I3 no free extract");
+    }
+
     /// @notice Unfunded pretransfer must NOT treat inventory as free (raw leg).
     function test_pretransfer_unfunded_raw_reverts() public {
         _firstMintEqual(200 ether);
-        // token1 is raw in default config; book holds face but free should be 0
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0)
+            )
+        );
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token1)),
             1 ether,
             IERC20(address(token2)),
             0,
             user,
-            true, // pretransferred without free funding
+            true,
             block.timestamp + 1
         );
     }
 
-    /// @notice Unfunded pretransfer on SE face (no free pair on hook) reverts.
+    /// @notice Unfunded pretransfer on SE face reverts.
     function test_pretransfer_unfunded_seFace_reverts() public {
         _firstMintEqual(200 ether);
-        // token0 is SE-buffered; free face on hook is 0 after buffer-last joins
         assertEq(token0.balanceOf(hook), 0, "no free SE face after join");
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0)
+            )
+        );
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token0)),
             1 ether,
@@ -237,18 +411,18 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         );
     }
 
-    /// @notice Funded pretransfer (free face) succeeds and is bit-exact with preview.
-    function test_pretransfer_funded_raw_previewEqualsExec() public {
+    /// @notice Absolute free inventory cannot fund pretransfer (L-GAPS-11; replaces free-spend pass).
+    function test_I1_pretransfer_donatedFreeInventory_revertsDelta0() public {
         _firstMintEqual(500 ether);
         uint256 amountIn = 2 ether;
-        uint256 preview = IStandardExchangeIn(hook).previewExchangeIn(
-            IERC20(address(token1)), amountIn, IERC20(address(token2))
-        );
-        // pre-send free face (donation excess relative to intentional raw book)
         token1.mint(hook, amountIn);
-        uint256 outBefore = token2.balanceOf(user);
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(hook).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token1)),
             amountIn,
             IERC20(address(token2)),
@@ -257,14 +431,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
             true,
             block.timestamp + 1
         );
-        assertEq(out, preview, "funded pretransfer preview==exec");
-        assertEq(token2.balanceOf(user) - outBefore, out);
     }
 
     /// @notice Unfunded exchangeOut pretransfer reverts (raw in).
     function test_pretransfer_unfunded_exchangeOut_reverts() public {
         _firstMintEqual(200 ether);
-        vm.expectRevert();
+        uint256 need_ = IStandardExchangeOut(hook).previewExchangeOut(
+            IERC20(address(token1)), IERC20(address(token2)), 1 ether
+        );
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, need_, uint256(0)
+            )
+        );
         IStandardExchangeOut(hook).exchangeOut(
             IERC20(address(token1)),
             type(uint256).max,

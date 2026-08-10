@@ -25,6 +25,7 @@ import {IRateProvider} from
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
@@ -389,6 +390,24 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         for (uint8 i; i < l.numTokens; ++i) {
             MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), _nativeAt(i));
+        }
+    }
+
+    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; CP SE buffer peer).
+    ///      Pretransfer credits only when claimed <= in-window observedDelta (blocks free leftover spend).
+    function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
+        internal
+        returns (uint256 observedDelta)
+    {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            _pull(address(tokenIn), claimed);
+        }
+        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (pretransferred) {
+            if (claimed > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
+            }
         }
     }
 

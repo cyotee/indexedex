@@ -19,7 +19,7 @@ import {
  * @title UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget
  * @notice SE In/Out swap-only surface (rated StableSwap book, internal settle).
  * @dev MultiAssetLiquidity selectors live on LiquidityFacet (same functions as product join/exit).
- *      pretransferred=true requires free funding only (orbital peer) — cannot drain inventory.
+ *      L-GAPS-11: pretransfer credits only in-window delta (ISecurePullErrors) — leftover not free-spent.
  */
 abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget is
     UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget,
@@ -54,15 +54,11 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         _tokenIndex(tin);
         _tokenIndex(tout);
 
-        // Quote on pre-intake book, then fund (free-only when pretransferred).
+        // Quote on pre-intake book, then fund (L-GAPS-11 delta gate — no free leftover credit).
         amountOut = _previewSwapExactIn(tin, tout, amountIn);
         if (amountOut < minAmountOut) revert Slippage();
 
-        if (!pretransferred) {
-            _pull(tin, amountIn);
-        } else {
-            _requirePretransferred(tin, amountIn);
-        }
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 i = _tokenIndex(tin);
@@ -77,7 +73,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         if (l.standardExchanges[i] != address(0)) {
             _bufferToken(i, amountIn);
         } else {
-            // Consume free / credit intentional raw book after funded in.
+            // Credit intentional raw book after funded in.
             _creditRawIntentional(i, amountIn);
         }
         _syncVaultReserves();
@@ -109,11 +105,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert Slippage();
 
-        if (!pretransferred) {
-            _pull(tin, amountIn);
-        } else {
-            _requirePretransferred(tin, amountIn);
-        }
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 ii = _tokenIndex(tin);

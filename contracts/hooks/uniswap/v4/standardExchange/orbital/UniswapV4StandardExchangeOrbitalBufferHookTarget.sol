@@ -26,6 +26,7 @@ import {
     IAllowanceTransfer
 } from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
@@ -2363,11 +2364,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
             revert InvalidRoute(tin, tout);
         }
 
-        if (!pretransferred) {
-            _pullSeFunding(tin, amountIn);
-        } else {
-            _requirePretransferred(tin, amountIn);
-        }
+        // L-GAPS-11 / ISecurePullErrors: pretransfer credits only in-window delta (I1/I3).
+        // Leftover spendable economics unchanged (surplus delta not exact-matched).
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         amountOut = _previewSwapExactIn(tin, tout, amountIn);
@@ -2417,19 +2416,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
 
-        if (!pretransferred) {
-            _pullSeFunding(tin, amountIn);
-        } else {
-            // Free balance must cover the quoted amountIn (max may be higher; refund excess).
-            _requirePretransferred(tin, amountIn);
-            if (maxAmountIn > amountIn) {
-                uint256 free = _freeTokenBalance(tin);
-                // Only refund excess free above amountIn that user pre-sent (up to max-amountIn gap).
-                uint256 excessCap = maxAmountIn - amountIn;
-                uint256 freeAfterNeed = free > amountIn ? free - amountIn : 0;
-                uint256 refund = freeAfterNeed < excessCap ? freeAfterNeed : excessCap;
-                if (refund > 0) IERC20(tin).safeTransfer(msg.sender, refund);
-            }
+        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
+        // (never absolute free inventory / book).
+        uint256 observedDelta = _securePull(IERC20(tin), amountIn, pretransferred);
+        if (pretransferred && observedDelta > amountIn) {
+            IERC20(tin).safeTransfer(msg.sender, observedDelta - amountIn);
         }
 
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
@@ -2461,8 +2452,23 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookTarget is
         return bal > book ? bal - book : 0;
     }
 
-    function _requirePretransferred(address token, uint256 amount) internal view {
-        if (_freeTokenBalance(token) < amount) revert InsufficientPretransfer();
+    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; CP SE buffer + BasicVault peer).
+    ///      Pretransfer credits `claimed` only when `claimed <= observedDelta` over the pull window.
+    ///      Absolute free inventory without a positive in-window delta cannot free-extract book (I1/I3).
+    function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
+        internal
+        returns (uint256 observedDelta)
+    {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            _pullSeFunding(address(tokenIn), claimed);
+        }
+        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (pretransferred) {
+            if (claimed > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
+            }
+        }
     }
 
     function _pullSeFunding(address token, uint256 amount) internal {

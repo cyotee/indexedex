@@ -89,23 +89,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         _tokenIndex(tin);
         _tokenIndex(tout);
 
-        if (!pretransferred) {
-            _pull(tin, amountIn);
-        } else {
-            if (IERC20(tin).balanceOf(address(this)) < amountIn
-                    && Repo._layout().standardExchanges[_tokenIndex(tin)] == address(0)
-                    && Repo._layout().rawReserves[_tokenIndex(tin)] + amountIn
-                        > IERC20(tin).balanceOf(address(this))) {
-                // free balance check for pretransfer
-            }
-            uint256 free = IERC20(tin).balanceOf(address(this));
-            if (Repo._layout().standardExchanges[_tokenIndex(tin)] == address(0)) {
-                free = free > Repo._layout().rawReserves[_tokenIndex(tin)]
-                    ? free - Repo._layout().rawReserves[_tokenIndex(tin)]
-                    : 0;
-            }
-            if (free < amountIn) revert InsufficientPretransfer();
-        }
+        // L-GAPS-11 / ISecurePullErrors: pretransfer credits only in-window delta (I1/I3).
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         amountOut = _previewSwapExactIn(tin, tout, amountIn);
         if (amountOut < minAmountOut) revert Slippage();
@@ -154,16 +139,8 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert Slippage();
 
-        if (!pretransferred) {
-            _pull(tin, amountIn);
-        } else {
-            uint8 i = _tokenIndex(tin);
-            uint256 free = IERC20(tin).balanceOf(address(this));
-            if (Repo._layout().standardExchanges[i] == address(0)) {
-                free = free > Repo._layout().rawReserves[i] ? free - Repo._layout().rawReserves[i] : 0;
-            }
-            if (free < amountIn) revert InsufficientPretransfer();
-        }
+        // L-GAPS-11: delta-gate claimed amountIn (no absolute free inventory credit).
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 ii = _tokenIndex(tin);
