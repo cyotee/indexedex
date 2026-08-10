@@ -5,19 +5,23 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICLPool} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/ICLPool.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
 import {SlipstreamUtils} from "@crane/contracts/utils/math/SlipstreamUtils.sol";
 import {SlipstreamQuoter} from "@crane/contracts/utils/math/SlipstreamQuoter.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 
-contract SlipstreamStandardExchangeCommon {
+contract SlipstreamStandardExchangeCommon is ISecurePullErrors {
+    using BetterSafeERC20 for IERC20;
     struct ManagedTicks {
         int24 centerLower;
         int24 centerUpper;
@@ -422,5 +426,35 @@ contract SlipstreamStandardExchangeCommon {
 
         amountOut = zeroForOne ? uint256(-amount1Delta) : uint256(-amount0Delta);
         require(amountOut >= minAmountOut, "SlipstreamCommon: insufficient output");
+    }
+
+    /**
+     * @notice Securely pulls tokens using balance-delta accounting (L-GAPS-9/10 / ISecurePullErrors).
+     * @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
+     *      - `!pretransferred`: transferFrom, return observedDelta (FoT-safe).
+     *      - `pretransferred`: no in-call transfer; credit exactly `amountIn` only when
+     *        `amountIn <= observedDelta`; otherwise revert
+     *        `TransferDeltaInsufficient(claimed, observedDelta)`.
+     *        Absolute `balanceOf >= claimed` without a positive in-window delta is forbidden
+     *        (blocks free inventory credit / I1).
+     */
+    function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
+        internal
+        returns (uint256 actualIn)
+    {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
+        }
+        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (pretransferred) {
+            if (amountIn > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
+            }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
+            return amountIn;
+        }
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
+        return observedDelta;
     }
 }

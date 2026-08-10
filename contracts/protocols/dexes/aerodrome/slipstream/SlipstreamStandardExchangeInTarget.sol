@@ -253,20 +253,6 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         amount1Used = bal1Before - IERC20(token1).balanceOf(address(this));
     }
 
-    function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
-        internal
-        returns (uint256 actualIn)
-    {
-        if (pretransferred) {
-            require(tokenIn.balanceOf(address(this)) >= amountIn, "SlipstreamExchangeIn: insufficient pretransferred balance");
-            return amountIn;
-        }
-
-        uint256 balBefore = tokenIn.balanceOf(address(this));
-        tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-        actualIn = tokenIn.balanceOf(address(this)) - balBefore;
-    }
-
     function _refundRemainder(address token) internal {
         uint256 balance = IERC20(token).balanceOf(address(this));
         if (balance > 0) {
