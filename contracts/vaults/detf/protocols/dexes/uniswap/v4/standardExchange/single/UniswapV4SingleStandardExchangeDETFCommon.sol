@@ -12,6 +12,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -290,16 +291,24 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         return false;
     }
 
-    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256) {
+    /// @dev Delta-based pull (L-GAPS-9/10/12). Pretransfer credits claimed only when
+    ///      claimed <= observedDelta; shortfalls revert TransferDeltaInsufficient.
+    ///      Absolute inventory without in-window delta is never free-credited.
+    function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
+        uint256 before_ = token_.balanceOf(address(this));
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+        }
+        uint256 observedDelta_ = token_.balanceOf(address(this)) - before_;
         if (pretransferred_) {
-            if (token_.balanceOf(address(this)) < amount_) {
-                revert UniswapV4SingleStandardExchangeDETFRepo.ZeroAmount();
+            if (amount_ > observedDelta_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta_);
             }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
             return amount_;
         }
-        uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        return token_.balanceOf(address(this)) - before_;
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
+        return observedDelta_;
     }
 
     function _effectiveLockDuration(uint256 lockDuration_) internal view returns (uint256 effective_) {

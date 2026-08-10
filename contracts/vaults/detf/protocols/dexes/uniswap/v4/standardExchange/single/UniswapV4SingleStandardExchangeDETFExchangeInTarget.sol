@@ -129,9 +129,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is Uniswap
         if (address(tokenIn_) == address(s.pairToken)) {
             uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
             pairNotional_ = pulled_;
-            tokenIn_.safeTransfer(address(s.standardExchangeVault), pulled_);
+            // Nested SE: forceApprove + pretransferred=false so SE _pullToken observes in-window delta.
+            tokenIn_.forceApprove(address(s.standardExchangeVault), pulled_);
             vaultShares_ = s.standardExchangeVault.exchangeIn(
-                tokenIn_, pulled_, s.standardExchangeVaultShare, 0, address(this), true, deadline_
+                tokenIn_, pulled_, s.standardExchangeVaultShare, 0, address(this), false, deadline_
             );
         } else if (address(tokenIn_) == address(s.standardExchangeVaultShare)) {
             vaultShares_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
@@ -140,9 +141,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is Uniswap
         } else if (_isAllowlistedTokenIn(tokenIn_)) {
             uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
             pairNotional_ = s.standardExchangeVault.previewExchangeIn(tokenIn_, pulled_, s.pairToken);
-            tokenIn_.safeTransfer(address(s.standardExchangeVault), pulled_);
+            // Nested SE: forceApprove + pretransferred=false so SE _pullToken observes in-window delta.
+            tokenIn_.forceApprove(address(s.standardExchangeVault), pulled_);
             vaultShares_ = s.standardExchangeVault.exchangeIn(
-                tokenIn_, pulled_, s.standardExchangeVaultShare, 0, address(this), true, deadline_
+                tokenIn_, pulled_, s.standardExchangeVaultShare, 0, address(this), false, deadline_
             );
         } else {
             revert UniswapV4SingleStandardExchangeDETFRepo.UnsupportedRoute(tokenIn_, IERC20(address(this)));
@@ -182,12 +184,12 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is Uniswap
             revert UniswapV4SingleStandardExchangeDETFRepo.BurningNotAllowed(_syntheticPrice(), s.burnThreshold);
         }
 
-        if (!pretransferred_) {
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), amountIn_);
-        }
+        // Delta-safe detfToken pull: pretransfer without inbound delta cannot free-extract
+        // diamond inventory (L-GAPS-9; mirrors CP single burn fix).
+        uint256 actualIn_ = _pullToken(IERC20(address(this)), amountIn_, pretransferred_);
 
         // Usage fee only on burn.
-        (uint256 afterFee_, uint256 feeAmt_) = DETFUsageFeeLib._splitUsageFee(amountIn_, _usageFeeWad());
+        (uint256 afterFee_, uint256 feeAmt_) = DETFUsageFeeLib._splitUsageFee(actualIn_, _usageFeeWad());
         // Fee stays as free DETF to feeTo (burn fee slice transferred).
         if (feeAmt_ > 0) IERC20(address(this)).safeTransfer(_feeTo(), feeAmt_);
 
@@ -204,14 +206,15 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is Uniswap
             s.standardExchangeVaultShare.safeTransfer(recipient_, sharesOut);
             amountOut_ = sharesOut;
         } else if (_isAllowlistedTokenIn(tokenOut_)) {
-            s.standardExchangeVaultShare.safeTransfer(address(s.standardExchangeVault), sharesOut);
+            // Nested SE: forceApprove + pretransferred=false so SE _pullToken observes in-window delta.
+            s.standardExchangeVaultShare.forceApprove(address(s.standardExchangeVault), sharesOut);
             amountOut_ = s.standardExchangeVault.exchangeIn(
                 s.standardExchangeVaultShare,
                 sharesOut,
                 tokenOut_,
                 minAmountOut_,
                 recipient_,
-                true,
+                false,
                 block.timestamp
             );
         } else {
