@@ -10,6 +10,7 @@ import {IAaveV3StataStandardVault} from "contracts/interfaces/IAaveV3StataStanda
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /**
  * @title AaveV3StataStandardExchangeTest
@@ -134,8 +135,11 @@ contract AaveV3StataStandardExchangeTest is TestBase_AaveV3StataStandardExchange
     }
 
     function test_Route_StataToSE() public {
-        // Simulate having stata (pretransferred)
+        // Honest path: in-call transferFrom of stata (!pretransferred). L-GAPS-9 forbids free
+        // credit of idle inventory via pretransferred=true without an in-window delta.
         uint256 amount = 50e18;
+        ERC20PermitMintableStub(mockStata).mint(address(this), amount);
+        IERC20(mockStata).approve(vault, amount);
 
         // Preview must be called while vault stata balance is in the expected pre-state
         uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(
@@ -150,7 +154,7 @@ contract AaveV3StataStandardExchangeTest is TestBase_AaveV3StataStandardExchange
             IERC20(vault),
             0,
             address(this),
-            true, // pretransferred simulation
+            false,
             block.timestamp + 100
         );
 
@@ -430,39 +434,18 @@ contract AaveV3StataStandardExchangeTest is TestBase_AaveV3StataStandardExchange
         assertGt(out, 0);
     }
 
+    /// @notice L-GAPS-9: transfer-before-call / inventory + pretransferred=true reverts (no free credit).
     function test_Route_BaseToStata_Pretransferred() public {
         address localVault = _deployStataVault(mockStata);
         uint256 amount = 15e18;
-        mockBase.mint(localVault, amount); // pretransferred: tokens already at vault
+        mockBase.mint(localVault, amount); // inventory present, no in-call transfer
 
-        vm.mockCall(
-            mockStata,
-            abi.encodeWithSelector(IERC4626.previewDeposit.selector, amount),
-            abi.encode(amount)
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0))
         );
-        vm.mockCall(
-            mockStata,
-            abi.encodeWithSelector(IERC4626.deposit.selector, amount, address(this)),
-            abi.encode(amount)
-        );
-
-        uint256 preview = IStandardExchangeIn(localVault).previewExchangeIn(
-            IERC20(address(mockBase)), amount, IERC20(mockStata)
-        );
-
-        uint256 stataBefore = IERC20(mockStata).balanceOf(address(this));
-        uint256 out = IStandardExchangeIn(localVault).exchangeIn(
+        IStandardExchangeIn(localVault).exchangeIn(
             IERC20(address(mockBase)), amount, IERC20(mockStata), 0, address(this), true, block.timestamp + 100
         );
-
-        // Simulate deposit side-effect (mock suppresses state change in ERC4626 deposit)
-        ERC20PermitMintableStub(mockStata).mint(address(this), out);
-
-        uint256 stataAfter = IERC20(mockStata).balanceOf(address(this));
-        uint256 received = stataAfter - stataBefore;
-
-        assertEq(out, preview, "preview must match execution for pretransferred base->stata");
-        assertEq(received, out, "received must match for pretransferred base->stata");
     }
 
     // AToken route preview == execution (using depositATokens path; 1:1 mocks)

@@ -161,11 +161,14 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T2_inSessionDeposit_sleeveNoNestedUnlock() public {
         uint256 amountIn = 5 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.transfer(address(vault), amountIn);
+        // L-GAPS-9: honest path is in-call transferFrom (!pretransferred). Transfer-before-call
+        // + pretransferred=true is outside the pull window and free-credits inventory.
+        tokenA.mint(address(unlockCaller), amountIn);
+        vm.prank(address(unlockCaller));
+        tokenA.approve(address(vault), amountIn);
 
         uint256 shares = unlockCaller.runExchangeIn(
-            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), true, _deadline()
+            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
         assertGt(shares, 0, "blocked deposit mints shares");
         assertGe(liquid.localReserve(_token0()), amountIn, "sleeve holds deposit");
@@ -253,12 +256,14 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T6_blockedDirectSwap_reverts() public {
         uint256 amountIn = 1e15;
-        tokenA.mint(address(this), amountIn);
-        tokenA.transfer(address(vault), amountIn);
+        tokenA.mint(address(unlockCaller), amountIn);
+        vm.prank(address(unlockCaller));
+        tokenA.approve(address(vault), amountIn);
 
+        // In-session direct swap must not open nested unlock (product gate), independent of pull.
         vm.expectRevert();
         unlockCaller.runExchangeIn(
-            address(vault), IERC20(_token0()), amountIn, IERC20(_token1()), 0, address(this), true, _deadline()
+            address(vault), IERC20(_token0()), amountIn, IERC20(_token1()), 0, address(this), false, _deadline()
         );
     }
 
@@ -331,11 +336,12 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition() public {
         uint256 amountIn = 8 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.transfer(address(vault), amountIn);
+        tokenA.mint(address(unlockCaller), amountIn);
+        vm.prank(address(unlockCaller));
+        tokenA.approve(address(vault), amountIn);
 
         uint256 shares = unlockCaller.runExchangeIn(
-            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), true, _deadline()
+            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
         assertGt(shares, 0, "first mint free only");
         (uint256 dep0,) = liquid.deployedReserve();

@@ -16,6 +16,7 @@ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libr
 import {SqrtPriceMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/SqrtPriceMath.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     TestBase_UniswapV4StandardExchange
 } from "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol";
@@ -387,6 +388,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         );
     }
 
+    /// @notice L-GAPS-9: transfer-before-call + pretransferred=true is outside the pull window.
+    ///         Absolute inventory must not free-credit a mint (TransferDeltaInsufficient(claimed, 0)).
+    ///         Honest path remains approve + pretransferred=false.
     function test_exchangeIn_zap_pretransferred_true() public {
         IERC20 vaultToken = IERC20(address(vault));
         uint256 amountIn = 1e18;
@@ -395,14 +399,10 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         tokenA.mint(address(this), amountIn);
         tokenA.transfer(address(vault), amountIn);
 
-        uint256 sharesOut =
-            vault.exchangeIn(IERC20(_token0Address()), amountIn, vaultToken, 0, recipient, true, _deadline());
-
-        assertGt(sharesOut, 0, "pretransferred zap shares");
-        // Local liquid buffer: deposited capital stays as free sleeve (or is partially deployed);
-        // it is not refunded as unused zap dust (D27).
-        assertEq(tokenA.balanceOf(address(this)), 0, "sender not refunded sleeve capital");
-        assertEq(vault.balanceOf(recipient), sharesOut, "recipient pretransferred zap shares");
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0))
+        );
+        vault.exchangeIn(IERC20(_token0Address()), amountIn, vaultToken, 0, recipient, true, _deadline());
     }
 
     function test_exchangeOut_zap_sharesToToken0() public {

@@ -122,56 +122,57 @@ contract AaveV3StataStandardExchangeInTarget is
         address base = _underlying();
         IPool pool = _pool();
 
-        // Pull tokens if not pretransferred
-        if (!pretransferred && amountIn > 0) {
-            tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-        }
-
+        // Capture stata reserve *before* any pull so SE share math is pre-delta (L-GAPS-9/10).
+        // Absolute inventory must never free-credit a mint when pretransferred without in-window delta.
         uint256 totalAssetsBefore = IERC20(stata).balanceOf(address(this));
 
+        // Delta-based secure pull (BasicVaultCommon / ISecurePullErrors). No skip-on-pretransfer free mint.
+        uint256 actualIn = amountIn == 0 ? 0 : _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+
         if (address(tokenIn) == base && address(tokenOut) == _aToken()) {
-            tokenIn.safeApprove(address(pool), amountIn);
-            pool.supply(base, amountIn, recipient, 0);
-            amountOut = amountIn;
+            tokenIn.safeApprove(address(pool), actualIn);
+            pool.supply(base, actualIn, recipient, 0);
+            amountOut = actualIn;
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }
 
         if (address(tokenIn) == base && address(tokenOut) == stata) {
-            tokenIn.safeApprove(stata, amountIn);
-            amountOut = IERC4626(stata).deposit(amountIn, recipient);
+            tokenIn.safeApprove(stata, actualIn);
+            amountOut = IERC4626(stata).deposit(actualIn, recipient);
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }
 
         if (address(tokenIn) == base && address(tokenOut) == address(this)) {
-            tokenIn.safeApprove(stata, amountIn);
-            uint256 delta = IERC4626(stata).deposit(amountIn, address(this));
+            tokenIn.safeApprove(stata, actualIn);
+            uint256 delta = IERC4626(stata).deposit(actualIn, address(this));
             amountOut = _mintStataDeltaAsSEShares(delta, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }
 
         if (address(tokenIn) == _aToken() && address(tokenOut) == stata) {
-            tokenIn.safeApprove(stata, amountIn);
-            amountOut = IStataTokenV2(stata).depositATokens(amountIn, recipient);
+            tokenIn.safeApprove(stata, actualIn);
+            amountOut = IStataTokenV2(stata).depositATokens(actualIn, recipient);
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }
 
         if (address(tokenIn) == _aToken() && address(tokenOut) == address(this)) {
-            tokenIn.safeApprove(stata, amountIn);
-            uint256 delta = IStataTokenV2(stata).depositATokens(amountIn, address(this));
+            tokenIn.safeApprove(stata, actualIn);
+            uint256 delta = IStataTokenV2(stata).depositATokens(actualIn, address(this));
             amountOut = _mintStataDeltaAsSEShares(delta, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }
 
         if (address(tokenIn) == stata && address(tokenOut) == address(this)) {
-            amountOut = _mintStataDeltaAsSEShares(amountIn, recipient, totalAssetsBefore);
+            // Credit only the secured actualIn (claimed when pretransfer delta-sufficient).
+            amountOut = _mintStataDeltaAsSEShares(actualIn, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
             return amountOut;
         }

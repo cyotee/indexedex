@@ -35,6 +35,7 @@ import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/P
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {UniswapV4PoolManagerAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolManagerAwareRepo.sol";
 import {UniswapV4PoolKeyAwareRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PoolKeyAwareRepo.sol";
@@ -44,7 +45,7 @@ import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
-abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
+abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePullErrors {
     using BetterSafeERC20 for IERC20;
     using BalanceDeltaLibrary for BalanceDelta;
     using CurrencyLibrary for Currency;
@@ -1069,20 +1070,34 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback {
         }
     }
 
+    /**
+     * @notice Securely pulls tokens using balance-delta accounting (L-GAPS-9/10 / ISecurePullErrors).
+     * @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
+     *      - `!pretransferred`: transferFrom, return observedDelta (FoT-safe).
+     *      - `pretransferred`: no in-call transfer; credit exactly `amountIn` only when
+     *        `amountIn <= observedDelta`; otherwise revert
+     *        `TransferDeltaInsufficient(claimed, observedDelta)`.
+     *        Absolute `balanceOf >= claimed` without a positive in-window delta is forbidden
+     *        (blocks free inventory credit / I1).
+     */
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
+        uint256 balBefore = tokenIn.balanceOf(address(this));
+        if (!pretransferred) {
+            tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
+        }
+        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
         if (pretransferred) {
-            if (tokenIn.balanceOf(address(this)) < amountIn) {
-                revert UniswapV4Exchange_TooMuchInput();
+            if (amountIn > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
             }
+            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
             return amountIn;
         }
-
-        uint256 balBefore = tokenIn.balanceOf(address(this));
-        tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-        actualIn = tokenIn.balanceOf(address(this)) - balBefore;
+        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
+        return observedDelta;
     }
 
     function _transferCurrency(address token, address recipient, uint256 amount) internal {
