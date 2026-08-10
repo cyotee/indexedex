@@ -11,10 +11,12 @@ import {
 
 /**
  * @title UniswapV4OrbitalSwapHook_Adversarial_Test
- * @notice Donations ignored for pricing; R sticky on full exit; radius capacity invariant.
+ * @notice Catalog A–H residual (WP-ADV-HOOK-001): donations ignored for pricing; R sticky; radius invariant.
+ * @dev Deferred P2: G composition; fork MEV sandwich reconstructions.
  */
 contract UniswapV4OrbitalSwapHook_Adversarial_Test is TestBase_UniswapV4OrbitalSwapHook {
-    function test_donationsIgnored_reserveOfUnchanged() public {
+    /// @notice A1: donations ignored for pricing / reserveOf (Repo SoT).
+    function test_A1_donationsIgnored_reserveOfUnchanged() public {
         _seedThreeLeg(100 ether);
         uint256 r0 = orbital.reserveOf(address(token0));
         uint256 bal = token0.balanceOf(hook);
@@ -28,7 +30,8 @@ contract UniswapV4OrbitalSwapHook_Adversarial_Test is TestBase_UniswapV4OrbitalS
         assertGt(shares, 0);
     }
 
-    function test_postState_reservesStrictlyUnderRadius() public {
+    /// @notice E1: post-swap reserves strictly under radius (capacity invariant).
+    function test_E1_postState_reservesStrictlyUnderRadius() public {
         _seedThreeLeg(100 ether);
         _setDexFee(0);
         for (uint256 i; i < 10; i++) {
@@ -44,7 +47,8 @@ contract UniswapV4OrbitalSwapHook_Adversarial_Test is TestBase_UniswapV4OrbitalS
         assertGt(orbital.lSquared(), 0);
     }
 
-    function test_fullExit_R_sticky_and_minDust() public {
+    /// @notice H1: full exit leaves R sticky + min dust; subsequent add works.
+    function test_H1_fullExit_R_sticky_and_minDust() public {
         (uint256 shares,,,) = _addLiquidity(100 ether, 100 ether, 100 ether);
         uint256 userShares = IERC20(hook).balanceOf(user);
         assertEq(userShares, shares);
@@ -66,7 +70,8 @@ contract UniswapV4OrbitalSwapHook_Adversarial_Test is TestBase_UniswapV4OrbitalS
         assertEq(orbital.radius(), R, "R still sticky after subsequent add");
     }
 
-    function test_hookFlags_includeLiquidityBans() public view {
+    /// @notice F3: hook flags include liquidity bans + swap surface.
+    function test_F3_hookFlags_includeLiquidityBans() public view {
         uint160 flags = _requiredFlags();
         assertTrue(flags & Hooks.BEFORE_ADD_LIQUIDITY_FLAG != 0);
         assertTrue(flags & Hooks.BEFORE_REMOVE_LIQUIDITY_FLAG != 0);

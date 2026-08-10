@@ -25,8 +25,9 @@ import {
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/HostileReentrantERC20.sol";
 
 /**
- * @notice H17 / O11 adversarial: CL blocked, pre-live swap, full-book exit, reentrancy.
- * @dev Catalog I1/I3: pretransfer must not free-extract SE book / free inventory (L-GAPS-11 / WP-I-HOOK-SEBUF-001).
+ * @notice Catalog A–H residual + H17/O11: CL blocked, pre-live swap, full-book exit, reentrancy.
+ * @dev Catalog A–H (WP-ADV-HOOK-001 residual) + I1/I3 pretransfer must not free-extract SE book
+ *      (L-GAPS-11 / WP-I-HOOK-SEBUF-001). Deferred P2: G composition, fork MEV.
  */
 contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
     TestBase_UniswapV4StandardExchangeWeightedBufferHook
@@ -207,13 +208,15 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         _assertAllDoorsLive();
     }
 
-    function test_preLive_swapReverts() public {
+    /// @notice H1: pre-live swap preview reverts (no book).
+    function test_H1_preLive_swapReverts() public {
         assertEq(IERC20(hook).totalSupply(), 0);
         vm.expectRevert();
         weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
-    function test_n2_firstMint_requiresBothLegs() public {
+    /// @notice E2: first mint requires both legs (zero leg amount reverts).
+    function test_E2_firstMint_requiresBothLegs() public {
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 10 ether;
         amounts[1] = 0;
@@ -222,7 +225,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
     }
 
-    function test_fullBook_exitCannotZeroLeg() public {
+    /// @notice E1: full-book exit cannot zero a leg.
+    function test_E1_fullBook_exitCannotZeroLeg() public {
         uint256 shares = _firstMintEqual(100 ether);
         uint256[] memory mins = new uint256[](2);
         uint256 burn = shares / 4;
@@ -241,7 +245,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         );
     }
 
-    function test_clAddLiquidity_blocked() public {
+    /// @notice H3: native CL addLiquidity always blocked.
+    function test_H3_clAddLiquidity_blocked() public {
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
@@ -254,7 +259,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         );
     }
 
-    function test_clDonate_blocked() public {
+    /// @notice H4: native CL donate blocked.
+    function test_H4_clDonate_blocked() public {
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
@@ -262,8 +268,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         IHooks(hook).beforeDonate(address(this), key, 1, 1, "");
     }
 
-    /// @notice H17: reentrancy-hostile raw ERC20 reenters depositSingle during transferFrom → nested Reentrancy.
-    function test_reentrancy_join_hitsReentrancy() public {
+    /// @notice C1: reentrancy-hostile raw ERC20 reenters depositSingle during transferFrom → nested Reentrancy.
+    function test_C1_reentrancy_join_hitsReentrancy() public {
         // SE on SimpleMintable 18-dec; hostile is raw leg.
         SimpleMintableERC20 seToken = new SimpleMintableERC20("SEPair", "SEP");
         HostileReentrantERC20 hostile = new HostileReentrantERC20("Hostile", "HST");

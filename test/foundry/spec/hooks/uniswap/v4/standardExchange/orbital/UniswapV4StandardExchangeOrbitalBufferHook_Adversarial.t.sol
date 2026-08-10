@@ -45,8 +45,9 @@ import {
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
 
 /**
- * @dev Catalog I1/I3: pretransfer trust flags must not free-extract SE book / free inventory
+ * @dev Catalog A–H residual (WP-ADV-HOOK-001) + I1/I3 pretransfer must not free-extract SE book
  *      (L-GAPS-11 / WP-I-HOOK-SEBUF-001). Leftover remains spendable via honest !pretransfer paths.
+ *      Deferred P2: G composition, fork MEV.
  */
 contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
@@ -274,7 +275,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         );
     }
 
-    function test_nativeCL_beforeAddLiquidity_reverts_LiquidityNotAllowed() public {
+    /// @notice H3: native CL addLiquidity always LiquidityNotAllowed.
+    function test_H3_nativeCL_beforeAddLiquidity_reverts_LiquidityNotAllowed() public {
         _seedThreeLeg(50 ether);
         ModifyLiquidityParams memory p =
             ModifyLiquidityParams({tickLower: -60, tickUpper: 60, liquidityDelta: 1e18, salt: bytes32(0)});
@@ -283,7 +285,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         IHooks(hook).beforeAddLiquidity(address(this), poolKey01, p, "");
     }
 
-    function test_nativeCL_beforeRemoveLiquidity_reverts_LiquidityNotAllowed() public {
+    /// @notice H4: native CL removeLiquidity always LiquidityNotAllowed.
+    function test_H4_nativeCL_beforeRemoveLiquidity_reverts_LiquidityNotAllowed() public {
         _seedThreeLeg(50 ether);
         ModifyLiquidityParams memory p =
             ModifyLiquidityParams({tickLower: -60, tickUpper: 60, liquidityDelta: -1e18, salt: bytes32(0)});
@@ -292,7 +295,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         IHooks(hook).beforeRemoveLiquidity(address(this), poolKey01, p, "");
     }
 
-    function test_distinctSE_reject_onDeploy() public {
+    /// @notice F3: distinct SE binding rejected on deploy.
+    function test_F3_distinctSE_reject_onDeploy() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.se0 = se0;
         args.se2 = se0;
@@ -300,13 +304,15 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_seShare_not_pool_currency() public view {
+    /// @notice F2: SE share is never a pool currency.
+    function test_F2_seShare_not_pool_currency() public view {
         assertTrue(Currency.unwrap(poolKey01.currency0) != se0);
         assertTrue(Currency.unwrap(poolKey01.currency1) != se0);
         assertTrue(Currency.unwrap(poolKey01.currency0) != se1);
     }
 
-    function test_D31a_seInvertMissing_fullTxReverts() public {
+    /// @notice H1: SE invert missing → full tx reverts (D31a).
+    function test_H1_seInvertMissing_fullTxReverts() public {
         // Real SE + hook; force missing exact-out invert via mockCall on SE (non-SUT failure mode).
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
             _argsWithSE(false, true, false); // buffer token1 only
@@ -348,7 +354,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         o.previewSwapExactOut(address(token0), address(token1), 1 ether);
     }
 
-    function test_reentrancy_addLiquidity_duringTransferFrom_reverts() public {
+    /// @notice C1: hostile token reenters addLiquidity mid transferFrom → outer fails; no LP mint.
+    function test_C1_reentrancy_addLiquidity_duringTransferFrom_reverts() public {
         // Hostile token2 re-enters addLiquidity mid-pull; nonReentrant must abort outer mint.
         // Min-SE: bind a real ERC-4626 SE on leg0; reentrancy still targets raw hostile leg pull.
         ReentrantMockERC20 hostile = new ReentrantMockERC20("HOST", "HOST", 18);

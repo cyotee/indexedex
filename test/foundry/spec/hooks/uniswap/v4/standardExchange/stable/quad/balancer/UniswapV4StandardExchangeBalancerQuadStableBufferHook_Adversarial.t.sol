@@ -26,7 +26,8 @@ import {
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/HostileReentrantERC20.sol";
 
 /**
- * @dev Catalog I1/I3: pretransfer must not free-extract SE book / free inventory (L-GAPS-11 / WP-I-HOOK-SEBUF-001).
+ * @dev Catalog A–H residual (WP-ADV-HOOK-001) + I1/I3 pretransfer must not free-extract SE book
+ *      (L-GAPS-11 / WP-I-HOOK-SEBUF-001). Deferred P2: G composition, fork MEV.
  */
 contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is TestBase {
     address internal attacker;
@@ -36,7 +37,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         attacker = makeAddr("attacker");
     }
 
-    function test_donation_seShares_dilutesJoin() public {
+    /// @notice A1: SE share donation dilutes subsequent join (no free LP credit).
+    function test_A1_donation_seShares_dilutesJoin() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](4);
         for (uint256 i; i < 4; ++i) amounts[i] = 20 ether;
@@ -74,7 +76,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
-    function test_fullBook_exitCannotZeroLeg() public {
+    /// @notice E1: full-book exit cannot zero a leg.
+    function test_E1_fullBook_exitCannotZeroLeg() public {
         uint256 shares = _firstMintEqual(100 ether);
         uint256[] memory mins = new uint256[](4);
         uint256 burn = shares / 4;
@@ -96,7 +99,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         assertGe(IERC20(hook).totalSupply(), 1000);
     }
 
-    function test_clAddLiquidity_blocked() public {
+    /// @notice H3: native CL addLiquidity always blocked.
+    function test_H3_clAddLiquidity_blocked() public {
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
@@ -109,7 +113,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         );
     }
 
-    function test_clDonate_blocked() public {
+    /// @notice H4: native CL donate blocked.
+    function test_H4_clDonate_blocked() public {
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
@@ -117,8 +122,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         IHooks(hook).beforeDonate(address(this), key, 1, 1, "");
     }
 
-    /// @notice Reentrancy-hostile raw ERC20 reenters depositSingle during transferFrom → nested fail.
-    function test_reentrancy_join_hitsReentrancy() public {
+    /// @notice C1: reentrancy-hostile raw ERC20 reenters depositSingle during transferFrom → nested fail.
+    function test_C1_reentrancy_join_hitsReentrancy() public {
         SimpleMintableERC20 seToken = new SimpleMintableERC20("SEPair", "SEP");
         HostileReentrantERC20 hostile = new HostileReentrantERC20("Hostile", "HST");
         SimpleMintableERC20 t2 = new SimpleMintableERC20("T2", "T2");
@@ -180,7 +185,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         assertFalse(hostile.nestedCallSucceeded(), "nested mutator must fail reentrancy guard");
     }
 
-    function test_feeTo_growthMintIncreasesBalance() public {
+    /// @notice B1: feeTo growth mint increases feeTo LP balance.
+    function test_B1_feeTo_growthMintIncreasesBalance() public {
         _ensureFeeTo();
         _setUsageFee(0.05e18);
         _firstMintEqual(100 ether);
@@ -203,7 +209,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         assertGt(IERC20(hook).balanceOf(feeTo_), before_, "feeTo got protocol shares");
     }
 
-    function test_preLive_swapReverts() public {
+    /// @notice H1: pre-live swap preview reverts.
+    function test_H1_preLive_swapReverts() public {
         // fresh hook with zero supply
         _deployHookWithArgs(_defaultPkgArgs());
         _fundAndApprove(token0);

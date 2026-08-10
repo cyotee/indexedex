@@ -22,10 +22,17 @@ import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {ModifyLiquidityParams} from
+    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 
 /**
- * @title Adversarial DoD: reentrancy, donation, feeTo, SE mid-zap rollback (O16 / N1–N4).
- * @dev Catalog I1/I3: pretransfer trust flags must not free-extract SE book / raw inventory (L-GAPS-11 / WP-I-HOOK-CP-001).
+ * @title Adversarial DoD: catalog A–H residual + I1/I3 pretransfer (O16 / N1–N4 mapped).
+ * @dev Catalog A–H (WP-ADV-HOOK-001 residual) + I1/I3 pretransfer trust flags must not free-extract
+ *      SE book / raw inventory (L-GAPS-11 / WP-I-HOOK-CP-001).
+ * @dev Deferred P2: G composition with outer DETF; fork-only multi-hop MEV.
  */
 contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Test is TestBase {
     using BetterEfficientHashLib for bytes;
@@ -211,7 +218,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(pairToken.balanceOf(attacker), pairAttBefore_, "I3 no free pair");
     }
 
-    function test_N2_donationDilutesLps_accepted() public {
+    /// @notice A1: SE share donation does not mint free LP; dilutes claim book (accepted O11).
+    function test_A1_seDonation_dilutesLps_noFreeMint() public {
         _seedLiveLiquidity();
         uint256 userLp = IERC20(hook).balanceOf(user);
         uint256 claimBefore = single.seClaimSupply();
@@ -233,8 +241,38 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertGe(single.seClaimSupply(), claimBefore);
     }
 
-    /// @notice N1: hostile raw ERC20 reenters deposit mid transferFrom → nested call cannot succeed.
-    function test_N1_hostileRaw_reentrancy_onDeposit() public {
+    /// @notice A2: raw donation idle — honest exchange still previewed; donation not free-spent.
+    function test_A2_rawDonation_doesNotFreeExtract() public {
+        _seedLiveLiquidity();
+        uint256 donated_ = 15 ether;
+        rawToken.mint(address(this), donated_);
+        rawToken.transfer(hook, donated_);
+        uint256 rawHookAfterDonate_ = rawToken.balanceOf(hook);
+        assertGe(rawHookAfterDonate_, donated_, "donation parked");
+
+        uint256 amountIn_ = 3 ether;
+        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(
+            IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
+        );
+        uint256 pairBefore_ = pairToken.balanceOf(user);
+        vm.prank(user);
+        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            amountIn_,
+            IERC20(address(pairToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+        assertEq(out_, preview_, "A2: out == preview");
+        assertEq(pairToken.balanceOf(user) - pairBefore_, preview_, "A2: user pair matches preview");
+        // Donation remains as free inventory (not consumed by !pretransfer path beyond honest in)
+        assertGe(rawToken.balanceOf(hook), donated_, "A2: donation residual remains");
+    }
+
+    /// @notice C1: hostile raw ERC20 reenters deposit mid transferFrom → nested call cannot succeed.
+    function test_C1_hostileRaw_reentrancy_onDeposit() public {
         HostileRawToken hostile = new HostileRawToken();
         SimpleYieldERC4626 pVault = new SimpleYieldERC4626(pairToken);
         address se2 = _deployERC4626SE(address(pVault));
@@ -294,8 +332,57 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertFalse(hostile.nestedSucceeded(), "nested deposit must not succeed while locked");
     }
 
-    /// @notice N4: SE exchangeIn reverts mid buffer during deposit → full rollback (no LP mint, no inventory).
-    function test_N4_seRevertMidBuffer_fullRollback() public {
+    /// @notice E1: successful raw→pair exchange preview equals exec; donation residual idle.
+    function test_E1_exchangeIn_previewEqualsExec() public {
+        _seedLiveLiquidity();
+        uint256 amountIn_ = 4 ether;
+        uint256 preview_ = IStandardExchangeIn(hook).previewExchangeIn(
+            IERC20(address(rawToken)), amountIn_, IERC20(address(pairToken))
+        );
+        vm.prank(user);
+        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            amountIn_,
+            IERC20(address(pairToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+        assertEq(out_, preview_, "E1: preview == exec");
+    }
+
+    /// @notice E2: zero amount deposit / exchange reverts.
+    function test_E2_zeroAmount_reverts() public {
+        _seedLiveLiquidity();
+        vm.prank(user);
+        vm.expectRevert();
+        single.deposit(0, 0, user, 0, block.timestamp + 1);
+        vm.prank(user);
+        vm.expectRevert();
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            0,
+            IERC20(address(pairToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+    }
+
+    /// @notice F1: diamondCut missing on live hook.
+    function test_F1_diamondCut_reverts() public {
+        (bool ok,) = hook.call(
+            abi.encodeWithSelector(
+                IDiamondCut.diamondCut.selector, new IDiamond.FacetCut[](0), address(0), ""
+            )
+        );
+        assertFalse(ok, "F1: diamondCut must not succeed");
+    }
+
+    /// @notice H1: SE exchangeIn reverts mid buffer during deposit → full rollback (no LP mint, no inventory).
+    function test_H1_seRevertMidBuffer_fullRollback() public {
         _seedLiveLiquidity();
         uint256 supplyBefore = IERC20(hook).totalSupply();
         uint256 userLpBefore = IERC20(hook).balanceOf(user);
@@ -326,11 +413,26 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(IERC20(se).balanceOf(hook), hookSeBefore, "hook SE unchanged");
     }
 
-    /// @notice N3: protocol growth mint is pure ERC20 storage credit — non-receivable feeTo cannot
+    /// @notice H3: native CL addLiquidity always LiquidityNotAllowed.
+    function test_H3_addLiquidity_alwaysReverts() public {
+        _seedLiveLiquidity(); // initializes poolKey
+        vm.prank(address(pm));
+        vm.expectRevert();
+        IHooks(hook).beforeAddLiquidity(
+            address(this),
+            poolKey,
+            ModifyLiquidityParams({
+                tickLower: -60, tickUpper: 60, liquidityDelta: 1e18, salt: bytes32(0)
+            }),
+            ""
+        );
+    }
+
+    /// @notice B1: protocol growth mint is pure ERC20 storage credit — non-receivable feeTo cannot
     /// revert the mint. Document product limitation (D75 / ERC20Repo._mint has no receiver callback).
     /// Equivalent exercised path: fee-on + yield growth + feeTo = contract that reverts on receive ETH
     /// still completes deposit and credits LP to feeTo balance.
-    function test_N3_feeToNonReceivable_erc20MintCannotRevert() public {
+    function test_B1_feeToNonReceivable_erc20MintCannotRevert() public {
         NonReceivableFeeTo badFeeTo = new NonReceivableFeeTo();
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setFeeTo(IFeeCollectorProxy(address(badFeeTo)));
