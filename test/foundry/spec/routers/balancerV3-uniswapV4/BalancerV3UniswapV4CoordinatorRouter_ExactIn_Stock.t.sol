@@ -143,7 +143,7 @@ contract BalancerV3UniswapV4CoordinatorRouter_ExactIn_Stock_Test is TestBase_Bal
         assertEq(uint256(amount), 0);
     }
 
-    /// @dev T11: global minAmountOut not met.
+    /// @dev T11: global minAmountOut not met → exact MinAmountOutNotMet(min, actual).
     function test_T11_globalMinOutReverts() public {
         bytes memory stepData = abi.encode(pool, address(dai), address(usdc), uint256(0), false, bytes(""));
         IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
@@ -153,26 +153,49 @@ contract BalancerV3UniswapV4CoordinatorRouter_ExactIn_Stock_Test is TestBase_Bal
         });
         IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
             _params(address(dai), 1e18, address(usdc), steps);
+        // Query actual out (minAmountOut not enforced on query path).
+        uint256 snap = vm.snapshotState();
+        vm.prank(address(0), address(0));
+        uint256 quoted = coordinator.queryExactIn(params);
+        vm.revertToState(snap);
+        assertGt(quoted, 0, "T11 quoted");
+
         params.minAmountOut = type(uint256).max;
         (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) = _sign(params, 11);
         vm.prank(aliceUser);
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IBalancerV3UniswapV4CoordinatorRouter.MinAmountOutNotMet.selector, type(uint256).max, quoted
+            )
+        );
         coordinator.swapExactInWithPermit(params, permit, sig);
     }
 
-    /// @dev T12: per-step minAmountOut not met.
+    /// @dev T12: per-step minAmountOut not met → exact MinAmountOutNotMet(min, actual).
     function test_T12_stepMinOutReverts() public {
         bytes memory stepData = abi.encode(pool, address(dai), address(usdc), uint256(0), false, bytes(""));
         IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
             new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
         steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
-            router: address(router), tokenOut: address(usdc), minAmountOut: type(uint256).max, data: stepData
+            router: address(router), tokenOut: address(usdc), minAmountOut: 0, data: stepData
         });
         IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
             _params(address(dai), 1e18, address(usdc), steps);
+        uint256 snap = vm.snapshotState();
+        vm.prank(address(0), address(0));
+        uint256 quoted = coordinator.queryExactIn(params);
+        vm.revertToState(snap);
+        assertGt(quoted, 0, "T12 quoted");
+
+        steps[0].minAmountOut = type(uint256).max;
+        params.steps = steps;
         (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) = _sign(params, 12);
         vm.prank(aliceUser);
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IBalancerV3UniswapV4CoordinatorRouter.MinAmountOutNotMet.selector, type(uint256).max, quoted
+            )
+        );
         coordinator.swapExactInWithPermit(params, permit, sig);
     }
 

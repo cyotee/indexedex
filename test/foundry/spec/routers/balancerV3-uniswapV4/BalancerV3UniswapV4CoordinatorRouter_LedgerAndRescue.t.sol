@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ISignatureTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {
@@ -68,7 +69,7 @@ contract BalancerV3UniswapV4CoordinatorRouter_LedgerAndRescue_Test is TestBase_B
     function test_T31_rescueOnlyOwner() public {
         stray.mint(address(coordinator), 1e18);
         vm.prank(aliceUser);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, aliceUser));
         coordinator.rescueTokens(address(stray), aliceUser, 1e18);
     }
 

@@ -13,7 +13,7 @@ import {
     TestBase_BalancerV3UniswapV4CoordinatorRouter
 } from "contracts/routers/balancerV3-uniswapV4/TestBase_BalancerV3UniswapV4CoordinatorRouter.sol";
 
-/// @notice T2, T15, T19, T20, T27, T32 (and other negatives without live pools)
+/// @notice T2, T15, T19, T20, T27, T32 + WP-N-RTR-001 exact-selector N matrix
 contract BalancerV3UniswapV4CoordinatorRouter_Negative_Test is TestBase_BalancerV3UniswapV4CoordinatorRouter {
     IWETH internal weth;
     SimpleMintableERC20 internal tokenA;
@@ -202,6 +202,157 @@ contract BalancerV3UniswapV4CoordinatorRouter_Negative_Test is TestBase_Balancer
             )
         );
         coordinator.swapExactInWithPermit(params, permit, sig);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  WP-N-RTR-001: missing validation exact selectors                      */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice EmptyRoute when steps.length == 0.
+    function test_N_emptyRoute_reverts_EmptyRoute() public {
+        IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
+            new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](0);
+        IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
+            IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
+                recipient: bob,
+                tokenIn: address(tokenA),
+                amountIn: 1e18,
+                tokenOut: address(tokenB),
+                minAmountOut: 0,
+                deadline: block.timestamp + 1 days,
+                ethIn: false,
+                ethOut: false,
+                steps: steps
+            });
+        tokenA.mint(alice, 1e18);
+        vm.prank(alice);
+        tokenA.approve(address(permit2), type(uint256).max);
+        (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) =
+            _signPermitWitness(params, 40, block.timestamp + 1 days);
+        vm.prank(alice);
+        vm.expectRevert(IBalancerV3UniswapV4CoordinatorRouter.EmptyRoute.selector);
+        coordinator.swapExactInWithPermit(params, permit, sig);
+    }
+
+    /// @notice TokenOutMismatch when last step.tokenOut != params.tokenOut.
+    function test_N_tokenOutMismatch_reverts_TokenOutMismatch() public {
+        coordinator.registerRouter(
+            address(0xBEEF), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
+        );
+        IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
+            new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
+        steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
+            router: address(0xBEEF), tokenOut: address(tokenB), minAmountOut: 0, data: ""
+        });
+        IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
+            IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
+                recipient: bob,
+                tokenIn: address(tokenA),
+                amountIn: 1e18,
+                tokenOut: address(tokenA), // ≠ step.tokenOut
+                minAmountOut: 0,
+                deadline: block.timestamp + 1 days,
+                ethIn: false,
+                ethOut: false,
+                steps: steps
+            });
+        tokenA.mint(alice, 1e18);
+        vm.prank(alice);
+        tokenA.approve(address(permit2), type(uint256).max);
+        (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) =
+            _signPermitWitness(params, 41, block.timestamp + 1 days);
+        vm.prank(alice);
+        vm.expectRevert(IBalancerV3UniswapV4CoordinatorRouter.TokenOutMismatch.selector);
+        coordinator.swapExactInWithPermit(params, permit, sig);
+    }
+
+    /// @notice InvalidEthOut when ethOut=true but tokenOut is not WETH.
+    function test_N_invalidEthOut_reverts_InvalidEthOut() public {
+        coordinator.registerRouter(
+            address(0xBEEF), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
+        );
+        IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
+            new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
+        steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
+            router: address(0xBEEF), tokenOut: address(tokenB), minAmountOut: 0, data: ""
+        });
+        IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
+            IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
+                recipient: bob,
+                tokenIn: address(tokenA),
+                amountIn: 1e18,
+                tokenOut: address(tokenB),
+                minAmountOut: 0,
+                deadline: block.timestamp + 1 days,
+                ethIn: false,
+                ethOut: true,
+                steps: steps
+            });
+        tokenA.mint(alice, 1e18);
+        vm.prank(alice);
+        tokenA.approve(address(permit2), type(uint256).max);
+        (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) =
+            _signPermitWitness(params, 42, block.timestamp + 1 days);
+        vm.prank(alice);
+        vm.expectRevert(IBalancerV3UniswapV4CoordinatorRouter.InvalidEthOut.selector);
+        coordinator.swapExactInWithPermit(params, permit, sig);
+    }
+
+    /// @notice ZeroAmount when amountIn=0 reaches hop loop (after successful zero pull).
+    function test_N_zeroAmountIn_reverts_ZeroAmount() public {
+        coordinator.registerRouter(
+            address(0xBEEF), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
+        );
+        IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
+            new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
+        steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
+            router: address(0xBEEF), tokenOut: address(tokenB), minAmountOut: 0, data: ""
+        });
+        IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
+            IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
+                recipient: bob,
+                tokenIn: address(tokenA),
+                amountIn: 0,
+                tokenOut: address(tokenB),
+                minAmountOut: 0,
+                deadline: block.timestamp + 1 days,
+                ethIn: false,
+                ethOut: false,
+                steps: steps
+            });
+        vm.prank(alice);
+        tokenA.approve(address(permit2), type(uint256).max);
+        (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) =
+            _signPermitWitness(params, 43, block.timestamp + 1 days);
+        vm.prank(alice);
+        vm.expectRevert(IBalancerV3UniswapV4CoordinatorRouter.ZeroAmount.selector);
+        coordinator.swapExactInWithPermit(params, permit, sig);
+    }
+
+    /// @notice InsufficientEth when msg.value < amountIn on eth entry.
+    function test_N_insufficientEth_reverts_InsufficientEth() public {
+        coordinator.registerRouter(
+            address(0xBEEF), IBalancerV3UniswapV4CoordinatorRouter.AdapterKind.StockBalancerV3Router
+        );
+        IBalancerV3UniswapV4CoordinatorRouter.RouteStep[] memory steps =
+            new IBalancerV3UniswapV4CoordinatorRouter.RouteStep[](1);
+        steps[0] = IBalancerV3UniswapV4CoordinatorRouter.RouteStep({
+            router: address(0xBEEF), tokenOut: address(weth), minAmountOut: 0, data: ""
+        });
+        IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams memory params =
+            IBalancerV3UniswapV4CoordinatorRouter.SwapExactInParams({
+                recipient: bob,
+                tokenIn: address(weth),
+                amountIn: 1e18,
+                tokenOut: address(weth),
+                minAmountOut: 0,
+                deadline: block.timestamp + 1 days,
+                ethIn: true,
+                ethOut: false,
+                steps: steps
+            });
+        vm.expectRevert(IBalancerV3UniswapV4CoordinatorRouter.InsufficientEth.selector);
+        coordinator.swapExactInEth{value: 0.5e18}(params);
     }
 }
 

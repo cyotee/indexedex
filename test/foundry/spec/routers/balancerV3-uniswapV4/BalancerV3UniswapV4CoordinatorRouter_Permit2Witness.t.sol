@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {ISignatureTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {SignatureVerification} from "@crane/contracts/protocols/utils/permit2/SignatureVerification.sol";
 import {WETHTestToken} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/WETHTestToken.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {
@@ -12,7 +13,7 @@ import {
     TestBase_BalancerV3UniswapV4CoordinatorRouter
 } from "contracts/routers/balancerV3-uniswapV4/TestBase_BalancerV3UniswapV4CoordinatorRouter.sol";
 
-/// @notice T13/T14 witness binding
+/// @notice T13/T14 witness binding (exact Permit2 fail selectors)
 contract BalancerV3UniswapV4CoordinatorRouter_Permit2Witness_Test is TestBase_BalancerV3UniswapV4CoordinatorRouter {
     SimpleMintableERC20 internal tokenA;
     SimpleMintableERC20 internal tokenB;
@@ -52,12 +53,12 @@ contract BalancerV3UniswapV4CoordinatorRouter_Permit2Witness_Test is TestBase_Ba
                 ethOut: false,
                 steps: steps
             });
-        // Sign honest params then tamper recipient
+        // Sign honest params then tamper recipient → Permit2 InvalidSigner (witness bound).
         (ISignatureTransfer.PermitTransferFrom memory permit, bytes memory sig) =
             _signPermitWitness(params, 0, block.timestamp + 1 days);
         params.recipient = makeAddr("attacker");
         vm.prank(alice);
-        vm.expectRevert();
+        vm.expectRevert(SignatureVerification.InvalidSigner.selector);
         coordinator.swapExactInWithPermit(params, permit, sig);
     }
 }
