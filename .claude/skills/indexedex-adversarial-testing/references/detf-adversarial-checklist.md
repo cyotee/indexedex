@@ -28,6 +28,13 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | F3 Claim onlyOwner | | mintFromNFTSale / burnShares | revert |
 | H2 Redeem atomicity | | redeemClaim fail | claim unchanged |
 | H3 Failed mint residual | | minOut fail | inventory 0 |
+| **I1** pretransferred claim, no transfer | | exchangeIn/mint with pretransferred=true | Vault has reserves; attacker shares **unchanged** |
+| **I2** short pretransfer | | transfer < amountIn, pretransferred=true | Exact revert |
+| **I3** residual reuse | | second call without new transfer | No free mint |
+| **J1** Target ⊆ facetFuncs | | declaration + Target enum | No omitted product selectors |
+| **J2** loupe after DFPkg deploy | | facetAddress(sel) | All product sels non-zero |
+| **J3** proxy smoke | | call each product fn on instance | No FunctionNotFound |
+| **K1** donation then deposit | | donate + victim mint | No free credit / strict mismatch |
 
 ## P1 (should)
 

@@ -359,7 +359,7 @@ Generic Foundry skills that demo `MockOracle` / `new MyContract()` are **subordi
 
 ## Test Patterns
 
-**See `crane-testing` (under `lib/crane/`) + `indexedex-testing` + `crane-deployment` first.** For abuse/attack suites use `crane-adversarial-testing` + `indexedex-adversarial-testing`.
+**See `crane-testing` (under `lib/crane/`) + `indexedex-testing` + `crane-deployment` first.** For abuse/attack suites use `crane-adversarial-testing` + `indexedex-adversarial-testing`. Ship gate checklist: `lib/crane/.claude/skills/crane-adversarial-testing/references/implementation-test-dod.md`.
 
 - Inherit `CraneTest` (provides `create3Factory` + `diamondPackageFactory` via `InitDevService`).
 - Then `IndexedexTest` (builds the core manager, fee collector, etc. using Crane factories + registers the manager as operator).
@@ -375,6 +375,16 @@ Protocol / vault gold TestBases (follow these exactly):
 **Key rule in IndexedEx**: Facets use the Crane path (`create3Factory`). Vault/StandardExchange *DFPkgs* use the manager/registry path. See the section below.
 
 IFacet / behavior tests implement the usual virtuals (`facetTestInstance()`, etc.).
+
+### Non-negotiable test gaps agents must not repeat
+
+| Failure class | Required bar |
+|---------------|--------------|
+| **Trust-flag free mint** (`pretransferred=true` / claimed `amountIn` while vault already holds inventory) | Negative tests I1–I3; credit only **observed balance delta**, never absolute balance + caller claim |
+| **Incomplete `facetFuncs`** | Controls from **Target/product API**; after DFPkg deploy, loupe + smoke call every product selector on the **proxy** (J1–J3) |
+| **Happy-path-only security** | Adversarial catalog A–K P0 (or explicit NatSpec defer); happy path is not a security bar |
+
+Catalog I/J/K details live in `crane-adversarial-testing` (synced from Crane).
 
 ## Project Structure
 

@@ -40,6 +40,18 @@ Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as cu
 
 5. **DETF instances** are immutable/unowned after deploy. Inert until first bond / family bootstrap. Mint/burn thresholds from `PkgArgs` → storage (`DETFThresholdPolicy`); fees via fee oracle. Sell→claim only after bond maturity (DETF-wide).
 6. **Foundry profiles:** hermetic = default `forge test`; fork = `FOUNDRY_PROFILE=fork`. No package-specific profiles. **`via_ir` forbidden.**
+7. **Forge patience (non-negotiable).** Monorepo solc / `forge` cold or near-cold compiles commonly take **20–40+ minutes** with little or no useful output while a single process holds high CPU/RAM. That is **normal, not a hang**. **Wait for process exit** (success **or** a real compiler/test error). **Never kill** `forge` / `solc` out of impatience or “no progress lines” — a mid-run kill discards all elapsed compile time and forces a full or near-full rebuild (pure loss). If a tool requires a timeout, set it to **hours** (e.g. 2–4h) for first compile in a worktree, not 10–20 minutes. Prefer one long-running command and completion notification over busy-polling and aborting.
+8. **Worktree compile seed (non-negotiable).** Before the **first** `forge build` / `forge test` / `forge` compile in a **new or empty** git worktree, seed Foundry artifacts from a **warm** checkout (primary repo or last green worktree). Copy the directories named by this repo’s `foundry.toml` — today **`cache_path = 'cache_forge'`** and **`out = 'out'`** (read `foundry.toml` if renamed; do **not** invent a default `cache/` path). Example:
+
+   ```bash
+   # REPO = warm checkout; WT = new worktree root
+   rsync -a "${REPO}/cache_forge/" "${WT}/cache_forge/"   # or: cp -a
+   rsync -a "${REPO}/out/" "${WT}/out/"
+   # Prefer: avoid nested crane reinstall thrash
+   rm -rf "${WT}/lib/crane" && ln -s "${REPO}/lib/crane" "${WT}/lib/crane"
+   ```
+
+   After a **green** forge in a worktree, copy updated `cache_forge/` + `out/` **back** to the warm seed so the next worktree benefits. Seeded cache only skips **unchanged** units — CODE edits still recompile those packages (expected, still far cheaper than cold monorepo compile). **Do not** delete `out/` or `cache_forge/` “to be safe” mid-program.
 
 ---
 
@@ -48,8 +60,9 @@ Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as cu
 | Task | Skills / agents (prefer Crane path when listed) |
 |------|--------------------------------------------------|
 | Deploy / DFPkg / CREATE3 | `crane-deployment`, `crane-architecture` |
-| Tests / TestBases | `crane-testing`, `indexedex-testing` |
-| Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` |
+| Tests / TestBases | `crane-testing`, `indexedex-testing` (LR-7 + proxy surface matrix + trust-flag negatives) |
+| Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K; I=pretransfer claim, J=facet/proxy surface; ship gate: `implementation-test-dod.md`) |
+| Test coverage audit / gap reports | [`docs/testing/TEST_COVERAGE_AUDIT_PRD.md`](docs/testing/TEST_COVERAGE_AUDIT_PRD.md) + [`TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md`](docs/testing/TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md) → Stage 1 reports; then gap-closure impl plan |
 | Uni V4 hook packages | `indexedex-uniswap-v4-hook-packages` |
 | Protocol port into Crane | agent `crane-porter` + `crane-porting` + `crane-porting-verification` |
 | Docs → skills | agent `docs-skill-scribe` + `docs-to-skills` / `skill-authoring` |

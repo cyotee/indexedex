@@ -1,0 +1,10 @@
+{
+  "chainId": 4663,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "feeCollector": "0x68Dca735Aacf40Dc31Aff8B8563eb89A91CD0c9D",
+  "indexedexManager": "0xA3b15642e1c1482dCCC4464fdd8334a6A5D96758",
+  "networkProfile": "anvil_robinhood_main",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "vaultFeeOracle": "0xA3b15642e1c1482dCCC4464fdd8334a6A5D96758",
+  "vaultRegistry": "0xA3b15642e1c1482dCCC4464fdd8334a6A5D96758"
+}

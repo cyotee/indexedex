@@ -29,6 +29,7 @@ method: cartographer+survey
 | Deploy vault or DETF package | `indexedex-testing` (deploy path) | Agent law deploy section | `contracts/manager`, `contracts/registries/vault` — `indexedexManager.deploy*DFPkg` / registry, then package `deployVault` |
 | Write hermetic Foundry tests | `crane-testing` → `indexedex-testing` | Agent law testing matrix | `contracts/test/IndexedexTest.sol`, package `TestBase_*`, `test/foundry/` |
 | Adversarial / donation / reentrancy | `crane-adversarial-testing`, `indexedex-adversarial-testing` | Agent law | DETF/SE package tests co-located or under `test/foundry/` |
+| Test coverage audit (reports only) | `docs/testing/TEST_COVERAGE_AUDIT_PRD.md` | skills DoD + catalog A–K | Outputs under `docs/testing/coverage-audit/`; feeds gap-closure implementation plan |
 | DETF mint/burn/bond/claim/compound | Family PRD + agent law § DETF | `docs/detf/*` shared programs | `contracts/vaults/detf/**` — role names only |
 | Single SE DETF (Balancer V3) | Family package docs | Agent law | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 | Single SE DETF (Uni V4) | Co-located PRD | `UniV4SingleStandardExchangeDETF_PRD.md` | `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/single/` |

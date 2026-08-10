@@ -22,6 +22,12 @@ import chain11155111_protocolDetfs from './addresses/chain/11155111/protocol-det
 import chain11155111_strategyVaults from './addresses/chain/11155111/strategy-vaults.tokenlist.json'
 import chain11155111_uniV2Pools from './addresses/chain/11155111/uni-v2-pools.tokenlist.json'
 
+// Chain 4663 (Anvil Robinhood fee-DETF / lab export)
+import chain4663_baseTokens from './addresses/chain/4663/base-tokens.tokenlist.json'
+import chain4663_featuredFeeDetfs from './addresses/chain/4663/featured-fee-detfs.tokenlist.json'
+import chain4663_protocolDetfs from './addresses/chain/4663/protocol-detfs.tokenlist.json'
+import chain4663_strategyVaults from './addresses/chain/4663/strategy-vaults.tokenlist.json'
+
 const ref = (id: string, list: unknown, priority = 50): TokenListRef => ({ id, priority, list: list as TokenList })
 
 export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
@@ -42,5 +48,11 @@ export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('protocol-detfs', chain11155111_protocolDetfs),
     ref('strategy-vaults', chain11155111_strategyVaults),
     ref('uni-v2-pools', chain11155111_uniV2Pools),
+  ],
+  4663: [
+    ref('base-tokens', chain4663_baseTokens),
+    ref('featured-fee-detfs', chain4663_featuredFeeDetfs),
+    ref('protocol-detfs', chain4663_protocolDetfs),
+    ref('strategy-vaults', chain4663_strategyVaults),
   ],
 }

@@ -74,10 +74,13 @@ Call path: `kernel.executeAction(Actions.InstallModule, address(module))` (execu
 
 | Tree | Path |
 |------|------|
-| Domain port | `contracts/protocols/tokens/stable/olympus/` |
-| Pin / scope | `…/olympus/VENDOR.md` |
-| Tests | `test/foundry/spec/protocols/tokens/stable/olympus/` |
-| Upstream | OlympusDAO/olympus-v3 `@ 0af8d56d` (AGPL-3.0-only) |
+| Domain port (forward) | `contracts/protocols/tokens/stable/olympus/v3/` |
+| Pin / scope | `…/olympus/v3/VENDOR.md` |
+| Tests | `test/foundry/spec/protocols/tokens/stable/olympus/v3/` |
+| Service / Aware / TestBase | `…/v3/services/`, `…/v3/aware/`, `…/v3/test/bases/` |
+| Profile | `FOUNDRY_PROFILE=olympus_v3_port` |
+| Upstream | OlympusDAO/olympus-v3 (AGPL-3.0-only; see VENDOR.md pin) |
+| Research dual tree | `olympus/v2/` + `olympus_port`; skills archive `docs/archive/skills/olympus-v2/` |
 
 ## Navigation
 

@@ -1,0 +1,1 @@
+{"name":"Indexedex Robinhood Fee-DETF Protocol DETFs","timestamp":"1785153934","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","detf","fee-detf"],"tokens":[{"chainId":4663,"address":"0x9e3245df28714896759635ae7e1620406c66e404","name":"IndexedEx Fee DETF","symbol":"CHIR","decimals":18,"tags":["vault","detf","fee-detf"]}]}

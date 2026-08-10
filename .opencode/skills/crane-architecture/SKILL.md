@@ -333,7 +333,7 @@ For detailed patterns and complete examples:
 |------|---------|
 | Storage for a feature | Create `*Repo.sol` (ERC1967 DEFAULT_SLOT) |
 | Business logic | Create `*Target.sol` or `*Service.sol` |
-| Diamond-exposed functions | Create `*Facet.sol` (implement IFacet with central selectors) |
+| Diamond-exposed functions | Create `*Facet.sol` (implement IFacet; **`facetFuncs()` must list every product entry from Target** — omitting selectors silently drops API from DFPkg proxies; see crane-testing surface matrix + adversarial J) |
 | External contract reference | Create `*AwareRepo.sol` |
 | Reusable access control | Create `*Modifiers.sol` (delegate to Repo _onlyXxx) |
 | Deployable package | Create `*DFPkg.sol` (structs in I* interface ONLY) |

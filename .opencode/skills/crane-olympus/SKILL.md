@@ -1,6 +1,6 @@
 ---
 name: crane-olympus
-description: This skill should be used when the user asks about "Crane Olympus", "Olympus port", "FOUNDRY_PROFILE=olympus_port", "integrate Olympus Kernel", "Olympus Diamond strategy", "Olympus TestBase", "olympus hermetic tests", building Crane integrations against the Olympus Default Framework port, or writing Foundry tests for Olympus under tokens/stable/olympus.
+description: This skill should be used when the user asks about "Crane Olympus", "Olympus port", "FOUNDRY_PROFILE=olympus_v3_port", "integrate Olympus Kernel", "Olympus Diamond strategy", "Olympus TestBase", "olympus hermetic tests", building Crane integrations against the Olympus Default Framework port, or writing Foundry tests for Olympus under tokens/stable/olympus/v3.
 license: MIT
 ---
 
@@ -12,25 +12,37 @@ How to **build on** and **test** Olympus using Crane’s port (not general Olymp
 
 | Layer | Path |
 |-------|------|
-| Domain | `contracts/protocols/tokens/stable/olympus/` |
-| Pin | `…/olympus/VENDOR.md` (upstream `0af8d56d`, AGPL-3.0-only) |
-| Hermetic tests | `test/foundry/spec/protocols/tokens/stable/olympus/` |
-| Quabi (FFI) | `src/test/lib/quabi/{path,jq}.sh` + test lib `…/lib/quabi/Quabi.sol` |
-| Profile | `FOUNDRY_PROFILE=olympus_port` in `foundry.toml` |
+| Domain | `contracts/protocols/tokens/stable/olympus/v3/` |
+| Pin | `…/olympus/v3/VENDOR.md` (upstream pin, AGPL-3.0-only) |
+| Hermetic tests | `test/foundry/spec/protocols/tokens/stable/olympus/v3/` |
+| Service | `…/olympus/v3/services/OlympusKernelService.sol` |
+| Aware | `…/olympus/v3/aware/OlympusKernelAwareRepo.sol` |
+| TestBase | `…/olympus/v3/test/bases/TestBase_OlympusV3.sol` |
+| Behavior | `…/olympus/v3/Behavior_IKernel.sol` |
+| Quabi (FFI) | test lib `…/v3/lib/quabi/{path,jq}.sh` + `Quabi.sol` |
+| Profile | `FOUNDRY_PROFILE=olympus_v3_port` in `foundry.toml` |
+| Out / cache | `out_olympus_v3_port` / `cache_olympus_v3_port` |
 
-There is **not yet** a Diamond Facet-Target-Repo / Service wrapper layer for Olympus (faithful domain + tests first). Integrators import domain types directly via `@crane/…`.
+**Diamond Facet-Target-Repo / DFPkg** for Kernel is not required; use Service + Aware + TestBase for strategy/Diamond consumers. Domain types remain importable via `@crane/…`.
+
+### Legacy v2 research tree
+
+| Item | Path |
+|------|------|
+| Domain / tests | `olympus/v2/` + `FOUNDRY_PROFILE=olympus_port` |
+| Archived skills | `docs/archive/skills/olympus-v2/` |
 
 ## Quick start: compose a policy against the port
 
 ```solidity
 import {Kernel, Policy, Permissions, Keycode, toKeycode} from
-    "@crane/contracts/protocols/tokens/stable/olympus/Kernel.sol";
+    "@crane/contracts/protocols/tokens/stable/olympus/v3/Kernel.sol";
 import {MINTRv1} from
-    "@crane/contracts/protocols/tokens/stable/olympus/modules/MINTR/MINTR.v1.sol";
+    "@crane/contracts/protocols/tokens/stable/olympus/v3/modules/MINTR/MINTR.v1.sol";
 import {ROLESv1} from
-    "@crane/contracts/protocols/tokens/stable/olympus/modules/ROLES/ROLES.v1.sol";
+    "@crane/contracts/protocols/tokens/stable/olympus/v3/modules/ROLES/ROLES.v1.sol";
 import {RolesConsumer} from
-    "@crane/contracts/protocols/tokens/stable/olympus/modules/ROLES/OlympusRoles.sol";
+    "@crane/contracts/protocols/tokens/stable/olympus/v3/modules/ROLES/OlympusRoles.sol";
 
 contract StrategyPolicy is Policy, RolesConsumer {
     MINTRv1 internal MINTR;
@@ -59,18 +71,18 @@ contract StrategyPolicy is Policy, RolesConsumer {
 
 | Layer | Command / pattern |
 |-------|-------------------|
-| Domain + suite compile | `FOUNDRY_PROFILE=olympus_port forge build` |
-| Full hermetic suite | `FOUNDRY_PROFILE=olympus_port forge test` |
-| Path match | `… forge test --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/**'` |
+| Domain + suite compile | `FOUNDRY_PROFILE=olympus_v3_port forge build` |
+| Full hermetic suite | `FOUNDRY_PROFILE=olympus_v3_port forge test` |
+| Path match | `… forge test --match-path 'test/foundry/spec/protocols/tokens/stable/olympus/v3/**'` |
 | Kernel unit | `Kernel.t.sol` — real Kernel install/activate |
 | Module permissions | `modules/MINTR.t.sol` etc. — Quabi godmode fixtures need **ffi + ast** |
 
-Profile sets `ffi=true`, `ast=true`, `src`/`test` scoped to olympus, `out_olympus_port`.
+Profile sets `ffi=true`, `ast=true`, `src`/`test` scoped to olympus, `out_olympus_v3_port`.
 
 ## Production-first rules
 
 - Never mock Kernel / modules / policies under test — deploy real ported contracts.
-- Godmode fixtures use Quabi → AST artifacts; rebuild with `olympus_port` so AST is present.
+- Godmode fixtures use Quabi → AST artifacts; rebuild with `olympus_v3_port` so AST is present.
 - Do not call module `permissioned` functions from tests as random EOAs without activating a fixture policy.
 - Shared deps: OZ v4/v5, solmate, clones-with-immutable-args under `contracts/external/` — **never** nest private OZ under olympus.
 - **Do not** change `contracts/external/uniswap/v3-periphery/.../TransferHelper.sol` IERC20 path to OZ v4 — breaks Fraxswap co-import with Crane IERC20.
@@ -87,10 +99,12 @@ Profile sets `ffi=true`, `ast=true`, `src`/`test` scoped to olympus, `out_olympu
 ## Key files
 
 - `Kernel.sol`, `modules/*`, `policies/*`, `external/OlympusERC20.sol`, `external/cooler/*`
-- Tests: `test/foundry/spec/protocols/tokens/stable/olympus/Kernel.t.sol`, `modules/*.t.sol`
-- `foundry.toml` → `[profile.olympus_port]`
+- Wrappers: `services/OlympusKernelService.sol`, `aware/OlympusKernelAwareRepo.sol`, `test/bases/TestBase_OlympusV3.sol`
+- Tests: `test/foundry/spec/protocols/tokens/stable/olympus/v3/Kernel.t.sol`, `modules/*.t.sol`, `services/OlympusKernelService.t.sol`
+- `foundry.toml` → `[profile.olympus_v3_port]`
 
 ## See also
 
 - `skill:crane-testing`, `skill:crane-porting`, `skill:crane-porting-verification`
 - `skill:crane-architecture` (when wrapping as Facet-Target-Repo later)
+- Archived v2 skills: `docs/archive/skills/olympus-v2/`

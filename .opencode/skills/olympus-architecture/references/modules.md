@@ -8,7 +8,7 @@
 - [Others (brief)](#others-brief)
 - [External products](#external-products)
 
-Paths under `contracts/protocols/tokens/stable/olympus/`.
+Paths under `contracts/protocols/tokens/stable/olympus/v3/`.
 
 ## MINTR
 

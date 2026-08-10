@@ -7,7 +7,7 @@
 - [Treasury / Emergency](#treasury--emergency)
 - [Integrating as a custom policy](#integrating-as-a-custom-policy)
 
-All paths relative to `contracts/protocols/tokens/stable/olympus/`.
+All paths relative to `contracts/protocols/tokens/stable/olympus/v3/`.
 
 ## Minter (OHM)
 

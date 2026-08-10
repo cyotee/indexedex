@@ -152,6 +152,37 @@ abstract contract TestBase_IFacet is Test {
 
 **Package Declaration Tests (mandatory LR-7)**: DFPkgs must be tested for `packageName()`, `facetAddresses()`, `facetCuts()`, `diamondConfig()`, `calcSalt(...)`, `processArgs(...)`, `initAccount(...)`, `postDeploy(...)`. End-to-end via real factory delegatecall for `initAccount`.
 
+### Surface completeness matrix (mandatory — prevents silent dead API)
+
+**Known failure class:** implementors omit selectors from `facetFuncs()`; declaration tests pass because controls were copied from the incomplete Facet; packages never cut those selectors onto proxies; product functions exist only on the implementation address.
+
+| Layer | Required |
+|-------|----------|
+| **Target / product interface** | Enumerate all money-moving + documented view entrypoints |
+| **controlFacetFuncs / controlFacetInterfaces** | Built from Target/interface (**not** by reading Facet.sol alone) |
+| **Facet `facetFuncs()`** | Exact match to controls via `Behavior_IFacet` |
+| **DFPkg `facetCuts()`** | Every facet selector appears in a cut |
+| **Live proxy** | After factory/registry deploy: `facetAddress(sel) != 0` and smoke call on **proxy** |
+
+Minimum tests:
+
+1. Declaration (Behavior_IFacet) with Target-derived controls.
+2. Package cuts include all declared facet selectors.
+3. Post-deploy loupe + at least one real call per product selector on the diamond proxy (success or exact access/guard revert — never unknown selector).
+
+See adversarial catalog **J1–J4** and `crane-adversarial-testing/references/implementation-test-dod.md`.
+
+### Accounting / trust-flag tests (mandatory when applicable)
+
+If the SUT accepts `pretransferred`, Permit2, or credits inbound assets:
+
+1. Happy path with real transfer.
+2. **Negative:** claim pretransferred / amount without transferring while vault already holds inventory → **no free shares** (exact revert or zero credit). Absolute `balanceOf(vault) >= amount` is **not** sufficient production logic.
+3. Short delivery vs claimed amount → exact selector revert.
+4. Credit uses observed **delta**, not caller claim alone (fee-on-transfer included).
+
+See adversarial **I1–I5**, **K**, and `docs/NEGATIVE_TEST_COVERAGE_REPORT.md` patterns in consumer repos.
+
 See `TestBase_IFacet` + `Behavior_IFacet` (contracts/factories/diamondPkg/). Similar for IDiamondFactoryPackage.
 
 ## Behavior Libraries (`Behavior_*.sol`)
@@ -342,7 +373,7 @@ See GitBook LR-2: `docs/development/testing.md` + deployment docs for registry +
 - Protocol: `contracts/protocols/.../test/bases/TestBase_*.sol`
 - Also see `IHandler.sol`, stubs under `contracts/test/`
 
-Ties to other skills: `crane-deployment` (factories + init in tests), `crane-architecture` (DFPkg + slots), `crane-natspec` (test NatSpec + central values process), `crane-adversarial-testing` (abuse catalogs, hostile harnesses, P0/P1 security suites — production-first). GitBook: `docs/development/testing.md`, `docs/development/natspec.md`, deployment/ and protocols/ sections (LR-2).
+Ties to other skills: `crane-deployment` (factories + init in tests), `crane-architecture` (DFPkg + slots), `crane-natspec` (test NatSpec + central values process), `crane-adversarial-testing` (abuse catalogs A–K, trust-flag I, surface J, hostile harnesses, P0/P1 security suites — production-first; see `references/implementation-test-dod.md`). GitBook: `docs/development/testing.md`, `docs/development/natspec.md`, deployment/ and protocols/ sections (LR-2).
 
 ## LR-7 Testing Standards (Mandatory - Full List Excerpt)
 
@@ -351,7 +382,7 @@ All tests (unit, behavior/declaration, invariant, fork) must satisfy (non-exhaus
 1. **Full and Correct Initialization** - Fully initialize before assertions. Packages use real facets (no address(0)). Production-like state only. Prefer production code over mocks for the SUT.
 2. **Exact Expected Value Assertions** - Precise values/deltas (e.g. `assertEq(delta, expectedAmount)`), not side-effect "changed".
 3. **Preview Function Exact Match** - For previewDeposit etc., assert returned value exactly equals result of executing the action (incl. edges).
-4. **Facet Declaration Tests** - Validate `facetInterfaces()`, `facetFuncs()`, `facetName()`, `facetMetadata()` using `Behavior_IFacet` + control values.
+4. **Facet Declaration Tests** - Validate `facetInterfaces()`, `facetFuncs()`, `facetName()`, `facetMetadata()` using `Behavior_IFacet` + control values **derived from Target/product API**.
 5. **Package Declaration Tests** - Validate all pkg metadata + `calcSalt`, `processArgs`, `initAccount` (real delegatecall), `postDeploy`.
 6. **Mandatory Behavior Libraries** - Use `Behavior_*` (IFacet, IDiamondFactoryPackage, protocols) for standards compliance. No bypassing.
 7. **Event + Delta Exactness** - `vm.expectEmit` + exact post-state.
@@ -363,6 +394,9 @@ All tests (unit, behavior/declaration, invariant, fork) must satisfy (non-exhaus
 13. **Correct TestBase/CraneTest** - Proper inheritance + ordered `setUp()` calls; no duplication/bypass.
 14. **NatSpec on Test Code** - Same LR-1 standard for public test APIs (tags + @custom using central).
 15. **Access/Reentrancy Matrix + Fork Parity** - Full coverage for operable/reentrancy; fork tests compare key outputs to on-chain.
+16. **Proxy surface completeness** - Target ↔ Facet ↔ DFPkg cuts ↔ live loupe ↔ callable on proxy (see Surface matrix above). Facet-only tests are insufficient.
+17. **Trust-flag / inbound accounting** - When `pretransferred` / pull / permit exists: negative tests prove no free credit from claimed amounts or absolute balance alone; credit = observed delta.
+18. **Adversarial P0 or explicit defer** - Money products need catalog coverage (or NatSpec deferral) per `crane-adversarial-testing`; happy path alone is not a security bar.
 
 Tests violating these are insufficient. See also exact registry + fork details in PRD LR-7 and AGENTS.md.
 

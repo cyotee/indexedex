@@ -25,7 +25,7 @@ Files:
 
 ## Live market views
 
-`MorphoBlueLiveMarket_Fork` binds known market ids when present; soft-skips if id missing at fork block. Prefer parity tests as the hard gate.
+`MorphoBlueLiveMarket_Fork` binds known liquid **USDC/WETH** (and USDC fallback) market ids at `ETHEREUM_MAIN.DEFAULT_FORK_BLOCK`. `setUp` **requires** a bound market (no silent soft-skip). Prefer parity tests as the hard gate for port correctness; live suite validates real singleton + token ops.
 
 ## RPC
 

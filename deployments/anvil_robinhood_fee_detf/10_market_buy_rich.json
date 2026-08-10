@@ -1,0 +1,11 @@
+{
+  "chainId": 4663,
+  "notes": "V3 SwapRouter02 exactInputSingle; minOut=0 local",
+  "pool": "0x178662106779b3d1C831D5732C204bBB6c32d6BA",
+  "poolFee": 10000,
+  "rich": "0x7d243b992f32BE821Feb90CfEcb3123a8bC5B8ed",
+  "richBought": "973343029654773217763876766",
+  "router": "0xCaf681a66D020601342297493863E78C959E5cb2",
+  "weth": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+  "wethSpent": "50000000000000000000"
+}

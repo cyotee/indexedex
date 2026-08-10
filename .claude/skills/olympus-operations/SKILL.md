@@ -71,4 +71,4 @@ bool canMint = kernel.modulePermissions(
 ## See also
 
 - `skill:olympus-architecture`, `skill:crane-olympus`
-- Paths: `contracts/protocols/tokens/stable/olympus/policies/`, `…/external/cooler/`
+- Paths: `contracts/protocols/tokens/stable/olympus/v3/policies/`, `…/external/cooler/`

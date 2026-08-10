@@ -16,7 +16,7 @@
 3. Executor installs modules (if new env) and activates your policy.
 4. External UX is your policy’s public functions.
 
-Imports always `@crane/contracts/protocols/tokens/stable/olympus/...`.
+Imports always `@crane/contracts/protocols/tokens/stable/olympus/v3/...`.
 
 ## Strategy / vault that holds OHM
 
@@ -52,7 +52,7 @@ pragma solidity >=0.8.15;
 
 import {Test} from "forge-std/Test.sol";
 import {Kernel, Actions} from
-    "@crane/contracts/protocols/tokens/stable/olympus/Kernel.sol";
+    "@crane/contracts/protocols/tokens/stable/olympus/v3/Kernel.sol";
 // + module impls, policies, ModuleTestFixtureGenerator as needed
 
 contract MyOlympusIntegrationTest is Test {
@@ -70,4 +70,4 @@ contract MyOlympusIntegrationTest is Test {
 }
 ```
 
-Run with `FOUNDRY_PROFILE=olympus_port`. Reuse patterns from `Kernel.t.sol` and `modules/MINTR.t.sol` rather than inventing mocks for Kernel.
+Run with `FOUNDRY_PROFILE=olympus_v3_port`. Reuse patterns from `Kernel.t.sol` and `modules/MINTR.t.sol` rather than inventing mocks for Kernel.

@@ -121,8 +121,27 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
 | Free BPT redeem without claim | Mandatory claim + `burnShares`; `ClaimTokenNotConfigured` |
 | Donation mints free DETF | Never use raw `balanceOf` donation for mint credit without accounting |
 | Nested MaxInRatio leaves partial balances | Clean revert; residual inventory asserts |
+| **`pretransferred=true` free mint** while vault holds reserves | Credit only **balance delta** (or lastReserve sync); never `return amountIn` after absolute `balanceOf >= amountIn`. See Crane catalog **I1–I3**. |
+| Facet omits Target selectors → proxy has no function | Target-derived `facetFuncs` + post-deploy loupe/smoke (**J1–J3**) |
+| Next depositor credited prior donation | Strict transfer-not-received / reserve snapshot update (**K**) |
 
 If exploit succeeds with unbounded profit → **production fix PR before green tests**.
+
+## IndexedEx-mandatory P0 extensions (beyond classic A–H)
+
+Every SE / vault / DETF with pull-or-credit paths:
+
+| ID | Required test on production path |
+|----|----------------------------------|
+| **I1** | `pretransferred=true`, **no** user transfer, vault already holds ≥ claimed amount → attacker receives **zero** shares/product (revert preferred) |
+| **I2** | Short pretransfer vs claimed `amountIn` → exact revert |
+| **I3** | Residual after successful pretransfer cannot free-mint a second op |
+| **J1–J3** | Each new Facet/DFPkg: Target API ⊆ facetFuncs ⊆ facetCuts ⊆ proxy loupe + callable |
+| **K1** | Donation into SE/DETF cannot be consumed as another user's mint credit without explicit product policy |
+
+`BasicVaultCommon._secureTokenTransfer` and every override must be reviewed against I1: absolute balance checks that return the **claimed** amount are a known free-mint class (task history: IDXEX-061 class).
+
+Do **not** mark "adversarially tested" from happy-path `pretransferred=true` alone.
 
 ## Deferred IDs (document in suite NatSpec)
 
@@ -140,9 +159,11 @@ Do not leave catalog IDs silently missing.
 1. Happy-path matrix green on production TestBase
 2. Map P0/P1 IDs from Crane catalog + `references/detf-adversarial-checklist.md` (document deferred IDs in suite NatSpec; do not co-locate product plan md under the family package)
 3. `TestBase_*_Adversarial` extends feature TestBase
-4. Implement P0: D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced
-5. `forge test --match-path '.../adversarial/**'` then full feature path
-6. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
+4. Implement P0: D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**
+5. Declaration controls from **Target/interface**; proxy smoke of full product API
+6. `forge test --match-path '.../adversarial/**'` then full feature path
+7. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
+8. Ship gate: Crane `references/implementation-test-dod.md`
 
 ## Commands
 

@@ -39,7 +39,39 @@ abstract contract UniswapV3StandardExchangeInQueryTarget is UniswapV3StandardExc
             return _previewZapInDeposit(tokenIn, amountIn);
         }
 
+        // Shares → pairToken (exact-in). Required for StandardExchangeRateProvider.getRate()
+        // and SE-buffered multi-leg valuation (parity with Uni V4 SE InQuery).
+        if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
+            return _previewZapOutExactIn(tokenOut, amountIn);
+        }
+
         revert IStandardExchangeIn.ExchangeInNotAvailable();
+    }
+
+    /// @notice Quote pairToken out for burning `sharesBurned` (exact-in shares).
+    function _previewZapOutExactIn(IERC20 tokenOut, uint256 sharesBurned) internal view returns (uint256 amountOut) {
+        if (sharesBurned == 0) {
+            return 0;
+        }
+        uint256 totalShares = IERC20(address(this)).totalSupply();
+        if (totalShares == 0 || !UniswapV3VaultRepo._isPositionCreated()) {
+            return 0;
+        }
+        return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
+    }
+
+    function _quoteZapOutAmount(IERC20 tokenOut, uint256 sharesBurned, uint256 totalShares)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
+        (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
+        IUniswapV3Pool pool = UniswapV3PoolAwareRepo._uniswapV3Pool();
+        address token0 = pool.token0();
+        if (address(tokenOut) == token0) {
+            return amount0 + (amount1 > 0 ? _quoteSwap(pool.token1(), token0, amount1) : 0);
+        }
+        return amount1 + (amount0 > 0 ? _quoteSwap(token0, pool.token1(), amount0) : 0);
     }
 
     function _previewZapInDeposit(IERC20 tokenIn, uint256 amountIn) internal view returns (uint256 sharesOut) {

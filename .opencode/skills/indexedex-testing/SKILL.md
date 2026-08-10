@@ -149,10 +149,29 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] Parent `setUp()` called; factories non-zero before deploy
 - [ ] PkgInit uses real facet addresses (never `address(0)`)
 - [ ] `PkgInit` / `PkgArgs` defined on the **interface**, not the contract (Crane rule)
+- [ ] **Facet surface:** `controlFacetFuncs` from Target/product interface; every product selector on live proxy after registry deploy
+- [ ] **Trust flags:** negative tests for `pretransferred=true` without transfer (vault already funded) — not only happy path
+- [ ] Inbound credit uses measured **delta**, not absolute balance + claimed amount
+
+## Mandatory negative paths (SE / vault / DETF)
+
+When implementing or reviewing tests for any path that mints shares or credits deposits:
+
+| Case | Assert |
+|------|--------|
+| `pretransferred=true`, no tokens sent, vault holds inventory | Revert **or** zero shares minted; attacker product balance unchanged |
+| `pretransferred=true`, short delivery | Exact transfer-not-received / insufficient selector |
+| Donation then deposit | No free mint from donation (or documented beneficiary + no victim loss) |
+| Product fn only on Target/Facet impl | Must also succeed on **deployed vault/DETF proxy** |
+
+Happy-path `pretransferred=true` with a real prior `transfer` does **not** cover free-mint from reserves.
+
+Reference: `docs/NEGATIVE_TEST_COVERAGE_REPORT.md`, Crane adversarial **I/J/K**, ship gate `lib/crane/.claude/skills/crane-adversarial-testing/references/implementation-test-dod.md`.
 
 ## Related skills
 
-- `crane-testing`, `crane-deployment`, `crane-architecture` — **canonical** under `lib/crane/.claude/skills/`
+- `crane-testing`, `crane-deployment`, `crane-architecture`, `crane-adversarial-testing` — **canonical** under `lib/crane/.claude/skills/`
+- `indexedex-adversarial-testing` — DETF/SE abuse suites + I/J/K extensions
 - `indexedex-uniswap-v4-hook-packages` — V4 hook DFPkgs, `deployHookVault`, flag mining (not monomorph CREATE3 hooks)
 - `forge-testing` — Foundry cheatcodes only; ignore its mock-first examples for IndexedEx
 - `permit2-*` — signature flows; still use real router + Permit2, not mocks

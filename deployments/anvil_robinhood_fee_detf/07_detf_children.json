@@ -1,0 +1,7 @@
+{
+  "bondNftVaultPkg": "0x3c327fe329AB4f456F862cb5F84E6B5c12bB840a",
+  "chainId": 4663,
+  "maxLock": 15552000,
+  "minLock": 2592000,
+  "rebasingClaimTokenPkg": "0x4812C37A2641828130539ac23b55FC4a892471B9"
+}

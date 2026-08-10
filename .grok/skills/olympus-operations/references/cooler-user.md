@@ -8,7 +8,7 @@
 - [Lender flow](#lender-flow)
 - [Safety checks](#safety-checks)
 
-Paths: `contracts/protocols/tokens/stable/olympus/external/cooler/`.
+Paths: `contracts/protocols/tokens/stable/olympus/v3/external/cooler/`.
 
 ## What Cooler is
 
@@ -68,6 +68,6 @@ cooler.requestLoan({
 - **Approvals:** set exact allowances; clear dust carefully with fee-on-transfer tokens (prefer standard ERC20s).
 - **Recipient:** repayments go to loan.recipient — confirm it is the lender or intended vault.
 - **Factory authenticity:** only interact with Coolers from the known CoolerFactory.
-- **Tests:** hermetic Cooler tests may live under the ported suite or deferred trees — run with `FOUNDRY_PROFILE=olympus_port` when present.
+- **Tests:** hermetic Cooler tests may live under the ported suite or deferred trees — run with `FOUNDRY_PROFILE=olympus_v3_port` when present.
 
 For clearinghouse-wrapped Cooler products (protocol-owned lender), see live Olympus docs / phase-2 port surface; not all clearinghouse policies are in the Crane hermetic tree.

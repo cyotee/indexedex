@@ -1,0 +1,12 @@
+{
+  "bondTokenId": 2,
+  "chainId": 4663,
+  "chir": "0x9E3245Df28714896759635AE7E1620406c66E404",
+  "creationPairPerDetfWad": 10000000000000000000,
+  "detfOut": 315060100975683913,
+  "freeDetfReceived": 45033980255474080,
+  "isReserveLive": true,
+  "lockDuration": 2592000,
+  "pairIn": 1000000000000000000,
+  "pairToken": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73"
+}

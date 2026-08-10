@@ -32,6 +32,14 @@
 | G1 | Outer does not brick nested | Nested live | Outer mint/burn | Inner still serves third user | P1 |
 | H2 | Failed redeem atomicity | Claim path | Impossible minOut / min balance | Claim balance unchanged on fail | P0 |
 | H3 | Failed mint residual | Live | Impossible minOut | No free inventory on diamond | P0 |
+| I1 | Claim pretransferred, no transfer | Live vault with existing reserves ≥ amountIn | `exchangeIn(..., pretransferred=true)` without sending tokens | Revert or zero credit; attacker shares unchanged | P0 |
+| I2 | Short pretransfer | Transfer amountIn/2 then claim amountIn | pretransferred=true | Exact transfer-not-received / insufficient revert | P0 |
+| I3 | Residual reuse | Valid pretransfer then second call without new funds | second entry | No free mint from residual | P0 |
+| I4 | Fee-on-transfer shortfall | FoT token pull path | deposit/exchange | Credit ≤ actual delta | P1 |
+| J1 | Facet omits Target entry | New facet | Diff Target external API vs facetFuncs | No orphan product selectors | P0 |
+| J2 | Proxy loupe missing selector | Production DFPkg deploy | facetAddress(sel) for each product sel | Non-zero for all | P0 |
+| J3 | Proxy call surface | Deployed instance | Call each product fn on **proxy** | No FunctionNotFound; access reverts exact | P0 |
+| K1 | Donation then deposit mis-credit | Donate to vault then victim deposits | deposit/exchangeIn | No free shares from donation; strict mismatch or documented beneficiary | P0 |
 
 ## Suite NatSpec stubs
 
@@ -58,3 +66,6 @@ contract Adversarial_Reentrancy_Test is TestBase_Feature_Adversarial { ... }
 5. Nested reentrancy → IsLocked
 6. Access-sensitive mint/burn onlyOwner or equivalent
 7. Soft non-dilution: existing holder **balance** unchanged by others' mints (economic claim may move by design)
+8. **Credit = observed inbound delta** — never absolute balance, never caller claim alone (`pretransferred` / pull / permit)
+9. **Proxy exposes full product API** — Target ↔ facetFuncs ↔ facetCuts ↔ loupe ↔ callable
+10. Attacker share/product balance does not increase without a matching asset decrease (or documented fee/seigniorage path)

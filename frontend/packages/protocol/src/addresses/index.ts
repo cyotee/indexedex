@@ -50,13 +50,24 @@ import supersimBaseAerodromeStrategyVaultsJson from './supersim_sepolia/base/sup
 import supersimBaseBalancerPoolsJson from './supersim_sepolia/base/supersim_sepolia-balancerv3-pools.tokenlist.json'
 import supersimBaseProtocolDetfJson from './supersim_sepolia/base/supersim_sepolia-protocol-detf.tokenlist.json'
 
+// Anvil Robinhood fork (chain 4663) — filled by deploy stage 14
+import robinhoodAnvilPlatformJson from './chain/4663/platform.json'
+import robinhoodAnvilBaseTokensJson from './chain/4663/base-tokens.tokenlist.json'
+import robinhoodAnvilStrategyVaultsJson from './chain/4663/strategy-vaults.tokenlist.json'
+import robinhoodAnvilProtocolDetfsJson from './chain/4663/protocol-detfs.tokenlist.json'
+
 export const CHAIN_ID_SEPOLIA = 11155111 as const
 export const CHAIN_ID_BASE_SEPOLIA = 84532 as const
+/** Robinhood Chain mainnet (also used by Anvil RH-fork local deploys). */
+export const CHAIN_ID_ROBINHOOD = 4663 as const
 const CANONICAL_PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia' | 'local_testing'
-export type ChainRole = 'ethereum' | 'base'
-export type CanonicalArtifactChainId = typeof CHAIN_ID_SEPOLIA | typeof CHAIN_ID_BASE_SEPOLIA
+export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia' | 'local_testing' | 'anvil_robinhood_main'
+export type ChainRole = 'ethereum' | 'base' | 'robinhood'
+export type CanonicalArtifactChainId =
+  | typeof CHAIN_ID_SEPOLIA
+  | typeof CHAIN_ID_BASE_SEPOLIA
+  | typeof CHAIN_ID_ROBINHOOD
 
 export type ArtifactBundle = {
   environment: DeploymentEnvironment
@@ -214,9 +225,29 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       balancerPools: [],
     }),
   },
+  anvil_robinhood_main: {
+    [CHAIN_ID_ROBINHOOD]: buildBundle('anvil_robinhood_main', CHAIN_ID_ROBINHOOD, 'robinhood', {
+      platform: robinhoodAnvilPlatformJson,
+      // Token List files are objects with a `tokens` array — pass the array for normalizeList.
+      tokens: (robinhoodAnvilBaseTokensJson as { tokens?: unknown[] }).tokens ?? [],
+      erc4626: [],
+      protocolDetf: (robinhoodAnvilProtocolDetfsJson as { tokens?: unknown[] }).tokens ?? [],
+      strategyVaults: (robinhoodAnvilStrategyVaultsJson as { tokens?: unknown[] }).tokens ?? [],
+      uniV2Pools: [],
+      aerodromePools: [],
+      aerodromeStrategyVaults: [],
+      balancerPools: [],
+    }),
+  },
 }
 
-export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = ['sepolia', 'public_sepolia', 'supersim_sepolia', 'local_testing']
+export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = [
+  'sepolia',
+  'public_sepolia',
+  'supersim_sepolia',
+  'local_testing',
+  'anvil_robinhood_main',
+]
 
 export function getArtifactBundle(
   environment: DeploymentEnvironment,

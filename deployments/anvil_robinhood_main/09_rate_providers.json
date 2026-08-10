@@ -1,0 +1,7 @@
+{
+  "chainId": 4663,
+  "notes": "V3 SE RP targets TT0; V4 SE RP targets TT4",
+  "rateProviderPkg": "0xAF6A43D5c2345ffF016D64A094FE901353DBE774",
+  "rp_v3Se_tt0_tt1": "0x4E29Cb8327B15D47Ad870EDa3C90406E08384025",
+  "rp_v4Se_tt4_tt5": "0x15045e0a50658a70cca16873abCa2c22e243Ba04"
+}

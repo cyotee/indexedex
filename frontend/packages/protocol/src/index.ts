@@ -11,6 +11,7 @@ export const PROTOCOL_PACKAGE_NAME = '@indexedex/protocol' as const
 export {
   CHAIN_ID_SEPOLIA,
   CHAIN_ID_BASE_SEPOLIA,
+  CHAIN_ID_ROBINHOOD,
   CHAIN_ID_ANVIL,
   CHAIN_ID_LOCALHOST,
   CHAIN_ID_BASE,

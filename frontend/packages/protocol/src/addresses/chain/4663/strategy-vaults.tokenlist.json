@@ -1,0 +1,1 @@
+{"name":"Indexedex Robinhood Fee-DETF Strategy Vaults","timestamp":"1785153934","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","strategy","vault","fee-detf"],"tokens":[{"chainId":4663,"address":"0xc79d214af075ec5ebc01fe78a6a63206f3d6ac78","name":"Uni V3 SE RICH/WETH","symbol":"uv3seRICH","decimals":18,"tags":["vault","se"]}]}

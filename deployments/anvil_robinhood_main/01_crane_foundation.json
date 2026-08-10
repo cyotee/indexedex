@@ -1,0 +1,19 @@
+{
+  "chainId": 4663,
+  "create3Factory": "0xA4B3f4c20D135798811AA6883c7150ffA343b08A",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "diamondCutFacet": "0x8ffD3c3f657278aDcdBbB49Fa73E96cfE1DafCBe",
+  "diamondPackageFactory": "0xBAc9CEb1A7d4DFF2741793F6103B261E14e43fcf",
+  "erc20Facet": "0x5048906F7134a92E0dC11d52a25d4FCDdD3D7532",
+  "erc2612Facet": "0x6a9d7C4ba69535AB89bfe95f98D3c8Ae03BeeaeB",
+  "erc4626BasicVaultFacet": "0x6DCD170ACfB6422f421A293DE609513F875Ebb04",
+  "erc4626Facet": "0x97B7a33ec5b3323E65ff80a2b997850022D672f0",
+  "erc4626StandardVaultFacet": "0xD2893e174ed3a3AC7eEC26185dE5d23259275D2b",
+  "erc5267Facet": "0x633b156BE968a6307a886BF56f6Dc3767e6fd92b",
+  "multiAssetBasicVaultFacet": "0x6D9c95D8aa4516A3d200Dee7469C8BAee558BA1f",
+  "multiAssetStandardVaultFacet": "0xef717668A6F531eBf788b6a954c62a326Ac052f4",
+  "multiStepOwnableFacet": "0x1Fb0155fcBB77da58988c1EaB3dFC7C46B8BA4E9",
+  "networkProfile": "anvil_robinhood_main",
+  "operableFacet": "0xD85C87e59b253F79419F9c3EcF80511d50C38C61",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+}

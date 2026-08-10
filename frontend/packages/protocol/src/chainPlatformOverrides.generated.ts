@@ -2,10 +2,12 @@
 // Run `cd scripts/node && npm run build-tokenlists` to regenerate after adding
 // or removing tokenlist files under frontend/app/addresses/chain/.
 
+import chain4663_platform from './addresses/chain/4663/platform.json'
 import chain84532_platform from './addresses/chain/84532/platform.json'
 import chain11155111_platform from './addresses/chain/11155111/platform.json'
 
 export const GENERATED_CHAIN_PLATFORM_OVERRIDES: Record<number, unknown> = {
+  4663: chain4663_platform,
   84532: chain84532_platform,
   11155111: chain11155111_platform,
 }

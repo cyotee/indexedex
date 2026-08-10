@@ -28,12 +28,14 @@ Write **abuse-oriented Foundry tests** that drive **real production entry points
 4. **Forbidden:** `vm.mockCall` on SUT; `MockVault` as SUT; hard-coded expected exploit profits that skip the call path.
 5. **Pass criteria are binary:** exploit **blocked** (revert / no value theft) **or** intentional economic risk **documented** with invariants that still hold (e.g. seigniorage when gates open, but bond principal not free-drainable).
 6. **If a profitable exploit is real** — fix production first; never greenwash as "expected" without a product decision and bounds.
+7. **Never trust caller-claimed amounts** — any path that accepts `amountIn` / `pretransferred` / permit amount / `msg.value` must credit only an **observed balance delta** (or strict equivalent), never absolute balance and never the caller's claim alone. See **I (Trust-flag abuse)**.
+8. **Diamond surface is part of security** — every product-facing Target entry must be in `facetFuncs()` **and** callable on a production-deployed proxy. Missing selectors are silent fund-path / view-path failures. See **J (Surface completeness)** and `crane-testing` LR-7 surface matrix.
 
 ## Workflow (do this in order)
 
 ```
-1. Threat model table (actor × surface × asset)
-2. Attack catalog IDs (A donation, B manip, C reentrancy, D authority, E accounting, F access, G composition, H grief)
+1. Threat model table (actor × surface × asset × trust flags)
+2. Attack catalog IDs (A–H classic + I trust-flag + J surface + K accounting-sync)
 3. Priority P0 / P1 / P2
 4. Adversarial plan markdown (status, checklist, pass criteria)
 5. TestBase_*_Adversarial harness (extends feature TestBase)
@@ -71,24 +73,91 @@ test/foundry/spec/<feature>/
     Adversarial_Economic.t.sol
     Adversarial_PriceManipulation.t.sol   # if pool-implied pricing
     Adversarial_Griefing.t.sol
+    Adversarial_TrustFlags.t.sol        # I1–I5 pretransferred / claimed amount
+    Adversarial_Surface.t.sol           # J1–J4 Target↔Facet↔proxy (or co-locate with declaration tests)
 ```
 
-Naming: `test_<ID>_<behavior>()` so greps prove catalog coverage (`test_A1_...`, `test_C3_...`).
+Naming: `test_<ID>_<behavior>()` so greps prove catalog coverage (`test_A1_...`, `test_I1_...`, `test_J2_...`).
 
 ## Attack catalog (generic vault / diamond)
 
 | Cat | Theme | Examples | Typical pass |
 |-----|--------|----------|--------------|
-| **A** | Donation / inflation | Transfer assets/shares/BPT to diamond without mint path | No free mint; idle inventory cannot steal others' balances |
+| **A** | Donation / inflation | Transfer assets/shares/BPT to diamond without mint path; first-depositor share inflation | No free mint; idle inventory cannot steal others' balances; empty-vault mint is safe or gated |
 | **B** | Spot / rate manipulation | Skew underlying AMM → mint → reverse → burn | No free lunch **or** bounded intentional seigniorage + safety invariants |
 | **C** | Reentrancy / cross-entry | Hostile share reenters mint/bond/redeem/init | Nested `IsLocked` (or equivalent nonReentrant) |
 | **D** | Authority / claim / NFT | Redeem without claim; double redeem; onlyOwner vaults | Revert; no over-claim of principal |
-| **E** | Accounting / residual | Round-trip conservation; zero amount; deadline | Residual free inventory 0; exact/approx deltas |
+| **E** | Accounting / residual | Round-trip conservation; zero amount; deadline; fee-on-transfer `actualIn` | Residual free inventory 0; exact/approx deltas; credit = observed in |
 | **F** | Access / immutability | diamondCut, setWeights, mintFromNFTSale by EOA | Fail; no owner upgrade surface if unowned |
 | **G** | Composition | Nested vault as leg | Outer activity does not brick inner |
 | **H** | Grief / DoS | minOut fail, min-balance exit fail | Clean revert; **atomicity** (no permanent burn without payout) |
+| **I** | Trust-flag / claimed amount | `pretransferred=true` with **no** transfer; claim `amountIn` against absolute vault balance that already holds reserves; permit amount ≠ actual; `msg.value` mismatch | Revert **or** credit only measured **delta** since last snapshot / call start; attacker balance of shares/product must not increase without paying |
+| **J** | Surface completeness | Target has `foo()` but Facet omits selector; DFPkg `facetCuts` incomplete; proxy loupe missing product API | After production deploy: every product selector is on loupe **and** succeeds as a real call (or intentional access revert) |
+| **K** | Accounting sync | `lastTotalAssets` / reserve snapshot stale; donation then next deposit mis-credits; skim vs internal books diverge | Next user cannot mint from prior donation; mismatch reverts with exact selector or donation is explicitly accepted with documented beneficiary |
 
 Map product-specific surfaces onto this catalog; drop irrelevant categories with a one-line deferred reason.
+
+### Category I — Trust-flag abuse (mandatory P0 for any vault with `pretransferred` / pull-or-credit)
+
+This is a **distinct failure class from A (donation)**. Donation is “assets arrive without a mint path.” Trust-flag abuse is “caller **claims** assets arrived (or will) and the SUT mints/credits without proving a delta.”
+
+**Bug pattern (real production class):**
+
+```solidity
+// WRONG — absolute balance check trusts prior inventory as "this user's" transfer
+if (pretransferred) {
+    require(token.balanceOf(address(this)) >= amountIn);
+    return amountIn; // credits claimed amount; vault may already hold amountIn from reserves/donations
+}
+```
+
+**Correct pattern (sketch):**
+
+```solidity
+// RIGHT — credit only observed inbound delta (or pull + re-measure)
+uint256 before = token.balanceOf(address(this)); // or lastSyncedReserve
+// if !pretransferred: pull amountIn
+uint256 actualIn = token.balanceOf(address(this)) - before;
+require(actualIn == amountIn /* or >= with refund/strict policy */, "...");
+// mint/credit using actualIn, not amountIn alone
+// update lastSyncedReserve / lastTotalAssets
+```
+
+**Required adversarial tests (P0 when flag exists):**
+
+| ID | Attack | Pass |
+|----|--------|------|
+| **I1** | `pretransferred=true`, **zero** transfer, vault already holds ≥ `amountIn` reserves | Revert **or** zero credit; attacker share/product balance unchanged |
+| **I2** | `pretransferred=true`, transfer **less** than claimed `amountIn` | Revert exact selector (e.g. transfer-not-received / insufficient pretransfer) |
+| **I3** | `pretransferred=true`, transfer exact, then second call reuses residual without new transfer | Second call cannot free-mint from residual |
+| **I4** | `pretransferred=false` path still measures post-pull **delta** (fee-on-transfer shortfall) | Credit ≤ actual received; no phantom shares |
+| **I5** | Permit2 / signature path: signed amount ≠ delivered | Revert or credit actual only |
+
+Do **not** treat happy-path `pretransferred=true` with a real transfer as coverage for I1–I3.
+
+### Category J — Diamond surface completeness (mandatory P0 for every new Facet / DFPkg)
+
+Facet declaration tests that only compare `facetFuncs()` to a **hand-written control list** can pass when **both** lists omit the same function. That is test theater.
+
+**Three-way (or four-way) matrix — all required:**
+
+| Layer | Source of truth | Assert |
+|-------|-----------------|--------|
+| 1. Target product API | External/public money + documented views on Target | Enumerate selectors |
+| 2. Facet declaration | `IFacet.facetFuncs()` / `facetInterfaces()` | **Equals** Target product API (or explicit intentional split across facets with no orphan) |
+| 3. Package cuts | DFPkg `facetCuts()` / `diamondConfig` | Every facet selector appears in a cut |
+| 4. Live proxy | Production deploy via factory/registry; loupe `facetAddress(sel)` | Non-zero; low-level call does not `FunctionNotFound` |
+
+**Required tests:**
+
+| ID | Test | Pass |
+|----|------|------|
+| **J1** | Control list built from **Target** (or interface of product), not from Facet source alone | Facet matches Target |
+| **J2** | After DFPkg deploy, for each product selector: `facetAddress(sel) != 0` | All wired |
+| **J3** | Smoke call each product entry on **proxy** (not facet address) | Succeeds or exact access/guard revert — never empty-code / unknown selector |
+| **J4** | Package `facetCuts` length/selectors match declared facets | No silent drop |
+
+See also Recon-style diamond structural invariants: selector uniqueness, loupe consistency, no dangling selectors (use when upgrade/`diamondCut` is live; unowned immutable diamonds still need J1–J3 at deploy).
 
 ## Harness patterns
 
@@ -174,13 +243,19 @@ Under closed thresholds (deadband), assert mint and burn are **not** simultaneou
 | Only static `grep` for security | Static ok as *supplement*; P0 needs execution |
 | Duplicate happy-path under "adversarial" name | Link baseline; add cross-function / abuse only |
 | Silent missing catalog IDs | Deferred NatSpec + plan checkbox |
+| Happy-path `pretransferred=true` with real transfer only | Add **I1–I3** false-claim / short-transfer cases |
+| `controlFacetFuncs` copied from incomplete Facet | Build control from **Target/interface** product API (**J1**) |
+| Declaration tests on facet contract only | Also deploy package and call **proxy** (**J2–J3**) |
+| Absolute `balanceOf(vault) >= amount` as “proof of transfer” | Measure **delta** vs last reserve / balBefore |
+| `expectRevert()` without selector | Exact selector + state unchanged |
+| Line coverage without balance invariants | Assert attacker did not gain shares/assets for free |
 
 ## Priority guidance
 
 | Priority | Ship gate? | Examples |
 |----------|------------|----------|
-| **P0** | Yes — "adversarially tested" | Free principal redeem, reentrancy cross-entry, residual after fail, onlyOwner critical mints, donation free-mint |
-| **P1** | Should before major release | Nested composition, lock clamps, soft non-dilution, deadband gates |
+| **P0** | Yes — "adversarially tested" | Free principal redeem, reentrancy, residual after fail, onlyOwner critical mints, donation free-mint, **I1–I3 trust-flag**, **J1–J3 surface**, **K** reserve-sync free credit |
+| **P1** | Should before major release | Nested composition, lock clamps, soft non-dilution, deadband gates, I4–I5, weird-token FoT |
 | **P2** | Explicit defer OK | Gas grief N=max, peer product ports, rare sandwich/MEV fork reconstructions |
 
 ## Run & evidence
@@ -192,14 +267,30 @@ forge test --match-path 'test/foundry/spec/<feature>/**'   # happy + adversarial
 
 Capture logs for verification goals. Update plan status to **IMPLEMENTED (P0/P1)** only when both paths exit 0 and deferred IDs are documented.
 
+## Definition of “adversarially tested” (ship gate)
+
+A feature is **adversarially tested** only when **all** of the following hold:
+
+1. Catalog A–H applicable P0 IDs have real tests or explicit NatSpec deferral.
+2. If the product has pull/credit flags (`pretransferred`, Permit2, `msg.value`): **I1–I3** green.
+3. Every new Facet/DFPkg: **J1–J3** green (Target → Facet → live proxy).
+4. If reserve/`lastTotalAssets` accounting exists: at least one **K** free-credit / mismatch case.
+5. `forge test --match-path '.../adversarial/**'` and full feature path exit 0.
+6. No known unbounded profitable exploit left greenwashed.
+
+Happy-path coverage alone is **never** sufficient for (2) or (3).
+
 ## See also
 
-- `skill:crane-testing` — production-first, TestBase, Behavior, LR-7
+- `skill:crane-testing` — production-first, TestBase, Behavior, LR-7, surface matrix, accounting gates
 - `skill:crane-deployment` — CREATE3 / DFPkg in tests
+- `skill:crane-architecture` — Facet/Target/Repo; `facetFuncs` must enumerate product API
 - `skill:crane-access` — nonReentrant / IsLocked
 - `skill:forge-testing` — cheatcodes only (subordinate for protocol tests)
+- `skill:forge-fuzz-testing` / property-based testing — L1/L3 properties complement fixed adversarial catalogs
 - Consumer: `skill:indexedex-adversarial-testing` when working in IndexedEx vaults/DETFs
 
 ## References
 
 - `references/attack-catalog-template.md` — copy/paste catalog + suite NatSpec stubs
+- `references/implementation-test-dod.md` — ship-gate checklist for implementors
