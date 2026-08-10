@@ -249,6 +249,12 @@ contract AerodromeStandardExchangeInTarget is
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountOut) {
+        // Vault-level deadline (peer SE: Uni V2 / Camelot). Router deadline alone
+        // does not cover vault-only routes (deposit / withdraw / share mint-burn).
+        if (block.timestamp > deadline) {
+            revert DeadlineExceeded(deadline, block.timestamp);
+        }
+
         ConstProdReserveVaultRepo.Storage storage constProd = ConstProdReserveVaultRepo._layoutStruct();
         IAerodromeRouter aerodromeRouter = AerodromeRouterAwareRepo._aerodromeRouter();
         IPool pool = IPool(address(ERC4626Repo._reserveAsset()));

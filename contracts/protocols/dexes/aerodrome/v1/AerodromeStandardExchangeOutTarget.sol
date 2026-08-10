@@ -588,6 +588,12 @@ contract AerodromeStandardExchangeOutTarget is
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountIn) {
+        // Vault-level deadline (peer SE: Uni V2 / Camelot). Router deadline alone
+        // does not cover vault-only routes (deposit / withdraw / share mint-burn).
+        if (block.timestamp > deadline) {
+            revert DeadlineExceeded(deadline, block.timestamp);
+        }
+
         OutArgs memory args = OutArgs({
             tokenIn: tokenIn,
             maxAmountIn: maxAmountIn,
