@@ -3,8 +3,10 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {
@@ -23,9 +25,191 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 /**
  * @title Adversarial DoD: reentrancy, donation, feeTo, SE mid-zap rollback (O16 / N1–N4).
+ * @dev Catalog I1/I3: pretransfer trust flags must not free-extract SE book / raw inventory (L-GAPS-11 / WP-I-HOOK-CP-001).
  */
 contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Test is TestBase {
     using BetterEfficientHashLib for bytes;
+
+    address internal attacker;
+
+    function setUp() public virtual override {
+        super.setUp();
+        attacker = makeAddr("attacker");
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  I1: pretransferred=true, inventory present, no in-call transfer       */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice I1 raw→pair: donate raw inventory; unfunded pretransfer cannot free-extract SE book.
+    function test_I1_pretransferred_rawToPair_inventoryNoInCallTransfer_revertsDelta0() public {
+        _seedLiveLiquidity();
+        uint256 claimed_ = 5 ether;
+        rawToken.mint(attacker, claimed_);
+        vm.prank(attacker);
+        rawToken.transfer(hook, claimed_);
+        assertEq(rawToken.balanceOf(hook), single.rawReserve(), "raw inventory on hook");
+        assertEq(rawToken.balanceOf(attacker), 0, "attacker drained");
+        assertEq(rawToken.allowance(attacker, hook), 0, "no allowance");
+
+        uint256 seClaimBefore_ = single.seClaimSupply();
+        uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
+        uint256 rawHookBefore_ = rawToken.balanceOf(hook);
+        uint256 seHookBefore_ = IERC20(se).balanceOf(hook);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            claimed_,
+            IERC20(address(pairToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(pairToken.balanceOf(attacker), pairAttBefore_, "I1: no free pair extract");
+        assertEq(single.seClaimSupply(), seClaimBefore_, "I1: SE book not free-spent");
+        assertEq(rawToken.balanceOf(hook), rawHookBefore_, "I1: raw inventory unchanged");
+        assertEq(IERC20(se).balanceOf(hook), seHookBefore_, "I1: SE shares unchanged");
+    }
+
+    /// @notice I1 pair→raw: donate free pair; unfunded pretransfer cannot free-extract raw book.
+    function test_I1_pretransferred_pairToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
+        _seedLiveLiquidity();
+        uint256 claimed_ = 5 ether;
+        pairToken.mint(attacker, claimed_);
+        vm.prank(attacker);
+        pairToken.transfer(hook, claimed_);
+        assertGe(pairToken.balanceOf(hook), claimed_, "pair inventory on hook");
+        assertEq(pairToken.balanceOf(attacker), 0);
+        assertEq(pairToken.allowance(attacker, hook), 0);
+
+        uint256 rawAttBefore_ = rawToken.balanceOf(attacker);
+        uint256 rawHookBefore_ = rawToken.balanceOf(hook);
+        uint256 pairHookBefore_ = pairToken.balanceOf(hook);
+        uint256 seHookBefore_ = IERC20(se).balanceOf(hook);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(pairToken)),
+            claimed_,
+            IERC20(address(rawToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(rawToken.balanceOf(attacker), rawAttBefore_, "I1: no free raw extract");
+        assertEq(rawToken.balanceOf(hook), rawHookBefore_, "I1: raw book intact");
+        assertEq(pairToken.balanceOf(hook), pairHookBefore_, "I1: pair inventory unmoved");
+        assertEq(IERC20(se).balanceOf(hook), seHookBefore_, "I1: SE shares unmoved");
+    }
+
+    /// @notice I1 exact-out raw→pair: unfunded pretransfer cannot free-extract SE book / refund.
+    function test_I1_pretransferred_exchangeOut_rawToPair_revertsDelta0() public {
+        _seedLiveLiquidity();
+        uint256 wantOut_ = 1 ether;
+
+        // Absolute inventory theater: seed raw so balance covers post-donation quote without in-call transfer.
+        // Quote AFTER donation — donating raw reprices the book (dx grows with rIn on exact-out).
+        rawToken.mint(attacker, 50 ether);
+        vm.prank(attacker);
+        rawToken.transfer(hook, 50 ether);
+
+        uint256 needRaw_ = IStandardExchangeOut(hook).previewExchangeOut(
+            IERC20(address(rawToken)), IERC20(address(pairToken)), wantOut_
+        );
+        assertGt(needRaw_, 0);
+        assertGe(rawToken.balanceOf(hook), needRaw_, "inventory covers claimed amountIn");
+
+        uint256 seClaimBefore_ = single.seClaimSupply();
+        uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
+        uint256 rawHookBefore_ = rawToken.balanceOf(hook);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, needRaw_, uint256(0)
+            )
+        );
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(rawToken)),
+            needRaw_,
+            IERC20(address(pairToken)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(pairToken.balanceOf(attacker), pairAttBefore_, "I1 out: no free pair");
+        assertEq(single.seClaimSupply(), seClaimBefore_, "I1 out: SE book intact");
+        assertEq(rawToken.balanceOf(hook), rawHookBefore_, "I1 out: raw unmoved (no refund extract)");
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  I3: residual inventory cannot fund second free pretransfer credit     */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice I3: residual free raw after honest path cannot fund a second free pretransfer raw→pair.
+    function test_I3_residualInventory_cannotFundSecondFreePretransfer_rawToPair() public {
+        _seedLiveLiquidity();
+
+        // Residual free raw that remains after honest swap (donation not consumed by !pretransfer).
+        uint256 residualSeed_ = 4 ether;
+        rawToken.mint(address(this), residualSeed_);
+        rawToken.transfer(hook, residualSeed_);
+
+        uint256 honestIn_ = 3 ether;
+        vm.prank(user);
+        uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            honestIn_,
+            IERC20(address(pairToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+        assertGt(out_, 0, "honest raw->pair ok");
+
+        uint256 residual_ = rawToken.balanceOf(hook);
+        assertGe(residual_, residualSeed_, "residual raw remains");
+        uint256 seClaimBefore_ = single.seClaimSupply();
+        uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
+            )
+        );
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            residualSeed_,
+            IERC20(address(pairToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
+
+        assertEq(rawToken.balanceOf(hook), residual_, "I3 residual unmoved");
+        assertEq(single.seClaimSupply(), seClaimBefore_, "I3 SE book not free-spent");
+        assertEq(pairToken.balanceOf(attacker), pairAttBefore_, "I3 no free pair");
+    }
 
     function test_N2_donationDilutesLps_accepted() public {
         _seedLiveLiquidity();
