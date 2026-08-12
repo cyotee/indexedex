@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
@@ -15,6 +15,8 @@ import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPoli
 library ComposedStableCommonDetfRepo {
 
     error InvalidReservePoolIndices(uint256 detfIndex, uint256 stablePoolBptIndex, uint256 commonPoolBptIndex);
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientReserveBpt(uint256 needed, uint256 available);
 
     bytes32 internal constant STORAGE_SLOT = keccak256("detf.composed.stable.common.repo");
 

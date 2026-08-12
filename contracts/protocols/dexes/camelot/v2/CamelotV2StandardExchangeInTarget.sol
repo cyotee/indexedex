@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {CAMELOTV2_FEE_DENOMINATOR} from "@crane/contracts/constants/Constants.sol";
@@ -372,6 +372,7 @@ contract CamelotV2StandardExchangeInTarget is
                     revert();
                 }
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -427,6 +428,7 @@ contract CamelotV2StandardExchangeInTarget is
                 }
             }
             // Go ahead and terminate further execution.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -488,6 +490,7 @@ contract CamelotV2StandardExchangeInTarget is
                     revert();
                 }
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -576,6 +579,7 @@ contract CamelotV2StandardExchangeInTarget is
                 amountOut
             );
             // Go ahead and terminate furtherRecordedVote.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -666,6 +670,7 @@ contract CamelotV2StandardExchangeInTarget is
             // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -771,6 +776,7 @@ contract CamelotV2StandardExchangeInTarget is
                 // uint256 amount,
                 amountOut
             );
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -872,6 +878,7 @@ contract CamelotV2StandardExchangeInTarget is
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             // Go ahead and terminate further execution.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

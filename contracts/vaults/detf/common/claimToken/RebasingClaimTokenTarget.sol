@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -296,19 +296,31 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
      * @dev Only callable by the DETF diamond owner.
      */
     function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 rebasingClaimMinted) {
-        if (lpShares == 0) revert ZeroAmount();
+        return mintFromNFTSale(lpShares, type(uint256).max, recipient);
+    }
+
+    /// @inheritdoc IRebasingClaimToken
+    function mintFromNFTSale(uint256 assets, uint256 totalAssetsBefore, address recipient)
+        public
+        onlyOwner
+        returns (uint256 rebasingClaimMinted)
+    {
+        if (assets == 0) revert ZeroAmount();
 
         RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
-        uint256 internalShares = RebasingClaimTokenRepo._externalSharesToInternal(lpShares);
+        uint256 totalAssets = totalAssetsBefore == type(uint256).max
+            ? layoutStruct.nftVault.originalSharesOf(layoutStruct.detfNFTId)
+            : totalAssetsBefore;
+        uint256 totalSharesExt = RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct.totalShares);
+        uint256 sharesOutExt = totalAssets == 0 ? assets : (assets * totalSharesExt) / totalAssets;
+        uint256 internalShares = RebasingClaimTokenRepo._externalSharesToInternal(sharesOutExt);
 
-        // Mint shares with internal precision while preserving 18-decimal external units.
         RebasingClaimTokenRepo._mintShares(layoutStruct, recipient, internalShares);
 
-        // Calculate balance for return value and event
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         rebasingClaimMinted = RebasingClaimTokenRepo._sharesToBalance(internalShares, rate);
 
-        emit IRebasingClaimToken.Minted(recipient, lpShares, lpShares, rebasingClaimMinted);
+        emit IRebasingClaimToken.Minted(recipient, assets, sharesOutExt, rebasingClaimMinted);
         emit IERC20Events.Transfer(address(0), recipient, rebasingClaimMinted);
     }
 
@@ -483,6 +495,20 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     /**
      * @dev Gets the current redemption rate, updating cache if stale.
      */
+    /// @dev ERC-4626 assets = originalSharesOf(detfNFTId). Never diamond BPT balance.
+    function _convertInternalSharesToProtocolBpt(
+        RebasingClaimTokenRepo.Storage storage layoutStruct_,
+        uint256 internalShares_
+    ) internal view returns (uint256 bptOut_) {
+        uint256 totalSharesExt_ = RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct_.totalShares);
+        if (totalSharesExt_ == 0 || internalShares_ == 0) {
+            return 0;
+        }
+        uint256 totalAssets_ = layoutStruct_.nftVault.originalSharesOf(layoutStruct_.detfNFTId);
+        uint256 extShares_ = RebasingClaimTokenRepo._internalSharesToExternal(internalShares_);
+        bptOut_ = (extShares_ * totalAssets_) / totalSharesExt_;
+    }
+
     function _getCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256) {
         // If rate was updated this block, use cached value
         if (layoutStruct_.lastRateUpdateBlock == block.number) {
@@ -507,15 +533,18 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
             );
         }
 
-        // Burn claim shares first (CEI). External share units equal LP principal minted at sale.
+        // 4626 convertToAssets against protocol NFT originalShares (before burn).
+        uint256 bptOut_ = _convertInternalSharesToProtocolBpt(layoutStruct_, shares);
+        if (bptOut_ == 0) revert ZeroAmount();
+
+        // Burn claim shares first (CEI).
         RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
 
         // L-CLAIM-1/2: fund redeem by unwinding protocol NFT LP via DETF - not idle rateAsset inventory.
-        uint256 lpPrincipal_ = RebasingClaimTokenRepo._internalSharesToExternal(shares);
-        wethOut_ = layoutStruct_.detf.claimLiquidity(lpPrincipal_, recipient_);
+        wethOut_ = layoutStruct_.detf.claimLiquidity(bptOut_, recipient_);
 
         emit IRebasingClaimToken.Redeemed(
-            msg.sender, recipient_, rebasingClaimAmount_, lpPrincipal_, wethOut_
+            msg.sender, recipient_, rebasingClaimAmount_, bptOut_, wethOut_
         );
         emit IERC20Events.Transfer(address(this), address(0), rebasingClaimAmount_);
     }

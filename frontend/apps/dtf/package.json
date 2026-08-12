@@ -12,6 +12,10 @@
     "typecheck": "node scripts/typecheck.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:live": "playwright test e2e/staking-bond-live.spec.ts e2e/swap-routes-live.spec.ts",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install chromium",
     "check": "npm run lint && npm run typecheck && npm run test",
     "hooks": "npx wagmi generate"
   },

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -43,8 +43,9 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        uint256 minted_ = bonding_.sellNFT(tokenId_, alice);
+        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim minted");
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
@@ -68,8 +69,9 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         address instance_ = _deployOpenModeDetfN(1);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 1_500e18);
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
 
         address junk = address(uint160(uint256(keccak256("junkRA"))));
         vm.prank(alice);
@@ -107,8 +109,9 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
         uint256 claimBal_ = claim_.balanceOf(alice);

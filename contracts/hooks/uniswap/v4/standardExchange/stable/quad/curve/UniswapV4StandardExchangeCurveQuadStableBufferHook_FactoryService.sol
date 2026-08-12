@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -21,8 +21,11 @@ import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol";
 import {
-    UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol";
+    UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol";
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol";
@@ -51,12 +54,25 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
         vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).name);
     }
 
-    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+    function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).name)._hash()
+            type(UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet).name)._hash()
         );
-        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet).name);
+        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet).name);
+    }
+
+    function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).name);
+    }
+
+    /// @dev Backward-compat alias (Join only). Prefer deployJoinFacet + deployExitFacet.
+    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        return deployJoinFacet(create3Factory);
     }
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {

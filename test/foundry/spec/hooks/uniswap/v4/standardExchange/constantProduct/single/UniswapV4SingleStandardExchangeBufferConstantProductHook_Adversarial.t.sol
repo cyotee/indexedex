@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -45,18 +45,17 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: pretransferred=true, inventory present, no in-call transfer       */
+    /*  I1: booked inventory (R==B), no new unbooked push, pretransferred=true */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 raw→pair: donate raw inventory; unfunded pretransfer cannot free-extract SE book.
+    /// @notice I1 raw→pair: booked free raw (post-seed R==B); true without new push reverts U=0.
+    /// @dev L-RSRV-DUST: bare donation free-credits until sync — I1 is booked inventory only.
     function test_I1_pretransferred_rawToPair_inventoryNoInCallTransfer_revertsDelta0() public {
         _seedLiveLiquidity();
         uint256 claimed_ = 5 ether;
-        rawToken.mint(attacker, claimed_);
-        vm.prank(attacker);
-        rawToken.transfer(hook, claimed_);
-        assertEq(rawToken.balanceOf(hook), single.rawReserve(), "raw inventory on hook");
-        assertEq(rawToken.balanceOf(attacker), 0, "attacker drained");
+        // Seeded free raw is end-synced (booked). Absolute B may cover claimed; U must not.
+        assertGe(rawToken.balanceOf(hook), claimed_, "booked raw inventory present");
+        assertEq(rawToken.balanceOf(attacker), 0, "attacker empty");
         assertEq(rawToken.allowance(attacker, hook), 0, "no allowance");
 
         uint256 seClaimBefore_ = single.seClaimSupply();
@@ -86,14 +85,13 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(IERC20(se).balanceOf(hook), seHookBefore_, "I1: SE shares unchanged");
     }
 
-    /// @notice I1 pair→raw: donate free pair; unfunded pretransfer cannot free-extract raw book.
+    /// @notice I1 pair→raw: no unbooked pair face (B_pair==0 ⇒ U=0 under virtual seClaim R); true reverts.
+    /// @dev Pair face is never booked as ERC20 R (R=seClaim virtual). Free face is L-RSRV-DUST push credit;
+    ///      I1 without face inventory still reverts U=0 and cannot free-extract raw.
     function test_I1_pretransferred_pairToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
         _seedLiveLiquidity();
         uint256 claimed_ = 5 ether;
-        pairToken.mint(attacker, claimed_);
-        vm.prank(attacker);
-        pairToken.transfer(hook, claimed_);
-        assertGe(pairToken.balanceOf(hook), claimed_, "pair inventory on hook");
+        // Do not donate pair face — that would be intentional unbooked U (L-RSRV-DUST).
         assertEq(pairToken.balanceOf(attacker), 0);
         assertEq(pairToken.allowance(attacker, hook), 0);
 
@@ -124,22 +122,36 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         assertEq(IERC20(se).balanceOf(hook), seHookBefore_, "I1: SE shares unmoved");
     }
 
-    /// @notice I1 exact-out raw→pair: unfunded pretransfer cannot free-extract SE book / refund.
+    /// @notice I1 exact-out raw→pair: booked free raw + true without new push reverts U=0.
     function test_I1_pretransferred_exchangeOut_rawToPair_revertsDelta0() public {
         _seedLiveLiquidity();
         uint256 wantOut_ = 1 ether;
 
-        // Absolute inventory theater: seed raw so balance covers post-donation quote without in-call transfer.
-        // Quote AFTER donation — donating raw reprices the book (dx grows with rIn on exact-out).
-        rawToken.mint(attacker, 50 ether);
-        vm.prank(attacker);
-        rawToken.transfer(hook, 50 ether);
+        // Book residual free raw so absolute inventory covers quote, then absorb into R.
+        uint256 residualSeed_ = 50 ether;
+        rawToken.mint(address(this), residualSeed_);
+        rawToken.transfer(hook, residualSeed_);
+        // Honest !pretransfer path end-syncs hold-set (books residual; L-RSRV-ABSORB).
+        uint256 honestIn_ = 1 ether;
+        rawToken.mint(user, honestIn_);
+        vm.startPrank(user);
+        rawToken.approve(hook, honestIn_);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            honestIn_,
+            IERC20(address(pairToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1
+        );
+        vm.stopPrank();
 
         uint256 needRaw_ = IStandardExchangeOut(hook).previewExchangeOut(
             IERC20(address(rawToken)), IERC20(address(pairToken)), wantOut_
         );
         assertGt(needRaw_, 0);
-        assertGe(rawToken.balanceOf(hook), needRaw_, "inventory covers claimed amountIn");
+        assertGe(rawToken.balanceOf(hook), needRaw_, "booked inventory covers claimed amountIn");
 
         uint256 seClaimBefore_ = single.seClaimSupply();
         uint256 pairAttBefore_ = pairToken.balanceOf(attacker);

@@ -63,6 +63,7 @@ CORRELATOR
 Cowork
 creationcode
 cspotcode
+cutover
 Cyfrin
 cyotee
 daosys
@@ -121,7 +122,9 @@ gantt
 gitlawb
 Gogs
 GONS
+greenwashing
 Hacken
+happies
 hdnode
 HEVM
 histori
@@ -245,6 +248,7 @@ Robinhood
 rollux
 Roundtable
 Roundtables
+RSRV
 secp
 sectanchors
 sectlinks

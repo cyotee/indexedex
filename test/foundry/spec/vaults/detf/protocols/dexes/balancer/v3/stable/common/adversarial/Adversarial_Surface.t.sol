@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -92,7 +92,11 @@ contract Adversarial_ComposedStable_Surface_Test is ComposedStableCommonDetf_Int
         assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.acceptedBondTokens.selector), "accepted");
         assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.isAcceptedBondToken.selector), "isAccepted");
         assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.bond.selector), "bond");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.sellNFT.selector), "sellNFT");
+        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.sellPositionToDetfNft.selector), "sell");
+        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.buyClaim.selector), "buyClaim");
+        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.closeBondMature.selector), "close");
+        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.redeemClaim.selector), "redeemClaim");
+        assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
     }
 
     /// @notice J1: exchangeOut / claim Target ⊆ exchangeOutQueryFacet.facetFuncs().

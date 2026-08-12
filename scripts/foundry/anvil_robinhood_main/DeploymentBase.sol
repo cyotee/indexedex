@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
@@ -7,6 +7,7 @@ import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN
 
 /// @title DeploymentBase
 /// @notice Shared base for Anvil Robinhood-mainnet-fork staged deploys (chain id 4663).
+/// @dev Stages 00–13 = lab; 14–21 = fee-DETF (CHIR); 22 = unified frontend export.
 abstract contract DeploymentBase is Script {
     string internal constant OUT_DIR = "deployments/anvil_robinhood_main";
     uint256 internal constant EXPECTED_CHAIN_ID = 4663;
@@ -104,6 +105,18 @@ abstract contract DeploymentBase is Script {
             }
         } catch {
             return (address(0), false);
+        }
+    }
+
+    function _readUintSafe(string memory file, string memory key) internal view returns (uint256 value, bool exists) {
+        try vm.readFile(_artifactPath(file)) returns (string memory json) {
+            try vm.parseJsonUint(json, string.concat(".", key)) returns (uint256 parsed) {
+                return (parsed, true);
+            } catch {
+                return (0, false);
+            }
+        } catch {
+            return (0, false);
         }
     }
 

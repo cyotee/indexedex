@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -1071,33 +1071,42 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     }
 
     /**
-     * @notice Securely pulls tokens using balance-delta accounting (L-GAPS-9/10 / ISecurePullErrors).
-     * @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
-     *      - `!pretransferred`: transferFrom, return observedDelta (FoT-safe).
-     *      - `pretransferred`: no in-call transfer; credit exactly `amountIn` only when
-     *        `amountIn <= observedDelta`; otherwise revert
-     *        `TransferDeltaInsufficient(claimed, observedDelta)`.
-     *        Absolute `balanceOf >= claimed` without a positive in-window delta is forbidden
-     *        (blocks free inventory credit / I1).
+     * @notice Securely pulls tokens using reserve-delta accounting (L-DETF-HOST-UPGRADE / BasicVault peer).
+     * @dev MultiAsset `R` for this SE is **total** inventory = face free + deployed position amounts
+     *      (`_syncVaultReserves`). Face unbooked must subtract only the **face** component of R:
+     *      `faceBooked = R - deployed`, `U = B_face - faceBooked`.
+     *      Using `U = B - R` under-credits free face when deployed > 0 (breaks nested push+true).
+     *      - `!pretransferred`: transferFrom, return pull delta only (FoT-safe; does not add prior U).
+     *      - `pretransferred`: credit `amountIn` only when `amountIn <= U`; else
+     *        `TransferDeltaInsufficient(claimed, U)`. I1 when face is fully booked (`U == 0`).
      */
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
-        uint256 balBefore = tokenIn.balanceOf(address(this));
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
+        uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
+            // FoT-safe: return pull delta only — do NOT add prior unbooked U.
+            return tokenIn.balanceOf(address(this)) - B0;
         }
-        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
-        if (pretransferred) {
-            if (amountIn > observedDelta) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
-            }
-            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
-            return amountIn;
+        // Face-booked component of total R (exclude deployed position amounts).
+        uint256 deployed = _deployedFaceOf(address(tokenIn));
+        uint256 faceBooked = R > deployed ? R - deployed : 0;
+        uint256 U = B0 > faceBooked ? B0 - faceBooked : 0;
+        if (amountIn > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, U);
         }
-        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
-        return observedDelta;
+        return amountIn;
+    }
+
+    /// @dev Deployed (non-face) reserve component for `token_` — 0 for unknown tokens.
+    function _deployedFaceOf(address token_) internal view returns (uint256 deployed_) {
+        (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
+        if (token_ == _token0()) return deployed0;
+        if (token_ == _token1()) return deployed1;
+        return 0;
     }
 
     function _transferCurrency(address token, address recipient, uint256 amount) internal {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -38,19 +38,11 @@ abstract contract MultiVaultWeightedDetfExchangeOutTarget is MultiVaultWeightedD
             revert MultiVaultWeightedDetfRepo.InvalidRoute(address(this), address(tokenOut_));
         }
 
-        // Delta-secure detfToken pull: never free-burn diamond inventory (L-GAPS-9).
-        IERC20 detfToken_ = IERC20(address(this));
-        uint256 before_ = detfToken_.balanceOf(address(this));
-        if (!pretransferred_) {
-            detfToken_.safeTransferFrom(msg.sender, address(this), detfIn_);
-        }
-        uint256 observedDelta = detfToken_.balanceOf(address(this)) - before_;
-        if (detfIn_ > observedDelta) {
-            revert ISecurePullErrors.TransferDeltaInsufficient(detfIn_, observedDelta);
-        }
+        // Reserve-delta detfToken pull (L-DETF-LOCAL-PUSH / L-GAPS-9).
+        uint256 actualIn_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
 
-        uint256 bptIn_ = _bptForDetfShares(detfIn_);
-        _burnDetf(address(this), detfIn_);
+        uint256 bptIn_ = _bptForDetfShares(actualIn_);
+        _burnDetf(address(this), actualIn_);
 
         (uint256 detfLeg_, uint256[] memory vaultSharesOut_) = _exitReserveProportional(bptIn_);
 
@@ -72,6 +64,7 @@ abstract contract MultiVaultWeightedDetfExchangeOutTarget is MultiVaultWeightedD
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     /// @dev Preview burn DETF → vault share (proportional BPT claim on target leg only after re-join others).

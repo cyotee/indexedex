@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
@@ -108,6 +108,24 @@ contract MockRebasingDETF {
         uint256 amountOut = reserveBptAmount * commonTokenPerReserveBpt / 1 ether;
         commonToken.mint(recipient, amountOut);
         return amountOut;
+    }
+
+    function previewRedeemClaim(uint256 claimAmount, IERC20) external view returns (uint256) {
+        uint256 reserveBptAmount = claimAmount * reserveBptPerRichir / 1 ether;
+        return reserveBptAmount * commonTokenPerReserveBpt / 1 ether;
+    }
+
+    function redeemClaim(uint256 claimAmount, IERC20, uint256, address recipient, uint256)
+        external
+        returns (uint256 amountOut)
+    {
+        if (revertClaimLiquidity) {
+            revert('claim-liquidity');
+        }
+        IRebasingClaimToken(msg.sender).burnShares(claimAmount, msg.sender, true);
+        uint256 reserveBptAmount = claimAmount * reserveBptPerRichir / 1 ether;
+        amountOut = reserveBptAmount * commonTokenPerReserveBpt / 1 ether;
+        commonToken.mint(recipient, amountOut);
     }
 }
 
@@ -386,6 +404,11 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
             nftVault,
             abi.encodeWithSelector(IDETFNFTVault.getPosition.selector, PROTOCOL_NFT_ID),
             abi.encode(position)
+        );
+        vm.mockCall(
+            nftVault,
+            abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, PROTOCOL_NFT_ID),
+            abi.encode(uint256(0))
         );
     }
 

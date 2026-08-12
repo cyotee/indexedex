@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -51,6 +51,55 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
         erc20PermitPkg = _deployTestTokenPkg();
 
         assertGt(address(pkg).code.length, 0, "RebasingClaimTokenDFPkg not deployed");
+    }
+
+    function test_mintFromNFTSale_emptyVault_thenFewerSharesAfterProtocolBpt() public {
+        address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth4626")));
+        address nft_ = address(0xCAFE);
+        _stubNftViews(nft_, 1, 0);
+        IRebasingClaimToken token = IRebasingClaimToken(
+            pkg.deployToken(IDetf(address(0xBEEF)), IDETFNFTVault(nft_), IERC20(mockWeth), 1, owner)
+        );
+
+        address alice_ = makeAddr("alice4626");
+        address bob_ = makeAddr("bob4626");
+
+        vm.startPrank(owner);
+        uint256 first_ = token.mintFromNFTSale(100e18, 0, alice_);
+        uint256 second_ = token.mintFromNFTSale(100e18, 200e18, bob_);
+        vm.stopPrank();
+
+        assertGt(first_, 0, "empty-vault mint");
+        assertLt(second_, first_, "second mint fewer shares per BPT after protocol BPT up");
+        assertEq(token.sharesOf(alice_), 100e18, "empty vault sharesOut = assets");
+        assertEq(token.sharesOf(bob_), 50e18, "4626 floor vs totalAssetsBefore=200");
+    }
+
+    function test_mintFromNFTSale_liveReadWrapper_emptyWhenProtocolZero() public {
+        address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth4626b")));
+        address nft_ = address(0xCAFE);
+        _stubNftViews(nft_, 2, 0);
+        IRebasingClaimToken token = IRebasingClaimToken(
+            pkg.deployToken(IDetf(address(0xBEEF)), IDETFNFTVault(nft_), IERC20(mockWeth), 2, owner)
+        );
+        vm.prank(owner);
+        uint256 minted_ = token.mintFromNFTSale(10e18, 0, owner);
+        assertEq(token.sharesOf(owner), 10e18, "explicit empty totalAssets");
+        assertGt(minted_, 0, "rebasing units");
+    }
+
+    function _stubNftViews(address nft_, uint256 tokenId_, uint256 originalShares_) internal {
+        IDETFNFTVault.Position memory position = IDETFNFTVault.Position({
+            originalShares: originalShares_,
+            effectiveShares: originalShares_,
+            bonusMultiplier: 1e18,
+            unlockTime: 0,
+            rewardDebt: 0
+        });
+        vm.mockCall(nft_, abi.encodeWithSelector(IDETFNFTVault.getPosition.selector, tokenId_), abi.encode(position));
+        vm.mockCall(
+            nft_, abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, tokenId_), abi.encode(originalShares_)
+        );
     }
 
     function test_deployToken_success() public {

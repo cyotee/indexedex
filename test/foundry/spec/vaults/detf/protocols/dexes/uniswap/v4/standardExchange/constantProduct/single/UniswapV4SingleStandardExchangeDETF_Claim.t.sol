@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -28,6 +28,7 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
         address claim = detfInfo.rebasingClaimToken();
         uint256 claimBefore = IRebasingClaimToken(claim).balanceOf(detfUser);
 
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         uint256 principal = detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -38,6 +39,7 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
 
     function test_redeemClaim_toPair() public {
         (uint256 tokenId,) = _firstBond(60 ether);
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -62,6 +64,7 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
 
     function test_redeemClaim_toVaultShare() public {
         (uint256 tokenId,) = _firstBond(60 ether);
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -84,6 +87,7 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
 
     function test_redeemClaim_invalidRoute_reverts() public {
         (uint256 tokenId,) = _firstBond(40 ether);
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 

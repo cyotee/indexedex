@@ -49,7 +49,7 @@ struct Storage {
 
 **`contracts/vaults/protocol/BaseProtocolDETFRichirRedeemTarget.sol`** (abstract):
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {OperableModifiers} from "@crane/contracts/access/operable/OperableModifiers.sol";
@@ -82,7 +82,7 @@ abstract contract BaseProtocolDETFRichirRedeemTarget is OperableModifiers {
 
 **`contracts/vaults/protocol/BaseProtocolDETFRichirRedeemFacet.sol`**:
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -111,7 +111,7 @@ contract BaseProtocolDETFRichirRedeemFacet is BaseProtocolDETFRichirRedeemTarget
 ### New Interface:
 **`contracts/interfaces/IBaseProtocolDETFRichirRedeem.sol`**:
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 interface IBaseProtocolDETFRichirRedeem {

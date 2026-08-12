@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -14,6 +14,7 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     TestBase_AerodromeStandardExchange_MultiPool
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_MultiPool.sol";
@@ -281,26 +282,46 @@ contract AerodromeStandardExchangeIn_Swap_Test is TestBase_AerodromeStandardExch
         assertTrue(tokenB.balanceOf(recipient) > 0, "Recipient received tokens");
     }
 
+    /// @notice I1 booked residual: compound/reserved dust is absorbed into R at end-of-op sync;
+    ///         a later pretransfer cannot free-credit booked inventory (shared TransferDeltaInsufficient).
     function test_Route1Swap_pretransferred_true_reverts_whenOnlyReservedDust() public {
         IStandardExchangeProxy vault = _getVault(PoolConfig.Balanced);
         IPool pool = _getPool(PoolConfig.Balanced);
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
 
-        uint256 amountIn = 777;
+        uint256 reserved = 777;
+        uint256 amountIn = TEST_AMOUNT;
         address recipient = makeAddr("recipient");
 
-        // Simulate that the vault intentionally holds dust from fee compounding.
+        // Product excess accounting (compound) — not the pretransfer baseline.
         bool tokenInIsToken0 = address(tokenA) == pool.token0();
-        _setHeldExcessTokens(address(vault), tokenInIsToken0 ? amountIn : 0, tokenInIsToken0 ? 0 : amountIn);
+        _setHeldExcessTokens(address(vault), tokenInIsToken0 ? reserved : 0, tokenInIsToken0 ? 0 : reserved);
 
-        // Only transfer the reserved amount to the vault.
-        tokenA.mint(address(this), amountIn);
-        tokenA.transfer(address(vault), amountIn);
-
-        vm.expectRevert(bytes("BasicVaultCommon: insufficient pretransferred balance"));
+        // Seed residual dust + pull credit for an honest swap that full-set syncs (books residual).
+        tokenA.mint(address(this), reserved + amountIn);
+        tokenA.transfer(address(vault), reserved); // residual to be booked
+        tokenA.approve(address(vault), amountIn);
         vault.exchangeIn(
             IERC20(address(tokenA)),
             amountIn,
+            IERC20(address(tokenB)),
+            0,
+            recipient,
+            false, // pull path
+            _deadline()
+        );
+        // Residual dust remains and is booked into R by full-set sync.
+        assertEq(tokenA.balanceOf(address(vault)), reserved, "reserved dust retained after honest pull swap");
+
+        // Free pretransfer against booked residual → TransferDeltaInsufficient(claimed, 0).
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, reserved, uint256(0)
+            )
+        );
+        vault.exchangeIn(
+            IERC20(address(tokenA)),
+            reserved,
             IERC20(address(tokenB)),
             0,
             recipient,

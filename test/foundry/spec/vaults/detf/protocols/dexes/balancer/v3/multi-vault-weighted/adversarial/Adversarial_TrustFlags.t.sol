@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -15,7 +15,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 
 /// @dev Same-tx helper: transfers `transferAmt_` then calls exchangeIn/bond with `claimAmt_` + pretransferred=true.
-///      Models a router multicall pull window so observedDelta == transferAmt_.
+///      Under durable U = B - R, when prior residual is booked, U equals the same-tx push amount.
 contract PretransferRouterHelper {
     function mintPretransfer(
         address detf_,
@@ -66,12 +66,12 @@ contract PretransferRouterHelper {
 
 /**
  * @title Adversarial_TrustFlags_Test
- * @notice Catalog I1/I2/I3 + K1: pretransfer trust flags must not free-credit inventory (L-GAPS-9/10/12).
+ * @notice Catalog I1/I2/I3 + K1 under durable reserve-delta pretransfer (U = B - R).
  * @dev Production proxy via TestBase_MultiVaultWeightedDetf_Adversarial (no mock SUT).
- *      I1: pretransferred=true, no in-call transfer, inventory present → TransferDeltaInsufficient(claimed, 0)
- *      I2: short observed delta (partial same-tx pretransfer) → TransferDeltaInsufficient(claimed, shortDelta)
- *      I3: residual inventory after a prior path cannot fund a second free pretransfer credit
- *      K1: donation cannot fund pretransfer credit (overlaps I1 after delta fix)
+ *      I1: booked residual (R==B), pretransferred=true, no new push → TransferDeltaInsufficient(claimed, 0)
+ *      I2: book residual first; same-tx push shortDelta then claim > short → TransferDeltaInsufficient(claimed, shortDelta)
+ *      I3: residual after honest money-route end-sync is booked; free true reverts
+ *      K1: bare donation free-credits by design (L-RSRV-DUST); after honest sync, booked residual cannot free-credit
  */
 contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     PretransferRouterHelper internal preHelper;
@@ -81,24 +81,39 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         preHelper = new PretransferRouterHelper();
     }
 
+    /// @dev Donate residual then honest !pretransferred mint so full-set end-sync books residual (R==B).
+    function _bookVaultShareResidual(address instance_, uint256 residual_) internal {
+        uint256 funded_ = _fundSeSharesLeg(0, bob, residual_);
+        vm.prank(bob);
+        seShares[0].transfer(instance_, funded_);
+
+        uint256 honestIn_ = _fundSeSharesLeg(0, alice, residual_ / 2 == 0 ? residual_ : residual_ / 2);
+        vm.startPrank(alice);
+        seShares[0].approve(instance_, honestIn_);
+        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
+            seShares[0], honestIn_, IERC20(instance_), 0, alice, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertTrue(out_ > 0, "book residual: honest mint ok");
+    }
+
     /* ---------------------------------------------------------------------- */
-    /*  I1: inventory present, no in-call transfer, pretransferred=true       */
+    /*  I1: booked inventory, no in-call transfer, pretransferred=true        */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 mint: donate vaultShare inventory to diamond; attacker claims pretransferred without transfer.
+    /// @notice I1 mint: booked vaultShare residual cannot free-credit pretransfer mint.
+    /// @dev Bare donation free-credits until end-sync (L-RSRV-DUST) — book via honest mint first.
     function test_I1_pretransferred_mint_inventoryNoInCallTransfer_revertsDelta0() public {
         address instance_ = _openLiveN1();
-        uint256 claimed_ = _fundSeSharesLeg(0, attacker, 50e18);
-
-        // Seed inventory on diamond so absolute balance theater would have passed.
-        vm.prank(attacker);
-        seShares[0].transfer(instance_, claimed_);
-        assertEq(seShares[0].balanceOf(instance_), claimed_, "vaultShare inventory on diamond");
-        assertEq(seShares[0].balanceOf(attacker), 0);
-        assertEq(seShares[0].allowance(attacker, instance_), 0);
+        uint256 residual_ = 50e18;
+        _bookVaultShareResidual(instance_, residual_);
 
         uint256 balBefore_ = seShares[0].balanceOf(instance_);
+        assertGe(balBefore_, residual_, "absolute inventory present (anti-theater)");
+        uint256 claimed_ = residual_;
         uint256 attackerDetfBefore_ = IERC20(instance_).balanceOf(attacker);
+        assertEq(seShares[0].allowance(attacker, instance_), 0);
+        assertEq(seShares[0].balanceOf(attacker), 0);
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -114,44 +129,55 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "I1: no free detfToken mint");
     }
 
-    /// @notice I1 burn: donate detfToken inventory to diamond; attacker burns pretransferred without transfer.
+    /// @notice I1 burn: booked detfToken residual cannot fund pretransfer burn.
+    /// @dev Bare donate detf free-credits until end-sync — book via honest burn path first.
     function test_I1_pretransferred_burn_detfInventoryNoInCallTransfer_revertsDelta0() public {
         address instance_ = _openLiveN1();
         require(IMultiVaultWeightedDetfInfo(instance_).isBurningAllowed(), "burn open");
 
         uint256 minted_ = _mintOnLeg(instance_, 0, victim, 40e18);
-        uint256 claimed_ = minted_ / 2;
-        if (claimed_ == 0) claimed_ = minted_;
+        uint256 donateAmt_ = minted_ / 2;
+        if (donateAmt_ == 0) donateAmt_ = minted_;
+        uint256 burnHonest_ = minted_ - donateAmt_;
+        if (burnHonest_ == 0) burnHonest_ = 1;
 
-        vm.prank(victim);
-        IERC20(instance_).transfer(instance_, claimed_);
-        assertEq(IERC20(instance_).balanceOf(instance_), claimed_, "detfToken inventory on diamond");
+        vm.startPrank(victim);
+        IERC20(instance_).transfer(instance_, donateAmt_);
+        IERC20(instance_).approve(instance_, burnHonest_);
+        IStandardExchangeIn(instance_).exchangeIn(
+            IERC20(instance_), burnHonest_, seShares[0], 0, victim, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        uint256 residualDetf_ = IERC20(instance_).balanceOf(instance_);
+        assertGt(residualDetf_, 0, "booked detf residual present");
         assertEq(IERC20(instance_).balanceOf(attacker), 0);
 
-        uint256 invBefore_ = IERC20(instance_).balanceOf(instance_);
+        uint256 invBefore_ = residualDetf_;
         uint256 attackerShareBefore_ = seShares[0].balanceOf(attacker);
 
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0)
             )
         );
         IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), claimed_, seShares[0], 0, attacker, true, block.timestamp + 1 hours
+            IERC20(instance_), residualDetf_, seShares[0], 0, attacker, true, block.timestamp + 1 hours
         );
 
         assertEq(IERC20(instance_).balanceOf(instance_), invBefore_, "I1 burn must not free-burn inventory");
         assertEq(seShares[0].balanceOf(attacker), attackerShareBefore_, "I1: no free vaultShare extract");
     }
 
-    /// @notice I1 bond: vaultShare inventory + pretransferred without inbound delta reverts.
+    /// @notice I1 bond: booked vaultShare residual + pretransferred without inbound delta reverts.
     function test_I1_pretransferred_bond_inventoryNoInCallTransfer_revertsDelta0() public {
         address instance_ = _openLiveN1();
-        uint256 claimed_ = _fundSeSharesLeg(0, attacker, 40e18);
+        uint256 residual_ = 40e18;
+        _bookVaultShareResidual(instance_, residual_);
 
-        vm.prank(attacker);
-        seShares[0].transfer(instance_, claimed_);
+        uint256 claimed_ = residual_;
+        uint256 balBefore_ = seShares[0].balanceOf(instance_);
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -162,59 +188,84 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         IMultiVaultWeightedDetfBonding(instance_).bond(
             seShares[0], claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours
         );
+
+        assertEq(seShares[0].balanceOf(instance_), balBefore_, "bond I1: inventory unchanged");
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I2: short delivery — claimed > observedDelta                          */
+    /*  I2: short delivery — claimed > U (U = same-tx shortDelta when booked) */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I2 mint: transfer-before-call is outside the pull window (observedDelta=0).
-    /// @dev L-GAPS-9 measures balBefore at entry of _pullToken; prior external transfer is not delta.
-    ///      Partial pre-call transfer + pretransferred=true therefore reverts with delta 0, not shortDelta.
+    /// @notice I2 mint: book residual, then same-tx push shortDelta and claim > short → (claimed, shortDelta).
+    /// @dev Durable U includes same-tx external push. Not observed-delta-0 when shortDelta lands.
     function test_I2_pretransferred_mint_shortDelta_reverts() public {
         address instance_ = _openLiveN1();
+
+        // Book residual so U starts at 0.
+        _bookVaultShareResidual(instance_, 40e18);
+        uint256 bookedBal_ = seShares[0].balanceOf(instance_);
+
         uint256 claimed_ = _fundSeSharesLeg(0, attacker, 60e18);
         uint256 shortDelta_ = claimed_ / 2;
         require(shortDelta_ > 0 && shortDelta_ < claimed_, "need short < claimed");
 
-        // Extra inventory so absolute balance would cover claimed if trusted.
-        uint256 extra_ = _fundSeSharesLeg(0, bob, 40e18);
-        vm.prank(bob);
-        seShares[0].transfer(instance_, extra_);
-
+        // Leave only shortDelta funded for the push (return excess if fund returns full claimed).
+        // Attacker keeps shortDelta to push; claim more than short.
+        // If fund gave full claimed_, transfer only shortDelta via helper.
         vm.startPrank(attacker);
         seShares[0].approve(address(preHelper), shortDelta_);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, shortDelta_
             )
         );
         preHelper.mintPretransfer(instance_, seShares[0], shortDelta_, claimed_, attacker);
         vm.stopPrank();
 
-        // Helper reverts as one call — short transfer rolls back; only prior extra inventory remains.
+        // Helper reverts as one call — short transfer rolls back; only booked inventory remains.
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "I2: no mint on short");
-        assertEq(seShares[0].balanceOf(instance_), extra_, "I2: only pre-existing inventory remains");
+        assertEq(seShares[0].balanceOf(instance_), bookedBal_, "I2: only booked inventory remains");
     }
 
-    /// @notice I2 burn: transfer-before-call yields observedDelta=0 (not shortDelta).
+    /// @notice I2 burn: book residual, same-tx push shortDelta of detf, claim > short → (claimed, shortDelta).
     function test_I2_pretransferred_burn_shortDelta_reverts() public {
         address instance_ = _openLiveN1();
         require(IMultiVaultWeightedDetfInfo(instance_).isBurningAllowed(), "burn open");
 
         uint256 minted_ = _mintOnLeg(instance_, 0, victim, 50e18);
-        uint256 extraInv_ = minted_ / 4;
-        if (extraInv_ == 0) extraInv_ = 1;
-        uint256 claimed_ = minted_ / 2;
-        if (claimed_ == 0) claimed_ = minted_;
+        uint256 residualSeed_ = minted_ / 4;
+        if (residualSeed_ == 0) residualSeed_ = 1;
+        uint256 burnHonest_ = minted_ / 4;
+        if (burnHonest_ == 0) burnHonest_ = 1;
+        uint256 toAttacker_ = minted_ - residualSeed_ - burnHonest_;
+        if (toAttacker_ == 0) {
+            // Fall back: leave residual + short path from a second mint if split is tight.
+            toAttacker_ = minted_ / 2;
+            residualSeed_ = minted_ / 4;
+            burnHonest_ = minted_ - residualSeed_ - toAttacker_;
+            if (burnHonest_ == 0) burnHonest_ = 1;
+        }
+
+        // Book residual: donate + honest burn end-syncs free detf into R.
+        vm.startPrank(victim);
+        IERC20(instance_).transfer(instance_, residualSeed_);
+        if (burnHonest_ > 0 && IERC20(instance_).balanceOf(victim) >= burnHonest_) {
+            IERC20(instance_).approve(instance_, burnHonest_);
+            IStandardExchangeIn(instance_).exchangeIn(
+                IERC20(instance_), burnHonest_, seShares[0], 0, victim, false, block.timestamp + 1 hours
+            );
+        }
+        uint256 attackerBal_ = IERC20(instance_).balanceOf(victim);
+        if (attackerBal_ > 0) {
+            IERC20(instance_).transfer(attacker, attackerBal_);
+        }
+        vm.stopPrank();
+
+        uint256 claimed_ = IERC20(instance_).balanceOf(attacker);
+        require(claimed_ >= 2, "need attacker detf for short path");
         uint256 shortDelta_ = claimed_ / 2;
         if (shortDelta_ == 0) shortDelta_ = 1;
         require(shortDelta_ < claimed_, "need short < claimed");
-
-        vm.startPrank(victim);
-        IERC20(instance_).transfer(instance_, extraInv_); // residual inventory
-        IERC20(instance_).transfer(attacker, claimed_);
-        vm.stopPrank();
 
         uint256 invBeforeTransfer_ = IERC20(instance_).balanceOf(instance_);
 
@@ -222,7 +273,7 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         IERC20(instance_).approve(address(preHelper), shortDelta_);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, shortDelta_
             )
         );
         preHelper.burnPretransfer(instance_, seShares[0], shortDelta_, claimed_, attacker);
@@ -244,12 +295,12 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
     function test_I3_residualInventory_cannotFundSecondFreePretransfer_mint() public {
         address instance_ = _openLiveN1();
 
-        // Seed residual inventory that will remain after first mint.
+        // Seed residual inventory that will remain after first mint (booked by end-sync).
         uint256 residualSeed_ = _fundSeSharesLeg(0, bob, 30e18);
         vm.prank(bob);
         seShares[0].transfer(instance_, residualSeed_);
 
-        // Honest mint path (!pretransferred) — does not consume residual seed.
+        // Honest mint path (!pretransferred) — end-sync books residual seed.
         uint256 honestIn_ = _fundSeSharesLeg(0, alice, 40e18);
         vm.startPrank(alice);
         seShares[0].approve(instance_, honestIn_);
@@ -316,21 +367,34 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  K1: donation cannot fund pretransfer credit                           */
+    /*  K1: donation free-credit is L-RSRV-DUST until honest end-sync books it */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice K1: direct donation of vaultShare cannot be credited via pretransferred mint.
+    /// @notice K1: bare donation free-credits by design (L-RSRV-DUST); after honest mint end-sync,
+    ///         booked residual cannot free-credit via pretransferred mint.
     function test_K1_donation_cannotFundPretransferCredit_mint() public {
         address instance_ = _openLiveN1();
         uint256 donated_ = _fundSeSharesLeg(0, attacker, 80e18);
 
-        // Donation (no exchangeIn) — idle inventory.
+        // Donation (no exchangeIn) — idle unbooked inventory (L-RSRV-DUST free-credit by design).
         vm.prank(attacker);
         seShares[0].transfer(instance_, donated_);
 
+        // Honest money route end-syncs → books donation residual into R.
+        uint256 honestIn_ = _fundSeSharesLeg(0, alice, 20e18);
+        vm.startPrank(alice);
+        seShares[0].approve(instance_, honestIn_);
+        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
+            seShares[0], honestIn_, IERC20(instance_), 0, alice, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertTrue(out_ > 0, "honest mint books residual");
+
         uint256 balBefore_ = seShares[0].balanceOf(instance_);
+        assertGe(balBefore_, donated_, "donated residual still on diamond");
         uint256 attackerDetfBefore_ = IERC20(instance_).balanceOf(attacker);
 
+        // Booked residual cannot free-credit.
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -341,13 +405,11 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
             seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
         );
 
-        assertEq(seShares[0].balanceOf(instance_), balBefore_, "K1 donation unmoved");
+        assertEq(seShares[0].balanceOf(instance_), balBefore_, "K1 booked donation unmoved");
         assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "K1 no free detfToken");
     }
 
     /// @notice Positive control: honest !pretransferred mint (in-call transferFrom) succeeds.
-    /// @dev Transfer-before-call + pretransferred=true is outside the pull window under L-GAPS-9;
-    ///      the supported honest path is approve + pretransferred=false.
     function test_I_positive_honestPullMint_succeeds() public {
         address instance_ = _openLiveN1();
         uint256 amount_ = _fundSeSharesLeg(0, alice, 35e18);

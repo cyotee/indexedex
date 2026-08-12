@@ -1,10 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedStableCommonDetfBonding.sol";
+import {ComposedStableCommonDetfRepo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol";
 import {
     ComposedStableCommonDetf_IntegratedDeploy_Test
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
@@ -77,7 +78,7 @@ contract ComposedStableCommonDetf_Sequences_Test is ComposedStableCommonDetf_Int
         assertTrue(detfToken.balanceOf(actorB) > 0, "B minted");
     }
 
-    /// @notice Bond then sellNFT leaves claim balance for actor (authority path sequence).
+    /// @notice Bond then mature sell leaves claim balance for actor (authority path sequence).
     function test_invariantSequence_bondSell_claimPositive() public {
         _bootstrapReserveGraph();
         deal(address(dai), actorA, 2_000e18, true);
@@ -86,7 +87,13 @@ contract ComposedStableCommonDetf_Sequences_Test is ComposedStableCommonDetf_Int
         (uint256 tokenId_,) = IComposedStableCommonDetfBonding(deployedDetfVault).bond(
             dai, 1_000e18, 30 days, actorA, block.timestamp + 1
         );
-        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId_, actorA);
+        uint256 unlock_ = bondNFTVault.unlockTimeOf(tokenId_);
+        vm.expectRevert(
+            abi.encodeWithSelector(ComposedStableCommonDetfRepo.BondNotMature.selector, unlock_)
+        );
+        IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, actorA);
+        _warpPastUnlock(tokenId_);
+        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, actorA);
         vm.stopPrank();
         assertTrue(claim_ > 0, "claim minted");
         assertEq(detfToken.balanceOf(deployedDetfVault), 0, "P-RESID after bond");

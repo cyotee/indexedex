@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -17,7 +17,8 @@ import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/E
  *      calculate amountIn, consume only that, refund refundable surplus;
  *      unrefundable residual ≤ MAX_DUST_WEI → feeTo when non-zero, skip if feeTo==0;
  *      delivered out < amountOut → Slippage (not dust).
- *      Non-burn tokenIn: Rocket `_securePull` balance-delta only (no free-mint on reserve).
+ *      Non-burn tokenIn: durable reserve-delta `_securePull` (no free-mint on booked reserve).
+ *      Every money route end-syncs expected-hold reserves after refunds.
  */
 contract ERC4626StandardExchangeOutTarget is
     ERC4626StandardExchangeCommon,
@@ -72,8 +73,7 @@ contract ERC4626StandardExchangeOutTarget is
             amountIn = _previewUnderlyingInForSeOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
 
-            // Balance-delta pull only (Rocket peer). Prefer !pretransferred+transferFrom.
-            // pretransferred=true requires a same-tx delta ≥ amountIn (not absolute reserve).
+            // Durable U pull. Prefer !pretransferred+transferFrom; true requires claimed ≤ U.
             _securePull(tokenIn, amountIn, pretransferred);
 
             // Vault-token inventory before deposit (underlying pull does not change it).
@@ -86,6 +86,7 @@ contract ERC4626StandardExchangeOutTarget is
 
             // Idle underlying leftover after deposit only (not protocol-vault reserve)
             _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -94,7 +95,7 @@ contract ERC4626StandardExchangeOutTarget is
             amountIn = _previewVaultInForSeOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
 
-            // Snapshot reserve *before* user deposit delta (free-mint safe).
+            // Snapshot reserve *before* user deposit credit (free-mint safe).
             uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
             _securePull(tokenIn, amountIn, pretransferred);
 
@@ -102,15 +103,17 @@ contract ERC4626StandardExchangeOutTarget is
             if (sharesFromDelta < amountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
             // Pull overshoot already refunded in _securePull; never refund absolute reserve.
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
-        // SE → protocolVault exact-out — burn only amountIn
+        // SE → protocolVault exact-out — burn only amountIn (self-burn when pretransferred).
         if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
             amountIn = _previewSharesForVaultOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
-            ERC20Repo._burn(msg.sender, amountIn);
+            _burnSeShares(msg.sender, amountIn, pretransferred);
             IERC20(address(vault)).safeTransfer(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -120,9 +123,10 @@ contract ERC4626StandardExchangeOutTarget is
             if (amountIn > maxAmountIn) revert Slippage();
 
             uint256 vaultOut = _previewRedeemShares(amountIn);
-            ERC20Repo._burn(msg.sender, amountIn);
+            _burnSeShares(msg.sender, amountIn, pretransferred);
             uint256 underlyingOut = vault.redeem(vaultOut, recipient, address(this));
             if (underlyingOut < amountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 

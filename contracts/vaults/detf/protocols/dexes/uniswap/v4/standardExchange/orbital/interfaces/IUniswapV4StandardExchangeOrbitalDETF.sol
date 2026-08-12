@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -147,8 +147,9 @@ interface IUniswapV4StandardExchangeOrbitalDETDFPkg is IDiamondFactoryPackage, I
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet infoFacet; // EIP-170 size split: view/info surface
+        IFacet exchangeInFacet; // Option 1e: exchange-only Facet
+        IFacet bondingFacet; // Option 1e: bond/claim/compound Facet
+        IFacet infoFacet; // view/info surface
         IVaultFeeOracleQuery feeOracle;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPoolManager poolManager;

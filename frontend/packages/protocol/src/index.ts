@@ -29,5 +29,5 @@ export type {
   DeploymentEnvironment,
 } from './addressArtifacts'
 
-export { resolveAppChain } from './runtimeChains'
+export { resolveAppChain, robinhood, robinhoodAnvil } from './runtimeChains'
 export { hasBytecode, isZeroAddress, ZERO_ADDR } from './onchain'

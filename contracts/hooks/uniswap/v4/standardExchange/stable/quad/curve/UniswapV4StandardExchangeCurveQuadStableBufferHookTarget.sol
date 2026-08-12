@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -264,21 +264,23 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         return bal > book ? bal - book : 0;
     }
 
-    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; CP SE buffer peer).
+    /// @dev Reserve-delta pull (L-DETF-HOST-UPGRADE). Pull delta only on false;
+    ///      pretransfer credits claimed iff claimed <= U (face surplus; virtual R > B → U = face).
     function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
         internal
         returns (uint256 observedDelta)
     {
-        uint256 balBefore = tokenIn.balanceOf(address(this));
+        uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             _pull(address(tokenIn), claimed);
+            return tokenIn.balanceOf(address(this)) - B0;
         }
-        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
-        if (pretransferred) {
-            if (claimed > observedDelta) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
-            }
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
+        uint256 U = B0 >= R ? B0 - R : B0;
+        if (claimed > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
+        return claimed;
     }
 
     /// @dev Credit intentional raw book after funded intake (join/swap/pretransfer consume free).

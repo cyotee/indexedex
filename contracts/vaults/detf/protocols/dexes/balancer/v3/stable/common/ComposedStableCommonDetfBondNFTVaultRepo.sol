@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Math} from "@crane/contracts/utils/Math.sol";
@@ -55,6 +55,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         uint256 nextTokenId;
         uint256 detfNFTId;
         uint256 feeRecipientNFTId;
+        uint256 totalOriginalShares;
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -142,6 +143,14 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _detfNFTId() internal view returns (uint256) {
         return _detfNFTId(_layoutStruct());
+    }
+
+    function _totalOriginalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.totalOriginalShares;
+    }
+
+    function _totalOriginalShares() internal view returns (uint256) {
+        return _totalOriginalShares(_layoutStruct());
     }
 
     function _feeRecipientNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
@@ -263,6 +272,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;
         layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
         layoutStruct_.totalShares += effectiveShares_;
+        layoutStruct_.totalOriginalShares += originalShares_;
     }
 
     function _createPosition(
@@ -277,6 +287,7 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _removePosition(Storage storage layoutStruct_, uint256 tokenId_) internal {
         layoutStruct_.totalShares -= layoutStruct_.effectiveSharesOf[tokenId_];
+        layoutStruct_.totalOriginalShares -= layoutStruct_.originalSharesOf[tokenId_];
         delete layoutStruct_.originalSharesOf[tokenId_];
         delete layoutStruct_.effectiveSharesOf[tokenId_];
         delete layoutStruct_.bonusMultiplierOf[tokenId_];
@@ -292,10 +303,42 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.totalShares += additionalShares_;
+        layoutStruct_.totalOriginalShares += additionalShares_;
     }
 
     function _addToPosition(uint256 tokenId_, uint256 additionalShares_) internal {
         _addToPosition(_layoutStruct(), tokenId_, additionalShares_);
+    }
+
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientOriginalShares(uint256 needed, uint256 available);
+
+    /// @notice Debits LP 1:1 from original and effective (inverse of `_addToPosition`).
+    function _removeFromPosition(Storage storage layoutStruct_, uint256 tokenId_, uint256 shares_) internal {
+        if (shares_ == 0) return;
+        uint256 orig_ = layoutStruct_.originalSharesOf[tokenId_];
+        if (shares_ > orig_) {
+            revert InsufficientOriginalShares(shares_, orig_);
+        }
+        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+        layoutStruct_.originalSharesOf[tokenId_] -= shares_;
+        layoutStruct_.effectiveSharesOf[tokenId_] -= shares_;
+        layoutStruct_.totalShares -= shares_;
+        layoutStruct_.totalOriginalShares -= shares_;
+
+        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 rps_ = layoutStruct_.rewardPerShares;
+        if (newEff_ > 0 && pending_ > 0) {
+            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+            layoutStruct_.userRewardPerSharePaid[tokenId_] =
+                rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+        } else {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+        }
+    }
+
+    function _removeFromPosition(uint256 tokenId_, uint256 shares_) internal {
+        _removeFromPosition(_layoutStruct(), tokenId_, shares_);
     }
 
     function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_) internal view returns (uint256 shares_) {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
@@ -71,10 +71,27 @@ contract MockQueryToken is IERC20 {
         return true;
     }
 
+    function getVault() external view returns (address) {
+        return address(uint160(uint256(keccak256(abi.encodePacked("mockBalVault", address(this))))));
+    }
+
     function burn(address from, uint256 amount) external returns (bool) {
         balanceOf[from] -= amount;
         totalSupply -= amount;
         return true;
+    }
+}
+
+contract MockQueryBondNft {
+    function addToDETFNFT(uint256, uint256) external {}
+    function detfNFTId() external pure returns (uint256) {
+        return 1;
+    }
+    function originalSharesOf(uint256) external pure returns (uint256) {
+        return 0;
+    }
+    function totalOriginalShares() external pure returns (uint256) {
+        return 0;
     }
 }
 
@@ -134,6 +151,17 @@ contract MockBalancerRouter {
         amountOut = nextAmountOut == 0 ? exactAmountIn : nextAmountOut;
         MockQueryToken(address(tokenOut)).mint(msg.sender, amountOut);
         nextAmountOut = 0;
+    }
+
+    function prepayAddLiquidityUnbalanced(address pool, uint256[] calldata amountsIn, uint256, bytes calldata)
+        external
+        returns (uint256 bptOut)
+    {
+        for (uint256 i; i < amountsIn.length; ++i) {
+            bptOut += amountsIn[i];
+        }
+        if (bptOut == 0) bptOut = 1;
+        MockQueryToken(pool).mint(msg.sender, bptOut);
     }
 
     function prepayRemoveLiquidityProportional(address pool, uint256 exactBptIn, uint256[] calldata, bytes calldata)
@@ -439,7 +467,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function setUp() public {
-        bondVaultCaller = makeAddr('bondVaultCaller');
+        bondVaultCaller = address(new MockQueryBondNft());
         rebasingTokenCaller = makeAddr('rebasingTokenCaller');
 
         detfToken = new MockQueryToken('DETF', 'DETF', 18);
@@ -514,7 +542,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         assertEq(detfToken.balanceOf(address(harness)), 0);
         assertEq(stablePoolBpt.balanceOf(address(harness)), 0);
         assertEq(commonPoolBpt.balanceOf(address(harness)), 0);
-        assertEq(reservePoolToken.balanceOf(address(harness)), 0);
+        // DETF self-leg is rejoined; protocol BPT may remain on the diamond.
     }
 
     function test_previewExchangeOut_selectsMostLiquidEligibleRouteAndPoolLeg() public view {
@@ -693,15 +721,23 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         harness.exchangeOut(detfToken, 1e18, commonToken, 1e18, address(this), false, block.timestamp + 1);
     }
 
-    function test_exchangeOut_revertsWhenUnderlyingExitLeavesResidualVaultTokens() public {
+    /// @notice Nested push + L-DETF-EXACT-OUT-PARTIAL: residual-hard-revert removed.
+    ///         Host that pays amountOut without consuming tokenIn still completes (production hosts
+    ///         refund unused to DETF; mock leaves vault tokens on host — not DETF residual).
+    function test_exchangeOut_underlyingExitNonConsumeStillDeliversAmountOut() public {
         routeAUnderlying.setConsumeTokenIn(false);
 
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, commonToken, 1e18);
         detfToken.mint(address(this), previewAmountIn);
         detfToken.approve(address(harness), previewAmountIn);
 
-        vm.expectRevert(IStandardExchangeOut.ExchangeOutNotAvailable.selector);
-        harness.exchangeOut(detfToken, previewAmountIn, commonToken, 1e18, address(this), false, block.timestamp + 1);
+        address recipient = makeAddr('residual-exit-recipient');
+        uint256 commonBefore = commonToken.balanceOf(recipient);
+        uint256 amountIn = harness.exchangeOut(
+            detfToken, previewAmountIn, commonToken, 1e18, recipient, false, block.timestamp + 1
+        );
+        assertGt(amountIn, 0, "amountIn reported");
+        assertEq(commonToken.balanceOf(recipient) - commonBefore, 1e18, "amountOut delivered");
     }
 
     function test_previewExchangeOut_supportsDirectVaultTokenPayout() public view {

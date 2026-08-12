@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -18,6 +18,16 @@ library MixedBufferMultiVaultStableDetf_Component_FactoryService {
     function deployExchangeInFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {
         facet_ = MixedBufferMultiVaultStableDetf_Facet_FactoryService
             .deployMixedBufferMultiVaultStableDetfExchangeInFacet(factory_);
+    }
+
+    function deployBondingFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {
+        facet_ = MixedBufferMultiVaultStableDetf_Facet_FactoryService
+            .deployMixedBufferMultiVaultStableDetfBondingFacet(factory_);
+    }
+
+    function deployInfoFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {
+        facet_ = MixedBufferMultiVaultStableDetf_Facet_FactoryService
+            .deployMixedBufferMultiVaultStableDetfInfoFacet(factory_);
     }
 
     function deployPkg(

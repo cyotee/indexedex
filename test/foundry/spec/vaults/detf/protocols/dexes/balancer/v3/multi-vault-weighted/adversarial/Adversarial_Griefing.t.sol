@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -26,8 +26,9 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
         uint256 claimBefore_ = claim_.balanceOf(alice);
@@ -66,8 +67,9 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         IRebasingClaimToken claim_ =
             IRebasingClaimToken(IMultiVaultWeightedDetfInfo(instance_).rebasingClaimToken());
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         uint256 claimBal_ = claim_.balanceOf(alice);
         // Redeem majority but not 100% of pool BPT path - use 30% of claim to stay above min balances
         uint256 part_ = (claimBal_ * 30) / 100;

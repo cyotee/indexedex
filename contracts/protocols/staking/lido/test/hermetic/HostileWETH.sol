@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {HermeticWETH} from "contracts/protocols/staking/lido/test/hermetic/HermeticLidoPorts.sol";

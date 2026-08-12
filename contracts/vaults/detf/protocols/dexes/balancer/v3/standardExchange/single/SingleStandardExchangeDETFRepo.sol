@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -6,6 +6,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @title SingleStandardExchangeDETFRepo
@@ -14,12 +15,17 @@ library SingleStandardExchangeDETFRepo {
     error AlreadyInitialized();
     error ReservePoolNotInitialized();
     error UnsupportedRoute(IERC20 tokenIn, IERC20 tokenOut);
+    error InvalidRoute(address tokenIn, address tokenOut);
     error ZeroAmount();
     error DeadlineExpired(uint256 deadline);
     error MintingNotAllowed(uint256 syntheticPrice, uint256 mintThreshold);
     error BurningNotAllowed(uint256 syntheticPrice, uint256 burnThreshold);
     error LockDurationTooShort(uint256 lockDuration, uint256 minLockDuration);
     error ResidualInventory(IERC20 token, uint256 amount);
+    error ClaimTokenNotConfigured();
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientReserveBpt(uint256 needed, uint256 available);
+    error NotAuthorized(address caller);
 
     bytes32 internal constant STORAGE_SLOT =
         keccak256("vault.detf.standardExchange.single.single-standard-exchange-detf.repo");
@@ -43,6 +49,7 @@ library SingleStandardExchangeDETFRepo {
         IDETFNFTVault bondNftVault;
         uint256 detfNftId;
         uint256 feeRecipientNftId;
+        IRebasingClaimToken rebasingClaimToken;
         // Phase 2 natural expansion (resolved deploy-time; no post-deploy setter).
         uint256 expansionClosureRatePerSecond;
         uint256 expansionCatchUpMaxSeconds;
@@ -118,5 +125,9 @@ library SingleStandardExchangeDETFRepo {
         if (s.lastExpansionTimestamp == 0) {
             s.lastExpansionTimestamp = block.timestamp;
         }
+    }
+
+    function _setRebasingClaimToken(IRebasingClaimToken token_) internal {
+        _layoutStruct().rebasingClaimToken = token_;
     }
 }

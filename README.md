@@ -288,7 +288,7 @@ test/foundry/
 **EVERY facet MUST have a dedicated IFacet test** that validates interface compliance:
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import { console } from "forge-std/console.sol";

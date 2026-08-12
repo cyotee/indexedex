@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -108,9 +108,19 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
     uint256 internal constant BOOTSTRAP_SHARE_FUND = 1_000e18;
     uint256 internal constant MBMVS_AMP = 200;
 
+    function _warpPastUnlock(address instance_, uint256 tokenId_) internal {
+        address nft_ = IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault();
+        uint256 unlock_ = IDETFNFTVault(nft_).unlockTimeOf(tokenId_);
+        if (block.timestamp <= unlock_) {
+            vm.warp(unlock_ + 1);
+        }
+    }
+
     IFacet internal multiAssetBasicVaultFacetDetf;
     IFacet internal multiAssetStandardVaultFacetDetf;
     IFacet internal mixedBufferDetfExchangeInFacet;
+    IFacet internal mixedBufferDetfBondingFacet;
+    IFacet internal mixedBufferDetfInfoFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal erc721Facet;
     IFacet internal singleSeDetfExchangeInFacet;
@@ -154,6 +164,10 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         multiAssetStandardVaultFacetDetf = create3Factory.deployMultiAssetStandardVaultFacet();
         mixedBufferDetfExchangeInFacet =
             MixedBufferMultiVaultStableDetf_Component_FactoryService.deployExchangeInFacet(create3Factory);
+        mixedBufferDetfBondingFacet =
+            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployBondingFacet(create3Factory);
+        mixedBufferDetfInfoFacet =
+            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployInfoFacet(create3Factory);
         singleSeDetfExchangeInFacet =
             SingleStandardExchangeDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
 
@@ -294,6 +308,8 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
             exchangeInFacet: mixedBufferDetfExchangeInFacet,
+            bondingFacet: mixedBufferDetfBondingFacet,
+            infoFacet: mixedBufferDetfInfoFacet,
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
@@ -327,6 +343,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
             weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
             rateProviderPkg: rateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
+            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
             diamondFactory: diamondPackageFactory
         });
         vm.startPrank(owner);
@@ -709,8 +726,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
 
         // First bootstrap bond → live; sell to protocol so detf NFT earns reward share.
         (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
 
         // Second buffer bond: user keeps NFT (for claim-while-locked). Keep modest vs pool.
@@ -792,8 +810,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
 
         // Bootstrap → live; sell first bond into protocol NFT so it has principal shares.
         (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
 
         // Second buffer bond: user keeps NFT (for claim-while-locked + reward share).

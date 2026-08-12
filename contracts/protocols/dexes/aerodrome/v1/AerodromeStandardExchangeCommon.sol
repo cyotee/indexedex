@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -30,6 +30,7 @@ import {IFeeCompounding} from "contracts/interfaces/IFeeCompounding.sol";
 
 // abstract
 contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
+    uint256 constant AERO_FEE_DENOM = 10000;
     using BetterSafeERC20 for IERC20;
 
     /// @notice Default dust threshold in wei - amounts below this are held for next compound
@@ -43,26 +44,9 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         excessToken1 = AerodromeStandardExchangeRepo._excessToken1();
     }
 
-    /**
-     * @dev Delta-based secure pull (L-GAPS-9/10). Aerodrome may hold token0/token1 dust from
-     *      fee compounding (`_excessToken*`), but pretransfer credit MUST NOT use absolute
-     *      `available = balance - reserved`. With pure delta, reserved/inventory dust is not
-     *      part of `observedDelta`, so free credit of inventory is already blocked.
-     *      Excess tracking remains for compound product logic only.
-     *      Pretransfer shortfalls revert `ISecurePullErrors.TransferDeltaInsufficient`.
-     */
-    function _secureTokenTransfer(IERC20 tokenIn, uint256 amountTokenToDeposit, bool pretransferred)
-        internal
-        virtual
-        override
-        returns (uint256 actualIn)
-    {
-        // Same delta pattern as BasicVaultCommon: measure balBefore; pull only when
-        // !pretransferred; if pretransferred and claimed > delta → TransferDeltaInsufficient;
-        // else return claimed (pretransfer) or observedDelta (!pretransfer).
-        // Reserved dust is intentionally ignored for credit — only in-window delta counts.
-        return super._secureTokenTransfer(tokenIn, amountTokenToDeposit, pretransferred);
-    }
+    // Secure pull / pretransfer: inherit BasicVaultCommon reserve-delta law
+    // (U = balanceOf - reserveOfToken). `_excessToken*` is compound product accounting only —
+    // never use excess dust as pretransfer free credit. Full-set end-of-route sync books residuals.
 
     struct AerodromeV1IndexSourceReserves {
         IPool pool;

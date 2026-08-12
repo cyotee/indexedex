@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -73,6 +73,8 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
         IFacet exchangeInFacet;
+        IFacet bondingFacet;
+        IFacet infoFacet;
         IVaultFeeOracleQuery feeOracle;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IBalancerV3StandardExchangeRouterProxy balancerV3Router;
@@ -143,6 +145,8 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable EXCHANGE_IN_FACET;
+    IFacet immutable BONDING_FACET;
+    IFacet immutable INFO_FACET;
     IVaultFeeOracleQuery immutable FEE_ORACLE;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IBalancerV3StandardExchangeRouterProxy immutable BALANCER_V3_ROUTER;
@@ -159,6 +163,8 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         EXCHANGE_IN_FACET = pkgInit.exchangeInFacet;
+        BONDING_FACET = pkgInit.bondingFacet;
+        INFO_FACET = pkgInit.infoFacet;
         FEE_ORACLE = pkgInit.feeOracle;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         BALANCER_V3_ROUTER = pkgInit.balancerV3Router;
@@ -203,13 +209,15 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](6);
+        facetAddresses_ = new address[](8);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[5] = address(EXCHANGE_IN_FACET);
+        facetAddresses_[6] = address(BONDING_FACET);
+        facetAddresses_[7] = address(INFO_FACET);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
@@ -236,7 +244,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](6);
+        facetCuts_ = new IDiamond.FacetCut[](8);
         facetCuts_[0] = IDiamond.FacetCut(address(ERC20_FACET), IDiamond.FacetCutAction.Add, ERC20_FACET.facetFuncs());
         facetCuts_[1] =
             IDiamond.FacetCut(address(ERC5267_FACET), IDiamond.FacetCutAction.Add, ERC5267_FACET.facetFuncs());
@@ -252,6 +260,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         );
         facetCuts_[5] =
             IDiamond.FacetCut(address(EXCHANGE_IN_FACET), IDiamond.FacetCutAction.Add, EXCHANGE_IN_FACET.facetFuncs());
+        facetCuts_[6] =
+            IDiamond.FacetCut(address(BONDING_FACET), IDiamond.FacetCutAction.Add, BONDING_FACET.facetFuncs());
+        facetCuts_[7] = IDiamond.FacetCut(address(INFO_FACET), IDiamond.FacetCutAction.Add, INFO_FACET.facetFuncs());
     }
 
     function diamondConfig() public view returns (DiamondConfig memory config_) {

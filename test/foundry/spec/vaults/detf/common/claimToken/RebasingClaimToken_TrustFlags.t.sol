@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -165,7 +165,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         // Inventory on diamond via mint-to-proxy (absolute coverage theater would pass).
         vm.prank(owner);
-        token.mintFromNFTSale(10, address(token));
+        token.mintFromNFTSale(10, 0, address(token));
         assertEq(token.balanceOf(address(token)), 10 ether);
         assertEq(token.balanceOf(attacker), 0);
 
@@ -187,7 +187,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /// @notice I1 exchangeIn: same free-credit gate on SE surface.
     function test_I1_pretransferred_exchangeIn_inventoryNoInCallTransfer_revertsDelta0() public {
         vm.prank(owner);
-        token.mintFromNFTSale(10, address(token));
+        token.mintFromNFTSale(10, 0, address(token));
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -203,7 +203,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /// @notice I1 variant: claimed strictly less than inventory still fails (absolute coverage forbidden).
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
         vm.prank(owner);
-        token.mintFromNFTSale(10, address(token));
+        token.mintFromNFTSale(10, 0, address(token));
         uint256 claimed = INVENTORY; // claimed < inventory (10e18)
 
         vm.prank(attacker);
@@ -218,7 +218,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /// @notice I1: transfer-before-call is outside the pull window under L-GAPS-9.
     function test_I1_pretransferred_transferBeforeCall_revertsDelta0() public {
         vm.prank(owner);
-        token.mintFromNFTSale(10, alice);
+        token.mintFromNFTSale(10, 0, alice);
 
         vm.prank(alice);
         token.transfer(address(token), CLAIMED);
@@ -240,7 +240,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /// @notice I2: claimed > 0 with observedDelta 0 (pretransferred, no inbound).
     function test_I2_pretransferred_claimedGtDelta0_reverts() public {
         vm.prank(owner);
-        token.mintFromNFTSale(10, address(token));
+        token.mintFromNFTSale(10, 0, address(token));
 
         vm.prank(alice);
         vm.expectRevert(
@@ -262,10 +262,10 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
         _mockPosition(20);
         // Seed residual inventory on diamond.
         vm.prank(owner);
-        token.mintFromNFTSale(10, address(token));
+        token.mintFromNFTSale(10, 0, address(token));
         // Alice holds redeemable shares pulled in-call.
         vm.prank(owner);
-        token.mintFromNFTSale(10, alice);
+        token.mintFromNFTSale(10, 0, alice);
 
         uint256 claimed_ = token.balanceOf(alice) / 2;
         assertGt(claimed_, 0);
@@ -280,7 +280,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
         if (residual_ < claimed_) {
             _mockPosition(30);
             vm.prank(owner);
-            token.mintFromNFTSale(10, address(token));
+            token.mintFromNFTSale(10, 0, address(token));
             residual_ = token.balanceOf(address(token));
         }
         assertGe(residual_, claimed_, "residual covers claimed");
@@ -304,7 +304,7 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /// @notice Honest !pretransferred redeem succeeds and pays via claimLiquidity.
     function test_I_positive_honestPullRedeem_succeeds() public {
         vm.prank(owner);
-        token.mintFromNFTSale(10, alice);
+        token.mintFromNFTSale(10, 0, alice);
 
         vm.prank(alice);
         uint256 out_ = token.redeem(CLAIMED, bob, false);
@@ -331,6 +331,12 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
             nftVault,
             abi.encodeWithSelector(IDETFNFTVault.getPosition.selector, PROTOCOL_NFT_ID),
             abi.encode(position)
+        );
+        // 2-arg mint live-reads originalShares as totalAssets. Empty vault (0) keeps 1:1 first mint.
+        vm.mockCall(
+            nftVault,
+            abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, PROTOCOL_NFT_ID),
+            abi.encode(originalShares_)
         );
     }
 }

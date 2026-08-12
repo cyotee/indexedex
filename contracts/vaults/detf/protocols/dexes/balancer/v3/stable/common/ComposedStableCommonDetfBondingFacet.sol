@@ -1,17 +1,24 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
+import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
+import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {DETFUsageFeeLib} from 'contracts/vaults/detf/common/core/DETFUsageFeeLib.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol';
 import {ComposedStableCommonDetfCommon} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol';
 
-contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon, IComposedStableCommonDetfBonding, IFacet {
+contract ComposedStableCommonDetfBondingFacet is
+    ComposedStableCommonDetfCommon,
+    ReentrancyLockModifiers,
+    IComposedStableCommonDetfBonding,
+    IFacet
+{
     function _usageFeePercentage(ComposedStableCommonDetfRepo.Storage storage layoutStruct_) internal view returns (uint256 fee_) {
         if (address(ComposedStableCommonDetfRepo._feeOracle(layoutStruct_)) == address(0)) {
             return 0;
@@ -119,6 +126,12 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         _requireReservePoolInitialized();
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        if (
+            address(tokenIn) == address(this)
+                || address(tokenIn) == address(ComposedStableCommonDetfRepo._detfToken(layoutStruct))
+        ) {
+            revert BondTokenNotSupported(tokenIn);
+        }
         if (!this.isAcceptedBondToken(tokenIn)) {
             revert BondTokenNotSupported(tokenIn);
         }
@@ -132,9 +145,15 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         );
         // Lazy protocol seigniorage compound (best-effort; never fails user bond).
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
-    function sellNFT(uint256 tokenId, address recipient) external returns (uint256 rebasingClaimMinted_) {
+    function sellPositionToDetfNft(uint256 tokenId, uint256 minClaimOut, address recipient)
+        external
+        nonReentrant
+        returns (uint256 claimMinted_)
+    {
+        _requireMature(tokenId);
         _requireReservePoolInitialized();
 
         if (recipient == address(0)) {
@@ -142,21 +161,181 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         }
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        IRebasingClaimToken richir = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
-        if (address(richir) == address(0)) {
+        IRebasingClaimToken claimToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
+        if (address(claimToken_) == address(0)) {
             revert InvalidToken(IERC20(address(0)));
         }
 
-        (uint256 principalShares,) = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct).sellPositionToDetfNft(
-            tokenId, msg.sender, recipient
-        );
-        if (principalShares == 0) {
+        _updateExpansionMintOnRewards();
+
+        IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct);
+        uint256 protocolBefore_ = _protocolOriginalShares();
+        uint256 assets_ = bondVault_.originalSharesOf(tokenId);
+        (uint256 principalShares,) = bondVault_.sellPositionToDetfNft(tokenId, msg.sender, recipient);
+        if (principalShares == 0 && assets_ == 0) {
             revert ZeroAmount();
         }
+        if (assets_ == 0) {
+            assets_ = principalShares;
+        }
 
-        rebasingClaimMinted_ = richir.mintFromNFTSale(principalShares, recipient);
-        // Lazy compound after protocol principal absorbs sold bond (best-effort).
+        claimMinted_ = claimToken_.mintFromNFTSale(assets_, protocolBefore_, recipient);
+        if (claimMinted_ < minClaimOut) {
+            revert InvalidRoute(address(claimToken_), address(0));
+        }
+
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function protocolBondOriginalShares() external view returns (uint256) {
+        return _protocolOriginalShares();
+    }
+
+    function buyClaim(
+        uint256 detfAmount,
+        uint256 minClaimOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 claimMinted_) {
+        _requireReservePoolInitialized();
+        _requireActive(deadline, detfAmount);
+
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        IRebasingClaimToken claimToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
+        if (address(claimToken_) == address(0)) {
+            revert InvalidToken(IERC20(address(0)));
+        }
+        if (recipient == address(0)) {
+            recipient = msg.sender;
+        }
+
+        _secureTokenTransfer(ComposedStableCommonDetfRepo._detfToken(layoutStruct), detfAmount, pretransferred);
+        uint256 bptIn_ = _singleSidedJoinDetf(detfAmount);
+        if (bptIn_ == 0) revert ZeroAmount();
+
+        // Mint against live protocol originalShares before the ledger credit (buyClaim order).
+        claimMinted_ = claimToken_.mintFromNFTSale(bptIn_, recipient);
+        layoutStruct.bondNftVault.addToDETFNFT(layoutStruct.bondNftVault.detfNFTId(), bptIn_);
+        if (claimMinted_ < minClaimOut) {
+            revert InvalidRoute(address(claimToken_), address(0));
+        }
+
+        _updateExpansionMintOnRewards();
+        _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function previewBuyClaim(uint256 detfAmount) external view returns (uint256 claimMinted_) {
+        if (detfAmount == 0) return 0;
+        if (address(ComposedStableCommonDetfRepo._rebasingDetfToken()) == address(0)) return 0;
+        uint256 bptIn_ = _previewJoinDetfOnly(detfAmount);
+        claimMinted_ = _previewClaimMinted(bptIn_, _protocolOriginalShares());
+    }
+
+    function closeBondMature(
+        uint256 tokenId,
+        IERC20 tokenOut,
+        uint256 minOut,
+        address recipient,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut_) {
+        _requireMature(tokenId);
+        _requireActive(deadline, 1);
+        if (recipient == address(0)) {
+            recipient = msg.sender;
+        }
+
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        if (!_isFamilyBurnToken(tokenOut)) {
+            revert InvalidRoute(address(0), address(tokenOut));
+        }
+
+        _updateExpansionMintOnRewards();
+
+        IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct);
+        uint256 assets_ = bondVault_.originalSharesOf(tokenId);
+        if (assets_ == 0) revert ZeroAmount();
+
+        uint256 protocol_ = _protocolOriginalShares();
+        uint256 bal_ = IERC20(address(layoutStruct.reservePool)).balanceOf(address(this));
+        if (bal_ < protocol_ + assets_) {
+            revert ComposedStableCommonDetfRepo.InsufficientReserveBpt(protocol_ + assets_, bal_);
+        }
+
+        bondVault_.sellPositionToDetfNft(tokenId, msg.sender, recipient);
+        bondVault_.removeFromDETFNFT(bondVault_.detfNFTId(), assets_);
+
+        amountOut_ = _exitRedepositSettle(assets_, tokenOut, minOut, recipient, deadline);
+
+        _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function previewCloseBondMature(uint256 tokenId, IERC20 tokenOut) external view returns (uint256 amountOut_) {
+        IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault();
+        uint256 assets_ = bondVault_.originalSharesOf(tokenId);
+        if (assets_ == 0) return 0;
+        amountOut_ = _previewExitSettle(assets_, tokenOut);
+    }
+
+    function redeemClaim(
+        uint256 claimAmount,
+        IERC20 tokenOut,
+        uint256 minOut,
+        address recipient,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut_) {
+        _requireReservePoolInitialized();
+        _requireActive(deadline, claimAmount);
+        if (recipient == address(0)) {
+            recipient = msg.sender;
+        }
+        if (!_isFamilyBurnToken(tokenOut)) {
+            revert InvalidRoute(address(0), address(tokenOut));
+        }
+
+        uint256 bptOut_ = _burnClaimConvertToAssets(claimAmount);
+        amountOut_ = _exitRedepositSettle(bptOut_, tokenOut, minOut, recipient, deadline);
+        _syncAllExpectedHoldReserves();
+    }
+
+    function previewRedeemClaim(uint256 claimAmount, IERC20 tokenOut) external view returns (uint256 amountOut_) {
+        if (claimAmount == 0) return 0;
+        uint256 bptOut_ = _previewClaimBptOut(claimAmount);
+        amountOut_ = _previewExitSettle(bptOut_, tokenOut);
+    }
+
+    function _burnClaimConvertToAssets(uint256 claimAmount_) private returns (uint256 bptOut_) {
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        IRebasingClaimToken claimToken_ = ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct);
+        if (address(claimToken_) == address(0)) {
+            revert InvalidToken(IERC20(address(0)));
+        }
+
+        address burnOwner_ = msg.sender;
+        bool pretransferred_ = false;
+        if (msg.sender == address(claimToken_)) {
+            burnOwner_ = address(claimToken_);
+            pretransferred_ = true;
+        }
+
+        uint256 totalSharesBefore_ = claimToken_.totalShares();
+        uint256 sharesBurned_ = claimToken_.burnShares(claimAmount_, burnOwner_, pretransferred_);
+        if (sharesBurned_ == 0) revert ZeroAmount();
+        uint256 totalAssets_ = _protocolOriginalShares();
+        uint256 totalShares_ = totalSharesBefore_ == 0 ? sharesBurned_ : totalSharesBefore_;
+        bptOut_ = (sharesBurned_ * totalAssets_) / totalShares_;
+        if (bptOut_ == 0) revert ZeroAmount();
+
+        uint256 userPile_ = _userPileReserved();
+        uint256 bal_ = IERC20(address(layoutStruct.reservePool)).balanceOf(address(this));
+        uint256 physicalAvail_ = bal_ > userPile_ ? bal_ - userPile_ : 0;
+        if (physicalAvail_ < bptOut_) {
+            revert ComposedStableCommonDetfRepo.InsufficientReserveBpt(bptOut_, physicalAvail_);
+        }
+        layoutStruct.bondNftVault.removeFromDETFNFT(layoutStruct.bondNftVault.detfNFTId(), bptOut_);
     }
 
     function facetName() external pure returns (string memory name_) {
@@ -169,11 +348,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](4);
-        funcs_[0] = IComposedStableCommonDetfBonding.acceptedBondTokens.selector;
-        funcs_[1] = IComposedStableCommonDetfBonding.isAcceptedBondToken.selector;
-        funcs_[2] = IComposedStableCommonDetfBonding.bond.selector;
-        funcs_[3] = IComposedStableCommonDetfBonding.sellNFT.selector;
+        funcs_ = _facetFuncs();
     }
 
     function facetMetadata()
@@ -186,10 +361,21 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         interfaces_ = new bytes4[](1);
         interfaces_[0] = type(IComposedStableCommonDetfBonding).interfaceId;
 
-        functions_ = new bytes4[](4);
-        functions_[0] = IComposedStableCommonDetfBonding.acceptedBondTokens.selector;
-        functions_[1] = IComposedStableCommonDetfBonding.isAcceptedBondToken.selector;
-        functions_[2] = IComposedStableCommonDetfBonding.bond.selector;
-        functions_[3] = IComposedStableCommonDetfBonding.sellNFT.selector;
+        functions_ = _facetFuncs();
+    }
+
+    function _facetFuncs() private pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](11);
+        funcs_[0] = IComposedStableCommonDetfBonding.acceptedBondTokens.selector;
+        funcs_[1] = IComposedStableCommonDetfBonding.isAcceptedBondToken.selector;
+        funcs_[2] = IComposedStableCommonDetfBonding.bond.selector;
+        funcs_[3] = IComposedStableCommonDetfBonding.sellPositionToDetfNft.selector;
+        funcs_[4] = IComposedStableCommonDetfBonding.buyClaim.selector;
+        funcs_[5] = IComposedStableCommonDetfBonding.previewBuyClaim.selector;
+        funcs_[6] = IComposedStableCommonDetfBonding.closeBondMature.selector;
+        funcs_[7] = IComposedStableCommonDetfBonding.previewCloseBondMature.selector;
+        funcs_[8] = IComposedStableCommonDetfBonding.redeemClaim.selector;
+        funcs_[9] = IComposedStableCommonDetfBonding.previewRedeemClaim.selector;
+        funcs_[10] = IComposedStableCommonDetfBonding.protocolBondOriginalShares.selector;
     }
 }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
@@ -62,6 +62,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
             if (amountOut_ < minAmountOut_) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
             }
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
 

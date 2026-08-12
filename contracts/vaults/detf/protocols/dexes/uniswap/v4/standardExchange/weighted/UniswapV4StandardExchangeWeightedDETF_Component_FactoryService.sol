@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -18,7 +18,15 @@ import {
 /// @notice Typed deploy helpers for CREATE3 facets + manager-registry DFPkg.
 library UniswapV4StandardExchangeWeightedDETF_Component_FactoryService {
     function deployExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        return FacetFS.deployUniswapV4StandardExchangeWeightedDETFExchangeFacet(create3Factory);
+    }
+
+    function deployBondingFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         return FacetFS.deployUniswapV4StandardExchangeWeightedDETFFacet(create3Factory);
+    }
+
+    function deployCompoundFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        return FacetFS.deployUniswapV4StandardExchangeWeightedDETFCompoundFacet(create3Factory);
     }
 
     function deployInfoFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {

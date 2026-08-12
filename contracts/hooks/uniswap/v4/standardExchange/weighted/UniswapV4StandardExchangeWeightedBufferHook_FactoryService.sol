@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -21,8 +21,11 @@ import {
     UniswapV4StandardExchangeWeightedBufferHookHooksFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol";
 import {
-    UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol";
+    UniswapV4StandardExchangeWeightedBufferHookJoinFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFacet.sol";
+import {
+    UniswapV4StandardExchangeWeightedBufferHookExitFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookSeFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol";
@@ -51,12 +54,25 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
         vm.label(address(facet), type(UniswapV4StandardExchangeWeightedBufferHookHooksFacet).name);
     }
 
-    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+    function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet).name)._hash()
+            type(UniswapV4StandardExchangeWeightedBufferHookJoinFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeWeightedBufferHookJoinFacet).name)._hash()
         );
-        vm.label(address(facet), type(UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet).name);
+        vm.label(address(facet), type(UniswapV4StandardExchangeWeightedBufferHookJoinFacet).name);
+    }
+
+    function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        facet = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeWeightedBufferHookExitFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeWeightedBufferHookExitFacet).name)._hash()
+        );
+        vm.label(address(facet), type(UniswapV4StandardExchangeWeightedBufferHookExitFacet).name);
+    }
+
+    /// @dev Backward-compat alias: deploy Join facet (prefer deployJoinFacet + deployExitFacet).
+    function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        return deployJoinFacet(create3Factory);
     }
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {

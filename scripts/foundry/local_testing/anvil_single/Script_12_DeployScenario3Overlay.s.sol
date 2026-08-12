@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
@@ -59,6 +59,7 @@ import {
     ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
@@ -73,6 +74,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for IVaultRegistryDeployment;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for ICreate3FactoryProxy;
 
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant INDEXEDEX_CORE_FILE = "02_indexedex_core.json";
@@ -114,10 +116,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private uniswapV4StandardExchangeInQueryFacet;
     IFacet private uniswapV4StandardExchangePositionImportFacet;
     IFacet private uniswapV4StandardExchangeOutFacet;
+    IFacet private uniswapV4StandardExchangeOutQueryFacet;
     IFacet private uniswapV4StandardExchangeLiquidReserveFacet;
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
+    IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
     IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
     ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
@@ -272,6 +276,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
         uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
+        uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutQueryFacet();
         uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
 
         erc721Facet = IFacet(
@@ -361,11 +366,20 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 uniswapV4StandardExchangeInQueryFacet,
                 uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
+                uniswapV4StandardExchangeOutQueryFacet,
                 uniswapV4StandardExchangeLiquidReserveFacet,
                 feeOracle,
                 vaultRegistry,
                 permit2,
                 poolManager
+            )
+        );
+
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        rebasingClaimTokenPkg = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
             )
         );
 
@@ -385,6 +399,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 weightedPoolFactory: weightedPoolFactory,
                 rateProviderPkg: rateProviderPkg,
                 bondNftVaultPkg: detfNFTVaultPkg,
+                rebasingClaimTokenPkg: rebasingClaimTokenPkg,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -417,8 +432,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         ISingleStandardExchangeDETFInfo detfInfo = ISingleStandardExchangeDETFInfo(inventoryDetf);
         protocolNftVault = detfInfo.bondNftVault();
-        // Single SE DETF does not wire a rebasing claim token; keep key as zero for stable artifact shape.
-        rebasingClaimToken = address(0);
+        rebasingClaimToken = detfInfo.rebasingClaimToken();
         reservePool = detfInfo.reservePool();
         underlyingVault = detfInfo.standardExchangeVault();
     }
@@ -475,7 +489,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     }
 
     function _exportFragments() internal {
-        // rebasingClaimToken is not wired for Single SE DETF; skip zero addresses via _writeFragment.
+        // Rebasing claim token is wired at DETF postDeploy (owner = DETF).
         _writeFragment("tokens", "richir", rebasingClaimToken, "Rich Reserve Token", "RICHIR", new string[](0));
         _writeFragment(
             "vaults/inventoryDetf",

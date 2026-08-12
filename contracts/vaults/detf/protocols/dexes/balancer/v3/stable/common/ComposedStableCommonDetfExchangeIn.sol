@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 
@@ -80,6 +80,10 @@ contract ComposedStableCommonDetfExchangeIn is
         }
 
         IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken();
+        address claim_ = address(ComposedStableCommonDetfRepo._rebasingDetfToken());
+        if (address(tokenOut) == claim_ || address(tokenIn) == claim_) {
+            revert InvalidRoute(address(tokenIn), address(tokenOut));
+        }
         if (address(tokenOut) == address(detfToken) && address(tokenIn) != address(detfToken)) {
             uint256 syntheticPrice = _syntheticDetfEthPrice();
             if (!_isMintingAllowed(syntheticPrice)) {
@@ -175,6 +179,7 @@ contract ComposedStableCommonDetfExchangeIn is
         _mintDetf(args_.recipient == address(0) ? msg.sender : args_.recipient, amountOut_);
         // Lazy protocol seigniorage compound (best-effort; never fails user mint).
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _executeBurnRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
@@ -212,6 +217,7 @@ contract ComposedStableCommonDetfExchangeIn is
         if (amountOut_ < args_.minAmountOut) {
             revert SlippageExceeded(args_.minAmountOut, amountOut_);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     /**
@@ -241,6 +247,10 @@ contract ComposedStableCommonDetfExchangeIn is
         }
 
         IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken();
+        address claim_ = address(ComposedStableCommonDetfRepo._rebasingDetfToken());
+        if (address(tokenOut) == claim_ || address(tokenIn) == claim_) {
+            revert InvalidRoute(address(tokenIn), address(tokenOut));
+        }
         if (address(tokenOut) == address(detfToken) && address(tokenIn) != address(detfToken)) {
             return _executeMintRoute(
                 IStandardExchangeIn.InArgs({

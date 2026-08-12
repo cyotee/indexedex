@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -26,6 +26,9 @@ import {
 import {
     AerodromeStandardExchangeOutFacet
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutFacet.sol";
+import {
+    AerodromeStandardExchangeOutQueryFacet
+} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol";
 import {
     IAerodromeStandardExchangeDFPkg,
     AerodromeStandardExchangeDFPkg
@@ -57,6 +60,17 @@ library Aerodrome_Component_FactoryService {
         vm.label(address(instance), type(AerodromeStandardExchangeOutFacet).name);
     }
 
+    function deployAerodromeStandardExchangeOutQueryFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(AerodromeStandardExchangeOutQueryFacet).creationCode,
+            abi.encode(type(AerodromeStandardExchangeOutQueryFacet).name)._hash()
+        );
+        vm.label(address(instance), type(AerodromeStandardExchangeOutQueryFacet).name);
+    }
+
     function deployAerodromeStandardExchangeDFPkg(
         IVaultRegistryDeployment vaultRegistry,
         IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit
@@ -85,6 +99,7 @@ library Aerodrome_Component_FactoryService {
         IFacet multiAssetStandardVaultFacet;
         IFacet aerodromeStandardExchangeInFacet;
         IFacet aerodromeStandardExchangeOutFacet;
+        IFacet aerodromeStandardExchangeOutQueryFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
@@ -92,43 +107,7 @@ library Aerodrome_Component_FactoryService {
         IPoolFactory aerodromePoolFactory;
     }
 
-    function deployAerodromeStandardExchangeDFPkg(
-        IVaultRegistryDeployment vaultRegistry,
-        IFacet erc20Facet,
-        IFacet erc2612Facet,
-        IFacet erc5267Facet,
-        IFacet erc4626Facet,
-        // IFacet erc4626BasicVaultFacet,
-        // IFacet erc4626StandardVaultFacet,
-        IFacet multiAssetBasicVaultFacet,
-        IFacet multiAssetStandardVaultFacet,
-        IFacet aerodromeStandardExchangeInFacet,
-        IFacet aerodromeStandardExchangeOutFacet,
-        IVaultFeeOracleQuery vaultFeeOracleQuery,
-        IVaultRegistryDeployment vaultRegistryDeployment,
-        IPermit2 permit2,
-        IRouter aerodromeRouter,
-        IPoolFactory aerodromePoolFactory
-    ) internal returns (IAerodromeStandardExchangeDFPkg instance) {
-        DeployDFPkgParams memory params;
-        params.vaultRegistry = vaultRegistry;
-        params.erc20Facet = erc20Facet;
-        params.erc2612Facet = erc2612Facet;
-        params.erc5267Facet = erc5267Facet;
-        params.erc4626Facet = erc4626Facet;
-        // params.erc4626BasicVaultFacet = erc4626BasicVaultFacet;
-        params.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
-        // params.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
-        params.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
-        params.aerodromeStandardExchangeInFacet = aerodromeStandardExchangeInFacet;
-        params.aerodromeStandardExchangeOutFacet = aerodromeStandardExchangeOutFacet;
-        params.vaultFeeOracleQuery = vaultFeeOracleQuery;
-        params.vaultRegistryDeployment = vaultRegistryDeployment;
-        params.permit2 = permit2;
-        params.aerodromeRouter = aerodromeRouter;
-        params.aerodromePoolFactory = aerodromePoolFactory;
-        return _deployDFPkgFromParams(params);
-    }
+    // Positional multi-arg deploy removed (stack-too-deep with outQuery; use PkgInit overload).
 
     function _deployDFPkgFromParams(DeployDFPkgParams memory params)
         private
@@ -148,6 +127,7 @@ library Aerodrome_Component_FactoryService {
         pkgInit.multiAssetStandardVaultFacet = params.multiAssetStandardVaultFacet;
         pkgInit.aerodromeStandardExchangeInFacet = params.aerodromeStandardExchangeInFacet;
         pkgInit.aerodromeStandardExchangeOutFacet = params.aerodromeStandardExchangeOutFacet;
+        pkgInit.aerodromeStandardExchangeOutQueryFacet = params.aerodromeStandardExchangeOutQueryFacet;
         pkgInit.vaultFeeOracleQuery = params.vaultFeeOracleQuery;
         pkgInit.vaultRegistryDeployment = params.vaultRegistryDeployment;
         pkgInit.permit2 = params.permit2;

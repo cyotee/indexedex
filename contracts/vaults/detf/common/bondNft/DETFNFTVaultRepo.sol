@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -96,6 +96,8 @@ library DETFNFTVaultRepo {
         uint256 nextTokenId;
         /// @notice Protocol-owned NFT token ID (has no unlock time)
         uint256 detfNFTId;
+        /// @notice Sum of originalShares across all tokenIds (user + protocol).
+        uint256 totalOriginalShares;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -198,6 +200,14 @@ library DETFNFTVaultRepo {
 
     function _totalShares() internal view returns (uint256) {
         return _totalShares(_layoutStruct());
+    }
+
+    function _totalOriginalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+        return layoutStruct_.totalOriginalShares;
+    }
+
+    function _totalOriginalShares() internal view returns (uint256) {
+        return _totalOriginalShares(_layoutStruct());
     }
 
     function _setTotalShares(Storage storage layoutStruct_, uint256 amount_) internal {
@@ -303,6 +313,7 @@ library DETFNFTVaultRepo {
         layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;
         layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
         layoutStruct_.totalShares += effectiveShares_;
+        layoutStruct_.totalOriginalShares += originalShares_;
     }
 
     function _createPosition(
@@ -317,6 +328,7 @@ library DETFNFTVaultRepo {
 
     function _removePosition(Storage storage layoutStruct_, uint256 tokenId_) internal {
         layoutStruct_.totalShares -= layoutStruct_.effectiveSharesOf[tokenId_];
+        layoutStruct_.totalOriginalShares -= layoutStruct_.originalSharesOf[tokenId_];
         delete layoutStruct_.originalSharesOf[tokenId_];
         delete layoutStruct_.effectiveSharesOf[tokenId_];
         delete layoutStruct_.bonusMultiplierOf[tokenId_];
@@ -346,6 +358,7 @@ library DETFNFTVaultRepo {
             layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
             layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
             layoutStruct_.totalShares += additionalShares_;
+            layoutStruct_.totalOriginalShares += additionalShares_;
             return;
         }
 
@@ -354,6 +367,7 @@ library DETFNFTVaultRepo {
         layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
         layoutStruct_.totalShares += additionalShares_;
+        layoutStruct_.totalOriginalShares += additionalShares_;
 
         uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
         uint256 rps_ = layoutStruct_.rewardPerShares;
@@ -369,6 +383,42 @@ library DETFNFTVaultRepo {
 
     function _addToPosition(uint256 tokenId_, uint256 additionalShares_) internal {
         _addToPosition(_layoutStruct(), tokenId_, additionalShares_);
+    }
+
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientOriginalShares(uint256 needed, uint256 available);
+
+    /**
+     * @notice Debits LP 1:1 from original and effective shares (inverse of `_addToPosition`).
+     * @dev only protocol NFT. Preserves pending reward debt on remaining effective shares.
+     */
+    function _removeFromPosition(Storage storage layoutStruct_, uint256 tokenId_, uint256 shares_) internal {
+        if (shares_ == 0) return;
+
+        uint256 orig_ = layoutStruct_.originalSharesOf[tokenId_];
+        if (shares_ > orig_) {
+            revert InsufficientOriginalShares(shares_, orig_);
+        }
+
+        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+        layoutStruct_.originalSharesOf[tokenId_] -= shares_;
+        layoutStruct_.effectiveSharesOf[tokenId_] -= shares_;
+        layoutStruct_.totalShares -= shares_;
+        layoutStruct_.totalOriginalShares -= shares_;
+
+        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 rps_ = layoutStruct_.rewardPerShares;
+        if (newEff_ > 0 && pending_ > 0) {
+            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+            layoutStruct_.userRewardPerSharePaid[tokenId_] =
+                rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+        } else {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+        }
+    }
+
+    function _removeFromPosition(uint256 tokenId_, uint256 shares_) internal {
+        _removeFromPosition(_layoutStruct(), tokenId_, shares_);
     }
 
     /* ---------------------------------------------------------------------- */

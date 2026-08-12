@@ -1,5 +1,5 @@
 ---
-last_reviewed: 2026-08-09
+last_reviewed: 2026-08-11
 git_sha: 4494c30
 scope: skills
 method: cartographer+survey
@@ -11,9 +11,10 @@ Authoritative index of agent skills for this monorepo. **SoT paths** are listed 
 |------|--------|
 | Crane framework skills | SoT: `lib/crane/.claude/skills/<name>/`. Refresh mirrors: `./scripts/sync-crane-skills.sh` |
 | IndexedEx-local skills | SoT: `.claude/skills/<name>/`. Mirror to `.grok/skills/` and `.opencode/skills/` |
-| Bankr / Base-agent catalogs | **Not** in this repo’s skill trees. Parent workspace via `./scripts/sync-bankr-skills.sh` |
+| EthSkills (selected) | Staging SoT: `lib/ethskills/`. Mirrored to `.claude` / `.grok` / `.opencode` skill trees. See section below. **Not** the full Bankr catalog. |
+| Bankr / Base-agent catalogs | **Not** in this repo’s skill trees (except selected EthSkills above). Parent workspace via `./scripts/sync-bankr-skills.sh` |
 | Godot / game-engine | Out of monorepo skill scope |
-| Prefer reading | Crane path for framework skills when both exist |
+| Prefer reading | Crane path for framework skills when both exist; prefer `crane-*` / `indexedex-*` over EthSkills for deploy/test/adversarial DoD |
 
 ## IndexedEx-local skills (SoT under `.claude/skills/`)
 
@@ -24,12 +25,43 @@ Authoritative index of agent skills for this monorepo. **SoT paths** are listed 
 | `battlechain-ai-tooling` | `.claude/skills/battlechain-ai-tooling/` | Use this skill when configuring AI agents (Claude Code, Copilot, Cursor, Codex, MCP clients) to enforce BattleChain-first development and docs-aware behavior. |
 | `battlechain-dev-workflow` | `.claude/skills/battlechain-dev-workflow/` | Use this skill when deploying or testing Solidity protocols on BattleChain, including setup, deployment, Safe Harbor agreement creation, requesting attack mode, and promotion to production. |
 | `battlechain-safe-harbor` | `.claude/skills/battlechain-safe-harbor/` | Use this skill when evaluating attack legality, agreement scope, bounty eligibility, or Binding Agreement resolution on BattleChain. |
+| `defi-incident-patterns` | `.claude/skills/defi-incident-patterns/` | Maps DeFiHackLabs incident patterns to Crane/IndexedEx adversarial catalog IDs (A0/L/M/N/O) and secure-dev checklists. Use for "DeFiHackLabs", historical hacks, skim/first-deposit/TOCTOU patterns; not profitable fork PoCs as DoD. |
 | `indexedex-adversarial-testing` | `.claude/skills/indexedex-adversarial-testing/` | This skill should be used when the user asks to "adversarial DETF tests", "MultiVaultWeightedDetf adversarial", "abuse tests for Standard Exchange", "vault donation attack IndexedEx", "claim redeem at |
 | `indexedex-product-voice` | `.claude/skills/indexedex-product-voice/` | Project voice law for IndexedEx / DETF customer-facing copy (UI, research notes, |
 | `indexedex-script-orchestration` | `.claude/skills/indexedex-script-orchestration/` | Indexedex shell and forge deployment orchestration best practices. Use when editing deploy_mainnet_bridge_ui.sh, wiring direct forge script execution, passing SENDER or OUT_DIR_OVERRIDE, handling loca |
 | `indexedex-testing` | `.claude/skills/indexedex-testing/` | This skill should be used when writing or reviewing IndexedEx Foundry tests, TestBases, mocks, vm.mockCall, IndexedexTest, vault DFPkg deploy, Standard Exchange tests, DETF tests, fork tests, or when  |
 | `indexedex-ui-refactor` | `.claude/skills/indexedex-ui-refactor/` | Indexedex frontend deployment-environment and artifact-registry refactor. Use when switching the UI between live Sepolia and local supersim_sepolia, updating address artifact loading, changing wagmi t |
+| `indexedex-ui-tx-testing` | `.claude/skills/indexedex-ui-tx-testing/` | Drive DTF/IndexedEx UI transactions via Playwright injected wallet; live bond/deposit/swap asserts on Anvil RH 4663. Use for "test UI txs", "e2e bond", "DTF e2e", "Robinhood Anvil UI". |
 | `indexedex-uniswap-v4-hook-packages` | `.claude/skills/indexedex-uniswap-v4-hook-packages/` | Guides implementation of IndexedEx Uniswap V4 Hook Diamond Packages (IUniswapV4HookDiamondPackage), |
+
+## EthSkills (selected; staging SoT `lib/ethskills/`)
+
+Upstream: [austintgriffith/ethskills](https://github.com/austintgriffith/ethskills) / [ethskills.com](https://ethskills.com/).  
+Installed into **all three** agent trees (Claude / Grok / OpenCode) for vault/protocol design, secure coding, and adversarial enrichment. **Do not** treat as a replacement for Crane/IndexedEx production-first deploy and adversarial skills.
+
+Refresh: re-copy from `lib/ethskills/` into `.claude/skills/`, `.grok/skills/`, `.opencode/skills/` (or re-stage from expanded `lib/bankr-skills/ethskills-*` + raw upstream for packages Bankr lacks, e.g. `crops`). See `lib/ethskills/SOURCE.md`.
+
+| Skill | Role for IndexedEx work |
+|-------|-------------------------|
+| `ethskills-concepts` | Incentive / state-machine mental models when designing vault or DETF flows |
+| `ethskills-crops` | Architecture trust review: admin, upgrade, exit, custody, censorship (DETF unowned posture) |
+| `ethskills-building-blocks` | DeFi composability (ERC-4626, hooks, L2 primitives) for new product design |
+| `ethskills-security` | Defensive Solidity patterns (reentrancy, decimals, inflation, MEV) |
+| `ethskills-testing` | Foundry unit/fuzz/fork/invariant baseline (prefer `crane-testing` + `indexedex-testing` for SUT) |
+| `ethskills-audit` | Systematic external-audit checklist mindset (not production-first adversarial DoD) |
+| `ethskills-addresses` | Verified protocol addresses (always re-verify on-chain) |
+| `ethskills-ship` | Agent routing worksheet for greenfield dApps (override with Crane DFPkg law) |
+| `ethskills-standards` | ERC-20/721/4626 and related interface surfaces |
+| `ethskills-tools` | Dev tooling landscape |
+| `ethskills-protocol` | EIP/fork evolution context |
+| `ethskills-wallets` | Multisig / AA / key safety for ops (not vault math) |
+| `ethskills-gas` | Cost realism mainnet vs L2 |
+| `ethskills-l2s` | L2 selection and bridge context |
+| `ethskills-qa` | Pre-ship dApp checklist |
+| `ethskills-indexing` | Events / The Graph / read-path patterns |
+| `ethskills-orchestration` | End-to-end agent build phases (non-DFPkg default) |
+
+**Load order (new vault / DETF design):** `concepts` → `crops` → `building-blocks` → `security` → then Crane/IndexedEx skills for deploy + adversarial tests.
 
 ## Crane skills (SoT under `lib/crane/.claude/skills/`)
 

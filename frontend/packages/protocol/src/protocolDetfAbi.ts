@@ -47,6 +47,8 @@ export const protocolDetfAbi = [
       { name: 'amountIn', type: 'uint256' },
       { name: 'lockDuration', type: 'uint256' },
       { name: 'recipient', type: 'address' },
+      // Uni V4 / modern DETF: false = pull tokenIn via transferFrom after approve
+      { name: 'pretransferred', type: 'bool' },
       { name: 'deadline', type: 'uint256' },
     ],
     outputs: [

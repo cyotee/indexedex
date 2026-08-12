@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
@@ -41,17 +41,17 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         return amountWad * (10 ** (decimals - 18));
     }
 
-    function recomputeL2(uint256 R, uint256 xWad, uint256 yWad, uint256 zWad)
-        internal
-        pure
-        returns (uint256)
-    {
+    function _recomputeL2(uint256 R, uint256 xWad, uint256 yWad, uint256 zWad) private pure returns (uint256) {
         if (R == 0) return 0;
         if (xWad >= R || yWad >= R || zWad >= R) revert MathDomain();
         uint256 dx = R - xWad;
         uint256 dy = R - yWad;
         uint256 dz = R - zWad;
         return dx * dx + dy * dy + dz * dz;
+    }
+
+    function recomputeL2(uint256 R, uint256 xWad, uint256 yWad, uint256 zWad) external pure returns (uint256) {
+        return _recomputeL2(R, xWad, yWad, zWad);
     }
 
     function sphereExactInOutWad(
@@ -61,7 +61,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 yWad,
         uint256 zWad,
         uint256 dxNetWad
-    ) internal pure returns (uint256 dyWad) {
+    ) external pure returns (uint256 dyWad) {
         if (R == 0 || dxNetWad == 0) revert MathDomain();
         if (xWad >= R || yWad >= R || zWad >= R) revert MathDomain();
         uint256 xPrime = xWad + dxNetWad;
@@ -86,7 +86,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 yWad,
         uint256 zWad,
         uint256 dyWad
-    ) internal pure returns (uint256 dxNetWad) {
+    ) external pure returns (uint256 dxNetWad) {
         if (R == 0 || dyWad == 0) revert MathDomain();
         if (xWad >= R || yWad >= R || zWad >= R) revert MathDomain();
         if (dyWad >= yWad) revert Drain();
@@ -105,15 +105,15 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         if (dxNetWad == 0) revert ZeroOut();
     }
 
-    function applyTradingFeeNet(uint256 amountWad, uint256 feeWad)
-        internal
-        pure
-        returns (uint256 netWad)
-    {
+    function _applyTradingFeeNet(uint256 amountWad, uint256 feeWad) private pure returns (uint256 netWad) {
         if (feeWad >= WAD) revert MathDomain();
         if (feeWad == 0) return amountWad;
         uint256 feeAmt = (amountWad * feeWad) / WAD;
         netWad = amountWad - feeAmt;
+    }
+
+    function applyTradingFeeNet(uint256 amountWad, uint256 feeWad) internal pure returns (uint256 netWad) {
+        return _applyTradingFeeNet(amountWad, feeWad);
     }
 
     function grossUpExactOut(uint256 netWad, uint256 feeWad) internal pure returns (uint256 grossWad) {
@@ -126,13 +126,13 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         return uint24(uint256(feeWad * 1e6 / WAD) | 0x400000);
     }
 
-    function firstMintShares(uint256 sumWad) internal pure returns (uint256 shares) {
+    function firstMintShares(uint256 sumWad) external pure returns (uint256 shares) {
         if (sumWad <= Repo.MINIMUM_LIQUIDITY) revert MathDomain();
         shares = sumWad - Repo.MINIMUM_LIQUIDITY;
     }
 
     function firstMintRadius(uint256 a0Wad, uint256 a1Wad, uint256 a2Wad)
-        internal
+        external
         pure
         returns (uint256 R)
     {
@@ -151,7 +151,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 r1Wad,
         uint256 r2Wad,
         uint256 supply
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0 || r0Wad == 0 || r1Wad == 0 || r2Wad == 0) revert MathDomain();
         uint256 s0 = (a0MaxWad * supply) / r0Wad;
         uint256 s1 = (a1MaxWad * supply) / r1Wad;
@@ -162,6 +162,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         if (shares == 0) revert MathDomain();
     }
 
+    /// @dev Tiny helper — kept internal so call sites avoid external+nested stack pressure.
     function fullBookUsedWad(uint256 shares, uint256 rWad, uint256 supply)
         internal
         pure
@@ -185,7 +186,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 used0Wad,
         uint256 used1Wad,
         uint256 used2Wad
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0 || R == 0) revert MathDomain();
         uint256 p0 = sphereSpotWeight(R, r0Wad);
         uint256 p1 = sphereSpotWeight(R, r1Wad);
@@ -202,7 +203,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 rootK,
         uint256 rootKLast,
         uint256 ownerFeeShare
-    ) internal pure returns (uint256) {
+    ) external pure returns (uint256) {
         if (supply == 0 || rootKLast == 0 || rootK <= rootKLast || ownerFeeShare == 0) {
             return 0;
         }
@@ -212,7 +213,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         return num / den;
     }
 
-    function cbrt(uint256 x) internal pure returns (uint256) {
+    function cbrt(uint256 x) external pure returns (uint256) {
         return FixedPointMathLib.cbrt(x);
     }
 
@@ -276,7 +277,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint8 inIdx,
         uint256 amountInWad
     )
-        internal
+        external
         pure
         returns (uint256 sJWad, uint256 sKWad, uint256 aInWad, uint256 aJWad, uint256 aKWad)
     {
@@ -289,7 +290,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         a.feeWad = feeWad;
         a.inIdx = inIdx;
         a.amountInWad = amountInWad;
-        ZapSplitResult memory r = zapSplitWad(a);
+        ZapSplitResult memory r = _zapSplitWadPacked(a);
         return (r.sJWad, r.sKWad, r.aInWad, r.aJWad, r.aKWad);
     }
 
@@ -313,7 +314,11 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
     }
 
     /// @notice Packed entry for zap split (single memory pointer in/out — stack-safe call sites).
-    function zapSplitWad(ZapSplitArgs memory a) internal pure returns (ZapSplitResult memory r) {
+    function zapSplitWad(ZapSplitArgs memory a) external pure returns (ZapSplitResult memory r) {
+        return _zapSplitWadPacked(a);
+    }
+
+    function _zapSplitWadPacked(ZapSplitArgs memory a) private pure returns (ZapSplitResult memory r) {
         if (a.amountInWad < 3 || a.e0 == 0 || a.e1 == 0 || a.e2 == 0 || a.R == 0) revert MathDomain();
         ResidualSearchCtx memory c;
         c.a = a;
@@ -357,7 +362,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         }
     }
 
-    function fullBookShares(FullBookArgs memory a) internal pure returns (uint256 shares) {
+    function fullBookShares(FullBookArgs memory a) external pure returns (uint256 shares) {
         if (a.supply == 0 || a.e0Wad == 0 || a.e1Wad == 0 || a.e2Wad == 0) revert MathDomain();
         uint256 s0 = (a.a0Wad * a.supply) / a.e0Wad;
         uint256 s1 = (a.a1Wad * a.supply) / a.e1Wad;
@@ -368,7 +373,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         if (shares == 0) revert MathDomain();
     }
 
-    function sphereNavShares(SphereNavArgs memory a) internal pure returns (uint256 shares) {
+    function sphereNavShares(SphereNavArgs memory a) external pure returns (uint256 shares) {
         if (a.supply == 0 || a.R == 0) revert MathDomain();
         uint256 p0 = sphereSpotWeight(a.R, a.r0Wad);
         uint256 p1 = sphereSpotWeight(a.R, a.r1Wad);
@@ -422,7 +427,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
 
     function _firstLegOut(ResidualSearchCtx memory c, uint256 sJWad) private pure returns (uint256 outJ) {
         uint256 x = _pick(c.a.e0, c.a.e1, c.a.e2, c.a.inIdx);
-        uint256 netJ = applyTradingFeeNet(sJWad, c.a.feeWad);
+        uint256 netJ = _applyTradingFeeNet(sJWad, c.a.feeWad);
         SphereLegsWad memory legs;
         legs.R = c.a.R;
         legs.L2 = c.a.L2;
@@ -440,7 +445,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 eJ2
     ) private pure returns (uint256 outK) {
         uint256 L2b = _l2AfterFirstSale(c, eIn2, eJ2);
-        uint256 netK = applyTradingFeeNet(sKWad, c.a.feeWad);
+        uint256 netK = _applyTradingFeeNet(sKWad, c.a.feeWad);
         SphereLegsWad memory legs;
         legs.R = c.a.R;
         legs.L2 = L2b;
@@ -496,7 +501,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         if (c.j == 0) e0b = eJ2;
         else if (c.j == 1) e1b = eJ2;
         else e2b = eJ2;
-        return recomputeL2(c.a.R, e0b, e1b, e2b);
+        return _recomputeL2(c.a.R, e0b, e1b, e2b);
     }
 
     function _compareResidualRatios(

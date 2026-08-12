@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -345,30 +345,24 @@ contract BalancerV3Fork_Prepay_LockedCaller_Test is TestBase_BalancerV3Fork_Stra
         );
     }
 
+    /// @notice Session-gated prepay: without an active session, EOAs cannot prepay (D6 self-root).
+    ///         Legacy `currentSE` pointer alone is no longer the prepay gate.
     function test_fork_prepay_locked_wrongCaller_reverts_when_currentSE_is_set() public {
         assertFalse(vault.isUnlocked(), "Fork precondition: vault should be locked");
-
-        PrepayAttacker attacker = new PrepayAttacker();
+        assertFalse(
+            IBalancerV3StandardExchangeRouterPrepay(address(seRouter)).prepaySessionActive(), "session off"
+        );
 
         uint256[] memory amounts = new uint256[](2);
         amounts[0] = 1;
         amounts[1] = 1;
 
+        address alice = makeAddr("prepayAlice");
+        vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IBalancerV3StandardExchangeRouterPrepay.NotCurrentStandardExchangeToken.selector,
-                address(attacker),
-                address(daiUsdcVault)
-            )
+            abi.encodeWithSelector(BalancerV3StandardExchangeRouterRepo.PrepayNotAuthorized.selector, alice)
         );
-
-        IBalancerV3StandardExchangeRouterTestHarness(address(seRouter))
-            .callWithCurrentStandardExchange(
-                daiUsdcVault,
-                address(attacker),
-                abi.encodeCall(
-                    attacker.attackPrepayAddLiquidityUnbalanced, (address(seRouter), daiUsdcPool, amounts, 1)
-                )
-            );
+        IBalancerV3StandardExchangeRouterPrepay(address(seRouter))
+            .prepayAddLiquidityUnbalanced(daiUsdcPool, amounts, 1, "");
     }
 }

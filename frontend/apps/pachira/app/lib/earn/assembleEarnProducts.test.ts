@@ -32,9 +32,35 @@ describe('assembleEarnProducts', () => {
     const a = products.find((p) => p.address.toLowerCase() === A.toLowerCase())
     expect(a?.productType).toBe('strategy')
     expect(a?.symbol).toBe('VA')
+    // Lab DETF (no fee-detf tag) → plain "detf", not "protocol-detf".
     expect(products.find((p) => p.address.toLowerCase() === B.toLowerCase())?.productType).toBe(
-      'protocol-detf',
+      'detf',
     )
+  })
+
+  it('tags fee-detf / featured as protocol-detf product brand', () => {
+    const products = assembleEarnProducts({
+      protocolDetf: [
+        {
+          address: B,
+          chainId: 1,
+          name: 'Fee DETF',
+          symbol: 'CHIR',
+          decimals: 18,
+          tags: ['vault', 'detf', 'fee-detf'],
+        },
+        {
+          address: C,
+          chainId: 1,
+          name: 'Lab DETF',
+          symbol: 'gDETF',
+          decimals: 18,
+          tags: ['vault', 'detf'],
+        },
+      ],
+    })
+    expect(products.find((p) => p.symbol === 'CHIR')?.productType).toBe('protocol-detf')
+    expect(products.find((p) => p.symbol === 'gDETF')?.productType).toBe('detf')
   })
 
   it('drops zero and invalid addresses', () => {

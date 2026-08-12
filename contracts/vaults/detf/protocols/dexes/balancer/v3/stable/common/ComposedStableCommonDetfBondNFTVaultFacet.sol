@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -20,7 +20,7 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](29);
+        funcs_ = new bytes4[](31);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
@@ -50,6 +50,8 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
         funcs_[26] = IDETFNFTVault.transferHeldToken.selector;
         funcs_[27] = IDETFNFTVault.lockInfoOf.selector;
         funcs_[28] = IDETFNFTVault.rewardPerShares.selector;
+        funcs_[29] = IDETFNFTVault.removeFromDETFNFT.selector;
+        funcs_[30] = IDETFNFTVault.totalOriginalShares.selector;
     }
 
     function facetMetadata()

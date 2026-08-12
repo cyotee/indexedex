@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -135,6 +135,7 @@ contract AaveV3StataStandardExchangeInTarget is
             amountOut = actualIn;
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -143,6 +144,7 @@ contract AaveV3StataStandardExchangeInTarget is
             amountOut = IERC4626(stata).deposit(actualIn, recipient);
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -151,6 +153,7 @@ contract AaveV3StataStandardExchangeInTarget is
             uint256 delta = IERC4626(stata).deposit(actualIn, address(this));
             amountOut = _mintStataDeltaAsSEShares(delta, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -159,6 +162,7 @@ contract AaveV3StataStandardExchangeInTarget is
             amountOut = IStataTokenV2(stata).depositATokens(actualIn, recipient);
             _collectAndForwardRewards();
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -167,6 +171,7 @@ contract AaveV3StataStandardExchangeInTarget is
             uint256 delta = IStataTokenV2(stata).depositATokens(actualIn, address(this));
             amountOut = _mintStataDeltaAsSEShares(delta, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -174,6 +179,7 @@ contract AaveV3StataStandardExchangeInTarget is
             // Credit only the secured actualIn (claimed when pretransfer delta-sufficient).
             amountOut = _mintStataDeltaAsSEShares(actualIn, recipient, totalAssetsBefore);
             require(amountOut >= minAmountOut, "slippage");
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

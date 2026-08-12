@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -83,11 +83,29 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
 
     uint256 internal constant DEFAULT_MIN_LOCK = 30 days;
     uint256 internal constant DEFAULT_MAX_LOCK = 180 days;
+
+    function _ensureProtocolNft(address instance_) internal {
+        address nft_ = IMultiVaultWeightedDetfInfo(instance_).bondNftVault();
+        if (nft_ == address(0)) return;
+        if (IDETFNFTVault(nft_).detfNFTId() != 0) return;
+        vm.prank(instance_);
+        IDETFNFTVault(nft_).initializeDETFNFT();
+    }
+
+    function _warpPastUnlock(address instance_, uint256 tokenId_) internal {
+        address nft_ = IMultiVaultWeightedDetfInfo(instance_).bondNftVault();
+        uint256 unlock_ = IDETFNFTVault(nft_).unlockTimeOf(tokenId_);
+        if (block.timestamp <= unlock_) {
+            vm.warp(unlock_ + 1);
+        }
+    }
     uint8 internal constant MAX_LEGS = 7;
 
     IFacet internal multiAssetBasicVaultFacetDetf;
     IFacet internal multiAssetStandardVaultFacetDetf;
     IFacet internal multiVaultWeightedDetfExchangeInFacet;
+    IFacet internal multiVaultWeightedDetfBondingFacet;
+    IFacet internal multiVaultWeightedDetfInfoFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal erc721Facet;
     IFacet internal singleSeDetfExchangeInFacet;
@@ -130,6 +148,10 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         multiAssetStandardVaultFacetDetf = create3Factory.deployMultiAssetStandardVaultFacet();
         multiVaultWeightedDetfExchangeInFacet =
             MultiVaultWeightedDetf_Component_FactoryService.deployExchangeInFacet(create3Factory);
+        multiVaultWeightedDetfBondingFacet =
+            MultiVaultWeightedDetf_Component_FactoryService.deployBondingFacet(create3Factory);
+        multiVaultWeightedDetfInfoFacet =
+            MultiVaultWeightedDetf_Component_FactoryService.deployInfoFacet(create3Factory);
         singleSeDetfExchangeInFacet =
             SingleStandardExchangeDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
 
@@ -152,6 +174,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         detfInfo = IMultiVaultWeightedDetfInfo(detf);
         detfBonding = IMultiVaultWeightedDetfBonding(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
+        _ensureProtocolNft(detf);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -221,6 +244,8 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
             exchangeInFacet: multiVaultWeightedDetfExchangeInFacet,
+            bondingFacet: multiVaultWeightedDetfBondingFacet,
+            infoFacet: multiVaultWeightedDetfInfoFacet,
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
@@ -254,6 +279,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
             rateProviderPkg: rateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
+            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
             diamondFactory: diamondPackageFactory
         });
         vm.startPrank(owner);
@@ -897,8 +923,9 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         // First BPT bond → live; sell to protocol so detf NFT earns reward share.
         // Keep sizes modest vs pool to avoid Balancer MaxInRatio on subsequent DETF-only joins.
         (uint256 firstId_,) = _goLiveViaBptBond(instance_, bonder_, 1_000e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        IMultiVaultWeightedDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        IMultiVaultWeightedDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
 
         // Second vault-share bond: user keeps NFT (for claim-while-locked).
@@ -998,8 +1025,9 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         _enableSeigniorageIncentive(instance_, 0.20e18);
 
         (uint256 firstId_,) = _goLiveViaBptBond(instance_, bonder_, 1_000e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        IMultiVaultWeightedDetfBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        IMultiVaultWeightedDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
 
         uint256 seSharesBond_ = _fundSeShares0(bonder_, 200e18);
         vm.startPrank(bonder_);

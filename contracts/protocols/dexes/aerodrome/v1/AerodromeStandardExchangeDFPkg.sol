@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -83,6 +83,7 @@ interface IAerodromeStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet multiAssetStandardVaultFacet;
         IFacet aerodromeStandardExchangeInFacet;
         IFacet aerodromeStandardExchangeOutFacet;
+        IFacet aerodromeStandardExchangeOutQueryFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
@@ -132,6 +133,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable AERODROME_STANDARD_EXCHANGE_IN_FACET;
     IFacet immutable AERODROME_STANDARD_EXCHANGE_OUT_FACET;
+    IFacet immutable AERODROME_STANDARD_EXCHANGE_OUT_QUERY_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
@@ -150,6 +152,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         AERODROME_STANDARD_EXCHANGE_IN_FACET = pkgInit.aerodromeStandardExchangeInFacet;
         AERODROME_STANDARD_EXCHANGE_OUT_FACET = pkgInit.aerodromeStandardExchangeOutFacet;
+        AERODROME_STANDARD_EXCHANGE_OUT_QUERY_FACET = pkgInit.aerodromeStandardExchangeOutQueryFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
@@ -398,7 +401,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](8);
+        facetAddresses_ = new address[](9);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -409,6 +412,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         facetAddresses_[5] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[6] = address(AERODROME_STANDARD_EXCHANGE_IN_FACET);
         facetAddresses_[7] = address(AERODROME_STANDARD_EXCHANGE_OUT_FACET);
+        facetAddresses_[8] = address(AERODROME_STANDARD_EXCHANGE_OUT_QUERY_FACET);
         return facetAddresses_;
     }
 
@@ -440,7 +444,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](8);
+        facetCuts_ = new IDiamond.FacetCut[](9);
 
         facetCuts_[0] = IDiamond.FacetCut({
             // address facetAddress;
@@ -521,6 +525,11 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
             functionSelectors: AERODROME_STANDARD_EXCHANGE_OUT_FACET.facetFuncs()
+        });
+        facetCuts_[8] = IDiamond.FacetCut({
+            facetAddress: address(AERODROME_STANDARD_EXCHANGE_OUT_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: AERODROME_STANDARD_EXCHANGE_OUT_QUERY_FACET.facetFuncs()
         });
     }
 

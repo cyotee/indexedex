@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -16,6 +16,7 @@ library DETFBondLifecycleLib {
     using BetterSafeERC20 for IERC20;
 
     error NoSeigniorageToCapture();
+    error BondNotMature(uint256 unlockTime);
 
     function _createBondPosition(
         IDetfSelfNftInventoryPolicy vault_,
@@ -53,9 +54,11 @@ library DETFBondLifecycleLib {
         address seller_,
         address recipient_
     ) internal returns (uint256 principalShares_, uint256 rebasingClaimMinted_) {
+        uint256 protocolBefore_ = vault_.originalSharesOf(vault_.detfNFTId());
         principalShares_ = _sellPositionToDetfNft(vault_, tokenId_, seller_, recipient_);
 
-        rebasingClaimMinted_ = rebasingClaimToken_.mintFromNFTSale(principalShares_, recipient_);
+        rebasingClaimMinted_ =
+            rebasingClaimToken_.mintFromNFTSale(principalShares_, protocolBefore_, recipient_);
     }
 
     function _sellPositionToDetfNft(
@@ -64,6 +67,10 @@ library DETFBondLifecycleLib {
         address seller_,
         address recipient_
     ) internal returns (uint256 principalShares_) {
+        uint256 unlockTime_ = vault_.unlockTimeOf(tokenId_);
+        if (block.timestamp < unlockTime_) {
+            revert BondNotMature(unlockTime_);
+        }
         (principalShares_,) = vault_.sellPositionToDetfNft(tokenId_, seller_, recipient_);
     }
 

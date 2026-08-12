@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
@@ -36,18 +36,25 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeInTarget is
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         if (address(tokenIn_) == address(this)) {
-            return _burnDetfExactIn(amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            amountOut_ =
+                _burnDetfExactIn(amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            _syncAllExpectedHoldReserves();
+            return amountOut_;
         }
         if (address(tokenOut_) == address(this)) {
             amountOut_ = _mintPath(tokenIn_, amountIn_, recipient_, pretransferred_, deadline_);
             if (amountOut_ < minAmountOut_) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
             }
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
         // SE passthrough on same SE when both allowlisted.
         if (_isAllowlistedTokenIn(tokenIn_) && _isAllowlistedTokenIn(tokenOut_)) {
-            return _sePassthrough(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            amountOut_ =
+                _sePassthrough(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            _syncAllExpectedHoldReserves();
+            return amountOut_;
         }
         revert Repo.InvalidRoute(tokenIn_, tokenOut_);
     }
@@ -90,11 +97,9 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeInTarget is
             se_ = address(s.standardExchange1);
         }
         if (se_ == address(0)) revert Repo.InvalidRoute(tokenIn_, tokenOut_);
-        // SE `_securePull` measures balance *delta* during the call — do not pre-fund then
-        // pass pretransferred=true (delta would be 0). Approve + transferFrom path.
-        tokenIn_.forceApprove(se_, pulled_);
-        amountOut_ = IStandardExchangeIn(se_).exchangeIn(
-            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, false, deadline_
+        // Nested SE fund: push + pretransferred=true (L-DETF-PUSH-NESTED).
+        amountOut_ = _nestedExchangeInPush(
+            IStandardExchangeIn(se_), tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, deadline_
         );
     }
 

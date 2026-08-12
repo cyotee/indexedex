@@ -28,7 +28,7 @@
 | Package | Role |
 |---------|------|
 | `UniswapV4SingleStandardExchangeDETF` | Same true-DETF economics; **2-leg CP** reserve (DETF raw × one pair) |
-| `UniV4SingleStandardExchangeDETF` (superseded listing draft) | Listing CL + OOR — **do not implement** |
+| Former listing-family Uni V4 Single SE DETF | Deleted — listing CL + OOR with no liquidity-holding reserve |
 | Raw `UniswapV4OrbitalSwapHook` | No SE buffering — not a DETF reserve host for this family |
 | Balancer multi-vault weighted / mixed-buffer | Multi-SE valuation on Balancer hosts — different reserve topology |
 

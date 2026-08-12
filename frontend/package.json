@@ -14,6 +14,8 @@
     "build": "npm run build:indexedex && npm run build:pachira && npm run build:dtf",
     "test": "npm run test -w @indexedex/app-indexedex",
     "test:e2e": "npm run test:e2e -w @indexedex/app-indexedex",
+    "test:e2e:dtf": "npm run test:e2e -w @indexedex/app-dtf",
+    "test:e2e:dtf:live": "npm run test:e2e:live -w @indexedex/app-dtf",
     "typecheck": "npm run typecheck -w @indexedex/app-indexedex && npm run typecheck -w @indexedex/app-pachira && npm run typecheck -w @indexedex/app-dtf",
     "check": "npm run check -w @indexedex/app-indexedex",
     "lint": "npm run lint -w @indexedex/app-indexedex && npm run lint -w @indexedex/app-pachira && npm run lint -w @indexedex/app-dtf",

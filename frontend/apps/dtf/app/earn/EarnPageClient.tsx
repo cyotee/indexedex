@@ -30,8 +30,8 @@ import {
 } from '@indexedex/protocol/tokenlists'
 
 function parseTypeParam(raw: string | null): EarnTypeFilter {
-  if (raw === 'strategy' || raw === 'protocol-detf') return raw
-  if (raw === 'detf') return 'protocol-detf'
+  if (raw === 'strategy' || raw === 'detf' || raw === 'protocol-detf') return raw
+  // Legacy query: type=detf meant the old single DETF bucket (now plain DETF, not fee brand).
   return 'all'
 }
 

@@ -1,16 +1,16 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
-    UniswapV4DualStandardExchangeBufferConstantProductHookTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.sol";
+    UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget.sol";
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
 
 contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet is
-    UniswapV4DualStandardExchangeBufferConstantProductHookTarget,
+    UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -422,6 +422,7 @@ contract UniswapV2StandardExchangeInTarget is
                     // address recipient
                     recipient
                 );
+            _syncAllExpectedHoldReserves();
             return result;
         }
 
@@ -478,6 +479,7 @@ contract UniswapV2StandardExchangeInTarget is
                 }
             }
             // Go ahead and terminate further execution.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -536,6 +538,7 @@ contract UniswapV2StandardExchangeInTarget is
                 revert();
             }
             // Go ahead and terminate furtherRecordedVote.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -629,6 +632,7 @@ contract UniswapV2StandardExchangeInTarget is
                 amountOut
             );
             // Go ahead and terminate furtherRecordedVote.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -724,6 +728,7 @@ contract UniswapV2StandardExchangeInTarget is
             // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -834,6 +839,7 @@ contract UniswapV2StandardExchangeInTarget is
                 // uint256 amount,
                 amountOut
             );
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -947,6 +953,7 @@ contract UniswapV2StandardExchangeInTarget is
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             // Go ahead and terminate further execution.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

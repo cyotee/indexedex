@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IPool} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPool.sol";

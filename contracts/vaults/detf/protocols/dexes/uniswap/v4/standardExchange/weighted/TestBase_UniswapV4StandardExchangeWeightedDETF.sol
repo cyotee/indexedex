@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -70,6 +70,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
     IFacet internal multiAssetBasicVaultFacetDetf;
     IFacet internal multiAssetStandardVaultFacetDetf;
     IFacet internal detfExchangeInFacet;
+    IFacet internal detfBondingFacet;
+    IFacet internal detfCompoundFacet;
     IFacet internal detfInfoFacet;
     IFacet internal detfNFTVaultFacet;
     IFacet internal erc721FacetDetf;
@@ -95,6 +97,10 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         multiAssetStandardVaultFacetDetf = create3Factory.deployMultiAssetStandardVaultFacet();
         detfExchangeInFacet =
             UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
+        detfBondingFacet =
+            UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.deployBondingFacet(create3Factory);
+        detfCompoundFacet =
+            UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.deployCompoundFacet(create3Factory);
         detfInfoFacet =
             UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.deployInfoFacet(create3Factory);
 
@@ -162,6 +168,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
             exchangeInFacet: detfExchangeInFacet,
+            bondingFacet: detfBondingFacet,
+            compoundFacet: detfCompoundFacet,
             infoFacet: detfInfoFacet,
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),

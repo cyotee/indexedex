@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20Events} from '@crane/contracts/interfaces/IERC20Events.sol';
@@ -9,15 +9,17 @@ import {ERC20Repo} from '@crane/contracts/tokens/ERC20/ERC20Repo.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
 import {MultiStepOwnableModifiers} from '@crane/contracts/access/ERC8023/MultiStepOwnableModifiers.sol';
+import {MultiStepOwnableRepo} from '@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol';
+import {IMultiStepOwnable} from '@crane/contracts/access/ERC8023/IMultiStepOwnable.sol';
 
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
+import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {RebasingDETFTokenRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenRepo.sol';
 
 contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
@@ -131,17 +133,31 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
     }
 
     function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 rebasingClaimMinted) {
-        if (lpShares == 0) revert ZeroAmount();
+        return mintFromNFTSale(lpShares, type(uint256).max, recipient);
+    }
+
+    /// @inheritdoc IRebasingClaimToken
+    function mintFromNFTSale(uint256 assets, uint256 totalAssetsBefore, address recipient)
+        public
+        onlyOwner
+        returns (uint256 rebasingClaimMinted)
+    {
+        if (assets == 0) revert ZeroAmount();
 
         RebasingDETFTokenRepo.Storage storage layoutStruct = RebasingDETFTokenRepo._layoutStruct();
-        uint256 internalShares = RebasingDETFTokenRepo._externalSharesToInternal(lpShares);
+        uint256 totalAssets = totalAssetsBefore == type(uint256).max
+            ? layoutStruct.nftVault.originalSharesOf(layoutStruct.detfNFTId)
+            : totalAssetsBefore;
+        uint256 totalSharesExt = RebasingDETFTokenRepo._internalSharesToExternal(layoutStruct.totalShares);
+        uint256 sharesOutExt = totalAssets == 0 ? assets : (assets * totalSharesExt) / totalAssets;
+        uint256 internalShares = RebasingDETFTokenRepo._externalSharesToInternal(sharesOutExt);
 
         RebasingDETFTokenRepo._mintShares(layoutStruct, recipient, internalShares);
 
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
         rebasingClaimMinted = RebasingDETFTokenRepo._sharesToBalance(internalShares, rate);
 
-        emit IRebasingClaimToken.Minted(recipient, lpShares, lpShares, rebasingClaimMinted);
+        emit IRebasingClaimToken.Minted(recipient, assets, sharesOutExt, rebasingClaimMinted);
         emit IERC20Events.Transfer(address(0), recipient, rebasingClaimMinted);
     }
 
@@ -228,10 +244,14 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
 
     function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)
         external
-        onlyOwner
-        nonReentrant
         returns (uint256 sharesBurned)
     {
+        if (
+            msg.sender != MultiStepOwnableRepo._owner()
+                && msg.sender != address(RebasingDETFTokenRepo._detf())
+        ) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
         if (rebasingClaimAmount == 0) revert ZeroAmount();
 
         RebasingDETFTokenRepo.Storage storage layoutStruct = RebasingDETFTokenRepo._layoutStruct();
@@ -324,12 +344,9 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
 
         _requireSupportedExchangePath(layoutStruct_, tokenIn_, tokenOut_);
 
-        uint256 reserveBptAmount = layoutStruct_.detf.previewRebasingDetfTokenReserveBpt(amountIn_);
-        if (reserveBptAmount == 0) {
-            return 0;
-        }
-
-        amountOut_ = IDetf(address(layoutStruct_.detf)).previewClaimLiquidity(reserveBptAmount);
+        amountOut_ = IComposedStableCommonDetfBonding(address(layoutStruct_.detf)).previewRedeemClaim(
+            amountIn_, _configuredCommonToken(layoutStruct_)
+        );
     }
 
     function _previewExchangeOut(
@@ -379,7 +396,6 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             revert ZeroAmount();
         }
 
-        uint256 reserveBptAmount = layoutStruct_.detf.previewRebasingDetfTokenReserveBpt(rebasingClaimAmount_);
         uint256 rate = _getCurrentRedemptionRate(layoutStruct_);
         uint256 shares = RebasingDETFTokenRepo._balanceToShares(rebasingClaimAmount_, rate);
 
@@ -390,8 +406,15 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             );
         }
 
-        RebasingDETFTokenRepo._burnShares(layoutStruct_, address(this), shares);
-        amountOut_ = IDetf(address(layoutStruct_.detf)).claimLiquidity(reserveBptAmount, recipient_);
+        // DETF.redeemClaim burns via burnShares (pretransferred on this claim token) and
+        // unwinds protocol-bond originalShares only. Do not burn locally first.
+        amountOut_ = IComposedStableCommonDetfBonding(address(layoutStruct_.detf)).redeemClaim(
+            rebasingClaimAmount_,
+            _configuredCommonToken(layoutStruct_),
+            0,
+            recipient_,
+            block.timestamp
+        );
 
         emit IRebasingClaimToken.Redeemed(
             msg.sender,
@@ -400,7 +423,6 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             RebasingDETFTokenRepo._internalSharesToExternal(shares),
             amountOut_
         );
-        emit IERC20Events.Transfer(address(this), address(0), rebasingClaimAmount_);
     }
 
     /**

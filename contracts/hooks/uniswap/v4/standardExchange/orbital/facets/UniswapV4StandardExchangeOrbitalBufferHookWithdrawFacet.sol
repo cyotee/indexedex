@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -6,15 +6,15 @@ import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {
-    UniswapV4StandardExchangeOrbitalBufferHookTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookTarget.sol";
+    UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget.sol";
 
 /**
  * @title UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet
  * @notice removeLiquidity + preview (no zap-out).
  */
 contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet is
-    UniswapV4StandardExchangeOrbitalBufferHookTarget,
+    UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {

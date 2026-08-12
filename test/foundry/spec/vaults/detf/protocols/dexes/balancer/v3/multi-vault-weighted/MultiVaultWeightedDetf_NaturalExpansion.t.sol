@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -81,8 +81,9 @@ contract MultiVaultWeightedDetf_NaturalExpansion_Test is TestBase_MultiVaultWeig
         address open_ = _deployOpenModeDetfN(1);
         _enableSeigniorageIncentive(open_, 0.20e18);
         (uint256 firstId_,) = _goLiveViaBptBond(open_, alice, 1_000e18);
+        _warpPastUnlock(open_, firstId_);
         vm.prank(alice);
-        IMultiVaultWeightedDetfBonding(open_).sellPositionToDetfNft(firstId_, alice);
+        IMultiVaultWeightedDetfBonding(open_).sellPositionToDetfNft(firstId_, 0, alice);
 
         // Second vault-share bond after live (not re-init reserve).
         uint256 seShares_ = _fundSeShares0(alice, 200e18);

@@ -987,7 +987,7 @@ function run() public override(Script_Crane, TestBase_Indexedex) {   // ✅ Comp
 **ALWAYS** include these imports in test files:
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import { console } from "forge-std/console.sol";
@@ -1021,7 +1021,7 @@ Based on practical implementation, **EVERY facet MUST have a dedicated IFacet te
 ### Complete IFacet Test Template
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import { console } from "forge-std/console.sol";
@@ -1273,7 +1273,7 @@ Based on practical implementation, **EVERY facet MUST have a dedicated IFacet te
 ### Complete IFacet Test Template
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import { console } from "forge-std/console.sol";

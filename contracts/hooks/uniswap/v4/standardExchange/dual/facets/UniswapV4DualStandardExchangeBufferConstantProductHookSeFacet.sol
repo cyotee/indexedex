@@ -1,19 +1,19 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
-    UniswapV4DualStandardExchangeBufferConstantProductHookTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookTarget.sol";
+    UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget.sol";
 
 /**
  * @title UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet
  * @notice M3: IStandardExchangeIn / Out for pair0↔pair1 book swaps on the dual diamond.
  */
 contract UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet is
-    UniswapV4DualStandardExchangeBufferConstantProductHookTarget,
+    UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {

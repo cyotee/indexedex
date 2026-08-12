@@ -19,7 +19,8 @@
     "generate": "task-master generate",
     "parse-prd": "task-master parse-prd",
     "update-file-index": "./scripts/generate-file-index.sh",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sizes": "forge compile --sizes | tee SIZES.log"
   },
   "repository": {
     "type": "git",

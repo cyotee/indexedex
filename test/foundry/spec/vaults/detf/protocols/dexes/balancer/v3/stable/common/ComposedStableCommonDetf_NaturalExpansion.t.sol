@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -115,8 +115,9 @@ contract ComposedStableCommonDetf_NaturalExpansion_Test is ComposedStableCommonD
 
         // First bond → sell into protocol so detf NFT has principal shares.
         (uint256 firstId_,) = _bondDai(bonder_, 1_000e18, MIN_LOCK);
+        _warpPastUnlock(firstId_);
         vm.prank(bonder_);
-        expBonding.sellNFT(firstId_, bonder_);
+        expBonding.sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(), 0, "protocol nft has principal after sell");
 
         // Second bond: user keeps NFT (claim-while-locked + reward share).

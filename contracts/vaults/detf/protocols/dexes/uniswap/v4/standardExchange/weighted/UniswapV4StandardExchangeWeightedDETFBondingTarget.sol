@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -8,8 +8,9 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {
-    UniswapV4StandardExchangeWeightedDETFExchangeInTarget
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFExchangeInTarget.sol";
+    UniswapV4StandardExchangeWeightedDETFCommon,
+    IWeightedDetfCompoundSelf
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFCommon.sol";
 import {
     UniswapV4StandardExchangeWeightedDETFRepo as Repo
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFRepo.sol";
@@ -23,9 +24,8 @@ import {
 /// @title UniswapV4StandardExchangeWeightedDETFBondingTarget
 /// @notice First bond (all externals + capitalToken + refund), later single-external bonds,
 ///         mature-only sell/close, claim deposit/redeem, compound.
-abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
-    UniswapV4StandardExchangeWeightedDETFExchangeInTarget
-{
+/// @dev Option 1e: sibling of Exchange Targets under Common (not Bonding→In→Out tower).
+abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is UniswapV4StandardExchangeWeightedDETFCommon {
     using BetterSafeERC20 for IERC20;
 
     /* ---------------------------------------------------------------------- */
@@ -48,7 +48,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         if (tokenIns_.length != amountsIn_.length) revert Repo.ZeroAmount();
 
         if (Repo._layoutStruct().isReserveLive) {
-            try this.realizeExpansionExternal() {} catch {}
+            try IWeightedDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
             if (tokenIns_.length != 1) revert Repo.LaterBondSingleExternalOnly();
             return _bondSingle(
                 tokenIns_[0], amountsIn_[0], lockDuration_, recipient_, pretransferred_, deadline_
@@ -74,7 +74,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         if (!Repo._layoutStruct().isReserveLive) {
             revert Repo.FirstBondRequiresAllExternalPairs();
         }
-        try this.realizeExpansionExternal() {} catch {}
+        try IWeightedDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
         return _bondSingle(tokenIn_, amountIn_, lockDuration_, recipient_, pretransferred_, deadline_);
     }
 
@@ -158,6 +158,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         Repo._addUserBondedLp(shares_);
         emit IUniswapV4StandardExchangeWeightedDETF.ReserveLive(tokenId_, shares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _bondSingle(
@@ -182,6 +183,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         Repo._setCapitalToken(tokenId_, cap_);
         Repo._addUserBondedLp(shares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _liveBondJoinSingle(PairLegRating memory r_) internal returns (uint256 lpOut_) {
@@ -246,7 +248,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         Repo.Storage storage s = Repo._layoutStruct();
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
-        try this.realizeExpansionExternal() {} catch {}
+        try IWeightedDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
 
         principalShares_ = s.bondNftVault.originalSharesOf(tokenId_);
         if (principalShares_ > 0 && address(s.rebasingClaimToken) != address(0)) {
@@ -275,6 +277,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         Repo._clearCapital(tokenId_);
         Repo._subUserBondedLp(principalShares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function closeBondMature(uint256 tokenId_, address recipient_)
@@ -287,7 +290,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         if (recipient_ == address(0)) recipient_ = msg.sender;
         Repo.Storage storage s = Repo._layoutStruct();
 
-        try this.realizeExpansionExternal() {} catch {}
+        try IWeightedDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
 
         uint256 lp_ = s.bondNftVault.originalSharesOf(tokenId_);
         address capital_ = s.capitalTokenOf[tokenId_];
@@ -309,6 +312,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
         Repo._clearCapital(tokenId_);
         Repo._subUserBondedLp(lp_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @dev Settle bond LP → single capitalToken (single-asset exit preferred; multipath fallback).
@@ -342,188 +346,17 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is
             pairAmts_[i] -= d_;
         }
         if (aDetf_ > 0) {
-            try this.redepositDetfExternal(aDetf_, dust_) {}
+            try IWeightedDetfCompoundSelf(address(this)).redepositDetfExternal(aDetf_, dust_) {}
             catch {
                 for (uint256 i; i < pairAmts_.length; ++i) {
                     pairAmts_[i] += dust_[i];
                 }
                 // Best-effort: leave DETF on diamond if sell also fails (do not brick close).
-                try this.swapDetfToCapitalExternal(aDetf_, capital_) returns (uint256 sold_) {
+                try IWeightedDetfCompoundSelf(address(this)).swapDetfToCapitalExternal(aDetf_, capital_) returns (uint256 sold_) {
                     amountOut_ += sold_;
                 } catch {}
             }
         }
         amountOut_ += _consolidateToPair(capital_, pairAmts_);
-    }
-
-    /// @dev External self-call for redeposit (fresh stack + try/catch from close path).
-    function redepositDetfExternal(uint256 amountNative_, uint256[] calldata pairDust_) external {
-        if (msg.sender != address(this)) revert NotSelf();
-        uint256[] memory dust_ = pairDust_;
-        _redepositDetfSelfLegWithPairDust(amountNative_, dust_);
-    }
-
-    function swapDetfToCapitalExternal(uint256 detfAmt_, address capital_)
-        external
-        returns (uint256 out_)
-    {
-        if (msg.sender != address(this)) revert NotSelf();
-        out_ = _weightedExactIn(address(this), capital_, detfAmt_, address(this));
-    }
-
-    function claimRewards(uint256 tokenId_, address recipient_)
-        public
-        virtual
-        nonReentrant
-        returns (uint256 rewards_)
-    {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (recipient_ == address(0)) recipient_ = msg.sender;
-        // Realize on fresh stack to avoid n-leg FD StackOverflow after deep bond paths.
-        try this.realizeExpansionExternal() {} catch {}
-        // L-REW-1: owner-only; non-owner reverts (no soft-success).
-        address holder_ = s.bondNftVault.ownerOf(tokenId_);
-        if (msg.sender != holder_) {
-            revert Repo.NotAuthorized(msg.sender);
-        }
-        // L-REW-2/3: execute claim; return 0 only when allowed and no rewards.
-        rewards_ = s.bondNftVault.claimRewards(tokenId_, recipient_);
-        _tryCompoundProtocolRewards();
-    }
-
-    /// @dev External self-call entry for expansion realize (stack reset).
-    function realizeExpansionExternal() external {
-        if (msg.sender != address(this)) revert NotSelf();
-        _realizeExpansionIfNeeded();
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                                Claim                                   */
-    /* ---------------------------------------------------------------------- */
-
-    /// @notice Direct claim deposit. Reverts if not single-asset eligible (unlike compound skip).
-    /// @dev Settle → depositSingle → LP on protocol holder → mintFromNFTSale(lpShares).
-    function depositClaim(
-        IERC20 tokenIn_,
-        uint256 amountIn_,
-        uint256 minClaimOut_,
-        address recipient_,
-        bool pretransferred_,
-        uint256 deadline_
-    ) public virtual nonReentrant returns (uint256 claimOut_) {
-        _requireReserveLive();
-        _requireActive(deadline_, amountIn_);
-        if (recipient_ == address(0)) recipient_ = msg.sender;
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
-        _requireSingleAssetEligible(); // REVERT — not compound skip
-
-        address holder_ = _protocolLpHolder();
-        uint256 lpMinted_;
-        if (address(tokenIn_) == address(this)) {
-            uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
-            lpMinted_ = _depositSingle(address(this), pulled_, holder_);
-        } else {
-            PairLegRating memory r_ = _settleToPairLeg(tokenIn_, amountIn_, pretransferred_, deadline_);
-            address pair_ = address(s.pairTokens[r_.fundedProductIndex]);
-            lpMinted_ = _depositSingle(pair_, r_.pairNotionalNative, holder_);
-        }
-        if (lpMinted_ == 0) revert Repo.ZeroAmount();
-
-        // LP is already on claim holder when holder_ == rebasingClaimToken.
-        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(lpMinted_, recipient_);
-        if (claimOut_ < minClaimOut_) revert Repo.SlippageExceeded(minClaimOut_, claimOut_);
-    }
-
-    function redeemClaim(
-        uint256 claimAmount_,
-        IERC20 tokenOut_,
-        uint256 minOut_,
-        address recipient_,
-        uint256 deadline_
-    ) public virtual nonReentrant returns (uint256 amountOut_) {
-        _requireReserveLive();
-        _requireActive(deadline_, claimAmount_);
-        if (recipient_ == address(0)) recipient_ = msg.sender;
-        if (address(tokenOut_) == address(this)) {
-            revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
-        }
-
-        uint256 lpOut_ = _burnClaimPullProtocolLp(claimAmount_);
-        uint256[] memory binding_ = _exitProportional(lpOut_, address(this));
-        (uint256 aDetf_, uint256[] memory pairAmts_) = _unpackBinding(binding_);
-        _redepositDetfSelfLeg(aDetf_);
-        amountOut_ = _settleClaimResidual(tokenOut_, pairAmts_, recipient_);
-
-        if (amountOut_ < minOut_) revert Repo.SlippageExceeded(minOut_, amountOut_);
-    }
-
-    function _burnClaimPullProtocolLp(uint256 claimAmount_) private returns (uint256 lpOut_) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
-
-        uint256 principalLp_ = s.rebasingClaimToken.burnShares(claimAmount_, msg.sender, false);
-        if (principalLp_ == 0) revert Repo.ZeroAmount();
-
-        uint256 protocolLp_ = _protocolLp();
-        lpOut_ = principalLp_ < protocolLp_ ? principalLp_ : protocolLp_;
-        if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
-        _pullProtocolLp(lpOut_);
-    }
-
-    function _settleClaimResidual(IERC20 tokenOut_, uint256[] memory pairAmts_, address recipient_)
-        private
-        returns (uint256 amountOut_)
-    {
-        address tout = address(tokenOut_);
-        if (Repo._isPairToken(tout)) {
-            amountOut_ = _consolidateToPair(tout, pairAmts_);
-            if (amountOut_ > 0) tokenOut_.safeTransfer(recipient_, amountOut_);
-            return amountOut_;
-        }
-        if (_isShareOrSeTokenOut(tokenOut_)) {
-            address mid_ = _pairForShareOut(tokenOut_);
-            uint256 midAmt_ = _consolidateToPair(mid_, pairAmts_);
-            return _seWrap(mid_, midAmt_, tokenOut_, recipient_);
-        }
-        revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
-    }
-
-    function claimLiquidity(uint256 lpAmount_, address recipient_)
-        public
-        virtual
-        nonReentrant
-        returns (uint256 amountOut_)
-    {
-        Repo.Storage storage s = Repo._layoutStruct();
-        address bond_ = address(s.bondNftVault);
-        address claim_ = address(s.rebasingClaimToken);
-        if (msg.sender != bond_ && msg.sender != claim_ && msg.sender != address(this)) {
-            revert Repo.NotAuthorized(msg.sender);
-        }
-        if (lpAmount_ == 0) revert Repo.ZeroAmount();
-        if (msg.sender == bond_) {
-            _pullBondLp(lpAmount_);
-        } else {
-            _ensureProtocolLpOnDiamond(lpAmount_);
-        }
-        uint256[] memory binding_ = _exitProportional(lpAmount_, address(this));
-        (uint256 aDetf_, uint256[] memory pairAmts_) = _unpackBinding(binding_);
-        _redepositDetfSelfLeg(aDetf_);
-        // Default claimLiquidity payout: first pair token (no whole-DETF rateAsset).
-        address pay_ = address(s.pairTokens[0]);
-        amountOut_ = _consolidateToPair(pay_, pairAmts_);
-        if (amountOut_ > 0) {
-            IERC20(pay_).safeTransfer(recipient_ == address(0) ? msg.sender : recipient_, amountOut_);
-        }
-    }
-
-    function compoundProtocolRewards()
-        public
-        virtual
-        nonReentrant
-        returns (uint256 detfIn_, uint256 lpOut_)
-    {
-        return _tryCompoundProtocolRewards();
     }
 }

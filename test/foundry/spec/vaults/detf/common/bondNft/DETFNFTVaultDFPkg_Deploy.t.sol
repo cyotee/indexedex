@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -96,6 +96,88 @@ contract DETFNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
         // Still validate the interface exists at compile-time.
         assertEq(address(IDETFNFTVault(vaultAddr).rewardToken()), rewardToken, "configured reward token");
         rewardToken; // silence unused local warning if assertions change later
+    }
+
+    function test_initializeDETFNFT_zeroPrincipal_and_addRemoveOneToOne() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address alice_ = makeAddr("alice");
+
+        vm.startPrank(owner);
+        vault_.initializeDETFNFT();
+        vm.stopPrank();
+        uint256 protocolId_ = vault_.detfNFTId();
+        // Token id 0 is a valid protocol NFT (some ERC721 counters start at 0).
+        assertEq(vault_.originalSharesOf(protocolId_), 0, "deploy principal 0");
+        assertEq(vault_.effectiveSharesOf(protocolId_), 0, "deploy effective 0");
+        assertEq(vault_.effectiveSharesOf(protocolId_), vault_.originalSharesOf(protocolId_), "1:1 at deploy");
+
+        vm.startPrank(owner);
+        uint256 userId_ = vault_.createPosition(100e18, 30 days, alice_);
+        vault_.addToDETFNFT(protocolId_, 40e18);
+        vm.stopPrank();
+
+        assertTrue(userId_ != protocolId_, "protocol != user tokenId");
+        assertEq(vault_.originalSharesOf(protocolId_), 40e18, "add original");
+        assertEq(vault_.effectiveSharesOf(protocolId_), 40e18, "add 1:1 effective");
+
+        vm.prank(owner);
+        vault_.removeFromDETFNFT(protocolId_, 15e18);
+        assertEq(vault_.originalSharesOf(protocolId_), 25e18, "remove original");
+        assertEq(vault_.effectiveSharesOf(protocolId_), 25e18, "remove 1:1 effective");
+    }
+
+    function test_sellPositionToDetfNft_revertsBondNotMature_untilUnlock() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address alice_ = makeAddr("alice");
+
+        vm.startPrank(owner);
+        vault_.initializeDETFNFT();
+        uint256 tokenId_ = vault_.createPosition(50e18, 30 days, alice_);
+        uint256 unlock_ = vault_.unlockTimeOf(tokenId_);
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("BondNotMature(uint256)")), unlock_));
+        vault_.sellPositionToDetfNft(tokenId_, alice_, alice_);
+        vm.stopPrank();
+
+        vm.warp(unlock_ + 1);
+        vm.prank(owner);
+        (uint256 principal_,) = vault_.sellPositionToDetfNft(tokenId_, alice_, alice_);
+        assertEq(principal_, 50e18, "principal moved");
+        uint256 protocolId_ = vault_.detfNFTId();
+        assertEq(vault_.originalSharesOf(protocolId_), 50e18, "protocol credited");
+        assertEq(vault_.effectiveSharesOf(protocolId_), vault_.originalSharesOf(protocolId_), "1:1 after sell");
+    }
+
+    function test_redeemPosition_onlyOwner_and_eoaReverts() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address alice_ = makeAddr("alice");
+
+        vm.startPrank(owner);
+        vault_.initializeDETFNFT();
+        uint256 tokenId_ = vault_.createPosition(10e18, 30 days, alice_);
+        vm.stopPrank();
+
+        vm.prank(alice_);
+        vm.expectRevert();
+        vault_.redeemPosition(tokenId_, alice_, block.timestamp + 1 hours);
+    }
+
+    function _deployNftVault() internal returns (IDETFNFTVault vault_) {
+        address lpToken = address(_deployTestToken("LP Token", "LP", keccak256("DETFNFTVault_LP_Token_law")));
+        address rewardToken =
+            address(_deployTestToken("Reward Token", "RWD", keccak256("DETFNFTVault_Reward_Token_law")));
+
+        vm.startPrank(owner);
+        address vaultAddr = pkg.deployVault(
+            "Protocol NFT Vault",
+            "pNFT",
+            IDetf(address(0xBEEF)),
+            IERC20(lpToken),
+            IERC20(rewardToken),
+            9,
+            owner
+        );
+        vm.stopPrank();
+        vault_ = IDETFNFTVault(vaultAddr);
     }
 
     function test_processArgs_reverts_whenNotRegistry() public {

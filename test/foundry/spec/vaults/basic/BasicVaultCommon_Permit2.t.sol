@@ -7,17 +7,32 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterPermit2} from "@crane/contracts/protocols/utils/permit2/BetterPermit2.sol";
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /// @notice Local harness (unique name) to avoid duplicate symbol conflicts with other test files.
 contract BasicVaultCommonPermit2Harness is BasicVaultCommon {
-    constructor(IPermit2 permit2_) {
+    constructor(IPermit2 permit2_, address[] memory expectedHoldTokens_) {
         Permit2AwareRepo._initialize(permit2_);
+        MultiAssetBasicVaultRepo._initialize(expectedHoldTokens_);
     }
 
     function secureTokenTransfer(IERC20 tokenIn_, uint256 amount_, bool pretransferred_) external returns (uint256) {
         return _secureTokenTransfer(tokenIn_, amount_, pretransferred_);
+    }
+
+    function syncAllExpectedHoldReserves() external {
+        _syncAllExpectedHoldReserves();
+    }
+
+    function moneyIn(IERC20 token_, uint256 claimed_, bool pretransferred_) external returns (uint256 credit_) {
+        credit_ = _secureTokenTransfer(token_, claimed_, pretransferred_);
+        _syncAllExpectedHoldReserves();
+    }
+
+    function bookedReserve(IERC20 token_) external view returns (uint256) {
+        return _bookedReserve(token_);
     }
 }
 
@@ -110,84 +125,95 @@ contract BasicVaultCommon_Permit2 is Test {
     address internal alice = makeAddr("alice");
 
     function setUp() public {
-        // Deploy local BetterPermit2 mock and initialize the harness to use it
         permit2 = new BetterPermit2();
-        harness = new BasicVaultCommonPermit2Harness(IPermit2(address(permit2)));
-
         token = new MockTokenPermit2();
         feeToken = new FeeOnTransferMockTokenPermit2();
+
+        address[] memory hold = new address[](1);
+        hold[0] = address(token);
+        harness = new BasicVaultCommonPermit2Harness(IPermit2(address(permit2)), hold);
     }
 
     /// @notice Permit2 path: when user has not given ERC20 allowance, Permit2.transferFrom is used.
     function test_permit2_transfer_success() public {
         token.mint(alice, DEPOSIT);
 
-        // Grant Permit2 allowance for the harness (owner = alice)
-        // Give Permit2 itself ERC20 approval to pull from alice
         vm.prank(alice);
         token.approve(address(permit2), DEPOSIT);
 
-        // Also grant Permit2 allowance mapping so AllowanceTransfer accepts the transfer
         vm.prank(alice);
         permit2.approve(address(token), address(harness), uint160(DEPOSIT), type(uint48).max);
 
         vm.startPrank(alice);
-        uint256 actual = harness.secureTokenTransfer(token, DEPOSIT, false);
+        uint256 actual = harness.moneyIn(token, DEPOSIT, false);
         vm.stopPrank();
 
         assertEq(actual, DEPOSIT, "actualIn should equal requested deposit");
         assertEq(token.balanceOf(address(harness)), DEPOSIT);
+        assertEq(harness.bookedReserve(token), DEPOSIT, "INV-R1 after moneyIn");
     }
 
     /// @notice Permit2 + fee-on-transfer: vault should observe net received amount.
     function test_permit2_feeOnTransfer_returnsNetAmount() public {
-        uint256 expectedFee = (DEPOSIT * 100) / 10_000; // 1%
+        uint256 expectedFee = (DEPOSIT * 100) / 10_000;
         uint256 expectedNet = DEPOSIT - expectedFee;
+
+        address[] memory hold = new address[](1);
+        hold[0] = address(feeToken);
+        BasicVaultCommonPermit2Harness feeHarness =
+            new BasicVaultCommonPermit2Harness(IPermit2(address(permit2)), hold);
 
         feeToken.mint(alice, DEPOSIT);
 
-        // Approve Permit2 allowance for the harness so Permit2.transferFrom succeeds
-        // Give Permit2 ERC20 approval for the fee token
         vm.prank(alice);
         feeToken.approve(address(permit2), DEPOSIT);
 
-        // Also grant Permit2 allowance mapping for the harness
         vm.prank(alice);
-        permit2.approve(address(feeToken), address(harness), uint160(DEPOSIT), type(uint48).max);
+        permit2.approve(address(feeToken), address(feeHarness), uint160(DEPOSIT), type(uint48).max);
 
         vm.startPrank(alice);
-        uint256 actual = harness.secureTokenTransfer(IERC20(address(feeToken)), DEPOSIT, false);
+        uint256 actual = feeHarness.secureTokenTransfer(IERC20(address(feeToken)), DEPOSIT, false);
         vm.stopPrank();
 
         assertEq(actual, expectedNet, "actualIn should reflect fee-on-transfer deduction");
-        assertEq(IERC20(address(feeToken)).balanceOf(address(harness)), expectedNet);
+        assertEq(IERC20(address(feeToken)).balanceOf(address(feeHarness)), expectedNet);
     }
 
-    /// @notice Pretransferred with inventory but no in-call transfer → delta 0 → shared error.
-    /// @dev Inverts former free-credit theater under Permit2-initialized harness.
+    /// @notice Pretransferred with booked inventory (R==B) → TransferDeltaInsufficient(claimed, 0).
     function test_pretransferred_returnsAmount() public {
         token.mint(address(harness), DUST + DEPOSIT);
-        assertGe(token.balanceOf(address(harness)), DEPOSIT);
+        harness.syncAllExpectedHoldReserves();
 
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0))
         );
         harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 
-    /// @notice Pretransferred shortfall uses ISecurePullErrors.TransferDeltaInsufficient (exact selector + args).
+    /// @notice Pretransferred shortfall: claimed > U uses exact U args.
     function test_pretransferred_insufficientBalance_reverts() public {
+        // Unbooked inventory U = DEPOSIT-1 (R=0)
         token.mint(address(harness), DEPOSIT - 1);
 
         vm.prank(alice);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, DEPOSIT - 1
             )
         );
         harness.secureTokenTransfer(token, DEPOSIT, true);
+    }
+
+    /// @notice Push + pretransferred=true happy path under Permit2-initialized harness.
+    function test_push_pretransferred_happy() public {
+        token.mint(alice, DEPOSIT);
+        vm.prank(alice);
+        token.transfer(address(harness), DEPOSIT);
+
+        vm.prank(alice);
+        uint256 credit = harness.moneyIn(token, DEPOSIT, true);
+        assertEq(credit, DEPOSIT);
+        assertEq(harness.bookedReserve(token), DEPOSIT);
     }
 }

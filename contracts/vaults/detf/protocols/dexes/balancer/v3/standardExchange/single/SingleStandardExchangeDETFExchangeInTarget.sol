@@ -1,10 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
     SingleStandardExchangeDETFExchangeOutTarget
@@ -32,8 +33,11 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
 
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
 
-        // Burn DETF → asset / vault shares
+        // Burn DETF → asset / vault shares. DETF → claim is buyClaim only.
         if (address(tokenIn_) == address(this)) {
+            if (address(tokenOut_) == address(s.rebasingClaimToken)) {
+                revert SingleStandardExchangeDETFRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
+            }
             return _burnDetfExactIn(amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
         }
 
@@ -43,10 +47,16 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
                 revert SingleStandardExchangeDETFRepo.UnsupportedRoute(tokenIn_, tokenOut_);
             }
             uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
-            tokenIn_.safeTransfer(address(s.standardExchangeVault), pulled_);
-            amountOut_ = s.standardExchangeVault.exchangeIn(
-                tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, true, deadline_
+            amountOut_ = _nestedExchangeInPush(
+                IStandardExchangeIn(address(s.standardExchangeVault)),
+                tokenIn_,
+                pulled_,
+                tokenOut_,
+                minAmountOut_,
+                recipient_,
+                deadline_
             );
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
 
@@ -62,14 +72,13 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
                 vaultShares_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
             } else if (_isAllowlistedTokenIn(tokenIn_)) {
                 uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
-                tokenIn_.safeTransfer(address(s.standardExchangeVault), pulled_);
-                vaultShares_ = s.standardExchangeVault.exchangeIn(
+                vaultShares_ = _nestedExchangeInPush(
+                    IStandardExchangeIn(address(s.standardExchangeVault)),
                     tokenIn_,
                     pulled_,
                     s.standardExchangeVaultShare,
                     0,
                     address(this),
-                    true,
                     deadline_
                 );
             } else {
@@ -80,6 +89,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
             if (amountOut_ < minAmountOut_) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
             }
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -46,7 +46,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](28);
+        funcs_ = new bytes4[](29);
         // ERC20 functions
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
@@ -69,7 +69,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         funcs_[16] = IRebasingClaimToken.convertToShares.selector;
         funcs_[17] = IRebasingClaimToken.convertToClaim.selector;
         funcs_[18] = IRebasingClaimToken.previewRedeem.selector;
-        funcs_[19] = IRebasingClaimToken.mintFromNFTSale.selector;
+        funcs_[19] = bytes4(keccak256("mintFromNFTSale(uint256,address)"));
         funcs_[20] = IRebasingClaimToken.redeem.selector;
         funcs_[21] = IRebasingClaimToken.burnShares.selector;
         funcs_[22] = IStandardExchangeIn.previewExchangeIn.selector;
@@ -78,6 +78,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
         funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
         funcs_[27] = IRebasingClaimToken.updateRedemptionRate.selector;
+        funcs_[28] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
     }
 
     /// @inheritdoc IFacet

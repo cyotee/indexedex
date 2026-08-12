@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation'
 import WalletStatusBanner from '../components/WalletStatusBanner'
 import { AddressLink } from '../components/ui/AddressLink'
 import { PageHeader } from '../components/ui/PageHeader'
-import { CHAIN_ID_SEPOLIA, getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
+import { CHAIN_ID_ROBINHOOD, getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
 import { isDebugLabEnabled } from '../lib/lab'
 import useChainResolution from '../lib/hooks/useChainResolution'
 import useRouterBytecode from '../lib/hooks/useRouterBytecode'
@@ -52,8 +52,8 @@ export default function StakingPageClient({
   embedMode = false,
   fixedDetf,
 }: StakingPageClientProps = {}) {
-  // DETF workspace (mint / bond / sell). Primary discovery is /earn; this page remains for full flows.
-  const chain = useChainResolution(CHAIN_ID_SEPOLIA)
+  // DETF workspace (mint / bond / sell). DTF launch default chain is Robinhood (4663).
+  const chain = useChainResolution(CHAIN_ID_ROBINHOOD)
   const publicClient = usePublicClient({ chainId: chain.dataChainId }) as PublicClient | undefined
   const { writeContractAsync, isPending: isWritePending } = useWriteContract()
   const searchParams = useSearchParams()
@@ -180,15 +180,20 @@ export default function StakingPageClient({
     await approveToken(stakingReads.effectiveWethToken, detfAddress, amount)
     setStatus('Bonding with rate asset…')
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
-    const hash = await writeContractAsync({
-      chain: chain.targetChain,
-      account: chain.address,
-      address: detfAddress,
-      abi: protocolDetfAbi,
-      functionName: 'bond',
-      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, deadline],
-    })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond rate asset')
+    try {
+      const hash = await writeContractAsync({
+        chain: chain.targetChain,
+        account: chain.address,
+        address: detfAddress,
+        abi: protocolDetfAbi,
+        functionName: 'bond',
+        // pretransferred=false: DETF pulls via transferFrom after ERC-20 approve
+        args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, false, deadline],
+      })
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond rate asset')
+    } catch (e) {
+      setStatus(`Bond rate asset failed: ${e instanceof Error ? e.message : String(e)}`)
+    }
   }, [detfAddress, chain, stakingReads.effectiveWethToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
   const handleBondWithRich = useCallback(async (amount: bigint, lockSeconds: bigint) => {
@@ -201,15 +206,19 @@ export default function StakingPageClient({
     await approveToken(stakingReads.effectiveRichToken, detfAddress, amount)
     setStatus('Bonding with pair token…')
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
-    const hash = await writeContractAsync({
-      chain: chain.targetChain,
-      account: chain.address,
-      address: detfAddress,
-      abi: protocolDetfAbi,
-      functionName: 'bond',
-      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, deadline],
-    })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond pair token')
+    try {
+      const hash = await writeContractAsync({
+        chain: chain.targetChain,
+        account: chain.address,
+        address: detfAddress,
+        abi: protocolDetfAbi,
+        functionName: 'bond',
+        args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, false, deadline],
+      })
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond pair token')
+    } catch (e) {
+      setStatus(`Bond pair token failed: ${e instanceof Error ? e.message : String(e)}`)
+    }
   }, [detfAddress, chain, stakingReads.effectiveRichToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
 
   const handleSellNft = useCallback(async (tokenId: bigint) => {

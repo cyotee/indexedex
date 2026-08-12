@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
@@ -25,7 +25,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](27);
+        funcs_ = new bytes4[](28);
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
         funcs_[2] = IERC20.transfer.selector;
@@ -45,7 +45,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[16] = IRebasingClaimToken.convertToShares.selector;
         funcs_[17] = IRebasingClaimToken.convertToClaim.selector;
         funcs_[18] = IRebasingClaimToken.previewRedeem.selector;
-        funcs_[19] = IRebasingClaimToken.mintFromNFTSale.selector;
+        funcs_[19] = bytes4(keccak256("mintFromNFTSale(uint256,address)"));
         funcs_[20] = IRebasingClaimToken.redeem.selector;
         funcs_[21] = IRebasingClaimToken.burnShares.selector;
         funcs_[22] = IStandardExchangeIn.previewExchangeIn.selector;
@@ -53,6 +53,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
         funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
+        funcs_[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
     }
 
     function facetMetadata()
@@ -69,7 +70,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         interfaces_[3] = type(IStandardExchangeIn).interfaceId;
         interfaces_[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions_ = new bytes4[](27);
+        functions_ = new bytes4[](28);
         functions_[0] = IERC20.totalSupply.selector;
         functions_[1] = IERC20.balanceOf.selector;
         functions_[2] = IERC20.transfer.selector;
@@ -89,7 +90,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[16] = IRebasingClaimToken.convertToShares.selector;
         functions_[17] = IRebasingClaimToken.convertToClaim.selector;
         functions_[18] = IRebasingClaimToken.previewRedeem.selector;
-        functions_[19] = IRebasingClaimToken.mintFromNFTSale.selector;
+        functions_[19] = bytes4(keccak256("mintFromNFTSale(uint256,address)"));
         functions_[20] = IRebasingClaimToken.redeem.selector;
         functions_[21] = IRebasingClaimToken.burnShares.selector;
         functions_[22] = IStandardExchangeIn.previewExchangeIn.selector;
@@ -97,5 +98,6 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[24] = IStandardExchangeOut.previewExchangeOut.selector;
         functions_[25] = IStandardExchangeOut.exchangeOut.selector;
         functions_[26] = IRebasingClaimToken.transferHeldToken.selector;
+        functions_[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
     }
 }

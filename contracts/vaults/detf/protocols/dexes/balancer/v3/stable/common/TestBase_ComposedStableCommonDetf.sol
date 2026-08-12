@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
@@ -100,6 +100,13 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
 
     address internal detfOwner;
     IDetf internal detf;
+
+    function _warpPastUnlock(uint256 tokenId_) internal {
+        uint256 unlock_ = bondNFTVault.unlockTimeOf(tokenId_);
+        if (block.timestamp <= unlock_) {
+            vm.warp(unlock_ + 1);
+        }
+    }
 
     function setUp() public virtual override {
         super.setUp();

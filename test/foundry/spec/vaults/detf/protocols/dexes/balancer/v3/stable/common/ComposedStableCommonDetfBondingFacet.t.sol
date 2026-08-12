@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
@@ -125,6 +125,26 @@ contract MockBondNFTVault {
         nextPrincipalShares = principalShares_;
     }
 
+    function unlockTimeOf(uint256) external pure returns (uint256) {
+        return 0;
+    }
+
+    function detfNFTId() external pure returns (uint256) {
+        return 1;
+    }
+
+    function originalSharesOf(uint256) external view returns (uint256) {
+        return nextPrincipalShares;
+    }
+
+    function effectiveSharesOf(uint256) external view returns (uint256) {
+        return nextPrincipalShares;
+    }
+
+    function totalOriginalShares() external view returns (uint256) {
+        return nextPrincipalShares;
+    }
+
     function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
         external
         returns (uint256 principalShares, uint256 rewardsClaimed)
@@ -140,6 +160,10 @@ contract MockBondNFTVault {
         lastFeeRecipientTokenId = tokenId;
         lastFeeRecipientShares = shares;
     }
+
+    function addToDETFNFT(uint256, uint256) external {}
+
+    function removeFromDETFNFT(uint256, uint256) external {}
 
     function feeRecipientNFTId() external view returns (uint256) {
         return feeRecipientTokenId;
@@ -173,6 +197,15 @@ contract MockRebasingDetfToken {
         lastLpShares = lpShares;
         lastRecipient = recipient;
         rebasingClaimMinted = lpShares * mintMultiplier;
+    }
+
+    function mintFromNFTSale(uint256 assets, uint256, address recipient)
+        external
+        returns (uint256 rebasingClaimMinted)
+    {
+        lastLpShares = assets;
+        lastRecipient = recipient;
+        rebasingClaimMinted = assets * mintMultiplier;
     }
 }
 
@@ -284,6 +317,10 @@ contract ComposedStableCommonDetfBondingHarness is ComposedStableCommonDetfBondi
 
     function _weightedPoolWeights(IWeightedPool pool_) internal view override returns (uint256[] memory weights_) {
         weights_ = weightedPoolStates[address(pool_)].weights;
+    }
+
+    function _syntheticDetfEthPrice() internal view override returns (uint256) {
+        return 1e18;
     }
 }
 
@@ -417,10 +454,10 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         harness.bond(detfToken, 1e18, 7 days, address(this), block.timestamp + 1);
     }
 
-    function test_sellNFT_movesPrincipalIntoProtocolAndMintsRebasingDetf() public {
+    function test_sellPositionToDetfNft_movesPrincipalIntoProtocolAndMintsRebasingDetf() public {
         bondNFTVault.setNextPrincipalShares(7e18);
 
-        uint256 rebasingClaimMinted = harness.sellNFT(11, address(0));
+        uint256 rebasingClaimMinted = harness.sellPositionToDetfNft(11, 0, address(0));
 
         assertEq(rebasingClaimMinted, 14e18);
         assertEq(bondNFTVault.lastSoldTokenId(), 11);
@@ -430,7 +467,7 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         assertEq(rebasingDetfToken.lastRecipient(), address(this));
     }
 
-    function test_sellNFT_revertsWhenRebasingTokenUnset() public {
+    function test_sellPositionToDetfNft_revertsWhenRebasingTokenUnset() public {
         ComposedStableCommonDetfRepo.RouteConfig[] memory routes = new ComposedStableCommonDetfRepo.RouteConfig[](1);
         routes[0] = ComposedStableCommonDetfRepo.RouteConfig({
             baseToken: commonToken,
@@ -469,6 +506,6 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         unconfiguredHarness.setWeightedPoolState(address(reservePoolToken), reserveBalances, reserveWeights, 0, 1000e18, true);
 
         vm.expectRevert(abi.encodeWithSelector(IDetfErrors.InvalidToken.selector, IERC20(address(0))));
-        unconfiguredHarness.sellNFT(1, address(this));
+        unconfiguredHarness.sellPositionToDetfNft(1, 0, address(this));
     }
 }

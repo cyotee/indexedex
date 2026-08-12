@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ONE_WAD} from '@crane/contracts/constants/Constants.sol';
@@ -33,8 +33,6 @@ contract AerodromeStandardExchangeInTarget is
     IStandardExchangeIn
 {
     using BetterSafeERC20 for IERC20;
-
-    uint256 constant AERO_FEE_DENOM = 10000;
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
@@ -266,7 +264,9 @@ contract AerodromeStandardExchangeInTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenOut))
         ) {
-            return _swapReserveAssets(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            amountOut = _swapReserveAssets(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+            _syncAllExpectedHoldReserves();
+            return amountOut;
         }
 
         /* ------------------------------------------------------------------ */
@@ -307,6 +307,7 @@ contract AerodromeStandardExchangeInTarget is
                     revert();
                 }
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -340,6 +341,7 @@ contract AerodromeStandardExchangeInTarget is
                     revert();
                 }
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -360,6 +362,7 @@ contract AerodromeStandardExchangeInTarget is
                 BetterMath._convertToSharesDown(amountIn, vs.vaultLpReserve, vs.vaultTotalShares, vs.decimalOffset);
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             ERC20Repo._mint(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -381,6 +384,7 @@ contract AerodromeStandardExchangeInTarget is
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             IERC20(address(pool)).transfer(recipient, amountOut);
             ERC4626Repo._setLastTotalAssets(IERC20(address(pool)).balanceOf(address(this)));
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -418,6 +422,7 @@ contract AerodromeStandardExchangeInTarget is
                 BetterMath._convertToSharesDown(lpMinted, vs.vaultLpReserve, vs.vaultTotalShares, vs.decimalOffset);
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             ERC20Repo._mint(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -446,6 +451,7 @@ contract AerodromeStandardExchangeInTarget is
 
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             ERC4626Repo._setLastTotalAssets(IERC20(address(pool)).balanceOf(address(this)));
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

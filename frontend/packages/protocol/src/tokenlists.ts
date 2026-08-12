@@ -394,11 +394,17 @@ export function getProtocolDetfTokensForChain(
   return getCached(chainId, environment).protocolDetfTokens
 }
 
+/**
+ * Protocol DETFs for Earn / product catalogs (lab gentle+launch-rich + fee DETF if listed).
+ * Wave 2: fee DETFs are also on `featured-fee-detfs`; Earn excludes those via
+ * {@link isFeaturedFeeDetfAddress} / loadEarnProductsForChain so they live on /staking only.
+ * Do not filter to CHIR-only here — that emptied Earn of all inert lab DETFs.
+ */
 export function getProtocolDetfsForChain(
   chainId: number,
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
 ): TokenListEntry[] {
-  return getCached(chainId, environment).protocolDetfTokens.filter((t) => t.symbol === 'CHIR')
+  return getCached(chainId, environment).protocolDetfTokens
 }
 
 /**
@@ -608,11 +614,16 @@ export function buildPoolOptions(): PoolOption[] {
     label: `${p.display || p.name || p.symbol} (ERC4626)`,
     type: 'vault',
   }))
-  const protocolDetfOptions: PoolOption[] = protocolDetfTokens.map((t) => ({
-    value: t.address,
-    label: `${t.display || t.name || t.symbol} (Protocol DETF)`,
-    type: 'vault',
-  }))
+  const protocolDetfOptions: PoolOption[] = protocolDetfTokens.map((t) => {
+    const tags = (t.tags ?? []).map((x) => String(x).toLowerCase())
+    const isFee = tags.includes('fee-detf') || tags.includes('featured')
+    const kind = isFee ? 'Protocol DETF' : 'DETF'
+    return {
+      value: t.address,
+      label: `${t.display || t.name || t.symbol} (${kind})`,
+      type: 'vault' as const,
+    }
+  })
   return [...balancerOptions, ...vaultOptions, ...erc4626VaultOptions, ...protocolDetfOptions]
 }
 

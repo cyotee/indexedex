@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -388,21 +388,23 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         );
     }
 
-    /// @notice L-GAPS-9: transfer-before-call + pretransferred=true is outside the pull window.
-    ///         Absolute inventory must not free-credit a mint (TransferDeltaInsufficient(claimed, 0)).
-    ///         Honest path remains approve + pretransferred=false.
+    /// @notice Durable U: transfer-before-call + pretransferred=true is the canonical nested/router push path.
+    ///         Credits `claimed` when `claimed <= U = B - R` (unbooked surplus after push).
+    ///         I1 booked free inventory without new push is covered by adversarial secure-pull suite.
     function test_exchangeIn_zap_pretransferred_true() public {
         IERC20 vaultToken = IERC20(address(vault));
         uint256 amountIn = 1e18;
         address recipient = makeAddr("zapInPretransferredRecipient");
 
+        // Ensure face free is booked (R==B) so only this push creates U.
+        // Bootstrap any residual face via a tiny honest pull if needed, then push+true.
         tokenA.mint(address(this), amountIn);
         tokenA.transfer(address(vault), amountIn);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0))
-        );
-        vault.exchangeIn(IERC20(_token0Address()), amountIn, vaultToken, 0, recipient, true, _deadline());
+        uint256 out_ =
+            vault.exchangeIn(IERC20(_token0Address()), amountIn, vaultToken, 0, recipient, true, _deadline());
+        assertGt(out_, 0, "push+true mint succeeds under durable U");
+        assertEq(vaultToken.balanceOf(recipient), out_, "recipient received SE shares");
     }
 
     function test_exchangeOut_zap_sharesToToken0() public {

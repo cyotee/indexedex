@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -31,8 +31,10 @@ contract MixedBufferMultiVaultStableDetf_Claim_Test is TestBase_MixedBufferMulti
         (uint256 tokenId_,) = detfBonding.bond(
             IERC20(address(dai)), 200e18, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
         );
-        uint256 claimMinted_ = detfBonding.sellNFT(tokenId_, bob);
         vm.stopPrank();
+        _warpPastUnlock(detf, tokenId_);
+        vm.prank(bob);
+        uint256 claimMinted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, bob);
 
         assertTrue(claimMinted_ > 0, "claim minted");
         IRebasingClaimToken claim_ = IRebasingClaimToken(detfInfo.rebasingClaimToken());

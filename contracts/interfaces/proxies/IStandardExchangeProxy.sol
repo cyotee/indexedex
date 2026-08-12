@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC4626PermitProxy} from "@crane/contracts/interfaces/proxies/IERC4626PermitProxy.sol";

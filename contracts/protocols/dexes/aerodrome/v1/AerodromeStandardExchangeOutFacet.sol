@@ -1,53 +1,26 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
-    AerodromeStandardExchangeOutTarget
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutTarget.sol";
+    AerodromeStandardExchangeOutExecuteTarget
+} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutExecuteTarget.sol";
 
-contract AerodromeStandardExchangeOutFacet is AerodromeStandardExchangeOutTarget, IFacet {
+/// @notice Execute-only exchangeOut (Option 1b view/execute split).
+contract AerodromeStandardExchangeOutFacet is AerodromeStandardExchangeOutExecuteTarget, IFacet {
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutFacet).name;
     }
 
-    function facetInterfaces()
-        public
-        pure
-        virtual
-        returns (
-            // override
-            bytes4[] memory interfaces
-        )
-    {
+    function facetInterfaces() public pure virtual returns (bytes4[] memory interfaces) {
         interfaces = new bytes4[](1);
-
         interfaces[0] = type(IStandardExchangeOut).interfaceId;
     }
 
-    function facetFuncs()
-        public
-        pure
-        virtual
-        returns (
-            // override
-            bytes4[] memory funcs
-        )
-    {
-        funcs = new bytes4[](2);
-
-        funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
-        funcs[1] = IStandardExchangeOut.exchangeOut.selector;
+    function facetFuncs() public pure virtual returns (bytes4[] memory funcs) {
+        funcs = new bytes4[](1);
+        funcs[0] = IStandardExchangeOut.exchangeOut.selector;
     }
 
     function facetMetadata()

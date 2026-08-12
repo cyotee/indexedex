@@ -35,7 +35,7 @@ Write **abuse-oriented Foundry tests** that drive **real production entry points
 
 ```
 1. Threat model table (actor × surface × asset × trust flags)
-2. Attack catalog IDs (A–H classic + I trust-flag + J surface + K accounting-sync)
+2. Attack catalog IDs (A–H classic + A0 empty-vault + I trust-flag + J surface + K accounting-sync + L AMM desync + M middleware + N TOCTOU + O signatures)
 3. Priority P0 / P1 / P2
 4. Adversarial plan markdown (status, checklist, pass criteria)
 5. TestBase_*_Adversarial harness (extends feature TestBase)
@@ -75,27 +75,107 @@ test/foundry/spec/<feature>/
     Adversarial_Griefing.t.sol
     Adversarial_TrustFlags.t.sol        # I1–I5 pretransferred / claimed amount
     Adversarial_Surface.t.sol           # J1–J4 Target↔Facet↔proxy (or co-locate with declaration tests)
+    Adversarial_AmmDesync.t.sol         # L1–L3 AMM reserve / FoT / skim-class (if product prices or holds LP)
+    Adversarial_Middleware.t.sol        # M1–M3 arbitrary call / swap target / allowance
+    Adversarial_Toctou.t.sol            # N1–N2 quote–settle / preview vs execute
+    Adversarial_Signatures.t.sol        # O1–O3 permit / ecrecover / replay (if product has sig paths)
 ```
 
-Naming: `test_<ID>_<behavior>()` so greps prove catalog coverage (`test_A1_...`, `test_I1_...`, `test_J2_...`).
+Naming: `test_<ID>_<behavior>()` so greps prove catalog coverage (`test_A1_...`, `test_A0_...`, `test_I1_...`, `test_L1_...`, `test_J2_...`).
 
 ## Attack catalog (generic vault / diamond)
 
 | Cat | Theme | Examples | Typical pass |
 |-----|--------|----------|--------------|
 | **A** | Donation / inflation | Transfer assets/shares/BPT to diamond without mint path; first-depositor share inflation | No free mint; idle inventory cannot steal others' balances; empty-vault mint is safe or gated |
+| **A0** | Empty vault / residual inventory | `totalSupply()==0` (or no dead shares) while contract holds assets; first minter drains pre-seeded inventory | First mint cannot claim unaccounted inventory; dead shares / virtual offset / init gate |
 | **B** | Spot / rate manipulation | Skew underlying AMM → mint → reverse → burn | No free lunch **or** bounded intentional seigniorage + safety invariants |
 | **C** | Reentrancy / cross-entry | Hostile share reenters mint/bond/redeem/init | Nested `IsLocked` (or equivalent nonReentrant) |
 | **D** | Authority / claim / NFT | Redeem without claim; double redeem; onlyOwner vaults | Revert; no over-claim of principal |
-| **E** | Accounting / residual | Round-trip conservation; zero amount; deadline; fee-on-transfer `actualIn` | Residual free inventory 0; exact/approx deltas; credit = observed in |
-| **F** | Access / immutability | diamondCut, setWeights, mintFromNFTSale by EOA | Fail; no owner upgrade surface if unowned |
+| **E** | Accounting / residual | Round-trip conservation; zero amount; deadline; fee-on-transfer `actualIn`; **surplus-refund** paths that pay `balance − X` to caller | Residual free inventory 0; exact/approx deltas; credit = observed in; refunds use **accounted liability**, not raw balance |
+| **F** | Access / immutability | diamondCut, setWeights, mintFromNFTSale by EOA; **permissionless structural ops** that resize/settle inventory (realloc-class, treasury resize, migrate) | Fail; no owner upgrade surface if unowned; value-settling structural ops are auth-gated or cannot refund untracked surplus |
 | **G** | Composition | Nested vault as leg | Outer activity does not brick inner |
 | **H** | Grief / DoS | minOut fail, min-balance exit fail | Clean revert; **atomicity** (no permanent burn without payout) |
 | **I** | Trust-flag / claimed amount | `pretransferred=true` with **no** transfer; claim `amountIn` against absolute vault balance that already holds reserves; permit amount ≠ actual; `msg.value` mismatch | Revert **or** credit only measured **delta** since last snapshot / call start; attacker balance of shares/product must not increase without paying |
 | **J** | Surface completeness | Target has `foo()` but Facet omits selector; DFPkg `facetCuts` incomplete; proxy loupe missing product API | After production deploy: every product selector is on loupe **and** succeeds as a real call (or intentional access revert) |
 | **K** | Accounting sync | `lastTotalAssets` / reserve snapshot stale; donation then next deposit mis-credits; skim vs internal books diverge | Next user cannot mint from prior donation; mismatch reverts with exact selector or donation is explicitly accepted with documented beneficiary |
+| **L** | AMM reserve / balance desync | Untracked pair surplus + public skim; FoT leaves books ≠ balances; burn-from-pair used as mint/burn oracle | Protocol books match balances; no free extract of untracked surplus; FoT does not desync NAV |
+| **M** | Middleware / arbitrary call / allowance | Public `target+calldata` with held ERC20 allowance; user-supplied swap target; third-party `transferFrom` without intent | No user-supplied call with protocol/user allowances; allowlisted routers; amountOut measured |
+| **N** | Quote–settle TOCTOU | Mid-tx hook/valuation changes units between quote and settle; preview ≠ execute | Hostile callback between quote and settle cannot inflate credit or drain inventory |
+| **O** | Signature / permit failure | ecrecover address(0); invalid/dummy sig accepted; missing nonce/deadline; domain/typehash mismatch | Invalid/zero/reused sig reverts; never authorizes address(0) |
+
+**Do not renumber A–K.** A0 and L/M/N/O are extensions only.
 
 Map product-specific surfaces onto this catalog; drop irrelevant categories with a one-line deferred reason.
+
+### Boundary map (avoid double-count)
+
+| Existing | When to use vs new |
+|----------|--------------------|
+| **A** | Assets arrive *without* mint path; classic donation/inflation |
+| **A0** | Residual assets with empty/zero share supply (first minter drain) |
+| **I** | Caller *claims* transfer via `pretransferred` / permit amount |
+| **K** | Stale internal snapshot; next user free credit from prior donation |
+| **L** | *External AMM* pair balance≠reserve; FoT pair surplus; skim-class |
+| **E** vs **L1** | E = product refund/residual math on own books; L1 = untracked surplus extract (incl. public skim / surplus-refund) |
+| **B** vs **L3** | B = economic skew of *priced* path; L3 = books/oracle trust of desynced reserves |
+| **C** vs **N** | C = reentrancy into locked path; N = logic TOCTOU without same-lock reentry |
+| **M** vs **F** | F = product access control; M = helper/router forwarding with allowances |
+
+### Category E / L1 cross-cut — surplus-refund & structural value settlement
+
+Any path that returns value as **`address(this).balance − floor`**, **`token.balanceOf(this) − someMin`**, or “rent/resize delta to `msg.sender`” is a **public skim of untracked surplus** unless the refund is capped to **caller-accounted liability** only.
+
+| ID | Attack | Pass | P |
+|----|--------|------|---|
+| **E6** | Overpay / donate ETH or tokens, then hit a refund path that pays raw balance above a floor to the caller | Refund ≤ caller’s tracked credit / overpay for **this** call; prior inventory and other users’ balances stay put | P0 if any refund / residual-return path exists |
+| **F5** | Untracked surplus + **permissionless** resize / migrate / reclaim that settles value to the caller | No free extract of protocol surplus; structural ops auth-gated **or** refund math cannot touch surplus inventory | P0 if public structural settle exists |
+| **L1** | Untracked surplus extract (pair skim, idle native/ERC20 reclaim chains) | Books match balances; no free extract of untracked surplus | P0 if holds AMM LP, prices from pair reserves, **or** holds idle inventory with public reclaim |
+
+**EVM anti-pattern (sketch):**
+
+```solidity
+// WRONG — refunds all surplus inventory, not just this caller's overpay
+uint256 refund = address(this).balance - requiredReserve;
+payable(msg.sender).transfer(refund);
+
+// RIGHT — refund only measured overpay for this call
+uint256 refund = msg.value - amountDue; // or tracked credit for msg.sender
+payable(msg.sender).transfer(refund);
+```
+
+Cross-VM lesson (Solana realloc / rent refund CTFs): shrinking or resettling an account that holds **trading proceeds above rent floor** can pay the entire surplus to `realloc_payer` when the framework refunds `lamports − new_rent_exempt`. Same class as **E6 / L1 / F5** — map to hermetic EVM tests; do not renumber A–K.
+
+### Category L — AMM reserve / balance desync (P0 when product prices from pair reserves or holds LP)
+
+| ID | Attack | Pass | P |
+|----|--------|------|---|
+| **L1** | Untracked balance / public skim-class surplus on protocol-owned or protocol-priced inventory (incl. surplus-refund / permissionless migrate+reclaim chains) | Books match balances; no free extract of untracked surplus | P0 if holds AMM LP, prices from pair reserves, **or** holds idle native/ERC20 with public reclaim |
+| **L2** | FoT / deflationary transfer leaves books ≠ balances | Credit ≤ actual; NAV not inflated by phantom FoT surplus | P1 default; P0 if product claims FoT support |
+| **L3** | Burn-from-pair or direct pair reserve skew used as mint/burn oracle | Spot path cannot free-mint beyond documented deadband/seigniorage policy | P0 when mint/burn uses spot/reserves without TWAP/deadband |
+
+### Category M — Middleware / arbitrary call / allowance (P0 for routers/helpers)
+
+| ID | Attack | Pass | P |
+|----|--------|------|---|
+| **M1** | Public arbitrary `call`/`delegatecall` with held ERC20 allowance | No user-supplied `target+calldata` against held allowances | P0 |
+| **M2** | User-supplied swap target without path/out validation | Allowlisted routers only; amountOut measured | P0 for issuance/exchange helpers |
+| **M3** | Allowance sweep / `transferFrom` third party without explicit intent | Revert or explicit permit path only | P0 |
+
+### Category N — Quote–settle TOCTOU (P0 for multi-step issue/bond with callbacks)
+
+| ID | Attack | Pass | P |
+|----|--------|------|---|
+| **N1** | Mid-tx external valuation/hook changes units between quote and settle | Hostile hook cannot inflate credit or drain inventory | P0 |
+| **N2** | Preview/view path inconsistent with execute (stale snapshot) | Documented tolerance or exact match | P1 |
+
+### Category O — Signature / permit (P0 if product has permit/sig paths)
+
+| ID | Attack | Pass | P |
+|----|--------|------|---|
+| **O1** | Permit/ecrecover accepts invalid or address(0) signer | Invalid/zero signer reverts | P0 if permit exists |
+| **O2** | Signature replay / missing nonce or deadline | Replay reverts | P0 if permit exists |
+| **O3** | Permit2 / EIP-712 typed data mismatch (domain, typehash) | Wrong domain/type reverts; credit actual only (see **I5**) | P1 |
 
 ### Category I — Trust-flag abuse (mandatory P0 for any vault with `pretransferred` / pull-or-credit)
 
@@ -249,13 +329,15 @@ Under closed thresholds (deadband), assert mint and burn are **not** simultaneou
 | Absolute `balanceOf(vault) >= amount` as “proof of transfer” | Measure **delta** vs last reserve / balBefore |
 | `expectRevert()` without selector | Exact selector + state unchanged |
 | Line coverage without balance invariants | Assert attacker did not gain shares/assets for free |
+| Only reading historical fork PoCs without hermetic tests | Map incident → catalog ID → production-path abuse test |
+| Fork profit assert (`assertGt(attackerBal, 0)`) as security coverage | Pass = exploit **blocked** (or bounded intentional risk) |
 
 ## Priority guidance
 
 | Priority | Ship gate? | Examples |
 |----------|------------|----------|
-| **P0** | Yes — "adversarially tested" | Free principal redeem, reentrancy, residual after fail, onlyOwner critical mints, donation free-mint, **I1–I3 trust-flag**, **J1–J3 surface**, **K** reserve-sync free credit |
-| **P1** | Should before major release | Nested composition, lock clamps, soft non-dilution, deadband gates, I4–I5, weird-token FoT |
+| **P0** | Yes — "adversarially tested" | Free principal redeem, reentrancy, residual after fail, onlyOwner critical mints, donation free-mint, **A0** empty vault, **I1–I3** trust-flag, **J1–J3** surface, **K** reserve-sync, **L1/L3** if AMM-priced or idle-inventory reclaim, **E6** if refund path, **F5** if public structural settle, **M*** if router/helper, **N1** if multi-step issue, **O1–O2** if permit |
+| **P1** | Should before major release | Nested composition, lock clamps, soft non-dilution, deadband gates, I4–I5, L2 FoT, N2 preview, O3 typed-data |
 | **P2** | Explicit defer OK | Gas grief N=max, peer product ports, rare sandwich/MEV fork reconstructions |
 
 ## Run & evidence
@@ -272,13 +354,18 @@ Capture logs for verification goals. Update plan status to **IMPLEMENTED (P0/P1)
 A feature is **adversarially tested** only when **all** of the following hold:
 
 1. Catalog A–H applicable P0 IDs have real tests or explicit NatSpec deferral.
-2. If the product has pull/credit flags (`pretransferred`, Permit2, `msg.value`): **I1–I3** green.
-3. Every new Facet/DFPkg: **J1–J3** green (Target → Facet → live proxy).
-4. If reserve/`lastTotalAssets` accounting exists: at least one **K** free-credit / mismatch case.
-5. `forge test --match-path '.../adversarial/**'` and full feature path exit 0.
-6. No known unbounded profitable exploit left greenwashed.
+2. If the product can hold inventory before live shares (or zero `totalSupply` with residual assets): **A0** green.
+3. If the product has pull/credit flags (`pretransferred`, Permit2, `msg.value`): **I1–I3** green.
+4. Every new Facet/DFPkg: **J1–J3** green (Target → Facet → live proxy).
+5. If reserve/`lastTotalAssets` accounting exists: at least one **K** free-credit / mismatch case.
+6. If the product prices from AMM pair reserves or holds LP **or** has public reclaim/refund of idle inventory: applicable **L1** / **E6** / **F5** P0 green (or deferred with reason).
+7. If any router/helper forwards user calldata or holds open allowances: applicable **M** P0 green.
+8. If multi-step issue/bond has external hooks between quote and settle: **N1** green.
+9. If permit/signature paths exist: **O1–O2** green.
+10. `forge test --match-path '.../adversarial/**'` and full feature path exit 0.
+11. No known unbounded profitable exploit left greenwashed.
 
-Happy-path coverage alone is **never** sufficient for (2) or (3).
+Happy-path coverage alone is **never** sufficient for trust-flag, surface, or empty-vault classes.
 
 ## See also
 
@@ -289,8 +376,10 @@ Happy-path coverage alone is **never** sufficient for (2) or (3).
 - `skill:forge-testing` — cheatcodes only (subordinate for protocol tests)
 - `skill:forge-fuzz-testing` / property-based testing — L1/L3 properties complement fixed adversarial catalogs
 - Consumer: `skill:indexedex-adversarial-testing` when working in IndexedEx vaults/DETFs
+- Consumer (IndexedEx monorepo): `skill:defi-incident-patterns` — historical incident → catalog ID map (reference corpus only)
 
 ## References
 
 - `references/attack-catalog-template.md` — copy/paste catalog + suite NatSpec stubs
 - `references/implementation-test-dod.md` — ship-gate checklist for implementors
+- `references/incident-pattern-bridge.md` — thin map from real-world incident themes to A0/L/M/N/O

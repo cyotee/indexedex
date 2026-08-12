@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -14,7 +14,8 @@ import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/E
  * @title ERC4626StandardExchangeInTarget
  * @notice Exact-in routes: underlying ↔ protocolVault ↔ SE shares (incl. SE → underlying unwrap).
  * @dev Mint routes apply dilution usage fee (D40). Exit / unwrap: no usage fee (D42).
- *      Non-burn tokenIn paths use Rocket-style `_securePull` balance-delta only.
+ *      Non-burn tokenIn paths use durable reserve-delta `_securePull` (L-DETF-HOST-UPGRADE).
+ *      Every money route end-syncs expected-hold reserves after refunds.
  */
 contract ERC4626StandardExchangeInTarget is
     ERC4626StandardExchangeCommon,
@@ -89,6 +90,7 @@ contract ERC4626StandardExchangeInTarget is
             if (amountOut < minAmountOut) revert Slippage();
             // Only idle underlying cash (not protocol-vault reserve)
             _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -103,19 +105,21 @@ contract ERC4626StandardExchangeInTarget is
             _mintWithUsageFee(recipient, amountOut);
             // Idle underlying leftover after deposit (e.g. under-consume dust) only
             _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
-        // protocolVault → SE (dilution fee) — balance-delta only (no free-mint on reserve)
+        // protocolVault → SE (dilution fee) — durable U credit (no free-mint on booked reserve)
         // amountIn vault tokens **stay** as SE reserve; never refund absolute vault balance.
         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
             uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
-            // totalBefore is vault inventory *before* this user's deposit delta
+            // totalBefore is vault inventory *before* this user's deposit credit
             amountOut = _convertVaultDeltaToShares(actualIn, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
             // Pull overshoot already refunded in _securePull; reserve retained.
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -125,24 +129,29 @@ contract ERC4626StandardExchangeInTarget is
             amountOut = vault.redeem(actualIn, recipient, address(this));
             if (amountOut < minAmountOut) revert Slippage();
             // Do not refund vault-token reserve
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
-        // Unwrap exact-in: SE → underlying (no exit fee) — burn SE, no tokenIn pull
+        // Unwrap exact-in: SE → underlying (no exit fee) — burn SE shares (self-burn path).
+        // Nested DETF push+true leaves shares on this diamond; burn from address(this).
+        // !pretransferred burns from msg.sender (standard ERC20 burn-from-holder).
         if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
             uint256 vaultOut = _previewRedeemShares(amountIn);
-            ERC20Repo._burn(msg.sender, amountIn);
+            _burnSeShares(msg.sender, amountIn, pretransferred);
             amountOut = vault.redeem(vaultOut, recipient, address(this));
             if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
-        // SE → protocolVault exact-in — burn SE
+        // SE → protocolVault exact-in — burn SE shares (self-burn path; same pretransfer law).
         if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
             amountOut = _previewRedeemShares(amountIn);
             if (amountOut < minAmountOut) revert Slippage();
-            ERC20Repo._burn(msg.sender, amountIn);
+            _burnSeShares(msg.sender, amountIn, pretransferred);
             IERC20(address(vault)).safeTransfer(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

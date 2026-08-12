@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -12,6 +12,7 @@ import {
 import {
     IMixedBufferMultiVaultStableDetfBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 
 contract MixedBufferMultiVaultStableDetf_Bonding_Test is TestBase_MixedBufferMultiVaultStableDetf {
     function setUp() public override {
@@ -84,5 +85,44 @@ contract MixedBufferMultiVaultStableDetf_Bonding_Test is TestBase_MixedBufferMul
         );
         vm.stopPrank();
         assertTrue(tokenId_ > 0, "clamped lock succeeds");
+    }
+
+    function test_sellPositionToDetfNft_revertsBondNotMature() public {
+        _fundBuffer(bob, 80e18);
+        vm.startPrank(bob);
+        IERC20(address(dai)).approve(detf, 80e18);
+        (uint256 tokenId_,) = detfBonding.bond(
+            IERC20(address(dai)), 80e18, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        uint256 unlock_ = IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId_);
+        vm.prank(bob);
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("BondNotMature(uint256)")), unlock_));
+        detfBonding.sellPositionToDetfNft(tokenId_, 0, bob);
+    }
+
+    function test_sellPositionToDetfNft_afterMaturity_mints4626() public {
+        _fundBuffer(bob, 80e18);
+        vm.startPrank(bob);
+        IERC20(address(dai)).approve(detf, 80e18);
+        (uint256 tokenId_,) = detfBonding.bond(
+            IERC20(address(dai)), 80e18, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        _warpPastUnlock(detf, tokenId_);
+        uint256 protocolBefore_ = detfBonding.protocolBondOriginalShares();
+        vm.prank(bob);
+        uint256 claimMinted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, bob);
+        assertTrue(claimMinted_ > 0, "claim minted");
+        uint256 protocolId_ = IDETFNFTVault(detfInfo.bondNftVault()).detfNFTId();
+        assertEq(
+            IDETFNFTVault(detfInfo.bondNftVault()).effectiveSharesOf(protocolId_),
+            IDETFNFTVault(detfInfo.bondNftVault()).originalSharesOf(protocolId_),
+            "1:1 protocol nft"
+        );
+        assertTrue(
+            IDETFNFTVault(detfInfo.bondNftVault()).originalSharesOf(protocolId_) > protocolBefore_,
+            "protocol credited"
+        );
     }
 }

@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
@@ -33,6 +34,7 @@ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
@@ -61,6 +63,31 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         if (!MixedBufferMultiVaultStableDetfRepo._layoutStruct().isReserveLive) {
             revert MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized();
         }
+    }
+
+    function _requireMature(uint256 tokenId_) internal view {
+        uint256 unlock_ = MixedBufferMultiVaultStableDetfRepo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
+        if (block.timestamp < unlock_) {
+            revert MixedBufferMultiVaultStableDetfRepo.BondNotMature(unlock_);
+        }
+    }
+
+    function _protocolOriginalShares() internal view returns (uint256) {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        return s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+    }
+
+    function _userPileReserved() internal view returns (uint256) {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 totalOrig_ = s.bondNftVault.totalOriginalShares();
+        uint256 protocol_ = _protocolOriginalShares();
+        return totalOrig_ > protocol_ ? totalOrig_ - protocol_ : 0;
+    }
+
+    function _singleSidedJoinDetf(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        bptOut_ = _joinReserveDetfOnly(detfAmount_);
     }
 
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
@@ -508,25 +535,48 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         );
     }
 
-    /// @dev Delta-based pull (L-GAPS-9/10/12). Pretransfer credits claimed only when
-    ///      claimed <= observedDelta; shortfalls revert TransferDeltaInsufficient.
-    ///      Absolute inventory without in-window delta is never free-credited.
+    /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). `pretransferred=true`: credit claimed only when
+    ///      claimed <= U = B - R. `false`: pull delta only (FoT-safe; does not add prior U).
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        uint256 before_ = token_.balanceOf(address(this));
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
+        uint256 B0 = token_.balanceOf(address(this));
         if (!pretransferred_) {
             token_.safeTransferFrom(msg.sender, address(this), amount_);
+            return token_.balanceOf(address(this)) - B0;
         }
-        uint256 observedDelta_ = token_.balanceOf(address(this)) - before_;
-        if (pretransferred_) {
-            if (amount_ > observedDelta_) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta_);
-            }
-            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
-            return amount_;
+        uint256 U = B0 - R;
+        if (amount_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, U);
         }
-        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
-        return observedDelta_;
+        return amount_;
     }
+
+    /// @dev Full expected-hold sync after outer refund (L-DETF-END-ORDER).
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    /// @dev Nested exchangeIn fund: push + true; amountIn_==0 skips entire call (L-DETF-ZERO-NESTED).
+    function _nestedExchangeInPush(
+        IStandardExchangeIn host_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        if (amountIn_ == 0) return 0;
+        tokenIn_.safeTransfer(address(host_), amountIn_);
+        amountOut_ = host_.exchangeIn(
+            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        );
+    }
+
 
     function _feeTo() internal view returns (address) {
         MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();

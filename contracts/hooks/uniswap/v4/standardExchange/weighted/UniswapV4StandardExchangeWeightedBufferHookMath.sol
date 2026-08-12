@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {FixedPoint} from
@@ -100,19 +100,19 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
     /* ---------------------------------------------------------------------- */
 
     /// @dev Full-book V = ∏ b_i^{w_i} (WeightedMath.computeInvariantDown).
-    function computeV(uint256[] memory weights, uint256[] memory scaledBalances)
-        internal
-        pure
-        returns (uint256)
-    {
+    function _computeV(uint256[] memory weights, uint256[] memory scaledBalances) private pure returns (uint256) {
         return WeightedMath.computeInvariantDown(weights, scaledBalances);
     }
 
+    function computeV(uint256[] memory weights, uint256[] memory scaledBalances) external pure returns (uint256) {
+        return _computeV(weights, scaledBalances);
+    }
+
     /// @dev Interim k on positive set with renormalized weights (PartialInterim).
-    function computeInterimK(
+    function _computeInterimK(
         uint256[] memory weights,
         uint256[] memory scaledBalances
-    ) internal pure returns (uint256 k) {
+    ) private pure returns (uint256 k) {
         uint256 n = weights.length;
         uint256 sumW;
         uint256 pos;
@@ -132,14 +132,21 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         if (k == 0) revert MathDomain();
     }
 
+    function computeInterimK(
+        uint256[] memory weights,
+        uint256[] memory scaledBalances
+    ) external pure returns (uint256 k) {
+        return _computeInterimK(weights, scaledBalances);
+    }
+
     /// @dev rootK = V literal for full book; interim k for partial.
     function rootKForMode(bool fullBook, uint256[] memory weights, uint256[] memory scaled)
-        internal
+        external
         pure
         returns (uint256 rootK)
     {
-        if (fullBook) return computeV(weights, scaled);
-        return computeInterimK(weights, scaled);
+        if (fullBook) return _computeV(weights, scaled);
+        return _computeInterimK(weights, scaled);
     }
 
     /// @dev Protocol LP: supply * (rootK - rootKLast) / (rootK * FEE_DENOM / ownerFeeShare + rootK - rootKLast)
@@ -149,7 +156,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 rootK,
         uint256 rootKLast,
         uint256 ownerFeeShare
-    ) internal pure returns (uint256) {
+    ) external pure returns (uint256) {
         if (supply == 0 || rootKLast == 0 || rootK <= rootKLast || ownerFeeShare == 0) {
             return 0;
         }
@@ -173,7 +180,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 rateIn,
         uint256 rateOut,
         uint256 feeWad
-    ) internal pure returns (uint256 amountOutRaw) {
+    ) external pure returns (uint256 amountOutRaw) {
         if (amountInRaw == 0) revert ZeroAmount();
         uint256 netIn = applyTradingFeeNet(amountInRaw, feeWad);
         if (netIn == 0) revert ZeroAmount();
@@ -196,7 +203,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 rateIn,
         uint256 rateOut,
         uint256 feeWad
-    ) internal pure returns (uint256 amountInGross) {
+    ) external pure returns (uint256 amountInGross) {
         if (amountOutRaw == 0) revert ZeroAmount();
         uint256 aOutScaled = scaleToUp(amountOutRaw, rateOut);
         if (aOutScaled > balOutScaled.mulDown(MAX_OUT_RATIO)) revert MaxOutRatio();
@@ -213,22 +220,22 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
 
     /// @dev O2: shares = V - MINIMUM_LIQUIDITY (full book, all legs > 0 scaled).
     function firstMintSharesFull(uint256[] memory weights, uint256[] memory scaledAmounts)
-        internal
+        external
         pure
         returns (uint256 shares, uint256 V)
     {
-        V = computeV(weights, scaledAmounts);
+        V = _computeV(weights, scaledAmounts);
         if (V <= MINIMUM_LIQUIDITY) revert MathDomain();
         shares = V - MINIMUM_LIQUIDITY;
     }
 
     /// @dev O4 partial first mint: interim k on positive set; shares = k - MIN.
     function firstMintSharesPartial(uint256[] memory weights, uint256[] memory scaledAmounts)
-        internal
+        external
         pure
         returns (uint256 shares, uint256 k)
     {
-        k = computeInterimK(weights, scaledAmounts);
+        k = _computeInterimK(weights, scaledAmounts);
         if (k <= MINIMUM_LIQUIDITY) revert MathDomain();
         shares = k - MINIMUM_LIQUIDITY;
     }
@@ -242,7 +249,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256[] memory amountScaled,
         uint256[] memory reserveScaled,
         uint256 supply
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0) revert MathDomain();
         shares = type(uint256).max;
         bool any;
@@ -268,7 +275,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 shares,
         uint256[] memory reserves,
         uint256 supply
-    ) internal pure returns (uint256[] memory amounts) {
+    ) external pure returns (uint256[] memory amounts) {
         if (shares == 0 || supply == 0) revert ZeroAmount();
         amounts = new uint256[](reserves.length);
         for (uint256 i; i < reserves.length; ++i) {
@@ -288,13 +295,13 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
      * @param supply post-protocol totalSupply
      * @param swapFeeWad trading fee WAD (0 OK)
      */
-    function unbalancedJoinShares(
+    function _unbalancedJoinShares(
         uint256[] memory currentScaled,
         uint256[] memory amountsScaled,
         uint256[] memory weights,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 bptOut) {
+    ) private pure returns (uint256 bptOut) {
         if (supply == 0) revert MathDomain();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         uint256 n = currentScaled.length;
@@ -331,6 +338,16 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         if (bptOut == 0) revert ZeroAmount();
     }
 
+    function unbalancedJoinShares(
+        uint256[] memory currentScaled,
+        uint256[] memory amountsScaled,
+        uint256[] memory weights,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) external pure returns (uint256 bptOut) {
+        return _unbalancedJoinShares(currentScaled, amountsScaled, weights, supply, swapFeeWad);
+    }
+
     /// @dev Single-asset exact-out shares → amountIn scaled (with swap fee on taxable).
     function singleJoinExactOutAmountIn(
         uint256[] memory currentScaled,
@@ -339,7 +356,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 exactBptOut,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 amountInScaled) {
+    ) external pure returns (uint256 amountInScaled) {
         if (supply == 0 || exactBptOut == 0) revert ZeroAmount();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         uint256 newSupply = supply + exactBptOut;
@@ -372,11 +389,11 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 amountInScaled,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         uint256 n = currentScaled.length;
         uint256[] memory amounts = new uint256[](n);
         amounts[tokenInIndex] = amountInScaled;
-        return unbalancedJoinShares(currentScaled, amounts, weights, supply, swapFeeWad);
+        return _unbalancedJoinShares(currentScaled, amounts, weights, supply, swapFeeWad);
     }
 
     /// @dev Single-asset exact-in exit: shares → amountOut raw-scaled domain then caller descales.
@@ -387,7 +404,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 sharesIn,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 amountOutScaled) {
+    ) external pure returns (uint256 amountOutScaled) {
         if (sharesIn == 0 || supply == 0 || sharesIn >= supply) revert MathDomain();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         uint256 newSupply = supply - sharesIn;
@@ -420,7 +437,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 amountOutScaled,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 sharesIn) {
+    ) external pure returns (uint256 sharesIn) {
         if (amountOutScaled == 0 || supply == 0) revert ZeroAmount();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         // Gross-up amountOut for fee on taxable (approximate: treat full amount as taxable for pool safety)
@@ -464,7 +481,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 supply,
         uint256 kBefore,
         uint256 kAfter
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0 || kBefore == 0 || kAfter <= kBefore) revert MathDomain();
         shares = (supply * (kAfter - kBefore)) / kBefore;
         if (shares == 0) revert ZeroAmount();

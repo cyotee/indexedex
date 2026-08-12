@@ -58,7 +58,7 @@ The abstract base is `DualLiquidityLinkedDetfProductionBase` (in `DualLiquidityL
 
 ## Global Constraints
 
-- License header: `// SPDX-License-Identifier: BUSL-1.1`, pragma `^0.8.0`.
+- License header: `// SPDX-License-Identifier: BSL-1.1`, pragma `^0.8.0`.
 - **Naming Rule (PRD):** role names only — `commonToken`, `tokenA`, `tokenB`. The strings `WETH`, `RICH`, `RICHAI` must not appear in any contract, interface, storage name, or normative NatSpec.
 - **Fresh codepath:** other DETF families are behavioral references only. Do not import their concrete contracts (shared libs `DETFUsageFeeLib`, `ERC20Repo`, interfaces are fine).
 - **Immutable deployment:** the DFPkg must not install ownership or diamond-cut facets. No pause, no admin setters.
@@ -142,7 +142,7 @@ cd daosys/lib/indexedex && git checkout -b feat/dual-liquidity-linked-detf
 
 ```solidity
 // test/foundry/spec/vaults/detf/composed/dual-liquidity-linked/DualLiquidityLinkedDetfMathLib.t.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -185,7 +185,7 @@ Expected: compilation failure — `DualLiquidityLinkedDetfMathLib` not found.
 
 ```solidity
 // contracts/vaults/detf/composed/dual-liquidity-linked/DualLiquidityLinkedDetfMathLib.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Math} from "@crane/contracts/utils/Math.sol";
@@ -215,7 +215,7 @@ library DualLiquidityLinkedDetfMathLib {
 
 ```solidity
 // contracts/interfaces/IDualLiquidityLinkedDetf.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";

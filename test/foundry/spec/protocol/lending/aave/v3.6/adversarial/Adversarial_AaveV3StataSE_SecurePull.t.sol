@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -81,25 +81,29 @@ contract Adversarial_AaveV3StataSE_SecurePull is TestBase_AaveV3StataStandardExc
     /*  I1 / FreeMint: pretransfer without delta cannot mint SE shares        */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1: donate stata inventory; pretransferred mint without in-call transfer → delta 0.
+    /// @notice I1 booked: seed inventory, honest pull books residual via full-set sync; free pretransfer reverts U=0.
     function test_I1_pretransferred_stataInventoryNoInCallTransfer_revertsDelta0() public {
-        uint256 claimed_ = 50e18;
-        ERC20PermitMintableStub(mockStata).mint(attacker, claimed_);
-        vm.prank(attacker);
-        IERC20(mockStata).transfer(vault, claimed_);
-        assertEq(IERC20(mockStata).balanceOf(vault), claimed_, "stata inventory present");
-        assertEq(IERC20(mockStata).allowance(attacker, vault), 0, "no allowance");
-
+        uint256 residual_ = 50e18;
+        uint256 pull_ = 1e18;
+        ERC20PermitMintableStub(mockStata).mint(vault, residual_);
+        ERC20PermitMintableStub(mockStata).mint(attacker, pull_);
+        vm.startPrank(attacker);
+        IERC20(mockStata).approve(vault, pull_);
+        IStandardExchangeIn(vault).exchangeIn(
+            IERC20(mockStata), pull_, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        // Residual (and pull inventory remaining on vault as stata) is booked — free pretransfer fails.
         uint256 supplyBefore_ = IERC20(vault).totalSupply();
         uint256 attackerSeBefore_ = IERC20(vault).balanceOf(attacker);
         uint256 invBefore_ = IERC20(mockStata).balanceOf(vault);
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
         );
         IStandardExchangeIn(vault).exchangeIn(
-            IERC20(mockStata), claimed_, IERC20(vault), 0, attacker, true, block.timestamp + 1 hours
+            IERC20(mockStata), residual_, IERC20(vault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         assertEq(IERC20(vault).totalSupply(), supplyBefore_, "I1: no free SE mint");
@@ -107,11 +111,18 @@ contract Adversarial_AaveV3StataSE_SecurePull is TestBase_AaveV3StataStandardExc
         assertEq(IERC20(mockStata).balanceOf(vault), invBefore_, "I1: inventory unmoved");
     }
 
-    /// @notice Free mint path (stata → SE) blocked when pretransferred with only idle inventory.
+    /// @notice Free mint path (stata → SE) blocked when inventory is booked (after money-route sync).
     function test_FreeMint_stataToSe_pretransferredInventory_reverts() public {
         uint256 claimed_ = 25e18;
-        // Residual inventory from a "prior deposit" theater — absolute credit would free-mint.
         ERC20PermitMintableStub(mockStata).mint(vault, claimed_ * 2);
+        // Book via honest pull of dust
+        ERC20PermitMintableStub(mockStata).mint(attacker, 1e18);
+        vm.startPrank(attacker);
+        IERC20(mockStata).approve(vault, 1e18);
+        IStandardExchangeIn(vault).exchangeIn(
+            IERC20(mockStata), 1e18, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
 
         uint256 supplyBefore_ = IERC20(vault).totalSupply();
 
@@ -124,13 +135,29 @@ contract Adversarial_AaveV3StataSE_SecurePull is TestBase_AaveV3StataStandardExc
         );
 
         assertEq(IERC20(vault).totalSupply(), supplyBefore_, "FreeMint blocked");
-        assertEq(IERC20(vault).balanceOf(attacker), 0, "attacker no shares");
     }
 
-    /// @notice Free mint via base inventory + pretransferred without pull also blocked.
+    /// @notice Free mint via booked base inventory + pretransferred without new unbooked inflow.
     function test_FreeMint_baseToSe_pretransferredInventory_reverts() public {
         uint256 claimed_ = 10e18;
         mockBase.mint(vault, claimed_);
+        // Book residual via honest pull of 1e18 base → SE
+        mockBase.mint(attacker, 1e18);
+        vm.mockCall(mockStata, abi.encodeWithSelector(IERC4626.previewDeposit.selector, 1e18), abi.encode(1e18));
+        vm.mockCall(
+            mockStata, abi.encodeWithSelector(IERC4626.deposit.selector, 1e18, vault), abi.encode(1e18)
+        );
+        // deposit mints stata to vault in real path; mock suppresses — seed stata for share mint
+        ERC20PermitMintableStub(mockStata).mint(vault, 1e18);
+
+        vm.startPrank(attacker);
+        mockBase.approve(vault, 1e18);
+        IStandardExchangeIn(vault).exchangeIn(
+            IERC20(address(mockBase)), 1e18, IERC20(vault), 0, attacker, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        uint256 supplyBefore_ = IERC20(vault).totalSupply();
 
         vm.mockCall(
             mockStata, abi.encodeWithSelector(IERC4626.previewDeposit.selector, claimed_), abi.encode(claimed_)
@@ -138,8 +165,6 @@ contract Adversarial_AaveV3StataSE_SecurePull is TestBase_AaveV3StataStandardExc
         vm.mockCall(
             mockStata, abi.encodeWithSelector(IERC4626.deposit.selector, claimed_, vault), abi.encode(claimed_)
         );
-
-        uint256 supplyBefore_ = IERC20(vault).totalSupply();
 
         vm.prank(attacker);
         vm.expectRevert(

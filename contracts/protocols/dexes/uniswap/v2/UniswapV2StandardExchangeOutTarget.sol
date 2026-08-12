@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -477,6 +477,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             // Refund any excess pretransferred tokenIn back to the caller.
             _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
 
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -550,6 +551,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                     revert();
                 }
             }
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -653,6 +655,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 revert();
             }
             // Go ahead and terminate further executiuon.
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -716,6 +719,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 // uint256 amount,
                 amountOut
             );
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -783,6 +787,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             );
 
             // Go ahead and terminate further executiuon.
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -794,7 +799,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
-            return _exchangeOut_zapInVaultDeposit(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
+            amountIn = _exchangeOut_zapInVaultDeposit(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
+            _syncAllExpectedHoldReserves();
+            return amountIn;
         }
 
         /* ------------------------------------------------------------------ */
@@ -884,6 +891,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 indexSource.pool.balanceOf(address(this))
             );
 
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
         // console.log("UniswapV2StandardExchangeOutFacet::exchangeOut: no branch matched, reverting with InvalidRoute");

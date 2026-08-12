@@ -59,11 +59,12 @@ Cartographer (2026-08-09): IndexedEx graph ~5408 files / 7264 nodes under `.cart
 
 | path | purpose | owner | PRD | test root |
 |------|---------|-------|-----|-----------|
-| `…/uniswap/v4/standardExchange/single/` | Uni V4 Single SE DETF | IndexedEx | `UniV4SingleStandardExchangeDETF_PRD.md` | `TestBase_UniswapV4SingleStandardExchangeDETF.sol` |
 | `…/uniswap/v4/standardExchange/constantProduct/single/` | Uni V4 Single SE CP DETF | IndexedEx | `UniswapV4SingleStandardExchangeDETF_PRD.md` | package |
 | `…/uniswap/v4/standardExchange/weighted/` | Uni V4 SE weighted DETF | IndexedEx | `UniswapV4StandardExchangeWeightedDETF_PRD.md` | package |
 | `…/uniswap/v4/standardExchange/orbital/` | Uni V4 SE orbital DETF | IndexedEx | `UniswapV4StandardExchangeOrbitalDETF_PRD.md` | package |
 | `…/uniswap/v4/common/{nft,rebasing}/` | Uni V4 DETF bond NFT + claim packages | IndexedEx | — | package |
+
+**Removed:** `…/uniswap/v4/standardExchange/single/` listing-family draft DETF (no liquidity-holding reserve).
 
 ## Hooks (Uniswap V4)
 

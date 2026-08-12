@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
-import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {DualLiquidityLinkedCrossVersionUniswapVaultRepo} from
     "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol";
 import {
@@ -108,22 +107,19 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Deposits is
         assertApproxEqAbs(minted, preview, 1e6, "multi-hop common deposit preview ~ execution");
     }
 
-    /// @notice L-GAPS-9: transfer-before-call + pretransferred=true is outside the pull window.
-    ///         Absolute inventory must not free-credit a mint (TransferDeltaInsufficient(claimed, 0)).
-    ///         Honest path remains approve + pretransferred=false (see other deposit tests).
-    function test_depositPretransferred_noInCallTransfer_revertsDelta0() public {
+    /// @notice Durable U: transfer-before-call + pretransferred=true is the canonical nested/router
+    ///         push path (`claimed <= U = B - R`). I1 booked free inventory without new push is
+    ///         covered by Adversarial_DualLiquidity_Catalog.
+    function test_depositPretransferred_pushThenTrue_succeeds() public {
         _fund(tokenB, depositor, LEG_SEED);
         vm.startPrank(depositor);
         tokenB.transfer(linkedVault, LEG_SEED);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, LEG_SEED, uint256(0)
-            )
-        );
-        IStandardExchangeIn(linkedVault).exchangeIn(
+        uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
             tokenB, LEG_SEED, shareToken, 0, depositor, true, block.timestamp
         );
         vm.stopPrank();
+        assertGt(out_, 0, "push+true mint succeeds under durable U");
+        assertEq(shareToken.balanceOf(depositor), out_, "depositor received shares");
     }
 
     /* -------------------------------- Guards ------------------------------- */

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {CAMELOTV2_FEE_DENOMINATOR} from "@crane/contracts/constants/Constants.sol";
@@ -430,6 +430,7 @@ contract CamelotV2StandardExchangeOutTarget is
             // Refund any excess pretransferred tokenIn back to the caller.
             _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
 
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -548,6 +549,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert();
             }
             // Go ahead and terminate further executiuon.
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -611,6 +613,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 // uint256 amount,
                 amountOut
             );
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -678,6 +681,7 @@ contract CamelotV2StandardExchangeOutTarget is
             );
 
             // Go ahead and terminate further executiuon.
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -781,6 +785,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 indexSource.pool.balanceOf(address(this))
             );
 
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
         // console.log("UniswapV2StandardExchangeOutFacet::exchangeOut: no branch matched, reverting with InvalidRoute");

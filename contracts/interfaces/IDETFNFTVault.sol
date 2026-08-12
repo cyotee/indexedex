@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -106,6 +106,11 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      * @return shares Original shares
      */
     function originalSharesOf(uint256 tokenId) external view returns (uint256 shares);
+
+    /**
+     * @notice Sum of originalShares across all tokenIds (user + protocol).
+     */
+    function totalOriginalShares() external view returns (uint256 shares);
 
     /**
      * @notice Returns the effective shares for a token ID.
@@ -249,6 +254,12 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      * @param lpAmount Amount of LP tokens to add
      */
     function addToDETFNFT(uint256 tokenId, uint256 lpAmount) external;
+
+    /**
+     * @notice Debits LP from the protocol-owned NFT 1:1 (original and effective).
+     * @dev onlyOwner. `tokenId` must be `detfNFTId`. Inverse of `addToDETFNFT`.
+     */
+    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external;
 
     /**
      * @notice Reallocates uncollected protocol NFT rewards as bond incentives.

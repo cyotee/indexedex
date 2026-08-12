@@ -1,5 +1,8 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 import "forge-std/Test.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -117,6 +120,7 @@ contract Debug_Level6_FullBaseWithoutDFPkg is TestBase_Permit2, TestBase_Aerodro
 
     IFacet aerodromeStandardExchangeInFacet;
     IFacet aerodromeStandardExchangeOutFacet;
+    IFacet aerodromeStandardExchangeOutQueryFacet;
 
     function setUp() public virtual override(TestBase_Permit2, TestBase_Aerodrome_Pools, TestBase_VaultComponents) {
         TestBase_Permit2.setUp();
@@ -147,6 +151,7 @@ contract Debug_Level6_FullBaseWithoutDFPkg is TestBase_Permit2, TestBase_Aerodro
         );
 
         aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+        aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
         console.log("aerodromeStandardExchangeOutFacet:", address(aerodromeStandardExchangeOutFacet));
         assertTrue(
             address(aerodromeStandardExchangeOutFacet) != address(0), "aerodromeStandardExchangeOutFacet should be set"
@@ -161,6 +166,7 @@ contract Debug_Level7_DeployDFPkg is TestBase_Permit2, TestBase_Aerodrome_Pools,
 
     IFacet aerodromeStandardExchangeInFacet;
     IFacet aerodromeStandardExchangeOutFacet;
+    IFacet aerodromeStandardExchangeOutQueryFacet;
     IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg;
 
     function setUp() public virtual override(TestBase_Permit2, TestBase_Aerodrome_Pools, TestBase_VaultComponents) {
@@ -170,6 +176,7 @@ contract Debug_Level7_DeployDFPkg is TestBase_Permit2, TestBase_Aerodrome_Pools,
 
         aerodromeStandardExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
         aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+        aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
     }
 
     function test_Level7_VerifyDependencies() public view {
@@ -216,21 +223,41 @@ contract Debug_Level7_DeployDFPkg is TestBase_Permit2, TestBase_Aerodrome_Pools,
         require(address(aerodromeRouter) != address(0), "aerodromeRouter is zero");
 
         vm.startPrank(owner);
-        aerodromeStandardExchangeDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(
-            erc20Facet,
-            erc2612Facet,
-            erc5267Facet,
-            erc4626Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
-            aerodromeStandardExchangeInFacet,
-            aerodromeStandardExchangeOutFacet,
-            indexedexManager,
-            indexedexManager,
-            permit2,
-            aerodromeRouter,
-            aerodromePoolFactory
-        );
+        {
+
+            IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
+
+            pkgInit_.erc20Facet = erc20Facet;
+
+            pkgInit_.erc2612Facet = erc2612Facet;
+
+            pkgInit_.erc5267Facet = erc5267Facet;
+
+            pkgInit_.erc4626Facet = erc4626Facet;
+
+            pkgInit_.multiAssetBasicVaultFacet = erc4626BasicVaultFacet;
+
+            pkgInit_.multiAssetStandardVaultFacet = erc4626StandardVaultFacet;
+
+            pkgInit_.aerodromeStandardExchangeInFacet = aerodromeStandardExchangeInFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutFacet = aerodromeStandardExchangeOutFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutQueryFacet = aerodromeStandardExchangeOutQueryFacet;
+
+            pkgInit_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+
+            pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+
+            pkgInit_.permit2 = permit2;
+
+            pkgInit_.aerodromeRouter = aerodromeRouter;
+
+            pkgInit_.aerodromePoolFactory = aerodromePoolFactory;
+
+            aerodromeStandardExchangeDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(pkgInit_);
+
+        }
         vm.stopPrank();
 
         console.log("aerodromeStandardExchangeDFPkg:", address(aerodromeStandardExchangeDFPkg));

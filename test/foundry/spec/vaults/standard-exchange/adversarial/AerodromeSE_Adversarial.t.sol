@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -299,19 +299,20 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
     /*  I1–I3: pretransfer trust flags must not free-credit inventory         */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 free credit: donate inventory; claim pretransferred without transfer → delta 0.
+    /// @notice I1 booked: residual after honest money-route sync cannot free-credit via pretransfer.
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
-        uint256 claimed_ = TEST_AMOUNT / 4;
+        uint256 residual_ = TEST_AMOUNT / 4;
+        uint256 pull_ = TEST_AMOUNT / 16;
 
-        // Seed inventory so absolute balance theater would have passed.
-        tokenA.mint(attacker, claimed_);
-        vm.prank(attacker);
-        tokenA.transfer(address(vault_), claimed_);
-        assertEq(tokenA.balanceOf(address(vault_)), claimed_, "inventory present");
-        assertEq(tokenA.balanceOf(attacker), 0, "attacker drained");
-        assertEq(tokenA.allowance(attacker, address(vault_)), 0, "no allowance");
+        // Seed residual then honest pull so full-set sync books inventory (R == B).
+        tokenA.mint(address(vault_), residual_);
+        tokenA.mint(attacker, pull_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(vault_), pull_);
+        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        vm.stopPrank();
 
         uint256 supplyBefore_ = vault_.totalSupply();
         uint256 attackerSharesBefore_ = vault_.balanceOf(attacker);
@@ -319,24 +320,30 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
         );
-        vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vault_.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free share mint");
         assertEq(vault_.balanceOf(attacker), attackerSharesBefore_, "I1: attacker shares unchanged");
         assertEq(tokenA.balanceOf(address(vault_)), invBefore_, "I1: inventory unmoved");
     }
 
-    /// @notice I1 claimed ≤ inventory still reverts when observedDelta is 0 (absolute credit forbidden).
+    /// @notice I1 claimed ≤ booked inventory still reverts (absolute free credit forbidden).
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
         uint256 inventory_ = TEST_AMOUNT / 2;
         uint256 claimed_ = TEST_AMOUNT / 8;
+        uint256 pull_ = TEST_AMOUNT / 32;
 
         tokenA.mint(address(vault_), inventory_);
-        assertGe(tokenA.balanceOf(address(vault_)), claimed_, "claimed <= inventory");
+        tokenA.mint(attacker, pull_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(vault_), pull_);
+        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        vm.stopPrank();
+        assertGe(tokenA.balanceOf(address(vault_)), claimed_, "claimed <= booked inventory");
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -345,7 +352,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
-    /// @notice I2: transfer-before-call + pretransferred=true is outside the pull window (delta 0).
+    /// @notice Reserve-delta push: transfer-before-call + pretransferred=true succeeds when claimed ≤ U.
     function test_I2_transferBeforeCall_pretransferred_revertsDelta0() public {
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
@@ -355,12 +362,13 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         vm.prank(attacker);
         tokenA.transfer(address(vault_), claimed_);
 
-        // Prior external transfer is not in-window delta under L-GAPS-9.
+        // Durable U = B - R (bootstrap R=0) allows push funding.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
+        uint256 out_ = vault_.exchangeIn(
+            IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
-        vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        assertGt(out_, 0, "push pretransfer succeeds under reserve-delta");
+        assertEq(tokenB.balanceOf(attacker), out_, "attacker received tokenB");
     }
 
     /// @notice I3: residual inventory after an honest pull cannot fund a second free pretransfer credit.

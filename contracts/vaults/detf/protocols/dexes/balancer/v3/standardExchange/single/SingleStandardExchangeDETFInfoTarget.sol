@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -28,6 +28,7 @@ interface ISingleStandardExchangeDETFInfo {
     function isMintingAllowed() external view returns (bool);
     function isBurningAllowed() external view returns (bool);
     function bondNftVault() external view returns (address);
+    function rebasingClaimToken() external view returns (address);
 
     /// @notice Last timestamp at which expansion mint advanced the accrual clock (0 if never live).
     function lastExpansionTimestamp() external view returns (uint256);
@@ -97,6 +98,10 @@ abstract contract SingleStandardExchangeDETFInfoTarget is
 
     function bondNftVault() external view returns (address) {
         return address(SingleStandardExchangeDETFRepo._layoutStruct().bondNftVault);
+    }
+
+    function rebasingClaimToken() external view returns (address) {
+        return address(SingleStandardExchangeDETFRepo._layoutStruct().rebasingClaimToken);
     }
 
     function lastExpansionTimestamp() external view returns (uint256) {

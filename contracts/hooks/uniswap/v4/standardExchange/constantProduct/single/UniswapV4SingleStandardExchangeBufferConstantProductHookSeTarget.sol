@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -709,20 +709,24 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     ///      `TransferDeltaInsufficient(claimed, observedDelta)`. Absolute inventory without a
     ///      positive in-window delta cannot free-extract SE book / raw face (I1). Surplus delta
     ///      is not exact-matched (leftover spendable / no exact-delta grief).
+    /// @dev Reserve-delta pull: `!pretransferred` returns pull delta only.
+    ///      `pretransferred`: credit `claimed` iff `claimed <= U`. Face book when `B >= R`;
+    ///      when virtual pair `R > B` (seClaim), all face is unbooked for ERC20 push credit.
     function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
         internal
         returns (uint256 observedDelta)
     {
-        uint256 balBefore = tokenIn.balanceOf(address(this));
+        uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             tokenIn.safeTransferFrom(msg.sender, address(this), claimed);
+            return tokenIn.balanceOf(address(this)) - B0;
         }
-        observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
-        if (pretransferred) {
-            if (claimed > observedDelta) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, observedDelta);
-            }
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
+        uint256 U = B0 >= R ? B0 - R : B0;
+        if (claimed > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
+        return claimed;
     }
 
     function _routeZeroForOne(address tokenIn, address tokenOut) internal view returns (bool) {

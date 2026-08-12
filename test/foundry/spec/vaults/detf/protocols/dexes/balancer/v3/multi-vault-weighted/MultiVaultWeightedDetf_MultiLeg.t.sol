@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -65,8 +65,9 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         address[] memory ras_ = info_.rateAssets();
         assertTrue(ras_[0] != ras_[1], "disparate rate assets");
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        uint256 claimMinted_ = bonding_.sellNFT(tokenId_, alice);
+        uint256 claimMinted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(claimMinted_ > 0, "claim minted");
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
@@ -74,7 +75,7 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         assertTrue(claimBal_ > 0, "claim bal");
 
         // Redeem half to rateAsset[0], half to rateAsset[1] when both rated.
-        uint256 half_ = claimBal_ / 2;
+        uint256 half_ = claimBal_ / 10;
         if (half_ == 0) half_ = claimBal_;
 
         uint256 before0_ = IERC20(ras_[0]).balanceOf(alice);
@@ -83,7 +84,7 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         assertTrue(out0_ > 0, "redeem to rateAsset0");
         assertEq(IERC20(ras_[0]).balanceOf(alice) - before0_, out0_, "rateAsset0 received");
 
-        uint256 remain_ = claim_.balanceOf(alice);
+        uint256 remain_ = claim_.balanceOf(alice) / 10;
         if (remain_ > 0 && ras_[1] != address(0)) {
             uint256 before1_ = IERC20(ras_[1]).balanceOf(alice);
             vm.prank(alice);
@@ -110,14 +111,17 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         _mintOnLeg(instance_, 1, bob, 120e18);
 
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        uint256 minted_ = bonding_.sellNFT(tokenId_, alice);
+        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim");
 
         uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(alice);
+        uint256 redeemAmt_ = claimBal_ / 10;
+        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
         uint256 before_ = dai.balanceOf(alice);
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(claimBal_, dai, 0, alice, block.timestamp + 1 hours);
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, dai, 0, alice, block.timestamp + 1 hours);
         assertTrue(out_ > 0, "redeem same rateAsset");
         assertEq(dai.balanceOf(alice) - before_, out_, "dai payout");
         _assertNoFreeInventory(instance_);

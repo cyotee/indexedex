@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -98,14 +98,19 @@ contract ERC4626StandardExchange_SfrxETH_Fork is TestBase_ERC4626StandardExchang
         assertEq(IERC20(seVault).balanceOf(address(this)), seOut);
 
         // Redeem SE → sfrxETH (protocol vault). exchangeOut amountOut = vault tokens desired.
-        uint256 half = seOut / 2;
+        // Usage-fee dilution expands total supply; shares needed for vaultOutWanted can exceed seOut/2.
+        // Allow full user balance as maxIn (preview may require slightly more than half of seOut).
         uint256 vaultHeld = IERC20(SFRX_ETH).balanceOf(seVault);
         uint256 vaultOutWanted = vaultHeld / 2;
         require(vaultOutWanted > 0, "se must hold protocol vault tokens");
+        uint256 previewShares = IStandardExchangeOut(seVault).previewExchangeOut(
+            IERC20(seVault), IERC20(SFRX_ETH), vaultOutWanted
+        );
+        require(previewShares > 0 && previewShares <= seOut, "preview within user balance");
         uint256 sfrxBefore = IERC20(SFRX_ETH).balanceOf(address(this));
         uint256 spent = IStandardExchangeOut(seVault).exchangeOut(
             IERC20(seVault),
-            half + 1, // max SE shares (allow 1 wei rounding headroom)
+            seOut, // max SE shares (covers fee-diluted share requirement)
             IERC20(SFRX_ETH),
             vaultOutWanted,
             address(this),
@@ -113,7 +118,8 @@ contract ERC4626StandardExchange_SfrxETH_Fork is TestBase_ERC4626StandardExchang
             block.timestamp + 1 hours
         );
         assertGt(spent, 0, "spent some SE shares");
-        assertLe(spent, half + 1, "did not overspend SE shares");
+        assertLe(spent, seOut, "did not overspend SE shares");
+        assertEq(spent, previewShares, "spent matches preview");
         assertEq(IERC20(SFRX_ETH).balanceOf(address(this)) - sfrxBefore, vaultOutWanted, "sfrx recovered");
     }
 

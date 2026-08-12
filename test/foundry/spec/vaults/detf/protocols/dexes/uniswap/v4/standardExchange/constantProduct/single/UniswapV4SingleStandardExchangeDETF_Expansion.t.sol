@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -92,6 +92,7 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
         // Protocol NFT starts with 0 effective shares → cannot earn inventory until principal weight exists.
         // Sell a user bond → protocol NFT gets originalShares weight + LP migrates to claim.
         (uint256 tokenId,) = _bondOn(d, 80 ether);
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         info.sellPositionToDetfNft(tokenId, detfUser);
         assertGt(IDETFNFTVault(bond).effectiveSharesOf(protocolNftId), 0, "protocol NFT has share weight after sell");

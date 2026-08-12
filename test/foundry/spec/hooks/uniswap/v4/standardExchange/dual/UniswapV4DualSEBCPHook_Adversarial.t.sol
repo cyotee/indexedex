@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -262,19 +262,18 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: pretransferred=true, inventory present, no in-call transfer       */
+    /*  I1: booked inventory (R==B), no new unbooked push, pretransferred=true */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 c0→c1: donate free c0 inventory; unfunded pretransfer cannot free-extract SE book.
+    /// @notice I1 c0→c1: dual SE-face uses virtual seClaim R; no unbooked face push → U=0 reverts.
+    /// @dev Do not donate c0 face — that is intentional unbooked U (L-RSRV-DUST). I1 is booked only.
     function test_I1_pretransferred_c0ToC1_inventoryNoInCallTransfer_revertsDelta0() public {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
         uint256 claimed_ = 5 ether;
 
-        _mintAndDonate(c0, attacker, claimed_);
-        assertGe(IERC20(c0).balanceOf(hook), claimed_, "c0 inventory on hook");
-        assertEq(IERC20(c0).balanceOf(attacker), 0, "attacker drained");
+        assertEq(IERC20(c0).balanceOf(attacker), 0, "attacker empty");
         assertEq(IERC20(c0).allowance(attacker, hook), 0, "no allowance");
 
         uint256 claim0Before_ = dual.claimSupplyCurrency0();
@@ -302,15 +301,14 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         assertEq(IERC20(_seForCurrency(c1)).balanceOf(hook), se1HookBefore_, "I1: se1 unmoved");
     }
 
-    /// @notice I1 c1→c0: donate free c1; unfunded pretransfer cannot free-extract opposite SE book.
+    /// @notice I1 c1→c0: no unbooked c1 face (virtual seClaim R); true without push reverts U=0.
+    /// @dev Do not donate c1 face — free face is L-RSRV-DUST push credit, not I1 booked inventory.
     function test_I1_pretransferred_c1ToC0_inventoryNoInCallTransfer_revertsDelta0() public {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
         uint256 claimed_ = 5 ether;
 
-        _mintAndDonate(c1, attacker, claimed_);
-        assertGe(IERC20(c1).balanceOf(hook), claimed_, "c1 inventory on hook");
         assertEq(IERC20(c1).balanceOf(attacker), 0);
         assertEq(IERC20(c1).allowance(attacker, hook), 0);
 
@@ -339,20 +337,16 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         assertEq(IERC20(_seForCurrency(c1)).balanceOf(hook), se1HookBefore_, "I1: se1 unmoved");
     }
 
-    /// @notice I1 exact-out c0→c1: unfunded pretransfer cannot free-extract SE book / refund inventory.
+    /// @notice I1 exact-out c0→c1: no unbooked face (virtual seClaim R); true without push reverts U=0.
+    /// @dev Do not donate c0 face — free face is L-RSRV-DUST under dual virtual R, not booked I1.
     function test_I1_pretransferred_exchangeOut_c0ToC1_revertsDelta0() public {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
         uint256 wantOut_ = 1 ether;
 
-        // Absolute inventory theater: seed c0 so balance covers post-donation quote without in-call transfer.
-        // Quote AFTER donation — donating free c0 does not reprice SE book, but keep order explicit.
-        _mintAndDonate(c0, attacker, 50 ether);
-
         uint256 needIn_ = IStandardExchangeOut(hook).previewExchangeOut(IERC20(c0), IERC20(c1), wantOut_);
         assertGt(needIn_, 0);
-        assertGe(IERC20(c0).balanceOf(hook), needIn_, "inventory covers claimed amountIn");
 
         uint256 claim0Before_ = dual.claimSupplyCurrency0();
         uint256 claim1Before_ = dual.claimSupplyCurrency1();
@@ -376,18 +370,16 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I3: residual inventory cannot fund second free pretransfer credit     */
+    /*  I3: residual after honest money route cannot free-credit              */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I3: residual free c0 after honest path cannot fund a second free pretransfer c0→c1.
+    /// @notice I3: after honest c0→c1, booked dual state (U=0) cannot fund free pretransfer.
+    /// @dev Dual R = seClaim virtual for both legs. Free face residual is L-RSRV-DUST (not I3).
+    ///      I3 here proves post-honest booked state: no unbooked face → true reverts U=0.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer_c0ToC1() public {
         _depositBoth(200 ether, 200 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
-
-        // Residual free c0 that remains after honest swap (donation not consumed by !pretransfer).
-        uint256 residualSeed_ = 4 ether;
-        _mintAndDonate(c0, address(this), residualSeed_);
 
         uint256 honestIn_ = 3 ether;
         if (c0 == address(tokenA)) tokenA.mint(user, honestIn_);
@@ -401,23 +393,24 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         vm.stopPrank();
         assertGt(out_, 0, "honest c0->c1 ok");
 
-        uint256 residual_ = IERC20(c0).balanceOf(hook);
-        assertGe(residual_, residualSeed_, "residual c0 remains");
+        // After end-sync R=seClaim; free face is typically 0 → U=0 (not bare-donate residual face).
+        uint256 claimed_ = 4 ether;
         uint256 claim0Before_ = dual.claimSupplyCurrency0();
         uint256 claim1Before_ = dual.claimSupplyCurrency1();
+        uint256 c0HookBefore_ = IERC20(c0).balanceOf(hook);
         uint256 c1AttBefore_ = IERC20(c1).balanceOf(attacker);
 
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
         );
         IStandardExchangeIn(hook).exchangeIn(
-            IERC20(c0), residualSeed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
         );
 
-        assertEq(IERC20(c0).balanceOf(hook), residual_, "I3 residual unmoved");
+        assertEq(IERC20(c0).balanceOf(hook), c0HookBefore_, "I3 face unmoved");
         assertEq(dual.claimSupplyCurrency0(), claim0Before_, "I3 c0 SE book not free-spent");
         assertEq(dual.claimSupplyCurrency1(), claim1Before_, "I3 c1 SE book intact");
         assertEq(IERC20(c1).balanceOf(attacker), c1AttBefore_, "I3 no free c1");

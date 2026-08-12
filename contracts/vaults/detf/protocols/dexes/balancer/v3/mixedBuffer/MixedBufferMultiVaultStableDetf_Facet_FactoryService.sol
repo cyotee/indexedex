@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
@@ -9,6 +9,12 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {
     MixedBufferMultiVaultStableDetfExchangeInFacet
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet.sol";
+import {
+    MixedBufferMultiVaultStableDetfBondingFacet
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingFacet.sol";
+import {
+    MixedBufferMultiVaultStableDetfInfoFacet
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoFacet.sol";
 
 library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -26,5 +32,31 @@ library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
             )
         );
         vm.label(address(instance), type(MixedBufferMultiVaultStableDetfExchangeInFacet).name);
+    }
+
+    function deployMixedBufferMultiVaultStableDetfBondingFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = IFacet(
+            create3Factory.deployFacet(
+                type(MixedBufferMultiVaultStableDetfBondingFacet).creationCode,
+                abi.encode(type(MixedBufferMultiVaultStableDetfBondingFacet).name)._hash()
+            )
+        );
+        vm.label(address(instance), type(MixedBufferMultiVaultStableDetfBondingFacet).name);
+    }
+
+    function deployMixedBufferMultiVaultStableDetfInfoFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = IFacet(
+            create3Factory.deployFacet(
+                type(MixedBufferMultiVaultStableDetfInfoFacet).creationCode,
+                abi.encode(type(MixedBufferMultiVaultStableDetfInfoFacet).name)._hash()
+            )
+        );
+        vm.label(address(instance), type(MixedBufferMultiVaultStableDetfInfoFacet).name);
     }
 }

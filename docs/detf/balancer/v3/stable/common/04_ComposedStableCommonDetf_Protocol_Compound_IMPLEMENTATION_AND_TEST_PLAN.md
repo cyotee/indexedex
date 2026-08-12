@@ -12,6 +12,7 @@
 | **Blocks** | Stage **09** |
 | **Program index** | [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md) |
 | **Product law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) §3, C1–C8 — **claim coupling critical** |
+| **Sell/claim law** | [`BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md`](../../../../../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md) (mature-only sell/close, 4626 `buyClaim`) |
 | **Gold TestBase** | [`composed/stable/common/TestBase_ComposedStableCommonDetf.sol`](./composed/stable/common/TestBase_ComposedStableCommonDetf.sol) |
 | **Pathfinder** | Stage 01 Single SE plan |
 | **Family note** | Uses family bond NFT package + rebasing claim / rebasing DETF token surfaces more heavily |

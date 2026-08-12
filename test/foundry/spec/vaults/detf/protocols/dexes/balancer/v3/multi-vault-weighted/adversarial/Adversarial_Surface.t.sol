@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -21,20 +21,24 @@ import {
  * @dev WP-J-DETF-MV-001. Production DETF proxy via TestBase; compares CREATE3 facet metadata to loupe.
  */
 contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
-    /// @notice J1: exchangeIn facetFuncs are non-empty and include core Target selectors.
+    /// @notice J1: exchange + bonding facetFuncs include core Target selectors; sellNFT is gone.
     function test_J1_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = multiVaultWeightedDetfExchangeInFacet.facetFuncs();
-        assertTrue(funcs_.length >= 29, "facetFuncs non-empty / compound surface");
+        bytes4[] memory xfuncs_ = multiVaultWeightedDetfExchangeInFacet.facetFuncs();
+        assertTrue(_contains(xfuncs_, IStandardExchangeIn.exchangeIn.selector), "exchangeIn");
+        assertTrue(_contains(xfuncs_, IStandardExchangeIn.previewExchangeIn.selector), "previewExchangeIn");
 
-        // Core Target surface must be listed on the facet.
-        assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "exchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "previewExchangeIn");
+        bytes4[] memory funcs_ = multiVaultWeightedDetfBondingFacet.facetFuncs();
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.bond.selector), "bond");
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.initializeReserve.selector), "initializeReserve");
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.redeemClaim.selector), "redeemClaim");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfInfo.isReserveLive.selector), "isReserveLive");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfInfo.syntheticPrice.selector), "syntheticPrice");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfInfo.compoundProtocolRewards.selector), "compound");
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.buyClaim.selector), "buyClaim");
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.closeBondMature.selector), "closeBondMature");
+        assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
+
+        bytes4[] memory ifuncs_ = multiVaultWeightedDetfInfoFacet.facetFuncs();
+        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.isReserveLive.selector), "isReserveLive");
+        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.syntheticPrice.selector), "syntheticPrice");
+        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.compoundProtocolRewards.selector), "compound");
     }
 
     /// @notice J2: every facetFuncs selector is registered on the production proxy loupe.
@@ -47,6 +51,18 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
             address loupeFacet_ = IDiamondLoupe(instance_).facetAddress(funcs_[i]);
             assertEq(loupeFacet_, expectedFacet_, "loupe maps selector to exchange facet");
         }
+
+        bytes4[] memory bfuncs_ = multiVaultWeightedDetfBondingFacet.facetFuncs();
+        address expectedBonding_ = address(multiVaultWeightedDetfBondingFacet);
+        for (uint256 i; i < bfuncs_.length; ++i) {
+            address loupeFacet_ = IDiamondLoupe(instance_).facetAddress(bfuncs_[i]);
+            assertEq(loupeFacet_, expectedBonding_, "loupe maps selector to bonding facet");
+        }
+        assertEq(
+            IDiamondLoupe(instance_).facetAddress(bytes4(keccak256("sellNFT(uint256,address)"))),
+            address(0),
+            "sellNFT absent from loupe"
+        );
     }
 
     /// @notice J3: proxy smoke — loupe-routed selectors execute on the production diamond (not facet impl).
@@ -79,6 +95,12 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         assertEq(loupeFacet_, address(multiVaultWeightedDetfExchangeInFacet), "exchangeIn loupe facet");
         assertTrue(loupeFacet_ != instance_, "not self-facet");
         assertTrue(loupeFacet_ != address(0), "facet set");
+
+        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
+        assertEq(bonding_.protocolBondOriginalShares(), 0, "proxy protocol bond empty at live");
+        bonding_.previewBuyClaim(1e18);
+        address buyFacet_ = IDiamondLoupe(instance_).facetAddress(IMultiVaultWeightedDetfBonding.buyClaim.selector);
+        assertEq(buyFacet_, address(multiVaultWeightedDetfBondingFacet), "buyClaim loupe");
     }
 
     /// @notice J facet metadata parity (extends IFacet unit test onto CREATE3-deployed facet).
@@ -86,7 +108,7 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         IFacet facet_ = multiVaultWeightedDetfExchangeInFacet;
         (string memory name_, bytes4[] memory ifaces_, bytes4[] memory funcs_) = facet_.facetMetadata();
         assertEq(keccak256(bytes(name_)), keccak256(bytes("MultiVaultWeightedDetfExchangeInFacet")));
-        assertTrue(ifaces_.length >= 3, "interfaces");
+        assertTrue(ifaces_.length >= 1, "interfaces");
         assertEq(facet_.facetFuncs().length, funcs_.length, "funcs match metadata");
         assertEq(
             keccak256(abi.encodePacked(funcs_)),

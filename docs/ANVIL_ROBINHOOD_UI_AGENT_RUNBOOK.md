@@ -4,8 +4,9 @@
 
 **Product law SoT:** [`ANVIL_ROBINHOOD_UNISWAP_V4_DETF_DEPLOY_PRD.md`](./ANVIL_ROBINHOOD_UNISWAP_V4_DETF_DEPLOY_PRD.md)  
 **Implementor plan:** [`ANVIL_ROBINHOOD_UNISWAP_V4_DETF_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md`](./ANVIL_ROBINHOOD_UNISWAP_V4_DETF_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md)  
-**Pipeline code:** `scripts/foundry/anvil_robinhood_main/`  
+**Pipeline code:** `scripts/foundry/anvil_robinhood_main/` (lab **+** fee-DETF CHIR stages 14–22)  
 **Shell entry:** `scripts/shell/anvil_robinhood_main.sh`  
+**Fee-only alternate:** `scripts/shell/anvil_robinhood_fee_detf.sh` (subset; prefer main for unified UI testing)  
 **RH pins:** Crane `ROBINHOOD_MAIN` (`lib/crane/contracts/constants/networks/ROBINHOOD_MAIN.sol`)
 
 ---
@@ -307,7 +308,8 @@ DETFs stay inert after deploy until the user bonds — that is intentional (PRD 
 | 11 | Bond NFT + rebasing claim packages | `11_detf_children.json` |
 | 12 | CP / Orbital / Weighted DETF packages | `12_detf_packages.json` |
 | 13 | Inert demos only (no bond) | `13_inert_demos.json` |
-| 14 | Export `chain/4663` | `14_frontend_export.json` |
+| 14–21 | Fee-DETF: pons RICH → Uni V3 SE → CHIR live + UI ETH | `14_pons_rich.json` … `21_ui_wallet.json` |
+| 22 | Export `chain/4663` (lab + CHIR + featured-fee-detfs) | `22_frontend_export.json` |
 
 Logs: `deployments/anvil_robinhood_main/runtime/anvil.log` when Anvil is started by the script.
 

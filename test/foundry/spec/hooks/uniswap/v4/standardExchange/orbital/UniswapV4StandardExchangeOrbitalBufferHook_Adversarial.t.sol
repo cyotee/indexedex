@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -63,18 +63,16 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: pretransferred=true, inventory present, no in-call transfer       */
+    /*  I1: booked inventory (R==B), no new unbooked push, pretransferred=true */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 SE-face→raw: donate free SE-face inventory; unfunded pretransfer cannot free-extract.
+    /// @notice I1 SE-face→raw: no unbooked face (virtual seClaim R); true without push reverts U=0.
+    /// @dev Do not donate SE face — free face is intentional unbooked U (L-RSRV-DUST).
     function test_I1_pretransferred_seFaceToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         uint256 claimed_ = 5 ether;
-        // token0 is SE-buffered in default config — free face is never book; absolute theater would pass.
-        token0.mint(attacker, claimed_);
-        vm.prank(attacker);
-        token0.transfer(hook, claimed_);
-        assertEq(token0.balanceOf(hook), claimed_, "SE face inventory on hook");
+        // token0 is SE-buffered — do not donate face (that would free-credit under virtual R).
+        assertEq(token0.balanceOf(attacker), 0, "attacker empty");
         assertEq(token0.allowance(attacker, hook), 0);
 
         uint256 se0Before_ = IERC20(se0).balanceOf(hook);
@@ -104,14 +102,15 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         assertEq(orbital.rawReserve(1), raw1Before_, "I1: raw1 book intact");
     }
 
-    /// @notice I1 raw→raw: donate free raw; unfunded pretransfer cannot free-extract other leg.
+    /// @notice I1 raw→raw: booked free raw (post-seed R==B); true without new push reverts U=0.
+    /// @dev L-RSRV-DUST: bare donation free-credits until sync — I1 is booked inventory only.
     function test_I1_pretransferred_rawToRaw_inventoryNoInCallTransfer_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         uint256 claimed_ = 5 ether;
-        token1.mint(attacker, claimed_);
-        vm.prank(attacker);
-        token1.transfer(hook, claimed_);
-        assertGt(token1.balanceOf(hook), orbital.rawReserve(1), "free raw above book");
+        // Seeded free raw is end-synced (booked). Absolute B may cover claimed; U must not.
+        assertGe(token1.balanceOf(hook), claimed_, "booked raw inventory present");
+        assertEq(token1.balanceOf(attacker), 0, "attacker empty");
+        assertEq(token1.allowance(attacker, hook), 0, "no allowance");
 
         uint256 outAttBefore_ = token2.balanceOf(attacker);
         uint256 raw1Before_ = orbital.rawReserve(1);
@@ -137,24 +136,20 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         assertEq(token2.balanceOf(attacker), outAttBefore_, "I1: no free token2 extract");
         assertEq(orbital.rawReserve(1), raw1Before_, "I1: raw1 book intact");
         assertEq(orbital.rawReserve(2), raw2Before_, "I1: raw2 book intact");
-        assertEq(token1.balanceOf(hook), face1Before_, "I1: free raw unmoved");
+        assertEq(token1.balanceOf(hook), face1Before_, "I1: booked raw unmoved");
     }
 
-    /// @notice I1 exact-out: unfunded pretransfer cannot free-extract (and cannot refund free inventory).
+    /// @notice I1 exact-out: booked free raw (post-seed R==B); true without new push reverts U=0.
+    /// @dev Do not bare-donate residual for theater — L-RSRV-DUST free-credits until booked.
     function test_I1_pretransferred_exchangeOut_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         uint256 wantOut_ = 1 ether;
-
-        // Absolute inventory theater: seed free face so bal covers quote without in-call transfer.
-        token1.mint(attacker, 50 ether);
-        vm.prank(attacker);
-        token1.transfer(hook, 50 ether);
 
         uint256 needIn_ = IStandardExchangeOut(hook).previewExchangeOut(
             IERC20(address(token1)), IERC20(address(token2)), wantOut_
         );
         assertGt(needIn_, 0);
-        assertGe(token1.balanceOf(hook) - orbital.rawReserve(1), needIn_, "free covers amountIn");
+        assertGe(token1.balanceOf(hook), needIn_, "booked inventory covers claimed amountIn");
 
         uint256 outAttBefore_ = token2.balanceOf(attacker);
         uint256 face1Before_ = token1.balanceOf(hook);
@@ -181,7 +176,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         assertEq(orbital.rawReserve(2), raw2Before_, "I1 out: raw2 book intact");
     }
 
-    /// @notice Unfunded pretransfer (zero free inventory) reverts with delta 0.
+    /// @notice Unfunded pretransfer (booked inventory / U=0, no new push) reverts with delta 0.
     function test_I1_pretransferred_unfunded_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         vm.prank(user);
@@ -205,16 +200,16 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
     /*  I3: residual inventory cannot fund second free pretransfer credit     */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I3: residual free raw after honest path cannot fund a second free pretransfer.
+    /// @notice I3: after honest raw→raw, booked state (U=0) cannot fund free pretransfer.
+    /// @dev Bare residual donate free-credits until full balanceOf end-sync (production gap vs CP).
+    ///      I3 here proves post-honest booked inventory without unbooked residual face.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer_rawToRaw() public {
         _seedThreeLeg(200 ether);
 
-        uint256 residualSeed_ = 4 ether;
-        token1.mint(address(this), residualSeed_);
-        token1.transfer(hook, residualSeed_);
-
         uint256 honestIn_ = 3 ether;
-        vm.prank(user);
+        token1.mint(user, honestIn_);
+        vm.startPrank(user);
+        token1.approve(hook, honestIn_);
         uint256 out_ = IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token1)),
             honestIn_,
@@ -224,22 +219,25 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             false,
             block.timestamp + 1 hours
         );
+        vm.stopPrank();
         assertGt(out_, 0, "honest raw->raw ok");
 
+        // After end-sync R tracks book (reserves), not bare-donated dust.
+        uint256 claimed_ = 4 ether;
+        assertGe(token1.balanceOf(hook), claimed_, "booked raw inventory present");
         uint256 residual_ = token1.balanceOf(hook);
-        assertGe(residual_, residualSeed_, "residual free raw remains (leftover spendable inventory)");
         uint256 raw2Before_ = orbital.rawReserve(2);
         uint256 outAttBefore_ = token2.balanceOf(attacker);
 
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
             )
         );
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token1)),
-            residualSeed_,
+            claimed_,
             IERC20(address(token2)),
             0,
             attacker,

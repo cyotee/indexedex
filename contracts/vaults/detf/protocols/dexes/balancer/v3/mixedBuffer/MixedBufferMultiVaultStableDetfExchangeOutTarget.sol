@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -63,6 +63,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeOutTarget is MixedBuffe
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function _previewBurnDetfToBuffer(uint256 detfIn_) internal view returns (uint256 bufferOut_) {

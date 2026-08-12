@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -130,6 +130,18 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
      * @return rebasingClaimMinted Amount of rebasing claim token minted
      */
     function mintFromNFTSale(uint256 lpShares, address recipient) external returns (uint256 rebasingClaimMinted);
+
+    /**
+     * @notice ERC-4626 mint against protocol-bond originalShares.
+     * @dev `totalAssetsBefore == type(uint256).max` means live-read `originalSharesOf(detfNFTId)`
+     *      (safe only when the credit has not landed yet — `buyClaim`). Sell must pass the snapshot.
+     * @param assets BPT credited this call.
+     * @param totalAssetsBefore Protocol NFT originalShares before this credit, or `type(uint256).max`.
+     * @param recipient Address to receive rebasing claim token.
+     */
+    function mintFromNFTSale(uint256 assets, uint256 totalAssetsBefore, address recipient)
+        external
+        returns (uint256 rebasingClaimMinted);
 
     /* ---------------------------------------------------------------------- */
     /*                          Redemption Operations                         */

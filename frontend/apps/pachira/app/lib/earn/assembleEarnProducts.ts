@@ -18,6 +18,13 @@ function normalizeAddress(address: string): Address | null {
   return address as Address
 }
 
+/** Fee DETF only — product brand “Protocol DETF”. Everything else with detf tags is plain DETF. */
+export function resolveDetfProductType(entry: EarnProductInput): EarnProductType {
+  const tags = (entry.tags ?? []).map((t) => String(t).toLowerCase())
+  if (tags.includes('fee-detf') || tags.includes('featured')) return 'protocol-detf'
+  return 'detf'
+}
+
 function toProduct(entry: EarnProductInput, productType: EarnProductType): EarnProduct | null {
   const address = normalizeAddress(entry.address)
   if (!address) return null
@@ -39,16 +46,20 @@ function toProduct(entry: EarnProductInput, productType: EarnProductType): EarnP
 /**
  * Merge strategy vaults and DETF tokenlist entries into a unified Earn catalog.
  * Later lists do not override an address already claimed by an earlier kind
- * (strategy wins, then protocol DETF).
+ * (strategy wins, then DETF kinds).
  */
 export function assembleEarnProducts(inputs: EarnCatalogInputs): EarnProduct[] {
   const out: EarnProduct[] = []
   const seen = new Set<string>()
 
-  const pushAll = (list: EarnProductInput[] | undefined, productType: EarnProductType) => {
+  const pushAll = (
+    list: EarnProductInput[] | undefined,
+    productType: EarnProductType | 'from-detf-tags',
+  ) => {
     if (!list) return
     for (const entry of list) {
-      const product = toProduct(entry, productType)
+      const kind = productType === 'from-detf-tags' ? resolveDetfProductType(entry) : productType
+      const product = toProduct(entry, kind)
       if (!product) continue
       const key = `${product.chainId}:${product.address.toLowerCase()}`
       if (seen.has(key)) continue
@@ -58,7 +69,7 @@ export function assembleEarnProducts(inputs: EarnCatalogInputs): EarnProduct[] {
   }
 
   pushAll(inputs.strategy, 'strategy')
-  pushAll(inputs.protocolDetf, 'protocol-detf')
+  pushAll(inputs.protocolDetf, 'from-detf-tags')
 
   return out
 }
@@ -72,7 +83,14 @@ export function filterEarnProducts(
   const q = (options.search ?? '').trim().toLowerCase()
 
   return products.filter((p) => {
-    if (typeFilter && p.productType !== typeFilter) return false
+    if (typeFilter) {
+      // "DETF" chip matches plain DETF; protocol-detf stays a distinct product brand.
+      if (typeFilter === 'detf') {
+        if (p.productType !== 'detf') return false
+      } else if (p.productType !== typeFilter) {
+        return false
+      }
+    }
     if (!q) return true
     const hay = [p.name, p.symbol, p.display ?? '', p.address].join(' ').toLowerCase()
     return hay.includes(q)

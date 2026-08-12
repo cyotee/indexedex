@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -41,7 +41,7 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
         // Product surface (no retired markDETFNFTSold / detfNFTSold).
-        funcs_ = new bytes4[](26);
+        funcs_ = new bytes4[](28);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -68,6 +68,8 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
         funcs_[23] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
         funcs_[24] = IDETFNFTVault.lockInfoOf.selector;
         funcs_[25] = IDETFNFTVault.rewardPerShares.selector;
+        funcs_[26] = IDETFNFTVault.removeFromDETFNFT.selector;
+        funcs_[27] = IDETFNFTVault.totalOriginalShares.selector;
     }
 
     /// @inheritdoc IFacet

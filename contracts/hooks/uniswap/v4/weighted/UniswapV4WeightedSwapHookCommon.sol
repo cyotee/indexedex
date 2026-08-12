@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -390,4 +390,40 @@ abstract contract UniswapV4WeightedSwapHookCommon {
             MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), l.reserves[i]);
         }
     }
+
+    /* size-split shared internals from monotarget */
+    function _snapshotKLastIfFeeOn() internal {
+        (bool feeOn,,,) = _feeOnAndShare();
+        Repo.Layout storage l = Repo._layout();
+        if (!feeOn) {
+            l.kLast = 0;
+            return;
+        }
+        uint256[] memory rates = _loadRates();
+        (uint8 mode, uint256 k,) = _measureK(rates);
+        l.kLast = k;
+        l.kLastMode = mode;
+    }
+
+
+    function _seedNavShares(uint256[] memory used, uint256[] memory rates, uint256 supply)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        Repo.Layout storage l = Repo._layout();
+        uint256 vIn;
+        uint256 vBook;
+        for (uint256 i; i < l.numTokens; ++i) {
+            uint256 rS = Math.scaleTo(l.reserves[i], rates[i]);
+            uint256 uS = Math.scaleTo(used[i], rates[i]);
+            vBook += (rS * l.weights[i]) / Math.WAD;
+            vIn += (uS * l.weights[i]) / Math.WAD;
+        }
+        if (vBook == 0 || vIn == 0) revert ZeroAmount();
+        shares = (supply * vIn) / vBook;
+        if (shares == 0) revert ZeroAmount();
+    }
+
+
 }

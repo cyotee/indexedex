@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -35,7 +35,9 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IFacet liquidityFacet;
+        /// @dev Option 1d: join + exit replace combined liquidityFacet.
+        IFacet joinFacet;
+        IFacet exitFacet;
         IFacet seFacet;
         IFacet hooksFacet;
         /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
@@ -60,7 +62,8 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
-    function LIQUIDITY_FACET() external view returns (IFacet);
+    function JOIN_FACET() external view returns (IFacet);
+    function EXIT_FACET() external view returns (IFacet);
     function SE_FACET() external view returns (IFacet);
     function HOOKS_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -7,7 +7,9 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {IERC4626StandardExchange} from "contracts/vaults/standard/erc4626/IERC4626StandardExchange.sol";
 
 /**
@@ -20,7 +22,9 @@ import {IERC4626StandardExchange} from "contracts/vaults/standard/erc4626/IERC46
  *      (Rocket Pool fee-mint peer). Residual > MAX_DUST_WEI is not silent absorb.
  *      Under-delivery of amountOut is Slippage, not dust.
  *
- * @dev Token-in pull is Rocket-peer balance-delta only — never absolute reserve inventory.
+ * @dev Token-in pull is durable reserve-delta (BasicVault peer / L-DETF-HOST-UPGRADE):
+ *      `U = B - R`; `pretransferred=true` credits claimed iff `claimed <= U`.
+ *      Nested DETF push+true requires this (observed in-call delta is always 0 after external push).
  */
 abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     using SafeERC20 for IERC20;
@@ -146,38 +150,56 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     }
 
     /**
-     * @dev Rocket-peer secure pull: measure **balance delta only**.
-     *      - !pretransferred: transferFrom `amountIn`
-     *      - pretransferred: require delta ≥ amountIn (no transfer); never treat absolute reserve as deposit
-     *      - actualIn returned is the amount available for consumption (= amountIn when ok)
-     *      - overshoot delta (pretransfer surplus) is left on contract for caller to refund/dust after consume
+     * @dev Durable reserve-delta secure pull (BasicVault peer).
+     *      - `R = reserveOfToken` (booked at last money-route sync)
+     *      - `B = balanceOf(this)`
+     *      - `U = B - R` (unbooked surplus)
+     *      - `!pretransferred`: transferFrom; credit **pull delta only** (FoT-safe; no prior U).
+     *        Pull overshoot is refunded immediately (D38).
+     *      - `pretransferred`: no in-call transfer; credit `claimed` iff `claimed <= U`, else
+     *        `TransferDeltaInsufficient(claimed, U)`. I1 when `R == B` (U=0).
+     *      Unclaimed surplus (`U - claimed`) is **not** refunded here — absorbed into `R` at
+     *      end-route `_syncAllExpectedHoldReserves()`.
      */
     function _securePull(IERC20 token, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
-        uint256 before_ = token.balanceOf(address(this));
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(token));
+        uint256 B0 = token.balanceOf(address(this));
+
         if (!pretransferred) {
             token.safeTransferFrom(msg.sender, address(this), amountIn);
+            uint256 delta = token.balanceOf(address(this)) - B0;
+            if (delta == 0) {
+                revert InsufficientDeposit(amountIn, 0);
+            }
+            // FoT / under-pull
+            if (delta < amountIn) {
+                return delta;
+            }
+            // Pull overshoot: refund immediately to caller (D38)
+            if (delta > amountIn) {
+                _refundExcess(token, msg.sender, delta - amountIn);
+            }
+            return amountIn;
         }
-        uint256 delta = token.balanceOf(address(this)) - before_;
-        if (delta == 0) {
-            revert InsufficientDeposit(amountIn, 0);
+
+        // pretransferred == true — durable reserve baseline
+        uint256 U = B0 - R;
+        if (amountIn > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, U);
         }
-        if (pretransferred && delta < amountIn) {
-            revert InsufficientDeposit(amountIn, delta);
+        return amountIn;
+    }
+
+    /// @dev Full expected-hold sync after money routes (L-RSRV-SYNC-FULL / L-DETF-END-ORDER).
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
         }
-        // FoT / under-pull when !pretransferred
-        if (!pretransferred && delta < amountIn) {
-            actualIn = delta;
-            return actualIn;
-        }
-        // Pull overshoot (gift tokens, pretransfer surplus): refund immediately to caller (D38).
-        if (delta > amountIn) {
-            _refundExcess(token, msg.sender, delta - amountIn);
-            delta = amountIn;
-        }
-        actualIn = amountIn;
     }
 
     /**
@@ -201,5 +223,23 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
     function _refundExcess(IERC20 token, address to, uint256 excess) internal {
         if (excess == 0) return;
         token.safeTransfer(to, excess);
+    }
+
+    /**
+     * @dev Burn SE shares for unwrap / SE→protocolVault routes (L-DETF-SHARE / BasicVault peer).
+     *      - `pretransferred=true`: shares were pushed onto this diamond; burn `address(this)`.
+     *        Refund leftover free shares on diamond to `owner` (exact-out partial maxIn).
+     *      - `pretransferred=false`: burn from `owner` (msg.sender holder).
+     */
+    function _burnSeShares(address owner, uint256 burnAmount, bool pretransferred) internal {
+        if (pretransferred) {
+            ERC20Repo._burn(address(this), burnAmount);
+            uint256 leftover = IERC20(address(this)).balanceOf(address(this));
+            if (leftover > 0) {
+                IERC20(address(this)).safeTransfer(owner, leftover);
+            }
+        } else {
+            ERC20Repo._burn(owner, burnAmount);
+        }
     }
 }

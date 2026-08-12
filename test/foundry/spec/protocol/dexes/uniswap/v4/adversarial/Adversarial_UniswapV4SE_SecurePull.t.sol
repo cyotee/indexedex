@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -23,8 +23,8 @@ import {
     UniswapV4StandardExchangeInBase
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
 import {
-    UniswapV4StandardExchangeOutTarget
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutTarget.sol";
+    UniswapV4StandardExchangeOutBase
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutBase.sol";
 import {
     TestBase_UniswapV4StandardExchange
 } from "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol";
@@ -152,20 +152,25 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: inventory present, no in-call transfer, pretransferred=true       */
+    /*  I1: booked inventory (R==B), no new unbooked push, pretransferred=true */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 free credit: donate inventory; claim pretransferred without transfer → delta 0.
+    /// @notice I1: after honest money route end-syncs face book, free true without new push reverts U=0.
+    /// @dev L-RSRV-DUST: bare donation free-credits until sync — not I1. Uni V4 SE may deploy free face
+    ///      into the position on honest mint, so free face B can be 0; I1 still holds (U=0).
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         uint256 claimed_ = 5 ether;
         address token0_ = _token0();
 
-        // Seed inventory so absolute balance theater would have passed.
-        ERC20PermitMintableStub(token0_).mint(attacker, claimed_);
-        vm.prank(attacker);
-        IERC20(token0_).transfer(address(vault), claimed_);
-        assertEq(IERC20(token0_).balanceOf(address(vault)), claimed_, "inventory present");
-        assertEq(IERC20(token0_).balanceOf(attacker), 0, "attacker drained");
+        // Book face via honest !pretransfer (end-syncs R including deployed + free face).
+        uint256 honestIn_ = 2 ether;
+        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
+        vm.startPrank(victim);
+        IERC20(token0_).approve(address(vault), honestIn_);
+        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+        vm.stopPrank();
+
+        assertEq(IERC20(token0_).balanceOf(attacker), 0, "attacker empty");
         assertEq(IERC20(token0_).allowance(attacker, address(vault)), 0, "no allowance");
 
         uint256 supplyBefore_ = vault.totalSupply();
@@ -183,14 +188,18 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         assertEq(IERC20(token0_).balanceOf(address(vault)), invBefore_, "I1: inventory unmoved");
     }
 
-    /// @notice I1 claimed ≤ inventory still reverts when observedDelta is 0 (absolute credit forbidden).
+    /// @notice I1: claimed > 0 with no unbooked face push reverts U=0 (absolute free credit forbidden).
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
-        uint256 inventory_ = 10 ether;
         uint256 claimed_ = 3 ether;
         address token0_ = _token0();
 
-        ERC20PermitMintableStub(token0_).mint(address(vault), inventory_);
-        assertGe(IERC20(token0_).balanceOf(address(vault)), claimed_, "claimed <= inventory");
+        // Book via honest path so face free is fully accounted (U=0 even if free face dust remains).
+        uint256 honestIn_ = 2 ether;
+        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
+        vm.startPrank(victim);
+        IERC20(token0_).approve(address(vault), honestIn_);
+        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+        vm.stopPrank();
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -352,7 +361,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         ERC20PermitMintableStub(_token0()).mint(attacker, previewIn_ * 2);
         vm.startPrank(attacker);
         IERC20(_token0()).approve(address(vault), previewIn_ * 2);
-        vm.expectRevert(UniswapV4StandardExchangeOutTarget.UniswapV4ExchangeOut_DeadlineExceeded.selector);
+        vm.expectRevert(UniswapV4StandardExchangeOutBase.UniswapV4ExchangeOut_DeadlineExceeded.selector);
         vault.exchangeOut(
             IERC20(_token0()), previewIn_ * 2, IERC20(_token1()), amountOut_, attacker, false, expired_
         );
@@ -477,7 +486,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         );
         assertTrue(
             _facetFuncsContains(
-                uniswapV4StandardExchangeOutFacet.facetFuncs(), IStandardExchangeOut.previewExchangeOut.selector
+                uniswapV4StandardExchangeOutQueryFacet.facetFuncs(), IStandardExchangeOut.previewExchangeOut.selector
             ),
             "J1 previewExchangeOut"
         );

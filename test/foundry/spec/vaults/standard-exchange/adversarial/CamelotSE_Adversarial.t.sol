@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -311,16 +311,17 @@ contract CamelotSE_Adversarial_Test is TestBase_CamelotV2StandardExchange {
     /*  I1–I3: pretransfer trust flags must not free-credit inventory         */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 free credit: donate inventory; claim pretransferred without transfer → delta 0.
+    /// @notice I1 booked: residual after honest money-route sync cannot free-credit via pretransfer.
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
-        uint256 claimed_ = TEST_AMT;
+        uint256 residual_ = TEST_AMT;
+        uint256 pull_ = TEST_AMT / 10;
 
-        tokenA.mint(attacker, claimed_);
-        vm.prank(attacker);
-        tokenA.transfer(address(vault), claimed_);
-        assertEq(tokenA.balanceOf(address(vault)), claimed_, "inventory present");
-        assertEq(tokenA.balanceOf(attacker), 0, "attacker drained");
-        assertEq(tokenA.allowance(attacker, address(vault)), 0, "no allowance");
+        tokenA.mint(address(vault), residual_);
+        tokenA.mint(attacker, pull_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(vault), pull_);
+        vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        vm.stopPrank();
 
         uint256 supplyBefore_ = vault.totalSupply();
         uint256 attackerSharesBefore_ = vault.balanceOf(attacker);
@@ -328,22 +329,28 @@ contract CamelotSE_Adversarial_Test is TestBase_CamelotV2StandardExchange {
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
         );
-        vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1: attacker shares unchanged");
         assertEq(tokenA.balanceOf(address(vault)), invBefore_, "I1: inventory unmoved");
     }
 
-    /// @notice I1 claimed ≤ inventory still reverts when observedDelta is 0.
+    /// @notice I1 claimed ≤ booked inventory still reverts (absolute free credit forbidden).
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
         uint256 inventory_ = TEST_AMT * 2;
         uint256 claimed_ = TEST_AMT / 2;
+        uint256 pull_ = TEST_AMT / 20;
 
         tokenA.mint(address(vault), inventory_);
-        assertGe(tokenA.balanceOf(address(vault)), claimed_, "claimed <= inventory");
+        tokenA.mint(attacker, pull_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(vault), pull_);
+        vault.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, attacker, false, _deadline());
+        vm.stopPrank();
+        assertGe(tokenA.balanceOf(address(vault)), claimed_, "claimed <= booked inventory");
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -352,7 +359,7 @@ contract CamelotSE_Adversarial_Test is TestBase_CamelotV2StandardExchange {
         vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
-    /// @notice I2: transfer-before-call + pretransferred=true is outside the pull window.
+    /// @notice Reserve-delta push: transfer-before-call + pretransferred=true succeeds when claimed ≤ U.
     function test_I2_transferBeforeCall_pretransferred_revertsDelta0() public {
         uint256 claimed_ = TEST_AMT;
 
@@ -361,10 +368,11 @@ contract CamelotSE_Adversarial_Test is TestBase_CamelotV2StandardExchange {
         tokenA.transfer(address(vault), claimed_);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
+        uint256 out_ = vault.exchangeIn(
+            IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
-        vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        assertGt(out_, 0, "push pretransfer succeeds under reserve-delta");
+        assertEq(tokenB.balanceOf(attacker), out_, "attacker received tokenB");
     }
 
     /// @notice I3: residual inventory after honest pull cannot fund second free pretransfer credit.

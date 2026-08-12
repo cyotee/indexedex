@@ -12,6 +12,7 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 
 | ID | Test exists? | Drives real entry? | Notes |
 |----|--------------|--------------------|-------|
+| **A0** Residual / empty supply drain | | first mint/bond/deposit | Pre-seeded inventory not free |
 | A1 Donate vault shares | | exchangeIn / transfer | No free DETF |
 | A3 Donate BPT / reserve | | redeemClaim without claim | No principal drain |
 | B1 Skew mint/burn | | real AMM + exchangeIn | Bounds or no free lunch |
@@ -24,8 +25,10 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | D6 Over-claim principal | | redeemClaim | Cap by claim + inventory |
 | E1 Round-trip | | mint + burn | residual 0 |
 | E5 Zero / deadline | | exchangeIn | exact selectors |
+| **E6** Surplus-refund (if residual-return path) | | refund / overpay return | Cannot drain prior inventory |
 | F2 Bond NFT onlyOwner | | createPosition | revert |
 | F3 Claim onlyOwner | | mintFromNFTSale / burnShares | revert |
+| **F5** Public structural reclaim (if exists) | | migrate/resize/reclaim | Or NatSpec: no public settle |
 | H2 Redeem atomicity | | redeemClaim fail | claim unchanged |
 | H3 Failed mint residual | | minOut fail | inventory 0 |
 | **I1** pretransferred claim, no transfer | | exchangeIn/mint with pretransferred=true | Vault has reserves; attacker shares **unchanged** |
@@ -35,6 +38,11 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | **J2** loupe after DFPkg deploy | | facetAddress(sel) | All product sels non-zero |
 | **J3** proxy smoke | | call each product fn on instance | No FunctionNotFound |
 | **K1** donation then deposit | | donate + victim mint | No free credit / strict mismatch |
+| **L1** untracked surplus (if AMM-priced/LP/idle reclaim) | | mint/exchange/reclaim after surplus | No free mint/extract; or NatSpec N/A |
+| **L3** pair reserve skew oracle (if spot) | | real swap + mint/burn | No free lunch beyond deadband |
+| **M1–M3** middleware (if helper exists) | | hostile target/calldata/allowance | Or NatSpec: no helper |
+| **N1** quote–settle TOCTOU (if callbacks) | | mid-flow hostile hook | Or NatSpec: no multi-step hook |
+| **O1–O2** permit (if sig path) | | invalid/replay permit | Or NatSpec: no permit |
 
 ## P1 (should)
 
@@ -47,10 +55,19 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | F1 No free diamondCut / unowned | |
 | F4 Weights/rates immutable | no setter |
 | G1 Nested outer does not brick inner | third user on nested |
+| **L2** FoT credit actualIn | P0 if product claims FoT support |
+| **N2** preview vs execute | documented tolerance OK |
+| **O3** EIP-712 domain / Permit2 typed data | also **I5** |
 
 ## P2 (explicit defer OK)
 
 A4–A5, B2/B4–B5, C4–C5, D7, E2–E3, G2–G3, H1, peer product ports — each needs one-line reason in suite NatSpec.
+
+Inapplicable **L/M/N/O** also need one-line NatSpec (not silent).
+
+## Incident study (optional)
+
+`skill:defi-incident-patterns` + `lib/DeFiHackLabs` — reference only; hermetic tests remain the bar.
 
 ## Reference suite
 

@@ -1,0 +1,156 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {
+    toBeforeSwapDelta,
+    BeforeSwapDelta
+} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {ModifyLiquidityParams, SwapParams} from
+    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookCommon
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookMath as Math
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
+import {
+    UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
+import {
+    IUniswapV4StandardExchangeOrbitalBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+
+/// @title UniswapV4StandardExchangeOrbitalBufferHookSeTarget
+/// @notice Role Target for orbital buffer hook size split (Option 1a).
+abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
+    using SafeERC20 for IERC20;
+
+    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
+    }
+
+
+    function exchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        if (recipient == address(0)) revert ZeroAddress();
+        address tin = address(tokenIn);
+        address tout = address(tokenOut);
+        if (!_isBound(tin) || !_isBound(tout) || tin == tout) revert InvalidRoute(tin, tout);
+        // Reject SE share addresses
+        Repo.Layout storage l = Repo._layout();
+        if (tin == l.se0 || tin == l.se1 || tin == l.se2 || tout == l.se0 || tout == l.se1 || tout == l.se2) {
+            revert InvalidRoute(tin, tout);
+        }
+
+        // L-GAPS-11 / ISecurePullErrors: pretransfer credits only in-window delta (I1/I3).
+        // Leftover spendable economics unchanged (surplus delta not exact-matched).
+        _securePull(IERC20(tin), amountIn, pretransferred);
+
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        amountOut = _previewSwapExactIn(tin, tout, amountIn);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+
+        // Execute book swap (no PM)
+        if (_seOf(tout) != address(0)) {
+            _unwrapExactTokenOut(tout, amountOut);
+        } else {
+            l.reserves[tout] -= amountOut;
+        }
+        if (_seOf(tin) != address(0)) {
+            _bufferToken(tin, amountIn);
+        } else {
+            l.reserves[tin] += amountIn;
+        }
+        _recomputeL2();
+        IERC20(tout).safeTransfer(recipient, amountOut);
+        _syncVaultReserves();
+        emit Swap(msg.sender, tin, tout, amountIn, amountOut, feeWad);
+    }
+
+
+    function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        return _previewSwapExactOut(address(tokenIn), address(tokenOut), amountOut);
+    }
+
+
+    function exchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountOut);
+        if (recipient == address(0)) revert ZeroAddress();
+        address tin = address(tokenIn);
+        address tout = address(tokenOut);
+        if (!_isBound(tin) || !_isBound(tout) || tin == tout) revert InvalidRoute(tin, tout);
+
+        amountIn = _previewSwapExactOut(tin, tout, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+
+        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
+        // (never absolute free inventory / book).
+        uint256 observedDelta = _securePull(IERC20(tin), amountIn, pretransferred);
+        if (pretransferred && observedDelta > amountIn) {
+            IERC20(tin).safeTransfer(msg.sender, observedDelta - amountIn);
+        }
+
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (_seOf(tout) != address(0)) {
+            _unwrapExactTokenOut(tout, amountOut);
+        } else {
+            l.reserves[tout] -= amountOut;
+        }
+        if (_seOf(tin) != address(0)) {
+            _bufferToken(tin, amountIn);
+        } else {
+            l.reserves[tin] += amountIn;
+        }
+        _recomputeL2();
+        IERC20(tout).safeTransfer(recipient, amountOut);
+        _syncVaultReserves();
+        emit Swap(msg.sender, tin, tout, amountIn, amountOut, feeWad);
+    }
+
+
+
+}

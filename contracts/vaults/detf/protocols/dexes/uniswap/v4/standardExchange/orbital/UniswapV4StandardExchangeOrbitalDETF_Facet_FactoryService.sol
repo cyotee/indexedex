@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
@@ -9,6 +9,9 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {
     UniswapV4StandardExchangeOrbitalDETFFacet
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFFacet.sol";
+import {
+    UniswapV4StandardExchangeOrbitalDETFExchangeFacet
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFExchangeFacet.sol";
 import {
     UniswapV4StandardExchangeOrbitalDETFInfoFacet
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFInfoFacet.sol";
@@ -27,6 +30,17 @@ library UniswapV4StandardExchangeOrbitalDETF_Facet_FactoryService {
             abi.encode(type(UniswapV4StandardExchangeOrbitalDETFFacet).name)._hash()
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeOrbitalDETFFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangeOrbitalDETFExchangeFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeOrbitalDETFExchangeFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeOrbitalDETFExchangeFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeOrbitalDETFExchangeFacet).name);
     }
 
     function deployUniswapV4StandardExchangeOrbitalDETFInfoFacet(ICreate3FactoryProxy create3Factory)

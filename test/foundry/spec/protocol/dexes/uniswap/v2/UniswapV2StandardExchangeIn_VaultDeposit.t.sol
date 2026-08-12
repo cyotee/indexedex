@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -14,6 +14,7 @@ import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswa
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {
     TestBase_UniswapV2StandardExchange_MultiPool
 } from "contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2StandardExchange_MultiPool.sol";
@@ -211,6 +212,12 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
         assertEq(lpToken.balanceOf(address(this)), senderLPBefore, "No additional transfer from sender");
         assertTrue(sharesOut > 0, "Received shares");
         assertEq(vault.balanceOf(recipient), sharesOut, "Recipient received shares");
+        // INV-R1: after successful money route, booked reserve matches live balance for LP hold-set token.
+        assertEq(
+            IBasicVault(address(vault)).reserveOfToken(address(lpToken)),
+            lpToken.balanceOf(address(vault)),
+            "INV-R1: R == B for LP after pretransfer deposit"
+        );
     }
 
     /* ---------------------------------------------------------------------- */

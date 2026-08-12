@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
@@ -164,6 +165,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     IFacet internal erc4626StandardVaultFacet;
     IFacet internal aeroExchangeInFacet;
     IFacet internal aeroExchangeOutFacet;
+    IFacet internal aeroExchangeOutQueryFacet;
     IAerodromeStandardExchangeDFPkg internal aeroStdExDFPkg;
 
     IStandardExchangeProxy public seVault;
@@ -380,25 +382,46 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
         aeroExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
         aeroExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+        aeroExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
     }
 
     function _deploySeVaultPkg() internal virtual {
         vm.startPrank(owner);
-        aeroStdExDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(
-            erc20Facet,
-            erc2612Facet,
-            erc5267Facet,
-            erc4626Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
-            aeroExchangeInFacet,
-            aeroExchangeOutFacet,
-            indexedexManager, // vaultFeeOracleQuery
-            indexedexManager, // vaultRegistryDeployment
-            permit2,
-            IRouter(address(aeroRouter)),
-            aeroPoolFactory
-        );
+        {
+
+            IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
+
+            pkgInit_.erc20Facet = erc20Facet;
+
+            pkgInit_.erc2612Facet = erc2612Facet;
+
+            pkgInit_.erc5267Facet = erc5267Facet;
+
+            pkgInit_.erc4626Facet = erc4626Facet;
+
+            pkgInit_.multiAssetBasicVaultFacet = erc4626BasicVaultFacet;
+
+            pkgInit_.multiAssetStandardVaultFacet = erc4626StandardVaultFacet;
+
+            pkgInit_.aerodromeStandardExchangeInFacet = aeroExchangeInFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutFacet = aeroExchangeOutFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutQueryFacet = aeroExchangeOutQueryFacet;
+
+            pkgInit_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+
+            pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+
+            pkgInit_.permit2 = permit2;
+
+            pkgInit_.aerodromeRouter = IRouter(address(aeroRouter));
+
+            pkgInit_.aerodromePoolFactory = aeroPoolFactory;
+
+            aeroStdExDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(pkgInit_);
+
+        }
         vm.stopPrank();
         vm.label(address(aeroStdExDFPkg), "AerodromeStdExDFPkg");
     }

@@ -1,5 +1,8 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -100,6 +103,7 @@ contract TestBase_AerodromeFork is TestBase_BaseFork, TestBase_Permit2, TestBase
 
     IFacet internal aerodromeStandardExchangeInFacet;
     IFacet internal aerodromeStandardExchangeOutFacet;
+    IFacet internal aerodromeStandardExchangeOutQueryFacet;
     IAerodromeStandardExchangeDFPkg internal aerodromeStandardExchangeDFPkg;
 
     /* ---------------------------------------------------------------------- */
@@ -298,24 +302,45 @@ contract TestBase_AerodromeFork is TestBase_BaseFork, TestBase_Permit2, TestBase
         // Deploy facets
         aerodromeStandardExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
         aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+        aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
 
         // Deploy DFPkg as owner
         vm.startPrank(owner);
-        aerodromeStandardExchangeDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(
-            erc20Facet,
-            erc2612Facet,
-            erc5267Facet,
-            erc4626Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
-            aerodromeStandardExchangeInFacet,
-            aerodromeStandardExchangeOutFacet,
-            indexedexManager, // vaultFeeOracleQuery
-            indexedexManager, // vaultRegistryDeployment
-            permit2,
-            aerodromeRouter, // Use mainnet router!
-            aerodromePoolFactory
-        );
+        {
+
+            IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
+
+            pkgInit_.erc20Facet = erc20Facet;
+
+            pkgInit_.erc2612Facet = erc2612Facet;
+
+            pkgInit_.erc5267Facet = erc5267Facet;
+
+            pkgInit_.erc4626Facet = erc4626Facet;
+
+            pkgInit_.multiAssetBasicVaultFacet = erc4626BasicVaultFacet;
+
+            pkgInit_.multiAssetStandardVaultFacet = erc4626StandardVaultFacet;
+
+            pkgInit_.aerodromeStandardExchangeInFacet = aerodromeStandardExchangeInFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutFacet = aerodromeStandardExchangeOutFacet;
+
+            pkgInit_.aerodromeStandardExchangeOutQueryFacet = aerodromeStandardExchangeOutQueryFacet;
+
+            pkgInit_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+
+            pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+
+            pkgInit_.permit2 = permit2;
+
+            pkgInit_.aerodromeRouter = IRouter(address(aerodromeRouter));
+
+            pkgInit_.aerodromePoolFactory = aerodromePoolFactory;
+
+            aerodromeStandardExchangeDFPkg = indexedexManager.deployAerodromeStandardExchangeDFPkg(pkgInit_);
+
+        }
         vm.stopPrank();
         vm.label(address(aerodromeStandardExchangeDFPkg), 'AerodromeStandardExchangeDFPkg_Fork');
     }

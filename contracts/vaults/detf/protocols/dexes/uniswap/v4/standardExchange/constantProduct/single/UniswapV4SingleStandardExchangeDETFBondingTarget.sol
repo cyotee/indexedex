@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
@@ -55,6 +55,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         tokenId_ = _openBondNft(shares_, lockDuration_, recipient_);
         Repo._addUserBondedLp(shares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _executeBondJoin(uint256 pairAmount_) private returns (uint256 lpOut_) {
@@ -195,9 +196,9 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
             address(tokenOut_) == address(s.standardExchangeVaultShare) || _isAllowlistedTokenIn(tokenOut_)
         ) {
             uint256 pairOut_ = _withdrawSinglePair(lpOut_, address(this));
-            s.pairToken.forceApprove(address(s.standardExchangeVault), pairOut_);
-            amountOut_ = IStandardExchangeIn(address(s.standardExchangeVault)).exchangeIn(
-                s.pairToken, pairOut_, tokenOut_, minOut_, recipient_, false, deadline_
+            amountOut_ = _nestedExchangeInPush(
+                IStandardExchangeIn(address(s.standardExchangeVault)),
+                s.pairToken, pairOut_, tokenOut_, minOut_, recipient_, deadline_
             );
         } else {
             revert Repo.InvalidRoute(IERC20(address(s.rebasingClaimToken)), tokenOut_);
@@ -206,6 +207,8 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+        // Outer money route: refund N/A; full hold-set sync after pair/SE exit (L-DETF-END-ORDER).
+        _syncAllExpectedHoldReserves();
     }
 
     /// @inheritdoc IUniswapV4SingleStandardExchangeDETF
@@ -214,6 +217,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         nonReentrant
         returns (uint256 pairOut_)
     {
+        // _claimLiquidity ends with _syncAllExpectedHoldReserves (pair leave diamond).
         return _claimLiquidity(lpAmount_, recipient_);
     }
 

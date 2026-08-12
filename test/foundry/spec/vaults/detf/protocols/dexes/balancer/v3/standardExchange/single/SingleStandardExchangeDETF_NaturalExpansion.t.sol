@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -82,8 +82,9 @@ contract SingleStandardExchangeDETF_NaturalExpansion_Test is TestBase_SingleStan
         address open_ = _deployOpenModeDetf("Open Expansion DETF", "oeDETF");
         _enableSeigniorageIncentive(open_, 0.20e18);
         uint256 firstId_ = _bootstrapDetf(open_, alice, 1_000e18);
+        _warpPastUnlock(open_, firstId_);
         vm.prank(alice);
-        ISingleStandardExchangeDETFBonding(open_).sellPositionToDetfNft(firstId_, alice);
+        ISingleStandardExchangeDETFBonding(open_).sellPositionToDetfNft(firstId_, 0, alice);
         _bootstrapDetf(open_, alice, 200e18);
 
         ISingleStandardExchangeDETFInfo openInfo_ = ISingleStandardExchangeDETFInfo(open_);

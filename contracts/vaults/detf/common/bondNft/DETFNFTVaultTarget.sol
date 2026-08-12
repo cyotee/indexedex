@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -112,7 +112,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
         tokenId = DETFNFTVaultRepo._detfNFTId(layoutStruct);
-        if (ERC721Repo._ownerOf(tokenId) != address(0)) {
+        if (tokenId != 0 && ERC721Repo._ownerOf(tokenId) != address(0)) {
             return tokenId;
         }
 
@@ -129,6 +129,7 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     //  */
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
         external
+        onlyOwner
         nonReentrant
         returns (uint256 wethOut)
     {
@@ -138,27 +139,16 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
 
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
-        // Validate caller using service struct
-        {
-            DETFNFTVaultService.RedeemParams memory params = DETFNFTVaultService.RedeemParams({
-                recipient: recipient, caller: msg.sender, detf: address(layoutStruct.detf)
-            });
-            address owner = ERC721Repo._ownerOf(tokenId);
-            if (!DETFNFTVaultService._validateRedeemCaller(params, owner)) {
-                revert NotBondHolder(owner, msg.sender);
-            }
-        }
-
         // Cannot redeem protocol NFT normally
         if (_isDETFNFT(tokenId)) {
             revert DETFNFTRestricted(tokenId);
         }
 
-        // Check lock expiry
+        // Mature-only: public user close is DETF `closeBondMature`; this path is DETF-only.
         {
             uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
-            if (DETFBondNFTMathLib._isUnlockPending(unlockTime, block.timestamp)) {
-                revert LockDurationNotExpired(block.timestamp, unlockTime);
+            if (block.timestamp < unlockTime) {
+                revert BondNotMature(unlockTime);
             }
         }
 
@@ -250,6 +240,17 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
     }
 
+    /// @notice Debit protocol-NFT principal 1:1 (original and effective). `tokenId` must be `detfNFTId`.
+    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
+        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+            revert DETFNFTRestricted(tokenId);
+        }
+
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        DETFNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);
+    }
+
     /**
      * @notice Sells a user bond NFT into the protocol-owned position.
      */
@@ -274,6 +275,13 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         principalShares = layoutStruct.originalSharesOf[tokenId];
         if (principalShares == 0) {
             revert PositionNotFound(tokenId);
+        }
+
+        {
+            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+            if (block.timestamp < unlockTime) {
+                revert BondNotMature(unlockTime);
+            }
         }
 
         if (rewardsRecipient == address(0)) {
@@ -399,6 +407,10 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     //  */
     function originalSharesOf(uint256 tokenId) external view returns (uint256 shares) {
         return DETFNFTVaultRepo._originalSharesOf(tokenId);
+    }
+
+    function totalOriginalShares() external view returns (uint256 shares) {
+        return DETFNFTVaultRepo._totalOriginalShares();
     }
 
     // /**

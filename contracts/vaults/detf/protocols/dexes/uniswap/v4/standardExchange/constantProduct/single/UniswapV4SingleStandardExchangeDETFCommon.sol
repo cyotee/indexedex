@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -37,6 +37,7 @@ import {
     IUniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 /// @title UniswapV4SingleStandardExchangeDETFCommon
 /// @notice Shared pricing, gates, mint split, hook LP helpers, epoch expansion, compound.
@@ -470,31 +471,56 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
             _ensureProtocolLpOnDiamond(lpAmount_);
         }
         pairOut_ = _withdrawSinglePair(lpAmount_, recipient_ == address(0) ? msg.sender : recipient_);
+        // Money route end-order: pair leave diamond → full hold-set sync (L-DETF-END-ORDER).
+        _syncAllExpectedHoldReserves();
     }
 
     /* ---------------------------------------------------------------------- */
     /*                              Transfers                                 */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev Delta-based pull (L-GAPS-9/10/12). Pretransfer credits claimed only when
-    ///      claimed <= observedDelta; shortfalls revert TransferDeltaInsufficient.
-    ///      Absolute inventory without in-window delta is never free-credited.
+    /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). `pretransferred=true`: credit claimed only when
+    ///      claimed <= U = B - R. `false`: pull delta only (FoT-safe; does not add prior U).
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        uint256 before_ = token_.balanceOf(address(this));
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
+        uint256 B0 = token_.balanceOf(address(this));
         if (!pretransferred_) {
             token_.safeTransferFrom(msg.sender, address(this), amount_);
+            return token_.balanceOf(address(this)) - B0;
         }
-        uint256 observedDelta_ = token_.balanceOf(address(this)) - before_;
-        if (pretransferred_) {
-            if (amount_ > observedDelta_) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta_);
-            }
-            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
-            return amount_;
+        uint256 U = B0 - R;
+        if (amount_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, U);
         }
-        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
-        return observedDelta_;
+        return amount_;
     }
+
+    /// @dev Full expected-hold sync after outer refund (L-DETF-END-ORDER).
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    /// @dev Nested exchangeIn fund: push + true; amountIn_==0 skips entire call (L-DETF-ZERO-NESTED).
+    function _nestedExchangeInPush(
+        IStandardExchangeIn host_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        if (amountIn_ == 0) return 0;
+        tokenIn_.safeTransfer(address(host_), amountIn_);
+        amountOut_ = host_.exchangeIn(
+            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        );
+    }
+
 
     function _feeTo() internal view returns (address) {
         Repo.Storage storage s = Repo._layoutStruct();
@@ -520,10 +546,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         }
         uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
         if (address(tokenIn_) == address(s.standardExchangeVaultShare) || _isAllowlistedTokenIn(tokenIn_)) {
-            // Nested SE pull must observe inbound delta under L-GAPS-9: approve + pull, not transfer+true.
-            tokenIn_.forceApprove(address(s.standardExchangeVault), pulled_);
-            pairAmount_ = IStandardExchangeIn(address(s.standardExchangeVault)).exchangeIn(
-                tokenIn_, pulled_, s.pairToken, 0, address(this), false, deadline_
+            // Nested SE fund: push + pretransferred=true (L-DETF-PUSH-NESTED).
+            pairAmount_ = _nestedExchangeInPush(
+                IStandardExchangeIn(address(s.standardExchangeVault)),
+                tokenIn_, pulled_, s.pairToken, 0, address(this), deadline_
             );
             return pairAmount_;
         }

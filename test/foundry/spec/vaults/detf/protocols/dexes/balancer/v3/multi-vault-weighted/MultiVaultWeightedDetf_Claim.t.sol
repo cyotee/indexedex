@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -25,8 +25,9 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
         IRebasingClaimToken claim_ = IRebasingClaimToken(detfInfo.rebasingClaimToken());
         uint256 claimBefore_ = claim_.balanceOf(alice);
 
+        _warpPastUnlock(detf, tokenId_);
         vm.prank(alice);
-        uint256 minted_ = detfBonding.sellNFT(tokenId_, alice);
+        uint256 minted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim minted");
         assertEq(claim_.balanceOf(alice) - claimBefore_, minted_, "claim balance");
 
@@ -52,8 +53,9 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
 
     function test_redeemClaim_unconfiguredRateAsset_reverts() public {
         (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 800e18);
+        _warpPastUnlock(detf, tokenId_);
         vm.prank(alice);
-        detfBonding.sellNFT(tokenId_, alice);
+        detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
 
         address junk = address(uint160(uint256(keccak256("junkRate"))));
         vm.prank(alice);

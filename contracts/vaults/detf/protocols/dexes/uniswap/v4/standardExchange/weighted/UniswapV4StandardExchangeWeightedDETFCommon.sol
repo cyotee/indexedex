@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -9,6 +9,8 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
@@ -46,6 +48,16 @@ import {
 /// - previewExitSingleAssetExactBptIn / previewSwapExactIn
 /// - isFullBook / nativeReserves / tokens / weight / standardExchange
 /// - IERC20 LP on hook diamond; SE In/Out for residual
+
+/// @dev CompoundFacet surface for diamond `address(this)` self-calls (keeps Bonding Facet thin).
+interface IWeightedDetfCompoundSelf {
+    function tryCompoundProtocolRewardsExternal() external returns (uint256 detfIn_, uint256 lpOut_);
+    function compoundProtocolRewardsAtomic() external returns (uint256 detfIn_, uint256 lpOut_);
+    function realizeExpansionExternal() external;
+    function redepositDetfExternal(uint256 amountNative_, uint256[] calldata pairDust_) external;
+    function swapDetfToCapitalExternal(uint256 detfAmt_, address capital_) external returns (uint256 out_);
+}
+
 abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockModifiers {
     using BetterSafeERC20 for IERC20;
 
@@ -561,14 +573,14 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         }
         Repo.Storage storage s = Repo._layoutStruct();
         address hook_ = s.reserveHook;
-        IERC20(tokenIn_).forceApprove(hook_, amountIn_);
-        amountOut_ = IStandardExchangeIn(hook_).exchangeIn(
+        // Nested hook fund: push + pretransferred=true (L-DETF-PUSH-NESTED; host WH durable pull).
+        amountOut_ = _nestedExchangeInPush(
+            IStandardExchangeIn(hook_),
             IERC20(tokenIn_),
             amountIn_,
             IERC20(tokenOut_),
             0,
             recipient_,
-            false,
             block.timestamp + 1
         );
     }
@@ -736,20 +748,17 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
 
     /// @dev External self-call resets EVM stack so bond/claim paths do not StackOverflow on n-leg FD.
     function _tryCompoundProtocolRewards() internal returns (uint256 detfIn_, uint256 lpOut_) {
-        try this.tryCompoundProtocolRewardsExternal() returns (uint256 d_, uint256 l_) {
+        // Diamond-route to CompoundFacet (not inherited on Bonding Facet — EIP-170).
+        try IWeightedDetfCompoundSelf(address(this)).tryCompoundProtocolRewardsExternal() returns (
+            uint256 d_, uint256 l_
+        ) {
             return (d_, l_);
         } catch {
             return (0, 0);
         }
     }
 
-    function tryCompoundProtocolRewardsExternal()
-        external
-        returns (uint256 detfIn_, uint256 lpOut_)
-    {
-        if (msg.sender != address(this)) revert NotSelf();
-        return _tryCompoundProtocolRewardsInner();
-    }
+    /// @dev External entrypoints live on CompoundTarget/Facet so Bonding Facet stays under EIP-170.
 
     function _tryCompoundProtocolRewardsInner() internal returns (uint256 detfIn_, uint256 lpOut_) {
         Repo.Storage storage s = Repo._layoutStruct();
@@ -766,7 +775,9 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         if (!_isSingleAssetEligible()) {
             return (0, 0);
         }
-        try this.compoundProtocolRewardsAtomic() returns (uint256 d_, uint256 l_) {
+        try IWeightedDetfCompoundSelf(address(this)).compoundProtocolRewardsAtomic() returns (
+            uint256 d_, uint256 l_
+        ) {
             detfIn_ = d_;
             lpOut_ = l_;
             if (lpOut_ > 0) {
@@ -775,11 +786,6 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         } catch {
             return (0, 0);
         }
-    }
-
-    function compoundProtocolRewardsAtomic() external returns (uint256 detfIn_, uint256 lpOut_) {
-        if (msg.sender != address(this)) revert NotSelf();
-        return _compoundProtocolRewardsAtomic();
     }
 
     function _compoundProtocolRewardsAtomic() internal returns (uint256 detfIn_, uint256 lpOut_) {
@@ -801,11 +807,43 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
     /*                              Transfers                                 */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). No absolute free credit on pretransfer.
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        if (pretransferred_) return amount_;
-        uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actual_ = token_.balanceOf(address(this)) - before_;
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
+        uint256 B0 = token_.balanceOf(address(this));
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+            return token_.balanceOf(address(this)) - B0;
+        }
+        uint256 U = B0 - R;
+        if (amount_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, U);
+        }
+        return amount_;
+    }
+
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    function _nestedExchangeInPush(
+        IStandardExchangeIn host_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        if (amountIn_ == 0) return 0;
+        tokenIn_.safeTransfer(address(host_), amountIn_);
+        amountOut_ = host_.exchangeIn(
+            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        );
     }
 
     function _feeTo() internal view returns (address) {
@@ -846,9 +884,8 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
                 // 0 shares and underflow on burn. Other SE vault tokens: transfer then pretransferred.
                 bool isSeShare_ = address(tokenIn_) == se_;
                 if (isSeShare_) {
-                    tokenIn_.forceApprove(se_, pulled2_);
-                    uint256 pairAmt_ = IStandardExchangeIn(se_).exchangeIn(
-                        tokenIn_, pulled2_, s.pairTokens[i], 0, address(this), false, deadline_
+                    uint256 pairAmt_ = _nestedExchangeInPush(
+                        IStandardExchangeIn(se_), tokenIn_, pulled2_, s.pairTokens[i], 0, address(this), deadline_
                     );
                     r_.fundedProductIndex = i;
                     r_.pairNotionalNative = pairAmt_;
@@ -909,4 +946,53 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
             _mintDetf(bondVault_, split_.inventoryDetf);
         }
     }
+
+    /* shared helpers used by bonding + exchange (Option 1e siblings) */
+    function _isShareOrSeTokenOut(IERC20 tokenOut_) internal view returns (bool) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        for (uint8 i; i < s.m; ++i) {
+            if (address(tokenOut_) == address(s.vaultShares[i])) return true;
+            if (
+                address(s.standardExchanges[i]) != address(0)
+                    && _tokenInSeTokens(tokenOut_, address(s.standardExchanges[i]))
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    function _pairForShareOut(IERC20 tokenOut_) internal view returns (address) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        for (uint8 i; i < s.m; ++i) {
+            if (
+                address(tokenOut_) == address(s.vaultShares[i])
+                    || (
+                        address(s.standardExchanges[i]) != address(0)
+                            && _tokenInSeTokens(tokenOut_, address(s.standardExchanges[i]))
+                    )
+            ) {
+                return address(s.pairTokens[i]);
+            }
+        }
+        revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
+    }
+
+
+    function _seWrap(address pair_, uint256 pairAmt_, IERC20 tokenOut_, address recipient_)
+        internal
+        returns (uint256 out_)
+    {
+        if (pairAmt_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint8 idx_ = Repo._productIndexOfPair(pair_);
+        address se_ = address(s.standardExchanges[idx_]);
+        if (se_ == address(0)) revert Repo.InvalidRoute(IERC20(pair_), tokenOut_);
+        out_ = _nestedExchangeInPush(
+            IStandardExchangeIn(se_), IERC20(pair_), pairAmt_, tokenOut_, 0, recipient_, block.timestamp + 1
+        );
+    }
+
+
 }

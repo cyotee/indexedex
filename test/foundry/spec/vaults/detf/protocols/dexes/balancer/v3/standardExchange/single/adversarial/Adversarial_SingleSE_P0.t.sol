@@ -1,10 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {
     TestBase_SingleStandardExchangeDETF_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial.sol";
@@ -20,8 +21,8 @@ import {
 import {DetfReentryTarget} from "contracts/test/adversarial/DetfReentryTarget.sol";
 
 /// @notice Wave 1A P0/P1 adversarial coverage for SingleStandardExchangeDETF.
-/// @dev Deferred: D6 claim over-redeem N/A (no rebasing claim v1); H2 claim path N/A - use sellPosition;
-///      G1 nested optional (see ComposedStable matrix). Production entry points only.
+/// @dev D6/H2 implemented now that rebasing claim is wired at deploy. G1 nested optional
+///      (see ComposedStable matrix). Production entry points only.
 contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adversarial {
     // --- E5 / H3 / Guards ---
 
@@ -133,17 +134,18 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         // First bond gave alice a tokenId; attacker cannot sell via DETF without ownership
         vm.prank(attacker);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, attacker);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, 0, attacker);
     }
 
     function test_D3_doubleSell_secondReverts() public {
         address instance_ = _deployOpenThresholdDetf("Adv DoubleSell", "advDS");
         uint256 tokenId_ = _bootstrapDetf(instance_, alice, 1_500e18);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, alice);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
         vm.prank(alice);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, alice);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
     }
 
     function test_D5_lockClamp_minRevert_maxOk() public {
@@ -160,6 +162,54 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         );
         vm.stopPrank();
         assertTrue(tid_ > 0, "clamped max lock");
+    }
+
+    function test_D6_cannotRedeemMoreThanClaimPrincipal() public {
+        address instance_ = _deployOpenThresholdDetf("Adv D6 Claim", "advD6");
+        uint256 tokenId_ = _bootstrapDetf(instance_, alice, 2_500e18);
+        ISingleStandardExchangeDETFBonding bonding_ = ISingleStandardExchangeDETFBonding(instance_);
+        ISingleStandardExchangeDETFInfo info_ = ISingleStandardExchangeDETFInfo(instance_);
+
+        _warpPastUnlock(instance_, tokenId_);
+        vm.prank(alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
+
+        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
+        uint256 claimBal_ = claim_.balanceOf(alice);
+        uint256 bptBefore_ = IERC20(info_.reservePool()).balanceOf(instance_);
+        uint256 redeemAmt_ = claimBal_ / 5;
+        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
+
+        vm.prank(alice);
+        bonding_.redeemClaim(redeemAmt_, seShare, 0, alice, block.timestamp + 1 hours);
+
+        uint256 bptAfter_ = IERC20(info_.reservePool()).balanceOf(instance_);
+        assertTrue(bptBefore_ >= bptAfter_, "BPT decreased or same");
+        vm.prank(alice);
+        vm.expectRevert();
+        bonding_.redeemClaim(claimBal_ + 1e18, seShare, 0, alice, block.timestamp + 1 hours);
+    }
+
+    function test_H2_redeemClaim_minOutTooHigh_claimUnchanged() public {
+        address instance_ = _deployOpenThresholdDetf("Adv H2 Claim", "advH2");
+        uint256 tokenId_ = _bootstrapDetf(instance_, alice, 2_000e18);
+        ISingleStandardExchangeDETFBonding bonding_ = ISingleStandardExchangeDETFBonding(instance_);
+        ISingleStandardExchangeDETFInfo info_ = ISingleStandardExchangeDETFInfo(instance_);
+        _warpPastUnlock(instance_, tokenId_);
+        vm.prank(alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
+
+        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
+        uint256 claimBefore_ = claim_.balanceOf(alice);
+        require(claimBefore_ > 0, "claim minted");
+        uint256 redeemAmt_ = claimBefore_ / 5;
+        if (redeemAmt_ == 0) redeemAmt_ = claimBefore_;
+
+        vm.prank(alice);
+        vm.expectRevert();
+        bonding_.redeemClaim(redeemAmt_, seShare, type(uint256).max, alice, block.timestamp + 1 hours);
+
+        assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged");
     }
 
     // --- F access ---

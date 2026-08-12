@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
@@ -42,8 +42,8 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        // Keep in lockstep with RebasingDETFTokenFacet.facetFuncs() (27 selectors).
-        controlFuncs = new bytes4[](27);
+        // Keep in lockstep with RebasingDETFTokenFacet.facetFuncs() (28 selectors).
+        controlFuncs = new bytes4[](28);
         controlFuncs[0] = IERC20.totalSupply.selector;
         controlFuncs[1] = IERC20.balanceOf.selector;
         controlFuncs[2] = IERC20.transfer.selector;
@@ -63,7 +63,7 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[16] = IRebasingClaimToken.convertToShares.selector;
         controlFuncs[17] = IRebasingClaimToken.convertToClaim.selector;
         controlFuncs[18] = IRebasingClaimToken.previewRedeem.selector;
-        controlFuncs[19] = IRebasingClaimToken.mintFromNFTSale.selector;
+        controlFuncs[19] = bytes4(keccak256("mintFromNFTSale(uint256,address)"));
         controlFuncs[20] = IRebasingClaimToken.redeem.selector;
         controlFuncs[21] = IRebasingClaimToken.burnShares.selector;
         controlFuncs[22] = IStandardExchangeIn.previewExchangeIn.selector;
@@ -71,5 +71,6 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[24] = IStandardExchangeOut.previewExchangeOut.selector;
         controlFuncs[25] = IStandardExchangeOut.exchangeOut.selector;
         controlFuncs[26] = IRebasingClaimToken.transferHeldToken.selector;
+        controlFuncs[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
     }
 }

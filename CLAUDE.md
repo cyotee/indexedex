@@ -61,13 +61,15 @@ Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as cu
 |------|--------------------------------------------------|
 | Deploy / DFPkg / CREATE3 | `crane-deployment`, `crane-architecture` |
 | Tests / TestBases | `crane-testing`, `indexedex-testing` (LR-7 + proxy surface matrix + trust-flag negatives) |
-| Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K; I=pretransfer claim, J=facet/proxy surface; ship gate: `implementation-test-dod.md`) |
+| Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + **A0/L/M/N/O**; I=pretransfer claim, J=facet/proxy surface; ship gate: `implementation-test-dod.md`) |
+| Incident-driven security / DeFiHackLabs | `defi-incident-patterns` (maps `lib/DeFiHackLabs` themes → catalog IDs + secure-dev checklist; **reference only** — hermetic production-first tests remain the bar) |
 | Test coverage audit / gap reports | [`docs/testing/TEST_COVERAGE_AUDIT_PRD.md`](docs/testing/TEST_COVERAGE_AUDIT_PRD.md) + [`TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md`](docs/testing/TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md) → Stage 1 reports; then gap-closure impl plan |
 | Uni V4 hook packages | `indexedex-uniswap-v4-hook-packages` |
 | Protocol port into Crane | agent `crane-porter` + `crane-porting` + `crane-porting-verification` |
 | Docs → skills | agent `docs-skill-scribe` + `docs-to-skills` / `skill-authoring` |
 | DETF product detail | Family PRD + [`docs/agent/INDEXEDEX_AGENT_LAW.md`](docs/agent/INDEXEDEX_AGENT_LAW.md) + `docs/detf/*` shared programs |
 | UI product copy | `indexedex-product-voice` |
+| UI money-path / live TX e2e (DTF, RH Anvil) | `indexedex-ui-tx-testing` |
 
 **Skill source of truth:** Crane skills under `lib/crane/.claude/skills/` — refresh mirrors with `./scripts/sync-crane-skills.sh`. IndexedEx-local skills: author under `.claude/skills/<name>/`, mirror to `.grok/skills/` and `.opencode/skills/`.
 

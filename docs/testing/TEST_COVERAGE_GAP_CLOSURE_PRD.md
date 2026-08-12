@@ -180,6 +180,8 @@ These answers are **normative**. Stage 3 agents apply them; they do not invent a
 
 **Rationale (owner):** Credit the user-provided amount only when it is backed by measured inbound delta; short delivery reverts; donations must not lock the vault.
 
+> **Refinement (BasicVault family):** L-GAPS-9 pretransfer baseline for packages that book via `MultiAssetBasicVaultRepo` / `BasicVaultCommon` is durable **`U = balanceOf − reserveOfToken`** (not in-call-only `balBefore`), with full expected-hold end-sync and absorb of unclaimed surplus — see [`docs/vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md`](../vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md).
+
 #### L-GAPS-10 — Shared monorepo short-delivery error
 
 | Rule | Detail |

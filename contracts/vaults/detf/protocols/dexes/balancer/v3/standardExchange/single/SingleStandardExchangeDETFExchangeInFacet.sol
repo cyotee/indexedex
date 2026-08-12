@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -37,8 +37,8 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
     }
 
-    function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](22);
+    function _facetFuncs() private pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](32);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -62,6 +62,20 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[19] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
         funcs_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
         funcs_[21] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
+        funcs_[22] = ISingleStandardExchangeDETFInfo.rebasingClaimToken.selector;
+        funcs_[23] = ISingleStandardExchangeDETFBonding.acceptedBondTokens.selector;
+        funcs_[24] = ISingleStandardExchangeDETFBonding.buyClaim.selector;
+        funcs_[25] = ISingleStandardExchangeDETFBonding.previewBuyClaim.selector;
+        funcs_[26] = ISingleStandardExchangeDETFBonding.closeBondMature.selector;
+        funcs_[27] = ISingleStandardExchangeDETFBonding.previewCloseBondMature.selector;
+        funcs_[28] = ISingleStandardExchangeDETFBonding.redeemClaim.selector;
+        funcs_[29] = ISingleStandardExchangeDETFBonding.previewRedeemClaim.selector;
+        funcs_[30] = ISingleStandardExchangeDETFBonding.claimLiquidity.selector;
+        funcs_[31] = ISingleStandardExchangeDETFBonding.protocolBondOriginalShares.selector;
+    }
+
+    function facetFuncs() public pure returns (bytes4[] memory funcs_) {
+        funcs_ = _facetFuncs();
     }
 
     function facetMetadata()
@@ -74,28 +88,6 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         interfaces_[0] = type(IStandardExchangeIn).interfaceId;
         interfaces_[1] = type(ISingleStandardExchangeDETFBonding).interfaceId;
         interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
-        funcs_ = new bytes4[](22);
-        funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
-        funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
-        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector;
-        funcs_[4] = ISingleStandardExchangeDETFInfo.isReserveLive.selector;
-        funcs_[5] = ISingleStandardExchangeDETFInfo.standardExchangeVault.selector;
-        funcs_[6] = ISingleStandardExchangeDETFInfo.standardExchangeVaultShare.selector;
-        funcs_[7] = ISingleStandardExchangeDETFInfo.rateTarget.selector;
-        funcs_[8] = ISingleStandardExchangeDETFInfo.reservePool.selector;
-        funcs_[9] = ISingleStandardExchangeDETFInfo.syntheticPrice.selector;
-        funcs_[10] = ISingleStandardExchangeDETFInfo.mintThreshold.selector;
-        funcs_[11] = ISingleStandardExchangeDETFInfo.burnThreshold.selector;
-        funcs_[12] = ISingleStandardExchangeDETFInfo.thresholdMode.selector;
-        funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
-        funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
-        funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
-        funcs_[16] = ISingleStandardExchangeDETFInfo.compoundProtocolRewards.selector;
-        funcs_[17] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
-        funcs_[18] = ISingleStandardExchangeDETFInfo.lastExpansionTimestamp.selector;
-        funcs_[19] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
-        funcs_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
-        funcs_[21] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
+        funcs_ = _facetFuncs();
     }
 }

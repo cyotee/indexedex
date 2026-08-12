@@ -11,6 +11,7 @@
 | **Depends on** | Stage **02** green (family Phase 1); Stage **05** green; **prefer Stage 06 green** (pathfinder) |
 | **Program index** | [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md) |
 | **Product law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) §4, E1–E9 |
+| **Sell/claim law** | [`BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md`](../../../../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md) — new sell/close/`buyClaim` touches realize expansion |
 | **Shared lib** | Stage 05 `DETFNaturalExpansionLib` |
 | **Pathfinder** | [`06_SingleStandardExchangeDETF_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md`](./06_SingleStandardExchangeDETF_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | **Gold TestBase** | [`composed/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol`](./composed/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol) |

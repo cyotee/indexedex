@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {
     TestBase_MultiVaultWeightedDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
@@ -31,10 +32,27 @@ contract MultiVaultWeightedDetf_Bonding_Test is TestBase_MultiVaultWeightedDetf 
         assertTrue(shares_ > 0, "bpt principal");
     }
 
-    function test_sellPositionToDetfNft() public {
+    function test_sellPositionToDetfNft_revertsBondNotMature() public {
         (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 800e18);
+        uint256 unlock_ = IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId_);
         vm.prank(alice);
-        uint256 principal_ = detfBonding.sellPositionToDetfNft(tokenId_, alice);
-        assertTrue(principal_ > 0, "principal sold");
+        vm.expectRevert(abi.encodeWithSelector(bytes4(keccak256("BondNotMature(uint256)")), unlock_));
+        detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
+    }
+
+    function test_sellPositionToDetfNft_afterMaturity_mints4626() public {
+        (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 800e18);
+        _warpPastUnlock(detf, tokenId_);
+        uint256 protocolBefore_ = detfBonding.protocolBondOriginalShares();
+        vm.prank(alice);
+        uint256 claimMinted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
+        assertTrue(claimMinted_ > 0, "claim minted");
+        uint256 protocolId_ = IDETFNFTVault(detfInfo.bondNftVault()).detfNFTId();
+        assertEq(
+            IDETFNFTVault(detfInfo.bondNftVault()).effectiveSharesOf(protocolId_),
+            IDETFNFTVault(detfInfo.bondNftVault()).originalSharesOf(protocolId_),
+            "1:1 protocol nft"
+        );
+        assertTrue(IDETFNFTVault(detfInfo.bondNftVault()).originalSharesOf(protocolId_) > protocolBefore_, "protocol credited");
     }
 }

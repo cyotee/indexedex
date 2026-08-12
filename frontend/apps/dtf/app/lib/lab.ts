@@ -6,12 +6,13 @@ export function isDebugLabEnabled(): boolean {
 }
 
 /**
- * Earn-detail DETF mint/bond/sell embed.
- * Default **false** until mint/bond e2e smoke passes (Wave 1 PR7).
- * Enable with NEXT_PUBLIC_EARN_DETF_EMBED=true for lab only.
+ * Legacy flag for older Earn DETF embed gates.
+ * Lab DETF earn subpages now always mount mint/bond/sell in-page
+ * (`productType === 'detf'`); fee Protocol DETF remains `/staking` only.
+ * Env still honored for any remaining callers that gate on this helper.
  */
 export function isEarnDetfEmbedEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_EARN_DETF_EMBED === 'true'
+  return process.env.NEXT_PUBLIC_EARN_DETF_EMBED !== 'false'
 }
 
 export function isLaunchBannerEnabled(): boolean {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -51,6 +51,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {
     ISingleStandardExchangeDETDFPkg
@@ -85,6 +86,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
     using BetterEfficientHashLib for bytes;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
     using BalancerV3StandardExchangeRouter_FactoryService for *;
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
@@ -118,6 +120,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
 
     IStandardExchangeRateProviderDFPkg public detfRateProviderPkg;
     IDetfSelfNftInventoryDFPkg public bondNftVaultPkg;
+    IRebasingClaimTokenDFPkg public rebasingClaimTokenPkg;
     ISingleStandardExchangeDETDFPkg public singleStandardExchangeDetfPkg;
 
     address public detf;
@@ -263,7 +266,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
 
     function sellBondToProtocol(address bonder_, uint256 tokenId_) public returns (uint256 principal_) {
         vm.prank(bonder_);
-        principal_ = detfBonding.sellPositionToDetfNft(tokenId_, bonder_);
+        principal_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, bonder_);
     }
 
     function enableSeigniorage(uint256 incentiveWad_) public {
@@ -523,6 +526,14 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             IVaultRegistryDeployment(address(indexedexManager)).deployDETFNFTVaultDFPkg(nftPkgInit);
         vm.stopPrank();
 
+        IFacet claimFacet_ = create3Factory.deployRebasingClaimTokenFacet();
+        rebasingClaimTokenPkg = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
+
         ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
@@ -537,6 +548,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             weightedPoolFactory: WeightedPoolFactory(weightedPoolFactory),
             rateProviderPkg: detfRateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
+            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
             diamondFactory: diamondPackageFactory
         });
 

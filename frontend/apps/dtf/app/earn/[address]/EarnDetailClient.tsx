@@ -21,7 +21,6 @@ import { Stat } from '../../components/ui/Stat'
 import { TabPanel, Tabs } from '../../components/ui/Tabs'
 import { findEarnProduct } from '../../lib/earn/loadEarnProducts'
 import { RISK_LEVEL_LABEL } from '@indexedex/protocol/earn/riskFromTags'
-import { isEarnDetfEmbedEnabled } from '../../lib/lab'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 import { feeDetfStakingHref, isFeaturedFeeDetfAddress } from '@indexedex/protocol/tokenlists'
@@ -52,13 +51,20 @@ function isAddress(value: string): value is `0x${string}` {
   return /^0x[0-9a-fA-F]{40}$/.test(value)
 }
 
+function productKindLabel(productType: string): string {
+  if (productType === 'strategy') return 'Strategy vault'
+  if (productType === 'protocol-detf') return 'Protocol DETF'
+  if (productType === 'detf') return 'DETF'
+  return productType
+}
+
 export default function EarnDetailClient({ address }: { address: string }) {
   const router = useRouter()
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
   const [tab, setTab] = useState('overview')
 
-  // Wave 2: Protocol DETF addresses redirect to /staking (not Earn strategy UI).
+  // Fee Protocol DETF only → /staking. Lab DETFs stay on /earn/[address] with their own workspace.
   const isFeeDetf = useMemo(() => {
     if (!isAddress(address)) return false
     return isFeaturedFeeDetfAddress(selectedChainId, environment, address)
@@ -75,8 +81,16 @@ export default function EarnDetailClient({ address }: { address: string }) {
     return findEarnProduct(selectedChainId, address, environment)
   }, [address, selectedChainId, environment])
 
-  const earnDetfEmbed = isEarnDetfEmbedEnabled()
-  const isDetf = product?.productType === 'protocol-detf'
+  /** Lab / non-fee DETF — mint/bond/sell live on this page. */
+  const isLabDetf = product?.productType === 'detf'
+  /** Any DETF-shaped product (lab uses `detf`; fee brand would be protocol-detf but is redirected). */
+  const isDetfProduct =
+    product?.productType === 'detf' || product?.productType === 'protocol-detf'
+
+  // Default lab DETF visitors to the actions workspace.
+  useEffect(() => {
+    if (isLabDetf) setTab('actions')
+  }, [isLabDetf, address])
 
   const vaultAddress = product?.address
 
@@ -103,11 +117,11 @@ export default function EarnDetailClient({ address }: { address: string }) {
     return (
       <EmptyState
         title="Redirecting to Protocol DETF"
-        body="This product lives on the Protocol DETF workspace, not Earn."
+        body="The fee Protocol DETF lives on /staking, not Earn."
         action={
           <Link href={feeDetfStakingHref(address)}>
             <Button variant="secondary" size="sm">
-              Open workspace
+              Open Protocol DETF workspace
             </Button>
           </Link>
         }
@@ -143,12 +157,8 @@ export default function EarnDetailClient({ address }: { address: string }) {
         title={product.symbol || product.display || product.name}
         subtitle={
           product.display && product.display !== product.symbol
-            ? `${product.display} · ${product.productType === 'strategy' ? 'strategy vault' : 'protocol DETF'}`
-            : product.productType === 'strategy'
-              ? 'Strategy vault'
-              : product.productType === 'protocol-detf'
-                ? 'Protocol DETF'
-                : undefined
+            ? `${product.display} · ${productKindLabel(product.productType)}`
+            : productKindLabel(product.productType)
         }
         actions={
           <div className="flex flex-wrap gap-2 items-center">
@@ -164,7 +174,7 @@ export default function EarnDetailClient({ address }: { address: string }) {
           <Stat label="APY" value="—" hint="Not fabricated; connect indexer later" />
         </Card>
         <Card padding="sm">
-          <Stat label="Type" value={product.productType === 'strategy' ? 'Strategy' : 'DETF'} />
+          <Stat label="Type" value={productKindLabel(product.productType)} />
         </Card>
         <Card padding="sm">
           <Stat label="Decimals" value={String(product.decimals)} />
@@ -178,13 +188,13 @@ export default function EarnDetailClient({ address }: { address: string }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
+        <div className={isLabDetf ? 'lg:col-span-5' : 'lg:col-span-3'}>
           <Tabs
             tabs={[
               { id: 'overview', label: 'Overview' },
+              ...(isLabDetf ? [{ id: 'actions', label: 'Mint / bond / sell' }] : []),
               { id: 'composition', label: 'Composition' },
               { id: 'risks', label: 'Risks' },
-              ...(isDetf && earnDetfEmbed ? [{ id: 'actions', label: 'Mint / bond / sell' }] : []),
             ]}
             active={tab}
             onChange={setTab}
@@ -205,22 +215,23 @@ export default function EarnDetailClient({ address }: { address: string }) {
                   <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">DETF lifecycle</h3>
                   <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] mb-4">
                     Mint or exchange in, bond as an NFT, sell to the protocol bond NFT vault, and redeem via the
-                    rebasing claim token.
+                    rebasing claim token. Use the <strong className="text-[var(--text-primary,#EDEDED)]">Mint / bond / sell</strong>{' '}
+                    tab for this DETF — actions stay on this page.
                   </p>
                   <DetfLifecycleStepper activeIndex={0} />
-                  <div className="mt-4">
-                    <Link href={`/staking?detf=${product.address}`}>
-                      <Button variant="secondary" size="sm">
-                        Open mint / bond / sell workspace
+                  {isLabDetf ? (
+                    <div className="mt-4">
+                      <Button variant="secondary" size="sm" onClick={() => setTab('actions')}>
+                        Go to mint / bond / sell
                       </Button>
-                    </Link>
-                  </div>
+                    </div>
+                  ) : null}
                 </>
               )}
             </Card>
           </TabPanel>
 
-          {isDetf && earnDetfEmbed ? (
+          {isLabDetf ? (
             <TabPanel when="actions" active={tab}>
               <DetfWorkspaceEmbed detfAddress={product.address} symbol={product.symbol} />
             </TabPanel>
@@ -231,10 +242,10 @@ export default function EarnDetailClient({ address }: { address: string }) {
               <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)] mb-3">
                 Where is my money?
               </h3>
-              {product.productType !== 'strategy' ? (
+              {isDetfProduct ? (
                 <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-                  DETF composition is dynamic (reserve pool, bond NFT, rebasing claim token). Use the DETF workspace
-                  for live mint thresholds and bonding.
+                  DETF composition is dynamic (reserve pool, bond NFT, rebasing claim token). Use mint / bond / sell
+                  on this page for live thresholds and positions for this DETF.
                 </p>
               ) : tokenList.length === 0 ? (
                 <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
@@ -260,7 +271,8 @@ export default function EarnDetailClient({ address }: { address: string }) {
               <ul className="list-disc pl-5 text-sm text-[var(--text-muted,#9aa3b2)] space-y-2">
                 {product.risk ? (
                   <li>
-                    Tokenlist risk label: <strong className="text-[var(--text-primary,#EDEDED)]">{RISK_LEVEL_LABEL[product.risk]}</strong>
+                    Tokenlist risk label:{' '}
+                    <strong className="text-[var(--text-primary,#EDEDED)]">{RISK_LEVEL_LABEL[product.risk]}</strong>
                     {' '}(from list tags only — not a guarantee or credit rating).
                   </li>
                 ) : null}
@@ -274,16 +286,18 @@ export default function EarnDetailClient({ address }: { address: string }) {
           </TabPanel>
         </div>
 
-        <div className="lg:col-span-2">
-          <DepositPanel product={product} chainId={selectedChainId} />
-          <p className="mt-3 text-center text-xs text-[var(--text-muted,#9aa3b2)]">
-            After deposit, check{' '}
-            <Link href="/portfolio" className="text-[var(--accent,#4FD44B)] hover:underline">
-              Portfolio
-            </Link>
-            .
-          </p>
-        </div>
+        {!isLabDetf ? (
+          <div className="lg:col-span-2">
+            <DepositPanel product={product} chainId={selectedChainId} />
+            <p className="mt-3 text-center text-xs text-[var(--text-muted,#9aa3b2)]">
+              After deposit, check{' '}
+              <Link href="/portfolio" className="text-[var(--accent,#4FD44B)] hover:underline">
+                Portfolio
+              </Link>
+              .
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   )

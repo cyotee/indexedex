@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
@@ -129,6 +129,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
     }
 
     function _loadExisting() internal returns (bool) {
+        if (_force()) return false;
         (address w, bool okW) = _readAddressSafe(ARTIFACT_FILE, "weightedBufferN8");
         (address c, bool okC) = _readAddressSafe(ARTIFACT_FILE, "cpDetfGentle");
         (address o, bool okO) = _readAddressSafe(ARTIFACT_FILE, "orbitalDetfGentle");
@@ -148,6 +149,14 @@ contract Script_13_DeployInertDemos is DeploymentBase {
     }
 
     function _deployWeightedBufferN8() internal {
+        // FORCE re-runs: reuse on-chain hook (same CREATE3 salt) — re-join / re-init reverts.
+        (address existing,) = _readAddressSafe(ARTIFACT_FILE, "weightedBufferN8");
+        if (existing != address(0) && existing.code.length > 0) {
+            weightedBufferN8 = existing;
+            vm.label(weightedBufferN8, "weightedBufferN8");
+            return;
+        }
+
         IWgtHookPkg pkg = IWgtHookPkg(_readAddress(HOOK_PKGS_FILE, "weightedHookPkg"));
 
         address[] memory tokens = new address[](8);
@@ -219,26 +228,38 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         IPoolManager pm = IPoolManager(RobinhoodCanonicalLib.poolManager());
 
         {
-            ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
-                poolManager: address(pm),
-                standardExchange: uniV3Se,
-                pairToken: tt[0]
-            });
-            uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
-            singleSeBuffer_v3 = SingleFS.deployHook(pkg, args, mineNonce);
-            vm.label(singleSeBuffer_v3, "singleSeBuffer_v3");
-            _initSingleSePool(singleSeBuffer_v3, uniV3Se, tt[0], pm);
+            (address existing,) = _readAddressSafe(ARTIFACT_FILE, "singleSeBuffer_v3");
+            if (existing != address(0) && existing.code.length > 0) {
+                singleSeBuffer_v3 = existing;
+                vm.label(singleSeBuffer_v3, "singleSeBuffer_v3");
+            } else {
+                ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
+                    poolManager: address(pm),
+                    standardExchange: uniV3Se,
+                    pairToken: tt[0]
+                });
+                uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
+                singleSeBuffer_v3 = SingleFS.deployHook(pkg, args, mineNonce);
+                vm.label(singleSeBuffer_v3, "singleSeBuffer_v3");
+                _initSingleSePool(singleSeBuffer_v3, uniV3Se, tt[0], pm);
+            }
         }
         {
-            ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
-                poolManager: address(pm),
-                standardExchange: uniV4Se,
-                pairToken: tt[4]
-            });
-            uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
-            singleSeBuffer_v4 = SingleFS.deployHook(pkg, args, mineNonce);
-            vm.label(singleSeBuffer_v4, "singleSeBuffer_v4");
-            _initSingleSePool(singleSeBuffer_v4, uniV4Se, tt[4], pm);
+            (address existing,) = _readAddressSafe(ARTIFACT_FILE, "singleSeBuffer_v4");
+            if (existing != address(0) && existing.code.length > 0) {
+                singleSeBuffer_v4 = existing;
+                vm.label(singleSeBuffer_v4, "singleSeBuffer_v4");
+            } else {
+                ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
+                    poolManager: address(pm),
+                    standardExchange: uniV4Se,
+                    pairToken: tt[4]
+                });
+                uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
+                singleSeBuffer_v4 = SingleFS.deployHook(pkg, args, mineNonce);
+                vm.label(singleSeBuffer_v4, "singleSeBuffer_v4");
+                _initSingleSePool(singleSeBuffer_v4, uniV4Se, tt[4], pm);
+            }
         }
     }
 
@@ -261,8 +282,8 @@ contract Script_13_DeployInertDemos is DeploymentBase {
 
         IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory gentle = IUniswapV4SingleStandardExchangeDETDFPkg
             .PkgArgs({
-            name: "Gentle UniV4 CP DETF",
-            symbol: "gCPDETF",
+            name: "Gentle UniV4 ConstProd DETF",
+            symbol: "gConstProdDETF",
             standardExchangeVault: IStandardExchangeProxy(uniV3Se),
             standardExchangeVaultShare: IERC20(address(0)),
             pairToken: IERC20(tt[0]),
@@ -281,8 +302,8 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         vm.label(cpDetfGentle, "cpDetfGentle");
 
         IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory rich = gentle;
-        rich.name = "LaunchRich UniV4 CP DETF";
-        rich.symbol = "lrCPDETF";
+        rich.name = "LaunchRich UniV4 ConstProd DETF";
+        rich.symbol = "lrConstProdDETF";
         rich.standardExchangeVault = IStandardExchangeProxy(uniV4Se);
         rich.pairToken = IERC20(tt[4]);
         rich.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
@@ -417,7 +438,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         json = vm.serializeString(
             "demos",
             "notes",
-            "Inert only; no bond. Weighted n=8: V3 SE on TT0, V4 SE on TT4. CP: V3 gentle / V4 launch-rich."
+            "Inert only; no bond. Weighted n=8: V3 SE on TT0, V4 SE on TT4. ConstProd: V3 gentle / V4 launch-rich."
         );
         _writeJson(json, ARTIFACT_FILE);
     }

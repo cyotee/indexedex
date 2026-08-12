@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -28,6 +28,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
     IFacet internal uniswapV4StandardExchangePositionImportFacet;
     IFacet internal uniswapV4StandardExchangeOutFacet;
+    IFacet internal uniswapV4StandardExchangeOutQueryFacet;
     IFacet internal uniswapV4StandardExchangeLiquidReserveFacet;
     IUniswapV4StandardExchangeDFPkg internal uniswapV4StandardExchangeDFPkg;
 
@@ -41,6 +42,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
         uniswapV4StandardExchangePositionImportFacet =
             create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
+        uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutQueryFacet();
         uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
 
         vm.startPrank(owner);
@@ -60,6 +62,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
                 uniswapV4StandardExchangeInQueryFacet,
                 uniswapV4StandardExchangePositionImportFacet,
                 uniswapV4StandardExchangeOutFacet,
+                uniswapV4StandardExchangeOutQueryFacet,
                 uniswapV4StandardExchangeLiquidReserveFacet,
                 indexedexManager,
                 indexedexManager,

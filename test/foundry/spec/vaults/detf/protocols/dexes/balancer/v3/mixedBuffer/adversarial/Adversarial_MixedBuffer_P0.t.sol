@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -194,17 +194,18 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         // First bootstrap bond is alice's tokenId; attacker cannot sell.
         vm.prank(attacker);
         vm.expectRevert();
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(1, attacker);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(1, 0, attacker);
     }
 
     function test_D3_doubleSell_secondReverts() public {
         address instance_ = _deployOpenThresholdDetfN(1);
         (uint256 tokenId_,,) = _bootstrapDefault(instance_, alice);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellNFT(tokenId_, alice);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
         vm.prank(alice);
         vm.expectRevert();
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellNFT(tokenId_, alice);
+        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
     }
 
     function test_D3_doubleRedeem_overClaim_reverts() public {
@@ -215,8 +216,9 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
 
         IMixedBufferMultiVaultStableDetfBonding bonding_ =
             IMixedBufferMultiVaultStableDetfBonding(instance_);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        uint256 minted_ = bonding_.sellNFT(tokenId_, alice);
+        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim minted");
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(_claimOf(instance_));
@@ -260,8 +262,9 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
             IMixedBufferMultiVaultStableDetfBonding(instance_);
         IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(instance_);
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
         uint256 claimBal_ = claim_.balanceOf(alice);
@@ -510,8 +513,9 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
 
         IMixedBufferMultiVaultStableDetfBonding bonding_ =
             IMixedBufferMultiVaultStableDetfBonding(instance_);
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        bonding_.sellNFT(tokenId_, alice);
+        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(_claimOf(instance_));
         uint256 claimBefore_ = claim_.balanceOf(alice);

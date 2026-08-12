@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
     SingleStandardExchangeDETFCommon
@@ -54,14 +55,13 @@ abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardE
             s.standardExchangeVaultShare.safeTransfer(recipient_, vaultSharesOut_);
             amountOut_ = vaultSharesOut_;
         } else if (_isAllowlistedTokenIn(tokenOut_)) {
-            s.standardExchangeVaultShare.safeTransfer(address(s.standardExchangeVault), vaultSharesOut_);
-            amountOut_ = s.standardExchangeVault.exchangeIn(
+            amountOut_ = _nestedExchangeInPush(
+                IStandardExchangeIn(address(s.standardExchangeVault)),
                 s.standardExchangeVaultShare,
                 vaultSharesOut_,
                 tokenOut_,
                 minOut_,
                 recipient_,
-                true,
                 deadline_
             );
         } else {
@@ -71,6 +71,7 @@ abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardE
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     // `_joinReserveDetfOnly` lives on SingleStandardExchangeDETFCommon (returns bptOut).

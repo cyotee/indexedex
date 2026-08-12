@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
@@ -120,8 +120,9 @@ contract ComposedStableCommonDetf_ProtocolCompound_Test is ComposedStableCommonD
 
         // First bond → sell into protocol so detf NFT has principal shares (claim-rate proxy).
         (uint256 firstId_,) = _bondDai(bonder_, 1_000e18, MIN_LOCK);
+        _warpPastUnlock(firstId_);
         vm.prank(bonder_);
-        compoundBonding.sellNFT(firstId_, bonder_);
+        compoundBonding.sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(), 0, "protocol nft has principal after sell");
 
         // Second bond: user keeps NFT (C3 claim-while-locked).

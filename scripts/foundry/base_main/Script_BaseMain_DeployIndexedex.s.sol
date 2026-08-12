@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
@@ -243,22 +243,26 @@ contract Script_BaseMain_DeployIndexedex is Script {
         returns (IAerodromeStandardExchangeDFPkg aerodromeStandardExchangeDFPkg)
     {
         // Use the Aerodrome factory service to avoid stack-too-deep.
-        aerodromeStandardExchangeDFPkg = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            create3Factory.deployERC20Facet(),
-            create3Factory.deployERC2612Facet(),
-            create3Factory.deployERC5267Facet(),
-            create3Factory.deployERC4626Facet(),
-            create3Factory.deployERC4626BasedBasicVaultFacet(),
-            create3Factory.deployERC4626StandardVaultFacet(),
-            create3Factory.deployAerodromeStandardExchangeInFacet(),
-            create3Factory.deployAerodromeStandardExchangeOutFacet(),
-            indexedexManager,
-            indexedexManager,
-            permit2,
-            aerodromeRouter,
-            aerodromePoolFactory
-        );
+        {
+            IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
+            pkgInit_.erc20Facet = erc20Facet;
+            pkgInit_.erc2612Facet = erc2612Facet;
+            pkgInit_.erc5267Facet = erc5267Facet;
+            pkgInit_.erc4626Facet = erc4626Facet;
+            pkgInit_.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+            pkgInit_.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+            pkgInit_.aerodromeStandardExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
+            pkgInit_.aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+            pkgInit_.aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
+            pkgInit_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+            pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+            pkgInit_.permit2 = permit2;
+            pkgInit_.aerodromeRouter = aerodromeRouter;
+            pkgInit_.aerodromePoolFactory = aerodromePoolFactory;
+            aerodromeStandardExchangeDFPkg = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(
+                IVaultRegistryDeployment(address(indexedexManager)), pkgInit_
+            );
+        }
     }
 
     function _deployBalancerRouter()

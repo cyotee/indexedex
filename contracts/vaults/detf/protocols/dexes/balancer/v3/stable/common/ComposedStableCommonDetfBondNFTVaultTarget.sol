@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
@@ -90,7 +90,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
         tokenId = ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId(layoutStruct);
-        if (ERC721Repo._ownerOf(tokenId) != address(0)) {
+        if (tokenId != 0 && ERC721Repo._ownerOf(tokenId) != address(0)) {
             return tokenId;
         }
 
@@ -101,6 +101,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
         external
+        onlyOwner
         nonReentrant
         returns (uint256 wethOut)
     {
@@ -110,27 +111,14 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
         ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct = ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
 
-        {
-            ComposedStableCommonDetfBondNFTVaultService.RedeemParams memory params =
-                ComposedStableCommonDetfBondNFTVaultService.RedeemParams({
-                    recipient: recipient,
-                    caller: msg.sender,
-                    detf: address(layoutStruct.detf)
-                });
-            address owner = ERC721Repo._ownerOf(tokenId);
-            if (!ComposedStableCommonDetfBondNFTVaultService._validateRedeemCaller(params, owner)) {
-                revert NotBondHolder(owner, msg.sender);
-            }
-        }
-
         if (_isDETFNFT(tokenId)) {
             revert DETFNFTRestricted(tokenId);
         }
 
         {
             uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
-            if (DETFBondNFTMathLib._isUnlockPending(unlockTime, block.timestamp)) {
-                revert LockDurationNotExpired(block.timestamp, unlockTime);
+            if (block.timestamp < unlockTime) {
+                revert BondNotMature(unlockTime);
             }
         }
 
@@ -197,6 +185,18 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         ComposedStableCommonDetfBondNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
     }
 
+    /// @inheritdoc IDETFNFTVault
+    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
+        if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._detfNFTId()) {
+            revert DETFNFTRestricted(tokenId);
+        }
+
+        ComposedStableCommonDetfBondNFTVaultRepo.Storage storage layoutStruct =
+            ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct();
+        ComposedStableCommonDetfBondNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        ComposedStableCommonDetfBondNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);
+    }
+
     function addToFeeRecipientNFT(uint256 tokenId, uint256 shares) external onlyOwner {
         if (tokenId != ComposedStableCommonDetfBondNFTVaultRepo._feeRecipientNFTId()) {
             revert PositionNotFound(tokenId);
@@ -227,6 +227,13 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         principalShares = layoutStruct.originalSharesOf[tokenId];
         if (principalShares == 0) {
             revert PositionNotFound(tokenId);
+        }
+
+        {
+            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+            if (block.timestamp < unlockTime) {
+                revert BondNotMature(unlockTime);
+            }
         }
 
         if (rewardsRecipient == address(0)) {
@@ -310,6 +317,10 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
 
     function originalSharesOf(uint256 tokenId) external view returns (uint256 shares) {
         return ComposedStableCommonDetfBondNFTVaultRepo._originalSharesOf(tokenId);
+    }
+
+    function totalOriginalShares() external view returns (uint256 shares) {
+        return ComposedStableCommonDetfBondNFTVaultRepo._totalOriginalShares();
     }
 
     function effectiveSharesOf(uint256 tokenId) external view returns (uint256 shares) {

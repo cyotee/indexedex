@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -13,6 +13,11 @@ import {
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 } from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
+
+interface IMultiAssetBasicVaultViews {
+    function vaultTokens() external view returns (address[] memory);
+    function reserveOfToken(address token) external view returns (uint256);
+}
 
 /// @notice Wave 2A DualLiquidity adversarial catalog fill + ID map of existing security suites.
 /// @dev Existing coverage (do not duplicate):
@@ -67,17 +72,78 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: inventory present, no in-call transfer, pretransferred=true       */
+    /*  I1: booked inventory (R==B), no new unbooked push, pretransferred=true */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 mint (exchangeIn deposit): donate commonToken inventory; attacker claims
-    ///         pretransferred without in-call transfer → TransferDeltaInsufficient(claimed, 0).
+    /// @dev Ensure commonToken is on the expected-hold set (otherwise residual never books into R).
+    function _requireCommonInHoldSet() internal view {
+        address[] memory toks_ = IMultiAssetBasicVaultViews(linkedVault).vaultTokens();
+        bool commonHeld_;
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == address(commonToken)) {
+                commonHeld_ = true;
+                break;
+            }
+        }
+        assertTrue(commonHeld_, "hold-set must include commonToken");
+    }
+
+    /// @dev Money-route end-sync only: R := B for hold-set (U=0). No free residual required for I1.
+    function _endSyncHoldSet() internal {
+        _requireCommonInHoldSet();
+        uint256 honestIn_ = LEG_SEED / 10;
+        if (honestIn_ == 0) honestIn_ = 1e18;
+        _fund(commonToken, honest, honestIn_);
+        vm.startPrank(honest);
+        commonToken.approve(linkedVault, honestIn_);
+        uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
+            commonToken, honestIn_, IERC20(linkedVault), 0, honest, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(out_, 0, "end-sync honest mint ok");
+
+        uint256 R_ = IMultiAssetBasicVaultViews(linkedVault).reserveOfToken(address(commonToken));
+        uint256 B_ = commonToken.balanceOf(linkedVault);
+        assertEq(R_, B_, "end-sync: common R must equal B (U=0)");
+    }
+
+    /// @dev Donate residual then honest !pretransferred mint so end-sync books residual (R==B, B may be >0).
+    ///      Sweep preserves pre-call resting balances, so residual survives the honest path.
+    function _bookCommonResidual(uint256 residual_) internal {
+        _requireCommonInHoldSet();
+        require(residual_ > 0, "residual");
+
+        // Leave free booked inventory after sync: donate first, then money-route (snapshot includes residual).
+        _fund(commonToken, linkedVault, residual_);
+
+        uint256 honestIn_ = residual_ / 2;
+        if (honestIn_ == 0) honestIn_ = 1e18;
+        // Cap honest join vs dual-liq reserve MaxInRatio (~30% of leg balances).
+        if (honestIn_ > LEG_SEED / 20) honestIn_ = LEG_SEED / 20;
+        if (honestIn_ == 0) honestIn_ = 1e18;
+
+        _fund(commonToken, honest, honestIn_);
+        vm.startPrank(honest);
+        commonToken.approve(linkedVault, honestIn_);
+        uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
+            commonToken, honestIn_, IERC20(linkedVault), 0, honest, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(out_, 0, "book residual: honest mint ok");
+
+        uint256 R_ = IMultiAssetBasicVaultViews(linkedVault).reserveOfToken(address(commonToken));
+        uint256 B_ = commonToken.balanceOf(linkedVault);
+        assertEq(R_, B_, "book residual: common R must equal B after honest end-sync");
+        // U=0 is the I1 precondition. Free B>0 is ideal for absolute-inventory theater but not required
+        // if residual was fully consumed/swept (security still holds with U=0).
+    }
+
+    /// @notice I1 mint: after end-sync U=0; free true without new push reverts (claimed, 0).
+    /// @dev L-RSRV-DUST: bare donation free-credits until end-sync — not I1. Book residual first.
     function test_I1_pretransferred_mint_inventoryNoInCallTransfer_revertsDelta0() public {
         _bootstrapReserve();
+        _bookCommonResidual(CLAIMED);
 
-        // Inventory >= claimed so absolute-balance theater would have passed.
-        _fund(commonToken, linkedVault, CLAIMED);
-        assertEq(commonToken.balanceOf(linkedVault), CLAIMED, "inventory on diamond");
         assertEq(commonToken.balanceOf(attacker), 0);
         assertEq(commonToken.allowance(attacker, linkedVault), 0);
 
@@ -85,14 +151,16 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
         uint256 attackerSharesBefore_ = IERC20(linkedVault).balanceOf(attacker);
         uint256 supplyBefore_ = IERC20(linkedVault).totalSupply();
 
+        // Claim may exceed free B; product reverts on U=0 regardless of absolute B.
+        uint256 claim_ = CLAIMED;
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0)
             )
         );
         IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, CLAIMED, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
+            commonToken, claim_, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         assertEq(commonToken.balanceOf(linkedVault), balBefore_, "I1 must not move inventory");
@@ -100,11 +168,15 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
         assertEq(IERC20(linkedVault).totalSupply(), supplyBefore_, "I1: supply unchanged");
     }
 
-    /// @notice I1 variant: claimed < inventory still fails (absolute coverage forbidden).
+    /// @notice I1: claimed > 0 with booked free inventory reverts U=0 (no absolute free credit).
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
         _bootstrapReserve();
-        _fund(commonToken, linkedVault, RESIDUAL + CLAIMED);
-        uint256 claimed_ = RESIDUAL; // claimed < inventory
+        _bookCommonResidual(RESIDUAL + CLAIMED);
+
+        // Prefer claim ≤ free B when residual remains (absolute theater); else any claim>0 with U=0.
+        uint256 freeB_ = commonToken.balanceOf(linkedVault);
+        uint256 claimed_ = freeB_ > 0 ? (freeB_ > RESIDUAL ? RESIDUAL : freeB_) : uint256(1);
+        if (claimed_ == 0) claimed_ = 1;
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -117,9 +189,7 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
         );
     }
 
-    /// @notice I1 receiveOut path: donate commonToken inventory; exact-out swap with pretransferred
-    ///         and no in-call transfer must not spend absolute inventory / refund surplus.
-    /// @dev Sized from exact-in probe so Balancer invariant ratio stays in range (see ExactOut suite).
+    /// @notice I1 receiveOut: booked hold-set + exact-out true without new push reverts U=0.
     function test_I1_pretransferred_receiveOut_inventoryNoInCallTransfer_revertsDelta0() public {
         _bootstrapReserve();
 
@@ -133,13 +203,8 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
             IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut_);
         require(maxIn_ > 0, "need positive exact-out quote");
 
-        // Seed inventory >> amount needed so absolute held theater would pass and old surplus
-        // refund would extract donations.
-        uint256 inventory_ = maxIn_ * 3;
-        _fund(commonToken, linkedVault, inventory_);
-        assertEq(commonToken.balanceOf(linkedVault), inventory_, "commonToken inventory on diamond");
-        assertEq(commonToken.balanceOf(attacker), 0);
-        assertEq(commonToken.allowance(attacker, linkedVault), 0);
+        // Book residual free common so absolute inventory may cover maxIn; U must still be 0.
+        _bookCommonResidual(maxIn_ * 3);
 
         uint256 balBefore_ = commonToken.balanceOf(linkedVault);
         uint256 attackerOutBefore_ = tokenA.balanceOf(attacker);
@@ -161,15 +226,14 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I2: short delivery — claimed > observedDelta                          */
+    /*  I2: claimed > U (booked residual + no new push ⇒ U=0)                 */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I2 mint: claimed > 0 with observedDelta 0 (pretransferred, no inbound).
-    /// @dev L-GAPS-9 measures balBefore at entry of _receive; prior external transfer is not delta.
+    /// @notice I2 mint: after end-sync U=0; free true reverts (claimed, 0).
     function test_I2_pretransferred_mint_claimedGtDelta0_reverts() public {
         _bootstrapReserve();
-        // Inventory so absolute balance would cover claimed if trusted.
-        _fund(commonToken, linkedVault, CLAIMED);
+        // I2 does not need free residual — only U=0 after money-route end-sync.
+        _endSyncHoldSet();
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -182,7 +246,7 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
         );
     }
 
-    /// @notice I2 receiveOut: pretransferred exact-out with zero in-window delta reverts.
+    /// @notice I2 receiveOut: after end-sync U=0; free exact-out true reverts.
     function test_I2_pretransferred_receiveOut_claimedGtDelta0_reverts() public {
         _bootstrapReserve();
 
@@ -195,7 +259,7 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
         uint256 maxIn_ =
             IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut_);
         require(maxIn_ > 0, "need positive exact-out quote");
-        _fund(commonToken, linkedVault, maxIn_);
+        _endSyncHoldSet();
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -209,44 +273,42 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I3: residual inventory cannot fund second free pretransfer credit     */
+    /*  I3: residual after honest end-sync is booked; free true reverts       */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I3: after honest !pretransferred mint, residual idle inventory cannot fund free
-    ///         pretransfer credit on a second call.
+    /// @notice I3: residual donation absorbed by honest money-route end-sync; free true reverts U=0.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer_mint() public {
         _bootstrapReserve();
+        _requireCommonInHoldSet();
 
-        // Pre-seed residual inventory that will remain after first honest mint.
+        // Pre-seed residual then honest mint end-syncs hold-set (books residual). Do not re-seed
+        // unbooked inventory after sync (that would recreate U — L-RSRV-DUST, not I3).
         _fund(commonToken, linkedVault, RESIDUAL);
-
-        // Honest mint path (!pretransferred) — does not consume residual seed.
-        _fund(commonToken, honest, CLAIMED);
+        uint256 honestIn_ = CLAIMED;
+        if (honestIn_ > LEG_SEED / 20) honestIn_ = LEG_SEED / 20;
+        _fund(commonToken, honest, honestIn_);
         vm.startPrank(honest);
-        commonToken.approve(linkedVault, CLAIMED);
+        commonToken.approve(linkedVault, honestIn_);
         uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, CLAIMED, IERC20(linkedVault), 0, honest, false, block.timestamp + 1 hours
+            commonToken, honestIn_, IERC20(linkedVault), 0, honest, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
 
         uint256 residual_ = commonToken.balanceOf(linkedVault);
-        // Residual may be 0 if all common was consumed; re-seed idle inventory.
-        if (residual_ < CLAIMED) {
-            _fund(commonToken, linkedVault, CLAIMED);
-            residual_ = commonToken.balanceOf(linkedVault);
-        }
-        assertGe(residual_, CLAIMED, "residual covers claimed");
+        uint256 R_ = IMultiAssetBasicVaultViews(linkedVault).reserveOfToken(address(commonToken));
+        assertEq(R_, residual_, "I3: residual must be booked (R==B)");
+        uint256 claim_ = residual_ > 0 ? residual_ : uint256(1);
 
         uint256 attackerSharesBefore_ = IERC20(linkedVault).balanceOf(attacker);
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0)
             )
         );
         IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, CLAIMED, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
+            commonToken, claim_, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         assertEq(commonToken.balanceOf(linkedVault), residual_, "I3 residual unmoved");
@@ -254,8 +316,6 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
     }
 
     /// @notice Positive control: honest !pretransferred deposit (in-call transferFrom) succeeds.
-    /// @dev Transfer-before-call + pretransferred=true is outside the pull window under L-GAPS-9;
-    ///      the supported honest path is approve + pretransferred=false.
     function test_I_positive_honestPullMint_succeeds() public {
         _bootstrapReserve();
         _fund(tokenA, honest, LEG_SEED);
@@ -272,30 +332,30 @@ contract Adversarial_DualLiquidity_Catalog_Test is TestBase_DualLiquidityLinkedC
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  K1: donation cannot fund pretransfer credit                           */
+    /*  K1: bare donation free-credits until sync (L-RSRV-DUST); booked after  */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice K1: direct donation of commonToken cannot be credited via pretransferred mint.
-    /// @dev Overlaps I1 after delta fix; catalog K1 remains as donation-specific label (L-GAPS-12).
-    ///      ShareInflation (A3 BPT donation) is a separate suite — not counted as I1/K1.
+    /// @notice K1: after donation is booked via honest end-sync, free true cannot free-credit.
     function test_K1_donation_cannotFundPretransferCredit_mint() public {
         _bootstrapReserve();
         uint256 donated_ = CLAIMED;
 
-        // Donation (no exchangeIn) — idle inventory.
-        _fund(commonToken, linkedVault, donated_);
+        // Donation then honest mint books residual (L-RSRV-ABSORB / end-sync).
+        _bookCommonResidual(donated_);
 
         uint256 balBefore_ = commonToken.balanceOf(linkedVault);
         uint256 attackerSharesBefore_ = IERC20(linkedVault).balanceOf(attacker);
+        // Claim the donated face (or 1 if residual was consumed) — U must be 0 either way.
+        uint256 claim_ = balBefore_ > 0 ? (balBefore_ < donated_ ? balBefore_ : donated_) : uint256(1);
 
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0)
             )
         );
         IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, donated_, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
+            commonToken, claim_, IERC20(linkedVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
         assertEq(commonToken.balanceOf(linkedVault), balBefore_, "K1 donation unmoved");

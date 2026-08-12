@@ -16,7 +16,7 @@
 - `StandardExchangeBufferPoolRepo.Storage` layout is append-only: existing fields keep offsets 0–9 (tests use `vm.store` at offsets 7 and 8); new field `baselineRate` goes at offset 10.
 - The pool remains two-token (TTA + one share token). No multi-token generalization in this plan.
 - No mocks in new tests. Rate movement must come from the **Uniswap V2 Standard Exchange Vault**: execute real trades through the underlying Uniswap V2 pair so the share NAV (and thus `getRate()`) genuinely changes.
-- License headers: `// SPDX-License-Identifier: BUSL-1.1`.
+- License headers: `// SPDX-License-Identifier: BSL-1.1`.
 - Commit after every task; message prefixes follow repo convention (`feat:`, `fix:`, `test:`, `chore:`).
 
 ## Design Reference (read before starting any task)
@@ -67,7 +67,7 @@ Key file inventory (all under `contracts/protocols/dexes/balancer/v3/pools/const
 Create `StandardExchangeBufferPoolCommon.t.sol` with a harness for the pure weight math (the storage-reading members are integration-tested in later tasks through the deployed pool):
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -178,7 +178,7 @@ and to the views block:
 This consolidates the `_derivedY` / `_liftSharesToScaled18Rated` duplicates that currently live in BOTH `StandardExchangeBufferPoolTarget` and `StandardExchangeBufferHookTarget`, moves the hook's `_bv3SharesDonationRaw` / `_bv3SharesRemoveOutRaw` round-trip mirrors here, and adds the new rate/weight helpers. All rate reads go through the Vault.
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
@@ -514,7 +514,7 @@ Expected: `test_onSwap_quoteScalesInverselyWithRateRatio` FAILS (old CP math ign
 Full replacement of the math (contract now inherits `Common`; its local `_derivedY`/`_liftSharesToScaled18Rated` are deleted):
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {PoolSwapParams, SwapKind, Rounding} from

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -46,8 +46,9 @@ contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDe
         IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
 
+        _warpPastUnlock(instance_, tokenId_);
         vm.prank(alice);
-        uint256 minted_ = bonding_.sellNFT(tokenId_, alice);
+        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim minted");
 
         address rated_ = info_.rateAssets()[0];

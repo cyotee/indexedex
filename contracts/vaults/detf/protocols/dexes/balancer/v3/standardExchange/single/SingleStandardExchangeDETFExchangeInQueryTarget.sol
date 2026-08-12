@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
@@ -22,11 +22,26 @@ abstract contract SingleStandardExchangeDETFExchangeInQueryTarget is SingleStand
     {
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
 
-        if (address(tokenOut_) != address(this) && address(tokenIn_) != address(this)) {
-            if (!_isAllowlistedTokenIn(tokenIn_) || !_isAllowlistedTokenIn(tokenOut_)) {
-                revert SingleStandardExchangeDETFRepo.UnsupportedRoute(tokenIn_, tokenOut_);
+        // Claim-token redemption-rate path: BPT → vaultShare / SE token (view only).
+        // Fall back to vaultShare quote when tokenOut is not on the primary-burn allowlist
+        // so mintFromNFTSale rate calc never reverts a mature sell.
+        if (address(tokenIn_) == address(s.reserveBpt) || address(tokenIn_) == s.reservePool) {
+            IERC20 quoteOut_ = tokenOut_;
+            if (!_isPrimaryBurnTokenOut(tokenOut_)) {
+                quoteOut_ = s.standardExchangeVaultShare;
             }
-            return s.standardExchangeVault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+            return _previewBptUnwind(amountIn_, quoteOut_);
+        }
+
+        if (address(tokenOut_) != address(this) && address(tokenIn_) != address(this)) {
+            if (_isAllowlistedTokenIn(tokenIn_) && _isAllowlistedTokenIn(tokenOut_)) {
+                return s.standardExchangeVault.previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+            }
+            // Claim rate calc may pass reserve BPT under a non-matching stored address; quote unwind.
+            return _previewBptUnwind(
+                amountIn_,
+                _isPrimaryBurnTokenOut(tokenOut_) ? tokenOut_ : s.standardExchangeVaultShare
+            );
         }
 
         if (address(tokenOut_) == address(this)) {

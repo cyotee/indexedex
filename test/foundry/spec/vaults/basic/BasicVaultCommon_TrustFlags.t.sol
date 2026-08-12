@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -8,6 +8,7 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -96,14 +97,28 @@ contract ShortDeliveryMockToken is IERC20 {
 /*                               Harness                                      */
 /* -------------------------------------------------------------------------- */
 
-/// @notice Minimal harness exposing BasicVaultCommon._secureTokenTransfer for I-catalog tests.
+/// @notice Production-storage harness: MultiAssetBasicVaultRepo + BasicVaultCommon.
 contract BasicVaultCommonTrustFlagsHarness is BasicVaultCommon {
-    constructor(IPermit2 permit2_) {
+    constructor(IPermit2 permit2_, address[] memory expectedHoldTokens_) {
         Permit2AwareRepo._initialize(permit2_);
+        MultiAssetBasicVaultRepo._initialize(expectedHoldTokens_);
     }
 
     function secureTokenTransfer(IERC20 tokenIn_, uint256 amount_, bool pretransferred_) external returns (uint256) {
         return _secureTokenTransfer(tokenIn_, amount_, pretransferred_);
+    }
+
+    function syncAllExpectedHoldReserves() external {
+        _syncAllExpectedHoldReserves();
+    }
+
+    function moneyIn(IERC20 token_, uint256 claimed_, bool pretransferred_) external returns (uint256 credit_) {
+        credit_ = _secureTokenTransfer(token_, claimed_, pretransferred_);
+        _syncAllExpectedHoldReserves();
+    }
+
+    function bookedReserve(IERC20 token_) external view returns (uint256) {
+        return _bookedReserve(token_);
     }
 }
 
@@ -113,10 +128,10 @@ contract BasicVaultCommonTrustFlagsHarness is BasicVaultCommon {
 
 /**
  * @title BasicVaultCommon_TrustFlags_Test
- * @notice Catalog I1/I2/I3: pretransfer trust flags must not free-credit inventory (L-GAPS-9/10).
- * @dev I1: pretransferred=true, no transfer in-call, inventory present → TransferDeltaInsufficient(claimed, 0)
- *      I2: claimed > observedDelta (short / zero delta)
- *      I3: residual inventory after a prior path cannot fund a second free pretransfer credit
+ * @notice Catalog I1/I2/I3 under reserve-delta law (booked inventory baseline).
+ * @dev I1: R == B (booked), pretransferred=true, no new push → TransferDeltaInsufficient(claimed, 0)
+ *      I2: claimed > U
+ *      I3: after money route sync, residual is absorbed into R → cannot fund second free pretransfer
  */
 contract BasicVaultCommon_TrustFlags_Test is Test {
     BasicVaultCommonTrustFlagsHarness internal harness;
@@ -132,19 +147,20 @@ contract BasicVaultCommon_TrustFlags_Test is Test {
     uint256 internal constant DEPOSIT = 100e18;
 
     function setUp() public {
-        harness = new BasicVaultCommonTrustFlagsHarness(PERMIT2_PRODUCTION);
         token = new TrustFlagMockToken();
+        address[] memory hold = new address[](1);
+        hold[0] = address(token);
+        harness = new BasicVaultCommonTrustFlagsHarness(PERMIT2_PRODUCTION, hold);
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I1: inventory present, no in-call transfer, pretransferred=true       */
+    /*  I1: booked inventory, no new unbooked inflow, pretransferred=true     */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1: mint inventory to harness; attacker does not transfer; pretransferred=true;
-    ///         claimed <= inventory still reverts TransferDeltaInsufficient(claimed, 0).
+    /// @notice I1: seed + sync so R==B; attacker does not transfer; pretransferred=true reverts (claimed, 0).
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
-        // Inventory >= claimed so absolute-balance theater would have passed
         token.mint(address(harness), CLAIMED);
+        harness.syncAllExpectedHoldReserves(); // book → U = 0
         assertEq(token.balanceOf(address(harness)), CLAIMED);
         assertEq(token.balanceOf(attacker), 0);
         assertEq(token.allowance(attacker, address(harness)), 0);
@@ -153,94 +169,87 @@ contract BasicVaultCommon_TrustFlags_Test is Test {
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
         );
         harness.secureTokenTransfer(token, CLAIMED, true);
 
-        // No in-call transfer: inventory unchanged
         assertEq(token.balanceOf(address(harness)), balBefore, "I1 must not transfer in-call");
         assertEq(token.balanceOf(attacker), 0);
     }
 
-    /// @notice I1 variant: claimed strictly less than inventory still fails (absolute coverage forbidden).
+    /// @notice I1 variant: claimed strictly less than booked inventory still fails.
     function test_I1_pretransferred_claimedLeInventory_stillReverts() public {
         token.mint(address(harness), INVENTORY + CLAIMED);
-        uint256 claimed = INVENTORY; // claimed < inventory
+        harness.syncAllExpectedHoldReserves();
+        uint256 claimed = INVENTORY;
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
         );
         harness.secureTokenTransfer(token, claimed, true);
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I2: short delivery — claimed > observedDelta                          */
+    /*  I2: claimed > U                                                       */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I2: claimed > 0 with observedDelta 0 (pretransferred, no inbound).
+    /// @notice I2: booked R==B so U=0; claimed > 0 reverts with observedDelta 0.
     function test_I2_pretransferred_claimedGtDelta0_reverts() public {
         token.mint(address(harness), DEPOSIT);
+        harness.syncAllExpectedHoldReserves();
 
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0))
         );
         harness.secureTokenTransfer(token, DEPOSIT, true);
     }
 
-    /// @notice I2: short delivery under !pretransferred returns partial delta (FoT-safe path),
-    ///         not free credit of inventory. Demonstrates delta observation, not absolute balance.
+    /// @notice I2: short delivery under !pretransferred returns partial delta only.
     function test_I2_pull_shortDelivery_returnsObservedDeltaOnly() public {
         uint256 shortAmt = 40e18;
         ShortDeliveryMockToken shortToken = new ShortDeliveryMockToken(shortAmt);
-        shortToken.mint(alice, DEPOSIT);
+        address[] memory hold = new address[](1);
+        hold[0] = address(shortToken);
+        BasicVaultCommonTrustFlagsHarness shortHarness =
+            new BasicVaultCommonTrustFlagsHarness(PERMIT2_PRODUCTION, hold);
 
-        // Seed extra inventory so absolute balance >> short delivery
-        shortToken.mint(address(harness), INVENTORY);
+        shortToken.mint(alice, DEPOSIT);
+        shortToken.mint(address(shortHarness), INVENTORY);
 
         vm.startPrank(alice);
-        shortToken.approve(address(harness), DEPOSIT);
-        uint256 actual = harness.secureTokenTransfer(IERC20(address(shortToken)), DEPOSIT, false);
+        shortToken.approve(address(shortHarness), DEPOSIT);
+        uint256 actual = shortHarness.secureTokenTransfer(IERC20(address(shortToken)), DEPOSIT, false);
         vm.stopPrank();
 
         assertEq(actual, shortAmt, "must credit observed delta only, not claimed or absolute inventory");
-        assertEq(shortToken.balanceOf(address(harness)), INVENTORY + shortAmt);
+        assertEq(shortToken.balanceOf(address(shortHarness)), INVENTORY + shortAmt);
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I3: residual inventory cannot fund second free pretransfer credit     */
+    /*  I3: residual after moneyIn sync cannot fund second free pretransfer   */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I3: after an honest pull leaves residual inventory, a second pretransferred call
-    ///         with no new inbound delta cannot free-credit residual.
+    /// @notice I3: after honest pull + full-set sync, residual is booked; second true fails.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer() public {
         token.mint(alice, DEPOSIT);
-        // Pre-seed residual that will remain after first pull
         token.mint(address(harness), INVENTORY);
 
         vm.startPrank(alice);
         token.approve(address(harness), DEPOSIT);
-        uint256 first = harness.secureTokenTransfer(token, DEPOSIT, false);
+        uint256 first = harness.moneyIn(token, DEPOSIT, false);
         vm.stopPrank();
 
         assertEq(first, DEPOSIT);
         uint256 residual = token.balanceOf(address(harness));
         assertEq(residual, INVENTORY + DEPOSIT);
-        assertGe(residual, DEPOSIT);
+        // After moneyIn sync, residual is absorbed into R → U = 0
+        assertEq(harness.bookedReserve(token), residual);
 
-        // Second call: pretransferred=true, claim against residual, no new transfer
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, DEPOSIT, uint256(0))
         );
         harness.secureTokenTransfer(token, DEPOSIT, true);
 

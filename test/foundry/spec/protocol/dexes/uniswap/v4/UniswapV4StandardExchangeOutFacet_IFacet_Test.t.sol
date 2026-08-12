@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -36,8 +36,8 @@ contract UniswapV4StandardExchangeOutFacet_IFacet_Test is CraneTest, TestBase_IF
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](2);
-        controlFuncs[0] = IStandardExchangeOut.previewExchangeOut.selector;
-        controlFuncs[1] = IStandardExchangeOut.exchangeOut.selector;
+        // Option 1b: preview lives on OutQueryFacet; execute-only here.
+        controlFuncs = new bytes4[](1);
+        controlFuncs[0] = IStandardExchangeOut.exchangeOut.selector;
     }
 }

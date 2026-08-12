@@ -6,12 +6,16 @@ import Image from 'next/image';
 import { useAccount, useChainId, useConnect, useConnection, useDisconnect, useSwitchChain } from 'wagmi';
 import { baseSepolia, sepolia } from 'wagmi/chains';
 
-import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts';
+import {
+  CHAIN_ID_ANVIL,
+  CHAIN_ID_LOCALHOST,
+  CHAIN_ID_ROBINHOOD,
+} from '@indexedex/protocol/addressArtifacts';
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment';
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection';
 import { useBrand } from '../../lib/brandContext';
 
-type HeaderChainOption = 'ethereum' | 'base';
+type HeaderChainOption = 'ethereum' | 'base' | 'robinhood';
 
 type BrowserEthereumProvider = {
   providers?: BrowserEthereumProvider[];
@@ -75,8 +79,18 @@ function getSwitchableChains(environment: string): Record<HeaderChainOption, Swi
   const baseRpcUrls = useLocalRpc
     ? [baseRpcUrl]
     : [...baseSepolia.rpcUrls.default.http];
+  // DTF launch: Robinhood always maps to local Anvil RH fork by default.
+  const robinhoodRpcUrls = [localRpcUrl];
 
   return {
+    robinhood: {
+      option: 'robinhood',
+      label: 'Robinhood (Anvil)',
+      chainId: CHAIN_ID_ROBINHOOD,
+      hexChainId: `0x${CHAIN_ID_ROBINHOOD.toString(16)}`,
+      chainName: 'Robinhood (Anvil)',
+      rpcUrls: robinhoodRpcUrls,
+    },
     ethereum: {
       option: 'ethereum',
       label: 'Ethereum Sepolia',
@@ -99,7 +113,9 @@ function getSwitchableChains(environment: string): Record<HeaderChainOption, Swi
 }
 
 function resolveHeaderChainOption(chainId: number | undefined): HeaderChainOption {
-  return chainId === baseSepolia.id ? 'base' : 'ethereum';
+  if (chainId === CHAIN_ID_ROBINHOOD) return 'robinhood'
+  if (chainId === baseSepolia.id) return 'base'
+  return 'ethereum'
 }
 
 function connectorHasRdns(connector: ConnectorLike | undefined, value: string): boolean {
@@ -600,11 +616,16 @@ export function Header() {
       return
     }
 
-    if (chainId === CHAIN_ID_ANVIL || chainId === CHAIN_ID_LOCALHOST) {
+    if (
+      chainId === CHAIN_ID_ANVIL ||
+      chainId === CHAIN_ID_LOCALHOST ||
+      // Injected Anvil RH already reports 4663 — no wallet_switch needed.
+      (chainId === CHAIN_ID_ROBINHOOD && target.chainId === CHAIN_ID_ROBINHOOD)
+    ) {
       setChainSwitchDebug('')
       setChainSwitchNotice({
         tone: 'success',
-        message: `Using local wallet chain ${chainId} for ${target.label}`,
+        message: `Using wallet chain ${chainId} for ${target.label}`,
       })
       return
     }
@@ -837,6 +858,7 @@ export function Header() {
                 disabled={isPromptingWalletSwitch}
                 title="Select app network"
               >
+                <option value="robinhood">Robinhood (Anvil)</option>
                 <option value="ethereum">Ethereum Sepolia</option>
                 <option value="base">Base Sepolia</option>
               </select>

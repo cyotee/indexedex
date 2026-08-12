@@ -4,7 +4,13 @@
 **Plan:** [`docs/ANVIL_ROBINHOOD_FEE_DETF_LAUNCH_IMPLEMENTATION_AND_TEST_PLAN.md`](../../../docs/ANVIL_ROBINHOOD_FEE_DETF_LAUNCH_IMPLEMENTATION_AND_TEST_PLAN.md)  
 **Product PRD:** [`docs/ROBINHOOD_PONS_SINGLE_SE_DETF_LAUNCH_TEST_SCENARIO_PRD.md`](../../../docs/ROBINHOOD_PONS_SINGLE_SE_DETF_LAUNCH_TEST_SCENARIO_PRD.md)
 
-This family is **separate** from `anvil_robinhood_main` (lab). Do not merge them.
+This family remains a **fee-DETF-only** path. For a **unified** stack (lab vaults/hooks/inert DETFs **+** CHIR fee-DETF), prefer:
+
+```bash
+bash scripts/shell/anvil_robinhood_main.sh all --restart-anvil
+```
+
+(`anvil_robinhood_main` stages 14–22 embed this fee-DETF topology.)
 
 ## Topology
 

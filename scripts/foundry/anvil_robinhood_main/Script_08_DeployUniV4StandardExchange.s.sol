@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
@@ -133,6 +133,7 @@ contract Script_08_DeployUniV4StandardExchange is DeploymentBase {
         pkgInit.uniswapV4StandardExchangePositionImportFacet =
             create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
         pkgInit.uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
+        pkgInit.uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutQueryFacet();
         pkgInit.uniswapV4StandardExchangeLiquidReserveFacet =
             create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
         pkgInit.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));

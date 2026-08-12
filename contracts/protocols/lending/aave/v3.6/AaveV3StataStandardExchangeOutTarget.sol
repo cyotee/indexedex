@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -108,6 +108,7 @@ contract AaveV3StataStandardExchangeOutTarget is
                 IERC20(stata).safeTransfer(recipient, stataRedeemed);
                 amountIn = maxAmountIn;
                 _collectAndForwardRewards();
+                _syncAllExpectedHoldReserves();
                 return amountIn;
             }
 
@@ -115,6 +116,7 @@ contract AaveV3StataStandardExchangeOutTarget is
                 amountIn = IERC4626(stata).redeem(stataRedeemed, recipient, address(this));
                 // Note: for mock consistency in tests we tolerate; in real paths check against max if needed
                 _collectAndForwardRewards();
+                _syncAllExpectedHoldReserves();
                 return amountIn;
             }
 
@@ -124,6 +126,7 @@ contract AaveV3StataStandardExchangeOutTarget is
             pool.supply(base, baseAmt, recipient, 0);
             amountIn = maxAmountIn;
             _collectAndForwardRewards();
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 

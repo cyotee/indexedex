@@ -10,10 +10,11 @@ Adversarial / abuse suites for **IndexedEx vaults and DETFs** on the production 
 
 **Read first (order):**
 
-1. `lib/crane/.claude/skills/crane-adversarial-testing/` — methodology, catalog, harness rules
+1. `lib/crane/.claude/skills/crane-adversarial-testing/` — methodology, catalog A–K + **A0/L/M/N/O**, harness rules
 2. `lib/crane/.claude/skills/crane-testing/` + `crane-deployment/`
 3. `.claude/skills/indexedex-testing/` — registry path, gold TestBases, no mock SUT
 4. This skill + repo `AGENTS.md` (DETF role naming)
+5. Optional incident → ID study: `.claude/skills/defi-incident-patterns/` (HackLabs **reference only**)
 
 ## Scope
 
@@ -58,6 +59,7 @@ See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-na
 
 | ID | IndexedEx surface | Notes |
 |----|-------------------|--------|
+| **A0** | Residual assets / SE inventory with zero DETF or SE share supply | First minter/bond cannot free-drain pre-seeded inventory; dead shares / init / go-live gate |
 | A1 | Donate SE vault shares to DETF diamond | Idle inventory; victim mint must not steal donation via free mint |
 | A3 | Donate/accumulate BPT on diamond | redeemClaim without claim → no BPT drain (**D2 regression class**) |
 | B1 | Underlying Aerodrome skew + mint/burn | Open thresholds: may extract seigniorage — document bounds; default 1.05/0.95 deadband mutual exclusion |
@@ -70,6 +72,15 @@ See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-na
 | G1 | Nested Single SE DETF leg | Outer mint/burn; third user still mints on nested |
 | H2 | redeemClaim minOut fail | Claim balance unchanged (tx atomicity; production may burn-then-exit) |
 | H3 | Failed mint minOut | Residual free shares/DETF = 0 |
+| **L1** | Untracked LP/pair surplus if SE/DETF prices or holds AMM inventory; idle native/ERC20 + public reclaim | No free mint/extract from skim-class surplus |
+| **E6** | Any residual-return / overpay-refund / “sweep excess” on SE/DETF/helpers | Refund ≤ this-call overpay or caller credit; prior inventory stays |
+| **F5** | Permissionless migrate/resize/reclaim-style ops (if any helper/facet exposes them) | Auth-gated or cannot free-extract trading proceeds |
+| **L2** | FoT pairToken/rateAsset (if product allows) | Credit actualIn; else defer “FoT forbidden” |
+| **L3** | Spot/reserve skew of underlying SE pools | Overlaps B1; free-mint beyond deadband blocked |
+| **M1–M3** | Any router/helper/facet that forwards calldata or holds open allowances | Usually N/A on pure vault diamond — defer with NatSpec if no helper |
+| **N1** | Multi-step bond/issue with external hooks/callbacks | Hostile mid-flow unit change cannot inflate credit |
+| **N2** | preview vs execute on mint/burn paths | Match or documented tolerance (P1) |
+| **O1–O3** | Permit2 / EIP-712 entry points if present | Invalid/zero/replay reverts; else defer |
 
 Reference implementation (gold suite + law — co-located product plans deleted in directory reorg):
 
@@ -120,6 +131,7 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
 | Claim burned but redeem reverts and state sticks | Full-tx revert is OK; avoid try/catch that keeps burn; prefer CEI if mid-tx observability matters |
 | Free BPT redeem without claim | Mandatory claim + `burnShares`; `ClaimTokenNotConfigured` |
 | Donation mints free DETF | Never use raw `balanceOf` donation for mint credit without accounting |
+| Refund / reclaim pays raw `balance − floor` after user payment | Cap refund to this-call overpay; gate structural reclaim (**E6**, **L1**, **F5**) |
 | Nested MaxInRatio leaves partial balances | Clean revert; residual inventory asserts |
 | **`pretransferred=true` free mint** while vault holds reserves | Credit only **balance delta** (or lastReserve sync); never `return amountIn` after absolute `balanceOf >= amountIn`. See Crane catalog **I1–I3**. |
 | Facet omits Target selectors → proxy has no function | Target-derived `facetFuncs` + post-deploy loupe/smoke (**J1–J3**) |
@@ -133,11 +145,24 @@ Every SE / vault / DETF with pull-or-credit paths:
 
 | ID | Required test on production path |
 |----|----------------------------------|
+| **A0** | Residual inventory at empty share supply (or pre-live residual) cannot free-mint to first user |
 | **I1** | `pretransferred=true`, **no** user transfer, vault already holds ≥ claimed amount → attacker receives **zero** shares/product (revert preferred) |
 | **I2** | Short pretransfer vs claimed `amountIn` → exact revert |
 | **I3** | Residual after successful pretransfer cannot free-mint a second op |
 | **J1–J3** | Each new Facet/DFPkg: Target API ⊆ facetFuncs ⊆ facetCuts ⊆ proxy loupe + callable |
 | **K1** | Donation into SE/DETF cannot be consumed as another user's mint credit without explicit product policy |
+
+### Incident-pattern P0 when surface applies (A0/L/M/N/O)
+
+| ID | When required on SE / DETF |
+|----|----------------------------|
+| **L1 / L3** | SE or DETF mint/burn prices from AMM pair reserves or holds LP inventory |
+| **L2** | Product claims FoT support on underlyings; else defer “FoT forbidden” |
+| **M1–M3** | Any helper/router/facet forwards user calldata or holds open ERC20 allowances |
+| **N1** | Multi-step bond/issue with untrusted callback/hook between quote and settle |
+| **O1–O2** | Permit / Permit2 / EIP-712 money paths exist |
+
+Incident study map (not a substitute for tests): `skill:defi-incident-patterns`.
 
 `BasicVaultCommon._secureTokenTransfer` and every override must be reviewed against I1: absolute balance checks that return the **claimed** amount are a known free-mint class (task history: IDXEX-061 class).
 
@@ -145,11 +170,13 @@ Do **not** mark "adversarially tested" from happy-path `pretransferred=true` alo
 
 ## Deferred IDs (document in suite NatSpec)
 
-When deferring P2, put the reason on the suite:
+When deferring P2 or inapplicable L/M/N/O, put the reason on the suite:
 
 ```solidity
 /// @dev Deferred P2: A4 dust initializeReserve grief; A5 fee-slice double-claim (FeeNonDilution).
 ///      B2 reserve sandwich; C4 hostile rateAsset; peer DETF ports.
+/// @dev Deferred M*: no router/helper surface. Deferred O*: no permit path.
+///      Deferred L2: FoT underlyings forbidden by product policy.
 ```
 
 Do not leave catalog IDs silently missing.
@@ -158,12 +185,13 @@ Do not leave catalog IDs silently missing.
 
 1. Happy-path matrix green on production TestBase
 2. Map P0/P1 IDs from Crane catalog + `references/detf-adversarial-checklist.md` (document deferred IDs in suite NatSpec; do not co-locate product plan md under the family package)
-3. `TestBase_*_Adversarial` extends feature TestBase
-4. Implement P0: D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**
-5. Declaration controls from **Target/interface**; proxy smoke of full product API
-6. `forge test --match-path '.../adversarial/**'` then full feature path
-7. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
-8. Ship gate: Crane `references/implementation-test-dod.md`
+3. Optional pass: `defi-incident-patterns` theme map for A0/L/M/N/O applicability
+4. `TestBase_*_Adversarial` extends feature TestBase
+5. Implement P0: **A0**, D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**, plus **L/M/N/O** when surface applies
+6. Declaration controls from **Target/interface**; proxy smoke of full product API
+7. `forge test --match-path '.../adversarial/**'` then full feature path
+8. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
+9. Ship gate: Crane `references/implementation-test-dod.md`
 
 ## Commands
 
@@ -175,6 +203,7 @@ forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/
 ## Related skills
 
 - `crane-adversarial-testing` — **canonical method** (`lib/crane/.claude/skills/`)
+- `defi-incident-patterns` — historical incidents → catalog IDs (reference corpus only)
 - `indexedex-testing` — deploy path, no mock vaults
 - `crane-testing`, `crane-deployment`, `crane-access`
 - Gold: `TestBase_MultiVaultWeightedDetf.sol`, multi-vault `adversarial/*.t.sol`

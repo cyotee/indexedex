@@ -12,6 +12,7 @@
 | **Blocks** | Preferred pattern source for Stages 07–09 |
 | **Program index** | [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md) |
 | **Product law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) §4, E1–E9 |
+| **Sell/claim law** | [`BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md`](../../../../../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md) — new sell/close/`buyClaim` touches realize expansion |
 | **Shared lib plan** | [`05_DETF_Natural_Expansion_Shared_IMPLEMENTATION_AND_TEST_PLAN.md`](./05_DETF_Natural_Expansion_Shared_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | **Gold TestBase** | [`standardExchange/single/TestBase_SingleStandardExchangeDETF.sol`](./standardExchange/single/TestBase_SingleStandardExchangeDETF.sol) |
 

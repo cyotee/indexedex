@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -23,7 +23,7 @@ import {
 contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDETF_Adversarial {
     /// @dev Target-derived control set: money + info + bonding selectors (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](21);
+        sels_ = new bytes4[](31);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -45,6 +45,16 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         sels_[18] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
         sels_[19] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
         sels_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
+        sels_[21] = ISingleStandardExchangeDETFInfo.rebasingClaimToken.selector;
+        sels_[22] = ISingleStandardExchangeDETFBonding.acceptedBondTokens.selector;
+        sels_[23] = ISingleStandardExchangeDETFBonding.buyClaim.selector;
+        sels_[24] = ISingleStandardExchangeDETFBonding.previewBuyClaim.selector;
+        sels_[25] = ISingleStandardExchangeDETFBonding.closeBondMature.selector;
+        sels_[26] = ISingleStandardExchangeDETFBonding.previewCloseBondMature.selector;
+        sels_[27] = ISingleStandardExchangeDETFBonding.redeemClaim.selector;
+        sels_[28] = ISingleStandardExchangeDETFBonding.previewRedeemClaim.selector;
+        sels_[29] = ISingleStandardExchangeDETFBonding.claimLiquidity.selector;
+        sels_[30] = ISingleStandardExchangeDETFBonding.protocolBondOriginalShares.selector;
     }
 
     function _facetFuncsContains(bytes4[] memory funcs_, bytes4 sel_) internal pure returns (bool) {
@@ -59,7 +69,7 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
         IFacet facet_ = singleStandardExchangeDetfExchangeInFacet;
         bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 21, "facetFuncs length");
+        assertTrue(funcs_.length >= 31, "facetFuncs length");
 
         bytes4[] memory controls_ = _controlSelectors();
         for (uint256 i; i < controls_.length; ++i) {
@@ -133,7 +143,21 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         // sellPosition: product revert (not missing selector) — non-owner / invalid id.
         vm.prank(attacker);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, attacker);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, 0, attacker);
+
+        vm.prank(attacker);
+        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
+        ISingleStandardExchangeDETFBonding(instance_).buyClaim(
+            0, 0, attacker, false, block.timestamp + 1 hours
+        );
+
+        vm.prank(attacker);
+        vm.expectRevert(abi.encodeWithSelector(SingleStandardExchangeDETFRepo.NotAuthorized.selector, attacker));
+        ISingleStandardExchangeDETFBonding(instance_).claimLiquidity(1e18, attacker);
+
+        ISingleStandardExchangeDETFInfo(instance_).rebasingClaimToken();
+        ISingleStandardExchangeDETFBonding(instance_).acceptedBondTokens();
+        ISingleStandardExchangeDETFBonding(instance_).protocolBondOriginalShares();
 
         // compound: permissionless best-effort; must not be "function does not exist".
         ISingleStandardExchangeDETFInfo(instance_).compoundProtocolRewards();

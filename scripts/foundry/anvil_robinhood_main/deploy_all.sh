@@ -71,15 +71,16 @@ Usage:
   scripts/foundry/anvil_robinhood_main/deploy_all.sh [command] [options]
 
 Commands:
-  all           Full pipeline stages 00-14
+  all           Full pipeline stages 00-22 (lab demos + fee-DETF CHIR)
   foundation    Stages 00-03
   assets        Stage 04
   pools         Stages 05-06
   se            Stages 07-09
   packages      Stages 10-12
   demos         Stage 13
-  export        Stage 14
-  stageNN       Single stage (00-14)
+  fee-detf      Stages 14-21 (pons RICH → CHIR live + UI ETH)
+  export        Stage 22
+  stageNN       Single stage (00-22)
 
 Options:
   --dry-run         Simulate without broadcasting
@@ -257,7 +258,15 @@ stage_script() {
     11) echo "$SCRIPT_DIR/Script_11_DeployDetfChildren.s.sol" ;;
     12) echo "$SCRIPT_DIR/Script_12_DeployDetfPackages.s.sol" ;;
     13) echo "$SCRIPT_DIR/Script_13_DeployInertDemos.s.sol" ;;
-    14) echo "$SCRIPT_DIR/Script_14_ExportFrontendArtifacts.s.sol" ;;
+    14) echo "$SCRIPT_DIR/Script_14_PonsLaunchRich.s.sol" ;;
+    15) echo "$SCRIPT_DIR/Script_15_DeployUniV3SeOnRichPool.s.sol" ;;
+    16) echo "$SCRIPT_DIR/Script_16_DeployFeeDetfRateProvider.s.sol" ;;
+    17) echo "$SCRIPT_DIR/Script_17_DeployFeeDetfPackage.s.sol" ;;
+    18) echo "$SCRIPT_DIR/Script_18_DeployChirInstance.s.sol" ;;
+    19) echo "$SCRIPT_DIR/Script_19_BootstrapMarketBuyRich.s.sol" ;;
+    20) echo "$SCRIPT_DIR/Script_20_BootstrapFirstBond.s.sol" ;;
+    21) echo "$SCRIPT_DIR/Script_21_FundUiWalletEth.s.sol" ;;
+    22) echo "$SCRIPT_DIR/Script_22_ExportFrontendArtifacts.s.sol" ;;
     *)
       log_error "Unknown stage $n"
       exit 1
@@ -276,7 +285,7 @@ run_stages() {
 ARGS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all|foundation|assets|pools|se|packages|demos|export)
+    all|foundation|assets|pools|se|packages|demos|fee-detf|export)
       COMMAND="$1"
       shift
       ;;
@@ -345,7 +354,8 @@ log_info "SENDER=$SENDER OUT_DIR=$OUT_DIR_OVERRIDE"
 
 case "$COMMAND" in
   all)
-    run_stages 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
+    # Lab path (inert demos) then fee-DETF (CHIR live) then unified export
+    run_stages 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
     ;;
   foundation)
     run_stages 00 01 02 03
@@ -365,8 +375,12 @@ case "$COMMAND" in
   demos)
     run_stages 13
     ;;
+  fee-detf)
+    # Requires foundation + stage 11 children (bond NFT / claim pkgs)
+    run_stages 14 15 16 17 18 19 20 21
+    ;;
   export)
-    run_stages 14
+    run_stages 22
     ;;
   stage*)
     n="${COMMAND#stage}"

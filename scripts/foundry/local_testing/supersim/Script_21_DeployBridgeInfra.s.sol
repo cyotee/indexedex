@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.30;
 
 import {Script_24_DeploySuperchainBridgeInfra} from "../../supersim/Script_24_DeploySuperchainBridgeInfra.s.sol";

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
@@ -164,7 +164,7 @@ contract SingleStandardExchangeDETF_ProtocolCompound_Test is TestBase_SingleStan
     /*                                 C5                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C5: claim package not deployed in Single SE TestBase; claim rate path uses protocol NFT
+    /// @dev C5: rebasing claim is wired at deploy; claim rate path uses protocol NFT
     ///      principal BPT (`originalSharesOf(detfNFTId)`). Compound must increase that principal.
     function test_C5_protocolCompoundRaisesClaimRateProxyPrincipal() public {
         uint256 principalBefore_ = _protocolNftPrincipal(compoundDetf);

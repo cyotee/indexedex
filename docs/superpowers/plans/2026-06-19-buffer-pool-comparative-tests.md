@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Solc `0.8.30`; license header `// SPDX-License-Identifier: BUSL-1.1`; `pragma solidity ^0.8.0;` (match sibling test files).
+- Solc `0.8.30`; license header `// SPDX-License-Identifier: BSL-1.1`; `pragma solidity ^0.8.0;` (match sibling test files).
 - Import `IERC20` from `@crane/contracts/interfaces/IERC20.sol` (Crane's IERC20 is canonical — NOT OpenZeppelin's).
 - Test paths live under `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/`.
 - No production contracts change — additive test-only work.
@@ -113,7 +113,7 @@ enum TokenType { STANDARD, WITH_RATE }
 - [ ] **Step 1: Create the base file with reference-pool deployment wired into `setUp`**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -353,7 +353,7 @@ Then in `_deployReferencePool()` add, after the `approveForPool(IERC20(reference
 Create `comparative/StandardExchangeBufferPool_Comparative.spec.t.sol`:
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {
@@ -453,7 +453,7 @@ guaranteed.
 Create `comparative/behaviors/Behavior_StandardExchangeBufferPool_Comparative.sol`:
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";

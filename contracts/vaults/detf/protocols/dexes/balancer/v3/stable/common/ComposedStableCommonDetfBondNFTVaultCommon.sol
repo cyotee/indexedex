@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
@@ -15,6 +15,8 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IDetfErrors {
     error BaseSharesZero();
     error DeadlineExceeded(uint256 deadline, uint256 currentTimestamp);
     error LockDurationNotExpired(uint256 currentTime, uint256 unlockTime);
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientOriginalShares(uint256 needed, uint256 available);
     error NotBondHolder(address owner, address caller);
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);

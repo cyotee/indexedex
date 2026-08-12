@@ -78,6 +78,7 @@ export default function BondSection({
 
       <label className="mt-3 block text-xs text-[var(--text-muted,#9aa3b2)]">Lock (days)</label>
       <input
+        data-testid="staking-bond-lock-days"
         value={lockDays}
         onChange={(event) => setLockDays(event.target.value)}
         className={inputClass}
@@ -85,7 +86,7 @@ export default function BondSection({
       />
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className={panelClass}>
+        <div className={panelClass} data-testid="staking-bond-rate-asset-panel">
           <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">
             Bond with {rateAssetSymbol}
           </div>
@@ -94,6 +95,7 @@ export default function BondSection({
             {bondWethAsEth ? 'ETH amount' : `${rateAssetSymbol} amount`}
           </label>
           <input
+            data-testid="staking-bond-rate-asset-amount"
             value={bondWethAmount}
             onChange={(event) => setBondWethAmount(event.target.value)}
             className={inputClass}
@@ -101,6 +103,7 @@ export default function BondSection({
           />
           <label className="mt-2 flex items-center gap-2 text-xs text-[var(--text-muted,#9aa3b2)]">
             <input
+              data-testid="staking-bond-wrap-eth"
               type="checkbox"
               checked={bondWethAsEth}
               onChange={(event) => setBondWethAsEth(event.target.checked)}
@@ -109,7 +112,7 @@ export default function BondSection({
             Wrap native ETH into WETH before bonding
           </label>
           {wethBalance !== undefined ? (
-            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="staking-bond-rate-asset-balance">
               Balance: {formatUnits(wethBalance, wethDecimals)} {rateAssetSymbol}
             </div>
           ) : null}
@@ -122,6 +125,7 @@ export default function BondSection({
             type="button"
             variant="primary"
             className="mt-3 w-full"
+            data-testid="staking-bond-rate-asset-submit"
             onClick={() =>
               parsedBondWeth !== undefined
                 ? void onBondWithWeth(parsedBondWeth, lockSeconds, bondWethAsEth)
@@ -136,7 +140,7 @@ export default function BondSection({
           </Button>
         </div>
 
-        <div className={panelClass}>
+        <div className={panelClass} data-testid="staking-bond-pair-token-panel">
           <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">
             Bond with {pairTokenSymbol}
           </div>
@@ -145,13 +149,14 @@ export default function BondSection({
             {pairTokenSymbol} amount
           </label>
           <input
+            data-testid="staking-bond-pair-token-amount"
             value={bondRichAmount}
             onChange={(event) => setBondRichAmount(event.target.value)}
             className={inputClass}
             placeholder="100"
           />
           {richBalance !== undefined ? (
-            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="staking-bond-pair-token-balance">
               Balance: {formatUnits(richBalance, richDecimals)} {pairTokenSymbol}
             </div>
           ) : null}
@@ -164,6 +169,7 @@ export default function BondSection({
             type="button"
             variant="secondary"
             className="mt-3 w-full"
+            data-testid="staking-bond-pair-token-submit"
             onClick={() =>
               parsedBondRich !== undefined
                 ? void onBondWithRich(parsedBondRich, lockSeconds)

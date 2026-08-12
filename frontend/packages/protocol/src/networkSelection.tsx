@@ -4,6 +4,7 @@ import { createContext, useContext } from 'react'
 
 import {
   CHAIN_ID_BASE_SEPOLIA,
+  CHAIN_ID_ROBINHOOD,
   CHAIN_ID_SEPOLIA,
   type CanonicalArtifactChainId,
 } from './addressArtifacts'
@@ -22,7 +23,11 @@ export const NetworkSelectionContext = createContext<NetworkSelectionContextValu
 })
 
 export function isCanonicalArtifactChainId(value: number): value is CanonicalArtifactChainId {
-  return value === CHAIN_ID_SEPOLIA || value === CHAIN_ID_BASE_SEPOLIA
+  return (
+    value === CHAIN_ID_SEPOLIA ||
+    value === CHAIN_ID_BASE_SEPOLIA ||
+    value === CHAIN_ID_ROBINHOOD
+  )
 }
 
 export function useSelectedNetwork(): NetworkSelectionContextValue {

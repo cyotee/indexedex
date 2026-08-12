@@ -133,11 +133,12 @@ Shared expectations (thresholds, bond maturity → claim, immutable instances, f
 
 | Family | Path | Co-located PRD |
 |--------|------|----------------|
-| Single SE | `…/uniswap/v4/standardExchange/single/` | `UniV4SingleStandardExchangeDETF_PRD.md` |
 | Single SE constant product | `…/uniswap/v4/standardExchange/constantProduct/single/` | `UniswapV4SingleStandardExchangeDETF_PRD.md` |
 | SE weighted | `…/uniswap/v4/standardExchange/weighted/` | `UniswapV4StandardExchangeWeightedDETF_PRD.md` |
 | SE orbital | `…/uniswap/v4/standardExchange/orbital/` | `UniswapV4StandardExchangeOrbitalDETF_PRD.md` |
 | Shared NFT / rebasing claim | `…/uniswap/v4/common/{nft,rebasing}/` | — |
+
+**Removed:** listing-family draft at `…/uniswap/v4/standardExchange/single/` (hooks=`0` listing pool; no liquidity-holding reserve).
 
 ## Uniswap V4 hooks
 

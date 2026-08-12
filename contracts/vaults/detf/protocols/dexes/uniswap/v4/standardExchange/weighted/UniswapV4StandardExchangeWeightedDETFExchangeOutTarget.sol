@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -55,6 +55,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
         uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
         BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
+        _syncAllExpectedHoldReserves();
     }
 
     function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {
@@ -112,19 +113,6 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
         return _isShareOrSeTokenOut(tokenOut_);
     }
 
-    function _isShareOrSeTokenOut(IERC20 tokenOut_) internal view returns (bool) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        for (uint8 i; i < s.m; ++i) {
-            if (address(tokenOut_) == address(s.vaultShares[i])) return true;
-            if (
-                address(s.standardExchanges[i]) != address(0)
-                    && _tokenInSeTokens(tokenOut_, address(s.standardExchanges[i]))
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     function _pairProductIndexForBurnOut(IERC20 tokenOut_) internal view returns (uint8) {
         if (Repo._isPairToken(address(tokenOut_))) {
@@ -134,36 +122,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
         return Repo._productIndexOfPair(_pairForShareOut(tokenOut_));
     }
 
-    function _pairForShareOut(IERC20 tokenOut_) internal view returns (address) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        for (uint8 i; i < s.m; ++i) {
-            if (
-                address(tokenOut_) == address(s.vaultShares[i])
-                    || (
-                        address(s.standardExchanges[i]) != address(0)
-                            && _tokenInSeTokens(tokenOut_, address(s.standardExchanges[i]))
-                    )
-            ) {
-                return address(s.pairTokens[i]);
-            }
-        }
-        revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
-    }
 
-    function _seWrap(address pair_, uint256 pairAmt_, IERC20 tokenOut_, address recipient_)
-        internal
-        returns (uint256 out_)
-    {
-        if (pairAmt_ == 0) return 0;
-        Repo.Storage storage s = Repo._layoutStruct();
-        uint8 idx_ = Repo._productIndexOfPair(pair_);
-        address se_ = address(s.standardExchanges[idx_]);
-        if (se_ == address(0)) revert Repo.InvalidRoute(IERC20(pair_), tokenOut_);
-        IERC20(pair_).forceApprove(se_, pairAmt_);
-        out_ = IStandardExchangeIn(se_).exchangeIn(
-            IERC20(pair_), pairAmt_, tokenOut_, 0, recipient_, false, block.timestamp + 1
-        );
-    }
 
     function _previewBurnDetfExactIn(uint256 detfIn_, IERC20 tokenOut_)
         internal

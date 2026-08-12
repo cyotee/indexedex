@@ -2,8 +2,13 @@ import type { RiskLevel } from './riskFromTags'
 
 export type Address = `0x${string}`
 
-/** Earn catalog product kinds merged from tokenlists. */
-export type EarnProductType = 'strategy' | 'protocol-detf'
+/**
+ * Earn catalog product kinds.
+ * - `strategy` — SE / buffer vaults
+ * - `detf` — standard DETF instances (lab / non-fee)
+ * - `protocol-detf` — fee DETF only (product brand “Protocol DETF”; usually lives on /staking)
+ */
+export type EarnProductType = 'strategy' | 'detf' | 'protocol-detf'
 
 export type { RiskLevel }
 
@@ -26,7 +31,7 @@ export type EarnProductInput = {
   symbol: string
   decimals: number
   display?: string
-  /** Uniswap-style tokenlist tags (may include risk-*). */
+  /** Uniswap-style tokenlist tags (may include risk-*, fee-detf). */
   tags?: string[]
   extensions?: Record<string, unknown>
   /** Pre-resolved risk; if omitted, assembled from tags/extensions. */
@@ -47,5 +52,6 @@ export type EarnFilterOptions = {
 
 export const EARN_PRODUCT_TYPE_LABEL: Record<EarnProductType, string> = {
   strategy: 'Strategy',
+  detf: 'DETF',
   'protocol-detf': 'Protocol DETF',
 }

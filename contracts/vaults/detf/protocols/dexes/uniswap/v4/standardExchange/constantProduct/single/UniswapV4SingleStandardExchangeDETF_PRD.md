@@ -13,7 +13,7 @@
 | **Reserve hook (mandatory dependency)** | [`UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`](../../../../../../../../../hooks/uniswap/v4/standardExchange/constantProduct/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md) |
 | **Hook impl plan** | Same directory under hooks — hook ABI freeze is a **hard coding gate** for this DETF |
 | **This family impl plan** | [`UniswapV4SingleStandardExchangeDETF_IMPLEMENTATION_AND_TEST_PLAN.md`](./UniswapV4SingleStandardExchangeDETF_IMPLEMENTATION_AND_TEST_PLAN.md) (implementor SoT once stamped) |
-| **Superseded topology** | `…/uniswap/v4/standardExchange/single/UniV4SingleStandardExchangeDETF_PRD.md` (listing pool `hooks=0`, dual OOR bonds, app TWAP) — **do not implement that shape for this family** |
+| **Removed topology** | Former listing-family draft at `…/uniswap/v4/standardExchange/single/` (listing pool `hooks=0`, dual OOR bonds, app TWAP; no liquidity-holding reserve) — **deleted**; do not reintroduce |
 | **Behavioral peer (code)** | Balancer `SingleStandardExchangeDETF` under `detf/…/balancer/v3/standardExchange/single/` — seigniorage split, burn LP formula, bond lifecycle, compound/expansion libs |
 | **Shared core** | `detf/common/core/*` (`DETFThresholdPolicy`, `DETFUsageFeeLib`, `DETFBondNFTMathLib`, `DETFNaturalExpansionLib` **or epoch successor**, compound helpers) |
 | **Shared compound / expansion law** | `docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md` (this family **in scope**). **Epoch form + debt-inclusive synthetic** are the **planned shared target** for all true DETFs (amendment soon); this PRD §10 is the normative draft of that form. |
@@ -739,7 +739,7 @@ contracts/vaults/detf/protocols/dexes/uniswap/v4/
         UniswapV4SingleStandardExchangeDETFRepo.sol
         UniswapV4SingleStandardExchangeDETFCommon.sol
         … Facets / Targets / FactoryService / TestBase
-    single/   # SUPERSEDED listing-family draft — do not extend for this product
+    # former single/ listing-family draft — deleted (no liquidity-holding reserve)
   common/
     nft/      # Uni V4 DETF bond NFT (LP principal)
     rebasing/ # claim on protocol hook LP (holds protocol LP)

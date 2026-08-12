@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -10,8 +10,8 @@ import {
     UniswapV4StandardExchangeOrbitalBufferHookRepo as HookRepo
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeOrbitalDETFExchangeInTarget
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFExchangeInTarget.sol";
+    UniswapV4StandardExchangeOrbitalDETFCommon
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFCommon.sol";
 import {
     UniswapV4StandardExchangeOrbitalDETFRepo as Repo
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFRepo.sol";
@@ -22,9 +22,9 @@ import {
 /// @title UniswapV4StandardExchangeOrbitalDETFBondingTarget
 /// @notice Dual-leg first bond, live single/dual bonds, mature-only sell/close, claim, compound.
 /// @dev Info getters live on UniswapV4StandardExchangeOrbitalDETFInfoTarget (size split).
-abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
-    UniswapV4StandardExchangeOrbitalDETFExchangeInTarget
-{
+/// @dev Option 1e: sibling of Exchange Targets under Common (not Bonding→In→Out tower).
+abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4StandardExchangeOrbitalDETFCommon {
+
     using BetterSafeERC20 for IERC20;
 
     /* ---------------------------------------------------------------------- */
@@ -107,6 +107,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         Repo._setCapital(tokenId_, IUniswapV4StandardExchangeOrbitalDETF.CapitalMode.Single, cap_, address(0));
         Repo._addUserBondedLp(shares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _bondDual(
@@ -159,6 +160,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         );
         Repo._addUserBondedLp(shares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function _firstBondJoin(uint256 p0Native_, uint256 p1Native_) internal returns (uint256 lpOut_) {
@@ -271,6 +273,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         Repo._clearCapital(tokenId_);
         Repo._subUserBondedLp(principalShares_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @notice IUniswapV4StandardExchangeOrbitalDETF surface
@@ -326,6 +329,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         Repo._clearCapital(tokenId_);
         Repo._subUserBondedLp(lp_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @notice IUniswapV4StandardExchangeOrbitalDETF surface
@@ -346,6 +350,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is
         // L-REW-2/3: execute claim; return 0 only when allowed and no rewards.
         rewards_ = s.bondNftVault.claimRewards(tokenId_, recipient_);
         _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     /* ---------------------------------------------------------------------- */

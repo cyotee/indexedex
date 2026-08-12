@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -59,6 +59,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
         BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
+        _syncAllExpectedHoldReserves();
     }
 
     function _requireBurnTokenOut(IERC20 tokenOut_) private view {
@@ -126,50 +127,8 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         return DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
     }
 
-    function _isShareOrSeTokenOut(IERC20 tokenOut_) internal view returns (bool) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (address(tokenOut_) == address(s.vaultShare0) || address(tokenOut_) == address(s.vaultShare1)) {
-            return true;
-        }
-        if (address(s.standardExchange0) != address(0) && _tokenInSeTokens(tokenOut_, address(s.standardExchange0))) {
-            return true;
-        }
-        if (address(s.standardExchange1) != address(0) && _tokenInSeTokens(tokenOut_, address(s.standardExchange1))) {
-            return true;
-        }
-        return false;
-    }
 
-    function _pairForShareOut(IERC20 tokenOut_) internal view returns (address) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (
-            address(tokenOut_) == address(s.vaultShare0)
-                || (address(s.standardExchange0) != address(0)
-                    && _tokenInSeTokens(tokenOut_, address(s.standardExchange0)))
-        ) {
-            return address(s.pairToken0);
-        }
-        return address(s.pairToken1);
-    }
 
-    function _seWrap(address pair_, uint256 pairAmt_, IERC20 tokenOut_, address recipient_)
-        internal
-        returns (uint256 out_)
-    {
-        if (pairAmt_ == 0) return 0;
-        Repo.Storage storage s = Repo._layoutStruct();
-        address se_;
-        if (pair_ == address(s.pairToken0)) {
-            se_ = address(s.standardExchange0);
-        } else {
-            se_ = address(s.standardExchange1);
-        }
-        if (se_ == address(0)) revert Repo.InvalidRoute(IERC20(pair_), tokenOut_);
-        IERC20(pair_).forceApprove(se_, pairAmt_);
-        out_ = IStandardExchangeIn(se_).exchangeIn(
-            IERC20(pair_), pairAmt_, tokenOut_, 0, recipient_, false, block.timestamp + 1
-        );
-    }
 
     /// @dev Pair residual after preview-remove (DETF leg assumed redeposited).
     struct BurnPreviewResidual {

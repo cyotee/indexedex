@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
@@ -247,6 +247,27 @@ contract AaveV3StataStandardExchangeDFPkg is IAaveV3StataStandardExchangeDFPkg {
         ERC4626Repo._initialize(IERC20(args.stataToken), dec, 0);
         // Also set last total assets if needed for the vault.
         ERC4626Repo._setLastTotalAssets(0);
+
+        // Expected-hold set for reserve-delta pretransfer + full-set end-of-money sync.
+        // Underlyings: stata reserve + base underlying + aToken sleeve when present.
+        address underlying_ = IERC4626(args.stataToken).asset();
+        address aToken_;
+        (bool ok_, bytes memory ret_) = args.stataToken.staticcall(abi.encodeWithSignature("aToken()"));
+        if (ok_ && ret_.length >= 32) {
+            aToken_ = abi.decode(ret_, (address));
+        }
+        if (aToken_ != address(0) && aToken_ != underlying_ && aToken_ != args.stataToken) {
+            address[] memory vaultTokens = new address[](3);
+            vaultTokens[0] = args.stataToken;
+            vaultTokens[1] = underlying_;
+            vaultTokens[2] = aToken_;
+            MultiAssetBasicVaultRepo._initialize(vaultTokens);
+        } else {
+            address[] memory vaultTokens = new address[](2);
+            vaultTokens[0] = args.stataToken;
+            vaultTokens[1] = underlying_;
+            MultiAssetBasicVaultRepo._initialize(vaultTokens);
+        }
     }
 
     function postDeploy(address) public returns (bool) {

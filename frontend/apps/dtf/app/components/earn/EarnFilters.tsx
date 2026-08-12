@@ -7,7 +7,8 @@ export type EarnTypeFilter = EarnProductType | 'all'
 const OPTIONS: { id: EarnTypeFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'strategy', label: 'Strategy' },
-  { id: 'protocol-detf', label: 'Protocol DETF' },
+  // Lab / non-fee DETFs. Fee product brand “Protocol DETF” lives on /staking, not this chip.
+  { id: 'detf', label: 'DETF' },
 ]
 
 export function EarnFilters({

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -27,7 +27,7 @@ import {
 contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultStableDetf_Adversarial {
     /// @dev Target-derived control set: money + bonding + info (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](34);
+        sels_ = new bytes4[](40);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -35,33 +35,39 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         sels_[4] = IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector;
         sels_[5] = IMixedBufferMultiVaultStableDetfBonding.bond.selector;
         sels_[6] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToDetfNft.selector;
-        sels_[7] = IMixedBufferMultiVaultStableDetfBonding.sellNFT.selector;
-        sels_[8] = IMixedBufferMultiVaultStableDetfBonding.acceptedBondTokens.selector;
-        sels_[9] = IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector;
-        sels_[10] = IMixedBufferMultiVaultStableDetfInfo.isReserveLive.selector;
-        sels_[11] = IMixedBufferMultiVaultStableDetfInfo.vaultCount.selector;
-        sels_[12] = IMixedBufferMultiVaultStableDetfInfo.underlyingVaults.selector;
-        sels_[13] = IMixedBufferMultiVaultStableDetfInfo.vaultShares.selector;
-        sels_[14] = IMixedBufferMultiVaultStableDetfInfo.bufferToken.selector;
-        sels_[15] = IMixedBufferMultiVaultStableDetfInfo.amplificationParameter.selector;
-        sels_[16] = IMixedBufferMultiVaultStableDetfInfo.rateProvider.selector;
-        sels_[17] = IMixedBufferMultiVaultStableDetfInfo.reservePool.selector;
-        sels_[18] = IMixedBufferMultiVaultStableDetfInfo.syntheticPrice.selector;
-        sels_[19] = IMixedBufferMultiVaultStableDetfInfo.mintThreshold.selector;
-        sels_[20] = IMixedBufferMultiVaultStableDetfInfo.burnThreshold.selector;
-        sels_[21] = IMixedBufferMultiVaultStableDetfInfo.thresholdMode.selector;
-        sels_[22] = IMixedBufferMultiVaultStableDetfInfo.isMintingAllowed.selector;
-        sels_[23] = IMixedBufferMultiVaultStableDetfInfo.isBurningAllowed.selector;
-        sels_[24] = IMixedBufferMultiVaultStableDetfInfo.bondNftVault.selector;
-        sels_[25] = IMixedBufferMultiVaultStableDetfInfo.rebasingClaimToken.selector;
-        sels_[26] = IMixedBufferMultiVaultStableDetfInfo.detfIndex.selector;
-        sels_[27] = IMixedBufferMultiVaultStableDetfInfo.bufferIndex.selector;
-        sels_[28] = IMixedBufferMultiVaultStableDetfInfo.shareIndex.selector;
-        sels_[29] = IMixedBufferMultiVaultStableDetfInfo.compoundProtocolRewards.selector;
-        sels_[30] = IMixedBufferMultiVaultStableDetfInfo.lastExpansionTimestamp.selector;
-        sels_[31] = IMixedBufferMultiVaultStableDetfInfo.expansionClosureRatePerSecond.selector;
-        sels_[32] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpMaxSeconds.selector;
-        sels_[33] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpCapBps.selector;
+        sels_[7] = IMixedBufferMultiVaultStableDetfBonding.acceptedBondTokens.selector;
+        sels_[8] = IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector;
+        sels_[9] = IMixedBufferMultiVaultStableDetfBonding.buyClaim.selector;
+        sels_[10] = IMixedBufferMultiVaultStableDetfBonding.previewBuyClaim.selector;
+        sels_[11] = IMixedBufferMultiVaultStableDetfBonding.closeBondMature.selector;
+        sels_[12] = IMixedBufferMultiVaultStableDetfBonding.previewCloseBondMature.selector;
+        sels_[13] = IMixedBufferMultiVaultStableDetfBonding.previewRedeemClaim.selector;
+        sels_[14] = IMixedBufferMultiVaultStableDetfBonding.claimLiquidity.selector;
+        sels_[15] = IMixedBufferMultiVaultStableDetfBonding.protocolBondOriginalShares.selector;
+        sels_[16] = IMixedBufferMultiVaultStableDetfInfo.isReserveLive.selector;
+        sels_[17] = IMixedBufferMultiVaultStableDetfInfo.vaultCount.selector;
+        sels_[18] = IMixedBufferMultiVaultStableDetfInfo.underlyingVaults.selector;
+        sels_[19] = IMixedBufferMultiVaultStableDetfInfo.vaultShares.selector;
+        sels_[20] = IMixedBufferMultiVaultStableDetfInfo.bufferToken.selector;
+        sels_[21] = IMixedBufferMultiVaultStableDetfInfo.amplificationParameter.selector;
+        sels_[22] = IMixedBufferMultiVaultStableDetfInfo.rateProvider.selector;
+        sels_[23] = IMixedBufferMultiVaultStableDetfInfo.reservePool.selector;
+        sels_[24] = IMixedBufferMultiVaultStableDetfInfo.syntheticPrice.selector;
+        sels_[25] = IMixedBufferMultiVaultStableDetfInfo.mintThreshold.selector;
+        sels_[26] = IMixedBufferMultiVaultStableDetfInfo.burnThreshold.selector;
+        sels_[27] = IMixedBufferMultiVaultStableDetfInfo.thresholdMode.selector;
+        sels_[28] = IMixedBufferMultiVaultStableDetfInfo.isMintingAllowed.selector;
+        sels_[29] = IMixedBufferMultiVaultStableDetfInfo.isBurningAllowed.selector;
+        sels_[30] = IMixedBufferMultiVaultStableDetfInfo.bondNftVault.selector;
+        sels_[31] = IMixedBufferMultiVaultStableDetfInfo.rebasingClaimToken.selector;
+        sels_[32] = IMixedBufferMultiVaultStableDetfInfo.detfIndex.selector;
+        sels_[33] = IMixedBufferMultiVaultStableDetfInfo.bufferIndex.selector;
+        sels_[34] = IMixedBufferMultiVaultStableDetfInfo.shareIndex.selector;
+        sels_[35] = IMixedBufferMultiVaultStableDetfInfo.compoundProtocolRewards.selector;
+        sels_[36] = IMixedBufferMultiVaultStableDetfInfo.lastExpansionTimestamp.selector;
+        sels_[37] = IMixedBufferMultiVaultStableDetfInfo.expansionClosureRatePerSecond.selector;
+        sels_[38] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpMaxSeconds.selector;
+        sels_[39] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpCapBps.selector;
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {
@@ -75,25 +81,54 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
     /*  J1: Target/product selectors ⊆ Facet.facetFuncs()                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice J1: Target/product API selectors ⊆ Facet.facetFuncs().
+    /// @notice J1: Target/product API selectors ⊆ role facetFuncs(); sellNFT is gone.
     function test_J1_targetSelectors_subseteq_facetFuncs() public view {
-        // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
-        IFacet facet_ = mixedBufferDetfExchangeInFacet;
-        bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 35, "facetFuncs length");
+        bytes4[] memory xfuncs_ = mixedBufferDetfExchangeInFacet.facetFuncs();
+        assertTrue(_contains(xfuncs_, IStandardExchangeIn.exchangeIn.selector), "exchangeIn");
+        assertTrue(_contains(xfuncs_, IStandardExchangeIn.previewExchangeIn.selector), "previewExchangeIn");
 
+        bytes4[] memory funcs_ = mixedBufferDetfBondingFacet.facetFuncs();
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector), "bootstrap");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.bond.selector), "bond");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector), "redeemClaim");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.buyClaim.selector), "buyClaim");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.closeBondMature.selector), "close");
+        assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
+
+        bytes4[] memory ifuncs_ = mixedBufferDetfInfoFacet.facetFuncs();
+        assertTrue(_contains(ifuncs_, IMixedBufferMultiVaultStableDetfInfo.isReserveLive.selector), "isReserveLive");
+        assertTrue(_contains(ifuncs_, IMixedBufferMultiVaultStableDetfInfo.syntheticPrice.selector), "syntheticPrice");
+        assertTrue(_contains(ifuncs_, IMixedBufferMultiVaultStableDetfInfo.compoundProtocolRewards.selector), "compound");
+        assertTrue(
+            _contains(ifuncs_, bytes4(keccak256("compoundProtocolRewardsAtomic()"))),
+            "J1 atomic compound"
+        );
+
+        bytes4[] memory union_ = _unionFacetFuncs();
         bytes4[] memory controls_ = _controlSelectors();
         for (uint256 i; i < controls_.length; ++i) {
             assertTrue(
-                _contains(funcs_, controls_[i]),
+                _contains(union_, controls_[i]),
                 string.concat("J1 missing selector idx ", vm.toString(i))
             );
         }
-        // Atomic compound helper is Facet-only (not on IMixedBufferMultiVaultStableDetfInfo).
-        assertTrue(
-            _contains(funcs_, bytes4(keccak256("compoundProtocolRewardsAtomic()"))),
-            "J1 atomic compound"
-        );
+    }
+
+    function _unionFacetFuncs() internal view returns (bytes4[] memory union_) {
+        bytes4[] memory a = mixedBufferDetfExchangeInFacet.facetFuncs();
+        bytes4[] memory b = mixedBufferDetfBondingFacet.facetFuncs();
+        bytes4[] memory c = mixedBufferDetfInfoFacet.facetFuncs();
+        union_ = new bytes4[](a.length + b.length + c.length);
+        uint256 n;
+        for (uint256 i; i < a.length; ++i) {
+            union_[n++] = a[i];
+        }
+        for (uint256 i; i < b.length; ++i) {
+            union_[n++] = b[i];
+        }
+        for (uint256 i; i < c.length; ++i) {
+            union_[n++] = c[i];
+        }
     }
 
     /* ---------------------------------------------------------------------- */
@@ -173,7 +208,7 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         // sellPosition: product revert (not missing selector) — non-owner / invalid id.
         vm.prank(attacker);
         vm.expectRevert();
-        bonding_.sellPositionToDetfNft(1, attacker);
+        bonding_.sellPositionToDetfNft(1, 0, attacker);
 
         // Live money smoke: mint buffer → DETF on diamond proxy (not facet impl).
         uint256 mintIn_ = 50e18;
@@ -193,7 +228,7 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         IFacet facet_ = mixedBufferDetfExchangeInFacet;
         (string memory name_, bytes4[] memory ifaces_, bytes4[] memory funcs_) = facet_.facetMetadata();
         assertEq(keccak256(bytes(name_)), keccak256(bytes("MixedBufferMultiVaultStableDetfExchangeInFacet")));
-        assertTrue(ifaces_.length >= 3, "interfaces");
+        assertTrue(ifaces_.length >= 1, "interfaces");
         assertEq(facet_.facetFuncs().length, funcs_.length, "funcs match metadata");
         assertEq(
             keccak256(abi.encodePacked(funcs_)),

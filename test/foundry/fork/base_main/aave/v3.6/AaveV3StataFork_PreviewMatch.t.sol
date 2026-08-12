@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {TestBase_AaveV3StataFork} from "./TestBase_AaveV3StataFork.sol";
@@ -18,8 +18,14 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
  *         Includes fuzz variants for robustness.
  */
 contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
+    /// @dev Live Stata maxDeposit can be 0 when reserve is paused/frozen or supply cap is full.
+    function _liveStataDepositRoomOk(uint256 amount) internal view returns (bool) {
+        return IERC4626(liveStata).maxDeposit(vault) >= amount;
+    }
+
     function test_Fork_Real_BaseToSE_PreviewMatchesExec() public {
         uint256 amount = 1e18;
+        if (!_liveStataDepositRoomOk(amount)) return;
         deal(liveUnderlying, address(this), amount);
         IERC20(liveUnderlying).approve(vault, amount);
 
@@ -38,6 +44,7 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
 
     function test_Fork_Real_SEToStata_PreviewMatchesExec() public {
         uint256 dep = 2e18;
+        if (!_liveStataDepositRoomOk(dep)) return;
         deal(liveUnderlying, address(this), dep);
         IERC20(liveUnderlying).approve(vault, dep);
 
@@ -64,6 +71,7 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
 
     function test_Fork_Real_SEToBase_PreviewMatchesExec() public {
         uint256 dep = 1.5e18;
+        if (!_liveStataDepositRoomOk(dep)) return;
         deal(liveUnderlying, address(this), dep);
         IERC20(liveUnderlying).approve(vault, dep);
 
@@ -88,7 +96,11 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
     /* --------------------------- Fuzz on fork (production) --------------------------- */
 
     function testFuzz_Fork_BaseToSE(uint256 amount) public {
-        amount = bound(amount, 0.01e18, 10e18);
+        // When live stata supply cap is full / paused, maxDeposit is 0 — do not vm.assume
+        // (would exhaust fuzz rejects). Skip the run cleanly.
+        uint256 maxDep = IERC4626(liveStata).maxDeposit(vault);
+        if (maxDep < 0.01e18) return;
+        amount = bound(amount, 0.01e18, maxDep < 10e18 ? maxDep : 10e18);
         deal(liveUnderlying, address(this), amount);
         IERC20(liveUnderlying).approve(vault, amount);
 
@@ -103,7 +115,9 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
     }
 
     function testFuzz_Fork_SEToStata(uint256 dep, uint256 burnPct) public {
-        dep = bound(dep, 0.1e18, 5e18);
+        uint256 maxDep = IERC4626(liveStata).maxDeposit(vault);
+        if (maxDep < 0.1e18) return;
+        dep = bound(dep, 0.1e18, maxDep < 5e18 ? maxDep : 5e18);
         burnPct = bound(burnPct, 1, 80);
 
         deal(liveUnderlying, address(this), dep);
@@ -127,7 +141,9 @@ contract AaveV3StataFork_PreviewMatch is TestBase_AaveV3StataFork {
     }
 
     function testFuzz_Fork_FeeAndPre(uint256 amount, uint256 feeWad) public {
-        amount = bound(amount, 0.1e18, 3e18);
+        uint256 maxDep = IERC4626(liveStata).maxDeposit(vault);
+        if (maxDep < 0.1e18) return;
+        amount = bound(amount, 0.1e18, maxDep < 3e18 ? maxDep : 3e18);
         feeWad = bound(feeWad, 0, 0.05e18); // 0-5%
 
         deal(liveUnderlying, address(this), amount);

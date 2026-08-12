@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
@@ -117,7 +117,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 rootKNow,
         uint256 rootKLast,
         uint256 ownerFeeShare
-    ) internal pure returns (uint256) {
+    ) external pure returns (uint256) {
         if (supply == 0 || rootKLast == 0 || rootKNow <= rootKLast || ownerFeeShare == 0) {
             return 0;
         }
@@ -131,7 +131,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     /*                     classic Curve getD / getY (n=4)                    */
     /* ---------------------------------------------------------------------- */
 
-    function getD(uint256[4] memory xp, uint256 amp) internal pure returns (uint256) {
+    function getD(uint256[4] memory xp, uint256 amp) external pure returns (uint256) {
         return _getD(xp, amp);
     }
 
@@ -186,7 +186,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     }
 
     function getY(uint256 i, uint256 j, uint256 x, uint256[4] memory xp, uint256 amp, uint256 D)
-        internal
+        external
         pure
         returns (uint256)
     {
@@ -251,7 +251,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 j,
         uint256 amountInRatedNet,
         uint256 amp
-    ) internal pure returns (uint256 amountOutRated) {
+    ) external pure returns (uint256 amountOutRated) {
         if (amountInRatedNet == 0) revert ZeroAmount();
         if (i == j || i >= N_TOKENS || j >= N_TOKENS) revert InvariantFailed();
         if (xp[i] == 0 || xp[j] == 0) revert InvariantFailed();
@@ -269,7 +269,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 j,
         uint256 amountOutRated,
         uint256 amp
-    ) internal pure returns (uint256 amountInRatedNet) {
+    ) external pure returns (uint256 amountInRatedNet) {
         if (amountOutRated == 0) revert ZeroAmount();
         if (i == j || i >= N_TOKENS || j >= N_TOKENS) revert InvariantFailed();
         if (xp[i] == 0 || xp[j] == 0) revert InvariantFailed();
@@ -288,14 +288,14 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     /*                         LP share helpers (inventory)                   */
     /* ---------------------------------------------------------------------- */
 
-    function firstMintShares(uint256[4] memory invWad) internal pure returns (uint256 shares) {
+    function firstMintShares(uint256[4] memory invWad) external pure returns (uint256 shares) {
         uint256 geo = geometricMean4(invWad[0], invWad[1], invWad[2], invWad[3]);
         if (geo <= MINIMUM_LIQUIDITY) revert ZeroAmount();
         shares = geo - MINIMUM_LIQUIDITY;
     }
 
     function proportionalJoinShares(uint256[4] memory amountWad, uint256[4] memory reserveWad, uint256 supply)
-        internal
+        external
         pure
         returns (uint256 shares)
     {
@@ -320,7 +320,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     }
 
     function proportionalExitAmounts(uint256 shares, uint256[4] memory natives, uint256 supply)
-        internal
+        external
         pure
         returns (uint256[4] memory amounts)
     {
@@ -341,7 +341,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 amp,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0 || amountInWad == 0) revert ZeroAmount();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         if (tokenInIndex >= N_TOKENS) revert MathDomain();
@@ -381,7 +381,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 amp,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 amountOutWad) {
+    ) external pure returns (uint256 amountOutWad) {
         if (sharesIn == 0 || supply == 0 || sharesIn >= supply) revert MathDomain();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         if (tokenOutIndex >= N_TOKENS) revert MathDomain();
@@ -421,7 +421,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 amp,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 shares) {
+    ) external pure returns (uint256 shares) {
         if (supply == 0) revert MathDomain();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         if (countPositive(amountsWad) == 0) revert ZeroAmount();
@@ -464,7 +464,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 amp,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 amountInWad) {
+    ) external pure returns (uint256 amountInWad) {
         if (supply == 0 || sharesOut == 0) revert ZeroAmount();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         if (tokenInIndex >= N_TOKENS) revert MathDomain();
@@ -505,7 +505,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 amp,
         uint256 supply,
         uint256 swapFeeWad
-    ) internal pure returns (uint256 sharesIn) {
+    ) external pure returns (uint256 sharesIn) {
         if (amountOutWad == 0 || supply == 0) revert ZeroAmount();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
         if (tokenOutIndex >= N_TOKENS) revert MathDomain();

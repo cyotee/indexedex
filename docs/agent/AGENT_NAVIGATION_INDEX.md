@@ -28,11 +28,11 @@ method: cartographer+survey
 | CREATE3 facet / DFPkg / FactoryService | `crane-deployment`, `crane-architecture` | Crane `AGENTS.md` | `lib/crane/contracts/factories`, `lib/crane/contracts/proxies` |
 | Deploy vault or DETF package | `indexedex-testing` (deploy path) | Agent law deploy section | `contracts/manager`, `contracts/registries/vault` — `indexedexManager.deploy*DFPkg` / registry, then package `deployVault` |
 | Write hermetic Foundry tests | `crane-testing` → `indexedex-testing` | Agent law testing matrix | `contracts/test/IndexedexTest.sol`, package `TestBase_*`, `test/foundry/` |
-| Adversarial / donation / reentrancy | `crane-adversarial-testing`, `indexedex-adversarial-testing` | Agent law | DETF/SE package tests co-located or under `test/foundry/` |
+| Adversarial / donation / reentrancy | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + A0/L/M/N/O) | Agent law | DETF/SE package tests co-located or under `test/foundry/` |
+| DeFiHackLabs / incident-driven security | `defi-incident-patterns` | `docs/agent/DEFI_HACKLABS_SKILLS_IMPLEMENTATION_PLAN.md` | `lib/DeFiHackLabs` (submodule; reference only) |
 | Test coverage audit (reports only) | `docs/testing/TEST_COVERAGE_AUDIT_PRD.md` | skills DoD + catalog A–K | Outputs under `docs/testing/coverage-audit/`; feeds gap-closure implementation plan |
 | DETF mint/burn/bond/claim/compound | Family PRD + agent law § DETF | `docs/detf/*` shared programs | `contracts/vaults/detf/**` — role names only |
 | Single SE DETF (Balancer V3) | Family package docs | Agent law | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
-| Single SE DETF (Uni V4) | Co-located PRD | `UniV4SingleStandardExchangeDETF_PRD.md` | `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/single/` |
 | Uni V4 Single SE CP DETF | Co-located PRD | `UniswapV4SingleStandardExchangeDETF_PRD.md` | `…/uniswap/v4/standardExchange/constantProduct/single/` |
 | Multi-vault weighted DETF | Package TestBase / agent law | — | `contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/` |
 | Uni V4 hook diamond package | `indexedex-uniswap-v4-hook-packages` | Hook PRDs under `contracts/hooks/uniswap/v4/**` | Package → Vault Registry → hook factory; `contracts/hooks/uniswap/v4/factory/` |
@@ -42,6 +42,7 @@ method: cartographer+survey
 | Olympus port status / integration | `crane-olympus`, `olympus-architecture` | Crane capability inventory | Crane tokens/stable olympus area + skills; see Crane inventory |
 | Fee oracle / fee collector | — | Agent law platform | `contracts/oracles/fee`, `contracts/fee/collector` |
 | Frontend product / redesign | `indexedex-ui-refactor` (env/registry) | `frontend/ROADMAP.md` | `frontend/apps/**` |
+| Frontend live TX / UI e2e (DTF, RH 4663) | `indexedex-ui-tx-testing` | `frontend/apps/dtf/e2e/README.md` | `frontend/apps/dtf/e2e/**` |
 | UI product copy | `indexedex-product-voice` | — | frontend copy surfaces |
 | Docs site → skills | agent `docs-skill-scribe` + `docs-to-skills` | `skill-authoring` | skill trees under Crane or IX SoT |
 | Cartographer re-index / graph | Installer + CLI | This index | `.cartographer/`, `lib/crane/.cartographer/` |

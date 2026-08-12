@@ -1,10 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {
@@ -45,10 +46,14 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is
             if (amountOut_ < minAmountOut_) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
             }
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
         if (address(tokenIn_) != address(this)) {
-            return _sePassthrough(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            amountOut_ =
+                _sePassthrough(tokenIn_, amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
+            _syncAllExpectedHoldReserves();
+            return amountOut_;
         }
         revert Repo.InvalidRoute(tokenIn_, tokenOut_);
     }
@@ -81,10 +86,15 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is
         }
         uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
         address se_ = address(Repo._layoutStruct().standardExchangeVault);
-        // Nested SE: forceApprove + pretransferred=false so SE _pullToken observes in-window delta.
-        tokenIn_.forceApprove(se_, pulled_);
-        amountOut_ = Repo._layoutStruct().standardExchangeVault.exchangeIn(
-            tokenIn_, pulled_, tokenOut_, minAmountOut_, recipient_, false, deadline_
+        // Nested SE fund: push + pretransferred=true (L-DETF-PUSH-NESTED).
+        amountOut_ = _nestedExchangeInPush(
+            IStandardExchangeIn(se_),
+            tokenIn_,
+            pulled_,
+            tokenOut_,
+            minAmountOut_,
+            recipient_,
+            deadline_
         );
     }
 

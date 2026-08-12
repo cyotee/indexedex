@@ -111,7 +111,7 @@ git commit -m "docs(pool): spec + plan for Standard Exchange Buffer Pool"
 - [ ] **Step 1: Write the interface**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -169,7 +169,7 @@ git commit -m "feat(pool): interface for Standard Exchange Buffer Pool"
 
 ```solidity
 // test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.t.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -241,7 +241,7 @@ Expected: fails to compile (`StandardExchangeBufferPoolRepo` not found).
 
 ```solidity
 // contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -333,7 +333,7 @@ The target uses `virtualTTA` for the TTA side and `derived_y = max(0, balancesLi
 
 ```solidity
 // test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.t.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -443,7 +443,7 @@ forge test --match-path 'test/foundry/spec/protocols/dexes/balancer/v3/pools/con
 
 ```solidity
 // contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {PoolSwapParams, SwapKind, Rounding} from
@@ -576,7 +576,7 @@ git commit -m "feat(pool): CP math target with virtualTTA + hookSharesDelta"
 - [ ] **Step 1: Write the facet wrapper (no new test; covered transitively)**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IBalancerV3Pool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerV3Pool.sol";
@@ -661,7 +661,7 @@ For `onRemoveLiquidityCustom`: same shape — accept any single-token withdrawal
 - [ ] **Step 1: Failing test**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {AddLiquidityKind, RemoveLiquidityKind} from
@@ -700,7 +700,7 @@ contract StandardExchangeBufferPoolLiquidityTargetTest is Test {
 - [ ] **Step 3: Write the target**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolLiquidity.sol";
@@ -758,7 +758,7 @@ git commit -m "feat(pool): pool-liquidity target for hook reconcile path"
 - [ ] **Step 1: Write the facet (mirror Task 4's structure)**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolLiquidity.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -802,7 +802,7 @@ The hook target is large; we build it incrementally. This task adds `onRegister`
 
 ```solidity
 // test path: test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_Registration.t.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {HookFlags, TokenConfig, TokenType, LiquidityManagement} from
@@ -899,7 +899,7 @@ contract HookRegistrationTest is Test {
 - [ ] **Step 3: Write the hook target — registration + init slice**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
@@ -1027,7 +1027,7 @@ Full test file (mocks observe call ordering via an instance counter; scripted re
 
 ```solidity
 // test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -1331,7 +1331,7 @@ For `shares -> TTA` the after-swap body is a no-op (all reconciliation happened 
 Reuses `MockBalancerV3Vault`, `MockStandardExchange`, `StaticRateProvider`, `HookHarness` from Task 8 — extract them into `test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/_HookMocks.sol` during Task 9 Step 1 if you haven't already (refactor for reuse), then this test imports the shared mocks. Extend `MockStandardExchange` with scripted `exchangeIn` / `previewExchangeIn` returns.
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {AfterSwapParams, SwapKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
@@ -1482,7 +1482,7 @@ Implements step 3 of Section 6.4. Reject non-PROPORTIONAL non-CUSTOM kinds (`Add
 - [ ] **Step 1: Failing test**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {AddLiquidityKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
@@ -1607,7 +1607,7 @@ Implements step 5 of Section 6.4 and step 4 of Section 6.5. Read `_totalSupply()
 The test only needs `MockBalancerV3Vault` (no Standard Exchange Vault calls here) and the harness, plus we mock `totalSupply()` via `vm.mockCall(address(hook), abi.encodeWithSelector(IERC20.totalSupply.selector), abi.encode(...))` since the BPT surface isn't on the harness yet.
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {AddLiquidityKind, RemoveLiquidityKind} from
@@ -1757,7 +1757,7 @@ The facet must concretize the abstract `_balancerV3Vault()` and `_expectedFactor
 - [ ] **Step 3: Write the facet.**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -2147,7 +2147,7 @@ Mirror `contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3Constant
 - [ ] **Step 1: Write the library**
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
@@ -2280,7 +2280,7 @@ The test base extends `TestBase_VaultComponents` (already in `contracts/vaults/`
 Look at `test/foundry/spec/protocol/dexes/balancer/v3/TestBase_StandardExchangeRouter.sol` for the existing pattern of Vault + Standard Exchange Vault setup; reuse it where possible.
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";

@@ -60,7 +60,7 @@ No hard-coded coll/loan symbols. Robinhood vs Base vs ETH = different `PkgInit.m
 Names are provisional (`MorphoUniswapV4LeveredLp` TBD). Structs and validation law are the design product of this note.
 
 ```solidity
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";

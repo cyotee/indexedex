@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
@@ -30,8 +30,12 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         _requireActive(deadline_, amountIn_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
-        // Burn DETF → vault share
+        // Burn DETF → vault share. DETF → claim is buyClaim only.
         if (address(tokenIn_) == address(this)) {
+            MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+            if (address(tokenOut_) == address(s.rebasingClaimToken)) {
+                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
+            }
             return _burnDetfExactIn(amountIn_, tokenOut_, minAmountOut_, recipient_, pretransferred_, deadline_);
         }
 
@@ -54,6 +58,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
             if (amountOut_ < minAmountOut_) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
             }
+            _syncAllExpectedHoldReserves();
             return amountOut_;
         }
 

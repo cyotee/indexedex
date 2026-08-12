@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -7,15 +7,15 @@ import {
     IUniswapV4WeightedSwapHook
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHook.sol";
 import {
-    UniswapV4WeightedSwapHookTarget
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookTarget.sol";
+    UniswapV4WeightedSwapHookHooksTarget
+} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookHooksTarget.sol";
 
 /**
  * @title UniswapV4WeightedSwapHookHooksFacet
  * @notice IHooks callbacks + product views + swap previews (size-split facet).
  * @dev Does not cut IERC20 / IBasicVault.reserves (shared facets).
  */
-contract UniswapV4WeightedSwapHookHooksFacet is UniswapV4WeightedSwapHookTarget, IFacet {
+contract UniswapV4WeightedSwapHookHooksFacet is UniswapV4WeightedSwapHookHooksTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(UniswapV4WeightedSwapHookHooksFacet).name;
     }

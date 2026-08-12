@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -27,6 +27,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
     ISingleStandardExchangeDETDFPkg
@@ -301,6 +302,13 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
                 IVaultRegistryDeployment(address(indexedexManager))
             )
         );
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
         ISingleStandardExchangeDETDFPkg outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
             IVaultRegistryDeployment(address(indexedexManager)),
             ISingleStandardExchangeDETDFPkg.PkgInit({
@@ -317,6 +325,7 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
                 weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
                 rateProviderPkg: ratePkg_,
                 bondNftVaultPkg: bondPkg_,
+                rebasingClaimTokenPkg: claimPkg_,
                 diamondFactory: diamondPackageFactory
             })
         );

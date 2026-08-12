@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -31,6 +31,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
@@ -122,6 +123,13 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
                 IVaultRegistryDeployment(address(indexedexManager))
             )
         );
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
 
         outerPkg = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
             IVaultRegistryDeployment(address(indexedexManager)),
@@ -139,6 +147,7 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
                 weightedPoolFactory: weightedPoolFactory,
                 rateProviderPkg: outerRateProviderPkg,
                 bondNftVaultPkg: bondNftVaultPkg,
+                rebasingClaimTokenPkg: claimPkg_,
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -189,13 +198,19 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
     }
 
     function test_matrix_dualLiquidity_firstBondMintBurn() public {
-        // Bootstrap outer with small dual-liquidity share size (MaxInRatio-safe).
+        // Bootstrap outer with dual-liquidity shares already on this contract from _bootstrapReserve.
+        // Outer SingleSE mint is a **single-sided** vault-share join; Balancer MaxInRatio ≈ 30% of that
+        // leg's pool balance. Cap mint well under first-bond vault-share amount.
+        // Dual-liq *inner* joins also hit MaxInRatio — keep `_acquireDualShares` tiny vs LEG_SEED.
         uint256 seShares_ = IERC20(linkedVault).balanceOf(address(this));
-        if (seShares_ < 1e18) {
-            seShares_ = _acquireDualShares(500e18);
+        if (seShares_ == 0) {
+            seShares_ = _acquireDualShares(1e16);
         }
-        uint256 bondIn_ = seShares_ > 50e18 ? 50e18 : seShares_ / 2;
+        // First bond bootstraps outer reserve (both legs). Keep principal small and MaxInRatio-safe
+        // for a later single-sided vault-share join (mint ≤ ~10% of bonded vault-share leg).
+        uint256 bondIn_ = seShares_ / 50;
         if (bondIn_ == 0) bondIn_ = seShares_;
+        if (bondIn_ > 1e17) bondIn_ = 1e17; // 0.1 dual shares max for first bond
 
         IERC20(linkedVault).approve(outerDetf, bondIn_);
         (uint256 tokenId_,) = outerBonding.bond(
@@ -206,10 +221,20 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
         assertTrue(IERC20(outerDetf).totalSupply() > 0, "outer detf supply");
         _assertOuterNoFreeInventory();
 
-        // Hard mint: open thresholds (mintThreshold=1) must allow mint after bootstrap.
+        // Hard mint: ≤5% of bonded vault-share leg (<< MaxInRatio 30%).
         assertTrue(outerInfo.isMintingAllowed(), "mint gate open");
-        uint256 mintIn_ = _acquireDualShares(50e18);
-        if (mintIn_ > 5e18) mintIn_ = 5e18;
+        uint256 mintIn_ = bondIn_ / 20;
+        if (mintIn_ == 0) mintIn_ = 1;
+        uint256 held_ = IERC20(linkedVault).balanceOf(address(this));
+        if (held_ < mintIn_) {
+            uint256 acquired_ = _acquireDualShares(1e15);
+            held_ = IERC20(linkedVault).balanceOf(address(this));
+            require(held_ > 0 || acquired_ > 0, "need dual shares for mint");
+            if (held_ < mintIn_) mintIn_ = held_ / 20;
+            if (mintIn_ == 0) mintIn_ = held_;
+        }
+        if (mintIn_ > bondIn_ / 20 && bondIn_ / 20 > 0) mintIn_ = bondIn_ / 20;
+
         IERC20(linkedVault).approve(outerDetf, mintIn_);
         uint256 mintOut_ = outerExchangeIn.exchangeIn(
             IERC20(linkedVault), mintIn_, IERC20(outerDetf), 0, address(this), false, block.timestamp + 1 hours
@@ -229,7 +254,7 @@ contract SingleStandardExchangeDETF_DualLiquidityMatrix_Test is
         _assertOuterNoFreeInventory();
 
         // Inner dual-liquidity still serves direct SE calls after outer composition.
-        uint256 innerOut_ = _acquireDualShares(50e18);
+        uint256 innerOut_ = _acquireDualShares(1e15);
         assertTrue(innerOut_ > 0, "inner still serves");
     }
 }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -57,6 +57,7 @@ contract UniswapV4SingleStandardExchangeDETF_BondTest is TestBase_UniswapV4Singl
         assertGt(IERC20(hook).balanceOf(bond), 0, "user LP on bond NFT");
         assertEq(IERC20(hook).balanceOf(claim), protocolBefore, "claim holds only protocol LP");
 
+        vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
         uint256 principal = detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 

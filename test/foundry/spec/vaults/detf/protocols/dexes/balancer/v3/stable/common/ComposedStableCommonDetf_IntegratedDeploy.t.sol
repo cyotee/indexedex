@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol';
@@ -115,6 +115,13 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     uint256 internal commonPoolBptIndex;
 
     address internal deployedDetfVault;
+
+    function _warpPastUnlock(uint256 tokenId_) internal {
+        uint256 unlock_ = bondNFTVault.unlockTimeOf(tokenId_);
+        if (block.timestamp <= unlock_) {
+            vm.warp(unlock_ + 1);
+        }
+    }
 
     struct StablePoolSpec {
         string name;
@@ -398,8 +405,17 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         assertEq(bondNFTVault.ownerOf(tokenId), alice, 'bond nft owner');
         assertEq(bondNFTVault.originalSharesOf(tokenId), shares, 'bond position tracked');
 
+        uint256 unlock_ = bondNFTVault.unlockTimeOf(tokenId);
         vm.prank(alice);
-        uint256 rebasingClaimMinted = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId, alice);
+        vm.expectRevert(
+            abi.encodeWithSelector(ComposedStableCommonDetfRepo.BondNotMature.selector, unlock_)
+        );
+        IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId, 0, alice);
+
+        _warpPastUnlock(tokenId);
+        vm.prank(alice);
+        uint256 rebasingClaimMinted =
+            IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId, 0, alice);
 
         uint256 redeemPreview = rebasingDetfToken.previewRedeem(rebasingClaimMinted);
 

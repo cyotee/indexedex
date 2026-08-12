@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -11,18 +11,38 @@ import {
     IUniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 
+/// @dev Same-tx helper for I2 short under durable U.
+contract UniV4CPPretransferRouterHelper {
+    function mintPretransfer(
+        address detf_,
+        IERC20 pairToken_,
+        uint256 transferAmt_,
+        uint256 claimAmt_,
+        address recipient_
+    ) external returns (uint256 out_) {
+        if (transferAmt_ > 0) {
+            pairToken_.transferFrom(msg.sender, detf_, transferAmt_);
+        }
+        out_ = IStandardExchangeIn(detf_).exchangeIn(
+            pairToken_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours
+        );
+    }
+}
+
 /// @notice Catalog I1–I3 for Uniswap V4 Single SE CP DETF secure pull (WP-I-DETF-SSE-CP-001).
-/// @dev Anti-theater: I1 never transfers in-call; exact TransferDeltaInsufficient selector; proxy calls.
+/// @dev Durable U = B - R. I1 requires booked residual; bare donation free-credits until end-sync (L-RSRV-DUST).
 contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
     address internal attacker;
     address internal victim;
     address internal aliceAdv;
+    UniV4CPPretransferRouterHelper internal preHelper;
 
     function setUp() public override {
         super.setUp();
         attacker = makeAddr("attacker");
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
+        preHelper = new UniV4CPPretransferRouterHelper();
     }
 
     function _openLiveOpenThreshold() internal returns (address instance_) {
@@ -63,25 +83,46 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
         vm.stopPrank();
     }
 
+    /// @dev Donate residual then honest !pretransferred mint so end-sync books residual (R==B).
+    function _bookPairResidual(address instance_, uint256 residual_) internal {
+        _fundPair(aliceAdv, residual_);
+        vm.prank(aliceAdv);
+        pairToken.transfer(instance_, residual_);
+
+        uint256 honestIn_ = residual_ / 2;
+        if (honestIn_ == 0) honestIn_ = residual_;
+        _fundPair(victim, honestIn_);
+        vm.startPrank(victim);
+        pairToken.approve(instance_, honestIn_);
+        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
+            IERC20(address(pairToken)),
+            honestIn_,
+            IERC20(instance_),
+            0,
+            victim,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(out_, 0, "book residual: honest mint ok");
+    }
+
     /* ---------------------------------------------------------------------- */
-    /*  I1: pretransferred=true, inventory present, no in-call transfer       */
+    /*  I1: booked inventory, no in-call transfer, pretransferred=true        */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I1 mint: donate pairToken inventory; attacker claims pretransfer without transfer → delta 0.
+    /// @notice I1 mint: booked pairToken residual cannot free-credit pretransfer mint.
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         address instance_ = _openLiveOpenThreshold();
-        uint256 claimed_ = _fundPair(attacker, 80 ether);
-        assertGt(claimed_, 0, "funded claim");
+        uint256 residual_ = 80 ether;
+        _bookPairResidual(instance_, residual_);
 
-        // Donate pair inventory so absolute balance >= claimed (absolute-credit theater would pass).
-        vm.prank(attacker);
-        pairToken.transfer(instance_, claimed_);
-        assertEq(pairToken.balanceOf(instance_), claimed_, "inventory present");
+        uint256 invBefore_ = pairToken.balanceOf(instance_);
+        assertGe(invBefore_, residual_, "absolute inventory present (anti-theater)");
+        uint256 claimed_ = residual_;
+        uint256 attDetfBefore_ = IERC20(instance_).balanceOf(attacker);
         assertEq(pairToken.balanceOf(attacker), 0, "attacker drained");
         assertEq(pairToken.allowance(attacker, instance_), 0, "no allowance");
-
-        uint256 attDetfBefore_ = IERC20(instance_).balanceOf(attacker);
-        uint256 invBefore_ = pairToken.balanceOf(instance_);
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -103,28 +144,39 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
         assertEq(pairToken.balanceOf(instance_), invBefore_, "I1: inventory unchanged (no in-call transfer)");
     }
 
-    /// @notice I1 burn: free detfToken on diamond cannot fund pretransfer burn extract.
+    /// @notice I1 burn: booked detfToken residual cannot fund pretransfer burn extract.
     function test_I1_burn_pretransferred_true_usesOnlyCallerTransferredDetf() public {
         address instance_ = _openLiveOpenThreshold();
         uint256 minted_ = _mintPairTo(instance_, aliceAdv, 40 ether);
         assertGt(minted_, 0, "minted detfToken");
         uint256 donateAmt_ = minted_ / 2;
         if (donateAmt_ == 0) donateAmt_ = minted_;
+        uint256 burnHonest_ = minted_ - donateAmt_;
+        if (burnHonest_ == 0) burnHonest_ = 1;
 
-        // Free detfToken inventory on diamond (may stack on pre-existing residual join dust).
-        uint256 freeBeforeDonate_ = IERC20(instance_).balanceOf(instance_);
-        vm.prank(aliceAdv);
+        // Free detf inventory on diamond, then honest burn books residual.
+        vm.startPrank(aliceAdv);
         IERC20(instance_).transfer(instance_, donateAmt_);
+        IERC20(instance_).approve(instance_, burnHonest_);
+        IStandardExchangeIn(instance_).exchangeIn(
+            IERC20(instance_),
+            burnHonest_,
+            IERC20(address(pairToken)),
+            0,
+            aliceAdv,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
         uint256 freeBal_ = IERC20(instance_).balanceOf(instance_);
-        assertEq(freeBal_, freeBeforeDonate_ + donateAmt_, "free detf inventory after donate");
-        assertGt(freeBal_, 0, "free detf present");
+        assertGt(freeBal_, 0, "booked detf residual present");
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "attacker has 0 detfToken");
 
         address hook_ = IUniswapV4SingleStandardExchangeDETF(instance_).reserveHook();
         uint256 lpBefore_ = IERC20(hook_).balanceOf(instance_);
         uint256 pairBefore_ = pairToken.balanceOf(attacker);
 
-        // Claim the full free inventory without an in-call transfer (absolute-credit theater).
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -146,13 +198,14 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
         assertEq(pairToken.balanceOf(attacker), pairBefore_, "I1 burn: no free pair extract");
     }
 
-    /// @notice I1 bond: donated pair inventory cannot fund free pretransfer bond.
+    /// @notice I1 bond: booked pair residual cannot fund free pretransfer bond.
     function test_I1_bond_pretransferred_inventoryNoTransfer_reverts() public {
         address instance_ = _openLiveOpenThreshold();
-        uint256 claimed_ = _fundPair(attacker, 60 ether);
-        vm.prank(attacker);
-        pairToken.transfer(instance_, claimed_);
-        assertEq(pairToken.balanceOf(instance_), claimed_);
+        uint256 residual_ = 60 ether;
+        _bookPairResidual(instance_, residual_);
+
+        uint256 claimed_ = residual_;
+        uint256 invBefore_ = pairToken.balanceOf(instance_);
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -169,46 +222,42 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
             block.timestamp + 1 hours
         );
 
-        assertEq(pairToken.balanceOf(instance_), claimed_, "bond I1: inventory unchanged");
+        assertEq(pairToken.balanceOf(instance_), invBefore_, "bond I1: inventory unchanged");
     }
 
     /* ---------------------------------------------------------------------- */
-    /*  I2: claimed > observedDelta                                           */
+    /*  I2: claimed > U                                                       */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I2: pretransferred short/zero delta reverts with exact selector + args.
+    /// @notice I2 short: book residual, same-tx push shortDelta, claim > short → (claimed, shortDelta).
     function test_I2_pretransferred_claimedGtDelta0_reverts() public {
         address instance_ = _openLiveOpenThreshold();
-        // Seed inventory (absolute would satisfy claimed) but no inbound delta.
-        uint256 donated_ = _fundPair(aliceAdv, 50 ether);
-        vm.prank(aliceAdv);
-        pairToken.transfer(instance_, donated_);
+        _bookPairResidual(instance_, 30 ether);
 
-        uint256 claimed_ = donated_;
-        assertGt(claimed_, 0);
+        uint256 claimed_ = _fundPair(attacker, 50 ether);
+        uint256 shortDelta_ = claimed_ / 2;
+        require(shortDelta_ > 0 && shortDelta_ < claimed_, "need short < claimed");
 
-        vm.prank(attacker);
+        vm.startPrank(attacker);
+        pairToken.approve(address(preHelper), shortDelta_);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, shortDelta_
             )
         );
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(address(pairToken)),
-            claimed_,
-            IERC20(instance_),
-            0,
-            attacker,
-            true,
-            block.timestamp + 1 hours
+        preHelper.mintPretransfer(
+            instance_, IERC20(address(pairToken)), shortDelta_, claimed_, attacker
         );
+        vm.stopPrank();
+
+        assertEq(IERC20(instance_).balanceOf(attacker), 0, "I2: no mint on short");
     }
 
     /* ---------------------------------------------------------------------- */
     /*  I3: residual inventory cannot fund second free pretransfer            */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice I3: after honest pull, residual donation cannot fund a second free pretransfer credit.
+    /// @notice I3: after honest pull end-sync, residual is booked; free true reverts U=0.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer() public {
         address instance_ = _openLiveOpenThreshold();
 
@@ -218,7 +267,7 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
         pairToken.transfer(instance_, residual_);
         assertEq(pairToken.balanceOf(instance_), residual_, "residual seeded");
 
-        // Honest first mint via pull path (not pretransfer).
+        // Honest first mint via pull path (not pretransfer) — end-sync books residual.
         uint256 victimIn_ = _fundPair(victim, 20 ether);
         vm.startPrank(victim);
         pairToken.approve(instance_, victimIn_);
@@ -233,9 +282,9 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
         );
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
-        // Residual donation (plus any mint dust) remains free on diamond — not free-creditable.
+        // Residual donation (plus any mint dust) remains on diamond — booked after end-sync.
         uint256 residualAfter_ = pairToken.balanceOf(instance_);
-        assertGe(residualAfter_, residual_, "residual still free after honest mint");
+        assertGe(residualAfter_, residual_, "residual still on diamond after honest mint");
 
         // Second call: pretransferred against residual free balance, no new inbound transfer.
         vm.prank(attacker);

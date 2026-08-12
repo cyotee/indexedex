@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -27,6 +27,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
     ISingleStandardExchangeDETDFPkg
@@ -112,24 +113,16 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
                 IVaultRegistryDeployment(address(indexedexManager))
             )
         );
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
         ISingleStandardExchangeDETDFPkg outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
             IVaultRegistryDeployment(address(indexedexManager)),
-            ISingleStandardExchangeDETDFPkg.PkgInit({
-                erc20Facet: erc20Facet,
-                erc5267Facet: erc5267Facet,
-                erc2612Facet: erc2612Facet,
-                multiAssetBasicVaultFacet: multiBasic_,
-                multiAssetStandardVaultFacet: multiStd_,
-                exchangeInFacet: exchangeInFacet_,
-                feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
-                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
-                balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
-                balancerV3Vault: IVault(address(vault)),
-                weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
-                rateProviderPkg: ratePkg_,
-                bondNftVaultPkg: bondPkg_,
-                diamondFactory: diamondPackageFactory
-            })
+            _outerPkgInit(multiBasic_, multiStd_, exchangeInFacet_, ratePkg_, bondPkg_, claimPkg_)
         );
 
         outerDetf_ = indexedexManager.deployVault(
@@ -157,6 +150,33 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
 
         outerInfo_ = ISingleStandardExchangeDETFInfo(outerDetf_);
         outerBonding_ = ISingleStandardExchangeDETFBonding(outerDetf_);
+    }
+
+    function _outerPkgInit(
+        IFacet multiBasic_,
+        IFacet multiStd_,
+        IFacet exchangeInFacet_,
+        IStandardExchangeRateProviderDFPkg ratePkg_,
+        IDetfSelfNftInventoryDFPkg bondPkg_,
+        IRebasingClaimTokenDFPkg claimPkg_
+    ) private view returns (ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit_) {
+        pkgInit_ = ISingleStandardExchangeDETDFPkg.PkgInit({
+            erc20Facet: erc20Facet,
+            erc5267Facet: erc5267Facet,
+            erc2612Facet: erc2612Facet,
+            multiAssetBasicVaultFacet: multiBasic_,
+            multiAssetStandardVaultFacet: multiStd_,
+            exchangeInFacet: exchangeInFacet_,
+            feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
+            vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+            balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
+            balancerV3Vault: IVault(address(vault)),
+            weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
+            rateProviderPkg: ratePkg_,
+            bondNftVaultPkg: bondPkg_,
+            rebasingClaimTokenPkg: claimPkg_,
+            diamondFactory: diamondPackageFactory
+        });
     }
 
     function test_matrix_composedStable_outerFirstBondAndInnerStillServes() public {

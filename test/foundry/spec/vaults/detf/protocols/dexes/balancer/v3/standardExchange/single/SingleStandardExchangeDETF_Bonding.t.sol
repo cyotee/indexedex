@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -60,5 +60,21 @@ contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExcha
             assertTrue(reason.length > 0, "reverted with reason");
         }
         vm.stopPrank();
+    }
+
+    function test_sellPositionToDetfNft_revertsBondNotMature() public {
+        (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 600e18);
+        uint256 unlock_ = _bondNftVault(detf).unlockTimeOf(tokenId_);
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(SingleStandardExchangeDETFRepo.BondNotMature.selector, unlock_));
+        detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
+    }
+
+    function test_sellPositionToDetfNft_afterMaturity_mints4626() public {
+        (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 800e18);
+        _warpPastUnlock(detf, tokenId_);
+        vm.prank(alice);
+        uint256 claimMinted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
+        assertTrue(claimMinted_ > 0, "claim minted after maturity");
     }
 }

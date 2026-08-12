@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
-import {IERC20MintBurn} from '@crane/contracts/interfaces/IERC20MintBurn.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
@@ -44,14 +43,15 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
         }
     }
 
-    function claimLiquidity(uint256 lpAmount, address recipient) external nonReentrant returns (uint256 extractedWeth) {
+    function claimLiquidity(uint256 lpAmount, address recipient) external nonReentrant returns (uint256 extractedRateAsset) {
         if (lpAmount == 0) {
             revert ZeroAmount();
         }
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         if (
-            msg.sender != address(ComposedStableCommonDetfRepo._bondNftVault(layoutStruct))
+            msg.sender != address(this)
+                && msg.sender != address(ComposedStableCommonDetfRepo._bondNftVault(layoutStruct))
                 && msg.sender != address(ComposedStableCommonDetfRepo._rebasingDetfToken(layoutStruct))
         ) {
             revert NotAuthorized(msg.sender);
@@ -65,49 +65,14 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             revert InsufficientBalance(lpAmount, availableLp);
         }
 
-        reservePoolToken.forceApprove(address(ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct)), lpAmount);
-
-        uint256[] memory minAmountsOut = new uint256[](3);
-        uint256[] memory amountsOut = ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct).prepayRemoveLiquidityProportional(
-            address(ComposedStableCommonDetfRepo._reservePool(layoutStruct)), lpAmount, minAmountsOut, ''
-        );
-
-        uint256 detfAmount = amountsOut[ComposedStableCommonDetfRepo._detfIndex(layoutStruct)];
-        uint256 stablePoolBptAmount = amountsOut[ComposedStableCommonDetfRepo._stablePoolBptIndex(layoutStruct)];
-        uint256 commonPoolBptAmount = amountsOut[ComposedStableCommonDetfRepo._commonPoolBptIndex(layoutStruct)];
-
-        if (detfAmount != 0) {
-            IERC20MintBurn(address(ComposedStableCommonDetfRepo._detfToken(layoutStruct))).burn(address(this), detfAmount);
-        }
-
         address payoutRecipient = recipient == address(0) ? msg.sender : recipient;
-        if (stablePoolBptAmount != 0) {
-            IERC20 stablePoolBpt = ComposedStableCommonDetfRepo._stablePoolBpt(layoutStruct);
-            stablePoolBpt.forceApprove(address(ComposedStableCommonDetfRepo._stablePoolExitPricer(layoutStruct)), stablePoolBptAmount);
-            extractedWeth += ComposedStableCommonDetfRepo._stablePoolExitPricer(layoutStruct).exchangeIn(
-                stablePoolBpt,
-                stablePoolBptAmount,
-                ComposedStableCommonDetfRepo._rateAsset(layoutStruct),
-                0,
-                payoutRecipient,
-                false,
-                block.timestamp
-            );
-        }
-
-        if (commonPoolBptAmount != 0) {
-            IERC20 commonPoolBpt = ComposedStableCommonDetfRepo._commonPoolBpt(layoutStruct);
-            commonPoolBpt.forceApprove(address(ComposedStableCommonDetfRepo._commonPoolExitPricer(layoutStruct)), commonPoolBptAmount);
-            extractedWeth += ComposedStableCommonDetfRepo._commonPoolExitPricer(layoutStruct).exchangeIn(
-                commonPoolBpt,
-                commonPoolBptAmount,
-                ComposedStableCommonDetfRepo._rateAsset(layoutStruct),
-                0,
-                payoutRecipient,
-                false,
-                block.timestamp
-            );
-        }
+        extractedRateAsset = _exitRedepositSettle(
+            lpAmount,
+            ComposedStableCommonDetfRepo._rateAsset(layoutStruct),
+            0,
+            payoutRecipient,
+            block.timestamp
+        );
     }
 
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
@@ -196,9 +161,20 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             args_.deadline
         );
 
-        if (depositedIn > amountIn_) {
-            args_.tokenIn.safeTransfer(msg.sender, depositedIn - amountIn_);
+        // Outermost exact-out: re-forward unused *caller-paid* input to entry msg.sender
+        // (L-DETF-REFUND-OUTER / L-DETF-REFUND-SCOPE). Prior residual detf on the diamond is
+        // not part of this refund; it is absorbed into R at end-sync (L-RSRV-ABSORB).
+        // Do not require remainingIn == refund — residual inventory is expected after partial
+        // routes / dust retention.
+        uint256 refundFromReturn = depositedIn > amountIn_ ? depositedIn - amountIn_ : 0;
+        if (refundFromReturn > 0) {
+            uint256 remainingIn = args_.tokenIn.balanceOf(address(this));
+            if (remainingIn < refundFromReturn) {
+                revert SlippageExceeded(refundFromReturn, remainingIn);
+            }
+            args_.tokenIn.safeTransfer(msg.sender, refundFromReturn);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function exchangeOut(

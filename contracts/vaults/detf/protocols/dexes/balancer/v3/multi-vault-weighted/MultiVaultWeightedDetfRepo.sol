@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -29,6 +29,9 @@ library MultiVaultWeightedDetfRepo {
     error NotLive();
     error AlreadyLive();
     error ClaimTokenNotConfigured();
+    error BondNotMature(uint256 unlockTime);
+    error InsufficientReserveBpt(uint256 needed, uint256 available);
+    error NotAuthorized(address caller);
 
     uint256 internal constant MAX_VAULTS = 7;
 

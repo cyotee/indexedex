@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
@@ -153,24 +153,26 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
     }
 
     function _deployAerodromePackage() internal {
-        aerodromePkg = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            erc20Facet,
-            erc2612Facet,
-            erc5267Facet,
-            erc4626Facet,
-            // erc4626BasicVaultFacet,
-            multiAssetBasicVaultFacet,
-            // erc4626StandardVaultFacet,
-            multiAssetStandardVaultFacet,
-            create3Factory.deployAerodromeStandardExchangeInFacet(),
-            create3Factory.deployAerodromeStandardExchangeOutFacet(),
-            indexedexManager,
-            indexedexManager,
-            permit2,
-            aerodromeRouter,
-            aerodromePoolFactory
-        );
+        {
+            IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
+            pkgInit_.erc20Facet = erc20Facet;
+            pkgInit_.erc2612Facet = erc2612Facet;
+            pkgInit_.erc5267Facet = erc5267Facet;
+            pkgInit_.erc4626Facet = erc4626Facet;
+            pkgInit_.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+            pkgInit_.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+            pkgInit_.aerodromeStandardExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
+            pkgInit_.aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
+            pkgInit_.aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
+            pkgInit_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+            pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+            pkgInit_.permit2 = permit2;
+            pkgInit_.aerodromeRouter = aerodromeRouter;
+            pkgInit_.aerodromePoolFactory = aerodromePoolFactory;
+            aerodromePkg = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(
+                IVaultRegistryDeployment(address(indexedexManager)), pkgInit_
+            );
+        }
     }
 
     function _deployCamelotPackage() internal {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -81,8 +81,9 @@ contract MixedBufferMultiVaultStableDetf_NaturalExpansion_Test is TestBase_Mixed
         address open_ = _deployOpenModeDetfN(1);
         _enableSeigniorageIncentive(open_, 0.20e18);
         (uint256 firstId_,,) = _bootstrapFirstBond(open_, alice, 500e18, 500e18);
+        _warpPastUnlock(open_, firstId_);
         vm.prank(alice);
-        IMixedBufferMultiVaultStableDetfBonding(open_).sellPositionToDetfNft(firstId_, alice);
+        IMixedBufferMultiVaultStableDetfBonding(open_).sellPositionToDetfNft(firstId_, 0, alice);
 
         // Second buffer bond after live.
         _fundBuffer(alice, 100e18);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {Test} from "forge-std/Test.sol";
@@ -434,11 +434,42 @@ contract AaveV3StataStandardExchangeTest is TestBase_AaveV3StataStandardExchange
         assertGt(out, 0);
     }
 
-    /// @notice L-GAPS-9: transfer-before-call / inventory + pretransferred=true reverts (no free credit).
+    /// @notice Reserve-delta push: transfer base to vault then pretransferred=true succeeds when claimed ≤ U.
     function test_Route_BaseToStata_Pretransferred() public {
         address localVault = _deployStataVault(mockStata);
         uint256 amount = 15e18;
-        mockBase.mint(localVault, amount); // inventory present, no in-call transfer
+        mockBase.mint(address(this), amount);
+        mockBase.transfer(localVault, amount); // push funding before call
+
+        vm.mockCall(
+            mockStata, abi.encodeWithSelector(IERC4626.previewDeposit.selector, amount), abi.encode(amount)
+        );
+        vm.mockCall(
+            mockStata, abi.encodeWithSelector(IERC4626.deposit.selector, amount, address(this)), abi.encode(amount)
+        );
+
+        uint256 out = IStandardExchangeIn(localVault).exchangeIn(
+            IERC20(address(mockBase)), amount, IERC20(mockStata), 0, address(this), true, block.timestamp + 100
+        );
+        // Mock deposit does not mint stata to recipient; returned amountOut is what route reports.
+        assertEq(out, amount, "pretransferred base->stata credits claimed push");
+    }
+
+    /// @notice I1 booked: after a money route books inventory, free pretransfer reverts with U=0.
+    function test_Route_BaseToStata_Pretransferred_bookedInventory_reverts() public {
+        address localVault = _deployStataVault(mockStata);
+        uint256 amount = 15e18;
+        // Seed residual + honest pull so full-set sync books residual.
+        mockBase.mint(localVault, amount);
+        mockBase.mint(address(this), 1e18);
+        mockBase.approve(localVault, 1e18);
+        vm.mockCall(mockStata, abi.encodeWithSelector(IERC4626.previewDeposit.selector, 1e18), abi.encode(1e18));
+        vm.mockCall(
+            mockStata, abi.encodeWithSelector(IERC4626.deposit.selector, 1e18, address(this)), abi.encode(1e18)
+        );
+        IStandardExchangeIn(localVault).exchangeIn(
+            IERC20(address(mockBase)), 1e18, IERC20(mockStata), 0, address(this), false, block.timestamp + 100
+        );
 
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0))
@@ -671,6 +702,8 @@ contract AaveV3StataStandardExchangeTest is TestBase_AaveV3StataStandardExchange
     function testFuzz_Route_StataToSE_Pretransferred(uint256 amount) public {
         amount = bound(amount, 1e6, 1000e18);
         ERC20PermitMintableStub(mockStata).mint(address(this), amount);
+        // Push funding before pretransferred=true (reserve-delta law).
+        IERC20(mockStata).transfer(vault, amount);
 
         uint256 preview = IStandardExchangeIn(vault).previewExchangeIn(
             IERC20(mockStata), amount, IERC20(vault)

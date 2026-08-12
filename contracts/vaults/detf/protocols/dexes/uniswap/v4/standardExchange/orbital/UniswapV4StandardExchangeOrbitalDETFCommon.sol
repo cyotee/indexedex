@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -9,6 +9,8 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
@@ -552,14 +554,14 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
         }
         Repo.Storage storage s = Repo._layoutStruct();
         address hook_ = s.reserveHook;
-        IERC20(tokenIn_).forceApprove(hook_, amountIn_);
-        amountOut_ = IStandardExchangeIn(hook_).exchangeIn(
+        // Nested hook fund: push + pretransferred=true (L-DETF-PUSH-NESTED; host WH durable pull).
+        amountOut_ = _nestedExchangeInPush(
+            IStandardExchangeIn(hook_),
             IERC20(tokenIn_),
             amountIn_,
             IERC20(tokenOut_),
             0,
             recipient_,
-            false,
             block.timestamp + 1
         );
     }
@@ -737,11 +739,43 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
     /*                              Transfers                                 */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). No absolute free credit on pretransfer.
     function _pullToken(IERC20 token_, uint256 amount_, bool pretransferred_) internal returns (uint256 actual_) {
-        if (pretransferred_) return amount_;
-        uint256 before_ = token_.balanceOf(address(this));
-        token_.safeTransferFrom(msg.sender, address(this), amount_);
-        actual_ = token_.balanceOf(address(this)) - before_;
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
+        uint256 B0 = token_.balanceOf(address(this));
+        if (!pretransferred_) {
+            token_.safeTransferFrom(msg.sender, address(this), amount_);
+            return token_.balanceOf(address(this)) - B0;
+        }
+        uint256 U = B0 - R;
+        if (amount_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, U);
+        }
+        return amount_;
+    }
+
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    function _nestedExchangeInPush(
+        IStandardExchangeIn host_,
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        if (amountIn_ == 0) return 0;
+        tokenIn_.safeTransfer(address(host_), amountIn_);
+        amountOut_ = host_.exchangeIn(
+            tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_
+        );
     }
 
     function _feeTo() internal view returns (address) {
@@ -835,4 +869,53 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
             _mintDetf(bondVault_, split_.inventoryDetf);
         }
     }
+
+    /* shared helpers used by bonding + exchange (Option 1e siblings) */
+    function _isShareOrSeTokenOut(IERC20 tokenOut_) internal view returns (bool) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(tokenOut_) == address(s.vaultShare0) || address(tokenOut_) == address(s.vaultShare1)) {
+            return true;
+        }
+        if (address(s.standardExchange0) != address(0) && _tokenInSeTokens(tokenOut_, address(s.standardExchange0))) {
+            return true;
+        }
+        if (address(s.standardExchange1) != address(0) && _tokenInSeTokens(tokenOut_, address(s.standardExchange1))) {
+            return true;
+        }
+        return false;
+    }
+
+
+    function _pairForShareOut(IERC20 tokenOut_) internal view returns (address) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (
+            address(tokenOut_) == address(s.vaultShare0)
+                || (address(s.standardExchange0) != address(0)
+                    && _tokenInSeTokens(tokenOut_, address(s.standardExchange0)))
+        ) {
+            return address(s.pairToken0);
+        }
+        return address(s.pairToken1);
+    }
+
+
+    function _seWrap(address pair_, uint256 pairAmt_, IERC20 tokenOut_, address recipient_)
+        internal
+        returns (uint256 out_)
+    {
+        if (pairAmt_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        address se_;
+        if (pair_ == address(s.pairToken0)) {
+            se_ = address(s.standardExchange0);
+        } else {
+            se_ = address(s.standardExchange1);
+        }
+        if (se_ == address(0)) revert Repo.InvalidRoute(IERC20(pair_), tokenOut_);
+        out_ = _nestedExchangeInPush(
+            IStandardExchangeIn(se_), IERC20(pair_), pairAmt_, tokenOut_, 0, recipient_, block.timestamp + 1
+        );
+    }
+
+
 }

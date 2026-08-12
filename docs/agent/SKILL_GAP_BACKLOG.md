@@ -37,6 +37,7 @@ Ranked skill gaps for IndexedEx agent routing. Stop rule (PRD §0.7.7): no open 
 | G-06 | Uni V4 hook diamond packages | P1 | `indexedex-uniswap-v4-hook-packages` (IX-local SoT + mirrors) |
 | G-07 | DETF adversarial / SE abuse | P1 | `indexedex-adversarial-testing` + `crane-adversarial-testing` |
 | G-08 | Bankr skills not installed here | P1 | Documented; parent workspace only (`sync-bankr-skills.sh`). **Not** a gap to fill in-repo |
+| G-22 | DeFiHackLabs incident patterns → skills | P1 | `defi-incident-patterns` + Crane catalog A0/L/M/N/O + `indexedex-adversarial-testing` map; plan `docs/agent/DEFI_HACKLABS_SKILLS_IMPLEMENTATION_PLAN.md` |
 
 ## Open P2 (non-blocking)
 

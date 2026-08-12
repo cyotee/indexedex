@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -70,6 +70,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
         if (amountOut_ < minOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {

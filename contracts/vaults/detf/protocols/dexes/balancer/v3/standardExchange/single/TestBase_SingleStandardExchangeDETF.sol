@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -32,9 +32,11 @@ import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPk
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
-    ISingleStandardExchangeDETDFPkg
+    ISingleStandardExchangeDETDFPkg,
+    SingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 import {
     SingleStandardExchangeDETF_Component_FactoryService
@@ -57,6 +59,7 @@ import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRo
 ///      (local production packages — no MockStandardExchange).
 abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3StandardExchangeRouter {
     using DetfFacetFactoryService for ICreate3FactoryProxy;
+    using DetfPkgFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
@@ -64,6 +67,14 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
 
     uint256 internal constant DEFAULT_MIN_LOCK = 30 days;
     uint256 internal constant DEFAULT_MAX_LOCK = 180 days;
+
+    function _warpPastUnlock(address instance_, uint256 tokenId_) internal {
+        address nft_ = ISingleStandardExchangeDETFInfo(instance_).bondNftVault();
+        uint256 unlock_ = IDETFNFTVault(nft_).unlockTimeOf(tokenId_);
+        if (block.timestamp <= unlock_) {
+            vm.warp(unlock_ + 1);
+        }
+    }
 
     IFacet internal multiAssetBasicVaultFacetDetf;
     IFacet internal multiAssetStandardVaultFacetDetf;
@@ -73,6 +84,7 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
 
     IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
     IDetfSelfNftInventoryDFPkg internal bondNftVaultPkg;
+    IRebasingClaimTokenDFPkg internal rebasingClaimTokenPkg;
     ISingleStandardExchangeDETDFPkg internal singleStandardExchangeDetfPkg;
 
     IStandardExchangeProxy internal seVault;
@@ -98,6 +110,7 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
 
         _deployRateProviderPkg();
         _deployBondNftVaultPkg();
+        _deployRebasingClaimTokenPkg();
         _deploySingleStandardExchangeDetfPkg();
         detf = _deployDetfInstance();
 
@@ -154,8 +167,22 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         vm.label(address(bondNftVaultPkg), "SingleStandardExchangeDETF_BondNftVaultPkg");
     }
 
-    function _deploySingleStandardExchangeDetfPkg() internal {
-        ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
+    function _deployRebasingClaimTokenPkg() internal {
+        IFacet claimFacet_ = create3Factory.deployRebasingClaimTokenFacet();
+        rebasingClaimTokenPkg = create3Factory.deployRebasingClaimTokenDFPkg(
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
+        vm.label(address(rebasingClaimTokenPkg), "SingleStandardExchangeDETF_RebasingClaimTokenPkg");
+    }
+
+    function _singleSePkgInit(IRebasingClaimTokenDFPkg claimPkg_)
+        internal
+        view
+        returns (ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit)
+    {
+        pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
@@ -169,8 +196,27 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
             rateProviderPkg: rateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
+            rebasingClaimTokenPkg: claimPkg_,
             diamondFactory: diamondPackageFactory
         });
+    }
+
+    /// @dev M12: manager deploy of this family's DFPkg with claim pkg = 0 must revert.
+    function _expectRevertDeployPkgWithZeroClaim() internal {
+        ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit =
+            _singleSePkgInit(IRebasingClaimTokenDFPkg(address(0)));
+        vm.startPrank(owner);
+        vm.expectRevert();
+        IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+            type(SingleStandardExchangeDETDFPkg).creationCode,
+            abi.encode(pkgInit),
+            keccak256("SingleSE_M12_zero_claim")
+        );
+        vm.stopPrank();
+    }
+
+    function _deploySingleStandardExchangeDetfPkg() internal {
+        ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = _singleSePkgInit(rebasingClaimTokenPkg);
 
         vm.startPrank(owner);
         singleStandardExchangeDetfPkg =
@@ -402,8 +448,9 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         // First bond → live; sell to protocol so detf NFT earns reward share.
         // Keep sizes modest vs pool to avoid Balancer MaxInRatio on subsequent joins.
         uint256 firstId_ = _bootstrapDetf(instance_, bonder_, 1_000e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
         assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
 
         // Second bond: user keeps NFT (for claim-while-locked) and more inventory accrues.
@@ -590,8 +637,9 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
 
         // Keep sizes modest vs pool to avoid Balancer MaxInRatio (same as protocol compound setup).
         uint256 firstId_ = _bootstrapDetf(instance_, bonder_, 1_000e18);
+        _warpPastUnlock(instance_, firstId_);
         vm.prank(bonder_);
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(firstId_, bonder_);
+        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
 
         userBondId_ = _bootstrapDetf(instance_, bonder_, 200e18);
         assertGt(

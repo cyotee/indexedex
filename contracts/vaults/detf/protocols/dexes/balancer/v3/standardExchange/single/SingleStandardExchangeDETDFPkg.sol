@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -49,6 +49,8 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
@@ -67,6 +69,8 @@ import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNat
 /// @title ISingleStandardExchangeDETDFPkg
 interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
+    error ZeroAddress();
+    error ClaimTokenNotDeployed();
 
     struct PkgInit {
         IFacet erc20Facet;
@@ -82,6 +86,7 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
         WeightedPoolFactory weightedPoolFactory;
         IStandardExchangeRateProviderDFPkg rateProviderPkg;
         IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
+        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
         IDiamondPackageCallBackFactory diamondFactory;
     }
 
@@ -152,9 +157,13 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     WeightedPoolFactory immutable WEIGHTED_POOL_FACTORY;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
     IDetfSelfNftInventoryDFPkg immutable BOND_NFT_VAULT_PKG;
+    IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     constructor(PkgInit memory pkgInit) {
+        if (address(pkgInit.rebasingClaimTokenPkg) == address(0)) {
+            revert ZeroAddress();
+        }
         ERC20_FACET = pkgInit.erc20Facet;
         ERC5267_FACET = pkgInit.erc5267Facet;
         ERC2612_FACET = pkgInit.erc2612Facet;
@@ -168,6 +177,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         WEIGHTED_POOL_FACTORY = pkgInit.weightedPoolFactory;
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
+        REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
         DIAMOND_FACTORY = pkgInit.diamondFactory;
     }
 
@@ -334,9 +344,31 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         DeployConfig storage cfg = _deployConfig();
         PoolBuild memory pb_ = _createRateProviderAndPool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(pb_.reservePool);
+        // Bond vault initializeDETFNFT() before claim init so detfNFTId is known.
         uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
+        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
         _initBasicVaultTokens(address(pb_.seShare), pb_.reservePool);
-        _initFamilyRepo(cfg, pb_, bondVault_, detfNftId_);
+        _initFamilyRepo(cfg, pb_, bondVault_, detfNftId_, claimToken_);
+    }
+
+    function _deployRebasingClaimToken(
+        DeployConfig storage cfg,
+        IDETFNFTVault bondVault_,
+        uint256 detfNftId_
+    ) private returns (IRebasingClaimToken claimToken_) {
+        address detf_ = address(this);
+        claimToken_ = IRebasingClaimToken(
+            REBASING_CLAIM_TOKEN_PKG.deployToken(
+                IDetf(detf_), bondVault_, cfg.rateTarget, detfNftId_, detf_
+            )
+        );
+        if (address(claimToken_) == address(0)) {
+            revert ClaimTokenNotDeployed();
+        }
+        // Owner is DETF; re-assert DETF wiring (deployToken already inits detf).
+        if (claimToken_.detf() != detf_) {
+            claimToken_.setDetf(detf_);
+        }
     }
 
     function _createRateProviderAndPool(DeployConfig storage cfg) private returns (PoolBuild memory pb_) {
@@ -453,7 +485,8 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         DeployConfig storage cfg,
         PoolBuild memory pb_,
         IDETFNFTVault bondVault_,
-        uint256 detfNftId_
+        uint256 detfNftId_,
+        IRebasingClaimToken claimToken_
     ) private {
         SingleStandardExchangeDETFRepo._initialize(
             cfg.standardExchangeVault,
@@ -465,20 +498,30 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             pb_.shareIndex,
             cfg.detfWeight,
             cfg.vaultShareWeight,
-            SingleStandardExchangeDETFRepo.ThresholdAndFeeInit({
-                mintThreshold: cfg.mintThreshold,
-                burnThreshold: cfg.burnThreshold,
-                thresholdMode: cfg.thresholdMode,
-                feeOracle: FEE_ORACLE,
-                bondNftVault: bondVault_,
-                detfNftId: detfNftId_,
-                feeRecipientNftId: 0,
-                expansionClosureRatePerSecond: cfg.expansionClosureRatePerSecond,
-                expansionCatchUpMaxSeconds: cfg.expansionCatchUpMaxSeconds,
-                expansionCatchUpCapBps: cfg.expansionCatchUpCapBps
-            })
+            _thresholdAndFeeInit(cfg, bondVault_, detfNftId_)
         );
-        // Emit once after storage write with resolved thresholds (PRD §16.4).
+        SingleStandardExchangeDETFRepo._setRebasingClaimToken(claimToken_);
+        _emitThresholdModeSet(cfg);
+    }
+
+    function _thresholdAndFeeInit(
+        DeployConfig storage cfg,
+        IDETFNFTVault bondVault_,
+        uint256 detfNftId_
+    ) private view returns (SingleStandardExchangeDETFRepo.ThresholdAndFeeInit memory tf_) {
+        tf_.mintThreshold = cfg.mintThreshold;
+        tf_.burnThreshold = cfg.burnThreshold;
+        tf_.thresholdMode = cfg.thresholdMode;
+        tf_.feeOracle = FEE_ORACLE;
+        tf_.bondNftVault = bondVault_;
+        tf_.detfNftId = detfNftId_;
+        tf_.feeRecipientNftId = 0;
+        tf_.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
+        tf_.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
+        tf_.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
+    }
+
+    function _emitThresholdModeSet(DeployConfig storage cfg) private {
         emit ISingleStandardExchangeDETFInfo.ThresholdModeSet(
             cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
         );

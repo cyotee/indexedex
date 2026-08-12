@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {
@@ -33,7 +33,7 @@ contract UniswapV4WeightedSwapHook_Base_Test is TestBase_UniswapV4WeightedSwapHo
         uint256 shares = _joinFullN2(hook, t0, t1, 5_000);
         assertGt(shares, 0);
 
-        PoolKey memory key = factory.pairPoolKeys(hook)[0];
+        PoolKey memory key = _pairPoolKeys(hook)[0];
         bool zeroForOne = address(t0) == Currency.unwrap(key.currency0);
         uint256 amountIn = _raw(t0, 25);
         uint256 preview =

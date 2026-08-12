@@ -12,6 +12,7 @@
 | **Blocks** | Stage **06** (this family’s Phase 2); preferred unblock for Stages 02–04 patterns |
 | **Program index** | [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md) |
 | **Product law** | [`DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](./DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) §3, C1–C8 |
+| **Sell/claim law** | [`BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md`](../../../../../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md) (mature-only sell/close, required claim DFPkg, 4626 `buyClaim`) |
 | **Gold TestBase** | [`standardExchange/single/TestBase_SingleStandardExchangeDETF.sol`](./standardExchange/single/TestBase_SingleStandardExchangeDETF.sol) |
 
 **Conforms to product law; no re-litigation.**  

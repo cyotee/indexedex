@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -73,7 +73,8 @@ contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_Integrat
         (uint256 tokenId_,) = IComposedStableCommonDetfBonding(deployedDetfVault).bond(
             dai, 1_000e18, 30 days, alice, block.timestamp + 1
         );
-        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId_, alice);
+        _warpPastUnlock(tokenId_);
+        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, alice);
         uint256 part_ = claim_ / 2;
         if (part_ == 0) part_ = claim_;
         rebasingDetfToken.redeem(part_, alice, false);
@@ -91,7 +92,8 @@ contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_Integrat
         (uint256 tokenId_,) = IComposedStableCommonDetfBonding(deployedDetfVault).bond(
             dai, 1_000e18, 30 days, alice, block.timestamp + 1
         );
-        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellNFT(tokenId_, alice);
+        _warpPastUnlock(tokenId_);
+        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, alice);
         uint256 before_ = rebasingDetfToken.balanceOf(alice);
         // redeem with impossible recipient path or zero via wrong amount - over-redeem reverts
         vm.expectRevert();
