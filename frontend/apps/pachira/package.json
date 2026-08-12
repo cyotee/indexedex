@@ -18,7 +18,7 @@
   "dependencies": {
     "@tanstack/react-query": "5.45.1",
     "@uniswap/permit2-sdk": "^1.4.0",
-    "next": "14.2.4",
+    "next": "16.3.0",
     "porto": "~0.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -43,7 +43,7 @@
     "eslint-config-next": "14.2.4",
     "lokijs": "^1.5.12",
     "pino-pretty": "^10.3.1",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.23",
     "supports-color": "^9.4.0",
     "tailwindcss": "^4.1.12",
     "typescript": "5.4.5",
