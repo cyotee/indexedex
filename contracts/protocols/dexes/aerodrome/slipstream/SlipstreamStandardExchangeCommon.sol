@@ -7,6 +7,12 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICLPool} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/ICLPool.sol";
+import {
+    ICLMintCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLMintCallback.sol";
+import {
+    ICLSwapCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLSwapCallback.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
 import {SlipstreamUtils} from "@crane/contracts/utils/math/SlipstreamUtils.sol";
 import {SlipstreamQuoter} from "@crane/contracts/utils/math/SlipstreamQuoter.sol";
@@ -20,8 +26,10 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 
-contract SlipstreamStandardExchangeCommon is ISecurePullErrors {
+contract SlipstreamStandardExchangeCommon is ISecurePullErrors, ICLMintCallback, ICLSwapCallback {
     using BetterSafeERC20 for IERC20;
+
+    error SlipstreamExchange_CallbackNotAuthorized();
     struct ManagedTicks {
         int24 centerLower;
         int24 centerUpper;
@@ -48,6 +56,36 @@ contract SlipstreamStandardExchangeCommon is ISecurePullErrors {
 
     function _pool() internal view returns (ICLPool) {
         return SlipstreamPoolAwareRepo._slipstreamPool();
+    }
+
+    function _requireBoundPoolCaller() internal view {
+        if (msg.sender != address(_pool())) {
+            revert SlipstreamExchange_CallbackNotAuthorized();
+        }
+    }
+
+    /// @inheritdoc ICLMintCallback
+    function uniswapV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata) external override {
+        _requireBoundPoolCaller();
+        ICLPool pool = _pool();
+        if (amount0Owed > 0) {
+            IERC20(pool.token0()).safeTransfer(msg.sender, amount0Owed);
+        }
+        if (amount1Owed > 0) {
+            IERC20(pool.token1()).safeTransfer(msg.sender, amount1Owed);
+        }
+    }
+
+    /// @inheritdoc ICLSwapCallback
+    function uniswapV3SwapCallback(int256 amount0Delta, int256 amount1Delta, bytes calldata) external override {
+        _requireBoundPoolCaller();
+        ICLPool pool = _pool();
+        if (amount0Delta > 0) {
+            IERC20(pool.token0()).safeTransfer(msg.sender, uint256(amount0Delta));
+        }
+        if (amount1Delta > 0) {
+            IERC20(pool.token1()).safeTransfer(msg.sender, uint256(amount1Delta));
+        }
     }
 
     function _loadPoolState()

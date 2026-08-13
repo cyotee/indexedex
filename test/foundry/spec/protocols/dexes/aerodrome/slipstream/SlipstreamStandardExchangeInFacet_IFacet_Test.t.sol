@@ -11,6 +11,12 @@ import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IF
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {Slipstream_Component_FactoryService} from "contracts/protocols/dexes/aerodrome/slipstream/Slipstream_Component_FactoryService.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {
+    ICLMintCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLMintCallback.sol";
+import {
+    ICLSwapCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLSwapCallback.sol";
 import {SlipstreamStandardExchangeInFacet} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacet.sol";
 
 /**
@@ -35,13 +41,17 @@ contract SlipstreamStandardExchangeInFacet_IFacet_Test is CraneTest, TestBase_IF
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](1);
+        controlInterfaces = new bytes4[](3);
         controlInterfaces[0] = type(IStandardExchangeIn).interfaceId;
+        controlInterfaces[1] = type(ICLMintCallback).interfaceId;
+        controlInterfaces[2] = type(ICLSwapCallback).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](2);
+        controlFuncs = new bytes4[](4);
         controlFuncs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         controlFuncs[1] = IStandardExchangeIn.exchangeIn.selector;
+        controlFuncs[2] = ICLMintCallback.uniswapV3MintCallback.selector;
+        controlFuncs[3] = ICLSwapCallback.uniswapV3SwapCallback.selector;
     }
 }

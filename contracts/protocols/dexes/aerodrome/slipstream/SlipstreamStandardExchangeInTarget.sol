@@ -38,6 +38,8 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         uint256 balance1Before;
         uint256 amount0Used;
         uint256 amount1Used;
+        uint256 pre0;
+        uint256 pre1;
     }
 
     error SlipstreamExchangeIn_DeadlineExceeded();
@@ -154,6 +156,12 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
 
         _collectManagedFees();
 
+        // Booked / prior inventory after fee collect, excluding this-call inbound of tokenIn.
+        uint256 bal0Start = IERC20(state.token0).balanceOf(address(this));
+        uint256 bal1Start = IERC20(state.token1).balanceOf(address(this));
+        state.pre0 = state.zeroForOne ? bal0Start - amountIn : bal0Start;
+        state.pre1 = state.zeroForOne ? bal1Start : bal1Start - amountIn;
+
         state.totalSharesBefore = IERC20(address(this)).totalSupply();
         (state.reserve0Before, state.reserve1Before) = _totalVaultReserves();
         state.managedTicks = _managedTicks();
@@ -194,8 +202,10 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
             );
         }
 
-        uint256 available0 = IERC20(state.token0).balanceOf(address(this));
-        uint256 available1 = IERC20(state.token1).balanceOf(address(this));
+        uint256 bal0AfterSwap = IERC20(state.token0).balanceOf(address(this));
+        uint256 bal1AfterSwap = IERC20(state.token1).balanceOf(address(this));
+        uint256 available0 = bal0AfterSwap > state.pre0 ? bal0AfterSwap - state.pre0 : 0;
+        uint256 available1 = bal1AfterSwap > state.pre1 ? bal1AfterSwap - state.pre1 : 0;
         state.plan = _managedLiquidityPlan(state.managedTicks, available0, available1);
 
         state.balance0Before = IERC20(state.token0).balanceOf(address(this));
@@ -225,8 +235,8 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         if (sharesOut < minSharesOut) revert SlipstreamExchangeIn_SlippageExceeded();
 
         ERC20Repo._mint(recipient, sharesOut);
-        _refundRemainder(state.token0);
-        _refundRemainder(state.token1);
+        _refundRemainder(state.token0, state.pre0);
+        _refundRemainder(state.token1, state.pre1);
     }
 
     function _mintPositionLiquidity(int24 tickLower, int24 tickUpper, uint128 liquidity) internal {
@@ -253,10 +263,12 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         amount1Used = bal1Before - IERC20(token1).balanceOf(address(this));
     }
 
-    function _refundRemainder(address token) internal {
+    /// @dev E6: refund this-call unused inbound only (`balance - bookedBefore`). Never sweep booked R.
+    function _refundRemainder(address token, uint256 bookedBefore) internal {
         uint256 balance = IERC20(token).balanceOf(address(this));
-        if (balance > 0) {
-            IERC20(token).safeTransfer(msg.sender, balance);
+        if (balance <= bookedBefore) {
+            return;
         }
+        IERC20(token).safeTransfer(msg.sender, balance - bookedBefore);
     }
 }

@@ -21,6 +21,12 @@ import {
 import {
     SlipstreamStandardExchangeOutFacet
 } from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutFacet.sol";
+import {
+    ISlipstreamStandardExchangeDFPkg,
+    SlipstreamStandardExchangeDFPkg
+} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 
 /**
  * @title Slipstream_Component_FactoryService
@@ -53,5 +59,30 @@ library Slipstream_Component_FactoryService {
             abi.encode(type(SlipstreamStandardExchangeOutFacet).name)._hash()
         );
         vm.label(address(instance), type(SlipstreamStandardExchangeOutFacet).name);
+    }
+
+    function deploySlipstreamStandardExchangeDFPkgFromVaultRegistry(
+        IVaultRegistryDeployment vaultRegistry,
+        ISlipstreamStandardExchangeDFPkg.PkgInit memory pkgInit
+    ) internal returns (ISlipstreamStandardExchangeDFPkg instance) {
+        instance = ISlipstreamStandardExchangeDFPkg(
+            address(
+                vaultRegistry.deployPkg(
+                    type(SlipstreamStandardExchangeDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    abi.encode(type(SlipstreamStandardExchangeDFPkg).name)._hash()
+                )
+            )
+        );
+        vm.label(address(instance), type(SlipstreamStandardExchangeDFPkg).name);
+    }
+
+    function deploySlipstreamStandardExchangeDFPkg(
+        IIndexedexManagerProxy indexedexManager,
+        ISlipstreamStandardExchangeDFPkg.PkgInit memory pkgInit
+    ) internal returns (ISlipstreamStandardExchangeDFPkg instance) {
+        return deploySlipstreamStandardExchangeDFPkgFromVaultRegistry(
+            IVaultRegistryDeployment(address(indexedexManager)), pkgInit
+        );
     }
 }

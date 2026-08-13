@@ -18,6 +18,9 @@ import {ICLPool} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/int
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
+import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -34,6 +37,12 @@ import {
     VaultFeeType,
     VaultFeeTypeIds
 } from "contracts/interfaces/VaultFeeTypes.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
+import {SlipstreamFactoryAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamFactoryAwareRepo.sol";
+import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 
 /**
  * @title ISlipstreamStandardExchangeDFPkg - Interface for Slipstream Standard Exchange Diamond Factory Package.
@@ -42,6 +51,7 @@ import {
 interface ISlipstreamStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
 
     error NotCalledByRegistry(address caller);
+    error InvalidPoolFactory(address poolFactory, address expectedFactory);
 
     struct PkgInit {
         IFacet erc20Facet;
@@ -199,8 +209,39 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
         return abi.encode(pkgArgs)._hash();
     }
 
-    function initAccount(bytes memory) external pure override {
-        // Initialize vault storage
+    function initAccount(bytes memory initArgs) public override {
+        PkgArgs memory decodedArgs = abi.decode(initArgs, (PkgArgs));
+
+        address poolFactory = decodedArgs.pool.factory();
+        if (poolFactory != address(SLIPSTREAM_FACTORY)) {
+            revert InvalidPoolFactory(poolFactory, address(SLIPSTREAM_FACTORY));
+        }
+
+        address token0 = decodedArgs.pool.token0();
+        address token1 = decodedArgs.pool.token1();
+        address[] memory tokens = new address[](2);
+        tokens[0] = token0;
+        tokens[1] = token1;
+
+        MultiAssetBasicVaultRepo._initialize(tokens);
+        StandardVaultRepo._initialize(
+            VAULT_FEE_ORACLE_QUERY, vaultFeeTypeIds(), vaultTypes(), abi.encode(tokens)._hash()
+        );
+        VaultFeeOracleQueryAwareRepo._initialize(VAULT_FEE_ORACLE_QUERY);
+        Permit2AwareRepo._initialize(PERMIT2);
+        SlipstreamFactoryAwareRepo._initialize(SLIPSTREAM_FACTORY);
+        SlipstreamPoolAwareRepo._initialize(decodedArgs.pool);
+        SlipstreamVaultRepo._initialize(decodedArgs.widthMultiplier);
+
+        string memory name_ = string.concat(
+            "Slipstream Vault of (",
+            _symbolOrToken(token0),
+            " / ",
+            _symbolOrToken(token1),
+            ")"
+        );
+        ERC20Repo._initialize(name_, "SLPX", 18);
+        EIP712Repo._initialize(name_, "1");
     }
 
     function postDeploy(address) external pure override returns (bool) {
@@ -252,5 +293,13 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
             ISlipstreamStandardExchangeDFPkg(address(this)),
             abi.encode(PkgArgs({pool: pool, widthMultiplier: widthMultiplier}))
         );
+    }
+
+    function _symbolOrToken(address token) internal view returns (string memory symbol_) {
+        try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
+            return fetchedSymbol;
+        } catch {
+            return "TOKEN";
+        }
     }
 }

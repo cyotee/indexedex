@@ -13,6 +13,12 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
+    ICLMintCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLMintCallback.sol";
+import {
+    ICLSwapCallback
+} from "@crane/contracts/protocols/dexes/aerodrome/slipstream/interfaces/callback/ICLSwapCallback.sol";
+import {
     SlipstreamStandardExchangeInTarget
 } from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInTarget.sol";
 
@@ -35,8 +41,10 @@ contract SlipstreamStandardExchangeInFacet is SlipstreamStandardExchangeInTarget
             bytes4[] memory interfaces
         )
     {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces[1] = type(ICLMintCallback).interfaceId;
+        interfaces[2] = type(ICLSwapCallback).interfaceId;
     }
 
     function facetFuncs()
@@ -48,9 +56,11 @@ contract SlipstreamStandardExchangeInFacet is SlipstreamStandardExchangeInTarget
             bytes4[] memory funcs
         )
     {
-        funcs = new bytes4[](2);
+        funcs = new bytes4[](4);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[2] = ICLMintCallback.uniswapV3MintCallback.selector;
+        funcs[3] = ICLSwapCallback.uniswapV3SwapCallback.selector;
     }
 
     function facetMetadata()
