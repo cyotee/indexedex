@@ -34,6 +34,7 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IFacet liquidityFacet;
+        IFacet exitFacet;
         IFacet seFacet;
         IFacet hooksFacet;
         /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.

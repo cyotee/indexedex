@@ -81,7 +81,10 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
             effectiveShares: effectiveShares,
             unlockTime: unlockTime,
             userRewardPerSharePaid: s.rewardPerShares,
-            active: true
+            active: true,
+            principalKind: 0,
+            capitalToken: address(0),
+            lpPrincipal: 0
         });
         s.totalShares += effectiveShares;
         s.lastRewardTokenBalance = s.rewardToken.balanceOf(address(this));
@@ -147,6 +150,9 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
         if (tokenId == 0) revert UniV4DetfBondNftRepo.ProtocolBondRestricted(0);
         UniV4DetfBondNftRepo.BondPosition storage p = s.positions[tokenId];
         if (!p.active) revert UniV4DetfBondNftRepo.ZeroAmount();
+        if (s.requireMatureForSell && block.timestamp < p.unlockTime) {
+            revert UniV4DetfBondNftRepo.BondNotMature(p.unlockTime);
+        }
 
         address bondOwner = s.ownerOf[tokenId];
         if (caller != bondOwner && caller != s.owner) {
@@ -218,5 +224,139 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
 
     function updateGlobalRewards() external {
         _updateGlobalRewards();
+    }
+
+    /// @inheritdoc IUniV4DetfBondNft
+    function initializeHookLpMode(address reserveLp_, bool requireMatureForSell_) external {
+        UniV4DetfBondNftRepo._requireOwner(msg.sender);
+        UniV4DetfBondNftRepo._initializeHookLpMode(IERC20(reserveLp_), requireMatureForSell_);
+    }
+
+    /// @inheritdoc IUniV4DetfBondNft
+    function openHookLpBond(
+        address recipient,
+        uint256 lpPrincipal,
+        address capitalToken,
+        uint256 effectiveShares,
+        uint256 unlockTime
+    ) external nonReentrant returns (uint256 tokenId) {
+        UniV4DetfBondNftRepo._requireOwner(msg.sender);
+        if (lpPrincipal == 0 || effectiveShares == 0) revert UniV4DetfBondNftRepo.ZeroAmount();
+        if (recipient == address(0)) recipient = tx.origin;
+
+        _updateGlobalRewards();
+        UniV4DetfBondNftRepo.Storage storage s = _s();
+        IERC20 lp_ = s.reserveLp;
+        if (address(lp_) == address(0)) revert UniV4DetfBondNftRepo.ZeroAmount();
+        uint256 have_ = lp_.balanceOf(address(this));
+        if (have_ < lpPrincipal) {
+            lp_.safeTransferFrom(msg.sender, address(this), lpPrincipal - have_);
+        }
+
+        tokenId = s.nextTokenId++;
+        s.ownerOf[tokenId] = recipient;
+        s.positions[tokenId] = UniV4DetfBondNftRepo.BondPosition({
+            pairTickLower: 0,
+            pairTickUpper: 0,
+            detfTickLower: 0,
+            detfTickUpper: 0,
+            pairPrincipal: lpPrincipal,
+            effectiveShares: effectiveShares,
+            unlockTime: unlockTime,
+            userRewardPerSharePaid: s.rewardPerShares,
+            active: true,
+            principalKind: 1,
+            capitalToken: capitalToken,
+            lpPrincipal: lpPrincipal
+        });
+        s.totalShares += effectiveShares;
+        s.lastRewardTokenBalance = s.rewardToken.balanceOf(address(this));
+    }
+
+    /// @inheritdoc IUniV4DetfBondNft
+    function closeHookLpBond(uint256 tokenId, address caller)
+        external
+        nonReentrant
+        returns (uint256 lpOut, uint256 rewards)
+    {
+        UniV4DetfBondNftRepo._requireOwner(msg.sender);
+        UniV4DetfBondNftRepo.Storage storage s = _s();
+        if (tokenId == 0) revert UniV4DetfBondNftRepo.ProtocolBondRestricted(0);
+        UniV4DetfBondNftRepo.BondPosition storage p = s.positions[tokenId];
+        if (!p.active || p.principalKind != 1) revert UniV4DetfBondNftRepo.ZeroAmount();
+        if (block.timestamp < p.unlockTime) revert UniV4DetfBondNftRepo.BondNotMature(p.unlockTime);
+
+        address bondOwner = s.ownerOf[tokenId];
+        if (caller != bondOwner && caller != s.owner) {
+            revert UniV4DetfBondNftRepo.NotBondHolder(bondOwner, caller);
+        }
+
+        rewards = _harvest(tokenId, bondOwner);
+        lpOut = p.lpPrincipal;
+        IERC20 lp_ = s.reserveLp;
+        uint256 have_ = address(lp_) == address(0) ? 0 : lp_.balanceOf(address(this));
+        if (lpOut > have_) lpOut = have_;
+        if (lpOut > 0) lp_.safeTransfer(s.owner, lpOut);
+
+        s.totalShares -= p.effectiveShares;
+        delete s.positions[tokenId];
+        delete s.ownerOf[tokenId];
+        s.lastRewardTokenBalance = s.rewardToken.balanceOf(address(this));
+    }
+
+    /// @inheritdoc IUniV4DetfBondNft
+    function sellHookLpBond(uint256 tokenId, address caller)
+        external
+        nonReentrant
+        returns (uint256 lpOut, uint256 rewards, uint256 principalCredited)
+    {
+        UniV4DetfBondNftRepo._requireOwner(msg.sender);
+        UniV4DetfBondNftRepo.Storage storage s = _s();
+        if (tokenId == 0) revert UniV4DetfBondNftRepo.ProtocolBondRestricted(0);
+        UniV4DetfBondNftRepo.BondPosition storage p = s.positions[tokenId];
+        if (!p.active || p.principalKind != 1) revert UniV4DetfBondNftRepo.ZeroAmount();
+        if (s.requireMatureForSell && block.timestamp < p.unlockTime) {
+            revert UniV4DetfBondNftRepo.BondNotMature(p.unlockTime);
+        }
+
+        address bondOwner = s.ownerOf[tokenId];
+        if (caller != bondOwner && caller != s.owner) {
+            revert UniV4DetfBondNftRepo.NotBondHolder(bondOwner, caller);
+        }
+
+        rewards = _harvest(tokenId, bondOwner);
+        lpOut = p.lpPrincipal;
+        IERC20 lp_ = s.reserveLp;
+        uint256 have_ = address(lp_) == address(0) ? 0 : lp_.balanceOf(address(this));
+        if (lpOut > have_) lpOut = have_;
+        if (lpOut > 0) lp_.safeTransfer(s.owner, lpOut);
+
+        principalCredited = p.lpPrincipal;
+        _updateGlobalRewards();
+        s.protocolPrincipal += principalCredited;
+        s.protocolEffectiveShares += principalCredited;
+        s.totalShares += principalCredited;
+        s.protocolRewardPerSharePaid = s.rewardPerShares;
+
+        s.totalShares -= p.effectiveShares;
+        delete s.positions[tokenId];
+        delete s.ownerOf[tokenId];
+        s.lastRewardTokenBalance = s.rewardToken.balanceOf(address(this));
+    }
+
+    function capitalTokenOf(uint256 tokenId) external view returns (address) {
+        return _s().positions[tokenId].capitalToken;
+    }
+
+    function lpPrincipalOf(uint256 tokenId) external view returns (uint256) {
+        return _s().positions[tokenId].lpPrincipal;
+    }
+
+    function requireMatureForSell() external view returns (bool) {
+        return _s().requireMatureForSell;
+    }
+
+    function reserveLp() external view returns (address) {
+        return address(_s().reserveLp);
     }
 }

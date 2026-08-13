@@ -6,13 +6,13 @@
 
 ## Status
 
-**DRAFT v0.3** — co-design Q1–Q17 **closed by stakeholder answers** (2026-08-12). Ready for product LOCK sign-off. Do **not** write the implementation plan until this PRD is stamped LOCK.
+**LOCKED v0.4** — co-design Q1–Q23 closed (2026-08-12). Product LOCK stamped 2026-08-12. Implementation plan authorized.
 
-**How Qs closed:** AskQuestion answered. Deltas vs v0.2 recommended defaults: **Q5/Q6** per-route synthetic + all-legs-rich expansion (Weighted); **Q4** proportional remove + redeposit **only** (no `withdrawSingle` on DETF); **Q7** maturity close = **the token used to buy the bond**; **Q15** expose exact-out mint/burn **iff** closed-form; **Q16** package path **`…/stable/quad/curve/`**.
+**How Qs closed:** Two AskQuestion rounds. Round 1 (Q1–Q17): per-route + all-legs-rich; prop-remove only; close = purchase token; exact-out iff closed-form; path `stable/quad/curve/`; like-kind only. Round 2 (Q18–Q23): first-bond close = pick one of three funded pairs; exact DETF-out mint + exact tokenOut burn; exact-out still prop-remove + redeposit; expansion uses **min S_spot_k**; like-kind is operator convention; claim redeem full matrix.
 
 | Related | Role |
 |---------|------|
-| **This family impl plan** | *Not written yet* — only after this PRD iterates to LOCK |
+| **This family impl plan** | [`UniswapV4StandardExchangeCurveQuadStableDETF_IMPLEMENTATION_AND_TEST_PLAN.md`](./UniswapV4StandardExchangeCurveQuadStableDETF_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | **Reserve hook (mandatory dependency)** | [`UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_PRD.md`](../../../../../../../../../../hooks/uniswap/v4/standardExchange/stable/quad/curve/UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_PRD.md) (**LOCKED v0.2**) |
 | **Hook ABI (frozen surface)** | [`IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol`](../../../../../../../../../../hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol) |
 | **Behavioral DETF peer (primary process)** | [`UniswapV4StandardExchangeOrbitalDETF_PRD.md`](../../../orbital/UniswapV4StandardExchangeOrbitalDETF_PRD.md) — multi-external seigniorage, first bond, bond/claim, mature-only sell, compound |
@@ -125,13 +125,13 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 24. Treating this DETF as a substitute rename of Orbital or Weighted.
 25. Using hook **`withdrawSingle`** on DETF burn / claim redeem — **forbidden** (Q4). Redeposit + residual only.
 26. A whole-DETF deploy-time **`rateAsset`** field for mint/burn gates (per-route pair unit — Q5).
-27. Mixed-vol / non-like-kind externals under this StableSwap \(A\) host (Q17).
+27. Mixed-vol / non-like-kind externals under this StableSwap \(A\) host (Q17) — **operator convention**, not an extra deploy revert (Q22).
 
 ---
 
 ## 1. Locked product decisions (summary)
 
-> v0.3: all §20 Qs **closed by stakeholder answers**. Stance = **LOCKED** unless noted as hook law / agent law.
+> v0.4: all §20 Qs **closed by stakeholder answers**. Stance = **LOCKED** unless noted as hook law / agent law.
 
 | Topic | Decision | Stance |
 |-------|----------|--------|
@@ -151,7 +151,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Backing SEs | Settlement SEs for mint/bond capital are the **same** instances bound on the hook for that pair | Peer copy |
 | Live | **Permissionless first successful bond** that joins reserve LP (synthetically ungated) | Peer copy |
 | First bond capital | **Requires all three external pair legs** funded (pair tokens and/or SE-accepted capital that settles to each) | **LOCKED Q1** |
-| First bond close asset | **`capitalToken` = a pair the user actually funded at open.** First bond: caller **must pass** one of the three funded pairs. Later bond: **forced** to the one funded pair (no choice). Close pays **only** that token | **LOCKED Q7** |
+| First bond close asset | **`capitalToken` = a pair the user actually funded at open.** First bond: caller **must pass** one of the three funded pairs (**Q18**). Later bond: **forced** to the one funded pair (no choice). Close pays **only** that token | **LOCKED Q7 / Q18** |
 | Creation rates | **Deploy-time `PkgArgs`** — three WAD rates, each **`> 0`**; size first-bond DETF + pairs so initial StableSwap mids ≈ creation | LOCKED |
 | First-bond excess | Unused external capital after min-implied DETF sizing is **refunded** | **LOCKED Q13** |
 | Seigniorage | Peer: boost on **funded pair-leg notional** → `quoteDetfAgainstReserve` (hook SoT) → usage fee → half-incentive inventory / user / feeTo | Peer copy |
@@ -170,7 +170,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Expansion realize paths | **Only** bond / `claimRewards` / `compoundProtocolRewards` (+ reward updates). **Not** primary mint/burn | Peer copy |
 | Compound if not single-asset eligible | **Skip** (no revert) — leave pending | Orbital Q6 |
 | Route errors | **`InvalidRoute`** plus family errors (not-live, not-mature, not-single-asset-eligible, first-bond-needs-all-externals, later-bond-single-only, protocol-LP-empty, lock-too-short, min-out) | LOCKED |
-| Exact-out DETF routes | **Ship iff closed-form + bit-exact preview** vs hook SoT (Phase 0 in impl plan). Else selectors **`InvalidRoute`** (exec + preview). **Never** binary-search | **LOCKED Q15** |
+| Exact-out DETF routes | **Exact DETF-out mint** + **exact tokenOut burn**, ship iff closed-form + bit-exact preview. Execution still prop-remove + redeposit + residual — **never** hook `withdrawSingle` / `exitSingleAssetExactTokenOut`. Else **`InvalidRoute`**. **Never** binary-search | **LOCKED Q15 / Q19 / Q20** |
 | Fixed-point | Scale to **1e18** internal; scale back for transfers | Peer copy |
 | Instance governance | Immutable / unowned after deploy | Peer copy |
 | DETF DFPkg path | IndexedEx manager vault registry. **Never** `new` facets/DFPkg; never bypass registry | Agent law |
@@ -178,11 +178,11 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Bond NFT / rebasing | **Share** `uniswap/v4/common/` packages; mature-only via DETF + shared flag | **LOCKED Q8** |
 | Fee-recipient NFT | Wire like peer UniV4 DETFs; **same** mature-only principal rules | Peer copy |
 | Compound | Protocol NFT only → `depositSingle(DETF)` when single-asset eligible | Peer copy |
-| Natural expansion | Deploy-time epochs + premium-closure; unlimited whole-epoch catch-up (`maxCatchUpEpochs=0`); **not** fee oracle; Policy accrues only when **all three** external legs are mint-rich (`allLegsMintRich`) at epoch end | **LOCKED Q6** |
+| Natural expansion | Deploy-time epochs + premium-closure; unlimited whole-epoch catch-up (`maxCatchUpEpochs=0`); **not** fee oracle; Policy accrues only when **all three** external legs are mint-rich (`allLegsMintRich`) at epoch end. Formula uses **`min(S_spot_0, S_spot_1, S_spot_2)`** | **LOCKED Q6 / Q21** |
 | Synthetic + epoch debt | Pending expansion in synthetic denominator | Peer copy |
 | Peg narrative | Per external pair \(k\): abstract **1e18** = FD claim in pair \(k\) per DETF equals **creationPairPerDetfWad[k]**. No global external peg pair | **LOCKED Q5** |
 | Buffered-leg mint capital | **Pair face allowed** (hook buffers last); also vaultShare / SE.tokens(); B6 flexible share flags allowed as **optimization** | **LOCKED Q14** |
-| Asset story | **Three like-kind stables only.** Mixed-vol → Weighted / Orbital, not this family | **LOCKED Q17** |
+| Asset story | **Three like-kind stables only** (operator convention — **no** extra deploy check beyond hook token rules). Mixed-vol → Weighted / Orbital | **LOCKED Q17 / Q22** |
 | Test matrix | Gentle **and** launch-rich expansion; **1 SE + 2 bare**, **2 SE + 1 bare**, **3 SE**; reject all-bare; RP on/off; mixed decimals 6/18; DETF not at binding index 0; amp bounds inherited from hook | LOCKED |
 
 ---
@@ -276,7 +276,7 @@ A swap on any door still uses the **other two tokens as witnesses** in the Stabl
 | `depositSingle` / `joinSingleAssetExactIn` (+ Flexible) | Live primary mint; protocol compound; free-DETF→claim |
 | `exitProportional` / `exitProportionalFlexible` | Normative burn / claim redeem / maturity close |
 | `withdrawSingle` / `exitSingleAssetExactBptIn` (+ Flexible) | **Not used** on DETF burn/redeem (Q4) |
-| `withdrawSingleExactOut` / `exitSingleAssetExactTokenOut` | DETF exact-out burn **iff** closed-form (Q15); else unused |
+| `withdrawSingleExactOut` / `exitSingleAssetExactTokenOut` | **Not used** on DETF (Q4 / Q20). Exact-out burn still sizes via invert then `exitProportional` |
 | `previewSwapExactIn` / SE In/Out | Residual consolidate other pairs → `tokenOut` / `capitalToken` |
 | `nativeReserve` / `ratedBalance` / `isFullBook` / `baseAmp` | Info + gates |
 
@@ -328,7 +328,7 @@ First bond is **synthetically ungated** (Policy and Open).
 
 This is **forced by hook first-mint law** (all four native inventories \(> 0\)). A two-pair first bond cannot create a valid hook book.
 
-**Close asset (LOCKED Q7):** caller **must** supply **`capitalToken`** — one of the three `pairTokens`. Stored on the NFT as the **sole** maturity-close settlement token. Orbital dual-residual close is **out** for three externals.
+**Close asset (LOCKED Q7 / Q18):** caller **must** supply **`capitalToken`** — one of the three **funded** `pairTokens`. Stored on the NFT as the **sole** maturity-close settlement token. Orbital dual-residual close is **out**.
 
 1. User supplies capital resolving to **all three** pair-notionals \(C_0, C_1, C_2 > 0\) in WAD, plus chosen **`capitalToken`**.
 2. **Mint DETF for join** using **creation rates only** (not live StableSwap mid):
@@ -561,7 +561,7 @@ lpOut = detfBurned * protocolLp / effectiveSupply
 7. Pay **`tokenOut` only**. **Dust policy:** dust of `tokenOut` after settle goes to the user; dust of other pairs that cannot be economically consolidated (below min swap / dust threshold frozen in plan) may remain on the DETF diamond and is **not** a user claim in v1. Tests assert no material free inventory of user capital on success paths.
 8. Enforce `minOut`.
 
-**Exact-out burn (LOCKED Q15):** if Phase 0 finds a **closed-form** invert (exact `tokenOut` → DETF in / LP in) with **bit-exact preview == execution** against hook SoT, expose it on the DETF surface. The execution path is still prop-remove + redeposit + residual (or the proven-equal closed form). If no closed-form: selector **`InvalidRoute`** (exec + preview). **Never** binary-search.
+**Exact-out burn (LOCKED Q15 / Q19 / Q20):** user names **exact `tokenOut` amount**. If Phase 0 finds a **closed-form** invert to DETF in / `lpOut` with **bit-exact preview == execution**, expose it. **Execution is still** `exitProportional` + redeposit DETF + residual consolidate — **never** hook `withdrawSingle` / `exitSingleAssetExactTokenOut`. If no closed-form: selector **`InvalidRoute`** (exec + preview). **Never** binary-search.
 
 #### 5.6.1 Redeposit ladder
 
@@ -608,7 +608,7 @@ This family **has** hook `withdrawSingle`. Stakeholder lock (**Q4**): DETF burn/
 
 **Invariant:** live primary mint does **not** require four-leg proportional deposit; peer is single-sided external-leg join + free DETF mint.
 
-**Exact-out mint (LOCKED Q15):** if Phase 0 finds a **closed-form** invert (exact DETF out → pair capital in) with **bit-exact preview == execution** against hook SoT (`previewJoinSingleAssetExactOut` / quote invert), expose it. Else selector **`InvalidRoute`**. **Never** binary-search.
+**Exact-out mint (LOCKED Q15 / Q19):** user names **exact DETF amount out**. If Phase 0 finds a **closed-form** invert to pair capital in (seigniorage quote inverse + hook SoT) with **bit-exact preview == execution**, expose it. Else selector **`InvalidRoute`**. **Never** binary-search. Not “exact hook LP out.”
 
 ---
 
@@ -688,7 +688,7 @@ Mechanics:
 
 ---
 
-## 9. Rebasing claim (LOCKED)
+## 9. Rebasing claim (LOCKED Q23)
 
 ### 9.1 Package
 
@@ -769,10 +769,10 @@ Identical to CP / Orbital UniV4 DETF peer:
 - Resolve defaults: epoch `0` → **8 hours**; `R == 0` → **0.10e18**; `maxCatchUpEpochs == 0` → unlimited.
 - Pending debt always in synthetic denominator.
 - Realize **only** on bond / claimRewards / compound / bond reward updates.
-- Premium-closure O(1) formula using `S_spot` then debt-inclusive synthetic for gates.
+- Premium-closure O(1) formula using **`S_spot = min(S_spot_0, S_spot_1, S_spot_2)`** then debt-inclusive synthetics for gates (**LOCKED Q21**).
 - Accrues while **`allLegsMintRich`** (every external pair’s `syntheticVs(pair_k) > mintThreshold`) at epoch end (**LOCKED Q6**). Open never expands.
 
-Reference tables for launch-rich `R` sizing: **copy CP UniV4 DETF §10.3–§10.4**. Per-leg creation rates are the peg references; premium-closure may use the minimum `S_spot_k` or a documented aggregate — impl plan freezes the bit-exact input so all-legs-rich and the O(1) formula stay consistent.
+Reference tables for launch-rich `R` sizing: **copy CP UniV4 DETF §10.3–§10.4**. Per-leg creation rates are the peg references; the formula input is the **weakest** pair’s `S_spot_k`.
 
 ---
 
@@ -919,7 +919,7 @@ Production-first (`indexedex-testing`). No mocks of SUT (DETF, hook, manager, re
 
 ## 16. Differences vs peers
 
-| | UniV4 CP SE DETF | UniV4 Orbital DETF | UniV4 Weighted DETF | **This family (v0.3)** |
+| | UniV4 CP SE DETF | UniV4 Orbital DETF | UniV4 Weighted DETF | **This family (v0.4)** |
 |--|------------------|--------------------|---------------------|------------------------|
 | Reserve | CP buffer hook (2 currencies) | Orbital SE buffer (3) | Weighted SE buffer (\(n\in[2,8]\)) | **Curve Quad Stable buffer (4)** |
 | Curve | Constant product | Sphere \(L^2\) | Weighted math | **StableSwap \(A\)** |
@@ -945,8 +945,8 @@ Production-first (`indexedex-testing`). No mocks of SUT (DETF, hook, manager, re
 | Order | Work |
 |-------|------|
 | 1 | Curve Quad Stable Buffer Hook PRD **LOCKED** + ABI frozen (done enough to draft this DETF) |
-| 2 | **This DETF PRD** → iterate (§20) → **LOCK** |
-| 3 | DETF implementation plan (only after LOCK) |
+| 2 | **This DETF PRD** → **LOCKED v0.4** |
+| 3 | DETF implementation plan (authorized) |
 | 4 | Shared bond NFT + rebasing packages for **LP principal** (already shared with CP / Orbital / Weighted) |
 | 5 | DETF DFPkg + tests |
 
@@ -1010,7 +1010,7 @@ Stakeholder answers 2026-08-12. Flip any row in chat before stamping LOCK.
 | **Q4** | Primary burn path | **Only** `exitProportional` + redeposit DETF + residual. **`withdrawSingle` forbidden** on DETF burn/redeem |
 | **Q5** | Synthetic ruler | **Per-route** `syntheticVs(pair_k)` (whole-reserve FD incl. DETF self-leg). **No** whole-DETF `rateAsset` field |
 | **Q6** | Expansion mint-rich gate | **All-legs-rich:** every external pair `syntheticVs(pair_k) > mintThreshold` at epoch end. Open never expands |
-| **Q7** | Maturity close | **Only the token used to buy the bond.** First bond: caller picks one of the three funded pairs. Later bond: **forced** to the one funded pair |
+| **Q7** | Maturity close | **Only the token used to buy the bond.** See Q18 for first bond |
 | **Q8** | Bond NFT + rebasing | **Share** `uniswap/v4/common/` with CP / Orbital / Weighted. `requireMatureForSell = true` |
 | **Q9** | Rate providers | **Optional** per SE leg; when unset, rated = SE claim. DoD includes RP on/off rows |
 | **Q10** | DETF binding index | **Free** among the four address-sorted slots. No fixed index |
@@ -1018,11 +1018,25 @@ Stakeholder answers 2026-08-12. Flip any row in chat before stamping LOCK.
 | **Q12** | Quote / FD calculator | **Hook source of truth** (previews only). No DETF-side StableSwap copy |
 | **Q13** | First-bond excess | **Refund** unused pair capital after min-implied DETF sizing |
 | **Q14** | B6 flexible share flags | Allowed as **optimization** when `tokenIn` is already vaultShare. Default remains pair-face + hook buffer-last |
-| **Q15** | Exact-out DETF routes | **Expose iff closed-form + bit-exact preview.** Else `InvalidRoute`. Never binary-search |
+| **Q15** | Exact-out DETF routes | See Q19 / Q20 |
 | **Q16** | Type name vs directory | Type **`UniswapV4StandardExchangeCurveQuadStableDETF`** at path **`…/standardExchange/stable/quad/curve/`** (matches hook) |
-| **Q17** | Asset story | **Three like-kind stables only.** Mixed-vol belongs on Weighted or Orbital |
+| **Q17** | Asset story | **Three like-kind stables only.** Mixed-vol belongs on Weighted or Orbital. Enforcement: Q22 |
+| **Q18** | First-bond close token | Caller **picks one of the three funded pairs** as `capitalToken`. Not a three-asset residual basket. Not a PkgArgs default |
+| **Q19** | Exact-out meaning | **Exact DETF-out mint** + **exact tokenOut burn**. Not “exact hook LP out.” Ship iff closed-form + preview==exec |
+| **Q20** | Exact-out burn settle | **Still** `exitProportional` + redeposit + residual. **Never** hook `withdrawSingle` / `exitSingleAssetExactTokenOut` |
+| **Q21** | Expansion formula input | **`S_spot = min(S_spot_0, S_spot_1, S_spot_2)`** once `allLegsMintRich` |
+| **Q22** | Like-kind enforcement | **Operator convention only.** No extra deploy check beyond hook token rules (ERC-20, decimals 6–18, not FoT/rebasing) |
+| **Q23** | Claim redeem `tokenOut` | **Full matrix** like burn: any of three pairs, vaultShare if SE set (prefer clean share path), or SE.tokens(). DETF face = `InvalidRoute`. Prop-remove + redeposit only |
 
-**Plan-only remaining (not product forks):** facet cut; storage layout; atomic order of burn-then-remove-then-redeposit; which hook preview inverts for `quoteDetfAgainstReserve`; residual sell order of the two non-out pairs; dust thresholds; exact shared-package flag name.
+**Plan-only remaining (not product forks):** frozen in the impl plan — facet cut; storage layout; atomic order of burn-then-remove-then-redeposit; which hook preview inverts for `quoteDetfAgainstReserve` and exact-out; residual sell order of the two non-out pairs; dust thresholds; exact shared-package flag name.
+
+**LOCK-time plan-scope answers (2026-08-12, not Q-table flips):**
+
+| Topic | Answer |
+|-------|--------|
+| Deposit / mint / bond capital units | **Whatever the reserve hook already accepts as a liquidity deposit.** Pair face always. Vault shares when the hook Flexible path accepts them. Do not invent extra DETF-only capital types. Do not refuse a unit the hook would take. Burn / claim redeem still **must not** call hook `withdrawSingle` (Q4). |
+| Exact-out mint / burn | **Phase 0 invert spike** against hook previews. Ship selectors iff closed-form + bit-exact preview==exec. Else `InvalidRoute`. Never binary-search. Never hook `withdrawSingle`. |
+| Agent-law / compound inventory | Add this family at LOCK (agent-law families table + shared compound/expansion inventory). |
 
 ---
 
@@ -1073,7 +1087,9 @@ User burns free DETF → tokenOut = USDC
 |---------|------|-------|
 | **v0.1** | 2026-08-12 | First draft. Orbital DETF economics + Curve Quad Stable Buffer Hook reserve. Process borrowed from Weighted where the hook surface matches. OPEN Q1–Q17. |
 | **v0.2** | 2026-08-12 | Interim: AskQuestion declined → recommended defaults applied (superseded by v0.3). |
-| **v0.3** | 2026-08-12 | **Stakeholder answers applied.** Q5/Q6 per-route + all-legs-rich; Q4 prop-remove only (no withdrawSingle); Q7 close = token used to buy the bond; Q15 exact-out iff closed-form; Q16 path `stable/quad/curve/`. Ready for product LOCK. |
+| **v0.3** | 2026-08-12 | Round-1 answers applied (Q1–Q17). |
+| **v0.4** | 2026-08-12 | Round-2 answers: Q18 first-bond close = pick one funded pair; Q19 exact DETF-out mint + exact tokenOut burn; Q20 exact-out still prop-remove; Q21 min `S_spot_k`; Q22 like-kind convention-only; Q23 claim redeem full matrix. Ready for product LOCK. |
+| **LOCKED v0.4** | 2026-08-12 | Product LOCK. No Q1–Q23 flips. Plan-scope: hook-accepted deposit units; exact-out Phase 0 spike; agent-law + compound inventory rows. |
 
 ---
 
@@ -1081,7 +1097,7 @@ User burns free DETF → tokenOut = USDC
 
 | Role | Sign-off |
 |------|----------|
-| Product | Pending — Q1–Q17 closed by answers; stamp LOCK or flip a row |
-| Protocol | Pending |
+| Product | **LOCKED v0.4** — 2026-08-12. Q1–Q23 unchanged. |
+| Protocol | Pending (implementation plan stamp) |
 
-**Status DRAFT v0.3 — stakeholder answers applied. Stamp LOCK to authorize the implementation plan.**
+**Status LOCKED v0.4 — implementation plan authorized.**

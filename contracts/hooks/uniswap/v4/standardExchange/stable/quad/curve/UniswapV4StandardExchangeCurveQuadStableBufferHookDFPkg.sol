@@ -62,6 +62,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
     IVaultRegistryDeployment public immutable VAULT_REGISTRY_DEPLOYMENT;
     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
     IFacet public immutable LIQUIDITY_FACET;
+    IFacet public immutable EXIT_FACET;
     IFacet public immutable SE_FACET;
     IFacet public immutable HOOKS_FACET;
     IFacet public immutable ERC20_FACET;
@@ -75,7 +76,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
         if (
             address(init.vaultRegistryDeployment) == address(0)
                 || address(init.vaultFeeOracleQuery) == address(0)
-                || address(init.liquidityFacet) == address(0) || address(init.seFacet) == address(0)
+                || address(init.liquidityFacet) == address(0) || address(init.exitFacet) == address(0)
+                || address(init.seFacet) == address(0)
                 || address(init.hooksFacet) == address(0) || address(init.erc20Facet) == address(0)
                 || address(init.erc5267Facet) == address(0) || address(init.erc2612Facet) == address(0)
                 || address(init.multiAssetBasicVaultFacet) == address(0)
@@ -86,6 +88,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
         VAULT_REGISTRY_DEPLOYMENT = init.vaultRegistryDeployment;
         VAULT_FEE_ORACLE_QUERY = init.vaultFeeOracleQuery;
         LIQUIDITY_FACET = init.liquidityFacet;
+        EXIT_FACET = init.exitFacet;
         SE_FACET = init.seFacet;
         HOOKS_FACET = init.hooksFacet;
         ERC20_FACET = init.erc20Facet;
@@ -140,7 +143,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](8);
+        facets = new address[](9);
         facets[0] = address(ERC20_FACET);
         facets[1] = address(ERC5267_FACET);
         facets[2] = address(ERC2612_FACET);
@@ -148,7 +151,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
         facets[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facets[5] = address(HOOKS_FACET);
         facets[6] = address(LIQUIDITY_FACET);
-        facets[7] = address(SE_FACET);
+        facets[7] = address(EXIT_FACET);
+        facets[8] = address(SE_FACET);
     }
 
     function packageMetadata()
@@ -162,7 +166,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](8);
+        cuts = new IDiamond.FacetCut[](9);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
             action: IDiamond.FacetCutAction.Add,
@@ -199,6 +203,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
             functionSelectors: LIQUIDITY_FACET.facetFuncs()
         });
         cuts[7] = IDiamond.FacetCut({
+            facetAddress: address(EXIT_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: EXIT_FACET.facetFuncs()
+        });
+        cuts[8] = IDiamond.FacetCut({
             facetAddress: address(SE_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: SE_FACET.facetFuncs()

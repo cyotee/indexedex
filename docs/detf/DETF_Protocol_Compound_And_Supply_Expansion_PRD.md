@@ -302,6 +302,10 @@ Both may mint DETF; both feed rewards. Accounting must not double-count or stran
 | Multi-vault weighted | `composed/multi-vault-weighted/` | Weighted multi-leg reserve |
 | Mixed-buffer multi-vault stable | `composed/stable/mixedBuffer/` | Buffer burn rules unchanged by this PRD |
 | Composed stable common | `composed/stable/common/` | Claim / rebasing surfaces often wired — Phase 1 claim coupling critical |
+| Uni V4 Single SE CP buffer | `detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/` | Epoch premium-closure form; hook LP compound |
+| Uni V4 SE Orbital | `detf/protocols/dexes/uniswap/v4/standardExchange/orbital/` | Same epoch form; compound skips if not zap-eligible |
+| Uni V4 SE Weighted | `detf/protocols/dexes/uniswap/v4/standardExchange/weighted/` | Epoch form + **all-legs-rich** gate; `min S_spot_k` |
+| Uni V4 SE Curve Quad Stable | `detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/` | **In scope (PRD LOCKED v0.4).** Epoch form + **all-legs-rich** (all three pairs); formula input **`min(S_spot_0, S_spot_1, S_spot_2)`**; compound `depositSingle(DETF)` or skip if not single-asset eligible |
 
 Shared: `detf/core/*`, `detf/bondNft/*`, `detf/claimToken/*`, `detf/reusable/*` as needed.
 

@@ -38,4 +38,14 @@ interface IUniV4DetfRebasingClaim {
     function detfToken() external view returns (IERC20);
     function listingPoolKey() external view returns (PoolKey memory);
     function owner() external view returns (address);
+
+    /* -------------------- Hook-LP principal (additive; CP wings unchanged) -------------------- */
+
+    /// @notice Optional post-init: bind fungible hook LP as claim principal.
+    function initializeHookLp(IERC20 reserveLp_) external;
+
+    /// @notice DETF-only: absorb hook LP into this package; mint rebasing from Δ LP.
+    function absorbHookLp(uint256 lpAmount, address rebasingRecipient) external returns (uint256 rebasingTokensMinted);
+
+    function reserveLp() external view returns (IERC20);
 }

@@ -153,4 +153,42 @@ abstract contract UniV4DetfRebasingClaimTarget is UniV4DetfRebasingClaimCommon, 
     function owner() external view returns (address) {
         return UniV4DetfRebasingClaimRepo._layout().owner;
     }
+
+    /// @inheritdoc IUniV4DetfRebasingClaim
+    function initializeHookLp(IERC20 reserveLp_) external {
+        UniV4DetfRebasingClaimRepo._requireOwner(msg.sender);
+        UniV4DetfRebasingClaimRepo._initializeHookLp(reserveLp_);
+    }
+
+    /// @inheritdoc IUniV4DetfRebasingClaim
+    function absorbHookLp(uint256 lpAmount, address rebasingRecipient)
+        external
+        nonReentrant
+        returns (uint256 rebasingTokensMinted)
+    {
+        UniV4DetfRebasingClaimRepo._requireOwner(msg.sender);
+        if (rebasingRecipient == address(0) || lpAmount == 0) revert ZeroAmount();
+        IERC20 lp_ = UniV4DetfRebasingClaimRepo._layout().reserveLp;
+        if (address(lp_) == address(0)) revert UnsupportedToken(address(0));
+        uint256 pre = lp_.balanceOf(address(this));
+        uint256 have = pre;
+        if (have < lpAmount) {
+            lp_.safeTransferFrom(msg.sender, address(this), lpAmount - have);
+        }
+        uint256 post = lp_.balanceOf(address(this));
+        uint256 contribution = post > pre ? post - pre : 0;
+        uint256 supply = ERC20Repo._totalSupply();
+        if (supply == 0 || pre == 0) {
+            rebasingTokensMinted = contribution;
+        } else {
+            rebasingTokensMinted = Math.mulDiv(contribution, supply, pre);
+        }
+        if (rebasingTokensMinted > 0) {
+            ERC20Repo._mint(rebasingRecipient, rebasingTokensMinted);
+        }
+    }
+
+    function reserveLp() external view returns (IERC20) {
+        return UniV4DetfRebasingClaimRepo._layout().reserveLp;
+    }
 }

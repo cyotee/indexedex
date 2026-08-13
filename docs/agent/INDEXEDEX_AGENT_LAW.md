@@ -111,6 +111,9 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 | Mixed-buffer multi-vault stable | `detf/protocols/dexes/balancer/v3/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
 | Multi-vault weighted | `detf/protocols/dexes/balancer/v3/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
 | **Uni V4 Single SE CP buffer** | `detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/` | Exactly **one** SE + **Uni V4 Single SE Buffer Constant Product** reserve (DETF raw leg ↔ pairToken; fungible hook LP principal); see co-located `UniswapV4SingleStandardExchangeDETF_PRD.md` |
+| **Uni V4 SE Orbital** | `detf/protocols/dexes/uniswap/v4/standardExchange/orbital/` | DETF + **exactly two** external pairs on a **3-leg orbital sphere** buffer hook; see co-located `UniswapV4StandardExchangeOrbitalDETF_PRD.md` |
+| **Uni V4 SE Weighted** | `detf/protocols/dexes/uniswap/v4/standardExchange/weighted/` | DETF + **1–7** external pairs on a **weighted** buffer hook (\(n\in[2,8]\), distinct valuations); see co-located `UniswapV4StandardExchangeWeightedDETF_PRD.md` |
+| **Uni V4 SE Curve Quad Stable** | `detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/` | DETF + **exactly three** like-kind external pairs on a **4-asset StableSwap** buffer hook (`baseAmp`); per-route synthetic; no whole-DETF `rateAsset`; see co-located `UniswapV4StandardExchangeCurveQuadStableDETF_PRD.md` (**LOCKED v0.4**) |
 | Dual-liquidity / protocol | elsewhere under `contracts/vaults/` | Protocol-specific DETF-like products; do not subclass for new generic DETFs |
 
 **Layout law:** shared true-DETF infrastructure → `detf/common/`; host-family packages → `detf/protocols/dexes/<host>/…`. See `contracts/vaults/detf/DETF_DIRECTORY_REORGANIZATION_PRD.md`.
@@ -155,7 +158,7 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 
 **Normative PRD:** [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**). Program index / stages: [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md). Shared libs: [`DETFProtocolCompoundLib.sol`](contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol), [`DETFNaturalExpansionLib.sol`](contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol).
 
-Apply to **true DETFs** in scope (Balancer Single SE, multi-vault weighted, mixed-buffer, composed stable common, **Uni V4 Single SE CP buffer**). **Out:** removed single-vault DETF residue, `contracts/vaults/seigniorage/`, dual DETF stubs (deleted) unless re-supported.
+Apply to **true DETFs** in scope (Balancer Single SE, multi-vault weighted, mixed-buffer, composed stable common, **Uni V4 Single SE CP buffer**, **Uni V4 SE Orbital**, **Uni V4 SE Weighted**, **Uni V4 SE Curve Quad Stable**). **Out:** removed single-vault DETF residue, `contracts/vaults/seigniorage/`, dual DETF stubs (deleted) unless re-supported. Uni V4 Curve Quad Stable / Weighted use **per-route** synthetics and **all-legs-rich** expansion (no whole-DETF `rateAsset` numeraire) — family PRD wins over the generic single-synthetic wording above.
 
 **Protocol compound (detf-owned bond NFT only):**
 

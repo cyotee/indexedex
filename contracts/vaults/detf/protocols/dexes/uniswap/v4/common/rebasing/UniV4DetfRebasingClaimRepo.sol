@@ -27,6 +27,7 @@ library UniV4DetfRebasingClaimRepo {
         bool pairIsCurrency0;
         uint24 widthMultiplier;
         address owner; // DETF diamond
+        IERC20 reserveLp; // 0 = CP wings mode
     }
 
     function _layout() internal pure returns (Storage storage s) {
@@ -57,6 +58,10 @@ library UniV4DetfRebasingClaimRepo {
         s.pairIsCurrency0 = pairIsCurrency0_;
         s.widthMultiplier = widthMultiplier_;
         s.owner = owner_;
+    }
+
+    function _initializeHookLp(IERC20 reserveLp_) internal {
+        _layout().reserveLp = reserveLp_;
     }
 
     function _requireOwner(address caller_) internal view {

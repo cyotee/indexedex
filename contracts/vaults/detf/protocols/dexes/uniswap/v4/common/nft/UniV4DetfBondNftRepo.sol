@@ -28,6 +28,10 @@ library UniV4DetfBondNftRepo {
         uint256 unlockTime;
         uint256 userRewardPerSharePaid;
         bool active;
+        /// @dev 0 = dual-OOR (CP); 1 = fungible hook LP principal.
+        uint8 principalKind;
+        address capitalToken;
+        uint256 lpPrincipal;
     }
 
     struct Storage {
@@ -51,6 +55,8 @@ library UniV4DetfBondNftRepo {
         uint256 protocolRewardPerSharePaid;
         mapping(uint256 tokenId => BondPosition) positions;
         mapping(uint256 tokenId => address) ownerOf;
+        IERC20 reserveLp;
+        bool requireMatureForSell;
     }
 
     function _layout() internal pure returns (Storage storage s) {
@@ -87,6 +93,12 @@ library UniV4DetfBondNftRepo {
         // Protocol id 0 starts with zero principal (plan §0.3 #23).
         s.protocolPrincipal = 0;
         s.protocolEffectiveShares = 0;
+    }
+
+    function _initializeHookLpMode(IERC20 reserveLp_, bool requireMatureForSell_) internal {
+        Storage storage s = _layout();
+        s.reserveLp = reserveLp_;
+        s.requireMatureForSell = requireMatureForSell_;
     }
 
     function _requireOwner(address caller_) internal view {

@@ -23,19 +23,7 @@ contract UniV4DetfRebasingClaimFacet is IFacet, UniV4DetfRebasingClaimTarget {
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](12);
-        funcs_[0] = IUniV4DetfRebasingClaim.deposit.selector;
-        funcs_[1] = IUniV4DetfRebasingClaim.redeem.selector;
-        funcs_[2] = IUniV4DetfRebasingClaim.previewDeposit.selector;
-        funcs_[3] = IUniV4DetfRebasingClaim.previewRedeem.selector;
-        funcs_[4] = IUniV4DetfRebasingClaim.zapOutToPair.selector;
-        funcs_[5] = IUniV4DetfRebasingClaim.absorbBondProceeds.selector;
-        funcs_[6] = IUniV4DetfRebasingClaim.donateDetf.selector;
-        funcs_[7] = IUniV4DetfRebasingClaim.pairToken.selector;
-        funcs_[8] = IUniV4DetfRebasingClaim.detfToken.selector;
-        funcs_[9] = IUniV4DetfRebasingClaim.listingPoolKey.selector;
-        funcs_[10] = IUniV4DetfRebasingClaim.owner.selector;
-        funcs_[11] = IUnlockCallback.unlockCallback.selector;
+        return _allFuncs();
     }
 
     function facetMetadata()
@@ -47,7 +35,11 @@ contract UniV4DetfRebasingClaimFacet is IFacet, UniV4DetfRebasingClaimTarget {
         interfaces_ = new bytes4[](2);
         interfaces_[0] = type(IUniV4DetfRebasingClaim).interfaceId;
         interfaces_[1] = type(IUnlockCallback).interfaceId;
-        funcs_ = new bytes4[](12);
+        funcs_ = _allFuncs();
+    }
+
+    function _allFuncs() private pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](15);
         funcs_[0] = IUniV4DetfRebasingClaim.deposit.selector;
         funcs_[1] = IUniV4DetfRebasingClaim.redeem.selector;
         funcs_[2] = IUniV4DetfRebasingClaim.previewDeposit.selector;
@@ -60,5 +52,8 @@ contract UniV4DetfRebasingClaimFacet is IFacet, UniV4DetfRebasingClaimTarget {
         funcs_[9] = IUniV4DetfRebasingClaim.listingPoolKey.selector;
         funcs_[10] = IUniV4DetfRebasingClaim.owner.selector;
         funcs_[11] = IUnlockCallback.unlockCallback.selector;
+        funcs_[12] = IUniV4DetfRebasingClaim.initializeHookLp.selector;
+        funcs_[13] = IUniV4DetfRebasingClaim.absorbHookLp.selector;
+        funcs_[14] = IUniV4DetfRebasingClaim.reserveLp.selector;
     }
 }

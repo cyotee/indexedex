@@ -48,4 +48,35 @@ interface IUniV4DetfBondNft {
 
     /// @notice Update global reward index from reward-token balance (free DETF held here).
     function updateGlobalRewards() external;
+
+    /* -------------------- Hook-LP principal (additive; CP dual-OOR unchanged) -------------------- */
+
+    /// @notice Open a fungible hook-LP bond. Only DETF owner. Returns tokenId.
+    /// @dev `capitalToken` is the single maturity-close settlement pair. LP must already sit on this package.
+    function openHookLpBond(
+        address recipient,
+        uint256 lpPrincipal,
+        address capitalToken,
+        uint256 effectiveShares,
+        uint256 unlockTime
+    ) external returns (uint256 tokenId);
+
+    /// @notice Mature close of a hook-LP bond: harvest rewards, send LP to DETF owner, retire NFT.
+    function closeHookLpBond(uint256 tokenId, address caller)
+        external
+        returns (uint256 lpOut, uint256 rewards);
+
+    /// @notice Sell a hook-LP bond: harvest, transfer LP to DETF owner for rebasing absorb, credit id 0, retire NFT.
+    /// @dev Reverts `BondNotMature` when `requireMatureForSell` is set and unlockTime has not passed.
+    function sellHookLpBond(uint256 tokenId, address caller)
+        external
+        returns (uint256 lpOut, uint256 rewards, uint256 principalCredited);
+
+    function capitalTokenOf(uint256 tokenId) external view returns (address);
+    function lpPrincipalOf(uint256 tokenId) external view returns (uint256);
+    function requireMatureForSell() external view returns (bool);
+    function reserveLp() external view returns (address);
+
+    /// @notice Optional post-init: bind fungible hook LP + mature-only sell flag. No-op if already set.
+    function initializeHookLpMode(address reserveLp_, bool requireMatureForSell_) external;
 }

@@ -1,0 +1,227 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook as IHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableDETFCommon
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableDETFCommon.sol";
+import {
+    UniswapV4StandardExchangeCurveQuadStableDETFRepo as Repo
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableDETFRepo.sol";
+
+/// @title UniswapV4StandardExchangeCurveQuadStableDETFInfoTarget
+/// @notice View/info surface. No rateAsset getter. baseAmp is hook passthrough.
+abstract contract UniswapV4StandardExchangeCurveQuadStableDETFInfoTarget is
+    UniswapV4StandardExchangeCurveQuadStableDETFCommon
+{
+    function isReserveLive() external view returns (bool) {
+        return Repo._layoutStruct().isReserveLive;
+    }
+
+    function n() external view returns (uint8) {
+        return Repo._layoutStruct().n;
+    }
+
+    function m() external view returns (uint8) {
+        return Repo._layoutStruct().m;
+    }
+
+    function pairTokens() external view returns (address[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new address[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = address(s.pairTokens[i]);
+        }
+    }
+
+    function pairToken(uint256 productIndex) external view returns (address) {
+        return address(Repo._layoutStruct().pairTokens[productIndex]);
+    }
+
+    function pairToken0() external view returns (address) {
+        return address(Repo._layoutStruct().pairTokens[0]);
+    }
+
+    function pairToken1() external view returns (address) {
+        return address(Repo._layoutStruct().pairTokens[1]);
+    }
+
+    function pairToken2() external view returns (address) {
+        return address(Repo._layoutStruct().pairTokens[2]);
+    }
+
+    function standardExchanges() external view returns (address[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new address[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = address(s.standardExchanges[i]);
+        }
+    }
+
+    function standardExchange(uint256 productIndex) external view returns (address) {
+        return address(Repo._layoutStruct().standardExchanges[productIndex]);
+    }
+
+    function vaultShares() external view returns (address[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new address[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = address(s.vaultShares[i]);
+        }
+    }
+
+    function vaultShare(uint256 productIndex) external view returns (address) {
+        return address(Repo._layoutStruct().vaultShares[productIndex]);
+    }
+
+    function rateProviders() external view returns (address[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new address[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = s.rateProviders[i];
+        }
+    }
+
+    function rateProvider(uint256 productIndex) external view returns (address) {
+        return Repo._layoutStruct().rateProviders[productIndex];
+    }
+
+    function baseAmp() external view returns (uint256) {
+        address hook_ = Repo._layoutStruct().reserveHook;
+        if (hook_ == address(0)) return 0;
+        return IHook(hook_).baseAmp();
+    }
+
+    function detfBindingIndex() external view returns (uint8) {
+        return Repo._layoutStruct().detfBindingIndex;
+    }
+
+    function pairBindingIndex(uint256 productIndex) external view returns (uint8) {
+        return Repo._layoutStruct().pairBindingIndex[productIndex];
+    }
+
+    function reserveHook() external view returns (address) {
+        return Repo._layoutStruct().reserveHook;
+    }
+
+    function reservePool() external view returns (address) {
+        return Repo._layoutStruct().reserveHook;
+    }
+
+    function syntheticVs(address pair) external view returns (uint256) {
+        return _syntheticVsAddr(pair);
+    }
+
+    function syntheticSpotVs(address pair) external view returns (uint256) {
+        return _syntheticSpotVsAddr(pair);
+    }
+
+    function pendingExpansionDetf() external view returns (uint256) {
+        return _previewPendingExpansionMint();
+    }
+
+    function mintThreshold() external view returns (uint256) {
+        return Repo._layoutStruct().mintThreshold;
+    }
+
+    function burnThreshold() external view returns (uint256) {
+        return Repo._layoutStruct().burnThreshold;
+    }
+
+    function thresholdMode() external view returns (ThresholdMode) {
+        return Repo._layoutStruct().thresholdMode;
+    }
+
+    function isMintingAllowed(address pair) external view returns (bool) {
+        return _isMintingAllowedAddr(pair);
+    }
+
+    function isBurningAllowed(address pair) external view returns (bool) {
+        return _isBurningAllowedAddr(pair);
+    }
+
+    function isAllLegsMintRich() external view returns (bool) {
+        return _allLegsMintRich();
+    }
+
+    function bondNftVault() external view returns (address) {
+        return address(Repo._layoutStruct().bondNftVault);
+    }
+
+    function rebasingClaimToken() external view returns (address) {
+        return address(Repo._layoutStruct().rebasingClaimToken);
+    }
+
+    function feeRecipientNftId() external view returns (uint256) {
+        return Repo._layoutStruct().feeRecipientNftId;
+    }
+
+    function creationPairPerDetfWad(uint256 productIndex) external view returns (uint256) {
+        return Repo._layoutStruct().creationPairPerDetfWad[productIndex];
+    }
+
+    function creationPairPerDetfWads() external view returns (uint256[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new uint256[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = s.creationPairPerDetfWad[i];
+        }
+    }
+
+    function lastExpansionTimestamp() external view returns (uint256) {
+        return Repo._layoutStruct().lastExpansionTimestamp;
+    }
+
+    function expansionEpochLength() external view returns (uint256) {
+        return Repo._layoutStruct().expansionEpochLength;
+    }
+
+    function expansionClosureRatePerYearWad() external view returns (uint256) {
+        return Repo._layoutStruct().expansionClosureRatePerYearWad;
+    }
+
+    function expansionMaxCatchUpEpochs() external view returns (uint256) {
+        return Repo._layoutStruct().expansionMaxCatchUpEpochs;
+    }
+
+    function acceptedBondTokens() external view returns (address[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint256 nOut_;
+        address[] memory tmp_ = new address[](uint256(s.m) * 3);
+        for (uint8 i; i < s.m; ++i) {
+            tmp_[nOut_++] = address(s.pairTokens[i]);
+            if (address(s.vaultShares[i]) != address(0)) {
+                tmp_[nOut_++] = address(s.vaultShares[i]);
+            }
+            address se_ = address(s.standardExchanges[i]);
+            if (se_ != address(0)) {
+                address[] memory toks_ = IBasicVault(se_).vaultTokens();
+                for (uint256 t; t < toks_.length; ++t) {
+                    if (toks_[t] != address(s.pairTokens[i]) && toks_[t] != address(this)) {
+                        tmp_[nOut_++] = toks_[t];
+                    }
+                }
+            }
+        }
+        out_ = new address[](nOut_);
+        for (uint256 i; i < nOut_; ++i) {
+            out_[i] = tmp_[i];
+        }
+    }
+
+    function protocolLp() external view returns (uint256) {
+        return _protocolLp();
+    }
+
+    function userBondedLp() external view returns (uint256) {
+        return Repo._layoutStruct().userBondedLp;
+    }
+
+    function capitalTokenOf(uint256 tokenId) external view returns (address) {
+        return Repo._layoutStruct().capitalTokenOf[tokenId];
+    }
+}
