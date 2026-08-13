@@ -34,6 +34,7 @@ contract T05_UserSellStillWorks_Test is TestBase_UniswapV4SingleStandardExchange
 
     function test_sellPositionToDetfNft_stillWorks() public {
         (uint256 tokenId, uint256 shares) = _firstBond(40 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         uint256 principal = detfInfo.sellPositionToDetfNft(tokenId, detfUser);
         assertEq(principal, shares, "user sell-to-DETF remains product-valid");

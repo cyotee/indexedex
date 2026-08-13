@@ -17,6 +17,7 @@ contract T04_ClaimUnwind_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
 
     function test_redeem_unwindsViaClaimLiquidity_notIdleInventory() public {
         (uint256 tokenId,) = _firstBond(70 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -68,6 +69,7 @@ contract T04_ClaimUnwind_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
 
     function test_redeemClaim_viaDetf_stillWorks() public {
         (uint256 tokenId,) = _firstBond(60 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 

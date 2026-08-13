@@ -94,7 +94,7 @@ contract DetfNestedPush_ProductionPresence_Test is Test {
             "B0 >= R ? B0 - R : B0"
         );
         _assertFileContains(
-            "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookTarget.sol",
+            "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
             "B0 >= R ? B0 - R : B0"
         );
     }

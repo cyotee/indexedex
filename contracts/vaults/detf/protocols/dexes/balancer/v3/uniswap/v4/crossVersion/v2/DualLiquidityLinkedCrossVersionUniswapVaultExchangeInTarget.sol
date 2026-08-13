@@ -347,8 +347,8 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget is
         address recipient_,
         uint256 deadline_
     ) private returns (uint256 amountOut_) {
-        tokenIn_.approve(address(vault_), amountIn_);
-        amountOut_ = vault_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, false, deadline_);
+        tokenIn_.safeTransfer(address(vault_), amountIn_);
+        amountOut_ = vault_.exchangeIn(tokenIn_, amountIn_, tokenOut_, minOut_, recipient_, true, deadline_);
     }
 
     /* ---------------------------------------------------------------------- */

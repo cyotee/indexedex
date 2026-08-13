@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
@@ -27,6 +28,7 @@ import {
 /// @dev Parameters are threaded through `IStandardExchangeOut.OutArgs` to keep stack depth within
 ///      limits without `viaIR`.
 abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget is DualLiquidityLinkedCrossVersionUniswapVaultCommon, ReentrancyLockModifiers {
+    using BetterSafeERC20 for IERC20;
     using DualLiquidityLinkedCrossVersionUniswapVaultRepo for DualLiquidityLinkedCrossVersionUniswapVaultRepo.Storage;
 
     /// @notice Exchanges up to `maxAmountIn_` of `tokenIn_` for exactly `amountOut_` of `tokenOut_`.
@@ -337,8 +339,8 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget i
         address recipient_,
         uint256 deadline_
     ) private {
-        tokenIn_.approve(address(vault_), maxIn_);
-        vault_.exchangeOut(tokenIn_, maxIn_, tokenOut_, amountOut_, recipient_, false, deadline_);
+        tokenIn_.safeTransfer(address(vault_), maxIn_);
+        vault_.exchangeOut(tokenIn_, maxIn_, tokenOut_, amountOut_, recipient_, true, deadline_);
     }
 
     /// @dev Adds exactly `maxIn_` (the exact-out quote for `bptOut_`, rounded up) of `vaultShare_` into

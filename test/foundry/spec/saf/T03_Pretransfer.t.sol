@@ -19,6 +19,7 @@ contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
 
     function test_redeem_pretransferred_false_pullsFromCaller() public {
         (uint256 tokenId,) = _firstBond(50 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -35,6 +36,7 @@ contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
 
     function test_redeem_pretransferred_true_withoutDeposit_reverts() public {
         (uint256 tokenId,) = _firstBond(50 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 
@@ -57,6 +59,7 @@ contract T03_Pretransfer_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
     ///         Absolute inventory (even after a real transfer) must not free-credit redeem.
     function test_redeem_pretransferred_true_afterRealTransfer_revertsDelta0() public {
         (uint256 tokenId,) = _firstBond(60 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         vm.prank(detfUser);
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
 

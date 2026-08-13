@@ -100,6 +100,13 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
             IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SSE_DETF_CS_721")));
         IFacet erc4626Basic_ = VaultComponentFactoryService.deployERC4626BasedBasicVaultFacet(create3Factory);
         IFacet erc4626Std_ = VaultComponentFactoryService.deployERC4626StandardVaultFacet(create3Factory);
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
 
         vm.startPrank(owner);
         IDetfSelfNftInventoryDFPkg bondPkg_ = DetfPkgFactoryService.deployDETFNFTVaultDFPkg(
@@ -111,13 +118,6 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
                 nftFacet_,
                 IVaultFeeOracleQuery(address(indexedexManager)),
                 IVaultRegistryDeployment(address(indexedexManager))
-            )
-        );
-        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
-        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory,
-            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
-                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
             )
         );
         ISingleStandardExchangeDETDFPkg outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(

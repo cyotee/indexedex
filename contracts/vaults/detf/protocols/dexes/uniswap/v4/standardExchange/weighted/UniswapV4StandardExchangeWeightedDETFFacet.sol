@@ -36,22 +36,13 @@ contract UniswapV4StandardExchangeWeightedDETFFacet is IFacet, UniswapV4Standard
     }
 
     function _allFuncs() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](14);
+        // Bonding / sell / close only. Claim + compound live on CompoundFacet (Option 1e).
+        f = new bytes4[](4);
         // bond(IERC20[],uint256[],address,uint256,address,bool,uint256)
         f[0] = bytes4(keccak256("bond(address[],uint256[],address,uint256,address,bool,uint256)"));
         // bond(IERC20,uint256,uint256,address,bool,uint256)
         f[1] = bytes4(keccak256("bond(address,uint256,uint256,address,bool,uint256)"));
         f[2] = IUniswapV4StandardExchangeWeightedDETF.sellPositionToDetfNft.selector;
         f[3] = IUniswapV4StandardExchangeWeightedDETF.closeBondMature.selector;
-        f[4] = IUniswapV4StandardExchangeWeightedDETF.claimRewards.selector;
-        f[5] = IUniswapV4StandardExchangeWeightedDETF.depositClaim.selector;
-        f[6] = IUniswapV4StandardExchangeWeightedDETF.redeemClaim.selector;
-        f[7] = IUniswapV4StandardExchangeWeightedDETF.claimLiquidity.selector;
-        f[8] = IUniswapV4StandardExchangeWeightedDETF.compoundProtocolRewards.selector;
-        f[9] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
-        f[10] = bytes4(keccak256("tryCompoundProtocolRewardsExternal()"));
-        f[11] = bytes4(keccak256("realizeExpansionExternal()"));
-        f[12] = bytes4(keccak256("redepositDetfExternal(uint256,uint256[])"));
-        f[13] = bytes4(keccak256("swapDetfToCapitalExternal(uint256,address)"));
     }
 }

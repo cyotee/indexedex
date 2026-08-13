@@ -262,6 +262,17 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
             ISingleStandardExchangeDETFBonding outerBonding_
         )
     {
+        ISingleStandardExchangeDETDFPkg outerPkg_ = _deployOuterPkg();
+        ISingleStandardExchangeDETDFPkg.PkgArgs memory pkgArgs_ = _outerPkgArgs();
+        vm.startPrank(owner);
+        outerDetf_ = indexedexManager.deployVault(IStandardVaultPkg(address(outerPkg_)), abi.encode(pkgArgs_));
+        vm.stopPrank();
+        outerInfo_ = ISingleStandardExchangeDETFInfo(outerDetf_);
+        outerBonding_ = ISingleStandardExchangeDETFBonding(outerDetf_);
+    }
+
+    /// @dev Member assignment (not a struct literal) keeps PkgInit / PkgArgs off the caller's stack.
+    function _deployOuterPkg() private returns (ISingleStandardExchangeDETDFPkg outerPkg_) {
         IFacet multiBasic_ = VaultComponentFactoryService.deployMultiAssetBasicVaultFacet(create3Factory);
         IFacet multiStd_ = VaultComponentFactoryService.deployMultiAssetStandardVaultFacet(create3Factory);
         IFacet exchangeInFacet_ =
@@ -289,6 +300,13 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
             IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("CS_GE_SSE_721")));
         IFacet erc4626Basic_ = VaultComponentFactoryService.deployERC4626BasedBasicVaultFacet(create3Factory);
         IFacet erc4626Std_ = VaultComponentFactoryService.deployERC4626StandardVaultFacet(create3Factory);
+        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
+            create3Factory,
+            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
+                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
+            )
+        );
 
         vm.startPrank(owner);
         IDetfSelfNftInventoryDFPkg bondPkg_ = DetfPkgFactoryService.deployDETFNFTVaultDFPkg(
@@ -302,59 +320,43 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
                 IVaultRegistryDeployment(address(indexedexManager))
             )
         );
-        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
-        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory,
-            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
-                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
-            )
-        );
-        ISingleStandardExchangeDETDFPkg outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            ISingleStandardExchangeDETDFPkg.PkgInit({
-                erc20Facet: erc20Facet,
-                erc5267Facet: erc5267Facet,
-                erc2612Facet: erc2612Facet,
-                multiAssetBasicVaultFacet: multiBasic_,
-                multiAssetStandardVaultFacet: multiStd_,
-                exchangeInFacet: exchangeInFacet_,
-                feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
-                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
-                balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
-                balancerV3Vault: IVault(address(vault)),
-                weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
-                rateProviderPkg: ratePkg_,
-                bondNftVaultPkg: bondPkg_,
-                rebasingClaimTokenPkg: claimPkg_,
-                diamondFactory: diamondPackageFactory
-            })
-        );
-
-        outerDetf_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(outerPkg_)),
-            abi.encode(
-                ISingleStandardExchangeDETDFPkg.PkgArgs({
-                    name: "Outer DETF over CS (G1)",
-                    symbol: "oCSG1",
-                    standardExchangeVault: IStandardExchangeProxy(deployedDetfVault),
-                    standardExchangeVaultShare: detfToken,
-                    // Nested composed burn path is not SE-rate-provider-quotable; abstract 1:1 reserve.
-                    rateTarget: IERC20(address(0)),
-                    detfWeight: 0,
-                    vaultShareWeight: 0,
-                    mintThreshold: 0,
-                    burnThreshold: 0,
-                    thresholdMode: ThresholdMode.Open,
-                    expansionClosureRatePerSecond: 0,
-                    expansionCatchUpMaxSeconds: 0,
-                    expansionCatchUpCapBps: 0
-                })
-            )
+        ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit_;
+        pkgInit_.erc20Facet = erc20Facet;
+        pkgInit_.erc5267Facet = erc5267Facet;
+        pkgInit_.erc2612Facet = erc2612Facet;
+        pkgInit_.multiAssetBasicVaultFacet = multiBasic_;
+        pkgInit_.multiAssetStandardVaultFacet = multiStd_;
+        pkgInit_.exchangeInFacet = exchangeInFacet_;
+        pkgInit_.feeOracle = IVaultFeeOracleQuery(address(indexedexManager));
+        pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+        pkgInit_.balancerV3Router = IBalancerV3StandardExchangeRouterProxy(address(seRouter));
+        pkgInit_.balancerV3Vault = IVault(address(vault));
+        pkgInit_.weightedPoolFactory = WeightedPoolFactory(testPoolFactory);
+        pkgInit_.rateProviderPkg = ratePkg_;
+        pkgInit_.bondNftVaultPkg = bondPkg_;
+        pkgInit_.rebasingClaimTokenPkg = claimPkg_;
+        pkgInit_.diamondFactory = diamondPackageFactory;
+        outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
+            IVaultRegistryDeployment(address(indexedexManager)), pkgInit_
         );
         vm.stopPrank();
+    }
 
-        outerInfo_ = ISingleStandardExchangeDETFInfo(outerDetf_);
-        outerBonding_ = ISingleStandardExchangeDETFBonding(outerDetf_);
+    function _outerPkgArgs() private view returns (ISingleStandardExchangeDETDFPkg.PkgArgs memory pkgArgs_) {
+        pkgArgs_.name = "Outer DETF over CS (G1)";
+        pkgArgs_.symbol = "oCSG1";
+        pkgArgs_.standardExchangeVault = IStandardExchangeProxy(deployedDetfVault);
+        pkgArgs_.standardExchangeVaultShare = detfToken;
+        // Nested composed burn path is not SE-rate-provider-quotable; abstract 1:1 reserve.
+        pkgArgs_.rateTarget = IERC20(address(0));
+        pkgArgs_.detfWeight = 0;
+        pkgArgs_.vaultShareWeight = 0;
+        pkgArgs_.mintThreshold = 0;
+        pkgArgs_.burnThreshold = 0;
+        pkgArgs_.thresholdMode = ThresholdMode.Open;
+        pkgArgs_.expansionClosureRatePerSecond = 0;
+        pkgArgs_.expansionCatchUpMaxSeconds = 0;
+        pkgArgs_.expansionCatchUpCapBps = 0;
     }
 
     /// @notice G1: outer SingleSE DETF mint/burn over nested CS does not brick CS for third users.
