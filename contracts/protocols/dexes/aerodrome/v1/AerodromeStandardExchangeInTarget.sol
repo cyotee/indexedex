@@ -10,7 +10,6 @@ import {BetterMath} from '@crane/contracts/utils/math/BetterMath.sol';
 import {ConstProdUtils} from '@crane/contracts/utils/math/ConstProdUtils.sol';
 import {ERC20Repo} from '@crane/contracts/tokens/ERC20/ERC20Repo.sol';
 import {ERC4626Repo} from '@crane/contracts/tokens/ERC4626/ERC4626Repo.sol';
-import {ERC4626Service} from '@crane/contracts/tokens/ERC4626/ERC4626Service.sol';
 import {AerodromeUtils} from '@crane/contracts/utils/math/AerodromeUtils.sol';
 import {AerodromeService} from '@crane/contracts/protocols/dexes/aerodrome/v1/services/AerodromeService.sol';
 import {
@@ -353,15 +352,22 @@ contract AerodromeStandardExchangeInTarget is
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
 
             VaultState memory vs;
-            vs.vaultLpReserve = ERC4626Repo._lastTotalAssets();
             vs.vaultTotalShares = ERC20Repo._totalSupply();
             vs.decimalOffset = ERC4626Repo._decimalOffset();
 
-            amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layoutStruct(), vs.vaultLpReserve, amountIn);
+            // Convert against live LP before this-call inbound so donated residual is reserve (A0).
+            uint256 liveBefore = IERC20(address(pool)).balanceOf(address(this));
+            vs.vaultLpReserve = pretransferred
+                ? (liveBefore > amountIn ? liveBefore - amountIn : 0)
+                : liveBefore;
+
+            // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap.
+            amountIn = _secureTokenTransfer(IERC20(address(pool)), amountIn, pretransferred);
             amountOut =
                 BetterMath._convertToSharesDown(amountIn, vs.vaultLpReserve, vs.vaultTotalShares, vs.decimalOffset);
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
             ERC20Repo._mint(recipient, amountOut);
+            ERC4626Repo._setLastTotalAssets(IERC20(address(pool)).balanceOf(address(this)));
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
@@ -397,6 +403,10 @@ contract AerodromeStandardExchangeInTarget is
                 && address(tokenOut) == address(this)
         ) {
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
+            // A0: unbooked reserve LP cannot be absorbed into a zap-in share mint.
+            if (IERC20(address(pool)).balanceOf(address(this)) != ERC4626Repo._lastTotalAssets()) {
+                revert();
+            }
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
             VaultState memory vs;

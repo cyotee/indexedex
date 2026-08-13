@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC4626Errors} from "@crane/contracts/interfaces/IERC4626Errors.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 
@@ -238,7 +237,7 @@ contract AerodromeStandardExchangeIn_VaultDeposit_Test is TestBase_AerodromeStan
     /*                    Donation / Direct-Transfer Tests                     */
     /* ---------------------------------------------------------------------- */
 
-    function test_Route4VaultDeposit_reverts_whenDonationCausesTransferMismatch_pretransferred_false() public {
+    function test_Route4VaultDeposit_donationDoesNotLockHonestPull() public {
         IStandardExchangeProxy vault = _getVault(PoolConfig.Balanced);
         IPool pool = _getPool(PoolConfig.Balanced);
 
@@ -249,21 +248,14 @@ contract AerodromeStandardExchangeIn_VaultDeposit_Test is TestBase_AerodromeStan
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
 
-        // Attacker-style donation: tokens arrive without updating lastTotalAssets.
         lpToken.transfer(address(vault), donation);
-
-        // Approve for the attempted deposit.
         lpToken.approve(address(vault), lpAmount);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, lpAmount + donation)
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
+        assertGt(sharesOut, 0, "L-CLAIM-3: extra inbound must not lock honest pull");
     }
 
-    function test_Route4VaultDeposit_reverts_whenDonationPlusPretransferCausesTransferMismatch_pretransferred_true()
-        public
-    {
+    function test_Route4VaultDeposit_donationPlusPretransfer_creditsClaimedOnly() public {
         IStandardExchangeProxy vault = _getVault(PoolConfig.Balanced);
         IPool pool = _getPool(PoolConfig.Balanced);
 
@@ -274,18 +266,10 @@ contract AerodromeStandardExchangeIn_VaultDeposit_Test is TestBase_AerodromeStan
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
 
-        // Donate + pretransfer, but declare only lpAmount.
         lpToken.transfer(address(vault), lpAmount + donation);
 
-        // Allow the vault to attempt a corrective pull during _secureReserveDeposit.
-        lpToken.approve(address(vault), lpAmount);
-
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, donation + (lpAmount * 2)
-            )
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
+        assertGt(sharesOut, 0, "L-CLAIM-3: claim <= U succeeds; surplus is not exact-delta grief");
     }
 
     /* ---------------------------------------------------------------------- */

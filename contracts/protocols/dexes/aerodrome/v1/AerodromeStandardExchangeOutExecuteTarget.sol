@@ -13,7 +13,6 @@ import {BetterMath} from '@crane/contracts/utils/math/BetterMath.sol';
 import {ConstProdUtils} from '@crane/contracts/utils/math/ConstProdUtils.sol';
 import {ERC20Repo} from '@crane/contracts/tokens/ERC20/ERC20Repo.sol';
 import {ERC4626Repo} from '@crane/contracts/tokens/ERC4626/ERC4626Repo.sol';
-import {ERC4626Service} from '@crane/contracts/tokens/ERC4626/ERC4626Service.sol';
 import {AerodromeUtils} from '@crane/contracts/utils/math/AerodromeUtils.sol';
 import {AerodromeService} from '@crane/contracts/protocols/dexes/aerodrome/v1/services/AerodromeService.sol';
 import {
@@ -63,6 +62,7 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         uint8 decimalOffset;
         uint256 lpTarget;
         uint256 amountIn;
+        uint256 creditedIn;
     }
 
     function exchangeOut(
@@ -135,14 +135,10 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             if (args.maxAmountIn < amountIn) {
                 revert MaxAmountExceeded(args.maxAmountIn, amountIn);
             }
-            amountIn = _secureTokenTransfer(
-                // IERC20 tokenIn,
-                args.tokenIn,
-                // uint256 amountTokenToDeposit,
-                amountIn,
-                // bool pretransferred
-                args.pretransferred
-            );
+            // E6: credit this-call prepaid max when pretransferred; else pull only used.
+            uint256 creditedIn;
+            (amountIn, creditedIn) =
+                _creditOutInbound(args.tokenIn, amountIn, args.maxAmountIn, args.pretransferred);
             // Use low-level pool.swap() for exact-out semantics.
             // Transfer the computed amountIn directly to the pool, then call swap
             // specifying the exact amountOut desired. This ensures only the needed
@@ -165,9 +161,9 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
                 // Transfer exactly the requested amount to the recipient and keep any
                 // tiny rounding surplus in the vault.
                 IERC20(address(args.tokenOut)).safeTransfer(args.recipient, args.amountOut);
-                // Refund any excess pretransferred tokenIn back to the caller.
+                // Refund this-call unused inbound only (credited − used), not fat max − used.
                 // Must happen BEFORE reserve check since tokenIn may be the pool token.
-                _refundExcess(args.tokenIn, args.maxAmountIn, amountIn, args.pretransferred, msg.sender);
+                _refundExcess(args.tokenIn, creditedIn, amountIn, args.pretransferred, msg.sender);
             }
             {
                 uint256 poolBalance = IERC20(address(aeroReserve.pool)).balanceOf(address(this));
@@ -341,52 +337,57 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
     }
 
 
-    function _execPassThroughZapIn(IStandardExchangeOut.OutArgs memory args, AeroReserve memory aeroReserve)
+    /// @dev E6: credit prepaid max when pretransferred; else pull only used.
+    function _creditOutInbound(IERC20 tokenIn, uint256 usedIn, uint256 maxAmountIn, bool pretransferred)
         internal
+        returns (uint256 used, uint256 credited)
+    {
+        if (pretransferred) {
+            credited = _secureTokenTransfer(tokenIn, maxAmountIn, true);
+            used = usedIn;
+        } else {
+            credited = _secureTokenTransfer(tokenIn, usedIn, false);
+            used = credited;
+        }
+    }
+
+    function _quotePassThroughZapIn(IStandardExchangeOut.OutArgs memory args, AeroReserve memory aeroReserve)
+        internal
+        view
         returns (uint256 amountIn)
     {
-        // Load reserves sorted so reserveIn corresponds to args.tokenIn.
         (uint256 reserve0, uint256 reserve1,) = aeroReserve.pool.getReserves();
         (uint256 reserveIn, uint256 reserveOut) = ConstProdUtils._sortReserves(
             address(args.tokenIn), ConstProdReserveVaultRepo._token0(), reserve0, reserve1
         );
         uint256 feePercent = AerodromePoolMetadataRepo._factory()
             .getFee(address(aeroReserve.pool), AerodromePoolMetadataRepo._isStable());
-        uint256 lpTotalSupply = IERC20(address(aeroReserve.pool)).totalSupply();
-
-        // Calculate minimum amountIn of tokenIn needed to ZapIn and obtain >= amountOut LP.
-        // Add 1 to lpTarget to ensure on-chain execution (which may differ from the pure-math
-        // path by 1 wei) still produces >= args.amountOut LP tokens.
-        amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
-            // uint256 targetLP,
+        // Add 1 to lpTarget so on-chain execution still produces >= args.amountOut LP.
+        return ConstProdUtils._quoteZapInToTargetLPWithFee(
             args.amountOut + 1,
-            // uint256 lpTotalSupply,
-            lpTotalSupply,
-            // uint256 reserveIn,
+            IERC20(address(aeroReserve.pool)).totalSupply(),
             reserveIn,
-            // uint256 reserveOut,
             reserveOut,
-            // uint256 feePercent,
             feePercent,
-            // uint256 feeDenominator,
             AERO_FEE_DENOM,
-            // uint256 kLast,
             0,
-            // uint256 ownerFeeShare,
             0,
-            // bool feeOn
             false
         );
+    }
 
-        // Slippage guard.
+    function _execPassThroughZapIn(IStandardExchangeOut.OutArgs memory args, AeroReserve memory aeroReserve)
+        internal
+        returns (uint256 amountIn)
+    {
+        amountIn = _quotePassThroughZapIn(args, aeroReserve);
         if (amountIn > args.maxAmountIn) {
             revert MaxAmountExceeded(args.maxAmountIn, amountIn);
         }
 
-        // Secure tokenIn from the caller.
-        amountIn = _secureTokenTransfer(args.tokenIn, amountIn, args.pretransferred);
+        uint256 creditedIn;
+        (amountIn, creditedIn) = _creditOutInbound(args.tokenIn, amountIn, args.maxAmountIn, args.pretransferred);
 
-        // Execute ZapIn: swap half -> add liquidity proportionally.
         AerodromeService.SwapDepositVolatileParams memory zapInParams = AerodromeService.SwapDepositVolatileParams({
             router: aeroReserve.router,
             factory: AerodromePoolMetadataRepo._factory(),
@@ -399,14 +400,10 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             deadline: args.deadline
         });
         uint256 lpOut = AerodromeService._swapDepositVolatile(zapInParams);
-
-        // Ensure LP output meets the requested amountOut.
         if (lpOut < args.amountOut) revert AmountOutNotMet(args.amountOut, lpOut);
 
-        // Refund any excess pretransferred tokenIn.
-        _refundExcess(args.tokenIn, args.maxAmountIn, amountIn, args.pretransferred, msg.sender);
+        _refundExcess(args.tokenIn, creditedIn, amountIn, args.pretransferred, msg.sender);
 
-        // Sanity check: vault LP reserve must be unchanged (no LP entered/left vault).
         {
             uint256 poolBalance = IERC20(address(aeroReserve.pool)).balanceOf(address(this));
             uint256 storedReserve = ERC4626Repo._lastTotalAssets();
@@ -463,6 +460,11 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         // Compound fees (mirrors exchangeIn Route 6 which calls _claimAndCompoundFees).
         _claimAndCompoundFees(_buildCompoundParams(aeroReserve.pool, args.deadline));
 
+        // A0: unbooked reserve LP cannot be absorbed into a zap-in share mint.
+        if (IERC20(address(aeroReserve.pool)).balanceOf(address(this)) != ERC4626Repo._lastTotalAssets()) {
+            revert();
+        }
+
         Route6State memory s;
         s.vaultLpReserve = ERC4626Repo._lastTotalAssets();
         s.vaultTotalShares = ERC20Repo._totalSupply();
@@ -489,8 +491,9 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             revert MaxAmountExceeded(args.maxAmountIn, s.amountIn);
         }
 
-        // Secure tokenIn from the caller.
-        s.amountIn = _secureTokenTransfer(args.tokenIn, s.amountIn, args.pretransferred);
+        // E6: credit prepaid max when pretransferred; else pull only used.
+        (s.amountIn, s.creditedIn) =
+            _creditOutInbound(args.tokenIn, s.amountIn, args.maxAmountIn, args.pretransferred);
 
         // Execute ZapIn and mint shares.
         return _execZapInVaultDepositFinalize(args, aeroReserve, s);
@@ -559,8 +562,8 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         if (sharesOut < args.amountOut) revert AmountOutNotMet(args.amountOut, sharesOut);
         ERC20Repo._mint(args.recipient, sharesOut);
 
-        // Refund any excess pretransferred tokenIn.
-        _refundExcess(args.tokenIn, args.maxAmountIn, s.amountIn, args.pretransferred, msg.sender);
+        // Refund this-call unused inbound (credited − used), not fat max − used.
+        _refundExcess(args.tokenIn, s.creditedIn, s.amountIn, args.pretransferred, msg.sender);
 
         return s.amountIn;
     }
@@ -616,10 +619,12 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         // Calculate the amount of LP tokens needed to mint the requested amount of vault shares.
         uint256 amountIn =
             BetterMath._convertToAssetsUp(args.amountOut, vaultLpReserve, vaultTotalShares, decimalOffset);
-        amountIn = ERC4626Service._secureReserveDeposit(ERC4626Repo._layoutStruct(), vaultLpReserve, amountIn);
         if (args.maxAmountIn < amountIn) {
             revert MaxAmountExceeded(args.maxAmountIn, amountIn);
         }
+        // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap.
+        amountIn = _secureTokenTransfer(IERC20(address(aeroReserve.pool)), amountIn, args.pretransferred);
+        ERC4626Repo._setLastTotalAssets(IERC20(address(aeroReserve.pool)).balanceOf(address(this)));
         // Mint exactly the requested share amount to the recipient.
         ERC20Repo._mint(
             // address account,
@@ -667,10 +672,10 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             revert MaxAmountExceeded(args.maxAmountIn, s.amountIn);
         }
 
-        // Transfer tokens in (may be pretransferred)
-        // uint256 balVaultBefore = IERC20(address(aeroReserve.pool)).balanceOf(address(this));
-        // uint256 balCallerBefore = IERC20(address(aeroReserve.pool)).balanceOf(msg.sender);
-        _secureTokenTransfer(args.tokenIn, s.amountIn, args.pretransferred);
+        // E6: credit prepaid max when pretransferred; else pull only used LP.
+        uint256 creditedIn;
+        (s.amountIn, creditedIn) =
+            _creditOutInbound(args.tokenIn, s.amountIn, args.maxAmountIn, args.pretransferred);
         // uint256 balVaultAfter = IERC20(address(aeroReserve.pool)).balanceOf(address(this));
         // uint256 balCallerAfter = IERC20(address(aeroReserve.pool)).balanceOf(msg.sender);
 
@@ -698,7 +703,7 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
 
         // Transfer exact requested amount to recipient and refund any excess
         IERC20(address(args.tokenOut)).safeTransfer(args.recipient, args.amountOut);
-        _refundExcess(args.tokenIn, args.maxAmountIn, s.amountIn, args.pretransferred, msg.sender);
+        _refundExcess(args.tokenIn, creditedIn, s.amountIn, args.pretransferred, msg.sender);
 
         // Sanity check stored reserve
         {
