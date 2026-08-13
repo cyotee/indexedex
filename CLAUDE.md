@@ -64,6 +64,7 @@ Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as cu
 | Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + **A0/L/M/N/O**; I=pretransfer claim, J=facet/proxy surface; ship gate: `implementation-test-dod.md`) |
 | Incident-driven security / DeFiHackLabs | `defi-incident-patterns` (maps `lib/DeFiHackLabs` themes → catalog IDs + secure-dev checklist; **reference only** — hermetic production-first tests remain the bar) |
 | Test coverage audit / gap reports | [`docs/testing/TEST_COVERAGE_AUDIT_PRD.md`](docs/testing/TEST_COVERAGE_AUDIT_PRD.md) + [`TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md`](docs/testing/TEST_COVERAGE_AUDIT_EXECUTE_PLAN.md) → Stage 1 reports; then gap-closure impl plan |
+| Security audit / parallel remediation planning | [`docs/security/SECURITY_AUDIT_PRD.md`](docs/security/SECURITY_AUDIT_PRD.md) + [`SECURITY_AUDIT_EXECUTE_PLAN.md`](docs/security/SECURITY_AUDIT_EXECUTE_PLAN.md) → Stage 1 reports under `docs/security/audit/`; then [`PROMPT_SECURITY_AUDIT_REMEDIATION_PRD.md`](docs/security/PROMPT_SECURITY_AUDIT_REMEDIATION_PRD.md) for the Stage 2 remediation PRD. Complements coverage-audit (do not compete on the same touch-set; `sec_fix_*` vs `gap_cover_*`) |
 | Uni V4 hook packages | `indexedex-uniswap-v4-hook-packages` |
 | Protocol port into Crane | agent `crane-porter` + `crane-porting` + `crane-porting-verification` |
 | Docs → skills | agent `docs-skill-scribe` + `docs-to-skills` / `skill-authoring` |
