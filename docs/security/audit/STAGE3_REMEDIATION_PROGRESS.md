@@ -14,12 +14,17 @@
 
 | Slot | Slice | Branch | Worktree | Status |
 |------|-------|--------|----------|--------|
-| 1–3 | — | — | — | free (W1-A next) |
+| 1 | `aero-se` | `sec_fix/aero-se` | `.worktrees/sec_fix_aero-se` | implementer live |
+| 2 | `slip-e6` | `sec_fix/slip-e6` | `.worktrees/sec_fix_slip-e6` | implementer live |
+| 3 | `univ3-e6` | `sec_fix/univ3-e6` | `.worktrees/sec_fix_univ3-e6` | seeding |
 
 ## Linear history on main (sec_fix stack)
 
 | Commit | Slice | WPs |
 |--------|-------|-----|
+| `1f8c8e21` | `cam-se` | `WP-SEC-CAM-OUT-001` + Camelot E6/R4/A0/I-4626 |
+| `7b2ef90a` | `bal-single-i` | `WP-SEC-I-BAL-SINGLE-001` |
+| `ea48cc1e` | `aave-loop` | `WP-SEC-I-AAVE-LOOP-001` |
 | `4936635c` | `e6-common` | `WP-SEC-E6-COMMON-001` |
 
 ## WP status (36 High)
@@ -29,12 +34,12 @@ Wave 0 / split-WP close rules: a split WP is closed only when every listed slice
 | WP-ID | Slice(s) | Status | Merge SHA |
 |-------|----------|--------|-----------|
 | `WP-SEC-E6-COMMON-001` | `e6-common` | **CLOSED** | `4936635c` |
-| `WP-SEC-CAM-OUT-001` | `cam-se` | OPEN | |
-| `WP-SEC-E6-SE-001` | `cam-se` + `aero-se` + `univ2-se` | OPEN | |
-| `WP-SEC-R4-SE-001` | `cam-se` + `univ2-se` | OPEN | |
-| `WP-SEC-A0-SE-001` | `cam-se` + `aero-se` + `univ2-se` | OPEN | |
-| `WP-SEC-I-SE-4626-001` | `cam-se` + `aero-se` + `univ2-se` | OPEN | |
-| `WP-SEC-I-AAVE-LOOP-001` | `aave-loop` | OPEN | |
+| `WP-SEC-CAM-OUT-001` | `cam-se` | **CLOSED** | `1f8c8e21` |
+| `WP-SEC-E6-SE-001` | `cam-se` + `aero-se` + `univ2-se` | PARTIAL (`cam-se` merged) | `1f8c8e21` (Camelot) |
+| `WP-SEC-R4-SE-001` | `cam-se` + `univ2-se` | PARTIAL (`cam-se` merged) | `1f8c8e21` (Camelot) |
+| `WP-SEC-A0-SE-001` | `cam-se` + `aero-se` + `univ2-se` | PARTIAL (`cam-se` merged) | `1f8c8e21` (Camelot) |
+| `WP-SEC-I-SE-4626-001` | `cam-se` + `aero-se` + `univ2-se` | PARTIAL (`cam-se` merged) | `1f8c8e21` (Camelot) |
+| `WP-SEC-I-AAVE-LOOP-001` | `aave-loop` | **CLOSED** | `ea48cc1e` |
 | `WP-SEC-E6-SLIP-001` | `slip-e6` | OPEN | |
 | `WP-SEC-E6-U3-001` | `univ3-e6` | OPEN | |
 | `WP-SEC-I-U3-SHARE-001` | `univ3-e6` | OPEN | |
@@ -42,7 +47,7 @@ Wave 0 / split-WP close rules: a split WP is closed only when every listed slice
 | `WP-SEC-E6-U4-001` | `univ4-se` | OPEN | |
 | `WP-SEC-IMP-U4-001` | `univ4-se` | OPEN | |
 | `WP-SEC-A0-U4-001` | `univ4-se` | OPEN | |
-| `WP-SEC-I-BAL-SINGLE-001` | `bal-single-i` | OPEN | |
+| `WP-SEC-I-BAL-SINGLE-001` | `bal-single-i` | **CLOSED** | `7b2ef90a` |
 | `WP-SEC-DETF-UV4-BURN-I1-001` | `detf-uv4-extra` | OPEN | |
 | `WP-SEC-DETF-UV4-I-SUITE-001` | `detf-uv4-extra` | OPEN | |
 | `WP-SEC-DETF-UV4-J-001` | `detf-uv4-extra` | OPEN | |
@@ -81,3 +86,9 @@ Wave 0 / split-WP close rules: a split WP is closed only when every listed slice
 - Matcher (worktree, twice): `forge test --match-path 'test/foundry/spec/vaults/basic/**' --match-test 'test_E6_|test_I1_|test_I2_|test_I3_' -vv` → **9 passed, 0 failed** both runs.
 - FF `main` at `4936635c`. Harvested `cache_forge/` + `out/` back to primary. Worktree removed.
 - Wave 0 on `main` **before** `cam-se` / `aero-se` / `univ2-se`.
+- Matcher on `main` (twice, `{SCRATCH}/sec_fix_e6-common.log`): **9 passed, 0 failed** both runs (`RUN1_EXIT=0`, `RUN2_EXIT=0`).
+
+### 2026-08-13 — W1-A spawned (3/3 slots)
+
+- `cam-se`, `aave-loop`, `bal-single-i` worktrees seeded from primary after Wave 0 FF.
+- Live concurrency = 3. No fourth implementer.
