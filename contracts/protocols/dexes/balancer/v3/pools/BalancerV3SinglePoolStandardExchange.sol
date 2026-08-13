@@ -8,6 +8,7 @@ import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contract
 import {IRouterCommon} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouterCommon.sol";
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
     using BetterSafeERC20 for IERC20;
@@ -18,6 +19,8 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
 
     IERC20[] internal _poolTokens;
     mapping(address => uint256) internal _tokenIndexPlusOne;
+    /// @dev Booked reserve `R` per token. Unbooked surplus `U = balanceOf − R` (L-CLAIM-3).
+    mapping(address => uint256) internal _tokenReserve;
 
     constructor(IRouter router_, address pool_, IERC20 bptToken_, IERC20[] memory poolTokens_) {
         router = router_;
@@ -69,19 +72,25 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
 
         if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
             uint256 actualAmountIn = _receiveExactIn(tokenIn, amountIn, pretransferred);
-            _approvePermit2ToRouter(tokenIn);
+            _approvePermit2ToRouter(tokenIn, actualAmountIn);
             amountOut = router.addLiquidityUnbalanced(pool, _amountsIn(tokenIn, actualAmountIn), minAmountOut, false, "");
+            _approvePermit2ToRouter(tokenIn, 0);
             bptToken.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(bptToken);
             return amountOut;
         }
 
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
             uint256 actualBptIn = _receiveExactIn(tokenIn, amountIn, pretransferred);
-            _approvePermit2ToRouter(tokenIn);
+            _approvePermit2ToRouter(tokenIn, actualBptIn);
             uint256 minSingleTokenOut = minAmountOut == 0 ? 1 : minAmountOut;
             amountOut =
                 router.removeLiquiditySingleTokenExactIn(pool, actualBptIn, tokenOut, minSingleTokenOut, false, "");
+            _approvePermit2ToRouter(tokenIn, 0);
             tokenOut.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(tokenOut);
             return amountOut;
         }
 
@@ -125,24 +134,30 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
         uint256 depositedAmount = _receiveMaxIn(tokenIn, maxAmountIn, pretransferred);
 
         if (address(tokenOut) == address(bptToken) && _supportsPoolToken(tokenIn)) {
-            _approvePermit2ToRouter(tokenIn);
+            _approvePermit2ToRouter(tokenIn, depositedAmount);
             amountIn = router.addLiquiditySingleTokenExactOut(pool, tokenIn, depositedAmount, amountOut, false, "");
             if (amountIn > maxAmountIn) {
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
+            _approvePermit2ToRouter(tokenIn, 0);
             _refundUnused(tokenIn, depositedAmount, amountIn, msg.sender);
             bptToken.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(bptToken);
             return amountIn;
         }
 
         if (address(tokenIn) == address(bptToken) && _supportsPoolToken(tokenOut)) {
-            _approvePermit2ToRouter(tokenIn);
+            _approvePermit2ToRouter(tokenIn, depositedAmount);
             amountIn = router.removeLiquiditySingleTokenExactOut(pool, depositedAmount, tokenOut, amountOut, false, "");
             if (amountIn > maxAmountIn) {
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
+            _approvePermit2ToRouter(tokenIn, 0);
             _refundUnused(tokenIn, depositedAmount, amountIn, msg.sender);
             tokenOut.safeTransfer(payoutRecipient, amountOut);
+            _syncReserve(tokenIn);
+            _syncReserve(tokenOut);
             return amountIn;
         }
 
@@ -169,32 +184,87 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
         }
     }
 
+    function _unbookedSurplus(IERC20 token_) internal view returns (uint256) {
+        uint256 balance_ = token_.balanceOf(address(this));
+        uint256 reserve_ = _tokenReserve[address(token_)];
+        return balance_ > reserve_ ? balance_ - reserve_ : 0;
+    }
+
+    function _syncReserve(IERC20 token_) internal {
+        _tokenReserve[address(token_)] = token_.balanceOf(address(this));
+    }
+
+    /// @dev L-CLAIM-3: `!pretransferred` credits the pull delta; `pretransferred` credits claimed iff `claimed <= U`.
     function _receiveExactIn(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) internal returns (uint256) {
         if (!pretransferred_) {
+            uint256 before_ = tokenIn_.balanceOf(address(this));
             tokenIn_.safeTransferFrom(msg.sender, address(this), amountIn_);
+            uint256 observed_ = tokenIn_.balanceOf(address(this)) - before_;
+            if (amountIn_ > observed_) {
+                if (observed_ == 0) {
+                    revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, 0);
+                }
+                return observed_;
+            }
+            return amountIn_;
+        }
+
+        uint256 U = _unbookedSurplus(tokenIn_);
+        if (amountIn_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, U);
         }
         return amountIn_;
     }
 
     function _receiveMaxIn(IERC20 tokenIn_, uint256 maxAmountIn_, bool pretransferred_) internal returns (uint256) {
         if (!pretransferred_) {
+            uint256 before_ = tokenIn_.balanceOf(address(this));
             tokenIn_.safeTransferFrom(msg.sender, address(this), maxAmountIn_);
+            uint256 observed_ = tokenIn_.balanceOf(address(this)) - before_;
+            if (maxAmountIn_ > observed_) {
+                if (observed_ == 0) {
+                    revert ISecurePullErrors.TransferDeltaInsufficient(maxAmountIn_, 0);
+                }
+                return observed_;
+            }
+            return maxAmountIn_;
+        }
+
+        uint256 U = _unbookedSurplus(tokenIn_);
+        if (maxAmountIn_ > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(maxAmountIn_, U);
         }
         return maxAmountIn_;
     }
 
-    function _refundUnused(IERC20 tokenIn_, uint256 depositedAmount_, uint256 usedAmount_, address refundRecipient_) internal {
-        if (depositedAmount_ > usedAmount_) {
-            tokenIn_.safeTransfer(refundRecipient_, depositedAmount_ - usedAmount_);
+    /// @dev E6: refund `min(deposited − used, unused U)` only. Never pays booked `R`.
+    function _refundUnused(IERC20 tokenIn_, uint256 depositedAmount_, uint256 usedAmount_, address refundRecipient_)
+        internal
+    {
+        if (depositedAmount_ <= usedAmount_) {
+            return;
+        }
+        uint256 claimedUnused_ = depositedAmount_ - usedAmount_;
+        uint256 unusedU_ = _unbookedSurplus(tokenIn_);
+        uint256 refund_ = claimedUnused_ < unusedU_ ? claimedUnused_ : unusedU_;
+        if (refund_ > 0) {
+            tokenIn_.safeTransfer(refundRecipient_, refund_);
         }
     }
 
-    function _approvePermit2ToRouter(IERC20 token_) internal {
-        token_.forceApprove(address(router), type(uint256).max);
-        token_.forceApprove(address(IRouterCommon(address(router)).getPermit2()), type(uint256).max);
-        IAllowanceTransfer(address(IRouterCommon(address(router)).getPermit2())).approve(
-            address(token_), address(router), type(uint160).max, type(uint48).max
-        );
+    /// @dev Approve only `amount_` for this consume, then call again with 0 to clear leftover allowance (M3).
+    function _approvePermit2ToRouter(IERC20 token_, uint256 amount_) internal {
+        address permit2_ = address(IRouterCommon(address(router)).getPermit2());
+        token_.forceApprove(address(router), 0);
+        token_.forceApprove(permit2_, 0);
+        IAllowanceTransfer(permit2_).approve(address(token_), address(router), 0, 0);
+        if (amount_ == 0) {
+            return;
+        }
+        token_.forceApprove(address(router), amount_);
+        token_.forceApprove(permit2_, amount_);
+        uint160 permitAmount_ = amount_ > type(uint160).max ? type(uint160).max : uint160(amount_);
+        IAllowanceTransfer(permit2_).approve(address(token_), address(router), permitAmount_, uint48(block.timestamp + 1));
     }
 
     function _queryAddLiquidityUnbalanced(uint256[] memory amountsIn_) internal view returns (uint256 amountOut_) {
