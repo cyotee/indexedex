@@ -7,6 +7,8 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
@@ -106,6 +108,8 @@ contract BasicVaultCommonHarness is BasicVaultCommon {
     constructor(IPermit2 permit2_, address[] memory expectedHoldTokens_) {
         Permit2AwareRepo._initialize(permit2_);
         MultiAssetBasicVaultRepo._initialize(expectedHoldTokens_);
+        // Harness is also vaultShare so `_secureSelfBurn` leftover-sweep can execute.
+        ERC20Repo._initialize("VaultShare", "VS", 18);
     }
 
     function secureTokenTransfer(IERC20 tokenIn_, uint256 amount_, bool pretransferred_) external returns (uint256) {
@@ -132,6 +136,24 @@ contract BasicVaultCommonHarness is BasicVaultCommon {
 
     function unbookedSurplus(IERC20 token_) external view returns (uint256) {
         return _unbookedSurplus(token_);
+    }
+
+    function secureSelfBurn(address owner, uint256 burnAmount, bool preTransferred) external {
+        _secureSelfBurn(owner, burnAmount, preTransferred);
+    }
+
+    function mintShares(address to, uint256 amount) external {
+        ERC20Repo._mint(to, amount);
+    }
+
+    /// @notice IERC20 surface so leftover-sweep `safeTransfer` can execute against this helper.
+    function balanceOf(address account) external view returns (uint256) {
+        return ERC20Repo._balanceOf(account);
+    }
+
+    function transfer(address to, uint256 amount) external returns (bool) {
+        ERC20Repo._transfer(msg.sender, to, amount);
+        return true;
     }
 
     /**
@@ -176,6 +198,7 @@ contract BasicVaultCommon_TokenTransfer_Test is Test {
     IPermit2 internal constant PERMIT2_PRODUCTION = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
     address internal alice = makeAddr("alice");
+    address internal attacker = makeAddr("attacker");
 
     uint256 internal constant DUST = 50e18;
     uint256 internal constant DEPOSIT = 100e18;
@@ -399,6 +422,64 @@ contract BasicVaultCommon_TokenTransfer_Test is Test {
         assertEq(token.balanceOf(address(harness)), used);
         assertEq(harness.bookedReserve(token), used, "INV-R1 after refund-then-sync");
         assertEq(harness.unbookedSurplus(token), 0);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  E6 surplus-refund / leftover self-share sweep                         */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice E6: fat max + transfer-only-used must not skim booked R (SEC-SHARP-002).
+    /// @dev Anti-theater: seed + sync R first; do **not** transfer fatMax.
+    function test_E6_refundExcess_fatMax_transferOnlyUsed_doesNotSkimBookedR() public {
+        uint256 bookedR = DEPOSIT;
+        uint256 used = 10e18;
+        uint256 fatMax = bookedR;
+
+        token.mint(address(harness), bookedR);
+        harness.syncAllExpectedHoldReserves();
+        assertEq(harness.bookedReserve(token), bookedR);
+        assertEq(token.balanceOf(address(harness)), bookedR);
+        assertEq(harness.unbookedSurplus(token), 0);
+
+        token.mint(attacker, used);
+        vm.prank(attacker);
+        token.transfer(address(harness), used);
+
+        uint256 uThisCall = harness.unbookedSurplus(token);
+        assertEq(uThisCall, used, "this-call unused inbound is the push of used only");
+        uint256 attackerAfterPush = token.balanceOf(attacker);
+        uint256 rBefore = harness.bookedReserve(token);
+
+        vm.prank(attacker);
+        harness.refundExcess(token, fatMax, used, true, attacker);
+
+        uint256 attackerGain = token.balanceOf(attacker) - attackerAfterPush;
+        assertLe(attackerGain, uThisCall, "refund cannot exceed this-call unused U");
+        assertEq(harness.bookedReserve(token), rBefore, "booked reserve storage unchanged");
+        assertGe(
+            token.balanceOf(address(harness)),
+            rBefore,
+            "live inventory must not drop below booked R"
+        );
+        assertLt(attackerGain, bookedR, "attacker must not receive booked R");
+    }
+
+    /// @notice E6: pretransfer self-burn must not sweep donated leftover shares (SEC-COMMON-002).
+    /// @dev Anti-theater: leftover sits on harness; attacker does not transfer extra leftover.
+    function test_E6_secureSelfBurn_pretransfer_doesNotSweepDonatedShares() public {
+        uint256 donated = 50e18;
+        uint256 burnAmount = 10e18;
+        uint256 selfHeld = donated + burnAmount;
+
+        harness.mintShares(address(harness), selfHeld);
+        assertEq(harness.balanceOf(address(harness)), selfHeld);
+        assertEq(harness.balanceOf(attacker), 0);
+
+        vm.prank(attacker);
+        harness.secureSelfBurn(attacker, burnAmount, true);
+
+        assertEq(harness.balanceOf(address(harness)), donated, "donated leftover must stay on vault");
+        assertEq(harness.balanceOf(attacker), 0, "attacker must not receive donated shares");
     }
 
     /* ---------------------------------------------------------------------- */

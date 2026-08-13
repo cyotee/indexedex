@@ -101,10 +101,12 @@ contract BasicVaultCommon is ISecurePullErrors {
     }
 
     /**
-     * @notice Refunds excess pretransferred tokens back to the caller.
-     * @dev Only refunds when pretransferred is true and maxAmount exceeds the amount actually used
-     *      (exact-out style). Does **not** refund unclaimed push surplus (`U - claimed`);
-     *      that surplus is absorbed into booked reserve at end-of-op full-set sync.
+     * @notice Refunds this-call unused inbound tokens after an exact-out consume.
+     * @dev E6 law: refund `min(maxAmount_ - usedAmount_, unused U)` only, where
+     *      `U = balanceOf(this) - reserveOfToken` (unbooked surplus). Never pays booked `R`.
+     *      If `U == 0`, refund is 0. Gate remains `pretransferred_ && maxAmount_ > usedAmount_`.
+     *      Does **not** refund unclaimed push surplus beyond this-call unused inbound;
+     *      leftover surplus is absorbed into booked reserve at end-of-op full-set sync.
      *      Call **before** `_syncAllExpectedHoldReserves()`.
      * @param token_ The token to refund.
      * @param maxAmount_ The maximum amount that was pretransferred / credited.
@@ -120,21 +122,29 @@ contract BasicVaultCommon is ISecurePullErrors {
         address recipient_
     ) internal {
         if (pretransferred_ && maxAmount_ > usedAmount_) {
-            uint256 refund = maxAmount_ - usedAmount_;
-            token_.safeTransfer(recipient_, refund);
+            uint256 unusedU = _unbookedSurplus(token_);
+            uint256 claimedUnused = maxAmount_ - usedAmount_;
+            uint256 refund = claimedUnused < unusedU ? claimedUnused : unusedU;
+            if (refund > 0) {
+                token_.safeTransfer(recipient_, refund);
+            }
         }
     }
 
+    /**
+     * @notice Burns vault shares (`vaultShare` / `address(this)`) for a pretransfer or pull path.
+     * @dev E6 law: when `preTransferred`, burn `burnAmount` from `address(this)` only.
+     *      Do **not** sweep leftover `balanceOf(this)` to `owner`. Honest extra / donated
+     *      self-shares stay on the vault (absorb), matching token-side unclaimed push surplus.
+     *      If `burnAmount` exceeds self-balance, ERC20 burn reverts.
+     *      When `!preTransferred`, burn `burnAmount` from `owner`.
+     * @param owner Share holder to burn from when `!preTransferred`.
+     * @param burnAmount Shares to burn.
+     * @param preTransferred When true, burn from `address(this)` (already-held self-shares).
+     */
     function _secureSelfBurn(address owner, uint256 burnAmount, bool preTransferred) internal {
         if (preTransferred) {
             ERC20Repo._burn(address(this), burnAmount);
-
-            // If excess shares were pretransferred to this vault, refund them back to the owner.
-            // This keeps `exchangeOut(..., pretransferred=true)` semantics consistent: only `burnAmount` is consumed.
-            uint256 leftoverShares = IERC20(address(this)).balanceOf(address(this));
-            if (leftoverShares > 0) {
-                IERC20(address(this)).safeTransfer(owner, leftoverShares);
-            }
         } else {
             ERC20Repo._burn(owner, burnAmount);
         }
