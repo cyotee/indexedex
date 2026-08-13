@@ -6,8 +6,20 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {FixtureGraph} from "./FixtureGraph.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 
+/// @dev Minimal views for DETF → reserve hook export (all Uni V4 SE DETF families).
+interface IDetfReserveHookView {
+    function reserveHook() external view returns (address);
+}
+
+interface IErc20MetaView {
+    function name() external view returns (string memory);
+    function symbol() external view returns (string memory);
+}
+
 /// @title Script_22_ExportFrontendArtifacts
 /// @notice Merge lab demos + fee-DETF (CHIR) into chain/4663 platform.json + tokenlists.
+/// @dev Strategy vaults include standalone buffers/SEs **and** every DETF reserveHook
+///      (ConstProd / Orbital / Weighted / fee) so Earn lists all pools.
 contract Script_22_ExportFrontendArtifacts is DeploymentBase {
     string internal constant FRONTEND_DIR = "frontend/packages/protocol/src/addresses/chain/4663";
     string internal constant ARTIFACT_FILE = "22_frontend_export.json";
@@ -123,6 +135,28 @@ contract Script_22_ExportFrontendArtifacts is DeploymentBase {
         out = vm.serializeAddress(p, "chir", _safeRead("18_chir_instance.json", "chir"));
         out = vm.serializeAddress(p, "feeDetf", _safeRead("18_chir_instance.json", "chir"));
         out = vm.serializeAddress(p, "reserveHook", _safeRead("18_chir_instance.json", "reserveHook"));
+        // DETF-owned reserve pools (hooks) — same addresses listed under strategy-vaults.
+        out = vm.serializeAddress(p, "chirReserveHook", _tryReserveHook(_safeRead("18_chir_instance.json", "chir")));
+        out = vm.serializeAddress(p, "cpDetfGentleReserveHook", _tryReserveHook(_safeRead("13_inert_demos.json", "cpDetfGentle")));
+        out = vm.serializeAddress(
+            p, "cpDetfLaunchRichReserveHook", _tryReserveHook(_safeRead("13_inert_demos.json", "cpDetfLaunchRich"))
+        );
+        out = vm.serializeAddress(
+            p, "orbitalDetfGentleReserveHook", _tryReserveHook(_safeRead("13_inert_demos.json", "orbitalDetfGentle"))
+        );
+        out = vm.serializeAddress(
+            p,
+            "orbitalDetfLaunchRichReserveHook",
+            _tryReserveHook(_safeRead("13_inert_demos.json", "orbitalDetfLaunchRich"))
+        );
+        out = vm.serializeAddress(
+            p, "weightedDetfGentleReserveHook", _tryReserveHook(_safeRead("13_inert_demos.json", "weightedDetfGentle"))
+        );
+        out = vm.serializeAddress(
+            p,
+            "weightedDetfLaunchRichReserveHook",
+            _tryReserveHook(_safeRead("13_inert_demos.json", "weightedDetfLaunchRich"))
+        );
         out = vm.serializeUint(p, "creationPairPerDetfWad", FixtureEconomics.creationPairPerDetfWad());
         out = vm.serializeString(p, "feeDetfTemplate", "launch-rich");
 
@@ -172,12 +206,9 @@ contract Script_22_ExportFrontendArtifacts is DeploymentBase {
         address v3 = _safeRead("07_univ3_se.json", "uniV3Se_tt0_tt1");
         address v4 = _safeRead("08_univ4_se.json", "uniV4Se_tt4_tt5");
         address seRich = _safeRead("15_univ3_se_rich.json", "uniV3Se_rich");
-        string memory full = string.concat(
-            '{"name":"Indexedex Robinhood Anvil Strategy Vaults","timestamp":"',
-            vm.toString(block.timestamp),
-            '","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","strategy","vault","fee-detf"],"tokens":[',
-            // Tag "strat" is required by frontend tokenlists.getStrategyVaultTokensForChain
-            // (fromComposed tag filter). Without it Earn preferred catalog is empty.
+
+        // Standalone strategy pools first, then every DETF-owned reserve hook (pool).
+        string memory tokensJson = string.concat(
             _vaultEntry(v3, "Uni V3 SE TT0/TT1", "uv3se01", '["vault","se","strat"]'),
             ",",
             _vaultEntry(v4, "Uni V4 SE TT4/TT5", "uv4se45", '["vault","se","strat"]'),
@@ -203,10 +234,100 @@ contract Script_22_ExportFrontendArtifacts is DeploymentBase {
                 "Single SE Buffer V4",
                 "sseBufV4",
                 '["vault","strat"]'
-            ),
+            )
+        );
+
+        // DETF reserve hooks — product pools created in DETF postDeploy (not standalone demos).
+        // Tags: strat → Earn preferred strategy catalog; detf-reserve → owned by a DETF.
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("18_chir_instance.json", "chir"),
+            "Fee DETF Reserve (ConstProd)",
+            "chirReserve",
+            '["vault","strat","detf-reserve","fee-detf"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "cpDetfGentle"),
+            "Gentle ConstProd DETF Reserve",
+            "gConstProdReserve",
+            '["vault","strat","detf-reserve"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "cpDetfLaunchRich"),
+            "LaunchRich ConstProd DETF Reserve",
+            "lrConstProdReserve",
+            '["vault","strat","detf-reserve"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "orbitalDetfGentle"),
+            "Gentle Orbital DETF Reserve",
+            "gOrbReserve",
+            '["vault","strat","detf-reserve","orbital"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "orbitalDetfLaunchRich"),
+            "LaunchRich Orbital DETF Reserve",
+            "lrOrbReserve",
+            '["vault","strat","detf-reserve","orbital"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "weightedDetfGentle"),
+            "Gentle Weighted DETF Reserve n8",
+            "gWgtReserve",
+            '["vault","strat","detf-reserve"]'
+        );
+        tokensJson = _appendDetfReserveHook(
+            tokensJson,
+            _safeRead("13_inert_demos.json", "weightedDetfLaunchRich"),
+            "LaunchRich Weighted DETF Reserve n8",
+            "lrWgtReserve",
+            '["vault","strat","detf-reserve"]'
+        );
+
+        string memory full = string.concat(
+            '{"name":"Indexedex Robinhood Anvil Strategy Vaults","timestamp":"',
+            vm.toString(block.timestamp),
+            '","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","strategy","vault","fee-detf","detf-reserve"],"tokens":[',
+            tokensJson,
             "]}"
         );
         vm.writeFile(string.concat(FRONTEND_DIR, "/strategy-vaults.tokenlist.json"), full);
+    }
+
+    /// @dev Append DETF.reserveHook() as a strategy vault row when present on-chain.
+    function _appendDetfReserveHook(
+        string memory tokensJson_,
+        address detf_,
+        string memory fallbackName_,
+        string memory fallbackSymbol_,
+        string memory tagsJson_
+    ) internal view returns (string memory) {
+        address hook_ = _tryReserveHook(detf_);
+        if (hook_ == address(0)) return tokensJson_;
+
+        string memory name_ = fallbackName_;
+        string memory symbol_ = fallbackSymbol_;
+        try IErc20MetaView(hook_).name() returns (string memory n_) {
+            if (bytes(n_).length > 0) name_ = n_;
+        } catch {}
+        try IErc20MetaView(hook_).symbol() returns (string memory s_) {
+            if (bytes(s_).length > 0) symbol_ = s_;
+        } catch {}
+
+        return string.concat(tokensJson_, ",", _vaultEntry(hook_, name_, symbol_, tagsJson_));
+    }
+
+    function _tryReserveHook(address detf_) internal view returns (address hook_) {
+        if (detf_ == address(0) || detf_.code.length == 0) return address(0);
+        try IDetfReserveHookView(detf_).reserveHook() returns (address h_) {
+            if (h_ != address(0) && h_.code.length > 0) return h_;
+        } catch {}
+        return address(0);
     }
 
     function _writeProtocolDetfsTokenlist() internal {

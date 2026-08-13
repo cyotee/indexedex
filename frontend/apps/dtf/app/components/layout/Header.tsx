@@ -804,8 +804,8 @@ export function Header() {
                 <Link href="/research" className={navLinkClass}>
                   Research
                 </Link>
-                <Link href="/token" className={navLinkClass}>
-                  Token
+                <Link href="/token" className={navLinkClass} data-testid="nav-token-launch">
+                  Launch
                 </Link>
               {/* More: power routes demoted from primary nav */}
               <div className="relative" ref={dropdownRef}>

@@ -21,6 +21,17 @@ DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
 # wait for: [SUCCESS] Command 'all' completed
 ```
 
+**Pons launch only** (no SE / DETF / scripted market buy):
+
+```bash
+DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+  bash scripts/shell/pons_launch_rich.sh
+# or: …/deploy_all.sh pons-launch
+# → deployments/.../14_pons_rich.json
+# → frontend/.../chain/4663/pons-launch.json  (DTF /token buy page)
+```
+
 Resume fee-DETF only (after foundation + stage 11 children exist):
 
 ```bash
@@ -43,7 +54,7 @@ bash scripts/shell/anvil_robinhood_main.sh export
 | 04–09 | TT0–TT7, Uni pools, SE, rate providers | Lab assets |
 | 10–12 | Hook pkgs, DETF children, DETF pkgs | Children reused by fee-DETF |
 | 13 | Inert demos | **No** scripted bond on lab DETFs |
-| **14** | Pons launch RICH | Fee-DETF path starts |
+| **14** | Pons launch RICH | Launch-only; `pons-launch` cmd; UI `/token` |
 | **15** | Uni V3 SE on RICH/WETH | |
 | **16** | Rate provider SE→WETH | |
 | **17** | Buffer CP hook + CHIR DETF packages | Uses `11_detf_children.json` |
@@ -75,5 +86,6 @@ Frontend: `frontend/packages/protocol/src/addresses/chain/4663/`
 1. Wallet RPC → `http://127.0.0.1:8545`, chain id **4663**  
 2. Import Anvil **#1** (or e2e inject #0)  
 3. `getAddressArtifacts(4663)` — **featured fee DETF = CHIR**; protocol-detfs also lists lab DETFs  
-4. `/staking?detf=<chir>` for fee-DETF; Earn for strategy SE vaults; lab DETFs for first-bond experiments  
-5. DTF e2e: skill `indexedex-ui-tx-testing` / `npm run test:e2e:dtf:live`
+4. `/token` (nav **Launch**) — pons v1 RICH buy/sell on the locked V3 pool  
+5. `/staking?detf=<chir>` for fee-DETF; Earn for strategy SE vaults; lab DETFs for first-bond experiments  
+6. DTF e2e: skill `indexedex-ui-tx-testing` / `npm run test:e2e:dtf:live`

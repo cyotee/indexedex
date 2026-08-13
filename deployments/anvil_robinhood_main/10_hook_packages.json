@@ -1,7 +1,0 @@
-{
-  "chainId": 4663,
-  "cpHookPkg": "0x6E6646aceBc86d5C1c2be47D412B28017202CD38",
-  "orbitalHookPkg": "0x9e058fB30817893bcE11a48E5506A4EE653CFAa8",
-  "singleSeBufferHookPkg": "0x1b63529995609F5bdF2D49566d0e948433b6Ed0D",
-  "weightedHookPkg": "0xf020F01B307A7e25738534f6e98B4F20c54E38c6"
-}

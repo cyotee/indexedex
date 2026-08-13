@@ -1,8 +1,0 @@
-{
-  "bondNftVaultPkg": "0x3c327fe329AB4f456F862cb5F84E6B5c12bB840a",
-  "bufferCpHookPkg": "0x31a98cf2664865C56951fbfaCC0F78937fBF3450",
-  "chainId": 4663,
-  "chirDetfPkg": "0xa52e5056C8aB722FcEdC15A62492a51C7fa61360",
-  "notes": "constantProduct/single Buffer CP hook + fee-DETF packages via registry",
-  "rebasingClaimTokenPkg": "0x4812C37A2641828130539ac23b55FC4a892471B9"
-}

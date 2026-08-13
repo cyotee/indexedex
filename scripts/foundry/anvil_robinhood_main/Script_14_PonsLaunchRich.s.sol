@@ -6,10 +6,13 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {IPonsLaunchFactoryV1, IPonsLauncherTokenV1, PonsV1Lib} from "./PonsV1Lib.sol";
 
-/// @title Script_04_PonsLaunchRich
-/// @notice Launch pons v1 token RICH on RH fork; persist pool + launch metadata.
+/// @title Script_14_PonsLaunchRich
+/// @notice Launch pons v1 token RICH on RH fork only (no SE / DETF / market buy).
+/// @dev Also writes frontend/packages/protocol/src/addresses/chain/4663/pons-launch.json for the buy page.
 contract Script_14_PonsLaunchRich is DeploymentBase {
     string internal constant ARTIFACT_FILE = "14_pons_rich.json";
+    string internal constant FRONTEND_DIR = "frontend/packages/protocol/src/addresses/chain/4663";
+    string internal constant FRONTEND_LAUNCH_FILE = "pons-launch.json";
 
     address private rich;
     address private pool;
@@ -28,6 +31,7 @@ contract Script_14_PonsLaunchRich is DeploymentBase {
 
         if (_loadExisting()) {
             _exportJson();
+            _writeFrontendLaunchJson();
             _logResults();
             return;
         }
@@ -36,7 +40,13 @@ contract Script_14_PonsLaunchRich is DeploymentBase {
         require(factory.code.length > 0, "pons factory missing code at pin");
 
         IPonsLaunchFactoryV1 pons = IPonsLaunchFactoryV1(factory);
-        require(pons.launchEnabled(), "pons launchEnabled=false");
+        // RH main tip may close public launches; local Anvil fixture must still launch.
+        // Layout on live factory (OZ Ownable2Step + ReentrancyGuard + fee/enabled): launchEnabled @ slot 3.
+        if (!pons.launchEnabled()) {
+            vm.store(factory, bytes32(uint256(3)), bytes32(uint256(1)));
+            require(pons.launchEnabled(), "pons launchEnabled=false (force failed; run deploy_all ensure)");
+            _logString("Forced launchEnabled=true via storage slot 3", "(anvil-only)");
+        }
         uint256 fee = pons.launchFee();
 
         // Unique salt so re-runs after purge do not collide with prior CREATE2.
@@ -66,12 +76,11 @@ contract Script_14_PonsLaunchRich is DeploymentBase {
         isToken0 = launched.isToken0;
         poolFee = launched.poolFee;
 
-        // Advance past launch protection window so stage 10 can buy as #0 without anti-snipe.
-        if (block.number <= restrictionsEndBlock) {
-            vm.roll(restrictionsEndBlock + 1);
-        }
+        // Do not auto-roll past anti-snipe here: launch-only path leaves sale timing to the buy UI.
+        // (Full fee-DETF pipeline stage 19 rolls before the scripted market buy.)
 
         _exportJson();
+        _writeFrontendLaunchJson();
         _logResults();
     }
 
@@ -83,26 +92,76 @@ contract Script_14_PonsLaunchRich is DeploymentBase {
         rich = r;
         pool = p;
         (factory,) = _readAddressSafe(ARTIFACT_FILE, "factory");
+        if (factory == address(0)) factory = FixtureEconomics.PONS_FACTORY;
         (restrictionsEndBlock,) = _readUintSafe(ARTIFACT_FILE, "restrictionsEndBlock");
         (positionId,) = _readUintSafe(ARTIFACT_FILE, "positionId");
+        (uint256 feeU,) = _readUintSafe(ARTIFACT_FILE, "poolFee");
+        poolFee = uint24(feeU);
+        // Refresh launch metadata from factory when available.
+        try IPonsLaunchFactoryV1(factory).getLaunchedToken(rich) returns (IPonsLaunchFactoryV1.LaunchedToken memory L) {
+            if (L.exists) {
+                isToken0 = L.isToken0;
+                if (L.poolFee != 0) poolFee = L.poolFee;
+                if (L.restrictionsEndBlock != 0) restrictionsEndBlock = L.restrictionsEndBlock;
+                if (L.positionId != 0) positionId = L.positionId;
+            }
+        } catch {}
         return true;
     }
 
     function _exportJson() internal {
         string memory json;
         json = vm.serializeAddress("pons", "rich", rich);
+        json = vm.serializeAddress("pons", "token", rich);
         json = vm.serializeAddress("pons", "pool", pool);
         json = vm.serializeAddress("pons", "factory", factory);
         json = vm.serializeAddress("pons", "locker", FixtureEconomics.PONS_LOCKER);
         json = vm.serializeAddress("pons", "weth", RobinhoodCanonicalLib.weth());
+        json = vm.serializeAddress("pons", "swapRouter", FixtureEconomics.PONS_V3_SWAP_ROUTER);
         json = vm.serializeUint("pons", "restrictionsEndBlock", restrictionsEndBlock);
         json = vm.serializeUint("pons", "positionId", positionId);
         json = vm.serializeUint("pons", "poolFee", uint256(poolFee));
         json = vm.serializeBool("pons", "isToken0", isToken0);
         json = vm.serializeBytes32("pons", "salt", saltUsed);
         json = vm.serializeUint("pons", "chainId", block.chainid);
+        json = vm.serializeString("pons", "name", FixtureEconomics.RICH_NAME);
         json = vm.serializeString("pons", "symbol", FixtureEconomics.RICH_SYMBOL);
+        json = vm.serializeString(
+            "pons",
+            "description",
+            "IndexedEx launch token on pons v1 (Uniswap V3 WETH pool from day one)."
+        );
         _writeJson(json, ARTIFACT_FILE);
+    }
+
+    /// @dev UI buy page source of truth under chain/4663.
+    function _writeFrontendLaunchJson() internal {
+        vm.createDir(FRONTEND_DIR, true);
+        string memory p = "launch";
+        string memory out;
+        out = vm.serializeUint(p, "chainId", block.chainid);
+        out = vm.serializeAddress(p, "token", rich);
+        out = vm.serializeAddress(p, "rich", rich);
+        out = vm.serializeAddress(p, "pool", pool);
+        out = vm.serializeAddress(p, "factory", factory);
+        out = vm.serializeAddress(p, "locker", FixtureEconomics.PONS_LOCKER);
+        out = vm.serializeAddress(p, "weth", RobinhoodCanonicalLib.weth());
+        out = vm.serializeAddress(p, "swapRouter", FixtureEconomics.PONS_V3_SWAP_ROUTER);
+        out = vm.serializeUint(p, "restrictionsEndBlock", restrictionsEndBlock);
+        out = vm.serializeUint(p, "positionId", positionId);
+        out = vm.serializeUint(p, "poolFee", uint256(poolFee == 0 ? 10000 : poolFee));
+        out = vm.serializeBool(p, "isToken0", isToken0);
+        out = vm.serializeString(p, "name", FixtureEconomics.RICH_NAME);
+        out = vm.serializeString(p, "symbol", FixtureEconomics.RICH_SYMBOL);
+        out = vm.serializeString(
+            p,
+            "description",
+            "IndexedEx launch token on pons v1 (Uniswap V3 WETH pool from day one)."
+        );
+        out = vm.serializeString(p, "generation", "v1");
+        out = vm.serializeString(p, "networkProfile", _networkProfile());
+        vm.writeJson(out, string.concat(FRONTEND_DIR, "/", FRONTEND_LAUNCH_FILE));
+        _logString("Frontend launch file:", string.concat(FRONTEND_DIR, "/", FRONTEND_LAUNCH_FILE));
     }
 
     function _logResults() internal view {

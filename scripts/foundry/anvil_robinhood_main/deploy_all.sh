@@ -78,6 +78,7 @@ Commands:
   se            Stages 07-09
   packages      Stages 10-12
   demos         Stage 13
+  pons-launch   Stage 14 only — pons v1 RICH launch + frontend pons-launch.json (no SE/DETF)
   fee-detf      Stages 14-21 (pons RICH → CHIR live + UI ETH)
   export        Stage 22
   stageNN       Single stage (00-22)
@@ -186,6 +187,29 @@ start_anvil() {
   fi
 }
 
+# Pons v1 factory on RH may have launchEnabled=false at recent tip. Forge vm.store does not
+# always persist to the Anvil node before broadcast, so set storage via RPC for local fixtures.
+ensure_pons_launch_enabled() {
+  local factory="${PONS_FACTORY:-0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB}"
+  # Empirically: live factory launchEnabled is storage slot 3 (bool).
+  local slot="0x0000000000000000000000000000000000000000000000000000000000000003"
+  local one="0x0000000000000000000000000000000000000000000000000000000000000001"
+  local enabled
+  enabled="$(cast call "$factory" "launchEnabled()(bool)" --rpc-url "$RPC_URL" 2>/dev/null || echo "false")"
+  if [[ "$enabled" == "true" ]]; then
+    log_info "pons launchEnabled already true"
+    return 0
+  fi
+  log_info "Forcing pons launchEnabled=true via anvil_setStorageAt (slot 3)"
+  cast rpc anvil_setStorageAt "$factory" "$slot" "$one" --rpc-url "$RPC_URL" >/dev/null
+  enabled="$(cast call "$factory" "launchEnabled()(bool)" --rpc-url "$RPC_URL")"
+  if [[ "$enabled" != "true" ]]; then
+    log_error "Failed to force pons launchEnabled (got $enabled)"
+    exit 1
+  fi
+  log_success "pons launchEnabled forced true"
+}
+
 require_localhost_broadcast() {
   if [[ -z "$BROADCAST_FLAG" ]]; then
     return 0
@@ -227,6 +251,8 @@ run_stage() {
   if [[ -n "$BROADCAST_FLAG" ]]; then
     # Large CREATE3 facets (V4 SE Out / DETF packages) need headroom beyond default 130%.
     cmd+=("$BROADCAST_FLAG" --slow --gas-estimate-multiplier "${GAS_ESTIMATE_MULTIPLIER:-300}")
+    # Fork RPC DNS blips break eth_feeHistory / EIP-1559 fee fetch. Prefer legacy + pinned gas.
+    cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
   fi
 
   (
@@ -285,7 +311,7 @@ run_stages() {
 ARGS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all|foundation|assets|pools|se|packages|demos|fee-detf|export)
+    all|foundation|assets|pools|se|packages|demos|pons-launch|fee-detf|export)
       COMMAND="$1"
       shift
       ;;
@@ -355,6 +381,8 @@ log_info "SENDER=$SENDER OUT_DIR=$OUT_DIR_OVERRIDE"
 case "$COMMAND" in
   all)
     # Lab path (inert demos) then fee-DETF (CHIR live) then unified export
+    # Stage 14 needs public launches open (or force-enabled on Anvil).
+    ensure_pons_launch_enabled
     run_stages 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
     ;;
   foundation)
@@ -375,8 +403,14 @@ case "$COMMAND" in
   demos)
     run_stages 13
     ;;
+  pons-launch)
+    # Launch-only: pons v1 RICH + frontend buy-page artifact. No SE wrap / DETF / market buy.
+    ensure_pons_launch_enabled
+    run_stages 14
+    ;;
   fee-detf)
     # Requires foundation + stage 11 children (bond NFT / claim pkgs)
+    ensure_pons_launch_enabled
     run_stages 14 15 16 17 18 19 20 21
     ;;
   export)

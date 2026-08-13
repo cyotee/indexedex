@@ -1,9 +1,0 @@
-{
-  "chainId": 4663,
-  "chir": "0xCECf3B38d8b8835f28fef7a9AdaCa213b106d364",
-  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "frontendDir": "frontend/packages/protocol/src/addresses/chain/4663",
-  "networkProfile": "anvil_robinhood_main",
-  "rich": "0xB83F836e6D7fa638f0eEeb0BE90064792d34B2C8",
-  "uiWallet": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
-}
