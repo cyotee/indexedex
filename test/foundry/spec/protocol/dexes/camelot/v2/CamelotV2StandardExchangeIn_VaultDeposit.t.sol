@@ -88,12 +88,44 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
         uint256 sharesOut =
             vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
 
-        // Camelot Route4 convert uses post-deposit LP reserve; preview uses pre-deposit reserve,
-        // so exec is slightly below preview (fee mint + reserve ordering). Bound, not exact eq.
         assertTrue(sharesOut > 0, "Execution non-zero");
-        assertLe(sharesOut, preview, "Exec should not exceed preview upper bound");
-        assertApproxEqRel(sharesOut, preview, 0.02e18, "Exec within 2% of preview");
+        assertEq(sharesOut, preview, "Route4 exec must match pre-deposit preview");
         assertEq(vault.balanceOf(recipient), sharesOut, "Recipient should receive minted shares");
+    }
+
+    /// @notice R4: convert against pre-deposit reserve; preview ≡ execute.
+    function test_R4_previewEqualsExecute_route4() public {
+        IERC20 lpToken = IERC20(address(pair));
+        IERC20 vaultToken = IERC20(address(vault));
+        uint256 lpAmount = _lpAmount();
+        address recipient = makeAddr("r4PreviewRecipient");
+
+        lpToken.approve(address(vault), lpAmount);
+        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        uint256 sharesOut =
+            vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertEq(sharesOut, preview, "R4: preview == execute against pre-deposit reserve");
+        assertEq(vault.balanceOf(recipient), sharesOut, "R4 recipient shares");
+    }
+
+    /// @notice R4: large deposit vs TVL uses pre-deposit reserve (no 2% theater).
+    function test_R4_largeDeposit_sharesEqPreview_preDepositReserve() public {
+        IERC20 lpToken = IERC20(address(pair));
+        IERC20 vaultToken = IERC20(address(vault));
+        uint256 vaultLp = lpToken.balanceOf(address(vault));
+        uint256 heldLp = lpToken.balanceOf(address(this));
+        uint256 lpAmount = heldLp / 2;
+        if (lpAmount > vaultLp) lpAmount = vaultLp;
+        require(lpAmount > MIN_TEST_AMOUNT, "large LP");
+        address recipient = makeAddr("r4LargeRecipient");
+
+        lpToken.approve(address(vault), lpAmount);
+        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        uint256 sharesOut =
+            vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertGt(preview, 0, "R4 large preview");
+        assertEq(sharesOut, preview, "R4 large: exec == pre-deposit preview");
+        assertEq(vault.balanceOf(recipient), sharesOut, "R4 large recipient");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -144,8 +176,7 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
             vault.exchangeIn(lpToken, lpAmount2, vaultToken, 0, depositor2, false, _deadline());
 
         assertTrue(shares2 > 0, "Second deposit receives shares");
-        assertLe(shares2, preview2, "Second deposit not above preview");
-        assertApproxEqRel(shares2, preview2, 0.02e18, "Second deposit within 2% of preview");
+        assertEq(shares2, preview2, "Second deposit preview == execute");
         assertEq(vault.balanceOf(depositor2), shares2, "Depositor2 balance");
     }
 
@@ -237,9 +268,8 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
         uint256 sharesOut =
             vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
 
-        // Zap-in mint path also fee/reserve sensitive; require non-zero + tight bound.
         assertTrue(sharesOut > 0, "Route6 shares non-zero");
-        assertApproxEqRel(sharesOut, preview, 0.02e18, "Route6 within 2% of preview");
+        assertEq(sharesOut, preview, "Route6 preview == execute");
         assertEq(vault.balanceOf(recipient), sharesOut, "Route6 recipient shares");
     }
 }

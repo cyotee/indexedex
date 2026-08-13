@@ -9,7 +9,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
-import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
 import {CamelotV2FactoryAwareRepo} from "@crane/contracts/protocols/dexes/camelot/v2/CamelotV2FactoryAwareRepo.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
@@ -385,7 +384,7 @@ contract CamelotV2StandardExchangeOutTarget is
             // Also loads the reserves of the known token and the opposing token.
             // Also loads the fee percent of the known token and the opposing token.
             // Sorts the reserves of the known token and the opposing token.
-            // Pass IERC20(address(0)) as the known token force token0 to be the known token.
+            indexSource.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
             _loadIndexSourceReserves(indexSource, tokenIn);
 
             // Calculate the amountIn required to purchase the requested amountOut
@@ -409,16 +408,15 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
-            // Pull the required amountIn
-            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            // Pull tokenIn used. Do not overwrite used with swap amountOut.
+            uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
-            // Perform the swap
-            amountIn = camelotV2Router._swap(
+            camelotV2Router._swap(
                 // ICamelotV2Router router,
                 // ICamelotPair pool,
                 indexSource.pool,
                 // uint256 amountIn,
-                amountIn,
+                used,
                 // IERC20 tokenIn,
                 tokenIn,
                 // IERC20 tokenOut,
@@ -427,11 +425,15 @@ contract CamelotV2StandardExchangeOutTarget is
                 address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())
             );
 
-            // Refund any excess pretransferred tokenIn back to the caller.
-            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            // Pay measured this-call tokenOut (quote may exceed live FoT/rounding output).
+            tokenOut.safeTransfer(recipient, _unbookedSurplus(tokenOut));
+
+            // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
+            // `used` is tokenIn consumed, never amountOut.
+            _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
 
             _syncAllExpectedHoldReserves();
-            return amountIn;
+            return used;
         }
 
         indexSource.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
@@ -537,10 +539,10 @@ contract CamelotV2StandardExchangeOutTarget is
                     // uint256 amount
                     amountOut
                 );
-            // Refund any excess pretransferred tokenIn back to the caller.
+            // Pass this-call unused inbound LP (not the fat maxAmountIn slippage cap).
             // Must happen BEFORE reserve check since tokenIn IS the pool token —
             // surplus LP in the vault would cause the reserve check to fail.
-            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
             // No reserve change, so no update needed.
             // But we do receive and send pool tokens, so we must verify the reserve still matches the held balance.
             // Check that local balance of the pool token still matches the stored reserve.
@@ -583,13 +585,8 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
-            // Secure the payment of the tokenIn
-            amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layoutStruct(),
-                vault.vaultLpReserve,
-                // uint256 amountTokenToDeposit,
-                amountIn
-            );
+            // Honor pretransferred: false always pulls. Do not credit lastTotalAssets exact-gap.
+            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
             uint256 actualShares = BetterMath._convertToSharesDown(
                 // uint256 assets,
@@ -603,8 +600,7 @@ contract CamelotV2StandardExchangeOutTarget is
 
             if (actualShares != amountOut) revert AmountOutNotMet(amountOut, actualShares);
 
-            // Update the reserve of the underlying pool token
-            // _updateReserve(IERC20(address(indexSource.pool)), indexSource.pool.balanceOf(address(this)));
+            ERC4626Repo._setLastTotalAssets(indexSource.pool.balanceOf(address(this)));
 
             // Mint exactly the requested amountOut to the recipient
             ERC20Repo._mint(
