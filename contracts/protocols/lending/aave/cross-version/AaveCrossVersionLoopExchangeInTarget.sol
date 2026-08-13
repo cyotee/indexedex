@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AaveCrossVersionLoopExchangeBase} from
     "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeBase.sol";
 import {CrossVersionLoopExecutor} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol";
@@ -53,8 +54,15 @@ contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBas
             revert ExchangeInNotAvailable();
         }
 
+        // L-CLAIM-3 / L-GAPS-9: credit claimed only against this-call inbound delta.
+        // Absolute inventory is not delivery. Extra inbound must not grief (no exact-delta lock).
+        uint256 balBefore = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             tokenIn.transferFrom(msg.sender, address(this), amountIn);
+        }
+        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
+        if (amountIn > observedDelta) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
         }
 
         uint256 navBefore = CrossVersionLoopExecutor.navUsd(m);

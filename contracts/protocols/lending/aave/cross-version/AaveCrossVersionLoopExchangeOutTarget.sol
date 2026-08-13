@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {AaveCrossVersionLoopExchangeBase} from
     "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeBase.sol";
 import {CrossVersionLoopExecutor} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol";
@@ -61,6 +62,7 @@ contract AaveCrossVersionLoopExchangeOutTarget is AaveCrossVersionLoopExchangeBa
         uint256 deadline
     ) external returns (uint256 amountIn) {
         if (deadline < block.timestamp) revert DeadlineExceeded(deadline, block.timestamp);
+        uint256 shareBefore = ERC20Repo._balanceOf(address(this));
         CrossVersionLoopExecutor.Market memory m = _market();
         if (address(tokenIn) != address(this) || address(tokenOut) != address(m.tokenA)) {
             revert ExchangeOutNotAvailable();
@@ -72,8 +74,17 @@ contract AaveCrossVersionLoopExchangeOutTarget is AaveCrossVersionLoopExchangeBa
         amountIn = _sharesForAmountOut(m, amountOut);
         if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
 
-        // Burn shares from the caller (or the vault, if pretransferred), then free + deliver tokenA.
-        ERC20Repo._burn(pretransferred ? address(this) : msg.sender, amountIn);
+        // L-CLAIM-3: burn address(this) shares only against this-call inbound share delta.
+        // Sitting / donated self-shares are not delivery (SEC-SE-AAVE-002).
+        if (!pretransferred) {
+            ERC20Repo._burn(msg.sender, amountIn);
+        } else {
+            uint256 observedDelta = ERC20Repo._balanceOf(address(this)) - shareBefore;
+            if (amountIn > observedDelta) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
+            }
+            ERC20Repo._burn(address(this), amountIn);
+        }
         CrossVersionLoopExecutor.withdrawA(m, amountOut);
         tokenOut.transfer(recipient, amountOut);
     }
