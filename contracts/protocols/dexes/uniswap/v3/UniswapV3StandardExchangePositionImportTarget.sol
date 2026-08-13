@@ -59,6 +59,17 @@ contract UniswapV3StandardExchangePositionImportTarget is
     error UniswapV3ExchangeImport_ZeroLiquidity();
     error UniswapV3ExchangeImport_SlippageExceeded();
 
+    struct ImportRemintState {
+        uint256 booked0;
+        uint256 booked1;
+        uint256 inbound0;
+        uint256 inbound1;
+        uint160 sqrtPriceX96;
+        uint128 remintLiquidity;
+        uint256 amount0Used;
+        uint256 amount1Used;
+    }
+
     function previewImportPosition(INonfungiblePositionManager positionManager, uint256 positionTokenId)
         external
         view
@@ -103,10 +114,31 @@ contract UniswapV3StandardExchangePositionImportTarget is
         sharesOut = _quoteImportShares(positionManager, positionTokenId);
         if (sharesOut < minSharesOut) revert UniswapV3ExchangeImport_SlippageExceeded();
 
-        // Pull NFT into vault (requires approval / operator from owner).
+        _exitNftRemintAndRefund(
+            positionManager, positionTokenId, owner, recipient, deadline, token0, token1, tickLower, tickUpper, liquidity
+        );
+        ERC20Repo._mint(recipient, sharesOut);
+    }
+
+    /// @dev Snapshot booked pair balances, exit the NFT, remint this-call inbound only, refund unused inbound.
+    function _exitNftRemintAndRefund(
+        INonfungiblePositionManager positionManager,
+        uint256 positionTokenId,
+        address owner,
+        address recipient,
+        uint256 deadline,
+        address token0,
+        address token1,
+        int24 tickLower,
+        int24 tickUpper,
+        uint128 liquidity
+    ) internal {
+        ImportRemintState memory state;
+        state.booked0 = IERC20(token0).balanceOf(address(this));
+        state.booked1 = IERC20(token1).balanceOf(address(this));
+
         IERC721(address(positionManager)).transferFrom(owner, address(this), positionTokenId);
 
-        // Full exit of NFT liquidity + collect all tokensOwed into vault balances.
         positionManager.decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: positionTokenId,
@@ -124,23 +156,25 @@ contract UniswapV3StandardExchangePositionImportTarget is
                 amount1Max: type(uint128).max
             })
         );
-        // Leave empty NFT on vault — do not burn.
 
         UniswapV3VaultRepo._initializeImportedCenter(address(positionManager), positionTokenId, tickLower, tickUpper);
 
-        // Remint center at same ticks with principal + compoundable fees now in free inventory.
-        uint256 available0 = IERC20(token0).balanceOf(address(this));
-        uint256 available1 = IERC20(token1).balanceOf(address(this));
-        (,, uint160 sqrtPriceX96,,) = _loadPoolState();
-        uint128 remintLiquidity =
-            UniswapV3Utils._quoteLiquidityForAmounts(sqrtPriceX96, tickLower, tickUpper, available0, available1);
-        _mintLiquidity(address(this), tickLower, tickUpper, remintLiquidity);
+        state.inbound0 = IERC20(token0).balanceOf(address(this)) - state.booked0;
+        state.inbound1 = IERC20(token1).balanceOf(address(this)) - state.booked1;
+        (,, state.sqrtPriceX96,,) = _loadPoolState();
+        state.remintLiquidity = UniswapV3Utils._quoteLiquidityForAmounts(
+            state.sqrtPriceX96, tickLower, tickUpper, state.inbound0, state.inbound1
+        );
+        (state.amount0Used, state.amount1Used) =
+            _mintLiquidity(address(this), tickLower, tickUpper, state.remintLiquidity);
         _updateManagedPositionLiquidities();
 
-        ERC20Repo._mint(recipient, sharesOut);
-        // Residual free inventory (dust) stays as working capital / refund policy: refund dust to recipient.
-        _refundRemainderTo(token0, recipient);
-        _refundRemainderTo(token1, recipient);
+        _refundRemainderTo(
+            token0, recipient, state.inbound0 > state.amount0Used ? state.inbound0 - state.amount0Used : 0
+        );
+        _refundRemainderTo(
+            token1, recipient, state.inbound1 > state.amount1Used ? state.inbound1 - state.amount1Used : 0
+        );
     }
 
     function _quoteImportShares(INonfungiblePositionManager positionManager, uint256 positionTokenId)
@@ -181,10 +215,12 @@ contract UniswapV3StandardExchangePositionImportTarget is
         }
     }
 
-    function _refundRemainderTo(address token, address recipient) internal {
+    /// @dev E6: refund only this-call unused inbound, never the entire `balanceOf(this)`.
+    function _refundRemainderTo(address token, address recipient, uint256 unusedInbound) internal {
         uint256 balance = IERC20(token).balanceOf(address(this));
-        if (balance > 0) {
-            IERC20(token).safeTransfer(recipient, balance);
+        uint256 refund = unusedInbound < balance ? unusedInbound : balance;
+        if (refund > 0) {
+            IERC20(token).safeTransfer(recipient, refund);
         }
     }
 }

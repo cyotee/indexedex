@@ -16,6 +16,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {UniswapV3PoolAwareRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3PoolAwareRepo.sol";
 import {UniswapV3VaultRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol";
 import {
@@ -88,18 +89,7 @@ contract UniswapV3StandardExchangeOutTarget is
             (address(tokenIn) == token0 && address(tokenOut) == token1)
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
-            // Quote first so we do not pull type(uint256).max.
-            uint256 quotedIn = _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
-            if (quotedIn > maxAmountIn) revert UniswapV3ExchangeOut_InsufficientOutput();
-            // Small buffer for rounding between quote and execution.
-            uint256 pullAmount = quotedIn + (quotedIn / 1000) + 1;
-            if (pullAmount > maxAmountIn) {
-                pullAmount = maxAmountIn;
-            }
-            _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
-            amountIn = _swapExactOut(address(tokenIn), address(tokenOut), amountOut, pullAmount, recipient);
-            _refundExcess(tokenIn, pullAmount, amountIn, true, msg.sender);
-            return amountIn;
+            return _executeSwapOut(tokenIn, tokenOut, maxAmountIn, amountOut, recipient, pretransferred);
         }
 
         if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
@@ -107,6 +97,28 @@ contract UniswapV3StandardExchangeOutTarget is
         }
 
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
+    }
+
+    function _executeSwapOut(
+        IERC20 tokenIn,
+        IERC20 tokenOut,
+        uint256 maxAmountIn,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 amountIn) {
+        uint256 quotedIn = _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
+        if (quotedIn > maxAmountIn) revert UniswapV3ExchangeOut_InsufficientOutput();
+        uint256 pullAmount = quotedIn + (quotedIn / 1000) + 1;
+        if (pullAmount > maxAmountIn) {
+            pullAmount = maxAmountIn;
+        }
+        uint256 inboundBefore = tokenIn.balanceOf(address(this));
+        _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
+        amountIn = _swapExactOut(address(tokenIn), address(tokenOut), amountOut, pullAmount, recipient);
+        uint256 remaining = tokenIn.balanceOf(address(this));
+        uint256 unusedInbound = remaining > inboundBefore ? remaining - inboundBefore : 0;
+        _refundExcess(tokenIn, pullAmount, amountIn, true, msg.sender, unusedInbound);
     }
 
     function _previewZapOutWithdrawal(IERC20 tokenOut, uint256 desiredAmountOut)
@@ -166,6 +178,7 @@ contract UniswapV3StandardExchangeOutTarget is
         bool pretransferred
     ) internal returns (uint256 sharesBurned) {
         ZapOutState memory state;
+        uint256 selfSharesBefore = IERC20(address(this)).balanceOf(address(this));
         _collectManagedFees();
 
         state.totalShares = IERC20(address(this)).totalSupply();
@@ -192,10 +205,11 @@ contract UniswapV3StandardExchangeOutTarget is
         if (state.actualOut < minAmountOut) revert UniswapV3ExchangeOut_SlippageExceeded();
 
         if (pretransferred) {
-            ERC20Repo._burn(address(this), sharesBurned);
-            if (maxSharesToBurn > sharesBurned) {
-                ERC20Repo._transfer(address(this), msg.sender, maxSharesToBurn - sharesBurned);
+            uint256 delivered = IERC20(address(this)).balanceOf(address(this)) - selfSharesBefore;
+            if (sharesBurned > delivered) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(sharesBurned, delivered);
             }
+            ERC20Repo._burn(address(this), sharesBurned);
         } else {
             ERC20Repo._burn(msg.sender, sharesBurned);
         }
@@ -272,15 +286,21 @@ contract UniswapV3StandardExchangeOutTarget is
         actualIn = tokenIn.balanceOf(address(this)) - balBefore;
     }
 
+    /// @dev E6: refund `min(max−used, unusedInbound)` only. Never pay booked / seeded inventory.
     function _refundExcess(
         IERC20 token,
         uint256 maxAmount,
         uint256 usedAmount,
         bool pretransferred,
-        address recipient
+        address recipient,
+        uint256 unusedInbound
     ) internal {
         if (pretransferred && maxAmount > usedAmount) {
-            token.safeTransfer(recipient, maxAmount - usedAmount);
+            uint256 claimedUnused = maxAmount - usedAmount;
+            uint256 refund = claimedUnused < unusedInbound ? claimedUnused : unusedInbound;
+            if (refund > 0) {
+                token.safeTransfer(recipient, refund);
+            }
         }
     }
 }

@@ -46,6 +46,8 @@ contract UniswapV3StandardExchangeInTarget is UniswapV3StandardExchangeCommon, R
         uint256 balance1Before;
         uint256 amount0Used;
         uint256 amount1Used;
+        uint256 inbound0;
+        uint256 inbound1;
     }
 
     function exchangeIn(
@@ -116,22 +118,29 @@ contract UniswapV3StandardExchangeInTarget is UniswapV3StandardExchangeCommon, R
             })
         );
 
+        state.inbound0 = state.zeroForOne ? amountIn : 0;
+        state.inbound1 = state.zeroForOne ? 0 : amountIn;
+
         if (quote.swapAmountIn > 0) {
-            _swap(
-                address(tokenIn),
-                state.zeroForOne ? state.token1 : state.token0,
-                quote.swapAmountIn,
-                0,
-                address(this)
-            );
+            address other = state.zeroForOne ? state.token1 : state.token0;
+            uint256 otherBefore = IERC20(other).balanceOf(address(this));
+            uint256 inBefore = IERC20(address(tokenIn)).balanceOf(address(this));
+            _swap(address(tokenIn), other, quote.swapAmountIn, 0, address(this));
+            uint256 swapOut = IERC20(other).balanceOf(address(this)) - otherBefore;
+            uint256 swapInUsed = inBefore - IERC20(address(tokenIn)).balanceOf(address(this));
+            if (state.zeroForOne) {
+                state.inbound0 = state.inbound0 > swapInUsed ? state.inbound0 - swapInUsed : 0;
+                state.inbound1 += swapOut;
+            } else {
+                state.inbound1 = state.inbound1 > swapInUsed ? state.inbound1 - swapInUsed : 0;
+                state.inbound0 += swapOut;
+            }
         }
 
         _createOrganicPositionsIfNeeded(state.managedTicks);
 
-        // Only principal free inventory remains for phase B (fees already compounded).
-        uint256 available0 = IERC20(state.token0).balanceOf(address(this));
-        uint256 available1 = IERC20(state.token1).balanceOf(address(this));
-        state.plan = _managedLiquidityPlan(state.managedTicks, available0, available1);
+        // A0/E6: phase B mints only this-call delivered inbound, never prior free inventory.
+        state.plan = _managedLiquidityPlan(state.managedTicks, state.inbound0, state.inbound1);
 
         state.balance0Before = IERC20(state.token0).balanceOf(address(this));
         state.balance1Before = IERC20(state.token1).balanceOf(address(this));
@@ -158,8 +167,10 @@ contract UniswapV3StandardExchangeInTarget is UniswapV3StandardExchangeCommon, R
         if (sharesOut < minSharesOut) revert UniswapV3ExchangeIn_SlippageExceeded();
 
         ERC20Repo._mint(recipient, sharesOut);
-        _refundRemainder(state.token0);
-        _refundRemainder(state.token1);
+        uint256 unused0 = state.inbound0 > state.amount0Used ? state.inbound0 - state.amount0Used : 0;
+        uint256 unused1 = state.inbound1 > state.amount1Used ? state.inbound1 - state.amount1Used : 0;
+        _refundRemainder(state.token0, unused0);
+        _refundRemainder(state.token1, unused1);
     }
 
     /// @dev Collect + compound free inventory excluding reserved principal already held.
@@ -209,10 +220,12 @@ contract UniswapV3StandardExchangeInTarget is UniswapV3StandardExchangeCommon, R
         actualIn = tokenIn.balanceOf(address(this)) - balBefore;
     }
 
-    function _refundRemainder(address token) internal {
+    /// @dev E6: refund only this-call unused inbound, never the entire `balanceOf(this)`.
+    function _refundRemainder(address token, uint256 unusedInbound) internal {
         uint256 balance = IERC20(token).balanceOf(address(this));
-        if (balance > 0) {
-            IERC20(token).safeTransfer(msg.sender, balance);
+        uint256 refund = unusedInbound < balance ? unusedInbound : balance;
+        if (refund > 0) {
+            IERC20(token).safeTransfer(msg.sender, refund);
         }
     }
 }
