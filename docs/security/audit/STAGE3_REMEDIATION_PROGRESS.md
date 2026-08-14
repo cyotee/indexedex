@@ -5,7 +5,7 @@
 | **Status** | **36/36 High closed.** `WP-SEC-TOKEN-001` recorded as project law (FoT forbidden; no rebasing underlyings; non-18 decimals allowed / scale to 18; pause accepted; docs + `test_L2_FoT_forbidden`; no allowlist). **No BUILD_BLOCKED.** |
 | **Started** | 2026-08-13 |
 | **Base SHA** | `aa8ec347` |
-| **Tip** | `d6260db0` |
+| **Tip** | `961e5369` |
 | **Law** | `docs/security/SECURITY_AUDIT_REMEDIATION_IMPLEMENTATION_PLAN.md` |
 | **Concurrency** | Wave 0 = 1 slot; thereafter ≤ 3 live `sec_fix_*` worktrees |
 | **Max live observed** | 3 |
@@ -22,6 +22,7 @@
 
 | Commit | Slice | WPs |
 |--------|-------|-----|
+| `961e5369` | `token-policy` | `WP-SEC-TOKEN-001` |
 | `d6260db0` | `detf-com-j` | `WP-SEC-DETF-COM-J-001` |
 | `cbde922d` | `erc4626-ij` | `WP-SEC-I-ERC4626-001` |
 | `55208c31` | `lst-ij` | `WP-SEC-I-LST-001`, `WP-SEC-J-LST-001` |
@@ -81,7 +82,7 @@ Orchestrator record commits: `a7b0a6d2` (Wave 0 progress), `b5cba112` (W1-A reco
 | `WP-SEC-I-LST-001` | `lst-ij` | **CLOSED** | `55208c31` |
 | `WP-SEC-J-LST-001` | `lst-ij` | **CLOSED** | `55208c31` |
 | `WP-SEC-I-ERC4626-001` | `erc4626-ij` | **CLOSED** | `cbde922d` |
-| `WP-SEC-TOKEN-001` | `token-policy` | **CLOSED** (docs + `test_L2_FoT_forbidden`; no allowlist) | this commit |
+| `WP-SEC-TOKEN-001` | `token-policy` | **CLOSED** (docs + `test_L2_FoT_forbidden`; no allowlist) | `961e5369` |
 
 ## Worklog
 
