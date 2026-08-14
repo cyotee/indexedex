@@ -52,7 +52,7 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
         IERC20[] memory ras_ = new IERC20[](1);
         uint256[] memory weights_ = new uint256[](1);
         vaults_[0] = seVault0;
-        shares_[0] = IERC20(address(0));
+        shares_[0] = seShare0;
         ras_[0] = rateAsset0;
         weights_[0] = 10e16;
 
@@ -87,8 +87,8 @@ contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
         uint256[] memory weights_ = new uint256[](2);
         vaults_[0] = seVault0;
         vaults_[1] = seVault0;
-        shares_[0] = IERC20(address(0));
-        shares_[1] = IERC20(address(0));
+        shares_[0] = seShare0;
+        shares_[1] = seShare0;
         ras_[0] = rateAsset0;
         ras_[1] = rateAsset0;
         weights_[0] = 10e16;

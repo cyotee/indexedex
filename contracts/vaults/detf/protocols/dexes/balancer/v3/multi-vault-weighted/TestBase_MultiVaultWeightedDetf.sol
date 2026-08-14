@@ -476,7 +476,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         uint256 remaining_ = vaultWeightBudget_;
         for (uint256 i; i < n; ++i) {
             args.vaults[i] = seVaults[i];
-            args.vaultShares[i] = IERC20(address(0));
+            args.vaultShares[i] = seShares[i];
             args.rateProviders[i] = IRateProvider(address(0));
             args.rateAssets[i] = rated_ ? rateAssets[i] : IERC20(address(0));
             if (i + 1 == n) args.vaultWeights[i] = remaining_;
@@ -556,6 +556,8 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         args.vaultWeights = new uint256[](2);
         args.vaults[0] = seVaults[0];
         args.vaults[1] = seVaults[3];
+        args.vaultShares[0] = IERC20(address(seVaults[0]));
+        args.vaultShares[1] = IERC20(address(seVaults[3]));
         args.rateAssets[0] = IERC20(address(dai));
         args.rateAssets[1] = IERC20(address(dai));
         args.vaultWeights[0] = 20e16;
@@ -688,7 +690,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         vaults_[0] = IStandardExchangeProxy(nestedDetf_);
         vaults_[1] = seVaults[1];
         shares_[0] = IERC20(nestedDetf_);
-        shares_[1] = IERC20(address(0));
+        shares_[1] = seShares[1];
         ras_[0] = IERC20(address(0)); // abstract 1:1 for nested DETF share
         ras_[1] = rateAssets[1];
         weights_[0] = 20e16;

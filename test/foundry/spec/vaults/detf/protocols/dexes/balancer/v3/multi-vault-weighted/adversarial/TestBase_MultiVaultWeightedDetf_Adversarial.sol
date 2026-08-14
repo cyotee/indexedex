@@ -141,14 +141,15 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
         _assertLive(instance_);
     }
 
-    function _deployHostileShareDetf(uint256 mintTh_, uint256 burnTh_) internal returns (address instance_) {
-        // Historical (1, max) dual-path always-allow → product Open under §16.3.
-        ThresholdMode mode_ = ThresholdMode.Policy;
-        if (mintTh_ == 1 && burnTh_ == type(uint256).max) {
-            mintTh_ = 0;
-            burnTh_ = 0;
-            mode_ = ThresholdMode.Open;
-        }
+    function _hostileSharePkgArgs() internal view returns (IMultiVaultWeightedDetfDFPkg.PkgArgs memory args) {
+        return _hostileSharePkgArgs(0, 0, ThresholdMode.Open);
+    }
+
+    function _hostileSharePkgArgs(uint256 mintTh_, uint256 burnTh_, ThresholdMode mode_)
+        internal
+        view
+        returns (IMultiVaultWeightedDetfDFPkg.PkgArgs memory args)
+    {
         IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](1);
         IERC20[] memory shares_ = new IERC20[](1);
         IRateProvider[] memory rps_ = new IRateProvider[](1);
@@ -158,8 +159,7 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
         shares_[0] = IERC20(address(hostileShare));
         ras_[0] = IERC20(address(0));
         weights_[0] = 20e16;
-
-        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = IMultiVaultWeightedDetfDFPkg.PkgArgs({
+        args = IMultiVaultWeightedDetfDFPkg.PkgArgs({
             name: "Adv Hostile MVW",
             symbol: "advH",
             vaults: vaults_,
@@ -175,6 +175,17 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0
         });
+    }
+
+    function _deployHostileShareDetf(uint256 mintTh_, uint256 burnTh_) internal returns (address instance_) {
+        // Historical (1, max) dual-path always-allow → product Open under §16.3.
+        ThresholdMode mode_ = ThresholdMode.Policy;
+        if (mintTh_ == 1 && burnTh_ == type(uint256).max) {
+            mintTh_ = 0;
+            burnTh_ = 0;
+            mode_ = ThresholdMode.Open;
+        }
+        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = _hostileSharePkgArgs(mintTh_, burnTh_, mode_);
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(
             IStandardVaultPkg(address(multiVaultWeightedDetfPkg)), abi.encode(args)

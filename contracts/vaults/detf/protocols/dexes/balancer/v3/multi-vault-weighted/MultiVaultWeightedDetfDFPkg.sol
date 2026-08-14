@@ -30,6 +30,7 @@ import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
@@ -67,6 +68,8 @@ import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNat
 /// @title IMultiVaultWeightedDetfDFPkg
 interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
+    error UnregisteredVault(address vault);
+    error InvalidVaultShare(uint256 index, address vault, address vaultShare);
 
     struct PkgInit {
         IFacet erc20Facet;
@@ -89,7 +92,8 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
     }
 
     /// @dev Per-instance args. Arrays must share length N in [1,7].
-    /// @dev `vaultShares[i]==0` → vault diamond is the share ERC-20.
+    /// @dev `vaultShares[i]` must be the registered SE share of `vaults[i]` (the vault diamond ERC-20).
+    /// @dev `address(0)` does **not** alias to `vaults[i]`. Hostile or missing share reverts.
     /// @dev `rateProviders`/`rateAssets` zero = unrated leg.
     /// @dev `weightDetf + sum(vaultWeights) == 1e18`; each weight > 0. Zero weightDetf not allowed.
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
@@ -285,6 +289,23 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
     function processArgs(bytes memory pkgArgs) public view returns (bytes memory processedPkgArgs_) {
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
+        }
+        PkgArgs memory args = abi.decode(pkgArgs, (PkgArgs));
+        uint256 n_ = args.vaults.length;
+        if (args.vaultShares.length != n_) {
+            revert MultiVaultWeightedDetfRepo.InvalidVaultCount(n_);
+        }
+        IVaultRegistryVaultQuery registry_ = IVaultRegistryVaultQuery(address(VAULT_REGISTRY_DEPLOYMENT));
+        for (uint256 i; i < n_; ++i) {
+            address vault_ = address(args.vaults[i]);
+            address share_ = address(args.vaultShares[i]);
+            if (vault_ == address(0) || !registry_.isVault(vault_)) {
+                revert UnregisteredVault(vault_);
+            }
+            // Registered SE diamonds are their own share ERC-20. No silent address(0) alias.
+            if (share_ == address(0) || share_ != vault_) {
+                revert InvalidVaultShare(i, vault_, share_);
+            }
         }
         return pkgArgs;
     }

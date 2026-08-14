@@ -2,8 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
@@ -14,12 +12,6 @@ import {
 import {
     IMultiVaultWeightedDetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
-import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share: transferFrom re-enters DETF, then ALWAYS completes transfer so probe state persists.
@@ -65,46 +57,27 @@ contract RecordingReentrantShare is MockERC20 {
     }
 }
 
-contract DetfReentryTarget {
-    function reenterExchangeIn(
-        address detf_,
-        IERC20 tokenIn_,
-        uint256 amountIn_,
-        IERC20 tokenOut_,
-        address recipient_
-    ) external {
-        IStandardExchangeIn(detf_).exchangeIn(
-            tokenIn_, amountIn_, tokenOut_, 0, recipient_, false, block.timestamp + 1 hours
-        );
-    }
-
-    function reenterBond(address detf_, IERC20 share_, uint256 amountIn_, uint256 lock_, address recipient_)
-        external
-    {
-        IMultiVaultWeightedDetfBonding(detf_).bond(
-            share_, amountIn_, lock_, recipient_, false, block.timestamp + 1 hours
-        );
-    }
-}
-
-/// @notice Proves nonReentrant via nested exchangeIn/bond during hostile share transferFrom.
+/// @notice Hostile vaultShare is rejected at PkgArgs (WP-SEC-PKG-MV-001).
+/// @dev TransferFrom reentry via a configured hostile share is unreachable after the deploy gate.
 contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDetf {
     RecordingReentrantShare internal hostileShare;
-    DetfReentryTarget internal reentryTarget;
-    address internal outerDetf;
-    IMultiVaultWeightedDetfInfo internal outerInfo;
-    IStandardExchangeIn internal outerEx;
-    IMultiVaultWeightedDetfBonding internal outerBonding;
 
     function setUp() public virtual override {
         super.setUp();
-
         hostileShare = new RecordingReentrantShare();
-        reentryTarget = new DetfReentryTarget();
         hostileShare.mint(alice, 1_000_000e18);
         hostileShare.mint(bob, 1_000_000e18);
+    }
 
-        // Deploy DETF with hostileShare as the configured vault share (production DFPkg path).
+    function test_reentrancy_mintSharePath_nestedHitsIsLocked() public {
+        _expectHostileShareDeployReverts();
+    }
+
+    function test_reentrancy_crossFunction_bond_nestedHitsIsLocked() public {
+        _expectHostileShareDeployReverts();
+    }
+
+    function _expectHostileShareDeployReverts() internal {
         IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](1);
         IERC20[] memory shares_ = new IERC20[](1);
         IRateProvider[] memory rps_ = new IRateProvider[](1);
@@ -112,8 +85,6 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
         uint256[] memory weights_ = new uint256[](1);
         vaults_[0] = seVault0;
         shares_[0] = IERC20(address(hostileShare));
-        rps_[0] = IRateProvider(address(0));
-        ras_[0] = IERC20(address(0)); // unrated hostile share
         weights_[0] = 20e16;
 
         IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = IMultiVaultWeightedDetfDFPkg.PkgArgs({
@@ -133,85 +104,17 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
             expansionCatchUpCapBps: 0
         });
         vm.startPrank(owner);
-        outerDetf = indexedexManager.deployVault(
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IMultiVaultWeightedDetfDFPkg.InvalidVaultShare.selector,
+                uint256(0),
+                address(seVault0),
+                address(hostileShare)
+            )
+        );
+        indexedexManager.deployVault(
             IStandardVaultPkg(address(multiVaultWeightedDetfPkg)), abi.encode(args)
         );
         vm.stopPrank();
-        outerInfo = IMultiVaultWeightedDetfInfo(outerDetf);
-        outerEx = IStandardExchangeIn(outerDetf);
-        outerBonding = IMultiVaultWeightedDetfBonding(outerDetf);
-
-        // Initialize reserve + first BPT bond with hostile share.
-        uint256[] memory amounts_ = new uint256[](1);
-        amounts_[0] = 5_000e18;
-        vm.startPrank(alice);
-        hostileShare.approve(outerDetf, type(uint256).max);
-        uint256 bpt_ = outerBonding.initializeReserve(amounts_, block.timestamp + 1 hours);
-        IERC20(outerInfo.reservePool()).approve(outerDetf, bpt_);
-        outerBonding.bond(
-            IERC20(outerInfo.reservePool()), bpt_, DEFAULT_MIN_LOCK, alice, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-        require(outerInfo.isReserveLive(), "outer live");
-    }
-
-    function test_reentrancy_mintSharePath_nestedHitsIsLocked() public {
-        uint256 amountIn_ = 50e18;
-
-        // Control: unarmed mint succeeds.
-        vm.startPrank(bob);
-        hostileShare.approve(outerDetf, amountIn_);
-        uint256 okOut_ = outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-        assertTrue(okOut_ > 0, "control mint works");
-
-        bytes memory reentry = abi.encodeCall(
-            DetfReentryTarget.reenterExchangeIn,
-            (outerDetf, IERC20(address(hostileShare)), uint256(1e18), IERC20(outerDetf), bob)
-        );
-        hostileShare.arm(address(reentryTarget), reentry);
-
-        uint256 balBefore_ = IERC20(outerDetf).balanceOf(bob);
-        vm.startPrank(bob);
-        hostileShare.approve(outerDetf, amountIn_);
-        outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-
-        assertEq(hostileShare.reentryAttempts(), 1, "nested reentry attempted exactly once");
-        assertFalse(hostileShare.nestedCallSucceeded(), "nested exchangeIn must not succeed");
-        assertEq(
-            hostileShare.nestedErrorSelector(),
-            IReentrancyLock.IsLocked.selector,
-            "nested exchangeIn must revert IsLocked (nonReentrant)"
-        );
-        assertGe(IERC20(outerDetf).balanceOf(bob), balBefore_, "outer path continued after blocked reentry");
-    }
-
-    function test_reentrancy_crossFunction_bond_nestedHitsIsLocked() public {
-        uint256 amountIn_ = 50e18;
-        bytes memory reentry = abi.encodeCall(
-            DetfReentryTarget.reenterBond,
-            (outerDetf, IERC20(address(hostileShare)), uint256(1e18), DEFAULT_MIN_LOCK, bob)
-        );
-        hostileShare.arm(address(reentryTarget), reentry);
-
-        vm.startPrank(bob);
-        hostileShare.approve(outerDetf, amountIn_);
-        outerEx.exchangeIn(
-            IERC20(address(hostileShare)), amountIn_, IERC20(outerDetf), 0, bob, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-
-        assertEq(hostileShare.reentryAttempts(), 1, "nested reentry attempted exactly once");
-        assertFalse(hostileShare.nestedCallSucceeded(), "nested bond must not succeed");
-        assertEq(
-            hostileShare.nestedErrorSelector(),
-            IReentrancyLock.IsLocked.selector,
-            "nested bond must revert IsLocked (nonReentrant)"
-        );
     }
 }
