@@ -144,14 +144,39 @@ contract WrappedStandardExchangeRateProvider_Test is TestBase_UniswapV2StandardE
     }
 
     function _expectedRate(IERC4626 wrapper_, IERC20 rateTarget_) internal view returns (uint256 expected_) {
-        uint256 reserveShareAmount = wrapper_.previewRedeem(1e18);
-        if (reserveShareAmount == 0) {
+        uint256 totalShares = wrapper_.totalSupply();
+        if (totalShares == 0) {
             return 0;
         }
 
-        uint256 out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
-            IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
-        );
+        uint256 quoteShares = totalShares < 1e18 ? totalShares : 1e18;
+        uint256 reserveShareAmount = wrapper_.previewRedeem(quoteShares);
+        uint256 out;
+        if (reserveShareAmount > 0) {
+            out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
+                IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
+            );
+        }
+
+        for (uint256 i = 0; out == 0 && quoteShares < totalShares && i < 18; ++i) {
+            uint256 nextQuote = quoteShares * 10;
+            if (nextQuote > totalShares) nextQuote = totalShares;
+            if (nextQuote == quoteShares) break;
+            quoteShares = nextQuote;
+            reserveShareAmount = wrapper_.previewRedeem(quoteShares);
+            if (reserveShareAmount == 0) continue;
+            out = IStandardExchangeIn(address(balancedVault)).previewExchangeIn(
+                IERC20(address(balancedVault)), reserveShareAmount, rateTarget_
+            );
+        }
+
+        if (out == 0 || quoteShares == 0) {
+            return 0;
+        }
+
+        if (quoteShares != 1e18) {
+            out = (out * 1e18 + quoteShares - 1) / quoteShares;
+        }
 
         uint8 targetDecimals = IERC20Metadata(address(rateTarget_)).decimals();
 

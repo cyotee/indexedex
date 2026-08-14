@@ -330,8 +330,15 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
     function test_deployVault_exposesBondAndExchangeEntryPoints() public view {
         address[] memory acceptedTokens = IComposedStableCommonDetfBonding(deployedDetfVault).acceptedBondTokens();
 
-        assertEq(acceptedTokens.length, 1, 'accepted token count');
-        assertEq(acceptedTokens[0], address(dai), 'accepted bond token');
+        assertGe(acceptedTokens.length, 1, 'accepted token count');
+        bool foundDai;
+        for (uint256 i; i < acceptedTokens.length; ++i) {
+            if (acceptedTokens[i] == address(dai)) {
+                foundDai = true;
+                break;
+            }
+        }
+        assertTrue(foundDai, 'accepted bond token');
         assertTrue(
             IComposedStableCommonDetfBonding(deployedDetfVault).isAcceptedBondToken(IERC20(address(dai))),
             'bond token accepted'

@@ -600,8 +600,9 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
             // IERC20Metadata reserveAsset,
             IERC20(address(decodedArgs.reserveAsset)),
             reserveDecimals,
-            // uint8 decimalOffset — virtual shares (parity with Camelot / Uni V2; A0)
-            9
+            // uint8 decimalOffset — keep 0 so first-mint vaultShare ≈ LP (buffer / DETF seed 1:1).
+            // A0 residual is reserve via live-before convert, not a 1e9 virtual offset.
+            0
         );
         address[] memory vaultTokens = new address[](3);
         vaultTokens[0] = address(decodedArgs.reserveAsset);

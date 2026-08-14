@@ -124,7 +124,8 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
 
         address donator_ = makeAddr("lpDonator");
         uint256 donate_ = TEST_AMOUNT / 40;
-        uint256 attackerLp_ = TEST_AMOUNT / 40;
+        // Offset 0: equal deposit/donation floors to 0 shares. Honest in must be >> leftover.
+        uint256 attackerLp_ = TEST_AMOUNT / 2;
         require(lp_.balanceOf(address(this)) >= donate_ + attackerLp_, "A0 LP inventory");
 
         lp_.transfer(donator_, donate_);

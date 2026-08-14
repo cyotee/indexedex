@@ -666,7 +666,10 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
 
         uint256 Xprime = vault.previewExchangeOut(vaultToken, tokenOut, Y);
         assertGt(Xprime, 0, "Fuzz Route7: X' must be non-zero");
-        assertGe(Xprime, sharesIn - 1, "Fuzz Route7: X' >= X-1");
+        // decimalOffset=9: zap-out floors to 1 LP, which is one virtual share (1e9).
+        uint256 virtualShare = 1e9;
+        uint256 lower = sharesIn > virtualShare ? sharesIn - virtualShare : 0;
+        assertGe(Xprime, lower, "Fuzz Route7: X' >= X - 1 virtual share");
         uint256 tol = sharesIn / 100 + 2;
         assertLe(Xprime, sharesIn + tol, "Fuzz Route7: X' within 1% of X");
     }
