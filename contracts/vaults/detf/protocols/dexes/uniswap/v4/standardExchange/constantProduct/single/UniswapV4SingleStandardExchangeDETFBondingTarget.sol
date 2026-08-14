@@ -42,11 +42,14 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         bool pretransferred_,
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         if (Repo._layoutStruct().isReserveLive) {
             _realizeExpansionIfNeeded();
+        } else {
+            _rejectPretransferredFirstBond(pretransferred_, amountIn_);
         }
 
         uint256 pairAmount_ = _settleToPair(tokenIn_, amountIn_, pretransferred_, deadline_);

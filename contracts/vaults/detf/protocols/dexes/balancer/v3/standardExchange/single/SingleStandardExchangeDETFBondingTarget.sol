@@ -87,6 +87,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         bool pretransferred_,
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
         if (address(tokenIn_) == address(this)) {
@@ -94,6 +95,9 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         }
 
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (!s.isReserveLive) {
+            _rejectPretransferredFirstBond(pretransferred_, amountIn_);
+        }
         uint256 effectiveLock_ = _effectiveLockDuration(lockDuration_);
 
         uint256 vaultShares_;
@@ -208,6 +212,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         bool pretransferred_,
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 claimMinted_) {
+        _requireNotDisabled();
         _requireReserveLive();
         _requireActive(deadline_, detfAmount_);
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();

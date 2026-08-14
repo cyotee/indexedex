@@ -128,11 +128,18 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         return _isAllowlistedTokenIn(tokenOut_);
     }
 
+    /// @dev Deadline + amount only. Disable is inbound-only (`_requireNotDisabled`).
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
-        _requireNotDisabled();
         if (amount_ == 0) revert SingleStandardExchangeDETFRepo.ZeroAmount();
         if (block.timestamp > deadline_) {
             revert SingleStandardExchangeDETFRepo.DeadlineExpired(deadline_);
+        }
+    }
+
+    /// @dev First bond cannot credit pre-live unbooked residual (A0).
+    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+        if (pretransferred_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed_, 0);
         }
     }
 
