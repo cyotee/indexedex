@@ -12,7 +12,7 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 
 | ID | Test exists? | Drives real entry? | Notes |
 |----|--------------|--------------------|-------|
-| **A0** Residual / empty supply drain | | first mint/bond/deposit | Pre-seeded inventory not free |
+| **A0** Residual / empty supply drain | | first mint/bond/deposit | Donate before first bond/mint on the proxy. Drop extras that hit an unrelated solver |
 | A1 Donate vault shares | | exchangeIn / transfer | No free DETF |
 | A3 Donate BPT / reserve | | redeemClaim without claim | No principal drain |
 | B1 Skew mint/burn | | real AMM + exchangeIn | Bounds or no free lunch |
@@ -25,7 +25,8 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | D6 Over-claim principal | | redeemClaim | Cap by claim + inventory |
 | E1 Round-trip | | mint + burn | residual 0 |
 | E5 Zero / deadline | | exchangeIn | exact selectors |
-| **E6** Surplus-refund (if residual-return path) | | refund / overpay return | Cannot drain prior inventory |
+| **E6** Surplus-refund (if residual-return path) | | refund / overpay return | Seed booked `R`; fat max + transfer only `used`; attacker must not receive `R` |
+| **CROPS** Disable-on-exit | | `setVaultAddressDisabled(true)` then mature close / redeem / `exchangeOut` | Exit still works; inbound may stay gated |
 | F2 Bond NFT onlyOwner | | createPosition | revert |
 | F3 Claim onlyOwner | | mintFromNFTSale / burnShares | revert |
 | **F5** Public structural reclaim (if exists) | | migrate/resize/reclaim | Or NatSpec: no public settle |
@@ -52,7 +53,7 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | D4 Junk rateAsset | InvalidRoute |
 | D5 Lock clamp | min revert / max clamp |
 | E4 Holder balance non-dilution | balance units unchanged |
-| F1 No free diamondCut / unowned | |
+| F1 No free diamondCut / unowned | Diamond **and** satellite `detfToken` / claim / NFT pkg: owner==0, stranger mint reverts |
 | F4 Weights/rates immutable | no setter |
 | G1 Nested outer does not brick inner | third user on nested |
 | **L2** FoT forbidden | Universal. `test_L2_FoT_forbidden` with real FoT as configured token. Never credit-actualIn. |
@@ -72,3 +73,7 @@ Inapplicable **L/M/N/O** also need one-line NatSpec (not silent).
 ## Reference suite
 
 `test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/`
+
+## Matcher hygiene
+
+Do not `--match-test 'test_C'` / bare `test_F_` / wide `test_A0_` under a family tree that also has ProtocolCompound or peer A0. Prefer `--match-contract` the WP suite. A red extra is not this WP.

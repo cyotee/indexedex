@@ -12,7 +12,7 @@ IndexedEx layers a **vault registry + manager** on Crane. Tests must use the sam
 
 1. `lib/crane/AGENTS.md` and **canonical** `lib/crane/.claude/skills/crane-testing/` (production-first + LR-7).
 2. `lib/crane/.claude/skills/crane-deployment/` (CREATE3, DFPkg, factories).
-3. This skill + repo root `AGENTS.md`.
+3. This skill + root `CLAUDE.md` then [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../../../docs/agent/INDEXEDEX_AGENT_LAW.md) (DETF roles, **token policy**). **No** root `AGENTS.md`.
 
 Generic Foundry skills (`forge-testing` mock sections) are **subordinate** to Crane + this skill.
 
@@ -152,6 +152,12 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] **Facet surface:** `controlFacetFuncs` from Target/product interface; every product selector on live proxy after registry deploy
 - [ ] **Trust flags:** negative tests for `pretransferred=true` without transfer (vault already funded) — not only happy path
 - [ ] Inbound credit uses measured **delta**, not absolute balance + claimed amount
+- [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (scale to 18); pause/blacklist accepted; no `PkgArgs` allowlist
+- [ ] `--match-test` prefixes unique enough (or `--match-contract` the suite); do not treat colliding extras as this change
+
+## Token policy (LOCKED)
+
+Universal. Full text: agent law § Token policy. Do not invent FoT support, a rebase underlying, or a `processArgs` allowlist.
 
 ## Mandatory negative paths (SE / vault / DETF)
 
@@ -162,6 +168,8 @@ When implementing or reviewing tests for any path that mints shares or credits d
 | `pretransferred=true`, no tokens sent, vault holds inventory | Revert **or** zero shares minted; attacker product balance unchanged |
 | `pretransferred=true`, short delivery | Exact transfer-not-received / insufficient selector |
 | Donation then deposit | No free mint from donation (or documented beneficiary + no victim loss) |
+| Fat `max` + transfer only `used` + booked `R` | Attacker does not receive booked inventory (E6) |
+| `setVaultAddressDisabled(true)` then mature close / redeem / `exchangeOut` | Still succeeds (CROPS; inbound may stay gated) |
 | Product fn only on Target/Facet impl | Must also succeed on **deployed vault/DETF proxy** |
 
 Happy-path `pretransferred=true` with a real prior `transfer` does **not** cover free-mint from reserves.

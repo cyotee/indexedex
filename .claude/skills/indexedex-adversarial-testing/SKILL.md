@@ -13,7 +13,7 @@ Adversarial / abuse suites for **IndexedEx vaults and DETFs** on the production 
 1. `lib/crane/.claude/skills/crane-adversarial-testing/` — methodology, catalog A–K + **A0/L/M/N/O**, harness rules
 2. `lib/crane/.claude/skills/crane-testing/` + `crane-deployment/`
 3. `.claude/skills/indexedex-testing/` — registry path, gold TestBases, no mock SUT
-4. This skill + repo `AGENTS.md` (DETF role naming)
+4. This skill + root `CLAUDE.md` then [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../../../docs/agent/INDEXEDEX_AGENT_LAW.md) (DETF roles, token policy). **No** root `AGENTS.md`.
 5. Optional incident → ID study: `.claude/skills/defi-incident-patterns/` (HackLabs **reference only**)
 
 ## Scope
@@ -53,13 +53,13 @@ Inherit gold bases:
 | Underlying SE | `underlyingVault` | |
 | Claim | `rebasingClaimToken` | |
 
-See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
+See agent law § DETF role naming + § Token policy. `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
 
 ## Multi-vault / DETF attack mapping
 
 | ID | IndexedEx surface | Notes |
 |----|-------------------|--------|
-| **A0** | Residual assets / SE inventory with zero DETF or SE share supply | First minter/bond cannot free-drain pre-seeded inventory; dead shares / init / go-live gate |
+| **A0** | Residual assets / SE inventory with zero DETF or SE share supply | Donate **before** first mint/bond on the production proxy. Do not invent a second path through an unrelated family solver (stable join, etc.); if that extra dies, drop it — do not expand out-of-touch-set CODE |
 | A1 | Donate SE vault shares to DETF diamond | Idle inventory; victim mint must not steal donation via free mint |
 | A3 | Donate/accumulate BPT on diamond | redeemClaim without claim → no BPT drain (**D2 regression class**) |
 | B1 | Underlying Aerodrome skew + mint/burn | Open thresholds: may extract seigniorage — document bounds; default 1.05/0.95 deadband mutual exclusion |
@@ -73,9 +73,10 @@ See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-na
 | H2 | redeemClaim minOut fail | Claim balance unchanged (tx atomicity; production may burn-then-exit) |
 | H3 | Failed mint minOut | Residual free shares/DETF = 0 |
 | **L1** | Untracked LP/pair surplus if SE/DETF prices or holds AMM inventory; idle native/ERC20 + public reclaim | No free mint/extract from skim-class surplus |
-| **E6** | Any residual-return / overpay-refund / “sweep excess” on SE/DETF/helpers | Refund ≤ this-call overpay or caller credit; prior inventory stays |
+| **E6** | Any residual-return / overpay-refund / “sweep excess” on SE/DETF/helpers | Cap to **this-call unused inbound** (`min(max−used, unbooked U)`). Recipe: seed booked `R`, fat `max`, transfer **only** `used`, `pretransferred=true` → attacker gain of that token is 0 and `R` intact. Never `max−used` against `balanceOf` |
 | **F5** | Permissionless migrate/resize/reclaim-style ops (if any helper/facet exposes them) | Auth-gated or cannot free-extract trading proceeds |
-| **L2** | FoT pairToken/rateAsset | **Forbidden** (agent law § Token policy). `test_L2_FoT_forbidden` with a real FoT as the configured token. Never `test_L2_FoT_credits_actualIn`. |
+| **CROPS** | `setVaultAddressDisabled(true)` | Inbound-only. Mature `closeBondMature` / `redeemClaim` / user `exchangeOut` must still work. Do not add disable to MultiVault. |
+| **L2** | FoT pairToken/rateAsset | **Forbidden** (agent law § Token policy). `test_L2_FoT_forbidden` with a real FoT as the configured token. Never `test_L2_FoT_credits_actualIn`. Do not re-ask. |
 | **L3** | Spot/reserve skew of underlying SE pools | Overlaps B1; free-mint beyond deadband blocked |
 | **M1–M3** | Any router/helper/facet that forwards calldata or holds open allowances | Usually N/A on pure vault diamond — defer with NatSpec if no helper |
 | **N1** | Multi-step bond/issue with external hooks/callbacks | Hostile mid-flow unit change cannot inflate credit |
@@ -86,7 +87,7 @@ Reference implementation (gold suite + law — co-located product plans deleted 
 
 ```text
 test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/
-AGENTS.md (DETF families — common expectations)
+docs/agent/INDEXEDEX_AGENT_LAW.md   # DETF families + token policy
 docs/detf/   # compound/expansion + shared threshold law
 docs/testing/ADVERSARIAL_VAULT_COVERAGE_IMPLEMENTATION_PLAN.md
 ```
@@ -131,11 +132,14 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
 | Claim burned but redeem reverts and state sticks | Full-tx revert is OK; avoid try/catch that keeps burn; prefer CEI if mid-tx observability matters |
 | Free BPT redeem without claim | Mandatory claim + `burnShares`; `ClaimTokenNotConfigured` |
 | Donation mints free DETF | Never use raw `balanceOf` donation for mint credit without accounting |
-| Refund / reclaim pays raw `balance − floor` after user payment | Cap refund to this-call overpay; gate structural reclaim (**E6**, **L1**, **F5**) |
+| Refund / reclaim pays raw `balance − floor` after user payment | Cap to this-call unused inbound; E6 recipe (seed `R`, fat max, transfer only `used`) |
 | Nested MaxInRatio leaves partial balances | Clean revert; residual inventory asserts |
 | **`pretransferred=true` free mint** while vault holds reserves | Credit only **balance delta** (or lastReserve sync); never `return amountIn` after absolute `balanceOf >= amountIn`. See Crane catalog **I1–I3**. |
 | Facet omits Target selectors → proxy has no function | Target-derived `facetFuncs` + post-deploy loupe/smoke (**J1–J3**) |
 | Next depositor credited prior donation | Strict transfer-not-received / reserve snapshot update (**K**) |
+| Disable bricks mature close / redeem / `exchangeOut` | Inbound-only disable (**CROPS**) |
+| Leftover owner/minter on a satellite `detfToken` / claim / NFT pkg | Unown / revoke after deploy — same bar as the DETF diamond (**F1**) |
+| Exact-out overwrites `amountIn` with `amountOut` | Keep used-in and out separate; pay `tokenOut` to recipient |
 
 If exploit succeeds with unbounded profit → **production fix PR before green tests**.
 
@@ -145,7 +149,9 @@ Every SE / vault / DETF with pull-or-credit paths:
 
 | ID | Required test on production path |
 |----|----------------------------------|
-| **A0** | Residual inventory at empty share supply (or pre-live residual) cannot free-mint to first user |
+| **A0** | Residual inventory at empty share supply (or pre-live residual) cannot free-mint to first user. Donate-before-first-bond/mint on the proxy is enough; do not add a path through an unrelated solver |
+| **E6** | Residual-return path: seed booked `R`; fat `max` + transfer of only `used` + `pretransferred=true` must not pay `R` |
+| **CROPS** | After `setVaultAddressDisabled(true)`, mature close / redeemClaim / user `exchangeOut` still succeed (inbound may stay gated) |
 | **I1** | `pretransferred=true`, **no** user transfer, vault already holds ≥ claimed amount → attacker receives **zero** shares/product (revert preferred) |
 | **I2** | Short pretransfer vs claimed `amountIn` → exact revert |
 | **I3** | Residual after successful pretransfer cannot free-mint a second op |
@@ -187,11 +193,17 @@ Do not leave catalog IDs silently missing.
 2. Map P0/P1 IDs from Crane catalog + `references/detf-adversarial-checklist.md` (document deferred IDs in suite NatSpec; do not co-locate product plan md under the family package)
 3. Optional pass: `defi-incident-patterns` theme map for A0/L/M/N/O applicability
 4. `TestBase_*_Adversarial` extends feature TestBase
-5. Implement P0: **A0**, D2-class, C1–C3, A1/A3, E1/E5, F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**, plus **L/M/N/O** when surface applies
+5. Implement P0: **A0**, **E6** if refund exists, **CROPS** if disable exists, D2-class, C1–C3, A1/A3, E1/E5, F1 (diamond **and** satellite tokens), F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**, plus **L/M/N/O** when surface applies
 6. Declaration controls from **Target/interface**; proxy smoke of full product API
-7. `forge test --match-path '.../adversarial/**'` then full feature path
+7. `forge test --match-path '.../adversarial/**'` then full feature path. **`--match-test` prefixes must not collide** with older suites (`test_C` hits ProtocolCompound `test_C1`; use `--match-contract` the WP file). A red extra is not in-scope CODE.
 8. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
 9. Ship gate: Crane `references/implementation-test-dod.md`
+
+## Matcher hygiene
+
+- Prefer `--match-contract ThisWpSuite` (or a unique `test_A0_cs_` / `test_E6_exchangeOut_` name) over a bare catalog letter.
+- `test_C`, `test_F_`, `test_A0_` under a wide `--match-path` will pull ProtocolCompound / peer-family extras. Do not treat those reds as this WP.
+- `--match-test 'test_J'` is OK only when the path is already the claim/bond/LST suite.
 
 ## Commands
 
