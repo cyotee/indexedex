@@ -5,7 +5,7 @@
 | **Status** | **36/36 High closed.** `WP-SEC-TOKEN-001` recorded as project law (FoT forbidden; no rebasing underlyings; non-18 decimals allowed / scale to 18; pause accepted; docs + `test_L2_FoT_forbidden`; no allowlist). **No BUILD_BLOCKED.** |
 | **Started** | 2026-08-13 |
 | **Base SHA** | `aa8ec347` |
-| **Tip** | `961e5369` |
+| **Tip** | `bb16e109` |
 | **Law** | `docs/security/SECURITY_AUDIT_REMEDIATION_IMPLEMENTATION_PLAN.md` |
 | **Concurrency** | Wave 0 = 1 slot; thereafter ≤ 3 live `sec_fix_*` worktrees |
 | **Max live observed** | 3 |
@@ -97,11 +97,11 @@ Orchestrator record commits: `a7b0a6d2` (Wave 0 progress), `b5cba112` (W1-A reco
 
 ### Matcher notes
 
-- `e6-common` on `main` twice: 9/9 (`{SCRATCH}/sec_fix_e6-common.log`).
-- `aave-loop` on `main` twice: 6/6 (`{SCRATCH}/sec_fix_aave-loop.log`).
-- `bal-single-i` on `main` twice: 5/5 (`{SCRATCH}/sec_fix_bal-single-i.log`).
-- Other slices: implementer worktree ran the exact §4 matcher twice (0 failed) before FF. Re-runs on `main` captured under `{SCRATCH}/sec_fix_<slice>.log` as completed.
-- `detf-cs` official `test_C|test_A0_|test_F_` also matches pre-existing `ProtocolCompound` `test_C1`–`C8` (`MaxImbalanceRatioExceeded` on uncapped bootstrap). Slice WP suites (11 + 2 A0) are green. Those compound extras are **outside** this WP’s CODE.
+On-`main` rematch at `bb16e109` (each slice twice; logs `{SCRATCH}/sec_fix_<slice>.log`):
+
+- **PASS 2×:** `e6-common`, `cam-se`, `aave-loop`, `bal-single-i`, `aero-se`, `slip-e6`, `univ3-e6`, `univ2-se`, `univ4-se`, `detf-uv4-extra`, `detf-dl` (fork + Alchemy), `detf-mv`, `detf-sse`, `lst-ij`, `erc4626-ij`, `detf-com-j`, `token-policy`.
+- **`detf-cs` exact §4 matcher FAIL** (over-match): ProtocolCompound `test_C1`–`C8` `MaxImbalanceRatioExceeded`; MixedBuffer `test_C3_swap_unpaired0_to_buffer` `AllVaultsExhausted`; MixedBuffer `test_A0_mb_emptyUserSupply_donatedInventory_notDrainedByFirstMint` `StableInvariantDidNotConverge`. Those are **outside** CS lock/minter/A0 CODE.
+- **`detf-cs` WP-named rematch PASS 2×** (11/11 + donatedBuffer A0): `{SCRATCH}/sec_fix_detf-cs-wp-named.log` + `{SCRATCH}/sec_fix_detf-cs-wp-suites.log`. Summary: `{SCRATCH}/matcher_summary.txt`.
 
 ### Seed / harvest
 
