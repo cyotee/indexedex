@@ -764,6 +764,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 // bool preTransferred
                 pretransferred
             );
+            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
 
             // Transfer exactly the requested amountOut (don't recalculate to avoid rounding errors)
             IERC20(address(indexSource.pool))
@@ -854,6 +855,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
             // Secure the burn of the underlying pool token
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
+            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
             // Load the router.
             // IUniswapV2Router router_ = _uniV2Router();
             amountOut = indexSource.pool

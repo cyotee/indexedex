@@ -280,8 +280,10 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
         uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
         assertGt(sharesOut, 0, "Honest pull still mints");
         assertEq(lpToken.balanceOf(address(vault)), vaultLpBefore + lpAmount, "Donation plus pull stay");
-        // A0: donation is pre-deposit reserve; redeem of minted shares cannot drain it.
+        vm.startPrank(recipient);
+        vaultToken.approve(address(vault), sharesOut);
         uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vm.stopPrank();
         assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
         assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }
@@ -304,7 +306,10 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
 
         uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
         assertGt(sharesOut, 0, "Honest pretransfer still mints");
+        vm.startPrank(recipient);
+        vaultToken.approve(address(vault), sharesOut);
         uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vm.stopPrank();
         assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
         assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }

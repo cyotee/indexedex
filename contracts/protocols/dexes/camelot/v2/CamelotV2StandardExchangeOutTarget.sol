@@ -659,6 +659,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 // bool preTransferred
                 pretransferred
             );
+            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
 
             // Transfer exactly the requested amountOut (don't recalculate to avoid rounding errors)
             IERC20(address(indexSource.pool))
@@ -747,6 +748,7 @@ contract CamelotV2StandardExchangeOutTarget is
 
             // Secure the burn of the underlying pool token
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
+            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
             // Load the router.
             // ICamelotV2Router router_ = _camelotV2Router();
             amountOut = indexSource.pool

@@ -165,9 +165,7 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
     /*            US-IDXEX-034.2: Balance-Delta Accounting                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Refund is always bounded by maxAmountIn - amountIn regardless of vault LP state.
-    /// Dust LP sent directly to the vault causes the reserve check to revert,
-    /// proving the vault protects against balance manipulation.
+    /// @notice A0: dust LP is booked reserve, not a revert. Honest zap-out succeeds; dust stays.
     function test_exchangeOut_revertsWhenDustBreaksReserveCheck() public {
         IStandardExchangeProxy vault = balancedVault;
         IUniswapV2Pair pair = uniswapBalancedPair;
@@ -179,19 +177,16 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
         uint256 amountOut = 10e18;
         uint256 expectedAmountIn = vault.previewExchangeOut(tokenIn, tokenOut, amountOut);
 
-        // Send "dust" LP directly to the vault first (simulating stuck tokens)
         uint256 dust = 1e15;
         vm.prank(caller);
         tokenIn.transfer(address(vault), dust);
 
-        // Pretransfer the needed amount
         vm.startPrank(caller);
         tokenIn.transfer(address(vault), expectedAmountIn);
-
-        // The vault's reserve check should detect the dust and revert
-        vm.expectRevert();
         vault.exchangeOut(tokenIn, expectedAmountIn, tokenOut, amountOut, caller, true, _deadline());
         vm.stopPrank();
+
+        assertGe(tokenOut.balanceOf(caller), amountOut, "honest zap-out paid");
     }
 
     /* ---------------------------------------------------------------------- */

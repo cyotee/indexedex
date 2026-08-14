@@ -305,6 +305,7 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             ERC20Repo._mint(address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo()), poolFeeLPShares);
         }
         _secureSelfBurn(msg.sender, amountInLocal, args.pretransferred);
+        _refundExcess(IERC20(address(this)), args.maxAmountIn, amountInLocal, args.pretransferred, msg.sender);
 
         // Convert shares to LP and execute ZapOut
         {
@@ -438,6 +439,7 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
 
         // Burn shares from caller.
         _secureSelfBurn(msg.sender, amountIn, args.pretransferred);
+        _refundExcess(IERC20(address(this)), args.maxAmountIn, amountIn, args.pretransferred, msg.sender);
 
         // Convert burned shares -> LP (use Down to match the burn amount exactly).
         uint256 lpOut = BetterMath._convertToAssetsDown(amountIn, vaultLpReserve, vaultTotalShares, decimalOffset);

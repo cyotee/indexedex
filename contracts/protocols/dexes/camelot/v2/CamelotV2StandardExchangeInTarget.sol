@@ -529,14 +529,17 @@ contract CamelotV2StandardExchangeInTarget is
                 revert();
             }
 
-            // Convert against pre-deposit vault.vaultLpReserve (do not overwrite before convert).
-            // Honor pretransferred: false always pulls. Do not credit lastTotalAssets exact-gap.
+            // Convert against live LP before this-call inbound so donated residual is reserve (A0 / R4).
+            uint256 liveBefore = indexSource.pool.balanceOf(address(this));
+            uint256 reserveBefore = pretransferred
+                ? (liveBefore > amountIn ? liveBefore - amountIn : 0)
+                : liveBefore;
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = BetterMath._convertToSharesDown(
                 // uint256 assets,
                 amountIn,
                 // uint256 reserve,
-                vault.vaultLpReserve,
+                reserveBefore,
                 // uint256 totalShares
                 vault.vaultTotalShares,
                 ERC4626Repo._decimalOffset()

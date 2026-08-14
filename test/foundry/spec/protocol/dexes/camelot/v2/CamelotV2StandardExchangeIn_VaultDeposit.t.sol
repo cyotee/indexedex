@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC4626Errors} from "@crane/contracts/interfaces/IERC4626Errors.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 
@@ -205,7 +204,7 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
     /*              K1 donation / direct-transfer mismatch                    */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice K1: untracked LP donation before pull deposit reverts exact selector.
+    /// @notice A0/R4: untracked LP donation is reserve, not a transfer-mismatch revert.
     function test_Route4VaultDeposit_reverts_whenDonationCausesTransferMismatch_pretransferred_false() public {
         IERC20 lpToken = IERC20(address(pair));
         IERC20 vaultToken = IERC20(address(vault));
@@ -213,18 +212,25 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
         uint256 lpAmount = _lpAmount();
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
+        address recipient = makeAddr("recipient");
 
-        // Attacker-style donation: tokens arrive without updating lastTotalAssets.
         lpToken.transfer(address(vault), donation);
         lpToken.approve(address(vault), lpAmount);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, lpAmount + donation)
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
+        uint256 vaultLpBefore = lpToken.balanceOf(address(vault));
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertGt(sharesOut, 0, "Honest pull still mints");
+        assertEq(lpToken.balanceOf(address(vault)), vaultLpBefore + lpAmount, "Donation plus pull stay");
+
+        vm.startPrank(recipient);
+        vaultToken.approve(address(vault), sharesOut);
+        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vm.stopPrank();
+        assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
+        assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }
 
-    /// @notice K1: donate + pretransfer declared short still mismatches after corrective pull.
+    /// @notice A0/R4: donate + honest pretransfer credits claimed only; donation stays.
     function test_Route4VaultDeposit_reverts_whenDonationPlusPretransferCausesTransferMismatch_pretransferred_true()
         public
     {
@@ -234,18 +240,19 @@ contract CamelotV2StandardExchangeIn_VaultDeposit_Test is TestBase_CamelotV2Stan
         uint256 lpAmount = _lpAmount();
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
+        address recipient = makeAddr("recipient");
 
-        // Donate + pretransfer, but declare only lpAmount.
         lpToken.transfer(address(vault), lpAmount + donation);
-        // Allow the vault to attempt a corrective pull during _secureReserveDeposit.
-        lpToken.approve(address(vault), lpAmount);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, donation + (lpAmount * 2)
-            )
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
+        assertGt(sharesOut, 0, "Honest pretransfer still mints");
+
+        vm.startPrank(recipient);
+        vaultToken.approve(address(vault), sharesOut);
+        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        vm.stopPrank();
+        assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
+        assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }
 
     /* ---------------------------------------------------------------------- */

@@ -252,19 +252,20 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
         }
     }
 
-    /// @dev Approve only `amount_` for this consume, then call again with 0 to clear leftover allowance (M3).
+    /// @dev Infinite approve for this consume only; `amount_ == 0` clears leftover allowance (M3).
     function _approvePermit2ToRouter(IERC20 token_, uint256 amount_) internal {
         address permit2_ = address(IRouterCommon(address(router)).getPermit2());
-        token_.forceApprove(address(router), 0);
-        token_.forceApprove(permit2_, 0);
-        IAllowanceTransfer(permit2_).approve(address(token_), address(router), 0, 0);
         if (amount_ == 0) {
+            token_.forceApprove(address(router), 0);
+            token_.forceApprove(permit2_, 0);
+            IAllowanceTransfer(permit2_).approve(address(token_), address(router), 0, 0);
             return;
         }
-        token_.forceApprove(address(router), amount_);
-        token_.forceApprove(permit2_, amount_);
-        uint160 permitAmount_ = amount_ > type(uint160).max ? type(uint160).max : uint160(amount_);
-        IAllowanceTransfer(permit2_).approve(address(token_), address(router), permitAmount_, uint48(block.timestamp + 1));
+        token_.forceApprove(address(router), type(uint256).max);
+        token_.forceApprove(permit2_, type(uint256).max);
+        IAllowanceTransfer(permit2_).approve(
+            address(token_), address(router), type(uint160).max, type(uint48).max
+        );
     }
 
     function _queryAddLiquidityUnbalanced(uint256[] memory amountsIn_) internal view returns (uint256 amountOut_) {
