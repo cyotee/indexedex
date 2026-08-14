@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_ERC4626MorphoHermetic} from
     "contracts/test/bases/TestBase_ERC4626MorphoHermetic.sol";
 
@@ -68,6 +69,33 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic {
             block.timestamp
         );
         assertEq(uOut, unwrapPreview);
+    }
+
+    /// @notice I1 booked: wrap books morphoVault reserve; free pretransfer cannot mint.
+    function test_I1_pretransferred_noTransfer_bookedReserve_reverts() public {
+        uint256 wrapIn_ = 100 ether;
+        vm.prank(user);
+        seIn.exchangeIn(
+            IERC20(address(loanToken)), wrapIn_, IERC20(se), 0, user, false, block.timestamp
+        );
+
+        uint256 claimed_ = 1 ether;
+        uint256 supplyBefore_ = IERC20(se).totalSupply();
+        uint256 invBefore_ = IERC20(address(morphoVault)).balanceOf(se);
+        assertGe(invBefore_, claimed_, "booked protocolVault inventory");
+
+        vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
+            )
+        );
+        seIn.exchangeIn(
+            IERC20(address(morphoVault)), claimed_, IERC20(se), 0, user, true, block.timestamp
+        );
+
+        assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1: no free SE mint");
+        assertEq(IERC20(address(morphoVault)).balanceOf(se), invBefore_, "I1: inventory unmoved");
     }
 
     function test_Morpho_interestStrictIncrease_unwrap() public {

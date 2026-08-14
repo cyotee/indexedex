@@ -261,7 +261,7 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
     /*                            Unwrap exact-in                             */
     /* ---------------------------------------------------------------------- */
 
-    function test_I1_unwrapExactIn_previewEqualsExecution() public {
+    function test_SE2_unwrapExactIn_previewEqualsExecution() public {
         _seedLiquidity(100 ether);
         uint256 seInAmt = IERC20(se).balanceOf(user) / 2;
         assertGt(seInAmt, 0);
