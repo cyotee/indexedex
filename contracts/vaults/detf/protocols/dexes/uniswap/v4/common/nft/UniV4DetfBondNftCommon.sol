@@ -15,6 +15,7 @@ import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     UniV4DetfBondNftRepo
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/common/nft/UniV4DetfBondNftRepo.sol";
@@ -42,6 +43,15 @@ abstract contract UniV4DetfBondNftCommon is IUnlockCallback, ReentrancyLockModif
     }
 
     error InvalidCallbackCaller(address caller);
+
+    /// @dev Credit only this-call inbound. Existing inventory is not delivery.
+    function _pullExact(IERC20 token, uint256 amount) internal returns (uint256 actual) {
+        if (amount == 0) return 0;
+        uint256 b0 = token.balanceOf(address(this));
+        token.safeTransferFrom(msg.sender, address(this), amount);
+        actual = token.balanceOf(address(this)) - b0;
+        if (actual < amount) revert ISecurePullErrors.TransferDeltaInsufficient(amount, actual);
+    }
 
     function _s() internal pure returns (UniV4DetfBondNftRepo.Storage storage) {
         return UniV4DetfBondNftRepo._layout();

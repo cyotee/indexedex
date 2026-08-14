@@ -48,11 +48,8 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
         }
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
-        if (!pretransferred_) {
-            IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
-        }
-
-        uint256 burnPrincipal_ = _takeBurnUsageFee(detfIn_);
+        uint256 pulled_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
+        uint256 burnPrincipal_ = _takeBurnUsageFee(pulled_);
         BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
         _syncAllExpectedHoldReserves();

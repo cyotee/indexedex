@@ -85,10 +85,29 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         if (!Repo._layoutStruct().isReserveLive) revert Repo.ReserveNotLive();
     }
 
+    /// @dev Deadline + amount only. Disable is inbound-only (`_requireNotDisabled`).
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
-        _requireNotDisabled();
         if (amount_ == 0) revert Repo.ZeroAmount();
         if (block.timestamp > deadline_) revert Repo.DeadlineExpired(deadline_);
+    }
+
+    /// @dev First bond cannot credit pre-live unbooked residual (A0).
+    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+        if (pretransferred_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed_, 0);
+        }
+    }
+
+    function _rejectPretransferredFirstBond(bool pretransferred_, uint256[] calldata amountsIn_)
+        internal
+        pure
+    {
+        if (!pretransferred_) return;
+        uint256 claimed_;
+        for (uint256 i; i < amountsIn_.length; ++i) {
+            claimed_ += amountsIn_[i];
+        }
+        revert ISecurePullErrors.TransferDeltaInsufficient(claimed_, 0);
     }
 
     function _requireNotDisabled() internal view {

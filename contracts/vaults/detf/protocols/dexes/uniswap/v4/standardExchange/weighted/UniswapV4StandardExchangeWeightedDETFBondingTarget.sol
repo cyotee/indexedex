@@ -70,6 +70,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is UniswapV
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (!Repo._layoutStruct().isReserveLive) {
             revert Repo.FirstBondRequiresAllExternalPairs();
@@ -89,6 +90,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFBondingTarget is UniswapV
     ) private returns (uint256 tokenId_, uint256 shares_) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (!Repo._isPairToken(capitalToken_)) revert Repo.InvalidCapitalToken();
+        _rejectPretransferredFirstBond(pretransferred_, amountsIn_);
 
         // Settle each input to product-order pair notionals.
         uint256[] memory pairNatives_ = new uint256[](s.m);

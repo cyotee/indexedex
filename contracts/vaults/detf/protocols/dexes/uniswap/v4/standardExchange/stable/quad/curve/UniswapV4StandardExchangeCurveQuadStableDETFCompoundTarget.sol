@@ -74,6 +74,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCompoundTarget is
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 claimOut_) {
         _requireReserveLive();
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
         Repo.Storage storage s = Repo._layoutStruct();

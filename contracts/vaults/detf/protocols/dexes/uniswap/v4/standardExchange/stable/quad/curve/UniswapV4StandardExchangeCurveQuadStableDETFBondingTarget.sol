@@ -69,6 +69,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (!Repo._layoutStruct().isReserveLive) {
             revert Repo.FirstBondRequiresAllExternalPairs();
@@ -90,6 +91,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
     ) private returns (uint256 tokenId_, uint256 shares_) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (!Repo._isPairToken(capitalToken_)) revert Repo.InvalidCapitalToken();
+        _rejectPretransferredFirstBond(pretransferred_, amountsIn_);
 
         uint256[] memory pairNatives_ = new uint256[](s.m);
         for (uint256 k; k < tokenIns_.length; ++k) {

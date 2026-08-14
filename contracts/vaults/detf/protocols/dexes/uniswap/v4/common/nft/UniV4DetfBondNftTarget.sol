@@ -32,23 +32,16 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
     ) external nonReentrant returns (uint256 tokenId) {
         UniV4DetfBondNftRepo._requireOwner(msg.sender);
         if (pairPrincipal == 0 || effectiveShares == 0) revert UniV4DetfBondNftRepo.ZeroAmount();
-        if (recipient == address(0)) recipient = tx.origin;
+        if (recipient == address(0)) revert UniV4DetfBondNftRepo.ZeroAmount();
 
         _updateGlobalRewards();
         UniV4DetfBondNftRepo.Storage storage s = _s();
 
-        // Pull tokens from DETF (already approved or pretransferred).
         if (pairAmountForLp > 0) {
-            uint256 bal = s.pairToken.balanceOf(address(this));
-            if (bal < pairAmountForLp) {
-                s.pairToken.safeTransferFrom(msg.sender, address(this), pairAmountForLp - bal);
-            }
+            _pullExact(s.pairToken, pairAmountForLp);
         }
         if (detfAmountForLp > 0) {
-            uint256 bal = s.detfToken.balanceOf(address(this));
-            if (bal < detfAmountForLp) {
-                s.detfToken.safeTransferFrom(msg.sender, address(this), detfAmountForLp - bal);
-            }
+            _pullExact(s.detfToken, detfAmountForLp);
         }
 
         tokenId = s.nextTokenId++;
@@ -229,7 +222,7 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
     /// @inheritdoc IUniV4DetfBondNft
     function initializeHookLpMode(address reserveLp_, bool requireMatureForSell_) external {
         UniV4DetfBondNftRepo._requireOwner(msg.sender);
-        UniV4DetfBondNftRepo._initializeHookLpMode(IERC20(reserveLp_), requireMatureForSell_);
+        UniV4DetfBondNftRepo._initializeHookLpMode(IERC20(reserveLp_), true);
     }
 
     /// @inheritdoc IUniV4DetfBondNft
@@ -242,16 +235,13 @@ abstract contract UniV4DetfBondNftTarget is UniV4DetfBondNftCommon, IUniV4DetfBo
     ) external nonReentrant returns (uint256 tokenId) {
         UniV4DetfBondNftRepo._requireOwner(msg.sender);
         if (lpPrincipal == 0 || effectiveShares == 0) revert UniV4DetfBondNftRepo.ZeroAmount();
-        if (recipient == address(0)) recipient = tx.origin;
+        if (recipient == address(0)) revert UniV4DetfBondNftRepo.ZeroAmount();
 
         _updateGlobalRewards();
         UniV4DetfBondNftRepo.Storage storage s = _s();
         IERC20 lp_ = s.reserveLp;
         if (address(lp_) == address(0)) revert UniV4DetfBondNftRepo.ZeroAmount();
-        uint256 have_ = lp_.balanceOf(address(this));
-        if (have_ < lpPrincipal) {
-            lp_.safeTransferFrom(msg.sender, address(this), lpPrincipal - have_);
-        }
+        _pullExact(lp_, lpPrincipal);
 
         tokenId = s.nextTokenId++;
         s.ownerOf[tokenId] = recipient;

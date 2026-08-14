@@ -19,6 +19,7 @@ import {SqrtPriceMath} from "@crane/contracts/protocols/dexes/uniswap/v4/librari
 import {SafeCast} from "@crane/contracts/external/openzeppelin-contracts/utils/math/SafeCast.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {UniswapV4PositionRepo} from "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol";
 import {UniswapV4QuoteService} from "contracts/protocols/dexes/uniswap/v4/UniswapV4QuoteService.sol";
 import {
@@ -476,16 +477,27 @@ abstract contract UniV4DetfRebasingClaimCommon is IUnlockCallback, ReentrancyLoc
     /*                         Deposit into wings                             */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev Credit only this-call inbound. Existing inventory is not delivery.
+    function _pullExact(IERC20 token, uint256 amount) internal returns (uint256 actual) {
+        if (amount == 0) return 0;
+        uint256 b0 = token.balanceOf(address(this));
+        token.safeTransferFrom(msg.sender, address(this), amount);
+        actual = token.balanceOf(address(this)) - b0;
+        if (actual < amount) revert ISecurePullErrors.TransferDeltaInsufficient(amount, actual);
+    }
+
     /// @dev Place held token0/token1 balances into re-derived center/wings. Does not mint shares.
     function _depositBalancesIntoWings() internal {
+        _depositAmountsIntoWings(
+            IERC20(_token0()).balanceOf(address(this)), IERC20(_token1()).balanceOf(address(this))
+        );
+    }
+
+    /// @dev Deposit only the specified amounts (inbound-only). Pre-existing inventory stays idle.
+    function _depositAmountsIntoWings(uint256 available0, uint256 available1) internal {
+        if (available0 == 0 && available1 == 0) return;
         ManagedTicks memory ticks = _deriveManagedTicks();
         _createOrUpdateManagedPositions(ticks);
-
-        address token0 = _token0();
-        address token1 = _token1();
-        uint256 available0 = IERC20(token0).balanceOf(address(this));
-        uint256 available1 = IERC20(token1).balanceOf(address(this));
-        if (available0 == 0 && available1 == 0) return;
 
         ManagedLiquidityPlan memory plan = _managedLiquidityPlan(ticks, available0, available1);
 

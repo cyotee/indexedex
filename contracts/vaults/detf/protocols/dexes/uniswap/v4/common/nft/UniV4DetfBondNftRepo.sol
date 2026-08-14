@@ -93,6 +93,11 @@ library UniV4DetfBondNftRepo {
         // Protocol id 0 starts with zero principal (plan §0.3 #23).
         s.protocolPrincipal = 0;
         s.protocolEffectiveShares = 0;
+        s.requireMatureForSell = true;
+    }
+
+    function _clearOwner() internal {
+        _layout().owner = address(0);
     }
 
     function _initializeHookLpMode(IERC20 reserveLp_, bool requireMatureForSell_) internal {

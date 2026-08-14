@@ -33,6 +33,9 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeInTarget is
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 amountOut_) {
         _requireActive(deadline_, amountIn_);
+        if (address(tokenIn_) != address(this)) {
+            _requireNotDisabled();
+        }
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         if (address(tokenIn_) == address(this)) {

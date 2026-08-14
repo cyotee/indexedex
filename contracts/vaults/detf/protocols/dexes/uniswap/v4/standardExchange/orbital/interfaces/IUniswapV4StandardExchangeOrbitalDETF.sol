@@ -113,6 +113,16 @@ interface IUniswapV4StandardExchangeOrbitalDETF {
 
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
+    /// @notice Direct claim deposit (pair/share/SE/free DETF). Reverts if not zap-eligible.
+    function depositClaim(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        uint256 minClaimOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 claimOut);
+
     /// @notice Redeem rebasing claim → rateAsset | other pair | vaultShare | SE token. Else InvalidRoute.
     function redeemClaim(
         uint256 claimAmount,

@@ -117,6 +117,7 @@ contract UniV4DetfBondNftDFPkg is IUniV4DetfBondNftDFPkg {
             args.widthMultiplier,
             args.owner
         );
+        UniV4DetfBondNftRepo._clearOwner();
     }
 
     function postDeploy(address) public pure returns (bool) {

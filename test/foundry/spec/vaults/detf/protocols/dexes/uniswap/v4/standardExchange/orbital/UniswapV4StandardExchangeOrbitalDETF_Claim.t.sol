@@ -116,6 +116,25 @@ contract UniswapV4StandardExchangeOrbitalDETF_ClaimTest is TestBase_UniswapV4Sta
         assertGt(IERC20(se).balanceOf(detfUser), 0);
     }
 
+    function test_depositClaim_pair_mintsClaim() public {
+        vm.startPrank(detfUser);
+        uint256 claimOut = detfInfo.depositClaim(IERC20(pair0), 40 ether, 0, detfUser, false, _dl());
+        vm.stopPrank();
+        assertGt(claimOut, 0, "depositClaim pair mints");
+        assertGt(IRebasingClaimToken(detfInfo.rebasingClaimToken()).balanceOf(detfUser), 0);
+    }
+
+    function test_depositClaim_freeDetf_mintsClaim() public {
+        vm.startPrank(detfUser);
+        uint256 minted = detfExchangeIn.exchangeIn(
+            IERC20(pair0), 40 ether, IERC20(detf), 0, detfUser, false, _dl()
+        );
+        IERC20(detf).approve(detf, minted);
+        uint256 claimOut = detfInfo.depositClaim(IERC20(detf), minted / 2, 0, detfUser, false, _dl());
+        vm.stopPrank();
+        assertGt(claimOut, 0, "depositClaim free detfToken mints");
+    }
+
     function test_redeemClaim_invalidRoute_reverts() public {
         vm.startPrank(detfUser);
         (uint256 tokenId,) =

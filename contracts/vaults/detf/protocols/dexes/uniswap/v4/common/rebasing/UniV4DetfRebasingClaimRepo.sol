@@ -60,6 +60,10 @@ library UniV4DetfRebasingClaimRepo {
         s.owner = owner_;
     }
 
+    function _clearOwner() internal {
+        _layout().owner = address(0);
+    }
+
     function _initializeHookLp(IERC20 reserveLp_) internal {
         _layout().reserveLp = reserveLp_;
     }

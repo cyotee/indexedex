@@ -34,9 +34,11 @@ abstract contract UniV4DetfRebasingClaimTarget is UniV4DetfRebasingClaimCommon, 
         address detf = address(_detfToken());
         if (address(tokenIn) != pair && address(tokenIn) != detf) revert UnsupportedToken(address(tokenIn));
 
+        uint256 inbound = _pullExact(tokenIn, amountIn);
         uint256 pre = _zapOutToPair();
-        tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-        _depositBalancesIntoWings();
+        uint256 amt0 = address(tokenIn) == _token0() ? inbound : 0;
+        uint256 amt1 = address(tokenIn) == _token1() ? inbound : 0;
+        _depositAmountsIntoWings(amt0, amt1);
         uint256 post = _zapOutToPair();
         rebasingTokensMinted = _mintFromContribution(pre, post, recipient);
         if (rebasingTokensMinted < minRebasingOut) {
@@ -101,22 +103,18 @@ abstract contract UniV4DetfRebasingClaimTarget is UniV4DetfRebasingClaimCommon, 
         if (rebasingRecipient == address(0)) revert ZeroAmount();
 
         uint256 pre = _zapOutToPair();
-        // Tokens already transferred or pulled by owner; pull remaining allowance if needed.
-        if (pairAmount > 0) {
-            IERC20 pair = _pairToken();
-            uint256 bal = pair.balanceOf(address(this));
-            if (bal < pairAmount) {
-                pair.safeTransferFrom(msg.sender, address(this), pairAmount - bal);
-            }
+        uint256 inPair = pairAmount > 0 ? _pullExact(_pairToken(), pairAmount) : 0;
+        uint256 inDetf = detfAmount > 0 ? _pullExact(_detfToken(), detfAmount) : 0;
+        uint256 amt0;
+        uint256 amt1;
+        if (address(_pairToken()) == _token0()) {
+            amt0 = inPair;
+            amt1 = inDetf;
+        } else {
+            amt0 = inDetf;
+            amt1 = inPair;
         }
-        if (detfAmount > 0) {
-            IERC20 detf = _detfToken();
-            uint256 bal = detf.balanceOf(address(this));
-            if (bal < detfAmount) {
-                detf.safeTransferFrom(msg.sender, address(this), detfAmount - bal);
-            }
-        }
-        _depositBalancesIntoWings();
+        _depositAmountsIntoWings(amt0, amt1);
         uint256 post = _zapOutToPair();
         rebasingTokensMinted = _mintFromContribution(pre, post, rebasingRecipient);
     }
@@ -125,13 +123,10 @@ abstract contract UniV4DetfRebasingClaimTarget is UniV4DetfRebasingClaimCommon, 
     function donateDetf(uint256 detfAmount) external nonReentrant {
         UniV4DetfRebasingClaimRepo._requireOwner(msg.sender);
         if (detfAmount == 0) return;
-        IERC20 detf = _detfToken();
-        uint256 bal = detf.balanceOf(address(this));
-        if (bal < detfAmount) {
-            detf.safeTransferFrom(msg.sender, address(this), detfAmount - bal);
-        }
-        // Deposit into wings; mint 0 rebasing tokens (pure donation).
-        _depositBalancesIntoWings();
+        uint256 inbound = _pullExact(_detfToken(), detfAmount);
+        uint256 amt0 = address(_detfToken()) == _token0() ? inbound : 0;
+        uint256 amt1 = address(_detfToken()) == _token1() ? inbound : 0;
+        _depositAmountsIntoWings(amt0, amt1);
     }
 
     /// @inheritdoc IUniV4DetfRebasingClaim
@@ -170,18 +165,13 @@ abstract contract UniV4DetfRebasingClaimTarget is UniV4DetfRebasingClaimCommon, 
         if (rebasingRecipient == address(0) || lpAmount == 0) revert ZeroAmount();
         IERC20 lp_ = UniV4DetfRebasingClaimRepo._layout().reserveLp;
         if (address(lp_) == address(0)) revert UnsupportedToken(address(0));
-        uint256 pre = lp_.balanceOf(address(this));
-        uint256 have = pre;
-        if (have < lpAmount) {
-            lp_.safeTransferFrom(msg.sender, address(this), lpAmount - have);
-        }
-        uint256 post = lp_.balanceOf(address(this));
-        uint256 contribution = post > pre ? post - pre : 0;
+        uint256 held_ = lp_.balanceOf(address(this));
+        uint256 contribution = _pullExact(lp_, lpAmount);
         uint256 supply = ERC20Repo._totalSupply();
-        if (supply == 0 || pre == 0) {
+        if (supply == 0 || held_ == 0) {
             rebasingTokensMinted = contribution;
         } else {
-            rebasingTokensMinted = Math.mulDiv(contribution, supply, pre);
+            rebasingTokensMinted = Math.mulDiv(contribution, supply, held_);
         }
         if (rebasingTokensMinted > 0) {
             ERC20Repo._mint(rebasingRecipient, rebasingTokensMinted);

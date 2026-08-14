@@ -71,6 +71,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _requireNotDisabled();
         _requireActive(deadline_, amountIn_);
         if (Repo._layoutStruct().isReserveLive) {
             _realizeExpansionIfNeeded();
@@ -120,6 +121,9 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
         bool pretransferred_,
         uint256 deadline_
     ) private returns (uint256 tokenId_, uint256 shares_) {
+        if (!Repo._layoutStruct().isReserveLive) {
+            _rejectPretransferredFirstBond(pretransferred_, amountIn0_ + amountIn1_);
+        }
         PairLegRating memory r0_ = _settleToPairLeg(tokenIn0_, amountIn0_, pretransferred_, deadline_);
         PairLegRating memory r1_ = _settleToPairLeg(tokenIn1_, amountIn1_, pretransferred_, deadline_);
         // Ensure legs map to distinct pairs.
@@ -356,6 +360,39 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
     /* ---------------------------------------------------------------------- */
     /*                                Claim                                   */
     /* ---------------------------------------------------------------------- */
+
+    /// @notice Direct claim deposit. Reverts if not zap-eligible (unlike compound skip).
+    function depositClaim(
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        uint256 minClaimOut_,
+        address recipient_,
+        bool pretransferred_,
+        uint256 deadline_
+    ) public virtual nonReentrant returns (uint256 claimOut_) {
+        _requireReserveLive();
+        _requireNotDisabled();
+        _requireActive(deadline_, amountIn_);
+        if (recipient_ == address(0)) recipient_ = msg.sender;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
+        _requireZapEligible();
+
+        address holder_ = _protocolLpHolder();
+        uint256 lpMinted_;
+        if (address(tokenIn_) == address(this)) {
+            uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+            lpMinted_ = _depositSingle(address(this), pulled_, holder_);
+        } else {
+            PairLegRating memory r_ = _settleToPairLeg(tokenIn_, amountIn_, pretransferred_, deadline_);
+            address pair_ = r_.fundedPairLeg == 0 ? address(s.pairToken0) : address(s.pairToken1);
+            lpMinted_ = _depositSingle(pair_, r_.pairNotionalNative, holder_);
+        }
+        if (lpMinted_ == 0) revert Repo.ZeroAmount();
+
+        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(lpMinted_, recipient_);
+        if (claimOut_ < minClaimOut_) revert Repo.SlippageExceeded(minClaimOut_, claimOut_);
+    }
 
     /// @dev Pair residual after remove + DETF redeposit (packed to free redeemClaim stack).
     struct ClaimResidual {
