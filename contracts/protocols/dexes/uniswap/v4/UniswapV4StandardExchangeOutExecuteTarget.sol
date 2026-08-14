@@ -56,6 +56,7 @@ abstract contract UniswapV4StandardExchangeOutExecuteTarget is UniswapV4Standard
             if (actualOut < amountOut) revert UniswapV4ExchangeOut_SlippageExceeded();
 
             _refundExcess(tokenIn, providedAmountIn, amountIn, msg.sender);
+            _syncVaultReserves();
             _rebalanceLiquidReserveBestEffort();
             return amountIn;
         }

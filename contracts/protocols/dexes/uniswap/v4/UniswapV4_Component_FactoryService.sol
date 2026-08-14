@@ -9,6 +9,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {
@@ -183,6 +184,45 @@ library UniswapV4_Component_FactoryService {
         pkgInit.vaultRegistryDeployment = vaultRegistryDeployment;
         pkgInit.permit2 = permit2;
         pkgInit.poolManager = poolManager;
+        // positionManager defaults to address(0) — import disabled until bound.
+    }
+
+    function buildArgsUniswapV4StandardExchangePkgInit(
+        IFacet erc20Facet,
+        IFacet erc5267Facet,
+        IFacet erc2612Facet,
+        IFacet multiAssetBasicVaultFacet,
+        IFacet multiAssetStandardVaultFacet,
+        IFacet uniswapV4StandardExchangeInFacet,
+        IFacet uniswapV4StandardExchangeInQueryFacet,
+        IFacet uniswapV4StandardExchangePositionImportFacet,
+        IFacet uniswapV4StandardExchangeOutFacet,
+        IFacet uniswapV4StandardExchangeOutQueryFacet,
+        IFacet uniswapV4StandardExchangeLiquidReserveFacet,
+        IVaultFeeOracleQuery vaultFeeOracleQuery,
+        IVaultRegistryDeployment vaultRegistryDeployment,
+        IPermit2 permit2,
+        IPoolManager poolManager,
+        IPositionManager positionManager
+    ) internal pure returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit) {
+        pkgInit = buildArgsUniswapV4StandardExchangePkgInit(
+            erc20Facet,
+            erc5267Facet,
+            erc2612Facet,
+            multiAssetBasicVaultFacet,
+            multiAssetStandardVaultFacet,
+            uniswapV4StandardExchangeInFacet,
+            uniswapV4StandardExchangeInQueryFacet,
+            uniswapV4StandardExchangePositionImportFacet,
+            uniswapV4StandardExchangeOutFacet,
+            uniswapV4StandardExchangeOutQueryFacet,
+            uniswapV4StandardExchangeLiquidReserveFacet,
+            vaultFeeOracleQuery,
+            vaultRegistryDeployment,
+            permit2,
+            poolManager
+        );
+        pkgInit.positionManager = positionManager;
     }
 
     function deployUniswapV4StandardExchangeDFPkg(

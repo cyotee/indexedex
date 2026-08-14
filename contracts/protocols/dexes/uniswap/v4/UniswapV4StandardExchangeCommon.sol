@@ -112,6 +112,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
 
     /// @dev Relative deadband: 5% of target free (D22).
     uint256 internal constant LIQUID_RESERVE_RELATIVE_TOL_WAD = 0.05e18;
+    /// @dev Sink for residual first-mint dead shares (A0). Not `address(this)` so self-balance stays 0.
+    address internal constant DEAD_SHARES_SINK = address(0x000000000000000000000000000000000000dEaD);
 
     /**
      * @notice True when this vault may open a new PoolManager `unlock` (manager idle).
@@ -484,6 +486,10 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token0()), reserve0);
         MultiAssetBasicVaultRepo._updateReserve(IERC20(_token1()), reserve1);
+        // Book sitting vaultShare so leftover self-shares are R, not durable U (E6 / I1).
+        MultiAssetBasicVaultRepo._updateReserve(
+            IERC20(address(this)), IERC20(address(this)).balanceOf(address(this))
+        );
     }
 
     /**
@@ -1114,6 +1120,35 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
             return;
         }
         IERC20(token).safeTransfer(recipient, amount);
+    }
+
+    /**
+     * @notice Credit `vaultShare` delivery for zap-out. Does not use token `_secureTokenTransfer`.
+     * @dev E6 / I1: `!pretransferred` returns this-call pull delta only. `pretransferred` credits
+     *      `amountIn` only against unbooked self-share `U = B - R` after `_syncVaultReserves`
+     *      books sitting leftover. Fat `max` against booked leftover reverts
+     *      `TransferDeltaInsufficient`.
+     */
+    function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
+        IERC20 vaultShare = IERC20(address(this));
+        uint256 b0 = vaultShare.balanceOf(address(this));
+        if (!pretransferred) {
+            vaultShare.safeTransferFrom(msg.sender, address(this), amountIn);
+            return vaultShare.balanceOf(address(this)) - b0;
+        }
+        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(this));
+        uint256 U = b0 > R ? b0 - R : 0;
+        if (amountIn > U) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, U);
+        }
+        return amountIn;
+    }
+
+    /// @dev E6: refund only this-call unused inbound shares (`delivered - used`), never leftover R.
+    function _refundUnusedShares(uint256 delivered, uint256 used, address recipient) internal {
+        if (delivered > used) {
+            IERC20(address(this)).safeTransfer(recipient, delivered - used);
+        }
     }
 
     function _symbolOrAddress(address token) internal view returns (string memory symbol_) {

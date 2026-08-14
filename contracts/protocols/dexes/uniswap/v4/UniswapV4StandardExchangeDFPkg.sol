@@ -14,6 +14,7 @@ import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
@@ -65,6 +66,7 @@ interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
         IPoolManager poolManager;
+        IPositionManager positionManager;
     }
 
     struct PkgArgs {
@@ -93,6 +95,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
     IPoolManager immutable POOL_MANAGER;
+    IPositionManager immutable POSITION_MANAGER;
 
     constructor(PkgInit memory pkgInit) {
         ERC20_FACET = pkgInit.erc20Facet;
@@ -110,6 +113,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
         POOL_MANAGER = pkgInit.poolManager;
+        POSITION_MANAGER = pkgInit.positionManager;
     }
 
     function name() public pure override returns (string memory) {
@@ -243,6 +247,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         UniswapV4PoolManagerAwareRepo._initialize(POOL_MANAGER);
         UniswapV4PoolKeyAwareRepo._initialize(decodedArgs.poolKey);
         UniswapV4PositionRepo._initialize(decodedArgs.widthMultiplier, bytes32(0));
+        UniswapV4PositionRepo._setAuthorizedPositionManager(POSITION_MANAGER);
 
         IERC20(tokens[0]).approve(address(PERMIT2), type(uint256).max);
         IERC20(tokens[1]).approve(address(PERMIT2), type(uint256).max);

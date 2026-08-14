@@ -32,10 +32,32 @@ contract UniswapV4StandardExchangePositionImportTarget is
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
         // D15 / T4e: position import hard-reverts while PoolManager is in-session.
         _requireCanOpenPoolManagerUnlock();
+        _requireAuthorizedImport(positionManager, owner, positionTokenId);
         if (IERC20(address(this)).totalSupply() != 0 || UniswapV4PositionRepo._isPositionCreated()) {
             revert UniswapV4ExchangeIn_PositionImportUnavailable();
         }
+        sharesOut = _executeAuthorizedImport(positionManager, positionTokenId, minSharesOut, recipient);
+    }
 
+    function _requireAuthorizedImport(IPositionManager positionManager, address owner, uint256 positionTokenId)
+        internal
+        view
+    {
+        address authorized = address(UniswapV4PositionRepo._authorizedPositionManager());
+        if (authorized == address(0) || address(positionManager) != authorized) {
+            revert UniswapV4ExchangeIn_UntrustedPositionManager();
+        }
+        if (owner != msg.sender || IERC721(address(positionManager)).ownerOf(positionTokenId) != msg.sender) {
+            revert UniswapV4ExchangeIn_UntrustedImportOwner();
+        }
+    }
+
+    function _executeAuthorizedImport(
+        IPositionManager positionManager,
+        uint256 positionTokenId,
+        uint256 minSharesOut,
+        address recipient
+    ) internal returns (uint256 sharesOut) {
         (PoolKey memory poolKey, PositionInfo info) = positionManager.getPoolAndPositionInfo(positionTokenId);
         if (keccak256(abi.encode(poolKey)) != keccak256(abi.encode(_poolKey()))) {
             revert UniswapV4ExchangeIn_InvalidImportedPool();
@@ -49,12 +71,21 @@ contract UniswapV4StandardExchangePositionImportTarget is
         sharesOut = _quoteImportedPositionShares(info, uint128(liquidity));
         if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
 
-        IERC721(address(positionManager)).transferFrom(owner, address(this), positionTokenId);
+        uint256 residual = _sleeveResidual();
+        IERC721(address(positionManager)).transferFrom(msg.sender, address(this), positionTokenId);
         UniswapV4PositionRepo._initializeImportedPosition(
             positionManager, positionTokenId, info.tickLower(), info.tickUpper()
         );
         _refreshStoredLiquidity();
+        if (residual > 0) {
+            ERC20Repo._mint(DEAD_SHARES_SINK, residual);
+        }
         _syncVaultReserves();
         ERC20Repo._mint(recipient, sharesOut);
+    }
+
+    function _sleeveResidual() internal view returns (uint256 residual) {
+        (uint256 sleeve0, uint256 sleeve1) = _freeBalances();
+        residual = sleeve0 + sleeve1;
     }
 }

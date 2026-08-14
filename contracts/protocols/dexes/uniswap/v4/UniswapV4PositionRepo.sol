@@ -36,6 +36,7 @@ library UniswapV4PositionRepo {
         IPositionManager importedPositionManager;
         uint256 importedPositionTokenId;
         bool importedPositionActive;
+        IPositionManager authorizedPositionManager;
         StrategyConfig strategy;
         uint160 lastSqrtPriceX96;
         int24 lastTick;
@@ -275,5 +276,21 @@ library UniswapV4PositionRepo {
 
     function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
         _setPoolState(_layout(), sqrtPriceX96_, tick_, timestamp_);
+    }
+
+    function _setAuthorizedPositionManager(Storage storage layout_, IPositionManager positionManager_) internal {
+        layout_.authorizedPositionManager = positionManager_;
+    }
+
+    function _setAuthorizedPositionManager(IPositionManager positionManager_) internal {
+        _setAuthorizedPositionManager(_layout(), positionManager_);
+    }
+
+    function _authorizedPositionManager(Storage storage layout_) internal view returns (IPositionManager manager_) {
+        return layout_.authorizedPositionManager;
+    }
+
+    function _authorizedPositionManager() internal view returns (IPositionManager manager_) {
+        return _authorizedPositionManager(_layout());
     }
 }

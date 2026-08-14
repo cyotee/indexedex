@@ -20,6 +20,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
     error UniswapV4ExchangeIn_SlippageExceeded();
     error UniswapV4ExchangeIn_PositionImportUnavailable();
     error UniswapV4ExchangeIn_InvalidImportedPool();
+    error UniswapV4ExchangeIn_UntrustedPositionManager();
+    error UniswapV4ExchangeIn_UntrustedImportOwner();
 
     function _swapExactIn(bool zeroForOne, uint256 amountSpecified) internal {
         _executeUnlock(
@@ -92,6 +94,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
 
         amountOut = IERC20(tokenOut).balanceOf(address(this)) - balanceBefore;
         _transferCurrency(tokenOut, recipient, amountOut);
+        _syncVaultReserves();
         _rebalanceLiquidReserveBestEffort();
     }
 
@@ -308,7 +311,18 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         uint256 reserve1Before = total1 - amount1Added;
 
         sharesOut = _sharesOutForDeposit(amount0Added, amount1Added, totalSharesBefore, reserve0Before, reserve1Before);
+        if (sharesOut == 0) {
+            revert UniswapV4Exchange_ZeroAmount();
+        }
         if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
+
+        // A0: residual inventory at empty supply is represented by dead shares, not first-minter NAV.
+        if (totalSharesBefore == 0) {
+            uint256 residual = reserve0Before + reserve1Before;
+            if (residual > 0) {
+                ERC20Repo._mint(DEAD_SHARES_SINK, residual);
+            }
+        }
 
         ERC20Repo._mint(recipient, sharesOut);
         _syncVaultReserves();

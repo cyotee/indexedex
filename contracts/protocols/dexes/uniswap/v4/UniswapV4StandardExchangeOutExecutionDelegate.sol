@@ -21,9 +21,17 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
         ZapOutState memory state;
         state.totalShares = IERC20(address(this)).totalSupply();
 
+        uint256 delivered;
+        if (pretransferred) {
+            delivered = _secureShareDelivery(maxSharesToBurn, true);
+        }
+
         if (!canOpenPoolManagerUnlock()) {
             sharesBurned = _previewZapOutWithdrawal(tokenOut, minAmountOut);
             if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) {
+                revert UniswapV4ExchangeOut_InsufficientInput();
+            }
+            if (pretransferred && sharesBurned > delivered) {
                 revert UniswapV4ExchangeOut_InsufficientInput();
             }
             uint256 freeOut = IERC20(tokenOut).balanceOf(address(this));
@@ -33,9 +41,7 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
             state.actualOut = minAmountOut;
             if (pretransferred) {
                 ERC20Repo._burn(address(this), sharesBurned);
-                if (maxSharesToBurn > sharesBurned) {
-                    ERC20Repo._transfer(address(this), msg.sender, maxSharesToBurn - sharesBurned);
-                }
+                _refundUnusedShares(delivered, sharesBurned, msg.sender);
             } else {
                 ERC20Repo._burn(msg.sender, sharesBurned);
             }
@@ -48,15 +54,16 @@ contract UniswapV4StandardExchangeOutExecutionDelegate is UniswapV4StandardExcha
         if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) {
             revert UniswapV4ExchangeOut_InsufficientInput();
         }
+        if (pretransferred && sharesBurned > delivered) {
+            revert UniswapV4ExchangeOut_InsufficientInput();
+        }
 
         state.actualOut = _executeFreeZapOutWithdrawalCore(tokenOut, sharesBurned, state.totalShares);
         if (state.actualOut < minAmountOut) revert UniswapV4ExchangeOut_SlippageExceeded();
 
         if (pretransferred) {
             ERC20Repo._burn(address(this), sharesBurned);
-            if (maxSharesToBurn > sharesBurned) {
-                ERC20Repo._transfer(address(this), msg.sender, maxSharesToBurn - sharesBurned);
-            }
+            _refundUnusedShares(delivered, sharesBurned, msg.sender);
         } else {
             ERC20Repo._burn(msg.sender, sharesBurned);
         }

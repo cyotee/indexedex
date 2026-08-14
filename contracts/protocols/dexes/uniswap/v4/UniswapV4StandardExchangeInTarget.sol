@@ -66,7 +66,7 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
         }
 
         if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
-            uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            uint256 actualIn = _secureShareDelivery(amountIn, pretransferred);
             amountOut = _delegateExecuteZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient);
             return amountOut;
         }
