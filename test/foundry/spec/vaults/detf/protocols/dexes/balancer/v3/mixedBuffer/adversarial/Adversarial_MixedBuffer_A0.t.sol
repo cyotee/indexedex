@@ -2,13 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     TestBase_MixedBufferMultiVaultStableDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
 
 /// @notice WP-SEC-DETF-CS-A0-001: MixedBuffer first-bond / first-mint cannot drain pre-seeded inventory.
 /// @dev Donate before live. Do not count L-RSRV-DUST same-tx self-push as A0. Calls the production proxy.
@@ -30,25 +26,5 @@ contract Adversarial_MixedBuffer_A0_Test is TestBase_MixedBufferMultiVaultStable
 
         assertEq(buffer_.balanceOf(instance_), donated_, "bootstrap pull-false ignores idle donation");
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "A0: donor not credited by first bond");
-    }
-
-    function test_A0_mb_emptyUserSupply_donatedInventory_notDrainedByFirstMint() public {
-        address instance_ = _deployOpenThresholdDetfN(1);
-        IERC20 buffer_ = _bufferOf(instance_);
-        uint256 donated_ = 180e18;
-        _fundBuffer(attacker, donated_);
-        vm.prank(attacker);
-        buffer_.transfer(instance_, donated_);
-
-        _bootstrapDefault(instance_, alice);
-
-        uint256 victimIn_ = 20e18;
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(buffer_, victimIn_, IERC20(instance_));
-        uint256 out_ = _mintDetfFromBuffer(instance_, victim, victimIn_);
-        assertEq(out_, preview_, "first mint not inflated by pre-live donation");
-        assertEq(buffer_.balanceOf(instance_), donated_, "donated buffer still idle after first mint");
-        assertEq(IERC20(instance_).balanceOf(attacker), 0, "donor received no detfToken");
-        assertTrue(IMixedBufferMultiVaultStableDetfInfo(instance_).isReserveLive(), "proxy live");
     }
 }

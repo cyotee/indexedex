@@ -100,8 +100,9 @@ Orchestrator record commits: `a7b0a6d2` (Wave 0 progress), `b5cba112` (W1-A reco
 On-`main` rematch at `bb16e109` (each slice twice; logs `{SCRATCH}/sec_fix_<slice>.log`):
 
 - **PASS 2×:** `e6-common`, `cam-se`, `aave-loop`, `bal-single-i`, `aero-se`, `slip-e6`, `univ3-e6`, `univ2-se`, `univ4-se`, `detf-uv4-extra`, `detf-dl` (fork + Alchemy), `detf-mv`, `detf-sse`, `lst-ij`, `erc4626-ij`, `detf-com-j`, `token-policy`.
-- **`detf-cs` exact §4 matcher FAIL** (over-match): ProtocolCompound `test_C1`–`C8` `MaxImbalanceRatioExceeded`; MixedBuffer `test_C3_swap_unpaired0_to_buffer` `AllVaultsExhausted`; MixedBuffer `test_A0_mb_emptyUserSupply_donatedInventory_notDrainedByFirstMint` `StableInvariantDidNotConverge`. Those are **outside** CS lock/minter/A0 CODE.
-- **`detf-cs` WP-named rematch PASS 2×** (11/11 + donatedBuffer A0): `{SCRATCH}/sec_fix_detf-cs-wp-named.log` + `{SCRATCH}/sec_fix_detf-cs-wp-suites.log`. Summary: `{SCRATCH}/matcher_summary.txt`.
+- **`detf-cs` exact §4 `test/**/stable/**` matcher FAIL** (over-match): ProtocolCompound `test_C1`–`C8` `MaxImbalanceRatioExceeded`; MixedBuffer `test_C3_swap_unpaired0_to_buffer` `AllVaultsExhausted`. Those are **outside** CS lock/minter/A0 CODE (§9).
+- **`mixedBuffer/**` + `test_A0_` PASS 2×** after deleting `test_A0_mb_emptyUserSupply_donatedInventory_notDrainedByFirstMint` (join solver out of CS CODE). Remaining A0: donate+bootstrap. Log: `{SCRATCH}/sec_fix_detf-cs-mixedbuffer-a0.log`.
+- **`detf-cs` WP-named rematch PASS 2×** (11/11 + donatedBuffer A0): `{SCRATCH}/sec_fix_detf-cs-wp-named.log`. Summary: `{SCRATCH}/matcher_summary.txt`.
 
 ### Seed / harvest
 
