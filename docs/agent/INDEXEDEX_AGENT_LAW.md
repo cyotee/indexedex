@@ -82,6 +82,20 @@ Use **role names**, never product token brands, in contracts, interfaces, storag
 
 See `docs/superpowers/plans/2026-07-14-detf-rich-naming-generalization.md`.
 
+## Token policy (LOCKED — project law, all products)
+
+Universal. Applies to every SE, DETF, hook, router, and DFPkg that takes an IERC20 in `PkgArgs` or as `rateAsset` / `pairToken` / underlying. **Do not re-ask. Do not treat `WP-SEC-TOKEN-001` / `SEC-SPEC-010` as NEEDS_OWNER.**
+
+| Class | Rule |
+|-------|------|
+| **Fee-on-transfer** | **Forbidden** as `rateAsset`, `pairToken`, or any configured underlying. Never a product claim. Never ship `test_L2_FoT_credits_actualIn`. Pull helpers may still credit **observed inbound delta** (I1 / L-CLAIM-3) — that is accounting robustness, **not** FoT support. |
+| **Rebasing underlyings** | **Forbidden** as `rateAsset`, `pairToken`, or any configured underlying (no raw `stETH`-style `balanceOf` rebase). Official wrap faces (`wstETH`, `weETH`, `rETH`, Aave Stata / static aToken) are the required LST / lending faces. **`rebasingClaimToken` is a protocol-issued claim product**, not an underlying — it remains allowed. |
+| **Non-18 decimals** | **Allowed.** Scale amounts to 18 decimals for internal consistency. Do not reject USDC / USDT / WBTC-class decimals and do not invent a decimals allowlist. |
+| **Pause / blacklist** | **Accepted risk.** Issuer freeze is out of protocol scope. Do not add pause / blacklist detection or `PkgArgs` rejection. |
+| **Enforcement** | **Docs + tests only.** No DFPkg `processArgs` allowlist. Proof: `test_L2_FoT_forbidden` with a **real FoT token as the configured token**, not a mock SUT. Official LST / Stata faces are out of that test’s scope. |
+
+Agents must not invent FoT economics, a token allowlist, or a “this family supports FoT” exception.
+
 ## DETF families — common expectations (mandatory for agents)
 
 Apply these to **any** DETF work under `contracts/vaults/detf/**`. Normative product law is this section, code NatSpec, **family PRDs co-located with package code**, and shared cross-family law under `docs/detf/` (compound/expansion PRD + PROGRAM + threshold plans).

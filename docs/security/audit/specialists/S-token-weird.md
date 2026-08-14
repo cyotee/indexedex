@@ -50,7 +50,7 @@ SE AMM v2, LST, Aave Stata, ERC4626/Morpho, Uni V3/V4 SE, hooks (pair tokens), D
 
 ## 4. Recommended epic WPs (Wave 0 style)
 
-`WP-SEC-TOKEN-001` — Wave 3 NEEDS_OWNER: freeze weird-token policy + one L2 test per family that claims FoT support.
+`WP-SEC-TOKEN-001` — **LOCKED** 2026-08-13 (agent law § Token policy): FoT forbidden; rebasing underlyings forbidden; non-18 decimals allowed (scale to 18); pause accepted; `test_L2_FoT_forbidden` only. Do not re-ask.
 
 ## 5. Explicit non-findings (checked, clean)
 

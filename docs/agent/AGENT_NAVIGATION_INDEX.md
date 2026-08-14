@@ -32,6 +32,7 @@ method: cartographer+survey
 | DeFiHackLabs / incident-driven security | `defi-incident-patterns` | `docs/agent/DEFI_HACKLABS_SKILLS_IMPLEMENTATION_PLAN.md` | `lib/DeFiHackLabs` (submodule; reference only) |
 | Test coverage audit (reports only) | `docs/testing/TEST_COVERAGE_AUDIT_PRD.md` | skills DoD + catalog A–K | Outputs under `docs/testing/coverage-audit/`; feeds gap-closure implementation plan |
 | Security audit (reports only) | `docs/security/SECURITY_AUDIT_PRD.md` + `SECURITY_AUDIT_EXECUTE_PLAN.md` | adversarial A–K+A0/L/M/N/O, ethskills-audit/CROPS, sharp-edges, spec-compliance, incident-patterns | Outputs under `docs/security/audit/`; Stage 2 prompt `docs/security/PROMPT_SECURITY_AUDIT_REMEDIATION_PRD.md` → `sec_fix_*` remediations. Complements coverage-audit (`TCA-*`/`gap_cover_*`); do not double-own the same files |
+| Weird tokens (FoT / rebase / decimals / pause) | Do **not** re-ask — **LOCKED** | Agent law § Token policy | FoT and rebasing underlyings forbidden; non-18 decimals allowed (scale to 18); pause accepted; no allowlist |
 | DETF mint/burn/bond/claim/compound | Family PRD + agent law § DETF | `docs/detf/*` shared programs | `contracts/vaults/detf/**` — role names only |
 | Single SE DETF (Balancer V3) | Family package docs | Agent law | `contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/` |
 | Uni V4 Single SE CP DETF | Co-located PRD | `UniswapV4SingleStandardExchangeDETF_PRD.md` | `…/uniswap/v4/standardExchange/constantProduct/single/` |

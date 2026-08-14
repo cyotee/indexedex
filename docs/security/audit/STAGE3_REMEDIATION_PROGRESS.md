@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | **35/36 High closed.** Remainder: owner-gated `WP-SEC-TOKEN-001` (no written FoT/rebase/6-dec/pause policy — not spawned). **No BUILD_BLOCKED.** |
+| **Status** | **36/36 High closed.** `WP-SEC-TOKEN-001` recorded as project law (FoT forbidden; no rebasing underlyings; non-18 decimals allowed / scale to 18; pause accepted; docs + `test_L2_FoT_forbidden`; no allowlist). **No BUILD_BLOCKED.** |
 | **Started** | 2026-08-13 |
 | **Base SHA** | `aa8ec347` |
 | **Tip** | `d6260db0` |
@@ -16,7 +16,7 @@
 
 | Slot | Slice | Status |
 |------|-------|--------|
-| 1–3 | — | free (queue empty except owner-gated token-policy) |
+| 1–3 | — | free |
 
 ## Linear history on main (`sec_fix` stack, newest first)
 
@@ -81,7 +81,7 @@ Orchestrator record commits: `a7b0a6d2` (Wave 0 progress), `b5cba112` (W1-A reco
 | `WP-SEC-I-LST-001` | `lst-ij` | **CLOSED** | `55208c31` |
 | `WP-SEC-J-LST-001` | `lst-ij` | **CLOSED** | `55208c31` |
 | `WP-SEC-I-ERC4626-001` | `erc4626-ij` | **CLOSED** | `cbde922d` |
-| `WP-SEC-TOKEN-001` | `token-policy` | **OPEN** (owner-gated; no written policy) | — |
+| `WP-SEC-TOKEN-001` | `token-policy` | **CLOSED** (docs + `test_L2_FoT_forbidden`; no allowlist) | this commit |
 
 ## Worklog
 
@@ -91,7 +91,8 @@ Orchestrator record commits: `a7b0a6d2` (Wave 0 progress), `b5cba112` (W1-A reco
 - DualLiquidity receive remains same-tx inbound-delta (not no-op, not `held − amountIn`).
 - Uni V3 `_secureTokenTransfer` body not restyled (OWNED_ELSEWHERE).
 - `BasicVaultCommon._secureTokenTransfer` not restyled.
-- Token-policy not spawned: no written owner FoT/rebase/6-dec/pause policy.
+- Token-policy LOCKED 2026-08-13 (owner): FoT forbidden; rebasing underlyings forbidden; non-18 decimals allowed (scale to 18); pause/blacklist accepted; no `processArgs` allowlist. SoT: `docs/agent/INDEXEDEX_AGENT_LAW.md` § Token policy.
+- `token-policy` matcher on `main`: `forge test --match-test 'test_L2_FoT_forbidden' -vv` → 2/2 (ERC4626 SE + Camelot V2 SE).
 
 ### Matcher notes
 

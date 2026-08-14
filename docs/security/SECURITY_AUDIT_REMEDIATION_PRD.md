@@ -150,7 +150,7 @@ Never treat fork `assertGt(attackerProfit, 0)` as coverage. Never greenwash free
 | **Seigniorage** | Open thresholds may allow bounded skew extract — **ACCEPTED_RISK** only with victim-balance + no-free-principal + residual-inventory invariants. Do not “fix” documented seigniorage. |
 | **DualLiquidity delta (SEC-DETF-DL-003)** | **NEEDS_OWNER** pick: (A) durable `U` per L-CLAIM-3 **or** (B) keep same-tx and invert two-tx/Permit2 theater. **Default if owner silent: (B)** — keep same-tx (already I1-safe); invert `pushThenTrue` / Permit2-`true` / surplus-refund-to-caller; NatSpec. **Never restore** no-op `_receive` or `held − amountIn` refund. Do not silently convert to durable `U` (larger blast; closed `WP-I-DETF-DL-001`). |
 | **Orbital `depositClaim` (SEC-DETF-UV4-008)** | Family PRD locks the API. **Default: implement** on orbital (copy weighted). Owner may amend the family PRD instead — then DOCS close, J must not claim a missing selector. |
-| **Weird tokens (SEC-SPEC-010 / WP-SEC-TOKEN-001)** | **NEEDS_OWNER** policy first. Do not invent an allowlist or FoT economics. Wave 3. |
+| **Weird tokens (SEC-SPEC-010 / WP-SEC-TOKEN-001)** | **LOCKED** owner policy (2026-08-13). FoT forbidden. Rebasing underlyings forbidden (`rebasingClaimToken` is a protocol product). Non-18 decimals allowed (scale to 18). Pause / blacklist accepted. Docs + `test_L2_FoT_forbidden` only — **no** `processArgs` allowlist, **no** `test_L2_FoT_credits_actualIn`. Universal. SoT: [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../agent/INDEXEDEX_AGENT_LAW.md) § Token policy. |
 | **Gap-closure I/J/K** | Closed pull bodies stay closed. This program does **not** restyle `BasicVaultCommon._secureTokenTransfer`, MultiVault `_pullToken`, Uni V3 `_secureTokenTransfer`, shared `RebasingClaimToken` pull, hook CP/SE-buffer I, Coordinator I5/J/N. |
 
 ---
@@ -183,7 +183,7 @@ Acceptance language may be refined below; IDs, severity, class, and touch-sets a
 | SEC-DETF-MV-007 | High TEST | this program | `WP-SEC-DETF-MV-A0-001` |
 | SEC-CROPS-001 | High CODE | this program | `WP-SEC-CROPS-001` |
 | SEC-SPEC-001 | High OE (alias) | this program via alias | same as `SEC-CROPS-001` → `WP-SEC-CROPS-001` |
-| SEC-SPEC-010 | High NEEDS_OWNER | this program | `WP-SEC-TOKEN-001` |
+| SEC-SPEC-010 | High LOCKED | this program | `WP-SEC-TOKEN-001` |
 | SEC-SPEC-020 | High CODE | this program | `WP-SEC-E6-COMMON-001` (epic pointer) |
 | SEC-SPEC-030 | High TEST | this program | `WP-SEC-I-LST-001` + `WP-SEC-J-LST-001` + `WP-SEC-I-ERC4626-001` + `WP-SEC-E6-SLIP-001` |
 | SEC-SPEC-040 | High OE | appendix | `WP-I5-RTR-001` |
@@ -350,7 +350,7 @@ Full §8 fields (problem, out-of-scope, implementation notes) remain in the Stag
 | `sec_fix_detf-com-j` (`sec_fix/detf-com-j`) | `WP-SEC-DETF-COM-J-001` | none unless PAT-J-OMIT. **Not** `WP-I-CLAIM-001` pull | claim + NFT vault `test_J*` after CREATE3/registry deploy | Wave 0 (no file share) | **1** |
 | `sec_fix_lst-ij` (`sec_fix/lst-ij`) | `WP-SEC-I-LST-001`, `WP-SEC-J-LST-001` | none unless helper regression / PAT-J-OMIT | `test/foundry/spec/protocol/staking/{lido,etherfi,rocket-pool}/**` `test_I1_*`, `test_I2_*`, `test_I3_*`, `test_J*` | Wave 0 (no file share) | **1** |
 | `sec_fix_erc4626-ij` (`sec_fix/erc4626-ij`) | `WP-SEC-I-ERC4626-001` | none | `test/foundry/spec/vaults/standard/erc4626/**` `test_I1_*`, `test_I2_*`, `test_I3_*`, `test_J*` (rename theater I1) | Wave 0 (no file share) | **1** |
-| `sec_fix_token-policy` (`sec_fix/token-policy`) | `WP-SEC-TOKEN-001` | optional DFPkg `processArgs` allowlist **only after** owner policy | one `test_L2_*` per family that claims FoT (real FoT token) | Wave 1 complete + **NEEDS_OWNER** policy | **3** |
+| `sec_fix_token-policy` (`sec_fix/token-policy`) | `WP-SEC-TOKEN-001` | none (no allowlist) | `test_L2_FoT_forbidden` (real FoT as configured token) | Wave 1 complete + **LOCKED** policy | **3** |
 
 **Spawn count:** 18 slices (1 Wave 0 + 16 Wave 1 + 1 Wave 3). **No slice** lists an OWNED_ELSEWHERE primary file as its production touch-set.
 
@@ -498,7 +498,7 @@ Global anti-theater (every slice):
 
 | Slice | Forge / artifact | Required names | Proof-first | Anti-theater |
 |-------|------------------|----------------|-------------|--------------|
-| `sec_fix_token-policy` | written policy **plus** `forge test --match-test 'test_L2_FoT_credits_actualIn\|test_L2_FoT_forbidden'` on families that claim FoT | `test_L2_*` | no | real FoT as **configured** token, not mock SUT; official LST/Stata faces out of scope |
+| `sec_fix_token-policy` | written policy (agent law § Token policy) **plus** `forge test --match-test 'test_L2_FoT_forbidden'` | `test_L2_FoT_forbidden` | no | real FoT as **configured** token, not mock SUT; official LST/Stata faces out of scope; never `credits_actualIn` |
 
 ---
 
@@ -506,7 +506,7 @@ Global anti-theater (every slice):
 
 Stage 3 of **this** program is done when:
 
-- [ ] All **36** High `WP-SEC-*` in §5.2 are merged **or** `BUILD_BLOCKED` (fork RPC only) **or** owner-gated `WP-SEC-TOKEN-001` with a recorded policy + tests
+- [x] All **36** High `WP-SEC-*` in §5.2 are merged **or** `BUILD_BLOCKED` (fork RPC only) **or** owner-gated `WP-SEC-TOKEN-001` with a recorded policy + tests
 - [ ] Every touched path’s §9 forge matcher is green on `main` (evidence in PR/worklog)
 - [ ] No unbounded extract / free mint is greenwashed
 - [ ] I1 suites do not use happy pretransfer+real transfer as the I1 case

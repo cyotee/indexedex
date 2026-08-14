@@ -119,7 +119,7 @@ Extend the Crane attack catalog. Keep letter IDs stable; **do not renumber A–K
 | ID | Attack | Priority | Notes |
 |----|--------|----------|-------|
 | **L1** | Untracked balance / public skim-class surplus on protocol-owned or protocol-priced inventory | P0 if product holds AMM LP or prices from pair reserves | |
-| **L2** | FoT / deflationary transfer leaves books ≠ balances | P1 for SE underlyings that may be FoT; P0 if product claims FoT support | Aligns with **I4** |
+| **L2** | FoT / deflationary transfer leaves books ≠ balances | **Forbidden** as a product claim (agent law § Token policy). `test_L2_FoT_forbidden` only — never `credits_actualIn` | Aligns with **I4** |
 | **L3** | Burn-from-pair or direct pair reserve skew used as mint/burn oracle | P0 when mint/burn uses spot/reserves without TWAP/deadband policy | Overlaps **B**; document boundary in skill |
 | **M1** | Public arbitrary `call`/`delegatecall` with held ERC20 allowance | P0 for any router/helper/facet that forwards calldata | |
 | **M2** | User-supplied swap target without path/out validation | P0 for issuance/exchange helpers | |

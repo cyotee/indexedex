@@ -75,7 +75,7 @@ See `AGENTS.md` DETF section and `docs/superpowers/plans/2026-07-14-detf-rich-na
 | **L1** | Untracked LP/pair surplus if SE/DETF prices or holds AMM inventory; idle native/ERC20 + public reclaim | No free mint/extract from skim-class surplus |
 | **E6** | Any residual-return / overpay-refund / “sweep excess” on SE/DETF/helpers | Refund ≤ this-call overpay or caller credit; prior inventory stays |
 | **F5** | Permissionless migrate/resize/reclaim-style ops (if any helper/facet exposes them) | Auth-gated or cannot free-extract trading proceeds |
-| **L2** | FoT pairToken/rateAsset (if product allows) | Credit actualIn; else defer “FoT forbidden” |
+| **L2** | FoT pairToken/rateAsset | **Forbidden** (agent law § Token policy). `test_L2_FoT_forbidden` with a real FoT as the configured token. Never `test_L2_FoT_credits_actualIn`. |
 | **L3** | Spot/reserve skew of underlying SE pools | Overlaps B1; free-mint beyond deadband blocked |
 | **M1–M3** | Any router/helper/facet that forwards calldata or holds open allowances | Usually N/A on pure vault diamond — defer with NatSpec if no helper |
 | **N1** | Multi-step bond/issue with external hooks/callbacks | Hostile mid-flow unit change cannot inflate credit |
@@ -157,7 +157,7 @@ Every SE / vault / DETF with pull-or-credit paths:
 | ID | When required on SE / DETF |
 |----|----------------------------|
 | **L1 / L3** | SE or DETF mint/burn prices from AMM pair reserves or holds LP inventory |
-| **L2** | Product claims FoT support on underlyings; else defer “FoT forbidden” |
+| **L2** | FoT underlyings are **forbidden** on every product. `test_L2_FoT_forbidden` (real FoT as configured token). Do not defer and do not add a FoT-success path. |
 | **M1–M3** | Any helper/router/facet forwards user calldata or holds open ERC20 allowances |
 | **N1** | Multi-step bond/issue with untrusted callback/hook between quote and settle |
 | **O1–O2** | Permit / Permit2 / EIP-712 money paths exist |
@@ -176,7 +176,7 @@ When deferring P2 or inapplicable L/M/N/O, put the reason on the suite:
 /// @dev Deferred P2: A4 dust initializeReserve grief; A5 fee-slice double-claim (FeeNonDilution).
 ///      B2 reserve sandwich; C4 hostile rateAsset; peer DETF ports.
 /// @dev Deferred M*: no router/helper surface. Deferred O*: no permit path.
-///      Deferred L2: FoT underlyings forbidden by product policy.
+///      L2: FoT underlyings forbidden (agent law § Token policy) — test_L2_FoT_forbidden.
 ```
 
 Do not leave catalog IDs silently missing.

@@ -367,9 +367,9 @@ forge test --match-path 'test/**/bondNft/**' --match-test 'test_J' -vv
 
 | Batch | Slice ID | WPs | Deps |
 |-------|----------|-----|------|
-| **W3** | `token-policy` | `WP-SEC-TOKEN-001` | All Wave 1 FFd **and** written owner policy for FoT / rebase / 6-dec / pause underlyings |
+| **W3** | `token-policy` | `WP-SEC-TOKEN-001` | All Wave 1 FFd **and** written owner policy (LOCKED 2026-08-13: FoT forbidden; no rebasing underlyings; non-18 decimals allowed / scale to 18; pause accepted; docs + `test_L2_FoT_forbidden` only) |
 
-Do **not** invent an allowlist. If the owner has not decided, leave this slice unspawned (WP stays open, High, not silently dropped).
+Do **not** invent an allowlist. Policy is recorded in [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../agent/INDEXEDEX_AGENT_LAW.md) § Token policy.
 
 ```bash
 forge test --match-test 'test_L2_FoT_credits_actualIn|test_L2_FoT_forbidden' -vv
@@ -737,12 +737,12 @@ Notes: J3 on proxy.
 ```text
 SLICE: token-policy
 WPs: WP-SEC-TOKEN-001
-Production: optional DFPkg processArgs allowlist ONLY after written owner policy
-Tests: test_L2_* on families that claim FoT
-Out of scope: official LST/Stata faces; inventing economics
+Production: none (no processArgs allowlist)
+Tests: test_L2_FoT_forbidden on IERC20-config surfaces (ERC4626 SE + Camelot V2 SE)
+Out of scope: official LST/Stata faces; inventing economics; credits_actualIn
 Proof-first: no
-Acceptance: written policy + forge test --match-test 'test_L2_FoT_credits_actualIn|test_L2_FoT_forbidden' -vv
-Notes: real FoT as the configured token, not mock SUT. If no owner policy, do not spawn.
+Acceptance: written policy (agent law § Token policy) + forge test --match-test 'test_L2_FoT_forbidden' -vv
+Notes: real FoT as the configured token, not mock SUT. Owner policy LOCKED 2026-08-13.
 ```
 
 ---
@@ -763,7 +763,7 @@ Notes: real FoT as the configured token, not mock SUT. If no owner policy, do no
 
 ## 10. Program DoD (Stage 3)
 
-- [ ] All **36** High `WP-SEC-*` merged, or only `BUILD_BLOCKED` / owner-gated `WP-SEC-TOKEN-001` remain
+- [x] All **36** High `WP-SEC-*` merged (token-policy recorded; no BUILD_BLOCKED)
 - [ ] Split WPs (`E6-SE`, `R4-SE`, `A0-SE`, `I-SE-4626`, `CROPS`) closed on **every** listed slice
 - [ ] Each slice’s §4 forge matcher green on `main` (worklog evidence)
 - [ ] No unbounded extract greenwashed; I1 ≠ happy pretransfer+transfer; J calls proxy

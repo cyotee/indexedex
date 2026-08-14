@@ -4,7 +4,9 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {FeeOnTransferERC20} from "contracts/test/stubs/FeeOnTransferERC20.sol";
 import {
     TestBase_CamelotV2StandardExchange
 } from "contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol";
@@ -196,5 +198,38 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         assertEq(vault.totalSupply(), supplyBefore_, "I1 lpDeposit: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1 lpDeposit: attacker shares unchanged");
         assertEq(lp_.balanceOf(address(vault)), vaultLpBefore_, "I1 lpDeposit: LP inventory unmoved");
+    }
+
+    /// @notice L2: real FoT as configured pairToken cannot credit claimed face.
+    /// @dev Agent law § Token policy. Production Camelot V2 SE proxy. Not a FoT-success path.
+    function test_L2_FoT_forbidden() public {
+        FeeOnTransferERC20 fot = new FeeOnTransferERC20("FOT", "FOT", 1000);
+        ERC20PermitMintableStub other =
+            new ERC20PermitMintableStub("Other", "OTH", 18, address(this), 10_000 ether);
+        uint256 seed_ = SEED;
+        fot.mint(address(this), seed_);
+        fot.approve(address(camelotV2StandardExchangeDFPkg), seed_);
+        other.approve(address(camelotV2StandardExchangeDFPkg), seed_);
+        IStandardExchangeProxy fotVault = IStandardExchangeProxy(
+            camelotV2StandardExchangeDFPkg.deployVault(
+                IERC20(address(fot)), seed_, IERC20(address(other)), seed_, address(this)
+            )
+        );
+
+        uint256 claimed_ = 10 ether;
+        fot.mint(attacker, claimed_);
+        vm.startPrank(attacker);
+        fot.transfer(address(fotVault), claimed_);
+        uint256 observed_ = fot.balanceOf(address(fotVault));
+        assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, observed_
+            )
+        );
+        fotVault.exchangeIn(
+            IERC20(address(fot)), claimed_, IERC20(address(other)), 0, attacker, true, _deadline()
+        );
+        vm.stopPrank();
     }
 }

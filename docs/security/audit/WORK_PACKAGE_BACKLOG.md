@@ -39,7 +39,7 @@ No Critical `SEC-*`. Every **High** `SEC-*` is listed individually (no ranges).
 | SEC-DETF-MV-007 | High TEST | `WP-SEC-DETF-MV-A0-001` | missing `test_A0_*` |
 | SEC-CROPS-001 | High CODE | `WP-SEC-CROPS-001` | disable-on-exit |
 | SEC-SPEC-001 | High OE | — | same as `SEC-CROPS-001` |
-| SEC-SPEC-010 | High NEEDS_OWNER | `WP-SEC-TOKEN-001` | weird tokens |
+| SEC-SPEC-010 | High LOCKED | `WP-SEC-TOKEN-001` | weird tokens |
 | SEC-SPEC-020 | High CODE | `WP-SEC-E6-COMMON-001` | E6 epic pointer (no extra tree) |
 | SEC-SPEC-030 | High TEST | `WP-SEC-I-LST-001` + `WP-SEC-J-LST-001` + `WP-SEC-I-ERC4626-001` + `WP-SEC-E6-SLIP-001` | J leftovers |
 | SEC-SPEC-040 | High OE | — | Coordinator I5 `WP-I5-RTR-001` |
@@ -1008,7 +1008,7 @@ Skip all OWNED_ELSEWHERE (gap_cover_* owns those files).
 | **Conflicts with coverage-audit WP** | none |
 | **Suggested worktree** | `sec_fix_token-policy` / `sec_fix/token-policy` |
 | **Implementation notes** | Do not invent economics. |
-| **Acceptance** | written policy + `test_L2_FoT_credits_actualIn` or `test_L2_FoT_forbidden` |
+| **Acceptance** | written policy (LOCKED: agent law § Token policy) + `test_L2_FoT_forbidden` |
 | **Anti-theater checks** | real FoT as configured token, not mock SUT |
 | **Proof-first?** | no |
 | **Estimate** | M |

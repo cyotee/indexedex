@@ -55,7 +55,7 @@ Use when implementing or reviewing adversarial suites for any IndexedEx DETF or 
 | F1 No free diamondCut / unowned | |
 | F4 Weights/rates immutable | no setter |
 | G1 Nested outer does not brick inner | third user on nested |
-| **L2** FoT credit actualIn | P0 if product claims FoT support |
+| **L2** FoT forbidden | Universal. `test_L2_FoT_forbidden` with real FoT as configured token. Never credit-actualIn. |
 | **N2** preview vs execute | documented tolerance OK |
 | **O3** EIP-712 domain / Permit2 typed data | also **I5** |
 

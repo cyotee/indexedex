@@ -12,6 +12,7 @@ import {TestBase_ERC4626StandardExchange} from
     "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+import {FeeOnTransferERC20} from "contracts/test/stubs/FeeOnTransferERC20.sol";
 
 /**
  * @title ERC4626StandardExchange_Adversarial
@@ -19,7 +20,8 @@ import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
  * @dev Catalog I1–I3 on durable reserve-delta `_securePull` + J1–J3 on the registry proxy.
  *      I1 is pretransferred=true with **no** in-call transfer against booked `R==B` (U=0).
  *      Happy pretransfer + real transfer is not I1.
- *      Deferred: A0 named suite (not this WP); L2 FoT policy (`WP-SEC-TOKEN-001`);
+ *      L2: FoT underlyings forbidden (agent law § Token policy) — `test_L2_FoT_forbidden`.
+ *      Deferred: A0 named suite (not this WP);
  *      M* no router/helper surface; O* Permit2 not exercised here.
  */
 contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange {
@@ -345,5 +347,35 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         seIn.exchangeIn(
             IERC20(address(protocolVault)), 1 ether, IERC20(se), 0, attacker, true, _deadline()
         );
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  L2: FoT as configured underlying is forbidden (face credit reverts)   */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice L2: real FoT as the configured underlying cannot credit claimed face.
+    /// @dev Agent law § Token policy. Not a FoT-success path.
+    function test_L2_FoT_forbidden() public {
+        FeeOnTransferERC20 fot = new FeeOnTransferERC20("FOT", "FOT", 1000);
+        SimpleYieldERC4626 fotVault = new SimpleYieldERC4626(fot);
+        address fotSe = _deployERC4626SE(address(fotVault));
+        IStandardExchangeIn fotSeIn = IStandardExchangeIn(fotSe);
+
+        uint256 claimed_ = 10 ether;
+        fot.mint(user, claimed_);
+        vm.startPrank(user);
+        fot.transfer(fotSe, claimed_);
+        uint256 observed_ = fot.balanceOf(fotSe);
+        assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, observed_
+            )
+        );
+        fotSeIn.exchangeIn(
+            IERC20(address(fot)), claimed_, IERC20(fotSe), 0, user, true, _deadline()
+        );
+        vm.stopPrank();
+        assertEq(IERC20(fotSe).totalSupply(), 0, "L2: no SE mint on FoT face claim");
     }
 }
