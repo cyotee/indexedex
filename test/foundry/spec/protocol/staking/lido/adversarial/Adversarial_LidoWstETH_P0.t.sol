@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
 import {TestBase_LidoWstETHStandardExchange} from
     "contracts/test/bases/TestBase_LidoWstETHStandardExchange.sol";
@@ -20,6 +22,9 @@ import {
 import {
     LidoWstETHStandardExchangeCommon
 } from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol";
+import {
+    LidoWstETHStandardExchangeInTarget
+} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol";
 
 /**
  * @title Adversarial_LidoWstETH_P0_Test
@@ -511,6 +516,218 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hostile.reentryAttempts(), 1);
         assertFalse(hostile.nestedCallSucceeded());
         assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  I1–I3: same-tx inbound-delta (WP-SEC-I-LST-001)                       */
+    /* ---------------------------------------------------------------------- */
+
+    /// @notice I1: inventory sitting, pretransferred=true, no in-call transfer → delta=0 revert.
+    function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
+        _seedVaultInventory(10 ether, 10 ether);
+        uint256 claimed = 1 ether;
+        uint256 invBefore = hermeticWeth.balanceOf(seVault);
+        assertGe(invBefore, claimed, "absolute inventory present");
+        uint256 supplyBefore = IERC20(seVault).totalSupply();
+        uint256 attackerSharesBefore = IERC20(seVault).balanceOf(attacker);
+        assertEq(hermeticWeth.balanceOf(attacker), 0, "attacker drained");
+        assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
+            )
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        assertEq(IERC20(seVault).totalSupply(), supplyBefore, "I1: no free vaultShare");
+        assertEq(IERC20(seVault).balanceOf(attacker), attackerSharesBefore, "I1: attacker shares unchanged");
+        assertEq(hermeticWeth.balanceOf(seVault), invBefore, "I1: inventory unchanged");
+    }
+
+    /// @notice I2: short prior push then claim more with pretransferred=true.
+    ///         Same-tx snapshot is after the push, so observed delta=0 → InsufficientDeposit(claimed, 0).
+    function test_I2_shortPush_pretransferred_claimedGtDelta_reverts() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        uint256 claimed = 1 ether;
+        uint256 shortPush = 0.4 ether;
+        require(shortPush > 0 && shortPush < claimed, "need short < claimed");
+
+        _dealWeth(attacker, shortPush);
+        vm.prank(attacker);
+        hermeticWeth.transfer(seVault, shortPush);
+
+        uint256 invAfterPush = hermeticWeth.balanceOf(seVault);
+        uint256 supplyBefore = IERC20(seVault).totalSupply();
+        assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
+            )
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        assertEq(IERC20(seVault).totalSupply(), supplyBefore, "I2: no mint on short");
+        assertEq(IERC20(seVault).balanceOf(attacker), 0, "I2: attacker no vaultShare");
+        assertEq(hermeticWeth.balanceOf(seVault), invAfterPush, "I2: short push not consumed");
+    }
+
+    /// @notice I3: residual after an honest pull cannot fund a second free pretransfer credit.
+    function test_I3_residualInventory_cannotFundSecondFreePretransfer() public {
+        _seedVaultInventory(5 ether, 5 ether);
+
+        uint256 victimIn = 2 ether;
+        _dealWeth(victim, victimIn);
+        vm.startPrank(victim);
+        hermeticWeth.approve(seVault, victimIn);
+        uint256 minted = seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            victimIn,
+            IERC20(seVault),
+            0,
+            victim,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(minted, 0, "honest first pull");
+
+        uint256 residual = hermeticWeth.balanceOf(seVault);
+        assertGt(residual, 0, "residual inventory remains");
+        uint256 claim = residual > 1 ether ? 1 ether : residual;
+        uint256 supplyBefore = IERC20(seVault).totalSupply();
+        assertEq(hermeticWeth.balanceOf(attacker), 0, "I3: attacker drained");
+        assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claim, uint256(0)
+            )
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claim,
+            IERC20(seVault),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        assertEq(IERC20(seVault).totalSupply(), supplyBefore, "I3: no second free mint");
+        assertEq(hermeticWeth.balanceOf(seVault), residual, "I3: residual unmoved");
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  J1–J3: Target ⊆ facetFuncs ⊆ loupe ⊆ proxy (WP-SEC-J-LST-001)         */
+    /* ---------------------------------------------------------------------- */
+
+    function _facetFuncsContains(bytes4[] memory funcs_, bytes4 sel_) internal pure returns (bool) {
+        for (uint256 i; i < funcs_.length; ++i) {
+            if (funcs_[i] == sel_) return true;
+        }
+        return false;
+    }
+
+    function _lidoMoneySelectors() internal pure returns (bytes4[] memory sels_) {
+        sels_ = new bytes4[](6);
+        sels_[0] = IStandardExchangeIn.previewExchangeIn.selector;
+        sels_[1] = IStandardExchangeIn.exchangeIn.selector;
+        sels_[2] = LidoWstETHStandardExchangeInTarget.exchangeInEth.selector;
+        sels_[3] = IStandardExchangeOut.previewExchangeOut.selector;
+        sels_[4] = IStandardExchangeOut.exchangeOut.selector;
+        sels_[5] = ILidoWstETHRebalance.rebalance.selector;
+    }
+
+    /// @notice J1: Target/product money selectors ⊆ CREATE3 facetFuncs (not an incomplete Facet copy).
+    function test_J1_facetFuncs_coversTargetApi() public view {
+        bytes4[] memory inFuncs_ = IFacet(address(lidoExchangeInFacet)).facetFuncs();
+        assertTrue(_facetFuncsContains(inFuncs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewIn");
+        assertTrue(_facetFuncsContains(inFuncs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
+        assertTrue(
+            _facetFuncsContains(inFuncs_, LidoWstETHStandardExchangeInTarget.exchangeInEth.selector),
+            "J1 exchangeInEth"
+        );
+
+        bytes4[] memory outFuncs_ = IFacet(address(lidoExchangeOutFacet)).facetFuncs();
+        assertTrue(
+            _facetFuncsContains(outFuncs_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewOut"
+        );
+        assertTrue(_facetFuncsContains(outFuncs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
+
+        bytes4[] memory rebFuncs_ = IFacet(address(lidoRebalanceFacet)).facetFuncs();
+        assertTrue(_facetFuncsContains(rebFuncs_, ILidoWstETHRebalance.rebalance.selector), "J1 rebalance");
+    }
+
+    /// @notice J2: loupe facetAddress(sel) != 0 and != proxy after registry deploy.
+    function test_J2_proxyLoupe_allProductSelectors() public view {
+        IDiamondLoupe loupe_ = IDiamondLoupe(seVault);
+        bytes4[] memory controls_ = _lidoMoneySelectors();
+        for (uint256 i; i < controls_.length; ++i) {
+            address facetAddr_ = loupe_.facetAddress(controls_[i]);
+            assertTrue(facetAddr_ != address(0), "J2 loupe zero facet");
+            assertTrue(facetAddr_ != seVault, "J2 facet != proxy");
+        }
+    }
+
+    /// @notice J3: smoke-call money + view selectors on the **proxy**, never the facet impl.
+    function test_J3_proxyCallable_smoke_eachSelector() public {
+        IDiamondLoupe loupe_ = IDiamondLoupe(seVault);
+        address inFacet_ = loupe_.facetAddress(IStandardExchangeIn.exchangeIn.selector);
+        address outFacet_ = loupe_.facetAddress(IStandardExchangeOut.exchangeOut.selector);
+        address ethFacet_ = loupe_.facetAddress(LidoWstETHStandardExchangeInTarget.exchangeInEth.selector);
+        address rebFacet_ = loupe_.facetAddress(ILidoWstETHRebalance.rebalance.selector);
+        assertTrue(inFacet_ != address(0) && inFacet_ != seVault, "J3 proxy cut in");
+        assertTrue(outFacet_ != address(0) && outFacet_ != seVault, "J3 proxy cut out");
+        assertTrue(ethFacet_ != address(0) && ethFacet_ != seVault, "J3 proxy cut exchangeInEth");
+        assertTrue(rebFacet_ != address(0) && rebFacet_ != seVault, "J3 proxy cut rebalance");
+
+        _seedVaultInventory(3 ether, 3 ether);
+
+        uint256 previewIn_ =
+            IStandardExchangeIn(seVault).previewExchangeIn(IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault));
+        assertGt(previewIn_, 0, "J3 previewExchangeIn live on proxy");
+
+        uint256 previewOut_ =
+            IStandardExchangeOut(seVault).previewExchangeOut(IERC20(seVault), IERC20(address(hermeticWeth)), 1e17);
+        assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
+
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, uint256(1 ether), uint256(0)
+            )
+        );
+        IStandardExchangeIn(seVault).exchangeIn(
+            IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
+        );
+
+        vm.expectRevert(ILidoWstETHStandardVault.ZeroAmount.selector);
+        LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 0}(
+            IERC20(seVault), 0, attacker, block.timestamp + 1 hours
+        );
+
+        seRebalance.rebalance();
     }
 }
 
