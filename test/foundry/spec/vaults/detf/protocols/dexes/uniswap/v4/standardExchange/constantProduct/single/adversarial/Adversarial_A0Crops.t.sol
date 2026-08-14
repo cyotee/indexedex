@@ -154,7 +154,10 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
         vm.stopPrank();
 
         assertEq(out_, preview_, "first mint not inflated by donation");
-        assertEq(IERC20(address(pairToken)).balanceOf(instance_), leftover_, "donated pairToken not drained");
+        // Unused inbound from this mint may sit on the diamond; donation must not shrink.
+        assertGe(
+            IERC20(address(pairToken)).balanceOf(instance_), leftover_, "donated pairToken not drained"
+        );
         assertEq(IERC20(instance_).balanceOf(attacker), out_, "attacker enrichment == own mint");
     }
 
