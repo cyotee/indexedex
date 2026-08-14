@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC4626Errors} from "@crane/contracts/interfaces/IERC4626Errors.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -61,6 +60,44 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
 
         assertEq(sharesOut, preview, "Execution should match preview");
         assertEq(vault.balanceOf(recipient), preview, "Recipient should receive preview shares");
+    }
+
+    /// @notice R4: convert against pre-deposit reserve; preview ≡ execute.
+    function test_R4_previewEqualsExecute_route4() public {
+        IStandardExchangeProxy vault = _getVault(PoolConfig.Balanced);
+        IUniswapV2Pair pair = _getPool(PoolConfig.Balanced);
+        IERC20 lpToken = IERC20(address(pair));
+        IERC20 vaultToken = IERC20(address(vault));
+        uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
+        require(lpAmount > MIN_TEST_AMOUNT, "Insufficient LP balance");
+        address recipient = makeAddr("r4PreviewRecipient");
+
+        lpToken.approve(address(vault), lpAmount);
+        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertEq(sharesOut, preview, "R4: preview == execute against pre-deposit reserve");
+        assertEq(vault.balanceOf(recipient), sharesOut, "R4 recipient shares");
+    }
+
+    /// @notice R4: large deposit vs TVL uses pre-deposit reserve (no 2% theater).
+    function test_R4_largeDeposit_sharesEqPreview_preDepositReserve() public {
+        IStandardExchangeProxy vault = _getVault(PoolConfig.Balanced);
+        IUniswapV2Pair pair = _getPool(PoolConfig.Balanced);
+        IERC20 lpToken = IERC20(address(pair));
+        IERC20 vaultToken = IERC20(address(vault));
+        uint256 vaultLp = lpToken.balanceOf(address(vault));
+        uint256 heldLp = lpToken.balanceOf(address(this));
+        uint256 lpAmount = heldLp / 2;
+        if (vaultLp > 0 && lpAmount > vaultLp) lpAmount = vaultLp;
+        require(lpAmount > MIN_TEST_AMOUNT, "large LP");
+        address recipient = makeAddr("r4LargeRecipient");
+
+        lpToken.approve(address(vault), lpAmount);
+        uint256 preview = vault.previewExchangeIn(lpToken, lpAmount, vaultToken);
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertGt(preview, 0, "R4 large preview");
+        assertEq(sharesOut, preview, "R4 large: exec == pre-deposit preview");
+        assertEq(vault.balanceOf(recipient), sharesOut, "R4 large recipient");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -234,14 +271,19 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
+        address recipient = makeAddr("recipient");
 
         lpToken.transfer(address(vault), donation);
         lpToken.approve(address(vault), lpAmount);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, lpAmount + donation)
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), false, _deadline());
+        uint256 vaultLpBefore = lpToken.balanceOf(address(vault));
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, false, _deadline());
+        assertGt(sharesOut, 0, "Honest pull still mints");
+        assertEq(lpToken.balanceOf(address(vault)), vaultLpBefore + lpAmount, "Donation plus pull stay");
+        // A0: donation is pre-deposit reserve; redeem of minted shares cannot drain it.
+        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
+        assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }
 
     function test_Route4VaultDeposit_reverts_whenDonationPlusPretransferCausesTransferMismatch_pretransferred_true()
@@ -256,15 +298,14 @@ contract UniswapV2StandardExchangeIn_VaultDeposit_Test is TestBase_UniswapV2Stan
         uint256 lpAmount = lpToken.balanceOf(address(this)) / 100;
         uint256 donation = lpAmount / 2;
         require(donation > 0, "Donation too small");
+        address recipient = makeAddr("recipient");
 
         lpToken.transfer(address(vault), lpAmount + donation);
-        lpToken.approve(address(vault), lpAmount);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC4626Errors.ERC4626TransferNotReceived.selector, lpAmount, donation + (lpAmount * 2)
-            )
-        );
-        vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, makeAddr("recipient"), true, _deadline());
+        uint256 sharesOut = vault.exchangeIn(lpToken, lpAmount, vaultToken, 0, recipient, true, _deadline());
+        assertGt(sharesOut, 0, "Honest pretransfer still mints");
+        uint256 lpOut = vault.exchangeIn(vaultToken, sharesOut, lpToken, 0, recipient, false, _deadline());
+        assertLe(lpOut, lpAmount, "Donation not redeemed by depositor");
+        assertGe(lpToken.balanceOf(address(vault)), donation, "Donated residual remains");
     }
 }

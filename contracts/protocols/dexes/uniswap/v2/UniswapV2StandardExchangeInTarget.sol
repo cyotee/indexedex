@@ -14,7 +14,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
-import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
 import {
     UniswapV2FactoryAwareRepo
 } from "@crane/contracts/protocols/dexes/uniswap/v2/aware/UniswapV2FactoryAwareRepo.sol";
@@ -199,12 +198,10 @@ contract UniswapV2StandardExchangeInTarget is
             // Calculates the vault fee.
             // Will add fee shares to vault.vaultTotalShares.
             _calcVaultFee(indexSource, vault);
-            // `exchangeIn` computes shares against the post-deposit reserve.
-            // Mirror that here so preview matches execution.
-            uint256 reserveAfter = vault.vaultLpReserve + amountIn;
-            // Calculate the shares received for a deposit of the underlying pool token for amountIn.
+            // Convert against pre-deposit live LP so preview ≡ execute (R4 / A0).
+            uint256 reserveBefore = indexSource.pool.balanceOf(address(this));
             amountOut = BetterMath._convertToSharesDown(
-                amountIn, reserveAfter, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+                amountIn, reserveBefore, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
             );
             return amountOut;
         }
@@ -287,12 +284,9 @@ contract UniswapV2StandardExchangeInTarget is
                 // bool feeOn
                 UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
             );
-            // `exchangeIn` computes shares against the post-deposit reserve.
-            // Mirror that here so preview matches execution.
-            uint256 reserveAfter = vault.vaultLpReserve + amountIn;
-            // Calculate the shares minted for the LP tokens from the swap/deposit.
+            // Convert LP quote against pre-zap vaultLpReserve (A0 / R4).
             amountOut = BetterMath._convertToSharesDown(
-                amountIn, reserveAfter, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+                amountIn, vault.vaultLpReserve, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
             );
             // console.log("UniswapV2StandardExchangeInFacet::previewExchangeIn: amountOut", amountOut);
             return amountOut;
@@ -366,7 +360,10 @@ contract UniswapV2StandardExchangeInTarget is
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountOut) {
-        _requireNotDisabled();
+        // CROPS: inbound-only disable. vaultShare exit stays live after registry disable.
+        if (address(tokenIn) != address(this)) {
+            _requireNotDisabled();
+        }
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -569,29 +566,30 @@ contract UniswapV2StandardExchangeInTarget is
             // Calculates the vault fee.
             // Will add fee shares to vault.vaultTotalShares.
             _calcAndMintVaultFee(indexSource, vault);
-            // Mint the shares to the protocol.
-            // Use the total share overload to save gas on loading the total supply.
-            // ERC20Repo._mint(
-            //     // address account,
-            //     VaultFeeOralceQueryAwareRepo._feeOracle().feeTo(),
-            //     // uint256 amount,
-            //     vault.feeShares
-            // );
-            // Secure the pool token to vault control.
-            amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layoutStruct(),
-                vault.vaultLpReserve,
-                // uint256 amountTokenToDeposit,
-                amountIn
+            // Convert against live LP before this-call inbound so donated residual is reserve (A0).
+            // Honor pretransferred: false always pulls. Do not credit lastTotalAssets exact-gap (I1).
+            uint256 liveBefore = indexSource.pool.balanceOf(address(this));
+            uint256 reserveBefore = pretransferred
+                ? (liveBefore > amountIn ? liveBefore - amountIn : 0)
+                : liveBefore;
+            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            amountOut = BetterMath._convertToSharesDown(
+                // uint256 assets,
+                amountIn,
+                // uint256 reserve,
+                reserveBefore,
+                // uint256 totalShares
+                vault.vaultTotalShares,
+                ERC4626Repo._decimalOffset()
             );
-            // Reserve does change, so we're updating the stored reserve value.
-            // Update the reserve of the underlying pool token.
+            if (amountOut < minAmountOut) {
+                revert MinAmountNotMet(minAmountOut, amountOut);
+            }
             vault.vaultLpReserve = indexSource.pool.balanceOf(address(this));
             ERC4626Repo._setLastTotalAssets(
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            // Calculated the owned reserves of the LP token reserves.
             (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
                 // uint256 ownedLPAmount,
                 vault.vaultLpReserve,
@@ -608,22 +606,8 @@ contract UniswapV2StandardExchangeInTarget is
                 // bool feeOn
                 UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
             );
-            // Store the owned reserves for yield tracking.
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            // Calculate the shares to mint for the secured amountIn.
-            amountOut = BetterMath._convertToSharesDown(
-                // uint256 assets,
-                amountIn,
-                // uint256 reserve,
-                vault.vaultLpReserve,
-                // uint256 totalShares
-                vault.vaultTotalShares,
-                ERC4626Repo._decimalOffset()
-            );
-            if (amountOut < minAmountOut) {
-                revert MinAmountNotMet(minAmountOut, amountOut);
-            }
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,
@@ -761,14 +745,10 @@ contract UniswapV2StandardExchangeInTarget is
             // Calculates the vault fee.
             // Will add fee shares to vault.vaultTotalShares.
             _calcAndMintVaultFee(indexSource, vault);
-            // Mint the shares to the protocol.
-            // ERC20Repo._mint(
-            //     // address account,
-            //     VaultFeeOralceQueryAwareRepo._feeOracle().feeTo(),
-            //     // uint256 amount,
-            //     vault.feeShares
-            // );
-            // Secure the tokenIn to vault control.
+            // A0: unbooked reserve LP cannot be absorbed by zap-in mint.
+            if (indexSource.pool.balanceOf(address(this)) != vault.vaultLpReserve) {
+                revert();
+            }
             amountIn = _secureTokenTransfer(
                 // IERC20 tokenIn,
                 tokenIn,
@@ -777,7 +757,7 @@ contract UniswapV2StandardExchangeInTarget is
                 // bool pretransferred
                 pretransferred
             );
-            // Execute the swap/deposit (ZapIn).
+            // Execute the swap/deposit (ZapIn). amountIn becomes LP minted.
             amountIn = UniswapV2RouterAwareRepo._uniswapV2Router()
                 ._swapDeposit(
                     // IUniswapV2Router router,
@@ -790,14 +770,24 @@ contract UniswapV2StandardExchangeInTarget is
                     // IERC20 opToken,
                     IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
                 );
-            // Reserve does change, so we're updating the stored reserve value.
-            // Update the reserve of the underlying pool token.
+            // Convert LP minted against pre-zap vault.vaultLpReserve (not live D+L).
+            amountOut = BetterMath._convertToSharesDown(
+                // uint256 assets,
+                amountIn,
+                // uint256 reserve,
+                vault.vaultLpReserve,
+                // uint256 totalShares
+                vault.vaultTotalShares,
+                ERC4626Repo._decimalOffset()
+            );
+            if (amountOut < minAmountOut) {
+                revert MinAmountNotMet(minAmountOut, amountOut);
+            }
             vault.vaultLpReserve = indexSource.pool.balanceOf(address(this));
             ERC4626Repo._setLastTotalAssets(
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            // Calculated the owned reserves of the LP token reserves.
             (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
                 // uint256 ownedLPAmount,
                 vault.vaultLpReserve,
@@ -814,24 +804,8 @@ contract UniswapV2StandardExchangeInTarget is
                 // bool feeOn
                 UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
             );
-            // Store the owned reserves for yield tracking.
-            // _setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
             ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            // Calculate the shares to mint for the secured amountIn.
-            amountOut = BetterMath._convertToSharesDown(
-                // uint256 assets,
-                amountIn,
-                // uint256 reserve,
-                vault.vaultLpReserve,
-                // uint256 totalShares
-                vault.vaultTotalShares,
-                ERC4626Repo._decimalOffset()
-            );
-            if (amountOut < minAmountOut) {
-                revert MinAmountNotMet(minAmountOut, amountOut);
-            }
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,

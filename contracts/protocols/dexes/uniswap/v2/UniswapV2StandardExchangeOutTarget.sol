@@ -16,7 +16,6 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
-import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
 import {
     UniswapV2FactoryAwareRepo
 } from "@crane/contracts/protocols/dexes/uniswap/v2/aware/UniswapV2FactoryAwareRepo.sol";
@@ -400,7 +399,8 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountIn) {
-        _requireNotDisabled();
+        // CROPS: user exchangeOut / vaultShare exit stays live after registry disable.
+        // Inbound-only gates remain on exchangeIn (non-vaultShare).
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
@@ -468,17 +468,16 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
-            // Pull the required amountIn
-            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            // Pull tokenIn used. Do not overwrite used with swap amountOut.
+            uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
-            // Perform the swap
-            amountIn = uniV2Router._swapTokensForExactTokens(tokenIn, amountIn, tokenOut, amountOut, recipient);
+            uniV2Router._swapTokensForExactTokens(tokenIn, used, tokenOut, amountOut, recipient);
 
-            // Refund any excess pretransferred tokenIn back to the caller.
-            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
+            _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
 
             _syncAllExpectedHoldReserves();
-            return amountIn;
+            return used;
         }
 
         indexSource.pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
@@ -540,8 +539,8 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                     recipient,
                     lpOut
                 );
-            // Refund any excess pretransferred tokenIn.
-            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
+            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
             // Verify the vault's stored LP reserve is still consistent.
             {
                 UniV2StrategyVault memory vault2;
@@ -643,10 +642,10 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                     // uint256 amount
                     amountOut
                 );
-            // Refund any excess pretransferred tokenIn back to the caller.
+            // Pass this-call unused inbound LP (not the fat maxAmountIn slippage cap).
             // Must happen BEFORE reserve check since tokenIn IS the pool token —
             // surplus LP in the vault would cause the reserve check to fail.
-            _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
             // No reserve change, so no update needed.
             // But we do receive and send pool tokens, so we must verify the reserve still matches the held balance.
             // Check that local balance of the pool token still matches the stored reserve.
@@ -689,13 +688,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
-            // Secure the payment of the tokenIn
-            amountIn = ERC4626Service._secureReserveDeposit(
-                ERC4626Repo._layoutStruct(),
-                vault.vaultLpReserve,
-                // uint256 amountTokenToDeposit,
-                amountIn
-            );
+            // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap (I1).
+            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            ERC4626Repo._setLastTotalAssets(indexSource.pool.balanceOf(address(this)));
 
             uint256 actualShares = BetterMath._convertToSharesDown(
                 // uint256 assets,
@@ -923,6 +918,10 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         _loadStrategyVault(vault, tokenIn);
         // Mint vault fee shares (matches the In side's _calcAndMintVaultFee call).
         _calcAndMintVaultFee(indexSource, vault);
+        // A0: unbooked reserve LP cannot be absorbed by zap-in mint.
+        if (indexSource.pool.balanceOf(address(this)) != vault.vaultLpReserve) {
+            revert();
+        }
 
         // Step 1: ERC-4626 inverse (post-deposit accounting) — shares → LP.
         //
@@ -989,11 +988,23 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
             );
 
-        // Update vault LP reserve.
+        // Convert LP received against pre-zap vault.vaultLpReserve (not live D+L).
+        uint256 actualShares = BetterMath._convertToSharesDown(
+            // uint256 assets,
+            lpReceived,
+            // uint256 reserve,
+            vault.vaultLpReserve,
+            // uint256 totalShares
+            vault.vaultTotalShares,
+            ERC4626Repo._decimalOffset()
+        );
+
+        // Guard: actual shares must be at least the requested amountOut.
+        if (actualShares < amountOut) revert AmountOutNotMet(amountOut, actualShares);
+
         vault.vaultLpReserve = indexSource.pool.balanceOf(address(this));
         ERC4626Repo._setLastTotalAssets(vault.vaultLpReserve);
 
-        // Update owned reserve tracking (mirrors the In-side exchangeIn Route 6).
         (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
             // uint256 ownedLPAmount,
             vault.vaultLpReserve,
@@ -1013,27 +1024,17 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
         ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
 
-        // Convert actual LP received → shares (floor, matching exchangeIn behaviour).
-        uint256 actualShares = BetterMath._convertToSharesDown(
-            // uint256 assets,
-            lpReceived,
-            // uint256 reserve,
-            vault.vaultLpReserve,
-            // uint256 totalShares
-            vault.vaultTotalShares,
-            ERC4626Repo._decimalOffset()
-        );
-
-        // Guard: actual shares must be at least the requested amountOut.
-        if (actualShares < amountOut) revert AmountOutNotMet(amountOut, actualShares);
-
         // Mint exactly the requested amountOut to the recipient (not actualShares — the caller
         // specified a target; any rounding surplus stays in the vault, benefiting all holders).
         ERC20Repo._mint(recipient, amountOut);
 
-        // Refund any excess pretransferred tokenIn.
-        _refundExcess(tokenIn, maxAmountIn, amountIn, pretransferred, msg.sender);
+        _refundThisCallUnused(tokenIn, amountIn, pretransferred);
 
         return amountIn;
+    }
+
+    /// @dev E6: refund this-call unused inbound only (separate frame for stack).
+    function _refundThisCallUnused(IERC20 tokenIn, uint256 used, bool pretransferred) internal {
+        _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
     }
 }
