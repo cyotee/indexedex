@@ -42,8 +42,8 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        // Keep in lockstep with RebasingDETFTokenFacet.facetFuncs() (28 selectors).
-        controlFuncs = new bytes4[](28);
+        // Keep in lockstep with RebasingDETFTokenFacet.facetFuncs() (29 selectors).
+        controlFuncs = new bytes4[](29);
         controlFuncs[0] = IERC20.totalSupply.selector;
         controlFuncs[1] = IERC20.balanceOf.selector;
         controlFuncs[2] = IERC20.transfer.selector;
@@ -72,5 +72,6 @@ contract RebasingDETFTokenFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[25] = IStandardExchangeOut.exchangeOut.selector;
         controlFuncs[26] = IRebasingClaimToken.transferHeldToken.selector;
         controlFuncs[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
+        controlFuncs[28] = bytes4(keccak256("renounceLeftoverMinter()"));
     }
 }

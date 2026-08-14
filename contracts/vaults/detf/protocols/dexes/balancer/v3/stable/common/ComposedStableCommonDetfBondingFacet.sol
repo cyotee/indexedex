@@ -114,6 +114,7 @@ contract ComposedStableCommonDetfBondingFacet is
 
     function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
         external
+        nonReentrant
         returns (uint256 tokenId, uint256 shares)
     {
         if (block.timestamp > deadline) {

@@ -167,6 +167,8 @@ contract RebasingDETFTokenDFPkg is IRebasingDETFTokenDFPkg {
         return true;
     }
 
+    /// @dev Init owner is a deploy-time wire key only. After `setDetf(liveDetf)` the token is unowned
+    ///      (`owner()==0`); mint is DETF-gated. Do not leave a leftover EOA minter on a live instance.
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
 

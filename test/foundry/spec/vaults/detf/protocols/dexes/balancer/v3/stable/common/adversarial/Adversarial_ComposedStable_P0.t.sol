@@ -12,7 +12,8 @@ import {
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
 
 /// @notice Wave 1B P0 adversarial coverage on production ComposedStable graph.
-/// @dev Deferred P2: C1–C3 multi-leg hostile reentrancy (high setup cost); B route grief.
+/// @dev C1–C3 lock proofs live in Adversarial_ComposedStable_SecRemediation.t.sol (WP-SEC-DETF-CS-LOCK-001).
+///      Deferred P2: B route grief.
 ///      H2 claim atomicity: failed redeem leaves claim balance (see also RebasingDETFTokenBehavior).
 contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
     address internal attacker;

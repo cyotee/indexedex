@@ -71,6 +71,10 @@ import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPolicy.sol';
 
+interface IRebasingLeftoverMinter {
+    function renounceLeftoverMinter() external;
+}
+
 contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3StandardExchangeRouter {
     using CastingHelpers for address[];
     using ComposedStableCommonDetf_Facet_FactoryService for ICreate3FactoryProxy;
@@ -146,6 +150,19 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         return ThresholdMode.Policy;
     }
 
+    function _primaryRoutes() internal virtual returns (ComposedStableCommonDetfRepo.RouteConfig[] memory routes) {
+        routes = new ComposedStableCommonDetfRepo.RouteConfig[](1);
+        routes[0] = ComposedStableCommonDetfRepo.RouteConfig({
+            baseToken: dai,
+            vaultToken: IERC20(address(daiUsdcVault)),
+            underlyingVault: daiUsdcVault,
+            stablePoolRouter: stablePoolAdapter,
+            commonPoolRouter: commonPoolAdapter,
+            stablePoolTokenIndex: 0,
+            commonPoolTokenIndex: 0
+        });
+    }
+
     /// @dev Product Open: mode Open + thresholds 0,0 (resolved defaults stored; gates ignore thresholds).
     function _deployOpenModeDetf() internal returns (address vault_) {
         vault_ = _deployDetfWithThresholds(0, 0, ThresholdMode.Open);
@@ -170,7 +187,15 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
             stablePoolTokenIndex: 0,
             commonPoolTokenIndex: 0
         });
+        return _deployDetfWithRoutes(routes, mintTh_, burnTh_, mode_);
+    }
 
+    function _deployDetfWithRoutes(
+        ComposedStableCommonDetfRepo.RouteConfig[] memory routes,
+        uint256 mintTh_,
+        uint256 burnTh_,
+        ThresholdMode mode_
+    ) internal returns (address vault_) {
         IComposedStableCommonDetfDFPkg.PkgArgs memory pkgArgs =
             ComposedStableCommonDetf_Component_FactoryService.buildPkgArgs(
                 ComposedStableCommonDetf_Component_FactoryService.ComposedStableCommonDetfPricingConfig({
@@ -247,16 +272,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         );
         vm.stopPrank();
 
-        ComposedStableCommonDetfRepo.RouteConfig[] memory routes = new ComposedStableCommonDetfRepo.RouteConfig[](1);
-        routes[0] = ComposedStableCommonDetfRepo.RouteConfig({
-            baseToken: dai,
-            vaultToken: IERC20(address(daiUsdcVault)),
-            underlyingVault: daiUsdcVault,
-            stablePoolRouter: stablePoolAdapter,
-            commonPoolRouter: commonPoolAdapter,
-            stablePoolTokenIndex: 0,
-            commonPoolTokenIndex: 0
-        });
+        ComposedStableCommonDetfRepo.RouteConfig[] memory routes = _primaryRoutes();
 
         IComposedStableCommonDetfDFPkg.PkgArgs memory pkgArgs =
             ComposedStableCommonDetf_Component_FactoryService.buildPkgArgs(
@@ -299,6 +315,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         vm.prank(owner);
         rebasingDetfToken.setDetf(deployedDetfVault);
         _transferRebasingDetfTokenOwnership(deployedDetfVault);
+        vm.prank(deployedDetfVault);
+        IRebasingLeftoverMinter(address(rebasingDetfToken)).renounceLeftoverMinter();
     }
 
     function test_deployVault_surfacesRealCompanionReferences() public view {
@@ -432,7 +450,17 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         assertEq(weth.balanceOf(alice) - wethBefore, wethOut, 'alice received weth');
     }
 
+    /// @dev Same as `_bootstrapReserveGraph` but caps vault-share init legs to the WETH scale so
+    ///      empty-SE virtual-offset first mints cannot trip StableMath MaxImbalanceRatioExceeded.
+    function _bootstrapReserveGraphBalanced() internal {
+        _bootstrapReserveGraphWithShareCap(true);
+    }
+
     function _bootstrapReserveGraph() internal {
+        _bootstrapReserveGraphWithShareCap(false);
+    }
+
+    function _bootstrapReserveGraphWithShareCap(bool capShareLegs_) internal {
         uint256 vaultAssetIn = 20_000e18;
         uint256 poolWethIn = 10_000e18;
         uint256 detfMintAmount = 2e18;
@@ -457,6 +485,10 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
 
         uint256 stableVaultShares = vaultShares / 2;
         uint256 commonVaultShares = vaultShares - stableVaultShares;
+        if (capShareLegs_) {
+            if (stableVaultShares > poolWethIn) stableVaultShares = poolWethIn;
+            if (commonVaultShares > poolWethIn) commonVaultShares = poolWethIn;
+        }
         uint256[] memory stableInitAmounts = new uint256[](2);
         uint256[] memory commonInitAmounts = new uint256[](2);
         if (address(composedTokens[0]) == address(daiUsdcVault)) {
@@ -582,6 +614,17 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
 
         vm.prank(newOwner_);
         IMultiStepOwnable(address(bondNFTVault)).acceptOwnershipTransfer();
+    }
+
+    function _transferDetfTokenOwnership(address newOwner_) internal {
+        vm.startPrank(owner);
+        IMultiStepOwnable(address(detfToken)).initiateOwnershipTransfer(newOwner_);
+        vm.warp(block.timestamp + IMultiStepOwnable(address(detfToken)).getOwnershipTransferBuffer());
+        IMultiStepOwnable(address(detfToken)).confirmOwnershipTransfer(newOwner_);
+        vm.stopPrank();
+
+        vm.prank(newOwner_);
+        IMultiStepOwnable(address(detfToken)).acceptOwnershipTransfer();
     }
 
     function _transferRebasingDetfTokenOwnership(address newOwner_) internal {

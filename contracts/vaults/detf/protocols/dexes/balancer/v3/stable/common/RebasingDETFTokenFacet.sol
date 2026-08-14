@@ -25,7 +25,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
     }
 
     function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](28);
+        funcs_ = new bytes4[](29);
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
         funcs_[2] = IERC20.transfer.selector;
@@ -54,6 +54,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         funcs_[25] = IStandardExchangeOut.exchangeOut.selector;
         funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
         funcs_[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
+        funcs_[28] = RebasingDETFTokenTarget.renounceLeftoverMinter.selector;
     }
 
     function facetMetadata()
@@ -70,7 +71,7 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         interfaces_[3] = type(IStandardExchangeIn).interfaceId;
         interfaces_[4] = type(IStandardExchangeOut).interfaceId;
 
-        functions_ = new bytes4[](28);
+        functions_ = new bytes4[](29);
         functions_[0] = IERC20.totalSupply.selector;
         functions_[1] = IERC20.balanceOf.selector;
         functions_[2] = IERC20.transfer.selector;
@@ -99,5 +100,6 @@ contract RebasingDETFTokenFacet is RebasingDETFTokenTarget, IFacet {
         functions_[25] = IStandardExchangeOut.exchangeOut.selector;
         functions_[26] = IRebasingClaimToken.transferHeldToken.selector;
         functions_[27] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
+        functions_[28] = RebasingDETFTokenTarget.renounceLeftoverMinter.selector;
     }
 }

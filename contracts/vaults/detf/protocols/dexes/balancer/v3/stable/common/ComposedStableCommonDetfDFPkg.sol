@@ -263,6 +263,10 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
         ComposedStableCommonDetfRepo._initializeNaturalExpansion(expRate_, expCatchUpSec_, expCapBps_);
     }
 
+    /// @dev Companions (bond NFT, claim token, family `detfToken`) are passed in `PkgArgs`.
+    ///      CFG must `setOperator(this, true)` on the mintable family share then revoke leftover
+    ///      Ownable (transfer to this DETF or renounce) before go-live. Claim token `setDetf(this)`
+    ///      revokes its leftover owner. This hook cannot unown a token it does not own.
     function postDeploy(address) public pure returns (bool) {
         return true;
     }

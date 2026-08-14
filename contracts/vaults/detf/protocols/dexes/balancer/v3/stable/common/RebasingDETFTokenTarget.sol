@@ -66,8 +66,20 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         return address(RebasingDETFTokenRepo._detf());
     }
 
+    /// @dev Bind DETF. Leftover Ownable is revoked by `renounceLeftoverMinter` after go-live (L-SEC-11).
     function setDetf(address detf_) external onlyOwner {
         RebasingDETFTokenRepo._setDetf(IDETF(detf_));
+    }
+
+    /// @dev One-shot: owner()==0. DETF remains the only mintFromNFTSale caller via stored detf().
+    function renounceLeftoverMinter() external onlyOwner {
+        MultiStepOwnableRepo.Storage storage ownable_ = MultiStepOwnableRepo._layoutStruct();
+        address prev_ = ownable_.owner;
+        ownable_.owner = address(0);
+        delete ownable_.pendingOwner;
+        delete ownable_.pendingOwnerConfirmed;
+        delete ownable_.bufferPeriodEnd;
+        emit IMultiStepOwnable.OwnershipTransferred(prev_, address(0));
     }
 
     function detfNFTId() external view returns (uint256) {
@@ -132,16 +144,16 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         return true;
     }
 
-    function mintFromNFTSale(uint256 lpShares, address recipient) external onlyOwner returns (uint256 rebasingClaimMinted) {
+    function mintFromNFTSale(uint256 lpShares, address recipient) external returns (uint256 rebasingClaimMinted) {
         return mintFromNFTSale(lpShares, type(uint256).max, recipient);
     }
 
     /// @inheritdoc IRebasingClaimToken
     function mintFromNFTSale(uint256 assets, uint256 totalAssetsBefore, address recipient)
         public
-        onlyOwner
         returns (uint256 rebasingClaimMinted)
     {
+        _requireDetfOrOwnerMinter();
         if (assets == 0) revert ZeroAmount();
 
         RebasingDETFTokenRepo.Storage storage layoutStruct = RebasingDETFTokenRepo._layoutStruct();
@@ -423,6 +435,15 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             RebasingDETFTokenRepo._internalSharesToExternal(shares),
             amountOut_
         );
+    }
+
+    /// @dev DETF is the only live minter. Leftover owner may mint only before `setDetf` revokes Ownable.
+    function _requireDetfOrOwnerMinter() internal view {
+        address owner_ = MultiStepOwnableRepo._owner();
+        address detf_ = address(RebasingDETFTokenRepo._detf());
+        if (msg.sender != owner_ && msg.sender != detf_) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
     }
 
     /**

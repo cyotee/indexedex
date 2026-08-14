@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
+import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
 import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
@@ -17,6 +18,7 @@ import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPoli
 
 contract ComposedStableCommonDetfExchangeIn is
     ComposedStableCommonDetfCommon,
+    ReentrancyLockModifiers,
     IStandardExchangeIn,
     IComposedStableCommonDetfInfo,
     IFacet
@@ -238,7 +240,7 @@ contract ComposedStableCommonDetfExchangeIn is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut) {
         if (block.timestamp > deadline) {
             revert DeadlineExceeded(deadline, block.timestamp);
         }
