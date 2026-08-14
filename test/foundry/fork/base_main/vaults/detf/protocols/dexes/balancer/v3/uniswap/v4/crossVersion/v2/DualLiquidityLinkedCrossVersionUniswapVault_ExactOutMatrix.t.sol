@@ -4,14 +4,15 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {DualLiquidityLinkedCrossVersionUniswapVaultRepo} from
     "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 } from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 
-/// @notice Broader exact-out matrix: swaps, BPT redeem, leg-share redeem, unsupported asset redeem,
-///         and prefund refund semantics.
+/// @notice Broader exact-out matrix: swaps, BPT redeem, leg-share redeem, unsupported asset redeem.
+/// @dev Law B: two-tx / prefund + `true` is I1 (no surplus refund to caller).
 contract DualLiquidityLinkedCrossVersionUniswapVault_ExactOutMatrix is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
@@ -81,26 +82,29 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_ExactOutMatrix is
         IStandardExchangeOut(linkedVault).previewExchangeOut(shareToken, tokenB, 1e18);
     }
 
-    function test_exactOutMatrix_swap_pretransferredRefundsSurplus() public {
+    function test_I1_exactOutMatrix_swap_prefundThenTrue_revertsNoSurplusRefund() public {
         uint256 probe = 40e18;
         uint256 amountOut = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, probe, tokenA);
         amountOut = amountOut > 1 ? amountOut / 2 : amountOut;
         if (amountOut == 0) return;
 
-        uint256 amountIn =
-            IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut);
+        uint256 amountIn = IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut);
         uint256 prefund = amountIn + 5e18;
         _fund(commonToken, user, prefund);
         vm.startPrank(user);
         commonToken.transfer(linkedVault, prefund);
-        uint256 used = IStandardExchangeOut(linkedVault).exchangeOut(
+        // `_receiveOut` credits the quoted used `amountIn`, not `maxIn` / prefund.
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0))
+        );
+        IStandardExchangeOut(linkedVault).exchangeOut(
             commonToken, prefund, tokenA, amountOut, user, true, block.timestamp
         );
         vm.stopPrank();
 
-        assertEq(used, amountIn);
-        assertEq(tokenA.balanceOf(user), amountOut);
-        assertEq(commonToken.balanceOf(user), prefund - used, "surplus refunded to caller");
+        assertEq(tokenA.balanceOf(user), 0, "no exact-out on theater prefund");
+        assertEq(commonToken.balanceOf(user), 0, "no surplus refund to caller");
+        assertEq(commonToken.balanceOf(linkedVault), prefund, "prefund sticks");
     }
 
     function _assertExactOutSwap(IERC20 tokenIn, IERC20 tokenOut, uint256 probeIn) internal {

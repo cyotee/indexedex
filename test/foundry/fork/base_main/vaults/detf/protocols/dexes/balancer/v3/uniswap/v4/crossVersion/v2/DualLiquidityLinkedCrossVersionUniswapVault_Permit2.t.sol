@@ -4,20 +4,15 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 } from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 
-/// @notice All vault routes funded via Permit2 AllowanceTransfer into the vault (or to the
-///         caller for burns), then executed with `pretransferred=true` where the surface pulls
-///         `tokenIn`. The diamond itself still uses ERC20 `transferFrom` / burn - Permit2 is the
-///         user-facing funding path (canonical Permit2 on Base), matching production wallets.
-///
-/// @dev Flow per deposit/swap/exact-out:
-///      1. User ERC20-approves Permit2
-///      2. User Permit2-approves this test as spender
-///      3. Test `permit2.transferFrom(user -> vault, amount)`
-///      4. User `exchangeIn/Out(..., pretransferred=true)`
+/// @notice Permit2 funding vs DualLiquidity same-tx receive (law **B**).
+/// @dev Prefund into the diamond then `pretransferred=true` **reverts** `TransferDeltaInsufficient`.
+///      Happy redeem paths after an honest `!pretransferred` pull still run. Surplus is **not**
+///      refunded to the caller (`held − amountIn` theft class is closed).
 contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2 is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
@@ -33,67 +28,55 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2 is
 
     /* ---------------------------- Deposits --------------------------------- */
 
-    function test_permit2_deposit_commonToken() public {
+    function test_I1_permit2_deposit_commonToken_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, commonToken, AMT);
-        uint256 preview =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, AMT, shareToken);
-
         vm.prank(user);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             commonToken, AMT, shareToken, 0, user, true, block.timestamp
         );
-
-        assertGt(minted, 0);
-        // Multi-hop: post-hop rate-provider update vs pre-hop join quote (see Deposits suite notes).
-        assertApproxEqAbs(minted, preview, 1e6, "multi-hop preview ~ execution");
-        assertEq(shareToken.balanceOf(user), minted);
-        assertEq(commonToken.balanceOf(linkedVault), 0, "vault consumed prefund");
+        assertEq(shareToken.balanceOf(user), 0, "Permit2-true must not mint");
+        assertEq(commonToken.balanceOf(linkedVault), AMT, "prefund sticks");
     }
 
-    function test_permit2_deposit_tokenA() public {
+    function test_I1_permit2_deposit_tokenA_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, tokenA, AMT);
-        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, AMT, shareToken);
-
         vm.prank(user);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, AMT, shareToken, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(minted, 0);
-        assertApproxEqAbs(minted, preview, 1e6, "multi-hop preview ~ execution");
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenA, AMT, shareToken, 0, user, true, block.timestamp);
+        assertEq(shareToken.balanceOf(user), 0);
     }
 
-    function test_permit2_deposit_tokenB() public {
+    function test_I1_permit2_deposit_tokenB_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, tokenB, AMT);
-        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenB, AMT, shareToken);
-
         vm.prank(user);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenB, AMT, shareToken, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(minted, 0);
-        assertApproxEqAbs(minted, preview, 1e6, "multi-hop preview ~ execution");
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenB, AMT, shareToken, 0, user, true, block.timestamp);
+        assertEq(shareToken.balanceOf(user), 0);
     }
 
-    function test_permit2_deposit_legVaultShare() public {
+    function test_I1_permit2_deposit_legVaultShare_prefundThenTrue_reverts() public {
         (IERC20 vaultAShare,,) = _legShares();
         uint256 shares = _acquireLegShare(address(vaultAShare), user);
 
-        // Prefund leg share into vault via Permit2.
         _permit2ApproveToken(user, vaultAShare);
         _permit2ApproveSpender(user, vaultAShare, address(this));
         _permit2TransferFrom(user, linkedVault, vaultAShare, shares);
 
-        uint256 preview =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(vaultAShare, shares, shareToken);
         vm.prank(user);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, shares, uint256(0))
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             vaultAShare, shares, shareToken, 0, user, true, block.timestamp
         );
-
-        assertGt(minted, 0);
-        assertEq(minted, preview);
+        assertEq(shareToken.balanceOf(user), 0);
     }
 
     function test_permit2_deposit_reserveBpt_requiresTransferFrom() public {
@@ -127,127 +110,67 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2 is
 
     /* ------------------------------ Swaps ---------------------------------- */
 
-    function test_permit2_swap_commonToTokenA() public {
+    function test_I1_permit2_swap_commonToTokenA_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, commonToken, AMT);
-        uint256 preview =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, AMT, tokenA);
-
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, AMT, tokenA, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(out, 0);
-        assertEq(out, preview);
-        assertEq(tokenA.balanceOf(user), out);
-        assertEq(shareToken.balanceOf(user), 0, "swap mints no shares");
+        IStandardExchangeIn(linkedVault).exchangeIn(commonToken, AMT, tokenA, 0, user, true, block.timestamp);
+        assertEq(tokenA.balanceOf(user), 0);
     }
 
-    function test_permit2_swap_tokenAToCommon() public {
+    function test_I1_permit2_swap_tokenAToCommon_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, tokenA, AMT);
-        uint256 preview =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, AMT, commonToken);
-
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, AMT, commonToken, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(out, 0);
-        assertEq(out, preview);
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenA, AMT, commonToken, 0, user, true, block.timestamp);
     }
 
-    function test_permit2_swap_tokenAToTokenB() public {
+    function test_I1_permit2_swap_tokenAToTokenB_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, tokenA, AMT);
-        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, AMT, tokenB);
-
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, AMT, tokenB, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(out, 0);
-        assertEq(out, preview);
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenA, AMT, tokenB, 0, user, true, block.timestamp);
     }
 
-    function test_permit2_swap_tokenBToTokenA() public {
+    function test_I1_permit2_swap_tokenBToTokenA_prefundThenTrue_reverts() public {
         _permit2PrefundVault(user, tokenB, AMT);
-        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenB, AMT, tokenA);
-
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenB, AMT, tokenA, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-
-        assertGt(out, 0);
-        assertEq(out, preview);
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenB, AMT, tokenA, 0, user, true, block.timestamp);
     }
 
     /* --------------------------- Exact-out --------------------------------- */
 
-    function test_permit2_exactOut_swap_commonToTokenA() public {
+    function test_I1_permit2_exactOut_swap_prefundThenTrue_revertsNoSurplusRefund() public {
         uint256 probeIn = 50e18;
         uint256 amountOut = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, probeIn, tokenA);
         amountOut = amountOut > 1 ? amountOut / 2 : amountOut;
         if (amountOut == 0) return;
 
-        uint256 amountIn =
-            IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut);
-        // Prefund with surplus; exact-out refunds unused input when pretransferred.
+        uint256 amountIn = IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, tokenA, amountOut);
         uint256 prefund = amountIn + 1e18;
         _permit2PrefundVault(user, commonToken, prefund);
+        assertEq(commonToken.balanceOf(linkedVault), prefund);
 
-        uint256 vaultBalBefore = commonToken.balanceOf(linkedVault);
-        // vaultBalBefore should equal prefund after permit2 transfer
-        assertEq(vaultBalBefore, prefund);
-
+        uint256 userBefore = commonToken.balanceOf(user);
         vm.prank(user);
-        uint256 used = IStandardExchangeOut(linkedVault).exchangeOut(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0))
+        );
+        IStandardExchangeOut(linkedVault).exchangeOut(
             commonToken, prefund, tokenA, amountOut, user, true, block.timestamp
         );
-
-        assertEq(used, amountIn, "used matches preview");
-        assertEq(tokenA.balanceOf(user), amountOut, "exact out");
-        // Unused prefund refunded to user (receiveOut path).
-        assertEq(commonToken.balanceOf(user), prefund - used, "surplus refunded");
-    }
-
-    function test_permit2_exactOut_deposit_commonToShares() public {
-        // Exact-out mint paid in commonToken (sizes via closed-form leg+join when available).
-        uint256 probeShares = _depositCommonViaPermit2(user, AMT);
-        if (probeShares < 4) return;
-        uint256 sharesWanted = probeShares / 4;
-
-        // Clear probe shares so balance is known.
-        address pool = _reservePool();
-        vm.startPrank(user);
-        IStandardExchangeIn(linkedVault).exchangeIn(
-            shareToken, shareToken.balanceOf(user), IERC20(pool), 0, user, false, block.timestamp
-        );
-        vm.stopPrank();
-
-        uint256 tokenInNeeded;
-        try IStandardExchangeOut(linkedVault).previewExchangeOut(commonToken, shareToken, sharesWanted) returns (
-            uint256 n
-        ) {
-            tokenInNeeded = n;
-        } catch {
-            return; // route not available for this size
-        }
-        if (tokenInNeeded == 0) return;
-
-        uint256 prefund = tokenInNeeded + tokenInNeeded / 5 + 1e15;
-        _permit2PrefundVault(user, commonToken, prefund);
-
-        vm.prank(user);
-        try IStandardExchangeOut(linkedVault).exchangeOut(
-            commonToken, prefund, shareToken, sharesWanted, user, true, block.timestamp
-        ) returns (uint256 used) {
-            assertLe(used, prefund);
-            assertEq(shareToken.balanceOf(user), sharesWanted, "exact shares out");
-        } catch {
-            // Accept: exact-out deposit is best-effort under live pool sizing.
-        }
+        assertEq(tokenA.balanceOf(user), 0, "no exact-out on theater prefund");
+        assertEq(commonToken.balanceOf(user), userBefore, "no surplus refund to caller");
+        assertEq(commonToken.balanceOf(linkedVault), prefund, "prefund not refunded");
     }
 
     /* -------------------------- Redemptions -------------------------------- */
@@ -313,19 +236,17 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2 is
     /* --------------------- End-to-end Permit2 cycle ------------------------ */
 
     function test_permit2_fullCycle_depositSwapRedeem() public {
-        // Deposit common via Permit2
         uint256 minted = _depositCommonViaPermit2(user, LEG_SEED);
         assertGt(minted, 0);
 
-        // Swap leftover common via Permit2 prefund
+        // Law B: prefund + true is I1, not a happy swap.
         _permit2PrefundVault(user, commonToken, AMT);
         vm.prank(user);
-        uint256 swapped = IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, AMT, tokenA, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, AMT, uint256(0))
         );
-        assertGt(swapped, 0);
+        IStandardExchangeIn(linkedVault).exchangeIn(commonToken, AMT, tokenA, 0, user, true, block.timestamp);
 
-        // Redeem half shares to BPT
         address pool = _reservePool();
         uint256 half = shareToken.balanceOf(user) / 2;
         vm.prank(user);

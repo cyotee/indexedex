@@ -594,8 +594,9 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
         revert("reserve pool not found");
     }
 
-    /// @dev Manual bootstrap: leg shares -> prepayInitialize via seRouter -> first share deposit (1:1).
-    function _bootstrapReserve() internal returns (uint256 bptOut) {
+    /// @dev Acquire legs and initialize the reserve pool; BPT is minted to this contract.
+    ///      Does **not** deposit into the DualLiquidity diamond (A0 / first-mint setup).
+    function _initializeReservePool() internal returns (uint256 bptOut) {
         address pool = _reservePool();
         IERC20[] memory legs = vault.getPoolTokens(pool);
 
@@ -608,6 +609,12 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
 
         // Production path: IndexedEx SE prepayInitialize (contract caller is allowed when vault is locked).
         bptOut = prepayRouter.prepayInitialize(pool, legs, amounts, 0, "");
+    }
+
+    /// @dev Manual bootstrap: leg shares -> prepayInitialize via seRouter -> first share deposit (1:1).
+    function _bootstrapReserve() internal returns (uint256 bptOut) {
+        address pool = _reservePool();
+        bptOut = _initializeReservePool();
 
         uint256 bptBal = IERC20(pool).balanceOf(address(this));
         IERC20(pool).approve(linkedVault, bptBal);
@@ -707,8 +714,10 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
         permit2.transferFrom(user_, to_, uint160(amount_), address(token_));
     }
 
-    /// @notice Full Permit2 prefund into the linked vault: ERC20->Permit2, Permit2 spend allowance,
-    ///         then AllowanceTransfer into the vault. Caller then uses `pretransferred=true`.
+    /// @notice Permit2 AllowanceTransfer of `amount_` from `user_` into the linked vault.
+    /// @dev DualLiquidity law **B** (same-tx delta): a later `exchangeIn/Out(..., pretransferred=true)`
+    ///      **reverts** `TransferDeltaInsufficient` because the snapshot is taken after this transfer.
+    ///      Use this helper only for I1 / two-tx invert cases. Happy paths must pull (`false`).
     function _permit2PrefundVault(address user_, IERC20 token_, uint256 amount_) internal {
         _fund(token_, user_, amount_);
         _permit2ApproveToken(user_, token_);
@@ -716,13 +725,17 @@ abstract contract TestBase_DualLiquidityLinkedCrossVersionUniswapVault is
         _permit2TransferFrom(user_, linkedVault, token_, amount_);
     }
 
-    /// @notice Deposit via Permit2 prefund + `pretransferred=true` exchangeIn into vault shares.
+    /// @notice Deposit `commonToken` via a standard in-call `transferFrom` (same-tx law **B**).
+    /// @dev Previously this prefunted the diamond then called `pretransferred=true` (theater).
+    ///      Permit2-to-diamond + `true` is I1 / two-tx and **reverts**. Happy funding is pull.
     function _depositCommonViaPermit2(address to_, uint256 commonAmount_) internal returns (uint256 minted_) {
-        _permit2PrefundVault(to_, commonToken, commonAmount_);
-        vm.prank(to_);
+        _fund(commonToken, to_, commonAmount_);
+        vm.startPrank(to_);
+        commonToken.approve(linkedVault, commonAmount_);
         minted_ = IStandardExchangeIn(linkedVault).exchangeIn(
-            commonToken, commonAmount_, IERC20(linkedVault), 0, to_, true, block.timestamp
+            commonToken, commonAmount_, IERC20(linkedVault), 0, to_, false, block.timestamp
         );
+        vm.stopPrank();
     }
 
     /// @dev The three leg share tokens are the reserve pool's registered tokens (any order).

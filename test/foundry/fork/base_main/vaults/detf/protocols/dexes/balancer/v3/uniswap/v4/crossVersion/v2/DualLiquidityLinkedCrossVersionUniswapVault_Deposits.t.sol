@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {DualLiquidityLinkedCrossVersionUniswapVaultRepo} from
     "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol";
 import {
@@ -107,19 +108,21 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Deposits is
         assertApproxEqAbs(minted, preview, 1e6, "multi-hop common deposit preview ~ execution");
     }
 
-    /// @notice Durable U: transfer-before-call + pretransferred=true is the canonical nested/router
-    ///         push path (`claimed <= U = B - R`). I1 booked free inventory without new push is
-    ///         covered by Adversarial_DualLiquidity_Catalog.
-    function test_depositPretransferred_pushThenTrue_succeeds() public {
+    /// @notice Law B (same-tx): two-tx transfer then `pretransferred=true` reverts delta 0.
+    ///         This is **not** durable U. Honest pull is `!pretransferred` + `transferFrom`.
+    function test_I1_twoTx_pushThenTrue_revertsDelta0() public {
         _fund(tokenB, depositor, LEG_SEED);
         vm.startPrank(depositor);
         tokenB.transfer(linkedVault, LEG_SEED);
-        uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, LEG_SEED, uint256(0))
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             tokenB, LEG_SEED, shareToken, 0, depositor, true, block.timestamp
         );
         vm.stopPrank();
-        assertGt(out_, 0, "push+true mint succeeds under durable U");
-        assertEq(shareToken.balanceOf(depositor), out_, "depositor received shares");
+        assertEq(shareToken.balanceOf(depositor), 0, "two-tx true must not mint");
+        assertEq(tokenB.balanceOf(linkedVault), LEG_SEED, "prefund remains on diamond");
     }
 
     /* -------------------------------- Guards ------------------------------- */

@@ -17,7 +17,6 @@ import {
 contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
-    IBasicVault internal openBook;
     address internal user = makeAddr("nestedPushUser");
     /// @dev Nested SE host (leg0 share token address == SE vault diamond).
     address internal nestedHost;
@@ -26,23 +25,12 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
     function setUp() public virtual override {
         super.setUp();
         _bootstrapReserve();
-        openBook = IBasicVault(linkedVault);
         (IERC20 leg0,,) = _legShares();
         nestedHost = address(leg0);
         nestedHostBook = IBasicVault(nestedHost);
     }
 
-    function _assertHoldSetREqualsB() internal view {
-        address[] memory tokens = openBook.vaultTokens();
-        for (uint256 i; i < tokens.length; ++i) {
-            address t = tokens[i];
-            assertEq(
-                openBook.reserveOfToken(t),
-                IERC20(t).balanceOf(linkedVault),
-                "hold-set R == B"
-            );
-        }
-    }
+    /// @dev DualLiquidity never `_updateReserve`s face tokens. Do not assert MultiAsset R==B.
 
     /// @dev Pick a face token the nested host books (common/tokenA/tokenB tried in order).
     function _nestedHostFaceToken() internal view returns (IERC20 token_) {
@@ -60,7 +48,6 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
         uint256 minted = _depositCommon(user, LEG_SEED);
         assertTrue(minted > 0, "T-NEST-1");
         assertGe(IERC20(linkedVault).balanceOf(user), minted, "user shares");
-        _assertHoldSetREqualsB();
     }
 
     /// @dev T-NEST-2: nested host short — claimed > all face inventory on leg SE with true.
@@ -98,18 +85,16 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
     function test_T_NEST_4_noNestedApproveOnFundPath() public {
         uint256 minted = _depositCommon(user, LEG_SEED);
         assertTrue(minted > 0, "T-NEST-4 deposit completed");
-        // Nested fund path is push+true (production `_legExchange`); no caller-side pre-approve to legs required.
-        _assertHoldSetREqualsB();
+        // Nested fund path is DualLiquidity `safeTransfer` then leg `true` (leg durable U). Not Dual I1.
     }
 
-    /// @dev T-NEST-5: outermost exact-out refunds unused pretransferred maxIn to entry msg.sender.
-    function test_T_NEST_5_outerExactOut_refundToEntryMsgSender() public {
+    /// @dev T-NEST-5 invert (law B): prefund + exact-out `true` reverts; no surplus refund to caller.
+    function test_I1_T_NEST_5_outerExactOut_prefundThenTrue_revertsNoRefund() public {
         uint256 probeIn = 50e18;
         uint256 amountOut = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, probeIn, tokenA);
         amountOut = amountOut > 1 ? amountOut / 2 : amountOut;
         if (amountOut == 0) {
             _depositCommon(user, LEG_SEED / 4);
-            _assertHoldSetREqualsB();
             return;
         }
 
@@ -117,31 +102,24 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
         uint256 surplus = needIn / 5 + 1e15;
         uint256 maxIn = needIn + surplus;
 
-        // Production refund re-forward path is pretransferred + maxIn > used (L-DETF-REFUND-OUTER).
         _permit2PrefundVault(user, commonToken, maxIn);
         uint256 userCommonBefore = commonToken.balanceOf(user);
-        uint256 tokenABefore = tokenA.balanceOf(user);
 
         vm.prank(user);
-        uint256 usedIn = IStandardExchangeOut(linkedVault).exchangeOut(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, needIn, uint256(0))
+        );
+        IStandardExchangeOut(linkedVault).exchangeOut(
             commonToken, maxIn, tokenA, amountOut, user, true, block.timestamp
         );
-
-        assertLe(usedIn, maxIn, "used <= maxIn");
-        assertEq(tokenA.balanceOf(user) - tokenABefore, amountOut, "exact-out delivered");
-        // Unused prefund re-forwarded to entry msg.sender (user).
-        assertEq(
-            commonToken.balanceOf(user),
-            userCommonBefore + (maxIn - usedIn),
-            "T-NEST-5: unused maxIn refunded to msg.sender"
-        );
-        assertEq(commonToken.balanceOf(linkedVault), 0, "T-NEST-5: no free tokenIn residual");
-        _assertHoldSetREqualsB();
+        assertEq(commonToken.balanceOf(user), userCommonBefore, "T-NEST-5: no surplus refund to caller");
+        assertEq(commonToken.balanceOf(linkedVault), maxIn, "T-NEST-5: prefund sticks");
+        assertEq(tokenA.balanceOf(user), 0, "T-NEST-5: no tokenOut");
     }
 
-    function test_T_NEST_6_holdSetSyncAfterRoute() public {
-        _depositCommon(user, LEG_SEED / 2);
-        _assertHoldSetREqualsB();
+    function test_T_NEST_6_honestPullAfterRoute() public {
+        uint256 minted = _depositCommon(user, LEG_SEED / 2);
+        assertGt(minted, 0);
     }
 
     function test_T_NEST_7_zeroAmount_skipsNested_outerRevertsZeroAmount() public {
@@ -152,14 +130,13 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
         );
     }
 
-    /// @dev T-NEST-8: partial maxIn exact-out succeeds (no residual-hard-revert).
-    function test_T_NEST_8_partialMaxIn_succeeds_noHardRevert() public {
+    /// @dev T-NEST-8 invert (law B): oversized prefund + `true` reverts; no caller refund.
+    function test_I1_T_NEST_8_partialMaxIn_prefundThenTrue_revertsNoRefund() public {
         uint256 probeIn = 80e18;
         uint256 amountOut = IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, probeIn, tokenA);
         amountOut = amountOut > 1 ? amountOut / 3 : amountOut;
         if (amountOut == 0) {
             _depositCommon(user, LEG_SEED / 4);
-            _assertHoldSetREqualsB();
             return;
         }
 
@@ -171,56 +148,37 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_NestedPush_Test is
         uint256 userCommonBefore = commonToken.balanceOf(user);
 
         vm.prank(user);
-        uint256 usedIn = IStandardExchangeOut(linkedVault).exchangeOut(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, needIn, uint256(0))
+        );
+        IStandardExchangeOut(linkedVault).exchangeOut(
             commonToken, maxIn, tokenA, amountOut, user, true, block.timestamp
         );
-
-        assertTrue(usedIn > 0, "T-NEST-8 used input");
-        assertLt(usedIn, maxIn, "T-NEST-8 partial maxIn");
-        assertEq(
-            commonToken.balanceOf(user),
-            userCommonBefore + (maxIn - usedIn),
-            "T-NEST-8 refund to caller"
-        );
-        _assertHoldSetREqualsB();
+        assertEq(commonToken.balanceOf(user), userCommonBefore, "T-NEST-8: no refund to caller");
+        assertEq(commonToken.balanceOf(linkedVault), maxIn, "T-NEST-8: prefund sticks");
     }
 
-    function test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU() public {
+    function test_I1_T_LOCAL_PUSH_transferToDetf_true_revertsDelta0() public {
         uint256 amt = LEG_SEED / 4;
         _fund(commonToken, user, amt);
         vm.prank(user);
         commonToken.transfer(linkedVault, amt);
         vm.prank(user);
-        uint256 out_ = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amt, uint256(0))
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             commonToken, amt, IERC20(linkedVault), 0, user, true, block.timestamp
         );
-        assertTrue(out_ > 0, "T-LOCAL-PUSH");
-        _assertHoldSetREqualsB();
+        assertEq(IERC20(linkedVault).balanceOf(user), 0, "T-LOCAL-PUSH: no mint");
     }
 
-    function test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts() public {
+    function test_I1_T_LOCAL_trueWithoutPush_revertsDelta0() public {
         _depositCommon(user, LEG_SEED / 4);
-        _assertHoldSetREqualsB();
-        address[] memory tokens = openBook.vaultTokens();
-        for (uint256 i; i < tokens.length; ++i) {
-            address t = tokens[i];
-            if (t == linkedVault) continue;
-            uint256 R = openBook.reserveOfToken(t);
-            uint256 B = IERC20(t).balanceOf(linkedVault);
-            if (R == B) {
-                vm.prank(user);
-                vm.expectRevert();
-                IStandardExchangeIn(linkedVault).exchangeIn(
-                    IERC20(t), 1, IERC20(linkedVault), 0, user, true, block.timestamp
-                );
-                return;
-            }
-        }
-        uint256 Rc = openBook.reserveOfToken(address(commonToken));
-        uint256 Bc = commonToken.balanceOf(linkedVault);
-        assertEq(Rc, Bc, "common booked after deposit");
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1), uint256(0))
+        );
         IStandardExchangeIn(linkedVault).exchangeIn(
             commonToken, 1, IERC20(linkedVault), 0, user, true, block.timestamp
         );

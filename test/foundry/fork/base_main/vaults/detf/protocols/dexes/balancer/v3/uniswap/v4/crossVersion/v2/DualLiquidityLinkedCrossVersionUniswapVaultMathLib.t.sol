@@ -7,6 +7,19 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultMathLib.sol";
 
 contract DualLiquidityLinkedCrossVersionUniswapVaultMathLibTest is Test {
+    function test_sharesForBpt_emptyGenesis_isOneToOne() public pure {
+        assertEq(DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(7e18, 0, 0), 7e18);
+    }
+
+    /// @notice A0: idle reserve BPT with zero shares must not mint 1:1 (would grant donated inventory).
+    function test_A0_sharesForBpt_idleReserve_doesNotMintOneToOne() public pure {
+        uint256 donated = 100e18;
+        uint256 attackerIn = 1;
+        uint256 shares =
+            DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(attackerIn, 0, donated);
+        assertEq(shares, 0, "A0: 1:1 short-circuit must not fire when idle BPT exists");
+    }
+
     function test_sharesForBpt_proportional() public pure {
         // 100 BPT into a reserve of 1000 BPT backing 2000 shares -> 200 shares
         assertEq(DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(100e18, 2000e18, 1000e18), 200e18);

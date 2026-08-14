@@ -45,8 +45,10 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget is
 
         TokenKind kindIn_ = _classify(tokenIn_);
         TokenKind kindOut_ = _classify(tokenOut_);
-        // The initializing (bootstrap) deposit runs against an empty reserve and mints 1:1; every other
-        // route requires a live reserve.
+        // Inbound mint/swap stay disable-gated. Share redeem is user exit (CROPS).
+        _requireInboundNotDisabled(kindIn_);
+        // The initializing (bootstrap) deposit runs against an empty reserve; every other
+        // route requires a live reserve (BPT + shares).
         if (!_isBootstrapDeposit(kindIn_, kindOut_)) {
             _requireReserveLive();
         }
@@ -461,13 +463,18 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget is
     /*                          Shared execution helpers                      */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev Delta-based secure pull (L-GAPS-9/10 / ISecurePullErrors).
-    ///      Measures `observedDelta` over the pull window. Pretransfer credits exactly `amountIn_`
-    ///      only when `amountIn_ <= observedDelta`; otherwise reverts
-    ///      `TransferDeltaInsufficient(amountIn_, observedDelta)`. Absolute inventory without a
-    ///      positive in-window delta is never free-credited (blocks donation / residual free mint).
-    ///      `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_` (package continues to
-    ///      account with claimed amountIn for standard tokens).
+    /// @dev Same-tx inbound-delta pull (owner-silent DualLiquidity law **B** / `SEC-DETF-DL-003`).
+    ///      Snapshot `balanceOf` **inside** this helper, then pull only if `!pretransferred`.
+    ///      `pretransferred=true` credits `amountIn_` only when `amountIn_ <= observedDelta`
+    ///      over that window; otherwise `TransferDeltaInsufficient(amountIn_, observedDelta)`.
+    ///      Two-tx / Permit2 prefund then `true` sees `observedDelta == 0` and **reverts**.
+    ///      Same-tx ERC20 `transfer` then this call also reverts (snapshot is after the transfer).
+    ///      `pretransferred=true` is therefore only valid if tokens arrive **during** the snapshot
+    ///      window (not a standard ERC20 path). This is **not** durable `U = B − R` (package never
+    ///      `_updateReserve`s face tokens). Do **not** restore a no-op `if (pretransferred) return`
+    ///      or refund `held − amountIn`. Surplus above `amountIn_` is not refunded to the caller
+    ///      (no exact-delta grief; leftover in-call growth is swept to `feeTo`).
+    ///      `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_`.
     function _receive(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {
         uint256 before_ = tokenIn_.balanceOf(address(this));
         if (!pretransferred_) {

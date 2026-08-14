@@ -52,9 +52,11 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget i
         });
 
         _requireActive(req_.deadline, req_.amountOut);
-        _requireReserveLive();
         TokenKind kindIn_ = _classify(req_.tokenIn);
         TokenKind kindOut_ = _classify(req_.tokenOut);
+        // Inbound mint/swap stay disable-gated. Share redeem is user exit (CROPS).
+        _requireInboundNotDisabled(kindIn_);
+        _requireReserveLive();
         uint256[6] memory rest_ = _snapshotIntermediates();
 
         if (kindOut_ == TokenKind.Shares) {
@@ -356,11 +358,14 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget i
         _joinReserveOut(vaultShare_, maxIn_, bptOut_);
     }
 
-    /// @dev Delta-based secure pull for exact-out (L-GAPS-9/10 / ISecurePullErrors).
-    ///      Measures `observedDelta` over the pull window. Pretransfer requires
-    ///      `amountIn_ <= observedDelta` and credits exactly `amountIn_` — never spends absolute
-    ///      inventory and never refunds surplus from free holdings (`held - amountIn` was free
-    ///      extract of donations). `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_`.
+    /// @dev Same-tx inbound-delta pull for exact-out (owner-silent DualLiquidity law **B** /
+    ///      `SEC-DETF-DL-003`). Snapshot `balanceOf` **inside** this helper. `pretransferred=true`
+    ///      requires `amountIn_ <= observedDelta` and credits exactly `amountIn_`. Two-tx / Permit2
+    ///      prefund then `true` reverts `TransferDeltaInsufficient` (`observedDelta == 0`).
+    ///      Never spends absolute inventory and **never** refunds `held − amountIn` (that theft
+    ///      class is closed). Unused `maxIn − used` is **not** returned to `msg.sender`; leftover
+    ///      in-call growth above the residual snapshot goes to `feeTo`. Do **not** restore a no-op
+    ///      receive. `!pretransferred`: standard ERC20 `transferFrom` of `amountIn_`.
     function _receiveOut(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {
         uint256 before_ = tokenIn_.balanceOf(address(this));
         if (!pretransferred_) {

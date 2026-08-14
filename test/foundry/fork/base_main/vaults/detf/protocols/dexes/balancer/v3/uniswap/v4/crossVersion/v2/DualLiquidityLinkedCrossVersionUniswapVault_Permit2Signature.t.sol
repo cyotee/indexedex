@@ -3,14 +3,15 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IEIP712} from "@crane/contracts/interfaces/IEIP712.sol";
 import {
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 } from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 
-/// @notice Signature-based Permit2 AllowanceTransfer (signed `permit`) then transfer into vault
-///         and pretransferred routes. Covers the wallet "sign once" funding pattern on Base Permit2.
+/// @notice Signature-based Permit2 AllowanceTransfer then transfer into vault.
+/// @dev Law B: signed prefund + `pretransferred=true` reverts same-tx delta 0.
 contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2Signature is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {
@@ -33,7 +34,7 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2Signature is
         require(user.code.length == 0, "signer must be EOA for ecrecover path");
     }
 
-    function test_permit2SignedAllowance_depositCommon() public {
+    function test_I1_permit2SignedAllowance_depositCommon_prefundThenTrue_reverts() public {
         uint256 amount = LEG_SEED;
         _fund(commonToken, user, amount);
         vm.prank(user);
@@ -41,17 +42,17 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2Signature is
 
         _signedAllowanceAndTransfer(address(commonToken), amount);
 
-        uint256 preview =
-            IStandardExchangeIn(linkedVault).previewExchangeIn(commonToken, amount, IERC20(linkedVault));
         vm.prank(user);
-        uint256 minted = IStandardExchangeIn(linkedVault).exchangeIn(
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0))
+        );
+        IStandardExchangeIn(linkedVault).exchangeIn(
             commonToken, amount, IERC20(linkedVault), 0, user, true, block.timestamp
         );
-        assertApproxEqAbs(minted, preview, 1e6, "multi-hop deposit preview ~ execution");
-        assertEq(IERC20(linkedVault).balanceOf(user), minted);
+        assertEq(IERC20(linkedVault).balanceOf(user), 0, "signed prefund + true must not mint");
     }
 
-    function test_permit2SignedAllowance_swapTokenAToTokenB() public {
+    function test_I1_permit2SignedAllowance_swapTokenAToTokenB_prefundThenTrue_reverts() public {
         uint256 amount = 200e18;
         _fund(tokenA, user, amount);
         vm.prank(user);
@@ -59,13 +60,12 @@ contract DualLiquidityLinkedCrossVersionUniswapVault_Permit2Signature is
 
         _signedAllowanceAndTransfer(address(tokenA), amount);
 
-        uint256 preview = IStandardExchangeIn(linkedVault).previewExchangeIn(tokenA, amount, tokenB);
         vm.prank(user);
-        uint256 out = IStandardExchangeIn(linkedVault).exchangeIn(
-            tokenA, amount, tokenB, 0, user, true, block.timestamp
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0))
         );
-        assertEq(out, preview);
-        assertEq(tokenB.balanceOf(user), out);
+        IStandardExchangeIn(linkedVault).exchangeIn(tokenA, amount, tokenB, 0, user, true, block.timestamp);
+        assertEq(tokenB.balanceOf(user), 0);
     }
 
     /// @dev User signs PermitSingle allowing this test as spender; test pulls into linkedVault.

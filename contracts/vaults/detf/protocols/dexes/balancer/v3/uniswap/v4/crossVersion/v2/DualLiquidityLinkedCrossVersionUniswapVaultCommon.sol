@@ -39,6 +39,10 @@ import {
 abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
     using BetterSafeERC20 for IERC20;
 
+    /// @dev Recipient of dead shares that lock idle `reserveBpt` at first mint (A0).
+    ///      Not a user; never redeemed. ERC20Repo allows mint to this address.
+    address internal constant DEAD_SHARES = address(0xdead);
+
     /* ---------------------------------------------------------------------- */
     /*                               TokenKind                                */
     /* ---------------------------------------------------------------------- */
@@ -79,7 +83,8 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
     function _previewSharesForBpt(uint256 bptIn_) internal view returns (uint256 userShares_, uint256 feeShares_) {
         uint256 totalSupply_ = ERC20Repo._totalSupply();
         uint256 totalBpt_ = _totalReserveBpt();
-        uint256 gross_ = DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(bptIn_, totalSupply_, totalBpt_);
+        uint256 adjSupply_ = _effectiveShareSupply(totalSupply_, totalBpt_);
+        uint256 gross_ = DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(bptIn_, adjSupply_, totalBpt_);
         uint256 feeWad_ = DualLiquidityLinkedCrossVersionUniswapVaultRepo._layoutStruct().feeOracle.usageFeeOfVault(address(this));
         (userShares_, feeShares_) = DETFUsageFeeLib._splitUsageFee(gross_, feeWad_);
     }
@@ -113,6 +118,7 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
         uint256 totalSupply_,
         uint256 totalBpt_
     ) private returns (uint256 userShares_) {
+        totalSupply_ = _lockIdleReserveAsDeadShares(totalSupply_, totalBpt_);
         uint256 gross_ =
             DualLiquidityLinkedCrossVersionUniswapVaultMathLib._sharesForBpt(bptIn_, totalSupply_, totalBpt_);
         uint256 feeWad_ =
@@ -162,13 +168,39 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
 
     /// @notice BPT required to back `grossShares_` new shares at the current reserve ratio (rounded up).
     function _bptForSharesUp(uint256 grossShares_) internal view returns (uint256 bptNeeded_) {
-        bptNeeded_ = _ceilDiv(grossShares_, _totalReserveBpt(), ERC20Repo._totalSupply());
+        uint256 totalBpt_ = _totalReserveBpt();
+        uint256 adjSupply_ = _effectiveShareSupply(ERC20Repo._totalSupply(), totalBpt_);
+        bptNeeded_ = _ceilDiv(grossShares_, totalBpt_, adjSupply_);
     }
 
     /// @notice Shares that must burn to release at least `bptOut_` of reserve BPT (rounded up, with a
     ///         one-unit safety margin so post-burn flooring never falls short of `bptOut_`).
     function _sharesForBptUp(uint256 bptOut_) internal view returns (uint256 sharesIn_) {
-        sharesIn_ = _ceilDiv(bptOut_, ERC20Repo._totalSupply(), _totalReserveBpt()) + 1;
+        uint256 totalBpt_ = _totalReserveBpt();
+        uint256 adjSupply_ = _effectiveShareSupply(ERC20Repo._totalSupply(), totalBpt_);
+        sharesIn_ = _ceilDiv(bptOut_, adjSupply_, totalBpt_) + 1;
+    }
+
+    /// @dev Virtual 1:1 dead supply when idle `reserveBpt` sits on an empty share book (A0).
+    function _effectiveShareSupply(uint256 totalSupply_, uint256 totalBpt_)
+        internal
+        pure
+        returns (uint256 adjSupply_)
+    {
+        adjSupply_ = (totalSupply_ == 0 && totalBpt_ > 0) ? totalBpt_ : totalSupply_;
+    }
+
+    /// @dev Locks unaccounted `reserveBpt` as dead shares so the first minter cannot claim it (A0).
+    ///      Preview uses `_effectiveShareSupply` so quote == execute after this mint.
+    function _lockIdleReserveAsDeadShares(uint256 totalSupply_, uint256 totalBpt_)
+        internal
+        returns (uint256 adjSupply_)
+    {
+        adjSupply_ = totalSupply_;
+        if (totalSupply_ == 0 && totalBpt_ > 0) {
+            ERC20Repo._mint(DEAD_SHARES, totalBpt_);
+            adjSupply_ = totalBpt_;
+        }
     }
 
     /// @notice Per-1e18-BPT payout of exit-token `index_` (0=A,1=B,2=pair) from a proportional exit.
@@ -522,10 +554,12 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
 
     /// @notice Universal precondition: non-zero amount and unexpired deadline. Does NOT require a live
     ///         reserve — the bootstrapping first deposit runs against an empty reserve.
+    /// @dev Disable is **not** applied here. Inbound mint/swap stay gated via `_requireInboundNotDisabled`.
+    ///      Share redeem (user exit) must remain callable after registry disable (`WP-SEC-CROPS-001`).
+    ///      DualLiquidity has no bond NFT / `redeemClaim`; exit is `exchangeIn`/`exchangeOut` share burn.
     /// @param deadline_ Unix timestamp after which the call is considered expired.
     /// @param amount_   Input/output amount (must be non-zero).
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
-        _requireNotDisabled();
         if (amount_ == 0) revert DualLiquidityLinkedCrossVersionUniswapVaultRepo.ZeroAmount();
         if (block.timestamp > deadline_) revert DualLiquidityLinkedCrossVersionUniswapVaultRepo.DeadlineExpired(deadline_);
     }
@@ -538,17 +572,27 @@ abstract contract DualLiquidityLinkedCrossVersionUniswapVaultCommon {
         }
     }
 
-    /// @notice Reverts unless the reserve already holds BPT. Required by every route except the
-    ///         bootstrapping first deposit.
+    /// @notice Disable-gates inbound mint / deposit / swap. Share redeem (`kindIn_ == Shares`) is exit
+    ///         and stays callable after `setVaultAddressDisabled(true)`.
+    function _requireInboundNotDisabled(TokenKind kindIn_) internal view {
+        if (kindIn_ != TokenKind.Shares) {
+            _requireNotDisabled();
+        }
+    }
+
+    /// @notice Reverts unless the reserve already holds BPT **and** shares have been minted.
+    ///         Required by every route except the bootstrapping first BPT deposit.
+    /// @dev `totalSupply == 0` with idle `reserveBpt` is the A0 window — only the BPT bootstrap
+    ///      path may run (and it locks idle BPT as dead shares). Other routes stay inert.
     function _requireReserveLive() internal view {
-        if (_totalReserveBpt() == 0) {
+        if (_totalReserveBpt() == 0 || ERC20Repo._totalSupply() == 0) {
             revert DualLiquidityLinkedCrossVersionUniswapVaultRepo.ReservePoolNotInitialized();
         }
     }
 
     /// @notice True when this call is the vault's initializing deposit: the reserve-BPT → shares route
-    ///         into a vault whose supply is still zero. Such a deposit mints 1:1 and is allowed to run
-    ///         against an empty reserve; all other routes require `_requireReserveLive`.
+    ///         into a vault whose supply is still zero. Empty genesis (no idle BPT) mints 1:1; idle
+    ///         BPT is locked as dead shares so the first minter cannot claim donated inventory.
     function _isBootstrapDeposit(TokenKind kindIn_, TokenKind kindOut_) internal view returns (bool) {
         return kindOut_ == TokenKind.Shares && kindIn_ == TokenKind.ReserveBpt && ERC20Repo._totalSupply() == 0;
     }

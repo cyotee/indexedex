@@ -8,8 +8,9 @@ import {
 } from "test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol";
 
 /// @notice First-deposit 1:1 model and donation / share-inflation resistance (no genesis dust).
-/// @dev Catalog: A3-class (BPT donation cannot steal victim deposit / front-run inflation).
-///      Formal DualLiquidity adversarial catalog: `adversarial/` under this fork tree.
+/// @dev Catalog: **A3-class only** (post-bootstrap BPT donation cannot steal victim deposit /
+///      front-run inflation). This is **not** I1/I2/I3/K1. Empty-vault idle-BPT drain is A0
+///      (`adversarial/Adversarial_DualLiquidity_A0.t.sol`).
 contract DualLiquidityLinkedCrossVersionUniswapVault_ShareInflation is
     TestBase_DualLiquidityLinkedCrossVersionUniswapVault
 {

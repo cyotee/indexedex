@@ -5,15 +5,17 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 
 library DualLiquidityLinkedCrossVersionUniswapVaultMathLib {
     /// @notice Shares minted for BPT deposited, quoted BEFORE the BPT enters the reserve.
-    /// @dev First deposit into an empty vault (no shares or no reserve BPT yet) mints 1:1, which both
-    ///      guards the division and sets the genesis share:BPT ratio at unity. Balancer already locks
-    ///      minimum liquidity when the reserve pool is initialized, so no extra dust lock is needed here.
+    /// @dev 1:1 genesis only when **both** `totalShares_ == 0` and `totalBpt_ == 0`. If the diamond
+    ///      already holds idle `reserveBpt` with no shares (`SEC-DETF-DL-004` / A0), 1:1 would grant
+    ///      the first minter the donated inventory. Callers must lock that idle BPT as dead shares
+    ///      (see Common `_lockIdleReserveAsDeadShares`) so this function sees a positive supply and
+    ///      mints pro-rata. `totalBpt_ == 0` with leftover shares no longer reprints 1:1.
     function _sharesForBpt(uint256 bptIn_, uint256 totalShares_, uint256 totalBpt_)
         internal
         pure
         returns (uint256 shares_)
     {
-        if (totalShares_ == 0 || totalBpt_ == 0) {
+        if (totalShares_ == 0 && totalBpt_ == 0) {
             return bptIn_;
         }
         shares_ = Math.mulDiv(bptIn_, totalShares_, totalBpt_);
