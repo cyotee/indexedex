@@ -18,9 +18,11 @@ export type SiteDefinition = {
 export const SITE: SiteDefinition = {
   id: 'indexedex',
   name: 'IndexedEx',
-  title: 'IndexedEx - Composed Indexed Liquidity',
-  description: 'Modular DeFi vault infrastructure. Deposit, earn, route.',
-  tagline: 'Modular vault infrastructure. Deposit once — strategies route the rest.',
+  title: 'IndexedEx - Deploy your own DETF',
+  description:
+    'A strategy protocol. Deploy a DETF: one token over a basket that manages assets in other protocols.',
+  tagline:
+    'A strategy protocol. Deploy a DETF: one token over a basket that works in other protocols.',
   manifestoLabel: '// indexedex manifesto',
   logoSrc: '/logo-indexedex.png',
   logoAlt: 'IndexedEx',

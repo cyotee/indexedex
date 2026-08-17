@@ -7,6 +7,25 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { DetfCompositionDiagram } from './diagrams/DetfCompositionDiagram'
 import { MermaidDiagram } from './MermaidDiagram'
 
+/** Renders `**lead** rest` as a bold lead plus the answer. */
+function BulletText({ text }: { text: string }) {
+  const parts = text.split(/\*\*/)
+  if (parts.length < 3) return <>{text}</>
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="font-medium text-[var(--text-primary,#EDEDED)]">
+            {part}
+          </strong>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </>
+  )
+}
+
 function formatDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00.000Z`)
   if (Number.isNaN(d.getTime())) return iso
@@ -87,7 +106,9 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
             {section.bullets && section.bullets.length > 0 ? (
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-muted,#9aa3b2)]">
                 {section.bullets.map((b) => (
-                  <li key={b}>{b}</li>
+                  <li key={b}>
+                    <BulletText text={b} />
+                  </li>
                 ))}
               </ul>
             ) : null}

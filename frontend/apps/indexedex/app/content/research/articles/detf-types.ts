@@ -10,13 +10,13 @@ export const detfTypesArticle: ResearchArticle = {
   slug: 'detf-types',
   title: 'DETF types: which design for which basket',
   summary:
-    'IndexedEx’s premier product is four DETF designs — not one black-box fund. They share the same DETF pattern (one share over a real reserve, bond / mint / burn) with different reserve layouts: single Standard Exchange, multi-vault weighted, multi-vault stable (layered composition), and mixed-buffer stable (one buffer + vaults).',
+    'IndexedEx’s premier product is four DETF designs — not one black-box fund. They share the same DETF pattern (one token over a real reserve, bond / mint / burn) with different reserve layouts: single Standard Exchange, multi-vault weighted, multi-vault stable (layered composition), and mixed-buffer stable (one buffer + vaults).',
   date: '2026-07-27',
   tags: ['detf', 'types', 'platform', 'product'],
   status: 'published',
   claims: [
     'There are four DETF composition types under the product map — types differ in reserve layout and inputs, not in inventing a second product category.',
-    'Single Standard Exchange DETFs pair the DETF share with exactly one SE vault share in a weighted reserve. Any Standard Exchange vault may be the external leg (no hardcoded venue).',
+    'Single Standard Exchange DETFs pair the DETF token with exactly one SE vault share in a weighted reserve. Any Standard Exchange vault may be the external leg (no hardcoded venue).',
     'Multi-vault weighted DETFs put several SE vault shares next to DETF in one weighted reserve with custom weights and independent valuations.',
     'Multi-vault stable (composed) DETFs layer two intermediate Balancer stable pools of the same SE vault shares under different rate views, then put DETF plus those two pool BPTs in a weighted top reserve — so the vault set is composed into one structure.',
     'Mixed-buffer multi-vault stable DETFs use one MixedBuffer stable pool: DETF, exactly one buffer token, and vault shares that process that buffer; mint buffer or vault share → DETF; burn DETF → buffer only.',
@@ -28,14 +28,14 @@ export const detfTypesArticle: ResearchArticle = {
     'Deploy package names in code are not customer product titles.',
   ],
   relatedProductHref: '/research/detf',
-  relatedProductLabel: 'DETFs: one share over a real reserve',
+  relatedProductLabel: 'DETFs: one token over a basket',
   sourceNote:
     'Four live families under contracts/vaults/detf/: standardExchange/single (SingleStandardExchangeDETF); composed/multi-vault-weighted (MultiVaultWeightedDetf); composed/stable/common (ComposedStableCommonDetf); composed/stable/mixedBuffer (MixedBufferMultiVaultStableDetf). Removed path composed/single is not a product type. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
   sections: [
     {
       heading: 'One pattern, four compositions',
       paragraphs: [
-        'DETF means Decentralized ETF: one onchain share over a real multi-asset reserve. IndexedEx’s premier product is standing up that pattern from more than one package type — so a one-vault basket is not forced into the same reserve layout as a multi-leg weighted or stable design.',
+        'DETF means Decentralized ETF: one token over a real multi-asset reserve. That token is a claim on a share of the managed reserve. IndexedEx’s premier product is standing up that pattern from more than one package type — so a one-vault basket is not forced into the same reserve layout as a multi-leg weighted or stable design.',
         'Every true DETF still: is the ERC-20, prices from its reserve, deploys inert until first bond (or family bootstrap), and offers Policy or Open mint/burn rules. Types change how legs are composed and which inputs mint or burn accept — not whether the product is “really a DETF.”',
         'A design rule across all types: reserve vault legs are Standard Exchange vaults injected at deploy — the DETF does not hardcode a single protocol backend.',
       ],

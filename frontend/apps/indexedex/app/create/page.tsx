@@ -311,8 +311,11 @@ export default function CreatePage() {
         return (
             <div className="container mx-auto px-4">
                 <div className="text-center pt-10 pb-6">
-                    <h1 className="text-3xl font-bold text-white">Create</h1>
-                    <p className="text-gray-300 mt-2">Connect your wallet to create contracts</p>
+                    <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
+                    <p className="text-gray-300 mt-2 max-w-lg mx-auto">
+                      Connect your wallet to deploy your own strategy: one token over a basket that
+                      works in other protocols. The DETF stays off until someone bonds.
+                    </p>
                 </div>
             </div>
         )
@@ -320,17 +323,41 @@ export default function CreatePage() {
 
     return (
         <div className="container mx-auto px-4 max-w-4xl">
-            <h1 className="text-3xl font-bold text-white text-center py-8">Create</h1>
+            <div className="text-center py-8">
+                <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
+                <p className="text-gray-300 mt-2 max-w-xl mx-auto">
+                    Deploy your own strategy as one token over a basket. The basket holds assets
+                    in other protocols. Three steps, then bond later to turn it on.
+                </p>
+            </div>
+
+            <ol className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-gray-300">
+                <li className="rounded-lg border border-slate-600 bg-slate-800/60 p-3">
+                    <p className="text-xs uppercase tracking-wide text-gray-400">1</p>
+                    <p className="mt-1 font-medium text-white">Pick a type</p>
+                    <p className="mt-1">The type is the strategy shape you want.</p>
+                </li>
+                <li className="rounded-lg border border-slate-600 bg-slate-800/60 p-3">
+                    <p className="text-xs uppercase tracking-wide text-gray-400">2</p>
+                    <p className="mt-1 font-medium text-white">Choose the action</p>
+                    <p className="mt-1">Usually deploy. That creates the new DETF.</p>
+                </li>
+                <li className="rounded-lg border border-slate-600 bg-slate-800/60 p-3">
+                    <p className="text-xs uppercase tracking-wide text-gray-400">3</p>
+                    <p className="mt-1 font-medium text-white">Fill and create</p>
+                    <p className="mt-1">Set the mix, then create. Bond later to turn it on.</p>
+                </li>
+            </ol>
 
             {/* Factory Selector */}
             <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Factory</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Type (factory)</label>
                 <select
                     value={selectedFactoryIndex}
                     onChange={(e) => { setSelectedFactoryIndex(parseInt(e.target.value, 10)); setSelectedFunctionIndex(-1); setArgsState({}) }}
                     className="w-full rounded border border-slate-600 bg-slate-700 text-white p-3"
                 >
-                    <option value={-1}>Select a Factory</option>
+                    <option value={-1}>Select a DETF type</option>
                     {factories.map((f, i) => (
                         <option key={i} value={i}>{f.name}</option>
                     ))}
@@ -340,13 +367,13 @@ export default function CreatePage() {
             {/* Function Selector */}
             {selectedFactory && (
                 <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Function</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Action</label>
                     <select
                         value={selectedFunctionIndex}
                         onChange={(e) => { setSelectedFunctionIndex(parseInt(e.target.value, 10)); setArgsState({}) }}
                         className="w-full rounded border border-slate-600 bg-slate-700 text-white p-3"
                     >
-                        <option value={-1}>Select a Function</option>
+                        <option value={-1}>Select an action</option>
                         {functions.map((fn, i) => (
                             <option key={i} value={i}>{fn.label}</option>
                         ))}

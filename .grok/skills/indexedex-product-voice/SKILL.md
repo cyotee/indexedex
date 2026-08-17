@@ -28,6 +28,10 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Protocol DETF → `/staking` (not Earn grid). Education → `/research/detf`. Strategy legs → `/earn`.
 
+**Differentiator (customer, keep this on landing):** IndexedEx is a **strategy protocol**. A DETF is how a user **deploys their own strategy** as one **token** over a **basket**. That basket **manages assets in other protocols** (not a static token list). Putting the **DETF token in market liquidity** is reserve technology: it helps manage the backing. Earn vaults are building blocks a DETF can put in its basket. Do not call Earn the strategy product.
+
+**DETF token vs share:** Default customer name is the **DETF token**. Use **share** only when explaining that the token is a **claim on a share of the managed reserve**, or for **share of protocol fees**, or **vault shares** (basket legs). Do not call the DETF instrument a share in titles, CTAs, or first-pass copy.
+
 **Never** put deploy package or family type names in customer UI titles:
 
 - ~~Single Vault DETF~~, ~~SingleStandardExchangeDETF~~, ~~MultiVaultWeightedDetf~~, ~~MixedBuffer…~~

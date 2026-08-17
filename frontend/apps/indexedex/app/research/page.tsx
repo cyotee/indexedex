@@ -9,7 +9,7 @@ import { PageHeader } from '../components/ui/PageHeader'
 export const metadata: Metadata = {
   title: 'Research — IndexedEx',
   description:
-    'Measured claims and product education: DETF pattern, Uniswap V4 markets, DETF types, bond vs mint, rate integrity, and Protocol DETF.',
+    'How DETFs work: one token over a basket, create or join Protocol DETF, Policy vs Open, and related notes.',
 }
 
 function formatDate(iso: string): string {
@@ -31,7 +31,7 @@ export default function ResearchIndexPage() {
     <div>
       <PageHeader
         title="Research"
-        subtitle="Measured claims. Product education. No invented APYs."
+        subtitle="How DETFs work, in plain language. No invented APYs."
         actions={
           <Link href="/staking">
             <Button size="sm" variant="secondary">
@@ -42,16 +42,15 @@ export default function ResearchIndexPage() {
       />
 
       <Card className="mb-8 border-[var(--border-accent,rgba(79,212,75,0.25))]">
-        <p className="text-xs uppercase tracking-widest text-[var(--accent,#4FD44B)]">Premier product</p>
+        <p className="text-xs uppercase tracking-widest text-[var(--accent,#4FD44B)]">Start here</p>
         <h2 className="mt-2 text-lg font-medium text-[var(--text-primary,#EDEDED)]">
-          Create your own DETFs
+          Deploy your own strategy as a DETF
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          A DETF (Decentralized ETF) is one onchain share over a multi-asset reserve. Stand up
-          your own instance from IndexedEx package types — bond into protocol-owned depth; Policy
-          price-gates mint/burn, or Open with no price restrictions. Deploy on Create; use
-          research notes below for the design. Want protocol fees instead of deploying? Open
-          Protocol DETF.
+          A DETF (Decentralized ETF) is one token over a basket that manages assets in other
+          protocols. That token is a claim on a share of the managed reserve. The token also sits
+          in market liquidity so the reserve can be managed. Create it, bond to turn it on, then
+          mint or burn. Want a share of protocol fees instead? Open Protocol DETF.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href="/create">
@@ -83,10 +82,8 @@ export default function ResearchIndexPage() {
           DETF Litepaper — July 2026
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          Mechanism write-up with measured appendix: inert to live, Policy vs Open, bond-ledger
-          rewards (capital seigniorage, natural expansion, protocol compound), nested SE mark
-          integrity, and hermetic Single SE scenario results. Not a prospectus and not a yield
-          forecast.
+          Longer write-up of the process: off to live, Policy vs Open, and where rewards can come
+          from. Not a prospectus and not a yield forecast.
         </p>
         <div className="mt-4">
           <a href="/research/DETF_LITEPAPAPER.pdf" download>

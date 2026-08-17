@@ -31,7 +31,7 @@ export const rateProvidersArticle: ResearchArticle = {
     'Rates off do not guarantee aggressive rebalancing — residual can exist below fees with no fills.',
   ],
   relatedProductHref: '/research/detf',
-  relatedProductLabel: 'DETFs: one share over a real reserve',
+  relatedProductLabel: 'DETFs: one token over a basket',
   sourceNote:
     'research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3 (rate provider comparative); research/scenarios/uniswapV2Se/rateProviderCompare/ (AGENT_RESEARCH_REPORT.md, FINDINGS.md). Product spine: docs/marketing/DETF_NARRATIVE_SPINE.md (pricing engine = reserve pool). DualLiquidity optional rates appear only as composition context — not the hero product.',
   sections: [

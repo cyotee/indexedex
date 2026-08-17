@@ -246,7 +246,7 @@ function EarnCatalogInner() {
     <div>
       <PageHeader
         title="Earn"
-        subtitle="Preferred catalog from tokenlists; search uses on-chain Vault Registry views."
+        subtitle="Building-block vaults a DETF can put in its basket. Protocol DETF lives on its own page."
       />
 
       {!search.trim() ? (
@@ -257,8 +257,8 @@ function EarnCatalogInner() {
             </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
               {featuredFee
-                ? `${featuredFee.symbol} lives on the Protocol DETF workspace (mint / bond / sell) — not in this strategy catalog.`
-                : 'Protocol DETFs use a dedicated workspace for mint, bond, and sell — not this catalog grid.'}
+                ? `${featuredFee.symbol} lives on the Protocol DETF page (mint, bond, sell), not in this vault catalog.`
+                : 'Protocol DETFs live on their own page for mint, bond, and sell, not in this vault catalog.'}
             </p>
           </div>
           <Link href={feePromoHref}>

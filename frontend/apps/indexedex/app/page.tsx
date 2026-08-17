@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { Button } from './components/ui/Button'
 import { Card } from './components/ui/Card'
 import { listPublishedResearchArticles } from './content/research'
-import { loadEarnProductsForChain, loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
+import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
 import { feeDetfStakingHref } from '@indexedex/protocol/tokenlists'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -14,70 +14,63 @@ import { useBrand } from './lib/brandContext'
 
 import './landing.css'
 
-const PROOF_CHIPS = [
-  { k: 'offer', v: 'many DETF types' },
-  { k: 'state', v: 'inert → live' },
-  { k: 'pricing', v: 'pool-priced' },
-  { k: 'mode', v: 'policy | open' },
-] as const
-
 const BENEFITS = [
   {
     featured: true,
-    t: 'Your DETF, your design',
-    d: 'Stand up reserve-backed shares from a family of package types — single vault, multi-vault weighted, mixed-buffer stable, composed shapes, and more. One platform; many DETF designs.',
-    tag: 'platform',
+    t: 'A basket that works in other protocols',
+    d: 'The assets in your DETF are not a static list. They sit in other protocols as a working strategy. That is the main difference. You deploy a DETF to ship your own strategy as one token.',
+    tag: 'strategy',
   },
   {
     featured: false,
-    t: 'One share, one basket',
-    d: 'One ERC-20 over configured reserve legs. ETF-shaped intent without a discretionary rebalancer.',
-    tag: 'share',
+    t: 'One token over that basket',
+    d: 'Hold, move, or exit a single token instead of managing each protocol position yourself.',
+    tag: 'simpler',
   },
   {
     featured: false,
-    t: 'Priced by the pool',
-    d: 'Synthetic valuation comes from the reserve AMM — balances, weights, rates — not a private dashboard ledger.',
-    tag: 'pricing',
+    t: 'The token is in the market',
+    d: 'The DETF token lives in market liquidity. That is how the reserve behind the token is managed, not a side listing.',
+    tag: 'reserve',
   },
   {
     featured: false,
-    t: 'Policy or Open',
-    d: 'Policy restricts primary mint/burn by synthetic price. Open has no price restrictions — you can mint and burn regardless of synthetic price. Fees may still apply.',
-    tag: 'modes',
+    t: 'You pick the rules',
+    d: 'Policy can pause mint and burn when the price sits near target. Open never does. Fees can still apply.',
+    tag: 'control',
   },
   {
     featured: false,
-    t: 'Immutable after deploy',
-    d: 'No instance owner and no admin rebalance in normal operation. Flawed config means ship a new package — not patch a live one.',
-    tag: 'constraints',
+    t: 'The design stays put',
+    d: 'After it goes live, nobody quietly rewrites the rules. A bad setup means a new DETF, not a silent patch.',
+    tag: 'trust',
   },
 ] as const
 
 const HOW_IT_WORKS = [
   {
     n: '01',
-    t: 'Bond',
-    d: 'Establish liveness and protocol-owned depth. Bond terms come from onchain configuration.',
+    t: 'Create',
+    d: 'Deploy a DETF as your strategy. Pick the type and the mix. It stays off until someone bonds.',
   },
   {
     n: '02',
-    t: 'Mint / burn',
-    d: 'Exchange vault shares for DETF on the primary market. Policy only allows mint/burn outside the price deadband. Open never blocks mint or burn by price.',
+    t: 'Bond',
+    d: 'Bond is the first real deposit. It turns the strategy on and funds the reserve.',
   },
   {
     n: '03',
-    t: 'Hold or claim',
-    d: 'Hold the share, trade when markets exist, or use bond/claim paths when the instance wires them.',
+    t: 'Use',
+    d: 'Hold the token, mint more, or burn to exit. The token stays in market liquidity so the reserve can be managed.',
   },
 ] as const
 
 const DISCLAIMERS = [
-  'A DETF is a decentralized ETF product pattern onchain — not a registered securities ETF or fund share.',
+  'A DETF is a decentralized ETF onchain. It is not a registered securities ETF or fund share.',
   'Holding DETF or reserve assets is not legal ownership of offchain stocks or other underlyings.',
-  'Policy price thresholds (and choosing Open) do not guarantee peg stability, liquidity, or returns.',
+  'Policy and Open do not guarantee a stable price, liquidity, or returns.',
   'There is no promised APY, rebase yield, or guaranteed returns.',
-  'Smart-contract and market risk apply. Read research; this is not financial advice.',
+  'Smart-contract and market risk apply. Read research. This is not financial advice.',
 ] as const
 
 type BandMode = 'policy' | 'open'
@@ -93,9 +86,9 @@ function ReserveCore() {
       <div className="landing-reserve__ring landing-reserve__ring--mid" />
       <div className="landing-reserve__ring landing-reserve__ring--inner" />
       <div className="landing-reserve__core">
-        <div className="landing-reserve__core-label">share token</div>
+        <div className="landing-reserve__core-label">DETF token</div>
         <div className="landing-reserve__core-title">DETF</div>
-        <div className="landing-reserve__core-state">inert → live</div>
+        <div className="landing-reserve__core-state">off, then live</div>
       </div>
     </div>
   )
@@ -108,17 +101,17 @@ function PolicyBandExperiment() {
     <div className="landing-bleed">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
         <div>
-          <p className="landing-section-label">Mint / burn modes</p>
+          <p className="landing-section-label">Mint and burn</p>
           <h2 className="mt-2 text-xl md:text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-            Policy gates by price. Open does not.
+            Choose when people can enter and exit
           </h2>
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] max-w-xl">
-            Toggle the deploy-time mode.{' '}
-            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Policy</strong> only
-            allows primary mint/burn outside a synthetic price deadband (defaults often ±5%).{' '}
-            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Open</strong> has no
-            price restrictions — mint and burn stay available regardless of synthetic price. Fees
-            may still apply. Neither mode is a peg or return guarantee.
+            Every DETF picks a mode when you create it.{' '}
+            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Policy</strong> can
+            pause mint and burn when the price sits near target.{' '}
+            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Open</strong> keeps
+            mint and burn available at any price. Fees can still apply. Neither mode promises a
+            stable price or a return.
           </p>
         </div>
         <div className="landing-mode-toggle" role="group" aria-label="Threshold mode preview">
@@ -137,34 +130,31 @@ function PolicyBandExperiment() {
 
       <div className="landing-band" data-mode={mode}>
         <div className="landing-band__zone landing-band__zone--burn">burn</div>
-        <div className="landing-band__zone landing-band__zone--dead">deadband</div>
+        <div className="landing-band__zone landing-band__zone--dead">near target</div>
         <div className="landing-band__zone landing-band__zone--mint">mint</div>
-        <div className="landing-band__zone landing-band__zone--open">mint &amp; burn · no price gate</div>
+        <div className="landing-band__zone landing-band__zone--open">mint and burn stay open</div>
       </div>
       <div className="landing-band__labels">
         {mode === 'policy' ? (
           <>
-            <span>burn only if synth &lt; 0.95</span>
-            <span>blocked near peg</span>
-            <span>mint only if synth &gt; 1.05</span>
+            <span>burn when price is low</span>
+            <span>paused near target</span>
+            <span>mint when price is high</span>
           </>
         ) : (
           <>
-            <span>no price floor</span>
-            <span>mint &amp; burn by price: always on</span>
-            <span>no price ceiling</span>
+            <span>mint stays open</span>
+            <span>no pause for price</span>
+            <span>burn stays open</span>
           </>
         )}
       </div>
 
-      <p className="mt-4 font-mono text-[11px] leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-        <span className="text-[var(--text-primary,#EDEDED)]">THRESHOLD_MODE=</span>
-        {mode === 'policy' ? 'POLICY' : 'OPEN'}
-        <span className="mx-2 opacity-40">·</span>
-        <span className="text-[var(--text-primary,#EDEDED)]">PRICE_GATES=</span>
-        {mode === 'policy' ? 'on' : 'off'}
-        <span className="mx-2 opacity-40">·</span>
-        Open is explicit at deploy — not “zero thresholds”
+      <p className="mt-4 text-xs leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+        You choose Policy or Open when you create the DETF.{' '}
+        <Link href="/research/detf" className="text-[var(--accent,#4FD44B)] hover:underline">
+          Read how DETFs work
+        </Link>
       </p>
     </div>
   )
@@ -175,10 +165,6 @@ export default function HomePage() {
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
 
-  const catalog = useMemo(
-    () => loadEarnProductsForChain(selectedChainId, environment),
-    [selectedChainId, environment],
-  )
   const featuredFeeDetfs = useMemo(
     () => loadFeaturedFeeDetfs(selectedChainId, environment, 3),
     [selectedChainId, environment],
@@ -188,9 +174,7 @@ export default function HomePage() {
 
   const researchNotes = useMemo(() => listPublishedResearchArticles().slice(0, 3), [])
 
-  const strategyCount = catalog.filter((p) => p.productType === 'strategy').length
   const primaryStakingHref = heroFee ? feeDetfStakingHref(heroFee.address) : '/staking'
-  const networkLabel = selectedChainId === 84532 ? 'Base Sepolia' : 'Sepolia'
   const featuredBenefit = BENEFITS.find((b) => b.featured)!
   const otherBenefits = BENEFITS.filter((b) => !b.featured)
 
@@ -207,30 +191,20 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           <div className="lg:col-span-7">
             <p className="landing-lab__eyebrow">
-              DETF = Decentralized ETF · many types
+              A strategy protocol · DETF means Decentralized ETF
             </p>
             <h1 className="landing-lab__h1 mt-4">
-              Build your own
+              Deploy your own
               <br />
-              <span className="landing-lab__h1-accent">onchain DETF.</span>
+              <span className="landing-lab__h1-accent">strategy as a DETF.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base md:text-lg text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-              <strong className="font-medium text-[var(--text-primary,#EDEDED)]">DETF</strong> means{' '}
-              <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Decentralized ETF</strong>
-              — the D is decentralized. One onchain share over a real multi-asset reserve. Stand up
-              your own DETFs from a family of package types — bond, mint, and burn rules priced from
-              the pool. Want a share of protocol fees? Open{' '}
+              One token over a basket you choose. That basket manages assets in other protocols,
+              not a static list of tokens. The DETF token also sits in market liquidity, which is
+              how the reserve behind the token is managed. This is not a registered stock ETF. Want
+              a share of protocol fees instead? Open{' '}
               <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Protocol DETF</strong>.
             </p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {PROOF_CHIPS.map((c) => (
-                <span key={c.k} className="landing-lab__chip">
-                  <span className="opacity-60">{c.k}</span>
-                  <strong>{c.v}</strong>
-                </span>
-              ))}
-            </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/create">
@@ -243,52 +217,21 @@ export default function HomePage() {
                   How DETFs work
                 </Button>
               </Link>
-              <Link href="/research/uniswap-v4-markets">
-                <Button size="lg" variant="secondary">
-                  Uni V4 markets
-                </Button>
-              </Link>
               <Link href={primaryStakingHref}>
                 <Button size="lg" variant="secondary">
-                  {heroFee ? `Protocol fees · ${heroFee.symbol}` : 'Open Protocol DETF'}
-                </Button>
-              </Link>
-              <Link href="/earn">
-                <Button size="lg" variant="ghost">
-                  Browse strategy vaults
+                  {heroFee ? `Open ${heroFee.symbol}` : 'Open Protocol DETF'}
                 </Button>
               </Link>
             </div>
-
-            <p className="mt-6 font-mono text-[11px] text-[var(--text-muted,#9aa3b2)]">
-              net={networkLabel}
-              <span className="mx-2 opacity-40">·</span>
-              products={catalog.length}
-              <span className="mx-2 opacity-40">·</span>
-              vaults={strategyCount}
-              <span className="mx-2 opacity-40">·</span>
-              protocol_detfs={featuredFeeDetfs.length}
-            </p>
           </div>
 
           <div className="lg:col-span-5">
             <div className="landing-lab__panel p-6 md:p-8">
-              <div className="landing-terminal-bar -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 px-4">
-                <span>{'// reserve_core.preview'}</span>
-                <span className="text-[var(--accent,#4FD44B)]">status=sim</span>
-              </div>
               <ReserveCore />
               <p className="mt-6 text-center text-xs text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-                Share at the center. Reserve legs on the ring. Policy blocks mint/burn near peg;
-                Open never does — primary mint and burn stay free of price gates.
+                The DETF token sits in the middle, in market liquidity. The ring is the basket:
+                assets working in other protocols.
               </p>
-              <div className="mt-5 flex justify-center">
-                <Link href="/earn">
-                  <Button size="sm" variant="secondary">
-                    Browse strategy vaults
-                  </Button>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -298,11 +241,12 @@ export default function HomePage() {
       <section className="mb-16 md:mb-20">
         <p className="landing-section-label">Why DETFs</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-          Types you can compose. Rules you can inspect.
+          A strategy you can hold as one token.
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          Not a single black-box fund. A platform of DETF packages with explicit lifecycle, optional
-          price gates, and hard post-deploy constraints.
+          IndexedEx is a strategy protocol. A DETF is how you deploy your own strategy vault: one
+          token over a basket that works in other protocols. That token is a claim on a share of
+          the managed reserve.
         </p>
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -337,9 +281,9 @@ export default function HomePage() {
 
       {/* How it works — timeline */}
       <section className="mb-16 md:mb-20">
-        <p className="landing-section-label">User path</p>
+        <p className="landing-section-label">The process</p>
         <h2 className="mt-2 mb-5 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-          How it works
+          Three steps
         </h2>
         <div className="landing-steps">
           {HOW_IT_WORKS.map((s) => (
@@ -369,9 +313,8 @@ export default function HomePage() {
           Protocol DETF
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          Earn a claim on protocol fees through a live DETF. Mint or burn against the reserve, bond for
-          onchain terms, sell to the protocol when ready, redeem via claim when wired. Fees may apply;
-          amounts are not guarantees.
+          Same DETF design, used to take part in protocol fees. Mint, bond, or exit when you are
+          ready. Fees may apply. Amounts are not guarantees.
         </p>
 
         {featuredFeeDetfs.length === 0 ? (
@@ -392,10 +335,6 @@ export default function HomePage() {
                 href={feeDetfStakingHref(heroFee.address)}
                 className="landing-feature-hero block group overflow-hidden rounded-xl transition-shadow"
               >
-                <div className="landing-terminal-bar">
-                  <span>{'// protocol_detf'}</span>
-                  <span className="text-[var(--accent,#4FD44B)]">live</span>
-                </div>
                 <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
@@ -405,10 +344,8 @@ export default function HomePage() {
                     <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">
                       Protocol DETF
                     </h3>
-                    <p className="mt-1 font-mono text-xs text-[var(--text-muted,#9aa3b2)]">
+                    <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
                       {heroFee.symbol}
-                      <span className="mx-2 opacity-40">·</span>
-                      share token
                     </p>
                   </div>
                   <span className="inline-flex items-center text-sm font-medium text-[var(--accent,#4FD44B)]">
@@ -433,8 +370,8 @@ export default function HomePage() {
                       <h3 className="mt-2 text-base font-semibold text-[var(--text-primary,#EDEDED)]">
                         {p.symbol}
                       </h3>
-                      <p className="mt-1 font-mono text-xs text-[var(--text-muted,#9aa3b2)]">
-                        share token
+                      <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+                        Protocol DETF token
                       </p>
                       <p className="mt-3 text-sm text-[var(--accent,#4FD44B)]">Open {p.symbol} →</p>
                     </Card>
@@ -461,7 +398,7 @@ export default function HomePage() {
             <div>
               <p className="landing-section-label">Research</p>
               <h2 className="mt-2 text-xl md:text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-                Measured claims. Clear mechanics.
+                How DETFs work
               </h2>
             </div>
             <Link
@@ -503,12 +440,12 @@ export default function HomePage() {
               Also on {brand.name}
             </p>
             <h2 className="mt-1 text-base font-medium text-[var(--text-primary,#EDEDED)]">
-              Strategy vaults
+              Building-block vaults
             </h2>
             <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)] max-w-xl">
-              Standard Exchange vaults and composed liquidity live on Earn — often the legs a DETF
-              reserve sits on. Mint, bond, and sell for Protocol DETF live on the Protocol DETF page,
-              not the Earn grid.
+              Deposit into vaults a DETF can put in its basket. Those vaults are how a strategy
+              reaches other protocols. Mint, bond, and sell for Protocol DETF live on the Protocol
+              DETF page.
             </p>
           </div>
           <Link href="/earn">
@@ -539,13 +476,10 @@ export default function HomePage() {
 
       {/* Closing strip */}
       <section className="pb-4">
-        <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 font-mono text-[11px] leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          <div className="text-[var(--accent,#4FD44B)] opacity-90">{'// product_law'}</div>
-          <div className="mt-2 text-[var(--text-primary,#EDEDED)]">
-            DETF = Decentralized ETF. many types. deploy inert. bond to go live.
-            <br />
-            protocol DETF for protocol fees. measure first; claim only what the chain can prove.
-          </div>
+        <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          DETF means Decentralized ETF. Deploy your own strategy as a basket that works in other
+          protocols. Open Protocol DETF for a share of protocol fees. We only claim what the chain
+          can prove.
         </div>
       </section>
     </div>

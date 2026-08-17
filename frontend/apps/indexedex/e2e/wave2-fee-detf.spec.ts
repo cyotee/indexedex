@@ -56,7 +56,7 @@ test.describe('Wave 2 Protocol DETF narrative', () => {
     })
 
     // Banner cross-promo (not a catalog row).
-    const banner = walletPage.getByText(/lives on the Protocol DETF workspace|Protocol DETFs use a dedicated workspace/i)
+    const banner = walletPage.getByText(/lives on the Protocol DETF page|Protocol DETFs live on their own page/i)
     await expect(banner.first()).toBeVisible()
 
     const bannerCta = walletPage.locator('a[href*="/staking"]').filter({ hasText: /Open/i }).first()

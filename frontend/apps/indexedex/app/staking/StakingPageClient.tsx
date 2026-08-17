@@ -254,15 +254,15 @@ export default function StakingPageClient({
             <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
               Browse Earn
             </a>
-            . Protocol DETFs use this page for mint, bond, and sell — not the Earn catalog grid.
+            . This page is for Protocol DETF (mint, bond, sell), not the Earn vault catalog.
           </div>
           <PageHeader
             title="Protocol DETF"
-            subtitle="Earn a share of protocol fees through Protocol DETF — a live Decentralized ETF (DETF) instance. Mint or exchange against the reserve, bond for oracle terms, sell to the protocol when ready, and redeem via the claim path. Lock terms come from the fee oracle. Fees may apply; amounts are not guarantees."
+            subtitle="Use Protocol DETF to take part in protocol fees. Mint, bond, or exit when you are ready. Fees may apply. Amounts are not guarantees."
           />
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Lifecycle: mint → bond NFT → sell to protocol → claim/redeem. Select an instance below when more
-            than one Protocol DETF is configured.
+            Typical path: mint, bond, sell to the protocol, then claim. Select an instance below
+            when more than one Protocol DETF is configured.
           </p>
         </>
       ) : null}
@@ -308,7 +308,7 @@ export default function StakingPageClient({
           <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">DETF (share / proxy)</div>
+                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">DETF token</div>
                 <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
                   {addrOrDash(detfAddress) ? (
                     <AddressLink chainId={chain.dataChainId} address={detfAddress!} />
