@@ -24,6 +24,8 @@
 
 **Process rule:** If this plan and PRD disagree, **PRD wins** and this plan must be patched. Do not reopen PRD-locked Q1–Q23 without a PRD revision.
 
+Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../../../UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md) / its implementation plan.
+
 **Role names only:** `detfToken`, `pairToken0` / `pairToken1` / `pairToken2`, `standardExchange[i]`, `vaultShare[i]`, `rateProvider[i]`, `baseAmp`, `reserveHook` / `reserveLp`, `bondNft`, `rebasingClaimToken`, `creationPairPerDetfWad[i]`, `capitalToken`, `syntheticVs(pair)`. **No** whole-DETF `rateAsset`. No brand tickers.
 
 **LOCK-time plan-scope (PRD §20):**

@@ -12,6 +12,7 @@ import {
 } from '@indexedex/protocol/deploymentEnvironment'
 import {
   CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
   setDefaultDeploymentEnvironment,
   type CanonicalArtifactChainId,
   type DeploymentEnvironment,
@@ -21,7 +22,7 @@ import {
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from '@indexedex/protocol/networkSelection'
-import { robinhoodAnvil } from '@indexedex/protocol/runtimeChains'
+import { robinhoodAnvil, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains'
 import { BrandProvider } from './lib/brandContext'
 
 const queryClient = new QueryClient()
@@ -30,12 +31,14 @@ const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:954
 const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ?? sepolia.rpcUrls.default.http[0]
 const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSepolia.rpcUrls.default.http[0]
 
-/** DTF launch target is Robinhood (4663); override with NEXT_PUBLIC_DEFAULT_CHAIN_ID. */
+/** DTF launch target is Robinhood (4663) unless the 46630 Anvil rehearsal env is selected. */
 const envDefaultChain = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
 const DTF_DEFAULT_CHAIN_ID: CanonicalArtifactChainId =
   Number.isFinite(envDefaultChain) && isCanonicalArtifactChainId(envDefaultChain)
     ? envDefaultChain
-    : CHAIN_ID_ROBINHOOD
+    : process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT === 'anvil_robinhood_testnet'
+      ? CHAIN_ID_ROBINHOOD_TESTNET
+      : CHAIN_ID_ROBINHOOD
 
 function isLocalSepoliaEnvironment(environment: string): boolean {
   // Both supersim and single-chain local_testing point sepolia/base-sepolia
@@ -79,9 +82,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     const useLocalRpc = isLocalSepoliaEnvironment(environment)
     // DTF always exposes Robinhood as Anvil-local RPC for launch testing.
     const rhChain = robinhoodAnvil(localRpcUrl)
+    const rhTestnetChain = robinhoodTestnetAnvil(localRpcUrl)
 
     return createConfig({
-      chains: [rhChain, sepolia, baseSepolia, foundry, localhost, base],
+      chains: [rhChain, rhTestnetChain, sepolia, baseSepolia, foundry, localhost, base],
       multiInjectedProviderDiscovery: false,
       ssr: true,
       storage: createStorage({ key: 'dtf-wagmi-v3' }),
@@ -92,6 +96,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       ],
       transports: {
         [CHAIN_ID_ROBINHOOD]: http(localRpcUrl),
+        [CHAIN_ID_ROBINHOOD_TESTNET]: http(localRpcUrl),
         [foundry.id]: http(localRpcUrl),
         [localhost.id]: http(localRpcUrl),
         [base.id]: http(base.rpcUrls.default.http[0]),

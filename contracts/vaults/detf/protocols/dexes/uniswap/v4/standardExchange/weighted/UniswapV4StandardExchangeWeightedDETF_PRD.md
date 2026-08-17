@@ -778,6 +778,8 @@ Reference tables for launch-rich `R` sizing: **copy CP UniV4 DETF §10.3–§10.
 
 ## 11. Deploy & PkgArgs (LOCKED)
 
+Typed surface: `IUniswapV4StandardExchangeWeightedDETDFPkg.deployVault(PkgArgs args, uint256 mineNonce)`. The nonce is **not** a PkgArgs field. Caller premines via `UniswapV4DetfHookPremineLib`. Deploy arity SoT: [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md).
+
 ### 11.1 Deploy sequence (postDeploy spirit)
 
 1. Deploy DETF diamond via vault registry (inert).  

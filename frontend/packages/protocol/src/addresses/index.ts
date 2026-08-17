@@ -56,18 +56,32 @@ import robinhoodAnvilBaseTokensJson from './chain/4663/base-tokens.tokenlist.jso
 import robinhoodAnvilStrategyVaultsJson from './chain/4663/strategy-vaults.tokenlist.json'
 import robinhoodAnvilProtocolDetfsJson from './chain/4663/protocol-detfs.tokenlist.json'
 
+import robinhoodTestnetAnvilPlatformJson from './chain/46630/platform.json'
+import robinhoodTestnetAnvilBaseTokensJson from './chain/46630/base-tokens.tokenlist.json'
+import robinhoodTestnetAnvilStrategyVaultsJson from './chain/46630/strategy-vaults.tokenlist.json'
+import robinhoodTestnetAnvilProtocolDetfsJson from './chain/46630/protocol-detfs.tokenlist.json'
+
 export const CHAIN_ID_SEPOLIA = 11155111 as const
 export const CHAIN_ID_BASE_SEPOLIA = 84532 as const
 /** Robinhood Chain mainnet (also used by Anvil RH-fork local deploys). */
 export const CHAIN_ID_ROBINHOOD = 4663 as const
+/** Robinhood Chain Testnet (Anvil fork at chain id 46630). Never remapped to 4663. */
+export const CHAIN_ID_ROBINHOOD_TESTNET = 46630 as const
 const CANONICAL_PERMIT2_ADDRESS = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-export type DeploymentEnvironment = 'sepolia' | 'public_sepolia' | 'supersim_sepolia' | 'local_testing' | 'anvil_robinhood_main'
+export type DeploymentEnvironment =
+  | 'sepolia'
+  | 'public_sepolia'
+  | 'supersim_sepolia'
+  | 'local_testing'
+  | 'anvil_robinhood_main'
+  | 'anvil_robinhood_testnet'
 export type ChainRole = 'ethereum' | 'base' | 'robinhood'
 export type CanonicalArtifactChainId =
   | typeof CHAIN_ID_SEPOLIA
   | typeof CHAIN_ID_BASE_SEPOLIA
   | typeof CHAIN_ID_ROBINHOOD
+  | typeof CHAIN_ID_ROBINHOOD_TESTNET
 
 export type ArtifactBundle = {
   environment: DeploymentEnvironment
@@ -239,6 +253,24 @@ export const ARTIFACT_REGISTRY: Record<DeploymentEnvironment, Partial<Record<Can
       balancerPools: [],
     }),
   },
+  anvil_robinhood_testnet: {
+    [CHAIN_ID_ROBINHOOD_TESTNET]: buildBundle(
+      'anvil_robinhood_testnet',
+      CHAIN_ID_ROBINHOOD_TESTNET,
+      'robinhood',
+      {
+        platform: robinhoodTestnetAnvilPlatformJson,
+        tokens: (robinhoodTestnetAnvilBaseTokensJson as { tokens?: unknown[] }).tokens ?? [],
+        erc4626: [],
+        protocolDetf: (robinhoodTestnetAnvilProtocolDetfsJson as { tokens?: unknown[] }).tokens ?? [],
+        strategyVaults: (robinhoodTestnetAnvilStrategyVaultsJson as { tokens?: unknown[] }).tokens ?? [],
+        uniV2Pools: [],
+        aerodromePools: [],
+        aerodromeStrategyVaults: [],
+        balancerPools: [],
+      }
+    ),
+  },
 }
 
 export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = [
@@ -247,6 +279,7 @@ export const DEPLOYMENT_ENVIRONMENTS: DeploymentEnvironment[] = [
   'supersim_sepolia',
   'local_testing',
   'anvil_robinhood_main',
+  'anvil_robinhood_testnet',
 ]
 
 export function getArtifactBundle(

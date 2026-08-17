@@ -32,6 +32,9 @@ dev-debug.log
 # Dependency directories
 node_modules/
 # Environment variables
+
+# Local RPC / fork URLs (often contain API keys)
+deployments/**/runtime/fork_url
 # Editor directories and files
 .idea
 .vscode

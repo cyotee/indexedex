@@ -131,8 +131,10 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
         }
     }
 
-    function deployVault(PkgArgs memory args) external returns (address vault) {
-        return VAULT_REGISTRY_DEPLOYMENT.deployVault(IStandardVaultPkg(address(this)), abi.encode(args));
+    function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault) {
+        return VAULT_REGISTRY_DEPLOYMENT.deployVault(
+            IStandardVaultPkg(address(this)), abi.encode(args, mineNonce)
+        );
     }
 
     function packageName() public pure returns (string memory) {
@@ -221,13 +223,15 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
     }
 
     function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt_) {
-        return keccak256(pkgArgs);
+        (PkgArgs memory argsOnly,) = abi.decode(pkgArgs, (PkgArgs, uint256));
+        return keccak256(abi.encode(argsOnly));
     }
 
     function processArgs(bytes memory pkgArgs) public view returns (bytes memory processedPkgArgs_) {
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
         }
+        abi.decode(pkgArgs, (PkgArgs, uint256));
         return pkgArgs;
     }
 
@@ -236,7 +240,7 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
     }
 
     function initAccount(bytes memory initArgs) public {
-        PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+        (PkgArgs memory args, uint256 mineNonce) = abi.decode(initArgs, (PkgArgs, uint256));
         if (args.creationPair0PerDetfWad == 0 || args.creationPair1PerDetfWad == 0) {
             revert InvalidCreationRate();
         }
@@ -306,7 +310,7 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
         cfg.expansionEpochLength = epoch_;
         cfg.expansionClosureRatePerYearWad = rate_;
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
-        cfg.hookMineNonce = args.hookMineNonce;
+        cfg.hookMineNonce = mineNonce;
     }
 
     function _resolvePairBinding(uint8 detfIdx_)
@@ -395,11 +399,7 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
                 sqrtPriceX96: SQRT_PRICE_1_1
             });
 
-        if (cfg.hookMineNonce == 0) {
-            hook_ = HOOK_PKG.deployVaultAutoMine(hArgs);
-        } else {
-            hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
-        }
+        hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
     }
 
     function _deployBondNftVault(address reserveHook_) private returns (IDETFNFTVault bondVault_) {

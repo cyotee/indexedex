@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalDETF.sol";
@@ -35,12 +34,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_DeployTest is TestBase_UniswapV4St
         args.standardExchange1 = IStandardExchangeProxy(address(0));
         args.name = "bothBare";
         args.symbol = "bb";
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(IUniswapV4StandardExchangeOrbitalDETDFPkg.BothBareForbidden.selector);
-        indexedexManager.deployVault(
-            IStandardVaultPkg(address(detfPkg)), abi.encode(args)
-        );
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_deploy_rejects_zero_creation_rate() public {
@@ -48,10 +45,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_DeployTest is TestBase_UniswapV4St
         args.creationPair0PerDetfWad = 0;
         args.name = "zeroRate";
         args.symbol = "zr";
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(IUniswapV4StandardExchangeOrbitalDETDFPkg.InvalidCreationRate.selector);
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_deploy_rejects_rp_without_se() public {
@@ -59,10 +56,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_DeployTest is TestBase_UniswapV4St
         args.rateProvider1 = address(0xBEEF); // SE1 is bare
         args.name = "rpNoSe";
         args.symbol = "rp";
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(IUniswapV4StandardExchangeOrbitalDETDFPkg.RateProviderWithoutSE.selector);
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_deploy_rejects_same_se_twice() public {
@@ -74,10 +71,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_DeployTest is TestBase_UniswapV4St
         args.standardExchange1 = IStandardExchangeProxy(se0);
         args.name = "sameSE";
         args.symbol = "sse";
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(IUniswapV4StandardExchangeOrbitalDETDFPkg.SameStandardExchange.selector);
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_deploy_free_binding_index_0() public {

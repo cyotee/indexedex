@@ -103,7 +103,7 @@ No overlapping struct layouts found across manager-diamond repos.
 | ADM / operator | `setUsageFee*` / `setDex*` / `setSeigniorage*` / liquid-reserve | **new** mint split / swap fee / incentive | 0 = unset sentinel | `onlyOwnerOrOperator`; cap `<= 1e18` | 100% tax on **new** `detfToken` mint (`_splitMintedDetf`). Cannot seize existing inventory or rewrite stored bond `unlockTime`. `SEC-CROPS-003`. |
 | ADM | `setFeeTo` | future protocol `detfToken` mint recipient | none | **onlyOwner** (operator forbidden — tested) | Redirect `feeTo` to attacker. `setFeeTo(0)` unbounded (Low). |
 | EXT | query cascade | none | none | vault → type → global | No write. 0 sentinel cannot express explicit 0% (`SEC-MGR-008`). |
-| CFG | default constants | 0.1% usage / 5% dex / 50% seigniorage | none | `initAccount` | Documented defaults; operator can overwrite live. |
+| CFG | default constants | 0.1% usage / 5% dex / 5% seigniorage | none | `initAccount` | Documented defaults; operator can overwrite live. |
 
 ### 3.3 VaultRegistry — deploy / index
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {console2} from "forge-std/console2.sol";
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {FixtureGraph} from "./FixtureGraph.sol";
@@ -11,14 +12,23 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 
-import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {
+    UniswapV4DetfHookPremineLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
 
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
+import {
+    IUniswapV4StandardExchangeOrbitalBufferHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
 
 import {
     IUniswapV4StandardExchangeWeightedBufferHookPackage as IWgtHookPkg
@@ -56,6 +66,7 @@ import {
 /// @notice Weighted n=8 buffer, single SE buffers, CP/Orbital/Weighted gentle + launch-rich inert DETFs.
 /// @dev NEVER calls bond / first-bond.
 contract Script_13_DeployInertDemos is DeploymentBase {
+    string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant CORE_FILE = "02_indexedex_core.json";
     string internal constant HOOK_FACTORY_FILE = "03_hook_factory.json";
     string internal constant TOKENS_FILE = "04_test_tokens.json";
@@ -67,7 +78,11 @@ contract Script_13_DeployInertDemos is DeploymentBase {
     string internal constant ARTIFACT_FILE = "13_inert_demos.json";
 
     address private indexedexManager;
+    IDiamondPackageCallBackFactory private diamondPackageFactory;
     IUniswapV4HookDiamondPackageCallBackFactory private hookFactory;
+    address private cpHookPkg;
+    address private orbitalHookPkg;
+    address private weightedHookPkg;
     address[8] private tt;
     address private uniV3Se;
     address private uniV4Se;
@@ -84,6 +99,16 @@ contract Script_13_DeployInertDemos is DeploymentBase {
     address private weightedDetfGentle;
     address private weightedDetfLaunchRich;
 
+    uint256 private nonceWeightedN8;
+    uint256 private nonceSingleV3;
+    uint256 private nonceSingleV4;
+    uint256 private nonceCpGentle;
+    uint256 private nonceCpRich;
+    uint256 private nonceOrbGentle;
+    uint256 private nonceOrbRich;
+    uint256 private nonceWgtGentle;
+    uint256 private nonceWgtRich;
+
     function run() external {
         _loadConfig();
         _requireRobinhoodChain();
@@ -96,6 +121,13 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             _logResults();
             return;
         }
+
+        console2.log("13 premine hook + DETF nonces (off-chain, not a broadcast tx)");
+        _premineWeightedBufferN8();
+        _premineSingleSeBuffers();
+        _premineCpDetfs();
+        _premineOrbitalDetfs();
+        _premineWeightedDetfs();
 
         vm.startBroadcast();
         _deployWeightedBufferN8();
@@ -118,7 +150,12 @@ contract Script_13_DeployInertDemos is DeploymentBase {
 
     function _loadPrior() internal {
         indexedexManager = _readAddress(CORE_FILE, "indexedexManager");
+        diamondPackageFactory =
+            IDiamondPackageCallBackFactory(_readAddress(CRANE_FOUNDATION_FILE, "diamondPackageFactory"));
         hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(_readAddress(HOOK_FACTORY_FILE, "hookFactory"));
+        cpHookPkg = _readAddress(HOOK_PKGS_FILE, "cpHookPkg");
+        orbitalHookPkg = _readAddress(HOOK_PKGS_FILE, "orbitalHookPkg");
+        weightedHookPkg = _readAddress(HOOK_PKGS_FILE, "weightedHookPkg");
         for (uint8 i; i < 8; ++i) {
             tt[i] = _readAddress(TOKENS_FILE, FixtureGraph.tokenSymbol(i));
         }
@@ -148,17 +185,12 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         return true;
     }
 
-    function _deployWeightedBufferN8() internal {
-        // FORCE re-runs: reuse on-chain hook (same CREATE3 salt) — re-join / re-init reverts.
-        (address existing,) = _readAddressSafe(ARTIFACT_FILE, "weightedBufferN8");
-        if (existing != address(0) && existing.code.length > 0) {
-            weightedBufferN8 = existing;
-            vm.label(weightedBufferN8, "weightedBufferN8");
-            return;
-        }
+    function _artifactHasCode(string memory key) private view returns (bool) {
+        (address existing,) = _readAddressSafe(ARTIFACT_FILE, key);
+        return existing != address(0) && existing.code.length > 0;
+    }
 
-        IWgtHookPkg pkg = IWgtHookPkg(_readAddress(HOOK_PKGS_FILE, "weightedHookPkg"));
-
+    function _weightedN8Args() private view returns (IWgtHookPkg.PkgArgs memory args) {
         address[] memory tokens = new address[](8);
         uint256[] memory weights = new uint256[](8);
         address[] memory ses = new address[](8);
@@ -189,7 +221,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             }
         }
 
-        IWgtHookPkg.PkgArgs memory args = IWgtHookPkg.PkgArgs({
+        args = IWgtHookPkg.PkgArgs({
             poolManager: RobinhoodCanonicalLib.poolManager(),
             feeOracle: indexedexManager,
             n: 8,
@@ -198,9 +230,27 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             standardExchanges: ses,
             rateProviders: rps
         });
+    }
 
-        uint256 mineNonce = WgtFS.findMineNonce(hookFactory, pkg, args);
-        weightedBufferN8 = WgtFS.deployHook(pkg, args, mineNonce);
+    function _premineWeightedBufferN8() internal {
+        if (_artifactHasCode("weightedBufferN8")) return;
+        IWgtHookPkg pkg = IWgtHookPkg(_readAddress(HOOK_PKGS_FILE, "weightedHookPkg"));
+        nonceWeightedN8 = WgtFS.findMineNonce(hookFactory, pkg, _weightedN8Args());
+        console2.log("13 premined weighted n=8 hook nonce", nonceWeightedN8);
+    }
+
+    function _deployWeightedBufferN8() internal {
+        // FORCE re-runs: reuse on-chain hook (same CREATE3 salt) — re-join / re-init reverts.
+        (address existing,) = _readAddressSafe(ARTIFACT_FILE, "weightedBufferN8");
+        if (existing != address(0) && existing.code.length > 0) {
+            weightedBufferN8 = existing;
+            vm.label(weightedBufferN8, "weightedBufferN8");
+            return;
+        }
+
+        IWgtHookPkg pkg = IWgtHookPkg(_readAddress(HOOK_PKGS_FILE, "weightedHookPkg"));
+        IWgtHookPkg.PkgArgs memory args = _weightedN8Args();
+        weightedBufferN8 = WgtFS.deployHook(pkg, args, nonceWeightedN8);
         vm.label(weightedBufferN8, "weightedBufferN8");
 
         // Seed doors: proportional join with small equal amounts
@@ -223,6 +273,30 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         w.joinProportional(amounts, deployer, 0, block.timestamp + 1 days);
     }
 
+    function _singleSeArgs(address se, address pairToken)
+        private
+        view
+        returns (ISinglePkg.PkgArgs memory args)
+    {
+        args = ISinglePkg.PkgArgs({
+            poolManager: RobinhoodCanonicalLib.poolManager(),
+            standardExchange: se,
+            pairToken: pairToken
+        });
+    }
+
+    function _premineSingleSeBuffers() internal {
+        ISinglePkg pkg = ISinglePkg(_readAddress(HOOK_PKGS_FILE, "singleSeBufferHookPkg"));
+        if (!_artifactHasCode("singleSeBuffer_v3")) {
+            nonceSingleV3 = SingleFS.findMineNonce(hookFactory, pkg, _singleSeArgs(uniV3Se, tt[0]));
+            console2.log("13 premined single SE v3 hook nonce", nonceSingleV3);
+        }
+        if (!_artifactHasCode("singleSeBuffer_v4")) {
+            nonceSingleV4 = SingleFS.findMineNonce(hookFactory, pkg, _singleSeArgs(uniV4Se, tt[4]));
+            console2.log("13 premined single SE v4 hook nonce", nonceSingleV4);
+        }
+    }
+
     function _deploySingleSeBuffers() internal {
         ISinglePkg pkg = ISinglePkg(_readAddress(HOOK_PKGS_FILE, "singleSeBufferHookPkg"));
         IPoolManager pm = IPoolManager(RobinhoodCanonicalLib.poolManager());
@@ -233,13 +307,8 @@ contract Script_13_DeployInertDemos is DeploymentBase {
                 singleSeBuffer_v3 = existing;
                 vm.label(singleSeBuffer_v3, "singleSeBuffer_v3");
             } else {
-                ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
-                    poolManager: address(pm),
-                    standardExchange: uniV3Se,
-                    pairToken: tt[0]
-                });
-                uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
-                singleSeBuffer_v3 = SingleFS.deployHook(pkg, args, mineNonce);
+                ISinglePkg.PkgArgs memory args = _singleSeArgs(uniV3Se, tt[0]);
+                singleSeBuffer_v3 = SingleFS.deployHook(pkg, args, nonceSingleV3);
                 vm.label(singleSeBuffer_v3, "singleSeBuffer_v3");
                 _initSingleSePool(singleSeBuffer_v3, uniV3Se, tt[0], pm);
             }
@@ -250,13 +319,8 @@ contract Script_13_DeployInertDemos is DeploymentBase {
                 singleSeBuffer_v4 = existing;
                 vm.label(singleSeBuffer_v4, "singleSeBuffer_v4");
             } else {
-                ISinglePkg.PkgArgs memory args = ISinglePkg.PkgArgs({
-                    poolManager: address(pm),
-                    standardExchange: uniV4Se,
-                    pairToken: tt[4]
-                });
-                uint256 mineNonce = SingleFS.findMineNonce(hookFactory, pkg, args);
-                singleSeBuffer_v4 = SingleFS.deployHook(pkg, args, mineNonce);
+                ISinglePkg.PkgArgs memory args = _singleSeArgs(uniV4Se, tt[4]);
+                singleSeBuffer_v4 = SingleFS.deployHook(pkg, args, nonceSingleV4);
                 vm.label(singleSeBuffer_v4, "singleSeBuffer_v4");
                 _initSingleSePool(singleSeBuffer_v4, uniV4Se, tt[4], pm);
             }
@@ -276,12 +340,12 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         try pm.initialize(key, FixtureGraph.SQRT_PRICE_1_1) {} catch {}
     }
 
-    function _deployCpDetfs() internal {
-        IUniswapV4SingleStandardExchangeDETDFPkg pkg =
-            IUniswapV4SingleStandardExchangeDETDFPkg(_readAddress(DETF_PKGS_FILE, "cpDetfPkg"));
-
-        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory gentle = IUniswapV4SingleStandardExchangeDETDFPkg
-            .PkgArgs({
+    function _cpGentleArgs()
+        private
+        view
+        returns (IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+    {
+        args = IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs({
             name: "Gentle UniV4 ConstProd DETF",
             symbol: "gConstProdDETF",
             standardExchangeVault: IStandardExchangeProxy(uniV3Se),
@@ -293,32 +357,79 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
-        cpDetfGentle = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(gentle)
+    }
+
+    function _cpRichArgs()
+        private
+        view
+        returns (IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+    {
+        args = _cpGentleArgs();
+        args.name = "LaunchRich UniV4 ConstProd DETF";
+        args.symbol = "lrConstProdDETF";
+        args.standardExchangeVault = IStandardExchangeProxy(uniV4Se);
+        args.pairToken = IERC20(tt[4]);
+        args.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
+    }
+
+    function _premineCpDetfs() internal {
+        IUniswapV4SingleStandardExchangeDETDFPkg pkg =
+            IUniswapV4SingleStandardExchangeDETDFPkg(_readAddress(DETF_PKGS_FILE, "cpDetfPkg"));
+        (, nonceCpGentle) = UniswapV4DetfHookPremineLib.premineCp(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(cpHookPkg),
+            _cpGentleArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
         );
+        (, nonceCpRich) = UniswapV4DetfHookPremineLib.premineCp(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(cpHookPkg),
+            _cpRichArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
+        );
+        console2.log("13 premined CP gentle nonce", nonceCpGentle);
+        console2.log("13 premined CP launch-rich nonce", nonceCpRich);
+    }
+
+    function _deployCpDetfs() internal {
+        IUniswapV4SingleStandardExchangeDETDFPkg pkg =
+            IUniswapV4SingleStandardExchangeDETDFPkg(_readAddress(DETF_PKGS_FILE, "cpDetfPkg"));
+
+        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory gentle = _cpGentleArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(gentle, uint256(0))
+            );
+            cpDetfGentle = pkg.deployVault(gentle, nonceCpGentle);
+            require(cpDetfGentle == predicted, "detf != predicted");
+        }
         vm.label(cpDetfGentle, "cpDetfGentle");
 
-        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory rich = gentle;
-        rich.name = "LaunchRich UniV4 ConstProd DETF";
-        rich.symbol = "lrConstProdDETF";
-        rich.standardExchangeVault = IStandardExchangeProxy(uniV4Se);
-        rich.pairToken = IERC20(tt[4]);
-        rich.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
-        cpDetfLaunchRich = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(rich)
-        );
+        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory rich = _cpRichArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(rich, uint256(0))
+            );
+            cpDetfLaunchRich = pkg.deployVault(rich, nonceCpRich);
+            require(cpDetfLaunchRich == predicted, "detf != predicted");
+        }
         vm.label(cpDetfLaunchRich, "cpDetfLaunchRich");
     }
 
-    function _deployOrbitalDetfs() internal {
-        IUniswapV4StandardExchangeOrbitalDETDFPkg pkg =
-            IUniswapV4StandardExchangeOrbitalDETDFPkg(_readAddress(DETF_PKGS_FILE, "orbitalDetfPkg"));
-
-        IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory gentle = IUniswapV4StandardExchangeOrbitalDETDFPkg
-            .PkgArgs({
+    function _orbGentleArgs()
+        private
+        view
+        returns (IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory args)
+    {
+        args = IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs({
             name: "Gentle UniV4 Orb DETF",
             symbol: "gOrbDETF",
             pairToken0: IERC20(tt[0]),
@@ -338,28 +449,76 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
-        orbitalDetfGentle = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(gentle)
+    }
+
+    function _orbRichArgs()
+        private
+        view
+        returns (IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory args)
+    {
+        args = _orbGentleArgs();
+        args.name = "LaunchRich UniV4 Orb DETF";
+        args.symbol = "lrOrbDETF";
+        args.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
+    }
+
+    function _premineOrbitalDetfs() internal {
+        IUniswapV4StandardExchangeOrbitalDETDFPkg pkg =
+            IUniswapV4StandardExchangeOrbitalDETDFPkg(_readAddress(DETF_PKGS_FILE, "orbitalDetfPkg"));
+        (, nonceOrbGentle) = UniswapV4DetfHookPremineLib.premineOrbital(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IUniswapV4StandardExchangeOrbitalBufferHookPackage(orbitalHookPkg),
+            _orbGentleArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
         );
+        (, nonceOrbRich) = UniswapV4DetfHookPremineLib.premineOrbital(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IUniswapV4StandardExchangeOrbitalBufferHookPackage(orbitalHookPkg),
+            _orbRichArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
+        );
+        console2.log("13 premined orbital gentle nonce", nonceOrbGentle);
+        console2.log("13 premined orbital launch-rich nonce", nonceOrbRich);
+    }
+
+    function _deployOrbitalDetfs() internal {
+        IUniswapV4StandardExchangeOrbitalDETDFPkg pkg =
+            IUniswapV4StandardExchangeOrbitalDETDFPkg(_readAddress(DETF_PKGS_FILE, "orbitalDetfPkg"));
+
+        IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory gentle = _orbGentleArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(gentle, uint256(0))
+            );
+            orbitalDetfGentle = pkg.deployVault(gentle, nonceOrbGentle);
+            require(orbitalDetfGentle == predicted, "detf != predicted");
+        }
         vm.label(orbitalDetfGentle, "orbitalDetfGentle");
 
-        IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory rich = gentle;
-        rich.name = "LaunchRich UniV4 Orb DETF";
-        rich.symbol = "lrOrbDETF";
-        rich.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
-        orbitalDetfLaunchRich = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(rich)
-        );
+        IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory rich = _orbRichArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(rich, uint256(0))
+            );
+            orbitalDetfLaunchRich = pkg.deployVault(rich, nonceOrbRich);
+            require(orbitalDetfLaunchRich == predicted, "detf != predicted");
+        }
         vm.label(orbitalDetfLaunchRich, "orbitalDetfLaunchRich");
     }
 
-    function _deployWeightedDetfs() internal {
-        IUniswapV4StandardExchangeWeightedDETDFPkg pkg =
-            IUniswapV4StandardExchangeWeightedDETDFPkg(_readAddress(DETF_PKGS_FILE, "weightedDetfPkg"));
-
+    function _wgtGentleArgs()
+        private
+        view
+        returns (IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+    {
         // n=8 = DETF self + 7 externals TT0..TT6
         IERC20[] memory pairs = new IERC20[](7);
         IStandardExchangeProxy[] memory ses = new IStandardExchangeProxy[](7);
@@ -379,8 +538,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
         ses[4] = IStandardExchangeProxy(uniV4Se);
         rps[4] = rpV4;
 
-        IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory gentle = IUniswapV4StandardExchangeWeightedDETDFPkg
-            .PkgArgs({
+        args = IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs({
             name: "Gentle UniV4 Wgt DETF n8",
             symbol: "gWgtDETF",
             pairTokens: pairs,
@@ -395,21 +553,68 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
-        weightedDetfGentle = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(gentle)
+    }
+
+    function _wgtRichArgs()
+        private
+        view
+        returns (IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+    {
+        args = _wgtGentleArgs();
+        args.name = "LaunchRich UniV4 Wgt DETF n8";
+        args.symbol = "lrWgtDETF";
+        args.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
+    }
+
+    function _premineWeightedDetfs() internal {
+        IUniswapV4StandardExchangeWeightedDETDFPkg pkg =
+            IUniswapV4StandardExchangeWeightedDETDFPkg(_readAddress(DETF_PKGS_FILE, "weightedDetfPkg"));
+        (, nonceWgtGentle) = UniswapV4DetfHookPremineLib.premineWeighted(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IWgtHookPkg(weightedHookPkg),
+            _wgtGentleArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
         );
+        (, nonceWgtRich) = UniswapV4DetfHookPremineLib.premineWeighted(
+            diamondPackageFactory,
+            hookFactory,
+            pkg,
+            IWgtHookPkg(weightedHookPkg),
+            _wgtRichArgs(),
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
+        );
+        console2.log("13 premined weighted DETF gentle nonce", nonceWgtGentle);
+        console2.log("13 premined weighted DETF launch-rich nonce", nonceWgtRich);
+    }
+
+    function _deployWeightedDetfs() internal {
+        IUniswapV4StandardExchangeWeightedDETDFPkg pkg =
+            IUniswapV4StandardExchangeWeightedDETDFPkg(_readAddress(DETF_PKGS_FILE, "weightedDetfPkg"));
+
+        IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory gentle = _wgtGentleArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(gentle, uint256(0))
+            );
+            weightedDetfGentle = pkg.deployVault(gentle, nonceWgtGentle);
+            require(weightedDetfGentle == predicted, "detf != predicted");
+        }
         vm.label(weightedDetfGentle, "weightedDetfGentle");
 
-        IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory rich = gentle;
-        rich.name = "LaunchRich UniV4 Wgt DETF n8";
-        rich.symbol = "lrWgtDETF";
-        rich.expansionClosureRatePerYearWad = FixtureGraph.LAUNCH_RICH_R;
-        weightedDetfLaunchRich = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(address(pkg)), abi.encode(rich)
-        );
+        IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory rich = _wgtRichArgs();
+        {
+            address predicted = diamondPackageFactory.calcAddress(
+                IDiamondFactoryPackage(address(pkg)), abi.encode(rich, uint256(0))
+            );
+            weightedDetfLaunchRich = pkg.deployVault(rich, nonceWgtRich);
+            require(weightedDetfLaunchRich == predicted, "detf != predicted");
+        }
         vm.label(weightedDetfLaunchRich, "weightedDetfLaunchRich");
     }
 

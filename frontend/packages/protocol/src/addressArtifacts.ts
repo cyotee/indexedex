@@ -1,6 +1,7 @@
 import {
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
   CHAIN_ID_SEPOLIA,
   getArtifactBundle,
   type ArtifactBundle,
@@ -20,6 +21,7 @@ const CHAIN_PLATFORM_OVERRIDES: Record<number, unknown> = GENERATED_CHAIN_PLATFO
 export {
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
   CHAIN_ID_SEPOLIA,
   getArtifactBundle,
   type ArtifactBundle,
@@ -53,8 +55,9 @@ export function resolveArtifactsChainId(
   environment: DeploymentEnvironment = defaultDeploymentEnvironment,
   preferredCanonicalChainId?: CanonicalArtifactChainId
 ): CanonicalArtifactChainId | null {
-  // Robinhood (4663) is first-class — never remap to Sepolia.
+  // Robinhood mainnet (4663) and testnet (46630) are first-class — never remap to Sepolia or each other.
   if (chainId === CHAIN_ID_ROBINHOOD) return CHAIN_ID_ROBINHOOD
+  if (chainId === CHAIN_ID_ROBINHOOD_TESTNET) return CHAIN_ID_ROBINHOOD_TESTNET
 
   if (chainId === CHAIN_ID_SEPOLIA) return CHAIN_ID_SEPOLIA
   if (chainId === CHAIN_ID_BASE_SEPOLIA) return CHAIN_ID_BASE_SEPOLIA
@@ -79,6 +82,12 @@ export function isSupportedChainId(chainId: number, environment: DeploymentEnvir
       getArtifactBundle(environment, CHAIN_ID_ROBINHOOD) !== null
     )
   }
+  if (resolved === CHAIN_ID_ROBINHOOD_TESTNET) {
+    return (
+      getArtifactBundle('anvil_robinhood_testnet', CHAIN_ID_ROBINHOOD_TESTNET) !== null ||
+      getArtifactBundle(environment, CHAIN_ID_ROBINHOOD_TESTNET) !== null
+    )
+  }
   return getArtifactBundle(environment, resolved) !== null
 }
 
@@ -89,16 +98,19 @@ export function getAddressArtifacts(
   const resolved = resolveArtifactsChainId(chainId, environment)
   if (resolved === null) {
     throw new Error(
-      `Unsupported chainId ${chainId}. Supported: ${CHAIN_ID_SEPOLIA} (Sepolia), ${CHAIN_ID_BASE_SEPOLIA} (Base Sepolia), ${CHAIN_ID_ROBINHOOD} (Robinhood / Anvil RH fork).`
+      `Unsupported chainId ${chainId}. Supported: ${CHAIN_ID_SEPOLIA} (Sepolia), ${CHAIN_ID_BASE_SEPOLIA} (Base Sepolia), ${CHAIN_ID_ROBINHOOD} (Robinhood), ${CHAIN_ID_ROBINHOOD_TESTNET} (Robinhood Testnet / Anvil 46630).`
     )
   }
 
-  // Prefer dedicated anvil_robinhood_main registry for 4663, then caller's environment.
+  // Prefer dedicated Anvil registries for RH mainnet (4663) and testnet (46630).
   const bundle =
     resolved === CHAIN_ID_ROBINHOOD
       ? (getArtifactBundle('anvil_robinhood_main', CHAIN_ID_ROBINHOOD) ??
         getArtifactBundle(environment, CHAIN_ID_ROBINHOOD))
-      : getArtifactBundle(environment, resolved)
+      : resolved === CHAIN_ID_ROBINHOOD_TESTNET
+        ? (getArtifactBundle('anvil_robinhood_testnet', CHAIN_ID_ROBINHOOD_TESTNET) ??
+          getArtifactBundle(environment, CHAIN_ID_ROBINHOOD_TESTNET))
+        : getArtifactBundle(environment, resolved)
 
   if (!bundle) {
     throw new Error(`No deployment bundle is registered for environment ${environment} on chain ${resolved}.`)

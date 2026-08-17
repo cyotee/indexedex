@@ -124,8 +124,7 @@ interface IUniswapV4SingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IS
         uint256 expansionEpochLength; // 0 → 8 hours
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited (kept)
-        uint256 hookMineNonce; // pre-mined for hook CREATE2 flags
     }
 
-    function deployVault(PkgArgs memory args) external returns (address vault);
+    function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);
 }

@@ -122,8 +122,10 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         }
     }
 
-    function deployVault(PkgArgs memory args) external returns (address vault) {
-        return VAULT_REGISTRY_DEPLOYMENT.deployVault(IStandardVaultPkg(address(this)), abi.encode(args));
+    function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault) {
+        return VAULT_REGISTRY_DEPLOYMENT.deployVault(
+            IStandardVaultPkg(address(this)), abi.encode(args, mineNonce)
+        );
     }
 
     function packageName() public pure returns (string memory) {
@@ -207,13 +209,15 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
     }
 
     function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt_) {
-        return keccak256(pkgArgs);
+        (PkgArgs memory argsOnly,) = abi.decode(pkgArgs, (PkgArgs, uint256));
+        return keccak256(abi.encode(argsOnly));
     }
 
     function processArgs(bytes memory pkgArgs) public view returns (bytes memory processedPkgArgs_) {
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
         }
+        abi.decode(pkgArgs, (PkgArgs, uint256));
         return pkgArgs;
     }
 
@@ -222,7 +226,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
     }
 
     function initAccount(bytes memory initArgs) public {
-        PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+        (PkgArgs memory args, uint256 mineNonce) = abi.decode(initArgs, (PkgArgs, uint256));
         if (args.creationPairPerDetfWad == 0) revert InvalidCreationRate();
         if (address(args.standardExchangeVault) == address(0) || address(args.pairToken) == address(0)) {
             revert ZeroAddress();
@@ -258,7 +262,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         cfg.expansionEpochLength = epoch_;
         cfg.expansionClosureRatePerYearWad = rate_;
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
-        cfg.hookMineNonce = args.hookMineNonce;
+        cfg.hookMineNonce = mineNonce;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -385,12 +389,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
             pairToken: address(cfg.pairToken),
             rawToken: address(this)
         });
-        // 0 → auto-mine flags (rawToken = this diamond is only known in postDeploy).
-        if (cfg.hookMineNonce == 0) {
-            hook_ = HOOK_PKG.deployVaultAutoMine(hArgs);
-        } else {
-            hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
-        }
+        hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
     }
 
     function _initPool(address hook_) private {

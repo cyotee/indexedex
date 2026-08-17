@@ -41,10 +41,10 @@ contract VaultFeeOracleManagerFacet_Seigniorage_Test is IndexedexTest {
     }
 
     function test_setDefaultSeigniorageIncentivePercentage_emitsEvent() public {
-        // Default is initialized to 5e17 (50%) in IndexedexManagerDFPkg
+        // Default is initialized to 5e16 (5%) in IndexedexManagerDFPkg
         vm.prank(owner);
         vm.expectEmit(true, true, false, false, address(indexedexManager));
-        emit IVaultFeeOracleManager.NewDefaultSeigniorageIncentivePercentage(5e17, 1e17);
+        emit IVaultFeeOracleManager.NewDefaultSeigniorageIncentivePercentage(5e16, 1e17);
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultSeigniorageIncentivePercentage(1e17);
     }
 

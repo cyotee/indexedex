@@ -301,8 +301,9 @@ PkgArgs (intent):
   expansionEpochLength: 0 → 8h
   expansionClosureRatePerYearWad: 4.4e18
   expansionMaxCatchUpEpochs: 0
-  hookMineNonce: 0 → auto-mine
 ```
+
+Caller premines via `UniswapV4DetfHookPremineLib`; `IUniswapV4SingleStandardExchangeDETDFPkg.deployVault(args, mineNonce)`; nonce is not in PkgArgs.
 
 - Deploy via registry / package `deployVault` as TestBase.  
 - Assert `isReserveLive() == false` before stage 11.  
@@ -440,7 +441,7 @@ UI plumbing is a **separate** implementation plan/PR.
 | pons factory ABI drift | Pin ABI from pons-integration; verify against fork bytecode; stage 04 clear errors |
 | Launch buy restrictions | Wait `restrictionsEndBlock` before stage 10; or creator buy rules documented |
 | First bond too small | Bump `FIRST_BOND_WETH`; re-run 11 |
-| Hook mine / flag failure | `hookMineNonce=0` auto-mine; ensure hook factory stage 03 |
+| Hook mine / flag failure | Caller premines via `UniswapV4DetfHookPremineLib` then `deployVault(args, mineNonce)`; ensure hook factory stage 03 |
 | SE empty → RP = 0 | Optional WETH dust deposit into SE before RP assert |
 | `chain/4663` collision with lab export | Launch keys overwrite known fields; tag fee-DETF; document “fee_detf profile owns CHIR/RICH keys” |
 | Code-size facet deploy | Keep `--disable-code-size-limit` |

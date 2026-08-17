@@ -18,6 +18,7 @@ Notes:
 
 - `scripts/foundry/anvil_base_main/`: full Base-mainnet-fork local deployment pipeline.
 - `scripts/foundry/anvil_robinhood_main/`: Robinhood-mainnet-fork (Anvil **chain id 4663**) Uni V3/V4 SE + hook + inert DETF pipeline. Entry: `scripts/shell/anvil_robinhood_main.sh` → `deploy_all.sh`.
+- `scripts/foundry/anvil_robinhood_testnet/`: Robinhood-**testnet**-fork (Anvil **chain id 46630**) Uni V4 live + launch-rich ten-DETF demo. Entry: `scripts/shell/anvil_robinhood_testnet.sh` → `deploy_all.sh`. No Balancer / pons / Uni V3.
 - `scripts/foundry/anvil_sepolia/`: Sepolia-fork local deployment pipeline.
 - `scripts/foundry/public_sepolia/`: current public testnet deployment entrypoints for Ethereum Sepolia and Base Sepolia.
 - `scripts/foundry/supersim/`: coordinated two-chain local Superchain deployment plus bridge bootstrap.
@@ -62,6 +63,27 @@ Anvil fork of **Robinhood Chain mainnet** at **chain id 4663**. Uses `ROBINHOOD_
 | `deploy_all.sh` | Orchestrator (`all`, `foundation`, `assets`, `pools`, `se`, `packages`, `demos`, `export`, `stageNN`). |
 
 Shell entry: `scripts/shell/anvil_robinhood_main.sh`. Artifacts: `deployments/anvil_robinhood_main/`.
+
+### `anvil_robinhood_testnet/`
+
+Anvil fork of **Robinhood Chain Testnet** at **chain id 46630**. Uses `ROBINHOOD_TESTNET` WETH / Permit2 / Uni V4 pins (never redeploys RH cores). Deploys factories, platform (D46 usage 5% / dex 0.03% / D52 liquid 20% / bond min 86400), Uni V4 packages including Curve Quad, 13 `TT*` + facade, five leaf SEs, ten live + D47-rich DETFs, `TTRICH` fee-sink exhibit. Exports `frontend/packages/protocol/src/addresses/chain/46630/`. DTF: `NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT=anvil_robinhood_testnet` on port 3002.
+
+| Script | What it deploys or does |
+| --- | --- |
+| `Script_00_Preflight.s.sol` | Asserts chain 46630 + required RH pins; writes `00_preflight.json`. |
+| `Script_01_Factories.s.sol` | CREATE3 + diamond factory + hook factory + shared facets. |
+| `Script_02_Platform.s.sol` | FeeCollector + IndexedexManager + RP pkg + fee/bond/liquid setters. |
+| `Script_03_UniV4Packages.s.sol` | Uni V4 hook / SE / DETF packages (CP / Orbital / Weighted / Curve Quad). |
+| `Script_04_Tokens.s.sol` | 13 stand-ins + ERC20MinterFacade + 1e12 to #0 and #1. |
+| `Script_05_LeafPoolsAndSEs.s.sol` | Five fixture pools + SEs + RPs. |
+| `Script_06_LeafDETFs.s.sol` | Five leaf DETFs + first-bond + D47. |
+| `Script_07_NestDETFs.s.sol` | Four nest DETFs + first-bond + D47. |
+| `Script_08_FeeSink.s.sol` | `TTRICH` + `TTRICH-S` + first-bond + D47 (no fee push). |
+| `Script_09_ExportFrontend.s.sol` | Writes `chain/46630/` platform + tokenlists. |
+| `Script_SimulateLaunch.s.sol` | Groups 01–08 in one broadcast / gas estimate. |
+| `deploy_all.sh` | Orchestrator (`all`, `foundation`, `assets`, `pools`, `leaves`, `nests`, `feesink`, `export`, `stageNN`). |
+
+Shell entry: `scripts/shell/anvil_robinhood_testnet.sh`. Artifacts: `deployments/anvil_robinhood_testnet/`.
 
 ### `anvil_base_main/`
 

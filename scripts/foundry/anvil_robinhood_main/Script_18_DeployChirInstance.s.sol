@@ -6,13 +6,21 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 
-import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {
+    IUniswapV4HookDiamondPackageCallBackFactory
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {
+    IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
+import {
+    UniswapV4DetfHookPremineLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
 
 import {
     IUniswapV4SingleStandardExchangeDETDFPkg,
@@ -22,12 +30,17 @@ import {
 /// @title Script_09_DeployChirInstance
 /// @notice Deploy inert CHIR fee-DETF instance (launch-rich @ 10 WETH/CHIR).
 contract Script_18_DeployChirInstance is DeploymentBase {
+    string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant CORE_FILE = "02_indexedex_core.json";
+    string internal constant HOOK_FACTORY_FILE = "03_hook_factory.json";
     string internal constant SE_FILE = "15_univ3_se_rich.json";
     string internal constant PKGS_FILE = "17_fee_detf_packages.json";
     string internal constant ARTIFACT_FILE = "18_chir_instance.json";
 
     address private indexedexManager;
+    IDiamondPackageCallBackFactory private diamondPackageFactory;
+    IUniswapV4HookDiamondPackageCallBackFactory private hookFactory;
+    address private bufferCpHookPkg;
     address private uniV3Se_rich;
     address private chirDetfPkg;
     address private bondNftVaultPkg;
@@ -75,14 +88,21 @@ contract Script_18_DeployChirInstance is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: FixtureEconomics.expansionClosureRatePerYearWad(),
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
 
-        vm.startBroadcast();
-        chir = IIndexedexManagerProxy(indexedexManager).deployVault(
-            IStandardVaultPkg(chirDetfPkg), abi.encode(args)
+        (address predicted, uint256 nonce) = UniswapV4DetfHookPremineLib.premineCp(
+            diamondPackageFactory,
+            hookFactory,
+            IUniswapV4SingleStandardExchangeDETDFPkg(chirDetfPkg),
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(bufferCpHookPkg),
+            args,
+            RobinhoodCanonicalLib.poolManager(),
+            indexedexManager
         );
+        vm.startBroadcast();
+        chir = IUniswapV4SingleStandardExchangeDETDFPkg(chirDetfPkg).deployVault(args, nonce);
+        require(chir == predicted, "detf != predicted");
         // Pin vault bond terms after deploy (postDeploy fee NFT path needs global defaults already set in stage 11).
         try IVaultFeeOracleManager(indexedexManager).setVaultBondTerms(
             chir,
@@ -116,6 +136,10 @@ contract Script_18_DeployChirInstance is DeploymentBase {
 
     function _loadPrior() internal {
         indexedexManager = _readAddress(CORE_FILE, "indexedexManager");
+        diamondPackageFactory =
+            IDiamondPackageCallBackFactory(_readAddress(CRANE_FOUNDATION_FILE, "diamondPackageFactory"));
+        hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(_readAddress(HOOK_FACTORY_FILE, "hookFactory"));
+        bufferCpHookPkg = _readAddress(PKGS_FILE, "bufferCpHookPkg");
         uniV3Se_rich = _readAddress(SE_FILE, "uniV3Se_rich");
         chirDetfPkg = _readAddress(PKGS_FILE, "chirDetfPkg");
         bondNftVaultPkg = _readAddress(PKGS_FILE, "bondNftVaultPkg");

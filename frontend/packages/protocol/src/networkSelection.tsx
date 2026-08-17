@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react'
 import {
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
   CHAIN_ID_SEPOLIA,
   type CanonicalArtifactChainId,
 } from './addressArtifacts'
@@ -26,7 +27,8 @@ export function isCanonicalArtifactChainId(value: number): value is CanonicalArt
   return (
     value === CHAIN_ID_SEPOLIA ||
     value === CHAIN_ID_BASE_SEPOLIA ||
-    value === CHAIN_ID_ROBINHOOD
+    value === CHAIN_ID_ROBINHOOD ||
+    value === CHAIN_ID_ROBINHOOD_TESTNET
   )
 }
 

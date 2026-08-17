@@ -28,6 +28,11 @@ import chain4663_featuredFeeDetfs from './addresses/chain/4663/featured-fee-detf
 import chain4663_protocolDetfs from './addresses/chain/4663/protocol-detfs.tokenlist.json'
 import chain4663_strategyVaults from './addresses/chain/4663/strategy-vaults.tokenlist.json'
 
+import chain46630_baseTokens from './addresses/chain/46630/base-tokens.tokenlist.json'
+import chain46630_featuredFeeDetfs from './addresses/chain/46630/featured-fee-detfs.tokenlist.json'
+import chain46630_protocolDetfs from './addresses/chain/46630/protocol-detfs.tokenlist.json'
+import chain46630_strategyVaults from './addresses/chain/46630/strategy-vaults.tokenlist.json'
+
 const ref = (id: string, list: unknown, priority = 50): TokenListRef => ({ id, priority, list: list as TokenList })
 
 export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
@@ -54,5 +59,11 @@ export const GENERATED_LIST_REGISTRY: Record<number, TokenListRef[]> = {
     ref('featured-fee-detfs', chain4663_featuredFeeDetfs),
     ref('protocol-detfs', chain4663_protocolDetfs),
     ref('strategy-vaults', chain4663_strategyVaults),
+  ],
+  46630: [
+    ref('base-tokens', chain46630_baseTokens),
+    ref('featured-fee-detfs', chain46630_featuredFeeDetfs),
+    ref('protocol-detfs', chain46630_protocolDetfs),
+    ref('strategy-vaults', chain46630_strategyVaults),
   ],
 }

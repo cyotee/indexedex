@@ -23,7 +23,7 @@ uint256 constant DEFAULT_DEX_FEE = 5e16; // 5% (WAD)
 
 /* ---------------------------- Seigniorage Terms --------------------------- */
 
-uint256 constant DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE = 5e17; // 50% (WAD)
+uint256 constant DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE = 5e16; // 5% (WAD)
 
 /* ------------------------------ Lending Terms ----------------------------- */
 

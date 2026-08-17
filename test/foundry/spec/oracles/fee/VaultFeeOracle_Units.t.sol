@@ -59,9 +59,9 @@ contract VaultFeeOracle_Units_Test is IndexedexTest {
     }
 
     function test_defaultSeignioragePercentage_isWADScale() public pure {
-        // DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE = 5e17 should be 50%
-        assertEq(DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE, 5e17);
-        assertEq(DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE, ONE_WAD / 2);
+        // DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE = 5e16 should be 5%
+        assertEq(DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE, 5e16);
+        assertEq(DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE, ONE_WAD * 5 / 100);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -107,10 +107,10 @@ contract VaultFeeOracle_Units_Test is IndexedexTest {
     }
 
     function test_seigniorageFeeCalculation_producesCorrectResult() public pure {
-        // With 50% seigniorage (5e17 WAD), applying to 200 tokens should yield 100 tokens
+        // With 5% seigniorage (5e16 WAD), applying to 200 tokens should yield 10 tokens
         uint256 amount = 200e18;
         uint256 fee = BetterMath._percentageOfWAD(amount, DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE);
-        assertEq(fee, 100e18);
+        assertEq(fee, 10e18);
     }
 
     /* ---------------------------------------------------------------------- */

@@ -12,6 +12,7 @@ export {
   CHAIN_ID_SEPOLIA,
   CHAIN_ID_BASE_SEPOLIA,
   CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
   CHAIN_ID_ANVIL,
   CHAIN_ID_LOCALHOST,
   CHAIN_ID_BASE,
@@ -29,5 +30,11 @@ export type {
   DeploymentEnvironment,
 } from './addressArtifacts'
 
-export { resolveAppChain, robinhood, robinhoodAnvil } from './runtimeChains'
+export {
+  resolveAppChain,
+  robinhood,
+  robinhoodAnvil,
+  robinhoodTestnet,
+  robinhoodTestnetAnvil,
+} from './runtimeChains'
 export { hasBytecode, isZeroAddress, ZERO_ADDR } from './onchain'

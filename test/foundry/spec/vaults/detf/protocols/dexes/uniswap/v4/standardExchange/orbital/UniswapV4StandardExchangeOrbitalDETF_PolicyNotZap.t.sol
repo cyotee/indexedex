@@ -75,7 +75,9 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
         address d = _deployDetfInstance(_gentleArgsUnique("polMint"));
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
-        _firstBondOn(d, 400 ether, 400 ether);
+        // Unbalanced first bond so S lands in Policy deadband (address-sorted
+        // 1:1 doors + new DETF CREATE2 address no longer keep 400/400 at peg).
+        _firstBondOn(d, 400 ether, 560 ether);
 
         // Hard mint-blocked precondition (no soft-if skip of blocked path).
         _requireMintBlocked(info);

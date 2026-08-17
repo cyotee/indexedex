@@ -12,7 +12,9 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
+import {
+    UniswapV4DetfHookPremineLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
@@ -186,8 +188,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
     }
 
@@ -230,9 +231,19 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         internal
         returns (address detf_)
     {
+        (address predicted_, uint256 nonce_) = UniswapV4DetfHookPremineLib.premineCp(
+            diamondPackageFactory,
+            hookFactory,
+            detfPkg,
+            hookPkg,
+            args,
+            address(pm),
+            address(indexedexManager)
+        );
         vm.startPrank(owner);
-        detf_ = indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
+        detf_ = detfPkg.deployVault(args, nonce_);
         vm.stopPrank();
+        require(detf_ == predicted_, "detf != predicted");
         vm.label(detf_, args.symbol);
     }
 

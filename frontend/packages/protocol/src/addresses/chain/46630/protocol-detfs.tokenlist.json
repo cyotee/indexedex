@@ -1,0 +1,18 @@
+{
+  "name": "IndexedEx Robinhood Testnet Protocol DETFs",
+  "timestamp": "0",
+  "version": { "major": 1, "minor": 0, "patch": 0 },
+  "keywords": ["indexedex", "46630"],
+  "tokens": [
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000011", "name": "Test DETF NVDA Single", "symbol": "TTNVDA-S", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000012", "name": "Test DETF NVDA SMH Orbital", "symbol": "TTNVDA-SMH-O", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000013", "name": "Test DETF Index Quad", "symbol": "TTIDX-Q", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000014", "name": "Test DETF Mag7 Weighted", "symbol": "TTM7-W", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000015", "name": "Test DETF Showcase Nest", "symbol": "TTNEST-W", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000016", "name": "Test DETF Beta Nest", "symbol": "TTBETA-O", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000017", "name": "Test DETF Index Wrap", "symbol": "TTIDX-WRAP", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000018", "name": "Test DETF Mag7 Wrap", "symbol": "TTM7-WRAP", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000019", "name": "Test DETF Dollar Quad", "symbol": "TTDOL-Q", "decimals": 18, "tags": ["vault", "detf"] },
+    { "chainId": 46630, "address": "0x000000000000000000000000000000000000001a", "name": "Test DETF RICH Single", "symbol": "TTRICH-S", "decimals": 18, "tags": ["vault", "detf"] }
+  ]
+}

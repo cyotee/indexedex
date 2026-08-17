@@ -465,8 +465,11 @@ export function getBalancerPoolTokensForChain(
 }
 
 // Mint page helpers
-export function getMintableTestTokensForChain(chainId: number): TokenListEntry[] {
-  return getBaseTokensForChain(chainId).filter(isTestTokenEntry)
+export function getMintableTestTokensForChain(
+  chainId: number,
+  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment()
+): TokenListEntry[] {
+  return getBaseTokensForChain(chainId, environment).filter(isTestTokenEntry)
 }
 
 export function getAllTokens(): TokenListEntry[] {

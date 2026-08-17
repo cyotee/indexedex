@@ -166,8 +166,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
             thresholdMode: ThresholdMode.Open,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
 
         hostileDetf = _deployDetfInstance(args);

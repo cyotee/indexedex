@@ -1,0 +1,16 @@
+{
+  "name": "IndexedEx Robinhood Testnet Strategy Vaults",
+  "timestamp": "0",
+  "version": { "major": 1, "minor": 0, "patch": 0 },
+  "keywords": ["indexedex", "46630"],
+  "tokens": [
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000021", "name": "Test SE TTNVDA/TTUSDG", "symbol": "SE-TTNVDA-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000022", "name": "Test SE TTSPY/TTUSDG", "symbol": "SE-TTSPY-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000023", "name": "Test SE TTUSDE/WETH", "symbol": "SE-TTUSDE-WETH", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000024", "name": "Test SE TTUSDG/WETH", "symbol": "SE-TTUSDG-WETH", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000025", "name": "Test SE TTUSDG/TTUSDE", "symbol": "SE-TTUSDG-TTUSDE", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000026", "name": "Test SE TTM7-W/TTUSDG", "symbol": "SE-TTM7-W-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000027", "name": "Test SE TTIDX-Q/TTUSDG", "symbol": "SE-TTIDX-Q-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
+    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000028", "name": "Test SE TTRICH/WETH", "symbol": "SE-TTRICH-WETH", "decimals": 18, "tags": ["vault", "se"] }
+  ]
+}

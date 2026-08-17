@@ -19,7 +19,6 @@ import {
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 
@@ -59,12 +58,10 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     function test_config_rejectAllExternalBare() public {
         IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args = _argsAllBare();
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(); // AllExternalBareForbidden
-        indexedexManager.deployVault(
-            IStandardVaultPkg(address(detfPkg)), abi.encode(args)
-        );
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_config_rejectZeroCreationRate() public {
@@ -72,10 +69,10 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         args.name = "ZeroRate";
         args.symbol = "zr";
         args.creationPairPerDetfWad[0] = 0;
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(); // InvalidCreationRate
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_config_rejectBadWeights() public {
@@ -83,10 +80,10 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         args.name = "BadW";
         args.symbol = "bw";
         args.detfWeight = 0.9e18; // sum != 1e18 with pair 0.5
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(); // InvalidWeights
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     function test_config_rejectRpWithoutSE() public {
@@ -100,10 +97,10 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         args.symbol = "rns";
         // pair1 is bare in _argsN3_1SeBare; put RP on pair1
         args.rateProviders[1] = address(0xBEEF);
-        vm.startPrank(owner);
+        uint256 nonce = _premineNonce(args);
+        vm.prank(owner);
         vm.expectRevert(); // RateProviderWithoutSE
-        indexedexManager.deployVault(IStandardVaultPkg(address(detfPkg)), abi.encode(args));
-        vm.stopPrank();
+        detfPkg.deployVault(args, nonce);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -462,8 +459,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
         address d = _deployDetfInstance(args);
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
@@ -920,8 +916,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
-            hookMineNonce: 0
+            expansionMaxCatchUpEpochs: 0
         });
         // Fix last weight so sum is exact 1e18
         uint256 wSum = args.detfWeight;

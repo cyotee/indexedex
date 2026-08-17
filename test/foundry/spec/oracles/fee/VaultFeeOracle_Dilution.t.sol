@@ -172,9 +172,9 @@ contract VaultFeeOracle_Dilution_Test is IndexedexTest {
         uint256 dexFeeExtracted = BetterMath._percentageOfWAD(yield, DEFAULT_DEX_FEE);
         assertEq(dexFeeExtracted, 50e18, "5% dex fee: 50 tokens per 1000");
 
-        // Seigniorage incentive: 50% → 500 tokens incentive per 1000 tokens
+        // Seigniorage incentive: 5% → 50 tokens incentive per 1000 tokens
         uint256 seigniorageExtracted = BetterMath._percentageOfWAD(yield, DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE);
-        assertEq(seigniorageExtracted, 500e18, "50% seigniorage: 500 tokens per 1000");
+        assertEq(seigniorageExtracted, 50e18, "5% seigniorage: 50 tokens per 1000");
     }
 
     /// @notice feeTo address is correctly paired with fee values.
