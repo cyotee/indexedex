@@ -25,7 +25,7 @@ export const detfArticle: ResearchArticle = {
   ],
   notClaiming: [
     'A DETF is not a registered securities ETF or fund share, and holding it is not legal ownership of offchain stocks or underlyings.',
-    'No promised APY, rebase return, peg guarantee, or “(3,3)” performance.',
+    'No promised APY, rebase return, or peg guarantee.',
     'Open removes price gates only — it does not erase fees, invent returns, or enable natural expansion.',
     'Natural expansion is not a yield product for free unlocked DETF holders and is not available in Open mode.',
     'Protocol compound does not guarantee claim redemption growth or a fixed coupon.',

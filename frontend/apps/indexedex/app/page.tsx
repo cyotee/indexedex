@@ -74,10 +74,9 @@ const HOW_IT_WORKS = [
 
 const DISCLAIMERS = [
   'A DETF is a decentralized ETF product pattern onchain — not a registered securities ETF or fund share.',
-  'Built by the original developer of Olympus — not OlympusDAO, not the OHM token, not a claim on any DAO treasury.',
   'Holding DETF or reserve assets is not legal ownership of offchain stocks or other underlyings.',
   'Policy price thresholds (and choosing Open) do not guarantee peg stability, liquidity, or returns.',
-  'There is no promised APY, rebase yield, or “(3,3)” performance.',
+  'There is no promised APY, rebase yield, or guaranteed returns.',
   'Smart-contract and market risk apply. Read research; this is not financial advice.',
 ] as const
 
@@ -208,20 +207,19 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           <div className="lg:col-span-7">
             <p className="landing-lab__eyebrow">
-              DETF = Decentralized ETF · original developer of Olympus
+              DETF = Decentralized ETF · many types
             </p>
             <h1 className="landing-lab__h1 mt-4">
-              Olympus made the meme.
+              Build your own
               <br />
-              <span className="landing-lab__h1-accent">DETFs make the product.</span>
+              <span className="landing-lab__h1-accent">onchain DETF.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base md:text-lg text-[var(--text-muted,#9aa3b2)] leading-relaxed">
               <strong className="font-medium text-[var(--text-primary,#EDEDED)]">DETF</strong> means{' '}
               <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Decentralized ETF</strong>
-              — the D is decentralized. Built by the original developer of Olympus: reserve-backed
-              units, bonding into shared depth, mint and burn with clear rules — productized, not a
-              fork cosplay. One onchain share over a real reserve. Premier path: create your own DETFs.
-              Want protocol fees? Open{' '}
+              — the D is decentralized. One onchain share over a real multi-asset reserve. Stand up
+              your own DETFs from a family of package types — bond, mint, and burn rules priced from
+              the pool. Want a share of protocol fees? Open{' '}
               <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Protocol DETF</strong>.
             </p>
 
