@@ -5,6 +5,7 @@ import type { ResearchArticle } from '../types'
  * Code: capital bond mints matching DETF into the reserve and joins (maker LP);
  * mint/bond seigniorage inventory (`inventoryDetf`) accrues to bond holders in both modes;
  * natural expansion is Policy-only (DETFNaturalExpansionLib; Open never expands).
+ * Creator and protocol hold unredeemable bonds in the same minted-DETF seat.
  * Olympus is a one-line aside, not a framing section.
  */
 export const bondVsMintArticle: ResearchArticle = {
@@ -20,6 +21,7 @@ export const bondVsMintArticle: ResearchArticle = {
     'Bond deposits one side and mints matching DETF into the reserve, so both sides of the liquidity are filled. That is the efficient way to take a maker position.',
     'Bond holders receive a portion of DETF minted when anyone mints or bonds with real capital. That split does not depend on price gating.',
     'When mint and burn are price-gated (Policy), bond holders also receive a portion of regular supply expansion. Open DETFs never expand that way.',
+    'Creating a DETF issues an unredeemable bond to the creator. That bond sits in the same minted-DETF seat as other bonds, including the protocol bond.',
     'A new DETF starts off. The first successful bond turns it on.',
   ],
   notClaiming: [
@@ -28,6 +30,7 @@ export const bondVsMintArticle: ResearchArticle = {
     'A DETF is not OlympusDAO or the OHM token.',
     'Open only keeps mint and burn available at any price. It does not invent returns.',
     'Fees and lock terms come from onchain configuration. Amounts are not promises.',
+    'The creator bond cannot be redeemed for principal. Accrued DETF amounts are not guaranteed.',
   ],
   relatedProductHref: '/staking',
   relatedProductLabel: 'Open Protocol DETF',
@@ -67,6 +70,7 @@ export const bondVsMintArticle: ResearchArticle = {
       heading: 'Bond holders share DETF that gets minted',
       paragraphs: [
         'Whenever someone mints or bonds with real capital, part of the minted DETF goes to the bond ledger. If you hold a bond, you receive a portion of that. This happens whether or not the DETF uses price-gated mint and burn.',
+        'The creator of the DETF also holds an unredeemable bond in that same seat, as does the protocol. Those bonds collect a portion of the minted DETF, including Policy expansion. They cannot be redeemed.',
         'So a bond is not only a liquidity seat. It is also a seat on DETF that is minted as the product is used.',
       ],
     },
@@ -101,6 +105,7 @@ export const bondVsMintArticle: ResearchArticle = {
         '**Do I get spendable DETF when I bond?** You get a locked liquidity position, plus some DETF from the mint split. The matching amount stays in the reserve.',
         '**Why is bonding the efficient maker path?** The DETF mints the DETF side for you. You do not buy that side first, and you do not add only one side.',
         '**Do bond holders share minted DETF if there is no price gate?** Yes. The cut of DETF minted from real deposits goes to bond holders in both modes.',
+        '**Does the creator get minted DETF?** Yes. Creating a DETF issues an unredeemable bond that collects a portion of DETF minted to bond holders, including Policy expansion.',
         '**When do bonders get regular supply expansion?** Only on Policy DETFs, when mint and burn are price-gated and the unit is rich. Open never expands that way.',
         '**Is this Olympus?** No. Policy expansion is a passing comparison: new supply can go to people who locked liquidity. A DETF is not OlympusDAO or OHM.',
         '**Where do I do this?** Create a DETF on /create. Protocol DETF is on /staking. Actions are Bond, Mint, Burn, and Claim.',

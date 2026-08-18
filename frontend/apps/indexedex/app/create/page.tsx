@@ -314,7 +314,8 @@ export default function CreatePage() {
                     <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
                     <p className="text-gray-300 mt-2 max-w-lg mx-auto">
                       Connect your wallet to deploy your own strategy: one token over a basket that
-                      works in other protocols. The DETF stays off until someone bonds.
+                      works in other protocols. You get an unredeemable bond that collects a cut of
+                      minted DETF. The DETF stays off until someone bonds.
                     </p>
                 </div>
             </div>
@@ -327,7 +328,8 @@ export default function CreatePage() {
                 <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
                 <p className="text-gray-300 mt-2 max-w-xl mx-auto">
                     Deploy your own strategy as one token over a basket. The basket holds assets
-                    in other protocols. Three steps, then bond later to turn it on.
+                    in other protocols. You get an unredeemable bond that collects a cut of minted
+                    DETF. Three steps, then bond later to turn it on.
                 </p>
             </div>
 
@@ -345,7 +347,10 @@ export default function CreatePage() {
                 <li className="rounded-lg border border-slate-600 bg-slate-800/60 p-3">
                     <p className="text-xs uppercase tracking-wide text-gray-400">3</p>
                     <p className="mt-1 font-medium text-white">Fill and create</p>
-                    <p className="mt-1">Set the mix, then create. Bond later to turn it on.</p>
+                    <p className="mt-1">
+                      Set the mix, then create. You get an unredeemable bond that collects a cut of
+                      minted DETF. Bond later to turn it on.
+                    </p>
                 </li>
             </ol>
 

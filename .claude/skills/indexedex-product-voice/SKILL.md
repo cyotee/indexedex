@@ -28,6 +28,8 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Protocol DETF → `/staking` (not Earn grid). Education → `/research/detf`. Strategy legs → `/earn`.
 
+**Creator bond:** Creating a DETF issues an **unredeemable bond** to the creator. It collects a **portion of DETF minted to bond holders** (the mint/bond split, and on Policy, regular supply expansion). Same pattern as the protocol's own unredeemable bond (internally `feeTo()` / protocol NFT). Do **not** say seigniorage. Do **not** imply the creator can redeem principal. Amounts are not guaranteed.
+
 **Never** put deploy package or family type names in customer UI titles:
 
 - ~~Single Vault DETF~~, ~~SingleStandardExchangeDETF~~, ~~MultiVaultWeightedDetf~~, ~~MixedBuffer…~~

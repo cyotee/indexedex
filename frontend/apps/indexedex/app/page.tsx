@@ -51,7 +51,7 @@ const HOW_IT_WORKS = [
   {
     n: '01',
     t: 'Create',
-    d: 'Deploy a DETF as your strategy. Pick the type and the mix. It stays off until someone bonds.',
+    d: 'Deploy a DETF as your strategy. You receive an unredeemable bond that collects a cut of DETF minted as the product is used. It stays off until someone bonds.',
   },
   {
     n: '02',

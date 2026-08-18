@@ -32,6 +32,8 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **DETF token vs share:** Default customer name is the **DETF token**. Use **share** only when explaining that the token is a **claim on a share of the managed reserve**, or for **share of protocol fees**, or **vault shares** (basket legs). Do not call the DETF instrument a share in titles, CTAs, or first-pass copy.
 
+**Creator bond:** Creating a DETF issues an **unredeemable bond** to the creator. It collects a **portion of DETF minted to bond holders** (the mint/bond split, and on Policy, regular supply expansion). Same pattern as the protocol's own unredeemable bond (internally `feeTo()` / protocol NFT). Do **not** say seigniorage. Do **not** imply the creator can redeem principal. Amounts are not guaranteed.
+
 **Never** put deploy package or family type names in customer UI titles:
 
 - ~~Single Vault DETF~~, ~~SingleStandardExchangeDETF~~, ~~MultiVaultWeightedDetf~~, ~~MixedBuffer…~~
@@ -97,6 +99,8 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 | Earn | Catalog for strategies; cross-promo says **Protocol DETF**, not package |
 | Research | Mechanics + not-claiming; hierarchy clear; cite spine; no fake performance |
 | X / external | Same product law; disclaimers in body not hook |
+
+**Page chrome (when refining a surface, not a bulk restyle):** match `/research/bond-vs-mint` (`BondVsMintView`) and landing `/`. Atmosphere, eyebrow, large title, section labels, choice cards, numbered tiles, FAQ as a card grid, folded disclaimers, named CTAs. Do **not** restyle every route in one pass. Apply this look only to the page being refined. Reference: `frontend/apps/indexedex/app/research/components/BondVsMintView.tsx`.
 
 ---
 

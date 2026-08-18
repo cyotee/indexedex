@@ -1,128 +1,132 @@
 import type { ResearchArticle } from '../types'
 
 /**
- * Rate providers — deploy-time mark policy for SE-share legs in nested / DETF reserves.
- * Public framing: accuracy-first (rates on) vs reprice-volume (rates off).
- * Evidence: research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3;
- * research/scenarios/uniswapV2Se/rateProviderCompare/.
- * Voice: indexedex-product-voice.
+ * Rate providers: how a DETF reserve marks vault-share legs.
+ * Customer choice: keep the mark current (rates on) or leave raw counts so the
+ * market can catch up (rates off). Neither is yield. Voice: destacked, token
+ * not share, Earn vaults are building blocks, no seigniorage / package titles.
  */
 export const rateProvidersArticle: ResearchArticle = {
   slug: 'rate-providers',
-  title: 'Rate providers: mark accuracy or market reprice',
+  title: 'Rate providers: current mark or market catch-up',
   summary:
-    'DETF reserves that hold Standard Exchange vault shares can deploy with rate providers on or off. On prioritizes accurate live marks so deposits and synthetic price track claim value. Off leaves raw-share mids that can lag — inviting reprice volume when that gap is large enough to trade. Two product intents. Neither is free yield.',
-  date: '2026-07-28',
-  tags: ['rates', 'se', 'balancer', 'detf', 'integrity'],
+    'A DETF (Decentralized ETF) is one token over a basket that manages assets in other protocols. Those assets often sit as vault shares. A rate provider tells the reserve what one vault share is worth right now. Turn rates on to keep mint, burn, and the displayed price current. Leave them off if you want the market to reprice the reserve when the mark lags. Neither path is yield.',
+  date: '2026-08-17',
+  tags: ['rates', 'detf', 'product'],
   status: 'published',
   claims: [
-    'DETF and nested SE-share reserves can deploy with rate providers on or off — two intentional mark policies.',
-    'Rates on prioritize mark accuracy: live claim accounting so deposit and synthetic quotes track redeem-fair value as underlyings move.',
-    'Rates off prioritize market reprice: raw-share mids can lag claim value, which can invite closer volume when residual clears fees and path costs.',
-    'With rate providers on under tested Uni-driven demand paths, residual mid lag is effectively zero.',
-    'With rate providers off, residual lag grows as underlying volume scales; fills appear only when edge clears the fee stack.',
-    'Rate providers re-mark live claim units; they do not auto-rebalance weights or allocate capital across vaults.',
+    'When a DETF basket holds vault shares, you can deploy those legs with rate providers on or off.',
+    'Rates on keep the reserve mark current as vault-share value moves. Mint, burn, deposits, and the displayed price read that mark.',
+    'Rates off leave raw vault-share counts. If the underlying moves and nobody trades the reserve, the displayed price can lag.',
+    'That lag can invite traders to reprice the reserve when the gap is large enough to cover fees and path costs. Volume is not promised.',
+    'Rate providers re-mark vault shares. They do not move capital from one vault to another.',
+    'Open still uses the same mark for quotes. Only Policy uses that price to pause mint or burn.',
   ],
   notClaiming: [
-    'Neither policy prints yield, guarantees profit, or promises mainnet reprice volume.',
-    'Results are from hermetic/fork research scenarios — not a promise of live DETF portfolio performance.',
-    'Fee ladders and fill behavior transfer carefully across pool fee settings; do not extrapolate one research fee to all production pools.',
-    'Rates on do not replace user mint, burn, bond, or deposit flow for moving inventory.',
-    'Rates off do not guarantee aggressive rebalancing — residual can exist below fees with no fills.',
+    'Neither setting prints yield, guarantees profit, or promises live reprice volume.',
+    'Research numbers come from hermetic and fork scenarios, not a live DETF performance promise.',
+    'Fee levels and fill behavior change with pool settings. Do not treat one research fee as a production rule.',
+    'Rates on do not replace mint, burn, bond, or deposit when you want to move inventory.',
+    'Rates off do not guarantee trades. A small gap can sit with no fills.',
   ],
   relatedProductHref: '/research/detf',
-  relatedProductLabel: 'DETFs: one token over a basket',
+  relatedProductLabel: 'How DETFs work',
   sourceNote:
-    'research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3 (rate provider comparative); research/scenarios/uniswapV2Se/rateProviderCompare/ (AGENT_RESEARCH_REPORT.md, FINDINGS.md). Product spine: docs/marketing/DETF_NARRATIVE_SPINE.md (pricing engine = reserve pool). DualLiquidity optional rates appear only as composition context — not the hero product.',
+    'research/MARKETING_AND_PERFORMANCE_FINDINGS.md §3.3; research/scenarios/uniswapV2Se/rateProviderCompare/. Product spine: docs/marketing/DETF_NARRATIVE_SPINE.md (price comes from the reserve). Companions: /research/detf, /research/detf-types, /research/bond-vs-mint.',
   sections: [
     {
-      heading: 'Two ways to mark SE-share legs',
+      heading: 'Start with the question',
       paragraphs: [
-        'A DETF (Decentralized ETF) prices itself from a real multi-asset reserve — often Balancer V3 legs that hold Standard Exchange (SE) vault shares. Those shares track claim value on underlying venues (for example a Uniswap book wrapped as an SE vault).',
-        'When you stand up a reserve, you can wire those share legs with rate providers on, or leave them as raw ERC-20 legs with rate providers off. That is a product intent choice: mark accuracy first, or market-driven reprice first.',
-        'Both designs are intentional. Pick the one that matches how you want the reserve to behave when underlyings move.',
+        'IndexedEx is a strategy protocol. A DETF (Decentralized ETF) is one token over a basket that manages assets in other protocols. That token is a claim on a share of the managed reserve. The price you see comes from that reserve.',
+        'Many basket legs are vault shares from Earn. Those vault shares change in value as the other protocol moves. When you create the DETF, you choose whether the reserve should keep asking what one vault share is worth right now.',
       ],
     },
     {
-      heading: 'What the switch changes',
+      heading: 'Why the mark matters',
       paragraphs: [
-        'SE vault shares are raw token balances. A rate provider answers how much claim one share is worth right now against the vault’s rate target. Balancer can use that answer so pool math works in live claim units.',
+        'Mint, burn, and deposits size themselves from the reserve. Policy also uses that price to pause mint or burn near a target. If the mark is stale, quotes and those pauses read a stale book.',
       ],
       bullets: [
-        'Mark accuracy (rates on) — live balance of a share leg scales with the SE rate. Nested mids re-mark as underlyings move, even before anyone trades the reserve.',
-        'Market reprice (rates off) — the pool sees raw share amounts. If underlyings move and reserve inventory is quiet, the nested mid can hold while redeem claim value moves.',
-        'Same raw inventory, two intents — continuous live marks versus raw-share mids that markets can reprice when the gap is worth trading.',
+        '**The DETF token sits in the reserve.** Liquidity is how the backing is managed, not a side listing.',
+        '**Vault shares are the working legs.** Earn vaults are building blocks. They are not the strategy product.',
+        '**A rate provider answers one question.** How much is one vault share worth right now.',
+        '**You pick this at create time.** Families that expose the flag let you turn it on or off per vault-share leg.',
       ],
     },
     {
-      heading: 'Mark accuracy (rates on)',
+      heading: 'Keep the mark current',
       paragraphs: [
-        'Choose rate providers when accurate reserve pricing matters most: fair deposits, fair vault-share ↔ DETF quotes, and a synthetic price that tracks live claim as underlyings move.',
-        'With rates on, the composed pool acts as a live ledger for the DETF reserve. Heterogeneous vault shares become comparable claim units in one Balancer book. Primary mint, burn, and deposit sizing can read that same book — not a separate admin NAV.',
+        'Turn rate providers on when you want mint, burn, deposits, and the displayed price to stay aligned with what a vault share would redeem for as the other protocol moves.',
       ],
       bullets: [
-        'Live path — SE shares (raw) → rate providers (claim per share) → live reserve balances → synthetic price and deposit quotes.',
-        'Fair deposits — joins and primary routes use rate-aware math so quotes stay aligned with claim value.',
-        'Honest synthetic — Policy mode gates mint and burn from reserve-derived synthetic price. A current book keeps those gates and quotes tied to redeem-fair marks. Open mode still benefits: quotes stay current even though Open does not price-gate mint or burn.',
-        'Who moves inventory — users rebalance exposure through deposit, mint, burn, and bond. Rates re-mark the book; they do not auto-shift weight from vault A to vault B. You do not need lag-driven arb to keep the mid honest.',
+        'The reserve re-marks vault shares as their claim value changes, even before anyone trades the DETF.',
+        'Quotes stay closer to redeem value. You do not need a trader to update the mid.',
+        'Policy still pauses mint and burn near target. The pause reads a current book.',
+        'Open does not pause for price. Quotes still stay current.',
       ],
     },
     {
-      heading: 'Market reprice (rates off)',
+      heading: 'Let the market catch up',
       paragraphs: [
-        'Choose rates off when you want raw-share mids and stronger incentive for markets to trade the reserve when claim value and the nested mid diverge.',
-        'As underlying venues move, SE rates update and residual mid lag can grow while raw inventory is quiet. That gap can invite closers to trade nested paths — more active reprice flow on the reserve when the edge clears fees, impact, and path costs.',
+        'Leave rate providers off when you want raw vault-share counts in the reserve. If the other protocol moves and the reserve is quiet, the displayed price can lag. That gap can pull in traders to reprice the book.',
       ],
       bullets: [
-        'Product upside — lag creates a signal for reprice volume that can push reserve inventory more actively than a continuously fair mid alone.',
-        'Clear tradeoff — mids may not track claim value continuously until that flow happens. Deposit and synthetic quotes can inherit the lag in the meantime.',
-        'Fee-aware — residual is not free yield. Research closers only filled when residual cleared the fee stack; modest lag can sit with no fills.',
-        'Best fit — compositions that want market-driven reprice on nested SE-share legs and accept less continuous mark accuracy.',
+        'The reserve sees vault-share amounts, not live redeem value, until someone trades.',
+        'A large enough gap can invite reprice volume. Fees and path costs still have to be covered.',
+        'Until that trade happens, mint, burn, and the displayed price can sit away from live redeem value.',
+        'A small gap can sit with no fills. This is not a yield product.',
       ],
     },
     {
-      heading: 'Side-by-side: same underlying move',
+      heading: 'A simple example',
       paragraphs: [
-        'Toy path: the reserve holds a fixed raw amount of SE shares. The underlying market moves so the SE rate goes from 1.00 to 1.05. No one has traded the reserve yet.',
+        'The reserve holds a fixed amount of vault shares. The other protocol moves so one vault share is worth 5% more. Nobody has traded the DETF yet.',
       ],
       bullets: [
-        'Rates on — live share balance scales up; the pool’s quote per raw share re-marks with claim value. Residual mid×rate stays near zero. A deposit or mint against that leg tracks live claim more closely.',
-        'Rates off — raw mid holds; redeem claim moved about five percent. Residual grows. That gap can later invite reprice trades if it clears costs; until then, quotes can sit away from live claim.',
-        'Why scaling under rates on is not free arb — the scale is re-pricing live claim units so the book stays fair. Reprice incentive shows up when the mid is left raw (rates off) and residual is large enough to trade.',
+        '**Rates on:** the reserve re-marks those shares. Mint, burn, and the displayed price move with the 5%.',
+        '**Rates off:** the raw count is unchanged. Redeem value moved about 5%. The displayed price can lag until someone trades the reserve.',
       ],
     },
     {
       heading: 'How to choose',
-      paragraphs: [
-        'Match the flag to product goals. Families may expose this as a deploy-time option on SE-share reserve legs. Defaults can differ by package — read instance args for the DETF or vault you care about.',
-      ],
+      paragraphs: [],
       bullets: [
-        'Choose mark accuracy (rates on) when fair primary deposits, live multi-leg accounting, and redeem-aligned synthetic matter most — with users moving inventory through product routes.',
-        'Choose market reprice (rates off) when you want lag to invite closer volume across the reserve and accept that mids may trail claim until that volume trades.',
-        'Weighted, stable, or multi-token design changes impact and path shape — not the core choice between continuous re-mark and raw-share reprice. More legs make a clear mark policy more important, because more raw counts can look similar when their claims are not.',
+        'Want fair mint, burn, and deposits as vault-share value moves? Turn rates on.',
+        'Want the displayed price to stay current without waiting for a trade? Turn rates on.',
+        'Want lag that can invite traders to reprice the reserve? Leave rates off, and accept stale quotes until that trade happens.',
+        'On Policy, the mint and burn pause reads this same mark. A current book keeps that pause honest.',
+        'On Open, mint and burn stay available at any price. The mark still decides quote quality.',
+        'This flag does not pick mint versus bond. That choice is /research/bond-vs-mint.',
       ],
     },
     {
-      heading: 'What research measured',
+      heading: 'What this does not do',
       paragraphs: [
-        'Hermetic Uni V2 SE runs compared pure rates-on and rates-off worlds under the same demand path. Those matrices used a research Balancer const-prod fee of 5% — treat fee thresholds as scenario-specific, not a universal production rule.',
-      ],
-      bullets: [
-        'Underlying demand only: rates on → residual ≈ 0 across volume tiers tested; rates off → residual scales with volume (tens of bps at modest stress into multi-percent and higher under extreme tiers).',
-        'Modest closer probes: residual below the research fee stack → no fills — lag without a free lunch.',
-        'Extreme stress: when residual cleared fees, fills appeared — reprice volume becomes real once edge clears costs. Multi-path stress can still produce some fills with rates on; residual series still separates continuous re-mark (on) from raw mid lag (off).',
-        'Figures on this site (when R4 ships): residual and fairness compares under matched demand. Until then: monorepo research/out/uniswapV2Se/rateProviderCompare/ and research/scenarios/uniswapV2Se/rateProviderCompare/.',
+        'Rate providers re-mark vault shares. They do not move capital from one vault to another, and they do not replace mint, burn, bond, or deposit.',
       ],
     },
     {
-      heading: 'Short FAQ',
+      heading: 'What we measured',
       paragraphs: [
-        'Can I deploy either way? Yes — when the package allows the flag. Both are intentional mark policies.',
-        'Which is better for a fair primary market? Mark accuracy (rates on).',
-        'Which invites reprice volume on nested legs? Market reprice (rates off), when residual clears costs — not guaranteed every path.',
-        'Do rate providers rebalance weights for me? No. Rates on re-mark live claim. Rates off leave raw mids for markets to reprice. Users still deposit, mint, burn, and bond to change exposure.',
-        'Does Open mode make rates irrelevant? No. Open removes price restrictions on primary mint and burn; quote quality still follows how the reserve marks SE legs.',
-        'Where does this sit in the stack? SE vaults under Earn and many DETF reserve legs. Basket shape: /research/detf-types. Liquid share vs bond path: /research/bond-vs-mint. DETF overview: /research/detf.',
+        'Lab runs compared rates on and rates off under the same demand path. Those runs used a research fee, not a production fee. Treat them as a picture of the two intents, not a forecast.',
+      ],
+      bullets: [
+        'With rates on, the mark stayed current as the underlying moved.',
+        'With rates off, the gap grew as the underlying moved and the reserve sat quiet.',
+        'Trades only showed up when the gap cleared fees and path costs. Modest lag often meant no fills.',
+      ],
+    },
+    {
+      heading: 'FAQ',
+      paragraphs: [],
+      bullets: [
+        '**What is a rate provider?** A feed that tells the reserve what one vault share is worth right now.',
+        '**Can I deploy either way?** Yes, when that DETF type exposes the flag. Both settings are intentional.',
+        '**Which is better for a fair primary market?** Rates on. Mint, burn, and deposits stay closer to redeem value.',
+        '**Which invites traders to reprice the reserve?** Rates off, when the gap clears costs. Volume is not promised.',
+        '**Do rate providers rebalance the basket for me?** No. They re-mark vault shares. You still mint, burn, bond, or deposit to change exposure.',
+        '**Does Open make this irrelevant?** No. Open only removes price restrictions on mint and burn. Quote quality still follows how the reserve marks vault shares.',
+        '**Where next?** How DETFs work: /research/detf. Types: /research/detf-types. Mint or bond: /research/bond-vs-mint. Building-block vaults: /earn.',
       ],
     },
   ],

@@ -1,118 +1,141 @@
 import type { ResearchArticle } from '../types'
 
 /**
- * DETF types (families) in plain customer language.
- * Four live composition packages under contracts/vaults/detf/ (Single SE + multi-vault families).
- * Package names stay out of titles — engineer paths only in sourceNote.
- * Do not reference removed composed/single (SingleVaultDetf).
+ * DETF types as basket shapes. Package names stay in sourceNote only.
+ * Four live families: one vault, weighted multi-vault, layered like-kind,
+ * one cash buffer plus vaults. Same DETF verbs on every type.
  */
 export const detfTypesArticle: ResearchArticle = {
   slug: 'detf-types',
-  title: 'DETF types: which design for which basket',
+  title: 'DETF types: pick the basket shape',
   summary:
-    'IndexedEx’s premier product is four DETF designs — not one black-box fund. They share the same DETF pattern (one token over a real reserve, bond / mint / burn) with different reserve layouts: single Standard Exchange, multi-vault weighted, multi-vault stable (layered composition), and mixed-buffer stable (one buffer + vaults).',
-  date: '2026-07-27',
-  tags: ['detf', 'types', 'platform', 'product'],
+    'A DETF (Decentralized ETF) is one token over a basket that manages assets in other protocols. The type is the shape of that basket. Bond, mint, and burn stay the same steps. Pick the type that matches the vaults you want to hold.',
+  date: '2026-08-17',
+  tags: ['detf', 'types', 'product'],
   status: 'published',
   claims: [
-    'There are four DETF composition types under the product map — types differ in reserve layout and inputs, not in inventing a second product category.',
-    'Single Standard Exchange DETFs pair the DETF token with exactly one SE vault share in a weighted reserve. Any Standard Exchange vault may be the external leg (no hardcoded venue).',
-    'Multi-vault weighted DETFs put several SE vault shares next to DETF in one weighted reserve with custom weights and independent valuations.',
-    'Multi-vault stable (composed) DETFs layer two intermediate Balancer stable pools of the same SE vault shares under different rate views, then put DETF plus those two pool BPTs in a weighted top reserve — so the vault set is composed into one structure.',
-    'Mixed-buffer multi-vault stable DETFs use one MixedBuffer stable pool: DETF, exactly one buffer token, and vault shares that process that buffer; mint buffer or vault share → DETF; burn DETF → buffer only.',
+    'There are four DETF types. They change how the basket is laid out, not whether the product is a DETF.',
+    'Every type is one DETF token over a managed reserve. That token is a claim on a share of the reserve and sits in market liquidity.',
+    'Basket legs are vault shares from Earn. Those vaults wrap other protocols. The DETF does not hardcode a venue.',
+    'One-vault type: the DETF token plus exactly one vault share.',
+    'Fixed-weight type: the DETF token plus several vault shares, each with a set weight.',
+    'Grouped type: several similar vaults sit in two grouped pools next to the DETF token, marked two ways.',
+    'Cash-buffer type: the DETF token, one cash token, and vaults that all take and give that cash. Burn returns that cash.',
+    'The first successful bond turns a new DETF on. Creating a DETF also issues an unredeemable creator bond.',
   ],
   notClaiming: [
     'No type is a registered securities ETF or fund share.',
-    'Type choice does not guarantee peg, yield, or secondary market depth.',
-    'Family availability depends on what is deployed on a given network — this note is the design map, not a live catalog guarantee.',
-    'Deploy package names in code are not customer product titles.',
+    'Type choice does not guarantee a peg, yield, or market depth.',
+    'What you can create on a given network depends on what is deployed. This note is the design map, not a live catalog.',
+    'Deploy package names in code are not customer titles.',
+    'The creator bond cannot be redeemed for principal. Accrued DETF amounts are not guaranteed.',
   ],
   relatedProductHref: '/research/detf',
-  relatedProductLabel: 'DETFs: one token over a basket',
+  relatedProductLabel: 'How DETFs work',
   sourceNote:
     'Four live families under contracts/vaults/detf/: standardExchange/single (SingleStandardExchangeDETF); composed/multi-vault-weighted (MultiVaultWeightedDetf); composed/stable/common (ComposedStableCommonDetf); composed/stable/mixedBuffer (MixedBufferMultiVaultStableDetf). Removed path composed/single is not a product type. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
   sections: [
     {
-      heading: 'One pattern, four compositions',
+      heading: 'Start with the basket',
       paragraphs: [
-        'DETF means Decentralized ETF: one token over a real multi-asset reserve. That token is a claim on a share of the managed reserve. IndexedEx’s premier product is standing up that pattern from more than one package type — so a one-vault basket is not forced into the same reserve layout as a multi-leg weighted or stable design.',
-        'Every true DETF still: is the ERC-20, prices from its reserve, deploys inert until first bond (or family bootstrap), and offers Policy or Open mint/burn rules. Types change how legs are composed and which inputs mint or burn accept — not whether the product is “really a DETF.”',
-        'A design rule across all types: reserve vault legs are Standard Exchange vaults injected at deploy — the DETF does not hardcode a single protocol backend.',
+        'IndexedEx is a strategy protocol. A DETF (Decentralized ETF) is how you deploy your own strategy as one token. The type is not a second product. It is the shape of the basket that token sits over.',
+        'Start from what you want in the basket. Do not start from a package name.',
       ],
     },
     {
-      heading: 'What is a Standard Exchange vault?',
+      heading: 'What stays the same',
       paragraphs: [
-        'Before the four DETF layouts: a Standard Exchange (SE) vault is IndexedEx’s vault standard for integrating an external protocol. Each SE vault uses the same deposit / share / redeem surface. You deposit underlyings, hold an ERC-20 vault share, and redeem later — without learning a different API per venue.',
-        'Example: a Uniswap V4 SE vault wraps V4 liquidity exposure as that share. Example: an Euler SE vault wraps lending-market exposure the same way. The vault is the adapter to Uni or Euler; products above it only see the SE share.',
-        'SE vaults are not DETF types and not another composition family. They are building blocks on Earn, in routers, and as optional reserve legs. The types below describe how those shares sit in a DETF reserve — not how Uniswap or Euler themselves work. Venue names are illustrative, not an exclusive live list.',
-      ],
-    },
-    {
-      heading: '1. Single Standard Exchange DETF',
-      paragraphs: [
-        'Weighted reserve with two legs: the DETF share and exactly one Standard Exchange vault share (default weights often 80% DETF / 20% vault share, overridable at deploy). Classic mental model: one vault-share surface against DETF mint and burn, with bond into protocol-owned depth. First live path is first bond with vault shares. The diagram below shows the composition; Uniswap V4 and Euler under the SE vault are example backends, not a fixed venue list.',
+        'Every type is the same DETF pattern. The token is a claim on a share of the managed reserve. It also sits in market liquidity, which is how that reserve is managed.',
       ],
       bullets: [
-        'Best when — one external vault leg is enough for the basket.',
-        'Primary market — vault shares ↔ DETF (exact-in closed form preferred).',
-        'Avoid for — several vault legs, fixed multi-leg weights, or a shared cash buffer fan-out.',
+        'Create the DETF, then bond to turn it on. Later you mint, hold, or burn.',
+        'Policy can pause mint and burn near a target price. Open never does. Fees can still apply.',
+        'Creating a DETF issues an unredeemable bond that collects a cut of DETF minted to bond holders, including Policy expansion.',
+        'A bad setup means a new DETF. The design does not get rewritten after it goes live.',
+      ],
+    },
+    {
+      heading: 'What sits in the basket',
+      paragraphs: [
+        'Basket legs are usually vault shares. You deposit into a vault, receive a vault share, and redeem later. Those vaults wrap a market, a lending book, or another protocol. That is how a DETF reaches other venues.',
+        'Earn vaults are building blocks. They are not the strategy product. Venue names you see in diagrams are examples, not a closed list. How vault shares are marked: /research/rate-providers.',
+      ],
+    },
+    {
+      heading: 'One vault',
+      paragraphs: [
+        'The reserve holds the DETF token and exactly one vault share. Use this when one working position in another protocol is the whole strategy.',
+      ],
+      bullets: [
+        'Mint and burn move between that vault share and the DETF token.',
+        'A common starting mix is more DETF than vault share. You can set the mix when you create it.',
+        'The first successful bond turns it on.',
+        'Skip this type if you need several vaults or one shared cash token.',
       ],
       diagram: 'single-standard-exchange',
     },
     {
-      heading: '2. Multi-Vault Weighted DETF',
+      heading: 'Several vaults, fixed weights',
       paragraphs: [
-        'Weighted reserve: DETF plus one to seven Standard Exchange vault shares, each with a custom immutable weight. Use when a stable pool is the wrong abstraction — unrated shares, disparate rate targets (different assets), or same nominal asset but distinct market identity that must stay separate legs.',
+        'The reserve holds the DETF token plus several vault shares. Each vault keeps its own weight and its own value. Use this when the vaults are different products and should stay separate legs.',
       ],
       bullets: [
-        'Best when — you need fixed basket weights and independent valuations across vault products.',
-        'Primary market — configured vault shares ↔ DETF only (deposit into the SE vault first if you hold underlyings).',
-        'First live path — initialize the reserve, then bond reserve BPT (family-specific).',
-        'Claim redeem (when wired) — toward any configured rate asset of a rated leg.',
-        'Avoid for — like-kind multi-vault cash baskets better served by multi-vault stable or mixed-buffer.',
+        'You pick the weights at create time. They stay put.',
+        'Mint and burn use the vault shares you configured. Deposit into a vault first if you hold the underlying.',
+        'After the reserve is set up, the first bond turns it on.',
+        'Skip this type if the vaults are alike and should share one cash token, or if they should be grouped rather than listed by weight.',
       ],
       diagram: 'multi-vault-weighted',
     },
     {
-      heading: '3. Multi-Vault Stable (Composed)',
+      heading: 'Several similar vaults, grouped',
       paragraphs: [
-        'For several like-kind Standard Exchange vaults that should end up in one composed DETF structure — not as a flat weighted list of raw vault shares next to DETF, and not as Mixed-buffer’s single buffer pool.',
-        'Composition is layered so every contained vault share is still bound into the same product. Deployer configures two rate groupings over the same vault set: a stable grouping (each vault gets its own rate target — unique per vault) and a common grouping (every vault shares one common rate target). The package builds two intermediate Balancer V3 Stable Pools that both hold those SE vault shares (only the rate markings differ). Joining vault shares into either pool mints that pool’s BPT.',
-        'The true DETF reserve is a Weighted Pool of three legs: DETF (self), Stable Pool BPT, and Common Pool BPT. DETF lives only on that top pool; the intermediate stables do not hold DETF. Economically, the layers exist so many vault exposures compose as if they were paired together under one share — two multi-vault composition receipts plus DETF, instead of pairing two lone coins.',
+        'Several like-kind vaults sit in two grouped pools. One group marks each vault on its own. The other marks them against one shared target. Those two groups sit next to the DETF token. You still hold one DETF token.',
       ],
       bullets: [
-        'Best when — multi-vault like-kind composition under dual rate views (per-vault stable targets + one shared common target).',
-        'Intermediate pools — both are Stable Pools; both hold the same SE vault shares; rates differ by grouping.',
-        'Top reserve — weighted: DETF + Stable BPT + Common BPT; DETF inventory is that weighted pool’s BPT.',
-        'Routing — deposits can route into vaults and intermediate pools by lowest rated liquidity (family rules).',
-        'Not Mixed-buffer — no single buffer token as the primary cash leg of one mixed stable reserve.',
+        'Use this when similar vaults should compose as one structure, not as a flat weighted list.',
+        'The DETF token lives only next to the two groups, not inside each vault group.',
+        'How those marks work is the rate-provider choice: /research/rate-providers.',
+        'This is not the one-cash-token design below.',
       ],
       diagram: 'multi-vault-stable',
     },
     {
-      heading: '4. Mixed-Buffer Multi-Vault Stable',
+      heading: 'One cash token plus vaults',
       paragraphs: [
-        'For one shared cash asset and one to three Standard Exchange vaults that all accept and produce that asset. The reserve is a single MixedBuffer stable pool — not a weighted multi-risk basket, and not the dual intermediate-BPT graph above.',
-        'Reserve legs: unpaired DETF self-leg, exactly one buffer token, and the vault share legs. That single buffer is the point: vaults fan in and out of the same cash unit. Live mint accepts buffer or any configured vault share; burn of DETF settles to buffer only. Liveness uses a permissionless first-bond bootstrap (user supplies non-DETF legs; DETF seeds its self-leg into the reserve; bond NFT principal on the bootstrap position).',
+        'The reserve holds the DETF token, exactly one cash token, and vaults that all take and give that cash. Use this when the strategy is a cash family: several vaults processing the same asset.',
       ],
       bullets: [
-        'Best when — staking or lending “cash families” where many vaults process one buffer asset.',
-        'Exactly one buffer — not several buffer tokens; rate asset for this family equals that buffer.',
-        'Mint — buffer or vault share → DETF; burn — DETF → buffer only.',
-        'Bond inputs after live — buffer or vault shares; claim redeem to buffer when wired.',
-        'Avoid for — disparate asset weights (use multi-vault weighted) or dual intermediate stable+common composition (use multi-vault stable composed).',
+        'Mint with the cash token or with a vault share.',
+        'Burn returns the cash token only.',
+        'The first bond can turn it on. You put in cash or a vault share. Matching DETF is minted into the reserve.',
+        'Skip this type if the vaults are different assets that need their own weights, or if you want the grouped design above.',
       ],
       diagram: 'mixed-buffer-multi-vault-stable',
     },
     {
       heading: 'How to choose',
-      paragraphs: ['Start from the basket, not from package names:'],
+      paragraphs: [],
       bullets: [
-        'One SE vault leg → Single Standard Exchange.',
-        'Several vaults, different valuations / fixed weights → multi-vault weighted.',
-        'Several like-kind vaults composed into one structure via dual rate views + weighted top → multi-vault stable (composed).',
-        'Several vaults on one cash buffer, mint buffer or shares, burn to that buffer → mixed-buffer multi-vault stable.',
+        'One working position in another protocol? One vault.',
+        'Several different vaults that should keep their own weights? Several vaults, fixed weights.',
+        'Several similar vaults that should compose as one structure? Several similar vaults, grouped.',
+        'Several vaults on one cash token, and you want to burn back to that cash? One cash token plus vaults.',
+        'Unsure how vault shares should be marked? Read /research/rate-providers after you pick the shape.',
+        'Need the mint versus bond pick? That is the same on every type: /research/bond-vs-mint.',
+      ],
+    },
+    {
+      heading: 'FAQ',
+      paragraphs: [],
+      bullets: [
+        '**Is a type a different product?** No. Every type is a DETF: one token over a basket. The type only changes the basket shape.',
+        '**Do I pick a package name?** No. Pick the basket. Package names stay in engineer docs.',
+        '**What is a vault share?** A claim on a vault that wraps another protocol. Deposit, receive a vault share, redeem later. Earn lists those vaults.',
+        '**Does the type change mint or bond?** No. Those steps stay the same. Inputs can change with the basket.',
+        '**Does the creator still get a bond?** Yes. Creating any DETF issues an unredeemable bond that collects a cut of minted DETF, including Policy expansion.',
+        '**Is Protocol DETF a fifth type?** No. It uses the same design so you can take part in protocol fees. Home: /staking.',
+        '**Where next?** How DETFs work: /research/detf. Mint or bond: /research/bond-vs-mint. Marking vault shares: /research/rate-providers. Create: /create.',
       ],
     },
   ],
