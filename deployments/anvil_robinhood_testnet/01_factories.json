@@ -1,0 +1,21 @@
+{
+  "chainId": 46630,
+  "create3Factory": "0x9f41366E1b1b0E4F404Af2300C58cAda1c68f0B9",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "diamondCutFacet": "0xc5A17D12B9E803b0657D5d65bb40Ec5048290bDF",
+  "diamondPackageFactory": "0xd7A059084eCFffb3c14AC31bfBe25fd17D7Cb65c",
+  "erc20Facet": "0xC951c9baE2f5E35692000e541873d2375311C160",
+  "erc2612Facet": "0x0cD61c55FD5b185f90143397342D9532E341eE73",
+  "erc4626BasicVaultFacet": "0x866810CEeb903486Ab1a3050E152370D1A04Ddc8",
+  "erc4626Facet": "0x63E94e99b5c252E2cC9Ec9406891Afb66d4E4cc7",
+  "erc4626StandardVaultFacet": "0x1017499b9f32b6A160CA18C38bD3E0aEE35f070c",
+  "erc5267Facet": "0x7D4E41e41425BF1c83BDe8A88DC87Fe0Ae432CD1",
+  "hookFactory": "0x5cA315f13012d9535BB6D5E873F96D50b858a54C",
+  "hookFlagsFacet": "0x774190530cCa4ba5FB085Df03271d8808e6bbdcB",
+  "multiAssetBasicVaultFacet": "0x248F952294cc0D153A886e500ABCBd534a76E6a2",
+  "multiAssetStandardVaultFacet": "0x86deD288B3F95B21C7cDC51283ca40B223243Eb1",
+  "multiStepOwnableFacet": "0xf6Cee3163efc111A6C08E6DDB7268F21885BAA1c",
+  "networkProfile": "anvil_robinhood_testnet",
+  "operableFacet": "0xC9001AF24F7b21cb46E2D13C3587E0D982C7bb3a",
+  "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+}

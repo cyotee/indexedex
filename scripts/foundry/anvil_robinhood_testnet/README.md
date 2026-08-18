@@ -6,8 +6,8 @@
 | | Value |
 |--|--|
 | Chain id | **46630** |
-| Fork alias | `robinhood_testnet_alchemy` → fallback `robinhood_testnet` |
-| Fork pin (D35) | Crane `ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK` (override with `ANVIL_FORK_BLOCK_NUMBER`) |
+| Fork alias | `robinhood_testnet_alchemy` → fallback `robinhood_testnet` (public). Public has **no archive** at `101800000`; fallback retargets to `head - 64`. |
+| Fork pin (D35) | Crane `ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK` on Alchemy. Override with `ANVIL_FORK_BLOCK_NUMBER`. |
 | Anvil flags | `--chain-id 46630 --disable-code-size-limit` |
 | Broadcast | localhost only (`http://127.0.0.1:8545`) |
 | Artifacts | `deployments/anvil_robinhood_testnet/` |
@@ -36,10 +36,15 @@ No Balancer. No pons. No Uni V3. No `vm.warp`. No fee push into `TTRICH-S`.
 ## One-shot
 
 ```bash
-export ALCHEMY_KEY=...
 export DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
-bash scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil
+# Official public 46630 RPC at the remote tip (Anvil default; no historical pin).
+bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --public-rpc --fork-latest
+# --public-rpc alone still pins head-64 (prunes mid-run on this node).
+
+# Alchemy archive (needs ALCHEMY_KEY + working DNS)
+# export ALCHEMY_KEY=...
+# bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh
 # wait for [SUCCESS]
 
 cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630

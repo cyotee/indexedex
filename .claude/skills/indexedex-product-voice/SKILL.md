@@ -28,6 +28,8 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
+**$RICH (landing fee story):** $RICH is the named token for app fees. Customer copy: **all protocol / app fees go to buying back $RICH**, including the **pons family** launch for $RICH. Point people to **buy $RICH** as the long-term way to take part when the product is used. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $RICH is the fee-buyback path, not a second DETF brand.
+
 **Creator bond:** Creating a DETF issues an **unredeemable bond** to the creator. It collects a **portion of DETF minted to bond holders** (the mint/bond split, and on Policy, regular supply expansion). Same pattern as the protocol's own unredeemable bond (internally `feeTo()` / protocol NFT). Do **not** say seigniorage. Do **not** imply the creator can redeem principal. Amounts are not guaranteed.
 
 **Never** put deploy package or family type names in customer UI titles:

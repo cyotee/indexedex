@@ -7,7 +7,8 @@ import { Button } from './components/ui/Button'
 import { Card } from './components/ui/Card'
 import { listPublishedResearchArticles } from './content/research'
 import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
-import { feeDetfStakingHref } from '@indexedex/protocol/tokenlists'
+import { getLaunchTokenAddress } from './lib/lab'
+import { feeDetfStakingHref, getBaseTokensForChain } from '@indexedex/protocol/tokenlists'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 import { useBrand } from './lib/brandContext'
@@ -70,6 +71,7 @@ const DISCLAIMERS = [
   'Holding DETF is not legal ownership of stocks or other offchain assets.',
   'Policy and Open do not promise a stable price, easy trades, or a return.',
   'There is no promised APY or guaranteed return.',
+  'Fees used to buy back $RICH do not promise a higher price or a profit.',
   'Smart contracts and markets can lose money. Read research. This is not financial advice.',
 ] as const
 
@@ -191,6 +193,15 @@ export default function HomePage() {
   const heroFee = featuredFeeDetfs[0]
   const secondaryFees = featuredFeeDetfs.slice(1)
 
+  const buyRichHref = useMemo(() => {
+    const launch = getLaunchTokenAddress()
+    const rich = getBaseTokensForChain(selectedChainId, environment).find(
+      (t) => t.symbol.toUpperCase() === 'RICH',
+    )
+    const addr = rich?.address ?? launch
+    return addr ? `/swap?launch=1&tokenOut=${addr}` : '/token'
+  }, [selectedChainId, environment])
+
   const researchNotes = useMemo(() => listPublishedResearchArticles().slice(0, 3), [])
 
   const featuredBenefit = BENEFITS.find((b) => b.featured)!
@@ -219,8 +230,9 @@ export default function HomePage() {
             <p className="mt-5 max-w-xl text-base md:text-lg text-[var(--text-muted,#9aa3b2)] leading-relaxed">
               A DETF is one token for a basket you pick. That basket puts money to work in other
               apps. People can trade the token. That market is how the assets behind it stay
-              useful. This is not a stock ETF. Want a cut of app fees instead? Open{' '}
-              <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Protocol DETF</strong>.
+              useful. This is not a stock ETF. Want to take part when people use IndexedEx? Buy{' '}
+              <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong>.
+              App fees go to buy it back.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -229,9 +241,9 @@ export default function HomePage() {
                   Create DETF
                 </Button>
               </Link>
-              <Link href="/explore">
+              <Link href={buyRichHref}>
                 <Button size="lg" variant="secondary">
-                  {heroFee ? `Open ${heroFee.symbol}` : 'Explore DETFs'}
+                  Buy $RICH
                 </Button>
               </Link>
               <Link href="/learn">
@@ -323,26 +335,34 @@ export default function HomePage() {
       </section>
 
       {/* Protocol DETF — protocol fees path (Wave 2 — e2e: heading + staking links) */}
-      <section className="mb-16 md:mb-20">
-        <p className="landing-section-label">Share of protocol fees</p>
+      <section id="rich" className="mb-16 md:mb-20 scroll-mt-24">
+        <p className="landing-section-label">App fees buy back $RICH</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
           Protocol DETF
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          Same DETF design. Use it to take a cut of app fees. Mint, bond, or leave when you are
-          ready. Fees may apply. Amounts are not promises.
+          <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong> is the
+          token for app fees. When people use IndexedEx, those fees go to buy back $RICH. That
+          includes the pons family launch for $RICH. Buy $RICH if you want to take part when the
+          product is used. This is not a promised return.
         </p>
 
         {featuredFeeDetfs.length === 0 ? (
           <Card className="mt-5">
             <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-              No Protocol DETF configured on this network.
+              No Protocol DETF is listed on this network yet. You can still buy $RICH when a market
+              is set.
             </p>
-            <Link href="/staking" className="inline-block mt-3">
-              <Button variant="secondary" size="sm">
-                Open Protocol DETF
-              </Button>
-            </Link>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link href={buyRichHref}>
+                <Button size="sm">Buy $RICH</Button>
+              </Link>
+              <Link href="/staking">
+                <Button variant="secondary" size="sm">
+                  Open Protocol DETF
+                </Button>
+              </Link>
+            </div>
           </Card>
         ) : (
           <div className="mt-5 space-y-3">
@@ -354,14 +374,13 @@ export default function HomePage() {
                 <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-                      Fee share
+                      $RICH
                     </p>
-                    {/* Product brand is Protocol DETF — not the deploy package name from lists. */}
                     <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">
                       Protocol DETF
                     </h3>
                     <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-                      {heroFee.symbol}
+                      Hold the fee path. Fees buy back $RICH.
                     </p>
                   </div>
                   <span className="inline-flex items-center text-sm font-medium text-[var(--accent,#4FD44B)]">
@@ -396,13 +415,18 @@ export default function HomePage() {
               </div>
             ) : null}
 
-            {heroFee ? (
-              <div className="pt-1">
+            <div className="pt-1 flex flex-wrap gap-2">
+              <Link href={buyRichHref}>
+                <Button size="sm">Buy $RICH</Button>
+              </Link>
+              {heroFee ? (
                 <Link href={feeDetfStakingHref(heroFee.address)}>
-                  <Button size="sm">Open {heroFee.symbol}</Button>
+                  <Button size="sm" variant="secondary">
+                    Open {heroFee.symbol}
+                  </Button>
                 </Link>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
         )}
       </section>
@@ -492,8 +516,9 @@ export default function HomePage() {
       {/* Closing strip */}
       <section className="pb-4">
         <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          DETF means Decentralized ETF. Run your plan as a basket that works in other apps. Open
-          Protocol DETF for a cut of app fees. We only claim what the chain can prove.
+          DETF means Decentralized ETF. Run your plan as a basket that works in other apps. Buy
+          $RICH to take part when the app is used. Fees go to buy it back. We only claim what the
+          chain can prove.
         </div>
       </section>
     </div>

@@ -35,14 +35,12 @@ ANVIL_PORT="${ANVIL_PORT:-8545}"
 ANVIL_CHAIN_ID="${ANVIL_CHAIN_ID:-46630}"
 FOUNDRY_FORK_RPC_ALIAS="${FOUNDRY_FORK_RPC_ALIAS:-robinhood_testnet_alchemy}"
 ANVIL_FORK_URL="${ANVIL_FORK_URL:-}"
-if [[ -z "$ANVIL_FORK_URL" ]]; then
-  if ! ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS" 2>/dev/null)"; then
-    FOUNDRY_FORK_RPC_ALIAS="robinhood_testnet"
-    ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
-  fi
-fi
-# D35: Crane ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK
+CLI_FORK_ALIAS=""
+# D35: Crane ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK. Public RPCs do not keep this
+# archive window — start_anvil retargets the pin on the public fallback.
 ANVIL_FORK_BLOCK_NUMBER="${ANVIL_FORK_BLOCK_NUMBER:-101800000}"
+ANVIL_PUBLIC_PIN_LAG="${ANVIL_PUBLIC_PIN_LAG:-64}"
+ANVIL_ALCHEMY_START_ATTEMPTS="${ANVIL_ALCHEMY_START_ATTEMPTS:-3}"
 # 50 CU/s starves fork storage reads (Mag7 deployVault looks hung). Alchemy default is 330.
 ANVIL_COMPUTE_UNITS_PER_SECOND="${ANVIL_COMPUTE_UNITS_PER_SECOND:-330}"
 ANVIL_FORK_RETRY_BACKOFF="${ANVIL_FORK_RETRY_BACKOFF:-1000}"
@@ -63,6 +61,7 @@ BROADCAST_FLAG="--broadcast"
 RESTART_ANVIL=0
 KILL_ANVIL=0
 FORCE=0
+FORK_LATEST=0
 FORGE_VERBOSITY=""
 COMMAND="all"
 
@@ -90,17 +89,21 @@ Options:
   --restart-anvil   Kill port + start fresh RH testnet fork at chain id 46630
   --kill-anvil      Kill Anvil and exit
   --force           Re-run stages (purge stage JSON first when restarting)
+  --fork-alias NAME Foundry [rpc_endpoints] alias (default robinhood_testnet_alchemy)
+  --public-rpc      Same as --fork-alias robinhood_testnet (official public RPC)
+  --fork-latest     Do not pass --fork-block-number; Anvil uses the remote tip
   -v…-vvvvv         Forge verbosity
   --help, -h
 
 Required env:
   DEV_ADDRESS   Anvil account(0) typically 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-  ALCHEMY_KEY   For robinhood_testnet_alchemy
+  ALCHEMY_KEY   For robinhood_testnet_alchemy (not needed with --public-rpc)
 
 Optional:
   ANVIL_FORK_URL / FOUNDRY_FORK_RPC_ALIAS (default robinhood_testnet_alchemy)
-  ANVIL_FORK_BLOCK_NUMBER (default Crane ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK)
+  ANVIL_FORK_BLOCK_NUMBER (default Crane pin; set to latest to omit the pin)
   RPC_URL (default http://127.0.0.1:8545) — must be localhost for broadcast
+  --public-rpc without --fork-latest retargets the pin to head-64.
 EOF
 }
 
@@ -176,20 +179,45 @@ wait_for_rpc() {
   return 0
 }
 
+rpc_block_number() {
+  local url="$1"
+  perl -e 'alarm shift; exec @ARGV' 8 cast block-number --rpc-url "$url" 2>/dev/null
+}
+
+# Public 46630 nodes prune historical state. Pin a few blocks behind tip (D35: still pinned).
+retarget_pin_for_public() {
+  local head
+  head="$(rpc_block_number "$ANVIL_FORK_URL" || true)"
+  if [[ ! "$head" =~ ^[0-9]+$ ]]; then
+    log_error "Could not read head from $ANVIL_FORK_URL"
+    return 1
+  fi
+  local lag="$ANVIL_PUBLIC_PIN_LAG"
+  if (( head > lag )); then
+    ANVIL_FORK_BLOCK_NUMBER=$((head - lag))
+  else
+    ANVIL_FORK_BLOCK_NUMBER="$head"
+  fi
+  log_info "Public RPC has no archive at 101800000; pinning $ANVIL_FORK_BLOCK_NUMBER (head $head - $lag)"
+}
+
 # stdout is the child pid only — do not log here (callers capture stdout).
 launch_anvil() {
   local fork_url="$1"
+  local fork_block="${2:-$ANVIL_FORK_BLOCK_NUMBER}"
   local anvil_cmd=(
     anvil
     --host "$ANVIL_HOST"
     --port "$ANVIL_PORT"
     --chain-id "$ANVIL_CHAIN_ID"
     --fork-url "$fork_url"
-    --fork-block-number "$ANVIL_FORK_BLOCK_NUMBER"
     --compute-units-per-second "$ANVIL_COMPUTE_UNITS_PER_SECOND"
     --fork-retry-backoff "$ANVIL_FORK_RETRY_BACKOFF"
     --disable-code-size-limit
   )
+  if [[ "$FORK_LATEST" -eq 0 && -n "$fork_block" && "$fork_block" != "latest" ]]; then
+    anvil_cmd+=(--fork-block-number "$fork_block")
+  fi
   nohup "${anvil_cmd[@]}" >"$ANVIL_LOG_DIR/anvil.log" 2>&1 &
   echo $!
 }
@@ -202,15 +230,41 @@ start_anvil() {
 
   mkdir -p "$ANVIL_LOG_DIR"
   local pid
-  log_info "Starting Anvil chain $ANVIL_CHAIN_ID forking $FOUNDRY_FORK_RPC_ALIAS @ block $ANVIL_FORK_BLOCK_NUMBER"
-  pid="$(launch_anvil "$ANVIL_FORK_URL")"
-  if ! wait_for_rpc "$pid"; then
-    # D14: Alchemy hostname did not resolve for this Anvil process. Retry public RPC.
+  local attempt
+  local started=0
+  if [[ "$FORK_LATEST" -eq 0 && "$FOUNDRY_FORK_RPC_ALIAS" != *alchemy* ]]; then
+    retarget_pin_for_public || exit 1
+  fi
+  if [[ "$FORK_LATEST" -eq 1 ]]; then
+    log_info "Starting Anvil chain $ANVIL_CHAIN_ID forking $FOUNDRY_FORK_RPC_ALIAS at remote latest"
+  else
+    log_info "Starting Anvil chain $ANVIL_CHAIN_ID forking $FOUNDRY_FORK_RPC_ALIAS @ block $ANVIL_FORK_BLOCK_NUMBER"
+  fi
+  for ((attempt = 1; attempt <= ANVIL_ALCHEMY_START_ATTEMPTS; attempt++)); do
+    pid="$(launch_anvil "$ANVIL_FORK_URL")"
+    if wait_for_rpc "$pid"; then
+      started=1
+      break
+    fi
+    kill_anvil
+    if [[ "$FOUNDRY_FORK_RPC_ALIAS" == *alchemy* && "$attempt" -lt "$ANVIL_ALCHEMY_START_ATTEMPTS" ]]; then
+      log_info "Alchemy Anvil start failed (attempt $attempt/$ANVIL_ALCHEMY_START_ATTEMPTS); retrying"
+      sleep 2
+    else
+      break
+    fi
+  done
+
+  if [[ "$started" -eq 0 ]]; then
     if [[ "$FOUNDRY_FORK_RPC_ALIAS" == *alchemy* ]]; then
-      kill_anvil
       FOUNDRY_FORK_RPC_ALIAS="robinhood_testnet"
       ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
-      log_info "Retrying Anvil with $FOUNDRY_FORK_RPC_ALIAS"
+      if [[ "$FORK_LATEST" -eq 0 ]]; then
+        retarget_pin_for_public || exit 1
+        log_info "Retrying Anvil with $FOUNDRY_FORK_RPC_ALIAS @ block $ANVIL_FORK_BLOCK_NUMBER"
+      else
+        log_info "Retrying Anvil with $FOUNDRY_FORK_RPC_ALIAS at remote latest"
+      fi
       pid="$(launch_anvil "$ANVIL_FORK_URL")"
       if ! wait_for_rpc "$pid"; then
         log_error "Anvil failed to start with $FOUNDRY_FORK_RPC_ALIAS"
@@ -352,6 +406,30 @@ while [[ $# -gt 0 ]]; do
       export FORCE=1
       shift
       ;;
+    --fork-alias)
+      if [[ $# -lt 2 || "$2" == -* ]]; then
+        log_error "--fork-alias requires a foundry.toml [rpc_endpoints] name"
+        exit 1
+      fi
+      CLI_FORK_ALIAS="$2"
+      shift 2
+      ;;
+    --fork-alias=*)
+      CLI_FORK_ALIAS="${1#--fork-alias=}"
+      if [[ -z "$CLI_FORK_ALIAS" ]]; then
+        log_error "--fork-alias requires a foundry.toml [rpc_endpoints] name"
+        exit 1
+      fi
+      shift
+      ;;
+    --public-rpc)
+      CLI_FORK_ALIAS="robinhood_testnet"
+      shift
+      ;;
+    --fork-latest)
+      FORK_LATEST=1
+      shift
+      ;;
     -v|-vv|-vvv|-vvvv|-vvvvv)
       FORGE_VERBOSITY="$1"
       shift
@@ -372,6 +450,28 @@ if [[ "$KILL_ANVIL" -eq 1 ]]; then
   kill_anvil
   exit 0
 fi
+
+if [[ "${ANVIL_FORK_BLOCK_NUMBER:-}" == "latest" ]]; then
+  FORK_LATEST=1
+fi
+if [[ -n "$CLI_FORK_ALIAS" ]]; then
+  FOUNDRY_FORK_RPC_ALIAS="$CLI_FORK_ALIAS"
+  ANVIL_FORK_URL=""
+fi
+if [[ -z "$ANVIL_FORK_URL" ]]; then
+  if ! ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS" 2>/dev/null)"; then
+    if [[ -n "$CLI_FORK_ALIAS" ]]; then
+      log_error "Could not resolve Foundry RPC alias: $FOUNDRY_FORK_RPC_ALIAS"
+      exit 1
+    fi
+    FOUNDRY_FORK_RPC_ALIAS="robinhood_testnet"
+    ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
+  fi
+fi
+_fork_host="${ANVIL_FORK_URL#*://}"
+_fork_host="${_fork_host%%/*}"
+log_info "Fork alias $FOUNDRY_FORK_RPC_ALIAS ($_fork_host)"
+unset _fork_host
 
 require_dev_address
 require_localhost_broadcast

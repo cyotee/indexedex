@@ -28,6 +28,8 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
+**$RICH (landing fee story):** $RICH is the named token for app fees. Customer copy: **all protocol / app fees go to buying back $RICH**, including the **pons family** launch for $RICH. Point people to **buy $RICH** as the long-term way to take part when the product is used. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $RICH is the fee-buyback path, not a second DETF brand.
+
 **Differentiator (customer, keep this on landing):** IndexedEx is a **strategy protocol**. A DETF is how a user **deploys their own strategy** as one **token** over a **basket**. That basket **manages assets in other protocols** (not a static token list). Putting the **DETF token in market liquidity** is reserve technology: it helps manage the backing. Earn vaults are building blocks a DETF can put in its basket. Do not call Earn the strategy product.
 
 **DETF token vs share:** Default customer name is the **DETF token**. Use **share** only when explaining that the token is a **claim on a share of the managed reserve**, or for **share of protocol fees**, or **vault shares** (basket legs). Do not call the DETF instrument a share in titles, CTAs, or first-pass copy.

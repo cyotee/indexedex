@@ -33,8 +33,9 @@ dev-debug.log
 node_modules/
 # Environment variables
 
-# Local RPC / fork URLs (often contain API keys)
+# Local RPC / fork URLs and Anvil logs (often contain API keys)
 deployments/**/runtime/fork_url
+deployments/**/runtime/anvil.log
 # Editor directories and files
 .idea
 .vscode
