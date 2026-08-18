@@ -15,6 +15,9 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {
+    UniswapV4DetfHookStagedInitLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookStagedInitLib.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
@@ -92,6 +95,13 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
     address internal pair0;
 
     function setUp() public virtual override {
+        _setUpPlatform();
+        detf = _deployDetfInstance(_defaultDetfArgs());
+        UniswapV4DetfHookStagedInitLib.ensureReserveReadyWeighted(IUniswapV4StandardExchangeWeightedDETF(detf));
+        _bindDetfPointers();
+    }
+
+    function _setUpPlatform() internal {
         // Hook base: tokens, SEs, PM, hook factory, hookPkg, default raw-only hook (unused by DETF).
         TestBase_UniswapV4StandardExchangeWeightedBufferHook.setUp();
 
@@ -111,8 +121,9 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         _deployDetfPkg();
 
         _setDefaultBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
+    }
 
-        detf = _deployDetfInstance(_defaultDetfArgs());
+    function _bindDetfPointers() internal {
         detfInfo = IUniswapV4StandardExchangeWeightedDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pair0 = detfInfo.pairToken(0);
@@ -341,6 +352,21 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         vm.label(detf_, args.symbol);
     }
 
+    function _deployDetfBootstrapOnly(IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+        internal
+        returns (address)
+    {
+        return _deployDetfInstance(args);
+    }
+
+    function _deployDetfWired(IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+        internal
+        returns (address detf_)
+    {
+        detf_ = _deployDetfInstance(args);
+        UniswapV4DetfHookStagedInitLib.ensureReserveReadyWeighted(IUniswapV4StandardExchangeWeightedDETF(detf_));
+    }
+
     function _premineNonce(IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
         internal
         view
@@ -450,6 +476,14 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
 
     function _assertInert() internal view {
         assertFalse(detfInfo.isReserveLive(), "expected inert (not live)");
+    }
+
+    function _assertWired() internal view {
+        assertTrue(detfInfo.isReserveWired(), "expected reserve wired");
+        assertTrue(detfInfo.isReserveHookFinalized(), "expected hook finalized");
+        assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault missing");
+        assertTrue(detfInfo.rebasingClaimToken() != address(0), "claim token missing");
+        assertFalse(detfInfo.isReserveLive(), "wired must still be inert");
     }
 
     function _assertLive() internal view {

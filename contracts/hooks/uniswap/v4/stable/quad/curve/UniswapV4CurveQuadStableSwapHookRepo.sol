@@ -41,6 +41,7 @@ library UniswapV4CurveQuadStableSwapHookRepo {
         // --- product book (raw face amounts) ---
         uint256[4] reserves;
         uint256 reentrancyStatus;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

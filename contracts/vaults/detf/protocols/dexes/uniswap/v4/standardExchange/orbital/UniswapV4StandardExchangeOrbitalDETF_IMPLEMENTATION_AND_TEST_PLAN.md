@@ -63,7 +63,7 @@ Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../UNISWAP_V4_SE
 ### Goals (v1 DoD)
 
 1. Ship **true DETF** diamond + DFPkg under this path via **IndexedEx manager vault registry**.  
-2. From **`PkgArgs`**, deploy **one** Orbital SE Buffer Hook via registry **`deployHookVault`**: DETF raw self-leg (any binding index) + two external pairs; **1–2** distinct SEs (≥1 required); optional RPs on SE legs only; three V4 doors in hook `postDeploy`.  
+2. From **`PkgArgs`**, deploy **one** Orbital SE Buffer Hook via registry **`deployHookVault`**: DETF raw self-leg (any binding index) + two external pairs; **1–2** distinct SEs (≥1 required); optional RPs on SE legs only. Hook `postDeploy` does **not** init doors. Callers use `productTokensOrbital` + one TX per door + two DETF wiring fns. TestBase `setUp` uses `ensureReserveReadyOrbital`.  
 3. **Permissionless first bond** requiring **both** external pair legs at creation rates → `isReserveLive`; MINIMUM_LIQUIDITY edge.  
 4. **Primary mint** (live): rate capital → funded pair-leg units (Q15) → seigniorage quote/split → hook **`depositSingle(pair)`** → protocol LP; **Policy debt-inclusive** mint gate; **revert if not zap-eligible**; **no** expansion realize.  
 5. **Primary burn**: free DETF only → multipath `removeLiquidity` → **redeposit returned DETF** (ladder) → residual consolidate → chosen pair; `lpOut = detfBurned * protocolLp / effectiveSupply`; usage fee **yes**; **no** expansion realize.  
@@ -125,13 +125,13 @@ IndexedexManager / Vault Registry
               standardExchange[3] (only external indices non-zero; ≥1 total)
               rateProvider[3] (only with SE)
               poolManager, feeOracle, mineNonce / salt
-          - hook postDeploy inits all three V4 doors (DYNAMIC_FEE_FLAG, plumbing sqrtPrice)
-          - deploy shared bond NFT package (owner=DETF; requireMatureForSell=true if flag exists)
-          - deploy shared rebasing claim package (owner=DETF; holds protocol LP)
+          - hook postDeploy does not init doors; scripts use productTokensOrbital + one TX per door + two wiring fns; TestBase setUp uses ensureReserveReadyOrbital
           - store PkgArgs: pairs, SEs, RPs, creation rates, rateAsset, thresholds, expansion, binding map
           - validate (PRD §11): pairs distinct; DETF raw only; ≥1 SE; SEs distinct; RP only with SE;
             pair ∈ SE.tokens() when SE set; DETF ∉ SE.tokens(); creation rates both > 0;
             rateAsset ∈ {pair0, pair1} (omit/0 → pair0); no FoT/rebasing pairs
+        after hook finalize (not postDeploy):
+          - completeReserveBondNft then completeReserveClaim (owner=DETF; requireMatureForSell=true if flag exists; claim holds protocol LP)
 
 Facets (CREATE3): Info / ExchangeIn / ExchangeOut / Bonding / Claim / (Compound on Info or Bonding)
 Diamond instance = detfToken ERC-20 (immutable / unowned after deploy)
@@ -579,7 +579,7 @@ Launch-rich templates set explicit `R` (e.g. `4.4e18`) — copy CP UniV4 DETF §
 | 1.1 | Interfaces with **`PkgInit` / `PkgArgs` on interface** (Crane rule) | Compiles |
 | 1.2 | Repo + Common stubs (scale, getters, gate shells) | Compiles |
 | 1.3 | Facets + FactoryService CREATE3 deploy paths | Facet registry labels |
-| 1.4 | DFPkg + manager `deploy*Orbital*DFPkg` + postDeploy: `deployHookVault`, children, validations | Inert instance deployable |
+| 1.4 | DFPkg + manager `deploy*Orbital*DFPkg` + postDeploy: bootstrap hook only (`deployHookVault`, validations). Doors + children after finalize via `productTokensOrbital` / `completeReserve*` | Inert unwired instance; TestBase `setUp` uses `ensureReserveReadyOrbital` |
 | 1.5 | Reject both-bare, creation rate 0, RP without SE, same SE twice, DETF in SE tokens, DETF not raw | Deploy negative tests green |
 | 1.6 | TestBase: `CraneTest` → `IndexedexTest` → … → deploy DFPkg | `test_deploy_inert` green |
 | 1.7 | Free binding index deploy row (DETF not at index 0) | Green |

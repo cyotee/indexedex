@@ -37,11 +37,15 @@ import {
 import {
     UniswapV4CurveQuadStableSwapHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHookPairPoolLib.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 
 /**
  * @title TestBase_UniswapV4CurveQuadStableSwapHook
- * @notice Package path TestBase: hook factory + registry deployHookVault + six pair doors.
+ * @notice Package path TestBase: hook factory + registry deployHookVault + staged six doors.
  * @dev Ladder: CraneTest → IndexedexTest → TestBase_VaultComponents → this.
+ *      setUp opens six product doors via deployPair then finalizeInitialization (F7).
  */
 abstract contract TestBase_UniswapV4CurveQuadStableSwapHook is TestBase_VaultComponents {
     using BetterEfficientHashLib for bytes;
@@ -116,6 +120,7 @@ abstract contract TestBase_UniswapV4CurveQuadStableSwapHook is TestBase_VaultCom
         IUniswapV4CurveQuadStableSwapHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         quad = IUniswapV4CurveQuadStableSwapHook(hook);
 
         _fundUser();
@@ -172,10 +177,45 @@ abstract contract TestBase_UniswapV4CurveQuadStableSwapHook is TestBase_VaultCom
     {
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h, args.token0, args.token1, args.token2, args.token3);
+    }
+
+    /// @notice Deploy via package path without opening doors or finalizing (S43).
+    function _deployBootstrapOnly(IUniswapV4CurveQuadStableSwapHookPackage.PkgArgs memory args)
+        internal
+        returns (address)
+    {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
+    /// @notice Open the six unordered product pairs then finalize. Not PairPoolLib.ensureSixPairPools.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        _ensureProductDoorsAndFinalize(hook_, address(t0), address(t1), address(t2), address(t3));
+    }
+
+    function _ensureProductDoorsAndFinalize(
+        address hook_,
+        address token0_,
+        address token1_,
+        address token2_,
+        address token3_
+    ) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(token0_, token1_);
+        init.deployPair(token0_, token2_);
+        init.deployPair(token0_, token3_);
+        init.deployPair(token1_, token2_);
+        init.deployPair(token1_, token3_);
+        init.deployPair(token2_, token3_);
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
     }
 
     function _poolKeys() internal view returns (PoolKey[6] memory) {
-        return hookPkg.pairPoolKeys(hook);
+        return PairPoolLib.computeKeys(
+            hook, address(t0), address(t1), address(t2), address(t3), DEMO_FEE
+        );
     }
 
     /// @dev Human units → raw (respects each token's decimals). `human` is whole tokens.
@@ -249,7 +289,7 @@ abstract contract TestBase_UniswapV4CurveQuadStableSwapHook is TestBase_VaultCom
         assertEq(key.fee, DEMO_FEE, "lpFeePips");
     }
 
-    function _assertSixPoolsLiveFromPostDeploy() internal view {
+    function _assertSixProductDoorsLive() internal view {
         PoolKey[6] memory keys = _poolKeys();
         for (uint256 i; i < 6; ++i) {
             _assertPoolLive(keys[i]);

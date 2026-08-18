@@ -97,7 +97,7 @@ Ship a **production-first Uniswap V4 hook package** that:
 9. Provides **custom** multipath `addLiquidity` / `removeLiquidity` **and** **`depositSingle` (zap-in only)** on the hook; **forbids** native V4 `modifyLiquidity` / CL; **no zap-out** in v1.
 10. Exposes **`IStandardExchangeIn` / `IStandardExchangeOut`** for exact-in/out **tokenᵢ ↔ tokenⱼ** against the **same** sphere book (internal settle; not LP mint/burn).
 11. Settles public swaps via **`beforeSwap` + `beforeSwapReturnDelta`** (custom accounting / NoOp curve) — pattern-copy settle; **no** Solidity inheritance of OZ/`BaseHook` / `BaseTokenWrapperHook` / `DeltaResolver`.
-12. Deploys as an **immutable hook diamond package** via registry `deployHookVault` + shared hook factory (CREATE2 + `mineNonce`); initializes **all three** pair doors as first-class product UX (postDeploy or package helper).
+12. Deploys as an **immutable hook diamond package** via registry `deployHookVault` + shared hook factory (CREATE2 + `mineNonce`). Product doors and the production ABI are **not** created in the same transaction as `deployVault`: callers open `(t0,t1)`, `(t1,t2)`, `(t0,t2)` via `deployPair` then `finalizeInitialization` (see staged-init PRD).
 13. Uses **live Vault Fee Oracle** rates (**orbital dual-channel**): `dexSwapFeeOfVault` = trading residual in book; `usageFeeOfVault` = protocol growth LP mint to `feeTo`.
 
 ### 1.1 Canonical user story — all three legs buffered
@@ -194,7 +194,7 @@ v1 is the **composition layer**: orbital multi-door topology with Single-SE-styl
 |-----------|--------|
 | Primary artifact | CREATE2-mined **hook diamond** (facets + Repo) implementing V4 `IHooks` **plus** 3-asset LP ERC-20 + multi-asset vault discovery surfaces |
 | Binding | `(poolManager, feeOracle, token[3], standardExchange[3], rateProvider[3])` — set-once at init; **no** post-deploy rebind |
-| Pool currencies | The three bound tokens; factory/postDeploy creates **all three** pair doors |
+| Pool currencies | The three bound tokens; product doors `(t0,t1)`, `(t1,t2)`, `(t0,t2)` open via `deployPair` then `finalizeInitialization` (staged-init PRD) |
 | Inventory | Per leg: raw ERC-20 **or** SE shares (not both as book for the same leg) |
 | Effective reserves | Per leg: raw face **or** rate-scaled SE claim |
 | Pricing | Orbital sphere on WAD effective reserves; \(L^2\) stored sphere parameter (recompute after state changes) |
@@ -260,10 +260,10 @@ v1 is the **composition layer**: orbital multi-door topology with Single-SE-styl
 | D10 | Empty SE at deploy | **Allowed** (inert SE until first buffer) |
 | D11 | Zero-SE config | **Allowed** — all three legs raw ⇒ pure orbital-style inventory (still this package’s codepath, not a call into monomorph orbital) |
 | D12 | Binding token order | Caller-supplied order is **canonical binding order** for LP / views / SE indices; pool keys still sort by address for V4 |
-| D13 | Pool set | Package/postDeploy path **always creates all three** pair pools (01, 12, 02). External actors may still initialize **additional** PoolKeys (e.g. other `tickSpacing`) with `hooks = this` + `DYNAMIC_FEE_FLAG` |
+| D13 | Pool set | Product doors are the three unordered bound pairs. `deployPair` inits or skip-if-live; `finalizeInitialization` requires all three live. External actors may still initialize **additional** PoolKeys (e.g. other `tickSpacing`) with `hooks = this` + `DYNAMIC_FEE_FLAG`; extra spacing does not count as a product door. See staged-init PRD. |
 | D14 | Pool fee (V4 key) | **`LPFeeLibrary.DYNAMIC_FEE_FLAG` only**. SoT for trading rate = oracle |
 | D15 | Native CL | **Forbidden** — `beforeAddLiquidity` / `beforeRemoveLiquidity` **revert** |
-| D16 | Package shape | **Hook diamond package** (`IUniswapV4HookDiamondPackage` + vault surfaces). Facets via CREATE3; instance via CREATE2 mine + hook factory. **Immutable** after postDeploy (no live `diamondCut`) |
+| D16 | Package shape | **Hook diamond package** (`IUniswapV4HookDiamondPackage` + vault surfaces). Facets via CREATE3; instance via CREATE2 mine + hook factory. Bootstrap cuts are vault pair + package-as-init. Production ABI (hooks, deposit, withdraw, SE, ERC20 trio) is added at `finalizeInitialization`. **Immutable** after factory postDeploy freeze (no public `diamondCut`) |
 | D17 | Hook inheritance | **No** inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver` — full **pattern-copy** settle. May use Crane facet bases for diamond plumbing |
 | D18 | Shared facets | Cut **ERC20PermitDFPkg** facets (`ERC20Facet` + `ERC5267Facet` + `ERC2612Facet`) + MultiAsset Basic/Standard vault facets for LP + discovery. Product facets = hooks + book + deposit/withdraw + SE buffer routes only |
 | D19 | Full type/file names | Full product names on contracts/files; short labels OK in prose. LP symbol prefix may be short (D44) |
@@ -334,7 +334,7 @@ v1 is the **composition layer**: orbital multi-door topology with Single-SE-styl
 | D57 | Deploy path | **Required:** `IUniswapV4HookDiamondPackage` + Vault Registry `deployHookVault` + shared `UniswapV4HookDiamondPackageCallBackFactory`. Facets CREATE3 via FactoryService. **Never** `new` SUT; **never** vault factory salt for V4 flag addresses |
 | D58 | Salt law | Factory PRD: `packageSalt` from stable `PRODUCT_ID` + binding fields (**tokens, SEs, RPs, feeOracle, poolManager** — **no** package/facet addresses); `finalSalt = keccak256(abi.encode(packageSalt, mineNonce))` |
 | D59 | Mine flags | At least `BEFORE_INITIALIZE \| BEFORE_ADD_LIQUIDITY \| BEFORE_REMOVE_LIQUIDITY \| BEFORE_SWAP \| BEFORE_SWAP_RETURNS_DELTA` (plan locks exact mask vs `Hooks.ALL_HOOK_MASK`) |
-| D60 | Pool init UX | **postDeploy on package (Q5):** on successful instance deploy, package **`postDeploy` initializes all three** pair doors with shared `tickSpacing` + `sqrtPriceX96` plumbing (defaults: spacing 60, 1:1 mid; args from `PkgArgs` or product defaults). Currencies address-sorted per pair; `hooks = this`; `fee = DYNAMIC_FEE_FLAG`. Atomic with deploy from integrator POV |
+| D60 | Pool init UX | **Staged (Q5):** `postDeploy` is a no-op (returns true, zero PoolManager inits). Callers open each product pair with `deployPair` then `finalizeInitialization`. Shared `tickSpacing` + `sqrtPriceX96` plumbing (defaults: spacing 60, 1:1 mid). Currencies address-sorted per pair; `hooks = this`; `fee = DYNAMIC_FEE_FLAG`. See staged-init PRD. |
 | D61 | One product pool-set | Multiple tickSpacings for the same pair on this hook **allowed** (share reserves). `beforeInitialize` validates pair ⊂ bound tokens + dynamic fee |
 | D62 | Deposit vs pool init | LP add/remove/previews **do not require** V4 initialize. **Swaps** require \(R > 0\), initialized directed pair pool, both trade-leg effective reserves > 0 |
 | D63 | Access | Liquidity + views permissionless; hook callbacks `msg.sender == poolManager` only |
@@ -693,7 +693,7 @@ vaultConfig / vaultTypes / contentsId / vaultFeeTypeIds  // MultiAsset Standard 
 | Registry | `deployPkg` for package; `deployHookVault` for instances |
 | Salt | Stable product binding fields only — **include** all three tokens, SE addresses, RP addresses, feeOracle, poolManager, PRODUCT_ID |
 | Immutability | No diamondCut facet on product config; no rebind |
-| Pool doors | **`postDeploy` initializes all three** pair pools (D60 / Q5) |
+| Pool doors | **`deployPair` × 3 then `finalizeInitialization`** (D60 / Q5). `postDeploy` does not init doors or cut the production ABI |
 | Facets | CREATE3 via FactoryService; cut shared ERC20+vault facets |
 
 Monomorph CREATE3 product factory (legacy orbital style) is **out of scope** for this package.
@@ -726,7 +726,7 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 | Q2 | Rate → WAD | **Native `seBal * rate / 1e18` then `toWad`** — D26 |
 | Q3 | SE In/Out | **Required v1** — D49a |
 | Q4 | Dust | **`MAX_DUST_WEI = 10`** — D35 |
-| Q5 | Pool init host | **`postDeploy` initializes all three doors** — D60 |
+| Q5 | Pool init host | **Staged `deployPair` + `finalizeInitialization`** — D60. `postDeploy` is a no-op |
 | Q6 | Growth fee channel | **Orbital dual-channel** — `usageFee` growth; `dexSwapFee` trading |
 | Q7 | 0-SE config in DoD | **Yes** — D65 |
 | Q8 | Rate provider on raw legs | **Forbidden** — D6 |
@@ -768,7 +768,7 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 - [ ] Trading + growth fee channels green (orbital dual-channel); previews bit-exact.  
 - [ ] LP: Permit2 + transferFrom.  
 - [ ] Config matrix 0–3 SEs + RP rows green.  
-- [ ] `postDeploy` creates all three pair doors.  
+- [ ] Three product doors open via `deployPair`; `finalizeInitialization` cuts the production ABI. `postDeploy` inits zero pools.  
 - [ ] Adversarial suite green.  
 - [ ] Fork smoke **Ethereum + Base + Robinhood (4663)** green.  
 - [ ] LP symbol uses **`SEORB-`** prefix.  

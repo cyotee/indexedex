@@ -41,7 +41,7 @@
 | Zap | **Zap-in only** (`depositSingle`); **no** `withdrawSingle` (D41a–D41b / Q10) |
 | SE invert | Missing exact-out / invert → **full tx revert** (D31a / Q12) |
 | Dust | `MAX_DUST_WEI = 10` free buffered-token refund (D35 / Q4) |
-| Pool init | **`postDeploy` initializes all three doors** (D60 / Q5) |
+| Pool init | **Staged:** `deployPair` × 3 then `finalizeInitialization`. `postDeploy` is a no-op (D60 / Q5). See staged-init PRD. |
 | SE In/Out pull | ERC-20 `transferFrom` if allowance ≥ amount, else Permit2 **AllowanceTransfer** (D49c / Q11) |
 | Forks | **Ethereum + Base + Robinhood (4663)** all required (D66 / Q13) |
 | LP symbol | **`SEORB-{s0}-{s1}-{s2}`** (D46 / Q14) |
@@ -91,7 +91,7 @@ Implement production-first package **`UniswapV4StandardExchangeOrbitalBufferHook
 8. **`IStandardExchangeIn` / `IStandardExchangeOut`** for tokenᵢ ↔ tokenⱼ on same sphere book (internal settle; not LP).  
 9. Swaps via **`beforeSwap` + `beforeSwapReturnDelta`** (custom accounting / NoOp curve); pattern-copy settle — **no** BaseHook / DeltaResolver inheritance.  
 10. Trading residual = live `dexSwapFeeOfVault`; protocol growth = Uni V2–style `kLast` + dual mode from `usageFeeOfVault` (orbital peer).  
-11. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + shared hook factory; **`postDeploy` inits all three pools**.  
+11. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + shared hook factory. Bootstrap ABI is vault pair + package-as-init. Product doors via `deployPair`; production ABI at `finalizeInitialization`. `postDeploy` inits zero pools.  
 12. Vault discovery: `IBasicVault` + `IStandardVault` multi-asset; `reserveOfToken` = **effective** reserve.  
 13. Hermetic config matrix 0–3 SE + RP on/off; adversarial suite; forks Ethereum + Base + RH 4663.  
 14. Size within real CREATE2/runtime limits; split facets/libs as needed without dropping §6 surface.
@@ -517,7 +517,7 @@ Mask against `Hooks.ALL_HOOK_MASK` in factory. `beforeAddLiquidity` / `beforeRem
    - `requiredHookFlags()` = §4.10 mask  
    - `calcSalt` = PRODUCT_ID + pm + feeOracle + tokens[3] + ses[3] + rps[3] — **no** package/facet addresses  
    - `deployVault(args, mineNonce)` → `registry.deployHookVault`  
-   - **`postDeploy`:** initialize all three pair doors (address-sorted currencies, `DYNAMIC_FEE_FLAG`, shared spacing default 60, 1:1 mid if zero args)  
+   - **`postDeploy`:** return true; zero PoolManager inits. Product doors via `deployPair`; production cuts via `finalizeInitialization` (staged-init PRD)  
    - `diamondConfig` **without** `diamondCut`  
    - Cut shared ERC20Permit + MultiAsset vault facets + product facets  
 6. **initAccount:** ERC20Repo + EIP712Repo + product Repo binding + LP name/symbol `SEORB-{s0}-{s1}-{s2}` (address-fragment fallback).  
@@ -985,7 +985,7 @@ PRODUCT: UniswapV4StandardExchangeOrbitalBufferHook
 PATH:    contracts/hooks/uniswap/v4/standardExchange/orbital/
 LAW:     PRD v0.5 + THIS PLAN (PRD wins on conflict)
 DEPLOY:  Hook diamond package → registry.deployHookVault → shared hook factory
-         postDeploy inits ALL THREE pair doors (DYNAMIC_FEE_FLAG)
+         deployPair × 3 + finalizeInitialization (postDeploy is a no-op)
 BOOK:    Sphere on effective reserves (raw | SE claim | shares×rate)
 SE:      Optional per leg; non-zero SEs distinct; buffer-last; free dust ≠ book
 ZAP:     depositSingle only (full book); NO withdrawSingle

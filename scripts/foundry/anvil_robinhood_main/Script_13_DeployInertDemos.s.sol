@@ -19,6 +19,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
 
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
@@ -410,6 +411,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             cpDetfGentle = pkg.deployVault(gentle, nonceCpGentle);
             require(cpDetfGentle == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireCp(cpDetfGentle);
         }
         vm.label(cpDetfGentle, "cpDetfGentle");
 
@@ -420,6 +422,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             cpDetfLaunchRich = pkg.deployVault(rich, nonceCpRich);
             require(cpDetfLaunchRich == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireCp(cpDetfLaunchRich);
         }
         vm.label(cpDetfLaunchRich, "cpDetfLaunchRich");
     }
@@ -500,6 +503,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             orbitalDetfGentle = pkg.deployVault(gentle, nonceOrbGentle);
             require(orbitalDetfGentle == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireOrbital(orbitalDetfGentle);
         }
         vm.label(orbitalDetfGentle, "orbitalDetfGentle");
 
@@ -510,6 +514,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             orbitalDetfLaunchRich = pkg.deployVault(rich, nonceOrbRich);
             require(orbitalDetfLaunchRich == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireOrbital(orbitalDetfLaunchRich);
         }
         vm.label(orbitalDetfLaunchRich, "orbitalDetfLaunchRich");
     }
@@ -604,6 +609,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             weightedDetfGentle = pkg.deployVault(gentle, nonceWgtGentle);
             require(weightedDetfGentle == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireWeighted(weightedDetfGentle);
         }
         vm.label(weightedDetfGentle, "weightedDetfGentle");
 
@@ -614,6 +620,7 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             );
             weightedDetfLaunchRich = pkg.deployVault(rich, nonceWgtRich);
             require(weightedDetfLaunchRich == predicted, "detf != predicted");
+            UniswapV4DetfScriptWireLib._wireWeighted(weightedDetfLaunchRich);
         }
         vm.label(weightedDetfLaunchRich, "weightedDetfLaunchRich");
     }

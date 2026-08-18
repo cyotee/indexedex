@@ -77,7 +77,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 
 1. Ship DETF package under  
    `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/`.  
-2. Wire **\(m \in [1,7]\)** external pair tokens + **≥1** distinct backing SE(s) + optional rate providers + **weight vector** via **`PkgArgs` → hook package deploy** (create all pair doors in hook postDeploy) + **one** Weighted SE Buffer Hook with raw DETF self-leg.  
+2. Wire **\(m \in [1,7]\)** external pair tokens + **≥1** distinct backing SE(s) + optional rate providers + **weight vector** via **`PkgArgs` → hook package deploy** (bootstrap hook only; doors via `productTokensWeighted` + one TX per pair) + **one** Weighted SE Buffer Hook with raw DETF self-leg.  
 3. Primary mint/burn + bond + **maturity** close and **post-maturity** sell→claim + direct claim paths (adapted to n-leg host).  
 4. Deploy-time **per-external creation rates** for empty-reserve first join; synthetic + Policy/Open thereafter.  
 5. Seigniorage inventory → bond reward ledger (**same split spirit as Balancer / CP / Orbital UniV4 DETF**); protocol compound into reserve LP via single-sided DETF join (`depositSingle(DETF)`) when **single-asset eligible**.  
@@ -789,7 +789,7 @@ Typed surface: `IUniswapV4StandardExchangeWeightedDETDFPkg.deployVault(PkgArgs a
    - SE slots (≥1 non-zero on external legs only; DETF SE must be 0)  
    - optional rate providers (only with SE; shares → that leg’s pairToken)  
    - poolManager, feeOracle, mineNonce / salt fields  
-3. Hook **postDeploy** initializes **all** \(\binom{n}{2}\) V4 pair doors (`DYNAMIC_FEE_FLAG`, plumbing sqrtPrice).  
+3. Hook **postDeploy** does **not** init doors. Callers open all \(\binom{n}{2}\) product pairs on `IUniswapV4HookStagedPairInit` (`productTokensWeighted`, one TX each), then finalize. Then `completeReserveBondNft` + `completeReserveClaim` on this `I*DETF`. TestBase `setUp` may use `ensureReserveReadyWeighted`. SoT: staged-init PRD.  
 4. Deploy **shared** bond NFT + rebasing packages (owner=DETF); rebasing is protocol LP holder.  
 5. Store creation rates (length \(m\)), weights (or re-read from hook), thresholds, mode, expansion params, DETF binding index.  
 6. Validate: pairs distinct; DETF raw only; pair ∈ SE tokens when SE set; SEs distinct when multiple; RP only with SE; **≥1 SE set** (reject all-external-bare); **all creation rates `> 0`**; weights valid; no FoT/rebasing pairs; \(n \in [2,8]\).  

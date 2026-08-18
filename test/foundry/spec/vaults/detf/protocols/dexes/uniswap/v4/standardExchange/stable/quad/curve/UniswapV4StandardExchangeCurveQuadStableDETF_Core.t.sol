@@ -226,7 +226,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     /* ---------------------------------------------------------------------- */
 
     function test_live_mint_previewEqualsExecution() public {
-        address d = _deployDetfInstance(_openArgsUnique("mintEq"));
+        address d = _deployDetfWired(_openArgsUnique("mintEq"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         IStandardExchangeIn ex = IStandardExchangeIn(d);
@@ -247,7 +247,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_live_mint_vaultShareFlexible() public {
-        address d = _deployDetfInstance(_openArgsUnique("flex"));
+        address d = _deployDetfWired(_openArgsUnique("flex"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         IStandardExchangeIn ex = IStandardExchangeIn(d);
@@ -279,7 +279,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_open_ungated_mint() public {
-        address d = _deployDetfInstance(_openArgsUnique("mint"));
+        address d = _deployDetfWired(_openArgsUnique("mint"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -294,7 +294,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_burn_tokenOutDetf_invalidRoute() public {
-        address d = _deployDetfInstance(_openArgsUnique("burnDetf"));
+        address d = _deployDetfWired(_openArgsUnique("burnDetf"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         IStandardExchangeIn ex = IStandardExchangeIn(d);
@@ -315,7 +315,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_burn_usageFee_andRedeposit() public {
-        address d = _deployDetfInstance(_openArgsUnique("burnEq"));
+        address d = _deployDetfWired(_openArgsUnique("burnEq"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         IStandardExchangeIn ex = IStandardExchangeIn(d);
@@ -403,7 +403,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_mature_close_paysOnlyCapitalToken() public {
-        address d = _deployDetfInstance(_openArgsUnique("close"));
+        address d = _deployDetfWired(_openArgsUnique("close"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -441,7 +441,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     /* ---------------------------------------------------------------------- */
 
     function test_claim_detfOut_invalidRoute() public {
-        address d = _deployDetfInstance(_openArgsUnique("claimDetf"));
+        address d = _deployDetfWired(_openArgsUnique("claimDetf"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -461,7 +461,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_claim_redeem_pair() public {
-        address d = _deployDetfInstance(_openArgsUnique("claimPay"));
+        address d = _deployDetfWired(_openArgsUnique("claimPay"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -491,7 +491,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_expansion_openNever() public {
-        address d = _deployDetfInstance(_openArgsUnique("exp"));
+        address d = _deployDetfWired(_openArgsUnique("exp"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -517,7 +517,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_expansion_allLegsRich_accrues() public {
-        address d = _deployDetfInstance(_launchRichArgsUnique("rich"));
+        address d = _deployDetfWired(_launchRichArgsUnique("rich"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -551,7 +551,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         IUniswapV4StandardExchangeCurveQuadStableDETDFPkg.PkgArgs memory args =
             _launchRichArgsUnique("flip");
         args.mintThreshold = 1e18;
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -594,7 +594,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         IUniswapV4StandardExchangeCurveQuadStableDETDFPkg.PkgArgs memory oneSe = _args1Se2Bare();
         oneSe.name = "Quad 1SE explicit";
         oneSe.symbol = "q1seX";
-        address d = _deployDetfInstance(oneSe);
+        address d = _deployDetfWired(oneSe);
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -620,7 +620,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         args.vaultShares[1] = IERC20(address(0));
         args.rateProviders[1] = address(0);
 
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -665,7 +665,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     /* ---------------------------------------------------------------------- */
 
     function test_matrix_2se1bare_firstBond() public {
-        address d = _deployDetfInstance(_args2Se1Bare());
+        address d = _deployDetfWired(_args2Se1Bare());
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -682,7 +682,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
     }
 
     function test_matrix_3se_firstBond() public {
-        address d = _deployDetfInstance(_args3Se());
+        address d = _deployDetfWired(_args3Se());
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -718,7 +718,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         args.rateProviders[2] = address(0);
         args.thresholdMode = ThresholdMode.Open;
 
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);

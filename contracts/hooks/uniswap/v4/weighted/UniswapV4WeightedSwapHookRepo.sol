@@ -36,6 +36,7 @@ library UniswapV4WeightedSwapHookRepo {
         uint256 kLast;
         uint8 kLastMode; // 0 FullProduct, 1 PartialInterim
         uint256 reentrancyStatus;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

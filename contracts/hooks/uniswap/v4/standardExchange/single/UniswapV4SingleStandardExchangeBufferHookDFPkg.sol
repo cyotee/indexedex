@@ -6,6 +6,7 @@ import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactor
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
@@ -20,6 +21,9 @@ import {
     UniswapV4SingleStandardExchangeBufferHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookRepo.sol";
 import {
+    UniswapV4SingleStandardExchangeBufferHookInitFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/single/facets/UniswapV4SingleStandardExchangeBufferHookInitFacet.sol";
+import {
     IUniswapV4SingleStandardExchangeBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHook.sol";
 import {
@@ -28,11 +32,15 @@ import {
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferHookDFPkg
- * @notice Option B DFPkg: MultiAsset vault facets + product buffer facet.
+ * @notice Option B DFPkg: vault pair + package-as-init at deploy; PRODUCT_FACET at finalize.
  * @dev deployVault → registry.deployHookVault → hook CREATE2 factory. Salt excludes package address.
  *      No LP ERC20 facets (buffer is not an LP product). Reserves stay 0.
+ *      postDeploy stays public pure. Product door via deployPair; ABI via finalizeInitialization.
  */
-contract UniswapV4SingleStandardExchangeBufferHookDFPkg is IUniswapV4SingleStandardExchangeBufferHookPackage {
+contract UniswapV4SingleStandardExchangeBufferHookDFPkg is
+    UniswapV4SingleStandardExchangeBufferHookInitFacet,
+    IUniswapV4SingleStandardExchangeBufferHookPackage
+{
     bytes32 public constant PRODUCT_ID = keccak256("uv4-single-se-buffer-hook");
     bytes4 public constant HOOK_VAULT_TYPE = bytes4(keccak256("UniswapV4SingleStandardExchangeBufferHook"));
 
@@ -92,7 +100,12 @@ contract UniswapV4SingleStandardExchangeBufferHookDFPkg is IUniswapV4SingleStand
         return type(UniswapV4SingleStandardExchangeBufferHookDFPkg).name;
     }
 
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+    function facetInterfaces()
+        public
+        pure
+        override(IDiamondFactoryPackage, UniswapV4SingleStandardExchangeBufferHookInitFacet)
+        returns (bytes4[] memory interfaces)
+    {
         interfaces = new bytes4[](5);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4SingleStandardExchangeBufferHook).interfaceId;
@@ -102,10 +115,11 @@ contract UniswapV4SingleStandardExchangeBufferHookDFPkg is IUniswapV4SingleStand
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](3);
+        facets = new address[](4);
         facets[0] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facets[1] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
-        facets[2] = address(PRODUCT_FACET);
+        facets[2] = address(SELF);
+        facets[3] = address(PRODUCT_FACET);
     }
 
     function packageMetadata()
@@ -131,10 +145,42 @@ contract UniswapV4SingleStandardExchangeBufferHookDFPkg is IUniswapV4SingleStand
             functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
         cuts[2] = IDiamond.FacetCut({
+            facetAddress: address(SELF),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: facetFuncs()
+        });
+    }
+
+    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+        cuts = new IDiamond.FacetCut[](1);
+        cuts[0] = IDiamond.FacetCut({
             facetAddress: address(PRODUCT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: PRODUCT_FACET.facetFuncs()
         });
+    }
+
+    function finalizeInitialization() public override returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.initializationFinalized) revert InitializationAlreadyFinalized();
+        if (!isPairPoolLive(l.currency0, l.currency1)) {
+            revert ProductDoorsNotLive();
+        }
+
+        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](2);
+        cuts[0] = IDiamond.FacetCut({
+            facetAddress: address(SELF),
+            action: IDiamond.FacetCutAction.Remove,
+            functionSelectors: facetFuncs()
+        });
+        IDiamond.FacetCut[] memory adds = productionFacetCuts();
+        cuts[1] = adds[0];
+
+        ERC2535Repo._processFacetCuts(cuts);
+        emit IDiamond.DiamondCut(cuts, address(0), "");
+        emit InitializationFinalized(address(this));
+        l.initializationFinalized = true;
+        return true;
     }
 
     function diamondConfig() public view returns (IDiamondFactoryPackage.DiamondConfig memory config) {

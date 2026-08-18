@@ -7,43 +7,17 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolId, PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol";
-import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 
 /**
  * @title UniswapV4OrbitalSwapHookPairPoolLib
- * @notice Ensure three pair doors (01, 12, 02) for an orbital hook proxy (R30–R33).
+ * @notice Product PoolKey construction and skip-if-live initialize for orbital pair doors.
  * @dev Idempotent via getSlot0: skip if sqrtPriceX96 != 0; otherwise initialize and
- *      let real failures (hook flags, currency order, spacing) revert the product deploy.
+ *      let real first-init failures revert. No bulk ensure (S15 / S55).
  */
 library UniswapV4OrbitalSwapHookPairPoolLib {
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
-
-    function ensureThreePairPools(
-        IPoolManager poolManager,
-        address hook,
-        address token0,
-        address token1,
-        address token2,
-        int24 tickSpacing,
-        uint160 sqrtPriceX96
-    )
-        internal
-        returns (PoolKey memory poolKey01, PoolKey memory poolKey12, PoolKey memory poolKey02)
-    {
-        int24 spacing = tickSpacing == 0 ? int24(60) : tickSpacing;
-        uint160 price = sqrtPriceX96 == 0 ? TickMath.getSqrtPriceAtTick(0) : sqrtPriceX96;
-        IHooks h = IHooks(hook);
-
-        poolKey01 = pairKey(token0, token1, spacing, h);
-        poolKey12 = pairKey(token1, token2, spacing, h);
-        poolKey02 = pairKey(token0, token2, spacing, h);
-
-        initIfNeeded(poolManager, poolKey01, price);
-        initIfNeeded(poolManager, poolKey12, price);
-        initIfNeeded(poolManager, poolKey02, price);
-    }
 
     /// @notice Pure pool key for a binding pair (currency-sorted, DYNAMIC_FEE, shared hooks).
     function pairKey(address a, address b, int24 spacing, IHooks hooks)

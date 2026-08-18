@@ -17,6 +17,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
 import {
     IUniswapV4SingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
@@ -79,6 +80,7 @@ library Stage_07_NestDETFs {
         );
         s.ttBetaO = IUniswapV4StandardExchangeOrbitalDETDFPkg(s.orbitalDetfPkg).deployVault(args, nonce);
         require(s.ttBetaO == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireOrbital(s.ttBetaO);
         RichnessLib.firstBondOrbital(
             s.ttBetaO,
             IERC20(s.ttNvdaSmhO),
@@ -101,6 +103,7 @@ library Stage_07_NestDETFs {
         );
         s.ttIdxWrap = IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg).deployVault(args, nonce);
         require(s.ttIdxWrap == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireCp(s.ttIdxWrap);
         RichnessLib.firstBondCp(s.ttIdxWrap, IERC20(s.ttIdxQ), FixtureEconomics.NEST_FIRST_BOND, bonder);
         address[] memory pairs = new address[](1);
         pairs[0] = s.ttIdxQ;

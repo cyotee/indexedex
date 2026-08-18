@@ -36,6 +36,9 @@ import {
     IUniswapV4WeightedSwapHookPackage
 } from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHookPackage.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     UniswapV4WeightedSwapHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol";
 import {
@@ -47,7 +50,7 @@ import {
 
 /**
  * @title TestBase_UniswapV4WeightedSwapHook
- * @notice Package path TestBase: hook factory + registry deployHookVault + pair doors.
+ * @notice Package path TestBase: hook factory + registry deployHookVault + staged pair doors.
  * @dev Ladder: CraneTest → IndexedexTest → TestBase_VaultComponents → this.
  *      Production-first. No mocks of hook/package/factory/Math/Repo/oracle/PoolManager under test.
  */
@@ -136,7 +139,31 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is TestBase_VaultComponents
         });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook, tokens);
         keys = PairPoolLib.computePairKeys(tokens, hook, int24(int256(Math.TICK_SPACING)));
+    }
+
+    /// @notice Open every unordered product pair then finalize. Not PairPoolLib.ensureAllPairPools.
+    /// @dev Reads tokens from the caller: `tokens()` is unmatched until finalize.
+    function _ensureProductDoorsAndFinalize(address hook_, address[] memory tokens_) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        uint256 n = tokens_.length;
+        for (uint256 i; i < n; ++i) {
+            for (uint256 j = i + 1; j < n; ++j) {
+                init.deployPair(tokens_[i], tokens_[j]);
+            }
+        }
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice Deploy via package path without opening doors or finalizing (S43).
+    function _deployBootstrapOnly(IUniswapV4WeightedSwapHookPackage.PkgArgs memory args)
+        internal
+        returns (address)
+    {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
     }
 
     function _deployN2() internal returns (address hook, MintableDec t0, MintableDec t1) {

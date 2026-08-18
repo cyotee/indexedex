@@ -17,7 +17,7 @@ contract UniswapV4SingleStandardExchangeDETF_MintBurnTest is TestBase_UniswapV4S
     function setUp() public override {
         // Full TestBase then swap default Policy instance for Open (mint path under dilution).
         super.setUp();
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4SingleStandardExchangeDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pairToken.mint(detfUser, 10_000_000 ether);
@@ -30,7 +30,7 @@ contract UniswapV4SingleStandardExchangeDETF_MintBurnTest is TestBase_UniswapV4S
     }
 
     function test_policy_blocks_mint_when_synthetic_below_threshold() public {
-        address d = _deployDetfInstance(_defaultDetfArgs()); // Policy defaults
+        address d = _deployDetfWired(_policyArgsUnique("mintGate")); // Policy defaults
         pairToken.mint(detfUser, 1000 ether);
         vm.startPrank(detfUser);
         pairToken.approve(d, type(uint256).max);
@@ -107,7 +107,7 @@ contract UniswapV4SingleStandardExchangeDETF_MintBurnTest is TestBase_UniswapV4S
 
     function test_burn_emptyProtocolLp_afterFirstBondOnly_reverts() public {
         // Fresh instance: first bond only → all LP user-bonded → protocol LP 0
-        address d = _deployDetfInstance(_defaultDetfArgs());
+        address d = _deployDetfWired(_policyArgsUnique("emptyLp"));
         pairToken.mint(detfUser, 1000 ether);
         vm.startPrank(detfUser);
         pairToken.approve(d, type(uint256).max);

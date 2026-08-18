@@ -33,6 +33,12 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
     error RedepositFailed();
     error InvalidCapitalToken();
     error InvalidPair();
+    error ReserveNotWired();
+    error ReserveHookNotFinalized();
+    error ReserveBondNftNotWired();
+    error ReserveBondNftAlreadyWired();
+    error ReserveClaimAlreadyWired();
+    error ZeroAddress();
 
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("vault.detf.uniswap.v4.se.curve.quad.stable.repo")) - 1)
@@ -68,6 +74,8 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         uint256 lastExpansionTimestamp;
         uint256 userBondedLp;
         mapping(uint256 tokenId => address) capitalTokenOf;
+        address bondNftVaultPkg;
+        address rebasingClaimTokenPkg;
     }
 
     struct CoreInit {
@@ -85,6 +93,8 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         IRebasingClaimToken rebasingClaimToken;
         uint256 detfNftId;
         uint256 feeRecipientNftId;
+        address bondNftVaultPkg;
+        address rebasingClaimTokenPkg;
     }
 
     struct PolicyInit {
@@ -128,6 +138,8 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         s.feeRecipientNftId = p_.feeRecipientNftId;
         s.lastExpansionTimestamp = 0;
         s.userBondedLp = 0;
+        s.bondNftVaultPkg = p_.bondNftVaultPkg;
+        s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
     }
 
     function _initializePolicy(PolicyInit memory p_) internal {
@@ -179,5 +191,26 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
             if (address(s.pairTokens[i]) == token_) return true;
         }
         return false;
+    }
+
+    function _setBondNft(
+        IDETFNFTVault bondNftVault_,
+        uint256 detfNftId_,
+        uint256 feeRecipientNftId_
+    ) internal {
+        Storage storage s = _layoutStruct();
+        if (address(s.bondNftVault) != address(0)) revert ReserveBondNftAlreadyWired();
+        if (address(bondNftVault_) == address(0)) revert ZeroAddress();
+        s.bondNftVault = bondNftVault_;
+        s.detfNftId = detfNftId_;
+        s.feeRecipientNftId = feeRecipientNftId_;
+    }
+
+    function _setClaim(IRebasingClaimToken rebasingClaimToken_) internal {
+        Storage storage s = _layoutStruct();
+        if (address(s.bondNftVault) == address(0)) revert ReserveBondNftNotWired();
+        if (address(s.rebasingClaimToken) != address(0)) revert ReserveClaimAlreadyWired();
+        if (address(rebasingClaimToken_) == address(0)) revert ZeroAddress();
+        s.rebasingClaimToken = rebasingClaimToken_;
     }
 }

@@ -26,21 +26,32 @@ import {
 import {
     IUniswapV4HookDiamondPackage
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 
 /**
  * @title UniswapV4CurveQuadStableSwapHook_Factory_Test
- * @notice Package deploy path: six doors, salt, flags, ensurePairPools, validation.
+ * @notice Package deploy path: salt, flags, staged doors, validation.
  */
 contract UniswapV4CurveQuadStableSwapHook_Factory_Test is TestBase_UniswapV4CurveQuadStableSwapHook {
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
 
-    function test_F1_packageDeploy_sixPools() public view {
+    /// @notice Doors come from `_ensureProductDoorsAndFinalize`, not `postDeploy`.
+    function test_F1_setUpLeavesSixDoorsAndFinalized() public view {
         assertTrue(hook.code.length > 0);
-        _assertSixPoolsLiveFromPostDeploy();
+        _assertSixProductDoorsLive();
         assertTrue(_registry().isVault(hook));
+        IDiamondLoupe loupe = IDiamondLoupe(hook);
+        assertTrue(
+            loupe.facetAddress(IUniswapV4CurveQuadStableSwapHook.addLiquidity.selector) != address(0)
+        );
+        assertEq(loupe.facetAddress(IUniswapV4HookStagedPairInit.deployPair.selector), address(0));
     }
 
+    /// @notice Extra deployVault is bootstrap-only: registered + flags, no six doors from postDeploy.
     function test_F2_deployWithMineNonce() public {
         address[4] memory toks = _fourNewTokens("PB");
         address[4] memory providers;
@@ -50,12 +61,9 @@ contract UniswapV4CurveQuadStableSwapHook_Factory_Test is TestBase_UniswapV4Curv
         address h = hookPkg.deployVault(args, goodNonce);
         assertTrue(h.code.length > 0);
         assertTrue(_registry().isVault(h));
-        PoolKey[6] memory keys = hookPkg.pairPoolKeys(h);
-        for (uint256 i; i < 6; ++i) {
-            (uint160 sqrtPrice,,,) = pm.getSlot0(keys[i].toId());
-            assertGt(sqrtPrice, 0, "path B pool live");
-        }
         assertEq(uint160(h) & Create2Lib.FLAG_MASK, FactoryService.requiredFlags() & Create2Lib.FLAG_MASK);
+        assertFalse(IUniswapV4HookStagedPairInit(h).isInitializationFinalized());
+        assertFalse(IUniswapV4HookStagedPairInit(h).isPairPoolLive(toks[0], toks[1]));
 
         // bad mineNonce for a different binding must fail flags
         address[4] memory toks2 = _fourNewTokens("PBb");
@@ -80,18 +88,26 @@ contract UniswapV4CurveQuadStableSwapHook_Factory_Test is TestBase_UniswapV4Curv
         revert("no bad mineNonce");
     }
 
-    function test_F3_permissionless_ensurePairPools() public {
+    /// @notice A stranger may open all six product doors and finalize. Not package ensurePairPools.
+    function test_F3_permissionless_strangerMayDoorAndFinalize() public {
         address[4] memory toks = _fourNewTokens("EOA");
         address[4] memory providers;
-        address h = _deployHook(_pkgArgs(toks[0], toks[1], toks[2], toks[3], DEMO_FEE, DEMO_AMP, providers));
-        // postDeploy already ensured; permissionless re-ensure is idempotent
-        vm.prank(deployerEoa);
-        (PoolKey[6] memory keys, uint8 created) = hookPkg.ensurePairPools(h);
-        assertEq(created, 0, "all already live");
-        for (uint256 i; i < 6; ++i) {
-            (uint160 sqrtPrice,,,) = pm.getSlot0(keys[i].toId());
-            assertGt(sqrtPrice, 0);
-        }
+        address h = _deployBootstrapOnly(
+            _pkgArgs(toks[0], toks[1], toks[2], toks[3], DEMO_FEE, DEMO_AMP, providers)
+        );
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(h);
+        vm.startPrank(deployerEoa);
+        init.deployPair(toks[0], toks[1]);
+        init.deployPair(toks[0], toks[2]);
+        init.deployPair(toks[0], toks[3]);
+        init.deployPair(toks[1], toks[2]);
+        init.deployPair(toks[1], toks[3]);
+        init.deployPair(toks[2], toks[3]);
+        assertTrue(init.finalizeInitialization());
+        vm.stopPrank();
+        assertEq(
+            IDiamondLoupe(h).facetAddress(IUniswapV4HookStagedPairInit.deployPair.selector), address(0)
+        );
     }
 
     function test_F4_unsorted_reverts() public {

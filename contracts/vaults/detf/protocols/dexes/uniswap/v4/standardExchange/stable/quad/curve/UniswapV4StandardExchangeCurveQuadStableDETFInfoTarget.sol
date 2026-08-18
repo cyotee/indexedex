@@ -4,6 +4,9 @@ pragma solidity ^0.8.0;
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
@@ -223,5 +226,20 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFInfoTarget is
 
     function capitalTokenOf(uint256 tokenId) external view returns (address) {
         return Repo._layoutStruct().capitalTokenOf[tokenId];
+    }
+
+    function isReserveHookFinalized() public view returns (bool) {
+        address hook_ = Repo._layoutStruct().reserveHook;
+        if (hook_ == address(0)) return false;
+        try IUniswapV4HookStagedPairInit(hook_).isInitializationFinalized() returns (bool done_) {
+            return done_;
+        } catch {
+            return true;
+        }
+    }
+
+    function isReserveWired() public view returns (bool) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        return address(s.bondNftVault) != address(0) && address(s.rebasingClaimToken) != address(0);
     }
 }

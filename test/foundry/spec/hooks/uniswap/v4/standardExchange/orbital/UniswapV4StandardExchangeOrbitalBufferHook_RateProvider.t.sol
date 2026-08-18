@@ -62,6 +62,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         args.rp0 = address(rp);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         IUniswapV4StandardExchangeOrbitalBufferHook o = IUniswapV4StandardExchangeOrbitalBufferHook(h);
 
         token0.mint(user, 500 ether);
@@ -89,6 +90,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         args.rp0 = address(rp);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         IUniswapV4StandardExchangeOrbitalBufferHook o = IUniswapV4StandardExchangeOrbitalBufferHook(h);
 
         token0.mint(user, 500 ether);

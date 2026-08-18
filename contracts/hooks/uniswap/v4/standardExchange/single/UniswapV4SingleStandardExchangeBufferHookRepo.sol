@@ -19,6 +19,7 @@ library UniswapV4SingleStandardExchangeBufferHookRepo {
         address currency1;
         bool wrapZeroForOne;
         bool bindingsInitialized;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

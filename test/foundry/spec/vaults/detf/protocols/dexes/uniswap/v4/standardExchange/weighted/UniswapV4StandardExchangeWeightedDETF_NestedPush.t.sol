@@ -22,7 +22,7 @@ contract UniswapV4StandardExchangeWeightedDETF_NestedPush_Test is TestBase_Unisw
     function setUp() public override {
         super.setUp();
         // Redeploy Open instance so mint always allowed when live.
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4StandardExchangeWeightedDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pair0 = detfInfo.pairToken(0);

@@ -94,7 +94,7 @@ contract UniswapV4SingleStandardExchangeDETF_AdversarialTest is TestBase_Uniswap
         args.pairToken = IERC20(address(hostilePair));
         args.thresholdMode = ThresholdMode.Open;
 
-        hostileDetf = _deployDetfInstance(args);
+        hostileDetf = _deployDetfWired(args);
         hostileDetfInfo = IUniswapV4SingleStandardExchangeDETF(hostileDetf);
         hostileDetfX = IStandardExchangeIn(hostileDetf);
 
@@ -168,7 +168,7 @@ contract UniswapV4SingleStandardExchangeDETF_AdversarialTest is TestBase_Uniswap
 
     function test_protocolLp_and_userBonded_partition() public {
         // Open detf for mint after first bond
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4SingleStandardExchangeDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pairToken.mint(detfUser, 1_000_000 ether);

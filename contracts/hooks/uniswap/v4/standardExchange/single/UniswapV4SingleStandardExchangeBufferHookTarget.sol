@@ -17,6 +17,9 @@ import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Ba
 import {
     UniswapV4SingleStandardExchangeBufferHookCommon
 } from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookCommon.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookBeforeInitializeLib.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferHookTarget
@@ -57,16 +60,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        Currency pairC = Currency.wrap(_pair());
-        Currency seC = Currency.wrap(_se());
-        bool wrapZFO = _wrapZeroForOne();
-        bool isValidPair = wrapZFO
-            ? (poolKey.currency0 == pairC && poolKey.currency1 == seC)
-            : (poolKey.currency0 == seC && poolKey.currency1 == pairC);
-        if (!isValidPair) revert InvalidPoolToken();
-        if (poolKey.fee != 0) revert InvalidPoolFee();
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
     function afterInitialize(address, PoolKey calldata, uint160, int24)

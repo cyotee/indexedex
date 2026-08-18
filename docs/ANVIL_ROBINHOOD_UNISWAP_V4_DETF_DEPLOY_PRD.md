@@ -299,8 +299,9 @@ SE vaults (V3 / V4)
 
 DETF diamonds
   → indexedexManager.deployVault / deploy*DFPkg
-  → postDeploy may deployHookVault for reserve hook + init V4 pool on ROBINHOOD PoolManager
-  → stop at inert; NO bond()
+  → postDeploy deploys bootstrap reserve hook only (no doors, no children)
+  → scripts: productTokens* + one TX per door + finalize + completeReserveBondNft + completeReserveClaim
+  → stop at inert (wired, !isReserveLive); NO bond()
 ```
 
 **PoolManager** on every V4 package: **`ROBINHOOD_MAIN.UNISWAP_V4_POOL_MANAGER`**.  
@@ -369,7 +370,7 @@ Scripts **must not** call DETF `bond`.
 | Weighted DETF | Package + **two inert** instances: gentle + launch-rich, **both \(n=8\)** (D12) |
 | Weighted Buffer Hook | Package + **one** standalone \(n=8\) demo (28 doors; mixed V3+V4 SE; RP on SE legs) |
 | Single SE Buffer | Package + demos against **both** V3 SE and V4 SE |
-| CP / Orbital hooks | Via DETF postDeploy and package registration as required |
+| CP / Orbital hooks | Via DETF postDeploy (bootstrap only) then script door+wire sequence |
 
 `PkgArgs` / expansion templates come from family PRDs / TestBases. **Do not invent** threshold/expansion numbers in shell.
 

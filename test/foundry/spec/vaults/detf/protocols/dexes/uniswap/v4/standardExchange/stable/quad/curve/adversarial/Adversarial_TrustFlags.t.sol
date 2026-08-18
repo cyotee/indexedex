@@ -41,7 +41,7 @@ contract Adversarial_CurveQuad_TrustFlags is TestBase_UniswapV4StandardExchangeC
     }
 
     function _openLive() internal returns (address instance_, address p0_) {
-        instance_ = _deployDetfInstance(_openArgsUnique("iFlags"));
+        instance_ = _deployDetfWired(_openArgsUnique("iFlags"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         p0_ = info_.pairToken(0);

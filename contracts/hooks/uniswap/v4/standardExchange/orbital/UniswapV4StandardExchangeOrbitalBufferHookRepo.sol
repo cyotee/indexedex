@@ -47,6 +47,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         uint256 kLast;
         uint8 kLastMode;
         uint256 reentrancyStatus;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

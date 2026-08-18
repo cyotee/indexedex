@@ -36,6 +36,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         uint256 kLast;
         bool poolInitialized;
         uint256 reentrancyStatus;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

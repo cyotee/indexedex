@@ -12,7 +12,9 @@ import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookPairPoolLib
- * @notice Ensure all binom(n,2) pair doors with DYNAMIC_FEE_FLAG, tickSpacing=1, hooks=this.
+ * @notice Product PoolKey construction and skip-if-live initialize for weighted pair doors.
+ * @dev Deploy path is deployPair per unordered pair. ensureAllPairPools is post-finalize
+ *      repair only (product ensurePairPools); not the required bootstrap path.
  */
 library UniswapV4StandardExchangeWeightedBufferHookPairPoolLib {
     using PoolIdLibrary for PoolKey;

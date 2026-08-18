@@ -20,7 +20,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_MintBurnTest is TestBase_UniswapV4
 
     function setUp() public override {
         super.setUp();
-        openDetf = _deployDetfInstance(_openArgs());
+        openDetf = _deployDetfWired(_openArgs());
         openInfo = IUniswapV4StandardExchangeOrbitalDETF(openDetf);
         _firstBondOn(openDetf, 500 ether, 500 ether);
         _firstBondBothPairs(500 ether, 500 ether);
@@ -50,7 +50,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_MintBurnTest is TestBase_UniswapV4
     }
 
     function test_burn_emptyProtocolLp_afterFirstBondOnly() public {
-        address d2 = _deployDetfInstance(_openArgsUnique("emptyProto"));
+        address d2 = _deployDetfWired(_openArgsUnique("emptyProto"));
         IUniswapV4StandardExchangeOrbitalDETF info2 = IUniswapV4StandardExchangeOrbitalDETF(d2);
         _firstBondOn(d2, 100 ether, 100 ether);
         // First bond LP is on bond NFT only — protocol holder must be empty.

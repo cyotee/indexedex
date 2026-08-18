@@ -5,11 +5,20 @@ import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {
@@ -99,6 +108,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
     /// @dev First bond at creation rate: mint join DETF from creationPairPerDetfWad, proportional deposit.
     ///      LP is minted to the bond NFT package (PRD LOCK: user bond LP on bond NFT).
     function _firstBondJoin(uint256 pairAmount_) internal returns (uint256 lpOut_) {
+        _requireReserveWired();
         Repo.Storage storage s = Repo._layoutStruct();
         uint8 pairDec_ = _pairDecimals();
         uint256 pairWad_ = _toWad(pairAmount_, pairDec_);
@@ -353,5 +363,81 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
 
     function compoundProtocolRewards() external nonReentrant returns (uint256 detfIn, uint256 lpOut) {
         return _tryCompoundProtocolRewards();
+    }
+
+    function isReserveHookFinalized() public view returns (bool) {
+        address hook_ = Repo._layoutStruct().reserveHook;
+        if (hook_ == address(0)) return false;
+        try IUniswapV4HookStagedPairInit(hook_).isInitializationFinalized() returns (bool done_) {
+            return done_;
+        } catch {
+            return true;
+        }
+    }
+
+    function isReserveWired() public view returns (bool) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        return address(s.bondNftVault) != address(0) && address(s.rebasingClaimToken) != address(0);
+    }
+
+    function completeReserveBondNft() public returns (address bondNftVault) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (s.reserveHook == address(0) || !isReserveHookFinalized()) {
+            revert Repo.ReserveHookNotFinalized();
+        }
+        if (address(s.bondNftVault) != address(0)) revert Repo.ReserveBondNftAlreadyWired();
+
+        address detf_ = address(this);
+        IDETFNFTVault bondVault_ = IDETFNFTVault(
+            IDetfSelfNftInventoryDFPkg(s.bondNftVaultPkg).deployVault(
+                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
+                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                IDetf(detf_),
+                IERC20(s.reserveHook),
+                IERC20(detf_),
+                0,
+                detf_
+            )
+        );
+        uint256 detfNftId_;
+        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
+            detfNftId_ = id_;
+        } catch {
+            detfNftId_ = 0;
+        }
+        uint256 feeRecipientNftId_;
+        address feeTo_ = address(s.feeOracle.feeTo());
+        if (feeTo_ != address(0)) {
+            uint256 lock_;
+            try s.feeOracle.bondTermsOfVault(detf_) returns (BondTerms memory terms_) {
+                lock_ = terms_.minLockDuration == 0 ? 1 : terms_.minLockDuration;
+            } catch {
+                lock_ = 1;
+            }
+            try bondVault_.createPosition(1, lock_, feeTo_) returns (uint256 id_) {
+                feeRecipientNftId_ = id_;
+            } catch {
+                feeRecipientNftId_ = 0;
+            }
+        }
+        Repo._setBondNft(bondVault_, detfNftId_, feeRecipientNftId_);
+        emit ReserveBondNftWired(s.reserveHook, address(bondVault_), detfNftId_, feeRecipientNftId_);
+        return address(bondVault_);
+    }
+
+    function completeReserveClaim() public returns (address rebasingClaimToken) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) revert Repo.ReserveBondNftNotWired();
+        if (address(s.rebasingClaimToken) != address(0)) revert Repo.ReserveClaimAlreadyWired();
+
+        address detf_ = address(this);
+        IRebasingClaimToken claimToken_ = IRebasingClaimToken(
+            IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg).deployToken(
+                IDetf(detf_), s.bondNftVault, s.pairToken, s.detfNftId, detf_
+            )
+        );
+        Repo._setClaim(claimToken_);
+        emit ReserveClaimWired(s.reserveHook, address(claimToken_));
+        return address(claimToken_);
     }
 }

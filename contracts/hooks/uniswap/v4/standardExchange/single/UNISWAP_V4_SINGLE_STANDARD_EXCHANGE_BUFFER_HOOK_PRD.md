@@ -158,7 +158,7 @@ These do **not** make the buffer design impossible; they fail closed if SE is in
 
 | Attribute | Value |
 |-----------|--------|
-| Primary artifact | Hook **diamond** instance at CREATE2-mined address implementing `IHooks` + thin views |
+| Primary artifact | Hook **diamond** at CREATE2 is bootstrap (vault pair + package-as-init). Production `IHooks` + thin views land on `finalizeInitialization` |
 | Binding | One `poolManager` + one `standardExchange` + one `pairToken` |
 | Pool currencies | Address-sorted `pairToken` and `address(standardExchange)` |
 | Behavior | Immediate wrap / unwrap via SE In/Out on every swap |
@@ -186,7 +186,7 @@ These do **not** make the buffer design impossible; they fail closed if SE is in
 2. Auto-deploying N buffers for all `vaultTokens()` in one call (may be a later helper script; not v1 package law).  
 3. Native ETH currency (use WETH).  
 4. Permit2 on hook (router can pull; SE may have its own paths).  
-5. Package-owned pool `initialize` (integrator initializes).  
+5. Same-tx full production ABI at CREATE2. Doors + ABI are staged (`deployPair` then `finalizeInitialization`).  
 6. Hook-side usage fee / growth fee / `kLast`.  
 7. Subclassing Crane `BaseTokenWrapperHook` / `BaseHook` / `DeltaResolver`.  
 8. Sharing TestBases with DETF or Single SE BCP beyond factory TestBase ladder.  
@@ -234,7 +234,7 @@ These do **not** make the buffer design impossible; they fail closed if SE is in
 | B18 | Tight SE bounds | `minOut` / `maxIn` = SE preview (router owns user slippage) |
 | B19 | Deadline to SE | `block.timestamp` only (v1) |
 | B20 | Currency order | Fixed at init from address sort of `pairToken` vs `SE`; **public** `currency0()` / `currency1()` required (O13); `wrapZeroForOne` Repo-only (no public getter) |
-| B21 | Pool init | Integrator/script; hook `beforeInitialize` validates pair + fee=0 |
+| B21 | Pool init | Product door via `deployPair` (or matching raw `PoolManager.initialize`); `beforeInitialize` validates wrap-aware pair + fee=0 (view-only) |
 | B22 | Test / hint convention | `tickSpacingHint = 60`, `sqrtPriceX96Hint` 1:1 mid, `poolFee = 0` — public pure/view helpers (O13); plumbing only |
 
 ### 4.3 Deploy / Hook Factory (standard)
@@ -377,9 +377,10 @@ Validation: non-zero; `pairToken ∈ SE.vaultTokens()` (or SE surface equivalent
 1. setHookDiamondPackageFactory(hookFactory)
 2. registry.deployPkg(bufferPkg, PkgInit, salt)
 3. premine mineNonce for PRODUCT_ID + binding
-4. pkg.deployVault(args, mineNonce) → registered diamond
-5. integrator initializes V4 pool (fee=0, currencies sorted, hooks=proxy)
-6. routers swap for wrap/unwrap hops
+4. pkg.deployVault(args, mineNonce) → registered bootstrap diamond
+5. deployPair(tokenA, tokenB) for the wrap-aware pair (either order; fee=0, hooks=proxy)
+6. finalizeInitialization Adds PRODUCT_FACET only
+7. routers swap for wrap/unwrap hops
 ```
 
 ---

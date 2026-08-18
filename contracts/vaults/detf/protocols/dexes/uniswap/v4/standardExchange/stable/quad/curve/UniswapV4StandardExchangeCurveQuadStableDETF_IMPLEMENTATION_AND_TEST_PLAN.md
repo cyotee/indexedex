@@ -71,7 +71,7 @@ Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../../../UNISWAP
 ### Goals (v1 DoD)
 
 1. Ship **true DETF** diamond + DFPkg under this path via **IndexedEx manager vault registry**.  
-2. From **`PkgArgs`**, deploy **one** Curve Quad Stable Buffer Hook via registry **`deployHookVault`**: exactly **4** tokens (DETF raw self-leg at its address-sorted index + **3** like-kind external pairs); **`baseAmp`**; **≥1** distinct SE on external legs; optional RPs on SE legs only; **all six** V4 doors in hook `postDeploy`.  
+2. From **`PkgArgs`**, deploy **one** Curve Quad Stable Buffer Hook via registry **`deployHookVault`**: exactly **4** tokens (DETF raw self-leg at its address-sorted index + **3** like-kind external pairs); **`baseAmp`**; **≥1** distinct SE on external legs; optional RPs on SE legs only. Hook `postDeploy` does **not** init doors. Callers use `productTokensQuad` + one TX per door + two DETF wiring fns. TestBase `setUp` uses `ensureReserveReadyQuad`.  
 3. **Permissionless first bond** requiring **all three** external pair legs at creation rates → full book → `isReserveLive`; **refund excess**; caller **picks** `capitalToken` among the three funded pairs; MINIMUM_LIQUIDITY edge.  
 4. **Primary mint** (live): rate capital → funded pair-leg units → seigniorage quote (**hook SoT**) / split → hook **`depositSingle(pair)`** or **`depositSingleFlexible`** when the unit is already vault share → protocol LP; **Policy per-route debt-inclusive** mint gate; **no** expansion realize.  
 5. **Primary burn**: free DETF only → `exitProportional` → **redeposit returned DETF** → residual consolidate → `tokenOut` pair; `lpOut = detfBurned * protocolLp / effectiveSupply`; usage fee **yes**; **`withdrawSingle` forbidden** even as an optimization.  
@@ -145,9 +145,7 @@ IndexedexManager / Vault Registry
           - SEs/RPs remapped to binding order; DETF slot SE=0, RP=0
           - deployHookVault(Curve Quad Stable Buffer Hook PkgArgs):
               tokens[4], SEs[4], RPs[4], baseAmp, poolManager, feeOracle, mineNonce / salt
-          - hook postDeploy inits all 6 V4 doors (DYNAMIC_FEE_FLAG, plumbing sqrtPrice)
-          - deploy shared bond NFT (owner=DETF; requireMatureForSell=true)
-          - deploy shared rebasing claim (owner=DETF; holds protocol LP)
+          - hook postDeploy does not init doors; scripts use productTokensQuad + one TX per door + two wiring fns; TestBase setUp uses ensureReserveReadyQuad
           - store PkgArgs: pairs (product order), creation rates (3), binding maps,
             thresholds, expansion, detfBindingIndex, reserveHook, refs
           - validate (PRD §11):
@@ -156,6 +154,8 @@ IndexedexManager / Vault Registry
               all three creation rates > 0; baseAmp in hook D7 bounds;
               no FoT/rebasing pairs; decimals [6, 18];
               NO whole-DETF rateAsset field
+        after hook finalize (not postDeploy):
+          - completeReserveBondNft then completeReserveClaim (owner=DETF; requireMatureForSell=true; claim holds protocol LP)
 
 Facets (CREATE3): Info / ExchangeIn / ExchangeOut / Bonding / Claim / Compound
 Diamond instance = detfToken ERC-20 (immutable / unowned after deploy)
@@ -711,7 +711,7 @@ Launch-rich templates set explicit `R` — copy CP UniV4 DETF §10.3–§10.4.
 | Phase | Deliverable | Exit criteria |
 |-------|-------------|---------------|
 | **0** | Hook ABI consumption filled (done in §2.1); shared nft+rebasing LP + `capitalToken` + `requireMatureForSell`; **exact-out invert spike** (ship or `InvalidRoute`); confirm `joinUnbalanced` DETF-only zeros accepted or not for redeposit fallback | G0–G4; spike decision written in TestBase / this plan rev |
-| **1** | Interfaces + Repo + DFPkg postDeploy + facet stubs + FactoryServices | Deploy inert diamond; hook bound; six doors exist; validations reject bad PkgArgs |
+| **1** | Interfaces + Repo + DFPkg postDeploy + facet stubs + FactoryServices | Deploy inert diamond; bootstrap hook only; doors via `productTokensQuad` + wiring; validations reject bad PkgArgs |
 | **2** | First bond (all three, refund, chosen `capitalToken`, full book) → live | §4.8 tests green |
 | **3** | Common: WAD scale, capital rating, **hook-SoT quote**, whole-reserve FD, per-route gates, residual order | Preview == execution unit rows |
 | **4** | Primary mint + seigniorage split + hook-accepted units (pair face **and** vault share) | Policy/Open; `NotSingleAssetEligible` revert |

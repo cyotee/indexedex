@@ -13,7 +13,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 /// @notice Epoch expansion: hard pending > 0 + realize mint; Open never; gentle vs launch-rich rates.
 contract UniswapV4StandardExchangeOrbitalDETF_ExpansionTest is TestBase_UniswapV4StandardExchangeOrbitalDETF {
     function test_open_never_expands() public {
-        address d_ = _deployDetfInstance(_openArgs());
+        address d_ = _deployDetfWired(_openArgs());
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(d_);
         _firstBondOn(d_, 200 ether, 200 ether);
         info_.compoundProtocolRewards();
@@ -26,7 +26,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_ExpansionTest is TestBase_UniswapV
     }
 
     function test_policy_pending_gt_zero_and_realize_mints() public {
-        address d = _deployDetfInstance(_gentleArgs());
+        address d = _deployDetfWired(_gentleArgs());
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
 
@@ -70,8 +70,8 @@ contract UniswapV4StandardExchangeOrbitalDETF_ExpansionTest is TestBase_UniswapV
     }
 
     function test_launch_rich_pending_ge_gentle_when_premium() public {
-        address g = _deployDetfInstance(_gentleArgs());
-        address lr = _deployDetfInstance(_launchRichArgs());
+        address g = _deployDetfWired(_gentleArgs());
+        address lr = _deployDetfWired(_launchRichArgs());
         IUniswapV4StandardExchangeOrbitalDETF gInfo = IUniswapV4StandardExchangeOrbitalDETF(g);
         IUniswapV4StandardExchangeOrbitalDETF lrInfo = IUniswapV4StandardExchangeOrbitalDETF(lr);
         assertEq(gInfo.expansionClosureRatePerYearWad(), 0.10e18);
@@ -98,7 +98,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_ExpansionTest is TestBase_UniswapV
     function test_compound_skip_when_not_zap_eligible_pre_live() public {
         // Default setUp deploys inert Policy instance first — compound before live is no-op.
         // Use a fresh inert deploy via open args then check pre-first-bond compound.
-        address d = _deployDetfInstance(_openArgs());
+        address d = _deployDetfWired(_openArgs());
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         assertFalse(info.isReserveLive());
         (uint256 a, uint256 b) = info.compoundProtocolRewards();

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -24,8 +25,6 @@ interface IUniswapV4BalancerQuadStableSwapHookPackage is IUniswapV4HookDiamondPa
     error InvalidTokenOrder();
     error InvalidFee();
     error InvalidAmp();
-
-    event PairPoolsEnsured(address indexed hook, uint8 createdCount, uint8 alreadyLiveCount);
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
@@ -58,16 +57,14 @@ interface IUniswapV4BalancerQuadStableSwapHookPackage is IUniswapV4HookDiamondPa
     function LIQUIDITY_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);
 
+    /// @notice Production Add list applied by finalizeInitialization. Not used at initAccount.
+    function productionFacetCuts() external view returns (IDiamond.FacetCut[] memory);
+
     /// @notice Product path: package → Vault Registry.deployHookVault → hook factory.
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);
 
     /// @notice Gas-risky auto-mine convenience. Prefer deployVault with premined mineNonce.
     function deployVaultAutoMine(PkgArgs memory args) external returns (address vault);
-
-    /// @notice Permissionless ensure of all six pair doors for a live hook proxy.
-    function ensurePairPools(address hook)
-        external
-        returns (PoolKey[6] memory poolKeys, uint8 createdCount);
 
     /// @notice Pure key construction for the six pair doors (does not initialize).
     function pairPoolKeys(address hook) external view returns (PoolKey[6] memory keys);

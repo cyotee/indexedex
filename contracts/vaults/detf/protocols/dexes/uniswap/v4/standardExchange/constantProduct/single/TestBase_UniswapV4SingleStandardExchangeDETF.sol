@@ -15,6 +15,9 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {
+    UniswapV4DetfHookStagedInitLib
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookStagedInitLib.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
@@ -81,6 +84,13 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
     address internal detfUser = address(0xD37F);
 
     function setUp() public virtual override {
+        _setUpPlatform();
+        detf = _deployDetfInstance(_defaultDetfArgs());
+        UniswapV4DetfHookStagedInitLib.ensureReserveReadyCp(IUniswapV4SingleStandardExchangeDETF(detf));
+        _bindDetfPointers();
+    }
+
+    function _setUpPlatform() internal {
         // Hook base: SE, PM, hook factory, hookPkg.
         TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.setUp();
 
@@ -94,11 +104,11 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         _deployRebasingClaimTokenPkg();
         _deployDetfPkg();
 
-        // Global bond terms BEFORE instance deploy so postDeploy fee-recipient NFT + lock validation succeed.
+        // Global bond terms BEFORE instance deploy so fee-recipient NFT + lock validation succeed.
         _setDefaultBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
+    }
 
-        detf = _deployDetfInstance(_defaultDetfArgs());
-
+    function _bindDetfPointers() internal {
         detfInfo = IUniswapV4SingleStandardExchangeDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
 
@@ -109,7 +119,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         pairToken.approve(se, type(uint256).max);
         vm.stopPrank();
 
-        // Also pin vault-specific terms (hermetic assert feeRecipientNftId != 0 after deploy).
+        // Also pin vault-specific terms (hermetic assert feeRecipientNftId != 0 after wire).
         _setBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
     }
 
@@ -227,6 +237,17 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         args.thresholdMode = ThresholdMode.Open;
     }
 
+    /// @notice Policy defaults with unique name/symbol so extra deploys do not collide with setUp.
+    function _policyArgsUnique(string memory tag)
+        internal
+        view
+        returns (IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+    {
+        args = _defaultDetfArgs();
+        args.name = string(abi.encodePacked("Policy UniV4 DETF ", tag));
+        args.symbol = string(abi.encodePacked("pDETF", tag));
+    }
+
     function _deployDetfInstance(IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
         internal
         returns (address detf_)
@@ -245,6 +266,21 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         vm.stopPrank();
         require(detf_ == predicted_, "detf != predicted");
         vm.label(detf_, args.symbol);
+    }
+
+    function _deployDetfBootstrapOnly(IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+        internal
+        returns (address)
+    {
+        return _deployDetfInstance(args);
+    }
+
+    function _deployDetfWired(IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+        internal
+        returns (address detf_)
+    {
+        detf_ = _deployDetfInstance(args);
+        UniswapV4DetfHookStagedInitLib.ensureReserveReadyCp(IUniswapV4SingleStandardExchangeDETF(detf_));
     }
 
     function _setDefaultBondTerms(uint256 minLock_, uint256 maxLock_) internal {
@@ -318,6 +354,14 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
 
     function _assertInert() internal view {
         assertFalse(detfInfo.isReserveLive(), "expected inert (not live)");
+    }
+
+    function _assertWired() internal view {
+        assertTrue(detfInfo.isReserveWired(), "expected reserve wired");
+        assertTrue(detfInfo.isReserveHookFinalized(), "expected hook finalized");
+        assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault missing");
+        assertTrue(detfInfo.rebasingClaimToken() != address(0), "claim token missing");
+        assertFalse(detfInfo.isReserveLive(), "wired must still be inert");
     }
 
     function _assertLive() internal view {

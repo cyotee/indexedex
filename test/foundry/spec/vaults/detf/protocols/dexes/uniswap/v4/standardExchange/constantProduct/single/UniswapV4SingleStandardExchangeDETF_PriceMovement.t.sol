@@ -75,7 +75,7 @@ contract UniswapV4SingleStandardExchangeDETF_PriceMovementTest is TestBase_Unisw
 
     function test_policy_defaultThresholds_mintAndBurnRegimes_viaRealTrades() public {
         // Policy defaults (mint 1.05 / burn 0.95)
-        address d = _deployDetfInstance(_defaultDetfArgs());
+        address d = _deployDetfWired(_policyArgsUnique("pm"));
         IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
         assertEq(info.mintThreshold(), 1.05e18);

@@ -684,14 +684,14 @@ Typed surface: `IUniswapV4SingleStandardExchangeDETDFPkg.deployVault(PkgArgs arg
 
 ### 11.1 Deploy sequence (postDeploy spirit)
 
-1. Deploy DETF diamond via vault registry (inert).  
-2. Deploy reserve hook:  
+DETF `postDeploy` deploys a **bootstrap** reserve hook only (no `deployPair`, no finalize, no children). Hook `postDeploy` does **not** init the product door. After `deployVault`, callers open the door on `IUniswapV4HookStagedPairInit` (`productTokensCp` + one TX), then `finalizeInitialization`, then `completeReserveBondNft` then `completeReserveClaim` on this `I*DETF`. TestBase `setUp` may call `UniswapV4DetfHookStagedInitLib.ensureReserveReadyCp`. SoT: [`UNISWAP_V4_SE_DETF_STAGED_HOOK_INIT_PRD.md`](../../UNISWAP_V4_SE_DETF_STAGED_HOOK_INIT_PRD.md).
+
+1. Deploy DETF diamond via vault registry (inert, unwired).  
+2. Deploy reserve hook (bootstrap only):  
    `(poolManager, feeOracle, standardExchange, pairToken, rawToken=DETF)`.  
-3. Initialize V4 pool: currencies sort(DETF, pairToken), fee=0, hooks=hook;  
-   `sqrtPriceX96` / tickSpacing = **plumbing** (hermetic 1:1 mid OK); product mid from first bond.  
-4. Deploy bond NFT + rebasing packages (owner=DETF); rebasing is protocol LP holder.  
-5. Store creation rate, thresholds, mode, expansion params.  
-6. Validate `pairToken ∈ SE.tokens()`; SE does not list DETF.
+3. Store creation rate, thresholds, mode, expansion params, child **package** addresses.  
+4. Validate `pairToken ∈ SE.tokens()`; SE does not list DETF.  
+5. Later (not in `postDeploy`): one `deployPair` + finalize on the hook; then two DETF wiring fns.
 
 ### 11.2 PkgArgs (normative)
 

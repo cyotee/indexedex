@@ -19,12 +19,10 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
-import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
@@ -336,13 +334,8 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         _resolveBinding(cfg);
         _validateSes(cfg);
         address hook_ = _deployReserveHook(cfg);
-        IDETFNFTVault bondVault_ = _deployBondNftVault(hook_);
-        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
-        uint256 feeRecipientNftId_ = _tryInitFeeRecipientNft(bondVault_);
-        IRebasingClaimToken claimToken_ =
-            _deployRebasingClaimToken(cfg.pairTokens[0], bondVault_, detfNftId_);
         _initVaultTokens(hook_, cfg);
-        _initRepo(cfg, hook_, bondVault_, detfNftId_, feeRecipientNftId_, claimToken_);
+        _initRepo(cfg, hook_);
     }
 
     function _resolveBinding(DeployConfig storage cfg) private {
@@ -421,58 +414,6 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
     }
 
-    function _deployBondNftVault(address reserveHook_) private returns (IDETFNFTVault bondVault_) {
-        address detf_ = address(this);
-        bondVault_ = IDETFNFTVault(
-            BOND_NFT_VAULT_PKG.deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
-                IDetf(detf_),
-                IERC20(reserveHook_),
-                IERC20(detf_),
-                0,
-                detf_
-            )
-        );
-    }
-
-    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
-            detfNftId_ = id_;
-        } catch {
-            detfNftId_ = 0;
-        }
-    }
-
-    function _tryInitFeeRecipientNft(IDETFNFTVault bondVault_) private returns (uint256 feeNftId_) {
-        address feeTo_ = address(FEE_ORACLE.feeTo());
-        if (feeTo_ == address(0)) return 0;
-        try bondVault_.createPosition(1, _minLockOrDefault(), feeTo_) returns (uint256 id_) {
-            feeNftId_ = id_;
-        } catch {
-            feeNftId_ = 0;
-        }
-    }
-
-    function _minLockOrDefault() private view returns (uint256 lock_) {
-        try FEE_ORACLE.bondTermsOfVault(address(this)) returns (BondTerms memory terms_) {
-            lock_ = terms_.minLockDuration == 0 ? 1 : terms_.minLockDuration;
-        } catch {
-            lock_ = 1;
-        }
-    }
-
-    function _deployRebasingClaimToken(
-        IERC20 rateToken_,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
-    ) private returns (IRebasingClaimToken claimToken_) {
-        address detf_ = address(this);
-        claimToken_ = IRebasingClaimToken(
-            REBASING_CLAIM_TOKEN_PKG.deployToken(IDetf(detf_), bondVault_, rateToken_, detfNftId_, detf_)
-        );
-    }
-
     function _initVaultTokens(address hook_, DeployConfig storage cfg) private {
         address[] memory vaultTokens_ = new address[](uint256(M) + 2);
         vaultTokens_[0] = address(this);
@@ -485,11 +426,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
 
     function _initRepo(
         DeployConfig storage cfg,
-        address hook_,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_,
-        uint256 feeRecipientNftId_,
-        IRebasingClaimToken claimToken_
+        address hook_
     ) private {
         IERC20[] memory pairs_ = new IERC20[](M);
         IStandardExchangeProxy[] memory ses_ = new IStandardExchangeProxy[](M);
@@ -518,10 +455,12 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
                 reserveHook: hook_,
                 poolManager: POOL_MANAGER,
                 feeOracle: FEE_ORACLE,
-                bondNftVault: bondVault_,
-                rebasingClaimToken: claimToken_,
-                detfNftId: detfNftId_,
-                feeRecipientNftId: feeRecipientNftId_
+                bondNftVault: IDETFNFTVault(address(0)),
+                rebasingClaimToken: IRebasingClaimToken(address(0)),
+                detfNftId: 0,
+                feeRecipientNftId: 0,
+                bondNftVaultPkg: address(BOND_NFT_VAULT_PKG),
+                rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG)
             })
         );
         Repo._initializePolicy(

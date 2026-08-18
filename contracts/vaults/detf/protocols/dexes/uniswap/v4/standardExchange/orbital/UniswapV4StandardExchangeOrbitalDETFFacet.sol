@@ -36,7 +36,7 @@ contract UniswapV4StandardExchangeOrbitalDETFFacet is IFacet, UniswapV4StandardE
     }
 
     function _allFuncs() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](10);
+        f = new bytes4[](12);
         f[0] = bytes4(keccak256("bond(address,uint256,address,uint256,uint256,address,bool,uint256)"));
         f[1] = bytes4(keccak256("bond(address,uint256,uint256,address,bool,uint256)"));
         f[2] = IUniswapV4StandardExchangeOrbitalDETF.sellPositionToDetfNft.selector;
@@ -47,5 +47,7 @@ contract UniswapV4StandardExchangeOrbitalDETFFacet is IFacet, UniswapV4StandardE
         f[7] = IUniswapV4StandardExchangeOrbitalDETF.claimLiquidity.selector;
         f[8] = IUniswapV4StandardExchangeOrbitalDETF.compoundProtocolRewards.selector;
         f[9] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        f[10] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveBondNft.selector;
+        f[11] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveClaim.selector;
     }
 }

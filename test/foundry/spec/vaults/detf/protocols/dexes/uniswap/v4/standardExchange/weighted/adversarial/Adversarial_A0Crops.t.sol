@@ -29,7 +29,7 @@ contract Adversarial_Weighted_A0Crops is TestBase_UniswapV4StandardExchangeWeigh
     }
 
     function test_A0_preLive_donatePair_pretransferredBond_cannotMintFromResidual() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         address p0_ = info_.pairToken(0);
         uint256 donate_ = 80 ether;
@@ -54,7 +54,7 @@ contract Adversarial_Weighted_A0Crops is TestBase_UniswapV4StandardExchangeWeigh
     }
 
     function test_A0_preLive_pullFalse_doesNotCreditDonation() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0p"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0p"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         address p0_ = info_.pairToken(0);
         uint256 donate_ = 50 ether;
@@ -70,7 +70,7 @@ contract Adversarial_Weighted_A0Crops is TestBase_UniswapV4StandardExchangeWeigh
     }
 
     function test_CROPS_disable_doesNotBlock_closeBondMature_or_redeemClaim() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("crops"));
+        address instance_ = _deployDetfWired(_openArgsUnique("crops"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         address p0_ = info_.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -106,7 +106,7 @@ contract Adversarial_Weighted_A0Crops is TestBase_UniswapV4StandardExchangeWeigh
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("cropsB"));
+        address instance_ = _deployDetfWired(_openArgsUnique("cropsB"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         address p0_ = info_.pairToken(0);
         uint256[] memory amts = new uint256[](1);

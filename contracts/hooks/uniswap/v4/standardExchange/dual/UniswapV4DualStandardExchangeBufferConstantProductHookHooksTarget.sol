@@ -37,6 +37,9 @@ import {
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4DualStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
@@ -142,17 +145,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        Repo.Layout storage l = Repo._layout();
-        if (l.poolInitialized) revert AlreadyInitialized();
-
-        address a = Currency.unwrap(poolKey.currency0);
-        address b = Currency.unwrap(poolKey.currency1);
-        if (!(a == l.currency0 && b == l.currency1)) revert InvalidPoolToken();
-        if (poolKey.fee != 0) revert InvalidPoolFee();
-
-        l.poolInitialized = true;
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
 

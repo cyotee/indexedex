@@ -26,7 +26,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
     }
 
     function _openLiveOpenThreshold() internal returns (address instance_) {
-        instance_ = _deployDetfInstance(_openArgs());
+        instance_ = _deployDetfWired(_openArgs());
         pairToken.mint(detfUser, 5_000_000 ether);
         vm.startPrank(detfUser);
         pairToken.approve(instance_, type(uint256).max);
@@ -44,7 +44,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
 
     /// @dev Target-derived control set: money + info + bonding selectors (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](31);
+        sels_ = new bytes4[](35);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = IUniswapV4SingleStandardExchangeDETF.bond.selector;
@@ -76,6 +76,10 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         sels_[28] = IUniswapV4SingleStandardExchangeDETF.acceptedBondTokens.selector;
         sels_[29] = IUniswapV4SingleStandardExchangeDETF.protocolLp.selector;
         sels_[30] = IUniswapV4SingleStandardExchangeDETF.userBondedLp.selector;
+        sels_[31] = IUniswapV4SingleStandardExchangeDETF.isReserveHookFinalized.selector;
+        sels_[32] = IUniswapV4SingleStandardExchangeDETF.isReserveWired.selector;
+        sels_[33] = IUniswapV4SingleStandardExchangeDETF.completeReserveBondNft.selector;
+        sels_[34] = IUniswapV4SingleStandardExchangeDETF.completeReserveClaim.selector;
         // compoundProtocolRewards is on interface but counted separately with atomic in J1.
     }
 
@@ -91,7 +95,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
         IFacet facet_ = detfExchangeInFacet;
         bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 32, "facetFuncs length");
+        assertTrue(funcs_.length >= 36, "facetFuncs length");
 
         bytes4[] memory controls_ = _controlSelectors();
         for (uint256 i; i < controls_.length; ++i) {

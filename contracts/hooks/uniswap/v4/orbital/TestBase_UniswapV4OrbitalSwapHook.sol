@@ -40,6 +40,9 @@ import {
     IUniswapV4OrbitalSwapHookPackage
 } from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookPackage.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     UniswapV4OrbitalSwapHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHook_FactoryService.sol";
 import {
@@ -126,11 +129,11 @@ abstract contract TestBase_UniswapV4OrbitalSwapHook is TestBase_VaultComponents 
 
         IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
-        // Product path only: package postDeploy must ensure three doors (no setUp re-ensure).
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         orbital = IUniswapV4OrbitalSwapHook(hook);
 
-        // Pure key construction for tests — does NOT call initialize (postDeploy already did).
+        // Pure key construction for tests — does NOT call initialize (S42 public ABI already did).
         int24 spacing = 60;
         poolKey01 = PairPoolLib.pairKey(address(token0), address(token1), spacing, IHooks(hook));
         poolKey12 = PairPoolLib.pairKey(address(token1), address(token2), spacing, IHooks(hook));
@@ -227,14 +230,33 @@ abstract contract TestBase_UniswapV4OrbitalSwapHook is TestBase_VaultComponents 
         return PkgFactory.requiredFlags();
     }
 
-    /// @notice On-chain proof a pair door is live on PoolManager (postDeploy path).
+    /// @notice S42: three public door calls then finalize. Not PairPoolLib.ensureThreePairPools.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(address(token0), address(token1));
+        init.deployPair(address(token1), address(token2));
+        init.deployPair(address(token0), address(token2));
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice S43: deploy via package path without opening doors or finalizing.
+    function _deployBootstrapOnly(IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args)
+        internal
+        returns (address)
+    {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
+    /// @notice On-chain proof a pair door is live on PoolManager.
     function _assertPoolLive(PoolKey memory key) internal view {
         assertTrue(PairPoolLib.isPoolLive(pm, key), "pair door not initialized on PoolManager");
         assertEq(address(key.hooks), hook, "hooks must be product proxy");
         assertEq(key.fee, LPFeeLibrary.DYNAMIC_FEE_FLAG, "DYNAMIC_FEE");
     }
 
-    function _assertThreePoolsLiveFromPostDeploy() internal view {
+    function _assertThreeProductDoorsLive() internal view {
         _assertPoolLive(poolKey01);
         _assertPoolLive(poolKey12);
         _assertPoolLive(poolKey02);

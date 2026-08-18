@@ -187,8 +187,8 @@ BEFORE_INITIALIZE | BEFORE_ADD_LIQUIDITY | BEFORE_REMOVE_LIQUIDITY
 
 | # | Decision | Value |
 |---|----------|--------|
-| R30 | Outcome | After a successful product deploy flow, **all three** pair pools exist (or are ensured) with `hooks = proxy`, `fee = DYNAMIC_FEE_FLAG`, shared `tickSpacing` + `sqrtPriceX96` policy per product PRD |
-| R31 | Host | **Not** a separate CREATE3 product factory. Prefer one of (plan picks one; **default recommended A**): **(A)** package `postDeploy(proxy)` initializes three pools (needs tick/sqrt in `PkgArgs` or fixed product defaults); **(B)** typed package helper `deployVaultAndInitPools(args, mineNonce, tickSpacing, sqrtPriceX96)` that deploys then inits; **(C)** thin permissionless `ensurePairPools(hook)` library/helper callable by anyone after deploy |
+| R30 | Outcome | **Superseded by staged init.** After three `deployPair` calls + `finalizeInitialization`, all three product pair pools exist with `hooks = proxy`, `fee = DYNAMIC_FEE_FLAG`, shared tick/sqrt policy. **Not** after `deployVault` / `postDeploy` alone. See `UNISWAP_V4_ORBITAL_SWAP_HOOK_STAGED_INIT_PRD.md`. |
+| R31 | Host | **Superseded (R31-A void).** `pkg.postDeploy` inits **zero** pools. Each product door is a later `deployPair(tokenA, tokenB)` call; production ABI is installed by `finalizeInitialization`. See staged init PRD + `UNISWAP_V4_ORBITAL_SWAP_HOOK_STAGED_INIT_IMPLEMENTATION_AND_TEST_PLAN.md`. |
 | R32 | Pool init args in salt | **No** — tickSpacing / sqrtPriceX96 are **not** binding identity (R15). If needed for postDeploy, pass via `PkgArgs` for process/init only, or fixed defaults in package constants |
 | R33 | Idempotent ensure | Re-init of live pool reverts at PoolManager; helper must skip already-initialized doors (legacy factory behavior) |
 | R34 | Discovery | Prefer registry `vaultsOfPackage` / vault tokens; optional `hooksOfBinding` view may live on package or a thin indexer — **not** a CREATE3 factory |
@@ -263,9 +263,10 @@ Validation (processArgs / initAccount): non-zero addresses; distinct tokens; fee
 3. off-chain: processArgs → calcSalt → mine mineNonce for requiredHookFlags
 4. pkg.deployVault(args, mineNonce)
      → registry.deployHookVault → hook factory CREATE2 diamond
-     → initAccount binds Repo; postDeploy / helper ensures three pools
-5. Instance is vault + IHooks + LP ERC-20 at mined address
-6. Users addLiquidity / swap via pair doors as product PRD
+     → initAccount binds Repo; pkg.postDeploy returns true (zero inits)
+5. Caller: deployPair(t0,t1), deployPair(t1,t2), deployPair(t0,t2), then finalizeInitialization (staged init PRD)
+6. Instance then has production ABI (IHooks + LP ERC-20) at mined address
+7. Users addLiquidity / swap via pair doors as product PRD
 ```
 
 ---

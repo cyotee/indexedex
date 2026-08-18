@@ -16,7 +16,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4SingleStandardExchangeDETF {
     function test_gentle_pendingAccrues_afterSeed_withoutRealizeOnMint() public {
         // Open mode for mint path; Policy gentle instance for expansion pending checks.
-        address dPolicy = _deployDetfInstance(_gentleArgs());
+        address dPolicy = _deployDetfWired(_gentleArgs());
         _liveWithFirstBond(dPolicy, 400 ether);
         IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(dPolicy);
         info.compoundProtocolRewards();
@@ -31,7 +31,7 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
         }
 
         // Mint path on Open instance so Policy gate does not block; clock on Open is separate.
-        address dOpen = _deployDetfInstance(_openArgs());
+        address dOpen = _deployDetfWired(_openArgs());
         _liveWithFirstBond(dOpen, 400 ether);
         IUniswapV4SingleStandardExchangeDETF openInfo = IUniswapV4SingleStandardExchangeDETF(dOpen);
         openInfo.compoundProtocolRewards();
@@ -43,7 +43,7 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
     }
 
     function test_launchRich_resolves_and_realizes_on_bond() public {
-        address d = _deployDetfInstance(_launchRichArgs());
+        address d = _deployDetfWired(_launchRichArgs());
         assertEq(IUniswapV4SingleStandardExchangeDETF(d).expansionClosureRatePerYearWad(), 4.4e18);
         _liveWithFirstBond(d, 400 ether);
 
@@ -57,7 +57,7 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
     }
 
     function test_open_never_expands() public {
-        address d = _deployDetfInstance(_openArgs());
+        address d = _deployDetfWired(_openArgs());
         _liveWithFirstBond(d, 400 ether);
         IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Open));
@@ -81,7 +81,7 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
 
     function test_compound_raises_protocolLp_when_pending_rewards() public {
         // Seed live + give protocol NFT share weight via sell, then force inventory seigniorage.
-        address d = _deployDetfInstance(_openArgs());
+        address d = _deployDetfWired(_openArgs());
         _liveWithFirstBond(d, 400 ether);
         IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(d);
         address claim = info.rebasingClaimToken();

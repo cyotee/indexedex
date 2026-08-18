@@ -36,6 +36,7 @@ contract ResearchFixture_OrbitalHook is TestBase_UniswapV4OrbitalSwapHook {
     }
 
     function bootstrapResearch() public {
+        // Gold setUp deploys then `_ensureProductDoorsAndFinalize` (S42). Do not re-implement doors.
         TestBase_UniswapV4OrbitalSwapHook.setUp();
     }
 

@@ -55,6 +55,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_B6_Test is
             _argsWithSE(true, true, true);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         hook = h;
         orbital = IUniswapV4StandardExchangeOrbitalBufferHook(h);
 
@@ -144,6 +145,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_B6_Test is
             _argsWithSE(true, true, true);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         orbital = IUniswapV4StandardExchangeOrbitalBufferHook(hook);
 
         uint256 s0 = _mintSeSharesToUser(se0, token0, 80 ether);

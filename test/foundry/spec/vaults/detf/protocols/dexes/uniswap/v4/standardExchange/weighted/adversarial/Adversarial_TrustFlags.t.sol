@@ -63,7 +63,7 @@ contract Adversarial_Weighted_TrustFlags is TestBase_UniswapV4StandardExchangeWe
     }
 
     function _openLive() internal returns (address instance_, address p0_) {
-        instance_ = _deployDetfInstance(_openArgsUnique("iFlags"));
+        instance_ = _deployDetfWired(_openArgsUnique("iFlags"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         p0_ = info_.pairToken(0);
         uint256[] memory amts = new uint256[](1);

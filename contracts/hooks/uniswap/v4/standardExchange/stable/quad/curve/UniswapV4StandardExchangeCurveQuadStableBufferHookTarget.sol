@@ -6,6 +6,9 @@ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IRateProvider} from
@@ -205,10 +208,23 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
 
     function ensurePairPools() external returns (uint256 doorsEnsured) {
         Repo.Layout storage l = Repo._layout();
-        doorsEnsured = PairPoolLib.ensureAllPairPools(
-            IPoolManager(l.poolManager), address(this), l.tokens, 0
+        IPoolManager pm = IPoolManager(l.poolManager);
+        uint160 price = TickMath.getSqrtPriceAtTick(0);
+        IHooks h = IHooks(address(this));
+        for (uint256 i; i < Repo.N_TOKENS; ++i) {
+            for (uint256 j = i + 1; j < Repo.N_TOKENS; ++j) {
+                PoolKey memory key =
+                    PairPoolLib.pairKey(l.tokens[i], l.tokens[j], Repo.TICK_SPACING, h);
+                if (PairPoolLib.initIfNeeded(pm, key, price)) {
+                    unchecked {
+                        ++doorsEnsured;
+                    }
+                }
+            }
+        }
+        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.PairPoolsEnsured(
+            address(this), doorsEnsured
         );
-        emit IUniswapV4StandardExchangeCurveQuadStableBufferHook.PairPoolsEnsured(address(this), doorsEnsured);
     }
 
     /* ---------------------------------------------------------------------- */

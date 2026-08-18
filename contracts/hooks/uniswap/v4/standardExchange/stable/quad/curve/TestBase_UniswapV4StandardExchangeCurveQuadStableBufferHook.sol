@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -46,11 +47,15 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 
 /**
  * @title TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook
- * @notice Package path: ERC-4626 SE + hook factory + registry deployHookVault.
+ * @notice Package path: ERC-4626 SE + hook factory + registry deployHookVault + staged six doors.
  * @dev Default: 4 tokens, SE on leg 0, baseAmp=100 (A'=10000). Matrix helpers for 1–4 SE.
+ *      setUp opens six product doors via deployPair then finalizeInitialization (F6).
  */
 abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is TestBase_ERC4626StandardExchange {
     using BetterEfficientHashLib for bytes;
@@ -169,9 +174,49 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         internal
     {
         hook = DeployLib.deployHookInstance(hookFactory, hookPkg, args);
+        if (
+            IDiamondLoupe(hook).facetAddress(IUniswapV4HookStagedPairInit.deployPair.selector)
+                != address(0)
+        ) {
+            _ensureProductDoorsAndFinalize(
+                hook, args.tokens[0], args.tokens[1], args.tokens[2], args.tokens[3]
+            );
+        }
         quad = IUniswapV4StandardExchangeCurveQuadStableBufferHook(hook);
         weighted = quad;
         poolKey01 = PairPoolLib.pairKey(args.tokens[0], args.tokens[1], 1, IHooks(hook));
+    }
+
+    /// @notice Deploy via package path without opening doors or finalizing (S43).
+    function _deployBootstrapOnly(
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory args
+    ) internal returns (address) {
+        return DeployLib.deployHookInstance(hookFactory, hookPkg, args);
+    }
+
+    /// @notice Open the six unordered product pairs then finalize. Not PairPoolLib.ensureAllPairPools.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        _ensureProductDoorsAndFinalize(
+            hook_, address(token0), address(token1), address(token2), address(token3)
+        );
+    }
+
+    function _ensureProductDoorsAndFinalize(
+        address hook_,
+        address token0_,
+        address token1_,
+        address token2_,
+        address token3_
+    ) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(token0_, token1_);
+        init.deployPair(token0_, token2_);
+        init.deployPair(token0_, token3_);
+        init.deployPair(token1_, token2_);
+        init.deployPair(token1_, token3_);
+        init.deployPair(token2_, token3_);
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
     }
 
     /// @notice Default: 4 tokens, SE on token0, baseAmp=100.

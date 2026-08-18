@@ -316,6 +316,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             _argsWithSE(false, true, false); // buffer token1 only
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         IUniswapV4StandardExchangeOrbitalBufferHook o = IUniswapV4StandardExchangeOrbitalBufferHook(h);
 
         token0.mint(user, 500 ether);
@@ -391,6 +392,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         // Factory package is already deployed; deployHook with pm2
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h, address(t0), address(t1), address(hostile));
         IUniswapV4StandardExchangeOrbitalBufferHook o = IUniswapV4StandardExchangeOrbitalBufferHook(h);
 
         t0.mint(user, 1_000_000 ether);

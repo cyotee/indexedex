@@ -93,7 +93,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_AdversarialTest is TestBase_Uniswa
         args.standardExchange1 = IStandardExchangeProxy(address(0));
         args.thresholdMode = ThresholdMode.Open;
 
-        hostileDetf = _deployDetfInstance(args);
+        hostileDetf = _deployDetfWired(args);
         hostileDetfInfo = IUniswapV4StandardExchangeOrbitalDETF(hostileDetf);
         hostileDetfX = IStandardExchangeIn(hostileDetf);
 
@@ -168,7 +168,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_AdversarialTest is TestBase_Uniswa
 
     function test_emptyProtocolLp_burn_reverts() public {
         // Fresh Open instance: first bond only -> protocol LP empty.
-        address d2 = _deployDetfInstance(_openArgs());
+        address d2 = _deployDetfWired(_openArgs());
         IUniswapV4StandardExchangeOrbitalDETF info2 = IUniswapV4StandardExchangeOrbitalDETF(d2);
         IStandardExchangeIn ex2 = IStandardExchangeIn(d2);
         address p0 = info2.pairToken0();

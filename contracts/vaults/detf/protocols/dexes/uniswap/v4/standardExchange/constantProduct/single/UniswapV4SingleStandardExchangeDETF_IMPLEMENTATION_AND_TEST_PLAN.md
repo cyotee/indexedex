@@ -102,12 +102,10 @@ Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../../UNISWAP_V4
 IndexedexManager / Vault Registry
   └── UniswapV4SingleStandardExchangeDETFDFPkg
         postDeploy:
-          - deploy/bind reserve hook (create3 FactoryService + HookMiner)
-          - poolManager.initialize(sort(DETF, pair), fee=0, hooks=hook)  // plumbing sqrtPrice only
-          - deploy bond NFT package (owner=DETF)
-          - deploy rebasing claim package (owner=DETF; holds protocol LP)
-          - store PkgArgs: SE, pair, creation rate, thresholds, expansion epochs/R, refs
+          - deploy/bind reserve hook (bootstrap only; no deployPair / finalize)
+          - store PkgArgs: SE, pair, creation rate, thresholds, expansion epochs/R, child pkg addrs
           - validate pair ∈ SE.tokens(); DETF ∉ SE.tokens()
+          - children + door/finalize are NOT here (staged-init PRD: productTokensCp + two wiring fns)
 
 Facets (CREATE3): Info / ExchangeIn / ExchangeOut / Bonding / (Claim surface as needed)
 Diamond instance = detfToken ERC-20 (immutable / unowned after deploy)
@@ -344,7 +342,7 @@ Launch-rich templates set explicit `R` (e.g. `4.4e18` for ~1y walk from S≈5) �
 | 1.1 | Interfaces with **`PkgInit` / `PkgArgs` on interface** | Compiles |
 | 1.2 | Repo + Common stubs | Compiles |
 | 1.3 | Facets + FactoryService deploy paths (CREATE3) | Facet registry labels |
-| 1.4 | DFPkg + manager `deploy*DFPkg` + `postDeploy` wiring (hook, pool init plumbing, children) | Inert instance deployable |
+| 1.4 | DFPkg + manager `deploy*DFPkg` + `postDeploy` (bootstrap hook only) | Inert unwired instance; TestBase `setUp` uses `ensureReserveReadyCp` |
 | 1.5 | TestBase: `CraneTest` → `IndexedexTest` → … → deploy DFPkg | `test_deploy_inert` green |
 
 ### Phase 2 — First bond → live
@@ -544,10 +542,10 @@ FOUNDRY_PROFILE=uv4_single_se_cp_detf_fork forge test \
 |------|-------------------|---------|-----|
 | **Physical LP custody** | Protocol LP on rebasing; user bond LP on bond NFT | **Shipped** | `transferHeldToken` on claim + bond NFT; mint/compound → claim; bond join → bond NFT; sell migrates NFT→claim; burn/redeem/claimLiquidity pull then withdraw |
 | **convertToAssets** | NFT convert used diamond `reserveOfToken` only | **Updated** | Prefer NFT `balanceOf`; exclude protocol NFT effective shares when LP is physically on NFT (protocol LP on claim) |
-| **Fee-recipient NFT** | Soft try/catch → 0 if bond terms missing | **Still soft at deploy** | postDeploy still try/catch (no hard revert if feeTo/terms missing). **TestBase sets `setDefaultBondTerms` before first deploy** and hermetic asserts `feeRecipientNftId() != 0` |
+| **Fee-recipient NFT** | Soft try/catch → 0 if bond terms missing | **Soft in `completeReserveBondNft`** | Wiring still try/catch (no hard revert if feeTo/terms missing). **TestBase sets `setDefaultBondTerms` before first deploy**; `setUp` uses `ensureReserveReadyCp`; hermetic asserts `feeRecipientNftId() != 0` after wiring |
 | **Foundry profile** | Default monorepo build | **`uv4_single_se_cp_detf`** | Default profile has pre-existing stack-too-deep elsewhere; dedicated profile for this family |
 | **Fork (6.1)** | Required DoD | **Shipped** | Base fork via `base_mainnet_alchemy` + production DFPkg path; Open mint after first bond (preview==exec). Profile `uv4_single_se_cp_detf_fork` (hermetic profile test path is hermetic-only) |
-| **Bond NFT path** | Plan mentioned `uniswap/v4/common/nft/` | Uses shared `detf/common/bondNft` + claim packages | Same packages as peers; Uni family wires via DFPkg postDeploy |
+| **Bond NFT path** | Plan mentioned `uniswap/v4/common/nft/` | Uses shared `detf/common/bondNft` + claim packages | Same packages as peers; instance `completeReserveBondNft` then `completeReserveClaim` after hook finalize; TestBase `setUp` uses `ensureReserveReadyCp` |
 | **Policy price test** | Real trades for both regimes | **Shipped** | Pair single-sided deposit raises synthetic; free seigniorage + external DETF deposit skew lowers it; Open is not used as sole mint/burn proof |
 | **Phase 7 product LOCK** | Product sign-off | **Not implementor** | Shared-program pointer added under `docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`; PRD remains unstamped until product role |
 

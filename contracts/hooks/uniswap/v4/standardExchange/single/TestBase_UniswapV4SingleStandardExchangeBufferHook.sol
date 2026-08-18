@@ -31,7 +31,11 @@ import {
 } from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
@@ -125,7 +129,9 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
         IUniswapV4SingleStandardExchangeBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         buffer = IHook(hook);
+        _bindProductPoolKey();
 
         // Fund user
         pairToken.mint(user, 1_000_000 ether);
@@ -227,7 +233,34 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
         vm.stopPrank();
     }
 
-    function _initPool() internal {
+    /// @notice S42: one wrap-aware product door then finalize. Not pm.initialize.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        _ensureProductDoorsAndFinalize(hook_, address(pairToken), se);
+    }
+
+    function _ensureProductDoorsAndFinalize(address hook_, address tokenA_, address tokenB_)
+        internal
+    {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(tokenA_, tokenB_);
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice S43: deploy via package path without opening the door or finalizing.
+    function _deployBootstrapOnly(
+        IUniswapV4SingleStandardExchangeBufferHookPackage.PkgArgs memory args
+    ) internal returns (address) {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
+    function _registry() internal view returns (IVaultRegistryVaultQuery) {
+        return IVaultRegistryVaultQuery(address(indexedexManager));
+    }
+
+    /// @notice Construct the product PoolKey. Door is already live after S42; do not initialize.
+    function _bindProductPoolKey() internal {
         poolKey = PoolKey({
             currency0: Currency.wrap(buffer.currency0()),
             currency1: Currency.wrap(buffer.currency1()),
@@ -235,7 +268,11 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
             tickSpacing: buffer.tickSpacingHint(),
             hooks: IHooks(hook)
         });
-        pm.initialize(poolKey, buffer.sqrtPriceX96Hint());
+    }
+
+    /// @dev Kept for existing specs. Constructs the live product key; does not initialize.
+    function _initPool() internal {
+        _bindProductPoolKey();
     }
 
     function _isWrapZFO() internal view returns (bool) {

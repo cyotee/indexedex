@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -59,9 +60,13 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
     function LIQUIDITY_FACET() external view returns (IFacet);
+    function EXIT_FACET() external view returns (IFacet);
     function SE_FACET() external view returns (IFacet);
     function HOOKS_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);
+
+    /// @notice Production Add list applied by finalizeInitialization. Not used at initAccount.
+    function productionFacetCuts() external view returns (IDiamond.FacetCut[] memory);
 
     /// @notice Product path: package → Vault Registry.deployHookVault → hook factory.
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

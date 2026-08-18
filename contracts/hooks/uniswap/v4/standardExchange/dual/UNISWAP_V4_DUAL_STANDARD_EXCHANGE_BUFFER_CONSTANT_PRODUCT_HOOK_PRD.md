@@ -77,7 +77,7 @@ Ship a **production-first Uniswap V4 hook package** that:
 7. Supports **two deposit entry paths** (both in v1 DoD):
    - **Proportional (dual-asset)** — both pair tokens; Uni V2-style ratio add (clamp + refund excess).
    - **Single-asset** — one pair token via **internal zap-in** (swap portion for the other leg, then proportional add). Depositor **accepts** CP price impact and SE costs of the zap; no separate single-sided LP position or value guarantee beyond fair rebalance + add.
-8. Deploys via existing `create3Factory` + mined hook flags + FactoryService; **does not** create the V4 pool as a package step (integrator initializes pools that reference the hook).
+8. Deploys via hook diamond package → Vault Registry `deployHookVault` → shared hook CREATE2 factory. `deployVault` leaves a bootstrap diamond (vault pair + package-as-init). The product door is later `deployPair(tokenA, tokenB)` for the bound pair (`fee = 0`); production ABI (hooks / deposit / withdraw / SE / ERC-20) is installed by `finalizeInitialization`. See staged init PRD.
 
 ### 1.1 Canonical user story (WETH SE + USDC SE)
 
@@ -304,7 +304,7 @@ These close gaps that blocked a clean implementation plan and caused premature c
 |----|--------|--------------|
 | C11 | Authority for implementors | After rewrite: **implementation plan is SoT for coding**. This PRD is product law used to write that plan |
 | C12 | Plan rewrite | Another agent rewrites the plan after PRD acceptance. This session does not rewrite the plan |
-| C13 | Deposit vs pool init | **Deposit / withdraw / previews do not require** V4 `initialize`. **Swaps** require initialized pool + live claims. **V4 `initialize` does not require liquidity** (only sets sqrtPrice plumbing; product LP is via hook `deposit`, not `modifyLiquidity`) |
+| C13 | Deposit vs pool init | **Superseded by staged init.** Production `deposit` / `withdraw` exist only after `finalizeInitialization`, which requires the product PoolKey live. **Swaps** still require that initialized pool + live claims. **V4 `initialize` does not require liquidity** (only sets sqrtPrice plumbing; product LP is via hook `deposit`, not `modifyLiquidity`) |
 | C14 | Live check basis | **Live** ⇔ `claimSupplyCurrency0() > 0 && claimSupplyCurrency1() > 0` (pool-order claims). **Zap-eligible** is stricter (D79): live **and** `totalSupply > MINIMUM_LIQUIDITY` |
 | C15 | SE I/O matrix | **§4.5** — buffer `exchangeIn(pair→SE)`; withdraw unwrap `exchangeIn(SE→pair)`; swap-out unwrap `exchangeOut(SE→pair)` |
 | C16 | SE minOut / maxIn | **Tight = preview**. Under-delivery → revert (no partial fill) |
@@ -1075,17 +1075,16 @@ event ZapSwap(
 ```text
 0. Ensure generic ERC-4626 SE package routes are complete (D60 / single-hook §6.0)
 1. Deploy two ERC-4626 SE vaults (test tokens in hermetic DoD) with pair tokens in vaultTokens
-2. deployHook(create3Factory, poolManager, feeOracle, se0, token0, se1, token1, namespace)
-3. Integrator may initialize V4 pool anytime (no liquidity required for initialize — C13):
-     - currencies = sort(token0, token1)
-     - fee = 0  (V4 pool fee; product CP fee is D29 0.3% inside hook quotes)
-     - hooks = hook
-     - sqrtPriceX96 + tickSpacing = PoolManager plumbing only
+2. pkg.deployVault(args, mineNonce) → registered bootstrap diamond (vault pair + package-as-init)
+3. Product door then production ABI (staged init PRD):
+     - deployPair(tokenA, tokenB) for the bound pair (either order; currencies address-sorted, fee=0, hooks=hook)
+     - or raw PoolManager.initialize of that product PoolKey
      - tests: tickSpacing=60, 1:1 mid
-     - second initialize against same hook → revert (D69)
-4. First LP: deposit(amount0, amount1, ...) both non-zero
+     - extra tick/fee keys are not the product door; second product-key initialize → AlreadyInitialized (D69)
+     - finalizeInitialization Adds the production ABI
+4. First LP: deposit(amount0, amount1, ...) both non-zero (production ABI after finalize)
      → D57 no-op (kLast==0) → buffer both → re-preview claims → mint LP → set kLast if fee-on
-   (allowed before pool init; swaps need init + live)
+   (swaps need live claims)
 5. Further LPs: deposit and/or depositSingle when zap-eligible (D79; zap with 0.3% claim-in internal swap — D78); ERC-20 or Permit2
    (fee-on: protocol LP from pre-buffer k growth → buffer/zap → user mint → kLast post-op)
    After full user exit (only MINIMUM_LIQUIDITY left): deposit only — depositSingle reverts
@@ -1101,7 +1100,7 @@ event ZapSwap(
 1. Real hook (FactoryService + mine), real PoolManager, **two ERC-4626 SE vaults with test tokens** (C27, D60), real Permit2 at well-known address, real **Vault Fee Oracle** — no mock SUT.  
 2. **Hermetic suite** — cover at least:  
    - deploy validation (D5–D7; feeOracle non-zero)  
-   - init pair/fee; **second initialize reverts** (D69); addLiquidity reverts; C6 init convention  
+   - product door via `deployPair` then finalize; **second product-key initialize reverts** (D69); addLiquidity reverts; C6 init convention  
    - first proportional dual deposit; MINIMUM_LIQUIDITY to `address(0)`  
    - first mint reverts if geometric LP &lt; MINIMUM_LIQUIDITY  
    - subsequent proportional: clamp + refund to `msg.sender`; preview == execution  

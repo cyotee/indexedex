@@ -34,6 +34,9 @@ import {
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib as PullLib
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
@@ -387,15 +390,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        Repo.Layout storage l = Repo._layout();
-        if (l.poolInitialized) revert AlreadyInitialized();
-        address a = Currency.unwrap(poolKey.currency0);
-        address b = Currency.unwrap(poolKey.currency1);
-        if (!(a == l.currency0 && b == l.currency1)) revert InvalidPoolToken();
-        if (poolKey.fee != 0) revert InvalidPoolFee();
-        l.poolInitialized = true;
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
     function afterInitialize(address, PoolKey calldata, uint160, int24)

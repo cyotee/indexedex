@@ -46,7 +46,7 @@ contract Adversarial_UniswapV4SingleSE_CP_TrustFlag_Test is TestBase_UniswapV4Si
     }
 
     function _openLiveOpenThreshold() internal returns (address instance_) {
-        instance_ = _deployDetfInstance(_openArgs());
+        instance_ = _deployDetfWired(_openArgs());
         pairToken.mint(aliceAdv, 5_000_000 ether);
         vm.startPrank(aliceAdv);
         pairToken.approve(instance_, type(uint256).max);

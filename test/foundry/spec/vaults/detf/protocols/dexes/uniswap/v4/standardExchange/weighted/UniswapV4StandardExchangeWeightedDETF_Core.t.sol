@@ -109,7 +109,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     function test_firstBond_allExternals_setsLive_andRefundsExcess() public {
         // n=3 with unequal capital: min detfFrom sizes join; excess pair0 refunded.
-        address d = _deployDetfInstance(_argsN3_1SeBare());
+        address d = _deployDetfWired(_argsN3_1SeBare());
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         address p1 = info.pairToken(1);
@@ -150,7 +150,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     function test_firstBond_missingExternal_reverts() public {
         // n=3 needs both externals
-        address d = _deployDetfInstance(_argsN3_1SeBare());
+        address d = _deployDetfWired(_argsN3_1SeBare());
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         address p1 = info.pairToken(1);
@@ -197,7 +197,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
         // Open-mode instance for ungated mint under default thresholds may block mint
         // if synthetic not > mintThreshold. Use Open deploy for mint path proof.
-        address d = _deployDetfInstance(_openArgsUnique("mint"));
+        address d = _deployDetfWired(_openArgsUnique("mint"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -222,7 +222,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         // After first bond only, protocol LP may be empty → burn reverts ProtocolLpEmpty / EmptyProtocolLp.
         _firstBondDefault(BOND_AMT);
         // Mint free DETF to user via Open instance so we have free DETF to burn.
-        address d = _deployDetfInstance(_openArgsUnique("burn"));
+        address d = _deployDetfWired(_openArgsUnique("burn"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -248,7 +248,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_burn_tokenOutDetf_reverts() public {
-        address d = _deployDetfInstance(_openArgsUnique("badOut"));
+        address d = _deployDetfWired(_openArgsUnique("badOut"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -282,7 +282,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_laterBond_multiExternal_reverts() public {
-        address d = _deployDetfInstance(_argsN3_1SeBare());
+        address d = _deployDetfWired(_argsN3_1SeBare());
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         address p1 = info.pairToken(1);
@@ -341,7 +341,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     /* ---------------------------------------------------------------------- */
 
     function test_n3_1SeBare_firstBondAndMint() public {
-        address d = _deployDetfInstance(_argsN3_1SeBare());
+        address d = _deployDetfWired(_argsN3_1SeBare());
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         assertEq(info.n(), 3);
         assertEq(info.m(), 2);
@@ -359,7 +359,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         o.name = "Open n3";
         o.symbol = "on3";
         o.thresholdMode = ThresholdMode.Open;
-        address d2 = _deployDetfInstance(o);
+        address d2 = _deployDetfWired(o);
         IUniswapV4StandardExchangeWeightedDETF info2 = IUniswapV4StandardExchangeWeightedDETF(d2);
         address q0 = info2.pairToken(0);
         address q1 = info2.pairToken(1);
@@ -375,7 +375,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_n3_allSe_firstBond() public {
-        address d = _deployDetfInstance(_argsN3_AllSe());
+        address d = _deployDetfWired(_argsN3_AllSe());
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](2);
@@ -397,7 +397,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_expansion_openNeverExpands() public {
-        address d = _deployDetfInstance(_openArgsUnique("exp"));
+        address d = _deployDetfWired(_openArgsUnique("exp"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -461,7 +461,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0
         });
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         assertEq(info.n(), 4);
         assertEq(info.m(), 3);
@@ -488,7 +488,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     /* ---------------------------------------------------------------------- */
 
     function test_policy_mint_blocked_then_allowed_after_push() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("polMint"));
+        address d = _deployDetfWired(_gentleArgsUnique("polMint"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
         address p0 = info.pairToken(0);
@@ -521,7 +521,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_policy_burn_allowed_when_synthetic_below_burnThreshold() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("polBurn"));
+        address d = _deployDetfWired(_gentleArgsUnique("polBurn"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -594,7 +594,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_depositClaim_pair_mintsClaim() public {
-        address d = _deployDetfInstance(_openArgsUnique("depCl"));
+        address d = _deployDetfWired(_openArgsUnique("depCl"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -619,7 +619,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_depositClaim_freeDetf_mintsClaim() public {
-        address d = _deployDetfInstance(_openArgsUnique("depDetf"));
+        address d = _deployDetfWired(_openArgsUnique("depDetf"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -641,7 +641,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_redeemClaim_toPair_and_detfOut_reverts() public {
-        address d = _deployDetfInstance(_openArgsUnique("redCl"));
+        address d = _deployDetfWired(_openArgsUnique("redCl"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -678,7 +678,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     /// @notice depositClaim(vaultShare/SE) → settle to pair → depositSingle → mint claim.
     function test_depositClaim_vaultShare_mintsClaim() public {
-        address d = _deployDetfInstance(_openArgsUnique("depShare"));
+        address d = _deployDetfWired(_openArgsUnique("depShare"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         address se = info.standardExchange(0);
@@ -716,7 +716,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     /// @notice redeemClaim tokenOut = vaultShare/SE (prefer clean share path).
     function test_redeemClaim_toVaultShare() public {
-        address d = _deployDetfInstance(_openArgsUnique("redShare"));
+        address d = _deployDetfWired(_openArgsUnique("redShare"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         address se = info.standardExchange(0);
@@ -746,7 +746,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     /// @notice Claim deposit hard-reverts NotSingleAssetEligible when book is MIN-only (unlike compound skip).
     function test_depositClaim_reverts_NotSingleAssetEligible_when_not_fullBook() public {
-        address d = _deployDetfInstance(_openArgsUnique("notFull"));
+        address d = _deployDetfWired(_openArgsUnique("notFull"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -798,7 +798,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     /* ---------------------------------------------------------------------- */
 
     function test_policy_expansion_pending_gt_zero_and_realize_mints() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("expPol"));
+        address d = _deployDetfWired(_gentleArgsUnique("expPol"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
         address p0 = info.pairToken(0);
@@ -853,7 +853,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
     }
 
     function test_policy_expansion_notRich_atRealize_pendingZero() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("exp0"));
+        address d = _deployDetfWired(_gentleArgsUnique("exp0"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
         uint256[] memory amts = new uint256[](1);
@@ -926,7 +926,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         pairW_[6] = 1e18 - wSum;
         args.pairWeights = pairW_;
 
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         assertEq(info.n(), 8);
         assertEq(info.m(), 7);

@@ -65,7 +65,7 @@ Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../UNISWAP_V4_SE
 ### Goals (v1 DoD)
 
 1. Ship **true DETF** diamond + DFPkg under this path via **IndexedEx manager vault registry**.  
-2. From **`PkgArgs`**, deploy **one** Weighted SE Buffer Hook via registry **`deployHookVault`**: \(n \in [2,8]\) tokens (DETF raw self-leg at address-sorted index + \(m = n-1\) external pairs); **weights** (sum \(1\mathrm{e}18\), each \(\ge 1\%\)); **≥1** distinct SE on external legs; optional RPs on SE legs only; **all** \(\binom{n}{2}\) V4 doors in hook `postDeploy`.  
+2. From **`PkgArgs`**, deploy **one** Weighted SE Buffer Hook via registry **`deployHookVault`**: \(n \in [2,8]\) tokens (DETF raw self-leg at address-sorted index + \(m = n-1\) external pairs); **weights** (sum \(1\mathrm{e}18\), each \(\ge 1\%\)); **≥1** distinct SE on external legs; optional RPs on SE legs only. Hook `postDeploy` does **not** init doors. Callers use `productTokensWeighted` + one TX per door + two DETF wiring fns. TestBase `setUp` uses `ensureReserveReadyWeighted`.  
 3. **Permissionless first bond** requiring **all** external pair legs at creation rates → full book → `isReserveLive`; **refund excess** external capital; **required** `capitalToken`; MINIMUM_LIQUIDITY edge.  
 4. **Primary mint** (live): rate capital → funded pair-leg units → seigniorage quote (**hook SoT**) / split → hook **`depositSingle(pair)`** → protocol LP; **Policy per-route debt-inclusive** mint gate; **no** expansion realize.  
 5. **Primary burn**: free DETF only → multipath/prop `removeLiquidity` (**normative**) → **redeposit returned DETF** (ladder) → residual consolidate → `tokenOut` pair; `lpOut = detfBurned * protocolLp / effectiveSupply`; usage fee **yes**; **`withdrawSingle` optional optimization only**; **no** expansion realize.  
@@ -135,9 +135,7 @@ IndexedexManager / Vault Registry
               rateProviders[n]: non-zero only if SE set
           - deployHookVault(Weighted SE Buffer Hook PkgArgs):
               tokens, weights, SEs, RPs, poolManager, feeOracle, mineNonce / salt
-          - hook postDeploy inits all C(n,2) V4 doors (DYNAMIC_FEE_FLAG, plumbing sqrtPrice)
-          - deploy shared bond NFT package (owner=DETF; requireMatureForSell=true if flag exists)
-          - deploy shared rebasing claim package (owner=DETF; holds protocol LP)
+          - hook postDeploy does not init doors; scripts use productTokensWeighted + one TX per door + two wiring fns; TestBase setUp uses ensureReserveReadyWeighted
           - store PkgArgs: pairTokens (product order), creation rates (m), binding maps,
             thresholds, expansion, detfBindingIndex, reserveHook, refs
           - validate (PRD §11):
@@ -145,6 +143,8 @@ IndexedexManager / Vault Registry
               RP only with SE; pair ∈ SE.tokens() when SE set; DETF ∉ SE.tokens();
               all creation rates > 0; weights sum 1e18 each ≥1%; no FoT/rebasing pairs;
               NO whole-DETF rateAsset field
+        after hook finalize (not postDeploy):
+          - completeReserveBondNft then completeReserveClaim (owner=DETF; requireMatureForSell=true if flag exists; claim holds protocol LP)
 
 Facets (CREATE3): Info / ExchangeIn / ExchangeOut / Bonding / Claim / (Compound on Info or Bonding)
 Diamond instance = detfToken ERC-20 (immutable / unowned after deploy)
@@ -649,7 +649,7 @@ Launch-rich templates set explicit `R` (e.g. `4.4e18`) — copy CP UniV4 DETF §
 | Phase | Deliverable | Exit criteria |
 |-------|-------------|---------------|
 | **0** | Hook ABI freeze / hermetic green; shared nft+rebasing LP principal + capitalToken + mature flag design | G0–G4 ready; consumption checklist filled with real selectors |
-| **1** | Interfaces + Repo + DFPkg postDeploy + facet stubs + FactoryServices | Deploy inert diamond; hook bound; all doors exist; validations reject bad PkgArgs |
+| **1** | Interfaces + Repo + DFPkg postDeploy + facet stubs + FactoryServices | Deploy inert diamond; bootstrap hook only; doors via `productTokensWeighted` + wiring; validations reject bad PkgArgs |
 | **2** | First bond (all externals, refund, capitalToken, full book) → live | §4.7 tests green |
 | **3** | Common: WAD scale, capital rating, **hook-SoT quote**, whole-reserve FD, per-route gates, residual | Preview == execution unit rows |
 | **4** | Primary mint + seigniorage split | Any pair face/share/SE; Policy/Open; pair-face on buffered |

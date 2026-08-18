@@ -71,7 +71,7 @@ contract UniswapV4StandardExchangeWeightedDETFInfoFacet is IFacet, UniswapV4Stan
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](21);
+        f = new bytes4[](23);
         f[0] = IUniswapV4StandardExchangeWeightedDETF.syntheticSpotVs.selector;
         f[1] = IUniswapV4StandardExchangeWeightedDETF.pendingExpansionDetf.selector;
         f[2] = IUniswapV4StandardExchangeWeightedDETF.mintThreshold.selector;
@@ -93,5 +93,7 @@ contract UniswapV4StandardExchangeWeightedDETFInfoFacet is IFacet, UniswapV4Stan
         f[18] = IUniswapV4StandardExchangeWeightedDETF.protocolLp.selector;
         f[19] = IUniswapV4StandardExchangeWeightedDETF.userBondedLp.selector;
         f[20] = IUniswapV4StandardExchangeWeightedDETF.capitalTokenOf.selector;
+        f[21] = IUniswapV4StandardExchangeWeightedDETF.isReserveHookFinalized.selector;
+        f[22] = IUniswapV4StandardExchangeWeightedDETF.isReserveWired.selector;
     }
 }

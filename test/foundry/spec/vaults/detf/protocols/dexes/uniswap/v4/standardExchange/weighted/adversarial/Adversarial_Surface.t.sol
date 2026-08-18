@@ -70,7 +70,7 @@ contract Adversarial_Weighted_Surface is TestBase_UniswapV4StandardExchangeWeigh
     }
 
     function test_J3_proxySmoke_loupeRoutedCalls() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("j3"));
+        address instance_ = _deployDetfWired(_openArgsUnique("j3"));
         IUniswapV4StandardExchangeWeightedDETF info_ = IUniswapV4StandardExchangeWeightedDETF(instance_);
         address p0_ = info_.pairToken(0);
         uint256[] memory amts = new uint256[](1);

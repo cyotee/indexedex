@@ -299,6 +299,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hHook, address(hostile), address(pairToken));
         IHook h = IHook(hHook);
 
         address alice = address(0xA11CE);

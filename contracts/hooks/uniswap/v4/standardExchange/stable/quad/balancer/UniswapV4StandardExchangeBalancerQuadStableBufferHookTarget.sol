@@ -200,14 +200,6 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         return PairPoolLib.pairDoorCount();
     }
 
-    function ensurePairPools() external returns (uint256 doorsEnsured) {
-        Repo.Layout storage l = Repo._layout();
-        doorsEnsured = PairPoolLib.ensureAllPairPools(
-            IPoolManager(l.poolManager), address(this), l.tokens, 0
-        );
-        emit IUniswapV4StandardExchangeBalancerQuadStableBufferHook.PairPoolsEnsured(address(this), doorsEnsured);
-    }
-
     /* ---------------------------------------------------------------------- */
     /*                              internal book                             */
     /* ---------------------------------------------------------------------- */

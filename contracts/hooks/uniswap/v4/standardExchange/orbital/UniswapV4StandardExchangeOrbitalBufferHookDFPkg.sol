@@ -10,8 +10,8 @@ import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
+import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -29,22 +29,20 @@ import {
     UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
 import {
-    UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
-import {
-    IUniswapV4StandardExchangeOrbitalBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+    UniswapV4StandardExchangeOrbitalBufferHookInitFacet
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookInitFacet.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
 
 /**
  * @title UniswapV4StandardExchangeOrbitalBufferHookDFPkg
- * @notice Hook diamond package: ERC20Permit LP + MultiAsset vault + SE orbital product facets.
+ * @notice Hook diamond package: vault pair + package-as-init at deploy; production facets at finalize.
  * @dev deployVault → registry.deployHookVault → hook CREATE2 factory. Salt excludes package address.
- *      postDeploy ensures three pair doors with DYNAMIC_FEE_FLAG.
+ *      postDeploy is a no-op. Product doors via deployPair; ABI via finalizeInitialization.
  */
 contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
+    UniswapV4StandardExchangeOrbitalBufferHookInitFacet,
     IUniswapV4StandardExchangeOrbitalBufferHookPackage
 {
     using BetterEfficientHashLib for bytes;
@@ -122,7 +120,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         return type(UniswapV4StandardExchangeOrbitalBufferHookDFPkg).name;
     }
 
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+    function facetInterfaces()
+        public
+        pure
+        override(IDiamondFactoryPackage, UniswapV4StandardExchangeOrbitalBufferHookInitFacet)
+        returns (bytes4[] memory interfaces)
+    {
         interfaces = new bytes4[](9);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
@@ -136,16 +139,17 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](9);
-        facets[0] = address(ERC20_FACET);
-        facets[1] = address(ERC5267_FACET);
-        facets[2] = address(ERC2612_FACET);
-        facets[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
-        facets[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
-        facets[5] = address(HOOKS_FACET);
-        facets[6] = address(DEPOSIT_FACET);
-        facets[7] = address(WITHDRAW_FACET);
-        facets[8] = address(SE_FACET);
+        facets = new address[](10);
+        facets[0] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        facets[1] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
+        facets[2] = address(SELF);
+        facets[3] = address(HOOKS_FACET);
+        facets[4] = address(DEPOSIT_FACET);
+        facets[5] = address(WITHDRAW_FACET);
+        facets[6] = address(SE_FACET);
+        facets[7] = address(ERC20_FACET);
+        facets[8] = address(ERC5267_FACET);
+        facets[9] = address(ERC2612_FACET);
     }
 
     function packageMetadata()
@@ -159,52 +163,93 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](9);
+        cuts = new IDiamond.FacetCut[](3);
         cuts[0] = IDiamond.FacetCut({
-            facetAddress: address(ERC20_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC20_FACET.facetFuncs()
-        });
-        cuts[1] = IDiamond.FacetCut({
-            facetAddress: address(ERC5267_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC5267_FACET.facetFuncs()
-        });
-        cuts[2] = IDiamond.FacetCut({
-            facetAddress: address(ERC2612_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC2612_FACET.facetFuncs()
-        });
-        cuts[3] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
         });
-        cuts[4] = IDiamond.FacetCut({
+        cuts[1] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
-        cuts[5] = IDiamond.FacetCut({
+        cuts[2] = IDiamond.FacetCut({
+            facetAddress: address(SELF),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: facetFuncs()
+        });
+    }
+
+    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+        cuts = new IDiamond.FacetCut[](7);
+        cuts[0] = IDiamond.FacetCut({
             facetAddress: address(HOOKS_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: HOOKS_FACET.facetFuncs()
         });
-        cuts[6] = IDiamond.FacetCut({
+        cuts[1] = IDiamond.FacetCut({
             facetAddress: address(DEPOSIT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: DEPOSIT_FACET.facetFuncs()
         });
-        cuts[7] = IDiamond.FacetCut({
+        cuts[2] = IDiamond.FacetCut({
             facetAddress: address(WITHDRAW_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: WITHDRAW_FACET.facetFuncs()
         });
-        cuts[8] = IDiamond.FacetCut({
+        cuts[3] = IDiamond.FacetCut({
             facetAddress: address(SE_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: SE_FACET.facetFuncs()
         });
+        cuts[4] = IDiamond.FacetCut({
+            facetAddress: address(ERC20_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: ERC20_FACET.facetFuncs()
+        });
+        cuts[5] = IDiamond.FacetCut({
+            facetAddress: address(ERC5267_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: ERC5267_FACET.facetFuncs()
+        });
+        cuts[6] = IDiamond.FacetCut({
+            facetAddress: address(ERC2612_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: ERC2612_FACET.facetFuncs()
+        });
+    }
+
+    function finalizeInitialization() public override nonReentrant returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.initializationFinalized) revert InitializationAlreadyFinalized();
+        if (
+            !isPairPoolLive(l.token0, l.token1) || !isPairPoolLive(l.token1, l.token2)
+                || !isPairPoolLive(l.token0, l.token2)
+        ) {
+            revert ProductDoorsNotLive();
+        }
+
+        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](8);
+        cuts[0] = IDiamond.FacetCut({
+            facetAddress: address(SELF),
+            action: IDiamond.FacetCutAction.Remove,
+            functionSelectors: facetFuncs()
+        });
+        IDiamond.FacetCut[] memory adds = productionFacetCuts();
+        cuts[1] = adds[0];
+        cuts[2] = adds[1];
+        cuts[3] = adds[2];
+        cuts[4] = adds[3];
+        cuts[5] = adds[4];
+        cuts[6] = adds[5];
+        cuts[7] = adds[6];
+
+        ERC2535Repo._processFacetCuts(cuts);
+        emit IDiamond.DiamondCut(cuts, address(0), "");
+        emit InitializationFinalized(address(this));
+        l.initializationFinalized = true;
+        return true;
     }
 
     function diamondConfig() public view returns (IDiamondFactoryPackage.DiamondConfig memory config) {
@@ -300,18 +345,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         return string.concat("SEORB-", _safeSymbol(t0), "-", _safeSymbol(t1), "-", _safeSymbol(t2));
     }
 
-    function postDeploy(address proxy) public returns (bool) {
-        IUniswapV4StandardExchangeOrbitalBufferHook h =
-            IUniswapV4StandardExchangeOrbitalBufferHook(proxy);
-        PairPoolLib.ensureThreePairPools(
-            h.poolManager(),
-            proxy,
-            h.token0(),
-            h.token1(),
-            h.token2(),
-            h.pairPoolTickSpacing(),
-            h.pairPoolSqrtPriceX96()
-        );
+    /// @notice Zero PoolManager inits. Factory still calls this then freezes the proxy.
+    function postDeploy(address) public returns (bool) {
         return true;
     }
 

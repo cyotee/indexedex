@@ -60,7 +60,7 @@ contract Adversarial_CurveQuad_Surface is TestBase_UniswapV4StandardExchangeCurv
     }
 
     function test_J3_proxySmoke_loupeRoutedCalls() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("j3"));
+        address instance_ = _deployDetfWired(_openArgsUnique("j3"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         address p0_ = info_.pairToken(0);

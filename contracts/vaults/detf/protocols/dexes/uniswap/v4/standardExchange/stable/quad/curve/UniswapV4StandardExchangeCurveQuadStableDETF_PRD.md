@@ -90,7 +90,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 
 1. Ship DETF package under  
    `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/`.
-2. Wire **three** external pair tokens + **1–3** distinct backing SEs (≥1 required) + optional rate providers + **`baseAmp`** via **`PkgArgs` → hook package deploy** (create all six pair doors in hook postDeploy) + **one** Curve Quad Stable Buffer Hook with raw DETF self-leg.
+2. Wire **three** external pair tokens + **1–3** distinct backing SEs (≥1 required) + optional rate providers + **`baseAmp`** via **`PkgArgs` → hook package deploy** (bootstrap hook only; doors via `productTokensQuad` + one TX per pair) + **one** Curve Quad Stable Buffer Hook with raw DETF self-leg.
 3. Primary mint/burn + bond + **maturity** close and **post-maturity** sell→claim + direct claim paths (adapted to 4-leg StableSwap host).
 4. Deploy-time **creation rates** (one per external pair) for empty-reserve first join; synthetic + Policy/Open thereafter.
 5. Seigniorage inventory → bond reward ledger (**same split spirit as Balancer / CP / Orbital / Weighted UniV4 DETF**); protocol compound into reserve LP via single-sided DETF join (`depositSingle(DETF)`) when single-asset eligible.
@@ -790,7 +790,7 @@ Typed surface: `IUniswapV4StandardExchangeCurveQuadStableDETDFPkg.deployVault(Pk
    - optional rate providers (only with SE)
    - `baseAmp`
    - poolManager, feeOracle, mineNonce / salt fields
-4. Hook **postDeploy** initializes **all six** V4 pair doors (`DYNAMIC_FEE_FLAG`, plumbing sqrtPrice). Permissionless `ensurePairPools` is repair-only.
+4. Hook **postDeploy** does **not** init doors. Callers open the six product pairs on `IUniswapV4HookStagedPairInit` (`productTokensQuad`, one TX each), then finalize. Then `completeReserveBondNft` + `completeReserveClaim` on this `I*DETF`. TestBase `setUp` may use `ensureReserveReadyQuad`. SoT: staged-init PRD.
 5. Deploy **shared** bond NFT + rebasing packages (owner=DETF); rebasing is protocol LP holder; **`requireMatureForSell = true`**.
 6. Store creation rates (all three), thresholds, mode, expansion params, binding index of DETF, `baseAmp` (view passthrough to hook is enough). **No** `rateAsset` field.
 7. Validate: pairs distinct and ≠ DETF; DETF raw only; pair ∈ SE tokens when SE set; SEs distinct when set; RP only with SE; **≥1 SE set**; **all three creation rates `> 0`**; hook `baseAmp` in hook bounds; no FoT/rebasing pairs; decimals in hook [6, 18].

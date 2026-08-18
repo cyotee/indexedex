@@ -522,7 +522,7 @@ Pure ConstProdUtils unit grids are **optional** (PRD §9). Prefer pool-attached 
 7. Phase 0 ERC-4626 complete for dual legs (D60/D66/D73).  
 8. Hermetic §8.2 + Base fork + Robinhood 4663 fork green (D64/D74).  
 9. `forge build --sizes` acceptable for CREATE3 product.  
-10. NatSpec + integrator notes: deploy → (optional init) → dual bootstrap → LP → swap → withdraw; zap impact via previews.  
+10. NatSpec + integrator notes: deployVault → deployPair → finalizeInitialization → LP → swap → withdraw; zap impact via previews. See staged init plan.  
 
 ---
 

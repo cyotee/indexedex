@@ -37,7 +37,7 @@ contracts/hooks/uniswap/v4/stable/quad/curve/
 2. registry.deployPkg(quad DFPkg init)
 3. premine mineNonce (PRODUCT_ID + binding flags)
 4. pkg.deployVault(args, mineNonce) → deployHookVault → CREATE2 diamond
-5. postDeploy / ensurePairPools → six pair doors
+5. deployPair × 6 then finalizeInitialization → six pair doors + production ABI
 6. addLiquidity / zapIn / swaps
 ```
 

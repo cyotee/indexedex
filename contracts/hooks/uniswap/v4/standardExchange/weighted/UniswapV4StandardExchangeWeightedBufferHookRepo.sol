@@ -45,6 +45,7 @@ library UniswapV4StandardExchangeWeightedBufferHookRepo {
         uint8[] invDecimals;
         /// @dev Intentional raw face inventory for raw legs only (buffered legs stay 0).
         uint256[] rawReserves;
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

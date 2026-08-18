@@ -5,7 +5,7 @@ import {console2} from "forge-std/console2.sol";
 import {Stage_06_LeafDETFs} from "./Stage_06_LeafDETFs.sol";
 import {Script_06_LeafBase} from "./Script_06_LeafBase.sol";
 
-/// @notice TTNVDA-S: deployVault + first-bond + one sized D47 deposit.
+/// @notice TTNVDA-S: deployVault (bootstrap hook only) + door/finalize/wire + first-bond + one sized D47 deposit.
 contract Script_06a_NvdaS is Script_06_LeafBase {
     function run() external {
         _prepLeaves();

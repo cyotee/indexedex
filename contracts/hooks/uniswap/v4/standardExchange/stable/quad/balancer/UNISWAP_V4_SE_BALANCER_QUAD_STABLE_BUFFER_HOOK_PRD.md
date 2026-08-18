@@ -47,7 +47,7 @@ StableSwap AMM on four pair tokens with combinatorial V4 pair doors, **Balancer 
 | **D1** | Hard math = Crane/Balancer **`StableMath`** identity (`AMP_PRECISION=1e3`, `computeBalance`, favor-protocol rules as applicable). |
 | **D2** | Not classic Curve-100 pin for this product. |
 | **D3** | Hook Diamond Package + `deployHookVault` / flag-mined CREATE2. |
-| **D4** | \(n=4\), six pair doors, shared book. |
+| **D4** | \(n=4\), six pair doors, shared book. Product doors open via permissionless `deployPair` then `finalizeInitialization`. `postDeploy` is a no-op (does not init all six). |
 | **D5** | **≥1** SE vault leg required at bind (`seCount == 0` reverts). |
 | **D6** | Opacity: pool currencies = pair tokens only (never SE shares). |
 | **D7** | Buffer pack: buffer-last; free pair on SE legs not book; rate/claim growth may reprice; buffer reshuffle alone must not false-reprice. |
@@ -76,7 +76,7 @@ StableSwap AMM on four pair tokens with combinatorial V4 pair doors, **Balancer 
 3. ≥1 SE required; opacity holds.  
 4. B6: deposit and withdraw support pair **and** SE share for buffered legs (tests prove both).  
 5. Hook Diamond Package path green.  
-6. Six doors + shared book.  
+6. Six doors + shared book. Doors via `deployPair` × 6 then `finalizeInitialization`; not same-tx in `postDeploy`.  
 
 ---
 

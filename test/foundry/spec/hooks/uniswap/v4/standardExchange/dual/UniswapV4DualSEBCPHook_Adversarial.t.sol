@@ -120,6 +120,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         });
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = DualFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hHook, address(hostile), address(other));
         IDualHook h = IDualHook(hHook);
 
         address alice = makeAddr("alice");

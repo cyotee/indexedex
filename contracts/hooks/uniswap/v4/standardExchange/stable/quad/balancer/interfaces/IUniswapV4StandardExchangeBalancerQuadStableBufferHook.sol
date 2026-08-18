@@ -47,7 +47,6 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHook {
         uint256 protocolSharesMinted
     );
     event ProtocolFeeMinted(address indexed feeTo, uint256 shares);
-    event PairPoolsEnsured(address indexed hook, uint256 doorsEnsured);
 
     /* ------------------------------- Binding -------------------------------- */
 
@@ -84,7 +83,6 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHook {
 
     /* ----------------------------- Pair doors ------------------------------- */
 
-    function ensurePairPools() external returns (uint256 doorsEnsured);
     function pairDoorCount() external view returns (uint256);
 
     /* ------------------------------ Previews -------------------------------- */

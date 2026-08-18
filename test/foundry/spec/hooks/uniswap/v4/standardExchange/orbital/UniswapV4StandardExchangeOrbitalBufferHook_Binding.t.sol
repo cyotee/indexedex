@@ -48,6 +48,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
             _argsWithSE(true, true, false);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         (bool ok, bytes memory data) =
             h.staticcall(abi.encodeWithSignature("standardExchange(uint8)", uint8(1)));
         assertTrue(ok);
@@ -59,6 +60,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
             _argsWithSE(true, true, true);
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(h);
         for (uint8 i; i < 3; i++) {
             (bool ok, bytes memory data) =
                 h.staticcall(abi.encodeWithSignature("isBuffered(uint8)", i));

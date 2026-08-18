@@ -25,7 +25,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](38);
+        funcs = new bytes4[](37);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -60,10 +60,9 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
         funcs[31] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.feeTo.selector;
         funcs[32] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.kLast.selector;
         funcs[33] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.isFullBook.selector;
-        funcs[34] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.ensurePairPools.selector;
-        funcs[35] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.pairDoorCount.selector;
-        funcs[36] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactIn.selector;
-        funcs[37] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactOut.selector;
+        funcs[34] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.pairDoorCount.selector;
+        funcs[35] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactIn.selector;
+        funcs[36] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactOut.selector;
     }
 
     function facetMetadata()

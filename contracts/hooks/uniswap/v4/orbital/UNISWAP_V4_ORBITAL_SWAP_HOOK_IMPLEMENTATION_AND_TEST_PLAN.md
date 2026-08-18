@@ -44,7 +44,7 @@ Implement production-first package **`UniswapV4OrbitalSwapHook`** + permissionle
 
 1. Bind **three** ERC-20s + **PoolManager** + **feeOracle** (hook ctor immutables).  
 2. **Orbital sphere** single orbit: \((R-x)^2+(R-y)^2+(R-z)^2=L^2\) on **1e18** reserves; \(R\) set once on first LP (`max × 10`); \(L^2\) stored sphere parameter recomputed after state changes.  
-3. **Three V4 pair pools** as doors; factory **always initializes all three** with `DYNAMIC_FEE_FLAG` + `hooks = hook`.  
+3. **Three V4 pair pools** as doors; **staged** `deployPair` then `finalizeInitialization` (not same-tx in `deployVault` / `postDeploy`). See `UNISWAP_V4_ORBITAL_SWAP_HOOK_STAGED_INIT_IMPLEMENTATION_AND_TEST_PLAN.md`.  
 4. Hook holds **raw ERC-20** inventory; Repo reserves are SoT (ignore donations).  
 5. Fungible **ERC-20 LP** on same contract: decimals **18**, EIP-2612, auto `ORB-{s0}-{s1}-{s2}`, `MINIMUM_LIQUIDITY = 1000` to `address(0)`.  
 6. Custom **`addLiquidity` / `removeLiquidity`** only; native CL `modifyLiquidity` reverts.  
@@ -52,7 +52,7 @@ Implement production-first package **`UniswapV4OrbitalSwapHook`** + permissionle
 8. Protocol growth: Uni V2–style **`kLast` + dual mode** (`FullProduct` / `SumInterim`); mint LP to `feeTo` from **`usageFeeOfVault`**.  
 9. Partial book: prop min over maxed positive legs only; **sphere-NAV** shares (not sum-NAV); seed-only OK. Full book: three-leg Uni V2 only — **no zap**.  
 10. Previews **bit-exact** vs execution at same oracle reads.  
-11. **Permissionless factory:** CREATE3 (`deployer = factory`), user salt mined off-chain, **`effectiveSalt = keccak256(abi.encodePacked(salt, msg.sender))`**, init all three pools, **AddressSetRepo** binding→hooks.  
+11. **Permissionless factory:** hook diamond package → `deployVault` then three `deployPair` calls then `finalizeInitialization` (staged init PRD). CREATE2 mined address; **AddressSetRepo** binding→hooks is historical factory law, superseded by registry `vaultsOfPackage`.  
 12. Hermetic DoD + forks **Ethereum + Base + Robinhood 4663**.  
 
 **Out of scope (v1):** multi-orbit ticks; \(n>3\); SE buffer legs; Facet/DFPkg/diamond hook; CREATE2 instance deploy; on-chain salt mine loop; factory owner/pause; on-hook zap/`depositSingle`; FoT/rebasing; native ETH currency; vault registry `deployPkg` for instances; BaseHook inheritance.

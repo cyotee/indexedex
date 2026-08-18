@@ -21,7 +21,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_NestedPush_Test is TestBase_Uniswa
 
     function setUp() public override {
         super.setUp();
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4StandardExchangeOrbitalDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pair0 = detfInfo.pairToken0();

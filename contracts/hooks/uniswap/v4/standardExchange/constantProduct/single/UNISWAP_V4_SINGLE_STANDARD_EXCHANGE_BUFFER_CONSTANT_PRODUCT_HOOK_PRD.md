@@ -87,7 +87,7 @@ Ship a **production-first Uniswap V4 hook** that:
    - **Single-asset withdraw (zap-out)** — either currency once zap-eligible.
    - **Standard Exchange swap surface** (`IStandardExchangeIn` / `IStandardExchangeOut`) for exact-in/out **raw ↔ pair** book swaps (compatibility; does **not** replace proportional/zap LP APIs).
    - **Vault discovery surface** (`IBasicVault` + `IStandardVault`) for tokens/reserves/types.
-9. Deploys via a **mined hook address** (permission flags D54) + FactoryService; **does not** create the V4 pool as a package step. Deploy shape: monomorph or Diamond — §2.4 / D10.
+9. Deploys via hook diamond package → Vault Registry `deployHookVault` → shared hook CREATE2 factory. `deployVault` leaves a bootstrap diamond (vault pair + package-as-init). The product door is later `deployPair(tokenA, tokenB)` for the bound pair (`fee = 0`); production ABI (SE / deposit / withdraw / ERC-20) is installed by `finalizeInitialization`. After finalize, `beforeInitialize` lives on `SE_FACET`. See staged init PRD.
 
 ### 1.1 Canonical user story (DETF-shaped example — informative only)
 

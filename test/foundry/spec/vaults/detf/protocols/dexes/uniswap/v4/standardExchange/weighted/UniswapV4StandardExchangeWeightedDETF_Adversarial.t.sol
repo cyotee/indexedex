@@ -118,7 +118,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
             expansionMaxCatchUpEpochs: 0
         });
 
-        hostileDetf = _deployDetfInstance(args);
+        hostileDetf = _deployDetfWired(args);
         hostileDetfInfo = IUniswapV4StandardExchangeWeightedDETF(hostileDetf);
         hostileDetfX = IStandardExchangeIn(hostileDetf);
         _setBondTermsFor(hostileDetf);
@@ -173,7 +173,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
 
     function test_emptyProtocolLp_burn_reverts() public {
         // Fresh Open instance: first bond only → protocol LP empty.
-        address d2 = _deployDetfInstance(_openArgsUnique("emptyLp"));
+        address d2 = _deployDetfWired(_openArgsUnique("emptyLp"));
         IUniswapV4StandardExchangeWeightedDETF info2 = IUniswapV4StandardExchangeWeightedDETF(d2);
         IStandardExchangeIn ex2 = IStandardExchangeIn(d2);
         address p0 = info2.pairToken(0);

@@ -14,7 +14,6 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
-import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol";
 import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
@@ -38,6 +37,9 @@ import {
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
+import {
+    UniswapV4StandardExchangeWeightedBufferHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookBeforeInitializeLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookTarget
@@ -68,16 +70,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        address a = Currency.unwrap(poolKey.currency0);
-        address b = Currency.unwrap(poolKey.currency1);
-        if (a >= b) revert InvalidPoolKey();
-        _tokenIndex(a);
-        _tokenIndex(b);
-        if (poolKey.fee != LPFeeLibrary.DYNAMIC_FEE_FLAG) revert InvalidPoolKey();
-        if (poolKey.tickSpacing != Repo.TICK_SPACING) revert InvalidPoolKey();
-        if (address(poolKey.hooks) != address(this)) revert InvalidPoolKey();
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
     function afterInitialize(address, PoolKey calldata, uint160, int24)

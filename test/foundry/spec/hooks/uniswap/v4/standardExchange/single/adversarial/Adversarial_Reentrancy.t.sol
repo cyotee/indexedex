@@ -49,6 +49,7 @@ contract Adversarial_Reentrancy_Test is AdvBase {
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hostileHook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hostileHook, address(hostilePair), hostileSe);
         hostileBuffer = IHook(hostileHook);
         hostileRouter = new WrapperExactOutRouter(pm);
 
@@ -59,7 +60,6 @@ contract Adversarial_Reentrancy_Test is AdvBase {
             tickSpacing: 60,
             hooks: IHooks(hostileHook)
         });
-        pm.initialize(hostileKey, SQRT_PRICE_1_1);
 
         hostilePair.mint(user, 1_000_000 ether);
         vm.startPrank(user);

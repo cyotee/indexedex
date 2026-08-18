@@ -30,6 +30,9 @@ import {
     IUniswapV4OrbitalSwapHookPackage
 } from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookPackage.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     UniswapV4OrbitalSwapHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHook_FactoryService.sol";
 
@@ -103,6 +106,11 @@ contract UniswapV4OrbitalSwapHook_Reentrancy_Test is TestBase_VaultComponents {
         });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook);
+        init.deployPair(address(token0), address(token1));
+        init.deployPair(address(token1), address(hostile));
+        init.deployPair(address(token0), address(hostile));
+        require(init.finalizeInitialization(), "finalize");
         orbital = IUniswapV4OrbitalSwapHook(hook);
 
         token0.mint(user, 1_000_000 ether);

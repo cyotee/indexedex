@@ -21,6 +21,7 @@ import {
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
 
 import {
     IUniswapV4SingleStandardExchangeDETDFPkg,
@@ -103,6 +104,7 @@ contract Script_18_DeployChirInstance is DeploymentBase {
         vm.startBroadcast();
         chir = IUniswapV4SingleStandardExchangeDETDFPkg(chirDetfPkg).deployVault(args, nonce);
         require(chir == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireCp(chir);
         // Pin vault bond terms after deploy (postDeploy fee NFT path needs global defaults already set in stage 11).
         try IVaultFeeOracleManager(indexedexManager).setVaultBondTerms(
             chir,

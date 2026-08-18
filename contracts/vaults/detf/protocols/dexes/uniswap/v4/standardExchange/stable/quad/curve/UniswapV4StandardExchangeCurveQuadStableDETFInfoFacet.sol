@@ -75,7 +75,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETFInfoFacet is
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](22);
+        f = new bytes4[](24);
         f[0] = IUniswapV4StandardExchangeCurveQuadStableDETF.reservePool.selector;
         f[1] = IUniswapV4StandardExchangeCurveQuadStableDETF.syntheticVs.selector;
         f[2] = IUniswapV4StandardExchangeCurveQuadStableDETF.syntheticSpotVs.selector;
@@ -98,5 +98,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETFInfoFacet is
         f[19] = IUniswapV4StandardExchangeCurveQuadStableDETF.acceptedBondTokens.selector;
         f[20] = IUniswapV4StandardExchangeCurveQuadStableDETF.protocolLp.selector;
         f[21] = IUniswapV4StandardExchangeCurveQuadStableDETF.userBondedLp.selector;
+        f[22] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveHookFinalized.selector;
+        f[23] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveWired.selector;
     }
 }

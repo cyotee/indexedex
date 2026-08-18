@@ -46,6 +46,8 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo {
         uint8[4] invDecimals;
         /// @dev Intentional raw face inventory for raw legs only (buffered legs stay 0).
         uint256[4] rawReserves;
+        /// @dev Appended: true after finalizeInitialization (I8). Defaults false.
+        bool initializationFinalized;
     }
 
     function _layout() internal pure returns (Layout storage l) {

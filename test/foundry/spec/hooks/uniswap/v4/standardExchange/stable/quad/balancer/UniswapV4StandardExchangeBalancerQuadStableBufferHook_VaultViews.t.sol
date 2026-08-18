@@ -20,9 +20,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_VaultViews is Tes
         assertEq(toks[0], address(token0));
     }
 
-    function test_ensurePairPools_idempotent() public {
-        uint256 n = quad.ensurePairPools();
-        assertEq(n, 0);
+    function test_setUpLeavesSixDoorsAndFinalized() public view {
         _assertAllDoorsLive();
+        assertEq(quad.pairDoorCount(), 6);
     }
 }

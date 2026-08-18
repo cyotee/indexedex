@@ -54,7 +54,7 @@ contract Adversarial_Orbital_TrustFlags is TestBase_UniswapV4StandardExchangeOrb
     }
 
     function _openLive() internal returns (address instance_, address p0_) {
-        instance_ = _deployDetfInstance(_openArgsUnique("iFlags"));
+        instance_ = _deployDetfWired(_openArgsUnique("iFlags"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         p0_ = info_.pairToken0();
         _firstBondOn(instance_, 200 ether, 200 ether);

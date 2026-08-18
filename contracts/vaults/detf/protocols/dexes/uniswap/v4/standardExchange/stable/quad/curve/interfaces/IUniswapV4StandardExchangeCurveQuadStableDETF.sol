@@ -151,6 +151,25 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETF {
         bool pretransferred,
         uint256 deadline
     ) external returns (uint256 detfInUsed);
+
+    event ReserveBondNftWired(
+        address indexed reserveHook,
+        address bondNftVault,
+        uint256 detfNftId,
+        uint256 feeRecipientNftId
+    );
+    event ReserveClaimWired(address indexed reserveHook, address rebasingClaimToken);
+
+    error ReserveNotWired();
+    error ReserveHookNotFinalized();
+    error ReserveBondNftNotWired();
+    error ReserveBondNftAlreadyWired();
+    error ReserveClaimAlreadyWired();
+
+    function isReserveHookFinalized() external view returns (bool);
+    function isReserveWired() external view returns (bool);
+    function completeReserveBondNft() external returns (address bondNftVault);
+    function completeReserveClaim() external returns (address rebasingClaimToken);
 }
 
 /// @title IUniswapV4StandardExchangeCurveQuadStableDETDFPkg

@@ -5,7 +5,7 @@ import {console2} from "forge-std/console2.sol";
 import {Stage_06_LeafDETFs} from "./Stage_06_LeafDETFs.sol";
 import {Script_06_LeafBase} from "./Script_06_LeafBase.sol";
 
-/// @notice TTDOL-Q: deployVault + first-bond + one sized D47 deposit per leg.
+/// @notice TTDOL-Q: deployVault (bootstrap hook only) + door/finalize/wire + first-bond + one sized D47 deposit per leg.
 contract Script_06e_DolQ is Script_06_LeafBase {
     function run() external {
         _prepLeaves();

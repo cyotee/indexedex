@@ -9,13 +9,13 @@
 > [`UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md`](./UNISWAP_V4_QUAD_STABLE_SWAP_HOOK_HOOK_FACTORY_REFACTOR_PRD.md)  
 > and the co-located hook-factory implementation plan.  
 > **Current production path:** package DFPkg → vault registry `deployHookVault` → shared Uniswap V4 hook diamond package callback factory (CREATE2 flag-mined diamond).  
-> Facets + package use CREATE3 only. Six pair doors via package `postDeploy` / permissionless `ensurePairPools`.  
-> StableSwap math, rates, zap, fee-on-output, pair-door product policy in **this** PRD remain authoritative unless the refactor PRD explicitly revises them.
+> Facets + package use CREATE3 only. Product doors are staged: `deployPair` for each of the six unordered pairs, then `finalizeInitialization`. `postDeploy` is a no-op and does not call `PoolManager.initialize`. See [`UNISWAP_V4_CURVE_QUAD_STABLE_SWAP_HOOK_STAGED_INIT_PRD.md`](./UNISWAP_V4_CURVE_QUAD_STABLE_SWAP_HOOK_STAGED_INIT_PRD.md).  
+> StableSwap math, rates, zap, fee-on-output, pair-door product policy in **this** PRD remain authoritative unless the refactor PRD or staged-init PRD explicitly revises them.
 
 **Package kind:** IndexedEx **hook diamond package** (after refactor):
 
 1. **Hook instance** — immutable diamond at CREATE2-mined address via shared hook factory; registered vault; LP ERC-20 on proxy via shared ERC20Permit facets.  
-2. **Package + ensure** — `UniswapV4CurveQuadStableSwapHookDFPkg` with `deployVault` / `ensurePairPools`; product CREATE3 monomorph factory **retired**.
+2. **Package + staged doors** — `UniswapV4CurveQuadStableSwapHookDFPkg` with `deployVault` leaving a bootstrap diamond; callers open the six product pairs via `deployPair` then `finalizeInitialization`. Product CREATE3 monomorph factory **retired**.
 
 **Behavioral / math reference (requirements harvest only — not deploy law, not package layout):**
 
@@ -207,7 +207,7 @@ v1 is the **productionization of multi-asset StableSwap on Uni V4 for exactly fo
 | D5 | Binding | Ctor immutables: `poolManager`, **sorted** `token0..token3`, `lpFeePips`, `baseAmp`, per-token `IRateProvider` (or zero) | **LOCKED** |
 | D6 | Token validation | Non-zero; **all pairwise distinct**; decimals in **[6, 18]** inclusive; **no native ETH** (`address(0)` forbidden) | **LOCKED** |
 | D7 | Ctor / factory token order | Factory and hook require **`token0 < token1 < token2 < token3` by address** (strict ascending). That order **is** the canonical binding order for LP / views / array indices. Revert if unsorted or duplicates | **LOCKED** |
-| D8 | Pool set | Factory **must create all six** pair pools on successful `deploy` (see §5.5). Permissionless `ensurePairPools(hook)` may complete/repair any missing doors. Manual external `initialize` of a valid pair remains allowed (hook `beforeInitialize` still gates). All doors: `hooks = hook instance` | **LOCKED** |
+| D8 | Pool set | **Superseded by staged init PRD.** `deployVault` / `postDeploy` do **not** initialize product pools. Each product door is `deployPair(tokenA, tokenB)` for a bound distinct pair (or raw `PoolManager.initialize` of that product PoolKey: `fee = lpFeePips`, `tickSpacing = Math.TICK_SPACING`, tick-0 mid). Extra fee or tickSpacing variants do not count. Production ABI exists only after `finalizeInitialization`. | **LOCKED** |
 | D9 | Pool fee (V4 key) | **`fee = lpFeePips`** (same `uint24` as hook LP fee). Hook StableSwap math remains the pricing authority; V4 CL fee is not used for inventory pricing | **LOCKED** |
 | D10 | Native CL | **Forbidden** — `beforeAddLiquidity` and `beforeRemoveLiquidity` **revert** | **LOCKED** |
 | D11 | Donate | **Forbidden** — `beforeDonate` **reverts** | **LOCKED** |
@@ -260,7 +260,7 @@ v1 is the **productionization of multi-asset StableSwap on Uni V4 for exactly fo
 | D56 | Normative PoolKey | For each pair: `PoolKey({ currency0, currency1, fee: lpFeePips, tickSpacing: TICK_SPACING (1), hooks: IHooks(hook) })` | **LOCKED** |
 | D57 | Init sqrt price | Factory initializes every pair with **`sqrtPriceX96 = TickMath.getSqrtPriceAtTick(0)`** (1:1 mid in V4 tick space). Product pricing ignores CL; this is only to satisfy `PoolManager.initialize` | **LOCKED** |
 | D58 | Pool create entrypoint | Factory calls **`IPoolManager.initialize(poolKey, sqrtPriceX96)`** for each of the six keys. **Idempotent:** if pool already initialized, skip (do not revert the whole deploy solely because a door already exists) | **LOCKED** |
-| D59 | `ensurePairPools` | Permissionless `ensurePairPools(hook)` **only if** `isDeployedByFactory[hook]` (or equivalent factory-attested set). Initializes any of the six doors not yet live. **Reject** hooks not deployed by this factory even if self-describing views match | **LOCKED** |
+| D59 | `ensurePairPools` | **Superseded by staged init PRD.** Package `ensurePairPools` is deleted as a required path. Product doors are `deployPair` then `finalizeInitialization`. | **LOCKED** |
 | D60 | Factory registry (minimal) | Factory **must** track factory-deployed hooks (`isDeployedByFactory`). **MAY** emit events and optional binding hash → hook. **Not** a full vault registry. Discovery: events + deterministic CREATE3 address from binding | **LOCKED** |
 | D61 | Hook ctor vs pools | Hook **constructor does not** initialize pools (gas + reentrancy cleanliness). **Factory** owns pool creation after hook code is live | **LOCKED** |
 | D62 | Salt mining paths (both DoD) | **(A)** `deploy(...)` — fully on-chain mine loop (bounded by `MAX_LOOP`, revert if exhausted). **(B)** `deployWithMineNonce(...)` (or equivalent) — caller supplies a pre-mined `mineNonce` that must yield flag-correct address for the binding salt; factory verifies flags + deploys (no search). **Both first-class in v1 DoD** | **LOCKED** |
@@ -330,10 +330,10 @@ v1 is the **productionization of multi-asset StableSwap on Uni V4 for exactly fo
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
 │ Anyone (permissionless)                                          │
-│   • factory.deploy(...)  →  hook + 6 pair pools                  │
-│   • factory.ensurePairPools(hook)                                │
+│   • pkg.deployVault → bootstrap diamond                          │
+│   • deployPair × 6 then finalizeInitialization                   │
 └───────────────────────────────┬──────────────────────────────────┘
-                                │ CREATE3 (ecosystem) + initialize×6
+                                │ hook factory CREATE2 + staged doors
                                 ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │ User / Router                                                    │

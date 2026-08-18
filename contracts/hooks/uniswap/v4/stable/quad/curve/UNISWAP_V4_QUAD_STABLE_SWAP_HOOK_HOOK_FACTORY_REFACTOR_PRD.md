@@ -46,7 +46,7 @@ Refactor Quad Stable so that:
 3. Pure package-constant `requiredHookFlags()` (including **beforeDonate** as today).  
 4. Salt law: `PRODUCT_ID` + binding fields + factory `mineNonce` — **no** package address.  
 5. **Product behavior** preserved: 4-asset StableSwap, fee-on-output, rate providers fail-closed, proportional add/remove, zap-in, six doors.  
-6. **All-six pair-pool ensure** remains first-class product UX (legacy factory `deploy` / `ensurePairPools`).
+6. **Staged six pair doors** — `deployVault` leaves a bootstrap diamond. Callers open each unordered product pair via `deployPair` then `finalizeInitialization`. `postDeploy` / package `ensurePairPools` do **not** init all six. See staged init PRD.
 
 ### 1.1 Why migrate
 
@@ -189,11 +189,11 @@ BEFORE_INITIALIZE | BEFORE_ADD_LIQUIDITY | BEFORE_REMOVE_LIQUIDITY
 
 | # | Decision | Value |
 |---|----------|--------|
-| Q29 | Outcome | All six pair doors ensureable after product deploy flow |
-| Q30 | Host | **Default B+C hybrid:** package helper after `deployVault` **or** permissionless `ensurePairPools(hook)` (legacy factory had both deploy-time ensure and explicit `ensurePairPools`). **Do not** put six `initialize` calls exclusively inside gas-fragile auto-mine. Prefer: deploy diamond → `ensurePairPools(proxy)` (package method or library, callable by anyone) |
+| Q29 | Outcome | All six product doors live after staged `deployPair` × 6 + `finalizeInitialization` (not after `deployVault` / `postDeploy`) |
+| Q30 | Host | **Superseded by staged init PRD.** Product doors are `deployPair(tokenA, tokenB)` on the bootstrap diamond. `postDeploy` is a no-op. Package `ensurePairPools` is deleted as a required product path. |
 | Q31 | PoolKey policy | `fee = lpFeePips`, `tickSpacing = Math.TICK_SPACING` (or product constant), currencies address-sorted pair, `hooks = proxy` |
 | Q32 | Pool params in salt | **No** — fee/amp already in binding; tickSpacing is package constant |
-| Q33 | Idempotent ensure | Skip already-live doors; emit counts like legacy `PairPoolsEnsured` |
+| Q33 | Idempotent door | `deployPair` skips if the product PoolKey is already live; extra fee/tick variants do not count |
 | Q34 | Discovery | Registry first; optional `pairPoolKeys(hook)` view on package or helper |
 
 ### 3.7 Product law that stays
@@ -263,8 +263,8 @@ struct PkgArgs {
 1. setHookDiamondPackageFactory
 2. deployPkg(quad package)
 3. premine mineNonce for PRODUCT_ID + binding
-4. pkg.deployVault(args, mineNonce) → registered diamond hook
-5. ensurePairPools(proxy) → all six doors
+4. pkg.deployVault(args, mineNonce) → registered bootstrap diamond
+5. deployPair for each of the six unordered pairs, then finalizeInitialization
 6. addLiquidity / zapIn / swaps per product PRD
 ```
 

@@ -26,7 +26,7 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
     }
 
     function test_A0_preLive_donatePair_pretransferredBond_cannotMintFromResidual() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         address p0_ = info_.pairToken(0);
@@ -57,7 +57,7 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
     }
 
     function test_A0_preLive_pullFalse_doesNotCreditDonation() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0p"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0p"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         address p0_ = info_.pairToken(0);
@@ -76,7 +76,7 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
     }
 
     function test_CROPS_disable_doesNotBlock_closeBondMature_or_redeemClaim() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("crops"));
+        address instance_ = _deployDetfWired(_openArgsUnique("crops"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         address p0_ = info_.pairToken(0);
@@ -113,7 +113,7 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("cropsB"));
+        address instance_ = _deployDetfWired(_openArgsUnique("cropsB"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
             IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
         address p0_ = info_.pairToken(0);

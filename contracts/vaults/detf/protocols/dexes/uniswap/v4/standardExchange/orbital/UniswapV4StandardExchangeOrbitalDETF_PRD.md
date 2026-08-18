@@ -73,7 +73,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 
 1. Ship DETF package under  
    `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/`.  
-2. Wire **two** external pair tokens + **1–2** distinct backing SEs (≥1 required) + optional rate providers via **`PkgArgs` → hook package deploy** (create pools in hook postDeploy) + **one** Orbital SE Buffer Hook with raw DETF self-leg.  
+2. Wire **two** external pair tokens + **1–2** distinct backing SEs (≥1 required) + optional rate providers via **`PkgArgs` → hook package deploy** (bootstrap hook only; doors via `productTokensOrbital` + one TX per pair) + **one** Orbital SE Buffer Hook with raw DETF self-leg.  
 3. Primary mint/burn + bond + **maturity** close and **post-maturity** sell→claim + direct claim paths (adapted to 3-leg host).  
 4. Deploy-time **creation rates** for empty-reserve first join; synthetic + Policy/Open thereafter.  
 5. Seigniorage inventory → bond reward ledger (**same split spirit as Balancer / CP UniV4 DETF**); protocol compound into reserve LP via single-sided DETF zap-in when hook allows.  
@@ -664,9 +664,9 @@ Typed surface: `IUniswapV4StandardExchangeOrbitalDETDFPkg.deployVault(PkgArgs ar
    - SE slots (0–2 non-zero on external legs only)  
    - optional rate providers (only with SE)  
    - poolManager, feeOracle, mineNonce / salt fields  
-3. Hook **postDeploy** initializes **all three** V4 pair doors (`DYNAMIC_FEE_FLAG`, plumbing sqrtPrice).  
-4. Deploy **shared** bond NFT + rebasing packages (owner=DETF); rebasing is protocol LP holder.  
-5. Store creation rates, `rateAsset` (default pair0 if omit/zero), thresholds, mode, expansion params, binding index of DETF.  
+3. Hook **postDeploy** does **not** init doors. Callers open the three product pairs on `IUniswapV4HookStagedPairInit` (`productTokensOrbital`, one TX each), then `finalizeInitialization`. See staged-init PRD.  
+4. After finalize, anyone calls `completeReserveBondNft` then `completeReserveClaim` on this `I*DETF` (not in DETF `postDeploy`). TestBase `setUp` may use `ensureReserveReadyOrbital`.  
+5. Store creation rates, `rateAsset` (default pair0 if omit/zero), thresholds, mode, expansion params, binding index of DETF, child package addresses.  
 6. Validate: pairs distinct; DETF raw only; pair ∈ SE tokens when SE set; SEs distinct when both set; RP only with SE; **≥1 SE set** (reject both bare); **both creation rates `> 0`**; `rateAsset` ∈ {pair0, pair1}; no FoT/rebasing pairs.
 
 ### 11.2 PkgArgs (normative)

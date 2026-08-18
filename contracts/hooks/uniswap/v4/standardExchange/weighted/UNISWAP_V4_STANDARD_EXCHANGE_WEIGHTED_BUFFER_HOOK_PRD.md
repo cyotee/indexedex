@@ -92,7 +92,7 @@ Ship a **production-first Uniswap V4 hook package** that:
    on the appropriate balance domain per surface (rated for swaps; native for LP — §4.3).
 3. For **each** pool token, accepts an **optional** Standard Exchange into which that token is **buffered** when non-zero — **at most one SE per token**; **non-zero SE addresses pairwise distinct**; **at least one** leg **must** be buffered (else use raw `UniswapV4WeightedSwapHook`).
 4. For **each** non-zero SE, accepts an **optional** Balancer-style **`IRateProvider`** that values **SE shares as the pair token** for **swap** pricing only.
-5. Exposes **all** \(\binom{n}{2}\) Uni V4 pair pools as swap doors into the **same** shared \(n\)-asset book (factory/postDeploy creates all doors).
+5. Exposes **all** \(\binom{n}{2}\) Uni V4 pair pools as swap doors into the **same** shared \(n\)-asset book (staged `deployPair` + `finalizeInitialization`; `postDeploy` does not init doors).
 6. **Buffers** pool tokens into the bound SE on liquidity add and on swap token-in when that leg is buffered; **unwraps** SE → pool token on liquidity remove and on swap token-out when that leg is buffered — **buffer-last** and share/claim composition (dual / SE Orbital process peer).
 7. Holds inventory as: **raw ERC-20** for raw legs + **SE shares** for buffered legs. Pool currencies remain the \(n\) tokens — **never** SE share addresses.
 8. Mints a **single fungible ERC-20 LP** representing pro-rata claim on all inventory components (raw balances + SE share balances).
@@ -100,7 +100,7 @@ Ship a **production-first Uniswap V4 hook package** that:
 10. Provides one-token LP paths as **Balancer single-asset join/exit** with UX aliases **`depositSingle` / `withdrawSingle`** (and exit exact-token-out only if closed-form — Q9). **No** multi-leg internal rebalance (unlike dual / SE Orbital multi-leg zaps).
 11. Exposes **`IStandardExchangeIn` / `IStandardExchangeOut`** for tokenᵢ ↔ tokenⱼ **swaps**, **plus** **`IStandardExchangeMultiAssetLiquidity`** mirroring the **full** weighted join/exit matrix including one-token aliases (§5.4).
 12. Settles public swaps via **`beforeSwap` + `beforeSwapReturnDelta`** — pattern-copy settle; **no** inheritance of OZ/`BaseHook` / `BaseTokenWrapperHook` / `DeltaResolver`.
-13. Deploys as an **immutable hook diamond package** via registry `deployHookVault` + shared hook factory (CREATE2 + `mineNonce`); initializes **all** factory doors in postDeploy.
+13. Deploys as an **immutable hook diamond package** via registry `deployHookVault` + shared hook factory (CREATE2 + `mineNonce`); product doors open via permissionless `deployPair` then `finalizeInitialization`.
 14. Uses **live Vault Fee Oracle** dual-channel rates: `dexSwapFeeOfVault` = trading residual (Balancer **input** fee); `usageFeeOfVault` = protocol growth LP mint to `feeTo`.
 
 ### 1.1 Canonical user story (n=4, two SE legs)
@@ -204,7 +204,7 @@ v1 is the **composition layer**: weighted multi-door topology with dual/SE-orbit
 |-----------|--------|
 | Primary artifact | CREATE2-mined **hook diamond** (facets + Repo) implementing V4 `IHooks` **plus** n-asset LP ERC-20 + multi-asset vault discovery + SE surfaces |
 | Binding | `(poolManager, feeOracle, n, tokens[n], weights[n], standardExchange[n], rateProvider[n])` — set-once at init; **no** post-deploy rebind |
-| Pool currencies | The \(n\) bound tokens; postDeploy creates **all** \(\binom{n}{2}\) pair doors |
+| Pool currencies | The \(n\) bound tokens; staged `deployPair` + finalize creates **all** \(\binom{n}{2}\) pair doors |
 | Inventory | Per leg: raw ERC-20 **or** SE shares (not both as book for the same leg) |
 | Swap balances | **Rated** balances (§4.3) into WeightedMath |
 | LP balances | **Native** inventory (§4.3) — **no** `IRateProvider` in join/exit share formulas |
@@ -299,11 +299,11 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D10 | Token validation | Non-zero; **pairwise distinct**; **strict address ascending**; decimals in **[6, 18]** (weighted peer); standard ERC-20 + USDT-style SafeERC20. Fee-on-transfer / rebasing **unsupported**. **No native ETH** |
 | D11 | SE validation (when non-zero) | `token_i ∈ SE_i.vaultTokens()`; `token_i != address(SE_i)`; SE exposes closed-form **token ↔ SE** buffer and unwrap routes with preview == execution; **D7b** distinctness |
 | D12 | Empty SE at deploy | **Allowed** (inert SE until first buffer) |
-| D13 | Pool set | Package **must create all** \(\binom{n}{2}\) pair pools on successful deploy (postDeploy). Permissionless `ensurePairPools(hook)` may repair. All doors: `hooks = this` |
+| D13 | Pool set | Every unordered pair is a product door. Required path: `deployPair(a,b)` then `finalizeInitialization`. Permissionless `ensurePairPools()` may repair after finalize. All doors: `hooks = this` |
 | D14 | Pool fee (V4 key) | **`LPFeeLibrary.DYNAMIC_FEE_FLAG` only**. Economic trading fee SoT = hook residual math |
 | D15 | Native CL | **Forbidden** — `beforeAddLiquidity` / `beforeRemoveLiquidity` **revert** |
 | D16 | Donate | **Forbidden** — `beforeDonate` **reverts** |
-| D17 | Package shape | **Hook diamond package** (`IUniswapV4HookDiamondPackage` + vault surfaces). Facets via CREATE3; instance via CREATE2 mine + hook factory. **Immutable** after postDeploy (no live `diamondCut`) |
+| D17 | Package shape | **Hook diamond package** (`IUniswapV4HookDiamondPackage` + vault surfaces). Facets via CREATE3; instance via CREATE2 mine + hook factory. **Immutable** after finalize (no public `diamondCut`) |
 | D18 | Hook inheritance | **No** inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver` — full **pattern-copy** settle. May use Crane facet bases for diamond plumbing |
 | D19 | Shared facets | Cut **ERC20PermitDFPkg** facets (`ERC20Facet` + `ERC5267Facet` + `ERC2612Facet`) + MultiAsset Basic/Standard vault facets for LP + discovery. Product facets = hooks + book + join/exit + SE buffer routes only |
 | D19a | Full type/file names | Full product names on contracts/files; short labels OK in prose. LP symbol prefix may be short (D46) |
@@ -378,7 +378,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D62 | Growth timing | Protocol mint from **pre-intake** \(k\) on add; mint before user burn on remove; set `kLast` post-op when fee-on. Swaps do not mint protocol LP or update `kLast` |
 | D63 | Previews + growth | LP previews **simulate** protocol mint dilution when fee-on |
 | D64 | Tick spacing | Package constant **`TICK_SPACING = 1`**. `beforeInitialize` enforces |
-| D65 | Init sqrt price | postDeploy: `TickMath.getSqrtPriceAtTick(0)` (plumbing only) |
+| D65 | Init sqrt price | `deployPair`: `TickMath.getSqrtPriceAtTick(0)` (plumbing only) |
 | D66 | Factory doors only | `beforeInitialize` accepts **only** PoolKeys that match factory-door rules: both currencies in bound set, distinct, **`fee == DYNAMIC_FEE_FLAG`**, **`tickSpacing == TICK_SPACING`**, **`hooks == this`**. Extra keys **revert** |
 | D67 | Access | Liquidity + views + SE surfaces permissionless; hook callbacks `msg.sender == poolManager` only |
 | D68 | Admin | **None** on hook — no weight/SE/RP update, no pause, no fee setter |
@@ -390,7 +390,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D69 | Deploy path | **Required:** `IUniswapV4HookDiamondPackage` + Vault Registry `deployHookVault` + shared `UniswapV4HookDiamondPackageCallBackFactory`. Facets CREATE3 via FactoryService. **Never** `new` SUT; **never** vault factory salt for V4 flag addresses |
 | D70 | Salt law / PRODUCT_ID (Q13) | **`PRODUCT_ID = "UniswapV4StandardExchangeWeightedBufferHook"`** (full type name). `packageSalt` from `PRODUCT_ID` + binding fields (**n, tokens, weights, SEs, RPs**) + factory-scope identity as factory PRD requires (**no** package/facet addresses). PM/oracle are factory immutables (Q11). `finalSalt = keccak256(abi.encode(packageSalt, mineNonce))` |
 | D71 | Mine flags | At least `BEFORE_INITIALIZE \| BEFORE_ADD_LIQUIDITY \| BEFORE_REMOVE_LIQUIDITY \| BEFORE_SWAP \| BEFORE_SWAP_RETURNS_DELTA \| BEFORE_DONATE` (plan locks exact mask vs `Hooks.ALL_HOOK_MASK`) |
-| D72 | Pool init UX | **postDeploy:** on successful instance deploy, package initializes **all** \(\binom{n}{2}\) pair doors with shared `tickSpacing` + `sqrtPriceX96` plumbing. Currencies address-sorted per pair; `hooks = this`; `fee = DYNAMIC_FEE_FLAG`. Atomic with deploy from integrator POV |
+| D72 | Pool init UX | **Staged:** after `deployVault`, each unordered pair is opened with `deployPair(a,b)` (DYNAMIC_FEE, `TICK_SPACING=1`, tick-0 mid). `finalizeInitialization` Adds production facets once every product door is live. `postDeploy` returns true and does not `PoolManager.initialize` |
 | D72a | ensurePairPools (Q15) | **Required** permissionless **`ensurePairPools(hook)`** (package and/or factory helper path). Creates/initializes any missing factory doors for an already-deployed hook. Does **not** pull tokens or mint LP. Idempotent for already-initialized doors |
 | D72b | Events minimum fields (Q23) | **Join / Exit / MultiAsset same:** `sender`, `to`, `shares` (minted or burned), `int256[] deltas` (binding order; pair-token amounts at user edge — positive in for joins, positive out for exits), `protocolSharesMinted` (0 if none). **DepositSingle:** `sender`, `to`, `token`, `amountIn`, `shares`, `protocolSharesMinted`. **WithdrawSingle:** `sender`, `to`, `token`, `amountOut`, `shares`, `protocolSharesMinted`. **WithdrawSingleExactOut** (iff shipped): `sender`, `to`, `token`, `amountOut`, `sharesBurned`, `protocolSharesMinted`. **ProtocolFeeMinted:** `feeTo`, `shares`. **EnsurePairPools:** `hook`, `doorsEnsured` (uint256 count). **No** product-level `Swap` event. SE MultiAssetLiquidity emits the **same** events as the underlying join/exit |
 | D73 | Deposit vs pool init | LP add/remove/previews **do not require** V4 initialize. **Swaps** require first-minted book, initialized directed pair pool, both trade-leg native + rated \(> 0\) |
@@ -447,7 +447,7 @@ Former “residual opens.” Product law below; implementation plan freezes only
 |---|--------|--------------|
 | **Q13** | PRODUCT_ID | **`"UniswapV4StandardExchangeWeightedBufferHook"`** (full type name) |
 | **Q14** | LP metadata caps | Symbol ≤ **32**, name ≤ **64**; truncate middle with `..`; else address-fragment fallback; prefix **`SEWGT`** |
-| **Q15** | Door repair | Permissionless **`ensurePairPools(hook)`** required (postDeploy still creates all doors) |
+| **Q15** | Door repair | Permissionless **`ensurePairPools()`** after finalize. Bootstrap path is `deployPair` + `finalizeInitialization`; `postDeploy` is a no-op |
 | **Q16** | Swap buffer | Buffer **full gross amountIn** (fee residual stays in inventory via gross buffer/credit; curve uses net) |
 | **Q17** | Hermetic \(n\) | **\(n \in \{2,3,4,8\}\) all required** |
 | **Q18** | Fork DoD | **Ethereum + Base + 4663** all required, equal |
@@ -833,12 +833,13 @@ dexSwapFee(), usageFee(), feeTo(), kLast(), kLastMode()
 4. HookPackage.deployVault(pkgArgs, mineNonce)
      → registry.deployHookVault(pkg, abi.encode(args), mineNonce)
        → hookFactory.deployWithMineNonce(...)
-       → postDeploy: init all binom(n,2) doors + register vault
+       → postDeploy: return true (no pool init) + register vault
+5. Permissionless deployPair for every i<j, then finalizeInitialization
 ```
 
 **Salt:** `PRODUCT_ID = "UniswapV4StandardExchangeWeightedBufferHook"` + binding fields (D70 / Q13).  
-**Doors:** postDeploy initializes all \(\binom{n}{2}\); permissionless **`ensurePairPools`** repairs (D72a / Q15).  
-**Immutability:** no live `diamondCut` after postDeploy.
+**Doors:** staged `deployPair` + finalize; permissionless **`ensurePairPools`** repairs after finalize (D72a / Q15).  
+**Immutability:** no public `diamondCut` after finalize.
 
 ---
 
@@ -850,7 +851,7 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 2. Real Uni V4 PoolManager (Crane port / hermetic).  
 3. Real Vault Fee Oracle with defaults.  
 4. Real SE legs (ERC-4626 Wrapper SE and/or production ports).  
-5. Cover: inert deploy; ≥1 SE; distinct SE; RP-only-on-SE; first mint inventory `V−MIN`; partial book; full join/exit incl. **`joinSingleAssetExactOut`**; single-asset aliases; **no** multi-leg rebalance; SE In/Out; MultiAssetLiquidity full matrix; rated swaps ±RP with **pair-token** scale; **gross** buffer on swaps; LP inventory domain + **live** SE `balanceOf` book; `reserveOfToken` = shares; buffer-last; protocol growth; preview==execution; donation dilution; reentrancy; factory PM/oracle; postDeploy + **ensurePairPools**; hermetic **\(n\in\{2,3,4,8\}\)**; fork **Ethereum + Base + 4663**.
+5. Cover: inert deploy; ≥1 SE; distinct SE; RP-only-on-SE; first mint inventory `V−MIN`; partial book; full join/exit incl. **`joinSingleAssetExactOut`**; single-asset aliases; **no** multi-leg rebalance; SE In/Out; MultiAssetLiquidity full matrix; rated swaps ±RP with **pair-token** scale; **gross** buffer on swaps; LP inventory domain + **live** SE `balanceOf` book; `reserveOfToken` = shares; buffer-last; protocol growth; preview==execution; donation dilution; reentrancy; factory PM/oracle; staged doors + **ensurePairPools**; hermetic **\(n\in\{2,3,4,8\}\)**; fork **Ethereum + Base + 4663**.
 
 ---
 
@@ -859,7 +860,7 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 - [ ] Product PRD **v0.6+** accepted (this file).  
 - [ ] Implementation + test plan accepted (`D78` / plan v1.0) — Phase 0a D42a audit only discretionary ship/omit for **exit** exact-token-out per Q21.  
 - [ ] Package implements D1–D78 + D42b + P1–P6 + Q7–Q28.  
-- [ ] Deploy: Package → Vault Registry → Hook Diamond Factory; postDeploy doors + **ensurePairPools**.  
+- [ ] Deploy: Package → Vault Registry → Hook Diamond Factory; staged `deployPair` + finalize; **ensurePairPools** after finalize.  
 - [ ] `PRODUCT_ID` full type name; LP caps; factory PM+oracle.  
 - [ ] ≥1 SE; distinct SEs; RP optional on SE only.  
 - [ ] Swaps rated + gross buffer; dual scale (Q25); live SE book (Q26); no multi-leg rebalance (Q28).  

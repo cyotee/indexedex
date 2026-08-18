@@ -106,11 +106,11 @@ Ship production-first:
 
 1. Bind \(n \in [2,8]\) sorted ERC-20s + factory-supplied canonical `IPoolManager` + factory-immutable `IVaultFeeOracleQuery` + weights + optional `IRateProvider`s.  
 2. Balancer Weighted pricing on **rate-scaled 1e18** reserves with global weights.  
-3. All \(\binom{n}{2}\) V4 pair doors → one shared Repo book.  
+3. All \(\binom{n}{2}\) V4 pair doors → one shared Repo book. Doors are opened after `deployVault` by `deployPair` for every `i<j`, then `finalizeInitialization`. `postDeploy` does not initialize pools. See staged init PRD + plan.  
 4. Fungible ERC-20 LP on the hook; custom join/exit surface (full Balancer when full book; restricted partial).  
 5. Swaps via `beforeSwap` + `beforeSwapReturnDelta` (custom accounting).  
 6. Dual fee channels: trading residual + protocol growth (`kLast` / dual mode).  
-7. On-chain **`UniswapV4WeightedSwapHookFactory`**: `deployWithMineNonce`, `ensurePairPools` (factory-attested only).  
+7. Hook diamond package: `deployVault` (bootstrap) then `deployPair` × \(C(n,2)\) then `finalizeInitialization`. No `ensurePairPools` / `ensureAllPairPools`. See staged init PRD + plan.  
 8. Permit2 + transferFrom LP pulls; deadline; msg.sender burn.  
 9. Hermetic TestBase + Base + Robinhood forks green per §8–§9.
 

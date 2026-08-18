@@ -87,6 +87,13 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
         DepositUnit depositUnit;
     }
 
+    function _requireReserveWired() internal view {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0) || address(s.rebasingClaimToken) == address(0)) {
+            revert Repo.ReserveNotWired();
+        }
+    }
+
     function _requireReserveLive() internal view {
         if (!Repo._layoutStruct().isReserveLive) revert Repo.ReserveNotLive();
     }

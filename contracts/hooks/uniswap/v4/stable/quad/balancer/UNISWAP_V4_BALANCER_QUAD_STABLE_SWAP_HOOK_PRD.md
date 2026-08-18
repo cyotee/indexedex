@@ -67,7 +67,7 @@ Traders see **pair tokens only**. No SE buffering (buffered Balancer product is 
 |------|-------------|
 | Swap | V4 `beforeSwap` (+ returns delta as required by flags); quotes use StableMath on rate-scaled balances |
 | LP | Fungible LP on diamond (shared ERC20 permit facets preferred); multipath join/exit |
-| Doors | `postDeploy` initializes all six pair pools |
+| Doors | Six product pair doors via permissionless `deployPair`; production ABI via `finalizeInitialization`. `postDeploy` is a no-op. |
 | Package | `IUniswapV4HookDiamondPackage`, `requiredHookFlags`, `calcSalt` without package address |
 
 ---

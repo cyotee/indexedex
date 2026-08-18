@@ -26,7 +26,7 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
     }
 
     function test_A0_preLive_donatePair_pretransferredBond_cannotMintFromResidual() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         address p0_ = info_.pairToken0();
         address p1_ = info_.pairToken1();
@@ -49,7 +49,7 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
     }
 
     function test_A0_preLive_pullFalse_doesNotCreditDonation() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0p"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0p"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         address p0_ = info_.pairToken0();
         uint256 donate_ = 50 ether;
@@ -63,7 +63,7 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
     }
 
     function test_depositClaim_pair_mintsClaim() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("dc"));
+        address instance_ = _deployDetfWired(_openArgsUnique("dc"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         address p0_ = info_.pairToken0();
         _firstBondOn(instance_, 300 ether, 300 ether);
@@ -78,7 +78,7 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
     }
 
     function test_CROPS_disable_doesNotBlock_closeBondMature_or_redeemClaim() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("crops"));
+        address instance_ = _deployDetfWired(_openArgsUnique("crops"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         address p0_ = info_.pairToken0();
         _firstBondOn(instance_, 300 ether, 300 ether);
@@ -110,7 +110,7 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("cropsB"));
+        address instance_ = _deployDetfWired(_openArgsUnique("cropsB"));
         IUniswapV4StandardExchangeOrbitalDETF info_ = IUniswapV4StandardExchangeOrbitalDETF(instance_);
         address p0_ = info_.pairToken0();
         _firstBondOn(instance_, 300 ether, 300 ether);

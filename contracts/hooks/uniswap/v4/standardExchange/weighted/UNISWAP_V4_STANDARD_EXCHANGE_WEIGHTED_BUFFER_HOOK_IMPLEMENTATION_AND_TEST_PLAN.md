@@ -50,7 +50,7 @@
 | LP pull | `transferFrom` if allowance else Permit2 **AllowanceTransfer only** — no SignatureTransfer / no `permit2Data` (Q24) |
 | MultiAssetLiquidity | **New** `IStandardExchangeMultiAssetLiquidity` = hook liquidity ABI **1:1** (Q19) |
 | PM + feeOracle | **Factory immutables only** (Q11) |
-| Doors | postDeploy all \(\binom{n}{2}\) + permissionless `ensurePairPools` (Q15) |
+| Doors | staged `deployPair` + finalize for all \(\binom{n}{2}\); permissionless `ensurePairPools` after finalize (Q15) |
 | PRODUCT_ID | `"UniswapV4StandardExchangeWeightedBufferHook"` (Q13) |
 | LP symbol prefix | **`SEWGT`** (Q14); symbol ≤32, name ≤64 |
 | Forks | **Ethereum + Base + Robinhood (4663)** all required, equal priority (Q18) |
@@ -102,7 +102,7 @@ Implement production-first package **`UniswapV4StandardExchangeWeightedBufferHoo
 9. **`IStandardExchangeIn` / `Out`** (swap-only, rated book, internal settle) + **`IStandardExchangeMultiAssetLiquidity`** = hook liquidity ABI 1:1.  
 10. Swaps via **`beforeSwap` + `beforeSwapReturnDelta`**; pattern-copy settle — **no** BaseHook / DeltaResolver inheritance.  
 11. Trading residual = live `dexSwapFeeOfVault` (gross buffer on SE in); growth = Uni V2–style inventory \(V_{inv}\) + dual mode from `usageFeeOfVault`.  
-12. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + hook factory; **postDeploy inits all doors**; **`ensurePairPools`**.  
+12. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + hook factory; **staged `deployPair` + finalize**; **`ensurePairPools`** after finalize.  
 13. Vault discovery: `IBasicVault` + `IStandardVault`; `reserveOfToken` = face \| **live SE shares** (not claim, not rated).  
 14. Hermetic \(n\in\{2,3,4,8\}\) + SE/RP matrix; adversarial suite; forks Ethereum + Base + RH 4663.  
 15. Size within real CREATE2/runtime limits; split facets/libs as needed without dropping D55a surface.
@@ -482,7 +482,7 @@ Mask against `Hooks.ALL_HOOK_MASK` in factory. CL add/remove and donate always r
    - `requiredHookFlags()` = §4.9 mask  
    - `packageSalt` = PRODUCT_ID + binding fields (**n, tokens, weights, SEs, RPs**) + factory-scope identity — **no** package/facet addresses; **no** PM/oracle in salt if factory-immutable (D70)  
    - `deployVault(args, mineNonce)` → `registry.deployHookVault`  
-   - **`postDeploy`:** initialize **all** \(\binom{n}{2}\) pair doors (address-sorted currencies, `DYNAMIC_FEE_FLAG`, `TICK_SPACING=1`, `sqrtPriceX96` at tick 0)  
+   - **`postDeploy`:** `return true` (no PoolManager init). Product doors via `deployPair` + `finalizeInitialization`  
    - `ensurePairPools(hook)` path (permissionless repair)  
    - `diamondConfig` **without** live `diamondCut`  
    - Cut shared ERC20Permit + MultiAsset vault facets + product facets  
@@ -668,8 +668,9 @@ Each: production PM/Permit2/fee oracle when present; deploy-if-missing productio
 4. HookPackage.deployVault(pkgArgs, mineNonce)
      → registry.deployHookVault(pkg, abi.encode(args), mineNonce)
        → hookFactory.deployWithMineNonce(...)
-       → postDeploy: init all binom(n,2) doors + register vault
-5. Permissionless ensurePairPools(hook) repairs missing doors only
+       → postDeploy: return true (no pool init) + register vault
+5. Permissionless deployPair for every i<j, then finalizeInitialization
+6. Permissionless ensurePairPools() repairs missing doors after finalize only
 ```
 
 ### 7.2 Salt law (D70 / Q13)
@@ -681,7 +682,7 @@ packageSalt = hash(PRODUCT_ID, n, tokens, weights, standardExchanges, rateProvid
 finalSalt = keccak256(abi.encode(packageSalt, mineNonce))
 ```
 
-### 7.3 postDeploy pool keys
+### 7.3 Product pool keys (`deployPair`)
 
 For every unordered pair \((i,j)\) with \(i < j\) in binding order:
 
@@ -815,7 +816,7 @@ uint256 lock
 | DETF creep | No DETF imports; independent TestBase (D77) |
 | Size blow-up at n=8 | Facet split; pure Math; shared vault/ERC20 facets |
 | Double fee haircut on V4 | Residual math SoT; override informational only |
-| Factory doors incomplete | postDeploy + ensurePairPools tests |
+| Factory doors incomplete | staged deployPair + finalize + ensurePairPools tests |
 
 ---
 
@@ -824,7 +825,7 @@ uint256 lock
 - [x] PRD v0.6 accepted; this plan accepted  
 - [x] Phase 0a D42a **SHIP** recorded (BasePoolMath single-token exact-out exit closed-form)  
 - [x] Package implements D1–D78 + D42b + P1–P6 + Q7–Q28 (v1 surface shipped)  
-- [x] Deploy: Package → Vault Registry → Hook Diamond Factory; postDeploy doors + `ensurePairPools`  
+- [x] Deploy: Package → Vault Registry → Hook Diamond Factory; staged doors + `ensurePairPools`  
 - [x] `PRODUCT_ID` full type name; LP caps; factory PM+oracle  
 - [x] ≥1 SE; distinct SEs; RP optional on SE only  
 - [x] Swaps rated + gross buffer; dual scale; live SE book; no multi-leg rebalance  

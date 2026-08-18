@@ -52,7 +52,7 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 
 `all` / `fresh_deploy.sh` runs `00`–`05`, `06a`–`06c`, `06e`, `Script_06`, `07`, `08`, `Script_SimulateLaunch`, `09`. **`TTM7-W` / `TTNEST-W` / `TTM7-WRAP` are not deployed** (weighted n=8 stalls on this fork).
 
-Replay after reset: `--restart-anvil` then `all` again. Resume one leaf with `stage06a`…`stage06c` or `stage06e`. Each leaf / nest / fee-sink script premines via `UniswapV4DetfHookPremineLib` **before** `startBroadcast` (Foundry otherwise folds `findMineNonce` into `eth_estimateGas`), then `deployVault(args, mineNonce)` (nonce is not in PkgArgs; `0` is a legal nonce), first-bonds, and does **one** closed-form richness deposit.
+Replay after reset: `--restart-anvil` then `all` again. Resume one leaf with `stage06a`…`stage06c` or `stage06e`. Each leaf / nest / fee-sink script premines via `UniswapV4DetfHookPremineLib` **before** `startBroadcast` (Foundry otherwise folds `findMineNonce` into `eth_estimateGas`), then `deployVault(args, mineNonce)` (nonce is not in PkgArgs; `0` is a legal nonce). `deployVault` leaves a bootstrap hook only (not a ready reserve). Scripts then send one `deployPair` per product door, `finalizeInitialization`, `completeReserveBondNft`, `completeReserveClaim`, then first-bond and **one** closed-form richness deposit.
 
 ## Gas estimate (no broadcast)
 

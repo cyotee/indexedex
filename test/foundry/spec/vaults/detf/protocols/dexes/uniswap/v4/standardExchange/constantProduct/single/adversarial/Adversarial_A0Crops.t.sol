@@ -56,7 +56,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_A0_preLive_donatedPairToken_cannotBeFirstMinted() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0m"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0m"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
         uint256 donate_ = 80 ether;
         pairToken.mint(attacker, donate_);
@@ -86,7 +86,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_A0_donatedInventory_firstBondDoesNotStealOthersSeed() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
         uint256 donate_ = 80 ether;
         pairToken.mint(attacker, donate_);
@@ -111,7 +111,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_A0_preLive_pullFalse_doesNotCreditDonation() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0p"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0p"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
         uint256 donate_ = 50 ether;
         pairToken.mint(attacker, donate_);
@@ -124,7 +124,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_A0_emptyUserSupply_donatedInventory_notDrainedByFirstMint() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("a0fm"));
+        address instance_ = _deployDetfWired(_openArgsUnique("a0fm"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
         uint256 donate_ = 60 ether;
         pairToken.mint(attacker, donate_);
@@ -162,7 +162,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_CROPS_disable_doesNotBlock_closeBondMature_or_redeemClaim() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("crops"));
+        address instance_ = _deployDetfWired(_openArgsUnique("crops"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
         _firstBondOn(instance_, 400 ether);
         (uint256 tokenId_,) = _firstBondOn(instance_, 80 ether);
@@ -188,7 +188,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {
-        address instance_ = _deployDetfInstance(_openArgsUnique("cropsB"));
+        address instance_ = _deployDetfWired(_openArgsUnique("cropsB"));
         _firstBondOn(instance_, 400 ether);
 
         uint256 mintIn_ = 40 ether;

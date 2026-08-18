@@ -6,7 +6,6 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolId, PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
-import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 import {
     UniswapV4BalancerQuadStableSwapHookMath as Math
@@ -14,15 +13,14 @@ import {
 
 /**
  * @title UniswapV4BalancerQuadStableSwapHookPairPoolLib
- * @notice Ensure all six address-sorted pair doors for a quad StableSwap hook proxy.
+ * @notice Product PoolKey construction and skip-if-live initialize for Balancer quad pair doors.
  * @dev Idempotent via getSlot0: skip if already live; otherwise initialize.
  *      PoolKey: fee = lpFeePips, tickSpacing = Math.TICK_SPACING, hooks = proxy.
+ *      No bulk ensure (F5). Callers open each unordered pair via deployPair.
  */
 library UniswapV4BalancerQuadStableSwapHookPairPoolLib {
     using PoolIdLibrary for PoolKey;
     using StateLibrary for IPoolManager;
-
-    event PairPoolsEnsured(address indexed hook, uint8 createdCount, uint8 alreadyLiveCount);
 
     function computeKeys(
         address hook,
@@ -56,27 +54,13 @@ library UniswapV4BalancerQuadStableSwapHookPairPoolLib {
         });
     }
 
-    /// @notice Ensure all six doors; returns keys + created/already counts.
-    function ensureSixPairPools(
-        IPoolManager poolManager,
-        address hook,
-        address t0,
-        address t1,
-        address t2,
-        address t3,
-        uint24 fee
-    ) internal returns (PoolKey[6] memory keys, uint8 created, uint8 already) {
-        keys = computeKeys(hook, t0, t1, t2, t3, fee);
-        uint160 sqrtPrice = TickMath.getSqrtPriceAtTick(0);
-        for (uint256 i; i < 6; ++i) {
-            if (isPoolLive(poolManager, keys[i])) {
-                ++already;
-            } else {
-                poolManager.initialize(keys[i], sqrtPrice);
-                ++created;
-            }
-        }
-        emit PairPoolsEnsured(hook, created, already);
+    /// @notice Initialize only when uninited; reverts on any failure that is not "already live".
+    function initIfNeeded(IPoolManager poolManager, PoolKey memory key, uint160 sqrtPriceX96)
+        internal
+    {
+        (uint160 liveSqrt,,,) = poolManager.getSlot0(key.toId());
+        if (liveSqrt != 0) return;
+        poolManager.initialize(key, sqrtPriceX96);
     }
 
     function isPoolLive(IPoolManager poolManager, PoolKey memory key) internal view returns (bool) {

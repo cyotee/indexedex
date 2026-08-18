@@ -49,12 +49,16 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
     function _allFuncs() private pure returns (bytes4[] memory funcs_) {
         bytes4[] memory a = _funcsA();
         bytes4[] memory b = _funcsB();
-        funcs_ = new bytes4[](a.length + b.length);
+        bytes4[] memory c = _funcsC();
+        funcs_ = new bytes4[](a.length + b.length + c.length);
         for (uint256 i; i < a.length; ++i) {
             funcs_[i] = a[i];
         }
         for (uint256 j; j < b.length; ++j) {
             funcs_[a.length + j] = b[j];
+        }
+        for (uint256 k; k < c.length; ++k) {
+            funcs_[a.length + b.length + k] = c[k];
         }
     }
 
@@ -97,5 +101,13 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
         f[14] = IUniswapV4SingleStandardExchangeDETF.userBondedLp.selector;
         f[15] = IUniswapV4SingleStandardExchangeDETF.compoundProtocolRewards.selector;
         f[16] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+    }
+
+    function _funcsC() private pure returns (bytes4[] memory f) {
+        f = new bytes4[](4);
+        f[0] = IUniswapV4SingleStandardExchangeDETF.isReserveHookFinalized.selector;
+        f[1] = IUniswapV4SingleStandardExchangeDETF.isReserveWired.selector;
+        f[2] = IUniswapV4SingleStandardExchangeDETF.completeReserveBondNft.selector;
+        f[3] = IUniswapV4SingleStandardExchangeDETF.completeReserveClaim.selector;
     }
 }

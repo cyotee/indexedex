@@ -43,6 +43,9 @@ import {
     IUniswapV4StandardExchangeOrbitalBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
 import {
@@ -181,6 +184,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
     {
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         orbital = IUniswapV4StandardExchangeOrbitalBufferHook(hook);
 
         int24 spacing = 60;
@@ -327,13 +331,37 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         return PkgFactory.requiredFlags();
     }
 
+    /// @notice S42: three public door calls then finalize. Not PairPoolLib.ensureThreePairPools.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        _ensureProductDoorsAndFinalize(hook_, address(token0), address(token1), address(token2));
+    }
+
+    function _ensureProductDoorsAndFinalize(address hook_, address t0, address t1, address t2)
+        internal
+    {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(t0, t1);
+        init.deployPair(t1, t2);
+        init.deployPair(t0, t2);
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice S43: deploy via package path without opening doors or finalizing.
+    function _deployBootstrapOnly(
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args
+    ) internal returns (address) {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
     function _assertPoolLive(PoolKey memory key) internal view {
         assertTrue(PairPoolLib.isPoolLive(pm, key), "pair door not initialized on PoolManager");
         assertEq(address(key.hooks), hook, "hooks must be product proxy");
         assertEq(key.fee, LPFeeLibrary.DYNAMIC_FEE_FLAG, "DYNAMIC_FEE");
     }
 
-    function _assertThreePoolsLiveFromPostDeploy() internal view {
+    function _assertThreeProductDoorsLive() internal view {
         _assertPoolLive(poolKey01);
         _assertPoolLive(poolKey12);
         _assertPoolLive(poolKey02);

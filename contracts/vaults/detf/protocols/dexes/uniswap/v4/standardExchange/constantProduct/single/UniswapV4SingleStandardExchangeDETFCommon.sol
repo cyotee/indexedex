@@ -58,6 +58,13 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         if (!Repo._layoutStruct().isReserveLive) revert Repo.ReserveNotLive();
     }
 
+    function _requireReserveWired() internal view {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0) || address(s.rebasingClaimToken) == address(0)) {
+            revert Repo.ReserveNotWired();
+        }
+    }
+
     /// @dev Deadline + amount only. Disable is inbound-only (`_requireNotDisabled`).
     function _requireActive(uint256 deadline_, uint256 amount_) internal view {
         if (amount_ == 0) revert Repo.ZeroAmount();

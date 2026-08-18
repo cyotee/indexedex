@@ -28,6 +28,9 @@ import {
 import {
     UniswapV4CurveQuadStableSwapHookMath as Math
 } from "contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHookMath.sol";
+import {
+    UniswapV4CurveQuadStableSwapHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHookBeforeInitializeLib.sol";
 
 /**
  * @title UniswapV4CurveQuadStableSwapHookTarget
@@ -162,16 +165,7 @@ abstract contract UniswapV4CurveQuadStableSwapHookTarget is IHooks, IUniswapV4Cu
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        address a = Currency.unwrap(poolKey.currency0);
-        address b = Currency.unwrap(poolKey.currency1);
-        if (a >= b) revert InvalidPoolKey();
-        _tokenIndex(a);
-        _tokenIndex(b);
-        if (poolKey.fee != Repo._layout().lpFeePips) revert InvalidPoolKey();
-        if (poolKey.tickSpacing != int24(int256(Math.TICK_SPACING))) revert InvalidPoolKey();
-        if (address(poolKey.hooks) != address(this)) revert InvalidPoolKey();
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
     function afterInitialize(address, PoolKey calldata, uint160, int24)

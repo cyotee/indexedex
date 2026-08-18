@@ -37,12 +37,14 @@ contract UniswapV4StandardExchangeWeightedDETFFacet is IFacet, UniswapV4Standard
 
     function _allFuncs() private pure returns (bytes4[] memory f) {
         // Bonding / sell / close only. Claim + compound live on CompoundFacet (Option 1e).
-        f = new bytes4[](4);
+        f = new bytes4[](6);
         // bond(IERC20[],uint256[],address,uint256,address,bool,uint256)
         f[0] = bytes4(keccak256("bond(address[],uint256[],address,uint256,address,bool,uint256)"));
         // bond(IERC20,uint256,uint256,address,bool,uint256)
         f[1] = bytes4(keccak256("bond(address,uint256,uint256,address,bool,uint256)"));
         f[2] = IUniswapV4StandardExchangeWeightedDETF.sellPositionToDetfNft.selector;
         f[3] = IUniswapV4StandardExchangeWeightedDETF.closeBondMature.selector;
+        f[4] = IUniswapV4StandardExchangeWeightedDETF.completeReserveBondNft.selector;
+        f[5] = IUniswapV4StandardExchangeWeightedDETF.completeReserveClaim.selector;
     }
 }

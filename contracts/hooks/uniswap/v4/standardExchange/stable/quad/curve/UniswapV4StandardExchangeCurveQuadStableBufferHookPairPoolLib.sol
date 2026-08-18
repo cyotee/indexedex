@@ -7,12 +7,14 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolId, PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol";
-import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib
- * @notice Ensure all 6 pair doors for fixed n=4 with DYNAMIC_FEE_FLAG, tickSpacing=1, hooks=this.
+ * @notice Product PoolKey construction and skip-if-live initialize for SE Curve quad pair doors.
+ * @dev Idempotent via getSlot0: skip if already live; otherwise initialize.
+ *      PoolKey: fee = DYNAMIC_FEE_FLAG, tickSpacing = 1, hooks = proxy.
+ *      No bulk ensure (F5). Callers open each unordered pair via deployPair.
  */
 library UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib {
     using PoolIdLibrary for PoolKey;
@@ -21,44 +23,6 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib {
     int24 internal constant TICK_SPACING = 1;
     uint256 internal constant N_TOKENS = 4;
     uint256 internal constant PAIR_DOOR_COUNT = 6; // binom(4,2)
-
-    /// @notice Initialize every unordered pair among fixed 4 tokens (address-sorted currencies).
-    /// @return doorsEnsured Count of pools newly initialized (already-live doors skipped).
-    function ensureAllPairPools(
-        IPoolManager poolManager,
-        address hook,
-        address[4] memory tokens,
-        uint160 sqrtPriceX96
-    ) internal returns (uint256 doorsEnsured) {
-        uint160 price = sqrtPriceX96 == 0 ? TickMath.getSqrtPriceAtTick(0) : sqrtPriceX96;
-        IHooks h = IHooks(hook);
-        for (uint256 i; i < N_TOKENS; ++i) {
-            for (uint256 j = i + 1; j < N_TOKENS; ++j) {
-                PoolKey memory key = pairKey(tokens[i], tokens[j], TICK_SPACING, h);
-                if (initIfNeeded(poolManager, key, price)) {
-                    unchecked {
-                        ++doorsEnsured;
-                    }
-                }
-            }
-        }
-    }
-
-    /// @notice Dynamic-array convenience (binding tokens view).
-    function ensureAllPairPools(
-        IPoolManager poolManager,
-        address hook,
-        address[] memory tokens,
-        uint160 sqrtPriceX96
-    ) internal returns (uint256 doorsEnsured) {
-        require(tokens.length == N_TOKENS, "n");
-        address[4] memory fixed_;
-        fixed_[0] = tokens[0];
-        fixed_[1] = tokens[1];
-        fixed_[2] = tokens[2];
-        fixed_[3] = tokens[3];
-        return ensureAllPairPools(poolManager, hook, fixed_, sqrtPriceX96);
-    }
 
     function pairDoorCount() internal pure returns (uint256) {
         return PAIR_DOOR_COUNT;

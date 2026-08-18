@@ -47,7 +47,7 @@ Refactor Dual SE Buffer CP so that:
 3. Align instance **vault + Standard Exchange surfaces** with Single SE BCP gold where dual product law already implies SE In/Out compatibility (at minimum vault discovery; SE In/Out if product PRD / DETF consumers need them — see D-SE).  
 4. Pure package-constant flags matching today’s permission set.  
 5. Salt: `PRODUCT_ID` + binding (feeOracle, poolManager, sorted legs) — **no** package address; **no** CREATE3 namespace salt as primary identity.  
-6. **Preserve** product PRD v3.12 behavior: dual SE buffer, CP on claims, proportional + single-asset zap deposit, withdraw, Permit2 variants, fee oracle trading + growth, **integrator-initialized** V4 pool (package does **not** create the pool).
+6. **Preserve** product PRD v3.12 behavior: dual SE buffer, CP on claims, proportional + single-asset zap deposit, withdraw, Permit2 variants, fee oracle trading + growth. **Staged init:** `deployVault` / `postDeploy` do **not** install the production ABI or open the product door. Callers open the door with `deployPair` (or raw `PoolManager.initialize` of that product PoolKey); `finalizeInitialization` Adds the production ABI. See staged init PRD.
 
 ### 1.1 Why migrate
 
@@ -102,7 +102,7 @@ FactoryService.deployHook(create3Factory, poolManager, feeOracle, se0, t0, se1, 
   → isExpectedHook deep binding checks for idempotency
 ```
 
-V4 pool: **not** created by package (integrator `poolManager.initialize`).
+V4 pool: **not** created in `deployVault` / `postDeploy`. Product door is later `deployPair` (or matching raw initialize). See staged init PRD.
 
 ### 2.3 Flags today (must remain package-constant)
 
@@ -162,7 +162,7 @@ BEFORE_INITIALIZE | BEFORE_ADD_LIQUIDITY | BEFORE_SWAP | BEFORE_SWAP_RETURNS_DEL
 | D8 | Auto-mine | Optional only |
 | D9 | Direct hookFactory | Tests / escape only |
 | D10 | No product CREATE3 factory | Dual never had one; **do not invent** one — package is the UX |
-| D11 | Pool create | **Still not** a package step (integrator initialize) — product D / C law |
+| D11 | Pool create | **Superseded by staged init.** `deployVault` does not initialize. Product door is `deployPair(tokenA, tokenB)` (or raw initialize of that key). Production ABI at `finalizeInitialization`. |
 | D12 | Premine-first | Same as factory skill |
 
 ### 3.3 Salt & flags
@@ -263,9 +263,9 @@ Validation: non-zero; `se0 != se1`; `token0 != token1`; each token ∈ correspon
 1. setHookDiamondPackageFactory
 2. deployPkg(dual package)
 3. premine mineNonce for PRODUCT_ID + sorted binding
-4. pkg.deployVault(args, mineNonce) → registered diamond
-5. Integrator initializes V4 pool: currencies sort(token0,token1), fee=0, hooks=proxy
-6. deposit / depositSingle / swap / withdraw per product PRD
+4. pkg.deployVault(args, mineNonce) → registered bootstrap diamond
+5. deployPair(tokenA, tokenB) for the bound pair (fee=0, hooks=proxy), then finalizeInitialization
+6. deposit / depositSingle / swap / withdraw per product PRD (production ABI after finalize)
 ```
 
 ---
@@ -293,7 +293,7 @@ Ladder: factory TestBase → dual product TestBase.
 | Deploy / registry / flags / salt / idempotent / immutable | Skill checklist |
 | Sorted salt | Swapped ctor leg order → **same** address |
 | SE validation | Token not in SE.vaultTokens reverts at processArgs/init |
-| Pool | Deposit works pre-init; swaps need initialize (product law) |
+| Pool | Product door via `deployPair` then finalize; swaps need that live key + claims |
 | Product | Dual deposit, depositSingle zap-eligible gate, claim-in composition, withdraw, fee growth |
 | Profile | `FOUNDRY_PROFILE=hook_factory` |
 
@@ -319,7 +319,7 @@ CP/SE/zap/fee product law remains v3.12 product PRD.
 
 1. Changing claim-in composition (D78) or zap residual gate (D79).  
 2. Building a dedicated dual CREATE3 product factory.  
-3. Package-owned V4 pool initialize (stays integrator).  
+3. Same-tx full production ABI at CREATE2. Doors + ABI are staged (`deployPair` then `finalizeInitialization`).  
 4. Migrating legacy `standardExchange/single` pricing hook.  
 5. Subclassing Single SE BCP diamond.  
 6. Post-deploy upgrades.

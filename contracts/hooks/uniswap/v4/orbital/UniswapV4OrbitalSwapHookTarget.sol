@@ -35,6 +35,9 @@ import {
 import {
     UniswapV4OrbitalSwapHookMath as Math
 } from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookMath.sol";
+import {
+    UniswapV4OrbitalSwapHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookBeforeInitializeLib.sol";
 
 /**
  * @title UniswapV4OrbitalSwapHookTarget
@@ -381,12 +384,7 @@ abstract contract UniswapV4OrbitalSwapHookTarget is IHooks, IUniswapV4OrbitalSwa
         override
         returns (bytes4)
     {
-        _onlyPoolManager();
-        address a = Currency.unwrap(poolKey.currency0);
-        address b = Currency.unwrap(poolKey.currency1);
-        if (!_isBound(a) || !_isBound(b) || a == b) revert InvalidPoolToken();
-        if (poolKey.fee != LPFeeLibrary.DYNAMIC_FEE_FLAG) revert InvalidPoolFee();
-        return IHooks.beforeInitialize.selector;
+        return BeforeInitializeLib.beforeInitialize(poolKey);
     }
 
     function afterInitialize(address, PoolKey calldata, uint160, int24)

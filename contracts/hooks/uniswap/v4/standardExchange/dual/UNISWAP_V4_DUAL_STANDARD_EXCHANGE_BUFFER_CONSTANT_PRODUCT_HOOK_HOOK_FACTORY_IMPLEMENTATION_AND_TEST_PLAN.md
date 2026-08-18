@@ -15,8 +15,8 @@
 1. setHookDiamondPackageFactory(hookFactory)
 2. registry.deployPkg(Dual DFPkg initCode, PkgInit, salt)
 3. premine mineNonce for PRODUCT_ID + sorted legs
-4. pkg.deployVault(PkgArgs, mineNonce) → deployHookVault → CREATE2 diamond
-5. Integrator poolManager.initialize(currencies, fee=0, hooks=proxy)
+4. pkg.deployVault(PkgArgs, mineNonce) → deployHookVault → CREATE2 bootstrap diamond
+5. deployPair(tokenA, tokenB) then finalizeInitialization (staged init PRD; product key fee=0)
 ```
 
 FactoryService exposes: `deployHooksFacet` / `deployDepositFacet` / `deployWithdrawFacet` / `deployPackage` / `findMineNonce` / `deployHook(pkg, args, mineNonce)` only. **No** CREATE3 monomorph `deployHook(create3Factory, …)`.

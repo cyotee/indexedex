@@ -25,7 +25,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_DeployTest is
             _requiredFlags() & Create2Lib.FLAG_MASK,
             "flags"
         );
-        _assertThreePoolsLiveFromPostDeploy();
+        _assertThreeProductDoorsLive();
         assertEq(orbital.radius(), 0, "R inert");
         assertEq(orbital.token0(), address(token0));
         assertEq(orbital.token1(), address(token1));

@@ -32,6 +32,9 @@ import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
@@ -100,7 +103,6 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
     using HookFactoryService for ICreate3FactoryProxy;
 
     address internal constant PERMIT2_ADDR = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
-    uint160 internal constant SQRT_PRICE_1_1 = 79228162514264337593543950336;
 
     ERC20PermitMintableStub internal pairToken;
     ERC20PermitMintableStub internal seOtherToken;
@@ -201,17 +203,13 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
         single = IHook(hook);
+        // Bootstrap hook has no production ABI until the product door + finalize.
+        {
+            IUniswapV4HookStagedPairInit staged = IUniswapV4HookStagedPairInit(hook);
+            hookPoolKey = staged.deployPair(address(rawToken), address(pairToken));
+            require(staged.finalizeInitialization(), "finalize");
+        }
         assertEq(single.standardExchange(), address(seVault), "hook bound to V4 SE");
-
-        // Hook pool (raw ↔ pair) on same PM; seed live book via proportional deposit (buffers pair → V4 SE).
-        hookPoolKey = PoolKey({
-            currency0: Currency.wrap(single.currency0()),
-            currency1: Currency.wrap(single.currency1()),
-            fee: 0,
-            tickSpacing: 60,
-            hooks: IHooks(hook)
-        });
-        poolManager.initialize(hookPoolKey, SQRT_PRICE_1_1);
 
         rawToken.mint(user, 1_000_000 ether);
         pairToken.mint(user, 1_000_000 ether);

@@ -19,7 +19,7 @@ contract UniswapV4SingleStandardExchangeDETF_NestedPush_Test is TestBase_Uniswap
 
     function setUp() public override {
         super.setUp();
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4SingleStandardExchangeDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pairToken.mint(detfUser, 10_000_000 ether);

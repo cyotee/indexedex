@@ -9,9 +9,6 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
-import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
-import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
@@ -22,12 +19,10 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
-import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
@@ -37,9 +32,6 @@ import {
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFEpochNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol";
-import {
-    IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
@@ -59,9 +51,6 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
     bytes32 private constant _DEPLOY_CONFIG_SLOT = keccak256(
         abi.encode(uint256(keccak256("vault.detf.uniswap.v4.se.cp.single.pkg.deploy-config")) - 1)
     ) & ~bytes32(uint256(0xff));
-
-    /// @dev Plumbing-only sqrt price (1:1). First bond sets economic creation rate.
-    uint160 private constant SQRT_PRICE_1_1 = 79228162514264337593543950336;
 
     struct DeployConfig {
         IStandardExchangeProxy standardExchangeVault;
@@ -278,48 +267,8 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         DeployConfig storage cfg = _deployConfig();
         _validateSePair(cfg);
         address hook_ = _deployReserveHook(cfg);
-        _initPool(hook_);
-        IDETFNFTVault bondVault_ = _deployBondNftVault(hook_);
-        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
-        uint256 feeRecipientNftId_ = _tryInitFeeRecipientNft(bondVault_);
-        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
         _initVaultTokens(hook_, address(cfg.pairToken));
-        _initRepo(cfg, hook_, bondVault_, detfNftId_, feeRecipientNftId_, claimToken_);
-    }
-
-    function _deployRebasingClaimToken(
-        DeployConfig storage cfg,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
-    ) private returns (IRebasingClaimToken claimToken_) {
-        address detf_ = address(this);
-        claimToken_ = IRebasingClaimToken(
-            REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IDetf(detf_), bondVault_, cfg.pairToken, detfNftId_, detf_
-            )
-        );
-    }
-
-    /// @dev Peer seigniorage shape: open a fee-recipient NFT owned by feeTo for claimable free DETF weight.
-    ///      Requires fee oracle bond terms (global/type/vault) so createPosition lock validation passes.
-    function _tryInitFeeRecipientNft(IDETFNFTVault bondVault_) private returns (uint256 feeNftId_) {
-        address feeTo_ = address(FEE_ORACLE.feeTo());
-        if (feeTo_ == address(0)) return 0;
-        // 1-wei principal share: fee recipient participates in free-DETF reward ledger (no auto-compound).
-        // Physical LP for this dust share is not required (convert excludes protocol NFT; fee dust is negligible).
-        try bondVault_.createPosition(1, _minLockOrDefault(), feeTo_) returns (uint256 id_) {
-            feeNftId_ = id_;
-        } catch {
-            feeNftId_ = 0;
-        }
-    }
-
-    function _minLockOrDefault() private view returns (uint256 lock_) {
-        try FEE_ORACLE.bondTermsOfVault(address(this)) returns (BondTerms memory terms_) {
-            lock_ = terms_.minLockDuration == 0 ? 1 : terms_.minLockDuration;
-        } catch {
-            lock_ = 1;
-        }
+        _initRepo(cfg, hook_);
     }
 
     function _initVaultTokens(address hook_, address pair_) private {
@@ -332,11 +281,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
 
     function _initRepo(
         DeployConfig storage cfg,
-        address hook_,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_,
-        uint256 feeRecipientNftId_,
-        IRebasingClaimToken claimToken_
+        address hook_
     ) private {
         Repo._initializeCore(
             Repo.CoreInit({
@@ -346,11 +291,13 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
                 reserveHook: hook_,
                 poolManager: POOL_MANAGER,
                 feeOracle: FEE_ORACLE,
-                bondNftVault: bondVault_,
-                rebasingClaimToken: claimToken_,
-                detfNftId: detfNftId_,
-                feeRecipientNftId: feeRecipientNftId_,
-                creationPairPerDetfWad: cfg.creationPairPerDetfWad
+                bondNftVault: IDETFNFTVault(address(0)),
+                rebasingClaimToken: IRebasingClaimToken(address(0)),
+                detfNftId: 0,
+                feeRecipientNftId: 0,
+                creationPairPerDetfWad: cfg.creationPairPerDetfWad,
+                bondNftVaultPkg: address(BOND_NFT_VAULT_PKG),
+                rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG)
             })
         );
         Repo._initializePolicy(
@@ -390,40 +337,5 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
             rawToken: address(this)
         });
         hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
-    }
-
-    function _initPool(address hook_) private {
-        IHook h = IHook(hook_);
-        PoolKey memory key = PoolKey({
-            currency0: Currency.wrap(h.currency0()),
-            currency1: Currency.wrap(h.currency1()),
-            fee: 0,
-            tickSpacing: 60,
-            hooks: IHooks(hook_)
-        });
-        POOL_MANAGER.initialize(key, SQRT_PRICE_1_1);
-    }
-
-    function _deployBondNftVault(address reserveHook_) private returns (IDETFNFTVault bondVault_) {
-        address detf_ = address(this);
-        bondVault_ = IDETFNFTVault(
-            BOND_NFT_VAULT_PKG.deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
-                IDetf(detf_),
-                IERC20(reserveHook_),
-                IERC20(detf_),
-                0,
-                detf_
-            )
-        );
-    }
-
-    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
-            detfNftId_ = id_;
-        } catch {
-            detfNftId_ = 0;
-        }
     }
 }

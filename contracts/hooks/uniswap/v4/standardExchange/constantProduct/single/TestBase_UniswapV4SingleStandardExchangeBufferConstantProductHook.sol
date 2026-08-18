@@ -20,8 +20,12 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
@@ -126,7 +130,9 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);
+        _ensureProductDoorsAndFinalize(hook);
         single = IHook(hook);
+        _bindProductPoolKey();
 
         // Fund user
         rawToken.mint(user, 1_000_000 ether);
@@ -201,7 +207,34 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         vm.stopPrank();
     }
 
-    function _initPool() internal {
+    /// @notice S42: one public product door then finalize. Not pm.initialize.
+    function _ensureProductDoorsAndFinalize(address hook_) internal {
+        _ensureProductDoorsAndFinalize(hook_, address(rawToken), address(pairToken));
+    }
+
+    function _ensureProductDoorsAndFinalize(address hook_, address tokenA_, address tokenB_)
+        internal
+    {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(tokenA_, tokenB_);
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice S43: deploy via package path without opening the door or finalizing.
+    function _deployBootstrapOnly(
+        IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args
+    ) internal returns (address) {
+        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+        return PkgFactory.deployHook(hookPkg, args, mineNonce);
+    }
+
+    function _registry() internal view returns (IVaultRegistryVaultQuery) {
+        return IVaultRegistryVaultQuery(address(indexedexManager));
+    }
+
+    /// @notice Construct the product PoolKey. Door is already live after S42; do not initialize.
+    function _bindProductPoolKey() internal {
         poolKey = PoolKey({
             currency0: Currency.wrap(single.currency0()),
             currency1: Currency.wrap(single.currency1()),
@@ -209,7 +242,11 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
             tickSpacing: 60,
             hooks: IHooks(hook)
         });
-        pm.initialize(poolKey, SQRT_PRICE_1_1);
+    }
+
+    /// @dev Kept for existing product specs. Constructs the live product key; does not initialize.
+    function _initPool() internal {
+        _bindProductPoolKey();
     }
 
     function _amountForCurrency(address currency, uint256 amtRaw, uint256 amtPair)

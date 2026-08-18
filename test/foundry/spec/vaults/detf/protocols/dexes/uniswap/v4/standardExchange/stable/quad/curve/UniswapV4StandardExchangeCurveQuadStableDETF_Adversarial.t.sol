@@ -169,7 +169,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
             expansionMaxCatchUpEpochs: 0
         });
 
-        hostileDetf = _deployDetfInstance(args);
+        hostileDetf = _deployDetfWired(args);
         hostileDetfInfo = IUniswapV4StandardExchangeCurveQuadStableDETF(hostileDetf);
         hostileDetfX = IStandardExchangeIn(hostileDetf);
         _setBondTermsFor(hostileDetf);
@@ -239,7 +239,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
     }
 
     function test_burn_neverCallsWithdrawSingle() public {
-        address d = _deployDetfInstance(_openArgsUnique("noWdraw"));
+        address d = _deployDetfWired(_openArgsUnique("noWdraw"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -259,7 +259,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
     }
 
     function test_claim_neverCallsWithdrawSingle() public {
-        address d = _deployDetfInstance(_openArgsUnique("noWdrawC"));
+        address d = _deployDetfWired(_openArgsUnique("noWdrawC"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -283,7 +283,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
     }
 
     function test_close_neverCallsWithdrawSingle() public {
-        address d = _deployDetfInstance(_openArgsUnique("noWdrawX"));
+        address d = _deployDetfWired(_openArgsUnique("noWdrawX"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -316,7 +316,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
         args.standardExchanges[1] = IStandardExchangeProxy(address(0));
         args.standardExchanges[2] = IStandardExchangeProxy(address(0));
 
-        address d = _deployDetfInstance(args);
+        address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         _setBondTermsFor(d);
@@ -444,7 +444,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
     }
 
     function test_burn_atomicRevert_leavesDetfUnburned() public {
-        address d = _deployDetfInstance(_openArgsUnique("atomic"));
+        address d = _deployDetfWired(_openArgsUnique("atomic"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
         IStandardExchangeIn ex = IStandardExchangeIn(d);

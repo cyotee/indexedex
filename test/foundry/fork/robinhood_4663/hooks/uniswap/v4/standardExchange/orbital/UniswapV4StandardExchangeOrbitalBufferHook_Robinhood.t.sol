@@ -27,7 +27,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Robinhood is
             emit log("FK3 skip: ROBINHOOD_RPC_URL unset");
             return;
         }
-        _assertThreePoolsLiveFromPostDeploy();
+        _assertThreeProductDoorsLive();
         uint256 shares = _seedThreeLeg(50 ether);
         assertGt(shares, 0);
         _swapExactIn(address(token0), address(token1), 1 ether);

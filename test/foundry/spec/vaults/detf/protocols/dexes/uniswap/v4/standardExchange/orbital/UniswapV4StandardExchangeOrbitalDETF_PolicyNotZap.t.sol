@@ -33,7 +33,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
     ///      (leave MINIMUM_LIQUIDITY). No DETF redeposit → supply == MIN → !isZapEligible.
     ///      Primary mint must hard-revert NotZapEligible (DETF gate before depositSingle).
     function test_mint_reverts_NotZapEligible_when_only_min_liquidity() public {
-        address d = _deployDetfInstance(_openArgsUnique("notZap"));
+        address d = _deployDetfWired(_openArgsUnique("notZap"));
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         (uint256 tokenId,) = _firstBondOn(d, 50 ether, 50 ether);
         address hook = info.reserveHook();
@@ -72,7 +72,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
     }
 
     function test_policy_mint_blocked_in_deadband_then_allowed_after_push() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("polMint"));
+        address d = _deployDetfWired(_gentleArgsUnique("polMint"));
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy));
         // Unbalanced first bond so S lands in Policy deadband (address-sorted
@@ -106,7 +106,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
     }
 
     function test_policy_burn_allowed_when_synthetic_below_burnThreshold() public {
-        address d = _deployDetfInstance(_gentleArgsUnique("polBurn"));
+        address d = _deployDetfWired(_gentleArgsUnique("polBurn"));
         IUniswapV4StandardExchangeOrbitalDETF info = IUniswapV4StandardExchangeOrbitalDETF(d);
         _firstBondOn(d, 100 ether, 100 ether);
 

@@ -102,7 +102,7 @@ Ship production-first:
 3. Six V4 pair doors → one shared Repo book.  
 4. Fungible ERC-20 LP on the hook; custom `addLiquidity` / `removeLiquidity` / `zapIn`.  
 5. Swaps via `beforeSwap` + `beforeSwapReturnDelta` (custom accounting).  
-6. On-chain **`UniswapV4CurveQuadStableSwapHookFactory`**: `deploy`, `deployWithMineNonce`, `ensurePairPools` (factory-attested only).  
+6. Hook diamond package: `deployVault` then `deployPair` × 6 then `finalizeInitialization` (staged init PRD). `postDeploy` does not init doors.  
 7. Hermetic TestBase + Base + Robinhood forks green per §8–§9.
 
 **Out of scope (v1 — PRD §2.3 / §11):** \(n \ne 4\); Balancer weights; SE buffering; amp ramp; fee skim; owner/pause; Permit2 on hook; native ETH; Facet/DFPkg; second CREATE3 system; subclassing peer hooks; shared TestBases with DETF Uni V4 packages; factory-seeded liquidity.

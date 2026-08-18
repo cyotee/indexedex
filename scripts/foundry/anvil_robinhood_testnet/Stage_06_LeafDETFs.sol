@@ -14,6 +14,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
 import {
     IUniswapV4SingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
@@ -168,6 +169,7 @@ library Stage_06_LeafDETFs {
         );
         s.ttNvdaS = IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg).deployVault(args, nonce);
         require(s.ttNvdaS == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireCp(s.ttNvdaS);
         RichnessLib.firstBondCp(s.ttNvdaS, IERC20(s.ttNVDA), FixtureEconomics.LEAF_FIRST_BOND, bonder);
     }
 
@@ -207,6 +209,7 @@ library Stage_06_LeafDETFs {
         s.ttNvdaSmhO = IUniswapV4StandardExchangeOrbitalDETDFPkg(s.orbitalDetfPkg).deployVault(args, nonce);
         require(s.ttNvdaSmhO == predicted, "detf != predicted");
         console2.log("06b deployVault done", s.ttNvdaSmhO);
+        UniswapV4DetfScriptWireLib._wireOrbital(s.ttNvdaSmhO);
         RichnessLib.firstBondOrbital(
             s.ttNvdaSmhO,
             IERC20(s.ttNVDA),
@@ -244,6 +247,7 @@ library Stage_06_LeafDETFs {
         s.ttIdxQ = IUniswapV4StandardExchangeCurveQuadStableDETDFPkg(s.curveQuadDetfPkg).deployVault(args, nonce);
         require(s.ttIdxQ == predicted, "detf != predicted");
         console2.log("06c deployVault done", s.ttIdxQ);
+        UniswapV4DetfScriptWireLib._wireQuad(s.ttIdxQ);
         IERC20[] memory ins = new IERC20[](3);
         uint256[] memory amts = new uint256[](3);
         ins[0] = IERC20(s.ttSPY);
@@ -289,6 +293,7 @@ library Stage_06_LeafDETFs {
         s.ttDolQ = IUniswapV4StandardExchangeCurveQuadStableDETDFPkg(s.curveQuadDetfPkg).deployVault(args, nonce);
         require(s.ttDolQ == predicted, "detf != predicted");
         console2.log("06e deployVault done", s.ttDolQ);
+        UniswapV4DetfScriptWireLib._wireQuad(s.ttDolQ);
         IERC20[] memory ins = new IERC20[](3);
         uint256[] memory amts = new uint256[](3);
         ins[0] = IERC20(s.ttUSDE);

@@ -33,7 +33,7 @@ contracts/hooks/uniswap/v4/orbital/
 3. Premine `mineNonce` for `PRODUCT_ID` salt + pure flags  
 4. `pkg.deployVault(args, mineNonce)` → `deployHookVault` → hook CREATE2 factory  
 5. `initAccount` binds Repo + ERC20/EIP712/MultiAsset/StandardVault  
-6. Package `postDeploy(proxy)` ensures three pair doors (idempotent)
+6. Package `postDeploy(proxy)` returns true and inits **zero** pools (staged init PRD / S12). Product doors + production ABI: `deployPair` then `finalizeInitialization`. See `UNISWAP_V4_ORBITAL_SWAP_HOOK_STAGED_INIT_IMPLEMENTATION_AND_TEST_PLAN.md`.
 
 ## Salt & flags
 

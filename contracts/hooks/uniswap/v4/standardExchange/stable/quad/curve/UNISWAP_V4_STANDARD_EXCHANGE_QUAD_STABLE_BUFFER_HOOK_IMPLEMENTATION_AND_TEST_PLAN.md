@@ -53,7 +53,7 @@
 | Swap buffer | Buffer **full gross** amountIn; curve uses fee-net (D59a) |
 | LP pull | `transferFrom` if allowance else Permit2 **AllowanceTransfer only** — no SignatureTransfer / no `permit2Data` (D47) |
 | PM + feeOracle | **Factory immutables only** (D8) |
-| Doors | postDeploy all **6** pairs + permissionless `ensurePairPools` (D75–D75a) |
+| Doors | Staged `deployPair` × 6 then `finalizeInitialization`. `ensurePairPools` may repair after finalize (D75–D75a). See staged PRD. |
 | PRODUCT_ID | `"UniswapV4StandardExchangeCurveQuadStableBufferHook"` (D73) |
 | LP symbol prefix | **`SEQS`** (D46); symbol ≤32, name ≤64 |
 | Forks | **Ethereum + Base + Robinhood (4663)** all required, equal priority (D79) |
@@ -108,7 +108,7 @@ Implement production-first package **`UniswapV4StandardExchangeCurveQuadStableBu
 9. **`IStandardExchangeIn` / `Out`** (swap-only, rated book, internal settle) + **full shared** **`IStandardExchangeMultiAssetLiquidity`**.  
 10. Swaps via **`beforeSwap` + `beforeSwapReturnDelta`**; pattern-copy settle — **no** BaseHook / DeltaResolver inheritance.  
 11. Trading residual = live `dexSwapFeeOfVault` (gross buffer on SE in); single-asset taxable = same channel; growth = Uni V2–style inventory product measure + `usageFeeOfVault`.  
-12. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + hook factory; **postDeploy inits all six doors**; **`ensurePairPools`**.  
+12. Deploy: facets CREATE3 + DFPkg via registry; instances via `deployHookVault` + hook factory; **`deployPair` × 6 then `finalizeInitialization`**. `ensurePairPools` may repair after finalize.  
 13. Vault discovery: `IBasicVault` + `IStandardVault`; `reserveOfToken` = face \| **live SE shares** (not claim, not rated).  
 14. Hermetic SE count matrix 1–4 + RP on/off; adversarial suite; forks Ethereum + Base + RH 4663.  
 15. Size within real CREATE2/runtime limits; split facets/libs as needed without dropping D57a surface.
@@ -119,7 +119,7 @@ Implement production-first package **`UniswapV4StandardExchangeCurveQuadStableBu
 
 | Peer | Copy what |
 |------|-----------|
-| SE Weighted / Orbital DFPkg + facets | Hook package shape, `deployVault` → `deployHookVault`, shared ERC20/vault facet cuts, FactoryService, postDeploy doors, MultiAssetLiquidity facade |
+| SE Weighted / Orbital DFPkg + facets | Hook package shape, `deployVault` → `deployHookVault`, shared ERC20/vault facet cuts, FactoryService, staged doors + finalize, MultiAssetLiquidity facade |
 | Raw Quad Math | Classic Curve `getD` / `getY` (n=4), `AMP_PRECISION`, Newton 255 iters, `geometricMean4`, post-state priceability |
 | Weighted dual scale + taxable single-asset | invScale/ratedScale, single-asset tax via `dexSwapFeeOfVault`, live book, growth predicate |
 | Dual / Orbital ClaimLib / buffer-last | Claim-in composition, SE buffer/unwrap tight bounds, dust refund, gross buffer |
@@ -182,7 +182,7 @@ contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol
 - Monomorph CREATE3 product factory for this package  
 - Vault factory salt / `deployVault` path that skips hook factory (wrong flags)  
 - Package/facet addresses in `packageSalt`  
-- Live `diamondCut` after postDeploy  
+- Public `diamondCut` after finalizeInitialization  
 - Solidity inheritance of Crane/OZ `BaseHook`, `BaseTokenWrapperHook`, `DeltaResolver`  
 - Short production type names (`SEQSHook`, `QuadSEBHook`, …)  
 - Multi-leg rebalance “zap split” helpers  
@@ -525,8 +525,8 @@ Mask against `Hooks.ALL_HOOK_MASK` in factory (I4). CL add/remove and donate alw
    - `requiredHookFlags()` = §4.8 mask  
    - `packageSalt` = PRODUCT_ID + binding fields (**tokens, SEs, RPs, baseAmp**) + factory-scope identity — **no** package/facet addresses; **no** PM/oracle in salt if factory-immutable (D73)  
    - `deployVault(args, mineNonce)` → `registry.deployHookVault`  
-   - **`postDeploy`:** initialize **all six** pair doors (address-sorted currencies, `DYNAMIC_FEE_FLAG`, `TICK_SPACING=1`, `sqrtPriceX96` at tick 0)  
-   - `ensurePairPools(hook)` path (permissionless repair)  
+   - **`postDeploy`:** `return true` (does not init doors)  
+   - Staged `deployPair` × 6 then `finalizeInitialization`. `ensurePairPools()` may repair after finalize.  
    - `diamondConfig` **without** live `diamondCut`  
    - Cut shared ERC20Permit + MultiAsset vault facets + product facets  
 6. **initAccount:** ERC20Repo + EIP712Repo + product Repo binding + LP name/symbol `SEQS-…` (D46 caps + address-fragment fallback).  
@@ -708,8 +708,8 @@ Each: production PM/Permit2/fee oracle when present; deploy-if-missing productio
 4. HookPackage.deployVault(pkgArgs, mineNonce)
      → registry.deployHookVault(pkg, abi.encode(args), mineNonce)
        → hookFactory.deployWithMineNonce(...)
-       → postDeploy: init all 6 doors + register vault
-5. Permissionless ensurePairPools(hook) repairs missing doors only
+       → postDeploy: no-op (does not init doors)
+5. Permissionless `deployPair` × 6 then `finalizeInitialization`. `ensurePairPools()` may repair after finalize.
 ```
 
 ### 7.2 Salt law (D73)
@@ -721,7 +721,7 @@ packageSalt = hash(PRODUCT_ID, tokens[4], standardExchanges[4], rateProviders[4]
 finalSalt = keccak256(abi.encode(packageSalt, mineNonce))
 ```
 
-### 7.3 postDeploy pool keys
+### 7.3 Product door pool keys (`deployPair`)
 
 For every unordered pair \((i,j)\) with \(i < j\) in binding order:
 
@@ -762,7 +762,7 @@ Peer SE Weighted / Orbital FactoryService:
 
 | ID | Case | Required |
 |----|------|----------|
-| H1 | Deploy inert; ≥1 SE; all six doors; flags | Yes |
+| H1 | Deploy inert; ≥1 SE; all six doors via staged `deployPair` + finalize; flags | Yes |
 | H2 | Zero-SE / non-distinct SE / RP-without-SE / bad amp / bad decimals / non-ascending tokens reject | Yes |
 | H3 | First mint inventory geoMean − MIN; dead MIN; all four legs | Yes |
 | H4 | Proportional join/exit; full-book exit floors | Yes |
@@ -801,7 +801,7 @@ Every shipped mutator has a matching `preview*` with **bit-exact** equality at t
 Mirror PRD §8. Package is **done** when:
 
 - [x] Files under `contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/` (facets, Repo, Target, Math, DFPkg, FactoryService, interfaces, TestBase).  
-- [x] Deploy path: facets CREATE3; instance via `deployHookVault` + shared hook factory; **all six** doors in postDeploy; `ensurePairPools`.  
+- [x] Deploy path: facets CREATE3; instance via `deployHookVault` + shared hook factory; **all six** doors via `deployPair` × 6 then `finalizeInitialization`.  
 - [x] Binding: four ascending tokens; ≥1 SE; distinct SEs; RP only on SE legs; immutable `baseAmp`.  
 - [x] First mint: all four legs; inventory geo-mean − MIN; buffer-last.  
 - [x] Proportional join/exit inventory domain; single-asset aliases (no multi-leg zap); single-asset taxable = **`dexSwapFeeOfVault`**.  

@@ -18,6 +18,7 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
 import {
     IUniswapV4SingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
@@ -64,6 +65,7 @@ library Stage_08_FeeSink {
         );
         s.ttRichS = IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg).deployVault(args, nonce);
         require(s.ttRichS == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireCp(s.ttRichS);
         address weth = RobinhoodCanonicalLib.weth();
         RichnessLib.firstBondCp(s.ttRichS, IERC20(weth), FixtureEconomics.TTRICH_FIRST_BOND, owner_);
         RichnessLib.enrichCp(s.ttRichS, weth, owner_);

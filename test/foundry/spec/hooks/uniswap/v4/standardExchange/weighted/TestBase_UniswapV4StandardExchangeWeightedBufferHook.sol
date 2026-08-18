@@ -21,6 +21,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
@@ -44,6 +45,9 @@ import {
     IUniswapV4StandardExchangeWeightedBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     UniswapV4StandardExchangeWeightedBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
 import {
@@ -55,8 +59,9 @@ import {
 
 /**
  * @title TestBase_UniswapV4StandardExchangeWeightedBufferHook
- * @notice Package path: ERC-4626 SE + hook factory + registry deployHookVault.
+ * @notice Package path: ERC-4626 SE + hook factory + registry deployHookVault + staged pair doors.
  * @dev Default n=2: token0 SE-buffered, token1 raw. Also deploys token2/3 + se matrix for n>2 tests.
+ *      After deployVault, setUp opens every i<j door then finalizeInitialization.
  */
 abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBase_ERC4626StandardExchange {
     using BetterEfficientHashLib for bytes;
@@ -177,10 +182,36 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         internal
     {
         hook = DeployLib.deployHookInstance(hookFactory, hookPkg, args);
+        _ensureProductDoorsAndFinalize(hook, args.tokens);
         weighted = IUniswapV4StandardExchangeWeightedBufferHook(hook);
         poolKey01 = PairPoolLib.pairKey(
             args.tokens[0], args.tokens.length > 1 ? args.tokens[1] : args.tokens[0], 1, IHooks(hook)
         );
+    }
+
+    /// @notice Open every unordered product pair then finalize. Not PairPoolLib.ensureAllPairPools.
+    /// @dev Reads tokens from the caller: `tokens()` is unmatched until finalize.
+    function _ensureProductDoorsAndFinalize(address hook_, address[] memory tokens_) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        uint256 n = tokens_.length;
+        for (uint256 i; i < n; ++i) {
+            for (uint256 j = i + 1; j < n; ++j) {
+                init.deployPair(tokens_[i], tokens_[j]);
+            }
+        }
+        bool ok = init.finalizeInitialization();
+        require(ok, "finalize");
+    }
+
+    /// @notice Deploy via package path without opening doors or finalizing (S43).
+    function _deployBootstrapOnly(
+        IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory args
+    ) internal returns (address) {
+        return DeployLib.deployHookInstance(hookFactory, hookPkg, args);
+    }
+
+    function _registry() internal view returns (IVaultRegistryVaultQuery) {
+        return IVaultRegistryVaultQuery(address(indexedexManager));
     }
 
     /// @notice Default: n=2, SE on token0, equal weights.

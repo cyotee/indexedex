@@ -7,7 +7,7 @@
 **Package kind:** IndexedEx **hook deploy package** with two primary artifacts:
 
 1. **Hook instance** — CREATE3-deployed single contract via the **existing ecosystem `create3Factory`**, with **off-chain-mined** salt material so the predicted address has required V4 hook flag bits (`HookMinerCreate3` / family peer). Repo + Target + Math + Common; also the fungible LP ERC-20. **Not** a vault share diamond; **not** `DiamondPackageCallBackFactory` for the hook instance; **not** Facet/DFPkg for the hook.
-2. **On-chain factory** — permissionless public surface that deploys hooks through the ecosystem `create3Factory` (as operator or equivalent authorized path) and **initializes all** \(\binom{n}{2}\) Uni V4 pair doors for the bound token set. Factory is **not** a second CREATE3 *system*; it is an **application factory** that *calls* the ecosystem CREATE3 factory.
+2. **On-chain factory** — permissionless public surface that deploys hooks through the ecosystem `create3Factory` (as operator or equivalent authorized path). `deployVault` leaves a bootstrap diamond. Product doors are later `deployPair(tokenA, tokenB)` for every unordered bound pair, then `finalizeInitialization`. **Not** same-tx all-pairs init. See [`UNISWAP_V4_WEIGHTED_SWAP_HOOK_STAGED_INIT_PRD.md`](./UNISWAP_V4_WEIGHTED_SWAP_HOOK_STAGED_INIT_PRD.md). Factory is **not** a second CREATE3 *system*; it is an **application factory** that *calls* the ecosystem CREATE3 factory.
 
 **Decision ID note:** `D*`, `Q*`, and `O*` IDs are **stable keys**, not document order. Prefer referring to IDs over section renumbering.
 
@@ -197,9 +197,9 @@ On every add/remove: usageFeeOfVault + feeTo → mint LP to feeTo from V growth 
 | Trading fee | Live **`dexSwapFeeOfVault(this)`** WAD; Balancer input-side residual; **0 allowed** |
 | Protocol fee | Live **`usageFeeOfVault(this)`** → mint LP to live **`feeTo()`** on add **and** remove; **`rootK = V`** (full book) |
 | PoolKey fee | **`DYNAMIC_FEE_FLAG`** + per-swap override report |
-| Deploy path | On-chain permissionless factory → ecosystem CREATE3 + **off-chain mine** + all pair `initialize` |
+| Deploy path | Hook diamond package → registry `deployHookVault` → CREATE2 factory. Product doors via `deployPair`; production ABI at `finalizeInitialization` (staged init PRD). |
 | Access (hook) | Fully permissionless — no owner, no pause, no weight mutation |
-| Access (factory) | Permissionless `deploy*` / `ensurePairPools` |
+| Access (factory) | Permissionless `deployVault` then `deployPair` × \(C(n,2)\) then `finalizeInitialization` |
 
 ### 2.2 What this package is not
 
@@ -571,7 +571,7 @@ Peer `BasePoolMath.computeAddLiquidityUnbalanced`:
 
 Balancer Weighted **cannot** compute \(V\) if any \(b_i = 0\). This hook still wants:
 
-- Deploy all pair doors before full capitalization.  
+- Open product pair doors (`deployPair`) then finalize before full capitalization. Doors are **not** opened in `deployVault` / `postDeploy` (staged init PRD).  
 - Seed legs over time (**\(n \ge 3\)**).  
 - Swap on any **swap-live** funded pair while other legs are empty.
 
@@ -898,10 +898,10 @@ Salt + flag checks + `isExpectedHook` + `deployHook` pure/internal helpers used 
 4. Gold TestBase: `TestBase_UniswapV4WeightedSwapHook`.  
 5. Allowed harnesses: mintable ERC20; optional reentrancy ERC20 for adversarial suite.  
 6. Cover at least:
-   - Factory deploy for \(n \in \{2,3,4,8\}\) (or matrix sample); **all** pair doors  
+   - Factory deploy for \(n \in \{2,3,4,8\}\) (or matrix sample); product doors via `deployPair` then finalize  
    - Off-chain mine + `deployWithMineNonce`; predict address matches  
    - Sorted tokens enforced; bad weights revert  
-   - Idempotent deploy; ensurePairPools factory-only  
+   - Idempotent deploy; `postDeploy` is a no-op (staged init PRD)  
    - First mint full; first mint partial (\(n\ge3\)); \(n=2\) rejects partial first mint  
    - Full-book: proportional join/exit; single-asset join; unbalanced join; exact BPT out paths  
    - Full-book exit that would zero a leg **reverts** (`WouldZeroReserve` peer)  

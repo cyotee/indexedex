@@ -77,7 +77,7 @@ Migrate **unbuffered** weighted multi-asset V4 hook to the **Uniswap V4 Hook Dia
 - DFPkg + package interface + FactoryService facet deploys  
 - Target / Repo split of current monomorph logic  
 - Facets for IHooks + liquidity/views as needed  
-- Pair-door `postDeploy` / PairPoolLib equivalent  
+- Pair doors via staged `deployPair` + `finalizeInitialization` (not `postDeploy` / `ensureAllPairPools`). See [`UNISWAP_V4_WEIGHTED_SWAP_HOOK_STAGED_INIT_PRD.md`](./UNISWAP_V4_WEIGHTED_SWAP_HOOK_STAGED_INIT_PRD.md).  
 - TestBase rewrite to package path  
 - Deprecation of monomorph factory as production entry  
 

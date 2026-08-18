@@ -27,7 +27,7 @@ import {
 contract T06b_CpPreviewParity_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
     function setUp() public override {
         super.setUp();
-        detf = _deployDetfInstance(_openArgs());
+        detf = _deployDetfWired(_openArgs());
         detfInfo = IUniswapV4SingleStandardExchangeDETF(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         pairToken.mint(detfUser, 10_000_000 ether);
@@ -69,7 +69,7 @@ contract T06b_OrbitalSePassthrough_Test is TestBase_UniswapV4StandardExchangeOrb
 
     function setUp() public override {
         super.setUp();
-        openDetf = _deployDetfInstance(_openArgs());
+        openDetf = _deployDetfWired(_openArgs());
         openInfo = IUniswapV4StandardExchangeOrbitalDETF(openDetf);
         _firstBondOn(openDetf, 500 ether, 500 ether);
         assertTrue(openInfo.isReserveLive(), "openDetf expected live");
@@ -121,7 +121,7 @@ contract T06b_WeightedSePassthrough_Test is TestBase_UniswapV4StandardExchangeWe
 
     function setUp() public override {
         super.setUp();
-        openDetf = _deployDetfInstance(_openArgs());
+        openDetf = _deployDetfWired(_openArgs());
         openInfo = IUniswapV4StandardExchangeWeightedDETF(openDetf);
         _setBondTermsFor(openDetf);
         address p0 = openInfo.pairToken(0);
