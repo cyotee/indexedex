@@ -21,30 +21,30 @@ export function LaunchBanner() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-sm">
         <span className="text-[var(--text-primary,#EDEDED)]">
           {launchToken
-            ? 'Token launch mode — buy via Swap, then put capital to work.'
-            : 'Token launch strip enabled — configure NEXT_PUBLIC_LAUNCH_TOKEN_ADDRESS for a direct buy path.'}
+            ? 'Token launch is on. Buy on Swap, then put it to work.'
+            : 'Token launch strip is on. Set a launch token to enable a buy path.'}
         </span>
         <div className="flex gap-3">
           <Link href={buyHref} className="font-medium text-[var(--accent,#4FD44B)] hover:underline">
             {launchToken ? 'Buy via Swap' : 'Token page'}
           </Link>
           <Link
-            href="/token"
+            href="/explore"
             className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)]"
           >
-            Token
+            Explore
           </Link>
           <Link
-            href="/staking"
+            href="/create"
             className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)]"
           >
-            Protocol DETF
+            Create
           </Link>
           <Link
-            href="/earn"
+            href="/learn"
             className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--text-primary,#EDEDED)]"
           >
-            Earn
+            Learn
           </Link>
         </div>
       </div>

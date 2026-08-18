@@ -8,9 +8,9 @@ import type { ResearchArticle } from '../types'
  */
 export const rateProvidersArticle: ResearchArticle = {
   slug: 'rate-providers',
-  title: 'Rate providers: current mark or market catch-up',
+  title: 'Rate providers: keep the price honest, or let traders catch up',
   summary:
-    'A DETF (Decentralized ETF) is one token over a basket that manages assets in other protocols. Those assets often sit as vault shares. A rate provider tells the reserve what one vault share is worth right now. Turn rates on to keep mint, burn, and the displayed price current. Leave them off if you want the market to reprice the reserve when the mark lags. Neither path is yield.',
+    'A DETF is one token for a basket. The basket often holds vault shares. A rate provider tells the DETF what one vault share is worth right now. Turn rates on to keep mint, burn, and the shown price current. Leave them off if you want traders to fix a stale price. Neither setting is yield.',
   date: '2026-08-17',
   tags: ['rates', 'detf', 'product'],
   status: 'published',

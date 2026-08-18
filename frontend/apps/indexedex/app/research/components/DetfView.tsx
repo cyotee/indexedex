@@ -87,10 +87,10 @@ export function DetfView({ article }: { article: ResearchArticle }) {
       <div className="landing-lab__content space-y-16">
         <section>
           <Link
-            href="/research"
+            href="/learn"
             className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
           >
-            Research
+            Learn
           </Link>
           <p className="landing-lab__eyebrow mt-5">DETF means Decentralized ETF</p>
           <h1 className="landing-lab__h1 mt-4">
@@ -141,7 +141,7 @@ export function DetfView({ article }: { article: ResearchArticle }) {
           <section>
             <p className="landing-section-label">Why DETFs</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-              A strategy you can hold as one token.
+              A plan you can hold as one token.
             </h2>
             {why.paragraphs.map((p) => (
               <p

@@ -106,10 +106,10 @@ export function BondVsMintView({ article }: { article: ResearchArticle }) {
       <div className="landing-lab__content space-y-16">
         <section>
           <Link
-            href="/research"
+            href="/learn"
             className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
           >
-            Research
+            Learn
           </Link>
           <p className="landing-lab__eyebrow mt-5">Mint or bond</p>
           <h1 className="landing-lab__h1 mt-4">

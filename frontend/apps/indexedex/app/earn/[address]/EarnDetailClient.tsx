@@ -52,7 +52,7 @@ function isAddress(value: string): value is `0x${string}` {
 }
 
 function productKindLabel(productType: string): string {
-  if (productType === 'strategy') return 'Strategy vault'
+  if (productType === 'strategy') return 'Building-block vault'
   if (productType === 'protocol-detf') return 'Protocol DETF'
   if (productType === 'detf') return 'DETF'
   return productType
@@ -204,19 +204,19 @@ export default function EarnDetailClient({ address }: { address: string }) {
             <Card>
               {product.productType === 'strategy' ? (
                 <>
-                  <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Strategy vault</h3>
+                  <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Building-block vault</h3>
                   <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-                    Standard Exchange strategy vault. Deposit underlying assets via the router to receive vault
-                    shares representing your LP position. Composition shows on-chain token reserves when available.
+                    This vault wraps another app. Deposit to get a vault share. That share is a receipt
+                    for your deposit. The mix onchain shows when we can read it.
                   </p>
                 </>
               ) : (
                 <>
                   <h3 className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">DETF lifecycle</h3>
                   <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] mb-4">
-                    Mint or exchange in, bond as an NFT, sell to the protocol bond NFT vault, and redeem via the
-                    rebasing claim token. Use the <strong className="text-[var(--text-primary,#EDEDED)]">Mint / bond / sell</strong>{' '}
-                    tab for this DETF — actions stay on this page.
+                    Mint to get DETF tokens. Bond to lock money in. Sell a mature bond. Claim when that
+                    path is open. Use the <strong className="text-[var(--text-primary,#EDEDED)]">Mint / bond / sell</strong>{' '}
+                    tab. Actions stay on this page.
                   </p>
                   <DetfLifecycleStepper activeIndex={0} />
                   {isLabDetf ? (

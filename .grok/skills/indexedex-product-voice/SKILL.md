@@ -26,7 +26,7 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 | **DETF** | Decentralized ETF **product pattern** / any instance | Registered ETF, SEC fund, “like SPY” |
 | **Earn** | Strategy vaults / legs under DETFs | Confusing Earn catalog with Protocol DETF |
 
-**Homes:** Protocol DETF → `/staking` (not Earn grid). Education → `/research/detf`. Strategy legs → `/earn`.
+**Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
 **Differentiator (customer, keep this on landing):** IndexedEx is a **strategy protocol**. A DETF is how a user **deploys their own strategy** as one **token** over a **basket**. That basket **manages assets in other protocols** (not a static token list). Putting the **DETF token in market liquidity** is reserve technology: it helps manage the backing. Earn vaults are building blocks a DETF can put in its basket. Do not call Earn the strategy product.
 
@@ -57,6 +57,22 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 **May still say:** fees can apply; modes do not guarantee peg or returns.
 
 ---
+
+## Reading level (mandatory)
+
+Target **grade 8**. Short sentences. One idea each. Everyday words first.
+
+| Hard word | Prefer |
+|-----------|--------|
+| protocol (as category) | IndexedEx / this product / other apps |
+| reserve / managed reserve | the assets behind the token |
+| market liquidity | a market people can trade |
+| unredeemable | you cannot cash it out |
+| claim on a share | you own a piece of |
+| seigniorage / synthetic / residual | do not use |
+| composition / immutable | shape / stays put |
+
+Keep product names: DETF, bond, mint, burn, Policy, Open, vault share, Protocol DETF. Define DETF on first use. Define bond, mint, and burn with a plain verb the first time they appear on a page.
 
 ## Voice
 
@@ -94,10 +110,13 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 | Surface | Style |
 |---------|--------|
-| Landing `/` | Define DETF (Decentralized ETF / D) first; then **create-your-own** / many types; Protocol DETF as fees path; CTAs to research + `/staking` + Earn; no package names on cards |
-| `/staking` | Title **Protocol DETF**; frame as share of protocol fees; actions named by verb |
-| Earn | Catalog for strategies; cross-promo says **Protocol DETF**, not package |
-| Research | Mechanics + not-claiming; hierarchy clear; cite spine; no fake performance |
+| Landing `/` | Define DETF first; CTAs to **Create**, **Explore**, **Learn**; Protocol DETF still listed as fees path |
+| `/explore` | Live DETFs; Protocol DETF first card; opens `/staking?detf=` |
+| `/create` | Basket-shape picker; type pages are deploy homes |
+| `/you` | Positions (vault receipts, DETF tokens, bonds) |
+| `/learn` | One walk; chapters at `/research/[slug]` |
+| `/staking` | Title **Protocol DETF**; mint / bond / sell |
+| Earn `/earn` | Vault catalog only; not a top-level product |
 | X / external | Same product law; disclaimers in body not hook |
 
 **Page chrome (when refining a surface, not a bulk restyle):** match `/research/bond-vs-mint` (`BondVsMintView`) and landing `/`. Atmosphere, eyebrow, large title, section labels, choice cards, numbered tiles, FAQ as a card grid, folded disclaimers, named CTAs. Do **not** restyle every route in one pass. Apply this look only to the page being refined. Reference: `frontend/apps/indexedex/app/research/components/BondVsMintView.tsx`.

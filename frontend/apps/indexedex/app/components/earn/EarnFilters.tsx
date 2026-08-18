@@ -6,7 +6,7 @@ export type EarnTypeFilter = EarnProductType | 'all'
 
 const OPTIONS: { id: EarnTypeFilter; label: string }[] = [
   { id: 'all', label: 'All' },
-  { id: 'strategy', label: 'Strategy' },
+  { id: 'strategy', label: 'Vaults' },
   { id: 'detf', label: 'DETF' },
 ]
 

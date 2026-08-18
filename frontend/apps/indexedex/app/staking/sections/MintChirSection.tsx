@@ -413,7 +413,6 @@ export default function MintChirSection({
       </div>
       <p className="mt-0.5 text-xs text-[var(--text-muted,#9aa3b2)]">
         Pay with {rateAssetSymbol}
-        <span className="text-[var(--text-muted,#9aa3b2)]"> · rate asset</span>
       </p>
       <div className="mt-2 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] p-2">
         <div className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">

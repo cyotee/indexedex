@@ -51,7 +51,7 @@ export type EarnFilterOptions = {
 }
 
 export const EARN_PRODUCT_TYPE_LABEL: Record<EarnProductType, string> = {
-  strategy: 'Strategy',
+  strategy: 'Vault',
   detf: 'DETF',
   'protocol-detf': 'Protocol DETF',
 }

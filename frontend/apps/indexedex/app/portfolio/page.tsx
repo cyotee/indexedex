@@ -768,8 +768,8 @@ export default function PortfolioPage() {
   return (
     <div className="max-w-6xl">
       <PageHeader
-        title="Portfolio"
-        subtitle="Vault shares and DETF bond NFTs."
+        title="You"
+        subtitle="Your vault receipts, DETF tokens, and bond NFTs."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Link
@@ -794,7 +794,7 @@ export default function PortfolioPage() {
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card padding="sm">
-          <Stat label="Strategy positions" value={String(strategyVaultBalances.length)} />
+          <Stat label="Vault positions" value={String(strategyVaultBalances.length)} />
         </Card>
         <Card padding="sm">
           <Stat label="DETF balances" value={String(detfBalances.length)} />
@@ -811,7 +811,7 @@ export default function PortfolioPage() {
         <div className="mb-8">
           <EmptyState
             title="No positions yet"
-            body="The index is empty — explore the Protocol DETF to mint, bond, and sell, or browse Earn strategies."
+            body="Nothing here yet. Open Protocol DETF to mint, bond, and sell. Or browse Earn vaults."
             action={
               <div className="flex flex-wrap gap-2">
                 <Link href={feeDetfExploreHref}>
@@ -836,7 +836,7 @@ export default function PortfolioPage() {
             <div>
               <p className="text-xs uppercase tracking-wide text-[var(--accent,#4FD44B)]">Share position</p>
               <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-                Sanitized symbol, amount, and address only — never certificate HTML or tokenURI markup.
+                Symbol, amount, and address only. No extra markup.
               </p>
             </div>
             <Button type="button" variant="ghost" size="sm" onClick={() => setShareTarget(null)}>
@@ -857,7 +857,7 @@ export default function PortfolioPage() {
 
       {/* Strategy vault shares */}
       <Card className="mb-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Strategy Vault Shares</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Vault shares</h2>
         <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
           Non-zero balances from the chain tokenlist. Manage via Earn detail.
         </p>

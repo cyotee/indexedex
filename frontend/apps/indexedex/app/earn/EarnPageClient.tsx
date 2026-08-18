@@ -246,7 +246,7 @@ function EarnCatalogInner() {
     <div>
       <PageHeader
         title="Earn"
-        subtitle="Building-block vaults a DETF can put in its basket. Protocol DETF lives on its own page."
+        subtitle="Vaults a DETF can put in its basket. Protocol DETF has its own page."
       />
 
       {!search.trim() ? (
@@ -257,8 +257,8 @@ function EarnCatalogInner() {
             </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
               {featuredFee
-                ? `${featuredFee.symbol} lives on the Protocol DETF page (mint, bond, sell), not in this vault catalog.`
-                : 'Protocol DETFs live on their own page for mint, bond, and sell, not in this vault catalog.'}
+                ? `${featuredFee.symbol} lives on the Protocol DETF page (mint, bond, sell), not in this vault list.`
+                : 'Protocol DETFs live on their own page for mint, bond, and sell, not in this vault list.'}
             </p>
           </div>
           <Link href={feePromoHref}>

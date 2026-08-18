@@ -250,19 +250,18 @@ export default function StakingPageClient({
       {!embedMode ? (
         <>
           <div className="mb-4 rounded-lg border border-[var(--border-accent,rgba(79,212,75,0.35))] bg-[var(--accent-muted,#1A3721)] px-3 py-2 text-sm">
-            Looking for strategy vaults?{' '}
+            Looking for vaults?{' '}
             <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
               Browse Earn
             </a>
-            . This page is for Protocol DETF (mint, bond, sell), not the Earn vault catalog.
+            . This page is Protocol DETF: mint, bond, and sell.
           </div>
           <PageHeader
             title="Protocol DETF"
-            subtitle="Use Protocol DETF to take part in protocol fees. Mint, bond, or exit when you are ready. Fees may apply. Amounts are not guarantees."
+            subtitle="Use Protocol DETF to take a cut of app fees. Mint, bond, or leave when you are ready. Fees may apply. Amounts are not promises."
           />
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Typical path: mint, bond, sell to the protocol, then claim. Select an instance below
-            when more than one Protocol DETF is configured.
+            Usual path: mint, bond, sell, then claim. Pick a DETF below if more than one is listed.
           </p>
         </>
       ) : null}

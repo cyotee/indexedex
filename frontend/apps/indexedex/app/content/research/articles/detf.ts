@@ -13,7 +13,7 @@ export const detfArticle: ResearchArticle = {
   slug: 'detf',
   title: 'DETFs: one token over a basket',
   summary:
-    'A DETF (Decentralized ETF) is how you deploy a strategy: one token over a basket that manages assets in other protocols. That token is a claim on a share of the managed reserve. The token also sits in market liquidity so the reserve can be managed.',
+    'A DETF (Decentralized ETF) is one token for a basket you pick. That basket puts money to work in other apps. You own a piece of the assets behind the token. People can trade the token. Make it, bond to turn it on, then mint or burn.',
   date: '2026-08-17',
   tags: ['detf', 'product'],
   status: 'published',
@@ -46,8 +46,8 @@ export const detfArticle: ResearchArticle = {
     {
       heading: 'What a DETF is',
       paragraphs: [
-        'IndexedEx is a strategy protocol. A DETF (Decentralized ETF) is how you deploy your own strategy as one token. The D means decentralized: this is not a registered stock ETF.',
-        'The basket manages assets that sit in other protocols. You hold that one token instead of running each position yourself.',
+        'IndexedEx lets you run a money plan as one token. A DETF (Decentralized ETF) is that token. The D means decentralized. This is not a stock ETF.',
+        'The basket puts money to work in other apps. You hold that one token instead of running each app yourself.',
       ],
     },
     {

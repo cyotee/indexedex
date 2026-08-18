@@ -31,7 +31,7 @@ export default function TokenPage() {
     <div className="max-w-3xl">
       <PageHeader
         title="Token"
-        subtitle="Buy (when configured), then put capital to work in the Protocol DETF or Earn strategies."
+        subtitle="Buy when a launch token is set. Then put it to work in Protocol DETF or Earn vaults."
       />
 
       <Card className="mb-6">
@@ -39,7 +39,7 @@ export default function TokenPage() {
         {launchToken ? (
           <>
             <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-              Launch token address is configured for this build. Buy via Swap with launch defaults.
+              A launch token is set for this build. Buy it on Swap.
             </p>
             <div className="mt-3">
               <AddressLink chainId={selectedChainId} address={launchToken} />
@@ -47,8 +47,7 @@ export default function TokenPage() {
           </>
         ) : (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-            No mainnet TGE address is set (<code className="text-xs">NEXT_PUBLIC_LAUNCH_TOKEN_ADDRESS</code>).
-            Use Swap on testnet when liquidity exists, or wait for launch configuration. We do not invent a
+            No launch token is set yet. Use Swap on testnet if a market exists. We do not invent a
             claim contract.
           </p>
         )}
@@ -67,9 +66,8 @@ export default function TokenPage() {
         {hero ? (
           <>
             <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-              After acquiring the token (or any base asset), open the Protocol DETF workspace to mint,
-              bond, and sell. Protocol usage and seigniorage fees apply on-chain — amounts are not
-              guarantees.
+              After you buy the token, open Protocol DETF to mint, bond, and sell. Fees may apply.
+              Amounts are not promises.
             </p>
             <Link href={feeDetfStakingHref(hero.address)} className="mt-4 inline-block">
               <Button variant="secondary" size="sm">
@@ -92,15 +90,12 @@ export default function TokenPage() {
       </Card>
 
       <Card>
-        <h2 className="text-base font-medium text-[var(--text-primary,#EDEDED)]">Utility (honest)</h2>
+        <h2 className="text-base font-medium text-[var(--text-primary,#EDEDED)]">What this token is for</h2>
         <ul className="mt-2 list-disc pl-5 text-sm text-[var(--text-muted,#9aa3b2)] space-y-1">
-          <li>Access to protocol products through the app (Earn, Swap, Protocol DETF workflows).</li>
-          <li>Fee / bonding utility is only claimed when live on-chain — check docs when published.</li>
-          <li>Governance claims require deployed governance contracts.</li>
-          <li>
-            No airdrop claim surface is invented here — only{' '}
-            <code className="text-xs">NEXT_PUBLIC_LAUNCH_TOKEN_ADDRESS</code> + Swap when configured.
-          </li>
+          <li>Use the app: Earn, Swap, and Protocol DETF.</li>
+          <li>Fee and bond uses are only real when they are live onchain.</li>
+          <li>Votes need live vote contracts. We do not invent them here.</li>
+          <li>There is no airdrop claim on this page.</li>
         </ul>
       </Card>
     </div>

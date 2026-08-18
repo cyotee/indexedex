@@ -77,20 +77,20 @@ test.describe('Connected wallet UI', () => {
   test('Portfolio empty state encourages Earn when connected path available', async ({
     walletPage,
   }) => {
-    await walletPage.goto('/portfolio')
+    await walletPage.goto('/you')
     // Without connect click, may show connect prompt; with provider, can still render
     const body = await walletPage.locator('body').innerText()
-    expect(body.toLowerCase()).toMatch(/portfolio|connect|earn|position/)
+    expect(body.toLowerCase()).toMatch(/you|connect|vault|position/)
   })
 })
 
 test.describe('Shell without requiring chain', () => {
-  test('primary nav exposes Earn Swap Portfolio Token', async ({ walletPage }) => {
+  test('primary nav exposes Explore Create You Learn', async ({ walletPage }) => {
     await walletPage.goto('/')
     const nav = walletPage.getByRole('navigation')
-    await expect(nav.getByRole('link', { name: 'Earn', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Swap', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Portfolio', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Token', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Explore', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Create', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'You', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Learn', exact: true })).toBeVisible()
   })
 })

@@ -12,7 +12,7 @@ export const bondVsMintArticle: ResearchArticle = {
   slug: 'bond-vs-mint',
   title: 'Mint or bond: which position do you want?',
   summary:
-    'Mint if you want DETF tokens you can move now. Bond if you want the efficient maker seat: matching DETF minted into the reserve for your deposit, plus a cut of DETF minted when others mint or bond. On a price-gated DETF, bonders also get a portion of regular supply expansion.',
+    'Mint if you want DETF tokens you can move now. Bond if you want the cheaper maker seat: the DETF fills the other side for you. Bonders also get a cut of new DETF when others mint or bond. On Policy, they can get extra DETF when the price is rich.',
   date: '2026-08-17',
   tags: ['detf', 'bond', 'mint', 'product'],
   status: 'published',

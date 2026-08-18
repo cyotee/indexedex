@@ -10,7 +10,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
   slug: 'uniswap-v4-markets',
   title: 'Uniswap V4 markets for DETFs',
   summary:
-    'DETFs use real Uniswap V4 pools as the reserve. Three setups for this launch: a two-token constant-product pool, three pools that share one three-token inventory, and a weighted set of pools for a larger basket. Diagrams below.',
+    'A DETF needs a real market behind the token. These use Uniswap V4 pools people can trade. This launch has three setups: one two-token pool, three pools that share one pot, and a weighted set of pools. Diagrams below.',
   date: '2026-08-06',
   tags: ['detf', 'uniswap-v4', 'markets', 'product'],
   status: 'published',
@@ -35,14 +35,14 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     {
       heading: 'Why Uniswap V4',
       paragraphs: [
-        'A DETF needs a real market behind the token: Uniswap V4 pools people can trade, plus liquidity tokens that prove someone added to those pools. A listing with no pool is not enough. Cash in a pool can sit in a strategy vault.',
-        'Uniswap V4 lets that inventory live under ordinary two-token pools. Routers already know how to trade those pools. We ship three setups for this launch, not every market design.',
+        'A DETF needs a real market behind the token. Uniswap V4 pools are that market. People can trade them. Adding money gives you an LP token. That token proves you added. A listing with no pool is not enough.',
+        'Cash in a pool can sit in a vault. We ship three setups for this launch. Not every market design.',
       ],
     },
     {
       heading: 'How a DETF sits on Uniswap V4',
       paragraphs: [
-        'Same stack on every launch type. You hold the DETF token. That token is a claim on a share of the managed reserve. The reserve is Uniswap V4 pool inventory. Cash can optionally sit in a strategy vault. When you bond, you add to that market and receive liquidity tokens. Those LP tokens are the bond principal. They are not a separate price feed.',
+        'You hold the DETF token. You own a piece of the assets behind it. Those assets sit in Uniswap V4 pools. Cash can sit in a vault. When you bond, you add to that market and get LP tokens. Those LP tokens are what you lock. They are not a second price.',
       ],
       mermaid: `graph TD
     User["You hold the DETF token"]
@@ -69,9 +69,9 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
         'The DETF token sits on a Uniswap V4 market. Traders use the Uniswap V4 pools. The DETF is the product on top.',
     },
     {
-      heading: '1. Pair market · one Uniswap V4 pool',
+      heading: 'One pool',
       paragraphs: [
-        'Two tokens in one Uniswap V4 pool: the DETF token and a cash token. The cash can sit in a strategy vault. Liquidity providers receive one LP token for adding to this pool. Traders see a normal two-token Uniswap V4 pool: DETF token ↔ cash.',
+        'Two tokens in one Uniswap V4 pool: the DETF token and a cash token. The cash can sit in a vault. If you add money, you get one LP token. Traders see a normal two-token pool.',
       ],
       mermaid: `graph TD
     DETF["DETF token"]
@@ -103,9 +103,9 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
         'Pair DETF: one Uniswap V4 pool. DETF token on one side, cash on the other. First bond opens the reserve. LP tokens are what you bond with.',
     },
     {
-      heading: '2. Triangle market · three Uniswap V4 pools, one inventory',
+      heading: 'Three pools, one pot',
       paragraphs: [
-        'Three tokens sit in one shared inventory. Traders use three Uniswap V4 pools: DETF token ↔ token A, DETF token ↔ token B, and token A ↔ token B. A trade in any of those pools updates the same inventory, so the third token is accounted for. One LP token covers all three pools. Capital is not split across three separate Uniswap V4 books.',
+        'Three tokens sit in one shared pot. Traders use three Uniswap V4 pools. A trade in any pool updates the same pot. One LP token covers all three pools. Your money is not split across three separate books.',
       ],
       mermaid: `graph TD
     DETF["DETF token"]
@@ -144,9 +144,9 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
         'Triangle DETF: three Uniswap V4 pools, one shared inventory. DETF token plus two other tokens.',
     },
     {
-      heading: '3. Weighted market · a Uniswap V4 pool for every pair',
+      heading: 'A pool for every pair',
       paragraphs: [
-        'Two to eight tokens, with weights set when you create the DETF. Every pair of those tokens has a Uniswap V4 pool into the same weighted inventory. Adding or removing liquidity follows weighted-pool math: a basket with chosen weights, not a pretend-equal stable set. External tokens can optionally sit in strategy vaults. The product model uses at least one vault.',
+        'Two to eight tokens. You set the weights when you create the DETF. Every pair has a Uniswap V4 pool into the same pot. Other tokens can sit in vaults. This type uses at least one vault.',
       ],
       mermaid: `graph TD
     DETF["DETF token"]
@@ -187,13 +187,13 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     {
       heading: 'How this meets DETFs',
       paragraphs: [
-        'Each launch DETF uses its matching Uniswap V4 setup as the reserve. A pair DETF uses one ConstProd pool. A triangle DETF uses the three shared-inventory pools. A weighted DETF uses the weighted set of pools. In every case, bond principal is that setup’s LP token.',
-        'The main offer is still: create your own DETF. These Uniswap V4 pools are the market under that product.',
+        'Each DETF uses its matching Uniswap V4 setup. One pool. Or three pools that share one pot. Or a pool for every pair. In every case you bond with that setup\'s LP token.',
+        'The main offer is still: create your own DETF. These pools are the market under it.',
       ],
       bullets: [
-        'Pair DETF: one Uniswap V4 pool. DETF token on one side, cash on the other (cash can sit in a vault). Bond with the ConstProd LP token.',
-        'Triangle DETF: three Uniswap V4 pools, one inventory. DETF token plus two other tokens. Bond with the triangle LP token.',
-        'Weighted DETF: a Uniswap V4 pool for every pair in the basket. Bond with the weighted LP token.',
+        'One pool: DETF token on one side, cash on the other. Cash can sit in a vault. Bond with that LP token.',
+        'Three pools, one pot: DETF token plus two other tokens. Bond with that LP token.',
+        'A pool for every pair: bond with that LP token.',
       ],
       mermaid: `flowchart LR
     subgraph Pair["Pair type"]

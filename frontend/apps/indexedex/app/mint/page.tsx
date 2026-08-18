@@ -15,6 +15,7 @@ import {
 } from '@indexedex/protocol/tokenlists'
 import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { isTestnetChainId } from '../lib/isTestnet'
 
 const erc20MinterFacadeAbi = [
   {
@@ -136,6 +137,17 @@ export default function MintPage() {
     }
   }, [selectedTokenAddress, refetchName, refetchSymbol, refetchDecimals, refetchBalance])
 
+  if (!isTestnetChainId(resolvedChainId)) {
+    return (
+      <div className="container mx-auto px-4 max-w-xl py-12">
+        <h1 className="text-2xl font-semibold text-white">Mint Test Tokens</h1>
+        <p className="mt-3 text-sm text-gray-300">
+          This page is only on test networks. Pick a testnet in the header.
+        </p>
+      </div>
+    )
+  }
+
   if (!isConnected) {
     return (
       <div className="container mx-auto px-4">
@@ -152,7 +164,7 @@ export default function MintPage() {
       <h1 className="text-3xl font-bold text-white text-center py-8">Mint Test Tokens</h1>
 
       <div className="mb-6 p-4 bg-slate-800/40 rounded-lg text-sm text-gray-300">
-        This page is for dev/testnet only. It only supports minting base test ERC20s via the ERC20 Minter Facade (no vault shares, no Standard Exchange vault minting, no DETFs).
+        Testnet only. This page mints simple test tokens. It does not mint vault shares or DETFs.
       </div>
       
       {/* Token Selection */}

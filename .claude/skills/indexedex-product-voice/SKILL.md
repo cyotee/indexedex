@@ -26,7 +26,7 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 | **DETF** | Decentralized ETF **product pattern** / any instance | Registered ETF, SEC fund, “like SPY” |
 | **Earn** | Strategy vaults / legs under DETFs | Confusing Earn catalog with Protocol DETF |
 
-**Homes:** Protocol DETF → `/staking` (not Earn grid). Education → `/research/detf`. Strategy legs → `/earn`.
+**Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
 **Creator bond:** Creating a DETF issues an **unredeemable bond** to the creator. It collects a **portion of DETF minted to bond holders** (the mint/bond split, and on Policy, regular supply expansion). Same pattern as the protocol's own unredeemable bond (internally `feeTo()` / protocol NFT). Do **not** say seigniorage. Do **not** imply the creator can redeem principal. Amounts are not guaranteed.
 
@@ -53,6 +53,22 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 **May still say:** fees can apply; modes do not guarantee peg or returns.
 
 ---
+
+## Reading level (mandatory)
+
+Target **grade 8**. Short sentences. One idea each. Everyday words first.
+
+| Hard word | Prefer |
+|-----------|--------|
+| protocol (as category) | IndexedEx / this product / other apps |
+| reserve / managed reserve | the assets behind the token |
+| market liquidity | a market people can trade |
+| unredeemable | you cannot cash it out |
+| claim on a share | you own a piece of |
+| seigniorage / synthetic / residual | do not use |
+| composition / immutable | shape / stays put |
+
+Keep product names: DETF, bond, mint, burn, Policy, Open, vault share, Protocol DETF. Define DETF on first use. Define bond, mint, and burn with a plain verb the first time they appear on a page.
 
 ## Voice
 

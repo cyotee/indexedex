@@ -18,11 +18,11 @@ export type SiteDefinition = {
 export const SITE: SiteDefinition = {
   id: 'indexedex',
   name: 'IndexedEx',
-  title: 'IndexedEx - Deploy your own DETF',
+  title: 'IndexedEx - Run your plan as one token',
   description:
-    'A strategy protocol. Deploy a DETF: one token over a basket that manages assets in other protocols.',
+    'IndexedEx lets you run a money plan as one DETF token. The basket puts that money to work in other apps.',
   tagline:
-    'A strategy protocol. Deploy a DETF: one token over a basket that works in other protocols.',
+    'Run a money plan as one token. The basket works in other apps.',
   manifestoLabel: '// indexedex manifesto',
   logoSrc: '/logo-indexedex.png',
   logoAlt: 'IndexedEx',

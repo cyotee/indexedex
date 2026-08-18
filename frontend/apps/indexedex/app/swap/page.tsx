@@ -3824,7 +3824,7 @@ function SwapPageInner() {
       case 'Balancer Swap + Vault Withdrawal':
         return 'Swap through external Balancer V3 pool, then withdraw from vault'
       case 'Strategy Vault with ETH':
-        return 'Strategy vault operation with ETH wrapping/unwrapping'
+        return 'Vault trade with ETH wrap'
       case 'Strategy Vault Deposit':
         return 'Direct deposit to strategy vault (LP tokens → Vault shares)'
       case 'Strategy Vault Withdrawal':
@@ -3834,7 +3834,7 @@ function SwapPageInner() {
       case 'Vault-to-Vault Cycle':
         return 'Complex routing through multiple vaults'
       case 'Strategy Vault Operation':
-        return 'Strategy vault operation'
+        return 'Vault trade'
       default:
         return ''
     }
@@ -3877,7 +3877,7 @@ function SwapPageInner() {
           Swap
         </h1>
         <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-          Exchange tokens via the Standard Exchange router.
+          Trade one token for another.
         </p>
       </div>
 
@@ -3885,7 +3885,7 @@ function SwapPageInner() {
         <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-600/15 p-3">
           <div className="text-sm font-medium text-amber-200">Wallet not connected</div>
           <div className="mt-1 text-xs text-amber-200/90">
-            You can still preview quotes, but you&apos;ll need to connect a wallet to issue approvals or submit a swap.
+            You can still preview a price. Connect a wallet to approve or swap.
           </div>
         </div>
       )}
@@ -4142,7 +4142,7 @@ function SwapPageInner() {
         <div className="text-xs text-amber-300 mb-2 space-y-1">
           <div>
             ⚠️ Ambiguous {swapRouteAuto.side === 'both' ? 'Token In and Token Out' : swapRouteAuto.side === 'in' ? 'Token In' : 'Token Out'} —
-            multiple Standard Exchange Vaults in this pool can wrap your selection. Pick one to clarify:
+            more than one vault can wrap this pick. Choose one:
           </div>
           {swapRouteAuto.tokenInCandidates && (
             <div>
@@ -4177,7 +4177,7 @@ function SwapPageInner() {
       {swapRouteAuto && swapRouteAuto.kind === 'invalid' && (
         <div className="text-xs text-amber-300 mb-2 space-y-1">
           <div>
-            ⚠️ Selected Token In / Token Out don&apos;t match any Standard Exchange Router route for this pool.
+            These two tokens do not match a swap route for this pool.
           </div>
           <div>
             Pool tokens:{' '}
@@ -4322,7 +4322,7 @@ function SwapPageInner() {
       {approvalMode === 'explicit' && (useTokenInVault || useTokenOutVault) && (
         <div className="mb-4 p-3 bg-amber-600/20 border border-amber-500/50 rounded-lg">
           <div className="text-xs text-amber-300">
-            Some Standard Exchange Vaults interact with underlying pools. This amount out may not include this interaction in the results of this swap. Use signed approvals or issue the explicit approval to ensure you get an accurate quote.
+            Some vaults sit on other pools. This out amount may miss that step. Approve first so the quote is closer.
           </div>
         </div>
       )}

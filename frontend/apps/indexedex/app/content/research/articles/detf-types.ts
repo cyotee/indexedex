@@ -9,7 +9,7 @@ export const detfTypesArticle: ResearchArticle = {
   slug: 'detf-types',
   title: 'DETF types: pick the basket shape',
   summary:
-    'A DETF (Decentralized ETF) is one token over a basket that manages assets in other protocols. The type is the shape of that basket. Bond, mint, and burn stay the same steps. Pick the type that matches the vaults you want to hold.',
+    'A DETF is one token for a basket. The type is the shape of that basket. Bond, mint, and burn stay the same. Pick the type that matches the vaults you want.',
   date: '2026-08-17',
   tags: ['detf', 'types', 'product'],
   status: 'published',

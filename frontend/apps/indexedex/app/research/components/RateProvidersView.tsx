@@ -139,16 +139,16 @@ export function RateProvidersView({ article }: { article: ResearchArticle }) {
       <div className="landing-lab__content space-y-16">
         <section>
           <Link
-            href="/research"
+            href="/learn"
             className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
           >
-            Research
+            Learn
           </Link>
-          <p className="landing-lab__eyebrow mt-5">How the reserve is marked</p>
+          <p className="landing-lab__eyebrow mt-5">How vault shares are priced</p>
           <h1 className="landing-lab__h1 mt-4">
-            Current mark,
+            Keep the price honest,
             <br />
-            <span className="landing-lab__h1-accent">or market catch-up.</span>
+            <span className="landing-lab__h1-accent">or let traders catch up.</span>
           </h1>
           <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-[var(--text-muted,#9aa3b2)]">
             {article.summary}

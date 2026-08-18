@@ -20,11 +20,11 @@ export function DetfWorkspaceEmbed({ detfAddress, symbol }: DetfWorkspaceEmbedPr
     <div className="space-y-4" data-testid="detf-workspace-embed">
       <Card padding="sm">
         <p className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">
-          {symbol || 'DETF'} workspace
+          {symbol || 'DETF'} actions
         </p>
         <p className="text-xs text-[var(--text-muted,#9aa3b2)] mt-0.5">
-          Mint, bond, and sell for this DETF on this page. The Protocol DETF fee product lives on{' '}
-          <span className="font-mono">/staking</span> only.
+          Mint, bond, and sell for this DETF on this page. Protocol DETF fee actions live on the
+          Protocol DETF page only.
         </p>
       </Card>
       <StakingPageClient embedMode fixedDetf={detfAddress} />

@@ -2,12 +2,11 @@ import Link from 'next/link'
 
 import type { ResearchArticle } from '../../content/research'
 import { Button } from '../../components/ui/Button'
-import { Card } from '../../components/ui/Card'
-import { PageHeader } from '../../components/ui/PageHeader'
 import { DetfCompositionDiagram } from './diagrams/DetfCompositionDiagram'
 import { MermaidDiagram } from './MermaidDiagram'
 
-/** Renders `**lead** rest` as a bold lead plus the answer. */
+import '../../landing.css'
+
 function BulletText({ text }: { text: string }) {
   const parts = text.split(/\*\*/)
   if (parts.length < 3) return <>{text}</>
@@ -26,85 +25,73 @@ function BulletText({ text }: { text: string }) {
   )
 }
 
-function formatDate(iso: string): string {
-  const d = new Date(`${iso}T00:00:00.000Z`)
-  if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  })
-}
-
 export function ResearchArticleView({ article }: { article: ResearchArticle }) {
+  const faq = article.sections.find((s) => s.heading === 'FAQ' || s.heading === 'Short FAQ')
+  const body = article.sections.filter((s) => s !== faq)
+
   return (
-    <article>
-      <div className="mb-4">
-        <Link
-          href="/research"
-          className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
-        >
-          ← Research
-        </Link>
+    <div className="landing-lab">
+      <div className="landing-lab__atmosphere" aria-hidden="true">
+        <div className="landing-lab__grid" />
+        <div className="landing-lab__glow" />
+        <div className="landing-lab__glow landing-lab__glow--secondary" />
       </div>
 
-      <PageHeader
-        title={article.title}
-        subtitle={article.summary}
-        actions={
-          article.relatedProductHref ? (
-            <Link href={article.relatedProductHref}>
-              <Button size="sm" variant="secondary">
-                {article.relatedProductLabel ?? 'Open product'}
+      <div className="landing-lab__content space-y-16">
+        <section>
+          <Link
+            href="/learn"
+            className="text-sm text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]"
+          >
+            Learn
+          </Link>
+          <p className="landing-lab__eyebrow mt-5">DETF means Decentralized ETF</p>
+          <h1 className="landing-lab__h1 mt-4">{article.title}</h1>
+          <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+            {article.summary}
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/create">
+              <Button size="lg" className="landing-lab__cta-primary">
+                Create DETF
               </Button>
             </Link>
-          ) : null
-        }
-      />
+            {article.relatedProductHref ? (
+              <Link href={article.relatedProductHref}>
+                <Button size="lg" variant="secondary">
+                  {article.relatedProductLabel ?? 'How DETFs work'}
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/research/detf">
+                <Button size="lg" variant="secondary">
+                  How DETFs work
+                </Button>
+              </Link>
+            )}
+          </div>
+        </section>
 
-      <div className="mb-6 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-        <time dateTime={article.date}>{formatDate(article.date)}</time>
-        <span aria-hidden="true">·</span>
-        {article.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border border-[var(--border-subtle,rgba(255,255,255,0.08))] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {article.claims.length > 0 ? (
-        <Card className="mb-6">
-          <p className="text-xs uppercase tracking-widest text-[var(--accent,#4FD44B)]">What this note shows</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-primary,#EDEDED)]">
-            {article.claims.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
-
-      <div className="space-y-8">
-        {article.sections.map((section, i) => (
+        {body.map((section, i) => (
           <section key={section.heading ?? `section-${i}`}>
             {section.heading ? (
-              <h2 className="text-lg font-medium text-[var(--text-primary,#EDEDED)]">{section.heading}</h2>
+              <>
+                <p className="landing-section-label">Note</p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
+                  {section.heading}
+                </h2>
+              </>
             ) : null}
             {section.paragraphs.map((p) => (
               <p
                 key={p.slice(0, 48)}
-                className={`text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)] ${
-                  section.heading || section.paragraphs[0] !== p ? 'mt-3' : 'mt-0'
-                }`}
+                className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]"
               >
                 {p}
               </p>
             ))}
             {section.bullets && section.bullets.length > 0 ? (
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-muted,#9aa3b2)]">
+              <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-[var(--text-muted,#9aa3b2)]">
                 {section.bullets.map((b) => (
                   <li key={b}>
                     <BulletText text={b} />
@@ -118,48 +105,62 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
             ) : null}
           </section>
         ))}
-      </div>
 
-      {article.notClaiming.length > 0 ? (
-        <Card className="mt-10 border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]/60">
-          <p className="text-xs uppercase tracking-widest text-[var(--text-muted,#9aa3b2)]">Not claiming</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-muted,#9aa3b2)]">
-            {article.notClaiming.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
-
-      {article.relatedProductHref ? (
-        <div className="mt-8">
-          <Link href={article.relatedProductHref}>
-            <Button>{article.relatedProductLabel ?? 'Continue'}</Button>
-          </Link>
-        </div>
-      ) : null}
-
-      <footer className="mt-10 space-y-2 border-t border-[var(--border-subtle,rgba(255,255,255,0.08))] pt-6 text-xs text-[var(--text-muted,#9aa3b2)]">
-        {article.sourceNote ? <p>Sources: {article.sourceNote}</p> : null}
-        {article.tags.includes('detf') ? (
-          <p>
-            Full mechanism write-up:{' '}
-            <a
-              href="/research/DETF_LITEPAPAPER.pdf"
-              download
-              className="text-[var(--accent,#4FD44B)] hover:underline"
-            >
-              Download DETF litepaper PDF
-            </a>
-            .
-          </p>
+        {faq?.bullets ? (
+          <section>
+            <div className="landing-lab-notes">
+              <p className="landing-section-label">FAQ</p>
+              <h2 className="mt-2 mb-5 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">
+                Quick answers
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {faq.bullets.map((b) => (
+                  <div key={b} className="landing-lab-note">
+                    <p className="text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+                      <BulletText text={b} />
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
         ) : null}
-        <p>
-          Research notes are educational. Smart contracts and markets involve risk of loss. Not investment,
-          legal, or tax advice.
-        </p>
-      </footer>
-    </article>
+
+        {article.notClaiming.length > 0 ? (
+          <details className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4 group">
+            <summary className="cursor-pointer list-none flex items-center justify-between gap-3 text-sm font-medium text-[var(--text-primary,#EDEDED)]">
+              Disclaimers
+              <span className="font-mono text-[10px] text-[var(--text-muted,#9aa3b2)] group-open:hidden">
+                expand
+              </span>
+              <span className="font-mono text-[10px] text-[var(--text-muted,#9aa3b2)] hidden group-open:inline">
+                collapse
+              </span>
+            </summary>
+            <ul className="mt-3 space-y-2 text-xs text-[var(--text-muted,#9aa3b2)] leading-relaxed list-disc pl-4">
+              {article.notClaiming.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </details>
+        ) : null}
+
+        <section className="pb-4">
+          <div className="flex flex-wrap gap-3">
+            <Link href="/create">
+              <Button>Create DETF</Button>
+            </Link>
+            <Link href="/research/detf">
+              <Button variant="secondary">How DETFs work</Button>
+            </Link>
+          </div>
+          <p className="mt-6 text-xs text-[var(--text-muted,#9aa3b2)]">
+            Research notes are educational. Smart contracts and markets involve risk of loss. Not
+            investment, legal, or tax advice.
+          </p>
+        </section>
+      </div>
+    </div>
   )
 }
 
