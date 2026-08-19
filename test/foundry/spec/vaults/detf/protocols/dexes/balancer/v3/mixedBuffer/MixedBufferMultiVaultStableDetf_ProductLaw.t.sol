@@ -21,7 +21,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
 
 /// @notice Product-law rows M1–M15 on the Mixed-buffer gold TestBase.
-/// @dev closeBondMature has no tokenOut — settlement is implicit bufferToken.
+/// @dev closeBondMature is D25+L2: proportional withdraw, burn DETF, send remaining reserve tokens.
 contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBufferMultiVaultStableDetf {
     bytes4 internal constant SEL_BOND_NOT_MATURE = bytes4(keccak256("BondNotMature(uint256)"));
     bytes4 internal constant SEL_SELL_NFT = bytes4(keccak256("sellNFT(uint256,address)"));
@@ -37,9 +37,10 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
     function test_M2_preMaturityClose_revertsBondNotMature() public {
         (uint256 tokenId_,,) = _bootstrapDefault(detf, alice);
         uint256 unlock_ = IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId_);
+        uint256[] memory minOut_ = _closeMinAmountsOut(detf);
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(SEL_BOND_NOT_MATURE, unlock_));
-        detfBonding.closeBondMature(tokenId_, 0, alice, block.timestamp + 1 hours);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M3_lockedClaimRewards_stillPays() public {
@@ -84,10 +85,10 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
         uint256 redeemAmt_ = claimBal_ / 2;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
 
-        uint256 preview_ = bonding_.previewRedeemClaim(redeemAmt_);
+        uint256 preview_ = bonding_.previewRedeemClaim(redeemAmt_, IERC20(instance_));
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "M4b redeem");
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
+        assertTrue(out_ > 0, "M4b redeem DETF");
         if (preview_ > 0) {
             assertApproxEqAbs(preview_, out_, 1e12, "M4b preview~exec");
         }
@@ -107,22 +108,26 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
         IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
         uint256 protocolId_ = nft_.detfNFTId();
         uint256 protocolBefore_ = nft_.originalSharesOf(protocolId_);
-        // Harvest seigniorage first so close does not pay pending free DETF as "extra".
-        vm.prank(alice);
-        nft_.claimRewards(tokenId_, alice);
         uint256 detfBefore_ = IERC20(detf).balanceOf(alice);
         uint256 bufBefore_ = IERC20(address(dai)).balanceOf(alice);
 
-        uint256 preview_ = detfBonding.previewCloseBondMature(tokenId_);
+        uint256[] memory preview_ = detfBonding.previewCloseBondMature(tokenId_);
+        uint256 pending_ = nft_.pendingRewards(tokenId_);
+        uint256[] memory minOut_ = _closeMinAmountsOut(detf);
         vm.prank(alice);
-        uint256 out_ = detfBonding.closeBondMature(tokenId_, 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "M5 settlement");
+        uint256[] memory out_ = detfBonding.closeBondMature(
+            tokenId_, minOut_, alice, block.timestamp + 1 hours
+        );
+        uint256 settled_ = 0;
+        for (uint256 i; i < out_.length; ++i) settled_ += out_[i];
+        assertTrue(settled_ > 0, "M5 settlement");
+        // D25 harvests pending DETF (incl. expansion minted on this touch); withdrawn reserve DETF is burned.
         uint256 detfDelta_ = IERC20(detf).balanceOf(alice) - detfBefore_;
-        // Close may harvest expansion minted on this touch; DETF self-leg is redeposited (not paid).
-        assertLt(detfDelta_, 1e18, "M5 no DETF self-leg dump");
-        assertEq(IERC20(address(dai)).balanceOf(alice) - bufBefore_, out_, "M5 buffer only");
-        if (preview_ > 0) {
-            assertApproxEqAbs(preview_, out_, 1e12, "M5 preview~exec");
+        assertTrue(detfDelta_ >= pending_, "M5 at least pending");
+        assertTrue(IERC20(address(dai)).balanceOf(alice) > bufBefore_, "M5 buffer basket");
+        assertEq(out_.length, preview_.length, "L2 length");
+        for (uint256 i; i < out_.length; ++i) {
+            assertApproxEqAbs(out_[i], preview_[i], 1e12, "M5 preview~exec");
         }
         // Close may credit redeposited DETF-leg BPT onto protocol NFT, never user principal.
         assertTrue(nft_.originalSharesOf(protocolId_) >= protocolBefore_, "M5 protocol not drained");
@@ -138,9 +143,10 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(SEL_BOND_NOT_MATURE, unlock_));
         detfBonding.sellPositionToDetfNft(tokenId_, 0, bob);
+        uint256[] memory minOut_ = _closeMinAmountsOut(detf);
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(SEL_BOND_NOT_MATURE, unlock_));
-        detfBonding.closeBondMature(tokenId_, 0, bob, block.timestamp + 1 hours);
+        detfBonding.closeBondMature(tokenId_, minOut_, bob, block.timestamp + 1 hours);
     }
 
     function test_M7_bondDetf_reverts_and_acceptedExcludesDetf() public {
@@ -218,9 +224,10 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
         // MixedBuffer BPT is a diamond; `deal` cannot find the ERC-20 slot. Drain via token transfer.
         vm.prank(detf);
         IERC20(bpt_).transfer(address(0xdead), bal_ - 1);
+        uint256[] memory minOut_ = _closeMinAmountsOut(detf);
         vm.prank(alice);
         vm.expectRevert();
-        detfBonding.closeBondMature(tokenId_, 0, alice, block.timestamp + 1 hours);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M8f_deploy_zeroPrincipalProtocolNft() public view {

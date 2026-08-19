@@ -43,6 +43,37 @@ interface IVaultFeeOracleManager {
     event NewLiquidReservePercentageOfVault(
         address indexed vault, uint256 indexed oldPercentage, uint256 indexed newPercentage
     );
+    event NewDefaultSeigniorageFeeToSharePercentage(uint256 indexed oldPercentage, uint256 indexed newPercentage);
+    event NewDefaultSeigniorageFeeToSharePercentageOfTypeId(
+        bytes4 indexed vaultTypeId, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
+    event NewSeigniorageFeeToSharePercentageOfVault(
+        address indexed vault, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
+    event NewDefaultSeigniorageCreatorSharePercentage(uint256 indexed oldPercentage, uint256 indexed newPercentage);
+    event NewDefaultSeigniorageCreatorSharePercentageOfTypeId(
+        bytes4 indexed vaultTypeId, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
+    event NewSeigniorageCreatorSharePercentageOfVault(
+        address indexed vault, uint256 indexed oldPercentage, uint256 indexed newPercentage
+    );
+    event NewDefaultSeignioragePotShares(
+        uint256 indexed oldFeeToShare, uint256 indexed oldCreatorShare, uint256 feeToShare, uint256 creatorShare
+    );
+    event NewDefaultSeignioragePotSharesOfTypeId(
+        bytes4 indexed vaultTypeId,
+        uint256 indexed oldFeeToShare,
+        uint256 indexed oldCreatorShare,
+        uint256 feeToShare,
+        uint256 creatorShare
+    );
+    event NewSeignioragePotSharesOfVault(
+        address indexed vault,
+        uint256 indexed oldFeeToShare,
+        uint256 indexed oldCreatorShare,
+        uint256 feeToShare,
+        uint256 creatorShare
+    );
 
     /* ---------------------------------------------------------------------- */
     /*                                Functions                               */
@@ -108,6 +139,47 @@ interface IVaultFeeOracleManager {
 
     /// @param percentage Vault override in WAD. 0 = clear override (fall back to type/global).
     function setLiquidReservePercentageOfVault(address vault, uint256 percentage) external returns (bool success);
+
+    /// @param percentage Global default `f` (feeTo pot weight) in WAD. 0 = unset.
+    function setDefaultSeigniorageFeeToSharePercentage(uint256 percentage) external returns (bool success);
+
+    /// @param percentage Type default `f` in WAD. 0 = clear type override.
+    function setDefaultSeigniorageFeeToSharePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        returns (bool success);
+
+    /// @param percentage Vault override `f` in WAD. 0 = clear override.
+    function setSeigniorageFeeToSharePercentageOfVault(address vault, uint256 percentage)
+        external
+        returns (bool success);
+
+    /// @param percentage Global default `c` (creator pot weight) in WAD. 0 = unset.
+    function setDefaultSeigniorageCreatorSharePercentage(uint256 percentage) external returns (bool success);
+
+    /// @param percentage Type default `c` in WAD. 0 = clear type override.
+    function setDefaultSeigniorageCreatorSharePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        returns (bool success);
+
+    /// @param percentage Vault override `c` in WAD. 0 = clear override.
+    function setSeigniorageCreatorSharePercentageOfVault(address vault, uint256 percentage)
+        external
+        returns (bool success);
+
+    /// @notice Atomically set global `f` and `c`. Rejects if resolved `f + c >= 1e18`.
+    function setDefaultSeignioragePotShares(uint256 feeToShare, uint256 creatorShare)
+        external
+        returns (bool success);
+
+    /// @notice Atomically set type-level `f` and `c`. Rejects if resolved `f + c >= 1e18`.
+    function setDefaultSeignioragePotSharesOfTypeId(bytes4 vaultTypeId, uint256 feeToShare, uint256 creatorShare)
+        external
+        returns (bool success);
+
+    /// @notice Atomically set vault-level `f` and `c`. Rejects if resolved `f + c >= 1e18`.
+    function setSeignioragePotSharesOfVault(address vault, uint256 feeToShare, uint256 creatorShare)
+        external
+        returns (bool success);
 
     // function setDefaultLendingTerms(KinkLendingTerms calldata lendingTerms) external returns (bool success);
 

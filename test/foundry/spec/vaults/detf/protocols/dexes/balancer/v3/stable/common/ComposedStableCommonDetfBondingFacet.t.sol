@@ -42,9 +42,10 @@ contract MockBondToken is IERC20 {
         decimals = decimals_;
     }
 
-    function mint(address to, uint256 amount) external {
+    function mint(address to, uint256 amount) external returns (bool) {
         balanceOf[to] += amount;
         totalSupply += amount;
+        return true;
     }
 
     function transfer(address to, uint256 amount) external returns (bool) {
@@ -137,8 +138,8 @@ contract MockBondNFTVault {
         return nextPrincipalShares;
     }
 
-    function effectiveSharesOf(uint256) external view returns (uint256) {
-        return nextPrincipalShares;
+    function effectiveSharesOf(uint256) external pure returns (uint256) {
+        return 0;
     }
 
     function totalOriginalShares() external view returns (uint256) {
@@ -165,6 +166,29 @@ contract MockBondNFTVault {
 
     function removeFromDETFNFT(uint256, uint256) external {}
 
+    function addEffectiveSharesOnly(uint256, uint256) external {}
+
+    function reservedBondNftsWired() external pure returns (bool) {
+        return true;
+    }
+
+    function initializeReservedBondNfts(address, address) external pure returns (uint256) {
+        return 0;
+    }
+
+    function totalShares() external view returns (uint256) {
+        return lastShares;
+    }
+
+    function convertToAssets(uint256 shares_) external pure returns (uint256) {
+        return shares_;
+    }
+
+    function retireMaturePosition(uint256, address) external view returns (uint256 originalShares, uint256 rewardsClaimed) {
+        originalShares = nextPrincipalShares;
+        rewardsClaimed = 0;
+    }
+
     function feeRecipientNFTId() external view returns (uint256) {
         return feeRecipientTokenId;
     }
@@ -185,6 +209,14 @@ contract MockBondFeeOracle {
 
     function feeTo() external view returns (IFeeCollectorProxy feeTo_) {
         return feeCollector;
+    }
+
+    function seigniorageIncentivePercentageOfVault(address) external pure returns (uint256) {
+        return 0;
+    }
+
+    function seigniorageSplitOfVault(address) external pure returns (uint256, uint256, uint256) {
+        return (0, 0, 0);
     }
 }
 
@@ -441,12 +473,12 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         (uint256 tokenId, uint256 shares) = harness.bond(commonToken, 2e18, 7 days, address(0), block.timestamp + 1);
 
         assertEq(tokenId, 1);
-        assertEq(shares, 117e17);
-        assertEq(bondNFTVault.lastShares(), 117e17);
+        assertEq(shares, 12e18);
+        assertEq(bondNFTVault.lastShares(), 12e18);
         assertEq(bondNFTVault.lastLockDuration(), 7 days);
         assertEq(bondNFTVault.lastRecipient(), address(this));
-        assertEq(bondNFTVault.lastFeeRecipientTokenId(), 99);
-        assertEq(bondNFTVault.lastFeeRecipientShares(), 3e17);
+        // D14: feeTo earns via standing NFT id 1, not usage-fee principal on the fee NFT.
+        assertEq(bondNFTVault.lastFeeRecipientShares(), 0);
     }
 
     function test_bond_revertsForUnsupportedToken() public {
@@ -506,6 +538,6 @@ contract ComposedStableCommonDetfBondingFacet_Test is Test {
         unconfiguredHarness.setWeightedPoolState(address(reservePoolToken), reserveBalances, reserveWeights, 0, 1000e18, true);
 
         vm.expectRevert(abi.encodeWithSelector(IDetfErrors.InvalidToken.selector, IERC20(address(0))));
-        unconfiguredHarness.sellPositionToDetfNft(1, 0, address(this));
+        unconfiguredHarness.sellPositionToDetfNft(11, 0, address(this));
     }
 }

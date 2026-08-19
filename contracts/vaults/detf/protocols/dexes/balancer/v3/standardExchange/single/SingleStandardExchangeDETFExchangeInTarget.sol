@@ -36,7 +36,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
 
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
 
-        // Burn DETF → asset / vault shares. DETF → claim is buyClaim only.
+        // Burn DETF → asset / vault shares. DETF → claim is buyClaim (D18); claim → DETF is redeemClaim (D15).
         if (address(tokenIn_) == address(this)) {
             if (address(tokenOut_) == address(s.rebasingClaimToken)) {
                 revert SingleStandardExchangeDETFRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
@@ -119,9 +119,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
         if (s.isReserveLive && IERC20(s.reservePool).totalSupply() > 0) {
             _joinReserveVaultSharesOnly(vaultShares_);
             _mintDetf(recipient_, split_.userDetf);
-            if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
             if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
-            // Lazy protocol compound after inventory seigniorage mint (best-effort; never fails mint).
             _tryCompoundProtocolRewards();
             return split_.userDetf;
         }

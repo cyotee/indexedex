@@ -233,7 +233,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 
@@ -304,7 +305,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 
@@ -506,18 +508,18 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         vm.stopPrank();
     }
 
-    /// @dev Donate pair face into protocol LP holder via hook depositSingle (raises FD without DETF supply).
+    /// @dev Donate pair via DETF-owned hook LP (owner-only) into the NFT vault. Raises FD without DETF supply.
     function _donatePairToProtocolLp(
         IUniswapV4StandardExchangeWeightedDETF info_,
         address pair_,
         uint256 pairAmt_
     ) internal returns (bool ok_) {
         address hook = info_.reserveHook();
-        address holder =
-            info_.rebasingClaimToken() != address(0) ? info_.rebasingClaimToken() : address(info_);
+        address holder = info_.bondNftVault();
+        if (holder == address(0)) holder = address(info_);
         if (!IUniswapV4StandardExchangeWeightedBufferHook(hook).isFullBook()) return false;
-        SimpleMintableERC20(pair_).mint(detfUser, pairAmt_);
-        vm.startPrank(detfUser);
+        SimpleMintableERC20(pair_).mint(address(info_), pairAmt_);
+        vm.startPrank(address(info_));
         IERC20(pair_).approve(hook, type(uint256).max);
         try IUniswapV4StandardExchangeWeightedBufferHook(hook).depositSingle(
             pair_, pairAmt_, holder, 0, block.timestamp + 1 days
@@ -620,5 +622,48 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         args.name = string(abi.encodePacked("LaunchRich Wgt ", tag_));
         args.symbol = string(abi.encodePacked("lrW", tag_));
         args.expansionClosureRatePerYearWad = 4.4e18;
+    }
+
+    function _feeTo() internal view returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IUniswapV4StandardExchangeWeightedDETF(instance_).bondNftVault());
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+    }
+
+    function _closeMinOut(address instance_) internal view returns (uint256[] memory minOut_) {
+        minOut_ = new uint256[](IUniswapV4StandardExchangeWeightedDETF(instance_).n());
+    }
+
+    function _closeBond(address instance_, uint256 tokenId_, address recipient_)
+        internal
+        returns (uint256[] memory amountsOut_)
+    {
+        amountsOut_ = IUniswapV4StandardExchangeWeightedDETF(instance_).closeBondMature(
+            tokenId_, _closeMinOut(instance_), recipient_, _dl()
+        );
+    }
+
+    function _closeNonDetfSum(address instance_, uint256[] memory amountsOut_)
+        internal
+        view
+        returns (uint256 sum_)
+    {
+        uint8 detfIdx_ = IUniswapV4StandardExchangeWeightedDETF(instance_).detfBindingIndex();
+        for (uint256 i; i < amountsOut_.length; ++i) {
+            if (i == detfIdx_) continue;
+            sum_ += amountsOut_[i];
+        }
     }
 }

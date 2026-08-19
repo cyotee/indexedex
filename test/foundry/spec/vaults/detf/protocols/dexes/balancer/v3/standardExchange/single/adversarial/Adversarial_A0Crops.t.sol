@@ -115,10 +115,11 @@ contract Adversarial_SingleSE_A0Crops is TestBase_SingleStandardExchangeDETF_Adv
         assertTrue(IVaultRegistryDisableQuery(address(indexedexManager)).isDisabled(instance_));
 
         vm.prank(bob);
-        uint256 closeOut_ = bonding_.closeBondMature(
-            bobId_, seShare, 0, bob, block.timestamp + 1 hours
+        uint256[] memory minOut_ = new uint256[](2);
+        uint256[] memory closeOut_ = bonding_.closeBondMature(
+            bobId_, minOut_, bob, block.timestamp + 1 hours
         );
-        assertGt(closeOut_, 0, "closeBondMature after disable");
+        assertGt(closeOut_[0] + closeOut_[1], 0, "closeBondMature after disable");
 
         address claim_ = info_.rebasingClaimToken();
         uint256 claimBal_ = IRebasingClaimToken(claim_).balanceOf(alice);
@@ -126,7 +127,7 @@ contract Adversarial_SingleSE_A0Crops is TestBase_SingleStandardExchangeDETF_Adv
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
         vm.prank(alice);
         uint256 redeemOut_ = bonding_.redeemClaim(
-            redeemAmt_, seShare, 0, alice, block.timestamp + 1 hours
+            redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours
         );
         assertGt(redeemOut_, 0, "redeemClaim after disable");
     }

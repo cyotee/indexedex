@@ -58,6 +58,7 @@ library ComposedStableCommonDetfRepo {
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
         uint256 lastExpansionTimestamp; // seeded at first live accrual touch
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -423,6 +424,22 @@ library ComposedStableCommonDetfRepo {
 
     function _expansionCatchUpCapBps() internal view returns (uint256 expansionCatchUpCapBps_) {
         return _expansionCatchUpCapBps(_layoutStruct());
+    }
+
+    function _setCreator(Storage storage layoutStruct_, address creator_) internal {
+        layoutStruct_.creator = creator_;
+    }
+
+    function _setCreator(address creator_) internal {
+        _setCreator(_layoutStruct(), creator_);
+    }
+
+    function _creator(Storage storage layoutStruct_) internal view returns (address creator_) {
+        return layoutStruct_.creator;
+    }
+
+    function _creator() internal view returns (address creator_) {
+        return _creator(_layoutStruct());
     }
 
     function _lastExpansionTimestamp(Storage storage layoutStruct_)

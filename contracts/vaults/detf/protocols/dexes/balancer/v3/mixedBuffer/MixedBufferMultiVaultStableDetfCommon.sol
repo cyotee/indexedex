@@ -24,7 +24,7 @@ import {
     IMixedBufferMultiVaultStablePool
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";
 import {DETFThresholdPolicy, ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
@@ -34,6 +34,11 @@ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
@@ -69,6 +74,12 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         uint256 unlock_ = MixedBufferMultiVaultStableDetfRepo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
         if (block.timestamp < unlock_) {
             revert MixedBufferMultiVaultStableDetfRepo.BondNotMature(unlock_);
+        }
+    }
+
+    function _requireNotStandingRewardNft(uint256 tokenId_) internal pure {
+        if (tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID) {
+            revert IDetfErrors.DETFNFTRestricted(tokenId_);
         }
     }
 
@@ -200,20 +211,73 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         return s.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
     }
 
-    function _usageFeeWad() internal view returns (uint256) {
-        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
-        if (address(s.feeOracle) == address(0)) return 0;
-        return s.feeOracle.usageFeeOfVault(address(this));
-    }
-
     function _splitMintedDetf(uint256 gross_) internal view returns (MintSplit memory split_) {
         split_.grossDetf = gross_;
         if (gross_ == 0) return split_;
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
-        split_.feeToDetf = feeTo_;
-        uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.inventoryDetf = afterFee_.mulDown(halfInc_);
-        split_.userDetf = afterFee_ - split_.inventoryDetf;
+        (uint256 user_, uint256 pot_) = DETFMintSplitLib._splitLiveGross(gross_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _splitBondDetf(uint256 joinDetf_) internal view returns (MintSplit memory split_) {
+        split_.grossDetf = joinDetf_;
+        if (joinDetf_ == 0) return split_;
+        (uint256 user_, uint256 pot_,) = DETFMintSplitLib._splitBond(joinDetf_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book is family peg-seed, not this path.
+    function _quoteBondJoinDetf(uint256 tokenIndex_, uint256 amountIn_) internal view returns (uint256 detfOut_) {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        if (!s.isReserveLive || IERC20(s.reservePool).totalSupply() == 0) {
+            return amountIn_;
+        }
+        (,, uint256[] memory balancesRaw_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        uint256 tokenBal_ = balancesRaw_[tokenIndex_];
+        uint256 detfBal_ = balancesRaw_[s.detfIndex];
+        if (tokenBal_ == 0) return amountIn_;
+        detfOut_ = amountIn_ * detfBal_ / tokenBal_;
+        if (detfOut_ == 0) detfOut_ = amountIn_;
+    }
+
+    /// @notice Proportional DETF leg of a BPT exit (preview; DETF slot stays 0 on D25 close).
+    function _previewProportionalDetf(uint256 bptIn_) internal view returns (uint256 detfOut_) {
+        if (bptIn_ == 0) return 0;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return 0;
+        (,, uint256[] memory balancesRaw_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        detfOut_ = balancesRaw_[s.detfIndex] * bptIn_ / bptSupply_;
+    }
+
+    function _previewProportionalExit(uint256 bptIn_) internal view returns (uint256[] memory amountsOut_) {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 n_ = uint256(s.vaultCount) + 2;
+        amountsOut_ = new uint256[](n_);
+        if (bptIn_ == 0) return amountsOut_;
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return amountsOut_;
+        (,, uint256[] memory balancesRaw_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        amountsOut_[s.bufferIndex] = balancesRaw_[s.bufferIndex] * bptIn_ / bptSupply_;
+        for (uint256 i; i < s.vaultCount; ++i) {
+            uint256 idx_ = s.shareIndexes[i];
+            amountsOut_[idx_] = balancesRaw_[idx_] * bptIn_ / bptSupply_;
+        }
+    }
+
+    function _reserveTokenCount() internal view returns (uint256) {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        return uint256(s.vaultCount) + 2;
+    }
+
+    function _topUpFeeCreatorShares() internal {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        if (address(s.bondNftVault) == address(0) || address(s.feeOracle) == address(0)) return;
+        (, uint256 f_, uint256 c_) = s.feeOracle.seigniorageSplitOfVault(address(this));
+        DETFBondLifecycleLib._topUpFeeCreatorShares(s.bondNftVault, f_, c_);
     }
 
     function _amp() internal view returns (uint256 amp_) {
@@ -401,6 +465,26 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         bptOut_ = _joinReserveUnbalanced(amountsIn_);
     }
 
+    /// @dev Live join of any combination of DETF / buffer / vault-share legs (zero amounts skipped).
+    function _joinReserveLegs(uint256 detfAmount_, uint256 bufferAmount_, uint256[] memory vaultShareAmounts_)
+        internal
+        returns (uint256 bptOut_)
+    {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 n_ = _reserveVault().getCurrentLiveBalances(s.reservePool).length;
+        uint256[] memory amountsIn_ = new uint256[](n_);
+        amountsIn_[s.detfIndex] = detfAmount_;
+        amountsIn_[s.bufferIndex] = bufferAmount_;
+        if (detfAmount_ > 0) IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+        if (bufferAmount_ > 0) s.bufferToken.safeTransfer(address(_reserveVault()), bufferAmount_);
+        for (uint256 i; i < s.vaultCount; ++i) {
+            uint256 amt_ = i < vaultShareAmounts_.length ? vaultShareAmounts_[i] : 0;
+            amountsIn_[s.shareIndexes[i]] = amt_;
+            if (amt_ > 0) s.vaultShares[i].safeTransfer(address(_reserveVault()), amt_);
+        }
+        bptOut_ = _joinReserveUnbalanced(amountsIn_);
+    }
+
     function _exitReserveProportional(uint256 bptIn_)
         internal
         returns (uint256 detfOut_, uint256 bufferOut_, uint256[] memory vaultSharesOut_)
@@ -533,6 +617,8 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
             protocolId_,
             bptOut_
         );
+        _topUpFeeCreatorShares();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). `pretransferred=true`: credit claimed only when

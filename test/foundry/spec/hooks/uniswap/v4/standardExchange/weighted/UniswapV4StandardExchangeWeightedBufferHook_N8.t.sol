@@ -64,6 +64,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8 is
             // only first SE non-zero to keep matrix light but ≥1
             if (i == 0) a.standardExchanges[i] = ses[i];
         }
+        a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
+        a.owner = _pkgOwner();
 
         _deployHookWithArgs(a);
         for (uint256 i; i < 8; ++i) {

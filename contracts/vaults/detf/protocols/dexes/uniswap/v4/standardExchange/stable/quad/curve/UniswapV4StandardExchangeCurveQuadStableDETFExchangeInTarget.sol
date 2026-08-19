@@ -138,16 +138,16 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFExchangeInTarget i
         uint256 gross_ = _quoteDetfAgainstReserve(r_.fundedProductIndex, pairBoosted_);
         MintSplit memory split_ = _splitMintedDetf(gross_);
 
+        address lpTo_ = _bondLpHolder();
         if (r_.depositUnit == DepositUnit.VaultShare) {
             address pair_ = address(Repo._layoutStruct().pairTokens[r_.fundedProductIndex]);
-            _depositSingleFlexible(pair_, r_.depositAmountNative, _protocolLpHolder());
+            _depositSingleFlexible(pair_, r_.depositAmountNative, lpTo_);
         } else {
             address pair_ = address(Repo._layoutStruct().pairTokens[r_.fundedProductIndex]);
-            _depositSingle(pair_, r_.pairNotionalNative, _protocolLpHolder());
+            _depositSingle(pair_, r_.pairNotionalNative, lpTo_);
         }
 
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         address bondVault_ = address(Repo._layoutStruct().bondNftVault);
         if (split_.inventoryDetf > 0 && bondVault_ != address(0)) {
             _mintDetf(bondVault_, split_.inventoryDetf);

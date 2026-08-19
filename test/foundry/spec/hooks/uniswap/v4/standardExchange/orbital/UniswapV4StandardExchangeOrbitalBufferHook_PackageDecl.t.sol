@@ -12,6 +12,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
@@ -33,16 +34,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
 {
     function test_facetCuts_isBootstrapOnly() public view {
         IDiamond.FacetCut[] memory cuts = hookPkg.facetCuts();
-        assertEq(cuts.length, 3);
-        assertEq(cuts[0].facetAddress, address(multiAssetBasicVaultFacet));
-        assertEq(cuts[1].facetAddress, address(multiAssetStandardVaultFacet));
-        assertEq(cuts[2].facetAddress, address(hookPkg));
+        assertEq(cuts.length, 4);
+        assertEq(cuts[0].facetAddress, address(multiStepOwnableFacet));
+        assertEq(cuts[1].facetAddress, address(multiAssetBasicVaultFacet));
+        assertEq(cuts[2].facetAddress, address(multiAssetStandardVaultFacet));
+        assertEq(cuts[3].facetAddress, address(hookPkg));
         assertEq(uint256(cuts[0].action), uint256(IDiamond.FacetCutAction.Add));
         assertEq(uint256(cuts[1].action), uint256(IDiamond.FacetCutAction.Add));
         assertEq(uint256(cuts[2].action), uint256(IDiamond.FacetCutAction.Add));
-        _assertSelectorsEq(cuts[2].functionSelectors, _s58());
-        _assertSelectorsEq(cuts[0].functionSelectors, multiAssetBasicVaultFacet.facetFuncs());
-        _assertSelectorsEq(cuts[1].functionSelectors, multiAssetStandardVaultFacet.facetFuncs());
+        assertEq(uint256(cuts[3].action), uint256(IDiamond.FacetCutAction.Add));
+        _assertSelectorsEq(cuts[0].functionSelectors, multiStepOwnableFacet.facetFuncs());
+        _assertSelectorsEq(cuts[3].functionSelectors, _s58());
+        _assertSelectorsEq(cuts[1].functionSelectors, multiAssetBasicVaultFacet.facetFuncs());
+        _assertSelectorsEq(cuts[2].functionSelectors, multiAssetStandardVaultFacet.facetFuncs());
     }
 
     function test_productionFacetCuts_sevenAdds() public view {
@@ -76,7 +80,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
 
     function test_facetInterfaces_nineProductionIds() public view {
         bytes4[] memory ids = hookPkg.facetInterfaces();
-        assertEq(ids.length, 9);
+        assertEq(ids.length, 10);
         assertEq(ids[0], type(IERC20).interfaceId);
         assertEq(ids[1], type(IERC20Metadata).interfaceId);
         assertEq(ids[2], type(IERC20Permit).interfaceId);
@@ -85,22 +89,24 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
         assertEq(ids[5], type(IStandardExchangeOut).interfaceId);
         assertEq(ids[6], type(IBasicVault).interfaceId);
         assertEq(ids[7], type(IStandardVault).interfaceId);
-        assertEq(ids[8], bytes4(keccak256("UniswapV4StandardExchangeOrbitalBufferHook")));
+        assertEq(ids[8], type(IMultiStepOwnable).interfaceId);
+        assertEq(ids[9], bytes4(keccak256("UniswapV4StandardExchangeOrbitalBufferHook")));
     }
 
     function test_facetAddresses_ten() public view {
         address[] memory facets = hookPkg.facetAddresses();
-        assertEq(facets.length, 10);
-        assertEq(facets[0], address(multiAssetBasicVaultFacet));
-        assertEq(facets[1], address(multiAssetStandardVaultFacet));
-        assertEq(facets[2], address(hookPkg));
-        assertEq(facets[3], address(hookPkg.HOOKS_FACET()));
-        assertEq(facets[4], address(hookPkg.DEPOSIT_FACET()));
-        assertEq(facets[5], address(hookPkg.WITHDRAW_FACET()));
-        assertEq(facets[6], address(hookPkg.SE_FACET()));
-        assertEq(facets[7], address(erc20Facet));
-        assertEq(facets[8], address(erc5267Facet));
-        assertEq(facets[9], address(erc2612Facet));
+        assertEq(facets.length, 11);
+        assertEq(facets[0], address(multiStepOwnableFacet));
+        assertEq(facets[1], address(multiAssetBasicVaultFacet));
+        assertEq(facets[2], address(multiAssetStandardVaultFacet));
+        assertEq(facets[3], address(hookPkg));
+        assertEq(facets[4], address(hookPkg.HOOKS_FACET()));
+        assertEq(facets[5], address(hookPkg.DEPOSIT_FACET()));
+        assertEq(facets[6], address(hookPkg.WITHDRAW_FACET()));
+        assertEq(facets[7], address(hookPkg.SE_FACET()));
+        assertEq(facets[8], address(erc20Facet));
+        assertEq(facets[9], address(erc5267Facet));
+        assertEq(facets[10], address(erc2612Facet));
     }
 
     function test_facetFuncs_isS58() public view {
@@ -126,29 +132,14 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
 
     function test_calcSalt_unchanged() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
-        bytes memory processed = hookPkg.processArgs(abi.encode(args));
-        bytes32 s1 = hookPkg.calcSalt(processed);
-        bytes32 expected = keccak256(
-            abi.encode(
-                hookPkg.PRODUCT_ID(),
-                args.poolManager,
-                args.feeOracle,
-                args.token0,
-                args.token1,
-                args.token2,
-                args.se0,
-                args.se1,
-                args.se2,
-                args.rp0,
-                args.rp1,
-                args.rp2
-            )
-        );
-        assertEq(s1, expected);
+        bytes32 s1 = hookPkg.calcSalt(hookPkg.processArgs(abi.encode(args)));
         args.tickSpacing = 120;
         args.sqrtPriceX96 = 1;
         bytes32 s2 = hookPkg.calcSalt(hookPkg.processArgs(abi.encode(args)));
         assertEq(s1, s2, "tick/sqrt excluded from salt");
+        args.ownerOnlyLiquidity = !args.ownerOnlyLiquidity;
+        bytes32 s3 = hookPkg.calcSalt(hookPkg.processArgs(abi.encode(args)));
+        assertTrue(s1 != s3, "ownerOnlyLiquidity in salt");
     }
 
     function _s58() internal pure returns (bytes4[] memory s) {

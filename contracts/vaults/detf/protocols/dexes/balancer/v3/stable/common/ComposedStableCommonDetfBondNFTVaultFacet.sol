@@ -20,7 +20,7 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](31);
+        funcs_ = new bytes4[](35);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
@@ -52,6 +52,10 @@ contract ComposedStableCommonDetfBondNFTVaultFacet is ComposedStableCommonDetfBo
         funcs_[28] = IDETFNFTVault.rewardPerShares.selector;
         funcs_[29] = IDETFNFTVault.removeFromDETFNFT.selector;
         funcs_[30] = IDETFNFTVault.totalOriginalShares.selector;
+        funcs_[31] = IDETFNFTVault.initializeReservedBondNfts.selector;
+        funcs_[32] = IDETFNFTVault.reservedBondNftsWired.selector;
+        funcs_[33] = IDETFNFTVault.addEffectiveSharesOnly.selector;
+        funcs_[34] = IDETFNFTVault.retireMaturePosition.selector;
     }
 
     function facetMetadata()

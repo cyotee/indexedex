@@ -420,9 +420,10 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
 
         // DETF.redeemClaim burns via burnShares (pretransferred on this claim token) and
         // unwinds protocol-bond originalShares only. Do not burn locally first.
+        // D15: claim redeem pays DETF only (bond vault reward token), not rateAsset.
         amountOut_ = IComposedStableCommonDetfBonding(address(layoutStruct_.detf)).redeemClaim(
             rebasingClaimAmount_,
-            _configuredCommonToken(layoutStruct_),
+            layoutStruct_.nftVault.rewardToken(),
             0,
             recipient_,
             block.timestamp

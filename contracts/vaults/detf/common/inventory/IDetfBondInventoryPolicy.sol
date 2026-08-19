@@ -45,8 +45,21 @@ interface IDetfBondInventoryPolicy {
     /// @notice Reward-ledger (effective) shares for a bond tokenId.
     function effectiveSharesOf(uint256 tokenId) external view returns (uint256 shares);
 
+    /// @notice Sum of effectiveShares across all tokenIds (user + protocol + standing reward).
+    function totalShares() external view returns (uint256 shares);
+
     /// @notice Sum of originalShares across all tokenIds (user + protocol).
     function totalOriginalShares() external view returns (uint256 shares);
+
+    /// @notice D7 reserved ids 0/1/2. User `createPosition` starts at 3 after this returns.
+    /// @dev `creator == 0` mints id 2 to `feeTo` (D21). Id 0 is a valid protocol id (L6).
+    function initializeReservedBondNfts(address feeTo, address creator) external returns (uint256 protocolId);
+
+    /// @notice L6 wired sentinel. Not `detfNftId == 0`.
+    function reservedBondNftsWired() external view returns (bool);
+
+    /// @notice L7: add effective-share weight only on ids 1 or 2. Does not change `originalShares`.
+    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external;
 
     /// @notice Harvest free DETF rewards accrued to the detf-owned NFT to `recipient`.
     /// @dev Free-DETF harvest — not BPT compound. Compound remains DETF-orchestrated.

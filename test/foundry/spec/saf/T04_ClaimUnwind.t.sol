@@ -75,17 +75,17 @@ contract T04_ClaimUnwind_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
 
         address claim = detfInfo.rebasingClaimToken();
         uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
-        uint256 pairBefore = pairToken.balanceOf(detfUser);
+        uint256 detfBefore = IERC20(detf).balanceOf(detfUser);
 
         vm.prank(detfUser);
-        uint256 pairOut = detfInfo.redeemClaim(
+        uint256 detfOut = detfInfo.redeemClaim(
             claimBal / 2,
-            IERC20(address(pairToken)),
+            IERC20(detf),
             0,
             detfUser,
             block.timestamp + 1 hours
         );
-        assertGt(pairOut, 0, "DETF redeemClaim still unwinds LP");
-        assertEq(pairToken.balanceOf(detfUser) - pairBefore, pairOut);
+        assertGt(detfOut, 0, "D15 redeemClaim pays DETF");
+        assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore, detfOut);
     }
 }

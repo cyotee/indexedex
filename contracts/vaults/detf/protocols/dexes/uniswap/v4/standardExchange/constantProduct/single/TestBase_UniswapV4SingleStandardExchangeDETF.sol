@@ -26,6 +26,7 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {
@@ -198,7 +199,8 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 
@@ -368,5 +370,45 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         assertTrue(detfInfo.isReserveLive(), "expected reserve live");
         assertTrue(detfInfo.reserveHook() != address(0), "reserve hook missing");
         assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault missing");
+    }
+
+    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IUniswapV4SingleStandardExchangeDETF(instance_).bondNftVault());
+    }
+
+    function _feeTo() internal view override returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
+        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+    }
+
+    function _bootstrapViaFirstBond(address bonder_, uint256 pairAmount_)
+        internal
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        pairToken.mint(bonder_, pairAmount_);
+        vm.startPrank(bonder_);
+        pairToken.approve(detf, pairAmount_);
+        (tokenId_, shares_) = detfInfo.bond(
+            IERC20(address(pairToken)),
+            pairAmount_,
+            DEFAULT_MIN_LOCK,
+            bonder_,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
     }
 }

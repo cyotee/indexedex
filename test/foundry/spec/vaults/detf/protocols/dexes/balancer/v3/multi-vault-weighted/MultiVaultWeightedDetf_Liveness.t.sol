@@ -21,13 +21,16 @@ contract MultiVaultWeightedDetf_Liveness_Test is TestBase_MultiVaultWeightedDetf
         vm.stopPrank();
     }
 
-    function test_preLive_bondVaultShare_reverts() public {
+    function test_preLive_bondVaultShare_n1_goesLive() public {
+        _assertInert(detf);
         uint256 seShares_ = _fundSeShares0(alice, 100e18);
         vm.startPrank(alice);
         seShare0.approve(detf, seShares_);
-        vm.expectRevert();
-        detfBonding.bond(seShare0, seShares_, DEFAULT_MIN_LOCK, alice, false, block.timestamp + 1 hours);
+        (uint256 tokenId_,) =
+            detfBonding.bond(seShare0, seShares_, DEFAULT_MIN_LOCK, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        assertTrue(tokenId_ > 0, "n1 first bond nft");
+        _assertLive(detf);
     }
 
     function test_firstBondBpt_setsLive() public {

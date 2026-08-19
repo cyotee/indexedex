@@ -56,6 +56,8 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         uint256 detfNFTId;
         uint256 feeRecipientNFTId;
         uint256 totalOriginalShares;
+        bool protocolNftInitialized;
+        bool reservedIdsWired;
     }
 
     function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
@@ -103,6 +105,26 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _setFeeRecipientNFTId(uint256 tokenId_) internal {
         _setFeeRecipientNFTId(_layoutStruct(), tokenId_);
+    }
+
+    function _protocolNftInitialized(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.protocolNftInitialized;
+    }
+
+    function _setProtocolNftInitialized(Storage storage layoutStruct_, bool value_) internal {
+        layoutStruct_.protocolNftInitialized = value_;
+    }
+
+    function _reservedIdsWired(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.reservedIdsWired;
+    }
+
+    function _reservedIdsWired() internal view returns (bool) {
+        return _reservedIdsWired(_layoutStruct());
+    }
+
+    function _setReservedIdsWired(Storage storage layoutStruct_, bool value_) internal {
+        layoutStruct_.reservedIdsWired = value_;
     }
 
     function _detf(Storage storage layoutStruct_) internal view returns (IDetf) {
@@ -308,6 +330,35 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
 
     function _addToPosition(uint256 tokenId_, uint256 additionalShares_) internal {
         _addToPosition(_layoutStruct(), tokenId_, additionalShares_);
+    }
+
+    /// @notice L7: effective-share weight only. Does not change `originalShares`. Reward-debt rebase like shared NFT.
+    function _addEffectiveSharesOnly(Storage storage layoutStruct_, uint256 tokenId_, uint256 additionalShares_)
+        internal
+    {
+        if (additionalShares_ == 0) return;
+
+        uint256 oldEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        if (oldEff_ == 0) {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+            layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+            layoutStruct_.totalShares += additionalShares_;
+            return;
+        }
+
+        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+        layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+        layoutStruct_.totalShares += additionalShares_;
+
+        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 rps_ = layoutStruct_.rewardPerShares;
+        if (newEff_ > 0 && pending_ > 0) {
+            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+            layoutStruct_.userRewardPerSharePaid[tokenId_] =
+                rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+        } else {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+        }
     }
 
     error BondNotMature(uint256 unlockTime);

@@ -181,10 +181,9 @@ contract UniswapV4SingleStandardExchangeDETF_AdversarialTest is TestBase_Uniswap
         uint256 user = detfInfo.userBondedLp();
         address hook = detfInfo.reserveHook();
         address bond = detfInfo.bondNftVault();
-        address claim = detfInfo.rebasingClaimToken();
-        // PRD LOCK physical custody: protocol on claim, user on bond NFT (not diamond).
-        assertEq(protocol, IERC20(hook).balanceOf(claim), "protocol = claim LP bal");
-        assertGe(IERC20(hook).balanceOf(bond), user, "bond NFT holds >= userBondedLp");
+        // D13: all reserve LP is on the NFT vault. protocolLp is nftLp minus user-bonded.
+        assertEq(IERC20(hook).balanceOf(bond), protocol + user, "nftLp = protocol + userBonded");
+        assertEq(IERC20(hook).balanceOf(detfInfo.rebasingClaimToken()), 0, "claim holds no LP");
         assertEq(IERC20(hook).balanceOf(detf), 0, "diamond holds no residual LP");
         assertGt(protocol, 0, "mint created protocol LP");
         assertGt(user, 0, "bond created user LP");

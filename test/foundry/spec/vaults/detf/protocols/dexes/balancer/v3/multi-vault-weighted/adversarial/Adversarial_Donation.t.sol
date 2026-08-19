@@ -111,7 +111,7 @@ contract Adversarial_Donation_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         vm.prank(attacker);
         vm.expectRevert();
         IMultiVaultWeightedDetfBonding(instance_).redeemClaim(
-            1e18, rateAssets[0], 0, attacker, block.timestamp + 1 hours
+            1e18, IERC20(instance_), 0, attacker, block.timestamp + 1 hours
         );
         assertEq(IERC20(pool_).balanceOf(attacker), attackerBptBefore_, "A3: no BPT stolen");
         assertEq(IERC20(pool_).balanceOf(instance_), bptAfterMint_, "diamond BPT intact");

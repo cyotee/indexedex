@@ -138,15 +138,15 @@ contract SingleStandardExchangeDETF_ProtocolCompound_Test is TestBase_SingleStan
     /*                                 C4                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C4: fee-recipient gets free DETF on mint (not auto-joined). Fee NFT not wired on Single SE.
+    /// @dev C4 / D14: mint does not send DETF to feeTo. They earn only via reserved id 1.
     function test_C4_feeRecipientGetsFreeDetfNotAutoJoined() public {
         address feeTo_ = _feeTo();
-        // Enable usage fee so feeTo receives DETF on mint.
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(compoundDetf, 0.01e18);
         vm.stopPrank();
 
         uint256 feeBefore_ = IERC20(compoundDetf).balanceOf(feeTo_);
+        uint256 potBefore_ = IERC20(compoundDetf).balanceOf(address(_bondNftVault(compoundDetf)));
         uint256 seShares_ = _fundSeShares(bob, 40e18);
         vm.startPrank(bob);
         seShare.approve(compoundDetf, seShares_);
@@ -155,9 +155,8 @@ contract SingleStandardExchangeDETF_ProtocolCompound_Test is TestBase_SingleStan
         );
         vm.stopPrank();
 
-        uint256 feeDelta_ = IERC20(compoundDetf).balanceOf(feeTo_) - feeBefore_;
-        assertGt(feeDelta_, 0, "feeTo received free detf");
-        // Fee is free DETF balance - protocol compound only touches detf-owned NFT.
+        assertEq(IERC20(compoundDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
+        assertTrue(IERC20(compoundDetf).balanceOf(address(_bondNftVault(compoundDetf))) >= potBefore_, "pot path");
     }
 
     /* ---------------------------------------------------------------------- */

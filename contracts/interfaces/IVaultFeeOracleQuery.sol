@@ -117,6 +117,42 @@ interface IVaultFeeOracleQuery {
         view
         returns (IFeeCollectorProxy feeTo, uint256 percentage);
 
+    /// @notice Global default `f` (feeTo effective-share weight of the pot). WAD. Stored 0 = unset.
+    function defaultSeigniorageFeeToSharePercentage() external view returns (uint256 percentage);
+
+    /// @notice Type-level `f`. Stored 0 = unset (fallback to global).
+    function seigniorageFeeToSharePercentageOfTypeId(bytes4 vaultTypeId) external view returns (uint256 percentage);
+
+    /// @notice Effective `f` for `vault` after three-tier resolution.
+    function seigniorageFeeToSharePercentageOfVault(address vault) external view returns (uint256 percentage);
+
+    /// @notice Global default `c` (creator effective-share weight of the pot). WAD. Stored 0 = unset.
+    function defaultSeigniorageCreatorSharePercentage() external view returns (uint256 percentage);
+
+    /// @notice Type-level `c`. Stored 0 = unset (fallback to global).
+    function seigniorageCreatorSharePercentageOfTypeId(bytes4 vaultTypeId) external view returns (uint256 percentage);
+
+    /// @notice Effective `c` for `vault` after three-tier resolution.
+    function seigniorageCreatorSharePercentageOfVault(address vault) external view returns (uint256 percentage);
+
+    /// @notice `(p, f, c)` for `vault` after three-tier resolution.
+    function seigniorageSplitOfVault(address vault)
+        external
+        view
+        returns (uint256 p, uint256 f, uint256 c);
+
+    /// @notice `(feeTo, p, f, c)` for `vault` after three-tier resolution.
+    function seigniorageSplitAndFeeToOfVault(address vault)
+        external
+        view
+        returns (IFeeCollectorProxy feeTo, uint256 p, uint256 f, uint256 c);
+
+    /// @notice Bond terms plus `(feeTo, p, f, c)` in one call.
+    function bondTermsAndSeigniorageOfVault(address vault)
+        external
+        view
+        returns (IFeeCollectorProxy feeTo, BondTerms memory terms, uint256 p, uint256 f, uint256 c);
+
     /* -------------------------------------------------------------------------- */
     /*                         Liquid reserve policy (WAD)                        */
     /* -------------------------------------------------------------------------- */

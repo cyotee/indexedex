@@ -64,11 +64,11 @@ Research suggests default product preference is **A for nested weighted DETF res
 
 | Item | Detail |
 |------|--------|
-| Package | `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` |
+| Package | `DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol` |
 | Policy | `PkgArgs.useRateProviders` (bool); default **false** in TestBase via `_useRateProviders()` |
 | Deploy | RPs deployed only if true; salt encodes policy |
 | Runtime | Exchange facets use Balancer rates (1e18 under STANDARD) |
-| Tests | Default suite rates-off; `DualLiquidityLinkedCrossVersionUniswapVault_RatesOn.t.sol` regression |
+| Tests | Default suite rates-off; `DualLiquidity (removed)CrossVersionUniswapVault_RatesOn.t.sol` regression |
 | Plan | `DualLiquidity_OptionalRateProviders_IMPLEMENTATION_PLAN.md` |
 
 **Action:** none for enforcement; optional follow-up residual research rates-on vs off.

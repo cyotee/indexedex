@@ -8,7 +8,7 @@
 
 **Canonical naming precedent (already enforced elsewhere):**
 
-- DualLiquidityLinkedDETF PRD / plan: *role names only* — no product strings in contract identifiers or normative NatSpec.
+- DualLiquidity (removed)DETF PRD / plan: *role names only* — no product strings in contract identifiers or normative NatSpec.
 - Composed stable common path already partially generalizes (`rebasingDetfToken`, `rewardToken`, `baseToken`) but still types against `IRICHIR` and keeps `richir*` parameter names.
 - **WETH rule:** Use `weth` / `WETH` only in code that is *actually* WETH-specific (e.g. `WETHAwareRepo`, wrap/unwrap). DETF vaults that accept a configurable settlement/rate asset must **not** say WETH even if a deployment happens to use WETH.
 
@@ -205,7 +205,7 @@ Update active normative docs; do not mass-edit archives unless cited as current:
 
 - Deployed mainnet/sepolia **addresses** and historical broadcast folders (immutable)
 - Renaming a real ERC20’s on-chain `name()`/`symbol()` for a token that is already RICH
-- DualLiquidityLinked family (already role-named; only verify no regression of the rule)
+- DualLiquidity (removed) family (already role-named; only verify no regression of the rule)
 - Archive tasks under `tasks/archive/*` (optional follow-up)
 
 ---
@@ -452,7 +452,7 @@ Do **not** mix this rename with economic changes or new vault features.
 | **Status** | IN PROGRESS — core rename implemented; forge build green; SingleVaultDetf + protocol + stable-common suites green |
 | **Author intent** | Correct accidental product branding introduced despite prior agent guidance |
 | **Branch (proposed)** | `refactor/detf-role-naming` |
-| **Related** | DualLiquidityLinked naming rule; stable-common partial generalization; SingleVaultDetf review |
+| **Related** | DualLiquidity (removed) naming rule; stable-common partial generalization; SingleVaultDetf review |
 
 ---
 

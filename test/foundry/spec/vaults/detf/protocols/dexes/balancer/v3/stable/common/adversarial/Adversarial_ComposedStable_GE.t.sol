@@ -357,6 +357,7 @@ contract Adversarial_ComposedStable_GE_Test is ComposedStableCommonDetf_Integrat
         pkgArgs_.expansionClosureRatePerSecond = 0;
         pkgArgs_.expansionCatchUpMaxSeconds = 0;
         pkgArgs_.expansionCatchUpCapBps = 0;
+        pkgArgs_.creator = address(0);
     }
 
     /// @notice G1: outer SingleSE DETF mint/burn over nested CS does not brick CS for third users.

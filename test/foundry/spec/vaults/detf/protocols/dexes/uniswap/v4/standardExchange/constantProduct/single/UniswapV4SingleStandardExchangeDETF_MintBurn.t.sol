@@ -119,14 +119,14 @@ contract UniswapV4SingleStandardExchangeDETF_MintBurnTest is TestBase_UniswapV4S
             false,
             block.timestamp + 1 hours
         );
-        // No free DETF from mint; free seigniorage legs may exist — try burn if any
+        // D13: burn sizes against NFT LP, so first-bond-only still covers a free-DETF burn.
         uint256 free = IERC20(d).balanceOf(detfUser);
-        if (free > 0 && IUniswapV4SingleStandardExchangeDETF(d).protocolLp() == 0) {
+        if (free > 0) {
             IERC20(d).approve(d, type(uint256).max);
-            vm.expectRevert();
-            IStandardExchangeIn(d).exchangeIn(
+            uint256 burned_ = IStandardExchangeIn(d).exchangeIn(
                 IERC20(d), free / 2, IERC20(address(pairToken)), 0, detfUser, false, block.timestamp + 1 hours
             );
+            assertGt(burned_, 0, "D13 nftLp covers first-bond-only burn");
         }
         vm.stopPrank();
     }

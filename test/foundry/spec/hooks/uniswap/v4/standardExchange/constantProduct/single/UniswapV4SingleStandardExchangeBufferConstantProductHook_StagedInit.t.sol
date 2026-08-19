@@ -56,14 +56,17 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
 
     function test_facetCuts_isBootstrapOnly() public view {
         IDiamond.FacetCut[] memory cuts = hookPkg.facetCuts();
-        assertEq(cuts.length, 3);
-        assertEq(cuts[0].facetAddress, address(multiAssetBasicVaultFacet));
-        assertEq(cuts[1].facetAddress, address(multiAssetStandardVaultFacet));
-        assertEq(cuts[2].facetAddress, address(hookPkg));
+        assertEq(cuts.length, 4);
+        assertEq(cuts[0].facetAddress, address(multiStepOwnableFacet));
+        assertEq(cuts[1].facetAddress, address(multiAssetBasicVaultFacet));
+        assertEq(cuts[2].facetAddress, address(multiAssetStandardVaultFacet));
+        assertEq(cuts[3].facetAddress, address(hookPkg));
         assertEq(uint8(cuts[0].action), uint8(IDiamond.FacetCutAction.Add));
         assertEq(uint8(cuts[1].action), uint8(IDiamond.FacetCutAction.Add));
         assertEq(uint8(cuts[2].action), uint8(IDiamond.FacetCutAction.Add));
-        _assertSelectorEq(cuts[2].functionSelectors, IFacet(address(hookPkg)).facetFuncs());
+        assertEq(uint8(cuts[3].action), uint8(IDiamond.FacetCutAction.Add));
+        _assertSelectorEq(cuts[0].functionSelectors, multiStepOwnableFacet.facetFuncs());
+        _assertSelectorEq(cuts[3].functionSelectors, IFacet(address(hookPkg)).facetFuncs());
     }
 
     function test_productionFacetCuts_sixAdds() public view {
@@ -442,7 +445,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
             feeOracle: address(indexedexManager),
             standardExchange: se_,
             pairToken: pair_,
-            rawToken: raw_
+            rawToken: raw_,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
     }
 

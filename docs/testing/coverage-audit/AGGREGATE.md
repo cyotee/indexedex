@@ -59,7 +59,7 @@
 | Uni V4 legacy Single SE DETF | **1** | Blocker + scaffold | single-se |
 | ComposedStableCommonDetf | **2** | Blocker blind pretransfer | composed-stable |
 | MixedBufferMultiVaultStableDetf | **2** | Blocker pull/burn | composed-stable |
-| DualLiquidityLinkedCrossVersion | **2** | Blocker `_receive` / `_receiveOut` | dual-liquidity |
+| DualLiquidity (removed)CrossVersion | **2** | Blocker `_receive` / `_receiveOut` | dual-liquidity |
 | SingleVault / Seigniorage DETF | **N/A** | removed | single-vault-seigniorage |
 | Aerodrome V1 SE | **3** | Blocker/High I | se-aero |
 | Camelot V2 SE | **2** | I/J/H holes | se-aero |

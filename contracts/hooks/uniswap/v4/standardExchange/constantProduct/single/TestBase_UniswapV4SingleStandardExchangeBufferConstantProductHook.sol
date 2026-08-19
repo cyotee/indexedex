@@ -122,7 +122,8 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet
             }),
             abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
         );
@@ -175,8 +176,18 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
             feeOracle: address(indexedexManager),
             standardExchange: se,
             pairToken: address(pairToken),
-            rawToken: address(rawToken)
+            rawToken: address(rawToken),
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
+    }
+
+    function _pkgOwnerOnlyLiquidity() internal view virtual returns (bool) {
+        return false;
+    }
+
+    function _pkgOwner() internal view virtual returns (address) {
+        return owner;
     }
 
     /// @notice Phase 0 proof: pair ↔ SE preview == execution on real wrapper SE.
@@ -277,7 +288,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         lp = _depositBoth(200 ether, 200 ether);
     }
 
-    function _feeTo() internal view returns (address feeTo_) {
+    function _feeTo() internal view virtual returns (address feeTo_) {
         (feeTo_,) = single.dexSwapFeeAndFeeTo();
     }
 

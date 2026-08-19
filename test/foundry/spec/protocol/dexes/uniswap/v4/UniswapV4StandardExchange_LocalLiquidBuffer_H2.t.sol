@@ -187,7 +187,8 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet
             }),
             abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v4-h2")._hash()
         );
@@ -198,7 +199,9 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 feeOracle: address(indexedexManager),
                 standardExchange: address(seVault),
                 pairToken: address(pairToken),
-                rawToken: address(rawToken)
+                rawToken: address(rawToken),
+                ownerOnlyLiquidity: false,
+                owner: owner
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);

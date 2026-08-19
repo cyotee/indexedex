@@ -115,7 +115,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeInTarget is
         );
     }
 
-    /// @dev Live primary mint: rate + quote + split; depositSingle(pair) → protocol LP; free DETF legs.
+    /// @dev Live mint D8+D27+D11: boost quote only; join unboosted pair to NFT (no originalShares); no feeTo.
     function _mintDetfFromPairLeg(PairLegRating memory r_, address recipient_)
         internal
         returns (uint256 userOut_)
@@ -126,14 +126,10 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeInTarget is
         MintSplit memory split_ = _splitMintedDetf(gross_);
 
         address pair_ = address(Repo._layoutStruct().pairTokens[r_.fundedProductIndex]);
-        _depositSingle(pair_, r_.pairNotionalNative, _protocolLpHolder());
+        _depositSingle(pair_, r_.pairNotionalNative, _bondLpHolder());
 
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
-        address bondVault_ = address(Repo._layoutStruct().bondNftVault);
-        if (split_.inventoryDetf > 0 && bondVault_ != address(0)) {
-            _mintDetf(bondVault_, split_.inventoryDetf);
-        }
+        _creditBondPot(split_.inventoryDetf);
         return split_.userDetf;
     }
 

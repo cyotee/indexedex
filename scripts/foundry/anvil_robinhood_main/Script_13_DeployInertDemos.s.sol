@@ -358,7 +358,8 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 

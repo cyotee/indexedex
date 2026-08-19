@@ -507,6 +507,17 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
         commonPoolExitPricer.setRate(commonPoolBpt, rateAsset, 3, 1);
     }
 
+    function _seedExchangeOutLp() internal {
+        reservePoolToken.mint(address(harness), 10_000e18);
+        stablePoolBpt.mint(address(harness), 200e18);
+        commonPoolBpt.mint(address(harness), 200e18);
+        uint256[] memory exitAmounts = new uint256[](3);
+        exitAmounts[0] = 0;
+        exitAmounts[1] = 50e18;
+        exitAmounts[2] = 50e18;
+        balancerRouter.setNextRemoveLiquidityAmountsOut(exitAmounts);
+    }
+
     function test_claimLiquidity_revertsWhenCallerUnauthorized() public {
         vm.expectRevert(abi.encodeWithSelector(IDetfErrors.NotAuthorized.selector, address(this)));
         harness.claimLiquidity(1e18, address(this));
@@ -591,6 +602,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function test_exchangeOut_executesSelectedRoute() public {
+        _seedExchangeOutLp();
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, commonToken, 1e18);
         address recipient = makeAddr('recipient');
 
@@ -612,17 +624,16 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function test_exchangeOut_refundsUnusedDetfInput() public {
+        _seedExchangeOutLp();
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, commonToken, 1e18);
-        uint256 actualAmountIn = previewAmountIn - 0.1e18;
+        uint256 extra_ = 0.1e18;
 
-        balancerRouter.setNextAmountIn(actualAmountIn);
-
-        detfToken.mint(address(this), previewAmountIn);
-        detfToken.approve(address(harness), previewAmountIn);
+        detfToken.mint(address(this), previewAmountIn + extra_);
+        detfToken.approve(address(harness), previewAmountIn + extra_);
 
         uint256 amountIn = harness.exchangeOut(
             detfToken,
-            previewAmountIn,
+            previewAmountIn + extra_,
             commonToken,
             1e18,
             address(this),
@@ -630,12 +641,13 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
             block.timestamp + 1
         );
 
-        assertEq(amountIn, actualAmountIn);
-        assertEq(detfToken.balanceOf(address(this)), previewAmountIn - actualAmountIn);
+        assertEq(amountIn, previewAmountIn);
+        assertEq(detfToken.balanceOf(address(this)), extra_);
         assertEq(commonToken.balanceOf(address(this)), 1e18);
     }
 
     function test_exchangeOut_defaultsRecipientToCaller() public {
+        _seedExchangeOutLp();
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, commonToken, 1e18);
 
         detfToken.mint(address(this), previewAmountIn);
@@ -726,6 +738,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     ///         refund unused to DETF; mock leaves vault tokens on host — not DETF residual).
     function test_exchangeOut_underlyingExitNonConsumeStillDeliversAmountOut() public {
         routeAUnderlying.setConsumeTokenIn(false);
+        _seedExchangeOutLp();
 
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, commonToken, 1e18);
         detfToken.mint(address(this), previewAmountIn);
@@ -757,6 +770,7 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet_Test is Test {
     }
 
     function test_exchangeOut_supportsDirectVaultTokenPayout() public {
+        _seedExchangeOutLp();
         uint256 previewAmountIn = harness.previewExchangeOut(detfToken, routeAVaultToken, 1e18);
         address recipient = makeAddr('vault-token-recipient');
 

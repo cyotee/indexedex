@@ -41,7 +41,7 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         vm.prank(alice);
         vm.expectRevert();
         bonding_.redeemClaim(
-            redeemAmt_, rateAssets[0], type(uint256).max, alice, block.timestamp + 1 hours
+            redeemAmt_, IERC20(instance_), type(uint256).max, alice, block.timestamp + 1 hours
         );
 
         assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged after failed redeem");
@@ -49,7 +49,7 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
         // Successful redeem still works
         vm.prank(alice);
         uint256 out_ = bonding_.redeemClaim(
-            redeemAmt_, rateAssets[0], 0, alice, block.timestamp + 1 hours
+            redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours
         );
         assertTrue(out_ > 0, "H2: successful redeem after failed attempt");
         assertLt(claim_.balanceOf(alice), claimBefore_, "claim burned on success");
@@ -77,7 +77,7 @@ contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversaria
 
         uint256 claimBefore_ = claim_.balanceOf(alice);
         vm.prank(alice);
-        try bonding_.redeemClaim(part_, rateAssets[0], 0, alice, block.timestamp + 1 hours) returns (
+        try bonding_.redeemClaim(part_, IERC20(instance_), 0, alice, block.timestamp + 1 hours) returns (
             uint256 out_
         ) {
             assertTrue(out_ > 0, "partial redeem ok");

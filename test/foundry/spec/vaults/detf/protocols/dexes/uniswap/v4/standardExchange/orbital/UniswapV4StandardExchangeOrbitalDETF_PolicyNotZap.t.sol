@@ -40,19 +40,13 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
         address bond = info.bondNftVault();
         address p0 = info.pairToken0();
 
-        // Production custody: DETF (bond owner) moves LP to user; user removes via hook.
+        // D9: only DETF (hook owner) can remove reserve LP. Drain via DETF custody.
         uint256 bondLp = IERC20(hook).balanceOf(bond);
         assertGt(bondLp, 0, "bond holds first-bond LP");
-        vm.prank(d);
-        IDETFNFTVault(bond).transferHeldToken(IERC20(hook), detfUser, bondLp);
-
-        uint256 userLp = IERC20(hook).balanceOf(detfUser);
-        // Leave only permanent MINIMUM_LIQUIDITY (1000) on the hook ERC-20.
-        uint256 removeAmt = userLp;
-        // Cannot remove more than balance; MIN is held by address(0), not user.
-        vm.startPrank(detfUser);
-        IERC20(hook).approve(hook, removeAmt);
-        IHook(hook).removeLiquidity(removeAmt, detfUser, 0, 0, 0, block.timestamp + 1 days);
+        vm.startPrank(d);
+        IDETFNFTVault(bond).transferHeldToken(IERC20(hook), d, bondLp);
+        IERC20(hook).approve(hook, bondLp);
+        IHook(hook).removeLiquidity(bondLp, d, 0, 0, 0, block.timestamp + 1 days);
         vm.stopPrank();
 
         assertFalse(IHook(hook).isZapEligible(), "must not be zap-eligible at min liquidity");
@@ -113,7 +107,11 @@ contract UniswapV4StandardExchangeOrbitalDETF_PolicyNotZapTest is
         _pushSyntheticMintAllowed(info);
         uint256 minted = _mintOn(d, info.pairToken1(), 100 ether);
         assertGt(minted, 0);
-        assertGt(info.protocolLp(), 0);
+        assertGt(
+            IERC20(info.reserveHook()).balanceOf(info.bondNftVault()),
+            0,
+            "D13 live mint LP sits on NFT vault"
+        );
 
         for (uint256 i; i < 25 && !info.isBurningAllowed() && info.isMintingAllowed(); ++i) {
             try this.mintExternal(d, info.pairToken1(), 80 ether) {} catch {

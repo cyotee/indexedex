@@ -221,7 +221,7 @@ Plain language:
 | Uni V4 legacy Single SE DETF | `areas/T-detf-single-se.md` | Blocker | `WP-I-DETF-SSE-UV4-001` |
 | ComposedStableCommonDetf + RebasingDETFToken | `areas/T-detf-composed-stable.md` | Blocker | `WP-I-DETF-CS-001/002`, `WP-J-DETF-CS-MB-001`, `WP-G-E-DETF-CS-001` |
 | MixedBufferMultiVaultStableDetf | `areas/T-detf-composed-stable.md` | Blocker | `WP-I-DETF-MB-001`, `WP-ADV-DETF-MB-001`, `WP-J-DETF-CS-MB-001` |
-| DualLiquidityLinkedCrossVersion | `areas/T-detf-dual-liquidity.md` | Blocker | `WP-I-DETF-DL-001/002`, `WP-J-DETF-DL-001` |
+| DualLiquidity (removed)CrossVersion | `areas/T-detf-dual-liquidity.md` | Blocker | `WP-I-DETF-DL-001/002`, `WP-J-DETF-DL-001` |
 | Aerodrome / Camelot / Uni V2 SE | `areas/T-se-aerodrome-camelot-univ2.md` | Blocker/High I | `WP-I-SE-AC-001`, `WP-J-SE-AC-001`, `WP-ADV-SE-AC-001`, `WP-H-CAM-001`, `WP-E5-AERO-001` |
 | Uni V4 SE + Aave Stata SE | `areas/T-se-univ4-aave-balancer.md` | Blocker | `WP-I-CLONE-UAB-001`, `WP-I-SE-UAB-001`, `WP-ADV-SE-UAB-001`, `WP-J-SE-UAB-001` |
 | Balancer SE routers / buffer | `areas/T-se-univ4-aave-balancer.md` | High J formal | `WP-J-ROUTER-UAB-001` |
@@ -280,7 +280,7 @@ Each epic cites TCA-* and WP-* from the Stage 1 backlog. Class: CODE | TEST | BO
 | **Problem** | `_receive` no-ops on pretransfer; `_receiveOut` spends absolute held inventory and can refund surplus — free mint/extract + donation theft. Fork-first product. |
 | **Evidence** | TCA-DETF-DL-001/002 (Blocker CODE, RUNTIME_UNPROVEN); DL-003/005 (I/K tests) |
 | **WPs** | `WP-I-DETF-DL-001` (CODE), `WP-I-DETF-DL-002` (TEST fork), `WP-J-DETF-DL-001` |
-| **Blast radius** | DualLiquidityLinkedCrossVersion only (package-local) |
+| **Blast radius** | DualLiquidity (removed)CrossVersion only (package-local) |
 | **Class** | BOTH |
 | **Wave** | **1** |
 | **Depends on** | none for CODE (package-local); fork I suite after CODE; L-TCA-5 + Alchemy |

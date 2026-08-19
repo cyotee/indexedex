@@ -3,10 +3,6 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
-import {Math} from "@crane/contracts/utils/Math.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
-import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {
     UniswapV4StandardExchangeWeightedDETFCommon,
     IWeightedDetfCompoundSelf
@@ -84,7 +80,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
     /* ---------------------------------------------------------------------- */
 
     /// @notice Direct claim deposit. Reverts if not single-asset eligible (unlike compound skip).
-    /// @dev Settle → depositSingle → LP on protocol holder → mintFromNFTSale(lpShares).
+    /// @dev D18 when tokenIn is DETF: join provided DETF, 4626 onto id 0, no new DETF mint.
     function depositClaim(
         IERC20 tokenIn_,
         uint256 amountIn_,
@@ -99,9 +95,9 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
         if (recipient_ == address(0)) recipient_ = msg.sender;
         Repo.Storage storage s = Repo._layoutStruct();
         if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
-        _requireSingleAssetEligible(); // REVERT — not compound skip
+        _requireSingleAssetEligible();
 
-        address holder_ = _protocolLpHolder();
+        address holder_ = _bondLpHolder();
         uint256 lpMinted_;
         if (address(tokenIn_) == address(this)) {
             uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
@@ -113,9 +109,13 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
         }
         if (lpMinted_ == 0) revert Repo.ZeroAmount();
 
-        // LP is already on claim holder when holder_ == rebasingClaimToken.
-        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(lpMinted_, recipient_);
+        uint256 protocolBefore_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpMinted_);
+        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(lpMinted_, protocolBefore_, recipient_);
         if (claimOut_ < minClaimOut_) revert Repo.SlippageExceeded(minClaimOut_, claimOut_);
+        _topUpFeeCreatorShares();
+        _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     function redeemClaim(
@@ -128,48 +128,83 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
         _requireReserveLive();
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
-        if (address(tokenOut_) == address(this)) {
+        if (address(tokenOut_) != address(this)) {
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }
 
-        uint256 lpOut_ = _burnClaimPullProtocolLp(claimAmount_);
-        uint256[] memory binding_ = _exitProportional(lpOut_, address(this));
-        (uint256 aDetf_, uint256[] memory pairAmts_) = _unpackBinding(binding_);
-        _redepositDetfSelfLeg(aDetf_);
-        amountOut_ = _settleClaimResidual(tokenOut_, pairAmts_, recipient_);
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint256 lpOut_ = _burnClaimConvertToAssets(claimAmount_);
+        uint256 owed_ = _previewProportionalDetf(lpOut_);
+        uint256 harvested_ = s.bondNftVault.reallocateDetfNftRewards(address(this));
+
+        if (harvested_ >= owed_) {
+            amountOut_ = owed_;
+            uint256 leftover_ = harvested_ - owed_;
+            if (leftover_ > 0) {
+                uint256 lpBack_ = _redepositDetfSelfLeg(leftover_);
+                if (lpBack_ > 0) {
+                    s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpBack_);
+                }
+            }
+            if (lpOut_ > 0) {
+                s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpOut_);
+            }
+        } else {
+            _pullBondLp(lpOut_);
+            uint256[] memory binding_ = _exitProportional(lpOut_, address(this));
+            (uint256 detfFromLp_, uint256[] memory pairAmts_) = _unpackBinding(binding_);
+            uint256 shortfall_ = owed_ - harvested_;
+            uint256 fromLp_ = detfFromLp_ < shortfall_ ? detfFromLp_ : shortfall_;
+            amountOut_ = harvested_ + fromLp_;
+            uint256 leftoverDetf_ = detfFromLp_ - fromLp_;
+            uint256 lpBack_;
+            if (leftoverDetf_ > 0) {
+                lpBack_ += _redepositDetfSelfLegWithPairDust(leftoverDetf_, pairAmts_);
+            } else {
+                lpBack_ += _joinPairsOnly(pairAmts_);
+            }
+            if (lpBack_ > 0) {
+                s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpBack_);
+            }
+        }
 
         if (amountOut_ < minOut_) revert Repo.SlippageExceeded(minOut_, amountOut_);
+        if (amountOut_ > 0) {
+            IERC20(address(this)).safeTransfer(recipient_, amountOut_);
+        }
+        _topUpFeeCreatorShares();
+        _syncAllExpectedHoldReserves();
     }
 
-    function _burnClaimPullProtocolLp(uint256 claimAmount_) private returns (uint256 lpOut_) {
+    function _burnClaimConvertToAssets(uint256 claimAmount_) private returns (uint256 lpOut_) {
         Repo.Storage storage s = Repo._layoutStruct();
         if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
-
-        uint256 principalLp_ = s.rebasingClaimToken.burnShares(claimAmount_, msg.sender, false);
-        if (principalLp_ == 0) revert Repo.ZeroAmount();
-
-        uint256 protocolLp_ = _protocolLp();
-        lpOut_ = principalLp_ < protocolLp_ ? principalLp_ : protocolLp_;
-        if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
-        _pullProtocolLp(lpOut_);
+        uint256 totalSharesBefore_ = s.rebasingClaimToken.totalShares();
+        uint256 sharesBurned_ = s.rebasingClaimToken.burnShares(claimAmount_, msg.sender, false);
+        if (sharesBurned_ == 0) revert Repo.ZeroAmount();
+        uint256 totalAssets_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        uint256 totalShares_ = totalSharesBefore_ == 0 ? sharesBurned_ : totalSharesBefore_;
+        lpOut_ = (sharesBurned_ * totalAssets_) / totalShares_;
+        if (lpOut_ == 0) revert Repo.ZeroAmount();
+        s.bondNftVault.removeFromDETFNFT(s.bondNftVault.detfNFTId(), lpOut_);
     }
 
-    function _settleClaimResidual(IERC20 tokenOut_, uint256[] memory pairAmts_, address recipient_)
-        private
-        returns (uint256 amountOut_)
-    {
-        address tout = address(tokenOut_);
-        if (Repo._isPairToken(tout)) {
-            amountOut_ = _consolidateToPair(tout, pairAmts_);
-            if (amountOut_ > 0) tokenOut_.safeTransfer(recipient_, amountOut_);
-            return amountOut_;
+    function _previewProportionalDetf(uint256 lpIn_) internal view returns (uint256 detfOut_) {
+        if (lpIn_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        try IHook(s.reserveHook).previewExitProportional(lpIn_) returns (uint256[] memory amts_) {
+            if (amts_.length == s.n) return amts_[s.detfBindingIndex];
+        } catch {}
+    }
+
+    function _joinPairsOnly(uint256[] memory pairAmts_) internal returns (uint256 lpOut_) {
+        uint256 sum_;
+        for (uint256 i; i < pairAmts_.length; ++i) {
+            sum_ += pairAmts_[i];
         }
-        if (_isShareOrSeTokenOut(tokenOut_)) {
-            address mid_ = _pairForShareOut(tokenOut_);
-            uint256 midAmt_ = _consolidateToPair(mid_, pairAmts_);
-            return _seWrap(mid_, midAmt_, tokenOut_, recipient_);
-        }
-        revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
+        if (sum_ == 0) return 0;
+        uint256[] memory binding_ = _packBinding(pairAmts_, 0);
+        lpOut_ = _joinUnbalanced(binding_, _bondLpHolder());
     }
 
     function claimLiquidity(uint256 lpAmount_, address recipient_)
@@ -185,11 +220,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
             revert Repo.NotAuthorized(msg.sender);
         }
         if (lpAmount_ == 0) revert Repo.ZeroAmount();
-        if (msg.sender == bond_) {
-            _pullBondLp(lpAmount_);
-        } else {
-            _ensureProtocolLpOnDiamond(lpAmount_);
-        }
+        _pullBondLp(lpAmount_);
         uint256[] memory binding_ = _exitProportional(lpAmount_, address(this));
         (uint256 aDetf_, uint256[] memory pairAmts_) = _unpackBinding(binding_);
         _redepositDetfSelfLeg(aDetf_);

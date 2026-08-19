@@ -372,7 +372,7 @@
 | **Title** | Fix DualLiquidity pretransfer free mint/extract on `_receive` paths |
 | **Severity** | Blocker |
 | **Class** | CODE |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-001, TCA-DETF-DL-002 |
 | **Problem** | `pretransferred=true` no-op receive; absolute-held spend + surplus refund theft class. |
 | **Production files** | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/**` |
@@ -714,7 +714,7 @@ Composite order remains: **Wave-0 commons** first, then **product Blocker CODE**
 | **Title** | DualLiquidity fork adversarial I1–I3 + K1 (pretransfer) |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-003, TCA-DETF-DL-005 |
 | **Problem** | Catalog I/K P0 absent; happy pretransfer theater; ShareInflation ≠ I/K. |
 | **Production files (touch set)** | none after WP-I-DETF-DL-001 |
@@ -736,7 +736,7 @@ Composite order remains: **Wave-0 commons** first, then **product Blocker CODE**
 | **Title** | DualLiquidity J1–J3 surface suite on production proxy |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-004 |
 | **Problem** | No Target-derived J suite; loupe only partial. |
 | **Production files (touch set)** | only if OMIT |

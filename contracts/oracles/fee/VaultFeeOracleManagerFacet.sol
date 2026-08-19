@@ -15,6 +15,7 @@ import {OperableModifiers} from "@crane/contracts/access/operable/OperableModifi
 
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {VaultFeeOracleRepo} from "contracts/oracles/fee/VaultFeeOracleRepo.sol";
+import {VaultRegistryVaultRepo} from "contracts/registries/vault/VaultRegistryVaultRepo.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 
@@ -30,7 +31,7 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](16);
+        funcs = new bytes4[](25);
         funcs[0] = IVaultFeeOracleManager.setFeeTo.selector;
         funcs[1] = IVaultFeeOracleManager.setDefaultUsageFee.selector;
         funcs[2] = IVaultFeeOracleManager.setDefaultUsageFeeOfTypeId.selector;
@@ -47,6 +48,15 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
         funcs[13] = IVaultFeeOracleManager.setDefaultLiquidReservePercentage.selector;
         funcs[14] = IVaultFeeOracleManager.setDefaultLiquidReservePercentageOfTypeId.selector;
         funcs[15] = IVaultFeeOracleManager.setLiquidReservePercentageOfVault.selector;
+        funcs[16] = IVaultFeeOracleManager.setDefaultSeigniorageFeeToSharePercentage.selector;
+        funcs[17] = IVaultFeeOracleManager.setDefaultSeigniorageFeeToSharePercentageOfTypeId.selector;
+        funcs[18] = IVaultFeeOracleManager.setSeigniorageFeeToSharePercentageOfVault.selector;
+        funcs[19] = IVaultFeeOracleManager.setDefaultSeigniorageCreatorSharePercentage.selector;
+        funcs[20] = IVaultFeeOracleManager.setDefaultSeigniorageCreatorSharePercentageOfTypeId.selector;
+        funcs[21] = IVaultFeeOracleManager.setSeigniorageCreatorSharePercentageOfVault.selector;
+        funcs[22] = IVaultFeeOracleManager.setDefaultSeignioragePotShares.selector;
+        funcs[23] = IVaultFeeOracleManager.setDefaultSeignioragePotSharesOfTypeId.selector;
+        funcs[24] = IVaultFeeOracleManager.setSeignioragePotSharesOfVault.selector;
         return funcs;
     }
 
@@ -193,5 +203,138 @@ contract VaultFeeOracleManagerFacet is MultiStepOwnableModifiers, OperableModifi
         uint256 oldPercentage = VaultFeeOracleRepo._overrideLiquidReservePercentageOfVault(vault, percentage);
         emit NewLiquidReservePercentageOfVault(vault, oldPercentage, percentage);
         return true;
+    }
+
+    function setDefaultSeigniorageFeeToSharePercentage(uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        VaultFeeOracleRepo._assertPotSharesBelowWad(
+            percentage, VaultFeeOracleRepo._defaultSeigniorageCreatorSharePercentage()
+        );
+        uint256 oldPercentage = VaultFeeOracleRepo._setDefaultSeigniorageFeeToSharePercentage(percentage);
+        emit NewDefaultSeigniorageFeeToSharePercentage(oldPercentage, percentage);
+        return true;
+    }
+
+    function setDefaultSeigniorageFeeToSharePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertTypePotShares(vaultTypeId, percentage, VaultFeeOracleRepo._seigniorageCreatorSharePercentageOfTypeId(vaultTypeId));
+        uint256 oldPercentage =
+            VaultFeeOracleRepo._setSeigniorageFeeToSharePercentageOfTypeId(vaultTypeId, percentage);
+        emit NewDefaultSeigniorageFeeToSharePercentageOfTypeId(vaultTypeId, oldPercentage, percentage);
+        return true;
+    }
+
+    function setSeigniorageFeeToSharePercentageOfVault(address vault, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertVaultPotShares(vault, percentage, VaultFeeOracleRepo._seigniorageCreatorSharePercentageOfVault(vault));
+        uint256 oldPercentage = VaultFeeOracleRepo._overrideSeigniorageFeeToSharePercentageOfVault(vault, percentage);
+        emit NewSeigniorageFeeToSharePercentageOfVault(vault, oldPercentage, percentage);
+        return true;
+    }
+
+    function setDefaultSeigniorageCreatorSharePercentage(uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        VaultFeeOracleRepo._assertPotSharesBelowWad(
+            VaultFeeOracleRepo._defaultSeigniorageFeeToSharePercentage(), percentage
+        );
+        uint256 oldPercentage = VaultFeeOracleRepo._setDefaultSeigniorageCreatorSharePercentage(percentage);
+        emit NewDefaultSeigniorageCreatorSharePercentage(oldPercentage, percentage);
+        return true;
+    }
+
+    function setDefaultSeigniorageCreatorSharePercentageOfTypeId(bytes4 vaultTypeId, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertTypePotShares(vaultTypeId, VaultFeeOracleRepo._seigniorageFeeToSharePercentageOfTypeId(vaultTypeId), percentage);
+        uint256 oldPercentage =
+            VaultFeeOracleRepo._setSeigniorageCreatorSharePercentageOfTypeId(vaultTypeId, percentage);
+        emit NewDefaultSeigniorageCreatorSharePercentageOfTypeId(vaultTypeId, oldPercentage, percentage);
+        return true;
+    }
+
+    function setSeigniorageCreatorSharePercentageOfVault(address vault, uint256 percentage)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertVaultPotShares(vault, VaultFeeOracleRepo._seigniorageFeeToSharePercentageOfVault(vault), percentage);
+        uint256 oldPercentage =
+            VaultFeeOracleRepo._overrideSeigniorageCreatorSharePercentageOfVault(vault, percentage);
+        emit NewSeigniorageCreatorSharePercentageOfVault(vault, oldPercentage, percentage);
+        return true;
+    }
+
+    function setDefaultSeignioragePotShares(uint256 feeToShare, uint256 creatorShare)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        VaultFeeOracleRepo._assertPotSharesBelowWad(feeToShare, creatorShare);
+        uint256 oldF = VaultFeeOracleRepo._setDefaultSeigniorageFeeToSharePercentage(feeToShare);
+        uint256 oldC = VaultFeeOracleRepo._setDefaultSeigniorageCreatorSharePercentage(creatorShare);
+        emit NewDefaultSeignioragePotShares(oldF, oldC, feeToShare, creatorShare);
+        return true;
+    }
+
+    function setDefaultSeignioragePotSharesOfTypeId(bytes4 vaultTypeId, uint256 feeToShare, uint256 creatorShare)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertTypePotShares(vaultTypeId, feeToShare, creatorShare);
+        uint256 oldF = VaultFeeOracleRepo._setSeigniorageFeeToSharePercentageOfTypeId(vaultTypeId, feeToShare);
+        uint256 oldC = VaultFeeOracleRepo._setSeigniorageCreatorSharePercentageOfTypeId(vaultTypeId, creatorShare);
+        emit NewDefaultSeignioragePotSharesOfTypeId(vaultTypeId, oldF, oldC, feeToShare, creatorShare);
+        return true;
+    }
+
+    function setSeignioragePotSharesOfVault(address vault, uint256 feeToShare, uint256 creatorShare)
+        external
+        onlyOwnerOrOperator
+        returns (bool success)
+    {
+        _assertVaultPotShares(vault, feeToShare, creatorShare);
+        uint256 oldF = VaultFeeOracleRepo._overrideSeigniorageFeeToSharePercentageOfVault(vault, feeToShare);
+        uint256 oldC = VaultFeeOracleRepo._overrideSeigniorageCreatorSharePercentageOfVault(vault, creatorShare);
+        emit NewSeignioragePotSharesOfVault(vault, oldF, oldC, feeToShare, creatorShare);
+        return true;
+    }
+
+    function _resolvedTypeShare(uint256 typeShare_, uint256 globalShare_) private pure returns (uint256) {
+        return typeShare_ == 0 ? globalShare_ : typeShare_;
+    }
+
+    function _assertTypePotShares(bytes4 vaultTypeId_, uint256 typeF_, uint256 typeC_) private view {
+        uint256 resolvedF_ = _resolvedTypeShare(typeF_, VaultFeeOracleRepo._defaultSeigniorageFeeToSharePercentage());
+        uint256 resolvedC_ = _resolvedTypeShare(typeC_, VaultFeeOracleRepo._defaultSeigniorageCreatorSharePercentage());
+        VaultFeeOracleRepo._assertPotSharesBelowWad(resolvedF_, resolvedC_);
+        vaultTypeId_;
+    }
+
+    function _assertVaultPotShares(address vault_, uint256 vaultF_, uint256 vaultC_) private view {
+        bytes4 typeId_ = VaultRegistryVaultRepo._seigniorageIncentiveIdOfVault(vault_);
+        uint256 typeF_ = VaultFeeOracleRepo._seigniorageFeeToSharePercentageOfTypeId(typeId_);
+        uint256 typeC_ = VaultFeeOracleRepo._seigniorageCreatorSharePercentageOfTypeId(typeId_);
+        uint256 resolvedF_ = vaultF_ == 0
+            ? _resolvedTypeShare(typeF_, VaultFeeOracleRepo._defaultSeigniorageFeeToSharePercentage())
+            : vaultF_;
+        uint256 resolvedC_ = vaultC_ == 0
+            ? _resolvedTypeShare(typeC_, VaultFeeOracleRepo._defaultSeigniorageCreatorSharePercentage())
+            : vaultC_;
+        VaultFeeOracleRepo._assertPotSharesBelowWad(resolvedF_, resolvedC_);
     }
 }

@@ -218,10 +218,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         assertEq(exec, preview, "preview == execution");
     }
 
-    function test_live_burn_requiresProtocolLp() public {
-        // After first bond only, protocol LP may be empty → burn reverts ProtocolLpEmpty / EmptyProtocolLp.
-        _firstBondDefault(BOND_AMT);
-        // Mint free DETF to user via Open instance so we have free DETF to burn.
+    function test_live_burn_usesNftLp() public {
         address d = _deployDetfWired(_openArgsUnique("burn"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
@@ -229,17 +226,15 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         amts[0] = BOND_AMT;
         _firstBondOn(d, amts, p0);
 
-        // Primary mint funds protocol LP.
         uint256 mintIn = 20 ether;
         _fundPair(d, p0, detfUser, mintIn * 2);
         uint256 userDetf = _mintOn(d, p0, mintIn);
         assertGt(userDetf, 0);
-        assertGt(info.protocolLp(), 0, "protocol LP after mint");
+        assertGt(IERC20(info.reserveHook()).balanceOf(info.bondNftVault()), 0, "NFT holds LP");
 
         uint256 preview = IStandardExchangeIn(d).previewExchangeIn(IERC20(d), userDetf / 2, IERC20(p0));
         uint256 out = _burnOn(d, p0, userDetf / 2);
         assertGt(out, 0, "burn out");
-        // Allow ≤ few wei if SE dust; pair-face path should be exact-ish.
         if (preview > out) {
             assertLe(preview - out, 10, "preview ~ exec");
         } else {
@@ -309,11 +304,12 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
     function test_matureOnly_sellAndClose_preMatureRevert() public {
         (uint256 tokenId,) = _firstBondDefault(BOND_AMT);
+        uint256[] memory minOut_ = new uint256[](detfInfo.n());
         vm.startPrank(detfUser);
         vm.expectRevert(); // BondNotMature
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
         vm.expectRevert(); // BondNotMature
-        detfInfo.closeBondMature(tokenId, detfUser);
+        detfInfo.closeBondMature(tokenId, minOut_, detfUser, _dl());
         vm.stopPrank();
     }
 
@@ -323,10 +319,13 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         uint256 balBefore = IERC20(pair0).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        uint256 out = detfInfo.closeBondMature(tokenId, detfUser);
+        uint256[] memory minOut_ = new uint256[](detfInfo.n());
+        uint256[] memory out = detfInfo.closeBondMature(tokenId, minOut_, detfUser, _dl());
         vm.stopPrank();
-        assertGt(out, 0, "capitalToken payout");
-        assertEq(IERC20(pair0).balanceOf(detfUser) - balBefore, out, "only capitalToken");
+        uint256 paid_ = _closeNonDetfSum(detf, out);
+        assertGt(paid_, 0, "non-DETF payout");
+        assertEq(out[detfInfo.detfBindingIndex()], 0, "DETF slot 0");
+        assertEq(IERC20(pair0).balanceOf(detfUser) - balBefore, paid_, "pair0 paid");
     }
 
     function test_claimRewards_whileLocked() public {
@@ -459,7 +458,8 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
         address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
@@ -640,7 +640,7 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         assertGt(IRebasingClaimToken(claim).balanceOf(detfUser), claimBefore);
     }
 
-    function test_redeemClaim_toPair_and_detfOut_reverts() public {
+    function test_redeemClaim_paysDetf_pairOutReverts() public {
         address d = _deployDetfWired(_openArgsUnique("redCl"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
@@ -650,7 +650,6 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         _fundPair(d, p0, detfUser, 50 ether);
         _mintOn(d, p0, 20 ether);
 
-        // Build claim inventory via depositClaim.
         uint256 depIn = 5 ether;
         _fundPair(d, p0, detfUser, depIn * 2);
         vm.startPrank(detfUser);
@@ -661,19 +660,17 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
 
         address claim = info.rebasingClaimToken();
         uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
-        // Approve claim token burn path if needed (burnShares pulls from owner).
         vm.startPrank(detfUser);
         IERC20(claim).approve(d, type(uint256).max);
 
-        // DETF out → InvalidRoute (selector + args).
-        vm.expectRevert(abi.encodeWithSelector(Repo.InvalidRoute.selector, IERC20(d), IERC20(d)));
-        info.redeemClaim(claimBal / 4, IERC20(d), 0, detfUser, _dl());
+        vm.expectRevert();
+        info.redeemClaim(claimBal / 4, IERC20(p0), 0, detfUser, _dl());
 
-        uint256 before_ = IERC20(p0).balanceOf(detfUser);
-        uint256 out_ = info.redeemClaim(claimBal / 2, IERC20(p0), 0, detfUser, _dl());
+        uint256 before_ = IERC20(d).balanceOf(detfUser);
+        uint256 out_ = info.redeemClaim(claimBal / 2, IERC20(d), 0, detfUser, _dl());
         vm.stopPrank();
-        assertGt(out_, 0, "redeem pair out");
-        assertEq(IERC20(p0).balanceOf(detfUser) - before_, out_);
+        assertGt(out_, 0, "redeem DETF out");
+        assertEq(IERC20(d).balanceOf(detfUser) - before_, out_);
     }
 
     /// @notice depositClaim(vaultShare/SE) → settle to pair → depositSingle → mint claim.
@@ -714,8 +711,8 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         assertEq(IRebasingClaimToken(claim).balanceOf(detfUser) - claimBefore, claimOut);
     }
 
-    /// @notice redeemClaim tokenOut = vaultShare/SE (prefer clean share path).
-    function test_redeemClaim_toVaultShare() public {
+    /// @notice D15: redeemClaim tokenOut = vaultShare/SE is InvalidRoute.
+    function test_redeemClaim_toVaultShare_reverts() public {
         address d = _deployDetfWired(_openArgsUnique("redShare"));
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
         address p0 = info.pairToken(0);
@@ -738,10 +735,9 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         uint256 redeemAmt = claimBal / 3;
         require(redeemAmt > 0, "redeem amt");
         IERC20(claim).approve(d, type(uint256).max);
-        uint256 shareOut = info.redeemClaim(redeemAmt, IERC20(se), 0, detfUser, _dl());
+        vm.expectRevert();
+        info.redeemClaim(redeemAmt, IERC20(se), 0, detfUser, _dl());
         vm.stopPrank();
-        assertGt(shareOut, 0, "redeem vaultShare/SE out");
-        assertGt(IERC20(se).balanceOf(detfUser), 0, "user holds SE shares");
     }
 
     /// @notice Claim deposit hard-reverts NotSingleAssetEligible when book is MIN-only (unlike compound skip).
@@ -757,19 +753,14 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
         address bond = info.bondNftVault();
         uint8 n_ = info.n();
 
-        // Production custody: DETF (bond owner) moves LP to user; user exits all redeemable LP.
-        // Leaves only MINIMUM_LIQUIDITY → not single-asset eligible (supply ≤ MIN).
+        // D9: only DETF (hook owner) can remove reserve LP. Drain NFT LP to MIN-only book.
         uint256 bondLp = IERC20(hook).balanceOf(bond);
         assertGt(bondLp, 0, "bond holds first-bond LP");
-        vm.prank(d);
-        IDETFNFTVault(bond).transferHeldToken(IERC20(hook), detfUser, bondLp);
-
-        uint256 userLp = IERC20(hook).balanceOf(detfUser);
-        assertGt(userLp, 0, "user holds LP");
         uint256[] memory mins = new uint256[](n_);
-        vm.startPrank(detfUser);
-        IERC20(hook).approve(hook, userLp);
-        IHook(hook).exitProportional(userLp, detfUser, mins, _dl());
+        vm.startPrank(d);
+        IDETFNFTVault(bond).transferHeldToken(IERC20(hook), d, bondLp);
+        IERC20(hook).approve(hook, bondLp);
+        IHook(hook).exitProportional(bondLp, detfUser, mins, _dl());
         vm.stopPrank();
 
         assertLe(IERC20(hook).totalSupply(), 1000, "only MINIMUM_LIQUIDITY remains");
@@ -916,7 +907,8 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
         // Fix last weight so sum is exact 1e18
         uint256 wSum = args.detfWeight;

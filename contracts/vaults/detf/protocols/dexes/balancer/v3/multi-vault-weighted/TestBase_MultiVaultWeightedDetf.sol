@@ -87,6 +87,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
     function _ensureProtocolNft(address instance_) internal {
         address nft_ = IMultiVaultWeightedDetfInfo(instance_).bondNftVault();
         if (nft_ == address(0)) return;
+        if (IDETFNFTVault(nft_).reservedBondNftsWired()) return;
         if (IDETFNFTVault(nft_).detfNFTId() != 0) return;
         vm.prank(instance_);
         IDETFNFTVault(nft_).initializeDETFNFT();
@@ -644,7 +645,8 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         nested_ = indexedexManager.deployVault(
@@ -710,7 +712,8 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         outer_ = indexedexManager.deployVault(
@@ -766,7 +769,7 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         vm.stopPrank();
     }
 
-    /// @dev Multi-leg initializeReserve + bond(BPT). `lpAmount` used per leg.
+    /// @dev First bond funds every vault-share leg (D16). `lpAmount` used per leg.
     function _goLiveViaBptBond(address instance_, address user, uint256 lpAmount)
         internal
         returns (uint256 tokenId_, uint256 bpt_)
@@ -776,7 +779,6 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         address[] memory shareTokens_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares();
 
         for (uint256 i; i < n_; ++i) {
-            // Match share token to a known seVaults index or nested diamond.
             amounts_[i] = _fundSharesForInstanceLeg(instance_, i, user, lpAmount);
         }
 
@@ -784,15 +786,21 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
         for (uint256 i; i < n_; ++i) {
             IERC20(shareTokens_[i]).approve(instance_, amounts_[i]);
         }
-        bpt_ = IMultiVaultWeightedDetfBonding(instance_).initializeReserve(
-            amounts_, block.timestamp + 1 hours
-        );
-        address pool_ = IMultiVaultWeightedDetfInfo(instance_).reservePool();
-        IERC20(pool_).approve(instance_, bpt_);
-        (tokenId_,) = IMultiVaultWeightedDetfBonding(instance_).bond(
-            IERC20(pool_), bpt_, DEFAULT_MIN_LOCK, user, false, block.timestamp + 1 hours
+        (tokenId_, bpt_) = IMultiVaultWeightedDetfBonding(instance_).initializeReserve(
+            amounts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
         );
         vm.stopPrank();
+    }
+
+    function _bootstrapViaFirstBond(address bonder, uint256 lpAmount)
+        internal
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        return _goLiveViaBptBond(detf, bonder, lpAmount);
+    }
+
+    function _closeMinOut(address instance_) internal view returns (uint256[] memory minOut_) {
+        minOut_ = new uint256[](IMultiVaultWeightedDetfInfo(instance_).vaultCount() + 1);
     }
 
     function _fundSharesForInstanceLeg(address instance_, uint256 legIndex_, address user, uint256 lpAmount)
@@ -876,6 +884,30 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
 
     function _feeTo() internal view returns (address) {
         return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
+        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+    }
+
+    function _deployOpenModeDetf(string memory name_, string memory symbol_) internal returns (address detf_) {
+        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args =
+            _buildPkgArgs(1, 0, 0, true, ThresholdMode.Open);
+        args.name = name_;
+        args.symbol = symbol_;
+        args.creator = address(0);
+        detf_ = _deployWithArgs(args);
+        vm.label(detf_, name_);
     }
 
     /* ---------------------------------------------------------------------- */

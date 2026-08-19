@@ -66,6 +66,7 @@ library ComposedStableCommonDetf_Component_FactoryService {
         uint256 expansionClosureRatePerSecond;
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
+        address creator;
     }
 
     struct RebasingDetfTokenFacets {
@@ -139,7 +140,8 @@ library ComposedStableCommonDetf_Component_FactoryService {
             thresholdMode: config_.thresholdMode,
             expansionClosureRatePerSecond: config_.expansionClosureRatePerSecond,
             expansionCatchUpMaxSeconds: config_.expansionCatchUpMaxSeconds,
-            expansionCatchUpCapBps: config_.expansionCatchUpCapBps
+            expansionCatchUpCapBps: config_.expansionCatchUpCapBps,
+            creator: config_.creator
         });
     }
 

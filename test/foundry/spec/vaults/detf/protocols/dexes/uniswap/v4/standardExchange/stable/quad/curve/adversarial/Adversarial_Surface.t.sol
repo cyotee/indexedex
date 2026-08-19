@@ -38,6 +38,15 @@ contract Adversarial_CurveQuad_Surface is TestBase_UniswapV4StandardExchangeCurv
             "burnExactTokenOut"
         );
 
+        bytes4[] memory bfuncs_ = detfBondingFacet.facetFuncs();
+        assertTrue(
+            _contains(bfuncs_, IUniswapV4StandardExchangeCurveQuadStableDETF.closeBondMature.selector), "close"
+        );
+        assertTrue(
+            _contains(bfuncs_, IUniswapV4StandardExchangeCurveQuadStableDETF.previewCloseBondMature.selector),
+            "previewClose"
+        );
+
         bytes4[] memory cfuncs_ = detfCompoundFacet.facetFuncs();
         assertTrue(
             _contains(cfuncs_, IUniswapV4StandardExchangeCurveQuadStableDETF.depositClaim.selector), "depositClaim"

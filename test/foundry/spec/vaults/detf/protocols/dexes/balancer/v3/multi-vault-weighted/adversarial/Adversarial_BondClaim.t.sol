@@ -30,7 +30,7 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         vm.prank(attacker);
         vm.expectRevert();
         IMultiVaultWeightedDetfBonding(instance_).redeemClaim(
-            1e18, rateAssets[0], 0, attacker, block.timestamp + 1 hours
+            1e18, IERC20(instance_), 0, attacker, block.timestamp + 1 hours
         );
 
         assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "D2: BPT not drained");
@@ -55,14 +55,14 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         if (part_ == 0) part_ = bal_;
 
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(part_, rateAssets[0], 0, alice, block.timestamp + 1 hours);
+        uint256 out_ = bonding_.redeemClaim(part_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
         assertTrue(out_ > 0, "first redeem ok");
 
         uint256 left_ = claim_.balanceOf(alice);
         // Attempt over-redeem of remaining + more
         vm.prank(alice);
         vm.expectRevert();
-        bonding_.redeemClaim(left_ + 1e18, rateAssets[0], 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(left_ + 1e18, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
     }
 
     function test_D4_redeem_junkRateAsset_InvalidRoute() public {
@@ -76,7 +76,11 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         address junk = address(uint160(uint256(keccak256("junkRA"))));
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(0), junk)
+            abi.encodeWithSelector(
+                MultiVaultWeightedDetfRepo.InvalidRoute.selector,
+                IMultiVaultWeightedDetfInfo(instance_).rebasingClaimToken(),
+                junk
+            )
         );
         bonding_.redeemClaim(1e18, IERC20(junk), 0, alice, block.timestamp + 1 hours);
     }
@@ -121,7 +125,7 @@ contract Adversarial_BondClaim_Test is TestBase_MultiVaultWeightedDetf_Adversari
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
 
         vm.prank(alice);
-        bonding_.redeemClaim(redeemAmt_, rateAssets[0], 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
 
         uint256 bptAfter_ = IERC20(info_.reservePool()).balanceOf(instance_);
         assertTrue(bptBefore_ >= bptAfter_, "BPT decreased or same");

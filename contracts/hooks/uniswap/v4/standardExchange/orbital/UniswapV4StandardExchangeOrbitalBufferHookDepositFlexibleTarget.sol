@@ -22,7 +22,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleTarge
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) external nonReentrant returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
         DepositFlexibleVars memory v;
         v.amount0 = amount0;
         v.amount0IsSeShare = amount0IsSeShare;

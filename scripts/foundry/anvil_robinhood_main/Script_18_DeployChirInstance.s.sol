@@ -89,7 +89,8 @@ contract Script_18_DeployChirInstance is DeploymentBase {
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: FixtureEconomics.expansionClosureRatePerYearWad(),
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
 
         (address predicted, uint256 nonce) = UniswapV4DetfHookPremineLib.premineCp(

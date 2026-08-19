@@ -153,7 +153,8 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
                 erc5267Facet: erc5267Facet,
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+                multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet
             }),
             abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1")._hash()
         );
@@ -212,8 +213,18 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             rp1: address(0),
             rp2: address(0),
             tickSpacing: 0,
-            sqrtPriceX96: 0
+            sqrtPriceX96: 0,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
+    }
+
+    function _pkgOwnerOnlyLiquidity() internal view virtual returns (bool) {
+        return false;
+    }
+
+    function _pkgOwner() internal view virtual returns (address) {
+        return owner;
     }
 
     /// @notice Base args with no SEs (invalid under min-SE; for reject tests only).
@@ -235,7 +246,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             rp1: address(0),
             rp2: address(0),
             tickSpacing: 0,
-            sqrtPriceX96: 0
+            sqrtPriceX96: 0,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
     }
 

@@ -92,17 +92,19 @@ contract AdvReentryTarget {
     }
 
     function reenterInitializeReserve(address detf_, uint256[] calldata amounts_, uint256 deadline_) external {
-        IMultiVaultWeightedDetfBonding(detf_).initializeReserve(amounts_, deadline_);
+        IMultiVaultWeightedDetfBonding(detf_).initializeReserve(
+            amounts_, 30 days, msg.sender, deadline_
+        );
     }
 
     function reenterRedeemClaim(
         address detf_,
         uint256 claimAmount_,
-        IERC20 rateAssetOut_,
+        IERC20 /* rateAssetOut_ */,
         address recipient_
     ) external {
         IMultiVaultWeightedDetfBonding(detf_).redeemClaim(
-            claimAmount_, rateAssetOut_, 0, recipient_, block.timestamp + 1 hours
+            claimAmount_, IERC20(detf_), 0, recipient_, block.timestamp + 1 hours
         );
     }
 }
@@ -173,7 +175,8 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
             thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
     }
 
@@ -201,13 +204,8 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
         amounts_[0] = amount_;
         vm.startPrank(user);
         hostileShare.approve(instance_, type(uint256).max);
-        bpt_ = IMultiVaultWeightedDetfBonding(instance_).initializeReserve(
-            amounts_, block.timestamp + 1 hours
-        );
-        address pool_ = IMultiVaultWeightedDetfInfo(instance_).reservePool();
-        IERC20(pool_).approve(instance_, bpt_);
-        (tokenId_,) = IMultiVaultWeightedDetfBonding(instance_).bond(
-            IERC20(pool_), bpt_, DEFAULT_MIN_LOCK, user, false, block.timestamp + 1 hours
+        (tokenId_, bpt_) = IMultiVaultWeightedDetfBonding(instance_).initializeReserve(
+            amounts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

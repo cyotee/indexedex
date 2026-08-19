@@ -106,12 +106,13 @@ contract UniswapV4SingleStandardExchangeDETF_ExpansionTest is TestBase_UniswapV4
         assertGt(pending, 0, "protocol NFT must have pending free DETF inventory before compound");
 
         uint256 protocolBefore = info.protocolLp();
-        uint256 claimLpBefore = IERC20(hook).balanceOf(claim);
+        uint256 nftLpBefore = IERC20(hook).balanceOf(bond);
         (uint256 detfIn, uint256 lpOut) = info.compoundProtocolRewards();
         assertGt(detfIn, 0, "compound must harvest free DETF");
         assertGt(lpOut, 0, "compound produced LP");
         assertGt(info.protocolLp(), protocolBefore, "protocol LP rises after compound");
-        assertGt(IERC20(hook).balanceOf(claim), claimLpBefore, "compound LP lands on rebasing claim package");
+        assertGt(IERC20(hook).balanceOf(bond), nftLpBefore, "compound LP lands on NFT vault");
+        assertEq(IERC20(hook).balanceOf(claim), 0, "claim holds no reserve LP");
     }
 
     /* ----------------------------- helpers ----------------------------- */

@@ -35,6 +35,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookRepo {
         bool poolInitialized;
         uint256 reentrancyStatus;
         bool initializationFinalized;
+        bool ownerOnlyLiquidity;
     }
 
     function _layout() internal pure returns (Layout storage l) {

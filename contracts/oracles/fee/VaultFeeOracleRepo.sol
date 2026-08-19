@@ -18,6 +18,7 @@ library VaultFeeOracleRepo {
     error BondTerms_MaxBonusExceedsWAD(uint256 maxBonusPercentage, uint256 maxAllowed);
     error BondTerms_MinBonusExceedsMax(uint256 minBonusPercentage, uint256 maxBonusPercentage);
     error BondTerms_MinLockExceedsMax(uint256 minLockDuration, uint256 maxLockDuration);
+    error SeignioragePotShares_SumNotBelowWAD(uint256 feeToShare, uint256 creatorShare);
 
     struct Storage {
         IFeeCollectorProxy feeTo;
@@ -43,6 +44,14 @@ library VaultFeeOracleRepo {
         uint256 defaultLiquidReservePercentage;
         mapping(bytes4 vaultFeeTypeId => uint256 percentage) defaultLiquidReservePercentageOfType;
         mapping(address vault => uint256 percentage) liquidReservePercentageOfVault;
+        /// @dev Global default `f` (feeTo share of pot). WAD. 0 = unset.
+        uint256 defaultSeigniorageFeeToSharePercentage;
+        mapping(bytes4 vaultFeeTypeId => uint256 percentage) seigniorageFeeToSharePercentageOfType;
+        mapping(address vault => uint256 percentage) seigniorageFeeToSharePercentageOfVault;
+        /// @dev Global default `c` (creator share of pot). WAD. 0 = unset.
+        uint256 defaultSeigniorageCreatorSharePercentage;
+        mapping(bytes4 vaultFeeTypeId => uint256 percentage) seigniorageCreatorSharePercentageOfType;
+        mapping(address vault => uint256 percentage) seigniorageCreatorSharePercentageOfVault;
     }
 
     function _layoutStruct(bytes32 slot) internal pure returns (Storage storage layoutStruct) {
@@ -58,6 +67,13 @@ library VaultFeeOracleRepo {
     function _validateWadPercentage(uint256 value_) internal pure {
         if (value_ > ONE_WAD) {
             revert Percentage_ExceedsWAD(value_, ONE_WAD);
+        }
+    }
+
+    /// @notice Reject resolved `f + c >= 1e18`. Either value may be 0 (unset at that tier).
+    function _assertPotSharesBelowWad(uint256 feeToShare_, uint256 creatorShare_) internal pure {
+        if (feeToShare_ + creatorShare_ >= ONE_WAD) {
+            revert SeignioragePotShares_SumNotBelowWAD(feeToShare_, creatorShare_);
         }
     }
 
@@ -502,5 +518,168 @@ library VaultFeeOracleRepo {
         returns (uint256 oldPercentage)
     {
         return _overrideLiquidReservePercentageOfVault(_layoutStruct(), vault_, percentage_);
+    }
+
+    /* ---------------------- Seigniorage pot shares f / c ---------------------- */
+
+    function _defaultSeigniorageFeeToSharePercentage(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.defaultSeigniorageFeeToSharePercentage;
+    }
+
+    function _defaultSeigniorageFeeToSharePercentage() internal view returns (uint256) {
+        return _defaultSeigniorageFeeToSharePercentage(_layoutStruct());
+    }
+
+    function _setDefaultSeigniorageFeeToSharePercentage(Storage storage layoutStruct, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.defaultSeigniorageFeeToSharePercentage;
+        layoutStruct.defaultSeigniorageFeeToSharePercentage = percentage_;
+    }
+
+    function _setDefaultSeigniorageFeeToSharePercentage(uint256 percentage_) internal returns (uint256 oldPercentage) {
+        return _setDefaultSeigniorageFeeToSharePercentage(_layoutStruct(), percentage_);
+    }
+
+    function _seigniorageFeeToSharePercentageOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.seigniorageFeeToSharePercentageOfType[vaultFeeTypeId_];
+    }
+
+    function _seigniorageFeeToSharePercentageOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
+        return _seigniorageFeeToSharePercentageOfTypeId(_layoutStruct(), vaultFeeTypeId_);
+    }
+
+    function _setSeigniorageFeeToSharePercentageOfTypeId(
+        Storage storage layoutStruct,
+        bytes4 vaultTypeId_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.seigniorageFeeToSharePercentageOfType[vaultTypeId_];
+        layoutStruct.seigniorageFeeToSharePercentageOfType[vaultTypeId_] = percentage_;
+    }
+
+    function _setSeigniorageFeeToSharePercentageOfTypeId(bytes4 vaultTypeId_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _setSeigniorageFeeToSharePercentageOfTypeId(_layoutStruct(), vaultTypeId_, percentage_);
+    }
+
+    function _seigniorageFeeToSharePercentageOfVault(Storage storage layoutStruct, address vault_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.seigniorageFeeToSharePercentageOfVault[vault_];
+    }
+
+    function _seigniorageFeeToSharePercentageOfVault(address vault_) internal view returns (uint256) {
+        return _seigniorageFeeToSharePercentageOfVault(_layoutStruct(), vault_);
+    }
+
+    function _overrideSeigniorageFeeToSharePercentageOfVault(
+        Storage storage layoutStruct,
+        address vault_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.seigniorageFeeToSharePercentageOfVault[vault_];
+        layoutStruct.seigniorageFeeToSharePercentageOfVault[vault_] = percentage_;
+    }
+
+    function _overrideSeigniorageFeeToSharePercentageOfVault(address vault_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _overrideSeigniorageFeeToSharePercentageOfVault(_layoutStruct(), vault_, percentage_);
+    }
+
+    function _defaultSeigniorageCreatorSharePercentage(Storage storage layoutStruct) internal view returns (uint256) {
+        return layoutStruct.defaultSeigniorageCreatorSharePercentage;
+    }
+
+    function _defaultSeigniorageCreatorSharePercentage() internal view returns (uint256) {
+        return _defaultSeigniorageCreatorSharePercentage(_layoutStruct());
+    }
+
+    function _setDefaultSeigniorageCreatorSharePercentage(Storage storage layoutStruct, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.defaultSeigniorageCreatorSharePercentage;
+        layoutStruct.defaultSeigniorageCreatorSharePercentage = percentage_;
+    }
+
+    function _setDefaultSeigniorageCreatorSharePercentage(uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _setDefaultSeigniorageCreatorSharePercentage(_layoutStruct(), percentage_);
+    }
+
+    function _seigniorageCreatorSharePercentageOfTypeId(Storage storage layoutStruct, bytes4 vaultFeeTypeId_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.seigniorageCreatorSharePercentageOfType[vaultFeeTypeId_];
+    }
+
+    function _seigniorageCreatorSharePercentageOfTypeId(bytes4 vaultFeeTypeId_) internal view returns (uint256) {
+        return _seigniorageCreatorSharePercentageOfTypeId(_layoutStruct(), vaultFeeTypeId_);
+    }
+
+    function _setSeigniorageCreatorSharePercentageOfTypeId(
+        Storage storage layoutStruct,
+        bytes4 vaultTypeId_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.seigniorageCreatorSharePercentageOfType[vaultTypeId_];
+        layoutStruct.seigniorageCreatorSharePercentageOfType[vaultTypeId_] = percentage_;
+    }
+
+    function _setSeigniorageCreatorSharePercentageOfTypeId(bytes4 vaultTypeId_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _setSeigniorageCreatorSharePercentageOfTypeId(_layoutStruct(), vaultTypeId_, percentage_);
+    }
+
+    function _seigniorageCreatorSharePercentageOfVault(Storage storage layoutStruct, address vault_)
+        internal
+        view
+        returns (uint256)
+    {
+        return layoutStruct.seigniorageCreatorSharePercentageOfVault[vault_];
+    }
+
+    function _seigniorageCreatorSharePercentageOfVault(address vault_) internal view returns (uint256) {
+        return _seigniorageCreatorSharePercentageOfVault(_layoutStruct(), vault_);
+    }
+
+    function _overrideSeigniorageCreatorSharePercentageOfVault(
+        Storage storage layoutStruct,
+        address vault_,
+        uint256 percentage_
+    ) internal returns (uint256 oldPercentage) {
+        _validateWadPercentage(percentage_);
+        oldPercentage = layoutStruct.seigniorageCreatorSharePercentageOfVault[vault_];
+        layoutStruct.seigniorageCreatorSharePercentageOfVault[vault_] = percentage_;
+    }
+
+    function _overrideSeigniorageCreatorSharePercentageOfVault(address vault_, uint256 percentage_)
+        internal
+        returns (uint256 oldPercentage)
+    {
+        return _overrideSeigniorageCreatorSharePercentageOfVault(_layoutStruct(), vault_, percentage_);
     }
 }

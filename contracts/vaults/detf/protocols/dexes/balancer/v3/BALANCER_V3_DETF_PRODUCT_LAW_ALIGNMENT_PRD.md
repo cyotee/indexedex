@@ -6,6 +6,8 @@
 
 ## Status
 
+**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for Balancer-only curve/token-set notes.
+
 **LOCK v0.5** — 2026-08-12. Fourth Q&A closed (rebasing bond **1:1 original=effective**, `detfNFTId` at deploy with 0 principal, `redemptionRate` quotes only that bond). Stamped LOCK for implementor execution.
 
 | Related | Role |

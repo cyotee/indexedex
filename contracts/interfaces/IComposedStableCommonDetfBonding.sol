@@ -26,13 +26,12 @@ interface IComposedStableCommonDetfBonding {
 
     function closeBondMature(
         uint256 tokenId,
-        IERC20 tokenOut,
-        uint256 minOut,
+        uint256[] calldata minAmountsOut,
         address recipient,
         uint256 deadline
-    ) external returns (uint256 amountOut);
+    ) external returns (uint256[] memory amountsOut);
 
-    function previewCloseBondMature(uint256 tokenId, IERC20 tokenOut) external view returns (uint256 amountOut);
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
 
     function redeemClaim(
         uint256 claimAmount,

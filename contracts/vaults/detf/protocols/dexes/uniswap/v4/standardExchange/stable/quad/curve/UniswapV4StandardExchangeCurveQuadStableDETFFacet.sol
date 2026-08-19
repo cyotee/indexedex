@@ -39,12 +39,13 @@ contract UniswapV4StandardExchangeCurveQuadStableDETFFacet is
     }
 
     function _allFuncs() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](6);
+        f = new bytes4[](7);
         f[0] = bytes4(keccak256("bond(address[],uint256[],address,uint256,address,bool,uint256)"));
         f[1] = bytes4(keccak256("bond(address,uint256,uint256,address,bool,uint256)"));
         f[2] = IUniswapV4StandardExchangeCurveQuadStableDETF.sellPositionToDetfNft.selector;
         f[3] = IUniswapV4StandardExchangeCurveQuadStableDETF.closeBondMature.selector;
-        f[4] = IUniswapV4StandardExchangeCurveQuadStableDETF.completeReserveBondNft.selector;
-        f[5] = IUniswapV4StandardExchangeCurveQuadStableDETF.completeReserveClaim.selector;
+        f[4] = IUniswapV4StandardExchangeCurveQuadStableDETF.previewCloseBondMature.selector;
+        f[5] = IUniswapV4StandardExchangeCurveQuadStableDETF.completeReserveBondNft.selector;
+        f[6] = IUniswapV4StandardExchangeCurveQuadStableDETF.completeReserveClaim.selector;
     }
 }

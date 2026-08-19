@@ -36,12 +36,13 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeQueryTarget is MixedBuf
             return _previewBptToBuffer(amountIn_);
         }
 
-        // Burn DETF → buffer
+        // Burn DETF → buffer or vault-share reserve leg (D20)
         if (address(tokenIn_) == address(this)) {
-            if (address(tokenOut_) != address(s.bufferToken)) {
+            (bool shareFound_,) = MixedBufferMultiVaultStableDetfRepo._findVaultShareIndex(tokenOut_);
+            if (!MixedBufferMultiVaultStableDetfRepo._isBufferToken(tokenOut_) && !shareFound_) {
                 revert MixedBufferMultiVaultStableDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
             }
-            return _previewBurnDetfToBuffer(amountIn_);
+            return _previewBurnDetfToToken(tokenOut_, amountIn_);
         }
 
         // Mint buffer or vault share → DETF

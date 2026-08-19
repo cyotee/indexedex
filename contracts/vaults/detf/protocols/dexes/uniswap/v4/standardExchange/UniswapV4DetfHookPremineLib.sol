@@ -61,7 +61,9 @@ library UniswapV4DetfHookPremineLib {
                 feeOracle: feeOracle,
                 standardExchange: address(args.standardExchangeVault),
                 pairToken: address(args.pairToken),
-                rawToken: predictedDetf
+                rawToken: predictedDetf,
+                ownerOnlyLiquidity: true,
+                owner: predictedDetf
             });
         mineNonce = _mine(hookFactory, hookPkg, abi.encode(hArgs));
     }
@@ -104,7 +106,9 @@ library UniswapV4DetfHookPremineLib {
                 rp1: rps[1],
                 rp2: rps[2],
                 tickSpacing: 60,
-                sqrtPriceX96: SQRT_PRICE_1_1
+                sqrtPriceX96: SQRT_PRICE_1_1,
+                ownerOnlyLiquidity: true,
+                owner: predictedDetf
             });
         mineNonce = _mine(hookFactory, hookPkg, abi.encode(hArgs));
     }
@@ -188,7 +192,9 @@ library UniswapV4DetfHookPremineLib {
                 tokens: tokens,
                 weights: weights,
                 standardExchanges: ses,
-                rateProviders: rps
+                rateProviders: rps,
+                ownerOnlyLiquidity: true,
+                owner: predictedDetf
             })
         );
     }
@@ -238,7 +244,9 @@ library UniswapV4DetfHookPremineLib {
                 tokens: tokens,
                 standardExchanges: ses,
                 rateProviders: rps,
-                baseAmp: args.baseAmp
+                baseAmp: args.baseAmp,
+                ownerOnlyLiquidity: true,
+                owner: predictedDetf
             })
         );
     }

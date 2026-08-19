@@ -5,7 +5,7 @@
 | Date | 2026-08-09 |
 | Area | `T-detf-dual-liquidity` |
 | Severity claimed | **Blocker CODE** (overwhelming static; no forge PoC executed this run) |
-| Product | `DualLiquidityLinkedCrossVersionUniswapVault` |
+| Product | `DualLiquidity (removed)CrossVersionUniswapVault` |
 | L-TCA-5 | Fork-first gold TestBase — missing fork I/K proof is **equal** severity to hermetic gaps |
 
 ## Roles (DETF law)
@@ -22,7 +22,7 @@
 ## Call chain — free mint (exact-in deposit / swap)
 
 1. `exchangeIn(..., pretransferred_=true)` → `_deposit` / `_swap` after `_receive`.
-2. `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget._receive`:
+2. `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInTarget._receive`:
 
 ```solidity
 function _receive(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {
@@ -39,7 +39,7 @@ function _receive(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) priv
 ## Call chain — free extract / steal donation (exact-out)
 
 1. `exchangeOut(..., pretransferred_=true)` → `_receiveOut`.
-2. `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget._receiveOut`:
+2. `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutTarget._receiveOut`:
 
 ```solidity
 function _receiveOut(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_) private {

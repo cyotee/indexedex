@@ -15,7 +15,7 @@ import {
 /**
  * @title UniswapV4SingleStandardExchangeDETF_ForkTest
  * @notice Phase 6.1: Base mainnet fork lifecycle smoke.
- * @dev Peer pattern (hook Base / DualLiquidity): `createSelectFork` then production DFPkg path
+ * @dev Peer pattern (hook Base fork): `createSelectFork` then production DFPkg path
  *      (CREATE3 + manager registry + real hook package + SE wrapper) on that fork context.
  *
  * Run:

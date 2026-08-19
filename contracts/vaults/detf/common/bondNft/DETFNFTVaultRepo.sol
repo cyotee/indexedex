@@ -94,10 +94,14 @@ library DETFNFTVaultRepo {
         mapping(uint256 tokenId => uint256) userRewardPerSharePaid;
         /// @notice Counter for generating unique token IDs
         uint256 nextTokenId;
-        /// @notice Protocol-owned NFT token ID (has no unlock time)
+        /// @notice Protocol-owned NFT token ID (has no unlock time). 0 is a valid D7 protocol id.
         uint256 detfNFTId;
         /// @notice Sum of originalShares across all tokenIds (user + protocol).
         uint256 totalOriginalShares;
+        /// @notice L6: protocol NFT has been minted. Do not treat `detfNFTId == 0` as unwired.
+        bool protocolNftInitialized;
+        /// @notice D7: ids 0, 1, and 2 have been minted (protocol / feeTo / creator).
+        bool reservedIdsWired;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -144,6 +148,38 @@ library DETFNFTVaultRepo {
 
     function _setDETFNFTId(uint256 tokenId_) internal {
         _setDETFNFTId(_layoutStruct(), tokenId_);
+    }
+
+    function _protocolNftInitialized(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.protocolNftInitialized;
+    }
+
+    function _protocolNftInitialized() internal view returns (bool) {
+        return _protocolNftInitialized(_layoutStruct());
+    }
+
+    function _setProtocolNftInitialized(Storage storage layoutStruct_, bool value_) internal {
+        layoutStruct_.protocolNftInitialized = value_;
+    }
+
+    function _setProtocolNftInitialized(bool value_) internal {
+        _setProtocolNftInitialized(_layoutStruct(), value_);
+    }
+
+    function _reservedIdsWired(Storage storage layoutStruct_) internal view returns (bool) {
+        return layoutStruct_.reservedIdsWired;
+    }
+
+    function _reservedIdsWired() internal view returns (bool) {
+        return _reservedIdsWired(_layoutStruct());
+    }
+
+    function _setReservedIdsWired(Storage storage layoutStruct_, bool value_) internal {
+        layoutStruct_.reservedIdsWired = value_;
+    }
+
+    function _setReservedIdsWired(bool value_) internal {
+        _setReservedIdsWired(_layoutStruct(), value_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -385,6 +421,40 @@ library DETFNFTVaultRepo {
         _addToPosition(_layoutStruct(), tokenId_, additionalShares_);
     }
 
+    /// @notice L7: add effective-share weight only. Does not change `originalShares`.
+    /// @dev Reward debt matches `_addToPosition` first/add paths so new shares do not claim old pot (FC4).
+    function _addEffectiveSharesOnly(Storage storage layoutStruct_, uint256 tokenId_, uint256 additionalShares_)
+        internal
+    {
+        if (additionalShares_ == 0) return;
+
+        uint256 oldEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        if (oldEff_ == 0) {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+            layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+            layoutStruct_.totalShares += additionalShares_;
+            return;
+        }
+
+        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+        layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+        layoutStruct_.totalShares += additionalShares_;
+
+        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+        uint256 rps_ = layoutStruct_.rewardPerShares;
+        if (newEff_ > 0 && pending_ > 0) {
+            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+            layoutStruct_.userRewardPerSharePaid[tokenId_] =
+                rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+        } else {
+            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+        }
+    }
+
+    function _addEffectiveSharesOnly(uint256 tokenId_, uint256 additionalShares_) internal {
+        _addEffectiveSharesOnly(_layoutStruct(), tokenId_, additionalShares_);
+    }
+
     error BondNotMature(uint256 unlockTime);
     error InsufficientOriginalShares(uint256 needed, uint256 available);
 
@@ -440,8 +510,8 @@ library DETFNFTVaultRepo {
         totalShares_ = layoutStruct_.totalShares;
         totalLpReserve_ = layoutStruct_.lpToken.balanceOf(address(this));
         if (totalLpReserve_ > 0) {
-            uint256 protocolId_ = layoutStruct_.detfNFTId;
-            if (protocolId_ != 0) {
+            if (layoutStruct_.protocolNftInitialized) {
+                uint256 protocolId_ = layoutStruct_.detfNFTId;
                 uint256 protocolEff_ = layoutStruct_.effectiveSharesOf[protocolId_];
                 if (protocolEff_ > 0 && protocolEff_ < totalShares_) {
                     totalShares_ -= protocolEff_;

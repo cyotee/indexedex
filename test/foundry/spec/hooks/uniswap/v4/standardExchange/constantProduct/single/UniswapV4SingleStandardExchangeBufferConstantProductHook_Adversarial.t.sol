@@ -295,7 +295,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
                 feeOracle: address(indexedexManager),
                 standardExchange: se2,
                 pairToken: address(pairToken),
-                rawToken: address(hostile)
+                rawToken: address(hostile),
+                ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+                owner: _pkgOwner()
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = PkgFactory.deployHook(hookPkg, args, mineNonce);

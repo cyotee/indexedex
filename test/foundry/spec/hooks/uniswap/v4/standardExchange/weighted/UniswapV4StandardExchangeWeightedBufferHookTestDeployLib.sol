@@ -32,6 +32,7 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
     }
 
     function deployFactoryAndPackage(
@@ -42,7 +43,8 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         IFacet erc5267Facet,
         IFacet erc2612Facet,
         IFacet multiAssetBasicVaultFacet,
-        IFacet multiAssetStandardVaultFacet
+        IFacet multiAssetStandardVaultFacet,
+        IFacet multiStepOwnableFacet
     )
         external
         returns (
@@ -56,6 +58,7 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         vf.erc2612Facet = erc2612Facet;
         vf.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         vf.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        vf.multiStepOwnableFacet = multiStepOwnableFacet;
         return _deployFactoryAndPackage(create3Factory, owner, indexedexManager, vf);
     }
 
@@ -129,6 +132,7 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         init.erc2612Facet = vf.erc2612Facet;
         init.multiAssetBasicVaultFacet = vf.multiAssetBasicVaultFacet;
         init.multiAssetStandardVaultFacet = vf.multiAssetStandardVaultFacet;
+        init.multiStepOwnableFacet = vf.multiStepOwnableFacet;
     }
 
     function deployHookInstance(

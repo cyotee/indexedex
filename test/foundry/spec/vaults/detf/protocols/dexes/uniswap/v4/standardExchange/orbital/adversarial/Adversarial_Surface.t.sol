@@ -31,6 +31,8 @@ contract Adversarial_Orbital_Surface is TestBase_UniswapV4StandardExchangeOrbita
         assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.depositClaim.selector), "depositClaim");
         assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.redeemClaim.selector), "redeemClaim");
         assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.closeBondMature.selector), "close");
+        assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.buyClaim.selector), "buyClaim");
+        assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.previewCloseBondMature.selector), "previewClose");
         assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeOrbitalDETF.compoundProtocolRewards.selector), "compound");
 
         bytes4[] memory ifuncs_ = detfInfoFacet.facetFuncs();

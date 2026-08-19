@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -61,6 +63,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
     IFacet public immutable ERC2612_FACET;
     IFacet public immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet public immutable MULTI_ASSET_STANDARD_VAULT_FACET;
+    IFacet public immutable MULTI_STEP_OWNABLE_FACET;
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage private immutable SELF;
 
     constructor(PkgInit memory init) {
@@ -72,6 +75,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
                 || address(init.erc5267Facet) == address(0) || address(init.erc2612Facet) == address(0)
                 || address(init.multiAssetBasicVaultFacet) == address(0)
                 || address(init.multiAssetStandardVaultFacet) == address(0)
+                || address(init.multiStepOwnableFacet) == address(0)
         ) {
             revert ZeroAddress();
         }
@@ -85,6 +89,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         ERC2612_FACET = init.erc2612Facet;
         MULTI_ASSET_BASIC_VAULT_FACET = init.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = init.multiAssetStandardVaultFacet;
+        MULTI_STEP_OWNABLE_FACET = init.multiStepOwnableFacet;
         SELF = this;
     }
 
@@ -129,7 +134,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         returns (bytes4[] memory interfaces)
     {
         // ERC20PermitDFPkg interfaces + vault/SE + product type.
-        interfaces = new bytes4[](9);
+        interfaces = new bytes4[](10);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -138,20 +143,22 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         interfaces[5] = type(IStandardExchangeOut).interfaceId;
         interfaces[6] = type(IBasicVault).interfaceId;
         interfaces[7] = type(IStandardVault).interfaceId;
-        interfaces[8] = HOOK_VAULT_TYPE;
+        interfaces[8] = type(IMultiStepOwnable).interfaceId;
+        interfaces[9] = HOOK_VAULT_TYPE;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](9);
-        facets[0] = address(MULTI_ASSET_BASIC_VAULT_FACET);
-        facets[1] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
-        facets[2] = address(SELF);
-        facets[3] = address(SE_FACET);
-        facets[4] = address(DEPOSIT_FACET);
-        facets[5] = address(WITHDRAW_FACET);
-        facets[6] = address(ERC20_FACET);
-        facets[7] = address(ERC5267_FACET);
-        facets[8] = address(ERC2612_FACET);
+        facets = new address[](10);
+        facets[0] = address(MULTI_STEP_OWNABLE_FACET);
+        facets[1] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        facets[2] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
+        facets[3] = address(SELF);
+        facets[4] = address(SE_FACET);
+        facets[5] = address(DEPOSIT_FACET);
+        facets[6] = address(WITHDRAW_FACET);
+        facets[7] = address(ERC20_FACET);
+        facets[8] = address(ERC5267_FACET);
+        facets[9] = address(ERC2612_FACET);
     }
 
     function packageMetadata()
@@ -165,18 +172,23 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](3);
+        cuts = new IDiamond.FacetCut[](4);
         cuts[0] = IDiamond.FacetCut({
+            facetAddress: address(MULTI_STEP_OWNABLE_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: MULTI_STEP_OWNABLE_FACET.facetFuncs()
+        });
+        cuts[1] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
         });
-        cuts[1] = IDiamond.FacetCut({
+        cuts[2] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
-        cuts[2] = IDiamond.FacetCut({
+        cuts[3] = IDiamond.FacetCut({
             facetAddress: address(SELF),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: facetFuncs()
@@ -259,7 +271,14 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         PkgArgs memory a = abi.decode(pkgArgs, (PkgArgs));
         return keccak256(
             abi.encode(
-                PRODUCT_ID, a.poolManager, a.feeOracle, a.standardExchange, a.pairToken, a.rawToken
+                PRODUCT_ID,
+                a.poolManager,
+                a.feeOracle,
+                a.standardExchange,
+                a.pairToken,
+                a.rawToken,
+                a.ownerOnlyLiquidity,
+                a.owner
             )
         );
     }
@@ -300,9 +319,11 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         );
 
         // Product bindings.
+        MultiStepOwnableRepo._initialize(a.owner, 1 days);
         Repo._initializeBindings(
             a.poolManager, a.feeOracle, a.standardExchange, a.pairToken, a.rawToken, c0, c1, d0, d1
         );
+        Repo._layout().ownerOnlyLiquidity = a.ownerOnlyLiquidity;
     }
 
     function postDeploy(address) public pure returns (bool) {
@@ -339,7 +360,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
     function _validateArgs(PkgArgs memory a) private pure {
         if (
             a.poolManager == address(0) || a.feeOracle == address(0) || a.standardExchange == address(0)
-                || a.pairToken == address(0) || a.rawToken == address(0)
+                || a.pairToken == address(0) || a.rawToken == address(0) || a.owner == address(0)
         ) {
             revert ZeroAddress();
         }

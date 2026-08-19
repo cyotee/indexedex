@@ -29,6 +29,8 @@ contract T02_ClaimRewards_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
     function test_claimRewards_owner_zeroRewards_returnsZero() public {
         (uint256 tokenId,) = _firstBond(50 ether);
         vm.prank(detfUser);
+        detfInfo.claimRewards(tokenId, detfUser);
+        vm.prank(detfUser);
         uint256 rewards = detfInfo.claimRewards(tokenId, detfUser);
         assertEq(rewards, 0, "L-REW-3: allowed caller with no rewards returns 0");
     }

@@ -121,15 +121,15 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeInTarget is
         address pair_ = r_.fundedPairLeg == 0
             ? address(Repo._layoutStruct().pairToken0)
             : address(Repo._layoutStruct().pairToken1);
-        // Revert if not zap-eligible (depositSingle enforces).
-        _depositSingle(pair_, r_.pairNotionalNative, _protocolLpHolder());
+        // D11: join non-DETF capital only; LP sits on the NFT without new originalShares.
+        _depositSingle(pair_, r_.pairNotionalNative, _bondLpHolder());
 
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         address bondVault_ = address(Repo._layoutStruct().bondNftVault);
         if (split_.inventoryDetf > 0 && bondVault_ != address(0)) {
             _mintDetf(bondVault_, split_.inventoryDetf);
         }
+        _tryCompoundProtocolRewards();
         return split_.userDetf;
     }
 

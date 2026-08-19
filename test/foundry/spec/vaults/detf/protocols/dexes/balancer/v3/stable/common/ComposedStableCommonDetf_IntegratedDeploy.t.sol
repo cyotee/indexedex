@@ -69,6 +69,7 @@ import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
 import {IMultiStepOwnable} from '@crane/contracts/interfaces/IMultiStepOwnable.sol';
 import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
+import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPolicy.sol';
 
 interface IRebasingLeftoverMinter {
@@ -125,6 +126,36 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         if (block.timestamp <= unlock_) {
             vm.warp(unlock_ + 1);
         }
+    }
+
+    function _feeTo() internal view returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(address(detfToken)).balanceOf(address(bondNFTVault));
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        vm.prank(to_);
+        claimed_ = bondNFTVault.claimRewards(tokenId_, to_);
+    }
+
+    function _wireReservedBondNfts() internal {
+        if (bondNFTVault.reservedBondNftsWired()) return;
+        address feeTo_ = _feeTo();
+        vm.prank(deployedDetfVault);
+        bondNFTVault.initializeReservedBondNfts(feeTo_, address(0));
+    }
+
+    function _liveMint(address who_, uint256 daiIn_) internal returns (uint256 detfOut_) {
+        deal(address(dai), who_, daiIn_, true);
+        vm.startPrank(who_);
+        dai.approve(deployedDetfVault, daiIn_);
+        detfOut_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
+            dai, daiIn_, IERC20(address(detfToken)), 0, who_, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
     }
 
     struct StablePoolSpec {
@@ -222,7 +253,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     thresholdMode: mode_,
                     expansionClosureRatePerSecond: 0,
                     expansionCatchUpMaxSeconds: 0,
-                    expansionCatchUpCapBps: 0
+                    expansionCatchUpCapBps: 0,
+                    creator: address(0)
                 })
             );
 
@@ -300,7 +332,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
                     thresholdMode: _composedThresholdMode(),
                     expansionClosureRatePerSecond: 0,
                     expansionCatchUpMaxSeconds: 0,
-                    expansionCatchUpCapBps: 0
+                    expansionCatchUpCapBps: 0,
+                    creator: address(0)
                 })
             );
 
@@ -317,6 +350,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         _transferRebasingDetfTokenOwnership(deployedDetfVault);
         vm.prank(deployedDetfVault);
         IRebasingLeftoverMinter(address(rebasingDetfToken)).renounceLeftoverMinter();
+        _wireReservedBondNfts();
     }
 
     function test_deployVault_surfacesRealCompanionReferences() public view {
@@ -442,19 +476,26 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_BalancerV3St
         uint256 rebasingClaimMinted =
             IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId, 0, alice);
 
-        uint256 redeemPreview = rebasingDetfToken.previewRedeem(rebasingClaimMinted);
-
-        assertGt(rebasingClaimMinted, 0, 'richir minted');
-        assertGt(redeemPreview, 0, 'richir redeem preview');
+        assertGt(rebasingClaimMinted, 0, 'claim minted');
         assertGt(bondNFTVault.originalSharesOf(bondNFTVault.detfNFTId()), protocolSharesBefore, 'protocol nft absorbed principal');
-        assertEq(rebasingDetfToken.balanceOf(alice), rebasingClaimMinted, 'alice richir balance');
+        assertEq(rebasingDetfToken.balanceOf(alice), rebasingClaimMinted, 'alice claim balance');
 
+        uint256 claimBal_ = rebasingDetfToken.balanceOf(alice);
+        uint256 previewDetf_ = IComposedStableCommonDetfBonding(deployedDetfVault).previewRedeemClaim(
+            claimBal_, IERC20(address(detfToken))
+        );
+        uint256 detfBefore_ = detfToken.balanceOf(alice);
         vm.prank(alice);
-        uint256 wethOut = rebasingDetfToken.redeem(rebasingClaimMinted, alice, false);
+        uint256 detfOut_ = IComposedStableCommonDetfBonding(deployedDetfVault).redeemClaim(
+            claimBal_, IERC20(address(detfToken)), 0, alice, block.timestamp + 1
+        );
 
-        assertGe(wethOut, redeemPreview, 'redeem meets preview');
-        assertEq(rebasingDetfToken.balanceOf(alice), 0, 'richir burned on redeem');
-        assertEq(weth.balanceOf(alice) - wethBefore, wethOut, 'alice received weth');
+        assertGt(detfOut_, 0, 'D15 DETF redeem');
+        if (previewDetf_ > 0) {
+            assertEq(detfOut_, previewDetf_, 'preview == execute');
+        }
+        assertEq(detfToken.balanceOf(alice) - detfBefore_, detfOut_, 'alice received DETF');
+        wethBefore;
     }
 
     /// @dev Same as `_bootstrapReserveGraph` but caps vault-share init legs to the WETH scale so

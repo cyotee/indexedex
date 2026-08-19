@@ -239,7 +239,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
 
         vm.startPrank(owner);
@@ -308,7 +309,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             thresholdMode: ThresholdMode.Open,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -337,7 +339,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -365,7 +368,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -431,6 +435,20 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
 
     function _feeTo() internal view returns (address) {
         return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
+        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
     }
 
     /// @dev Bootstrap open-mode DETF, sell first bond into protocol NFT so it has principal shares,
@@ -615,7 +633,8 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             thresholdMode: ThresholdMode.Policy,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(

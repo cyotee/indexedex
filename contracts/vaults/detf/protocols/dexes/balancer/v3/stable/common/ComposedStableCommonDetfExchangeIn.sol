@@ -103,7 +103,8 @@ contract ComposedStableCommonDetfExchangeIn is
             }
 
             _requireReservePoolInitialized();
-            amountOut = _previewMostLiquidUnwindSelectionForExactIn(tokenOut, amountIn).tokenOutAmountOut;
+            uint256 bptIn_ = _bptForDetfShares(amountIn);
+            amountOut = _previewExitSettle(bptIn_, tokenOut);
             return amountOut;
         }
 
@@ -120,9 +121,8 @@ contract ComposedStableCommonDetfExchangeIn is
             revert ExchangeInNotAvailable();
         }
 
-        if (reservePoolBptOut_ > 0) {
-            bondNftVault.addToDETFNFT(bondNftVault.detfNFTId(), reservePoolBptOut_);
-        }
+        // D11: live mint LP may join non-DETF capital; do not mint originalShares (NAV change).
+        reservePoolBptOut_;
 
         if (inventoryDetfOut_ > 0) {
             _mintDetf(address(bondNftVault), inventoryDetfOut_);
@@ -153,6 +153,7 @@ contract ComposedStableCommonDetfExchangeIn is
     }
 
     function _executeMintRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
+        _ensureReservedBondNftsWired();
         uint256 syntheticPrice = _syntheticDetfEthPrice();
         if (!_isMintingAllowed(syntheticPrice)) {
             revert MintingNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._mintThreshold());
@@ -192,33 +193,22 @@ contract ComposedStableCommonDetfExchangeIn is
             revert BurningNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._burnThreshold());
         }
 
-        ExactInUnwindSelection memory selection = _previewMostLiquidUnwindSelectionForExactIn(args_.tokenOut, args_.amountIn);
+        if (!_isFamilyBurnToken(args_.tokenOut)) {
+            revert InvalidRoute(address(args_.tokenIn), address(args_.tokenOut));
+        }
+
         uint256 actualIn = _secureTokenTransfer(args_.tokenIn, args_.amountIn, args_.pretransferred);
+        uint256 bptIn_ = _bptForDetfShares(actualIn);
+        if (bptIn_ == 0) revert ZeroAmount();
+        _burnDetf(address(this), actualIn);
 
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(
-            layoutStruct, selection.routeIndex
-        );
-
-        uint256 poolBptAmountOut = _executeReservePoolSwapExactIn(selection, actualIn, args_.deadline);
-        uint256 vaultTokenAmountOut = _executeComposedPoolExitExactInShared(
-            selection.exitFromStablePool,
-            selection.poolBptToken,
-            poolBptAmountOut,
-            route.vaultToken,
-            args_.deadline
-        );
-        amountOut_ = _executeUnderlyingExitExactInShared(
-            route,
+        amountOut_ = _exitRedepositSettle(
+            bptIn_,
             args_.tokenOut,
-            vaultTokenAmountOut,
+            args_.minAmountOut,
             args_.recipient == address(0) ? msg.sender : args_.recipient,
             args_.deadline
         );
-
-        if (amountOut_ < args_.minAmountOut) {
-            revert SlippageExceeded(args_.minAmountOut, amountOut_);
-        }
         _syncAllExpectedHoldReserves();
     }
 

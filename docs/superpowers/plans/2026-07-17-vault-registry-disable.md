@@ -191,7 +191,7 @@ Call on **mutating** entrypoints only. Do **not** gate pure preview/query functi
 
 | Family | Integration point (representative) | Guard locations |
 |--------|-------------------------------------|-----------------|
-| DualLiquidityLinked | `DualLiquidityLinkedCrossVersionUniswapVaultCommon` | Start of `_requireActive` **or** first line of `exchangeIn` / `exchangeOut` targets (all non-view routes) |
+| DualLiquidity (removed) | `DualLiquidity (removed)CrossVersionUniswapVaultCommon` | Start of `_requireActive` **or** first line of `exchangeIn` / `exchangeOut` targets (all non-view routes) |
 | SingleStandardExchange DETF | `SingleStandardExchangeDETFCommon` | Same: `_requireActive` or exchange/bond mutation targets |
 | MultiVaultWeighted DETF | `MultiVaultWeightedDetfCommon` | Mutating exchange/deposit/redeem paths |
 | Standard SE vaults (V2/V4/Aerodrome/etc.) | Shared Common / ExchangeIn-Out targets if present | Primary deposit/redeem/swap mutations |
@@ -201,7 +201,7 @@ Call on **mutating** entrypoints only. Do **not** gate pure preview/query functi
 
 **Minimum viable surface for this plan (must ship):**
 
-1. DualLiquidityLinked (vault product home)  
+1. DualLiquidity (removed) (vault product home)  
 2. At least one Standard Exchange vault path used in fork tests (e.g. Uni V4 or V2 SE)  
 3. SingleStandardExchange DETF **or** MultiVaultWeighted DETF  
 
@@ -255,11 +255,11 @@ Use synthetic `registerVault` where possible; use real `deployPkg`/`deployVault`
 
 Do **not** assert emergency withdraw (does not exist yet).
 
-#### DualLiquidityLinked
+#### DualLiquidity (removed)
 
 **Location:**  
 `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`  
-Add e.g. `DualLiquidityLinkedCrossVersionUniswapVault_Disable.t.sol` on existing production/fork TestBase.
+Add e.g. `DualLiquidity (removed)CrossVersionUniswapVault_Disable.t.sol` on existing production/fork TestBase.
 
 | Test | Steps |
 |------|--------|
@@ -303,7 +303,7 @@ E.g. Uni V4 SE or existing SE TestBase under `test/foundry/fork/...`:
 forge test --match-contract VaultRegistry_Disable -vv
 
 # DualLiquidity disable
-forge test --match-contract DualLiquidityLinkedCrossVersionUniswapVault_Disable -vv
+forge test --match-contract DualLiquidity (removed)CrossVersionUniswapVault_Disable -vv
 
 # Broader registry + disable
 forge test --match-path 'test/foundry/spec/registries/vault/*' -vv
@@ -338,7 +338,7 @@ forge test --match-path 'test/foundry/fork/base_main/vaults/detf/protocols/dexes
 - [ ] `contracts/registries/vault/VaultRegistryDisableQueryTarget.sol`  
 - [ ] `contracts/registries/vault/VaultRegistryDisableQueryFacet.sol`  
 - [ ] `test/foundry/spec/registries/vault/VaultRegistry_Disable.t.sol`  
-- [ ] `test/foundry/.../DualLiquidityLinkedCrossVersionUniswapVault_Disable.t.sol`  
+- [ ] `test/foundry/.../DualLiquidity (removed)CrossVersionUniswapVault_Disable.t.sol`  
 - [ ] DETF disable test file(s)  
 - [ ] SE vault disable test file (or section)
 
@@ -362,7 +362,7 @@ PR / step 1  Interfaces + DisableRepo + pkgOfVault + Manager/Query facets
 
 PR / step 2  deployVault package-disabled gate + test
 
-PR / step 3  DualLiquidityLinked _requireNotDisabled + Disable.t.sol
+PR / step 3  DualLiquidity (removed) _requireNotDisabled + Disable.t.sol
              (address + package disable/re-enable)
 
 PR / step 4  DETF + SE vault guards + tests

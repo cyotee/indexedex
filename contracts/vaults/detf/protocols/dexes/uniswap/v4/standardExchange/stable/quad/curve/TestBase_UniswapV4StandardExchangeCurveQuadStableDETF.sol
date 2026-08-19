@@ -87,6 +87,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
     IStandardExchangeIn internal detfExchangeIn;
 
     address internal detfUser = address(0xD37F);
+    address internal alice = address(0xA11CE);
+    address internal bob = address(0xB0B);
     address internal pair0;
     address internal pair1;
     address internal pair2;
@@ -251,7 +253,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 
@@ -601,6 +604,67 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
         _fundPair(d, pair_, detfUser, amt * 2);
         vm.startPrank(detfUser);
         (tokenId, shares) = info.bond(IERC20(pair_), amt, DEFAULT_MIN_LOCK, detfUser, false, _dl());
+        vm.stopPrank();
+    }
+
+    function _feeTo() internal view returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IUniswapV4StandardExchangeCurveQuadStableDETF(instance_).bondNftVault());
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+    }
+
+    function _zeroMinOut(address instance_) internal view returns (uint256[] memory minOut_) {
+        minOut_ = new uint256[](IUniswapV4StandardExchangeCurveQuadStableDETF(instance_).n());
+    }
+
+    function _fundUser(address instance_, address who_, uint256 amt_) internal {
+        IUniswapV4StandardExchangeCurveQuadStableDETF info_ =
+            IUniswapV4StandardExchangeCurveQuadStableDETF(instance_);
+        uint8 m_ = info_.m();
+        for (uint8 i; i < m_; ++i) {
+            _fundPair(instance_, info_.pairToken(i), who_, amt_);
+        }
+    }
+
+    function _bootstrapViaFirstBond(address bonder_, uint256 amount_)
+        internal
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        _fundUser(detf, bonder_, amount_ * 2);
+        IERC20[] memory ins_ = new IERC20[](3);
+        uint256[] memory amts_ = new uint256[](3);
+        ins_[0] = IERC20(pair0);
+        ins_[1] = IERC20(pair1);
+        ins_[2] = IERC20(pair2);
+        amts_[0] = amount_;
+        amts_[1] = amount_;
+        amts_[2] = amount_;
+        vm.startPrank(bonder_);
+        (tokenId_, shares_) =
+            detfInfo.bond(ins_, amts_, pair0, DEFAULT_MIN_LOCK, bonder_, false, _dl());
+        vm.stopPrank();
+    }
+
+    function _laterBond(address bonder_, uint256 amount_)
+        internal
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        _fundPair(detf, pair0, bonder_, amount_ * 2);
+        vm.startPrank(bonder_);
+        (tokenId_, shares_) =
+            detfInfo.bond(IERC20(pair0), amount_, DEFAULT_MIN_LOCK, bonder_, false, _dl());
         vm.stopPrank();
     }
 }

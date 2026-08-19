@@ -14,7 +14,7 @@ You are continuing work on IndexedEx (monorepo at repo root). Read the following
 1. Root agent rules: `AGENTS.md` / `Agents.md` (esp. CREATE3, vault registry path, production-first tests, DETF role naming).
 2. Living launch plan: `docs/LAUNCH_PLAN.md`
    - Dual-token RICH (ETH→Superchain→Base CCA) then RICHAI on Bankr after CCA clears
-   - Fee model: other vaults/DETFs → Vault Fee Collector → donation into **RICH liquidity** via **SingleVault DETF (RICH)** (not DualLiquidityLinked day-1)
+   - Fee model: other vaults/DETFs → Vault Fee Collector → donation into **RICH liquidity** via **SingleVault DETF (RICH)** (not DualLiquidity (removed) day-1)
    - CCA params / FDV: `docs/CCA_FDV_WORKSHOP.md`, `docs/CCA_PARAMETER_SHEET.md`, `docs/cca/base-rich-cca-config.json`
    - BattleChain as **promo + adversarial lab**, not the capital raise (§1.4b)
    - Expansion L2 (internal L2-E, chain **4663** / testnet **46630**) deploy BOM: **§2.9** — reuse Uni/Permit2; **we must deploy Balancer V3 + IndexedEx core + SE + DETFs**
@@ -65,7 +65,7 @@ Crane CREATE3 → Balancer V3 Vault + Weighted factory + routers → IndexedEx m
 
 ### Explicit non-goals unless reopened
 
-- Using DualLiquidityLinked as day-1 fee sink
+- Using DualLiquidity (removed) as day-1 fee sink
 - Day-1 Aave on L2-E
 - Redeploying BC-provided Morpho/Uni V3/etc. on BattleChain
 - Venue-chain or “stock token” framing in public launch marketing

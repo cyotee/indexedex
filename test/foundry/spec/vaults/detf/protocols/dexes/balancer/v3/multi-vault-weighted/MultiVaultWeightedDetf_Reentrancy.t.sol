@@ -101,7 +101,8 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
             thresholdMode: ThresholdMode.Open,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         vm.expectRevert(

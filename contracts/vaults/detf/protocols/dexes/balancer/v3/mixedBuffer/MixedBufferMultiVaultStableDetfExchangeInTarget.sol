@@ -69,7 +69,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         revert MixedBufferMultiVaultStableDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
     }
 
-    /// @dev P7: unbalanced buffer + DETF self join.
+    /// @dev D11: join only non-DETF capital. D8 quote + D27 split. No DETF into the pool.
     function _mintDetfFromBuffer(uint256 bufferAmount_, address recipient_)
         internal
         returns (uint256 userOut_)
@@ -81,14 +81,28 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         }
 
         MintSplit memory split_ = _splitMintedDetf(_quoteDetfOutForBuffer(bufferAmount_));
-        _mintDetf(address(this), split_.grossDetf);
-        _joinReserveBufferAndDetf(bufferAmount_, split_.grossDetf);
+        _joinLiveNonDetfBuffer(bufferAmount_);
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
-        // Lazy protocol compound after inventory seigniorage mint (best-effort; never fails mint).
         _tryCompoundProtocolRewards();
         return split_.userDetf;
+    }
+
+    /// @dev D11: no DETF into the pool. Buffer-only unbalanced joins shrink the MixedBuffer
+    ///      invariant (virtualBuffer updates after join). Zap buffer → vault-share 0, join shares.
+    function _joinLiveNonDetfBuffer(uint256 bufferAmount_) internal {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 sharesOut_ = _nestedExchangeInPush(
+            s.underlyingVaults[0],
+            s.bufferToken,
+            bufferAmount_,
+            s.vaultShares[0],
+            0,
+            address(this),
+            block.timestamp + 1 hours
+        );
+        _joinReserveVaultShareOnly(0, sharesOut_);
     }
 
     function _mintDetfFromVaultShares(uint256 legIndex_, uint256 vaultShares_, address recipient_)
@@ -102,12 +116,9 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         }
 
         MintSplit memory split_ = _splitMintedDetf(_quoteDetfOutForVaultShares(legIndex_, vaultShares_));
-        _mintDetf(address(this), split_.grossDetf);
-        _joinReserveShareAndDetf(legIndex_, vaultShares_, split_.grossDetf);
+        _joinReserveVaultShareOnly(legIndex_, vaultShares_);
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
-        // Lazy protocol compound after inventory seigniorage mint (best-effort; never fails mint).
         _tryCompoundProtocolRewards();
         return split_.userDetf;
     }

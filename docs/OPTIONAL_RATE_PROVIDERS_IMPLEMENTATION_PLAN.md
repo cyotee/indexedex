@@ -686,8 +686,8 @@ research/.../AGENT_RESEARCH_REPORT.md            # optional one-liner when shipp
 ### Already done (do not re-scope)
 
 ```text
-contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol
-test/.../crossVersion/** including DualLiquidityLinkedCrossVersionUniswapVault_RatesOn.t.sol
+contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol
+test/.../crossVersion/** including DualLiquidity (removed)CrossVersionUniswapVault_RatesOn.t.sol
 ```
 
 ---

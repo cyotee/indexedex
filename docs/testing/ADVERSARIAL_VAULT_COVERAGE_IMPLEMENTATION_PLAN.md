@@ -181,7 +181,7 @@ forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/
 
 ## 5. Wave 2 — Protocol vaults + SE surface
 
-### 5.1 DualLiquidityLinkedCrossVersionUniswapVault (Wave 2A)
+### 5.1 DualLiquidity (removed)CrossVersionUniswapVault (Wave 2A)
 
 #### 5.1.1 Approach
 

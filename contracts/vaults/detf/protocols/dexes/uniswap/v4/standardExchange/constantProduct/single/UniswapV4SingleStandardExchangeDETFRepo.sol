@@ -32,6 +32,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
     error ReserveBondNftAlreadyWired();
     error ReserveClaimAlreadyWired();
     error ZeroAddress();
+    error BondNotMature(uint256 unlockTime);
 
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("vault.detf.uniswap.v4.se.cp.single.repo")) - 1)
@@ -60,6 +61,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         uint256 userBondedLp;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     /// @dev Core bindings only — thresholds/expansion set via `_initPolicy`.
@@ -77,6 +79,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         uint256 creationPairPerDetfWad;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct PolicyInit {
@@ -114,6 +117,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
+        s.creator = p_.creator;
     }
 
     function _initializePolicy(PolicyInit memory p_) internal {

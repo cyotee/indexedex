@@ -31,22 +31,20 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
         assertTrue(minted_ > 0, "claim minted");
         assertEq(claim_.balanceOf(alice) - claimBefore_, minted_, "claim balance");
 
-        // Redeemer must approve DETF (burnShares pulls claim via onlyOwner path without transfer when owner=DETF).
-        // burnShares(owner=msg.sender) burns from alice without transferFrom when pretransferred=false - it burns sharesOf(owner).
-        uint256 daiBefore_ = dai.balanceOf(alice);
+        uint256 detfBefore_ = IERC20(detf).balanceOf(alice);
         uint256 claimAmt_ = claim_.balanceOf(alice);
         assertTrue(claimAmt_ > 0, "has claim");
 
-        // redeem half of claim to rateAsset0 (dai)
+        // D15: redeem half of claim for DETF only
         uint256 redeemAmt_ = claimAmt_ / 2;
         if (redeemAmt_ == 0) redeemAmt_ = claimAmt_;
 
         vm.prank(alice);
         uint256 out_ =
-            detfBonding.redeemClaim(redeemAmt_, rateAsset0, 0, alice, block.timestamp + 1 hours);
+            detfBonding.redeemClaim(redeemAmt_, IERC20(detf), 0, alice, block.timestamp + 1 hours);
 
-        assertTrue(out_ > 0, "rateAsset payout");
-        assertEq(dai.balanceOf(alice) - daiBefore_, out_, "dai received");
+        assertTrue(out_ > 0, "DETF payout");
+        assertEq(IERC20(detf).balanceOf(alice) - detfBefore_, out_, "DETF received");
         assertTrue(claim_.balanceOf(alice) < claimAmt_, "claim burned");
         _assertNoFreeInventory(detf);
     }
@@ -60,7 +58,7 @@ contract MultiVaultWeightedDetf_Claim_Test is TestBase_MultiVaultWeightedDetf {
         address junk = address(uint160(uint256(keccak256("junkRate"))));
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(0), junk)
+            abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, detfInfo.rebasingClaimToken(), junk)
         );
         detfBonding.redeemClaim(1e18, IERC20(junk), 0, alice, block.timestamp + 1 hours);
     }

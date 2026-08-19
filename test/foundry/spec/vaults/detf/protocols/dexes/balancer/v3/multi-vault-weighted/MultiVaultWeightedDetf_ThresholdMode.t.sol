@@ -215,14 +215,11 @@ contract MultiVaultWeightedDetf_ThresholdMode_Test is TestBase_MultiVaultWeighte
         vm.stopPrank();
 
         assertTrue(userOut_ > 0, "user mint");
-        uint256 usage_ = IVaultFeeOracleQuery(address(indexedexManager)).usageFeeOfVault(openDetf);
+        assertEq(IERC20(openDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
         uint256 seign_ =
             IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
-        if (usage_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(feeTo_) > feeBefore_, "feeTo received");
-        }
         if (seign_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(bondNft_) >= protocolBefore_, "protocol path");
+            assertTrue(IERC20(openDetf).balanceOf(bondNft_) > protocolBefore_, "pot from D27");
         }
         _assertNoFreeInventory(openDetf);
     }

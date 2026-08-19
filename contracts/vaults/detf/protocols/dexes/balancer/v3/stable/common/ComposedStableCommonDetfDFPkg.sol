@@ -76,6 +76,7 @@ interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVau
         uint256 expansionClosureRatePerSecond; // 0 → default
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 }
 
@@ -251,7 +252,15 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
         );
         // Expansion resolve+store in a separate frame to avoid stack-too-deep.
         _initNaturalExpansion(args);
+        ComposedStableCommonDetfRepo._setCreator(args.creator);
+        _tryInitReservedBondNfts(args.bondNftVault, args.creator);
         emit IComposedStableCommonDetfInfo.ThresholdModeSet(args.thresholdMode, mintThreshold_, burnThreshold_);
+    }
+
+    function _tryInitReservedBondNfts(IDETFNFTVault bondVault_, address creator_) private {
+        if (address(bondVault_) == address(0) || address(bondVault_).code.length == 0) return;
+        address feeTo_ = address(IVaultFeeOracleQuery(address(VAULT_REGISTRY_DEPLOYMENT)).feeTo());
+        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) {} catch {}
     }
 
     function _initNaturalExpansion(PkgArgs memory args) internal {

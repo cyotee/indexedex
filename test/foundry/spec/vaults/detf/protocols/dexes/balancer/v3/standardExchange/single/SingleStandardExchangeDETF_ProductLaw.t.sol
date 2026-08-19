@@ -34,7 +34,8 @@ contract SingleStandardExchangeDETF_ProductLaw_Test is TestBase_SingleStandardEx
         uint256 unlock_ = IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId_);
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(SEL_BOND_NOT_MATURE, unlock_));
-        detfBonding.closeBondMature(tokenId_, seShare, 0, alice, block.timestamp + 1 hours);
+        uint256[] memory minOut_ = new uint256[](2);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M3_lockedClaimRewards_stillPays() public {
@@ -72,13 +73,35 @@ contract SingleStandardExchangeDETF_ProductLaw_Test is TestBase_SingleStandardEx
         uint256 protocolId_ = nft_.detfNFTId();
         uint256 protocolBefore_ = nft_.originalSharesOf(protocolId_);
         uint256 detfBefore_ = IERC20(detf).balanceOf(bob);
+        uint256 pending_ = nft_.pendingRewards(tokenId_);
 
         vm.prank(bob);
-        uint256 out_ = detfBonding.closeBondMature(tokenId_, seShare, 0, bob, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "M5 settlement");
-        assertEq(IERC20(detf).balanceOf(bob), detfBefore_, "M5 no extra DETF");
+        uint256[] memory minOut_ = new uint256[](2);
+        uint256[] memory out_ = detfBonding.closeBondMature(tokenId_, minOut_, bob, block.timestamp + 1 hours);
+        uint256 settled_ = out_[0] + out_[1];
+        assertTrue(settled_ > 0, "M5 settlement");
+        // D25 harvests pending DETF to the user; withdrawn reserve DETF is burned.
+        assertApproxEqAbs(IERC20(detf).balanceOf(bob) - detfBefore_, pending_, 1, "M5 pending only");
         assertTrue(nft_.originalSharesOf(protocolId_) >= protocolBefore_, "M5 protocol not drained");
         assertEq(nft_.effectiveSharesOf(protocolId_), nft_.originalSharesOf(protocolId_), "M5 1:1");
+    }
+
+    function test_close_previewMatchesExecute_paysVaultShare() public {
+        _bootstrapViaFirstBond(alice, 1_200e18);
+        uint256 tokenId_ = _bootstrapDetf(detf, bob, 200e18);
+        _warpPastUnlock(detf, tokenId_);
+        uint256[] memory preview_ = detfBonding.previewCloseBondMature(tokenId_);
+        uint256 seBefore_ = seShare.balanceOf(bob);
+        uint256 detfBefore_ = IERC20(detf).balanceOf(bob);
+        uint256 pending_ = IDETFNFTVault(detfInfo.bondNftVault()).pendingRewards(tokenId_);
+        vm.prank(bob);
+        uint256[] memory minOut_ = new uint256[](2);
+        uint256[] memory out_ = detfBonding.closeBondMature(tokenId_, minOut_, bob, block.timestamp + 1 hours);
+        assertEq(out_.length, preview_.length, "L2 length");
+        assertApproxEqAbs(out_[0], preview_[0], 1, "preview[0]");
+        assertApproxEqAbs(out_[1], preview_[1], 1, "preview[1]");
+        assertApproxEqAbs(IERC20(detf).balanceOf(bob) - detfBefore_, pending_, 1, "D25 pending only");
+        assertTrue(seShare.balanceOf(bob) > seBefore_, "D25 vault share basket");
     }
 
     function test_M6_transferredLockedNft_buyerCannotExit() public {
@@ -161,7 +184,8 @@ contract SingleStandardExchangeDETF_ProductLaw_Test is TestBase_SingleStandardEx
         }
         vm.prank(alice);
         vm.expectRevert();
-        detfBonding.closeBondMature(tokenId_, seShare, 0, alice, block.timestamp + 1 hours);
+        uint256[] memory minOut_ = new uint256[](2);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M8f_deploy_zeroPrincipalProtocolNft() public view {

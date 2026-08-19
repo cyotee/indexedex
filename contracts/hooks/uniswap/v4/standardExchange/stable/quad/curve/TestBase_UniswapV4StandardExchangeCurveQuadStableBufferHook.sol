@@ -143,7 +143,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
             erc5267Facet,
             erc2612Facet,
             multiAssetBasicVaultFacet,
-            multiAssetStandardVaultFacet
+            multiAssetStandardVaultFacet,
+            multiStepOwnableFacet
         );
         vm.prank(owner);
         IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
@@ -239,8 +240,18 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
             tokens: toks,
             standardExchanges: ses,
             rateProviders: rps,
-            baseAmp: DEFAULT_BASE_AMP
+            baseAmp: DEFAULT_BASE_AMP,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
+    }
+
+    function _pkgOwnerOnlyLiquidity() internal view virtual returns (bool) {
+        return false;
+    }
+
+    function _pkgOwner() internal view virtual returns (address) {
+        return owner;
     }
 
     function _firstMintEqual(uint256 amountEach) internal returns (uint256 shares) {
@@ -316,6 +327,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         for (uint8 i; i < seCount; ++i) {
             a.standardExchanges[i] = sesAll[i];
         }
+        a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
+        a.owner = _pkgOwner();
     }
 
     function _pkgArgs(
@@ -330,6 +343,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         a.standardExchanges = ses;
         a.rateProviders = rps;
         a.baseAmp = baseAmp;
+        a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
+        a.owner = _pkgOwner();
     }
 
     function _setDexFee(uint256 feeWad) internal {

@@ -44,6 +44,7 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
     }
 
     /// @notice Binding for one immortal hook instance (exactly 4 tokens, ≥1 SE).
@@ -56,6 +57,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
         address[4] standardExchanges;
         address[4] rateProviders;
         uint256 baseAmp;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

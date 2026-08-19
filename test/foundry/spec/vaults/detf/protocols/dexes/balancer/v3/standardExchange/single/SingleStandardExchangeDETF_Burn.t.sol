@@ -72,5 +72,19 @@ contract SingleStandardExchangeDETF_Burn_Test is TestBase_SingleStandardExchange
         assertTrue(out_ > 0, "received vault shares");
         assertEq(seShare.balanceOf(alice) - seBefore_, out_, "share balance");
         assertApproxEqAbs(preview_, out_, 1, "preview ~= execution");
+        assertEq(IERC20(openDetf).balanceOf(alice), detfBal_ - burnAmt_, "D12 burned user DETF");
+    }
+
+    function test_burn_decreasesDetfSupply() public {
+        uint256 detfBal_ = _bootstrapAndMint(alice, 1_000e18, 200e18);
+        uint256 supplyBefore_ = IERC20(openDetf).totalSupply();
+        uint256 burnAmt_ = detfBal_ / 2;
+        vm.startPrank(alice);
+        IERC20(openDetf).approve(openDetf, burnAmt_);
+        openExchangeIn.exchangeIn(
+            IERC20(openDetf), burnAmt_, seShare, 0, alice, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertLt(IERC20(openDetf).totalSupply(), supplyBefore_, "D12 supply down");
     }
 }

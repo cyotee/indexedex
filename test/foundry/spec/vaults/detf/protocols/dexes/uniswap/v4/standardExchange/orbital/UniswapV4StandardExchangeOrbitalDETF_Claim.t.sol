@@ -45,10 +45,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_ClaimTest is TestBase_UniswapV4Sta
         assertEq(principal, shares, "principal == LP originalShares");
         uint256 claimAfter = IRebasingClaimToken(claim).balanceOf(detfUser);
         assertGt(claimAfter, claimBefore, "mintFromNFTSale increased claim balance");
-        assertGt(detfInfo.protocolLp(), protocolLpBefore, "protocol LP received bond principal");
+        assertGt(detfInfo.protocolLp(), protocolLpBefore, "id 0 originalShares received bond principal");
     }
 
-    function test_redeemClaim_toRateAsset() public {
+    function test_redeemClaim_toDetf() public {
         vm.startPrank(detfUser);
         (uint256 tokenId,) =
             detfInfo.bond(IERC20(pair0), 60 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours);
@@ -61,16 +61,15 @@ contract UniswapV4StandardExchangeOrbitalDETF_ClaimTest is TestBase_UniswapV4Sta
         uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
         assertGt(claimBal, 0);
 
-        address rate_ = detfInfo.rateAsset();
-        uint256 before_ = IERC20(rate_).balanceOf(detfUser);
+        uint256 before_ = IERC20(detf).balanceOf(detfUser);
         uint256 dl = block.timestamp + 30 days;
         vm.prank(detfUser);
-        uint256 out_ = detfInfo.redeemClaim(claimBal / 2, IERC20(rate_), 0, detfUser, dl);
-        assertGt(out_, 0, "redeem rateAsset out");
-        assertEq(IERC20(rate_).balanceOf(detfUser) - before_, out_);
+        uint256 out_ = detfInfo.redeemClaim(claimBal / 2, IERC20(detf), 0, detfUser, dl);
+        assertGt(out_, 0, "D15 redeem DETF only");
+        assertEq(IERC20(detf).balanceOf(detfUser) - before_, out_);
     }
 
-    function test_redeemClaim_toOtherPair() public {
+    function test_redeemClaim_pairToken_reverts() public {
         vm.startPrank(detfUser);
         (uint256 tokenId,) =
             detfInfo.bond(IERC20(pair1), 60 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours);
@@ -81,39 +80,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_ClaimTest is TestBase_UniswapV4Sta
 
         address claim = detfInfo.rebasingClaimToken();
         uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
-        // Other pair relative to rateAsset (pair0 default).
-        address other_ = pair1;
-        uint256 before_ = IERC20(other_).balanceOf(detfUser);
         uint256 dl = block.timestamp + 30 days;
         vm.prank(detfUser);
-        uint256 out_ = detfInfo.redeemClaim(claimBal / 3, IERC20(other_), 0, detfUser, dl);
-        assertGt(out_, 0, "redeem other pair out");
-        assertEq(IERC20(other_).balanceOf(detfUser) - before_, out_);
-    }
-
-    function test_redeemClaim_toVaultShare() public {
-        // se0 is vaultShare for pair0 leg.
-        address se = detfInfo.standardExchange0();
-        if (se == address(0)) return;
-
-        vm.startPrank(detfUser);
-        (uint256 tokenId,) =
-            detfInfo.bond(IERC20(pair0), 60 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours);
-        vm.stopPrank();
-        vm.warp(IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId) + 1);
-        vm.prank(detfUser);
-        detfInfo.sellPositionToDetfNft(tokenId, detfUser);
-
-        address claim = detfInfo.rebasingClaimToken();
-        uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
-        uint256 redeemAmt = claimBal / 3;
-        if (redeemAmt == 0) return;
-
-        uint256 dl = block.timestamp + 30 days;
-        vm.prank(detfUser);
-        uint256 shareOut = detfInfo.redeemClaim(redeemAmt, IERC20(se), 0, detfUser, dl);
-        assertGt(shareOut, 0, "redeem vaultShare out");
-        assertGt(IERC20(se).balanceOf(detfUser), 0);
+        vm.expectRevert();
+        detfInfo.redeemClaim(claimBal / 3, IERC20(pair1), 0, detfUser, dl);
     }
 
     function test_depositClaim_pair_mintsClaim() public {

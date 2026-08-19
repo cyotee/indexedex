@@ -379,7 +379,7 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
             boostedPoolBptIn,
             0
         );
-        uint256 expected = grossExpected - ((grossExpected * 10e16) / 2e18);
+        uint256 expected = (grossExpected * (1e18 - 10e16)) / 1e18;
 
         assertEq(routeBUnderlyingOut, routeBUnderlying.previewExchangeIn(commonToken, 1e18, routeBVaultToken));
         assertEq(commonPoolBptOut, routeBCommonPoolRouter.previewExchangeIn(routeBVaultToken, routeBUnderlyingOut, commonPoolBpt));
@@ -403,8 +403,8 @@ contract ComposedStableCommonDetfExchangeIn_Test is Test {
         assertEq(amountOut, previewAmount);
         assertEq(detfToken.balanceOf(user), previewAmount);
         assertEq(detfToken.balanceOf(address(bondNFTVault)), grossMintAmount - previewAmount);
-        assertEq(bondNFTVault.lastProtocolTokenId(), 7);
-        assertEq(bondNFTVault.lastProtocolShares(), 4e18);
+        // D11: live mint does not credit originalShares onto the protocol NFT.
+        assertEq(bondNFTVault.lastProtocolShares(), 0);
         assertEq(address(routeBUnderlying.lastTokenIn()), address(commonToken));
         assertEq(address(routeBCommonPoolRouter.lastTokenIn()), address(routeBVaultToken));
         assertEq(address(reservePoolRouter.lastTokenIn()), address(commonPoolBpt));

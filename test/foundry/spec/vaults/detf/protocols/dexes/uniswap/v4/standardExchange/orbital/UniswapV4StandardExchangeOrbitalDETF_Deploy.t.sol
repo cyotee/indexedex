@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalDETF
@@ -26,6 +27,10 @@ contract UniswapV4StandardExchangeOrbitalDETF_DeployTest is TestBase_UniswapV4St
         assertEq(detfInfo.creationPair0PerDetfWad(), DEFAULT_CREATION);
         assertEq(detfInfo.creationPair1PerDetfWad(), DEFAULT_CREATION);
         assertEq(uint256(detfInfo.thresholdMode()), 0); // Policy
+        IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
+        assertTrue(nft_.reservedBondNftsWired(), "D7 reserved 0/1/2");
+        assertEq(nft_.ownerOf(1), _feeTo(), "id1 feeTo");
+        assertEq(nft_.ownerOf(2), _feeTo(), "id2 D21 creator==0");
     }
 
     function test_deploy_rejects_both_bare() public {

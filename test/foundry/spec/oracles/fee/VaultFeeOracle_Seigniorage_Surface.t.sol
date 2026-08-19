@@ -68,6 +68,14 @@ contract VaultFeeOracle_Seigniorage_Surface_Test is IndexedexTest {
             _contains(funcs_, IVaultFeeOracleManager.setSeigniorageIncentivePercentageOfVault.selector),
             "J1 setSeigniorageIncentivePercentageOfVault"
         );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleManager.setDefaultSeignioragePotShares.selector),
+            "J1 setDefaultSeignioragePotShares"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleManager.setSeignioragePotSharesOfVault.selector),
+            "J1 setSeignioragePotSharesOfVault"
+        );
     }
 
     /// @notice J1: fee-oracle query seigniorage getters are cut into facetFuncs.
@@ -91,6 +99,17 @@ contract VaultFeeOracle_Seigniorage_Surface_Test is IndexedexTest {
         assertTrue(
             _contains(funcs_, IVaultFeeOracleQuery.seigniorageIncentivePercentageOfVaultAndFeeTo.selector),
             "J1 seigniorageIncentivePercentageOfVaultAndFeeTo"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleQuery.defaultSeigniorageFeeToSharePercentage.selector),
+            "J1 defaultSeigniorageFeeToSharePercentage"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleQuery.seigniorageSplitOfVault.selector), "J1 seigniorageSplitOfVault"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleQuery.bondTermsAndSeigniorageOfVault.selector),
+            "J1 bondTermsAndSeigniorageOfVault"
         );
     }
 

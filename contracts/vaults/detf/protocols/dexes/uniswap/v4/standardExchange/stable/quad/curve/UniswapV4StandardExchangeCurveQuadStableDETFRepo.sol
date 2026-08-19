@@ -76,6 +76,7 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         mapping(uint256 tokenId => address) capitalTokenOf;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct CoreInit {
@@ -95,6 +96,7 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         uint256 feeRecipientNftId;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct PolicyInit {
@@ -140,6 +142,7 @@ library UniswapV4StandardExchangeCurveQuadStableDETFRepo {
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
+        s.creator = p_.creator;
     }
 
     function _initializePolicy(PolicyInit memory p_) internal {

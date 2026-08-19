@@ -6,7 +6,6 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
@@ -52,9 +51,9 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         if (recipient_ == address(0)) recipient_ = msg.sender;
         _requireBurnTokenOut(tokenOut_);
 
+        _realizeExpansionIfNeeded();
         uint256 pulled_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
-        uint256 burnPrincipal_ = _takeBurnUsageFee(pulled_);
-        BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
+        BurnExecResidual memory res = _burnAndRemoveNftLp(pulled_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
         _syncAllExpectedHoldReserves();
     }
@@ -65,29 +64,20 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         }
     }
 
-    function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {
-        (uint256 afterFee_, uint256 feeTo_) = _splitBurnUsageFee(detfIn_);
-        if (feeTo_ > 0) {
-            IERC20(address(this)).safeTransfer(_feeTo(), feeTo_);
-        }
-        burnPrincipal_ = afterFee_;
-        if (burnPrincipal_ == 0) revert Repo.ZeroAmount();
-    }
-
-    function _burnAndRemoveProtocolLp(uint256 burnPrincipal_)
+    function _burnAndRemoveNftLp(uint256 burnPrincipal_)
         private
         returns (BurnExecResidual memory res)
     {
-        // Does NOT call _realizeExpansionIfNeeded.
-        uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
-        uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0) revert Repo.EmptyProtocolLp();
+        if (burnPrincipal_ == 0) revert Repo.ZeroAmount();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        uint256 nftLp_ = _nftLp();
+        if (nftLp_ == 0 || supply_ == 0) revert Repo.EmptyProtocolLp();
 
-        uint256 lpOut_ = burnPrincipal_ * protocolLp_ / effectiveSupply_;
+        uint256 lpOut_ = burnPrincipal_ * nftLp_ / supply_;
         if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
 
         _burnDetf(address(this), burnPrincipal_);
-        _ensureProtocolLpOnDiamond(lpOut_);
+        _pullBondLp(lpOut_);
         (res.aDetf, res.a0, res.a1) = _removeLiquidity(lpOut_, address(this));
     }
 
@@ -115,17 +105,6 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
             revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
         }
     }
-
-    function _splitBurnUsageFee(uint256 detfIn_)
-        internal
-        view
-        returns (uint256 afterFee_, uint256 feeTo_)
-    {
-        return DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
-    }
-
-
-
 
     /// @dev Pair residual after preview-remove (DETF leg assumed redeposited).
     struct BurnPreviewResidual {
@@ -171,13 +150,12 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         r.p0 = address(s.pairToken0);
         r.p1 = address(s.pairToken1);
 
-        (uint256 afterFee_,) = _splitBurnUsageFee(detfIn_);
-        if (afterFee_ == 0) return r;
+        if (detfIn_ == 0) return r;
 
         uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
-        uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0) return r;
-        r.lpOut = afterFee_ * protocolLp_ / effectiveSupply_;
+        uint256 nftLp_ = _nftLp();
+        if (nftLp_ == 0 || effectiveSupply_ == 0) return r;
+        r.lpOut = detfIn_ * nftLp_ / effectiveSupply_;
         if (r.lpOut == 0) return r;
 
         r.hookAddr = s.reserveHook;

@@ -70,29 +70,25 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         uint256 claimMinted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(claimMinted_ > 0, "claim minted");
 
-        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
-        uint256 claimBal_ = claim_.balanceOf(alice);
+        uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(alice);
         assertTrue(claimBal_ > 0, "claim bal");
-
-        // Redeem half to rateAsset[0], half to rateAsset[1] when both rated.
-        uint256 half_ = claimBal_ / 10;
-        if (half_ == 0) half_ = claimBal_;
-
-        uint256 before0_ = IERC20(ras_[0]).balanceOf(alice);
-        vm.prank(alice);
-        uint256 out0_ = bonding_.redeemClaim(half_, IERC20(ras_[0]), 0, alice, block.timestamp + 1 hours);
-        assertTrue(out0_ > 0, "redeem to rateAsset0");
-        assertEq(IERC20(ras_[0]).balanceOf(alice) - before0_, out0_, "rateAsset0 received");
-
-        uint256 remain_ = claim_.balanceOf(alice) / 10;
-        if (remain_ > 0 && ras_[1] != address(0)) {
-            uint256 before1_ = IERC20(ras_[1]).balanceOf(alice);
-            vm.prank(alice);
-            uint256 out1_ = bonding_.redeemClaim(remain_, IERC20(ras_[1]), 0, alice, block.timestamp + 1 hours);
-            assertTrue(out1_ > 0, "redeem to rateAsset1");
-            assertEq(IERC20(ras_[1]).balanceOf(alice) - before1_, out1_, "rateAsset1 received");
-        }
+        uint256 redeemAmt_ = claimBal_ / 10;
+        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
+        _redeemDetfAndAssert(bonding_, instance_, alice, redeemAmt_);
         _assertNoFreeInventory(instance_);
+    }
+
+    function _redeemDetfAndAssert(
+        IMultiVaultWeightedDetfBonding bonding_,
+        address instance_,
+        address user_,
+        uint256 redeemAmt_
+    ) private {
+        uint256 before_ = IERC20(instance_).balanceOf(user_);
+        vm.prank(user_);
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, user_, block.timestamp + 1 hours);
+        assertTrue(out_ > 0, "redeem DETF");
+        assertEq(IERC20(instance_).balanceOf(user_) - before_, out_, "DETF received");
     }
 
     function test_n2_sameRateAsset_twoDistinctLegs_claimRedeem() public {
@@ -119,11 +115,11 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(alice);
         uint256 redeemAmt_ = claimBal_ / 10;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 before_ = dai.balanceOf(alice);
+        uint256 before_ = IERC20(instance_).balanceOf(alice);
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, dai, 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "redeem same rateAsset");
-        assertEq(dai.balanceOf(alice) - before_, out_, "dai payout");
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
+        assertTrue(out_ > 0, "redeem DETF");
+        assertEq(IERC20(instance_).balanceOf(alice) - before_, out_, "DETF payout");
         _assertNoFreeInventory(instance_);
     }
 

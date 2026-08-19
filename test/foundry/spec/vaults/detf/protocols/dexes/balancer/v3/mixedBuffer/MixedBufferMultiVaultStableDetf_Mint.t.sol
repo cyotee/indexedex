@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     TestBase_MixedBufferMultiVaultStableDetf
@@ -29,6 +30,15 @@ contract MixedBufferMultiVaultStableDetf_Mint_Test is TestBase_MixedBufferMultiV
         assertTrue(out_ > 0, "minted");
         assertEq(IERC20(detf).balanceOf(bob), out_, "user balance");
         _assertNoFreeInventory(detf);
+    }
+
+    function test_liveMint_doesNotJoinDetf() public {
+        address pool_ = detfInfo.reservePool();
+        uint256 detfIdx_ = detfInfo.detfIndex();
+        (,, uint256[] memory before_,) = IVault(address(vault)).getPoolTokenInfo(pool_);
+        _mintDetfFromBuffer(detf, bob, 20e18);
+        (,, uint256[] memory after_,) = IVault(address(vault)).getPoolTokenInfo(pool_);
+        assertEq(after_[detfIdx_], before_[detfIdx_], "D11 no DETF join");
     }
 
     function test_mint_from_vault_share() public {

@@ -91,10 +91,11 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
     /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
     /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
     ///
-    /// # PkgArgs field order (Stage 08)
+    /// # PkgArgs field order (Stage 08 + D26)
     /// 1 name, 2 symbol, 3 bufferToken, 4 standardExchangeVaults, 5 vaultShareRateProviders,
     /// 6 amplificationParameter, 7 mintThreshold, 8 burnThreshold, 9 thresholdMode,
-    /// 10 expansionClosureRatePerSecond, 11 expansionCatchUpMaxSeconds, 12 expansionCatchUpCapBps
+    /// 10 expansionClosureRatePerSecond, 11 expansionCatchUpMaxSeconds, 12 expansionCatchUpCapBps,
+    /// 13 creator (D26; 0 → feeTo owns id 2, D21)
     struct PkgArgs {
         string name;
         string symbol;
@@ -108,6 +109,7 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
         uint256 expansionClosureRatePerSecond; // 0 → default
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -137,6 +139,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         uint256 expansionClosureRatePerSecond;
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
+        address creator;
     }
 
     IFacet immutable ERC20_FACET;
@@ -325,6 +328,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         cfg.expansionClosureRatePerSecond = expRate_;
         cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
         cfg.expansionCatchUpCapBps = expCapBps_;
+        cfg.creator = args.creator;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.standardExchangeVaults[i];
             // Vault diamond is the share ERC-20 for Standard Exchange vaults.
@@ -426,10 +430,16 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     }
 
     function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
+        address feeTo_ = address(FEE_ORACLE.feeTo());
+        address creator_ = _deployConfig().creator;
+        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
             detfNftId_ = id_;
         } catch {
-            detfNftId_ = 0;
+            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
+                detfNftId_ = id2_;
+            } catch {
+                detfNftId_ = 0;
+            }
         }
     }
 

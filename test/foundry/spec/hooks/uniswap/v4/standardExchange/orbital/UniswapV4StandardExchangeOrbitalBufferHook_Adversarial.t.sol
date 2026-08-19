@@ -386,7 +386,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             rp1: address(0),
             rp2: address(0),
             tickSpacing: 0,
-            sqrtPriceX96: 0
+            sqrtPriceX96: 0,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
         // Need package that posts to pm2 — deploy new package is heavy; use existing hookPkg with new pm
         // Factory package is already deployed; deployHook with pm2

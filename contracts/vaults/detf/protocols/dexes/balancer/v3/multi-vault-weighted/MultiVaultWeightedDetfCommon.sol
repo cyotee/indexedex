@@ -26,7 +26,7 @@ import {
     BalancerV3WeightedPoolQuote
 } from "@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol";
 import {DETFThresholdPolicy, ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
@@ -35,6 +35,13 @@ import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNat
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
@@ -70,6 +77,19 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
         uint256 unlock_ = MultiVaultWeightedDetfRepo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
         if (block.timestamp < unlock_) {
             revert MultiVaultWeightedDetfRepo.BondNotMature(unlock_);
+        }
+    }
+
+    function _requireNotStandingRewardNft(uint256 tokenId_) internal pure {
+        if (tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID) {
+            revert IDetfErrors.DETFNFTRestricted(tokenId_);
+        }
+    }
+
+    /// @dev First bond cannot credit pre-live unbooked residual (A0).
+    function _rejectPretransferredFirstBond(bool pretransferred_, uint256 claimed_) internal pure {
+        if (pretransferred_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(claimed_, 0);
         }
     }
 
@@ -222,11 +242,90 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
     function _splitMintedDetf(uint256 gross_) internal view returns (MintSplit memory split_) {
         split_.grossDetf = gross_;
         if (gross_ == 0) return split_;
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
-        split_.feeToDetf = feeTo_;
-        uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.inventoryDetf = afterFee_.mulDown(halfInc_);
-        split_.userDetf = afterFee_ - split_.inventoryDetf;
+        (uint256 user_, uint256 pot_) = DETFMintSplitLib._splitLiveGross(gross_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _splitBondDetf(uint256 joinDetf_) internal view returns (MintSplit memory split_) {
+        split_.grossDetf = joinDetf_;
+        if (joinDetf_ == 0) return split_;
+        (uint256 user_, uint256 pot_,) = DETFMintSplitLib._splitBond(joinDetf_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book uses family weights.
+    function _quoteBondJoinDetf(uint256 legIndex_, uint256 vaultShares_) internal view returns (uint256 detfOut_) {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        if (!s.isReserveLive || IERC20(s.reservePool).totalSupply() == 0) {
+            if (s.vaultWeights[legIndex_] == 0) return vaultShares_;
+            return vaultShares_.mulDown(s.weightDetf).divDown(s.vaultWeights[legIndex_]);
+        }
+        IVault bal_ = BalancerV3VaultAwareRepo._balancerV3Vault();
+        (,, uint256[] memory balancesRaw_,) = bal_.getPoolTokenInfo(s.reservePool);
+        uint256 vaultBal_ = balancesRaw_[s.vaultShareIndexes[legIndex_]];
+        uint256 detfBal_ = balancesRaw_[s.detfIndex];
+        if (vaultBal_ == 0) {
+            if (s.vaultWeights[legIndex_] == 0) return vaultShares_;
+            return vaultShares_.mulDown(s.weightDetf).divDown(s.vaultWeights[legIndex_]);
+        }
+        detfOut_ = vaultShares_ * detfBal_ / vaultBal_;
+        if (detfOut_ == 0) detfOut_ = vaultShares_;
+    }
+
+    /// @notice Empty first-bond G from family weights vs the funded vault-share basket.
+    function _quoteBondJoinDetfAllLegs(uint256[] memory amounts_) internal view returns (uint256 detfOut_) {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        uint256 shareSum_;
+        uint256 weightSum_;
+        for (uint256 i; i < s.vaultCount; ++i) {
+            shareSum_ += amounts_[i];
+            weightSum_ += s.vaultWeights[i];
+        }
+        if (weightSum_ == 0) return shareSum_;
+        detfOut_ = shareSum_.mulDown(s.weightDetf).divDown(weightSum_);
+        if (detfOut_ == 0) detfOut_ = shareSum_;
+    }
+
+    /// @notice Proportional DETF leg of a BPT exit (preview; DETF slot stays 0 on D25 close).
+    function _previewProportionalDetf(uint256 bptIn_) internal view returns (uint256 detfOut_) {
+        if (bptIn_ == 0) return 0;
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return 0;
+        IVault bal_ = _reserveVault();
+        (,, uint256[] memory balancesRaw_,) = bal_.getPoolTokenInfo(s.reservePool);
+        detfOut_ = balancesRaw_[s.detfIndex] * bptIn_ / bptSupply_;
+    }
+
+    function _previewProportionalAmounts(uint256 bptIn_) internal view returns (uint256[] memory amountsOut_) {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        uint256 n_ = uint256(s.vaultCount) + 1;
+        amountsOut_ = new uint256[](n_);
+        if (bptIn_ == 0) return amountsOut_;
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return amountsOut_;
+        IVault bal_ = _reserveVault();
+        (,, uint256[] memory balancesRaw_,) = bal_.getPoolTokenInfo(s.reservePool);
+        for (uint256 i; i < s.vaultCount; ++i) {
+            uint256 idx_ = s.vaultShareIndexes[i];
+            amountsOut_[idx_] = balancesRaw_[idx_] * bptIn_ / bptSupply_;
+        }
+    }
+
+    function _topUpFeeCreatorShares() internal {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return;
+        (, uint256 f_, uint256 c_) =
+            IVaultFeeOracleQuery(address(StandardVaultRepo._feeOracle())).seigniorageSplitOfVault(address(this));
+        DETFBondLifecycleLib._topUpFeeCreatorShares(s.bondNftVault, f_, c_);
+    }
+
+    function _reserveTokenCount() internal view returns (uint256) {
+        return uint256(MultiVaultWeightedDetfRepo._layoutStruct().vaultCount) + 1;
     }
 
     function _toLiveScaled18(uint256 raw_, TokenInfo memory info_) internal view returns (uint256) {
@@ -463,6 +562,35 @@ abstract contract MultiVaultWeightedDetfCommon is ReentrancyLockModifiers {
             protocolId_,
             bptOut_
         );
+        _topUpFeeCreatorShares();
+        _syncAllExpectedHoldReserves();
+    }
+
+    /// @dev Join DETF + every vault-share amount (live pool). Empty pool uses `_initializeReserve`.
+    function _joinReserveDetfAndShares(uint256 detfAmount_, uint256[] memory vaultShareAmounts_)
+        internal
+        returns (uint256 bptOut_)
+    {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        if (IERC20(s.reservePool).totalSupply() == 0) {
+            return _initializeReserve(detfAmount_, vaultShareAmounts_);
+        }
+        uint256 n_ = _reserveVault().getCurrentLiveBalances(s.reservePool).length;
+        uint256[] memory amountsIn_ = new uint256[](n_);
+        bool any_;
+        if (detfAmount_ > 0) {
+            amountsIn_[s.detfIndex] = detfAmount_;
+            IERC20(address(this)).safeTransfer(address(_reserveVault()), detfAmount_);
+            any_ = true;
+        }
+        for (uint256 i; i < s.vaultCount; ++i) {
+            if (vaultShareAmounts_[i] == 0) continue;
+            amountsIn_[s.vaultShareIndexes[i]] = vaultShareAmounts_[i];
+            s.vaultShares[i].safeTransfer(address(_reserveVault()), vaultShareAmounts_[i]);
+            any_ = true;
+        }
+        if (!any_) return 0;
+        bptOut_ = _reserveRouter().prepayAddLiquidityUnbalanced(s.reservePool, amountsIn_, 0, "");
     }
 
     /// @dev Reserve-delta pull (L-DETF-LOCAL-PUSH). `pretransferred=true`: credit claimed only when

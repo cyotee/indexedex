@@ -38,13 +38,12 @@ contract UniswapV4StandardExchangeOrbitalDETF_BondTest is TestBase_UniswapV4Stan
         );
         assertEq(detfInfo.capitalToken0Of(tokenId), pair0);
 
-        // originalShares = LP principal; effectiveShares = rateAsset mid base * lock bonus (!= LP unless 1:1).
+        // D10: originalShares = LP; lock bonus applies only to effectiveShares.
         IDETFNFTVault nft = IDETFNFTVault(detfInfo.bondNftVault());
         assertEq(nft.originalSharesOf(tokenId), shares, "originalShares is LP principal");
         uint256 eff = nft.effectiveSharesOf(tokenId);
         assertGt(eff, 0, "effectiveShares set");
-        // With lock bonus, effective >= base; mid path must not silently equal 0 discard.
-        assertTrue(eff != 0);
+        assertGe(eff, shares, "lock bonus on effective only");
     }
 
     function test_preMaturity_sell_reverts() public {
@@ -63,7 +62,7 @@ contract UniswapV4StandardExchangeOrbitalDETF_BondTest is TestBase_UniswapV4Stan
             IERC20(pair1), 20 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
         );
         vm.expectRevert();
-        detfInfo.closeBondMature(tokenId, detfUser);
+        detfInfo.closeBondMature(tokenId, _minOut3(), detfUser, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -94,11 +93,14 @@ contract UniswapV4StandardExchangeOrbitalDETF_BondTest is TestBase_UniswapV4Stan
         vm.warp(unlock + 1);
 
         uint256 before0 = IERC20(pair0).balanceOf(detfUser);
+        uint256 before1 = IERC20(pair1).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        (uint256 a0, uint256 a1) = detfInfo.closeBondMature(tokenId, detfUser);
+        uint256[] memory out_ = detfInfo.closeBondMature(tokenId, _minOut3(), detfUser, block.timestamp + 1 hours);
         vm.stopPrank();
-        assertTrue(a0 + a1 > 0);
-        assertGe(IERC20(pair0).balanceOf(detfUser), before0);
+        assertTrue(out_[1] + out_[2] > 0);
+        assertEq(out_[0], 0, "D25 DETF slot burned");
+        assertEq(IERC20(pair0).balanceOf(detfUser) - before0, out_[1]);
+        assertEq(IERC20(pair1).balanceOf(detfUser) - before1, out_[2]);
     }
 
     function test_postMaturity_close_dual_residual_composition() public {
@@ -129,15 +131,14 @@ contract UniswapV4StandardExchangeOrbitalDETF_BondTest is TestBase_UniswapV4Stan
         uint256 b0 = IERC20(pair0).balanceOf(detfUser);
         uint256 b1 = IERC20(pair1).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        (uint256 a0, uint256 a1) = detfInfo.closeBondMature(tokenId, detfUser);
+        uint256[] memory out_ = detfInfo.closeBondMature(tokenId, _minOut3(), detfUser, block.timestamp + 1 hours);
         vm.stopPrank();
-        // Dual pays residual composition of both pairs.
-        assertGt(a0, 0, "dual residual pair0");
-        assertGt(a1, 0, "dual residual pair1");
-        assertEq(IERC20(pair0).balanceOf(detfUser) - b0, a0);
-        assertEq(IERC20(pair1).balanceOf(detfUser) - b1, a1);
-        // Not forced to open notionals 30e18 each.
-        assertTrue(a0 != 30 ether || a1 != 30 ether, "residual != fixed open notionals");
+        assertEq(out_[0], 0, "D25 DETF slot burned");
+        assertGt(out_[1], 0, "dual residual pair0");
+        assertGt(out_[2], 0, "dual residual pair1");
+        assertEq(IERC20(pair0).balanceOf(detfUser) - b0, out_[1]);
+        assertEq(IERC20(pair1).balanceOf(detfUser) - b1, out_[2]);
+        assertTrue(out_[1] != 30 ether || out_[2] != 30 ether, "residual != fixed open notionals");
     }
 
     function test_claimRewards_free_detf_while_locked() public {

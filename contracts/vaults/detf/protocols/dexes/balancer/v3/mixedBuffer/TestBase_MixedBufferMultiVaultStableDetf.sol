@@ -457,6 +457,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         args.mintThreshold = mintTh_;
         args.burnThreshold = burnTh_;
         args.thresholdMode = mode_;
+        args.creator = address(0);
     }
 
     function _deployWithArgs(IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args)
@@ -678,6 +679,28 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
 
     function _feeTo() internal view returns (address) {
         return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
+        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+    }
+
+    function _reserveTokenCount(address instance_) internal view returns (uint256) {
+        return IMixedBufferMultiVaultStableDetfInfo(instance_).vaultCount() + 2;
+    }
+
+    function _closeMinAmountsOut(address instance_) internal view returns (uint256[] memory minOut_) {
+        minOut_ = new uint256[](_reserveTokenCount(instance_));
     }
 
     /* ---------------------------------------------------------------------- */

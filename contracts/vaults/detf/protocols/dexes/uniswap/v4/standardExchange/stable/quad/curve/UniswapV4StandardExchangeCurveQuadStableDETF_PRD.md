@@ -6,6 +6,8 @@
 
 ## Status
 
+**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+
 **LOCKED v0.4** — co-design Q1–Q23 closed (2026-08-12). Product LOCK stamped 2026-08-12. Implementation plan authorized.
 
 **How Qs closed:** Two AskQuestion rounds. Round 1 (Q1–Q17): per-route + all-legs-rich; prop-remove only; close = purchase token; exact-out iff closed-form; path `stable/quad/curve/`; like-kind only. Round 2 (Q18–Q23): first-bond close = pick one of three funded pairs; exact DETF-out mint + exact tokenOut burn; exact-out still prop-remove + redeposit; expansion uses **min S_spot_k**; like-kind is operator convention; claim redeem full matrix.

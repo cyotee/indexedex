@@ -30,6 +30,24 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         openEx = IStandardExchangeIn(openDetf);
     }
 
+    function test_mint_doesNotIncreaseReserveDetf_orFeeTo() public {
+        _goLiveViaBptBond(openDetf, alice, 2_000e18);
+        uint256 reserveDetfBefore_ = IERC20(openDetf).balanceOf(address(vault));
+        uint256 feeToBefore_ = IERC20(openDetf).balanceOf(_feeTo());
+
+        uint256 seShares_ = _fundSeShares0(bob, 200e18);
+        vm.startPrank(bob);
+        seShare0.approve(openDetf, seShares_);
+        uint256 out_ = openEx.exchangeIn(
+            seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        assertTrue(out_ > 0, "minted");
+        assertEq(IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_, "D11 no DETF join");
+        assertEq(IERC20(openDetf).balanceOf(_feeTo()), feeToBefore_, "D14 no feeTo mint");
+    }
+
     function test_mint_previewEqualsExecution() public {
         _goLiveViaBptBond(openDetf, alice, 1_000e18);
         assertTrue(openInfo.isMintingAllowed(), "mint open");

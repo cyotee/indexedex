@@ -99,7 +99,8 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 1e18, 1e18));
@@ -123,7 +124,8 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             thresholdMode: ThresholdMode.Open,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 0.5e18, 0.6e18));
@@ -245,9 +247,8 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
         uint256 usage_ = IVaultFeeOracleQuery(address(indexedexManager)).usageFeeOfVault(openDetf);
         uint256 seign_ =
             IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
-        if (usage_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(feeTo_) > feeBefore_, "feeTo received");
-        }
+        usage_;
+        assertEq(IERC20(openDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
         if (seign_ > 0) {
             assertTrue(IERC20(openDetf).balanceOf(bondNft_) >= protocolBefore_, "protocol path");
         }
@@ -315,7 +316,8 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
             thresholdMode: ThresholdMode.Open,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         address customOpen_ = indexedexManager.deployVault(

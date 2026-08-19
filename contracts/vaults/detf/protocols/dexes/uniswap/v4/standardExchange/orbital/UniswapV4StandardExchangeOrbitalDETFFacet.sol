@@ -36,18 +36,21 @@ contract UniswapV4StandardExchangeOrbitalDETFFacet is IFacet, UniswapV4StandardE
     }
 
     function _allFuncs() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](12);
+        f = new bytes4[](15);
         f[0] = bytes4(keccak256("bond(address,uint256,address,uint256,uint256,address,bool,uint256)"));
         f[1] = bytes4(keccak256("bond(address,uint256,uint256,address,bool,uint256)"));
         f[2] = IUniswapV4StandardExchangeOrbitalDETF.sellPositionToDetfNft.selector;
         f[3] = IUniswapV4StandardExchangeOrbitalDETF.closeBondMature.selector;
-        f[4] = IUniswapV4StandardExchangeOrbitalDETF.claimRewards.selector;
-        f[5] = IUniswapV4StandardExchangeOrbitalDETF.depositClaim.selector;
-        f[6] = IUniswapV4StandardExchangeOrbitalDETF.redeemClaim.selector;
-        f[7] = IUniswapV4StandardExchangeOrbitalDETF.claimLiquidity.selector;
-        f[8] = IUniswapV4StandardExchangeOrbitalDETF.compoundProtocolRewards.selector;
-        f[9] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
-        f[10] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveBondNft.selector;
-        f[11] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveClaim.selector;
+        f[4] = IUniswapV4StandardExchangeOrbitalDETF.previewCloseBondMature.selector;
+        f[5] = IUniswapV4StandardExchangeOrbitalDETF.claimRewards.selector;
+        f[6] = IUniswapV4StandardExchangeOrbitalDETF.depositClaim.selector;
+        f[7] = IUniswapV4StandardExchangeOrbitalDETF.redeemClaim.selector;
+        f[8] = IUniswapV4StandardExchangeOrbitalDETF.buyClaim.selector;
+        f[9] = IUniswapV4StandardExchangeOrbitalDETF.previewBuyClaim.selector;
+        f[10] = IUniswapV4StandardExchangeOrbitalDETF.claimLiquidity.selector;
+        f[11] = IUniswapV4StandardExchangeOrbitalDETF.compoundProtocolRewards.selector;
+        f[12] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        f[13] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveBondNft.selector;
+        f[14] = IUniswapV4StandardExchangeOrbitalDETF.completeReserveClaim.selector;
     }
 }

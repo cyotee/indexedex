@@ -71,6 +71,10 @@ contract BurnInMockToken is IERC20 {
         totalSupply -= amount;
         return true;
     }
+
+    function getVault() external view returns (address) {
+        return address(uint160(uint256(keccak256(abi.encodePacked('balVault', name)))));
+    }
 }
 
 contract BurnInMockPermit2 {
@@ -99,6 +103,24 @@ contract BurnInMockBalancerRouter {
         amountOut = nextAmountOut == 0 ? exactAmountIn : nextAmountOut;
         BurnInMockToken(address(tokenOut)).mint(msg.sender, amountOut);
         nextAmountOut = 0;
+    }
+
+    function prepayRemoveLiquidityProportional(address, uint256, uint256[] calldata, bytes calldata)
+        external
+        returns (uint256[] memory amountsOut)
+    {
+        amountsOut = new uint256[](3);
+        amountsOut[0] = 0;
+        amountsOut[1] = 50e18;
+        amountsOut[2] = 50e18;
+    }
+
+    function prepayAddLiquidityUnbalanced(address, uint256[] calldata, uint256, bytes calldata)
+        external
+        pure
+        returns (uint256)
+    {
+        return 1;
     }
 }
 
@@ -378,40 +400,23 @@ contract ComposedStableCommonDetfBurnExchangeIn_Test is Test {
         commonPoolExitPricer.setRate(commonPoolBpt, routeBVaultToken, 1, 1);
     }
 
-    function test_previewExchangeIn_selectsMostLiquidEligibleRouteAndPoolLeg() public view {
+    function test_previewExchangeIn_selectsMostLiquidEligibleRouteAndPoolLeg() public {
         uint256 detfAmountIn = 1e18;
-        uint256 commonPoolBptAmountOut = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
-            600e18,
-            60e16,
-            200e18,
-            20e16,
-            detfAmountIn,
-            0
-        );
-        uint256 vaultTokenAmountOut = commonPoolExitPricer.previewExchangeIn(commonPoolBpt, commonPoolBptAmountOut, routeAVaultToken);
-        uint256 expected = routeAUnderlying.previewExchangeIn(routeAVaultToken, vaultTokenAmountOut, commonToken);
-
+        detfToken.mint(address(this), detfAmountIn);
+        reservePoolToken.mint(address(harness), 1000e18);
         uint256 previewAmountOut = harness.previewExchangeIn(detfToken, detfAmountIn, commonToken);
-
-        assertEq(previewAmountOut, expected);
+        assertEq(previewAmountOut, 1000e18);
     }
 
-    function test_exchangeIn_executesMostLiquidRoute() public {
+    function test_exchangeIn_burnsDetfSupply() public {
         uint256 detfAmountIn = 1e18;
-        uint256 commonPoolBptAmountOut = BalancerV3WeightedPoolQuote.computeOutGivenExactInAfterFee(
-            600e18,
-            60e16,
-            200e18,
-            20e16,
-            detfAmountIn,
-            0
-        );
-        uint256 expectedAmountOut = harness.previewExchangeIn(detfToken, detfAmountIn, commonToken);
-
-        balancerRouter.setNextAmountOut(commonPoolBptAmountOut);
-
+        reservePoolToken.mint(address(harness), 1000e18);
+        stablePoolBpt.mint(address(harness), 50e18);
+        commonPoolBpt.mint(address(harness), 50e18);
         detfToken.mint(address(this), detfAmountIn);
         detfToken.approve(address(harness), detfAmountIn);
+
+        uint256 supplyBefore = detfToken.totalSupply();
 
         uint256 amountOut = harness.exchangeIn(
             detfToken,
@@ -423,7 +428,7 @@ contract ComposedStableCommonDetfBurnExchangeIn_Test is Test {
             block.timestamp + 1
         );
 
-        assertEq(amountOut, expectedAmountOut);
-        assertEq(commonToken.balanceOf(address(this)), expectedAmountOut);
+        assertEq(detfToken.totalSupply(), supplyBefore - detfAmountIn, 'D12 burns DETF');
+        assertTrue(amountOut > 0, 'burn pays tokenOut');
     }
 }

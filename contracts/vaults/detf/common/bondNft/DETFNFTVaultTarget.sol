@@ -21,6 +21,11 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID,
+    DETF_PROTOCOL_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
 import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
 import {DETFNFTVaultService} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol";
@@ -109,15 +114,69 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
 
     /// @notice Mints and records the protocol-owned NFT (once).
     function initializeDETFNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
+        tokenId = _initializeProtocolNft();
+    }
+
+    /// @notice D7: mint ids 0, 1, 2 (protocol / feeTo / creator) before any user bond.
+    function initializeReservedBondNfts(address feeTo, address creator)
+        external
+        onlyOwner
+        nonReentrant
+        returns (uint256 protocolId)
+    {
+        protocolId = _initializeReservedBondNfts(feeTo, creator);
+    }
+
+    function reservedBondNftsWired() external view returns (bool) {
+        return DETFNFTVaultRepo._reservedIdsWired();
+    }
+
+    function _initializeProtocolNft() private returns (uint256 tokenId) {
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
-
-        tokenId = DETFNFTVaultRepo._detfNFTId(layoutStruct);
-        if (tokenId != 0 && ERC721Repo._ownerOf(tokenId) != address(0)) {
-            return tokenId;
+        if (layoutStruct.protocolNftInitialized) {
+            return layoutStruct.detfNFTId;
         }
-
         tokenId = ERC721Repo._mint(address(this));
         DETFNFTVaultRepo._setDETFNFTId(layoutStruct, tokenId);
+        DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+    }
+
+    function _initializeReservedBondNfts(address feeTo_, address creator_) private returns (uint256 protocolId) {
+        if (feeTo_ == address(0)) revert FeeToZero();
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        if (layoutStruct.reservedIdsWired) {
+            return layoutStruct.detfNFTId;
+        }
+
+        ERC721Repo.Storage storage erc721_ = ERC721Repo._layoutStruct();
+        if (!layoutStruct.protocolNftInitialized) {
+            if (erc721_.nextTokenId != DETF_PROTOCOL_BOND_NFT_ID) {
+                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+            }
+            protocolId = ERC721Repo._mint(address(this));
+            DETFNFTVaultRepo._setDETFNFTId(layoutStruct, protocolId);
+            DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+        } else {
+            protocolId = layoutStruct.detfNFTId;
+            if (protocolId != DETF_PROTOCOL_BOND_NFT_ID) {
+                revert ReservedBondNftIdsUnavailable(protocolId);
+            }
+        }
+
+        if (ERC721Repo._ownerOf(DETF_FEE_TO_BOND_NFT_ID) == address(0)) {
+            if (erc721_.nextTokenId != DETF_FEE_TO_BOND_NFT_ID) {
+                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+            }
+            ERC721Repo._mint(feeTo_);
+        }
+        address creatorOwner_ = creator_ == address(0) ? feeTo_ : creator_;
+        if (ERC721Repo._ownerOf(DETF_CREATOR_BOND_NFT_ID) == address(0)) {
+            if (erc721_.nextTokenId != DETF_CREATOR_BOND_NFT_ID) {
+                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+            }
+            ERC721Repo._mint(creatorOwner_);
+        }
+        DETFNFTVaultRepo._setReservedIdsWired(layoutStruct, true);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -139,8 +198,8 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
 
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
-        // Cannot redeem protocol NFT normally
-        if (_isDETFNFT(tokenId)) {
+        // Cannot redeem protocol NFT or standing reward ids 1–2 (D7 / D17).
+        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
             revert DETFNFTRestricted(tokenId);
         }
 
@@ -171,6 +230,35 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);
 
         emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
+    }
+
+    /// @notice D25: harvest + remove + burn a mature user bond. Does not credit id 0.
+    function retireMaturePosition(uint256 tokenId, address rewardsRecipient)
+        external
+        onlyOwner
+        nonReentrant
+        returns (uint256 originalShares, uint256 rewardsClaimed)
+    {
+        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
+            revert DETFNFTRestricted(tokenId);
+        }
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        address owner_ = ERC721Repo._ownerOf(tokenId);
+        if (owner_ == address(0)) revert PositionNotFound(tokenId);
+        {
+            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+            if (block.timestamp < unlockTime) {
+                revert BondNotMature(unlockTime);
+            }
+        }
+        if (rewardsRecipient == address(0)) rewardsRecipient = owner_;
+        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);
+        originalShares = layoutStruct.originalSharesOf[tokenId];
+        if (originalShares == 0) revert PositionNotFound(tokenId);
+        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
+        ERC721Repo._burn(tokenId);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -240,6 +328,19 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
     }
 
+    /// @notice L7: effective-share weight only on ids 1 or 2. Does not change `originalShares`.
+    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external onlyOwner {
+        if (!_isStandingRewardNft(tokenId)) {
+            revert DETFNFTRestricted(tokenId);
+        }
+        if (ERC721Repo._ownerOf(tokenId) == address(0)) {
+            revert ReservedBondNftsNotWired();
+        }
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);
+    }
+
     /// @notice Debit protocol-NFT principal 1:1 (original and effective). `tokenId` must be `detfNFTId`.
     function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
         if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
@@ -262,8 +363,8 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
     {
         DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
 
-        // Cannot sell protocol NFT, and token must exist.
-        if (_isDETFNFT(tokenId)) {
+        // Cannot sell protocol NFT or standing reward ids 1–2 (D7 / D17).
+        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
             revert DETFNFTRestricted(tokenId);
         }
 

@@ -17,17 +17,14 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 /// @notice Phase 6.3: default Policy thresholds — drive synthetic via real reserve depth + dilution.
 /// @dev Mint-allowed and burn-allowed must both be proven under Policy (not Open-only).
 contract UniswapV4SingleStandardExchangeDETF_PriceMovementTest is TestBase_UniswapV4SingleStandardExchangeDETF {
-    address internal constant EXTERNAL_LP = address(0xBEEF);
-
-    /// @dev Raise synthetic without minting free DETF: single-sided pair deposit into protocol LP holder.
+    /// @dev Raise synthetic without minting free DETF: owner-only pair deposit into the NFT vault (D9/D13).
     function _skewSyntheticUp(address d, uint256 pairAmt) internal {
         IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(d);
         address hook = info.reserveHook();
-        address claim = info.rebasingClaimToken();
-        address lpTo = claim == address(0) ? d : claim;
-        pairToken.mint(detfUser, pairAmt);
-        vm.startPrank(detfUser);
-        pairToken.approve(hook, type(uint256).max);
+        address lpTo = info.bondNftVault();
+        pairToken.mint(d, pairAmt);
+        vm.startPrank(d);
+        pairToken.approve(hook, pairAmt);
         IHook(hook).depositSingle(address(pairToken), pairAmt, lpTo, 0, block.timestamp + 1 hours);
         vm.stopPrank();
     }
@@ -48,17 +45,19 @@ contract UniswapV4SingleStandardExchangeDETF_PriceMovementTest is TestBase_Unisw
         vm.stopPrank();
     }
 
-    /// @dev Skew pool DETF-heavy: single-sided DETF deposit to external LP (not counted in FD).
-    ///      Reduces pair claim of owned protocol/bond LP → synthetic falls.
+    /// @dev Skew pool DETF-heavy: owner-only single-sided DETF deposit to the NFT vault (D9/D13).
     function _skewSyntheticDownViaDetfDeposit(address d, uint256 detfAmt) internal {
         if (detfAmt == 0) return;
-        address hook = IUniswapV4SingleStandardExchangeDETF(d).reserveHook();
+        IUniswapV4SingleStandardExchangeDETF info = IUniswapV4SingleStandardExchangeDETF(d);
+        address hook = info.reserveHook();
         uint256 bal = IERC20(d).balanceOf(detfUser);
         if (bal < detfAmt) detfAmt = bal;
         if (detfAmt == 0) return;
-        vm.startPrank(detfUser);
+        vm.prank(detfUser);
+        IERC20(d).transfer(d, detfAmt);
+        vm.startPrank(d);
         IERC20(d).approve(hook, detfAmt);
-        try IHook(hook).depositSingle(d, detfAmt, EXTERNAL_LP, 0, block.timestamp + 1 hours) returns (uint256) {}
+        try IHook(hook).depositSingle(d, detfAmt, info.bondNftVault(), 0, block.timestamp + 1 hours) returns (uint256) {}
         catch {}
         vm.stopPrank();
     }
@@ -121,7 +120,7 @@ contract UniswapV4SingleStandardExchangeDETF_PriceMovementTest is TestBase_Unisw
         );
         vm.stopPrank();
         assertEq(minted, previewMint, "preview==exec mint under Policy");
-        assertGt(info.protocolLp(), 0, "mint deposited protocol LP on claim");
+        assertGt(info.protocolLp(), 0, "mint deposited protocol LP on NFT");
 
         // --- Burn regime (synthetic < burnThreshold) under Policy ---
         // Combine: free seigniorage dilution (bond/mint), expansion debt realize, DETF-heavy pool skew.

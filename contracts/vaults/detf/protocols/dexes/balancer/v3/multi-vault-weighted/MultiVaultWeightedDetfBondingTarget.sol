@@ -25,11 +25,13 @@ interface IMultiVaultWeightedDetfBonding {
         uint256 deadline
     ) external returns (uint256 tokenId, uint256 shares);
 
-    /// @notice Pre-live only: mint DETF self-leg into join, initialize weighted reserve with vault shares, return BPT.
-    /// @dev Does not set live. Caller bonds BPT next to go live. No free seigniorage DETF to user.
-    function initializeReserve(uint256[] calldata vaultShareAmounts, uint256 deadline)
-        external
-        returns (uint256 bptOut);
+    /// @notice First bond: fund EVERY vault-share leg plus unboosted DETF `G`. Goes live.
+    function initializeReserve(
+        uint256[] calldata vaultShareAmounts,
+        uint256 lockDuration,
+        address recipient,
+        uint256 deadline
+    ) external returns (uint256 tokenId, uint256 shares);
 
     function sellPositionToDetfNft(uint256 tokenId, uint256 minClaimOut, address recipient)
         external
@@ -49,15 +51,14 @@ interface IMultiVaultWeightedDetfBonding {
 
     function closeBondMature(
         uint256 tokenId,
-        IERC20 tokenOut,
-        uint256 minOut,
+        uint256[] calldata minAmountsOut,
         address recipient,
         uint256 deadline
-    ) external returns (uint256 amountOut);
+    ) external returns (uint256[] memory amountsOut);
 
-    function previewCloseBondMature(uint256 tokenId, IERC20 tokenOut) external view returns (uint256 amountOut);
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
 
-    /// @notice Redeem rebasing claim for a configured rateAsset via protocol reserve BPT unwind.
+    /// @notice Redeem rebasing claim for DETF only (D15).
     function redeemClaim(
         uint256 claimAmount,
         IERC20 tokenOut,
@@ -79,12 +80,12 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
     using BetterSafeERC20 for IERC20;
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
-    function initializeReserve(uint256[] calldata vaultShareAmounts_, uint256 deadline_)
-        public
-        virtual
-        nonReentrant
-        returns (uint256 bptOut_)
-    {
+    function initializeReserve(
+        uint256[] calldata vaultShareAmounts_,
+        uint256 lockDuration_,
+        address recipient_,
+        uint256 deadline_
+    ) public virtual nonReentrant returns (uint256 tokenId_, uint256 shares_) {
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
         if (s.isReserveLive) revert MultiVaultWeightedDetfRepo.AlreadyLive();
         if (IERC20(s.reservePool).totalSupply() != 0) {
@@ -93,41 +94,35 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         if (vaultShareAmounts_.length != s.vaultCount) {
             revert MultiVaultWeightedDetfRepo.InvalidVaultCount(vaultShareAmounts_.length);
         }
-        if (block.timestamp > deadline_) {
-            revert MultiVaultWeightedDetfRepo.DeadlineExpired(deadline_);
-        }
-
-        // Pull all vault shares; mint DETF self-leg for weight pairing (into pool only).
-        uint256 primaryLeg_;
-        uint256 primaryAmount_;
-        for (uint256 i; i < s.vaultCount; ++i) {
-            if (vaultShareAmounts_[i] == 0) revert MultiVaultWeightedDetfRepo.ZeroAmount();
-            _pullToken(s.vaultShares[i], vaultShareAmounts_[i], false);
-            if (vaultShareAmounts_[i] > primaryAmount_) {
-                primaryAmount_ = vaultShareAmounts_[i];
-                primaryLeg_ = i;
-            }
-        }
-
-        uint256 detfForPool_ = _quoteDetfBootstrapPublic(primaryLeg_, primaryAmount_);
-        // Scale DETF by total vault weight / primary so multi-leg join is roughly weight-matched.
-        // For N=1 this equals single-vault bootstrap quote.
-        _mintDetf(address(this), detfForPool_);
+        _requireActive(deadline_, 1);
+        if (recipient_ == address(0)) recipient_ = msg.sender;
+        uint256 effectiveLock_ = _effectiveLockDuration(lockDuration_);
 
         uint256[] memory amounts_ = new uint256[](s.vaultCount);
         for (uint256 i; i < s.vaultCount; ++i) {
-            amounts_[i] = vaultShareAmounts_[i];
+            if (vaultShareAmounts_[i] == 0) revert MultiVaultWeightedDetfRepo.ZeroAmount();
+            amounts_[i] = _pullToken(s.vaultShares[i], vaultShareAmounts_[i], false);
         }
-        bptOut_ = _initializeReserve(detfForPool_, amounts_);
-        s.reserveBpt.safeTransfer(msg.sender, bptOut_);
-    }
 
-    function _quoteDetfBootstrapPublic(uint256 legIndex_, uint256 vaultShares_)
-        internal
-        view
-        returns (uint256)
-    {
-        return _quoteDetfOutForVaultShares(legIndex_, vaultShares_);
+        // D24 empty = family weights. L1 + D4 pot. Join remains full G.
+        uint256 detfForPool_ = _quoteBondJoinDetfAllLegs(amounts_);
+        MintSplit memory split_ = _splitBondDetf(detfForPool_);
+
+        _mintDetf(address(this), detfForPool_);
+        uint256 bptOut_ = _initializeReserve(detfForPool_, amounts_);
+
+        if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
+
+        tokenId_ = DETFBondLifecycleLib._createBondPosition(
+            s.bondNftVault, bptOut_, effectiveLock_, recipient_
+        );
+        shares_ = bptOut_;
+
+        MultiVaultWeightedDetfRepo._setReserveLive();
+        _topUpFeeCreatorShares();
+        if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
+        _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
@@ -146,30 +141,53 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         }
 
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        if (!s.isReserveLive) {
+            _rejectPretransferredFirstBond(pretransferred_, amountIn_);
+        }
         uint256 effectiveLock_ = _effectiveLockDuration(lockDuration_);
 
         uint256 bptPrincipal_;
 
         if (address(tokenIn_) == address(s.reserveBpt)) {
-            bptPrincipal_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
-        } else {
-            // Vault-share bond: only after live (builds additional BPT via join).
+            // Existing LP only after live. First bond must fund every vault-share leg.
             if (!s.isReserveLive) {
                 revert MultiVaultWeightedDetfRepo.ReservePoolNotInitialized();
             }
-            (bool found_, uint256 legIndex_) = MultiVaultWeightedDetfRepo._findVaultShareIndex(tokenIn_);
-            if (!found_) {
-                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(this));
-            }
-            uint256 vaultShares_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
-            uint256 detfForPool_ = _quoteDetfOutForVaultShares(legIndex_, vaultShares_);
-            MintSplit memory split_ = _splitMintedDetf(detfForPool_);
-            _mintDetf(address(this), detfForPool_);
-            bptPrincipal_ = _joinReserveBothDetfAndShare(legIndex_, detfForPool_, vaultShares_);
-            if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
-            if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
-            if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
+            bptPrincipal_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+            tokenId_ = DETFBondLifecycleLib._createBondPosition(
+                s.bondNftVault, bptPrincipal_, effectiveLock_, recipient_
+            );
+            shares_ = bptPrincipal_;
+            _topUpFeeCreatorShares();
+            _tryCompoundProtocolRewards();
+            _syncAllExpectedHoldReserves();
+            return (tokenId_, shares_);
         }
+
+        return _bondVaultShare(tokenIn_, amountIn_, effectiveLock_, recipient_, pretransferred_);
+    }
+
+    function _bondVaultShare(
+        IERC20 tokenIn_,
+        uint256 amountIn_,
+        uint256 effectiveLock_,
+        address recipient_,
+        bool pretransferred_
+    ) private returns (uint256 tokenId_, uint256 shares_) {
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        (bool found_, uint256 legIndex_) = MultiVaultWeightedDetfRepo._findVaultShareIndex(tokenIn_);
+        if (!found_) {
+            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(this));
+        }
+        if (!s.isReserveLive && s.vaultCount != 1) {
+            revert MultiVaultWeightedDetfRepo.ReservePoolNotInitialized();
+        }
+        uint256 vaultShares_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
+        uint256 detfForPool_ = _quoteBondJoinDetf(legIndex_, vaultShares_);
+        MintSplit memory split_ = _splitBondDetf(detfForPool_);
+        _mintDetf(address(this), detfForPool_);
+        uint256 bptPrincipal_ = _joinReserveBothDetfAndShare(legIndex_, detfForPool_, vaultShares_);
+        if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
 
         tokenId_ = DETFBondLifecycleLib._createBondPosition(
             s.bondNftVault, bptPrincipal_, effectiveLock_, recipient_
@@ -180,7 +198,8 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
             MultiVaultWeightedDetfRepo._setReserveLive();
         }
 
-        // Lazy protocol compound after reward-affecting bond / inventory mint (best-effort).
+        _topUpFeeCreatorShares();
+        if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
@@ -193,6 +212,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         returns (uint256 claimMinted_)
     {
         _requireMature(tokenId_);
+        _requireNotStandingRewardNft(tokenId_);
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
         if (address(s.rebasingClaimToken) == address(0)) {
             revert MultiVaultWeightedDetfRepo.ClaimTokenNotConfigured();
@@ -209,6 +229,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
             revert MultiVaultWeightedDetfRepo.InvalidRoute(address(s.rebasingClaimToken), address(0));
         }
 
+        _topUpFeeCreatorShares();
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
@@ -254,6 +275,7 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
             revert MultiVaultWeightedDetfRepo.InvalidRoute(address(s.rebasingClaimToken), address(0));
         }
 
+        _topUpFeeCreatorShares();
         _updateExpansionMintOnRewards();
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
@@ -271,52 +293,63 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
     /// @inheritdoc IMultiVaultWeightedDetfBonding
     function closeBondMature(
         uint256 tokenId_,
-        IERC20 tokenOut_,
-        uint256 minOut_,
+        uint256[] calldata minAmountsOut_,
         address recipient_,
         uint256 deadline_
-    ) public virtual nonReentrant returns (uint256 amountOut_) {
+    ) public virtual nonReentrant returns (uint256[] memory amountsOut_) {
         _requireMature(tokenId_);
+        _requireNotStandingRewardNft(tokenId_);
         _requireActive(deadline_, 1);
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        uint256 n_ = _reserveTokenCount();
+        if (minAmountsOut_.length != n_) {
+            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(0), address(0));
+        }
+        if (minAmountsOut_[s.detfIndex] != 0) {
+            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(this), address(0));
+        }
         _updateExpansionMintOnRewards();
 
-        uint256 assets_ = s.bondNftVault.originalSharesOf(tokenId_);
-        if (assets_ == 0) revert MultiVaultWeightedDetfRepo.ZeroAmount();
-        uint256 protocol_ = _protocolOriginalShares();
-        uint256 bal_ = s.reserveBpt.balanceOf(address(this));
-        if (bal_ < protocol_ + assets_) {
-            revert MultiVaultWeightedDetfRepo.InsufficientReserveBpt(protocol_ + assets_, bal_);
+        uint256 lpOut_ = s.bondNftVault.convertToAssets(s.bondNftVault.originalSharesOf(tokenId_));
+        if (lpOut_ == 0) revert MultiVaultWeightedDetfRepo.ZeroAmount();
+        s.bondNftVault.retireMaturePosition(tokenId_, recipient_);
+
+        (uint256 detfOut_, uint256[] memory vaultSharesOut_) = _exitReserveProportional(lpOut_);
+        if (detfOut_ > 0) {
+            _burnDetf(address(this), detfOut_);
         }
 
-        (bool found_, uint256 legIndex_) = _resolveBurnLeg(tokenOut_);
-        if (!found_) {
-            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(0), address(tokenOut_));
+        amountsOut_ = new uint256[](n_);
+        for (uint256 i; i < s.vaultCount; ++i) {
+            uint256 idx_ = s.vaultShareIndexes[i];
+            uint256 amt_ = vaultSharesOut_[i];
+            if (amt_ < minAmountsOut_[idx_]) {
+                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(s.vaultShares[i]), address(0));
+            }
+            amountsOut_[idx_] = amt_;
+            if (amt_ > 0) {
+                s.vaultShares[i].safeTransfer(recipient_, amt_);
+            }
         }
-
-        DETFBondLifecycleLib._sellPositionToDetfNft(s.bondNftVault, tokenId_, msg.sender, recipient_);
-        s.bondNftVault.removeFromDETFNFT(s.bondNftVault.detfNFTId(), assets_);
-
-        amountOut_ = _exitRedepositSettle(assets_, legIndex_, tokenOut_, minOut_, recipient_, deadline_);
 
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
-    function previewCloseBondMature(uint256 tokenId_, IERC20 tokenOut_)
+    function previewCloseBondMature(uint256 tokenId_)
         external
         view
-        returns (uint256 amountOut_)
+        returns (uint256[] memory amountsOut_)
     {
         MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        amountsOut_ = new uint256[](_reserveTokenCount());
         uint256 assets_ = s.bondNftVault.originalSharesOf(tokenId_);
-        if (assets_ == 0) return 0;
-        (bool found_, uint256 legIndex_) = _resolveBurnLeg(tokenOut_);
-        if (!found_) return 0;
-        amountOut_ = _previewExitSettle(assets_, legIndex_, tokenOut_);
+        if (assets_ == 0) return amountsOut_;
+        uint256 lpOut_ = s.bondNftVault.convertToAssets(assets_);
+        amountsOut_ = _previewProportionalAmounts(lpOut_);
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
@@ -327,18 +360,72 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         address recipient_,
         uint256 deadline_
     ) public virtual nonReentrant returns (uint256 amountOut_) {
+        amountOut_ = _redeemClaimForDetf(claimAmount_, tokenOut_, minOut_, recipient_, deadline_);
+    }
+
+    /// @dev D15: claim → DETF. Pending on id 0 first; leftover pending compounded; shortfall from LP.
+    function _redeemClaimForDetf(
+        uint256 claimAmount_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
-        (bool found_, uint256 legIndex_) = _resolveBurnLeg(tokenOut_);
-        if (!found_) {
-            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(0), address(tokenOut_));
+        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+        if (address(tokenOut_) != address(this)) {
+            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(s.rebasingClaimToken), address(tokenOut_));
         }
 
         uint256 bptOut_ = _burnClaimConvertToAssets(claimAmount_);
-        amountOut_ = _exitRedepositSettle(bptOut_, legIndex_, tokenOut_, minOut_, recipient_, deadline_);
+        uint256 owed_ = _previewProportionalDetf(bptOut_);
+        uint256 harvested_ = s.bondNftVault.reallocateDetfNftRewards(address(this));
+
+        if (harvested_ >= owed_) {
+            amountOut_ = owed_;
+            uint256 leftover_ = harvested_ - owed_;
+            if (leftover_ > 0) {
+                uint256 bptBack_ = _joinReserveDetfOnly(leftover_);
+                if (bptBack_ > 0) {
+                    s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptBack_);
+                }
+            }
+            if (bptOut_ > 0) {
+                s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptOut_);
+            }
+        } else {
+            (uint256 detfFromLp_, uint256[] memory vaultSharesOut_) = _exitReserveProportional(bptOut_);
+            uint256 shortfall_ = owed_ - harvested_;
+            uint256 fromLp_ = detfFromLp_ < shortfall_ ? detfFromLp_ : shortfall_;
+            amountOut_ = harvested_ + fromLp_;
+            uint256 leftoverDetf_ = detfFromLp_ - fromLp_;
+            uint256[] memory rejoinShares_ = vaultSharesOut_;
+            if (leftoverDetf_ > 0 || _anyPositive(rejoinShares_)) {
+                uint256 bptBack_ = _joinReserveDetfAndShares(leftoverDetf_, rejoinShares_);
+                if (bptBack_ > 0) {
+                    s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptBack_);
+                }
+            }
+        }
+
+        if (amountOut_ < minOut_) {
+            revert MultiVaultWeightedDetfRepo.InvalidRoute(address(this), address(tokenOut_));
+        }
+        if (amountOut_ > 0) {
+            IERC20(address(this)).safeTransfer(recipient_, amountOut_);
+        }
+        _topUpFeeCreatorShares();
         _syncAllExpectedHoldReserves();
+    }
+
+    function _anyPositive(uint256[] memory amounts_) private pure returns (bool) {
+        for (uint256 i; i < amounts_.length; ++i) {
+            if (amounts_[i] > 0) return true;
+        }
+        return false;
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding
@@ -348,10 +435,9 @@ abstract contract MultiVaultWeightedDetfBondingTarget is MultiVaultWeightedDetfC
         returns (uint256 amountOut_)
     {
         if (claimAmount_ == 0) return 0;
-        (bool found_, uint256 legIndex_) = _resolveBurnLeg(tokenOut_);
-        if (!found_) return 0;
+        if (address(tokenOut_) != address(this)) return 0;
         uint256 bptOut_ = _previewClaimBptOut(claimAmount_);
-        amountOut_ = _previewExitSettle(bptOut_, legIndex_, tokenOut_);
+        amountOut_ = _previewProportionalDetf(bptOut_);
     }
 
     /// @inheritdoc IMultiVaultWeightedDetfBonding

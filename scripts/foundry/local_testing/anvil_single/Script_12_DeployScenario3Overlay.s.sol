@@ -422,7 +422,8 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0
+        expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
 
         inventoryDetf = vaultRegistry.deployVault(

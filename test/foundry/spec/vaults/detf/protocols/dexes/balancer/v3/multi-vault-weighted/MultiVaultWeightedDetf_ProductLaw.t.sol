@@ -33,9 +33,10 @@ contract MultiVaultWeightedDetf_ProductLaw_Test is TestBase_MultiVaultWeightedDe
     function test_M2_preMaturityClose_revertsBondNotMature() public {
         (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 800e18);
         uint256 unlock_ = IDETFNFTVault(detfInfo.bondNftVault()).unlockTimeOf(tokenId_);
+        uint256[] memory minOut_ = _closeMinOut(detf);
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(SEL_BOND_NOT_MATURE, unlock_));
-        detfBonding.closeBondMature(tokenId_, rateAsset0, 0, alice, block.timestamp + 1 hours);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M3_lockedClaimRewards_stillPays() public {
@@ -65,18 +66,17 @@ contract MultiVaultWeightedDetf_ProductLaw_Test is TestBase_MultiVaultWeightedDe
         IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
         uint256 protocolId_ = nft_.detfNFTId();
         uint256 protocolBefore_ = nft_.originalSharesOf(protocolId_);
-        uint256 detfBefore_ = IERC20(detf).balanceOf(alice);
-        uint256 pending_ = nft_.pendingRewards(tokenId_);
+        uint256 shareBefore_ = seShare0.balanceOf(alice);
+        uint256[] memory minOut_ = _closeMinOut(detf);
 
         vm.prank(alice);
-        uint256 out_ = detfBonding.closeBondMature(tokenId_, rateAsset0, 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "M5 settlement");
-        // Harvest may pay pending + expansion-synced free DETF. The self-leg is not paid out
-        // (that would be ~principal BPT-sized). Allow harvest, reject principal-sized DETF.
-        uint256 detfGain_ = IERC20(detf).balanceOf(alice) - detfBefore_;
-        pending_; // snapshot kept for traces
-        assertTrue(detfGain_ < 10e18, "M5 no extra DETF");
-        // Close may credit redeposited DETF-leg BPT onto protocol NFT, never user principal.
+        uint256[] memory out_ = detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
+        uint256 settled_;
+        for (uint256 i; i < out_.length; ++i) {
+            settled_ += out_[i];
+        }
+        assertTrue(settled_ > 0, "M5 settlement");
+        assertTrue(seShare0.balanceOf(alice) > shareBefore_, "D25 vault shares to user");
         assertTrue(nft_.originalSharesOf(protocolId_) >= protocolBefore_, "M5 protocol not drained");
         assertEq(nft_.effectiveSharesOf(protocolId_), nft_.originalSharesOf(protocolId_), "M5 1:1");
     }
@@ -171,15 +171,17 @@ contract MultiVaultWeightedDetf_ProductLaw_Test is TestBase_MultiVaultWeightedDe
             vm.prank(detf);
             IERC20(bpt_).transfer(address(1), detfBpt_ - 1);
         }
+        uint256[] memory minOut_ = _closeMinOut(detf);
         vm.prank(alice);
         vm.expectRevert();
-        detfBonding.closeBondMature(tokenId_, rateAsset0, 0, alice, block.timestamp + 1 hours);
+        detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M8f_deploy_zeroPrincipalProtocolNft() public view {
         IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
         uint256 protocolId_ = nft_.detfNFTId();
-        assertTrue(protocolId_ > 0, "M8f exists");
+        assertTrue(nft_.reservedBondNftsWired(), "M8f reserved wired");
+        assertEq(protocolId_, 0, "M8f id 0 protocol");
         assertEq(nft_.originalSharesOf(protocolId_), 0, "M8f 0 principal");
         assertEq(nft_.effectiveSharesOf(protocolId_), 0, "M8f 0 effective");
     }

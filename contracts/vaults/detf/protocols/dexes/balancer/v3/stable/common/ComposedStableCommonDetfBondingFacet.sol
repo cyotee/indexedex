@@ -3,15 +3,20 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
+import {IVault} from '@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol';
 import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
+import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
-import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
+import {IDetfSelfNftInventoryPolicy} from 'contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol';
 
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
-import {DETFUsageFeeLib} from 'contracts/vaults/detf/common/core/DETFUsageFeeLib.sol';
+import {DETFBondLifecycleLib} from 'contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol';
-import {ComposedStableCommonDetfCommon} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol';
+import {
+    ComposedStableCommonDetfCommon,
+    IComposedStableBalancerPoolToken
+} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol';
 
 contract ComposedStableCommonDetfBondingFacet is
     ComposedStableCommonDetfCommon,
@@ -19,21 +24,7 @@ contract ComposedStableCommonDetfBondingFacet is
     IComposedStableCommonDetfBonding,
     IFacet
 {
-    function _usageFeePercentage(ComposedStableCommonDetfRepo.Storage storage layoutStruct_) internal view returns (uint256 fee_) {
-        if (address(ComposedStableCommonDetfRepo._feeOracle(layoutStruct_)) == address(0)) {
-            return 0;
-        }
-
-        fee_ = ComposedStableCommonDetfRepo._feeOracle(layoutStruct_).usageFeeOfVault(address(this));
-    }
-
-    function _splitBondShares(ComposedStableCommonDetfRepo.Storage storage layoutStruct_, uint256 grossShares_)
-        internal
-        view
-        returns (uint256 userShares_, uint256 feeShares_)
-    {
-        return DETFUsageFeeLib._splitUsageFee(grossShares_, _usageFeePercentage(layoutStruct_));
-    }
+    using BetterSafeERC20 for IERC20;
 
     function _creditBondShares(
         ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
@@ -41,20 +32,16 @@ contract ComposedStableCommonDetfBondingFacet is
         uint256 lockDuration_,
         address recipient_
     ) internal returns (uint256 tokenId_, uint256 userShares_) {
-        uint256 feeShares;
-        (userShares_, feeShares) = _splitBondShares(layoutStruct_, grossShares_);
-        if (userShares_ == 0) {
+        if (grossShares_ == 0) {
             revert ZeroAmount();
         }
-
-        IComposedStableCommonDetfBondNFTVault bondVault =
-            IComposedStableCommonDetfBondNFTVault(address(ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_)));
-
-        if (feeShares > 0) {
-            bondVault.addToFeeRecipientNFT(bondVault.feeRecipientNFTId(), feeShares);
-        }
-
-        tokenId_ = bondVault.createPosition(userShares_, lockDuration_, recipient_);
+        userShares_ = grossShares_;
+        tokenId_ = DETFBondLifecycleLib._createBondPosition(
+            IDetfSelfNftInventoryPolicy(address(ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_))),
+            userShares_,
+            lockDuration_,
+            recipient_
+        );
     }
 
     function acceptedBondTokens() external view returns (address[] memory tokens_) {
@@ -104,12 +91,17 @@ contract ComposedStableCommonDetfBondingFacet is
         IERC20 tokenIn_,
         uint256 amountIn_,
         uint256 deadline_
-    ) internal returns (uint256 grossShares_) {
+    ) internal returns (uint256 grossShares_, uint256 joinDetf_) {
         RoutedPoolSelection memory selection = _selectRoutingPath(tokenIn_);
         ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(layoutStruct_, selection.routeIndex);
         uint256 actualIn = _collectBondInput(tokenIn_, amountIn_);
         uint256 poolBptOut = _executeRoutedEntryToPoolBptShared(route, selection, tokenIn_, actualIn, deadline_);
-        grossShares_ = _depositIntoReservePoolShared(layoutStruct_, selection, poolBptOut, deadline_);
+        joinDetf_ = _quoteBondJoinDetf(poolBptOut, selection.depositToStablePool);
+        if (joinDetf_ > 0) {
+            _mintDetf(address(this), joinDetf_);
+            grossShares_ += _joinReserveDetfOnly(joinDetf_);
+        }
+        grossShares_ += _depositIntoReservePoolShared(layoutStruct_, selection, poolBptOut, deadline_);
     }
 
     function bond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration, address recipient, uint256 deadline)
@@ -125,6 +117,7 @@ contract ComposedStableCommonDetfBondingFacet is
         }
 
         _requireReservePoolInitialized();
+        _ensureReservedBondNftsWired();
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         if (
@@ -137,14 +130,18 @@ contract ComposedStableCommonDetfBondingFacet is
             revert BondTokenNotSupported(tokenIn);
         }
 
-        uint256 grossShares = _executeBondRoute(layoutStruct, tokenIn, amountIn, deadline);
-        (tokenId, shares) = _creditBondShares(
-            layoutStruct,
-            grossShares,
-            lockDuration,
-            recipient == address(0) ? msg.sender : recipient
-        );
-        // Lazy protocol seigniorage compound (best-effort; never fails user bond).
+        address recipient_ = recipient == address(0) ? msg.sender : recipient;
+        (uint256 grossShares, uint256 joinDetf_) = _executeBondRoute(layoutStruct, tokenIn, amountIn, deadline);
+        MintSplit memory split_ = _splitBondAmount(joinDetf_);
+        if (split_.userDetfOut > 0) {
+            _mintDetf(recipient_, split_.userDetfOut);
+        }
+        (tokenId, shares) = _creditBondShares(layoutStruct, grossShares, lockDuration, recipient_);
+        // D2 after O change, then L1+D4 pot mint so ids 1–2 take this bond at the new weights.
+        _topUpFeeCreatorShares();
+        if (split_.inventoryDetfOut > 0) {
+            _mintDetf(address(ComposedStableCommonDetfRepo._bondNftVault(layoutStruct)), split_.inventoryDetfOut);
+        }
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
@@ -155,6 +152,7 @@ contract ComposedStableCommonDetfBondingFacet is
         returns (uint256 claimMinted_)
     {
         _requireMature(tokenId);
+        _requireNotStandingRewardNft(tokenId);
         _requireReservePoolInitialized();
 
         if (recipient == address(0)) {
@@ -185,6 +183,7 @@ contract ComposedStableCommonDetfBondingFacet is
             revert InvalidRoute(address(claimToken_), address(0));
         }
 
+        _topUpFeeCreatorShares();
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
@@ -201,6 +200,7 @@ contract ComposedStableCommonDetfBondingFacet is
         uint256 deadline
     ) external nonReentrant returns (uint256 claimMinted_) {
         _requireReservePoolInitialized();
+        _ensureReservedBondNftsWired();
         _requireActive(deadline, detfAmount);
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
@@ -223,6 +223,7 @@ contract ComposedStableCommonDetfBondingFacet is
             revert InvalidRoute(address(claimToken_), address(0));
         }
 
+        _topUpFeeCreatorShares();
         _updateExpansionMintOnRewards();
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
@@ -237,48 +238,74 @@ contract ComposedStableCommonDetfBondingFacet is
 
     function closeBondMature(
         uint256 tokenId,
-        IERC20 tokenOut,
-        uint256 minOut,
+        uint256[] calldata minAmountsOut,
         address recipient,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut_) {
+    ) external nonReentrant returns (uint256[] memory amountsOut_) {
         _requireMature(tokenId);
+        _requireNotStandingRewardNft(tokenId);
         _requireActive(deadline, 1);
         if (recipient == address(0)) {
             recipient = msg.sender;
         }
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        if (!_isFamilyBurnToken(tokenOut)) {
-            revert InvalidRoute(address(0), address(tokenOut));
+        if (minAmountsOut.length != RESERVE_TOKEN_COUNT) {
+            revert InvalidRoute(address(0), address(0));
+        }
+        if (minAmountsOut[layoutStruct.detfIndex] != 0) {
+            revert InvalidRoute(address(ComposedStableCommonDetfRepo._detfToken(layoutStruct)), address(0));
         }
 
         _updateExpansionMintOnRewards();
 
         IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct);
-        uint256 assets_ = bondVault_.originalSharesOf(tokenId);
-        if (assets_ == 0) revert ZeroAmount();
+        uint256 orig_ = bondVault_.originalSharesOf(tokenId);
+        if (orig_ == 0) revert ZeroAmount();
+        uint256 totalOrig_ = bondVault_.totalOriginalShares();
+        uint256 bptBal_ = IERC20(address(layoutStruct.reservePool)).balanceOf(address(this));
+        uint256 lpOut_ = totalOrig_ == 0 ? orig_ : orig_ * bptBal_ / totalOrig_;
+        if (lpOut_ == 0) revert ZeroAmount();
 
-        uint256 protocol_ = _protocolOriginalShares();
-        uint256 bal_ = IERC20(address(layoutStruct.reservePool)).balanceOf(address(this));
-        if (bal_ < protocol_ + assets_) {
-            revert ComposedStableCommonDetfRepo.InsufficientReserveBpt(protocol_ + assets_, bal_);
+        bondVault_.retireMaturePosition(tokenId, recipient);
+
+        (uint256 detfOut_, uint256 stableBptOut_, uint256 commonBptOut_) = _exitReserveProportional(lpOut_);
+        if (detfOut_ > 0) {
+            _burnDetf(address(this), detfOut_);
+        }
+        if (stableBptOut_ < minAmountsOut[layoutStruct.stablePoolBptIndex]) {
+            revert InvalidRoute(address(layoutStruct.stablePoolBpt), address(0));
+        }
+        if (commonBptOut_ < minAmountsOut[layoutStruct.commonPoolBptIndex]) {
+            revert InvalidRoute(address(layoutStruct.commonPoolBpt), address(0));
+        }
+        if (stableBptOut_ > 0) {
+            layoutStruct.stablePoolBpt.safeTransfer(recipient, stableBptOut_);
+        }
+        if (commonBptOut_ > 0) {
+            layoutStruct.commonPoolBpt.safeTransfer(recipient, commonBptOut_);
         }
 
-        bondVault_.sellPositionToDetfNft(tokenId, msg.sender, recipient);
-        bondVault_.removeFromDETFNFT(bondVault_.detfNFTId(), assets_);
-
-        amountOut_ = _exitRedepositSettle(assets_, tokenOut, minOut, recipient, deadline);
+        amountsOut_ = new uint256[](RESERVE_TOKEN_COUNT);
+        amountsOut_[layoutStruct.stablePoolBptIndex] = stableBptOut_;
+        amountsOut_[layoutStruct.commonPoolBptIndex] = commonBptOut_;
 
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
 
-    function previewCloseBondMature(uint256 tokenId, IERC20 tokenOut) external view returns (uint256 amountOut_) {
-        IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault();
-        uint256 assets_ = bondVault_.originalSharesOf(tokenId);
-        if (assets_ == 0) return 0;
-        amountOut_ = _previewExitSettle(assets_, tokenOut);
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut_) {
+        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
+        amountsOut_ = new uint256[](RESERVE_TOKEN_COUNT);
+        IDETFNFTVault bondVault_ = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct);
+        uint256 orig_ = bondVault_.originalSharesOf(tokenId);
+        if (orig_ == 0) return amountsOut_;
+        uint256 totalOrig_ = bondVault_.totalOriginalShares();
+        uint256 bptBal_ = IERC20(address(layoutStruct.reservePool)).balanceOf(address(this));
+        uint256 lpOut_ = totalOrig_ == 0 ? orig_ : orig_ * bptBal_ / totalOrig_;
+        (, uint256 stableOut_, uint256 commonOut_) = _previewProportionalExit(lpOut_);
+        amountsOut_[layoutStruct.stablePoolBptIndex] = stableOut_;
+        amountsOut_[layoutStruct.commonPoolBptIndex] = commonOut_;
     }
 
     function redeemClaim(
@@ -288,24 +315,92 @@ contract ComposedStableCommonDetfBondingFacet is
         address recipient,
         uint256 deadline
     ) external nonReentrant returns (uint256 amountOut_) {
-        _requireReservePoolInitialized();
-        _requireActive(deadline, claimAmount);
-        if (recipient == address(0)) {
-            recipient = msg.sender;
-        }
-        if (!_isFamilyBurnToken(tokenOut)) {
-            revert InvalidRoute(address(0), address(tokenOut));
-        }
-
-        uint256 bptOut_ = _burnClaimConvertToAssets(claimAmount);
-        amountOut_ = _exitRedepositSettle(bptOut_, tokenOut, minOut, recipient, deadline);
-        _syncAllExpectedHoldReserves();
+        amountOut_ = _redeemClaimForDetf(claimAmount, tokenOut, minOut, recipient, deadline);
     }
 
     function previewRedeemClaim(uint256 claimAmount, IERC20 tokenOut) external view returns (uint256 amountOut_) {
         if (claimAmount == 0) return 0;
+        if (address(tokenOut) != address(ComposedStableCommonDetfRepo._detfToken())) return 0;
         uint256 bptOut_ = _previewClaimBptOut(claimAmount);
-        amountOut_ = _previewExitSettle(bptOut_, tokenOut);
+        amountOut_ = _previewProportionalDetf(bptOut_);
+    }
+
+    /// @dev D15: claim → DETF. Pending on id 0 first; leftover pending compounded; shortfall from LP.
+    function _redeemClaimForDetf(
+        uint256 claimAmount_,
+        IERC20 tokenOut_,
+        uint256 minOut_,
+        address recipient_,
+        uint256 deadline_
+    ) internal returns (uint256 amountOut_) {
+        _requireReservePoolInitialized();
+        _requireActive(deadline_, claimAmount_);
+        if (recipient_ == address(0)) recipient_ = msg.sender;
+
+        ComposedStableCommonDetfRepo.Storage storage s = ComposedStableCommonDetfRepo._layoutStruct();
+        if (address(tokenOut_) != address(s.detfToken)) {
+            revert InvalidRoute(address(s.rebasingDetfToken), address(tokenOut_));
+        }
+
+        uint256 bptOut_ = _burnClaimConvertToAssets(claimAmount_);
+        uint256 owed_ = _previewProportionalDetf(bptOut_);
+        uint256 harvested_ = s.bondNftVault.reallocateDetfNftRewards(address(this));
+
+        if (harvested_ >= owed_) {
+            amountOut_ = owed_;
+            uint256 leftover_ = harvested_ - owed_;
+            if (leftover_ > 0) {
+                uint256 bptBack_ = _joinReserveDetfOnly(leftover_);
+                if (bptBack_ > 0) {
+                    s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptBack_);
+                }
+            }
+            if (bptOut_ > 0) {
+                s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptOut_);
+            }
+        } else {
+            (uint256 detfFromLp_, uint256 stableBpt_, uint256 commonBpt_) = _exitReserveProportional(bptOut_);
+            uint256 shortfall_ = owed_ - harvested_;
+            uint256 fromLp_ = detfFromLp_ < shortfall_ ? detfFromLp_ : shortfall_;
+            amountOut_ = harvested_ + fromLp_;
+            uint256 leftoverDetf_ = detfFromLp_ - fromLp_;
+            if (leftoverDetf_ > 0) {
+                uint256 bptBack_ = _joinReserveDetfOnly(leftoverDetf_);
+                if (bptBack_ > 0) {
+                    s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptBack_);
+                }
+            }
+            if (stableBpt_ > 0 || commonBpt_ > 0) {
+                _redepositNonDetfLegs(stableBpt_, commonBpt_);
+            }
+        }
+
+        if (amountOut_ < minOut_) {
+            revert InvalidRoute(address(s.detfToken), address(tokenOut_));
+        }
+        if (amountOut_ > 0) {
+            s.detfToken.safeTransfer(recipient_, amountOut_);
+        }
+        _topUpFeeCreatorShares();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function _redepositNonDetfLegs(uint256 stableBpt_, uint256 commonBpt_) internal {
+        ComposedStableCommonDetfRepo.Storage storage s = ComposedStableCommonDetfRepo._layoutStruct();
+        uint256[] memory amountsIn_ = new uint256[](RESERVE_TOKEN_COUNT);
+        IVault bal_ = IComposedStableBalancerPoolToken(address(s.reservePool)).getVault();
+        if (stableBpt_ > 0) {
+            amountsIn_[s.stablePoolBptIndex] = stableBpt_;
+            s.stablePoolBpt.safeTransfer(address(bal_), stableBpt_);
+        }
+        if (commonBpt_ > 0) {
+            amountsIn_[s.commonPoolBptIndex] = commonBpt_;
+            s.commonPoolBpt.safeTransfer(address(bal_), commonBpt_);
+        }
+        uint256 bptBack_ = s.balancerV3Router.prepayAddLiquidityUnbalanced(address(s.reservePool), amountsIn_, 0, '');
+        if (bptBack_ > 0) {
+            s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), bptBack_);
+        }
     }
 
     function _burnClaimConvertToAssets(uint256 claimAmount_) private returns (uint256 bptOut_) {

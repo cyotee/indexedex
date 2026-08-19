@@ -19,7 +19,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget is 
         uint256 sharesMin,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external nonReentrant returns (uint256 shares) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline, permit2Data);
     }
 

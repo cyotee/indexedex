@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -62,6 +64,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     IFacet public immutable ERC2612_FACET;
     IFacet public immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet public immutable MULTI_ASSET_STANDARD_VAULT_FACET;
+    IFacet public immutable MULTI_STEP_OWNABLE_FACET;
     IUniswapV4StandardExchangeOrbitalBufferHookPackage private immutable SELF;
 
     constructor(PkgInit memory init) {
@@ -74,6 +77,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
                 || address(init.erc2612Facet) == address(0)
                 || address(init.multiAssetBasicVaultFacet) == address(0)
                 || address(init.multiAssetStandardVaultFacet) == address(0)
+                || address(init.multiStepOwnableFacet) == address(0)
         ) {
             revert ZeroAddress();
         }
@@ -88,6 +92,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         ERC2612_FACET = init.erc2612Facet;
         MULTI_ASSET_BASIC_VAULT_FACET = init.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = init.multiAssetStandardVaultFacet;
+        MULTI_STEP_OWNABLE_FACET = init.multiStepOwnableFacet;
         SELF = this;
     }
 
@@ -126,7 +131,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeOrbitalBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](9);
+        interfaces = new bytes4[](10);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -135,21 +140,23 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         interfaces[5] = type(IStandardExchangeOut).interfaceId;
         interfaces[6] = type(IBasicVault).interfaceId;
         interfaces[7] = type(IStandardVault).interfaceId;
-        interfaces[8] = HOOK_VAULT_TYPE;
+        interfaces[8] = type(IMultiStepOwnable).interfaceId;
+        interfaces[9] = HOOK_VAULT_TYPE;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](10);
-        facets[0] = address(MULTI_ASSET_BASIC_VAULT_FACET);
-        facets[1] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
-        facets[2] = address(SELF);
-        facets[3] = address(HOOKS_FACET);
-        facets[4] = address(DEPOSIT_FACET);
-        facets[5] = address(WITHDRAW_FACET);
-        facets[6] = address(SE_FACET);
-        facets[7] = address(ERC20_FACET);
-        facets[8] = address(ERC5267_FACET);
-        facets[9] = address(ERC2612_FACET);
+        facets = new address[](11);
+        facets[0] = address(MULTI_STEP_OWNABLE_FACET);
+        facets[1] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        facets[2] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
+        facets[3] = address(SELF);
+        facets[4] = address(HOOKS_FACET);
+        facets[5] = address(DEPOSIT_FACET);
+        facets[6] = address(WITHDRAW_FACET);
+        facets[7] = address(SE_FACET);
+        facets[8] = address(ERC20_FACET);
+        facets[9] = address(ERC5267_FACET);
+        facets[10] = address(ERC2612_FACET);
     }
 
     function packageMetadata()
@@ -163,18 +170,23 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](3);
+        cuts = new IDiamond.FacetCut[](4);
         cuts[0] = IDiamond.FacetCut({
+            facetAddress: address(MULTI_STEP_OWNABLE_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: MULTI_STEP_OWNABLE_FACET.facetFuncs()
+        });
+        cuts[1] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
         });
-        cuts[1] = IDiamond.FacetCut({
+        cuts[2] = IDiamond.FacetCut({
             facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         });
-        cuts[2] = IDiamond.FacetCut({
+        cuts[3] = IDiamond.FacetCut({
             facetAddress: address(SELF),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: facetFuncs()
@@ -278,7 +290,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
                 a.se2,
                 a.rp0,
                 a.rp1,
-                a.rp2
+                a.rp2,
+                a.ownerOnlyLiquidity,
+                a.owner
             )
         );
     }
@@ -332,6 +346,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         b.decimals2 = _readDecimals(a.token2);
         b.tickSpacing = a.tickSpacing;
         b.sqrtPriceX96 = a.sqrtPriceX96;
+        b.ownerOnlyLiquidity = a.ownerOnlyLiquidity;
+        MultiStepOwnableRepo._initialize(a.owner, 1 days);
         Repo._initializeBindings(b);
     }
 
@@ -376,7 +392,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     function _validateArgs(PkgArgs memory a) private view {
         if (
             a.poolManager == address(0) || a.feeOracle == address(0) || a.token0 == address(0)
-                || a.token1 == address(0) || a.token2 == address(0)
+                || a.token1 == address(0) || a.token2 == address(0) || a.owner == address(0)
         ) {
             revert ZeroAddress();
         }

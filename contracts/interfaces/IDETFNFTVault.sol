@@ -199,7 +199,18 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
 
     /// @notice Mints and records the protocol-owned NFT (once).
     /// @dev Expected to be called during package post-deploy/initialization.
+    ///      L6: wired-state is `reservedBondNftsWired` / protocol-nft-initialized, not `id == 0`.
     function initializeDETFNFT() external returns (uint256 tokenId);
+
+    /// @notice D7: mint ids 0, 1, 2 (protocol / feeTo / creator) before any user bond.
+    /// @dev `creator == 0` mints id 2 to `feeTo` (D21).
+    function initializeReservedBondNfts(address feeTo, address creator) external returns (uint256 protocolId);
+
+    /// @notice L6 wired sentinel. Not `detfNftId == 0`.
+    function reservedBondNftsWired() external view returns (bool);
+
+    /// @notice L7: add effective-share weight only on ids 1 or 2. Does not change `originalShares`.
+    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external;
 
     /**
      * @notice Redeems a position after unlock.
@@ -209,6 +220,12 @@ interface IDETFNFTVault is IERC721, IDetfSelfNftInventoryPolicy {
      * @return wethOut Amount of WETH extracted and sent to `recipient`
      */
     function redeemPosition(uint256 tokenId, address recipient, uint256 deadline) external returns (uint256 wethOut);
+
+    /// @notice Harvest, debit the position, and burn a mature user NFT without selling into id 0.
+    /// @dev D25 close: DETF then proportionally withdraws LP and burns the DETF self-leg.
+    function retireMaturePosition(uint256 tokenId, address rewardsRecipient)
+        external
+        returns (uint256 originalShares, uint256 rewardsClaimed);
 
     /**
      * @notice Claims reward-token rewards without redeeming position.

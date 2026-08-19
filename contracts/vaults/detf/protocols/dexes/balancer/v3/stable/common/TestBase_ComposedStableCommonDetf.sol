@@ -11,6 +11,7 @@ import {IComposedStableCommonDetfBondNFTVault} from 'contracts/interfaces/ICompo
 import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
+import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
 import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponents.sol';
 import {
@@ -106,6 +107,19 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
         if (block.timestamp <= unlock_) {
             vm.warp(unlock_ + 1);
         }
+    }
+
+    function _feeTo() internal view returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(address(detfToken)).balanceOf(address(bondNFTVault));
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        vm.prank(to_);
+        claimed_ = bondNFTVault.claimRewards(tokenId_, to_);
     }
 
     function setUp() public virtual override {

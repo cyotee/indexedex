@@ -134,16 +134,25 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             revert SlippageExceeded(args_.maxAmountIn, selection.detfAmountIn);
         }
 
+        if (address(ComposedStableCommonDetfRepo._balancerV3Router()) == address(0)) {
+            revert ExchangeOutNotAvailable();
+        }
         uint256 depositedIn = _secureTokenTransfer(args_.tokenIn, args_.maxAmountIn, args_.pretransferred);
-        amountIn_ = _executeReservePoolSwap(selection, depositedIn, args_.deadline);
-        if (amountIn_ > args_.maxAmountIn) {
+        amountIn_ = selection.detfAmountIn;
+        if (amountIn_ > depositedIn) {
             revert SlippageExceeded(args_.maxAmountIn, amountIn_);
         }
+        uint256 bptIn_ = _bptForDetfShares(amountIn_);
+        if (bptIn_ == 0) revert ZeroAmount();
+        _burnDetf(address(this), amountIn_);
 
         ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
         ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(
             layoutStruct, selection.routeIndex
         );
+
+        (uint256 detfLeg_,,) = _exitReserveProportional(bptIn_);
+        _redepositDetfSelfLeg(detfLeg_);
 
         _executeComposedPoolExitExactOutShared(
             selection.exitFromStablePool,

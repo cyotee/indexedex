@@ -50,7 +50,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is Uni
         uint256 sharesMin,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external nonReentrant returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2) {
         return _addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data);
     }
 
@@ -62,7 +62,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is Uni
         uint256 sharesMin,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external nonReentrant returns (uint256 shares) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline, permit2Data);
     }
 
@@ -104,7 +104,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is Uni
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) external nonReentrant returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
         DepositFlexibleVars memory v;
         v.amount0 = amount0;
         v.amount0IsSeShare = amount0IsSeShare;

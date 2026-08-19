@@ -101,15 +101,13 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is
         );
     }
 
-    /// @dev Live primary mint: seigniorage quote/split; depositSingle(pair) → protocol LP holder; free DETF legs.
-    ///      Does NOT realize expansion.
+    /// @dev Live mint: D8 bonus on amountIn, D27/D3 split. No DETF into reserve (D11). No feeTo mint (D14).
+    ///      Pair LP sits on the NFT without new originalShares (NAV change). Does NOT realize expansion.
     function _mintDetfFromPair(uint256 pairAmount_, address recipient_) internal returns (uint256 userOut_) {
         uint256 pairBoosted_ = Math.mulDiv(pairAmount_, ONE_WAD + _seigniorageIncentiveWad(), ONE_WAD);
         MintSplit memory split_ = _splitMintedDetf(_quoteDetfAgainstReserve(pairBoosted_));
-        // Protocol LP lands on rebasing claim package when wired (PRD: protocol principal held by claim).
-        _depositSinglePair(pairAmount_, _protocolLpHolder());
+        _depositSinglePair(pairAmount_, _bondLpHolder());
         _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
         address bondVault_ = address(Repo._layoutStruct().bondNftVault);
         if (split_.inventoryDetf > 0 && bondVault_ != address(0)) {
             _mintDetf(bondVault_, split_.inventoryDetf);

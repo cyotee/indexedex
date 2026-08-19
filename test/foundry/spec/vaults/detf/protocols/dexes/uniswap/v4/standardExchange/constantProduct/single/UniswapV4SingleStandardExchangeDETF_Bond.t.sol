@@ -52,10 +52,10 @@ contract UniswapV4SingleStandardExchangeDETF_BondTest is TestBase_UniswapV4Singl
         uint256 protocolBefore = detfInfo.protocolLp();
         address hook = detfInfo.reserveHook();
         address bond = detfInfo.bondNftVault();
-        address claim = detfInfo.rebasingClaimToken();
-        // Physical: user LP on bond NFT after bond
-        assertGt(IERC20(hook).balanceOf(bond), 0, "user LP on bond NFT");
-        assertEq(IERC20(hook).balanceOf(claim), protocolBefore, "claim holds only protocol LP");
+        uint256 nftLpBefore = IERC20(hook).balanceOf(bond);
+        // D13: all reserve LP stays on the NFT vault.
+        assertGt(nftLpBefore, 0, "user LP on bond NFT");
+        assertEq(IERC20(hook).balanceOf(detfInfo.rebasingClaimToken()), 0, "claim holds no LP");
 
         vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
@@ -63,9 +63,10 @@ contract UniswapV4SingleStandardExchangeDETF_BondTest is TestBase_UniswapV4Singl
 
         assertEq(principal, shares);
         assertEq(detfInfo.userBondedLp(), userBefore - principal);
-        // Protocol LP rises by principal (physical migrate NFT → claim)
+        // D10: originalShares move to id 0; physical LP stays on the NFT.
         assertEq(detfInfo.protocolLp(), protocolBefore + principal);
-        assertEq(IERC20(hook).balanceOf(claim), protocolBefore + principal, "claim holds sold LP");
+        assertEq(IERC20(hook).balanceOf(bond), nftLpBefore, "LP stays on NFT");
+        assertEq(IERC20(hook).balanceOf(detfInfo.rebasingClaimToken()), 0, "claim still holds no LP");
     }
 
     function test_bond_lp_physically_on_bondNft() public {

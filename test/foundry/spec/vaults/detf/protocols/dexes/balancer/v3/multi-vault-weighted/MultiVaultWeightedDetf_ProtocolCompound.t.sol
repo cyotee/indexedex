@@ -139,10 +139,9 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
     /*                                 C4                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C4: fee-recipient gets free DETF on mint (not auto-joined). Fee NFT not required.
+    /// @dev C4 / D14: mint does not mint free DETF to feeTo. They claim via reserved NFT id 1.
     function test_C4_feeRecipientGetsFreeDetfNotAutoJoined() public {
         address feeTo_ = _feeTo();
-        // Enable usage fee so feeTo receives DETF on mint.
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(compoundDetf, 0.01e18);
         vm.stopPrank();
@@ -156,9 +155,12 @@ contract MultiVaultWeightedDetf_ProtocolCompound_Test is TestBase_MultiVaultWeig
         );
         vm.stopPrank();
 
-        uint256 feeDelta_ = IERC20(compoundDetf).balanceOf(feeTo_) - feeBefore_;
-        assertGt(feeDelta_, 0, "feeTo received free detf");
-        // Fee is free DETF balance - protocol compound only touches detf-owned NFT.
+        assertEq(IERC20(compoundDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
+        IDETFNFTVault nft_ = IDETFNFTVault(compoundInfo.bondNftVault());
+        uint256 claimed_ = nft_.pendingRewards(1);
+        vm.prank(feeTo_);
+        uint256 got_ = nft_.claimRewards(1, feeTo_);
+        assertEq(got_, claimed_, "id1 claim");
     }
 
     /* ---------------------------------------------------------------------- */

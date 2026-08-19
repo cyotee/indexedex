@@ -1,4 +1,4 @@
-# Plan: De-mock + inert-bootstrap + interface removal — DualLiquidityLinkedDetf
+# Plan: De-mock + inert-bootstrap + interface removal — DualLiquidity (removed)Detf
 
 Status: READY TO EXECUTE. Consolidates decisions made 2026-07-07 while removing test mocks
 surfaced three real production gaps and the reserve-bootstrap design was settled.
@@ -9,13 +9,13 @@ Removing the protocol mocks (`MockStandardExchange`, `MockVaultFeeOracle`) surfa
 `TestBase`/harness hid real deployment gaps — the 60+ green tests ran against a hand-seeded state the
 real DFPkg never produces:
 
-1. **Inert deployment is never initialized.** `DualLiquidityLinkedDetfDFPkg` creates the reserve
+1. **Inert deployment is never initialized.** `DualLiquidity (removed)DetfDFPkg` creates the reserve
    weighted pool but never initializes it, so `reservePool.balanceOf(detf) == 0` and every route
    reverts. Bootstrapping is a manual post-deploy procedure (deposit into legs → init reserve pool →
    deposit BPT for shares).
 2. **Hollow pre-minted dust.** The DFPkg mints `dustShares` (1e6) to `0xdEaD` at deploy, so an
    "inert" vault has non-zero `totalSupply` backed by zero BPT. Wrong — inert must be `totalSupply == 0`.
-3. **Config getters missing from the deployed diamond.** `IDualLiquidityLinkedDetf` declares config
+3. **Config getters missing from the deployed diamond.** `IDualLiquidity (removed)Detf` declares config
    getters implemented only on the test harness; the shipped diamond reverts `NoTargetFor` on them.
 
 ## Decisions (from the user)
@@ -27,25 +27,25 @@ real DFPkg never produces:
 - First DETF deposit mints **1:1** (`shares = bptIn`); usual fee split then applies. NO DETF-level
   MINIMUM_LIQUIDITY lock — Balancer already locks minimum liquidity when the reserve pool is
   initialized.
-- Remove `IDualLiquidityLinkedDetf` entirely. Config is read from the standard vault surface
+- Remove `IDualLiquidity (removed)Detf` entirely. Config is read from the standard vault surface
   (`IBasicVault.vaultTokens()` → `[self, vaultA, vaultB, pairVault, reservePool]`;
   `IBasicVault.reserveOfToken(reservePool)` → `totalReserveBpt`) plus token balances / leg queries.
 
 ## Execution steps
 
-### 1. Remove `IDualLiquidityLinkedDetf`; remap errors
-- Delete `contracts/interfaces/IDualLiquidityLinkedDetf.sol`.
+### 1. Remove `IDualLiquidity (removed)Detf`; remap errors
+- Delete `contracts/interfaces/IDualLiquidity (removed)Detf.sol`.
 - Error remap in Common/Targets/QueryTargets/DFPkg:
   - `UnsupportedRoute(IERC20,IERC20)` (×15) → `IStandardExchangeErrors.InvalidRoute(address,address)`.
   - `DeadlineExpired(uint256)` → `IStandardExchangeErrors.DeadlineExceeded(deadline, block.timestamp)`.
   - `ZeroAmount()`, `ReservePoolNotInitialized()`, `ResidualInventory(IERC20,uint256)` → move into
-    `DualLiquidityLinkedDetfRepo` (library errors, alongside `AlreadyInitialized`).
+    `DualLiquidity (removed)DetfRepo` (library errors, alongside `AlreadyInitialized`).
 - Replace any config-getter reads with `IBasicVault`/`IStandardVault` + balances.
 
 ### 2. Bootstrap / dust redesign (inert + 1:1 first deposit)
-- `DualLiquidityLinkedDetfMathLib._sharesForBpt`: if `totalShares_ == 0 || totalBpt_ == 0` return
+- `DualLiquidity (removed)DetfMathLib._sharesForBpt`: if `totalShares_ == 0 || totalBpt_ == 0` return
   `bptIn_` (1:1 first deposit). (Guards the div-by-zero.)
-- `DualLiquidityLinkedDetfCommon`: split `_requireLive` into `_requireActive(deadline, amount)`
+- `DualLiquidity (removed)DetfCommon`: split `_requireLive` into `_requireActive(deadline, amount)`
   (deadline + zero-amount, universal) and `_requireReserveLive()` (`reserveBpt.balanceOf(this) > 0`).
 - `ExchangeInTarget.exchangeIn`: `_requireActive`; classify; treat
   `kindOut == Shares && kindIn == ReserveBpt && totalSupply == 0` as the bootstrap deposit → skip
@@ -54,11 +54,11 @@ real DFPkg never produces:
   pre-deposit empty state.
 - `ExchangeOutTarget.exchangeOut`: `_requireActive` + `_requireReserveLive` (exact-out is never the
   bootstrap).
-- `DualLiquidityLinkedDetfDFPkg`: delete `_mint(DUST_SINK, dustShares)`, `DUST_SINK`, and the
+- `DualLiquidity (removed)DetfDFPkg`: delete `_mint(DUST_SINK, dustShares)`, `DUST_SINK`, and the
   `dustShares` field from `PkgArgs`/`DeployConfig` (+ the interface struct). Deploy inert.
 
 ### 3. Real ProductionBase + bootstrap helper
-- `DualLiquidityLinkedDetfProductionBase` (abstract), mirroring `SingleVaultDetfProductionBase`:
+- `DualLiquidity (removed)DetfProductionBase` (abstract), mirroring `SingleVaultDetfProductionBase`:
   real `ERC20PermitDFPkg` tokens (fixed supply to test, distributed via transfer), real V4 pools + V2
   pair, real leg DFPkgs, real rate providers, real DETF via registry; `feeOracle = indexedexManager`.
 - `_bootstrapReserve()`: deposit commonToken→vaultAShare, commonToken→vaultBShare, zap
@@ -77,7 +77,7 @@ real DFPkg never produces:
 - Reentrancy: keep `ReentrantMockERC20` in the tokenB slot over the real deployment.
 
 ### 5. Delete mocks + prove
-- Delete `MockStandardExchange`, `MockVaultFeeOracle`, mock `TestBase_DualLiquidityLinkedDetf` + harness.
+- Delete `MockStandardExchange`, `MockVaultFeeOracle`, mock `TestBase_DualLiquidity (removed)Detf` + harness.
 - `grep -r` confirms no references remain. Full family suite green over real code.
 - Update `test_facetCuts_installsNineFacets_noDiamondCut` if facet count changed (interface removal
   does not add/remove facets; verify).

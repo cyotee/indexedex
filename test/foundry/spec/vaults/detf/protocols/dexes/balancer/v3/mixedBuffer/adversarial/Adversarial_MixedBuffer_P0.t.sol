@@ -24,7 +24,7 @@ import {
 /// @dev I1–I3 secure-pull / trust-flag: Adversarial_MixedBuffer_TrustFlag.t.sol.
 ///      Deferred P2: A4 dust bootstrap grief; A5 fee-slice double-claim; B2 reserve sandwich;
 ///      B4–B5 MaxInRatio / multi-leg desync; C4 hostile bufferToken; C5 gas N-max;
-///      D4 junk rateAsset N/A (redeemClaim is buffer-only); D7 sell/redeem lock independence by design;
+///      D4 junk rateAsset N/A (redeemClaim is DETF-only); D7 sell/redeem lock independence by design;
 ///      E2–E3 multi-leg dust / fee recipient; G2–G3 nested free-inventory / opacity; H1 N-max gas.
 contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStableDetf_Adversarial {
     /* ---------------------------------------------------------------------- */
@@ -178,7 +178,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         vm.prank(attacker);
         vm.expectRevert();
         IMixedBufferMultiVaultStableDetfBonding(instance_).redeemClaim(
-            1e18, 0, attacker, block.timestamp + 1 hours
+            1e18, IERC20(instance_), 0, attacker, block.timestamp + 1 hours
         );
 
         assertEq(IERC20(pool_).balanceOf(instance_), bptAfterMint_, "A3/D2: BPT intact");
@@ -227,13 +227,13 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         if (part_ == 0) part_ = bal_;
 
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(part_, 0, alice, block.timestamp + 1 hours);
+        uint256 out_ = bonding_.redeemClaim(part_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
         assertTrue(out_ > 0, "first redeem ok");
 
         uint256 left_ = claim_.balanceOf(alice);
         vm.prank(alice);
         vm.expectRevert();
-        bonding_.redeemClaim(left_ + 1e18, 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(left_ + 1e18, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
     }
 
     function test_D5_lockClamp_minRevert_maxOk() public {
@@ -273,7 +273,7 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
 
         vm.prank(alice);
-        bonding_.redeemClaim(redeemAmt_, 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
 
         uint256 bptAfter_ = IERC20(info_.reservePool()).balanceOf(instance_);
         assertTrue(bptBefore_ >= bptAfter_, "BPT decreased or same");
@@ -526,12 +526,12 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
 
         vm.prank(alice);
         vm.expectRevert();
-        bonding_.redeemClaim(redeemAmt_, type(uint256).max, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), type(uint256).max, alice, block.timestamp + 1 hours);
 
         assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged after failed redeem");
 
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, 0, alice, block.timestamp + 1 hours);
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
         assertTrue(out_ > 0, "H2: successful redeem after failed attempt");
         assertLt(claim_.balanceOf(alice), claimBefore_, "claim burned on success");
     }

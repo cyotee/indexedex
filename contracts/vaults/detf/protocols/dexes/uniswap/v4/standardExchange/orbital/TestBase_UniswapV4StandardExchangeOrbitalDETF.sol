@@ -234,7 +234,8 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
     }
 
@@ -520,11 +521,10 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
     {
         address hook = info_.reserveHook();
         address p0 = info_.pairToken0();
-        address holder =
-            info_.rebasingClaimToken() != address(0) ? info_.rebasingClaimToken() : address(info_);
+        address holder = info_.bondNftVault() != address(0) ? info_.bondNftVault() : address(info_);
         if (!IUniswapV4StandardExchangeOrbitalBufferHook(hook).isZapEligible()) return false;
-        SimpleMintableERC20(p0).mint(detfUser, pairAmt_);
-        vm.startPrank(detfUser);
+        SimpleMintableERC20(p0).mint(address(info_), pairAmt_);
+        vm.startPrank(address(info_));
         IERC20(p0).approve(hook, type(uint256).max);
         try IUniswapV4StandardExchangeOrbitalBufferHook(hook).depositSingle(
             p0, pairAmt_, holder, 0, block.timestamp + 1 days, ""
@@ -671,7 +671,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
         uint256 principal = IDETFNFTVault(bond).originalSharesOf(bondTokenId);
         uint256 bondLpBefore = IERC20(hook).balanceOf(bond);
         vm.prank(detfUser);
-        info_.closeBondMature(bondTokenId, detfUser);
+        info_.closeBondMature(bondTokenId, _minOut3(), detfUser, block.timestamp + 1 hours);
         // Position principal must leave the bond vault (unique instance: full drain).
         uint256 bondLpAfter = IERC20(hook).balanceOf(bond);
         assertLe(bondLpAfter, bondLpBefore - principal, "bond principal not pulled on close");
@@ -686,7 +686,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
             if (!IUniswapV4StandardExchangeOrbitalBufferHook(hook).isZapEligible()) break;
             uint256 supply = IERC20(hook).totalSupply();
             if (supply <= 1000 + 1e12) break;
-            uint256 proto = info_.protocolLp();
+            uint256 proto = IERC20(hook).balanceOf(bond);
             if (proto == 0) break;
             if (!info_.isBurningAllowed() && info_.thresholdMode() == ThresholdMode.Policy) break;
 
@@ -714,7 +714,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
         if (IUniswapV4StandardExchangeOrbitalBufferHook(hook).isZapEligible()) {
             // Final attempt: burn entire free DETF supply-sized chunks until empty protocol or revert.
             for (uint256 k; k < 30 && IUniswapV4StandardExchangeOrbitalBufferHook(hook).isZapEligible(); ++k) {
-                uint256 proto2 = info_.protocolLp();
+                uint256 proto2 = IERC20(hook).balanceOf(bond);
                 if (proto2 == 0) break;
                 deal(d, detfUser, proto2 + 1 ether);
                 try this.burnExternal(d, p1, IERC20(d).balanceOf(detfUser)) {} catch {
@@ -724,6 +724,32 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
                 }
             }
         }
+    }
+
+    function _minOut3() internal pure returns (uint256[] memory m_) {
+        m_ = new uint256[](3);
+    }
+
+    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IUniswapV4StandardExchangeOrbitalDETF(instance_).bondNftVault());
+    }
+
+    function _feeTo() internal view returns (address) {
+        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+    }
+
+    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
+        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
+    }
+
+    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
+        IDETFNFTVault vault_ = _bondNftVault(detf);
+        vm.prank(to_);
+        claimed_ = vault_.claimRewards(tokenId_, to_);
+    }
+
+    function _potBalance() internal view returns (uint256) {
+        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
     }
 }
 

@@ -88,7 +88,7 @@ Pick 1–2 for launch week; keep the rest as secondary:
 
 - **Each DETF share** = the “OHM” of *that* reserve (seigniorage unit).  
 - **RICH** = protocol capital token + **economic center of fee-make**: fees from **other** vaults/DETFs are routed to **`donation` into RICH liquidity**.  
-- **Launch fee sink:** **SingleVault DETF for RICH** (`SingleVaultDetf`) — **accrues** those donations (reserve / make) — not a cash dividend on free-floating RICH. DualLiquidityLinked is **not** the day-1 fee sink.  
+- **Launch fee sink:** **SingleVault DETF for RICH** (`SingleVaultDetf`) — **accrues** those donations (reserve / make) — not a cash dividend on free-floating RICH. DualLiquidity (removed) is **not** the day-1 fee sink.  
 - Do **not** call RICH “the new OHM” (collapses platform capital with per-reserve seigniorage).
 
 ---
@@ -178,7 +178,7 @@ Pick 1–2 for launch week; keep the rest as secondary:
 | **Multi-vault weighted DETF** | Basket: multiple SE legs + weights | **P0 product** |
 | **Single-SE DETF** | Simplest gold path if multi-vault not ready | **P0 fallback** |
 | **SingleVault DETF (RICH)** | **Launch fee sink** — accrues donations; makes RICH-linked liquidity | **P0 product** (with RICH capital) |
-| **DualLiquidityLinked** | Optional later multi-leg product — **not** day-1 fee sink | **P2** |
+| **DualLiquidity (removed)** | Optional later multi-leg product — **not** day-1 fee sink | **P2** |
 | **RICH** | Capital token + center of fee-make liquidity | **P0 capital** |
 
 **Role names in code (mandatory):** `rateAsset`, `pairToken`, `underlyingVault`, `vaultShare`, `detfToken`, `reservePool` — never brand external product tickers into DETF interfaces.
@@ -426,7 +426,7 @@ Do **not** open a capital auction before R1 addresses are public and R3 demo pat
 | 2026-07-26 | Inherit RICH 1B / 10% CCA / floor workshop **unless L2-E-first workshop supersedes** | **Proposed** |
 | 2026-07-26 | **Launch narrative lead:** founder = **original Olympus developer**; DETF = **“launch your own OHM”**. RICH = capital + fee-make center, not OHM rebrand. | **Proposed** — ready to lock |
 | 2026-07-26 | **Fee model:** fees from other vaults/DETFs **donate into RICH liquidity**; fee-sink DETF **accrues** (not free-RICH cash dividend). | **Decided** |
-| 2026-07-26 | **Launch fee-accrual DETF = SingleVault DETF for RICH** (`SingleVaultDetf`) — DualLiquidityLinked not day-1 fee sink | **Decided** |
+| 2026-07-26 | **Launch fee-accrual DETF = SingleVault DETF for RICH** (`SingleVaultDetf`) — DualLiquidity (removed) not day-1 fee sink | **Decided** |
 | 2026-07-26 | **Public copy avoids** venue-chain brand names and issuer “stock token” product framing; use multi-asset / OHM language | **Proposed** — ready to lock |
 | — | Exact hero DETF composition (legs, weights, rateAsset) | **Open** |
 | — | Bridge design for RICH L1 ↔ L2-E | **Open** |

@@ -73,6 +73,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         uint256 expansionClosureRatePerYearWad;
         uint256 expansionMaxCatchUpEpochs;
         uint256 hookMineNonce;
+        address creator;
     }
 
     IFacet immutable ERC20_FACET;
@@ -318,6 +319,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         cfg.expansionClosureRatePerYearWad = rate_;
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
         cfg.hookMineNonce = mineNonce;
+        cfg.creator = args.creator;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -408,7 +410,9 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
                 tokens: tokens_,
                 standardExchanges: ses_,
                 rateProviders: rps_,
-                baseAmp: cfg.baseAmp
+                baseAmp: cfg.baseAmp,
+                ownerOnlyLiquidity: true,
+                owner: address(this)
             });
 
         hook_ = HOOK_PKG.deployVault(hArgs, cfg.hookMineNonce);
@@ -460,7 +464,8 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
                 detfNftId: 0,
                 feeRecipientNftId: 0,
                 bondNftVaultPkg: address(BOND_NFT_VAULT_PKG),
-                rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG)
+                rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG),
+                creator: cfg.creator
             })
         );
         Repo._initializePolicy(

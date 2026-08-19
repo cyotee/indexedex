@@ -24,7 +24,7 @@ contract MixedBufferMultiVaultStableDetf_Claim_Test is TestBase_MixedBufferMulti
         _bootstrapDefault(detf, alice);
     }
 
-    function test_sell_to_claim_and_redeem_buffer() public {
+    function test_sell_to_claim_and_redeem_detf() public {
         _fundBuffer(bob, 200e18);
         vm.startPrank(bob);
         IERC20(address(dai)).approve(detf, 200e18);
@@ -41,12 +41,12 @@ contract MixedBufferMultiVaultStableDetf_Claim_Test is TestBase_MixedBufferMulti
         uint256 claimBal_ = claim_.balanceOf(bob);
         assertTrue(claimBal_ > 0, "claim balance");
 
-        uint256 bufBefore_ = IERC20(address(dai)).balanceOf(bob);
+        uint256 detfBefore_ = IERC20(detf).balanceOf(bob);
         vm.startPrank(bob);
-        uint256 out_ = detfBonding.redeemClaim(claimBal_, 0, bob, block.timestamp + 1 hours);
+        uint256 out_ = detfBonding.redeemClaim(claimBal_, IERC20(detf), 0, bob, block.timestamp + 1 hours);
         vm.stopPrank();
-        assertTrue(out_ > 0, "buffer from redeem");
-        assertEq(IERC20(address(dai)).balanceOf(bob) - bufBefore_, out_, "buffer received");
+        assertTrue(out_ > 0, "DETF from redeem");
+        assertEq(IERC20(detf).balanceOf(bob) - detfBefore_, out_, "DETF received");
         _assertNoFreeInventory(detf);
     }
 }

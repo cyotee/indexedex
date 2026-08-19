@@ -32,7 +32,9 @@ import {
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
@@ -47,6 +49,11 @@ import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 /// @title SingleStandardExchangeDETFCommon
@@ -82,6 +89,12 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         uint256 unlock_ = SingleStandardExchangeDETFRepo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
         if (block.timestamp < unlock_) {
             revert SingleStandardExchangeDETFRepo.BondNotMature(unlock_);
+        }
+    }
+
+    function _requireNotStandingRewardNft(uint256 tokenId_) internal pure {
+        if (tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID) {
+            revert IDetfErrors.DETFNFTRestricted(tokenId_);
         }
     }
 
@@ -301,12 +314,49 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     function _splitMintedDetf(uint256 gross_) internal view returns (MintSplit memory split_) {
         split_.grossDetf = gross_;
         if (gross_ == 0) return split_;
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
-        split_.feeToDetf = feeTo_;
-        // Half of seigniorage incentive of remaining → protocol NFT accrual path
-        uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.inventoryDetf = afterFee_.mulDown(halfInc_);
-        split_.userDetf = afterFee_ - split_.inventoryDetf;
+        (uint256 user_, uint256 pot_) = DETFMintSplitLib._splitLiveGross(gross_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _splitBondDetf(uint256 joinDetf_) internal view returns (MintSplit memory split_) {
+        split_.grossDetf = joinDetf_;
+        if (joinDetf_ == 0) return split_;
+        (uint256 user_, uint256 pot_,) = DETFMintSplitLib._splitBond(joinDetf_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book uses family weights.
+    function _quoteBondJoinDetf(uint256 vaultShares_) internal view returns (uint256 detfOut_) {
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (!s.isReserveLive || IERC20(s.reservePool).totalSupply() == 0) {
+            if (s.vaultShareWeight == 0) return vaultShares_;
+            return vaultShares_.mulDown(s.detfWeight).divDown(s.vaultShareWeight);
+        }
+        IVault bal_ = BalancerV3VaultAwareRepo._balancerV3Vault();
+        (,, uint256[] memory balancesRaw_,) = bal_.getPoolTokenInfo(s.reservePool);
+        uint256 vaultBal_ = balancesRaw_[s.vaultShareIndex];
+        uint256 detfBal_ = balancesRaw_[s.detfIndex];
+        if (vaultBal_ == 0) {
+            if (s.vaultShareWeight == 0) return vaultShares_;
+            return vaultShares_.mulDown(s.detfWeight).divDown(s.vaultShareWeight);
+        }
+        detfOut_ = vaultShares_ * detfBal_ / vaultBal_;
+        if (detfOut_ == 0) detfOut_ = vaultShares_;
+    }
+
+    /// @notice Proportional DETF leg of a BPT exit (preview; DETF slot stays 0 on D25 close).
+    function _previewProportionalDetf(uint256 bptIn_) internal view returns (uint256 detfOut_) {
+        if (bptIn_ == 0) return 0;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return 0;
+        IVault bal_ = _reserveVault();
+        (,, uint256[] memory balancesRaw_,) = bal_.getPoolTokenInfo(s.reservePool);
+        detfOut_ = balancesRaw_[s.detfIndex] * bptIn_ / bptSupply_;
     }
 
     function _toLiveScaled18(uint256 raw_, TokenInfo memory info_) internal view returns (uint256) {
@@ -323,6 +373,14 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     /* ---------------------------------------------------------------------- */
     /*                         Reserve join / exit                            */
     /* ---------------------------------------------------------------------- */
+
+    function _topUpFeeCreatorShares() internal {
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return;
+        (, uint256 f_, uint256 c_) =
+            IVaultFeeOracleQuery(address(StandardVaultRepo._feeOracle())).seigniorageSplitOfVault(address(this));
+        DETFBondLifecycleLib._topUpFeeCreatorShares(s.bondNftVault, f_, c_);
+    }
 
     function _reserveRouter() internal view returns (IBalancerV3StandardExchangeRouterProxy) {
         return BalancerV3StandardExchangeRouterAwareRepo._balancerV3StandardExchangeRouter();
@@ -514,6 +572,7 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
             protocolId_,
             bptOut_
         );
+        _topUpFeeCreatorShares();
         _syncAllExpectedHoldReserves();
     }
 

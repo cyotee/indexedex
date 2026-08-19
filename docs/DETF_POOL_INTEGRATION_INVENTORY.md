@@ -33,7 +33,7 @@
 | **SeigniorageDETF** (legacy dual-token) | — | — | **REMOVED** |
 | **ComposedStableCommonDetf** (`detf/protocols/dexes/balancer/v3/stable/common/`) | Weighted reserve of BPTs + DETF | Crane **`IWeightedPool`** + **`IStablePool`×2** | **E** — all three supplied in `PkgArgs` |
 | **MixedBufferMultiVaultStableDetf** (`detf/protocols/dexes/balancer/v3/mixedBuffer/`) | Stable (MixedBuffer) | IndexedEx **`MixedBufferMultiVaultStablePool`** | **D** — via pool DFPkg |
-| **DualLiquidityLinkedCrossVersionUniswapVault** (`vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
+| **DualLiquidity (removed)CrossVersionUniswapVault** (`vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/`) | Weighted (3-token dual SE + pair) | Crane **`WeightedPoolFactory`** | **D** — DFPkg |
 
 ### Gap headline
 
@@ -172,7 +172,7 @@ Path root: `lib/crane/contracts/external/balancer/v3/`
 | Status | **REMOVED** (2026-07-31) — dual-token RBT/sRBT + underwrite NFT product deleted |
 | Note | Not a true DETF family. Fee-oracle seigniorage **mint incentive** for true DETFs is unrelated and retained. Do not reintroduce this package. |
 
-### F7 — DualLiquidityLinkedCrossVersionUniswapVault
+### F7 — DualLiquidity (removed)CrossVersionUniswapVault
 
 | Field | Value |
 |-------|-------|
@@ -326,7 +326,7 @@ Derived from the matrix; product priority may override.
 | Composed Stable Common | `.../balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol` | `TestBase_*`; AGENTS + `docs/detf/` |
 | Single Vault (8020) | removed | — |
 | Seigniorage (legacy) | **REMOVED** | — |
-| DualLiquidity | `.../uniswap/crossVersion/DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | family docs under protocol tree |
+| DualLiquidity | `.../uniswap/crossVersion/DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol` | family docs under protocol tree |
 
 ### IndexedEx pools
 

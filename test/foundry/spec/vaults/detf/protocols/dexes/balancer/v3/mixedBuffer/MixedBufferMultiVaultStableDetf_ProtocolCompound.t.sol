@@ -133,20 +133,19 @@ contract MixedBufferMultiVaultStableDetf_ProtocolCompound_Test is TestBase_Mixed
     /*                                 C4                                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @dev C4: fee-recipient gets free DETF on mint (not auto-joined). Fee NFT not required.
+    /// @dev C4: feeTo earns only via token id 1 `claimRewards` (D14). No DETF mint to feeTo on mint.
     function test_C4_feeRecipientGetsFreeDetfNotAutoJoined() public {
         address feeTo_ = _feeTo();
-        // Enable usage fee so feeTo receives DETF on mint.
-        vm.startPrank(owner);
-        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(compoundDetf, 0.01e18);
-        vm.stopPrank();
-
         uint256 feeBefore_ = IERC20(compoundDetf).balanceOf(feeTo_);
         _mintDetfFromBuffer(compoundDetf, bob, 40e18);
+        assertEq(IERC20(compoundDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
 
-        uint256 feeDelta_ = IERC20(compoundDetf).balanceOf(feeTo_) - feeBefore_;
-        assertGt(feeDelta_, 0, "feeTo received free detf");
-        // Fee is free DETF balance - protocol compound only touches detf-owned NFT.
+        IDETFNFTVault vault_ = _bondNftVault(compoundDetf);
+        uint256 pending_ = vault_.pendingRewards(1);
+        vm.prank(feeTo_);
+        uint256 claimed_ = vault_.claimRewards(1, feeTo_);
+        assertEq(claimed_, pending_, "id1 claim==pending");
+        assertGt(claimed_, 0, "feeTo claimed via id 1");
     }
 
     /* ---------------------------------------------------------------------- */

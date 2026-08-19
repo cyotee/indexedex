@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -10,7 +12,6 @@ import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventor
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {
@@ -151,21 +152,17 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
             revert Repo.FirstBondBelowMinimumLiquidity();
         }
 
+        MintSplit memory split_ = _splitBondDetf(detfForJoin_);
+        if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
+
         Repo._setReserveLive();
-        _mintBondFreeLegs(detfForJoin_, recipient_);
-
-        uint256 effectiveBase_;
-        for (uint8 i; i < s.m; ++i) {
-            uint256 mid_ = _previewExactIn(address(s.pairTokens[i]), address(this), usedPairs_[i]);
-            if (mid_ == 0) mid_ = _pairNotionalToDetfWad(i, usedPairs_[i]);
-            effectiveBase_ += mid_;
-        }
-        if (effectiveBase_ == 0) effectiveBase_ = shares_;
-
-        tokenId_ = _openBondNft(shares_, effectiveBase_, lockDuration_, recipient_);
+        tokenId_ = _openBondNft(shares_, lockDuration_, recipient_);
         Repo._setCapitalToken(tokenId_, capitalToken_);
         Repo._addUserBondedLp(shares_);
         emit IUniswapV4StandardExchangeCurveQuadStableDETF.ReserveLive(tokenId_, shares_);
+
+        _topUpFeeCreatorShares();
+        if (split_.inventoryDetf > 0) _mintDetf(address(s.bondNftVault), split_.inventoryDetf);
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
@@ -184,55 +181,37 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         if (capitalToken_ != address(0) && capitalToken_ != fundedPair_) {
             revert Repo.InvalidCapitalToken();
         }
-        shares_ = _liveBondJoinSingle(r_);
-        uint256 pairBoosted_ =
-            Math.mulDiv(r_.pairNotionalNative, ONE_WAD + _seigniorageIncentiveWad(), ONE_WAD);
-        _mintBondFreeLegs(_quoteDetfAgainstReserve(r_.fundedProductIndex, pairBoosted_), recipient_);
+        uint256 detfForJoin_ = _quoteBondJoinDetf(r_.fundedProductIndex, r_.pairNotionalNative);
+        if (detfForJoin_ == 0) revert Repo.ZeroAmount();
+        MintSplit memory split_ = _splitBondDetf(detfForJoin_);
 
-        uint256 rateWad_ = _previewExactIn(fundedPair_, address(this), r_.pairNotionalNative);
-        if (rateWad_ == 0) rateWad_ = _pairNotionalToDetfWad(r_.fundedProductIndex, r_.pairNotionalNative);
-        if (rateWad_ == 0) rateWad_ = shares_;
-        tokenId_ = _openBondNft(shares_, rateWad_, lockDuration_, recipient_);
-        Repo._setCapitalToken(tokenId_, fundedPair_);
-        Repo._addUserBondedLp(shares_);
-        _tryCompoundProtocolRewards();
-        _syncAllExpectedHoldReserves();
-    }
-
-    /// @dev Later bond: always joinUnbalanced DETF + one pair; zeros on the other two.
-    function _liveBondJoinSingle(PairLegRating memory r_) internal returns (uint256 lpOut_) {
-        uint256 pairBoosted_ =
-            Math.mulDiv(r_.pairNotionalNative, ONE_WAD + _seigniorageIncentiveWad(), ONE_WAD);
-        uint256 detfForJoin_ = _quoteDetfAgainstReserve(r_.fundedProductIndex, pairBoosted_);
-        if (detfForJoin_ == 0) {
-            Repo.Storage storage s = Repo._layoutStruct();
-            detfForJoin_ = Math.mulDiv(
-                _toWad(r_.pairNotionalNative, _decimalsOf(address(s.pairTokens[r_.fundedProductIndex]))),
-                ONE_WAD,
-                s.creationPairPerDetfWad[r_.fundedProductIndex]
-            );
-        }
         Repo.Storage storage s2 = Repo._layoutStruct();
         uint256[] memory pairAmts_ = new uint256[](s2.m);
         pairAmts_[r_.fundedProductIndex] = r_.pairNotionalNative;
         _mintDetf(address(this), detfForJoin_);
         uint256[] memory binding_ = _packBinding(pairAmts_, detfForJoin_);
-        lpOut_ = _joinUnbalanced(binding_, _bondLpHolder());
+        shares_ = _joinUnbalanced(binding_, _bondLpHolder());
+        if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
+
+        tokenId_ = _openBondNft(shares_, lockDuration_, recipient_);
+        Repo._setCapitalToken(tokenId_, fundedPair_);
+        Repo._addUserBondedLp(shares_);
+        _topUpFeeCreatorShares();
+        if (split_.inventoryDetf > 0) _mintDetf(address(s2.bondNftVault), split_.inventoryDetf);
+        _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
     }
 
-    function _openBondNft(uint256 lpOut_, uint256 effectiveBase_, uint256 lockDuration_, address recipient_)
+    function _openBondNft(uint256 lpOut_, uint256 lockDuration_, address recipient_)
         private
         returns (uint256 tokenId_)
     {
         Repo.Storage storage s = Repo._layoutStruct();
         if (address(s.bondNftVault) == address(0)) return 0;
         uint256 lock_ = _effectiveLockDuration(lockDuration_);
-        tokenId_ = DETFBondLifecycleLib._createBondPositionWithEffectiveBase(
-            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)),
-            lpOut_,
-            effectiveBase_,
-            lock_,
-            recipient_
+        uint256 orig_ = _originalSharesForBondLp(lpOut_);
+        tokenId_ = DETFBondLifecycleLib._createBondPosition(
+            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), orig_, lock_, recipient_
         );
     }
 
@@ -243,83 +222,92 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         returns (uint256 principalShares_)
     {
         _requireMature(tokenId_);
+        _requireNotStandingRewardNft(tokenId_);
         Repo.Storage storage s = Repo._layoutStruct();
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         try IQuadDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
 
-        principalShares_ = s.bondNftVault.originalSharesOf(tokenId_);
-        if (principalShares_ > 0 && address(s.rebasingClaimToken) != address(0)) {
-            address claim_ = address(s.rebasingClaimToken);
-            IERC20 lp_ = IERC20(s.reserveHook);
-            uint256 bondBal_ = lp_.balanceOf(address(s.bondNftVault));
-            uint256 move_ = principalShares_ < bondBal_ ? principalShares_ : bondBal_;
-            if (move_ > 0) {
-                s.bondNftVault.transferHeldToken(lp_, claim_, move_);
-            }
-        }
-
-        if (address(s.rebasingClaimToken) == address(0)) {
-            principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
-                IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), tokenId_, msg.sender, recipient_
-            );
-        } else {
-            (principalShares_,) = DETFBondLifecycleLib._sellPositionToRebasingClaim(
-                IDetfSelfNftInventoryPolicy(address(s.bondNftVault)),
-                s.rebasingClaimToken,
-                tokenId_,
-                msg.sender,
-                recipient_
-            );
+        uint256 protocolBefore_ = _protocolOriginalShares();
+        uint256 assets_ = s.bondNftVault.originalSharesOf(tokenId_);
+        principalShares_ = DETFBondLifecycleLib._sellPositionToDetfNft(
+            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), tokenId_, msg.sender, recipient_
+        );
+        if (address(s.rebasingClaimToken) != address(0) && assets_ > 0) {
+            s.rebasingClaimToken.mintFromNFTSale(assets_, protocolBefore_, recipient_);
         }
         Repo._clearCapital(tokenId_);
         Repo._subUserBondedLp(principalShares_);
+        _topUpFeeCreatorShares();
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
 
-    function closeBondMature(uint256 tokenId_, address recipient_)
-        public
-        virtual
-        nonReentrant
-        returns (uint256 amountOut_)
-    {
+    function closeBondMature(
+        uint256 tokenId_,
+        uint256[] calldata minAmountsOut_,
+        address recipient_,
+        uint256 deadline_
+    ) public virtual nonReentrant returns (uint256[] memory amountsOut_) {
         _requireMature(tokenId_);
+        _requireNotStandingRewardNft(tokenId_);
+        _requireActive(deadline_, 1);
         if (recipient_ == address(0)) recipient_ = msg.sender;
         Repo.Storage storage s = Repo._layoutStruct();
+        if (minAmountsOut_.length != s.n) {
+            revert Repo.InvalidRoute(IERC20(address(0)), IERC20(address(0)));
+        }
+        if (minAmountsOut_[s.detfBindingIndex] != 0) {
+            revert Repo.InvalidRoute(IERC20(address(this)), IERC20(address(0)));
+        }
 
         try IQuadDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
 
-        uint256 lp_ = s.bondNftVault.originalSharesOf(tokenId_);
-        address capital_ = s.capitalTokenOf[tokenId_];
-        if (capital_ == address(0) || !Repo._isPairToken(capital_)) {
-            revert Repo.InvalidCapitalToken();
+        uint256 orig_ = s.bondNftVault.originalSharesOf(tokenId_);
+        uint256 lpOut_ = s.bondNftVault.convertToAssets(orig_);
+        if (lpOut_ == 0) revert Repo.ZeroAmount();
+        s.bondNftVault.retireMaturePosition(tokenId_, recipient_);
+
+        _pullBondLp(lpOut_);
+        uint256[] memory withdrawn_ = _exitProportional(lpOut_, address(this));
+        uint256 detfOut_ = withdrawn_[s.detfBindingIndex];
+        if (detfOut_ > 0) _burnDetf(address(this), detfOut_);
+
+        amountsOut_ = new uint256[](s.n);
+        for (uint8 i; i < s.n; ++i) {
+            if (i == s.detfBindingIndex) continue;
+            uint256 amt_ = withdrawn_[i];
+            if (amt_ < minAmountsOut_[i]) {
+                revert Repo.InvalidRoute(IERC20(_tokenAtBinding(i)), IERC20(address(0)));
+            }
+            amountsOut_[i] = amt_;
+            if (amt_ > 0) IERC20(_tokenAtBinding(i)).safeTransfer(recipient_, amt_);
         }
 
-        _pullBondLp(lp_);
-        DETFBondLifecycleLib._sellPositionToDetfNft(
-            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), tokenId_, msg.sender, recipient_
-        );
-
-        amountOut_ = _closeLpToCapitalToken(lp_, capital_);
-        if (amountOut_ > 0) IERC20(capital_).safeTransfer(recipient_, amountOut_);
-
         Repo._clearCapital(tokenId_);
-        Repo._subUserBondedLp(lp_);
+        Repo._subUserBondedLp(lpOut_);
         _tryCompoundProtocolRewards();
         _syncAllExpectedHoldReserves();
     }
 
-    /// @dev Prop-remove + redeposit DETF + consolidate. NEVER withdrawSingle / exitSingleAssetExact*.
-    function _closeLpToCapitalToken(uint256 lp_, address capital_) internal returns (uint256 amountOut_) {
+    function previewCloseBondMature(uint256 tokenId_)
+        external
+        view
+        returns (uint256[] memory amountsOut_)
+    {
         Repo.Storage storage s = Repo._layoutStruct();
-        IHook hook_ = IHook(s.reserveHook);
-        IERC20(s.reserveHook).forceApprove(s.reserveHook, lp_);
-        uint256[] memory mins_ = new uint256[](s.n);
-        uint256[] memory residual_ = hook_.exitProportional(lp_, address(this), mins_, block.timestamp + 1);
-        (uint256 aDetf_, uint256[] memory pairAmts_) = _unpackBinding(residual_);
-        _redepositDetfSelfLeg(aDetf_);
-        amountOut_ = _consolidateToPair(capital_, pairAmts_);
+        amountsOut_ = new uint256[](s.n);
+        uint256 orig_ = s.bondNftVault.originalSharesOf(tokenId_);
+        if (orig_ == 0) return amountsOut_;
+        uint256 lpOut_ = s.bondNftVault.convertToAssets(orig_);
+        if (lpOut_ == 0) return amountsOut_;
+        try IHook(s.reserveHook).previewExitProportional(lpOut_) returns (uint256[] memory withdrawn_) {
+            if (withdrawn_.length != s.n) return amountsOut_;
+            for (uint8 i; i < s.n; ++i) {
+                if (i == s.detfBindingIndex) continue;
+                amountsOut_[i] = withdrawn_[i];
+            }
+        } catch {}
     }
 
     function completeReserveBondNft() public returns (address bondNftVault) {
@@ -345,26 +333,18 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
             )
         );
         uint256 detfNftId_;
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
+        address feeTo_ = address(s.feeOracle.feeTo());
+        address creator_ = s.creator;
+        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
             detfNftId_ = id_;
         } catch {
-            detfNftId_ = 0;
-        }
-        uint256 feeRecipientNftId_;
-        address feeTo_ = address(s.feeOracle.feeTo());
-        if (feeTo_ != address(0)) {
-            uint256 lock_;
-            try s.feeOracle.bondTermsOfVault(detf_) returns (BondTerms memory terms_) {
-                lock_ = terms_.minLockDuration == 0 ? 1 : terms_.minLockDuration;
+            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
+                detfNftId_ = id2_;
             } catch {
-                lock_ = 1;
-            }
-            try bondVault_.createPosition(1, lock_, feeTo_) returns (uint256 id_) {
-                feeRecipientNftId_ = id_;
-            } catch {
-                feeRecipientNftId_ = 0;
+                detfNftId_ = 0;
             }
         }
+        uint256 feeRecipientNftId_ = 1;
         Repo._setBondNft(bondVault_, detfNftId_, feeRecipientNftId_);
         emit IUniswapV4StandardExchangeCurveQuadStableDETF.ReserveBondNftWired(
             s.reserveHook, address(bondVault_), detfNftId_, feeRecipientNftId_

@@ -101,8 +101,10 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(instance_, true);
 
         vm.startPrank(detfUser);
-        uint256 closeOut_ = info_.closeBondMature(tokenId_, detfUser);
-        assertGt(closeOut_, 0, "closeBondMature after disable");
+        uint256[] memory closeOut_ = info_.closeBondMature(tokenId_, _zeroMinOut(instance_), detfUser, _dl());
+        uint256 paid_;
+        for (uint256 i; i < closeOut_.length; ++i) paid_ += closeOut_[i];
+        assertGt(paid_, 0, "closeBondMature after disable");
 
         uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(detfUser);
         uint256 redeemAmt_ = claimBal_ / 2;

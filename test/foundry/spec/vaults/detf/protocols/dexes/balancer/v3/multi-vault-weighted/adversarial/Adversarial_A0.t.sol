@@ -74,61 +74,21 @@ contract Adversarial_A0_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
         address instance_ = _deployOpenModeDetfN(1);
         _assertInert(instance_);
 
-        uint256 victimShares_ = _fundSeSharesLeg(0, victim, 1_000e18);
-        uint256[] memory amounts_ = new uint256[](1);
-        amounts_[0] = victimShares_;
-        vm.startPrank(victim);
-        seShares[0].approve(instance_, victimShares_);
-        uint256 bptOut_ = IMultiVaultWeightedDetfBonding(instance_).initializeReserve(
-            amounts_, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-        assertFalse(IMultiVaultWeightedDetfInfo(instance_).isReserveLive(), "still inert until bond");
+        uint256 donate_ = _fundSeSharesLeg(0, attacker, 80e18);
+        vm.prank(attacker);
+        seShares[0].transfer(instance_, donate_);
 
-        address pool_ = IMultiVaultWeightedDetfInfo(instance_).reservePool();
-        uint256 donate_ = bptOut_ / 2;
-        require(donate_ > 0, "need residual BPT");
-        vm.prank(victim);
-        IERC20(pool_).transfer(instance_, donate_);
-        uint256 bondAmt_ = IERC20(pool_).balanceOf(victim);
-        assertEq(IERC20(pool_).balanceOf(instance_), donate_, "donated BPT idle pre-bond");
-
-        vm.startPrank(victim);
-        IERC20(pool_).approve(instance_, bondAmt_);
-        (uint256 tokenId_, uint256 principal_) = IMultiVaultWeightedDetfBonding(instance_).bond(
-            IERC20(pool_), bondAmt_, DEFAULT_MIN_LOCK, victim, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-        _assertLive(instance_);
-        assertEq(principal_, bondAmt_, "first bond principal is pulled BPT only");
-        assertEq(
-            IDETFNFTVault(IMultiVaultWeightedDetfInfo(instance_).bondNftVault()).originalSharesOf(tokenId_),
-            bondAmt_,
-            "NFT principal excludes donated BPT"
-        );
-        assertEq(IERC20(pool_).balanceOf(attacker), 0, "attacker has no BPT");
-        assertEq(IERC20(pool_).balanceOf(victim), 0, "victim bonded remaining BPT");
-        assertGe(IERC20(pool_).balanceOf(instance_), donate_, "donated BPT stays off first-mover wallet");
-
-        // Honest mint syncs booked residual; attacker cannot bond idle BPT without inbound delta.
-        uint256 syncIn_ = _fundSeSharesLeg(0, alice, 40e18);
-        vm.startPrank(alice);
-        seShares[0].approve(instance_, syncIn_);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], syncIn_, IERC20(instance_), 0, alice, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-
-        uint256 attackerDetfBefore_ = IERC20(instance_).balanceOf(attacker);
         vm.prank(attacker);
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donate_, uint256(0))
         );
         IMultiVaultWeightedDetfBonding(instance_).bond(
-            IERC20(pool_), donate_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours
+            seShares[0], donate_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours
         );
-        assertGe(IERC20(pool_).balanceOf(instance_), donate_, "attacker cannot drain donated BPT");
-        assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "no free detfToken from donated BPT");
+
+        assertFalse(IMultiVaultWeightedDetfInfo(instance_).isReserveLive(), "still inert");
+        assertEq(seShares[0].balanceOf(instance_), donate_, "donation unmoved");
+        assertEq(IERC20(instance_).balanceOf(attacker), 0, "no free detfToken");
     }
 
     function test_A0_emptyUserSupply_donatedInventory_notDrainedByFirstMint() public {

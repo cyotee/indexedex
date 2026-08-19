@@ -34,6 +34,7 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
     }
 
     /// @notice Binding for one immortal hook instance (salt identity).
@@ -43,6 +44,10 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
         address standardExchange;
         address pairToken;
         address rawToken;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

@@ -13,20 +13,24 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
     DETFThresholdPolicy,
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
 import {DETFEpochNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
@@ -83,6 +87,24 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
             revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
         }
+    }
+
+    function _requireMature(uint256 tokenId_) internal view {
+        uint256 unlock_ = Repo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
+        if (block.timestamp < unlock_) {
+            revert Repo.BondNotMature(unlock_);
+        }
+    }
+
+    function _requireNotStandingRewardNft(uint256 tokenId_) internal pure {
+        if (tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID) {
+            revert IDetfErrors.DETFNFTRestricted(tokenId_);
+        }
+    }
+
+    function _protocolOriginalShares() internal view returns (uint256) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        return s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -142,66 +164,61 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
     /*                    Protocol / bonded LP accounting                     */
     /* ---------------------------------------------------------------------- */
 
-    /// @notice Protocol LP holder per PRD LOCK: rebasing claim package when wired; else diamond.
-    function _protocolLpHolder() internal view returns (address) {
-        address claim_ = address(Repo._layoutStruct().rebasingClaimToken);
-        return claim_ == address(0) ? address(this) : claim_;
-    }
-
-    /// @notice Bond NFT package holds user open-bond reserve LP (PRD LOCK).
+    /// @notice D13: reserve LP is held by the bond NFT vault.
     function _bondLpHolder() internal view returns (address) {
         address bond_ = address(Repo._layoutStruct().bondNftVault);
         return bond_ == address(0) ? address(this) : bond_;
     }
 
-    /// @notice Protocol-owned hook LP (physical balance of protocol holder).
-    function _protocolLp() internal view returns (uint256) {
+    /// @notice Physical hook LP on the NFT vault (D13).
+    function _nftLp() internal view returns (uint256) {
         Repo.Storage storage s = Repo._layoutStruct();
-        return IERC20(s.reserveHook).balanceOf(_protocolLpHolder());
+        address holder_ = _bondLpHolder();
+        return IERC20(s.reserveHook).balanceOf(holder_);
     }
 
-    /// @notice Pull protocol LP onto this diamond before hook withdraw (burn / claim unwind).
-    function _pullProtocolLp(uint256 lpAmount_) internal {
+    /// @notice LP on the NFT that is not tracked as user-bonded principal.
+    function _protocolLp() internal view returns (uint256) {
+        uint256 nftLp_ = _nftLp();
+        uint256 user_ = Repo._layoutStruct().userBondedLp;
+        return nftLp_ > user_ ? nftLp_ - user_ : 0;
+    }
+
+    /// @notice Pull NFT-custodied hook LP onto this diamond before hook withdraw (D13).
+    function _pullNftLp(uint256 lpAmount_) internal {
         if (lpAmount_ == 0) return;
         Repo.Storage storage s = Repo._layoutStruct();
         IERC20 lp_ = IERC20(s.reserveHook);
         uint256 have_ = lp_.balanceOf(address(this));
         if (have_ >= lpAmount_) return;
         uint256 need_ = lpAmount_ - have_;
-        address holder_ = _protocolLpHolder();
+        address holder_ = _bondLpHolder();
         if (holder_ == address(this)) {
             if (have_ < lpAmount_) revert Repo.EmptyProtocolLp();
             return;
         }
         if (need_ > lp_.balanceOf(holder_)) revert Repo.EmptyProtocolLp();
-        IRebasingClaimToken(holder_).transferHeldToken(lp_, address(this), need_);
+        IDETFNFTVault(holder_).transferHeldToken(lp_, address(this), need_);
+    }
+
+    /// @dev Back-compat name used by burn / claim unwind.
+    function _pullProtocolLp(uint256 lpAmount_) internal {
+        _pullNftLp(lpAmount_);
     }
 
     /// @notice Pull LP from bond NFT (maturity close via claimLiquidity).
     function _pullBondLp(uint256 lpAmount_) internal {
-        if (lpAmount_ == 0) return;
-        Repo.Storage storage s = Repo._layoutStruct();
-        IERC20 lp_ = IERC20(s.reserveHook);
-        uint256 have_ = lp_.balanceOf(address(this));
-        if (have_ >= lpAmount_) return;
-        uint256 need_ = lpAmount_ - have_;
-        address bond_ = address(s.bondNftVault);
-        if (bond_ == address(0)) {
-            if (have_ < lpAmount_) revert Repo.EmptyProtocolLp();
-            return;
-        }
-        if (need_ > lp_.balanceOf(bond_)) revert Repo.EmptyProtocolLp();
-        IDETFNFTVault(bond_).transferHeldToken(lp_, address(this), need_);
+        _pullNftLp(lpAmount_);
     }
 
     function _ensureProtocolLpAvailable(uint256 lpAmount_) internal view {
-        if (lpAmount_ > _protocolLp()) revert Repo.EmptyProtocolLp();
+        if (lpAmount_ > _nftLp()) revert Repo.EmptyProtocolLp();
     }
 
-    /// @dev Back-compat name used by burn path.
+    /// @dev Pull NFT LP onto the diamond for hook withdraw.
     function _ensureProtocolLpOnDiamond(uint256 lpAmount_) internal {
         _ensureProtocolLpAvailable(lpAmount_);
-        _pullProtocolLp(lpAmount_);
+        _pullNftLp(lpAmount_);
     }
 
     /// @notice Fully diluted pair value of owned LP (protocol claim + bond NFT + residual diamond).
@@ -316,21 +333,56 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         return s.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
     }
 
-    function _usageFeeWad() internal view returns (uint256) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (address(s.feeOracle) == address(0)) return 0;
-        return s.feeOracle.usageFeeOfVault(address(this));
-    }
-
     function _splitMintedDetf(uint256 gross_) internal view returns (MintSplit memory split_) {
         split_.grossDetf = gross_;
         if (gross_ == 0) return split_;
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
-        split_.feeToDetf = feeTo_;
-        uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        // inventory = afterFee * (incentive/2) / 1e18
-        split_.inventoryDetf = Math.mulDiv(afterFee_, halfInc_, ONE_WAD);
-        split_.userDetf = afterFee_ - split_.inventoryDetf;
+        (uint256 user_, uint256 pot_) = DETFMintSplitLib._splitLiveGross(gross_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _splitBondDetf(uint256 joinDetf_) internal view returns (MintSplit memory split_) {
+        split_.grossDetf = joinDetf_;
+        if (joinDetf_ == 0) return split_;
+        (uint256 user_, uint256 pot_,) = DETFMintSplitLib._splitBond(joinDetf_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book uses creation rate.
+    function _quoteBondJoinDetf(uint256 pairAmount_) internal view returns (uint256 detfOut_) {
+        if (pairAmount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint256 creation_ = s.creationPairPerDetfWad;
+        uint256 pairWad_ = _toWad(pairAmount_, _pairDecimals());
+        if (!s.isReserveLive || !_hookIsLive()) {
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+            return detfOut_ == 0 ? pairAmount_ : detfOut_;
+        }
+        IHook hook_ = IHook(s.reserveHook);
+        uint256 rawReserve_ = hook_.rawReserve();
+        uint256 pairReserve_ = hook_.currency0() == address(s.pairToken)
+            ? hook_.reserveCurrency0()
+            : hook_.reserveCurrency1();
+        if (rawReserve_ == 0 || pairReserve_ == 0) {
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+            return detfOut_ == 0 ? pairAmount_ : detfOut_;
+        }
+        detfOut_ = pairAmount_ * rawReserve_ / pairReserve_;
+        if (detfOut_ == 0) {
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+        }
+    }
+
+    function _topUpFeeCreatorShares() internal {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return;
+        (, uint256 f_, uint256 c_) = s.feeOracle.seigniorageSplitOfVault(address(this));
+        DETFBondLifecycleLib._topUpFeeCreatorShares(
+            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), f_, c_
+        );
     }
 
     /// @notice Closed-form DETF out for exact-in pair notional against live hook effective reserves.
@@ -414,6 +466,36 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         );
     }
 
+    function _withdrawProportional(uint256 lpAmount_)
+        internal
+        returns (uint256 detfOut_, uint256 pairOut_)
+    {
+        Repo.Storage storage s = Repo._layoutStruct();
+        IHook hook_ = IHook(s.reserveHook);
+        IERC20(s.reserveHook).forceApprove(s.reserveHook, lpAmount_);
+        (uint256 a0_, uint256 a1_) = hook_.withdraw(lpAmount_, address(this), 0, 0, block.timestamp + 1);
+        bool detfIs0_ = hook_.currency0() == address(this);
+        detfOut_ = detfIs0_ ? a0_ : a1_;
+        pairOut_ = detfIs0_ ? a1_ : a0_;
+    }
+
+    function _previewProportional(uint256 lpAmount_)
+        internal
+        view
+        returns (uint256 detfOut_, uint256 pairOut_)
+    {
+        IHook hook_ = IHook(Repo._layoutStruct().reserveHook);
+        (uint256 a0_, uint256 a1_) = hook_.previewWithdraw(lpAmount_);
+        bool detfIs0_ = hook_.currency0() == address(this);
+        detfOut_ = detfIs0_ ? a0_ : a1_;
+        pairOut_ = detfIs0_ ? a1_ : a0_;
+    }
+
+    function _previewProportionalDetf(uint256 lpAmount_) internal view returns (uint256) {
+        (uint256 detfOut_,) = _previewProportional(lpAmount_);
+        return detfOut_;
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                     Protocol seigniorage compound                      */
     /* ---------------------------------------------------------------------- */
@@ -456,17 +538,17 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         detfIn_ = vault_.reallocateDetfNftRewards(address(this));
         if (detfIn_ == 0) return (0, 0);
 
-        // Join protocol LP onto claim holder when wired (else diamond).
-        lpOut_ = _depositSingleDetf(detfIn_, _protocolLpHolder());
+        // D13: join LP onto the NFT vault; credit id 0 originalShares.
+        lpOut_ = _depositSingleDetf(detfIn_, _bondLpHolder());
         if (lpOut_ == 0) revert CompoundJoinProducedZeroLp();
 
-        // Credit protocol NFT principal accounting (share units = LP amount).
         DETFBondLifecycleLib._addReservePoolBptToDetfNft(
             IERC20(s.reserveHook),
             IDetfSelfNftInventoryPolicy(address(vault_)),
             s.detfNftId == 0 ? vault_.detfNFTId() : s.detfNftId,
             lpOut_
         );
+        _topUpFeeCreatorShares();
     }
 
     /// @notice NFT vault / claim-authorized unwind of LP → pair.

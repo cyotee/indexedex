@@ -98,14 +98,14 @@ contract Adversarial_Orbital_A0Crops is TestBase_UniswapV4StandardExchangeOrbita
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(instance_, true);
 
         vm.startPrank(detfUser);
-        (uint256 a0_, uint256 a1_) = info_.closeBondMature(tokenId_, detfUser);
-        assertTrue(a0_ + a1_ > 0, "closeBondMature after disable");
+        uint256[] memory closeOut_ = info_.closeBondMature(tokenId_, _minOut3(), detfUser, _dl());
+        assertTrue(closeOut_[1] + closeOut_[2] > 0, "closeBondMature after disable");
 
         uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(detfUser);
         uint256 redeemAmt_ = claimBal_ / 2;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(p0_), 0, detfUser, _dl());
-        assertGt(redeemOut_, 0, "redeemClaim after disable");
+        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(instance_), 0, detfUser, _dl());
+        assertGt(redeemOut_, 0, "redeemClaim DETF after disable");
         vm.stopPrank();
     }
 

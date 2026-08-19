@@ -27,6 +27,19 @@ contract UniswapV4StandardExchangeOrbitalDETF_MintBurnTest is TestBase_UniswapV4
         _assertLive();
     }
 
+    function test_liveMint_doesNotIncreaseReserveDetf() public {
+        address hook = openInfo.reserveHook();
+        uint256 detfInHookBefore = IERC20(openDetf).balanceOf(hook);
+        uint256 userDetf = _mintOn(openDetf, openInfo.pairToken0(), 10 ether);
+        assertGt(userDetf, 0);
+        assertLe(
+            IERC20(openDetf).balanceOf(hook),
+            detfInHookBefore,
+            "D11 no new DETF minted into reserve on live mint"
+        );
+        assertEq(IERC20(openDetf).balanceOf(_feeTo()), 0, "D14 no feeTo mint");
+    }
+
     function test_mint_previewEqualsExecution_open() public {
         address p0 = openInfo.pairToken0();
         uint256 amountIn = 10 ether;
@@ -45,27 +58,23 @@ contract UniswapV4StandardExchangeOrbitalDETF_MintBurnTest is TestBase_UniswapV4
         uint256 lastExpBefore = openInfo.lastExpansionTimestamp();
         uint256 out_ = _burnOn(openDetf, p1, burnAmt);
         assertApproxEqAbs(out_, preview, 100, "burn preview == execution (few-wei)");
-        assertEq(openInfo.lastExpansionTimestamp(), lastExpBefore, "burn must not realize expansion");
+        // D13 sizes after expansion mint-on-update; Open never expands so the clock stays put.
+        assertEq(openInfo.lastExpansionTimestamp(), lastExpBefore, "Open burn does not expand");
         assertGt(out_, 0);
     }
 
-    function test_burn_emptyProtocolLp_afterFirstBondOnly() public {
+    function test_burn_afterFirstBond_sizesFromNftLp() public {
         address d2 = _deployDetfWired(_openArgsUnique("emptyProto"));
         IUniswapV4StandardExchangeOrbitalDETF info2 = IUniswapV4StandardExchangeOrbitalDETF(d2);
         _firstBondOn(d2, 100 ether, 100 ether);
-        // First bond LP is on bond NFT only — protocol holder must be empty.
-        assertEq(info2.protocolLp(), 0, "protocol LP empty after first bond only");
+        // D7: id 0 has no originalShares until sell-in. D13 burn uses NFT LP, not id 0.
+        assertEq(info2.protocolLp(), 0, "id 0 originalShares empty after first bond only");
         uint256 freeDetf = IERC20(d2).balanceOf(detfUser);
         assertGt(freeDetf, 0, "user has free DETF from first bond");
-        // Cache outs before expectRevert (arg evaluation would consume expectRevert).
         address p0 = info2.pairToken0();
         uint256 burnAmt = freeDetf / 2 == 0 ? freeDetf : freeDetf / 2;
-        uint256 dl = _dl();
-        vm.startPrank(detfUser);
-        IERC20(d2).approve(d2, type(uint256).max);
-        vm.expectRevert(Repo.EmptyProtocolLp.selector);
-        IStandardExchangeIn(d2).exchangeIn(IERC20(d2), burnAmt, IERC20(p0), 0, detfUser, false, dl);
-        vm.stopPrank();
+        uint256 out_ = _burnOn(d2, p0, burnAmt);
+        assertGt(out_, 0, "D13 burn against nftLp after first bond");
     }
 
     function test_fd_includes_detf_leg_gt_pairs_only() public {

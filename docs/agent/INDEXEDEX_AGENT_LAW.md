@@ -128,7 +128,6 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 | **Uni V4 SE Orbital** | `detf/protocols/dexes/uniswap/v4/standardExchange/orbital/` | DETF + **exactly two** external pairs on a **3-leg orbital sphere** buffer hook; see co-located `UniswapV4StandardExchangeOrbitalDETF_PRD.md` |
 | **Uni V4 SE Weighted** | `detf/protocols/dexes/uniswap/v4/standardExchange/weighted/` | DETF + **1–7** external pairs on a **weighted** buffer hook (\(n\in[2,8]\), distinct valuations); see co-located `UniswapV4StandardExchangeWeightedDETF_PRD.md` |
 | **Uni V4 SE Curve Quad Stable** | `detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/` | DETF + **exactly three** like-kind external pairs on a **4-asset StableSwap** buffer hook (`baseAmp`); per-route synthetic; no whole-DETF `rateAsset`; see co-located `UniswapV4StandardExchangeCurveQuadStableDETF_PRD.md` (**LOCKED v0.4**) |
-| Dual-liquidity / protocol | elsewhere under `contracts/vaults/` | Protocol-specific DETF-like products; do not subclass for new generic DETFs |
 
 **Layout law:** shared true-DETF infrastructure → `detf/common/`; host-family packages → `detf/protocols/dexes/<host>/…`. See `contracts/vaults/detf/DETF_DIRECTORY_REORGANIZATION_PRD.md`.
 
@@ -165,7 +164,7 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 - **Policy gates (when live):** mint iff `synthetic > mintThreshold`; burn iff `synthetic < burnThreshold`; **equality = deadband** (neither). First bond / bootstrap remains **synthetically ungated** (both modes).
 - **Open gates (when live):** threshold gates **always pass**. Open does **not** change the route set (e.g. MixedBuffer still burns **buffer only**), fees, seigniorage split, or inert→live rules. Do not advertise a peg for Open instances.
 - **Info surface:** `thresholdMode()`, live-coupled `isMintingAllowed()` / `isBurningAllowed()` (and stored threshold getters).
-- **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **Legacy dual-token SeigniorageDETF** product under `contracts/vaults/seigniorage/` is **REMOVED** (not a true DETF family). DualLiquidity / pure SE vaults remain out of this PRD.
+- **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **Legacy dual-token SeigniorageDETF** product under `contracts/vaults/seigniorage/` is **REMOVED** (not a true DETF family). The former DualLiquidity pro-rata BPT vault is **deleted** (alignment D1). Pure SE vaults remain out of this PRD.
 - Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
 
 ### Protocol seigniorage compound + natural supply expansion
@@ -205,7 +204,7 @@ Apply to **true DETFs** in scope (Balancer Single SE, multi-vault weighted, mixe
 - **Full bond NFT vault** is the default v1 shape: user bond positions + protocol NFT + fee-recipient NFT wiring as peer families.
 - Bond lock terms from oracle: **revert if lock < min**; **clamp to max** if longer (bonus at max). Use `DETFBondNFTMathLib` / `DETFBondLifecycleLib`.
 - `acceptedBondTokens()` must list what the family accepts (at least reserve BPT and/or vault shares per PRD).
-- **Sell NFT → protocol (rebasing claim) — DETF-wide standard (LOCKED):** bond holders **must not** sell their bond for rebasing claim until the bond is **mature** (`block.timestamp >= unlockTime`). Pre-maturity sell **reverts**. At maturity the holder may **close** (principal out in family settlement assets) **or** **sell → rebasing claim** (migrate principal LP/BPT to protocol + mint claim). While locked, rewards remain claimable free DETF via `claimRewards` (not a principal exit). **First family adopter:** Uni V4 Standard Exchange Orbital DETF (`…/uniswap/v4/standardExchange/orbital/`). **Balancer V3 true DETFs** (Weighted, Mixed-buffer, Composed, Single SE): follow [`BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md) + [impl plan](../../contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md) (mature-only sell/close, ERC-4626 claim, `buyClaim`). DualLiquidity under `uniswap/v4/crossVersion/v2/` is **not** a true DETF.
+- **Sell NFT → protocol (rebasing claim) — DETF-wide standard (LOCKED):** bond holders **must not** sell their bond for rebasing claim until the bond is **mature** (`block.timestamp >= unlockTime`). Pre-maturity sell **reverts**. At maturity the holder may **close** (principal out in family settlement assets) **or** **sell → rebasing claim** (migrate principal LP/BPT to protocol + mint claim). While locked, rewards remain claimable free DETF via `claimRewards` (not a principal exit). **First family adopter:** Uni V4 Standard Exchange Orbital DETF (`…/uniswap/v4/standardExchange/orbital/`). **Mint / bond / burn / claim / close** for every true DETF: [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) D1–D28. DualLiquidity is **deleted** (alignment D1), not a live family.
 - **Claim redeem:** DETF-orchestrated unwind of protocol reserve BPT → vault share path → payout in configured `rateAsset`(s). Never treat raw claim amounts as free BPT authority without burning claim shares (`burnShares` / peer path). Require claim token configured when redeem is exposed.
 - Wire claim package in DFPkg `postDeploy` when the family requires claim (role-named `IRebasingClaimToken` / `RebasingClaimTokenDFPkg`).
 
@@ -222,7 +221,7 @@ Production-first rules in this file and `indexedex-testing` apply. Additionally 
 
 1. **No mocks of SUT:** DETF diamond, facets, DFPkg, manager, registry, fee oracle, attached SE vaults under test.
 2. **Gold TestBases:** inherit `CraneTest` → `IndexedexTest` → vault components / Balancer SE router or protocol SE TestBases; mirror `TestBase_SingleStandardExchangeDETF` / family `TestBase_*` patterns.
-3. **Real SE legs:** deploy production SE vaults (Aerodrome/Camelot hermetic ports, fork Uni V4, nested DETF/DualLiquidity as matrix rows). Crane `*/stubs/` protocol ports are **not** “mocks.”
+3. **Real SE legs:** deploy production SE vaults (Aerodrome/Camelot hermetic ports, fork Uni V4, nested true DETF as matrix rows). Crane `*/stubs/` protocol ports are **not** “mocks.”
 4. **Allowed non-SUT harnesses:** mintable ERC20 for funding; **reentrancy hostile ERC20** as configured vault share only for attack tests (see Single SE + MultiVault reentrancy suites); never a fake Standard Exchange for lifecycle.
 5. **Cover at least:** inert deploy; first-bond → live; pre-live mint blocked; mint/burn with **preview == execution**; threshold gates; route rejects (`InvalidRoute` / family equivalent); bond lock clamp; **pre-maturity sell→claim reverts**; **post-maturity** sell → claim and/or maturity close (when in scope); residual free inventory zero on success (BPT on diamond may remain); nested reentrancy hits `IsLocked`.
 6. **Price movement:** for threshold tests under **default** mint/burn thresholds, drive synthetic via **real underlying pool trades** (and seigniorage dilution where needed) so both mint-allowed and burn-allowed regimes are exercised — do not only use open-threshold deploys as the sole proof.
@@ -243,10 +242,8 @@ contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/     # mu
 contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/            # multi-vault stable + claim packages
 contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/              # mixed-buffer multi-vault stable
 contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/  # Uni V4 Single SE CP buffer DETF (+ co-located PRD)
-contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/  # DualLiquidity linked cross-version (pro-rata BPT vault; NOT a true DETF)
 docs/detf/                                            # shared compound + expansion + threshold programs (public/process)
 docs/detf/balancer/v3/<family-path>/                  # historical family compound/expansion stage plans
-docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/     # DualLiquidity process docs
 ```
 
 When implementing a new DETF family: place package code under the correct host tree (`protocols/dexes/<host>/…`), keep shared libs in `common/`, and keep **family product PRDs / impl plans co-located with the package** (internal law). Shared cross-family programs stay under `docs/detf/`. Do not re-open locked shared product law without an explicit PRD revision.
@@ -387,7 +384,6 @@ Protocol / vault gold TestBases (follow these exactly):
 - `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol`
 - `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol`
 - `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol`
-- `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` (fork + full factory/registry path)
 
 **Key rule in IndexedEx**: Facets use the Crane path (`create3Factory`). Vault/StandardExchange *DFPkgs* use the manager/registry path. See the section below.
 

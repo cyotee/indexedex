@@ -19,7 +19,7 @@
 
 | Product | Maturity | Worst open severity | One-line |
 |---------|----------|---------------------|----------|
-| **DualLiquidityLinkedCrossVersionUniswapVault** | **2** | **Blocker** (CODE, RUNTIME_UNPROVEN) | Rich **fork** H/N/P + partial A–H security slices; catalog “P0 complete” claim is **stale under A–K**. Package-local **PAT-I-ABS** on `_receive` / `_receiveOut`; ShareInflation is **A3-class only**, not I/K. No formal I1–I3. J partial via immutability/registry, not J1–J3 catalog. |
+| **DualLiquidity (removed)CrossVersionUniswapVault** | **2** | **Blocker** (CODE, RUNTIME_UNPROVEN) | Rich **fork** H/N/P + partial A–H security slices; catalog “P0 complete” claim is **stale under A–K**. Package-local **PAT-I-ABS** on `_receive` / `_receiveOut`; ShareInflation is **A3-class only**, not I/K. No formal I1–I3. J partial via immutability/registry, not J1–J3 catalog. |
 
 Product class for P0 subset: **Standard Exchange vault** (implements `IStandardExchangeIn`/`Out`; DETF-like share + `reserveBpt` economics; **no** bond/claim NFT surface). Bond/claim catalog rows (D2–D6, F2–F3 bond NFT) = **N/A**.
 
@@ -58,22 +58,22 @@ Product class for P0 subset: **Standard Exchange vault** (implements `IStandardE
 
 | Product | DFPkg / key Targets | Facets | TestBase | Test roots | Deploy path quality |
 |---------|---------------------|--------|----------|------------|---------------------|
-| **DualLiquidityLinkedCrossVersionUniswapVault** | `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol`; Targets: ExchangeIn, ExchangeInQuery, ExchangeOut, ExchangeOutQuery; Common+Repo+MathLib | ExchangeIn / InQuery / Out / OutQuery + ERC20 / ERC2612 / ERC5267 / MultiAsset Basic+Standard vault facets (9 cuts) | **`TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol`** — **Base fork gold** (`TestBase_BaseFork` + IndexedexTest) | Fork tree under `test/foundry/fork/base_main/.../crossVersion/v2/**` | **Gold fork path**: CREATE3 Facet/Pkg factories + manager/registry deploy; live Uni V4/V2 + Balancer on Base. **Never** mock SUT. Hermetic full product = **absent** (intentional fork-first). |
+| **DualLiquidity (removed)CrossVersionUniswapVault** | `DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol`; Targets: ExchangeIn, ExchangeInQuery, ExchangeOut, ExchangeOutQuery; Common+Repo+MathLib | ExchangeIn / InQuery / Out / OutQuery + ERC20 / ERC2612 / ERC5267 / MultiAsset Basic+Standard vault facets (9 cuts) | **`TestBase_DualLiquidity (removed)CrossVersionUniswapVault.sol`** — **Base fork gold** (`TestBase_BaseFork` + IndexedexTest) | Fork tree under `test/foundry/fork/base_main/.../crossVersion/v2/**` | **Gold fork path**: CREATE3 Facet/Pkg factories + manager/registry deploy; live Uni V4/V2 + Balancer on Base. **Never** mock SUT. Hermetic full product = **absent** (intentional fork-first). |
 
 ### 2.2 Production file inventory (package root)
 
 | Path | Role |
 |------|------|
-| `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | DFPkg, facetCuts (9), registry `processArgs` gate |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget.sol` | `exchangeIn` deposit/redeem/swap; **`_receive` PAT-I-ABS** |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInFacet.sol` | `facetFuncs` → `exchangeIn` only |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInQueryTarget/Facet.sol` | `previewExchangeIn` |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget.sol` | `exchangeOut`; **`_receiveOut` PAT-I-ABS + donation refund** |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutFacet.sol` | `facetFuncs` → `exchangeOut` only |
-| `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutQueryTarget/Facet.sol` | `previewExchangeOut` |
-| `DualLiquidityLinkedCrossVersionUniswapVaultCommon.sol` | share mint/burn vs `reserveBpt`, residual sweep, join/exit |
-| `DualLiquidityLinkedCrossVersionUniswapVaultRepo.sol` | storage + errors |
-| `DualLiquidityLinkedCrossVersionUniswapVaultMathLib.sol` | pro-rata share math (pure) |
+| `DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol` | DFPkg, facetCuts (9), registry `processArgs` gate |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInTarget.sol` | `exchangeIn` deposit/redeem/swap; **`_receive` PAT-I-ABS** |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInFacet.sol` | `facetFuncs` → `exchangeIn` only |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInQueryTarget/Facet.sol` | `previewExchangeIn` |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutTarget.sol` | `exchangeOut`; **`_receiveOut` PAT-I-ABS + donation refund** |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutFacet.sol` | `facetFuncs` → `exchangeOut` only |
+| `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutQueryTarget/Facet.sol` | `previewExchangeOut` |
+| `DualLiquidity (removed)CrossVersionUniswapVaultCommon.sol` | share mint/burn vs `reserveBpt`, residual sweep, join/exit |
+| `DualLiquidity (removed)CrossVersionUniswapVaultRepo.sol` | storage + errors |
+| `DualLiquidity (removed)CrossVersionUniswapVaultMathLib.sol` | pro-rata share math (pure) |
 | `*_FactoryService.sol` (Component/Facet/Pkg) | CREATE3 helpers |
 
 ### 2.3 Trust-flag entrypoints (I-applicable)
@@ -104,7 +104,7 @@ Product class for P0 subset: **Standard Exchange vault** (implements `IStandardE
 
 | Root | Role | Notes |
 |------|------|-------|
-| `TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Gold fork TestBase | Permit2 helpers; bootstrap reserve; production DFPkg |
+| `TestBase_DualLiquidity (removed)CrossVersionUniswapVault.sol` | Gold fork TestBase | Permit2 helpers; bootstrap reserve; production DFPkg |
 | `*_Deposits/Redemptions/Swaps/ExactOut*.t.sol` | Happy path + preview≡execute | Strong H/P |
 | `*_Guards.t.sol` | N (minOut, deadline, recipient) | Some bare `expectRevert` |
 | `*_ShareInflation.t.sol` | **A3-class** BPT donation | **Not I/K** |
@@ -129,7 +129,7 @@ Legend: **F** full · **P** partial · **G** gap · **N/A** · **S** stub/theate
 
 | Product | H | N | D | J | I | K | A–H | P | L1 | L2 | L3 | Maturity | Notes |
 |---------|---|---|---|---|---|---|-----|---|----|----|----|----------|-------|
-| DualLiquidityLinked… | **F** (fork) | **P** | **P** | **P** | **G** / **S**† | **G** | **P**‡ | **F** | **P** (math) | **P**/**F** seq | **G** (fork defer) | **2** | Blocker CODE I; ShareInflation ≠ I/K |
+| DualLiquidity (removed)… | **F** (fork) | **P** | **P** | **P** | **G** / **S**† | **G** | **P**‡ | **F** | **P** (math) | **P**/**F** seq | **G** (fork defer) | **2** | Blocker CODE I; ShareInflation ≠ I/K |
 
 † Happy pretransfer only (theater for I); zero `test_I1_`/`I2_`/`I3_`.  
 ‡ Scattered security files + thin adversarial fill; not MultiVault-grade ID suite.
@@ -190,9 +190,9 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 
 - **Summary:** `_receive(..., pretransferred_=true)` is a **no-op**. Deposit and swap routes then consume claimed `amountIn_` from whatever inventory sits on the diamond (including prior donations of `pairToken` / `rateAsset` / leg `vaultShare`), minting `detfToken` or paying swap output — **free principal**.
 - **Evidence:**
-  - `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget.sol` ~463–468 (`_receive`)
+  - `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInTarget.sol` ~463–468 (`_receive`)
   - Call sites: `_deposit` non-BPT ~87–94; swap branch ~62
-  - Residual snapshot/sweep: `DualLiquidityLinkedCrossVersionUniswapVaultCommon.sol` ~580–597 (resting balances protect **pre-call** inventory as “normal”, do not require inbound delta)
+  - Residual snapshot/sweep: `DualLiquidity (removed)CrossVersionUniswapVaultCommon.sol` ~580–597 (resting balances protect **pre-call** inventory as “normal”, do not require inbound delta)
 - **Why bar fails:** Ship-gate I + L-CLAIM-3 style accounting: credit observed inbound delta, never claim alone.
 - **Recommended CODE:** Always measure `balBefore`; if pretransferred, require `balAfter - balBefore >= amountIn_` (or credit **only** delta and reject shortfall with exact error). Align with ERC4626 `_securePull` / Wave-0 commons pattern **but this package does not use BasicVaultCommon** — package-local fix required.
 - **Recommended TEST:** `test_I1_pretransferred_true_noTransfer_existingPairTokenInventory_noFreeMint` on fork TestBase (see WP-I-DETF-DL-002).
@@ -203,7 +203,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 ### 5.2 [TCA-DETF-DL-002] Blocker · CODE · PAT-I-ABS + donation theft (`_receiveOut` exact-out)
 
 - **Summary:** `_receiveOut` with `pretransferred=true` does not verify caller funding. It treats **entire** `balanceOf(this)` as caller prefund and **refunds `held - amountIn` to `msg.sender`**. Attacker can: (a) fund exact-out deposit/swap from donated inventory, and (b) **steal residual donation** as “surplus refund”. Happy-path `test_exactOutMatrix_swap_pretransferredRefundsSurplus` only proves refund when **caller** prefunded surplus.
-- **Evidence:** `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget.sol` ~356–366; call sites depositOut/swapOut `_receiveOut(..., req_.pretransferred)`.
+- **Evidence:** `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutTarget.sol` ~356–366; call sites depositOut/swapOut `_receiveOut(..., req_.pretransferred)`.
 - **Why bar fails:** Same free principal class; worse than mint-only because excess inventory is transferred out.
 - **Recommended CODE:** Track inbound delta from `msg.sender` (or snapshot token before any external effects); credit min(delta, amountIn); never refund above **caller-attributable** inbound. If product law allows multi-hop prefund, still require delta ≥ amountIn before spend.
 - **Recommended TEST:** `test_I1_exactOut_pretransferred_true_donatedInventory_noSpendNoRefund` + I2 short prefund.
@@ -336,10 +336,10 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | Fix DualLiquidity pretransfer credit to balance-delta (exact-in + exact-out) |
 | **Severity** | Blocker |
 | **Class** | CODE (+ minimal regression tests) |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-001, TCA-DETF-DL-002, TCA-DETF-DL-005 (CODE half) |
 | **Problem** | `_receive` no-ops on pretransfer; `_receiveOut` spends/refunds absolute held inventory. Free mint, free swap, donation theft. |
-| **Production files** | `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget.sol` (`_receive`); `DualLiquidityLinkedCrossVersionUniswapVaultExchangeOutTarget.sol` (`_receiveOut`); possibly Common if shared helper extracted |
+| **Production files** | `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInTarget.sol` (`_receive`); `DualLiquidity (removed)CrossVersionUniswapVaultExchangeOutTarget.sol` (`_receiveOut`); possibly Common if shared helper extracted |
 | **Test files** | temporary fork I1 smoke; full suite in WP-I-DETF-DL-002 |
 | **Out of scope** | BasicVaultCommon Wave-0 (T-basic-protocol-commons) unless extracting shared helper by design; MultiVault; outer Single SE matrix; hermetic invention |
 | **Depends on** | none (align pattern with Wave-0 commons delta law; **not** file-coupled to BasicVaultCommon) |
@@ -358,7 +358,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | Add DualLiquidity fork adversarial I1–I3 + K1 (pretransfer) |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-003, TCA-DETF-DL-005 |
 | **Problem** | Catalog I/K P0 absent; happy pretransfer theater. |
 | **Production files** | none (after 001) |
@@ -380,7 +380,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | DualLiquidity J1–J3 surface suite on production proxy |
 | **Severity** | High |
 | **Class** | TEST (CODE only if PAT-J-OMIT found) |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-004 |
 | **Problem** | No Target-derived J suite; loupe only negative-path immutability. |
 | **Production files** | only if omit found |
@@ -402,7 +402,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | K1 donation + pretransfer free-credit regression |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-005 |
 | **Problem** | K1 unproven; A3 misread as K. |
 | **Test files** | merge into Adversarial_TrustFlag |
@@ -421,7 +421,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | DualLiquidity adversarial catalog honesty + consolidation |
 | **Severity** | Medium |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-006, TCA-DETF-DL-009 |
 | **Problem** | Catalog claims P0 complete; map test theater; H3 weak; IDs not on test names. |
 | **Test files** | `adversarial/**`, `DualLiquidity_ADVERSARIAL_CATALOG.md`, NatSpec on ShareInflation/Reentrancy/Residual |
@@ -442,7 +442,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | Exact selectors on DualLiquidity bare reverts |
 | **Severity** | Medium |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-008 |
 | **Problem** | Bare `expectRevert` weakens N bar. |
 | **Test files** | Guards, Deposits, adversarial H3, misc |
@@ -461,7 +461,7 @@ Product-class P0 default (**SE vault**, PRD §2.3): A1, C (in/out), E1, E5, H3, 
 | **Title** | DualLiquidity L1 expand + L2 pretransfer attack ops (post I fix) |
 | **Severity** | Medium |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | TCA-DETF-DL-007 |
 | **Problem** | L1 only MathLib; L2 lacks trust-flag attack ops; L3 deferred. |
 | **Depends on** | WP-I-DETF-DL-001 for pretransfer attack ops |

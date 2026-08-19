@@ -12,9 +12,6 @@ import {
 import {
     IMixedBufferMultiVaultStableDetfBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {
-    MixedBufferMultiVaultStableDetfRepo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
 
 contract MixedBufferMultiVaultStableDetf_Burn_Test is TestBase_MixedBufferMultiVaultStableDetf {
     function setUp() public override {
@@ -34,18 +31,16 @@ contract MixedBufferMultiVaultStableDetf_Burn_Test is TestBase_MixedBufferMultiV
         _assertNoFreeInventory(detf);
     }
 
-    function test_burn_to_vaultShare_reverts_InvalidRoute() public {
+    function test_burn_to_vaultShare() public {
         uint256 minted_ = _mintDetfFromBuffer(detf, bob, 100e18);
         vm.startPrank(bob);
         IERC20(detf).approve(detf, minted_);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                MixedBufferMultiVaultStableDetfRepo.InvalidRoute.selector, detf, address(seShares[0])
-            )
-        );
-        detfExchangeIn.exchangeIn(
+        uint256 out_ = detfExchangeIn.exchangeIn(
             IERC20(detf), minted_ / 2, seShares[0], 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
+        assertTrue(out_ > 0, "share out");
+        assertTrue(seShares[0].balanceOf(bob) >= out_, "share received");
+        _assertNoFreeInventory(detf);
     }
 }

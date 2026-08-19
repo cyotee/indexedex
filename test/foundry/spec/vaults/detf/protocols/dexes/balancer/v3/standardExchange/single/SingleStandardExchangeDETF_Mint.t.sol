@@ -62,6 +62,24 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
         assertApproxEqAbs(preview_, out_, 1, "preview == execution");
     }
 
+    function test_mint_doesNotIncreaseReserveDetf_orFeeTo() public {
+        _bootstrapOpen(alice, 1_000e18);
+        uint256 reserveDetfBefore_ = IERC20(openDetf).balanceOf(address(vault));
+        uint256 feeToBefore_ = IERC20(openDetf).balanceOf(_feeTo());
+
+        uint256 seShares_ = _fundSeShares(bob, 200e18);
+        vm.startPrank(bob);
+        seShare.approve(openDetf, seShares_);
+        uint256 out_ = openExchangeIn.exchangeIn(
+            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        assertTrue(out_ > 0, "minted");
+        assertEq(IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_, "D11 no DETF join");
+        assertEq(IERC20(openDetf).balanceOf(_feeTo()), feeToBefore_, "D14 no feeTo mint");
+    }
+
     function test_mint_revertsWhenInert() public {
         uint256 seShares_ = _fundSeShares(alice, 100e18);
         vm.startPrank(alice);

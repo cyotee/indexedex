@@ -71,8 +71,9 @@ contract T06a_CpBurnFee_Test is TestBase_UniswapV4SingleStandardExchangeDETF {
         assertEq(pairToken.balanceOf(detfUser) - pairBefore, pairOut);
         assertGt(pairOut, 0, "burn still produces pair");
 
-        // L-FEE-2: feeTo receives exactly the usage-fee share of DETF burned principal.
+        // D14: burn does not mint or transfer DETF to feeTo. Usage fee is unused on this path.
         uint256 feeAfter = IERC20(detf).balanceOf(feeToAddr);
-        assertEq(feeAfter - feeBefore, expectedFee, "feeTo DETF delta == usage fee portion");
+        assertEq(feeAfter, feeBefore, "D14 no feeTo DETF on burn");
+        expectedFee;
     }
 }

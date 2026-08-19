@@ -79,7 +79,7 @@ Thin pilot `AGGREGATE.md` + `WORK_PACKAGE_BACKLOG.md` archived at `docs/security
 | UniswapV4SingleStandardExchangeDETF (CP) | `…/uniswap/v4/standardExchange/constantProduct/single/**` | `A-detf-single-se` |
 | ComposedStableCommonDetf + RebasingDETFToken + bond NFT pkg | `…/balancer/v3/stable/common/**` | `A-detf-composed-stable` |
 | MixedBufferMultiVaultStableDetf | `…/balancer/v3/mixedBuffer/**` | `A-detf-composed-stable` |
-| DualLiquidityLinkedCrossVersion | `…/crossVersion/v2/**` | `A-detf-dual-liquidity` |
+| DualLiquidity (removed)CrossVersion | `…/crossVersion/v2/**` | `A-detf-dual-liquidity` |
 | UniswapV4StandardExchangeWeightedDETF | `…/uniswap/v4/standardExchange/weighted/**` | `A-detf-univ4-extra` |
 | UniswapV4StandardExchangeOrbitalDETF | `…/uniswap/v4/standardExchange/orbital/**` | `A-detf-univ4-extra` |
 | UniswapV4StandardExchangeCurveQuadStableDETF | `…/uniswap/v4/standardExchange/stable/quad/curve/**` | `A-detf-univ4-extra` |

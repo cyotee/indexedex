@@ -105,8 +105,16 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETF {
         external
         returns (uint256 principalShares);
 
-    /// @notice Mature-only: close bond, pay single capitalToken residual.
-    function closeBondMature(uint256 tokenId, address recipient) external returns (uint256 amountOut);
+    /// @notice D25 + L2: mature close, proportional withdraw, burn DETF self-leg, pay remaining legs.
+    /// @dev `minAmountsOut` length = n (binding order). DETF self-leg slot must be 0.
+    function closeBondMature(
+        uint256 tokenId,
+        uint256[] calldata minAmountsOut,
+        address recipient,
+        uint256 deadline
+    ) external returns (uint256[] memory amountsOut);
+
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
 
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
@@ -230,6 +238,7 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETDFPkg is IDiamondFactoryPa
         uint256 expansionEpochLength; // 0 → 8 hours
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

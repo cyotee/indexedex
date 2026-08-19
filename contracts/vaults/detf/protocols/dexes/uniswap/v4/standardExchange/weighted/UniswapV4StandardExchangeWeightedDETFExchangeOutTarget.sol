@@ -6,20 +6,20 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
 import {
-    UniswapV4StandardExchangeWeightedDETFCommon
+    UniswapV4StandardExchangeWeightedDETFCommon,
+    IWeightedDetfCompoundSelf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFCommon.sol";
 import {
     UniswapV4StandardExchangeWeightedDETFRepo as Repo
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFRepo.sol";
 
 /// @title UniswapV4StandardExchangeWeightedDETFExchangeOutTarget
-/// @notice Primary burn: free DETF only → multipath exit → redeposit DETF → residual → pair.
-/// @dev Uses effectiveSupply; does NOT realize expansion. Burn usage fee YES.
+/// @notice Primary burn: free DETF only → NFT LP exit (D13) → redeposit DETF → residual → pair.
+/// @dev D12/D14/L4: burns DETF; no feeTo transfer; no amountIn bonus.
 abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
     UniswapV4StandardExchangeWeightedDETFCommon
 {
@@ -49,35 +49,25 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         uint256 pulled_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
-        uint256 burnPrincipal_ = _takeBurnUsageFee(pulled_);
-        BurnExecResidual memory res = _burnAndRemoveProtocolLp(burnPrincipal_);
+        BurnExecResidual memory res = _burnAndRemoveNftLp(pulled_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
         _syncAllExpectedHoldReserves();
     }
 
-    function _takeBurnUsageFee(uint256 detfIn_) private returns (uint256 burnPrincipal_) {
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
-        if (feeTo_ > 0) {
-            IERC20(address(this)).safeTransfer(_feeTo(), feeTo_);
-        }
-        burnPrincipal_ = afterFee_;
-        if (burnPrincipal_ == 0) revert Repo.ZeroAmount();
-    }
-
-    function _burnAndRemoveProtocolLp(uint256 burnPrincipal_)
+    function _burnAndRemoveNftLp(uint256 burnPrincipal_)
         private
         returns (BurnExecResidual memory res)
     {
-        // Does NOT call _realizeExpansionIfNeeded.
-        uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
-        uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0) revert Repo.EmptyProtocolLp();
+        _realizeExpansionIfNeeded();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        uint256 nftLp_ = _nftLp();
+        if (nftLp_ == 0 || supply_ == 0) revert Repo.EmptyProtocolLp();
 
-        uint256 lpOut_ = burnPrincipal_ * protocolLp_ / effectiveSupply_;
+        uint256 lpOut_ = burnPrincipal_ * nftLp_ / supply_;
         if (lpOut_ == 0) revert Repo.EmptyProtocolLp();
 
         _burnDetf(address(this), burnPrincipal_);
-        _ensureProtocolLpOnDiamond(lpOut_);
+        _pullBondLp(lpOut_);
         uint256[] memory binding_ = _exitProportional(lpOut_, address(this));
         (res.aDetf, res.pairAmts) = _unpackBinding(binding_);
     }
@@ -145,12 +135,11 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
     }
 
     function _previewBurnLpOut(uint256 detfIn_) private view returns (uint256 lpOut_) {
-        (uint256 afterFee_,) = DETFUsageFeeLib._splitUsageFee(detfIn_, _usageFeeWad());
-        if (afterFee_ == 0) return 0;
+        if (detfIn_ == 0) return 0;
         uint256 effectiveSupply_ = ERC20Repo._totalSupply() + _previewPendingExpansionMint();
-        uint256 protocolLp_ = _protocolLp();
-        if (protocolLp_ == 0 || effectiveSupply_ == 0) return 0;
-        lpOut_ = afterFee_ * protocolLp_ / effectiveSupply_;
+        uint256 nftLp_ = _nftLp();
+        if (nftLp_ == 0 || effectiveSupply_ == 0) return 0;
+        lpOut_ = detfIn_ * nftLp_ / effectiveSupply_;
     }
 
     function _previewSettleBurnOut(IERC20 tokenOut_, uint256[] memory pairAmts_)

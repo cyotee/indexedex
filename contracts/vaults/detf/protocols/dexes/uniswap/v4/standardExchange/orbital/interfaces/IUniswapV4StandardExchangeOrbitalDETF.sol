@@ -106,10 +106,26 @@ interface IUniswapV4StandardExchangeOrbitalDETF {
         external
         returns (uint256 principalShares);
 
-    /// @notice Mature-only: close bond, pay capital residual(s).
-    function closeBondMature(uint256 tokenId, address recipient)
-        external
-        returns (uint256 amount0, uint256 amount1);
+    /// @notice D25+L2: mature close. `minAmountsOut` length 3: DETF slot 0 must be 0, then pair0, pair1.
+    function closeBondMature(
+        uint256 tokenId,
+        uint256[] calldata minAmountsOut,
+        address recipient,
+        uint256 deadline
+    ) external returns (uint256[] memory amountsOut);
+
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
+
+    /// @notice D18: move free DETF into reserve LP; 4626 credit on id 0; mint rebasing claim. No new DETF mint.
+    function buyClaim(
+        uint256 detfAmount,
+        uint256 minClaimOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 claimMinted);
+
+    function previewBuyClaim(uint256 detfAmount) external view returns (uint256 claimMinted);
 
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
@@ -212,6 +228,7 @@ interface IUniswapV4StandardExchangeOrbitalDETDFPkg is IDiamondFactoryPackage, I
         uint256 expansionEpochLength; // 0 → 8 hours
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

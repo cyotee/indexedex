@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
@@ -19,6 +20,23 @@ contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExcha
         assertTrue(bpt_ > 0, "bpt principal recorded");
         assertTrue(IERC20(detf).totalSupply() > 0, "detf minted for reserve + split");
         assertTrue(IERC20(detfInfo.reservePool()).totalSupply() > 0, "reserve pool initialized");
+    }
+
+    function test_bond_live_unboostedG_and_d4Pot() public {
+        _bootstrapViaFirstBond(alice, 1_000e18);
+        uint256 reserveBefore_ = IERC20(detf).balanceOf(address(vault));
+        uint256 potBefore_ = IERC20(detf).balanceOf(address(_bondNftVault(detf)));
+        uint256 seShares_ = _fundSeShares(bob, 200e18);
+        vm.startPrank(bob);
+        seShare.approve(detf, seShares_);
+        detfBonding.bond(seShare, seShares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        uint256 G_ = IERC20(detf).balanceOf(address(vault)) - reserveBefore_;
+        assertTrue(G_ > 0, "G joined");
+        uint256 p_ = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf);
+        uint256 expectedPot_ = (G_ * p_ / 1e18) + (G_ * p_ / 1e18);
+        uint256 potDelta_ = IERC20(detf).balanceOf(address(_bondNftVault(detf))) - potBefore_;
+        assertApproxEqAbs(potDelta_, expectedPot_, 2, "L1+D4 pot");
     }
 
     function test_bond_revertsIfLockTooShort() public {

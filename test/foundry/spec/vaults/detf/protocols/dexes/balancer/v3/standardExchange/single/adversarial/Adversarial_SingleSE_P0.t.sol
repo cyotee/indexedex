@@ -181,13 +181,13 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
 
         vm.prank(alice);
-        bonding_.redeemClaim(redeemAmt_, seShare, 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
 
         uint256 bptAfter_ = IERC20(info_.reservePool()).balanceOf(instance_);
         assertTrue(bptBefore_ >= bptAfter_, "BPT decreased or same");
         vm.prank(alice);
         vm.expectRevert();
-        bonding_.redeemClaim(claimBal_ + 1e18, seShare, 0, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(claimBal_ + 1e18, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
     }
 
     function test_H2_redeemClaim_minOutTooHigh_claimUnchanged() public {
@@ -207,7 +207,7 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
 
         vm.prank(alice);
         vm.expectRevert();
-        bonding_.redeemClaim(redeemAmt_, seShare, type(uint256).max, alice, block.timestamp + 1 hours);
+        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), type(uint256).max, alice, block.timestamp + 1 hours);
 
         assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged");
     }

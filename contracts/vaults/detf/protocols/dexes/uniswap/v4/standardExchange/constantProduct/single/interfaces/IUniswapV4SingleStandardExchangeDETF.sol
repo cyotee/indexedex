@@ -71,7 +71,28 @@ interface IUniswapV4SingleStandardExchangeDETF {
 
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
-    /// @notice Redeem rebasing claim → pairToken, vaultShare, or SE vault token. Else InvalidRoute.
+    /// @notice D18: move provided DETF into liquidity; 4626 to id 0; mint claim. No new DETF mint.
+    function buyClaim(
+        uint256 detfAmount,
+        uint256 minClaimOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 claimMinted);
+
+    function previewBuyClaim(uint256 detfAmount) external view returns (uint256 claimMinted);
+
+    /// @notice D25 + L2: mature close. `minAmountsOut[0]` is the DETF self-leg and must be 0.
+    function closeBondMature(
+        uint256 tokenId,
+        uint256[] calldata minAmountsOut,
+        address recipient,
+        uint256 deadline
+    ) external returns (uint256[] memory amountsOut);
+
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
+
+    /// @notice D15: redeem rebasing claim → DETF only. Else InvalidRoute.
     function redeemClaim(
         uint256 claimAmount,
         IERC20 tokenOut,
@@ -79,6 +100,8 @@ interface IUniswapV4SingleStandardExchangeDETF {
         address recipient,
         uint256 deadline
     ) external returns (uint256 amountOut);
+
+    function previewRedeemClaim(uint256 claimAmount, IERC20 tokenOut) external view returns (uint256 amountOut);
 
     /// @notice NFT vault / claim package: unwind protocol LP principal to pair for recipient.
     function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 pairOut);
@@ -143,6 +166,7 @@ interface IUniswapV4SingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IS
         uint256 expansionEpochLength; // 0 → 8 hours
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited (kept)
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

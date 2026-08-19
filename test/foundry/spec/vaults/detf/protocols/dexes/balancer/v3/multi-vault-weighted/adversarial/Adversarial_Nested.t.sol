@@ -79,13 +79,8 @@ contract Adversarial_Nested_Test is TestBase_MultiVaultWeightedDetf_Adversarial 
         vm.startPrank(user);
         IERC20(nested_).approve(outer_, nestedShares_);
         seShares[1].approve(outer_, seSharesAmt_);
-        uint256 bpt_ = IMultiVaultWeightedDetfBonding(outer_).initializeReserve(
-            amounts_, block.timestamp + 1 hours
-        );
-        address pool_ = IMultiVaultWeightedDetfInfo(outer_).reservePool();
-        IERC20(pool_).approve(outer_, bpt_);
-        IMultiVaultWeightedDetfBonding(outer_).bond(
-            IERC20(pool_), bpt_, DEFAULT_MIN_LOCK, user, false, block.timestamp + 1 hours
+        IMultiVaultWeightedDetfBonding(outer_).initializeReserve(
+            amounts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }

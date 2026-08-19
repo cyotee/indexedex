@@ -297,6 +297,10 @@ contract IndexedexManagerDFPkg is IIndexedexManagerDFPkg {
         VaultFeeOracleRepo._setDefaultSeigniorageIncentivePercentage(
             feeLayout, DEFAULT_SEIGNIORAGE_INCENTIVE_PERCENTAGE
         );
+        // D6 first values: p = 5e16 (init literal above), f = 12e16, c = 28e16.
+        VaultFeeOracleRepo._assertPotSharesBelowWad(12e16, 28e16);
+        VaultFeeOracleRepo._setDefaultSeigniorageFeeToSharePercentage(feeLayout, 12e16);
+        VaultFeeOracleRepo._setDefaultSeigniorageCreatorSharePercentage(feeLayout, 28e16);
     }
 
     function postDeploy(address) public pure returns (bool) {

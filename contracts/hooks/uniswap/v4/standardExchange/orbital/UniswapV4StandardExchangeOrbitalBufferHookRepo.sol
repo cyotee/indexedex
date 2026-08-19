@@ -48,6 +48,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         uint8 kLastMode;
         uint256 reentrancyStatus;
         bool initializationFinalized;
+        bool ownerOnlyLiquidity;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -75,6 +76,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         uint8 decimals2;
         int24 tickSpacing;
         uint160 sqrtPriceX96;
+        bool ownerOnlyLiquidity;
     }
 
     function _initializeBindings(BindingsInit memory b) internal {
@@ -98,6 +100,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         l.sqrtPriceX96 = b.sqrtPriceX96;
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
+        l.ownerOnlyLiquidity = b.ownerOnlyLiquidity;
     }
 
     function _tokenAt(Layout storage l, uint8 i) internal view returns (address) {

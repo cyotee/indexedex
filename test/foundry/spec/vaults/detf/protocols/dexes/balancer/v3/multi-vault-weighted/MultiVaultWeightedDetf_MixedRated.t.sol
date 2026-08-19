@@ -51,16 +51,15 @@ contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDe
         uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
         assertTrue(minted_ > 0, "claim minted");
 
-        address rated_ = info_.rateAssets()[0];
         uint256 claimBal_ = IERC20(info_.rebasingClaimToken()).balanceOf(alice);
-        // Redeem a small slice so proportional exit keeps Balancer min balances.
+        // D15: redeem a small slice for DETF only.
         uint256 redeemAmt_ = claimBal_ / 20;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 before_ = IERC20(rated_).balanceOf(alice);
+        uint256 before_ = IERC20(instance_).balanceOf(alice);
         vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(rated_), 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "redeem rated");
-        assertEq(IERC20(rated_).balanceOf(alice) - before_, out_, "payout");
+        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
+        assertTrue(out_ > 0, "redeem DETF");
+        assertEq(IERC20(instance_).balanceOf(alice) - before_, out_, "payout");
 
         // Unrated leg has no rateAsset - zero address is invalid route for redeem
         vm.prank(alice);

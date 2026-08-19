@@ -156,7 +156,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         uint256 protocolBefore = _maybeMintProtocolFee();
@@ -299,6 +299,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
 
     function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
         public
+        onlyLiquidityOwner
         nonReentrant
         returns (uint256 shares)
     {
@@ -348,7 +349,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         shares = _joinSingleAssetExactIn(tokenIn, amountIn, to, sharesMin, deadline);
     }
 
@@ -359,7 +360,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         shares = _joinSingleAssetExactIn(tokenIn, amountIn, to, sharesMin, deadline);
     }
 
@@ -432,7 +433,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 amountInMax,
         uint256 deadline
-    ) public nonReentrant returns (uint256 amountIn) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 amountIn) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (sharesOut == 0) revert ZeroAmount();
@@ -502,7 +503,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         _validateSeShareFlags(amountIsSeShare);
@@ -586,7 +587,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         shares = _joinSingleAssetExactInFlexible(tokenIn, amountIn, amountIsSeShare, to, sharesMin, deadline);
     }
 
@@ -598,7 +599,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         address to,
         uint256 sharesMin,
         uint256 deadline
-    ) public nonReentrant returns (uint256 shares) {
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares) {
         shares = _joinSingleAssetExactInFlexible(tokenIn, amountIn, amountIsSeShare, to, sharesMin, deadline);
     }
 

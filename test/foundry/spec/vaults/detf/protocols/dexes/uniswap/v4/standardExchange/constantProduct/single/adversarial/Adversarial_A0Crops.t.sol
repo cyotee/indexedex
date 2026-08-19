@@ -164,7 +164,7 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
     function test_CROPS_disable_doesNotBlock_closeBondMature_or_redeemClaim() public {
         address instance_ = _deployDetfWired(_openArgsUnique("crops"));
         IUniswapV4SingleStandardExchangeDETF info_ = IUniswapV4SingleStandardExchangeDETF(instance_);
-        _firstBondOn(instance_, 400 ether);
+        (uint256 firstId_,) = _firstBondOn(instance_, 400 ether);
         (uint256 tokenId_,) = _firstBondOn(instance_, 80 ether);
 
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
@@ -182,9 +182,16 @@ contract Adversarial_UniV4CpSingleSE_A0Crops is TestBase_UniswapV4SingleStandard
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
         vm.prank(detfUser);
         uint256 redeemOut_ = info_.redeemClaim(
-            redeemAmt_, IERC20(address(pairToken)), 0, detfUser, block.timestamp + 1 hours
+            redeemAmt_, IERC20(instance_), 0, detfUser, block.timestamp + 1 hours
         );
         assertGt(redeemOut_, 0, "redeemClaim after disable");
+
+        uint256[] memory minOut_ = new uint256[](2);
+        vm.prank(detfUser);
+        uint256[] memory closed_ = info_.closeBondMature(
+            firstId_, minOut_, detfUser, block.timestamp + 1 hours
+        );
+        assertGt(closed_[1], 0, "closeBondMature after disable");
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {

@@ -234,6 +234,9 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfB
         {
             uint256 protocolTokenId = ERC721Repo._mint(address(this));
             ComposedStableCommonDetfBondNFTVaultRepo._setDETFNFTId(protocolTokenId);
+            ComposedStableCommonDetfBondNFTVaultRepo._setProtocolNftInitialized(
+                ComposedStableCommonDetfBondNFTVaultRepo._layoutStruct(), true
+            );
             ComposedStableCommonDetfBondNFTVaultRepo._createPosition(protocolTokenId, 0, 0, 1e18, 0);
 
             IFeeCollectorProxy feeRecipient = VAULT_FEE_ORACLE_QUERY.feeTo();

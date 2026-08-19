@@ -71,7 +71,8 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
             thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0
+            expansionCatchUpCapBps: 0,
+            creator: address(0)
         });
         vm.startPrank(owner);
         instance_ = indexedexManager.deployVault(

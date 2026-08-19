@@ -48,6 +48,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
         uint256[4] rawReserves;
         /// @dev Append-only: set by finalizeInitialization after all six product doors are live.
         bool initializationFinalized;
+        bool ownerOnlyLiquidity;
     }
 
     function _layout() internal pure returns (Layout storage l) {

@@ -36,7 +36,7 @@ contract VaultFeeOracleManagerFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](16);
+        controlFuncs = new bytes4[](25);
         controlFuncs[0] = IVaultFeeOracleManager.setFeeTo.selector;
         controlFuncs[1] = IVaultFeeOracleManager.setDefaultUsageFee.selector;
         controlFuncs[2] = IVaultFeeOracleManager.setDefaultUsageFeeOfTypeId.selector;
@@ -53,5 +53,14 @@ contract VaultFeeOracleManagerFacet_IFacet_Test is CraneTest, TestBase_IFacet {
         controlFuncs[13] = IVaultFeeOracleManager.setDefaultLiquidReservePercentage.selector;
         controlFuncs[14] = IVaultFeeOracleManager.setDefaultLiquidReservePercentageOfTypeId.selector;
         controlFuncs[15] = IVaultFeeOracleManager.setLiquidReservePercentageOfVault.selector;
+        controlFuncs[16] = IVaultFeeOracleManager.setDefaultSeigniorageFeeToSharePercentage.selector;
+        controlFuncs[17] = IVaultFeeOracleManager.setDefaultSeigniorageFeeToSharePercentageOfTypeId.selector;
+        controlFuncs[18] = IVaultFeeOracleManager.setSeigniorageFeeToSharePercentageOfVault.selector;
+        controlFuncs[19] = IVaultFeeOracleManager.setDefaultSeigniorageCreatorSharePercentage.selector;
+        controlFuncs[20] = IVaultFeeOracleManager.setDefaultSeigniorageCreatorSharePercentageOfTypeId.selector;
+        controlFuncs[21] = IVaultFeeOracleManager.setSeigniorageCreatorSharePercentageOfVault.selector;
+        controlFuncs[22] = IVaultFeeOracleManager.setDefaultSeignioragePotShares.selector;
+        controlFuncs[23] = IVaultFeeOracleManager.setDefaultSeignioragePotSharesOfTypeId.selector;
+        controlFuncs[24] = IVaultFeeOracleManager.setSeignioragePotSharesOfVault.selector;
     }
 }

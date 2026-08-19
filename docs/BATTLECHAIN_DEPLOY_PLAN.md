@@ -258,7 +258,7 @@ Parallel track (does not block BC promo): RICH ETH deploy → Superchain bridge 
 | Aerodrome / Slipstream | Larger constructor graph |
 | Balancer V3 Vault diamond | Own bootstrap |
 | Aave V3/V4 / Euler | Multi-tx config |
-| IndexedEx DualLiquidityLinked | Product surface |
+| IndexedEx DualLiquidity (removed) | Product surface |
 | Explorer verification batch | Post-stable addresses |
 
 ---

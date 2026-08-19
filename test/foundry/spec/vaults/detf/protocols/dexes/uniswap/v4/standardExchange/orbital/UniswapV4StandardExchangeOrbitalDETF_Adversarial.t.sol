@@ -181,11 +181,11 @@ contract UniswapV4StandardExchangeOrbitalDETF_AdversarialTest is TestBase_Uniswa
         info2.bond(
             IERC20(p0), 100 ether, IERC20(p1), 100 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
         );
-        assertEq(info2.protocolLp(), 0);
+        assertEq(info2.protocolLp(), 0, "id 0 empty after first bond");
         deal(d2, detfUser, 1 ether);
         IERC20(d2).approve(d2, type(uint256).max);
-        vm.expectRevert(Repo.EmptyProtocolLp.selector);
-        ex2.exchangeIn(IERC20(d2), 1 ether, IERC20(p0), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 burnOut_ = ex2.exchangeIn(IERC20(d2), 1 ether, IERC20(p0), 0, detfUser, false, block.timestamp + 1 hours);
+        assertGt(burnOut_, 0, "D13 burn against nftLp");
         vm.stopPrank();
     }
 

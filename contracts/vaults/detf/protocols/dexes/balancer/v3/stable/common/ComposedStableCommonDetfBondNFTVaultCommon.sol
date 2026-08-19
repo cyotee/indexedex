@@ -21,6 +21,9 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IDetfErrors {
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);
     error DETFNFTCannotBeUnlocked(uint256 tokenId);
+    error ReservedBondNftsNotWired();
+    error ReservedBondNftIdsUnavailable(uint256 nextTokenId);
+    error FeeToZero();
 
 
 
@@ -65,5 +68,9 @@ abstract contract ComposedStableCommonDetfBondNFTVaultCommon is IDetfErrors {
 
     function _isFeeRecipientNFT(uint256 tokenId_) internal view returns (bool) {
         return tokenId_ == ComposedStableCommonDetfBondNFTVaultRepo._feeRecipientNFTId();
+    }
+
+    function _isStandingRewardNft(uint256 tokenId_) internal pure returns (bool) {
+        return tokenId_ == 1 || tokenId_ == 2;
     }
 }

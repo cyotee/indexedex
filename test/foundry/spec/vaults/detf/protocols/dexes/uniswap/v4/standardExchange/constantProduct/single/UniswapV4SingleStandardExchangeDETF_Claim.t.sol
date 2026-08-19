@@ -10,7 +10,7 @@ import {
     IUniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 
-/// @notice Phase 4 claim: sell→mint rebasing claim; redeemClaim pair / vaultShare / SE token matrix.
+/// @notice Phase 4 claim: sell→mint rebasing claim; D15 redeemClaim is DETF only.
 contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4SingleStandardExchangeDETF {
     function setUp() public override {
         super.setUp();
@@ -37,7 +37,7 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
         assertGt(claimAfter, claimBefore, "mintFromNFTSale increased claim balance");
     }
 
-    function test_redeemClaim_toPair() public {
+    function test_redeemClaim_toDetf() public {
         (uint256 tokenId,) = _firstBond(60 ether);
         vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
@@ -47,22 +47,20 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
         uint256 claimBal = IRebasingClaimToken(claim).balanceOf(detfUser);
         assertGt(claimBal, 0);
 
-        // Approve DETF to burn claim shares (burnShares pulls from owner unless pretransferred).
-        // burnShares is onlyOwner (DETF) and burns from owner without transfer when called by DETF.
-        uint256 pairBefore = pairToken.balanceOf(detfUser);
+        uint256 detfBefore = IERC20(detf).balanceOf(detfUser);
         vm.prank(detfUser);
-        uint256 pairOut = detfInfo.redeemClaim(
+        uint256 detfOut = detfInfo.redeemClaim(
             claimBal / 2,
-            IERC20(address(pairToken)),
+            IERC20(detf),
             0,
             detfUser,
             block.timestamp + 1 hours
         );
-        assertGt(pairOut, 0, "redeem pair out");
-        assertEq(pairToken.balanceOf(detfUser) - pairBefore, pairOut);
+        assertGt(detfOut, 0, "redeem DETF out");
+        assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore, detfOut);
     }
 
-    function test_redeemClaim_toVaultShare() public {
+    function test_redeemClaim_toPair_reverts() public {
         (uint256 tokenId,) = _firstBond(60 ether);
         vm.warp(block.timestamp + 30 days + 1);
         vm.prank(detfUser);
@@ -74,15 +72,14 @@ contract UniswapV4SingleStandardExchangeDETF_ClaimTest is TestBase_UniswapV4Sing
         if (redeemAmt == 0) return;
 
         vm.prank(detfUser);
-        uint256 shareOut = detfInfo.redeemClaim(
+        vm.expectRevert();
+        detfInfo.redeemClaim(
             redeemAmt,
-            IERC20(se),
+            IERC20(address(pairToken)),
             0,
             detfUser,
             block.timestamp + 1 hours
         );
-        assertGt(shareOut, 0, "redeem vaultShare out");
-        assertGt(IERC20(se).balanceOf(detfUser), 0);
     }
 
     function test_redeemClaim_invalidRoute_reverts() public {

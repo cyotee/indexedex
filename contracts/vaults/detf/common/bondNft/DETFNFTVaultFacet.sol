@@ -41,7 +41,7 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
         // Product surface (no retired markDETFNFTSold / detfNFTSold).
-        funcs_ = new bytes4[](28);
+        funcs_ = new bytes4[](32);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -70,6 +70,10 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
         funcs_[25] = IDETFNFTVault.rewardPerShares.selector;
         funcs_[26] = IDETFNFTVault.removeFromDETFNFT.selector;
         funcs_[27] = IDETFNFTVault.totalOriginalShares.selector;
+        funcs_[28] = IDETFNFTVault.initializeReservedBondNfts.selector;
+        funcs_[29] = IDETFNFTVault.reservedBondNftsWired.selector;
+        funcs_[30] = IDETFNFTVault.addEffectiveSharesOnly.selector;
+        funcs_[31] = IDETFNFTVault.retireMaturePosition.selector;
     }
 
     /// @inheritdoc IFacet

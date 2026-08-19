@@ -41,6 +41,7 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
     }
 
     /// @notice Binding for one immortal hook instance (salt identity includes SE + RP).
@@ -59,6 +60,10 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
         address rp2;
         int24 tickSpacing;
         uint160 sqrtPriceX96;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

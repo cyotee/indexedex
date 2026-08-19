@@ -77,10 +77,11 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         uint256 expansionMaxCatchUpEpochs;
         uint256 lastExpansionTimestamp;
         uint256 userBondedLp;
-        /// @dev Single capitalToken per bond tokenId (maturity close pays only this).
+        /// @dev Recorded at bond open (info). D25 close pays the full non-DETF basket.
         mapping(uint256 tokenId => address) capitalTokenOf;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct CoreInit {
@@ -103,6 +104,7 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         uint256 feeRecipientNftId;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct PolicyInit {
@@ -153,6 +155,7 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
+        s.creator = p_.creator;
     }
 
     function _initializePolicy(PolicyInit memory p_) internal {

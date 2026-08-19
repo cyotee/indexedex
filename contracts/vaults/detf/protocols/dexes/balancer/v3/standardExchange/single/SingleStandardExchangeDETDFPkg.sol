@@ -114,6 +114,7 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
         uint256 expansionClosureRatePerSecond; // 0 → default
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -142,6 +143,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         uint256 expansionClosureRatePerSecond;
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
+        address creator;
     }
 
     IFacet immutable ERC20_FACET;
@@ -321,6 +323,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         cfg.expansionClosureRatePerSecond = expRate_;
         cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
         cfg.expansionCatchUpCapBps = expCapBps_;
+        cfg.creator = args.creator;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -466,10 +469,16 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     }
 
     function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
+        address feeTo_ = address(FEE_ORACLE.feeTo());
+        address creator_ = _deployConfig().creator;
+        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
             detfNftId_ = id_;
         } catch {
-            detfNftId_ = 0;
+            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
+                detfNftId_ = id2_;
+            } catch {
+                detfNftId_ = 0;
+            }
         }
     }
 

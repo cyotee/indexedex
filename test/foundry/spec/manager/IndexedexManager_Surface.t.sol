@@ -110,7 +110,15 @@ contract IndexedexManager_Surface_Test is IndexedexTest {
             _contains(funcs_, IVaultFeeOracleManager.setLiquidReservePercentageOfVault.selector),
             "J1 setLiquidReservePercentageOfVault"
         );
-        assertEq(funcs_.length, 16, "J1 fee manager facetFuncs length");
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleManager.setDefaultSeigniorageFeeToSharePercentage.selector),
+            "J1 setDefaultSeigniorageFeeToSharePercentage"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleManager.setDefaultSeigniorageCreatorSharePercentage.selector),
+            "J1 setDefaultSeigniorageCreatorSharePercentage"
+        );
+        assertEq(funcs_.length, 25, "J1 fee manager facetFuncs length");
     }
 
     /// @notice J1: fee-oracle query non-seigniorage getters are cut.
@@ -131,7 +139,16 @@ contract IndexedexManager_Surface_Test is IndexedexTest {
             _contains(funcs_, IVaultFeeOracleQuery.liquidReservePercentageOfVault.selector),
             "J1 liquidReservePercentageOfVault"
         );
-        assertEq(funcs_.length, 25, "J1 fee query facetFuncs length");
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleQuery.defaultSeigniorageFeeToSharePercentage.selector),
+            "J1 defaultSeigniorageFeeToSharePercentage"
+        );
+        assertTrue(
+            _contains(funcs_, IVaultFeeOracleQuery.defaultSeigniorageCreatorSharePercentage.selector),
+            "J1 defaultSeigniorageCreatorSharePercentage"
+        );
+        assertTrue(_contains(funcs_, IVaultFeeOracleQuery.seigniorageSplitOfVault.selector), "J1 seigniorageSplitOfVault");
+        assertEq(funcs_.length, 34, "J1 fee query facetFuncs length");
     }
 
     /// @notice J1: registry vault manager/package/disable/deployment selectors cut.

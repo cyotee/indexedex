@@ -164,19 +164,17 @@ contract MixedBufferMultiVaultStableDetf_ThresholdMode_Test is TestBase_MixedBuf
         assertTrue(burnedOut_ > 0, "burned to buffer");
         assertApproxEqAbs(previewBurn_, burnedOut_, 10, "T12 preview~=exec burn");
 
-        // F3 lock: Open must not unlock vaultShare burn.
+        // D20: Open burn may pay a vault-share reserve leg (not DETF self).
         uint256 remaining_ = IERC20(openDetf).balanceOf(bob);
-        if (remaining_ > 0) {
+        if (remaining_ > 1e15) {
             address share0_ = openInfo.vaultShares()[0];
+            uint256 burnShare_ = remaining_ / 4;
+            if (burnShare_ == 0) burnShare_ = remaining_ / 2;
             vm.startPrank(bob);
-            IERC20(openDetf).approve(openDetf, remaining_);
-            vm.expectRevert(
-                abi.encodeWithSelector(
-                    MixedBufferMultiVaultStableDetfRepo.InvalidRoute.selector, openDetf, share0_
-                )
-            );
-            openEx.exchangeIn(
-                IERC20(openDetf), remaining_ / 2 == 0 ? remaining_ : remaining_ / 2,
+            IERC20(openDetf).approve(openDetf, burnShare_);
+            uint256 shareOut_ = openEx.exchangeIn(
+                IERC20(openDetf),
+                burnShare_,
                 IERC20(share0_),
                 0,
                 bob,
@@ -184,6 +182,7 @@ contract MixedBufferMultiVaultStableDetf_ThresholdMode_Test is TestBase_MixedBuf
                 block.timestamp + 1 hours
             );
             vm.stopPrank();
+            assertTrue(shareOut_ > 0, "D20 vault-share burn");
         }
 
         if (
@@ -215,15 +214,12 @@ contract MixedBufferMultiVaultStableDetf_ThresholdMode_Test is TestBase_MixedBuf
 
         uint256 userOut_ = _mintDetfFromBuffer(openDetf, bob, 50e18);
         assertTrue(userOut_ > 0, "user mint");
+        assertEq(IERC20(openDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
 
-        uint256 usage_ = IVaultFeeOracleQuery(address(indexedexManager)).usageFeeOfVault(openDetf);
         uint256 seign_ =
             IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
-        if (usage_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(feeTo_) > feeBefore_, "feeTo received");
-        }
         if (seign_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(bondNft_) >= protocolBefore_, "protocol path");
+            assertTrue(IERC20(openDetf).balanceOf(bondNft_) > protocolBefore_, "D27 pot");
         }
         _assertNoFreeInventory(openDetf);
     }

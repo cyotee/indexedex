@@ -2,7 +2,7 @@
 
 **Status:** Living document — research + decisions as of 2026-07-22  
 **Owner discussion:** In progress (not frozen)  
-**Primary product surface:** strategy vaults + DETFs; **launch fee-sink** = **SingleVault DETF for RICH** (not DualLiquidityLinked day-1)
+**Primary product surface:** strategy vaults + DETFs; **launch fee-sink** = **SingleVault DETF for RICH** (not DualLiquidity (removed) day-1)
 
 ### Current work track (2026-07-22; RH addendum 2026-07-26)
 
@@ -38,7 +38,7 @@ Canonical economic home of the token contract is **Ethereum**. Day-1 sale liquid
 
 1. **Fees from other vaults and DETFs** are routed (via **Vault Fee Collector**) to **`donation`** that **makes / deepens RICH liquidity**.  
 2. **Launch fee-sink (decided 2026-07-26):** **SingleVault DETF for RICH** (`SingleVaultDetf` under `contracts/vaults/detf/composed/single/`) — **that DETF accrues** donated value (reserve quality / share NAV as designed).  
-3. **Not** DualLiquidityLinked as day-1 fee sink (DualLiquidity remains optional later product; do not block launch on it).  
+3. **Not** DualLiquidity (removed) as day-1 fee sink (DualLiquidity remains optional later product; do not block launch on it).  
 4. **Not** a classic cash dividend paid to free-floating RICH balances. Value path = **buyback-and-make into RICH-linked liquidity** via the SingleVault DETF’s underlying SE vault / pool.  
 5. **`donation` is permissionless** (process inventory into the SingleVault DETF / underlying → pools).  
 6. If fee inventory is not already an accepted sink asset, **sell into WETH and/or RICH** (and RICHAI only if that instance is later wired), then donate.  
@@ -355,7 +355,7 @@ Public copy = **community DeFi lab**. Ops truth = **we need this deployed for la
 | **ETH canonical RICH + Base CCA** | **Viable and common** — Uniswap CCA supports existing tokens; Base is live for CCA. Engineering focus: bridge + which address CCA commits. |
 | **Fees → RICH liquidity** | **Decided** — other vaults/DETFs route fees to **donate into RICH liquidity**; the fee-sink DETF **accrues** those donations. |
 | **Launch fee sink** | **SingleVault DETF for RICH** (`SingleVaultDetf`) + `donation` buyback-and-make. Not a cash dividend on free RICH. |
-| DualLiquidityLinked as fee sink | **Deferred** — not day-1 launch fee accrual vehicle. |
+| DualLiquidity (removed) as fee sink | **Deferred** — not day-1 launch fee accrual vehicle. |
 | Optional second CCA on Ethereum later | **Sensible** — don’t compete two CCAs on day 1; use L1 CCA only if Base raise underdelivers or expansion needs L1 depth. |
 | Simultaneous / mid-CCA RICHAI | High messaging load; competes with auction. **Decided (2026-07-14):** CCA **fully ends**, then RICHAI — agents still learn RICH exists and can buy both. |
 
@@ -379,15 +379,15 @@ Public copy = **community DeFi lab**. Ops truth = **we need this deployed for la
 | **Family** | **SingleVault DETF** (`SingleVaultDetf`, `contracts/vaults/detf/composed/single/`) |
 | **Role** | **Fee-accrual DETF for RICH** — protocol fees from other vaults/DETFs **donate into RICH liquidity** through this instance |
 | **Shape** | Single underlying SE vault + Balancer weighted reserve (self-leg + external leg(s) per package); diamond = DETF share ERC-20 |
-| **Not day-1 fee sink** | DualLiquidityLinked (three-leg) — remains optional later product surface |
+| **Not day-1 fee sink** | DualLiquidity (removed) (three-leg) — remains optional later product surface |
 
 **Eng path:** facets / DFPkg via Crane CREATE3 + manager vault registry; implement / wire **`donation`** on SingleVault DETF; Fee Collector → this package instance; first bond bootstrap before live mint/burn.
 
 **Naming:** product/marketing may say “SingleVault DETF (RICH)” or “RICH fee-accrual DETF.” Role names in code stay `rateAsset` / `vaultShare` / `underlyingVault` / etc. (no brand leakage into generic interfaces).
 
-### 3.1 DualLiquidityLinked (deferred relative to fee sink)
+### 3.1 DualLiquidity (removed) (deferred relative to fee sink)
 
-From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md` and related): DualLiquidityLinked is a multi-leg DETF (two V4 SE vaults + one V2 pair SE). **Prior “day-1 fee sink = DualLiquidityLinked” is superseded** for launch — DualLiquidity may still ship later as a product, not as the RICH fee-accrual vehicle at launch.
+From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md` and related): DualLiquidity (removed) is a multi-leg DETF (two V4 SE vaults + one V2 pair SE). **Prior “day-1 fee sink = DualLiquidity (removed)” is superseded** for launch — DualLiquidity may still ship later as a product, not as the RICH fee-accrual vehicle at launch.
 
 **Launch implications (updated):**
 
@@ -429,7 +429,7 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
    |-----------------|------|-----|
    | RICH | L1-canonical capital + Base CCA + **center of fee-make liquidity** | Not “only a meme”; not a cash dividend |
    | RICHAI | Agent-native social/Bankr companion | Not the L1 capital raise alone |
-   | **SingleVault DETF (RICH)** | **Launch fee sink** — accrues donations; **`donation` buyback-and-make** into RICH-linked vault/pool | Not DualLiquidityLinked day-1; not a cash claim vault |
+   | **SingleVault DETF (RICH)** | **Launch fee sink** — accrues donations; **`donation` buyback-and-make** into RICH-linked vault/pool | Not DualLiquidity (removed) day-1; not a cash claim vault |
 
 3. **Fee path = donate to RICH liquidity via SingleVault DETF (decided 2026-07-26)**  
    - Fees from **other vaults and DETFs** → Vault Fee Collector → sell if needed → **`donation`** into **SingleVault DETF for RICH**.  
@@ -495,7 +495,7 @@ From internal plans (`docs/superpowers/plans/2026-07-05-dual-liquidity-linked-de
 - Pricing CCA floor off a dust RICHAI print / day-1 dual seed theater.  
 - Launching RICHAI **during** CCA (attention split) or same-T0 dual launch.  
 - Setting CCA floor/FDV with no realistic fully diluted mcap story.  
-- Using DualLiquidityLinked as day-1 fee sink when **SingleVault DETF (RICH)** is the locked launch vehicle.  
+- Using DualLiquidity (removed) as day-1 fee sink when **SingleVault DETF (RICH)** is the locked launch vehicle.  
 - Treating pre-bootstrap `ReservePoolNotInitialized` as a deploy-script bug instead of running first bond/bootstrap.  
 - Launching tokens before SingleVault DETF (RICH) is **testnet-demoable** (bootstrap + fee → donation → RICH liquidity).  
 - Overclaiming “agents will manage billions” before one public demo vault has real deposits.  
@@ -551,7 +551,7 @@ Phase 3 — RICHAI Bankr (Base) — AFTER CCA ends
 Phase 4 — Flywheel
   [ ] **SingleVault DETF (RICH)** live as fee sink; donation → RICH liquidity measurable
   [ ] Agents deposit; arb volume; fee-make TVL / depth dashboards
-  [ ] Optional later: DualLiquidityLinked as additional product (not required for fee-make launch)
+  [ ] Optional later: DualLiquidity (removed) as additional product (not required for fee-make launch)
   [ ] Optional Phase 5: Ethereum CCA for additional RICH supply if capital needed
   [ ] Optional later: revisit **DAOSYS** token / bounty launch (explicitly deferred)
 
@@ -580,10 +580,10 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 | 2026-07-11 | Research: CCA viable for capital; Bankr for agent attention | Confirmed |
 | 2026-07-11 | **RICH: deploy on Ethereum, bring to Base, sell in CCA on Base** | **Decided** |
 | 2026-07-11 | **Optional additional RICH CCA on Ethereum later** if more capital needed | **Decided** (deferred) |
-| 2026-07-11 | **DualLiquidityLinked DETF is fee sink** for other strategy vaults and DETFs | **Superseded for launch** 2026-07-26 → **SingleVault DETF (RICH)** |
+| 2026-07-11 | **DualLiquidity (removed) DETF is fee sink** for other strategy vaults and DETFs | **Superseded for launch** 2026-07-26 → **SingleVault DETF (RICH)** |
 | 2026-07-11 | **Both RICH and RICHAI are fee-distribution tokens** | **Refined** 2026-07-26 — not cash dividends; **fees donate into RICH liquidity**; sink DETF accrues |
 | 2026-07-11 | Prefer RICH as DETF reserve economic leg; RICHAI primarily distribution only | **Superseded** 2026-07-14 (all three in reserve) |
-| 2026-07-14 | DualLiquidityLinked day-1 reserve legs: **WETH + RICH + RICHAI** | **Deferred** as fee-sink shape; DualLiquidity not launch fee accrual vehicle |
+| 2026-07-14 | DualLiquidity (removed) day-1 reserve legs: **WETH + RICH + RICHAI** | **Deferred** as fee-sink shape; DualLiquidity not launch fee accrual vehicle |
 | 2026-07-26 | **Launch fee-accrual DETF = SingleVault DETF for RICH** (`SingleVaultDetf`) | **Decided** |
 | 2026-07-11 | Product / agent / CCA / Bankr day-1 liquidity home: **Base**; RICH canonical: **Ethereum** | **Decided** |
 | 2026-07-11 | **RICH total supply = 1,000,000,000** | **Decided** |
@@ -618,7 +618,7 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 | 2026-07-14 | Gitlawb budget: **small test first** (low hundreds USDC); creative draft later; landings = docs + CCA + Bankr when live | **Decided** |
 | 2026-07-14 | Tickers locked **RICH** + **RICHAI**; formal **audit + calendar still open** | **Superseded in part** 2026-07-17 (no external audit budget) |
 | 2026-07-17 | **Current work track:** review plan → implement gaps (donation, kill-switch) → **testnet protocol demo** → write **CCA + Bankr announcement** copy | **Decided** |
-| 2026-07-17 | DualLiquidityLinked is **ready** for **`donation`** implementation | **Superseded for launch sink** — implement donation on **SingleVault DETF (RICH)** first |
+| 2026-07-17 | DualLiquidity (removed) is **ready** for **`donation`** implementation | **Superseded for launch sink** — implement donation on **SingleVault DETF (RICH)** first |
 | 2026-07-17 | CCA floor / FDV **not set**; requires dedicated **research** before CCA deploy | **Superseded** 2026-07-22 |
 | 2026-07-22 | **FDV workshop locked** — full record [`CCA_FDV_WORKSHOP.md`](./CCA_FDV_WORKSHOP.md) | **Decided** |
 | 2026-07-22 | CCA floor = **\(5\times10^{-7}\) ETH per RICH**; FDV at floor **~500 ETH (~$950k @ ETH $1,900)**; public “~$1M at floor”; max comfort **&lt;$5M FDV** | **Decided** |
@@ -636,7 +636,7 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 | 2026-07-26 | **Public BC narrative** = community gift (open toolkit + Safe Harbor); **internal** = required stage for promo + our stack validation — do not lead public copy with self-serving deploy need | **Decided** |
 | 2026-07-22 | **CCA parameter sheet** drafted — [`CCA_PARAMETER_SHEET.md`](./CCA_PARAMETER_SHEET.md), config [`cca/base-rich-cca-config.json`](./cca/base-rich-cca-config.json); token + absolute blocks pending | **Decided** (draft) |
 | 2026-07-17 | Bridge = **canonical Superchain (OP Stack)** ETH→Base for RICH CCA tranche | **Decided** |
-| 2026-07-17 | DualLiquidityLinked **weights** set in DFPkg `PkgArgs` (defaults **20/20/60** for weightA/B/pair over SE vault-share legs) | **Decided** (clarification) |
+| 2026-07-17 | DualLiquidity (removed) **weights** set in DFPkg `PkgArgs` (defaults **20/20/60** for weightA/B/pair over SE vault-share legs) | **Decided** (clarification) |
 | 2026-07-17 | Scenario3 / pre-bootstrap uninitialized reserve is **expected**; live via **first bond/bootstrap** (external deposits → BPR leg shares → init weighted reserve), not a deploy-script seed-all-pools blocker | **Decided** (clarification) |
 | 2026-07-17 | **No external audit budget**; multi-model self-audit continues; use **BattleChain** safe harbor for ethical hacker testing | **Decided** |
 | 2026-07-17 | Implement owner-controlled **Vault Registry kill-switch**: disable by vault and/or vault type ID; vaults/DETFs query registry as source of truth; includes **disabled emergency withdraw** | **Decided** (to implement) |
@@ -662,7 +662,7 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 - **Proceeds:** **~6.5 ETH ops**, rest liquidity; min raise **0**; planning success **50 ETH** / stretch **100 ETH** (not promises)  
 - **Sequence:** **CCA fully clears** → **then RICHAI Bankr**  
 - **30% seed:** size **at post-CCA runtime only**  
-- **Launch fee sink:** **SingleVault DETF (RICH)** — DualLiquidityLinked fee-sink deferred  
+- **Launch fee sink:** **SingleVault DETF (RICH)** — DualLiquidity (removed) fee-sink deferred  
 - **RICHAI buy ~$100 ETH** (demo only); **no day-1 dual seed theater**  
 - RICHAI messaging **leads with RICH + IndexedEx**; agents can buy both  
 - CCA proceeds + Bankr fee recipient → **`0xeD1FA21329fc45860cAB5D5E26a5fafcCDAcd6D5`**  
@@ -704,7 +704,7 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 - Bankr: https://bankr.bot/ · docs: https://docs.bankr.bot/ · token launching: https://docs.bankr.bot/token-launching/overview/  
 - Bankr skills / deploy notes (GitHub): https://github.com/BankrBot/skills  
 - Gitlawb Ads (agent-economy sponsored tips): https://ads.gitlawb.com/ · stack: https://gitlawb.com/  
-- Internal: `docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md`, DualLiquidityLinked DFPkg/PRD (bootstrap / first bond; weights 20/20/60)
+- Internal: `docs/superpowers/plans/2026-07-05-dual-liquidity-linked-detf.md`, DualLiquidity (removed) DFPkg/PRD (bootstrap / first bond; weights 20/20/60)
 - Internal: Vault Fee Collector (`contracts/fee/collector/`), Vault Registry (`contracts/registries/vault/`)
 - Internal: CCA FDV workshop decisions — [`docs/CCA_FDV_WORKSHOP.md`](./CCA_FDV_WORKSHOP.md)
 - BattleChain: https://docs.battlechain.com/ (safe harbor; no external audit budget for now)
@@ -837,7 +837,7 @@ Phase L2-E — Expansion L2 (chain 4663) product + Balancer (parallel after / wi
 | Uniswap V2/V3/V4 core on **mainnet** | Already present |
 | Permit2 / Multicall3 | Canonical addresses live |
 | Full stock-token laundry list as DETF legs | Legal/transfer matrix + thin liquidity; pick legs deliberately |
-| DualLiquidityLinked as fee sink | Launch fee sink remains **SingleVault DETF (RICH)** |
+| DualLiquidity (removed) as fee sink | Launch fee sink remains **SingleVault DETF (RICH)** |
 | CCA on 4663 | Not required for dual-track A (Base CCA remains capital raise) |
 | Replacing Uni as “the” spot DEX | We own **weighted multi-asset + vault-native** narrative |
 

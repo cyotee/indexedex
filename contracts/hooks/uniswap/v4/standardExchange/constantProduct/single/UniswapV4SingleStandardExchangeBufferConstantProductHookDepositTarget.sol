@@ -23,6 +23,9 @@ import {ModifyLiquidityParams, SwapParams} from
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
 
 import {
+    UniswapV4HookOwnerOnlyLiquidityLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
 import {
@@ -92,6 +95,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         l.reentrancyStatus = Repo.ENTERED;
         _;
         l.reentrancyStatus = Repo.NOT_ENTERED;
+    }
+
+    modifier onlyLiquidityOwner() {
+        UniswapV4HookOwnerOnlyLiquidityLib.enforce(Repo._layout().ownerOnlyLiquidity);
+        _;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -401,6 +409,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
 
     function deposit(uint256 amount0, uint256 amount1, address to, uint256 minLpAmount, uint256 deadline)
         external
+        onlyLiquidityOwner
         nonReentrant
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
@@ -415,7 +424,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 minLpAmount,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external nonReentrant returns (uint256 lpAmount, uint256 used0, uint256 used1) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount, uint256 used0, uint256 used1) {
         PullLib.pullPermit2SignatureDual(currency0(), currency1(), amount0, amount1, permit2Data);
         return _deposit(amount0, amount1, to, minLpAmount, deadline);
     }
@@ -426,13 +435,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         address to,
         uint256 minLpAmount,
         uint256 deadline
-    ) external nonReentrant returns (uint256 lpAmount, uint256 used0, uint256 used1) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount, uint256 used0, uint256 used1) {
         PullLib.pullPermit2AllowanceDual(currency0(), currency1(), amount0, amount1);
         return _deposit(amount0, amount1, to, minLpAmount, deadline);
     }
 
     function depositSingle(address tokenIn, uint256 amountIn, address to, uint256 minLpAmount, uint256 deadline)
         external
+        onlyLiquidityOwner
         nonReentrant
         returns (uint256 lpAmount)
     {
@@ -447,7 +457,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 minLpAmount,
         uint256 deadline,
         bytes calldata permit2Data
-    ) external nonReentrant returns (uint256 lpAmount) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount) {
         PullLib.pullPermit2SignatureSingle(tokenIn, amountIn, permit2Data);
         return _depositSingle(tokenIn, amountIn, to, minLpAmount, deadline);
     }
@@ -458,7 +468,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         address to,
         uint256 minLpAmount,
         uint256 deadline
-    ) external nonReentrant returns (uint256 lpAmount) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount) {
         PullLib.pullPermit2AllowanceSingle(tokenIn, amountIn);
         return _depositSingle(tokenIn, amountIn, to, minLpAmount, deadline);
     }
@@ -470,7 +480,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         address to,
         uint256 minLpAmount,
         uint256 deadline
-    ) external nonReentrant returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe) {
         Repo.Layout storage l = Repo._layout();
         PullLib.pullErc20Single(l.rawToken, amountRaw);
         PullLib.pullErc20Single(l.standardExchange, amountSe);

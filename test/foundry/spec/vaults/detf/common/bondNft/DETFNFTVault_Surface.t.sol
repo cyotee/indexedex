@@ -93,7 +93,7 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
 
     /// @dev Target/product API: IDETFNFTVault + IERC721Metadata.tokenURI + guarded ERC721 transfers.
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](31);
+        sels_ = new bytes4[](35);
         sels_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         sels_[1] = IDETFNFTVault.createPosition.selector;
         sels_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -122,9 +122,13 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         sels_[25] = IDETFNFTVault.rewardPerShares.selector;
         sels_[26] = IDETFNFTVault.removeFromDETFNFT.selector;
         sels_[27] = IDETFNFTVault.totalOriginalShares.selector;
-        sels_[28] = IERC721.transferFrom.selector;
-        sels_[29] = SAFE_TRANSFER_FROM;
-        sels_[30] = SAFE_TRANSFER_FROM_DATA;
+        sels_[28] = IDETFNFTVault.initializeReservedBondNfts.selector;
+        sels_[29] = IDETFNFTVault.reservedBondNftsWired.selector;
+        sels_[30] = IDETFNFTVault.addEffectiveSharesOnly.selector;
+        sels_[31] = IDETFNFTVault.retireMaturePosition.selector;
+        sels_[32] = IERC721.transferFrom.selector;
+        sels_[33] = SAFE_TRANSFER_FROM;
+        sels_[34] = SAFE_TRANSFER_FROM_DATA;
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {
@@ -198,6 +202,7 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         assertEq(vault.totalOriginalShares(), 0);
         assertEq(vault.rewardPerShares(), 0);
         vault.detfNFTId();
+        assertFalse(vault.reservedBondNftsWired(), "J3 reserved not wired at deploy");
         vault.getPosition(0);
         vault.positionOf(0);
         vault.pendingRewards(0);
@@ -250,6 +255,15 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         vm.prank(attacker);
         _assertProxyNotFunctionNotFound(
             proxy_, abi.encodeWithSelector(IDETFNFTVault.addToDETFNFT.selector, uint256(0), uint256(1e18))
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_, abi.encodeWithSelector(IDETFNFTVault.addEffectiveSharesOnly.selector, uint256(1), uint256(1e18))
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(IDETFNFTVault.initializeReservedBondNfts.selector, attacker, attacker)
         );
         vm.prank(attacker);
         _assertProxyNotFunctionNotFound(

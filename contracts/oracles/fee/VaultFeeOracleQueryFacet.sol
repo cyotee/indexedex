@@ -34,7 +34,7 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](25);
+        funcs = new bytes4[](34);
         funcs[0] = IVaultFeeOracleQuery.feeTo.selector;
         funcs[1] = IVaultFeeOracleQuery.usageFeeVaultTypeIds.selector;
         funcs[2] = IVaultFeeOracleQuery.defaultUsageFee.selector;
@@ -60,6 +60,15 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
         funcs[22] = IVaultFeeOracleQuery.defaultLiquidReservePercentageOfTypeId.selector;
         funcs[23] = IVaultFeeOracleQuery.liquidReservePercentageOfVault.selector;
         funcs[24] = IVaultFeeOracleQuery.liquidReservePercentageOfVaultAndFeeTo.selector;
+        funcs[25] = IVaultFeeOracleQuery.defaultSeigniorageFeeToSharePercentage.selector;
+        funcs[26] = IVaultFeeOracleQuery.seigniorageFeeToSharePercentageOfTypeId.selector;
+        funcs[27] = IVaultFeeOracleQuery.seigniorageFeeToSharePercentageOfVault.selector;
+        funcs[28] = IVaultFeeOracleQuery.defaultSeigniorageCreatorSharePercentage.selector;
+        funcs[29] = IVaultFeeOracleQuery.seigniorageCreatorSharePercentageOfTypeId.selector;
+        funcs[30] = IVaultFeeOracleQuery.seigniorageCreatorSharePercentageOfVault.selector;
+        funcs[31] = IVaultFeeOracleQuery.seigniorageSplitOfVault.selector;
+        funcs[32] = IVaultFeeOracleQuery.seigniorageSplitAndFeeToOfVault.selector;
+        funcs[33] = IVaultFeeOracleQuery.bondTermsAndSeigniorageOfVault.selector;
         return funcs;
     }
 
@@ -231,6 +240,71 @@ contract VaultFeeOracleQueryFacet is IVaultFeeOracleQuery, IFacet {
     {
         feeTo_ = feeTo();
         percentage = seigniorageIncentivePercentageOfVault(vault);
+    }
+
+    function defaultSeigniorageFeeToSharePercentage() public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._defaultSeigniorageFeeToSharePercentage();
+    }
+
+    function seigniorageFeeToSharePercentageOfTypeId(bytes4 vaultTypeId) public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._seigniorageFeeToSharePercentageOfTypeId(vaultTypeId);
+    }
+
+    function seigniorageFeeToSharePercentageOfVault(address vault) public view returns (uint256 percentage) {
+        percentage = VaultFeeOracleRepo._seigniorageFeeToSharePercentageOfVault(vault);
+        if (percentage == 0) {
+            percentage =
+                seigniorageFeeToSharePercentageOfTypeId(VaultRegistryVaultRepo._seigniorageIncentiveIdOfVault(vault));
+            if (percentage == 0) {
+                percentage = defaultSeigniorageFeeToSharePercentage();
+            }
+        }
+        return percentage;
+    }
+
+    function defaultSeigniorageCreatorSharePercentage() public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._defaultSeigniorageCreatorSharePercentage();
+    }
+
+    function seigniorageCreatorSharePercentageOfTypeId(bytes4 vaultTypeId) public view returns (uint256 percentage) {
+        return VaultFeeOracleRepo._seigniorageCreatorSharePercentageOfTypeId(vaultTypeId);
+    }
+
+    function seigniorageCreatorSharePercentageOfVault(address vault) public view returns (uint256 percentage) {
+        percentage = VaultFeeOracleRepo._seigniorageCreatorSharePercentageOfVault(vault);
+        if (percentage == 0) {
+            percentage =
+                seigniorageCreatorSharePercentageOfTypeId(VaultRegistryVaultRepo._seigniorageIncentiveIdOfVault(vault));
+            if (percentage == 0) {
+                percentage = defaultSeigniorageCreatorSharePercentage();
+            }
+        }
+        return percentage;
+    }
+
+    function seigniorageSplitOfVault(address vault) public view returns (uint256 p, uint256 f, uint256 c) {
+        p = seigniorageIncentivePercentageOfVault(vault);
+        f = seigniorageFeeToSharePercentageOfVault(vault);
+        c = seigniorageCreatorSharePercentageOfVault(vault);
+    }
+
+    function seigniorageSplitAndFeeToOfVault(address vault)
+        public
+        view
+        returns (IFeeCollectorProxy feeTo_, uint256 p, uint256 f, uint256 c)
+    {
+        feeTo_ = feeTo();
+        (p, f, c) = seigniorageSplitOfVault(vault);
+    }
+
+    function bondTermsAndSeigniorageOfVault(address vault)
+        public
+        view
+        returns (IFeeCollectorProxy feeTo_, BondTerms memory terms, uint256 p, uint256 f, uint256 c)
+    {
+        feeTo_ = feeTo();
+        terms = bondTermsOfVault(vault);
+        (p, f, c) = seigniorageSplitOfVault(vault);
     }
 
     /* -------------------------------------------------------------------------- */

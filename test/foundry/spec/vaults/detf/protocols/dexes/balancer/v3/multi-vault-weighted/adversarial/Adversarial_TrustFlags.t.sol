@@ -413,6 +413,7 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
     function test_I_positive_honestPullMint_succeeds() public {
         address instance_ = _openLiveN1();
         uint256 amount_ = _fundSeSharesLeg(0, alice, 35e18);
+        uint256 before_ = IERC20(instance_).balanceOf(alice);
 
         vm.startPrank(alice);
         seShares[0].approve(instance_, amount_);
@@ -422,7 +423,7 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         vm.stopPrank();
 
         assertTrue(out_ > 0, "honest !pretransferred mint");
-        assertEq(IERC20(instance_).balanceOf(alice), out_, "alice received detfToken");
+        assertEq(IERC20(instance_).balanceOf(alice) - before_, out_, "alice received detfToken");
     }
 
     /// @notice Positive control: honest !pretransferred burn succeeds.

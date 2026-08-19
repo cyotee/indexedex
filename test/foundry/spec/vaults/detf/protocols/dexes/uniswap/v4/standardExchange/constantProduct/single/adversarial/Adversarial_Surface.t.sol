@@ -44,7 +44,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
 
     /// @dev Target-derived control set: money + info + bonding selectors (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](35);
+        sels_ = new bytes4[](40);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = IUniswapV4SingleStandardExchangeDETF.bond.selector;
@@ -80,6 +80,11 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         sels_[32] = IUniswapV4SingleStandardExchangeDETF.isReserveWired.selector;
         sels_[33] = IUniswapV4SingleStandardExchangeDETF.completeReserveBondNft.selector;
         sels_[34] = IUniswapV4SingleStandardExchangeDETF.completeReserveClaim.selector;
+        sels_[35] = IUniswapV4SingleStandardExchangeDETF.buyClaim.selector;
+        sels_[36] = IUniswapV4SingleStandardExchangeDETF.previewBuyClaim.selector;
+        sels_[37] = IUniswapV4SingleStandardExchangeDETF.closeBondMature.selector;
+        sels_[38] = IUniswapV4SingleStandardExchangeDETF.previewCloseBondMature.selector;
+        sels_[39] = IUniswapV4SingleStandardExchangeDETF.previewRedeemClaim.selector;
         // compoundProtocolRewards is on interface but counted separately with atomic in J1.
     }
 
@@ -95,7 +100,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
         IFacet facet_ = detfExchangeInFacet;
         bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 36, "facetFuncs length");
+        assertTrue(funcs_.length >= 41, "facetFuncs length");
 
         bytes4[] memory controls_ = _controlSelectors();
         for (uint256 i; i < controls_.length; ++i) {

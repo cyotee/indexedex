@@ -421,7 +421,7 @@ Skip all OWNED_ELSEWHERE (gap_cover_* owns those files).
 | **Title** | DualLiquidity A0 + same-tx/docs delta + honest fork I/K |
 | **Severity** | High |
 | **Class** | BOTH |
-| **Products** | DualLiquidityLinkedCrossVersion |
+| **Products** | DualLiquidity (removed)CrossVersion |
 | **Finding IDs** | SEC-DETF-DL-003, SEC-DETF-DL-004, SEC-DETF-DL-005 |
 | **Problem** | Residual inventory first mint; helper vs documented two-tx/Permit2; fork I/K theater. |
 | **Production files (touch set)** | `…/crossVersion/v2/**` receive helpers |
@@ -733,7 +733,7 @@ Skip all OWNED_ELSEWHERE (gap_cover_* owns those files).
 | **Title** | Align DualLiquidity receive with documented two-tx/Permit2 or invert tests |
 | **Severity** | High |
 | **Class** | BOTH / DOCS |
-| **Products** | DualLiquidityLinkedCrossVersion |
+| **Products** | DualLiquidity (removed)CrossVersion |
 | **Finding IDs** | SEC-DETF-DL-003 |
 | **Problem** | Helper is same-tx delta; docs/Permit2 imply two-tx pretransfer. |
 | **Production files (touch set)** | `…/crossVersion/v2/` `_receive` / `_receiveOut` |
@@ -757,7 +757,7 @@ Skip all OWNED_ELSEWHERE (gap_cover_* owns those files).
 | **Title** | Replace DualLiquidity I/K theater with fork I1–I3 + K1 |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersion |
+| **Products** | DualLiquidity (removed)CrossVersion |
 | **Finding IDs** | SEC-DETF-DL-005 |
 | **Problem** | ShareInflation is A3-class; happy Permit2 pretransfer is not I. Fork P0 = High (L-SEC-5). |
 | **Production files (touch set)** | none |

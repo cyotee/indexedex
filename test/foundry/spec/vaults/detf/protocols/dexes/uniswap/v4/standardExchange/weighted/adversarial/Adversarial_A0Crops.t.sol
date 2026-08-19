@@ -93,16 +93,24 @@ contract Adversarial_Weighted_A0Crops is TestBase_UniswapV4StandardExchangeWeigh
         IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(instance_, true);
 
         vm.startPrank(detfUser);
-        uint256 closeOut_ = info_.closeBondMature(tokenId_, detfUser);
-        assertGt(closeOut_, 0, "closeBondMature after disable");
+        {
+            uint256[] memory minOut_ = new uint256[](info_.n());
+            uint256[] memory closeOut_ = info_.closeBondMature(tokenId_, minOut_, detfUser, _dl());
+            uint256 paid_;
+            for (uint256 i; i < closeOut_.length; ++i) paid_ += closeOut_[i];
+            assertGt(paid_, 0, "closeBondMature after disable");
+        }
+        _redeemClaimDetfAfterDisable(info_);
+        vm.stopPrank();
+    }
 
+    function _redeemClaimDetfAfterDisable(IUniswapV4StandardExchangeWeightedDETF info_) internal {
         address claim_ = info_.rebasingClaimToken();
         uint256 claimBal_ = IRebasingClaimToken(claim_).balanceOf(detfUser);
         uint256 redeemAmt_ = claimBal_ / 2;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(p0_), 0, detfUser, _dl());
+        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(address(info_)), 0, detfUser, _dl());
         assertGt(redeemOut_, 0, "redeemClaim after disable");
-        vm.stopPrank();
     }
 
     function test_CROPS_disable_doesNotBlock_burnExit() public {

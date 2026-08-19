@@ -165,6 +165,11 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         weth = new MockRebasingWETH();
         detf = new MockRebasingDETF(weth);
         nftVault = makeAddr('nftVault');
+        vm.mockCall(
+            nftVault,
+            abi.encodeWithSelector(IDETFNFTVault.rewardToken.selector),
+            abi.encode(address(weth))
+        );
 
         token = IRebasingClaimToken(
             pkg.deployToken(IDETF(address(detf)), IDETFNFTVault(nftVault), IERC20(address(weth)), PROTOCOL_NFT_ID, owner)

@@ -166,7 +166,8 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
             thresholdMode: ThresholdMode.Open,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
 
         hostileDetf = _deployDetfWired(args);
@@ -299,8 +300,10 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
         _expectNoWithdrawSingle(hook);
 
         vm.prank(detfUser);
-        uint256 out_ = info.closeBondMature(tokenId, detfUser);
-        assertGt(out_, 0);
+        uint256[] memory out_ = info.closeBondMature(tokenId, _zeroMinOut(d), detfUser, _dl());
+        uint256 paid_;
+        for (uint256 i; i < out_.length; ++i) paid_ += out_[i];
+        assertGt(paid_, 0);
     }
 
     function test_burn_residual_addressAscending() public {

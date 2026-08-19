@@ -81,8 +81,9 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCompoundTarget is
         if (address(s.rebasingClaimToken) == address(0)) revert Repo.ClaimTokenNotConfigured();
         _requireSingleAssetEligible();
 
-        address holder_ = _protocolLpHolder();
+        address holder_ = _bondLpHolder();
         uint256 lpMinted_;
+        uint256 protocolBefore_ = _protocolOriginalShares();
         if (address(tokenIn_) == address(this)) {
             uint256 pulled_ = _pullToken(tokenIn_, amountIn_, pretransferred_);
             lpMinted_ = _depositSingle(address(this), pulled_, holder_);
@@ -98,8 +99,11 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCompoundTarget is
         }
         if (lpMinted_ == 0) revert Repo.ZeroAmount();
 
-        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(lpMinted_, recipient_);
+        uint256 orig_ = _originalSharesForBondLp(lpMinted_);
+        s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), orig_);
+        claimOut_ = s.rebasingClaimToken.mintFromNFTSale(orig_, protocolBefore_, recipient_);
         if (claimOut_ < minClaimOut_) revert Repo.SlippageExceeded(minClaimOut_, claimOut_);
+        _topUpFeeCreatorShares();
     }
 
     function redeemClaim(

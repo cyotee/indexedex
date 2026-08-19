@@ -57,9 +57,8 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         uint256 usage_ = IVaultFeeOracleQuery(address(indexedexManager)).usageFeeOfVault(openDetf);
         uint256 seign_ =
             IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
-        if (usage_ > 0) {
-            assertTrue(IERC20(openDetf).balanceOf(feeTo_) > feeBefore_, "feeTo received");
-        }
+        usage_;
+        assertEq(IERC20(openDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
         if (seign_ > 0) {
             assertTrue(IERC20(openDetf).balanceOf(bondNft_) >= protocolBefore_, "protocol nft accrual path");
         }

@@ -10,6 +10,10 @@ import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 
 /**
  * @title DETFNFTVaultCommon
@@ -36,6 +40,9 @@ abstract contract DETFNFTVaultCommon is IDetfErrors {
     error LockDurationTooShort(uint256 duration, uint256 minimum);
     error LockDurationTooLong(uint256 duration, uint256 maximum);
     error DETFNFTCannotBeUnlocked(uint256 tokenId);
+    error ReservedBondNftsNotWired();
+    error ReservedBondNftIdsUnavailable(uint256 nextTokenId);
+    error FeeToZero();
 
     /* ---------------------------------------------------------------------- */
     /*                          Bond Terms Helper                             */
@@ -111,5 +118,10 @@ abstract contract DETFNFTVaultCommon is IDetfErrors {
      */
     function _isDETFNFT(uint256 tokenId_) internal view returns (bool) {
         return tokenId_ == DETFNFTVaultRepo._detfNFTId();
+    }
+
+    function _isStandingRewardNft(uint256 tokenId_) internal view returns (bool) {
+        if (!DETFNFTVaultRepo._reservedIdsWired()) return false;
+        return tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID;
     }
 }

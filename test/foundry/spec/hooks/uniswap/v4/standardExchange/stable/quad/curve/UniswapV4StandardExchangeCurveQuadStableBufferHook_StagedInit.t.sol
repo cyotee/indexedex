@@ -72,11 +72,12 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test is
     function test_bootstrapCuts_vs_productionCuts() public view {
         IDiamond.FacetCut[] memory boot = hookPkg.facetCuts();
         IDiamond.FacetCut[] memory prod = hookPkg.productionFacetCuts();
-        assertEq(boot.length, 3);
-        assertEq(boot[0].facetAddress, address(multiAssetBasicVaultFacet));
-        assertEq(boot[1].facetAddress, address(multiAssetStandardVaultFacet));
-        assertEq(boot[2].facetAddress, address(hookPkg));
-        assertEq(boot[2].functionSelectors.length, 6);
+        assertEq(boot.length, 4);
+        assertEq(boot[0].facetAddress, address(multiStepOwnableFacet));
+        assertEq(boot[1].facetAddress, address(multiAssetBasicVaultFacet));
+        assertEq(boot[2].facetAddress, address(multiAssetStandardVaultFacet));
+        assertEq(boot[3].facetAddress, address(hookPkg));
+        assertEq(boot[3].functionSelectors.length, 6);
 
         assertEq(prod.length, 7);
         assertEq(prod[0].facetAddress, address(hookPkg.HOOKS_FACET()));
@@ -88,7 +89,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test is
         assertEq(prod[6].facetAddress, address(erc2612Facet));
 
         bytes4[] memory ifaces = hookPkg.facetInterfaces();
-        assertEq(ifaces.length, 10);
+        assertEq(ifaces.length, 11);
     }
 
     function test_S43_deployAlone_noProductDoors() public {

@@ -29,6 +29,9 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
+    UniswapV4HookOwnerOnlyLiquidityLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {
@@ -156,6 +159,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         l.reentrancyStatus = Repo.ENTERED;
         _;
         l.reentrancyStatus = Repo.NOT_ENTERED;
+    }
+
+    modifier onlyLiquidityOwner() {
+        UniswapV4HookOwnerOnlyLiquidityLib.enforce(Repo._layout().ownerOnlyLiquidity);
+        _;
     }
 
     /* ---------------------------------------------------------------------- */

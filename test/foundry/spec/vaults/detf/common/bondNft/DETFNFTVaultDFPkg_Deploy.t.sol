@@ -13,6 +13,13 @@ import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20
 
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID,
+    DETF_FIRST_USER_BOND_NFT_ID,
+    DETF_PROTOCOL_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -178,6 +185,105 @@ contract DETFNFTVaultDFPkg_Deploy_Test is TestBase_VaultComponents {
         );
         vm.stopPrank();
         vault_ = IDETFNFTVault(vaultAddr);
+    }
+
+    function test_reservedIds_wire_0_1_2_userStartsAt3() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address feeTo_ = makeAddr("feeTo");
+        address creator_ = makeAddr("creator");
+
+        vm.prank(owner);
+        uint256 protocolId_ = vault_.initializeReservedBondNfts(feeTo_, creator_);
+
+        assertTrue(vault_.reservedBondNftsWired(), "wired sentinel");
+        assertEq(protocolId_, DETF_PROTOCOL_BOND_NFT_ID, "id 0 protocol");
+        assertEq(vault_.detfNFTId(), DETF_PROTOCOL_BOND_NFT_ID, "detfNftId is 0");
+        assertEq(vault_.ownerOf(DETF_PROTOCOL_BOND_NFT_ID), address(vault_), "id 0 owner vault");
+        assertEq(vault_.ownerOf(DETF_FEE_TO_BOND_NFT_ID), feeTo_, "id 1 feeTo");
+        assertEq(vault_.ownerOf(DETF_CREATOR_BOND_NFT_ID), creator_, "id 2 creator");
+
+        address alice_ = makeAddr("alice");
+        vm.prank(owner);
+        uint256 userId_ = vault_.createPosition(10e18, 30 days, alice_);
+        assertEq(userId_, DETF_FIRST_USER_BOND_NFT_ID, "user starts at 3");
+        assertEq(vault_.ownerOf(userId_), alice_, "user owns 3");
+    }
+
+    function test_creatorZero_mints_id2_to_feeTo() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address feeTo_ = makeAddr("feeTo");
+
+        vm.prank(owner);
+        vault_.initializeReservedBondNfts(feeTo_, address(0));
+        assertEq(vault_.ownerOf(DETF_FEE_TO_BOND_NFT_ID), feeTo_, "id 1");
+        assertEq(vault_.ownerOf(DETF_CREATOR_BOND_NFT_ID), feeTo_, "id 2 D21");
+    }
+
+    function test_addEffectiveSharesOnly_noOriginalShares_ids1and2() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address feeTo_ = makeAddr("feeTo");
+        address creator_ = makeAddr("creator");
+
+        vm.startPrank(owner);
+        vault_.initializeReservedBondNfts(feeTo_, creator_);
+        vault_.addEffectiveSharesOnly(DETF_FEE_TO_BOND_NFT_ID, 11e18);
+        vault_.addEffectiveSharesOnly(DETF_CREATOR_BOND_NFT_ID, 5e18);
+        vm.stopPrank();
+
+        assertEq(vault_.originalSharesOf(DETF_FEE_TO_BOND_NFT_ID), 0, "FC9 id1 original 0");
+        assertEq(vault_.originalSharesOf(DETF_CREATOR_BOND_NFT_ID), 0, "FC9 id2 original 0");
+        assertEq(vault_.effectiveSharesOf(DETF_FEE_TO_BOND_NFT_ID), 11e18, "id1 effective");
+        assertEq(vault_.effectiveSharesOf(DETF_CREATOR_BOND_NFT_ID), 5e18, "id2 effective");
+        assertEq(vault_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID), 0, "id0 original still 0");
+    }
+
+    function test_sellAndRedeem_revert_ids1and2() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address feeTo_ = makeAddr("feeTo");
+        address creator_ = makeAddr("creator");
+
+        vm.startPrank(owner);
+        vault_.initializeReservedBondNfts(feeTo_, creator_);
+
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, DETF_FEE_TO_BOND_NFT_ID));
+        vault_.sellPositionToDetfNft(DETF_FEE_TO_BOND_NFT_ID, feeTo_, feeTo_);
+
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, DETF_CREATOR_BOND_NFT_ID));
+        vault_.sellPositionToDetfNft(DETF_CREATOR_BOND_NFT_ID, creator_, creator_);
+
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, DETF_FEE_TO_BOND_NFT_ID));
+        vault_.redeemPosition(DETF_FEE_TO_BOND_NFT_ID, feeTo_, block.timestamp + 1 hours);
+
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, DETF_CREATOR_BOND_NFT_ID));
+        vault_.redeemPosition(DETF_CREATOR_BOND_NFT_ID, creator_, block.timestamp + 1 hours);
+        vm.stopPrank();
+    }
+
+    function test_initializeDETFNFT_id0_is_valid_not_unwired() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        vm.prank(owner);
+        uint256 protocolId_ = vault_.initializeDETFNFT();
+        assertEq(protocolId_, DETF_PROTOCOL_BOND_NFT_ID, "first mint is 0");
+        vm.prank(owner);
+        uint256 again_ = vault_.initializeDETFNFT();
+        assertEq(again_, protocolId_, "L6 sentinel not id==0");
+        assertEq(vault_.ownerOf(protocolId_), address(vault_), "protocol still id 0");
+        assertFalse(vault_.reservedBondNftsWired(), "reserved wire is separate");
+    }
+
+    function test_addEffectiveSharesOnly_reverts_on_protocol_or_user() public {
+        IDETFNFTVault vault_ = _deployNftVault();
+        address feeTo_ = makeAddr("feeTo");
+        address alice_ = makeAddr("alice");
+
+        vm.startPrank(owner);
+        vault_.initializeReservedBondNfts(feeTo_, feeTo_);
+        uint256 userId_ = vault_.createPosition(10e18, 30 days, alice_);
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, DETF_PROTOCOL_BOND_NFT_ID));
+        vault_.addEffectiveSharesOnly(DETF_PROTOCOL_BOND_NFT_ID, 1e18);
+        vm.expectRevert(abi.encodeWithSelector(IDetfErrors.DETFNFTRestricted.selector, userId_));
+        vault_.addEffectiveSharesOnly(userId_, 1e18);
+        vm.stopPrank();
     }
 
     function test_processArgs_reverts_whenNotRegistry() public {

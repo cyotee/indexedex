@@ -22,13 +22,19 @@ import {
     DETFThresholdPolicy,
     ThresholdMode
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {DETFUsageFeeLib} from "contracts/vaults/detf/common/core/DETFUsageFeeLib.sol";
 import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
 import {DETFEpochNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
@@ -129,6 +135,12 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         if (block.timestamp < unlock_) revert Repo.BondNotMature(unlock_);
     }
 
+    function _requireNotStandingRewardNft(uint256 tokenId_) internal pure {
+        if (tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID) {
+            revert IDetfErrors.DETFNFTRestricted(tokenId_);
+        }
+    }
+
     function _effectiveLockDuration(uint256 lockDuration_) internal view returns (uint256 effective_) {
         BondTerms memory terms_ = DETFBondNFTMathLib._bondTerms(address(this));
         if (lockDuration_ < terms_.minLockDuration) {
@@ -162,8 +174,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
     /* ---------------------------------------------------------------------- */
 
     function _protocolLpHolder() internal view returns (address) {
-        address claim_ = address(Repo._layoutStruct().rebasingClaimToken);
-        return claim_ == address(0) ? address(this) : claim_;
+        return _bondLpHolder();
     }
 
     function _bondLpHolder() internal view returns (address) {
@@ -171,8 +182,21 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         return bond_ == address(0) ? address(this) : bond_;
     }
 
+    function _nftLp() internal view returns (uint256) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        address bond_ = address(s.bondNftVault);
+        if (bond_ == address(0)) return IERC20(s.reserveHook).balanceOf(address(this));
+        return IERC20(s.reserveHook).balanceOf(bond_);
+    }
+
+    /// @notice Id-0 4626 slice of NFT-held reserve LP (claim backing). Live-mint extra NAV is excluded.
     function _protocolLp() internal view returns (uint256) {
-        return IERC20(Repo._layoutStruct().reserveHook).balanceOf(_protocolLpHolder());
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return 0;
+        uint256 totalOrig_ = s.bondNftVault.totalOriginalShares();
+        if (totalOrig_ == 0) return 0;
+        uint256 protoOrig_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        return protoOrig_ * _nftLp() / totalOrig_;
     }
 
     function _pullProtocolLp(uint256 lpAmount_) internal {
@@ -453,20 +477,32 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         return s.feeOracle.seigniorageIncentivePercentageOfVault(address(this));
     }
 
-    function _usageFeeWad() internal view returns (uint256) {
-        Repo.Storage storage s = Repo._layoutStruct();
-        if (address(s.feeOracle) == address(0)) return 0;
-        return s.feeOracle.usageFeeOfVault(address(this));
-    }
-
     function _splitMintedDetf(uint256 gross_) internal view returns (MintSplit memory split_) {
         split_.grossDetf = gross_;
         if (gross_ == 0) return split_;
-        (uint256 afterFee_, uint256 feeTo_) = DETFUsageFeeLib._splitUsageFee(gross_, _usageFeeWad());
-        split_.feeToDetf = feeTo_;
-        uint256 halfInc_ = _seigniorageIncentiveWad() / 2;
-        split_.inventoryDetf = Math.mulDiv(afterFee_, halfInc_, ONE_WAD);
-        split_.userDetf = afterFee_ - split_.inventoryDetf;
+        (uint256 user_, uint256 pot_) = DETFMintSplitLib._splitLiveGross(gross_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _splitBondDetf(uint256 joinDetf_) internal view returns (MintSplit memory split_) {
+        split_.grossDetf = joinDetf_;
+        if (joinDetf_ == 0) return split_;
+        (uint256 user_, uint256 pot_,) = DETFMintSplitLib._splitBond(joinDetf_, _seigniorageIncentiveWad());
+        split_.userDetf = user_;
+        split_.inventoryDetf = pot_;
+        split_.feeToDetf = 0;
+    }
+
+    function _topUpFeeCreatorShares() internal {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return;
+        (, uint256 f_, uint256 c_) =
+            IVaultFeeOracleQuery(address(s.feeOracle)).seigniorageSplitOfVault(address(this));
+        DETFBondLifecycleLib._topUpFeeCreatorShares(
+            IDetfSelfNftInventoryPolicy(address(s.bondNftVault)), f_, c_
+        );
     }
 
     /// @notice Rate capital tokenIn to a funded external pair leg. Never cross-pair mid for mint quote.
@@ -819,14 +855,15 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         IDETFNFTVault vault_ = s.bondNftVault;
         detfIn_ = vault_.reallocateDetfNftRewards(address(this));
         if (detfIn_ == 0) return (0, 0);
-        lpOut_ = _depositSingle(address(this), detfIn_, _protocolLpHolder());
+        lpOut_ = _depositSingle(address(this), detfIn_, _bondLpHolder());
         if (lpOut_ == 0) revert CompoundJoinProducedZeroLp();
         DETFBondLifecycleLib._addReservePoolBptToDetfNft(
             IERC20(s.reserveHook),
             IDetfSelfNftInventoryPolicy(address(vault_)),
-            s.detfNftId == 0 ? vault_.detfNFTId() : s.detfNftId,
+            vault_.detfNFTId(),
             lpOut_
         );
+        _topUpFeeCreatorShares();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -963,13 +1000,10 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCommon is ReentrancyLockM
         );
     }
 
-    function _mintBondFreeLegs(uint256 grossDetf_, address recipient_) internal {
-        MintSplit memory split_ = _splitMintedDetf(grossDetf_);
-        if (split_.userDetf > 0) _mintDetf(recipient_, split_.userDetf);
-        if (split_.feeToDetf > 0) _mintDetf(_feeTo(), split_.feeToDetf);
+    function _creditBondPot(uint256 potDetf_) internal {
         address bondVault_ = address(Repo._layoutStruct().bondNftVault);
-        if (split_.inventoryDetf > 0 && bondVault_ != address(0)) {
-            _mintDetf(bondVault_, split_.inventoryDetf);
+        if (potDetf_ > 0 && bondVault_ != address(0)) {
+            _mintDetf(bondVault_, potDetf_);
         }
     }
 

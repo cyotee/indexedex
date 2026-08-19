@@ -366,7 +366,8 @@ contract ComposedStableCommonDetf_ThresholdMode_Test is ComposedStableCommonDetf
                 thresholdMode: mode_,
                 expansionClosureRatePerSecond: 0,
                 expansionCatchUpMaxSeconds: 0,
-                expansionCatchUpCapBps: 0
+                expansionCatchUpCapBps: 0,
+                creator: address(0)
             })
         );
     }

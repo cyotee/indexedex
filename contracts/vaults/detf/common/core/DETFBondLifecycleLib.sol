@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+import {DETFSeigniorageShareLib} from "contracts/vaults/detf/common/core/DETFSeigniorageShareLib.sol";
 
 /// @notice Shared bond / detf-NFT lifecycle helpers for true DETFs.
 /// @dev Protocol BPT compound is **DETF-orchestrated** (see `DETFProtocolCompoundLib`).
@@ -17,6 +18,11 @@ library DETFBondLifecycleLib {
 
     error NoSeigniorageToCapture();
     error BondNotMature(uint256 unlockTime);
+
+    /// @notice D2: top up ids 1 and 2 after any event that changes others' effective shares.
+    function _topUpFeeCreatorShares(IDetfSelfNftInventoryPolicy vault_, uint256 f_, uint256 c_) internal {
+        DETFSeigniorageShareLib._topUpFeeCreatorShares(vault_, f_, c_);
+    }
 
     function _createBondPosition(
         IDetfSelfNftInventoryPolicy vault_,

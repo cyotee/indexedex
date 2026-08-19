@@ -6,6 +6,8 @@
 
 ## Status
 
+**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+
 **DRAFT v0.5** — Clarifications LOCK-ready: bond ungated when live; expansion realize on reward/compound/bond only; burn uses effective supply; shared epoch amendment planned. Co-located (internal product law).
 
 | Related | Role |

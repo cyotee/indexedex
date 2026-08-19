@@ -115,7 +115,8 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
             thresholdMode: ThresholdMode.Open,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0)
         });
 
         hostileDetf = _deployDetfWired(args);
@@ -171,8 +172,8 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
         hostilePair.disarm();
     }
 
-    function test_emptyProtocolLp_burn_reverts() public {
-        // Fresh Open instance: first bond only → protocol LP empty.
+    function test_emptyProtocolLp_burn_usesNftLp() public {
+        // First bond: id 0 originalShares = 0, but NFT holds bond LP (D13).
         address d2 = _deployDetfWired(_openArgsUnique("emptyLp"));
         IUniswapV4StandardExchangeWeightedDETF info2 = IUniswapV4StandardExchangeWeightedDETF(d2);
         IStandardExchangeIn ex2 = IStandardExchangeIn(d2);
@@ -180,12 +181,16 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
         uint256[] memory amts = new uint256[](1);
         amts[0] = 100 ether;
         _firstBondOn(d2, amts, p0);
-        assertEq(info2.protocolLp(), 0);
-        deal(d2, detfUser, 1 ether);
+        assertEq(info2.protocolLp(), 0, "id 0 originalShares empty");
+        assertGt(IERC20(info2.reserveHook()).balanceOf(info2.bondNftVault()), 0, "NFT holds LP");
+        uint256 free_ = IERC20(d2).balanceOf(detfUser);
+        require(free_ > 0, "L1 free DETF");
+        uint256 burnAmt_ = free_ / 10;
+        if (burnAmt_ == 0) burnAmt_ = free_;
         vm.startPrank(detfUser);
         IERC20(d2).approve(d2, type(uint256).max);
-        vm.expectRevert(Repo.EmptyProtocolLp.selector);
-        ex2.exchangeIn(IERC20(d2), 1 ether, IERC20(p0), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 out_ = ex2.exchangeIn(IERC20(d2), burnAmt_, IERC20(p0), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        assertGt(out_, 0, "D13 burn against NFT LP");
     }
 }

@@ -6,6 +6,9 @@ import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 import {
+    IUniswapV4StandardExchangeWeightedBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
+import {
     UniswapV4StandardExchangeWeightedDETFCommon
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFCommon.sol";
 import {
@@ -212,5 +215,24 @@ abstract contract UniswapV4StandardExchangeWeightedDETFInfoTarget is UniswapV4St
     function isReserveWired() public view returns (bool) {
         Repo.Storage storage s = Repo._layoutStruct();
         return address(s.bondNftVault) != address(0) && address(s.rebasingClaimToken) != address(0);
+    }
+
+    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        amountsOut_ = new uint256[](s.n);
+        if (address(s.bondNftVault) == address(0)) return amountsOut_;
+        uint256 orig_ = s.bondNftVault.originalSharesOf(tokenId);
+        if (orig_ == 0) return amountsOut_;
+        uint256 lp_ = s.bondNftVault.convertToAssets(orig_);
+        if (lp_ == 0) return amountsOut_;
+        try IUniswapV4StandardExchangeWeightedBufferHook(s.reserveHook).previewExitProportional(lp_) returns (
+            uint256[] memory residual_
+        ) {
+            if (residual_.length != s.n) return amountsOut_;
+            for (uint8 i; i < s.n; ++i) {
+                if (i == s.detfBindingIndex) continue;
+                amountsOut_[i] = residual_[i];
+            }
+        } catch {}
     }
 }

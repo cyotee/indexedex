@@ -68,7 +68,7 @@ Headline: **commons token pull is reserve-delta and I1-blocked when `R == B`**. 
 | Slipstream `_secureTokenTransfer` | `contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol` ~441–459 |
 | RebasingClaimToken `_secureTokenTransfer` | `contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol` ~559–581 |
 | RebasingDETFToken `_secureTokenTransfer` | `.../stable/common/RebasingDETFTokenTarget.sol` ~433–454 |
-| DualLiquidity `_receive` / `_receiveOut` | `.../crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVaultExchange{In,Out}Target.sol` |
+| DualLiquidity `_receive` / `_receiveOut` | `.../crossVersion/v2/DualLiquidity (removed)CrossVersionUniswapVaultExchange{In,Out}Target.sol` |
 | Lido / Rocket / EtherFi `_securePull` | `contracts/protocols/staking/{lido,rocket-pool,etherfi}/**` (`InsufficientDeposit`, same-tx delta) |
 
 #### C. **Still PAT-I-ABS** (absolute `balanceOf >= amount` → `return amount`)

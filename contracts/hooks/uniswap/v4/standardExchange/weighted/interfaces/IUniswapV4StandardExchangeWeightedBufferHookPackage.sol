@@ -47,6 +47,7 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
     }
 
     /// @notice Binding for one immortal hook instance (n∈[2,8], ≥1 SE).
@@ -60,6 +61,10 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
         uint256[] weights;
         address[] standardExchanges;
         address[] rateProviders;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

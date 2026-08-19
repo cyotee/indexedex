@@ -23,6 +23,9 @@ import {ModifyLiquidityParams, SwapParams} from
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
 
 import {
+    UniswapV4HookOwnerOnlyLiquidityLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
 import {
@@ -86,6 +89,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         l.reentrancyStatus = Repo.ENTERED;
         _;
         l.reentrancyStatus = Repo.NOT_ENTERED;
+    }
+
+    modifier onlyLiquidityOwner() {
+        UniswapV4HookOwnerOnlyLiquidityLib.enforce(Repo._layout().ownerOnlyLiquidity);
+        _;
     }
 
     /* ---------------------------------------------------------------------- */
@@ -395,6 +403,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
 
     function withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)
         external
+        onlyLiquidityOwner
         nonReentrant
         returns (uint256 amount0, uint256 amount1)
     {
@@ -407,7 +416,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         address to,
         uint256 minAmountOut,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
         return _withdrawSingle(lpAmount, tokenOut, to, minAmountOut, deadline);
     }
 
@@ -418,7 +427,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         uint256 minAmountRaw,
         uint256 minAmountSe,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountRaw, uint256 amountSe) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountRaw, uint256 amountSe) {
         return _withdrawSeShares(lpAmount, to, minAmountRaw, minAmountSe, deadline);
     }
 

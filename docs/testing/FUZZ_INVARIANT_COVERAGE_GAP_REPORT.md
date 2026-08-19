@@ -8,7 +8,7 @@
 | Kind | Path | Role |
 |------|------|------|
 | **Foundry `invariant_*` + Handler** | `test/.../standardExchange/StandardExchangeBufferPool.invariant.t.sol` + `Handler_StandardExchangeBufferPool.sol` | Only production SUT with real multi-call invariant runner |
-| **Sequence “invariant” tests** | `test/foundry/fork/.../DualLiquidityLinkedCrossVersionUniswapVault_Invariants.t.sol` (+ `_InvariantHandler.t.sol`) | Fixed multi-op sequences; intentionally avoids fork RPC load of Foundry invariant engine |
+| **Sequence “invariant” tests** | `test/foundry/fork/.../DualLiquidity (removed)CrossVersionUniswapVault_Invariants.t.sol` (+ `_InvariantHandler.t.sol`) | Fixed multi-op sequences; intentionally avoids fork RPC load of Foundry invariant engine |
 | **Property fuzz (SE)** | `AerodromeStandardExchange_Fuzz.t.sol`, `*_InOutInvariant.t.sol`, router/Aave fuzz | Bounded `testFuzz_*` on routes / math / fees |
 | **Crane reference (not IndexedEx product)** | `lib/crane/.../CamelotV2_invariant.t.sol`, `TestBase_ERC4626` / `TestBase_ERC20` handlers | Protocol-port and token stub patterns to port, not substitute for DETF/SE product coverage |
 
@@ -32,7 +32,7 @@ This report inventories **where property fuzz and stateful invariants are missin
 |----------|------------------|
 | **Full Foundry invariant + Handler** | Standard Exchange Buffer Pool only |
 | **Strong `testFuzz_*` (routes / math / fees)** | Aerodrome SE (dominant share); Uni V2 SE in/out; Aave Stata SE; Balancer SE router; VaultFeeOracle bounds/dilution; DualLiquidity math pure fuzz |
-| **Sequence invariants (not Foundry runner)** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Sequence invariants (not Foundry runner)** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Thin / pure / stub fuzz** | Seigniorage (bonus multiplier only); RebasingClaimToken (pure math stub); BufferPool common weights view fuzz |
 | **Critical gap** | **All DETFs** (MultiVaultWeighted, Single SE, ComposedStable, SingleVault, Seigniorage product paths); **Camelot SE**; **SE multi-call invariants** (except BufferPool); **Slipstream** (commented) |
 
@@ -158,8 +158,8 @@ All eight live in one contract:
 
 | File | Style |
 |------|--------|
-| `.../DualLiquidityLinkedCrossVersionUniswapVault_Invariants.t.sol` | Fixed multi-step: deposit→redeem never profits; BPT backing; BPT/share non-decreasing; pro-rata redeem |
-| `.../DualLiquidityLinkedCrossVersionUniswapVault_InvariantHandler.t.sol` | Named sequence of deposit/swap/redeem with inventory + genesis claim checks — **not** Foundry `targetContract` |
+| `.../DualLiquidity (removed)CrossVersionUniswapVault_Invariants.t.sol` | Fixed multi-step: deposit→redeem never profits; BPT backing; BPT/share non-decreasing; pro-rata redeem |
+| `.../DualLiquidity (removed)CrossVersionUniswapVault_InvariantHandler.t.sol` | Named sequence of deposit/swap/redeem with inventory + genesis claim checks — **not** Foundry `targetContract` |
 
 Comment in Handler file: *avoids Foundry invariant runner's heavy fork RPC load* — a real constraint for fork golds; hermetic DETF/SE should prefer L3.
 
@@ -237,7 +237,7 @@ Reuse `TestBase` from adversarial/matrix; production deploy only. Prefer **herme
 
 ---
 
-### 5. DualLiquidityLinkedCrossVersionUniswapVault — **L2 partial; L3 gap**
+### 5. DualLiquidity (removed)CrossVersionUniswapVault — **L2 partial; L3 gap**
 
 | Item | Detail |
 |------|--------|

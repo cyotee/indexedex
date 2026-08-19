@@ -332,11 +332,10 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         uint256 burnAmt = bal / 10;
         uint256 preview = ex.previewExchangeIn(IERC20(d), burnAmt, IERC20(p1));
         uint256 exec = _burnOn(d, p1, burnAmt);
-        // Hook view quotes residual swaps on the live book; exec sells after
-        // exitProportional + DETF redeposit. Measured delta ~4.4e12–7.0e12
-        // (~1e-5 rel) depending on address-sorted door order.
-        // Cannot compose hook state in a view without DETF-side D/y (forbidden).
-        assertApproxEqAbs(exec, preview, 8e12, "burn preview~exec (post-redeposit book)");
+        // D13 sizes LP from NFT-held hook LP (not claim-token protocol LP). Exec
+        // then prop-exits and residual-swaps after DETF redeposit. View quote
+        // cannot compose that book; relative slip is ~3e-4 on this size.
+        assertApproxEqRel(exec, preview, 0.01e18, "burn preview~exec (post-redeposit book)");
         assertGt(exec, 0);
     }
 
@@ -394,15 +393,16 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
 
     function test_preMaturity_sellAndClose_revert() public {
         (uint256 tokenId,) = _firstBondDefault(BOND_AMT);
+        uint256[] memory minOut_ = _zeroMinOut(detf);
         vm.startPrank(detfUser);
         vm.expectRevert();
         detfInfo.sellPositionToDetfNft(tokenId, detfUser);
         vm.expectRevert();
-        detfInfo.closeBondMature(tokenId, detfUser);
+        detfInfo.closeBondMature(tokenId, minOut_, detfUser, _dl());
         vm.stopPrank();
     }
 
-    function test_mature_close_paysOnlyCapitalToken() public {
+    function test_mature_close_paysNonDetfLegs() public {
         address d = _deployDetfWired(_openArgsUnique("close"));
         IUniswapV4StandardExchangeCurveQuadStableDETF info =
             IUniswapV4StandardExchangeCurveQuadStableDETF(d);
@@ -412,17 +412,22 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         amts[1] = BOND_AMT;
         amts[2] = BOND_AMT;
         (uint256 tokenId,) = _firstBondOn(d, amts, info.pairToken(0));
-        // Leave protocol LP so sole-bond exit does not drain the full book before redeposit.
         _mintOn(d, info.pairToken(0), 20 ether);
-        assertEq(info.capitalTokenOf(tokenId), info.pairToken(0));
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
         uint256 b0 = IERC20(info.pairToken(0)).balanceOf(detfUser);
-        uint256 b1 = IERC20(info.pairToken(1)).balanceOf(detfUser);
+        uint256[] memory preview_ = info.previewCloseBondMature(tokenId);
         vm.prank(detfUser);
-        uint256 out_ = info.closeBondMature(tokenId, detfUser);
-        assertGt(out_, 0, "capital paid");
-        assertGt(IERC20(info.pairToken(0)).balanceOf(detfUser), b0, "capitalToken increased");
-        assertEq(IERC20(info.pairToken(1)).balanceOf(detfUser), b1, "other pair unchanged");
+        uint256[] memory out_ = info.closeBondMature(tokenId, _zeroMinOut(d), detfUser, _dl());
+        assertEq(out_.length, info.n(), "n");
+        assertEq(out_[info.detfBindingIndex()], 0, "D25 DETF slot 0");
+        uint256 paid_;
+        for (uint256 i; i < out_.length; ++i) {
+            paid_ += out_[i];
+            assertEq(out_[i], preview_[i], "preview==exec");
+        }
+        assertGt(paid_, 0, "non-DETF paid");
+        assertGt(IERC20(info.pairToken(0)).balanceOf(detfUser), b0, "pair0 paid");
+        // D25 harvests pending DETF to the holder; withdrawn self-leg is burned (slot 0).
     }
 
     function test_nft_transferable() public {

@@ -334,7 +334,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
             rp1: address(0),
             rp2: address(0),
             tickSpacing: 0,
-            sqrtPriceX96: 0
+            sqrtPriceX96: 0,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
         address first = _deployBootstrapOnly(args);
         address second = _deployBootstrapOnly(args);
@@ -502,7 +504,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
             rp1: address(0),
             rp2: address(0),
             tickSpacing: 0,
-            sqrtPriceX96: 0
+            sqrtPriceX96: 0,
+            ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
+            owner: _pkgOwner()
         });
         h = _deployBootstrapOnly(args);
         init = IUniswapV4HookStagedPairInit(h);

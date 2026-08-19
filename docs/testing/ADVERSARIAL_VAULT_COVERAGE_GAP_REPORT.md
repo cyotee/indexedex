@@ -21,7 +21,7 @@ This report inventories **where formal adversarial suites are missing**, what **
 
 1. **SingleStandardExchangeDETF** — closest architecture to MultiVault; matrix already green; MultiVault plan Phase 6 peer #1.  
 2. **ComposedStableCommonDetf** (+ rebasing claim token) — multi-leg reserve, claim redeem, nested composition.  
-3. **DualLiquidityLinkedCrossVersionUniswapVault** — strong fork security slices; needs catalog consolidation + missing P0 IDs.  
+3. **DualLiquidity (removed)CrossVersionUniswapVault** — strong fork security slices; needs catalog consolidation + missing P0 IDs.  
 4. **Standard Exchange vaults** (shared SE surface) — cross-protocol residual, donation, route abuse.  
 5. **SingleVaultDetf / SeigniorageDETF** — product-specific bond/redeem/bridge surfaces.
 
@@ -176,7 +176,7 @@ Reuse MultiVault harness patterns; underlying SE via existing matrix providers (
 
 ---
 
-### 5. DualLiquidityLinkedCrossVersionUniswapVault — **partial security; needs catalog suite**
+### 5. DualLiquidity (removed)CrossVersionUniswapVault — **partial security; needs catalog suite**
 
 | Item | Detail |
 |------|--------|
@@ -331,7 +331,7 @@ Priority: **after** Single SE + ComposedStable unless Seigniorage is next ship g
 | MultiVault | `TestBase_MultiVaultWeightedDetf` + `adversarial/*` |
 | Single SE DETF | `TestBase_SingleStandardExchangeDETF` |
 | ComposedStable | `TestBase_ComposedStableCommonDetf` |
-| DualLiquidity | `TestBase_DualLiquidityLinkedCrossVersionUniswapVault` (fork) |
+| DualLiquidity | `TestBase_DualLiquidity (removed)CrossVersionUniswapVault` (fork) |
 | Aerodrome SE | `TestBase_AerodromeStandardExchange` |
 | Camelot SE | `TestBase_CamelotV2StandardExchange` |
 | Aave Stata SE | `TestBase_AaveV3StataStandardExchange` |

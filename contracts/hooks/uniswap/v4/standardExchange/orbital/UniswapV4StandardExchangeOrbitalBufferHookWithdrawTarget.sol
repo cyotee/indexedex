@@ -49,7 +49,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         uint256 a1Min,
         uint256 a2Min,
         uint256 deadline
-    ) external nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
         return _removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline);
     }
 
@@ -73,7 +73,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         uint256 a1Min,
         uint256 a2Min,
         uint256 deadline
-    ) external nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
         WithdrawFlexibleVars memory w;
         w.shares = shares;
         w.to = to;

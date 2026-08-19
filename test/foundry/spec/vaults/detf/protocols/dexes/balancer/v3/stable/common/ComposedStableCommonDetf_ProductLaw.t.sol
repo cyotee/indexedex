@@ -61,9 +61,10 @@ contract ComposedStableCommonDetf_ProductLaw_Test is ComposedStableCommonDetf_In
         _goLive();
         (uint256 tokenId_,) = _bondDai(alice, 1_000e18);
         uint256 unlock_ = bondNFTVault.unlockTimeOf(tokenId_);
+        uint256[] memory minOut_ = new uint256[](3);
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(ComposedStableCommonDetfRepo.BondNotMature.selector, unlock_));
-        _bonding().closeBondMature(tokenId_, weth, 0, alice, block.timestamp + 1 hours);
+        _bonding().closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M3_lockedClaimRewards_stillPays() public {
@@ -97,9 +98,17 @@ contract ComposedStableCommonDetf_ProductLaw_Test is ComposedStableCommonDetf_In
         uint256 protocolBefore_ = bondNFTVault.originalSharesOf(protocolId_);
         uint256 detfBefore_ = detfToken.balanceOf(alice);
 
+        uint256[] memory minOut_ = new uint256[](3);
+        uint256 stableBefore_ = IERC20(address(stablePool)).balanceOf(alice);
+        uint256 commonBefore_ = IERC20(address(commonPool)).balanceOf(alice);
         vm.prank(alice);
-        uint256 out_ = _bonding().closeBondMature(tokenId_, weth, 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "M5 settlement");
+        uint256[] memory out_ = _bonding().closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
+        assertEq(out_.length, 3, "M5 basket");
+        assertTrue(
+            IERC20(address(stablePool)).balanceOf(alice) > stableBefore_
+                || IERC20(address(commonPool)).balanceOf(alice) > commonBefore_,
+            "M5 settlement"
+        );
         // Close harvests any expansion dust onto the user; must not pay the DETF self-leg as free DETF.
         assertLt(detfToken.balanceOf(alice) - detfBefore_, 1e16, "M5 no DETF self-leg payout");
         assertTrue(bondNFTVault.originalSharesOf(protocolId_) >= protocolBefore_, "M5 protocol not drained");
@@ -234,9 +243,10 @@ contract ComposedStableCommonDetf_ProductLaw_Test is ComposedStableCommonDetf_In
             vm.prank(deployedDetfVault);
             IERC20(address(reservePool)).transfer(address(1), bal_ - 1);
         }
+        uint256[] memory minOut_ = new uint256[](3);
         vm.prank(alice);
         vm.expectRevert();
-        _bonding().closeBondMature(tokenId_, weth, 0, alice, block.timestamp + 1 hours);
+        _bonding().closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
     }
 
     function test_M8f_deploy_zeroPrincipalProtocolNft() public view {

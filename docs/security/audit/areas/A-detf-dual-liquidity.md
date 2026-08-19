@@ -8,15 +8,15 @@
 | Status | **COMPLETE** |
 | Production paths | `contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/**` |
 | Test paths | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/**` (incl. `adversarial/`); hermetic: `*MathLib.t.sol` only; outer `test/**/standardExchange/single/*DualLiquidity*` is **REFERENCE only** (owned by `A-detf-single-se`) |
-| Skills cited | `SECURITY_AUDIT_PRD` §2, §2.4, §3.8, §5–8, §19 **L-SEC-5**; `crane-adversarial-testing`; `indexedex-adversarial-testing`; `indexedex-testing`; `ethskills-security`; `defi-incident-patterns`; family PRD `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidityLinkedCrossVersionUniswapVault_PRD.md`; seed `docs/testing/coverage-audit/areas/T-detf-dual-liquidity.md`; blast `areas/A-commons-pull.md` §2.2.B |
-| Residual-risk scores | DualLiquidityLinkedCrossVersionUniswapVault → **2** |
+| Skills cited | `SECURITY_AUDIT_PRD` §2, §2.4, §3.8, §5–8, §19 **L-SEC-5**; `crane-adversarial-testing`; `indexedex-adversarial-testing`; `indexedex-testing`; `ethskills-security`; `defi-incident-patterns`; family PRD `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/DualLiquidity (removed)CrossVersionUniswapVault_PRD.md`; seed `docs/testing/coverage-audit/areas/T-detf-dual-liquidity.md`; blast `areas/A-commons-pull.md` §2.2.B |
+| Residual-risk scores | DualLiquidity (removed)CrossVersionUniswapVault → **2** |
 | Forge | **Not run** (fork-first; L-SEC-3 / orchestrator owns runtime). Static re-verify of production + fork tests only. Coverage-audit `repro/TCA-DETF-DL-001/notes.md` is **stale** (quotes the pre-fix no-op `_receive`). |
 
 ---
 
 ## 1. Executive summary
 
-- **Residual-risk:** DualLiquidityLinkedCrossVersionUniswapVault **2** — money path reviewed; historical PAT-I-ABS **steal is closed** at this SHA; leftover High CODE is **A0** (1:1 genesis captures idle `reserveBpt`) plus **same-tx pretransfer vs documented two-tx / Permit2** (funds can stick; not free-mint of booked inventory). Fork I/K tests exist by name but assume a durable `R` hold-set this package never writes.
+- **Residual-risk:** DualLiquidity (removed)CrossVersionUniswapVault **2** — money path reviewed; historical PAT-I-ABS **steal is closed** at this SHA; leftover High CODE is **A0** (1:1 genesis captures idle `reserveBpt`) plus **same-tx pretransfer vs documented two-tx / Permit2** (funds can stick; not free-mint of booked inventory). Fork I/K tests exist by name but assume a durable `R` hold-set this package never writes.
 - **Critical / High counts:** **Critical 0**. **High 3** — `SEC-DETF-DL-003` (CODE, same-tx vs documented two-tx/Permit2), `SEC-DETF-DL-004` (CODE, A0), `SEC-DETF-DL-005` (TEST, I/K honesty / PAT-THEATER-PRE). No leftover `diamondCut` / `owner()` on the live instance (L-SEC-11 statically clean).
 - **PAT-I-ABS re-verify (must classify honestly):** Pilot `A-commons-pull` §2.2.B is **correct**. `_receive` / `_receiveOut` are **same-tx inbound-delta** (`before = balanceOf`; `pretransferred=true` requires `claimed <= observedDelta`; else `TransferDeltaInsufficient`). **I1-safe if there is no in-call push. Two-tx pretransfer fails.** This is **not** the 2026-08-09 no-op / absolute-held body. ShareInflation remains **A3-class only** — do not count as I/K.
 - **Top recommended WPs (this program):**
@@ -33,7 +33,7 @@
 
 | Product | DFPkg / Targets | TestBase | Deploy path | Residual risk |
 |---------|-----------------|----------|-------------|---------------|
-| **DualLiquidityLinkedCrossVersionUniswapVault** | `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol`; Targets: ExchangeIn, ExchangeInQuery, ExchangeOut, ExchangeOutQuery; Common + Repo + MathLib; Facets: ExchangeIn / InQuery / Out / OutQuery + ERC20 / ERC2612 / ERC5267 / MultiAsset Basic + Standard (9 cuts) | `TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` — Base-fork gold (`TestBase_BaseFork` + IndexedexTest) | **Gold fork path.** CREATE3 Facet/Pkg factories + `indexedexManager.deployVault` / registry. Live Uni V4 + Uni V2 + Balancer V3 on Base. **Never** mock SUT. Hermetic full product **absent** (intentional). | **2** |
+| **DualLiquidity (removed)CrossVersionUniswapVault** | `DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol`; Targets: ExchangeIn, ExchangeInQuery, ExchangeOut, ExchangeOutQuery; Common + Repo + MathLib; Facets: ExchangeIn / InQuery / Out / OutQuery + ERC20 / ERC2612 / ERC5267 / MultiAsset Basic + Standard (9 cuts) | `TestBase_DualLiquidity (removed)CrossVersionUniswapVault.sol` — Base-fork gold (`TestBase_BaseFork` + IndexedexTest) | **Gold fork path.** CREATE3 Facet/Pkg factories + `indexedexManager.deployVault` / registry. Live Uni V4 + Uni V2 + Balancer V3 on Base. **Never** mock SUT. Hermetic full product **absent** (intentional). | **2** |
 
 Product class (P0 subset): **Standard Exchange vault** (implements `IStandardExchangeIn` / `Out`). Pro-rata `reserveBpt` share diamond. Family PRD: **not** a true DETF — layout co-location only. No mint/burn thresholds, no bond NFT, no rebasing claim.
 
@@ -41,7 +41,7 @@ Product class (P0 subset): **Standard Exchange vault** (implements `IStandardExc
 
 | Path | Role |
 |------|------|
-| `DualLiquidityLinkedCrossVersionUniswapVaultDFPkg.sol` | Registry-gated `processArgs`; 9 `facetCuts`; deploys 3 SE legs + weighted `reservePool`; `MultiAssetBasicVaultRepo._initialize([self, vaultA, vaultB, pairVault, reservePool])` |
+| `DualLiquidity (removed)CrossVersionUniswapVaultDFPkg.sol` | Registry-gated `processArgs`; 9 `facetCuts`; deploys 3 SE legs + weighted `reservePool`; `MultiAssetBasicVaultRepo._initialize([self, vaultA, vaultB, pairVault, reservePool])` |
 | `…ExchangeInTarget.sol` | `exchangeIn` deposit / redeem / swap; **`_receive` same-tx delta** |
 | `…ExchangeInFacet.sol` | `facetFuncs` → `exchangeIn` only |
 | `…ExchangeInQueryTarget/Facet.sol` | `previewExchangeIn` |
@@ -110,7 +110,7 @@ No PAT-J-OMIT on the money API (static). Fork `test_J1_*` / `test_J2_*` / `test_
 
 ## 3. Threat models
 
-**Product:** DualLiquidityLinkedCrossVersionUniswapVault (unowned SE-style diamond). Role names: `commonToken`, `tokenA` / `tokenB` (`pairToken` legs), `vaultAShare` / `vaultBShare` / `pairVaultShare`, `reserveBpt`, `detfToken` = `address(this)`.
+**Product:** DualLiquidity (removed)CrossVersionUniswapVault (unowned SE-style diamond). Role names: `commonToken`, `tokenA` / `tokenB` (`pairToken` legs), `vaultAShare` / `vaultBShare` / `pairVaultShare`, `reserveBpt`, `detfToken` = `address(this)`.
 
 | Actor | Surface (fn) | Asset moved | Trust flags | Admin / oracle | Worst case |
 |-------|--------------|-------------|-------------|----------------|------------|
@@ -222,10 +222,10 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | erc20 |
 | **CROPS pillar** | n/a |
 | **Incident theme** | Trust-flag free mint |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | Single package |
 | **Impact** | None at `1e0d7c48` for booked-inventory free mint. Pre-fix: credit claimed `amountIn` from sitting `commonToken` / `tokenA` / `tokenB` / leg `vaultShare`. |
-| **Evidence** | `DualLiquidityLinkedCrossVersionUniswapVaultExchangeInTarget.sol` L464–485: snapshot `before_`; `!pretransferred` `transferFrom`; `observedDelta = balanceOf − before_`; `pretransferred && amountIn > observedDelta` → `ISecurePullErrors.TransferDeltaInsufficient`. Coverage repro `docs/testing/coverage-audit/repro/TCA-DETF-DL-001/notes.md` still quotes the **old** no-op body — **stale**. Gap-closure `WP-I-DETF-DL-001` / commit `29e3598` (`STAGE3_PROGRESS.md`). |
+| **Evidence** | `DualLiquidity (removed)CrossVersionUniswapVaultExchangeInTarget.sol` L464–485: snapshot `before_`; `!pretransferred` `transferFrom`; `observedDelta = balanceOf − before_`; `pretransferred && amountIn > observedDelta` → `ISecurePullErrors.TransferDeltaInsufficient`. Coverage repro `docs/testing/coverage-audit/repro/TCA-DETF-DL-001/notes.md` still quotes the **old** no-op body — **stale**. Gap-closure `WP-I-DETF-DL-001` / commit `29e3598` (`STAGE3_PROGRESS.md`). |
 | **Runtime** | Not re-run. Static body is sufficient to refuse a new Critical steal. Label historical runtime **stale**. |
 | **Recommended CODE** | none for PAT-I-ABS steal |
 | **Recommended TEST** | Keep an I1 that does **not** transfer in-call; do not require MultiAsset `R` (see `SEC-DETF-DL-005`) |
@@ -248,7 +248,7 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | erc20 |
 | **CROPS pillar** | n/a |
 | **Incident theme** | Surplus-refund / public reclaim |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | Single package |
 | **Impact** | None at this SHA for “treat entire `balanceOf` as caller prefund and refund the rest.” |
 | **Evidence** | `…ExchangeOutTarget.sol` L359–378: same-tx delta; NatSpec explicitly forbids `held − amountIn`. `_sweepResidual` (`…Common.sol` L580–597) sends **in-call growth above snapshot** to `feeTo`, not `msg.sender`. |
@@ -274,7 +274,7 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | erc20 |
 | **CROPS pillar** | P (exit of mistakenly prefunded inventory) |
 | **Incident theme** | Trust-flag / stuck inventory (not free mint) |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | Single package + any router / Permit2 integrator that prefills then calls `true` |
 | **Attacker** | **CFG** / **INT** (follows TestBase / PRD / Permit2 helper); not EXT free-mint |
 | **Attack scenario** | 1. Integrator or user transfers `commonToken` / `tokenA` / `tokenB` to the diamond (Permit2 AllowanceTransfer or ERC20 `transfer`) in **tx1**, matching `TestBase._permit2PrefundVault` and `test_depositPretransferred_pushThenTrue_succeeds`. 2. Tx2: `exchangeIn` / `exchangeOut(..., pretransferred=true)`. 3. `_receive` / `_receiveOut` snapshots `balanceOf` **after** the tokens already sit; `observedDelta=0`; reverts `TransferDeltaInsufficient(amountIn, 0)`. 4. Tx1 tokens remain. Later honest routes snapshot them as resting; `_sweepResidual` will not return them to the original sender. 5. Same-tx multicall `transfer` then `exchangeIn(true)` also reverts (snapshot is inside `_receive`, after the transfer). Only `pretransferred=false` + `transferFrom` works. |
@@ -303,7 +303,7 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | erc4626 / precision-math |
 | **CROPS pillar** | n/a |
 | **Incident theme** | Empty vault / first-deposit drain |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | Single package; only **pre-live** residual `reserveBpt` (after live, A3 tests show donation does not zero a victim) |
 | **Attacker** | **EXT** / **CAP** |
 | **Attack scenario** | 1. Instance is inert: `totalSupply()==0`. Weighted pool exists; someone transfers `reserveBpt` to the diamond (mis-sent bootstrap, donation, or leftover). 2. Attacker `exchangeIn(reserveBpt, 1 wei, detfToken, …, pretransferred=false)` (BPT `true` is `UnsupportedRoute`). 3. `_mintSharesForBpt` → `MathLib._sharesForBpt(1, 0, donatedBpt)` hits `totalShares==0` and returns **1 wei shares**, ignoring `totalBpt>0`. 4. `transferFrom` pulls 1 wei BPT. 5. Attacker holds 100% of supply and `exchangeIn(detfToken → reserveBpt)` takes `donated + 1`. |
@@ -332,7 +332,7 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | erc20 |
 | **CROPS pillar** | n/a |
 | **Incident theme** | Trust-flag free mint (tests) |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | Test tree only |
 | **Attacker** | n/a (false confidence) |
 | **Attack scenario** | Reviewer greps `test_I1_` / `test_K1_` and treats ship-gate I/K as F. Setup calls `_requireCommonInHoldSet` / `_bookCommonResidual` / `_endSyncHoldSet`, which require `commonToken ∈ IBasicVault.vaultTokens()` and `reserveOfToken(commonToken)==balanceOf`. Production hold-set never includes `commonToken` and never `_updateReserve`. Those tests fail at setup **or** pass only by accident if someone later adds tokens. Meanwhile Deposits / Permit2 / NestedPush / ExactOut still assert two-tx `true` **succeeds** and surplus is refunded — the opposite of current `_receive` / `_receiveOut`. Catalog md still says **IMPLEMENTED (P0)** and does not list I/J. |
@@ -361,7 +361,7 @@ Walked as hunt lists (not a second ID space):
 | **EVM-audit domain** | proxies |
 | **CROPS pillar** | n/a |
 | **Incident theme** | Missing diamond selectors |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Blast radius** | n/a |
 | **Impact** | Coverage High `TCA-DETF-DL-004` is **closed as TEST**. J3 money path still uses bare `expectRevert` (weak N, not omit). |
 | **Evidence** | Facets expose exactly the Target money/query selectors. `test_J1_facetFuncs_coversTargetApi`, `test_J2_proxyLoupe_allProductSelectors`, `test_J3_proxyCallable_smoke_eachSelector`. `WP-J-DETF-DL-001` / STAGE3 11/11 fork. |
@@ -442,7 +442,7 @@ Walked as hunt lists (not a second ID space):
 | **Title** | Gate DualLiquidity 1:1 genesis against idle `reserveBpt` |
 | **Severity** | High |
 | **Class** | BOTH |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | `SEC-DETF-DL-004` |
 | **Problem** | `totalShares==0` short-circuit mints `bptIn` shares even when the diamond already holds `reserveBpt`. First 1-wei BPT deposit takes all idle reserve. |
 | **Production files (touch set)** | `…MathLib.sol`; possibly `…Common.sol` / `…ExchangeInTarget.sol` `_depositBpt` |
@@ -466,7 +466,7 @@ Walked as hunt lists (not a second ID space):
 | **Title** | Resolve DualLiquidity same-tx vs L-CLAIM-3 / Permit2 two-tx |
 | **Severity** | High |
 | **Class** | BOTH (or DOCS if owner accepts same-tx and tests are inverted) |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | `SEC-DETF-DL-003` |
 | **Problem** | Same-tx `_receive` is I1-safe but breaks documented two-tx / Permit2 prefund and can stick inventory. Tests still claim durable U and exact-out surplus refund to caller. |
 | **Production files (touch set)** | `…ExchangeInTarget.sol` (`_receive`); `…ExchangeOutTarget.sol` (`_receiveOut`); if durable U: Common + DFPkg hold-set / `_updateReserve` |
@@ -490,7 +490,7 @@ Walked as hunt lists (not a second ID space):
 | **Title** | Honest DualLiquidity fork I1–I3/K1 + catalog rewrite |
 | **Severity** | High |
 | **Class** | TEST |
-| **Products** | DualLiquidityLinkedCrossVersionUniswapVault |
+| **Products** | DualLiquidity (removed)CrossVersionUniswapVault |
 | **Finding IDs** | `SEC-DETF-DL-005`, `SEC-DETF-DL-008` (fold) |
 | **Problem** | Named I/K tests require a hold-set/`R` this SUT does not maintain; catalog claims P0; happy pretransfer theater. |
 | **Production files (touch set)** | none |

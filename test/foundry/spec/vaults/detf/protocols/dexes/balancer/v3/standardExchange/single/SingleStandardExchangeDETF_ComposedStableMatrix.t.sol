@@ -142,7 +142,8 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
                     thresholdMode: ThresholdMode.Open,
                 expansionClosureRatePerSecond: 0,
                 expansionCatchUpMaxSeconds: 0,
-                expansionCatchUpCapBps: 0
+                expansionCatchUpCapBps: 0,
+                    creator: address(0)
                 })
             )
         );

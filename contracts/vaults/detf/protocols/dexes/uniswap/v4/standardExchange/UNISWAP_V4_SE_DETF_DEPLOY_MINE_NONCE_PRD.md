@@ -144,6 +144,8 @@ Shared constants (all families):
 | `standardExchange` | `address(args.standardExchangeVault)` |
 | `pairToken` | `address(args.pairToken)` |
 | `rawToken` | `predictedDetf` |
+| `ownerOnlyLiquidity` | `true` (D9 DETF-reserve LP) |
+| `owner` | `predictedDetf` |
 
 **Orbital** (`IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs`):
 
@@ -178,6 +180,8 @@ rps[p1Idx] = args.rateProvider1;
 | `rp2` | `rps[2]` |
 | `tickSpacing` | `60` |
 | `sqrtPriceX96` | `79228162514264337593543950336` |
+| `ownerOnlyLiquidity` | `true` (D9 DETF-reserve LP) |
+| `owner` | `predictedDetf` |
 
 **Weighted** (`IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs`):
 
@@ -218,6 +222,8 @@ for i in [0, m):
 | `weights` | `weights` (`uint256[]`, length `n`) |
 | `standardExchanges` | `ses` (`address[]`, length `n`) |
 | `rateProviders` | `rps` (`address[]`, length `n`) |
+| `ownerOnlyLiquidity` | `true` (D9 DETF-reserve LP) |
+| `owner` | `predictedDetf` |
 
 **Curve Quad** (`IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs`):
 
@@ -243,6 +249,8 @@ for i in [0, 3):
 | `standardExchanges` | `ses` (`address[4]`) |
 | `rateProviders` | `rps` (`address[4]`) |
 | `baseAmp` | `args.baseAmp` |
+| `ownerOnlyLiquidity` | `true` (D9 DETF-reserve LP) |
+| `owner` | `predictedDetf` |
 
 ### 4.2 Shared premine helper (locked)
 

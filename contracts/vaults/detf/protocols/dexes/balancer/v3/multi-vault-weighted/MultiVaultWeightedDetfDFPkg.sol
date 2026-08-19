@@ -102,7 +102,8 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
     /// # PkgArgs field order (Stage 07 — mirror Stage 06)
     /// 1 name, 2 symbol, 3 vaults, 4 vaultShares, 5 rateProviders, 6 rateAssets,
     /// 7 weightDetf, 8 vaultWeights, 9 mintThreshold, 10 burnThreshold, 11 thresholdMode,
-    /// 12 expansionClosureRatePerSecond, 13 expansionCatchUpMaxSeconds, 14 expansionCatchUpCapBps
+    /// 12 expansionClosureRatePerSecond, 13 expansionCatchUpMaxSeconds, 14 expansionCatchUpCapBps,
+    /// 15 creator (D26; 0 → feeTo owns id 2 (D21))
     struct PkgArgs {
         string name;
         string symbol;
@@ -118,6 +119,7 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
         uint256 expansionClosureRatePerSecond; // 0 → default
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
+        address creator; // D26; 0 → feeTo owns id 2 (D21)
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -148,6 +150,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256 expansionClosureRatePerSecond;
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
+        address creator;
     }
 
     IFacet immutable ERC20_FACET;
@@ -385,6 +388,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             cfg.rateAssets[i] = args.rateAssets[i];
             cfg.vaultWeights[i] = args.vaultWeights[i];
         }
+        cfg.creator = args.creator;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -550,10 +554,16 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
     }
 
     function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        try bondVault_.initializeDETFNFT() returns (uint256 id_) {
+        address feeTo_ = address(FEE_ORACLE.feeTo());
+        address creator_ = _deployConfig().creator;
+        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
             detfNftId_ = id_;
         } catch {
-            detfNftId_ = 0;
+            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
+                detfNftId_ = id2_;
+            } catch {
+                detfNftId_ = 0;
+            }
         }
     }
 

@@ -84,6 +84,7 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         mapping(uint256 tokenId => CapitalMeta) capitalOf;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct CoreInit {
@@ -110,6 +111,7 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         uint256 creationPair1PerDetfWad;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
+        address creator;
     }
 
     struct PolicyInit {
@@ -157,6 +159,7 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
+        s.creator = p_.creator;
     }
 
     function _initializePolicy(PolicyInit memory p_) internal {
