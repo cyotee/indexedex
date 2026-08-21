@@ -15,13 +15,13 @@ abstract contract Script_06_LeafBase is LaunchIo {
         console2.log("06 prep start");
         _loadConfig();
         _requireRobinhoodTestnet();
-        _requireLocalhostIfBroadcast();
         RobinhoodCanonicalLib.requireCanonicalPins();
         require(_loadFactories(s), "run Script_01 first");
         require(_loadPlatform(s), "run Script_02 first");
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
         require(_loadLeafPools(s), "run Script_05 first");
+        _requireChirArchitecture(s);
         _loadLeafDetfsPartial(s);
     }
 

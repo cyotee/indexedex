@@ -23,6 +23,7 @@ import {
   preferredToRows,
   type VaultSearchRow,
 } from '@indexedex/protocol/registry/mapRegistryToRows'
+import { CHAIN_ID_ROBINHOOD_TESTNET } from '@indexedex/protocol/addressArtifacts'
 import {
   feeDetfStakingHref,
   getBaseTokensForChain,
@@ -181,7 +182,9 @@ function EarnCatalogInner() {
   const rows: VaultSearchRow[] = useMemo(() => {
     const typeFilter = productType === 'all' ? undefined : (productType as EarnProductType)
     const dropFeeDetf = (list: VaultSearchRow[]) =>
-      list.filter((r) => !isFeaturedFeeDetfAddress(selectedChainId, environment, r.address))
+      selectedChainId === CHAIN_ID_ROBINHOOD_TESTNET
+        ? list
+        : list.filter((r) => !isFeaturedFeeDetfAddress(selectedChainId, environment, r.address))
 
     if (!registrySearch.isRegistryMode) {
       // Preferred default or free-text filter on preferred list.
@@ -244,10 +247,7 @@ function EarnCatalogInner() {
 
   return (
     <div>
-      <PageHeader
-        title="Earn"
-        subtitle="Vaults a DETF can put in its basket. Protocol DETF has its own page."
-      />
+      <PageHeader title="Earn" />
 
       {!search.trim() ? (
         <Card accent className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -256,15 +256,11 @@ function EarnCatalogInner() {
               Protocol DETF
             </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
-              {featuredFee
-                ? `${featuredFee.symbol} lives on the Protocol DETF page (mint, bond, sell), not in this vault list.`
-                : 'Protocol DETFs live on their own page for mint, bond, and sell, not in this vault list.'}
+              Stake your $RICH to earn a share of protocol fees.
             </p>
           </div>
           <Link href={feePromoHref}>
-            <Button size="sm">
-              {featuredFee ? `Open ${featuredFee.symbol}` : 'Open Protocol DETF'}
-            </Button>
+            <Button size="sm">Stake $RICH</Button>
           </Link>
         </Card>
       ) : null}

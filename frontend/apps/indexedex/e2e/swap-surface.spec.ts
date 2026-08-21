@@ -5,7 +5,7 @@ import { strategyVaults, balancerPools, baseTokens } from './helpers/chainArtifa
  * L3/L4 surface checks for Swap + Batch Swap option population.
  * Full route txs need data-testids + balances; this verifies lists load from live tokenlists.
  */
-test.describe('Swap surfaces', () => {
+test.describe.skip('Swap surfaces (archived Balancer swap)', () => {
   test.beforeEach(async ({ walletPage }) => {
     await walletPage.goto('/')
     await walletPage.evaluate(() => {

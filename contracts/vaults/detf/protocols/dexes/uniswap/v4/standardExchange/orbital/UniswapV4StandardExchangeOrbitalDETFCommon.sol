@@ -502,6 +502,14 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
         returns (uint256 detfOut_)
     {
         if (pairNative_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (!s.isReserveLive) {
+            uint256 opening_ =
+                fundedPairLeg_ == 0 ? s.openingPair0PerDetfWad : s.openingPair1PerDetfWad;
+            uint8 dec_ = fundedPairLeg_ == 0 ? _pair0Decimals() : _pair1Decimals();
+            detfOut_ = Math.mulDiv(_toWad(pairNative_, dec_), ONE_WAD, opening_);
+            return detfOut_ == 0 ? pairNative_ : detfOut_;
+        }
         return _quoteDetfAgainstReserve(fundedPairLeg_, pairNative_);
     }
 

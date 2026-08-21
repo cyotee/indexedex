@@ -18,6 +18,7 @@
 | **Crane skills** | `crane-deployment`, `crane-architecture`, `crane-testing` |
 | **IndexedEx skills** | `indexedex-testing`, `indexedex-adversarial-testing`, `indexedex-uniswap-v4-hook-packages` |
 | **Weighted UniV4 DETF peer** | n>2 host + hook-SoT + per-route synthetic + all-legs-rich — **do not subclass** |
+| **Peg vs opening** | [`UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`](../../../UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md) |
 | **Orbital UniV4 DETF peer** | Multi-external process + facet/TestBase shape — **do not subclass** |
 | **CP UniV4 DETF peer** | Seigniorage split / epoch expansion form — **do not subclass** |
 | **Curve Quad Stable Buffer Hook** | Hard dependency — 4-asset StableSwap book, `depositSingle` / `joinUnbalanced` / `exitProportional`, Flexible deposit units |

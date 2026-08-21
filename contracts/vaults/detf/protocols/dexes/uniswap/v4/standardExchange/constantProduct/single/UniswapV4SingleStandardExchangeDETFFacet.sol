@@ -83,7 +83,7 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](17);
+        f = new bytes4[](18);
         f[0] = IUniswapV4SingleStandardExchangeDETF.burnThreshold.selector;
         f[1] = IUniswapV4SingleStandardExchangeDETF.thresholdMode.selector;
         f[2] = IUniswapV4SingleStandardExchangeDETF.isMintingAllowed.selector;
@@ -92,19 +92,20 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
         f[5] = IUniswapV4SingleStandardExchangeDETF.rebasingClaimToken.selector;
         f[6] = IUniswapV4SingleStandardExchangeDETF.feeRecipientNftId.selector;
         f[7] = IUniswapV4SingleStandardExchangeDETF.creationPairPerDetfWad.selector;
-        f[8] = IUniswapV4SingleStandardExchangeDETF.lastExpansionTimestamp.selector;
-        f[9] = IUniswapV4SingleStandardExchangeDETF.expansionEpochLength.selector;
-        f[10] = IUniswapV4SingleStandardExchangeDETF.expansionClosureRatePerYearWad.selector;
-        f[11] = IUniswapV4SingleStandardExchangeDETF.expansionMaxCatchUpEpochs.selector;
-        f[12] = IUniswapV4SingleStandardExchangeDETF.acceptedBondTokens.selector;
-        f[13] = IUniswapV4SingleStandardExchangeDETF.protocolLp.selector;
-        f[14] = IUniswapV4SingleStandardExchangeDETF.userBondedLp.selector;
-        f[15] = IUniswapV4SingleStandardExchangeDETF.compoundProtocolRewards.selector;
-        f[16] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
+        f[8] = IUniswapV4SingleStandardExchangeDETF.openingPairPerDetfWad.selector;
+        f[9] = IUniswapV4SingleStandardExchangeDETF.lastExpansionTimestamp.selector;
+        f[10] = IUniswapV4SingleStandardExchangeDETF.expansionEpochLength.selector;
+        f[11] = IUniswapV4SingleStandardExchangeDETF.expansionClosureRatePerYearWad.selector;
+        f[12] = IUniswapV4SingleStandardExchangeDETF.expansionMaxCatchUpEpochs.selector;
+        f[13] = IUniswapV4SingleStandardExchangeDETF.acceptedBondTokens.selector;
+        f[14] = IUniswapV4SingleStandardExchangeDETF.protocolLp.selector;
+        f[15] = IUniswapV4SingleStandardExchangeDETF.userBondedLp.selector;
+        f[16] = IUniswapV4SingleStandardExchangeDETF.compoundProtocolRewards.selector;
+        f[17] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
     }
 
     function _funcsC() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](9);
+        f = new bytes4[](10);
         f[0] = IUniswapV4SingleStandardExchangeDETF.isReserveHookFinalized.selector;
         f[1] = IUniswapV4SingleStandardExchangeDETF.isReserveWired.selector;
         f[2] = IUniswapV4SingleStandardExchangeDETF.completeReserveBondNft.selector;
@@ -114,5 +115,6 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
         f[6] = IUniswapV4SingleStandardExchangeDETF.closeBondMature.selector;
         f[7] = IUniswapV4SingleStandardExchangeDETF.previewCloseBondMature.selector;
         f[8] = IUniswapV4SingleStandardExchangeDETF.previewRedeemClaim.selector;
+        f[9] = IUniswapV4SingleStandardExchangeDETF.previewClaimLiquidity.selector;
     }
 }

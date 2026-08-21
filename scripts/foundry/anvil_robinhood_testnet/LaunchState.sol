@@ -17,6 +17,7 @@ import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap
 
 /// @title LaunchState
 /// @notice In-memory / storage bag shared by group libraries and Script_SimulateLaunch.
+/// @dev Demo products: required fee DETF `TTCHIR` and USD quad `TTDOL-Q`.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
     IDiamondPackageCallBackFactory diamondPackageFactory;
@@ -37,58 +38,32 @@ struct LaunchState {
     IIndexedexManagerProxy indexedexManager;
     IStandardExchangeRateProviderDFPkg rateProviderPkg;
     address cpHookPkg;
-    address orbitalHookPkg;
-    address weightedHookPkg;
-    address singleSeBufferHookPkg;
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
     address cpDetfPkg;
-    address orbitalDetfPkg;
-    address weightedDetfPkg;
     address curveQuadHookPkg;
     address curveQuadDetfPkg;
+    address orbitalHookPkg;
+    address orbitalDetfPkg;
+    address weightedHookPkg;
+    address weightedDetfPkg;
     address erc20MinterFacade;
     address tokenPkg;
     address ttUSDG;
     address ttUSDE;
-    address ttNVDA;
-    address ttMSFT;
-    address ttAAPL;
-    address ttGOOGL;
-    address ttAMZN;
-    address ttMETA;
-    address ttTSLA;
-    address ttSMH;
-    address ttSPY;
-    address ttVTI;
-    address ttQQQ;
+    address ttWETH;
     address ttRICH;
-    address seNvdaUsdg;
-    address seSpyUsdg;
     address seUsdeWeth;
     address seUsdgWeth;
     address seUsdgUsde;
-    address seM7Usdg;
-    address seIdxUsdg;
     address seRichWeth;
-    address rpNvdaUsdg;
-    address rpSpyUsdg;
     address rpUsdeWeth;
     address rpUsdgWeth;
     address rpUsdgUsde;
-    address rpM7Usdg;
-    address rpIdxUsdg;
     address rpRichWeth;
     address v4Seeder;
-    address ttNvdaS;
-    address ttNvdaSmhO;
-    address ttIdxQ;
-    address ttM7W;
+    address ttChir;
+    address ttRichir;
     address ttDolQ;
-    address ttNestW;
-    address ttBetaO;
-    address ttIdxWrap;
-    address ttM7Wrap;
-    address ttRichS;
 }

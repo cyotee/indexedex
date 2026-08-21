@@ -57,6 +57,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         IERC20 standardExchangeVaultShare;
         IERC20 pairToken;
         uint256 creationPairPerDetfWad;
+        uint256 openingPairPerDetfWad;
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
@@ -221,6 +222,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         if (address(args.standardExchangeVault) == address(0) || address(args.pairToken) == address(0)) {
             revert ZeroAddress();
         }
+        uint256 opening_ = _resolveOpening(args.creationPairPerDetfWad, args.openingPairPerDetfWad);
 
         ERC20Repo._initialize(args.name, args.symbol, 18);
         EIP712Repo._initialize(args.name, "1");
@@ -246,6 +248,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
             : args.standardExchangeVaultShare;
         cfg.pairToken = args.pairToken;
         cfg.creationPairPerDetfWad = args.creationPairPerDetfWad;
+        cfg.openingPairPerDetfWad = opening_;
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
         cfg.thresholdMode = args.thresholdMode;
@@ -254,6 +257,18 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
         cfg.hookMineNonce = mineNonce;
         cfg.creator = args.creator;
+        _storeChildTokenMetadata(args);
+    }
+
+    /// @dev Fresh stack frame: four string args overflow initAccount (legacy codegen, no viaIR).
+    function _storeChildTokenMetadata(PkgArgs memory args) private {
+        Repo._setChildTokenMetadata(args.claimName, args.claimSymbol, args.bondName, args.bondSymbol);
+    }
+
+    /// @dev PRD N6/N7: opening 0 → creation. Creation 0 reverts InvalidCreationRate.
+    function _resolveOpening(uint256 creation_, uint256 opening_) internal pure returns (uint256) {
+        if (creation_ == 0) revert InvalidCreationRate();
+        return opening_ == 0 ? creation_ : opening_;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -298,6 +313,7 @@ contract UniswapV4SingleStandardExchangeDETDFPkg is IUniswapV4SingleStandardExch
                 detfNftId: 0,
                 feeRecipientNftId: 0,
                 creationPairPerDetfWad: cfg.creationPairPerDetfWad,
+                openingPairPerDetfWad: cfg.openingPairPerDetfWad,
                 bondNftVaultPkg: address(BOND_NFT_VAULT_PKG),
                 rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG),
                 creator: cfg.creator

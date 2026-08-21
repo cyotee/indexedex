@@ -124,7 +124,8 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Bond NFT | `bondNft` | User bond positions; holds user `reserveLp` while open |
 | Protocol principal | protocol-owned `reserveLp` | Primary mint joins, bond sells, compound, direct claim deposits — **held by rebasing package** (LOCK) |
 | Rebasing claim | `rebasingClaimToken` | ERC-20 claim on protocol `reserveLp` |
-| Creation rate | `creationPairPerDetfWad` | Deploy-time empty-book join rate (WAD after decimal normalize) |
+| Creation rate (peg) | `creationPairPerDetfWad` | Pair per DETF when synthetic = 1e18. Policy mint/burn and expansion use this only. |
+| Opening | `openingPairPerDetfWad` | Pair per DETF on first bond. `0` → creation (open at peg). |
 | Rate asset (narrative) | often = `pairToken` | Settlement numeraire for synthetic peg and primary burn |
 
 **Anti-patterns:** brand tickers; `pairToken` ∉ SE tokens; using Uni V4 SE DFPkg as claim; listing-pool dual OOR as bond principal; treating wrapper pricing hook as reserve; inventing hook APIs not in the hook PRD.
@@ -205,12 +206,12 @@ First bond is **synthetically ungated** (Policy and Open).
 
 1. User supplies bond capital: **`pairToken`**, **backing vault share**, or other **SE-accepted token** (see §7).  
 2. Convert capital to **pair-notional** \(C\) in WAD (if share/other: SE preview → pair, then scale).  
-3. **Mint DETF for join** using **creation rate only** (not market CP mid):
+3. **Mint DETF for join** using **opening** (not creation, not market CP mid):
 
 ```text
-// WAD space
-detfForJoinWad = pairNotionalWad * 1e18 / creationPairPerDetfWad
-// fixed-point: mulDiv; direction pair capital → DETF amount for proportional join
+// WAD space — empty-book first bond. Synthetic peg stays creation.
+detfForJoinWad = pairNotionalWad * 1e18 / openingPairPerDetfWad
+// opening 0 resolved to creation at init. Live quotes after isReserveLive use the live curve.
 ```
 
 4. Apply **peer mint modifiers** on the join-sized gross (same as Balancer bond spirit):  
@@ -702,7 +703,8 @@ DETF `postDeploy` deploys a **bootstrap** reserve hook only (no `deployPair`, no
 | `standardExchangeVault` | Backing SE |
 | `pairToken` | Must ∈ SE tokens |
 | `poolManager` | Uni V4 PoolManager |
-| `creationPairPerDetfWad` | First-bond / peg reference (WAD) |
+| `creationPairPerDetfWad` | Peg / synthetic 1.0 (WAD). Not the first-bond join. |
+| `openingPairPerDetfWad` | First-bond pair per DETF. `0` → creation. |
 | `thresholdMode`, mint/burn thresholds | Shared policy resolve |
 | `expansionEpochLength` | Seconds; `0` → family default (8 hours recommended) |
 | `expansionClosureRatePerYearWad` | Premium closed per year (1e18); `0` → 10%/yr gentle default; launch-rich templates set explicit higher `R` |

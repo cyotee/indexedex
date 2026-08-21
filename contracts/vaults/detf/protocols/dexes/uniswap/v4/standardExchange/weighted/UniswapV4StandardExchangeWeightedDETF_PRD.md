@@ -185,7 +185,8 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Bond NFT | `bondNft` | Shared Uni V4 package; holds user `reserveLp` while open |
 | Protocol principal | protocol-owned `reserveLp` | Held by **shared** rebasing package |
 | Rebasing claim | `rebasingClaimToken` | ERC-20 claim on protocol `reserveLp` |
-| Creation rates | `creationPairPerDetfWad[i]` | Deploy-time empty-book join rates (WAD) for each external pair vs DETF; **each must be > 0** |
+| Creation rates (peg) | `creationPairPerDetfWad[i]` | Pair per DETF when `syntheticVs(pair_i)` = 1e18. Policy mint/burn and expansion use this only. **Each must be > 0** |
+| Opening | `openingPairPerDetfWad[i]` | Pair per DETF on first bond. Slot `0` → that slot’s creation. Empty array → all creation. |
 | Native / rated reserves | hook inventory vs rated swap balances | LP uses native; swaps/seigniorage quotes use rated where RP/claim applies (hook law) |
 | Single-asset eligible | hook full book + supply > MIN | Gate for `depositSingle` / single-asset join paths (prefer this term over “zap-eligible”) |
 | Bond capital token | per-`tokenId` `capitalToken` | **Single** external pair address chosen at open; maturity close pays **only** this token |
@@ -284,7 +285,7 @@ No MEV protection in v1; operators should seed with a **small but viable** multi
 **Example (\(m=2\)):** Want “1 DETF = 2 USDC and 1 DETF = 0.001 WETH” at seed →  
 `creationPairPerDetfWad[USDC] = 2e18`, `creationPairPerDetfWad[WETH] = 0.001e18` after WAD normalize.
 
-**Peg narrative (LOCKED):** for each external pair \(k\), abstract **1e18** on `syntheticVs(pair_k)` means FD claim of counted reserve LP **in pair \(k\)** per DETF equals **creationPairPerDetfWad[k]**. Creation rates also size the first multipath join and seed initial mids. There is **no** single global external peg pair — richness is always relative to a chosen pair leg.
+**Peg narrative (LOCKED):** for each external pair \(k\), abstract **1e18** on `syntheticVs(pair_k)` means FD claim of counted reserve LP **in pair \(k\)** per DETF equals **creationPairPerDetfWad[k]**. First-bond empty-book join uses **opening** (0 → creation). There is **no** single global external peg pair — richness is always relative to a chosen pair leg.
 
 ### 4.4 First bond mechanics (LOCKED — Q2)
 
@@ -295,12 +296,12 @@ First bond is **synthetically ungated** (Policy and Open).
 **Close asset (LOCKED):** caller **must** supply **`capitalToken`** — required even when \(m=1\); must be one of `pairTokens` (all funded on first bond). Stored on the NFT as the **sole** maturity-close settlement token.
 
 1. User supplies capital resolving to **all** external pair-notionals \(C_i > 0\) in WAD, plus chosen **`capitalToken`**.  
-2. **Mint DETF for join** using **creation rates only** (not live weighted mid):
+2. **Mint DETF for join** using **opening** (not creation, not live weighted mid):
 
 ```text
-// WAD space — join DETF sized so empty multipath / proportional ratio matches creation
+// WAD space — join DETF sized so empty multipath matches opening (0 → creation)
 for each external i:
-  detfFrom[i] = pairNotionalWad[i] * 1e18 / creationPairPerDetfWad[i]
+  detfFrom[i] = pairNotionalWad[i] * 1e18 / openingPairPerDetfWad[i]
 // Common join size: min of implied DETF amounts
 detfForJoinWad = min_i(detfFrom[i])
 require detfForJoinWad > 0

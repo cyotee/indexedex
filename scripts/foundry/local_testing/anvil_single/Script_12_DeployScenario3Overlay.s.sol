@@ -423,7 +423,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
 
         inventoryDetf = vaultRegistry.deployVault(

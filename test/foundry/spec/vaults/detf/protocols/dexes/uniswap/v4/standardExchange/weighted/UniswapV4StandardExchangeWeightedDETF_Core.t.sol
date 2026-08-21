@@ -453,13 +453,18 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             detfWeight: 0.25e18,
             pairWeights: pairW_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](3),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
         address d = _deployDetfWired(args);
         IUniswapV4StandardExchangeWeightedDETF info = IUniswapV4StandardExchangeWeightedDETF(d);
@@ -902,13 +907,18 @@ contract UniswapV4StandardExchangeWeightedDETF_Core is TestBase_UniswapV4Standar
             detfWeight: 0.16e18,
             pairWeights: pairW_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](7),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
         // Fix last weight so sum is exact 1e18
         uint256 wSum = args.detfWeight;

@@ -73,6 +73,8 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         uint256 feeRecipientNftId;
         uint256 creationPair0PerDetfWad;
         uint256 creationPair1PerDetfWad;
+        uint256 openingPair0PerDetfWad;
+        uint256 openingPair1PerDetfWad;
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
@@ -85,6 +87,10 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     struct CoreInit {
@@ -109,6 +115,8 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         uint256 feeRecipientNftId;
         uint256 creationPair0PerDetfWad;
         uint256 creationPair1PerDetfWad;
+        uint256 openingPair0PerDetfWad;
+        uint256 openingPair1PerDetfWad;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
@@ -155,6 +163,8 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         s.feeRecipientNftId = p_.feeRecipientNftId;
         s.creationPair0PerDetfWad = p_.creationPair0PerDetfWad;
         s.creationPair1PerDetfWad = p_.creationPair1PerDetfWad;
+        s.openingPair0PerDetfWad = p_.openingPair0PerDetfWad;
+        s.openingPair1PerDetfWad = p_.openingPair1PerDetfWad;
         s.lastExpansionTimestamp = 0;
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
@@ -225,5 +235,18 @@ library UniswapV4StandardExchangeOrbitalDETFRepo {
         if (address(s.rebasingClaimToken) != address(0)) revert ReserveClaimAlreadyWired();
         if (address(rebasingClaimToken_) == address(0)) revert ZeroAddress();
         s.rebasingClaimToken = rebasingClaimToken_;
+    }
+
+    function _setChildTokenMetadata(
+        string memory claimName_,
+        string memory claimSymbol_,
+        string memory bondName_,
+        string memory bondSymbol_
+    ) internal {
+        Storage storage s = _layoutStruct();
+        s.claimName = claimName_;
+        s.claimSymbol = claimSymbol_;
+        s.bondName = bondName_;
+        s.bondSymbol = bondSymbol_;
     }
 }

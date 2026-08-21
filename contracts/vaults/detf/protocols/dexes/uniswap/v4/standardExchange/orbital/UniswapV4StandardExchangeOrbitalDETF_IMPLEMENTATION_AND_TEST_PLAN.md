@@ -18,6 +18,7 @@
 | **Crane skills** | `crane-deployment`, `crane-architecture`, `crane-testing` |
 | **IndexedEx skills** | `indexedex-testing`, `indexedex-adversarial-testing`, `indexedex-uniswap-v4-hook-packages` |
 | **CP UniV4 DETF peer** | Behavioral + facet/TestBase shape reference only — **do not subclass** |
+| **Peg vs opening** | [`UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`](../../UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md) |
 | **Balancer Single SE peer** | Seigniorage split / fee-recipient NFT / bond lifecycle spirit — **do not subclass** |
 | **Orbital SE Buffer Hook** | Hard dependency — multipath LP + `depositSingle` only (no zap-out) |
 

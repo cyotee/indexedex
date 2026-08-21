@@ -23,6 +23,10 @@ library FixtureEconomics {
     uint256 internal constant CLAIM_WIDTH_MULTIPLIER = 1;
 
     uint256 internal constant CREATION_PAIR_PER_DETF = 1e18;
+    /// @dev First-bond pair per DETF. N17 starts 1.1e18. Hermetic N10: CP Single mint-opens at 2.2e18
+    ///      after a real `bond` (Quad mint-opens at 1.1e18). Shared 46630 fixture uses the CP WAD.
+    ///      Not a D47 impersonation target.
+    uint256 internal constant OPENING_PAIR_PER_DETF = 2.2e18;
     uint256 internal constant MINT_THRESHOLD = 1.05e18;
     uint256 internal constant BURN_THRESHOLD = 0.95e18;
     uint256 internal constant EXPANSION_EPOCH = 0;
@@ -46,8 +50,7 @@ library FixtureEconomics {
     uint256 internal constant WETH_POOL_SEED = 100 ether;
     uint256 internal constant LEAF_FIRST_BOND = 10 ether;
     uint256 internal constant TTDOL_FIRST_BOND = 10 ether;
-    uint256 internal constant NEST_FIRST_BOND = 10_000 ether;
-    uint256 internal constant TTRICH_FIRST_BOND = 10 ether;
+    uint256 internal constant TTCHIR_FIRST_BOND = 10 ether;
     uint256 internal constant INVENTORY_STARTER = 100_000 ether;
     uint256 internal constant SWAP_MIN_OUT = 1;
 

@@ -60,6 +60,9 @@ interface IUniswapV4StandardExchangeOrbitalDETF {
     function feeRecipientNftId() external view returns (uint256);
     function creationPair0PerDetfWad() external view returns (uint256);
     function creationPair1PerDetfWad() external view returns (uint256);
+    /// @notice Pair per DETF on first bond. Resolved storage (0 at init → creation).
+    function openingPair0PerDetfWad() external view returns (uint256);
+    function openingPair1PerDetfWad() external view returns (uint256);
     function lastExpansionTimestamp() external view returns (uint256);
     function expansionEpochLength() external view returns (uint256);
     function expansionClosureRatePerYearWad() external view returns (uint256);
@@ -222,6 +225,9 @@ interface IUniswapV4StandardExchangeOrbitalDETDFPkg is IDiamondFactoryPackage, I
         uint8 detfBindingIndex; // 0, 1, or 2
         uint256 creationPair0PerDetfWad; // required > 0
         uint256 creationPair1PerDetfWad; // required > 0
+        /// @notice Pair per DETF on first bond. 0 → use creation (open at peg).
+        uint256 openingPair0PerDetfWad;
+        uint256 openingPair1PerDetfWad;
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
         ThresholdMode thresholdMode; // 0 = Policy
@@ -229,6 +235,10 @@ interface IUniswapV4StandardExchangeOrbitalDETDFPkg is IDiamondFactoryPackage, I
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

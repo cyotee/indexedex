@@ -100,7 +100,13 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 1e18, 1e18));
@@ -125,7 +131,13 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         vm.expectRevert(abi.encodeWithSelector(InvalidThresholdPair.selector, 0.5e18, 0.6e18));
@@ -317,7 +329,13 @@ contract SingleStandardExchangeDETF_ThresholdMode_Test is TestBase_SingleStandar
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         address customOpen_ = indexedexManager.deployVault(

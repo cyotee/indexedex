@@ -84,13 +84,18 @@ contract Script_18_DeployChirInstance is DeploymentBase {
             standardExchangeVaultShare: IERC20(address(0)),
             pairToken: IERC20(RobinhoodCanonicalLib.weth()),
             creationPairPerDetfWad: creationPairPerDetfWad,
+            openingPairPerDetfWad: 0,
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: FixtureEconomics.expansionClosureRatePerYearWad(),
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
 
         (address predicted, uint256 nonce) = UniswapV4DetfHookPremineLib.premineCp(

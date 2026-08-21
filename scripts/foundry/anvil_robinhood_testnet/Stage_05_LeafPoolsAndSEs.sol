@@ -14,37 +14,43 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
 
 /// @title Stage_05_LeafPoolsAndSEs
-/// @notice Five fixture Uni V4 pools + SEs + RPs (PRD §2.5).
+/// @notice Required `TTRICH`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
 library Stage_05_LeafPoolsAndSEs {
     function execute(LaunchState storage s, address owner_) internal {
+        require(s.ttWETH != address(0) && s.ttWETH.code.length > 0, "Stage_05: TTWETH required");
         IPoolManager pm = IPoolManager(RobinhoodCanonicalLib.poolManager());
         address seeder = PoolSeedLib.ensureSeeder(s.create3Factory, pm);
         s.v4Seeder = seeder;
         _topUp(s.ttUSDG, owner_);
         _topUp(s.ttUSDE, owner_);
-        _topUp(s.ttNVDA, owner_);
-        _topUp(s.ttMSFT, owner_);
-        _topUp(s.ttAAPL, owner_);
-        _topUp(s.ttGOOGL, owner_);
-        _topUp(s.ttAMZN, owner_);
-        _topUp(s.ttMETA, owner_);
-        _topUp(s.ttTSLA, owner_);
-        _topUp(s.ttSMH, owner_);
-        _topUp(s.ttSPY, owner_);
-        _topUp(s.ttVTI, owner_);
-        _topUp(s.ttQQQ, owner_);
-        PoolSeedLib.wrapWeth(owner_, 5_000 ether);
+        _topUp(s.ttWETH, owner_);
 
-        address weth = RobinhoodCanonicalLib.weth();
-        (s.seNvdaUsdg, s.rpNvdaUsdg) = _poolSeRp(s, seeder, s.ttNVDA, s.ttUSDG, s.ttNVDA, FixtureEconomics.TT_TT_SEED);
-        (s.seSpyUsdg, s.rpSpyUsdg) = _poolSeRp(s, seeder, s.ttSPY, s.ttUSDG, s.ttSPY, FixtureEconomics.TT_TT_SEED);
+        address ttweth = s.ttWETH;
         // TTDOL-Q 3/3: each RP rates shares → the pairToken that SE actually holds.
         (s.seUsdeWeth, s.rpUsdeWeth) =
-            _poolSeRp(s, seeder, s.ttUSDE, weth, s.ttUSDE, FixtureEconomics.WETH_POOL_SEED);
+            _poolSeRp(s, seeder, s.ttUSDE, ttweth, s.ttUSDE, FixtureEconomics.WETH_POOL_SEED);
         (s.seUsdgUsde, s.rpUsdgUsde) =
             _poolSeRp(s, seeder, s.ttUSDG, s.ttUSDE, s.ttUSDG, FixtureEconomics.TT_TT_SEED);
         (s.seUsdgWeth, s.rpUsdgWeth) =
-            _poolSeRp(s, seeder, s.ttUSDG, weth, weth, FixtureEconomics.WETH_POOL_SEED);
+            _poolSeRp(s, seeder, s.ttUSDG, ttweth, ttweth, FixtureEconomics.WETH_POOL_SEED);
+        deployTtrichWeth(s, owner_);
+    }
+
+    /// @notice Required architecture SE. Resume-safe if an older 05 artifact omitted it.
+    function deployTtrichWeth(LaunchState storage s, address owner_) internal {
+        require(s.ttRICH != address(0) && s.ttRICH.code.length > 0, "Stage_05: TTRICH required");
+        require(s.ttWETH != address(0) && s.ttWETH.code.length > 0, "Stage_05: TTWETH required");
+        if (s.seRichWeth != address(0) && s.seRichWeth.code.length > 0) return;
+        IPoolManager pm = IPoolManager(RobinhoodCanonicalLib.poolManager());
+        address seeder = s.v4Seeder;
+        if (seeder == address(0)) {
+            seeder = PoolSeedLib.ensureSeeder(s.create3Factory, pm);
+            s.v4Seeder = seeder;
+        }
+        _topUp(s.ttWETH, owner_);
+        _topUp(s.ttRICH, owner_);
+        (s.seRichWeth, s.rpRichWeth) =
+            _poolSeRp(s, seeder, s.ttRICH, s.ttWETH, s.ttRICH, FixtureEconomics.WETH_POOL_SEED);
     }
 
     function _poolSeRp(

@@ -154,7 +154,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Live | **Permissionless first successful bond** that joins reserve LP (synthetically ungated) | Peer copy |
 | First bond capital | **Requires all three external pair legs** funded (pair tokens and/or SE-accepted capital that settles to each) | **LOCKED Q1** |
 | First bond close asset | **`capitalToken` = a pair the user actually funded at open.** First bond: caller **must pass** one of the three funded pairs (**Q18**). Later bond: **forced** to the one funded pair (no choice). Close pays **only** that token | **LOCKED Q7 / Q18** |
-| Creation rates | **Deploy-time `PkgArgs`** — three WAD rates, each **`> 0`**; size first-bond DETF + pairs so initial StableSwap mids ≈ creation | LOCKED |
+| Creation rates (peg) | **Deploy-time `PkgArgs`** — three WAD rates, each **`> 0`**; synthetic 1.0. First-bond empty-book uses **opening**. | LOCKED |
 | First-bond excess | Unused external capital after min-implied DETF sizing is **refunded** | **LOCKED Q13** |
 | Seigniorage | Peer: boost on **funded pair-leg notional** → `quoteDetfAgainstReserve` (hook SoT) → usage fee → half-incentive inventory / user / feeTo | Peer copy |
 | Primary mint (live) | **Any of the three external pairs** (or capital settled into that pair / its SE) via hook **`depositSingle` / `joinSingleAssetExactIn`**. Revert if not single-asset eligible | **LOCKED Q2** |
@@ -208,7 +208,8 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Bond NFT | `bondNft` | Shared Uni V4 package; holds user `reserveLp` while open |
 | Protocol principal | protocol-owned `reserveLp` | Held by **shared** rebasing package |
 | Rebasing claim | `rebasingClaimToken` | ERC-20 claim on protocol `reserveLp` |
-| Creation rates | `creationPair0PerDetfWad`, `creationPair1PerDetfWad`, `creationPair2PerDetfWad` | Deploy-time empty-book join rates (WAD) for each external pair vs DETF; **each must be > 0** |
+| Creation rates (peg) | `creationPairPerDetfWad[]` | Pair per DETF when synthetic vs that pair = 1e18. Policy mint/burn and expansion use this only. **Each must be > 0** |
+| Opening | `openingPairPerDetfWad[]` | Pair per DETF on first bond. Slot `0` → that slot’s creation. Empty array → all creation. |
 | Native / rated reserves | hook `nativeReserve(i)` / `ratedBalance(i)` | LP uses native inventory; swaps / seigniorage quotes use rated (face / claim / shares×rate) |
 | Single-asset eligible | hook `isFullBook()` + supply > `MINIMUM_LIQUIDITY` | Gate for `depositSingle` / single-asset join paths. Prefer this term over Orbital “zap-eligible” |
 | Bond capital token | per-`tokenId` `capitalToken` | **The pair used to buy the bond** (first bond: one of the three funded; later: the one funded). Close pays **only** this token (**LOCKED Q7**) |
@@ -337,10 +338,11 @@ This is **forced by hook first-mint law** (all four native inventories \(> 0\)).
 
 ```text
 // WAD space — join DETF sized so empty proportional ratio matches creation
-detfFrom0 = pair0NotionalWad * 1e18 / creationPair0PerDetfWad
-detfFrom1 = pair1NotionalWad * 1e18 / creationPair1PerDetfWad
-detfFrom2 = pair2NotionalWad * 1e18 / creationPair2PerDetfWad
+detfFrom0 = pair0NotionalWad * 1e18 / openingPairPerDetfWad[0]
+detfFrom1 = pair1NotionalWad * 1e18 / openingPairPerDetfWad[1]
+detfFrom2 = pair2NotionalWad * 1e18 / openingPairPerDetfWad[2]
 detfForJoinWad = min(detfFrom0, detfFrom1, detfFrom2)
+// opening slot 0 resolved to that slot's creation at init. Synthetic peg stays creation.
 require detfForJoinWad > 0
 // Size each pair used at join = detfForJoinWad * creationPair_i / 1e18
 // Excess external capital is REFUNDED

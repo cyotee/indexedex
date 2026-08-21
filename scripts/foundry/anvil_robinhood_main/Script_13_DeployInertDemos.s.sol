@@ -353,13 +353,18 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             standardExchangeVaultShare: IERC20(address(0)),
             pairToken: IERC20(tt[0]),
             creationPairPerDetfWad: FixtureGraph.DEFAULT_CREATION_PAIR_PER_DETF,
+            openingPairPerDetfWad: 0,
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -448,12 +453,19 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             detfBindingIndex: 2,
             creationPair0PerDetfWad: FixtureGraph.DEFAULT_CREATION_PAIR_PER_DETF,
             creationPair1PerDetfWad: FixtureGraph.DEFAULT_CREATION_PAIR_PER_DETF,
+            openingPair0PerDetfWad: 0,
+            openingPair1PerDetfWad: 0,
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -554,12 +566,18 @@ contract Script_13_DeployInertDemos is DeploymentBase {
             detfWeight: FixtureGraph.EQUAL_WEIGHT_N8,
             pairWeights: pairW,
             creationPairPerDetfWad: rates,
+            openingPairPerDetfWad: new uint256[](7),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 

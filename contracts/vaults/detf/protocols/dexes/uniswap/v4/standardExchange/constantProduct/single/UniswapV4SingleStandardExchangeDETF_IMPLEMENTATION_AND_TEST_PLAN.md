@@ -22,7 +22,7 @@
 
 **Process rule:** If this plan and PRD disagree, **PRD wins** and this plan must be patched.
 
-Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../../UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md) / its implementation plan.
+Deploy arity is [`UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md`](../../UNISWAP_V4_SE_DETF_DEPLOY_MINE_NONCE_PRD.md) / its implementation plan. Peg vs first-bond opening: [`UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`](../../UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md).
 
 **Role names only:** `detfToken`, `pairToken`, `standardExchangeVault`, `backingVaultShare`, `reserveHook` / `reserveLp`, `bondNft`, `rebasingClaimToken`, `creationPairPerDetfWad`. No brand tickers.
 

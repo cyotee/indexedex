@@ -59,15 +59,15 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     /**
      * @notice Returns the name of the token.
      */
-    function name() external pure returns (string memory) {
-        return "RebasingClaim";
+    function name() external view returns (string memory) {
+        return ERC20Repo._name();
     }
 
     /**
      * @notice Returns the symbol of the token.
      */
-    function symbol() external pure returns (string memory) {
-        return "RebasingClaim";
+    function symbol() external view returns (string memory) {
+        return ERC20Repo._symbol();
     }
 
     /**
@@ -78,12 +78,11 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     }
 
     /**
-     * @notice Returns the total supply (computed from totalShares * redemptionRate).
+     * @notice Total supply is the zapout of protocol-owned reserve LP (bond NFT id 0).
+     * @dev Zero when there are no claim shares or the protocol NFT holds no LP.
      */
     function totalSupply() external view returns (uint256) {
-        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
-        uint256 rate = _getCurrentRedemptionRate(layoutStruct);
-        return RebasingClaimTokenRepo._sharesToBalance(layoutStruct.totalShares, rate);
+        return _protocolNftZapOut(RebasingClaimTokenRepo._layoutStruct());
     }
 
     /**
@@ -581,10 +580,7 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
     }
 
     /**
-     * @dev Calculates the current redemption rate based on protocol-owned NFT value.
-     * @dev Rate = (WETH value of protocol NFT's BPT) / totalRebasingClaimShares
-     *      This allows rebasing claim token to rebase based on the underlying LP value.
-     * @return rate The redemption rate (1e18 = 1:1)
+     * @dev Rate such that balanceOf = pro-rata of `_protocolNftZapOut` (totalSupply).
      */
     function _calcCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256 rate) {
         uint256 totalShares_ = layoutStruct_.totalShares;
@@ -592,30 +588,52 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
             return ONE_WAD;
         }
 
-        // Get protocol-owned NFT position
-        IDETFNFTVault.Position memory position = layoutStruct_.nftVault.getPosition(layoutStruct_.detfNFTId);
-        if (position.originalShares == 0) {
+        uint256 zapout_ = _protocolNftZapOut(layoutStruct_);
+        if (zapout_ == 0) {
             return ONE_WAD;
         }
 
-        // Calculate WETH value of the protocol NFT's BPT via the generic StandardExchange preview.
-        IERC20 bpt = IERC20(layoutStruct_.detf.reservePool());
-        uint256 wethValue = IStandardExchangeIn(address(layoutStruct_.detf)).previewExchangeIn(
-            bpt,
-            position.originalShares,
-            layoutStruct_.rateAsset
-        );
-        if (wethValue == 0) {
-            return ONE_WAD;
-        }
-
-        // Rate = total WETH value / total rebasing claim token shares
-        // This means 1 rebasing claim token share = (wethValue / totalShares) WETH
-        rate = Math.mulDiv(wethValue, RebasingClaimTokenRepo._shareUnit(), totalShares_);
-
-        // Ensure rate never goes to 0 (minimum 1 wei per share)
+        rate = Math.mulDiv(zapout_, RebasingClaimTokenRepo._shareUnit(), totalShares_);
         if (rate == 0) {
             rate = 1;
+        }
+    }
+
+    /// @dev Zapout of the protocol bond NFT's whole reserve-LP slice (4626 assets, then single-sided exit).
+    function _protocolNftZapOut(RebasingClaimTokenRepo.Storage storage layoutStruct_)
+        internal
+        view
+        returns (uint256 zapout_)
+    {
+        if (layoutStruct_.totalShares == 0) return 0;
+        uint256 orig_ = layoutStruct_.nftVault.originalSharesOf(layoutStruct_.detfNFTId);
+        if (orig_ == 0) {
+            IDETFNFTVault.Position memory position_ = layoutStruct_.nftVault.getPosition(layoutStruct_.detfNFTId);
+            orig_ = position_.originalShares;
+        }
+        if (orig_ == 0) return 0;
+
+        uint256 lp_ = orig_;
+        try layoutStruct_.nftVault.convertToAssets(orig_) returns (uint256 assets_) {
+            if (assets_ > 0) lp_ = assets_;
+        } catch {}
+
+        return _reserveShareZapOut(layoutStruct_, lp_);
+    }
+
+    /// @dev Canonical quote: DETF `previewClaimLiquidity` (reserve LP zapout). Fallback: previewExchangeIn.
+    function _reserveShareZapOut(RebasingClaimTokenRepo.Storage storage layoutStruct_, uint256 lpAmount_)
+        internal
+        view
+        returns (uint256 zapout_)
+    {
+        try layoutStruct_.detf.previewClaimLiquidity(lpAmount_) returns (uint256 z_) {
+            return z_;
+        } catch {
+            IERC20 bpt = IERC20(layoutStruct_.detf.reservePool());
+            return IStandardExchangeIn(address(layoutStruct_.detf)).previewExchangeIn(
+                bpt, lpAmount_, layoutStruct_.rateAsset
+            );
         }
     }
 }

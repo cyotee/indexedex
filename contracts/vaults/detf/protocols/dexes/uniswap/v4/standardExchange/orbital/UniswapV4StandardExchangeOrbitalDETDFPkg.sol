@@ -70,6 +70,8 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
         uint8 pair1BindingIndex;
         uint256 creationPair0PerDetfWad;
         uint256 creationPair1PerDetfWad;
+        uint256 openingPair0PerDetfWad;
+        uint256 openingPair1PerDetfWad;
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
@@ -303,6 +305,8 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
         cfg.pair1BindingIndex = p1Idx_;
         cfg.creationPair0PerDetfWad = args.creationPair0PerDetfWad;
         cfg.creationPair1PerDetfWad = args.creationPair1PerDetfWad;
+        cfg.openingPair0PerDetfWad = _resolveOpening(args.creationPair0PerDetfWad, args.openingPair0PerDetfWad);
+        cfg.openingPair1PerDetfWad = _resolveOpening(args.creationPair1PerDetfWad, args.openingPair1PerDetfWad);
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
         cfg.thresholdMode = args.thresholdMode;
@@ -311,6 +315,18 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
         cfg.hookMineNonce = mineNonce;
         cfg.creator = args.creator;
+        _storeChildTokenMetadata(args);
+    }
+
+    /// @dev Fresh stack frame: four string args overflow initAccount (legacy codegen, no viaIR).
+    function _storeChildTokenMetadata(PkgArgs memory args) private {
+        Repo._setChildTokenMetadata(args.claimName, args.claimSymbol, args.bondName, args.bondSymbol);
+    }
+
+    /// @dev PRD N6/N7: opening 0 → creation. Creation 0 reverts InvalidCreationRate.
+    function _resolveOpening(uint256 creation_, uint256 opening_) internal pure returns (uint256) {
+        if (creation_ == 0) revert InvalidCreationRate();
+        return opening_ == 0 ? creation_ : opening_;
     }
 
     function _resolvePairBinding(uint8 detfIdx_)
@@ -436,6 +452,8 @@ contract UniswapV4StandardExchangeOrbitalDETDFPkg is IUniswapV4StandardExchangeO
                 feeRecipientNftId: 0,
                 creationPair0PerDetfWad: cfg.creationPair0PerDetfWad,
                 creationPair1PerDetfWad: cfg.creationPair1PerDetfWad,
+                openingPair0PerDetfWad: cfg.openingPair0PerDetfWad,
+                openingPair1PerDetfWad: cfg.openingPair1PerDetfWad,
                 bondNftVaultPkg: address(BOND_NFT_VAULT_PKG),
                 rebasingClaimTokenPkg: address(REBASING_CLAIM_TOKEN_PKG),
                 creator: cfg.creator

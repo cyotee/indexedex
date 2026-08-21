@@ -175,6 +175,18 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFInfoTarget is
         }
     }
 
+    function openingPairPerDetfWad(uint256 productIndex) external view returns (uint256) {
+        return Repo._layoutStruct().openingPairPerDetfWad[productIndex];
+    }
+
+    function openingPairPerDetfWads() external view returns (uint256[] memory out_) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        out_ = new uint256[](s.m);
+        for (uint8 i; i < s.m; ++i) {
+            out_[i] = s.openingPairPerDetfWad[i];
+        }
+    }
+
     function lastExpansionTimestamp() external view returns (uint256) {
         return Repo._layoutStruct().lastExpansionTimestamp;
     }

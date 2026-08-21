@@ -240,7 +240,13 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
 
         vm.startPrank(owner);
@@ -310,7 +316,13 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -340,7 +352,13 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -369,7 +387,13 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
         expansionClosureRatePerSecond: 0,
         expansionCatchUpMaxSeconds: 0,
         expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(
@@ -634,7 +658,13 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_BalancerV3Stan
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         detf_ = indexedexManager.deployVault(

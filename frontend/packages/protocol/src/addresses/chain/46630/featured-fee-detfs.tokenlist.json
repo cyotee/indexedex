@@ -1,7 +1,1 @@
-{
-  "name": "IndexedEx Robinhood Testnet Featured Fee DETFs",
-  "timestamp": "0",
-  "version": { "major": 1, "minor": 0, "patch": 0 },
-  "keywords": ["indexedex", "detf"],
-  "tokens": []
-}
+{"name":"IndexedEx Robinhood Testnet Featured Fee DETFs","timestamp":"0","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","46630"],"tokens":[{"chainId":46630,"address":"0x956d07f06D4969ce42Dec94A28649D4e81C5E1FC","name":"Test DETF CHIR Single","symbol":"TTCHIR","decimals":18,"tags":["vault","detf","fee"]}]}

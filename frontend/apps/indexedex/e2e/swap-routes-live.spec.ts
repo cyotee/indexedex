@@ -17,7 +17,7 @@ import { ensureWeth, erc20Balance, isBalancerPoolInitialized } from './helpers/r
  * E-DEP: Earn deposit panel (shares mint)
  * B-BAL: batch single-step surface with pool + CHIR
  */
-test.describe('Live swap routes (Anvil)', () => {
+test.describe.skip('Live swap routes (Anvil; archived Balancer swap)', () => {
   test.setTimeout(180_000)
 
   test.beforeEach(async ({ walletPage }) => {

@@ -102,7 +102,13 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         vm.expectRevert(

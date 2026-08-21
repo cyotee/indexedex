@@ -15,6 +15,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -37,7 +38,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 
 /// @title UniswapV4SingleStandardExchangeDETFBondingTarget
-/// @notice Bond with pair/share/SE token. First bond bootstraps at creation rate (permissionless).
+/// @notice Bond with pair/share/SE token. First bond bootstraps at opening (permissionless).
 /// @dev Live bonds: no synthetic gate; realize expansion then reward update.
 abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
     UniswapV4SingleStandardExchangeDETFCommon,
@@ -66,7 +67,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         }
 
         uint256 pairAmount_ = _settleToPair(tokenIn_, amountIn_, pretransferred_, deadline_);
-        // D24 unboosted join `G`. Empty book uses creationPairPerDetfWad. L1 free U=G then D3+D4 pot.
+        // D24 unboosted join `G`. Empty book uses openingPairPerDetfWad. L1 free U=G then D3+D4 pot.
         uint256 detfForPool_ = _quoteBondJoinDetf(pairAmount_);
         if (detfForPool_ == 0) revert Repo.FirstBondBelowMinimumLiquidity();
         MintSplit memory split_ = _splitBondDetf(detfForPool_);
@@ -461,6 +462,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         return Repo._layoutStruct().creationPairPerDetfWad;
     }
 
+    function openingPairPerDetfWad() external view returns (uint256) {
+        return Repo._layoutStruct().openingPairPerDetfWad;
+    }
+
     function lastExpansionTimestamp() external view returns (uint256) {
         return Repo._layoutStruct().lastExpansionTimestamp;
     }
@@ -521,8 +526,8 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         address detf_ = address(this);
         IDETFNFTVault bondVault_ = IDETFNFTVault(
             IDetfSelfNftInventoryDFPkg(s.bondNftVaultPkg).deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                DETFChildTokenMetadata.resolveBondName(s.bondName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveBondSymbol(s.bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
                 IERC20(s.reserveHook),
                 IERC20(detf_),
@@ -556,11 +561,25 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         address detf_ = address(this);
         IRebasingClaimToken claimToken_ = IRebasingClaimToken(
             IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg).deployToken(
-                IDetf(detf_), s.bondNftVault, s.pairToken, s.detfNftId, detf_
+                IDetf(detf_),
+                s.bondNftVault,
+                s.pairToken,
+                s.detfNftId,
+                detf_,
+                DETFChildTokenMetadata.resolveClaimName(s.claimName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveClaimSymbol(s.claimSymbol, ERC20Repo._symbol())
             )
         );
         Repo._setClaim(claimToken_);
         emit ReserveClaimWired(s.reserveHook, address(claimToken_));
         return address(claimToken_);
+    }
+
+    /// @inheritdoc IUniswapV4SingleStandardExchangeDETF
+    function previewClaimLiquidity(uint256 lpAmount_) public view returns (uint256 pairOut_) {
+        if (lpAmount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (s.reserveHook == address(0) || address(s.pairToken) == address(0)) return 0;
+        return IHook(s.reserveHook).previewWithdrawSingle(lpAmount_, address(s.pairToken));
     }
 }

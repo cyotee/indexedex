@@ -22,6 +22,7 @@ contract UniswapV4SingleStandardExchangeDETF_DeployTest is TestBase_UniswapV4Sin
         assertTrue(detfInfo.reserveHook() != address(0));
         assertTrue(detfInfo.bondNftVault() != address(0));
         assertEq(detfInfo.creationPairPerDetfWad(), DEFAULT_CREATION_PAIR_PER_DETF);
+        assertEq(detfInfo.openingPairPerDetfWad(), DEFAULT_CREATION_PAIR_PER_DETF);
         assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy));
         assertEq(detfInfo.mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD);
         assertEq(detfInfo.burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD);

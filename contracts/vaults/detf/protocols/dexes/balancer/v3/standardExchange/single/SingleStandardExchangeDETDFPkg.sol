@@ -51,6 +51,7 @@ import {
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
@@ -115,6 +116,12 @@ interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVa
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -144,6 +151,12 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     IFacet immutable ERC20_FACET;
@@ -324,6 +337,12 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
         cfg.expansionCatchUpCapBps = expCapBps_;
         cfg.creator = args.creator;
+        cfg.claimName = args.claimName;
+        cfg.claimSymbol = args.claimSymbol;
+        cfg.bondName = args.bondName;
+        cfg.bondSymbol = args.bondSymbol;
+        cfg.reserveName = args.reserveName;
+        cfg.reserveSymbol = args.reserveSymbol;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -362,7 +381,13 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         address detf_ = address(this);
         claimToken_ = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IDetf(detf_), bondVault_, cfg.rateTarget, detfNftId_, detf_
+                IDetf(detf_),
+                bondVault_,
+                cfg.rateTarget,
+                detfNftId_,
+                detf_,
+                DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
         );
         if (address(claimToken_) == address(0)) {
@@ -440,8 +465,8 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         PoolRoleAccounts memory roles_;
         // WeightedPool min swap fee is 0.001e16; use 0.3% like dual-liquidity reserves.
         pool_ = WEIGHTED_POOL_FACTORY.create(
-            string(abi.encodePacked(ERC20Repo._name(), " Reserve")),
-            string(abi.encodePacked(ERC20Repo._symbol(), "-R")),
+            DETFChildTokenMetadata.resolveReserveName(_deployConfig().reserveName, ERC20Repo._name()),
+            DETFChildTokenMetadata.resolveReserveSymbol(_deployConfig().reserveSymbol, ERC20Repo._symbol()),
             tokens_,
             weights_,
             roles_,
@@ -457,8 +482,8 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         address detf_ = address(this);
         bondVault_ = IDETFNFTVault(
             BOND_NFT_VAULT_PKG.deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
                 IERC20(reservePool_),
                 IERC20(detf_),

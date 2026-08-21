@@ -351,14 +351,14 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         split_.feeToDetf = 0;
     }
 
-    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book uses creation rate.
+    /// @notice Unboosted DETF self-leg for a bond join (D24). Empty book uses resolved opening.
     function _quoteBondJoinDetf(uint256 pairAmount_) internal view returns (uint256 detfOut_) {
         if (pairAmount_ == 0) return 0;
         Repo.Storage storage s = Repo._layoutStruct();
-        uint256 creation_ = s.creationPairPerDetfWad;
+        uint256 opening_ = s.openingPairPerDetfWad;
         uint256 pairWad_ = _toWad(pairAmount_, _pairDecimals());
         if (!s.isReserveLive || !_hookIsLive()) {
-            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, opening_);
             return detfOut_ == 0 ? pairAmount_ : detfOut_;
         }
         IHook hook_ = IHook(s.reserveHook);
@@ -367,12 +367,12 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
             ? hook_.reserveCurrency0()
             : hook_.reserveCurrency1();
         if (rawReserve_ == 0 || pairReserve_ == 0) {
-            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, opening_);
             return detfOut_ == 0 ? pairAmount_ : detfOut_;
         }
         detfOut_ = pairAmount_ * rawReserve_ / pairReserve_;
         if (detfOut_ == 0) {
-            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, creation_);
+            detfOut_ = Math.mulDiv(pairWad_, ONE_WAD, s.creationPairPerDetfWad);
         }
     }
 

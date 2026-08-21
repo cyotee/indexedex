@@ -47,12 +47,16 @@ interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
         IDetf detf;
         /// @notice The Protocol NFT Vault contract
         IDETFNFTVault nftVault;
-        /// @notice The WETH token
+        /// @notice Settlement token for zapout quotes (pair / rateAsset as wired by the DETF)
         IERC20 rateAsset;
         /// @notice The protocol-owned NFT token ID
         uint256 detfNFTId;
         /// @notice Owner address (typically the DETF contract)
         address owner;
+        /// @notice ERC-20 name. Empty → DETF name + " Claim", else "RebasingClaim".
+        string name;
+        /// @notice ERC-20 symbol. Empty → DETF symbol + "IR", else "RebasingClaim".
+        string symbol;
         /// @notice Optional salt for deterministic deployment
         bytes32 optionalSalt;
     }
@@ -63,6 +67,16 @@ interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
         IERC20 rateAsset,
         uint256 detfNFTId,
         address owner
+    ) external returns (address tokenAddress);
+
+    function deployToken(
+        IDetf detf,
+        IDETFNFTVault nftVault,
+        IERC20 rateAsset,
+        uint256 detfNFTId,
+        address owner,
+        string memory name,
+        string memory symbol
     ) external returns (address tokenAddress);
 }
 
@@ -95,6 +109,20 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
         uint256 detfNFTId,
         address owner
     ) external returns (address tokenAddress) {
+        (string memory name_, string memory symbol_) = _deriveClaimMetadata(detf);
+        return deployToken(detf, nftVault, rateAsset, detfNFTId, owner, name_, symbol_);
+    }
+
+    function deployToken(
+        IDetf detf,
+        IDETFNFTVault nftVault,
+        IERC20 rateAsset,
+        uint256 detfNFTId,
+        address owner,
+        string memory name,
+        string memory symbol
+    ) public returns (address tokenAddress) {
+        (string memory name_, string memory symbol_) = _resolveNameSymbol(detf, name, symbol);
         return address(
             DIAMOND_FACTORY.deploy(
                 this,
@@ -105,6 +133,8 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
                         rateAsset: rateAsset,
                         detfNFTId: detfNFTId,
                         owner: owner,
+                        name: name_,
+                        symbol: symbol_,
                         optionalSalt: abi.encode(address(detf))._hash()
                     })
                 )
@@ -190,11 +220,10 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
         // Initialize ownership (DETF is the owner)
         MultiStepOwnableRepo._initialize(args.owner, 1 days);
 
-        // Initialize ERC20 metadata
-        ERC20Repo._initialize("RebasingClaim", "RebasingClaim", 18);
-
-        // Initialize EIP712
-        EIP712Repo._initialize("RebasingClaim", "1");
+        string memory name_ = bytes(args.name).length == 0 ? "RebasingClaim" : args.name;
+        string memory symbol_ = bytes(args.symbol).length == 0 ? "RebasingClaim" : args.symbol;
+        ERC20Repo._initialize(name_, symbol_, 18);
+        EIP712Repo._initialize(name_, "1");
 
         // Initialize rebasing claim token storage
         RebasingClaimTokenRepo._initialize(args.detf, args.nftVault, args.rateAsset, args.detfNFTId);
@@ -202,5 +231,42 @@ contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
 
     function postDeploy(address) public pure returns (bool) {
         return true;
+    }
+
+    function _deriveClaimMetadata(IDetf detf)
+        private
+        view
+        returns (string memory name_, string memory symbol_)
+    {
+        return _resolveNameSymbol(detf, "", "");
+    }
+
+    function _resolveNameSymbol(IDetf detf, string memory name_, string memory symbol_)
+        private
+        view
+        returns (string memory resolvedName_, string memory resolvedSymbol_)
+    {
+        resolvedName_ = bytes(name_).length == 0 ? _tryDetfClaimName(detf) : name_;
+        resolvedSymbol_ = bytes(symbol_).length == 0 ? _tryDetfClaimSymbol(detf) : symbol_;
+    }
+
+    function _tryDetfClaimName(IDetf detf) private view returns (string memory) {
+        if (address(detf).code.length == 0) return "RebasingClaim";
+        try IERC20Metadata(address(detf)).name() returns (string memory n) {
+            if (bytes(n).length == 0) return "RebasingClaim";
+            return string.concat(n, " Claim");
+        } catch {
+            return "RebasingClaim";
+        }
+    }
+
+    function _tryDetfClaimSymbol(IDetf detf) private view returns (string memory) {
+        if (address(detf).code.length == 0) return "RebasingClaim";
+        try IERC20Metadata(address(detf)).symbol() returns (string memory s) {
+            if (bytes(s).length == 0) return "RebasingClaim";
+            return string.concat(s, "IR");
+        } catch {
+            return "RebasingClaim";
+        }
     }
 }

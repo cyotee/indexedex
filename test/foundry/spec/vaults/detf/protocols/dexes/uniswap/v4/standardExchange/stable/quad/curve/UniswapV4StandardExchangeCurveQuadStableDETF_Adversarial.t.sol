@@ -160,6 +160,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
             vaultShares: shares_,
             rateProviders: rps_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](3),
             baseAmp: DEFAULT_BASE_AMP,
             mintThreshold: 0,
             burnThreshold: 0,
@@ -167,7 +168,11 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
 
         hostileDetf = _deployDetfWired(args);

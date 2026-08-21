@@ -7,6 +7,7 @@ const MAINNET_CHAIN_IDS = new Set([
   42161, // Arbitrum
   43114, // Avalanche
   8453, // Base
+  4663, // Robinhood
 ])
 
 export function isTestnetChainId(chainId: number | undefined): boolean {

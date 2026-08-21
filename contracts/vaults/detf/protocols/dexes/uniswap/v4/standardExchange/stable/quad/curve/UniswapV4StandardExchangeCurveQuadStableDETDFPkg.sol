@@ -64,6 +64,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         IERC20[M] vaultShares;
         address[M] rateProviders;
         uint256[M] creationPairPerDetfWad;
+        uint256[M] openingPairPerDetfWad;
         uint8[M] pairBindingIndex;
         uint256 baseAmp;
         uint256 mintThreshold;
@@ -249,6 +250,9 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         ) {
             revert ArrayLengthMismatch();
         }
+        if (args.openingPairPerDetfWad.length != 0 && args.openingPairPerDetfWad.length != M) {
+            revert ArrayLengthMismatch();
+        }
         if (args.baseAmp == 0 || args.baseAmp >= MAX_AMP) revert InvalidBaseAmp();
 
         uint256 seCount_;
@@ -320,6 +324,29 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         cfg.expansionMaxCatchUpEpochs = maxCatch_;
         cfg.hookMineNonce = mineNonce;
         cfg.creator = args.creator;
+        _storeOpenings(cfg, args);
+        _storeChildTokenMetadata(args);
+    }
+
+    /// @dev Fresh stack frame: four string args overflow initAccount (legacy codegen, no viaIR).
+    function _storeChildTokenMetadata(PkgArgs memory args) private {
+        Repo._setChildTokenMetadata(args.claimName, args.claimSymbol, args.bondName, args.bondSymbol);
+    }
+
+    /// @dev Fresh stack: resolve opening 0 → creation per slot (PRD N6/N7/N9).
+    function _storeOpenings(DeployConfig storage cfg, PkgArgs memory args) private {
+        for (uint256 i; i < M; ++i) {
+            cfg.openingPairPerDetfWad[i] = _resolveOpening(
+                args.creationPairPerDetfWad[i],
+                args.openingPairPerDetfWad.length == 0 ? 0 : args.openingPairPerDetfWad[i]
+            );
+        }
+    }
+
+    /// @dev PRD N6/N7: opening 0 → creation. Creation 0 reverts InvalidCreationRate.
+    function _resolveOpening(uint256 creation_, uint256 opening_) internal pure returns (uint256) {
+        if (creation_ == 0) revert InvalidCreationRate();
+        return opening_ == 0 ? creation_ : opening_;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -437,6 +464,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
         IERC20[] memory shares_ = new IERC20[](M);
         address[] memory rps_ = new address[](M);
         uint256[] memory rates_ = new uint256[](M);
+        uint256[] memory openings_ = new uint256[](M);
         uint8[] memory pairBind_ = new uint8[](M);
         for (uint8 i; i < M; ++i) {
             pairs_[i] = cfg.pairTokens[i];
@@ -444,6 +472,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
             shares_[i] = cfg.vaultShares[i];
             rps_[i] = cfg.rateProviders[i];
             rates_[i] = cfg.creationPairPerDetfWad[i];
+            openings_[i] = cfg.openingPairPerDetfWad[i];
             pairBind_[i] = cfg.pairBindingIndex[i];
         }
 
@@ -455,6 +484,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETDFPkg is IUniswapV4StandardE
                 vaultShares: shares_,
                 rateProviders: rps_,
                 creationPairPerDetfWad: rates_,
+                openingPairPerDetfWad: openings_,
                 pairBindingIndex: pairBind_,
                 reserveHook: hook_,
                 poolManager: POOL_MANAGER,

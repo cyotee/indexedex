@@ -22,7 +22,7 @@ import {
 } from "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
 
 /// @title Stage_04_Tokens
-/// @notice 13 Operable ERC-20 stand-ins + minter facade + 1e12 to #0 and #1.
+/// @notice Required `TTRICH` plus mintable stand-ins `TTUSDG` / `TTUSDE` / `TTWETH` + facade + 1e12 to #0 and #1.
 library Stage_04_Tokens {
     using BetterEfficientHashLib for bytes;
 
@@ -32,39 +32,13 @@ library Stage_04_Tokens {
 
         s.ttUSDG = tokenPkg.deployToken("Test Token USDG", "TTUSDG", 18, owner_, _salt("TTUSDG"));
         s.ttUSDE = tokenPkg.deployToken("Test Token USDE", "TTUSDE", 18, owner_, _salt("TTUSDE"));
-        s.ttNVDA = tokenPkg.deployToken("Test Token NVDA", "TTNVDA", 18, owner_, _salt("TTNVDA"));
-        s.ttMSFT = tokenPkg.deployToken("Test Token MSFT", "TTMSFT", 18, owner_, _salt("TTMSFT"));
-        s.ttAAPL = tokenPkg.deployToken("Test Token AAPL", "TTAAPL", 18, owner_, _salt("TTAAPL"));
-        s.ttGOOGL = tokenPkg.deployToken("Test Token GOOGL", "TTGOOGL", 18, owner_, _salt("TTGOOGL"));
-        s.ttAMZN = tokenPkg.deployToken("Test Token AMZN", "TTAMZN", 18, owner_, _salt("TTAMZN"));
-        s.ttMETA = tokenPkg.deployToken("Test Token META", "TTMETA", 18, owner_, _salt("TTMETA"));
-        s.ttTSLA = tokenPkg.deployToken("Test Token TSLA", "TTTSLA", 18, owner_, _salt("TTTSLA"));
-        s.ttSMH = tokenPkg.deployToken("Test Token SMH", "TTSMH", 18, owner_, _salt("TTSMH"));
-        s.ttSPY = tokenPkg.deployToken("Test Token SPY", "TTSPY", 18, owner_, _salt("TTSPY"));
-        s.ttVTI = tokenPkg.deployToken("Test Token VTI", "TTVTI", 18, owner_, _salt("TTVTI"));
-        s.ttQQQ = tokenPkg.deployToken("Test Token QQQ", "TTQQQ", 18, owner_, _salt("TTQQQ"));
+        s.ttWETH = tokenPkg.deployToken("Test Token WETH", "TTWETH", 18, owner_, _salt("TTWETH"));
 
         s.erc20MinterFacade = address(_deployFacade(s));
+        deployAndMintTtrich(s, owner_, uiWallet_);
         _authorizeAndMint(s, s.ttUSDG, owner_, uiWallet_);
         _authorizeAndMint(s, s.ttUSDE, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttNVDA, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttMSFT, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttAAPL, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttGOOGL, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttAMZN, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttMETA, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttTSLA, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttSMH, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttSPY, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttVTI, owner_, uiWallet_);
-        _authorizeAndMint(s, s.ttQQQ, owner_, uiWallet_);
-    }
-
-    function deployAndMintTtrich(LaunchState storage s, address owner_, address uiWallet_) internal {
-        require(s.tokenPkg != address(0), "Stage_04: tokenPkg missing");
-        IERC20MintBurnOwnableOperableDFPkg tokenPkg = IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
-        s.ttRICH = tokenPkg.deployToken("Test Token RICH", "TTRICH", 18, owner_, _salt("TTRICH"));
-        _authorizeAndMint(s, s.ttRICH, owner_, uiWallet_);
+        _authorizeAndMint(s, s.ttWETH, owner_, uiWallet_);
     }
 
     function _deployTokenPkg(LaunchState storage s) private returns (IERC20MintBurnOwnableOperableDFPkg tokenPkg) {
@@ -118,6 +92,26 @@ library Stage_04_Tokens {
         // D33 1e12 exceeds facade maxMint (10e6). Owner mints inventory; facade stays on for /mint.
         IERC20MintBurn(token).mint(owner_, FixtureEconomics.PREMINT);
         IERC20MintBurn(token).mint(uiWallet_, FixtureEconomics.PREMINT);
+    }
+
+    /// @notice Required architecture token. Resume-safe if `TTRICH` is missing from an older 04 artifact.
+    function deployAndMintTtrich(LaunchState storage s, address owner_, address uiWallet_) internal {
+        require(s.tokenPkg != address(0), "Stage_04: tokenPkg missing");
+        require(s.erc20MinterFacade != address(0), "Stage_04: facade missing");
+        if (s.ttRICH != address(0) && s.ttRICH.code.length > 0) return;
+        IERC20MintBurnOwnableOperableDFPkg tokenPkg = IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
+        s.ttRICH = tokenPkg.deployToken("Test Token RICH", "TTRICH", 18, owner_, _salt("TTRICH"));
+        _authorizeAndMint(s, s.ttRICH, owner_, uiWallet_);
+    }
+
+    /// @notice Mintable ETH stand-in. Public RH testnet faucet ETH is not enough to wrap canonical WETH for pool seed.
+    function deployAndMintTtweth(LaunchState storage s, address owner_, address uiWallet_) internal {
+        require(s.tokenPkg != address(0), "Stage_04: tokenPkg missing");
+        require(s.erc20MinterFacade != address(0), "Stage_04: facade missing");
+        if (s.ttWETH != address(0) && s.ttWETH.code.length > 0) return;
+        IERC20MintBurnOwnableOperableDFPkg tokenPkg = IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
+        s.ttWETH = tokenPkg.deployToken("Test Token WETH", "TTWETH", 18, owner_, _salt("TTWETH"));
+        _authorizeAndMint(s, s.ttWETH, owner_, uiWallet_);
     }
 
     function _salt(string memory symbol) private pure returns (bytes32) {

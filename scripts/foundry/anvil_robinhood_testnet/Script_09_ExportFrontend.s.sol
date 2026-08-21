@@ -5,6 +5,7 @@ import {LaunchIo} from "./LaunchIo.sol";
 import {LaunchState} from "./LaunchState.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_TESTNET.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 
 /// @title Script_09_ExportFrontend
 /// @notice Writes chain/46630 platform + tokenlists. No on-chain txs.
@@ -22,9 +23,12 @@ contract Script_09_ExportFrontend is LaunchIo {
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
         require(_loadLeafPools(s), "run Script_05 first");
-        require(_loadLeafDetfs(s), "run Script_06 first");
-        require(_loadNestDetfs(s), "run Script_07 first");
-        require(_loadFeeSink(s), "run Script_08 first");
+        require(_loadLeafDetfs(s), "run Script_06 first (TTCHIR required)");
+        _requireChirArchitecture(s);
+        if (!_hasCode(s.ttRichir) && _hasCode(s.ttChir)) {
+            s.ttRichir = address(IDetf(s.ttChir).rebasingClaimToken());
+        }
+        require(_hasCode(s.ttRichir), "TTRICHIR required (wire TTCHIR claim)");
         _logHeader("Group 09: Frontend export (46630)");
 
         vm.createDir(FRONTEND_DIR, true);
@@ -57,32 +61,20 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("p", "diamondPackageFactory", address(s.diamondPackageFactory));
         json = vm.serializeAddress("p", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("p", "TTUSDE", s.ttUSDE);
-        json = vm.serializeAddress("p", "TTNVDA", s.ttNVDA);
-        json = vm.serializeAddress("p", "TTMSFT", s.ttMSFT);
-        json = vm.serializeAddress("p", "TTAAPL", s.ttAAPL);
-        json = vm.serializeAddress("p", "TTGOOGL", s.ttGOOGL);
-        json = vm.serializeAddress("p", "TTAMZN", s.ttAMZN);
-        json = vm.serializeAddress("p", "TTMETA", s.ttMETA);
-        json = vm.serializeAddress("p", "TTTSLA", s.ttTSLA);
-        json = vm.serializeAddress("p", "TTSMH", s.ttSMH);
-        json = vm.serializeAddress("p", "TTSPY", s.ttSPY);
-        json = vm.serializeAddress("p", "TTVTI", s.ttVTI);
-        json = vm.serializeAddress("p", "TTQQQ", s.ttQQQ);
+        json = vm.serializeAddress("p", "TTWETH", s.ttWETH);
         json = vm.serializeAddress("p", "TTRICH", s.ttRICH);
-        json = vm.serializeAddress("p", "seNvdaUsdg", s.seNvdaUsdg);
-        json = vm.serializeAddress("p", "seSpyUsdg", s.seSpyUsdg);
+        json = vm.serializeAddress("p", "TTCHIR", s.ttChir);
+        json = vm.serializeAddress("p", "TTRICHIR", s.ttRichir);
+        json = vm.serializeAddress("p", "rebasingClaimToken", s.ttRichir);
         json = vm.serializeAddress("p", "seUsdeWeth", s.seUsdeWeth);
         json = vm.serializeAddress("p", "seUsdgWeth", s.seUsdgWeth);
         json = vm.serializeAddress("p", "seUsdgUsde", s.seUsdgUsde);
-        json = vm.serializeAddress("p", "seIdxUsdg", s.seIdxUsdg);
         json = vm.serializeAddress("p", "seRichWeth", s.seRichWeth);
-        json = vm.serializeAddress("p", "TTNVDA-S", s.ttNvdaS);
-        json = vm.serializeAddress("p", "TTNVDA-SMH-O", s.ttNvdaSmhO);
-        json = vm.serializeAddress("p", "TTIDX-Q", s.ttIdxQ);
-        json = vm.serializeAddress("p", "TTBETA-O", s.ttBetaO);
-        json = vm.serializeAddress("p", "TTIDX-WRAP", s.ttIdxWrap);
         json = vm.serializeAddress("p", "TTDOL-Q", s.ttDolQ);
-        json = vm.serializeAddress("p", "TTRICH-S", s.ttRichS);
+        json = vm.serializeAddress("p", "$$DETF", s.ttDolQ);
+        if (_hasCode(s.ttDolQ)) {
+            json = vm.serializeAddress("p", "I$$DETF", address(IDetf(s.ttDolQ).rebasingClaimToken()));
+        }
         json = vm.serializeAddress("p", "deployer", deployer);
         json = vm.serializeAddress("p", "uiWallet", uiWallet);
         json = vm.serializeString("p", "networkProfile", _networkProfile());
@@ -97,27 +89,7 @@ contract Script_09_ExportFrontend is LaunchIo {
             ",",
             _tok("Test Token USDE", "TTUSDE", s.ttUSDE, '["token","testToken"]'),
             ",",
-            _tok("Test Token NVDA", "TTNVDA", s.ttNVDA, '["token","testToken"]'),
-            ",",
-            _tok("Test Token MSFT", "TTMSFT", s.ttMSFT, '["token","testToken"]'),
-            ",",
-            _tok("Test Token AAPL", "TTAAPL", s.ttAAPL, '["token","testToken"]'),
-            ",",
-            _tok("Test Token GOOGL", "TTGOOGL", s.ttGOOGL, '["token","testToken"]'),
-            ",",
-            _tok("Test Token AMZN", "TTAMZN", s.ttAMZN, '["token","testToken"]'),
-            ",",
-            _tok("Test Token META", "TTMETA", s.ttMETA, '["token","testToken"]'),
-            ",",
-            _tok("Test Token TSLA", "TTTSLA", s.ttTSLA, '["token","testToken"]'),
-            ",",
-            _tok("Test Token SMH", "TTSMH", s.ttSMH, '["token","testToken"]'),
-            ",",
-            _tok("Test Token SPY", "TTSPY", s.ttSPY, '["token","testToken"]'),
-            ",",
-            _tok("Test Token VTI", "TTVTI", s.ttVTI, '["token","testToken"]'),
-            ",",
-            _tok("Test Token QQQ", "TTQQQ", s.ttQQQ, '["token","testToken"]'),
+            _tok("Test Token WETH", "TTWETH", s.ttWETH, '["token","testToken"]'),
             ",",
             _tok("Test Token RICH", "TTRICH", s.ttRICH, '["token","testToken"]'),
             ",",
@@ -133,51 +105,46 @@ contract Script_09_ExportFrontend is LaunchIo {
             ",",
             _tok("Faucet AMD", "AMD", ROBINHOOD_TESTNET.FAUCET_AMD, '["rh-faucet"]')
         );
+        if (_hasCode(s.ttDolQ)) {
+            address dolQClaim = address(IDetf(s.ttDolQ).rebasingClaimToken());
+            if (_hasCode(dolQClaim)) {
+                body = string.concat(
+                    body,
+                    ",",
+                    _tok("Infinite Double Dollar", "I$$DETF", dolQClaim, '["token","claim"]')
+                );
+            }
+        }
         vm.writeFile(_frontendPath("base-tokens.tokenlist.json"), _list("IndexedEx Robinhood Testnet Base Tokens", body));
     }
 
     function _writeStrategyVaults() internal {
         string memory body = string.concat(
-            _tok("Test SE TTNVDA/TTUSDG", "SE-TTNVDA-TTUSDG", s.seNvdaUsdg, '["vault","se"]'),
+            _tok("Test SE TTUSDE/TTWETH", "SE-TTUSDE-TTWETH", s.seUsdeWeth, '["vault","se","strat"]'),
             ",",
-            _tok("Test SE TTSPY/TTUSDG", "SE-TTSPY-TTUSDG", s.seSpyUsdg, '["vault","se"]'),
+            _tok("Test SE TTUSDG/TTWETH", "SE-TTUSDG-TTWETH", s.seUsdgWeth, '["vault","se","strat"]'),
             ",",
-            _tok("Test SE TTUSDE/WETH", "SE-TTUSDE-WETH", s.seUsdeWeth, '["vault","se"]'),
+            _tok("Test SE TTUSDG/TTUSDE", "SE-TTUSDG-TTUSDE", s.seUsdgUsde, '["vault","se","strat"]'),
             ",",
-            _tok("Test SE TTUSDG/WETH", "SE-TTUSDG-WETH", s.seUsdgWeth, '["vault","se"]'),
-            ",",
-            _tok("Test SE TTUSDG/TTUSDE", "SE-TTUSDG-TTUSDE", s.seUsdgUsde, '["vault","se"]'),
-            ",",
-            _tok("Test SE TTIDX-Q/TTUSDG", "SE-TTIDX-Q-TTUSDG", s.seIdxUsdg, '["vault","se"]'),
-            ",",
-            _tok("Test SE TTRICH/WETH", "SE-TTRICH-WETH", s.seRichWeth, '["vault","se"]')
+            _tok("Test SE TTRICH/TTWETH", "SE-TTRICH-TTWETH", s.seRichWeth, '["vault","se","strat"]')
         );
         vm.writeFile(_frontendPath("strategy-vaults.tokenlist.json"), _list("IndexedEx Robinhood Testnet Strategy Vaults", body));
     }
 
     function _writeProtocolDetfs() internal {
         string memory body = string.concat(
-            _tok("Test DETF NVDA Single", "TTNVDA-S", s.ttNvdaS, '["vault","detf"]'),
+            _tok("Test DETF CHIR Single", "TTCHIR", s.ttChir, '["vault","detf"]'),
             ",",
-            _tok("Test DETF NVDA SMH Orbital", "TTNVDA-SMH-O", s.ttNvdaSmhO, '["vault","detf"]'),
-            ",",
-            _tok("Test DETF Index Quad", "TTIDX-Q", s.ttIdxQ, '["vault","detf"]'),
-            ",",
-            _tok("Test DETF Beta Nest", "TTBETA-O", s.ttBetaO, '["vault","detf"]'),
-            ",",
-            _tok("Test DETF Index Wrap", "TTIDX-WRAP", s.ttIdxWrap, '["vault","detf"]'),
-            ",",
-            _tok("Test DETF Dollar Quad", "TTDOL-Q", s.ttDolQ, '["vault","detf"]'),
-            ",",
-            _tok("Test DETF RICH Single", "TTRICH-S", s.ttRichS, '["vault","detf"]')
+            _tok("Double Dollar DETF", "$$DETF", s.ttDolQ, '["vault","detf"]')
         );
         vm.writeFile(_frontendPath("protocol-detfs.tokenlist.json"), _list("IndexedEx Robinhood Testnet Protocol DETFs", body));
     }
 
     function _writeFeaturedFee() internal {
+        string memory body = _tok("Test DETF CHIR Single", "TTCHIR", s.ttChir, '["vault","detf","fee"]');
         vm.writeFile(
             _frontendPath("featured-fee-detfs.tokenlist.json"),
-            '{"name":"IndexedEx Robinhood Testnet Featured Fee DETFs","timestamp":"0","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","detf"],"tokens":[]}'
+            _list("IndexedEx Robinhood Testnet Featured Fee DETFs", body)
         );
     }
 
@@ -185,8 +152,11 @@ contract Script_09_ExportFrontend is LaunchIo {
         string memory json;
         json = vm.serializeUint("x", "chainId", uint256(46630));
         json = vm.serializeAddress("x", "erc20MinterFacade", s.erc20MinterFacade);
-        json = vm.serializeAddress("x", "TTNVDA-S", s.ttNvdaS);
-        json = vm.serializeAddress("x", "TTRICH-S", s.ttRichS);
+        json = vm.serializeAddress("x", "TTRICH", s.ttRICH);
+        json = vm.serializeAddress("x", "TTWETH", s.ttWETH);
+        json = vm.serializeAddress("x", "TTCHIR", s.ttChir);
+        json = vm.serializeAddress("x", "TTRICHIR", s.ttRichir);
+        json = vm.serializeAddress("x", "TTDOL-Q", s.ttDolQ);
         json = vm.serializeString("x", "frontendDir", FRONTEND_DIR);
         _writeJson(json, FILE_EXPORT);
     }

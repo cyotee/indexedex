@@ -1,16 +1,1 @@
-{
-  "name": "IndexedEx Robinhood Testnet Strategy Vaults",
-  "timestamp": "0",
-  "version": { "major": 1, "minor": 0, "patch": 0 },
-  "keywords": ["indexedex", "46630"],
-  "tokens": [
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000021", "name": "Test SE TTNVDA/TTUSDG", "symbol": "SE-TTNVDA-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000022", "name": "Test SE TTSPY/TTUSDG", "symbol": "SE-TTSPY-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000023", "name": "Test SE TTUSDE/WETH", "symbol": "SE-TTUSDE-WETH", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000024", "name": "Test SE TTUSDG/WETH", "symbol": "SE-TTUSDG-WETH", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000025", "name": "Test SE TTUSDG/TTUSDE", "symbol": "SE-TTUSDG-TTUSDE", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000026", "name": "Test SE TTM7-W/TTUSDG", "symbol": "SE-TTM7-W-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000027", "name": "Test SE TTIDX-Q/TTUSDG", "symbol": "SE-TTIDX-Q-TTUSDG", "decimals": 18, "tags": ["vault", "se"] },
-    { "chainId": 46630, "address": "0x0000000000000000000000000000000000000028", "name": "Test SE TTRICH/WETH", "symbol": "SE-TTRICH-WETH", "decimals": 18, "tags": ["vault", "se"] }
-  ]
-}
+{"name":"IndexedEx Robinhood Testnet Strategy Vaults","timestamp":"0","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","46630"],"tokens":[{"chainId":46630,"address":"0xfb40276683454159A6b1F9aB1f7C2c3355d22EBd","name":"Test SE TTUSDE/TTWETH","symbol":"SE-TTUSDE-TTWETH","decimals":18,"tags":["vault","se","strat"]},{"chainId":46630,"address":"0x54094E08f1eb96C74c9A80A3f2cf6fFaF6720DcC","name":"Test SE TTUSDG/TTWETH","symbol":"SE-TTUSDG-TTWETH","decimals":18,"tags":["vault","se","strat"]},{"chainId":46630,"address":"0x5c07271240B4ddaE69eBCE90c2CD0774a42B781b","name":"Test SE TTUSDG/TTUSDE","symbol":"SE-TTUSDG-TTUSDE","decimals":18,"tags":["vault","se","strat"]},{"chainId":46630,"address":"0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099","name":"Test SE TTRICH/TTWETH","symbol":"SE-TTRICH-TTWETH","decimals":18,"tags":["vault","se","strat"]}]}

@@ -90,6 +90,10 @@ contract MockClaimDetf {
         return amountIn * 1 ether;
     }
 
+    function previewClaimLiquidity(uint256 lpPrincipal) external view returns (uint256) {
+        return lpPrincipal * rateAssetPerExternalShare;
+    }
+
     function claimLiquidity(uint256 lpPrincipal, address recipient) external returns (uint256) {
         if (revertClaimLiquidity) {
             revert("claim-liquidity");
@@ -301,6 +305,21 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
     /*  Positive control                                                      */
     /* ---------------------------------------------------------------------- */
 
+    /// @notice Rebase rate is zapout of protocol originalShares / total claim shares.
+    function test_redemptionRate_followsPreviewClaimLiquidityZapout() public {
+        _mockPosition(10);
+        detf.setClaimLiquidityQuote(2 ether);
+        vm.prank(owner);
+        token.mintFromNFTSale(10, 0, alice);
+
+        uint256 zapout_ = detf.previewClaimLiquidity(10);
+        assertEq(zapout_, 20 ether, "mock zapout");
+        assertEq(token.sharesOf(alice), 10, "full protocol claim shares");
+        assertEq(token.totalSupply(), zapout_, "supply is zapout of protocol NFT LP");
+        assertEq(token.balanceOf(alice), zapout_, "sole holder balance is that zapout");
+        assertEq(token.convertToClaim(10), zapout_, "convertToClaim matches zapout");
+    }
+
     /// @notice Honest !pretransferred redeem succeeds and pays via claimLiquidity.
     function test_I_positive_honestPullRedeem_succeeds() public {
         vm.prank(owner);
@@ -336,6 +355,13 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_VaultComponents {
         vm.mockCall(
             nftVault,
             abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, PROTOCOL_NFT_ID),
+            abi.encode(originalShares_)
+        );
+        // Rate path live-reads 4626 convertToAssets(orig). Empty EOA success + no mock
+        // ABI-decodes as a panic (not caught by try/catch). Identity keeps 1 share = 1 LP.
+        vm.mockCall(
+            nftVault,
+            abi.encodeWithSelector(IDETFNFTVault.convertToAssets.selector),
             abi.encode(originalShares_)
         );
     }

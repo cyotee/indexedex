@@ -1,4 +1,5 @@
 import { execFileSync, spawn } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { rm } from 'node:fs/promises'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
@@ -7,9 +8,22 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Ensure Next runs with frontend/ as cwd even if npm was invoked from repo root.
-const frontendDir = path.resolve(__dirname, '..')
-process.chdir(frontendDir)
+// App root (apps/indexedex). npm workspaces hoist bins to frontend/node_modules.
+const appDir = path.resolve(__dirname, '..')
+const workspaceDir = path.resolve(appDir, '../..')
+process.chdir(appDir)
+
+function resolveBin(name) {
+  const bin = process.platform === 'win32' ? `${name}.cmd` : name
+  const candidates = [
+    path.join(appDir, 'node_modules', '.bin', bin),
+    path.join(workspaceDir, 'node_modules', '.bin', bin),
+  ]
+  const found = candidates.find((candidate) => existsSync(candidate))
+  if (found) return found
+  console.error(`Could not find ${bin}. Tried:\n${candidates.join('\n')}`)
+  process.exit(1)
+}
 
 const [cmd, ...rest] = process.argv.slice(2)
 if (!cmd) {
@@ -64,7 +78,7 @@ for (let i = rest.indexOf('--'); i !== -1; i = rest.indexOf('--')) {
 }
 
 if (shouldClean) {
-  await rm(path.join(frontendDir, '.next'), { recursive: true, force: true })
+  await rm(path.join(appDir, '.next'), { recursive: true, force: true })
 }
 
 async function killPortListeners(port) {
@@ -119,11 +133,20 @@ if (typeof killPort === 'number') {
   }
 }
 
-const nextBin = path.join(frontendDir, 'node_modules', '.bin', process.platform === 'win32' ? 'next.cmd' : 'next')
+const nextBin = resolveBin('next')
 
 const child = spawn(nextBin, [cmd, ...rest], {
   stdio: 'inherit',
-  env: process.env,
+  env: {
+    ...process.env,
+    // Skip Next's registry.yarnpkg.com version ping (10s timeout + stack when offline).
+    NEXT_TELEMETRY_DISABLED: process.env.NEXT_TELEMETRY_DISABLED ?? '1',
+  },
+})
+
+child.on('error', (err) => {
+  console.error(err)
+  process.exit(1)
 })
 
 child.on('exit', (code) => {

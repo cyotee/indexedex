@@ -24,6 +24,9 @@ export function Footer() {
             <Link href="/explore" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Explore
             </Link>
+            <Link href="/insights" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              DETFs
+            </Link>
             <Link href="/create" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Create
             </Link>

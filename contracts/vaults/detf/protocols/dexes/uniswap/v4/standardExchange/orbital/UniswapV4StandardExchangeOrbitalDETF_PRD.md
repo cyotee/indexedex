@@ -172,7 +172,8 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Bond NFT | `bondNft` | Shared Uni V4 package; holds user `reserveLp` while open |
 | Protocol principal | protocol-owned `reserveLp` | Held by **shared** rebasing package |
 | Rebasing claim | `rebasingClaimToken` | ERC-20 claim on protocol `reserveLp` |
-| Creation rates | `creationPair0PerDetfWad`, `creationPair1PerDetfWad` | Deploy-time empty-book join rates (WAD) for each external pair vs DETF; **both must be > 0** |
+| Creation rates (peg) | `creationPair0PerDetfWad`, `creationPair1PerDetfWad` | Pair per DETF when synthetic = 1e18. Policy mint/burn and expansion use this only. **Both must be > 0** |
+| Opening | `openingPair0PerDetfWad`, `openingPair1PerDetfWad` | Pair per DETF on first bond. `0` → that leg’s creation. |
 | Effective reserves | hook `effectiveReserve(i)` | Sphere inputs per binding index |
 | Bond capital metadata | per-`tokenId` capital pair set | External pair address(es) funded at open (after SE settle); drives maturity close mode |
 
@@ -266,13 +267,13 @@ First bond is **synthetically ungated** (Policy and Open).
 **Requires both external pair legs** with non-zero capital after settlement (pair tokens, vault shares, and/or SE-accepted tokens that resolve to **both** `pairToken0` and `pairToken1`). Single-pair first bond **reverts**.
 
 1. User supplies capital resolving to **both** pair-notionals \(C_0, C_1 > 0\) in WAD.  
-2. **Mint DETF for join** using **creation rates only** (not market sphere mid):
+2. **Mint DETF for join** using **opening** (not creation, not market sphere mid):
 
 ```text
-// WAD space — join DETF sized so empty multipath ratio matches creation
-detfFrom0 = pair0NotionalWad * 1e18 / creationPair0PerDetfWad
-detfFrom1 = pair1NotionalWad * 1e18 / creationPair1PerDetfWad
-// Common join size: min of implied DETF amounts; excess pair refunded by hook clamp
+// WAD space — join DETF sized so empty multipath matches opening (0 → creation)
+detfFrom0 = pair0NotionalWad * 1e18 / openingPair0PerDetfWad
+detfFrom1 = pair1NotionalWad * 1e18 / openingPair1PerDetfWad
+// Common join size: min of implied DETF amounts
 detfForJoinWad = min(detfFrom0, detfFrom1)
 require detfForJoinWad > 0
 ```

@@ -75,7 +75,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETFInfoFacet is
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](24);
+        f = new bytes4[](26);
         f[0] = IUniswapV4StandardExchangeCurveQuadStableDETF.reservePool.selector;
         f[1] = IUniswapV4StandardExchangeCurveQuadStableDETF.syntheticVs.selector;
         f[2] = IUniswapV4StandardExchangeCurveQuadStableDETF.syntheticSpotVs.selector;
@@ -91,14 +91,16 @@ contract UniswapV4StandardExchangeCurveQuadStableDETFInfoFacet is
         f[12] = IUniswapV4StandardExchangeCurveQuadStableDETF.feeRecipientNftId.selector;
         f[13] = IUniswapV4StandardExchangeCurveQuadStableDETF.creationPairPerDetfWad.selector;
         f[14] = IUniswapV4StandardExchangeCurveQuadStableDETF.creationPairPerDetfWads.selector;
-        f[15] = IUniswapV4StandardExchangeCurveQuadStableDETF.lastExpansionTimestamp.selector;
-        f[16] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionEpochLength.selector;
-        f[17] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionClosureRatePerYearWad.selector;
-        f[18] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionMaxCatchUpEpochs.selector;
-        f[19] = IUniswapV4StandardExchangeCurveQuadStableDETF.acceptedBondTokens.selector;
-        f[20] = IUniswapV4StandardExchangeCurveQuadStableDETF.protocolLp.selector;
-        f[21] = IUniswapV4StandardExchangeCurveQuadStableDETF.userBondedLp.selector;
-        f[22] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveHookFinalized.selector;
-        f[23] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveWired.selector;
+        f[15] = IUniswapV4StandardExchangeCurveQuadStableDETF.openingPairPerDetfWad.selector;
+        f[16] = IUniswapV4StandardExchangeCurveQuadStableDETF.openingPairPerDetfWads.selector;
+        f[17] = IUniswapV4StandardExchangeCurveQuadStableDETF.lastExpansionTimestamp.selector;
+        f[18] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionEpochLength.selector;
+        f[19] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionClosureRatePerYearWad.selector;
+        f[20] = IUniswapV4StandardExchangeCurveQuadStableDETF.expansionMaxCatchUpEpochs.selector;
+        f[21] = IUniswapV4StandardExchangeCurveQuadStableDETF.acceptedBondTokens.selector;
+        f[22] = IUniswapV4StandardExchangeCurveQuadStableDETF.protocolLp.selector;
+        f[23] = IUniswapV4StandardExchangeCurveQuadStableDETF.userBondedLp.selector;
+        f[24] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveHookFinalized.selector;
+        f[25] = IUniswapV4StandardExchangeCurveQuadStableDETF.isReserveWired.selector;
     }
 }

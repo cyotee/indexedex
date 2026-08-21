@@ -120,6 +120,14 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFInfoTarget is UniswapV4Sta
         return Repo._layoutStruct().creationPair1PerDetfWad;
     }
 
+    function openingPair0PerDetfWad() external view returns (uint256) {
+        return Repo._layoutStruct().openingPair0PerDetfWad;
+    }
+
+    function openingPair1PerDetfWad() external view returns (uint256) {
+        return Repo._layoutStruct().openingPair1PerDetfWad;
+    }
+
     function lastExpansionTimestamp() external view returns (uint256) {
         return Repo._layoutStruct().lastExpansionTimestamp;
     }

@@ -50,16 +50,18 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
 
     /**
      * @notice Returns the total underlying shares.
-     * @dev totalSupply() is computed as totalShares * redemptionRate.
+     * @dev Shares are constant between mint/burn. `totalSupply()` is the zapout of
+     *      protocol-owned reserve LP (bond NFT), not `totalShares * 1`.
      * @return shares Total underlying shares
      */
     function totalShares() external view returns (uint256 shares);
 
     /**
-    * @notice Returns the current redemption rate (configured common-token value per share).
-     * @dev Calculated by simulating full unwinding:
-     *      reserve LP -> vault tokens -> Aerodrome LP -> rateAsset
-     * @return rate rateAsset value per share (1e18 precision)
+     * @notice Returns the current redemption rate (zapout of reserve LP per claim share).
+     * @dev Quote is `previewClaimLiquidity` of protocol-owned originalShares (token id 0),
+     *      i.e. single-sided zapout of that LP from the reserve pool. `balanceOf` is
+     *      the holder's pro-rata slice of that zapout.
+     * @return rate settlement-token value per share (1e18 precision)
      */
     function redemptionRate() external view returns (uint256 rate);
 

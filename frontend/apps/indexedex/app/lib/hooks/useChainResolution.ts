@@ -12,6 +12,7 @@ import { useBrowserChainId, useConnectedWalletChainId } from '@indexedex/protoco
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
+import { isLocalRobinhoodTestnet, LOCAL_RPC_URL } from '../localRpc'
 
 export type ChainSources = {
   account: number | undefined
@@ -92,7 +93,10 @@ export function useChainResolution(fallbackChainId: number = CHAIN_ID_SEPOLIA): 
     address,
     environment,
     selectedChainId,
-    targetChain: resolveAppChain(dataChainId),
+    targetChain: resolveAppChain(
+      dataChainId,
+      isLocalRobinhoodTestnet() ? LOCAL_RPC_URL : undefined,
+    ),
     chainSources,
   }
 }

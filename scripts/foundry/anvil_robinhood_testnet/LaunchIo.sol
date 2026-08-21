@@ -29,8 +29,6 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_TOKENS = "04_tokens.json";
     string internal constant FILE_LEAF_POOLS = "05_leaf_pools_ses.json";
     string internal constant FILE_LEAF_DETFS = "06_leaf_detfs.json";
-    string internal constant FILE_NEST_DETFS = "07_nest_detfs.json";
-    string internal constant FILE_FEE_SINK = "08_fee_sink.json";
     string internal constant FILE_EXPORT = "09_export.json";
 
     function _loadFactories(LaunchState storage s) internal returns (bool) {
@@ -101,12 +99,6 @@ abstract contract LaunchIo is DeploymentBase {
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpHookPkg");
         if (!ok || !_hasCode(a)) return false;
         s.cpHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalHookPkg");
-        if (ok) s.orbitalHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedHookPkg");
-        if (ok) s.weightedHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "singleSeBufferHookPkg");
-        if (ok) s.singleSeBufferHookPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "bondNftVaultPkg");
         if (ok) s.bondNftVaultPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "rebasingClaimTokenPkg");
@@ -114,14 +106,20 @@ abstract contract LaunchIo is DeploymentBase {
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpDetfPkg");
         if (!ok || !_hasCode(a)) return false;
         s.cpDetfPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalDetfPkg");
-        if (ok) s.orbitalDetfPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedDetfPkg");
-        if (ok) s.weightedDetfPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadHookPkg");
-        if (ok) s.curveQuadHookPkg = a;
+        if (!ok || !_hasCode(a)) return false;
+        s.curveQuadHookPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadDetfPkg");
-        if (ok) s.curveQuadDetfPkg = a;
+        if (!ok || !_hasCode(a)) return false;
+        s.curveQuadDetfPkg = a;
+        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalHookPkg");
+        if (ok && _hasCode(a)) s.orbitalHookPkg = a;
+        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalDetfPkg");
+        if (ok && _hasCode(a)) s.orbitalDetfPkg = a;
+        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedHookPkg");
+        if (ok && _hasCode(a)) s.weightedHookPkg = a;
+        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedDetfPkg");
+        if (ok && _hasCode(a)) s.weightedDetfPkg = a;
         return true;
     }
 
@@ -165,17 +163,16 @@ abstract contract LaunchIo is DeploymentBase {
     function _exportUniV4Packages(LaunchState storage s) internal {
         string memory json;
         json = vm.serializeAddress("g03", "cpHookPkg", s.cpHookPkg);
-        json = vm.serializeAddress("g03", "orbitalHookPkg", s.orbitalHookPkg);
-        json = vm.serializeAddress("g03", "weightedHookPkg", s.weightedHookPkg);
-        json = vm.serializeAddress("g03", "singleSeBufferHookPkg", s.singleSeBufferHookPkg);
         json = vm.serializeAddress("g03", "uniV4SePkg", address(s.uniV4SePkg));
         json = vm.serializeAddress("g03", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("g03", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         json = vm.serializeAddress("g03", "cpDetfPkg", s.cpDetfPkg);
-        json = vm.serializeAddress("g03", "orbitalDetfPkg", s.orbitalDetfPkg);
-        json = vm.serializeAddress("g03", "weightedDetfPkg", s.weightedDetfPkg);
         json = vm.serializeAddress("g03", "curveQuadHookPkg", s.curveQuadHookPkg);
         json = vm.serializeAddress("g03", "curveQuadDetfPkg", s.curveQuadDetfPkg);
+        json = vm.serializeAddress("g03", "orbitalHookPkg", s.orbitalHookPkg);
+        json = vm.serializeAddress("g03", "orbitalDetfPkg", s.orbitalDetfPkg);
+        json = vm.serializeAddress("g03", "weightedHookPkg", s.weightedHookPkg);
+        json = vm.serializeAddress("g03", "weightedDetfPkg", s.weightedDetfPkg);
         json = vm.serializeAddress("g03", "poolManager", RobinhoodCanonicalLib.poolManager());
         json = vm.serializeUint("g03", "chainId", block.chainid);
         _writeJson(json, FILE_UNIV4_PKGS);
@@ -193,29 +190,10 @@ abstract contract LaunchIo is DeploymentBase {
         (a, ok) = _readAddressSafe(FILE_TOKENS, "TTUSDE");
         if (!ok || !_hasCode(a)) return false;
         s.ttUSDE = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTNVDA");
-        if (!ok || !_hasCode(a)) return false;
-        s.ttNVDA = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTMSFT");
-        if (ok) s.ttMSFT = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTAAPL");
-        if (ok) s.ttAAPL = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTGOOGL");
-        if (ok) s.ttGOOGL = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTAMZN");
-        if (ok) s.ttAMZN = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTMETA");
-        if (ok) s.ttMETA = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTTSLA");
-        if (ok) s.ttTSLA = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTSMH");
-        if (ok) s.ttSMH = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTSPY");
-        if (ok) s.ttSPY = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTVTI");
-        if (ok) s.ttVTI = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTQQQ");
-        if (ok) s.ttQQQ = a;
+        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTWETH");
+        if (ok && _hasCode(a)) s.ttWETH = a;
+        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTRICH");
+        if (ok && _hasCode(a)) s.ttRICH = a;
         (a, ok) = _readAddressSafe(FILE_TOKENS, "tokenPkg");
         if (ok) s.tokenPkg = a;
         return true;
@@ -227,17 +205,8 @@ abstract contract LaunchIo is DeploymentBase {
         json = vm.serializeAddress("g04", "tokenPkg", s.tokenPkg);
         json = vm.serializeAddress("g04", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("g04", "TTUSDE", s.ttUSDE);
-        json = vm.serializeAddress("g04", "TTNVDA", s.ttNVDA);
-        json = vm.serializeAddress("g04", "TTMSFT", s.ttMSFT);
-        json = vm.serializeAddress("g04", "TTAAPL", s.ttAAPL);
-        json = vm.serializeAddress("g04", "TTGOOGL", s.ttGOOGL);
-        json = vm.serializeAddress("g04", "TTAMZN", s.ttAMZN);
-        json = vm.serializeAddress("g04", "TTMETA", s.ttMETA);
-        json = vm.serializeAddress("g04", "TTTSLA", s.ttTSLA);
-        json = vm.serializeAddress("g04", "TTSMH", s.ttSMH);
-        json = vm.serializeAddress("g04", "TTSPY", s.ttSPY);
-        json = vm.serializeAddress("g04", "TTVTI", s.ttVTI);
-        json = vm.serializeAddress("g04", "TTQQQ", s.ttQQQ);
+        json = vm.serializeAddress("g04", "TTWETH", s.ttWETH);
+        json = vm.serializeAddress("g04", "TTRICH", s.ttRICH);
         json = vm.serializeAddress("g04", "owner", owner);
         json = vm.serializeAddress("g04", "uiWallet", uiWallet);
         json = vm.serializeUint("g04", "chainId", block.chainid);
@@ -247,28 +216,25 @@ abstract contract LaunchIo is DeploymentBase {
     function _loadLeafPools(LaunchState storage s) internal returns (bool) {
         address a;
         bool ok;
-        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seNvdaUsdg");
-        if (!ok || !_hasCode(a)) return false;
-        s.seNvdaUsdg = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seSpyUsdg");
-        if (!ok || !_hasCode(a)) return false;
-        s.seSpyUsdg = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seUsdeWeth");
-        if (ok) s.seUsdeWeth = a;
+        if (!ok || !_hasCode(a)) return false;
+        s.seUsdeWeth = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seUsdgWeth");
-        if (ok) s.seUsdgWeth = a;
+        if (!ok || !_hasCode(a)) return false;
+        s.seUsdgWeth = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seUsdgUsde");
-        if (ok) s.seUsdgUsde = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpNvdaUsdg");
-        if (ok) s.rpNvdaUsdg = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpSpyUsdg");
-        if (ok) s.rpSpyUsdg = a;
+        if (!ok || !_hasCode(a)) return false;
+        s.seUsdgUsde = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpUsdeWeth");
         if (ok) s.rpUsdeWeth = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpUsdgWeth");
         if (ok) s.rpUsdgWeth = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpUsdgUsde");
         if (ok) s.rpUsdgUsde = a;
+        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "seRichWeth");
+        if (ok && _hasCode(a)) s.seRichWeth = a;
+        (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "rpRichWeth");
+        if (ok) s.rpRichWeth = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_POOLS, "v4Seeder");
         if (ok) s.v4Seeder = a;
         return true;
@@ -276,16 +242,14 @@ abstract contract LaunchIo is DeploymentBase {
 
     function _exportLeafPools(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g05", "seNvdaUsdg", s.seNvdaUsdg);
-        json = vm.serializeAddress("g05", "seSpyUsdg", s.seSpyUsdg);
         json = vm.serializeAddress("g05", "seUsdeWeth", s.seUsdeWeth);
         json = vm.serializeAddress("g05", "seUsdgWeth", s.seUsdgWeth);
         json = vm.serializeAddress("g05", "seUsdgUsde", s.seUsdgUsde);
-        json = vm.serializeAddress("g05", "rpNvdaUsdg", s.rpNvdaUsdg);
-        json = vm.serializeAddress("g05", "rpSpyUsdg", s.rpSpyUsdg);
         json = vm.serializeAddress("g05", "rpUsdeWeth", s.rpUsdeWeth);
         json = vm.serializeAddress("g05", "rpUsdgWeth", s.rpUsdgWeth);
         json = vm.serializeAddress("g05", "rpUsdgUsde", s.rpUsdgUsde);
+        json = vm.serializeAddress("g05", "seRichWeth", s.seRichWeth);
+        json = vm.serializeAddress("g05", "rpRichWeth", s.rpRichWeth);
         json = vm.serializeAddress("g05", "v4Seeder", s.v4Seeder);
         json = vm.serializeUint("g05", "chainId", block.chainid);
         _writeJson(json, FILE_LEAF_POOLS);
@@ -294,81 +258,31 @@ abstract contract LaunchIo is DeploymentBase {
     function _loadLeafDetfsPartial(LaunchState storage s) internal {
         address a;
         bool ok;
-        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTNVDA-S");
-        if (ok && _hasCode(a)) s.ttNvdaS = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTNVDA-SMH-O");
-        if (ok && _hasCode(a)) s.ttNvdaSmhO = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTIDX-Q");
-        if (ok && _hasCode(a)) s.ttIdxQ = a;
+        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTCHIR");
+        if (ok && _hasCode(a)) s.ttChir = a;
+        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTRICHIR");
+        if (ok && _hasCode(a)) s.ttRichir = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTDOL-Q");
         if (ok && _hasCode(a)) s.ttDolQ = a;
     }
 
     function _loadLeafDetfs(LaunchState storage s) internal returns (bool) {
         _loadLeafDetfsPartial(s);
-        return _hasCode(s.ttNvdaS) && _hasCode(s.ttNvdaSmhO) && _hasCode(s.ttIdxQ) && _hasCode(s.ttDolQ);
+        return _hasCode(s.ttChir) && _hasCode(s.ttDolQ);
     }
 
     function _exportLeafDetfs(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g06", "TTNVDA-S", s.ttNvdaS);
-        json = vm.serializeAddress("g06", "TTNVDA-SMH-O", s.ttNvdaSmhO);
-        json = vm.serializeAddress("g06", "TTIDX-Q", s.ttIdxQ);
+        json = vm.serializeAddress("g06", "TTCHIR", s.ttChir);
+        json = vm.serializeAddress("g06", "TTRICHIR", s.ttRichir);
         json = vm.serializeAddress("g06", "TTDOL-Q", s.ttDolQ);
         json = vm.serializeUint("g06", "chainId", block.chainid);
         _writeJson(json, FILE_LEAF_DETFS);
     }
 
-    function _loadNestDetfs(LaunchState storage s) internal returns (bool) {
-        address a;
-        bool ok;
-        (a, ok) = _readAddressSafe(FILE_NEST_DETFS, "TTBETA-O");
-        if (!ok || !_hasCode(a)) return false;
-        s.ttBetaO = a;
-        (a, ok) = _readAddressSafe(FILE_NEST_DETFS, "TTIDX-WRAP");
-        if (ok) s.ttIdxWrap = a;
-        (a, ok) = _readAddressSafe(FILE_NEST_DETFS, "seIdxUsdg");
-        if (ok) s.seIdxUsdg = a;
-        (a, ok) = _readAddressSafe(FILE_NEST_DETFS, "rpIdxUsdg");
-        if (ok) s.rpIdxUsdg = a;
-        return true;
-    }
-
-    function _exportNestDetfs(LaunchState storage s) internal {
-        string memory json;
-        json = vm.serializeAddress("g07", "TTBETA-O", s.ttBetaO);
-        json = vm.serializeAddress("g07", "TTIDX-WRAP", s.ttIdxWrap);
-        json = vm.serializeAddress("g07", "seIdxUsdg", s.seIdxUsdg);
-        json = vm.serializeAddress("g07", "rpIdxUsdg", s.rpIdxUsdg);
-        json = vm.serializeUint("g07", "chainId", block.chainid);
-        _writeJson(json, FILE_NEST_DETFS);
-    }
-
-    function _loadFeeSink(LaunchState storage s) internal returns (bool) {
-        address a;
-        bool ok;
-        (a, ok) = _readAddressSafe(FILE_FEE_SINK, "TTRICH-S");
-        if (!ok || !_hasCode(a)) return false;
-        s.ttRichS = a;
-        (a, ok) = _readAddressSafe(FILE_FEE_SINK, "TTRICH");
-        if (ok) s.ttRICH = a;
-        (a, ok) = _readAddressSafe(FILE_FEE_SINK, "seRichWeth");
-        if (ok) s.seRichWeth = a;
-        (a, ok) = _readAddressSafe(FILE_FEE_SINK, "rpRichWeth");
-        if (ok) s.rpRichWeth = a;
-        (a, ok) = _readAddressSafe(FILE_FEE_SINK, "erc20MinterFacade");
-        if (ok && s.erc20MinterFacade == address(0)) s.erc20MinterFacade = a;
-        return true;
-    }
-
-    function _exportFeeSink(LaunchState storage s) internal {
-        string memory json;
-        json = vm.serializeAddress("g08", "TTRICH", s.ttRICH);
-        json = vm.serializeAddress("g08", "TTRICH-S", s.ttRichS);
-        json = vm.serializeAddress("g08", "seRichWeth", s.seRichWeth);
-        json = vm.serializeAddress("g08", "rpRichWeth", s.rpRichWeth);
-        json = vm.serializeAddress("g08", "erc20MinterFacade", s.erc20MinterFacade);
-        json = vm.serializeUint("g08", "chainId", block.chainid);
-        _writeJson(json, FILE_FEE_SINK);
+    function _requireChirArchitecture(LaunchState storage s) internal view {
+        require(_hasCode(s.ttRICH), "TTRICH required (run Script_04)");
+        require(_hasCode(s.ttWETH), "TTWETH required (run Script_04)");
+        require(_hasCode(s.seRichWeth), "TTRICH/TTWETH SE required (run Script_05)");
     }
 }

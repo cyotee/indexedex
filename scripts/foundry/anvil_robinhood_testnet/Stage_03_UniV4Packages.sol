@@ -38,53 +38,11 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 
 import {
-    IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbHookPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeOrbitalBufferHookDFPkg as OrbHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
-import {
-    UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbHookFS
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
-
-import {
-    IUniswapV4StandardExchangeWeightedBufferHookPackage as IWgtHookPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeWeightedBufferHookDFPkg as WgtHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol";
-import {
-    UniswapV4StandardExchangeWeightedBufferHook_FactoryService as WgtHookFS
-} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
-
-import {
-    IUniswapV4SingleStandardExchangeBufferHookPackage as ISingleHookPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHookPackage.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferHookDFPkg as SingleHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferHook_FactoryService as SingleHookFS
-} from "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHook_FactoryService.sol";
-
-import {
     IUniswapV4SingleStandardExchangeDETDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 import {
     UniswapV4SingleStandardExchangeDETF_Component_FactoryService as CpDetfFS
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    IUniswapV4StandardExchangeOrbitalDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalDETF.sol";
-import {
-    UniswapV4StandardExchangeOrbitalDETF_Component_FactoryService as OrbDetfFS
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETF_Component_FactoryService.sol";
-import {
-    IUniswapV4StandardExchangeWeightedDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedDETF.sol";
-import {
-    UniswapV4StandardExchangeWeightedDETF_Component_FactoryService as WgtDetfFS
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IQuadHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
@@ -114,10 +72,6 @@ library Stage_03_UniV4Packages {
     using UniswapV4_Component_FactoryService for IIndexedexManagerProxy;
     using CpDetfFS for ICreate3FactoryProxy;
     using CpDetfFS for IVaultRegistryDeployment;
-    using OrbDetfFS for ICreate3FactoryProxy;
-    using OrbDetfFS for IVaultRegistryDeployment;
-    using WgtDetfFS for ICreate3FactoryProxy;
-    using WgtDetfFS for IVaultRegistryDeployment;
     using QuadDetfFS for ICreate3FactoryProxy;
     using QuadDetfFS for IVaultRegistryDeployment;
 
@@ -147,72 +101,11 @@ library Stage_03_UniV4Packages {
             init_.erc2612Facet = s.erc2612Facet;
             init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
             init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
+            init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
             s.cpHookPkg = reg.deployPkg(
                 type(CpHookDFPkg).creationCode,
                 abi.encode(init_),
                 abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash()
-            );
-        }
-
-        {
-            IFacet depositFacet = OrbHookFS.deployDepositFacet(s.create3Factory);
-            IFacet withdrawFacet = OrbHookFS.deployWithdrawFacet(s.create3Factory);
-            IFacet seFacet = OrbHookFS.deploySeFacet(s.create3Factory);
-            IFacet hooksFacet = OrbHookFS.deployHooksFacet(s.create3Factory);
-            IOrbHookPkg.PkgInit memory init_;
-            init_.vaultRegistryDeployment = reg;
-            init_.vaultFeeOracleQuery = feeOracle;
-            init_.depositFacet = depositFacet;
-            init_.withdrawFacet = withdrawFacet;
-            init_.seFacet = seFacet;
-            init_.hooksFacet = hooksFacet;
-            init_.erc20Facet = s.erc20Facet;
-            init_.erc5267Facet = s.erc5267Facet;
-            init_.erc2612Facet = s.erc2612Facet;
-            init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
-            init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
-            s.orbitalHookPkg = reg.deployPkg(
-                type(OrbHookDFPkg).creationCode,
-                abi.encode(init_),
-                abi.encode(type(IOrbHookPkg).name, FixtureEconomics.SALT_NS)._hash()
-            );
-        }
-
-        {
-            IFacet joinFacet = WgtHookFS.deployJoinFacet(s.create3Factory);
-            IFacet exitFacet = WgtHookFS.deployExitFacet(s.create3Factory);
-            IFacet seFacet = WgtHookFS.deploySeFacet(s.create3Factory);
-            IFacet hooksFacet = WgtHookFS.deployHooksFacet(s.create3Factory);
-            IWgtHookPkg.PkgInit memory init_;
-            init_.vaultRegistryDeployment = reg;
-            init_.vaultFeeOracleQuery = feeOracle;
-            init_.joinFacet = joinFacet;
-            init_.exitFacet = exitFacet;
-            init_.seFacet = seFacet;
-            init_.hooksFacet = hooksFacet;
-            init_.erc20Facet = s.erc20Facet;
-            init_.erc5267Facet = s.erc5267Facet;
-            init_.erc2612Facet = s.erc2612Facet;
-            init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
-            init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
-            s.weightedHookPkg = reg.deployPkg(
-                type(WgtHookDFPkg).creationCode,
-                abi.encode(init_),
-                abi.encode(type(IWgtHookPkg).name, FixtureEconomics.SALT_NS)._hash()
-            );
-        }
-
-        {
-            IFacet productFacet = SingleHookFS.deployProductFacet(s.create3Factory);
-            ISingleHookPkg.PkgInit memory init_;
-            init_.vaultRegistryDeployment = reg;
-            init_.productFacet = productFacet;
-            init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
-            init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
-            s.singleSeBufferHookPkg = reg.deployPkg(
-                type(SingleHookDFPkg).creationCode,
-                abi.encode(init_),
-                abi.encode(type(ISingleHookPkg).name, FixtureEconomics.SALT_NS)._hash()
             );
         }
 
@@ -233,6 +126,7 @@ library Stage_03_UniV4Packages {
             init_.erc2612Facet = s.erc2612Facet;
             init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
             init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
+            init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
             s.curveQuadHookPkg = reg.deployPkg(
                 type(QuadHookDFPkg).creationCode,
                 abi.encode(init_),
@@ -315,54 +209,6 @@ library Stage_03_UniV4Packages {
             init_.rebasingClaimTokenPkg = IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg);
             init_.diamondFactory = s.diamondPackageFactory;
             s.cpDetfPkg = address(CpDetfFS.deployPkg(reg, init_));
-        }
-
-        {
-            IFacet exchangeInFacet = OrbDetfFS.deployExchangeInFacet(s.create3Factory);
-            IFacet bondingFacet = OrbDetfFS.deployBondingFacet(s.create3Factory);
-            IFacet infoFacet = OrbDetfFS.deployInfoFacet(s.create3Factory);
-            IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgInit memory init_;
-            init_.erc20Facet = s.erc20Facet;
-            init_.erc5267Facet = s.erc5267Facet;
-            init_.erc2612Facet = s.erc2612Facet;
-            init_.multiAssetBasicVaultFacet = multiAssetBasic;
-            init_.multiAssetStandardVaultFacet = multiAssetStd;
-            init_.exchangeInFacet = exchangeInFacet;
-            init_.bondingFacet = bondingFacet;
-            init_.infoFacet = infoFacet;
-            init_.feeOracle = IVaultFeeOracleQuery(address(s.indexedexManager));
-            init_.vaultRegistryDeployment = reg;
-            init_.poolManager = pm;
-            init_.hookPkg = IOrbHookPkg(s.orbitalHookPkg);
-            init_.bondNftVaultPkg = IDetfSelfNftInventoryDFPkg(s.bondNftVaultPkg);
-            init_.rebasingClaimTokenPkg = IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg);
-            init_.diamondFactory = s.diamondPackageFactory;
-            s.orbitalDetfPkg = address(OrbDetfFS.deployPkg(reg, init_));
-        }
-
-        {
-            IFacet exchangeInFacet = WgtDetfFS.deployExchangeInFacet(s.create3Factory);
-            IFacet bondingFacet = WgtDetfFS.deployBondingFacet(s.create3Factory);
-            IFacet compoundFacet = WgtDetfFS.deployCompoundFacet(s.create3Factory);
-            IFacet infoFacet = WgtDetfFS.deployInfoFacet(s.create3Factory);
-            IUniswapV4StandardExchangeWeightedDETDFPkg.PkgInit memory init_;
-            init_.erc20Facet = s.erc20Facet;
-            init_.erc5267Facet = s.erc5267Facet;
-            init_.erc2612Facet = s.erc2612Facet;
-            init_.multiAssetBasicVaultFacet = multiAssetBasic;
-            init_.multiAssetStandardVaultFacet = multiAssetStd;
-            init_.exchangeInFacet = exchangeInFacet;
-            init_.bondingFacet = bondingFacet;
-            init_.compoundFacet = compoundFacet;
-            init_.infoFacet = infoFacet;
-            init_.feeOracle = IVaultFeeOracleQuery(address(s.indexedexManager));
-            init_.vaultRegistryDeployment = reg;
-            init_.poolManager = pm;
-            init_.hookPkg = IWgtHookPkg(s.weightedHookPkg);
-            init_.bondNftVaultPkg = IDetfSelfNftInventoryDFPkg(s.bondNftVaultPkg);
-            init_.rebasingClaimTokenPkg = IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg);
-            init_.diamondFactory = s.diamondPackageFactory;
-            s.weightedDetfPkg = address(WgtDetfFS.deployPkg(reg, init_));
         }
 
         {

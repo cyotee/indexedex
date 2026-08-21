@@ -194,13 +194,18 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
             standardExchangeVaultShare: IERC20(address(0)),
             pairToken: IERC20(address(pairToken)),
             creationPairPerDetfWad: DEFAULT_CREATION_PAIR_PER_DETF,
+            openingPairPerDetfWad: 0,
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -248,6 +253,16 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeDETF is
         args = _defaultDetfArgs();
         args.name = string(abi.encodePacked("Policy UniV4 DETF ", tag));
         args.symbol = string(abi.encodePacked("pDETF", tag));
+    }
+
+    /// @notice Unique Policy instance with explicit first-bond opening (0 → creation / at peg).
+    function _argsWithOpening(string memory tag, uint256 opening_)
+        internal
+        view
+        returns (IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
+    {
+        args = _policyArgsUnique(tag);
+        args.openingPairPerDetfWad = opening_;
     }
 
     function _deployDetfInstance(IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)

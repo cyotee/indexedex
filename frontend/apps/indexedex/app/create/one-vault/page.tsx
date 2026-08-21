@@ -1,9 +1,9 @@
-import { CreateTypePlaceholder } from '../CreateTypePlaceholder'
+import { CreatePageFrame } from '../CreatePageFrame'
 
 export const metadata = {
   title: 'Create: one vault — IndexedEx',
 }
 
 export default function CreateOneVaultPage() {
-  return <CreateTypePlaceholder typeId="one-vault" />
+  return <CreatePageFrame initialTypeId="one-vault" />
 }

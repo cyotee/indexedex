@@ -22,11 +22,16 @@ if (!fs.existsSync(placeholderFile)) {
   fs.writeFileSync(placeholderFile, 'export {}\n', 'utf8')
 }
 
-const tscBin = path.join(
-  frontendDir,
-  'node_modules',
-  '.bin',
-  process.platform === 'win32' ? 'tsc.cmd' : 'tsc'
-)
+const workspaceDir = path.resolve(frontendDir, '../..')
+const tscName = process.platform === 'win32' ? 'tsc.cmd' : 'tsc'
+const tscBin = [
+  path.join(frontendDir, 'node_modules', '.bin', tscName),
+  path.join(workspaceDir, 'node_modules', '.bin', tscName),
+].find((candidate) => fs.existsSync(candidate))
+
+if (!tscBin) {
+  console.error(`Could not find ${tscName}`)
+  process.exit(1)
+}
 
 run(tscBin, ['--noEmit'], { cwd: frontendDir })

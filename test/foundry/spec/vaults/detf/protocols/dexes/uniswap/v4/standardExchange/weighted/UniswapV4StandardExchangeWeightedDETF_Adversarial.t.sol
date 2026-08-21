@@ -110,13 +110,18 @@ contract UniswapV4StandardExchangeWeightedDETF_Adversarial is
             detfWeight: 0.33e18,
             pairWeights: pairW_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](2),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Open,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
 
         hostileDetf = _deployDetfWired(args);

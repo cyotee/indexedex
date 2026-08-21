@@ -14,7 +14,6 @@ contract Script_02_Platform is LaunchIo {
     function run() external {
         _loadConfig();
         _requireRobinhoodTestnet();
-        _requireLocalhostIfBroadcast();
         RobinhoodCanonicalLib.requireCanonicalPins();
         require(_loadFactories(s), "run Script_01_Factories first");
         _logHeader("Group 02: IndexedEx platform");
@@ -27,7 +26,7 @@ contract Script_02_Platform is LaunchIo {
             return;
         }
 
-        vm.startBroadcast();
+        _broadcast();
         Stage_02_Platform.execute(s, owner);
         vm.stopBroadcast();
 

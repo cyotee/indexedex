@@ -1,4 +1,5 @@
 import {
+  CHAIN_ID_ROBINHOOD_TESTNET,
   getDefaultDeploymentEnvironment,
   type DeploymentEnvironment,
 } from '@indexedex/protocol/addressArtifacts'
@@ -25,21 +26,31 @@ function toInput(entry: TokenListEntry): EarnProductInput {
   }
 }
 
+function isClaimEntry(entry: TokenListEntry): boolean {
+  return (entry.tags ?? []).map((tag) => tag.toLowerCase()).includes('claim')
+}
+
 /**
- * Build the Earn catalog for a chain from live tokenlists (strategy + DETFs).
- * Wave 2: addresses on the featured-fee-detfs list are excluded (fee DETFs live on /staking).
+ * Earn catalog: strategy vaults plus DETF instances from the chain tokenlists.
+ * Claim tokens are not vaults. On Robinhood testnet, keep deployed DETFs on this
+ * list (including TTCHIR). Other chains still hide featured-fee DETFs (Wave 2).
  */
 export function loadEarnProductsForChain(
   chainId: number,
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment(),
 ): EarnProduct[] {
+  const catalog = assembleEarnProducts({
+    strategy: getStrategyVaultTokensForChain(chainId, environment)
+      .filter((t) => !isClaimEntry(t))
+      .map(toInput),
+    protocolDetf: getProtocolDetfsForChain(chainId, environment)
+      .filter((t) => !isClaimEntry(t))
+      .map(toInput),
+  })
+  if (chainId === CHAIN_ID_ROBINHOOD_TESTNET) return catalog
   const feeExcluded = new Set(
     getFeaturedFeeDetfsForChain(chainId, environment).map((t) => t.address.toLowerCase()),
   )
-  const catalog = assembleEarnProducts({
-    strategy: getStrategyVaultTokensForChain(chainId, environment).map(toInput),
-    protocolDetf: getProtocolDetfsForChain(chainId, environment).map(toInput),
-  })
   if (feeExcluded.size === 0) return catalog
   return catalog.filter((p) => !feeExcluded.has(p.address.toLowerCase()))
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Anvil Robinhood Testnet fork — 46630 launch groups 00-09
+# Robinhood testnet (46630) launch groups 00-06 + 09.
+# Broadcast as DEPLOYER_ADDRESS (--sender; cast wallet signs). Simulate is alternate.
 # =============================================================================
 set -euo pipefail
 
@@ -52,16 +53,18 @@ export NETWORK_PROFILE="${NETWORK_PROFILE:-anvil_robinhood_testnet}"
 export CHAIN_ID="${CHAIN_ID:-46630}"
 export RPC_URL
 
-DEV_ADDRESS="${DEV_ADDRESS:-}"
-SENDER="${SENDER:-$DEV_ADDRESS}"
-export OWNER="${OWNER:-$DEV_ADDRESS}"
-export UI_WALLET="${UI_WALLET:-0x70997970C51812dc3A010C7d01b50e0d17dc79C8}"
+DEPLOYER_ADDRESS="${DEPLOYER_ADDRESS:-}"
+SENDER="${SENDER:-}"
+OWNER="${OWNER:-}"
+UI_WALLET="${UI_WALLET:-}"
 
 BROADCAST_FLAG="--broadcast"
 RESTART_ANVIL=0
 KILL_ANVIL=0
 FORCE=0
 FORK_LATEST=0
+LIVE_BROADCAST=0
+RPC_URL_EXPLICIT=0
 FORGE_VERBOSITY=""
 COMMAND="all"
 
@@ -71,39 +74,49 @@ Usage:
   scripts/shell/anvil_robinhood_testnet.sh [command] [options]
   scripts/foundry/anvil_robinhood_testnet/deploy_all.sh [command] [options]
 
+These groups are the 46630 launch scripts. Set DEPLOYER_ADDRESS; forge uses
+--sender and the cast wallet signs. Point RPC_URL at a local Anvil fork to
+rehearse, or --live / a public RPC to broadcast to Robinhood Chain Testnet.
+
 Commands:
-  all           Every launch script: 00-05, 06a-c, 06e, 06, 07, 08, SimulateLaunch, 09 (no 06d / TTM7-W)
-  foundation    Groups 00-03
+  all           Staged deploy: 00-05, 03b (Orbital+Weighted pkgs), 06t (TTCHIR), 06e (TTDOL-Q), 09
+  foundation    Groups 00-03, 03b
   assets        Group 04
   pools         Group 05
-  leaves        Script_06 + 06a-e
-  nests         Group 07
-  feesink       Group 08
-  simulate      Script_SimulateLaunch (01-08)
-  export        Group 09
-  stageNN       Single group (00-09, 06a-e)
-  stagesimulate Script_SimulateLaunch
+  leaves        06t (TTCHIR) + 06e (TTDOL-Q)
+  export        Group 09 (frontend JSON)
+  simulate      Alternate: Script_SimulateLaunch (01-06 in one script, for gas estimate). Do not run after \`all\`.
+  stageNN       Single group (00-06, 03b, 06t, 06e, 09)
+  stagesimulate Same as simulate
+  detach-fork   Anvil-only: dump overlay, restart without a fork, reload state. Use when the
+                public RH RPC returns "metadata is not found" for new CREATE addresses.
 
 Options:
   --dry-run         Simulate without broadcasting
-  --restart-anvil   Kill port + start fresh RH testnet fork at chain id 46630
+  --live            Broadcast to public 46630 (official RPC unless RPC_URL is already set).
+                    Does not start Anvil. Requires DEPLOYER_ADDRESS (cast wallet).
+  --rpc-url URL     Broadcast RPC (default http://127.0.0.1:8545)
+  --restart-anvil   Local only: kill port + start a RH testnet fork at chain id 46630
+                    with --disable-code-size-limit (Anvil node flag, not a script cheat)
   --kill-anvil      Kill Anvil and exit
   --force           Re-run stages (purge stage JSON first when restarting)
-  --fork-alias NAME Foundry [rpc_endpoints] alias (default robinhood_testnet_alchemy)
-  --public-rpc      Same as --fork-alias robinhood_testnet (official public RPC)
+  --fork-alias NAME Anvil fork source: Foundry [rpc_endpoints] alias (default robinhood_testnet_alchemy)
+  --public-rpc      Anvil fork source = robinhood_testnet (official public RPC). Not --live.
   --fork-latest     Do not pass --fork-block-number; Anvil uses the remote tip
   -v…-vvvvv         Forge verbosity
   --help, -h
 
-Required env:
-  DEV_ADDRESS   Anvil account(0) typically 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-  ALCHEMY_KEY   For robinhood_testnet_alchemy (not needed with --public-rpc)
+Signer:
+  DEPLOYER_ADDRESS  Required. Passed as forge --sender. Cast wallet signs.
+  OWNER             Defaults to DEPLOYER_ADDRESS
+  UI_WALLET         Defaults to DEPLOYER_ADDRESS
 
 Optional:
+  ALCHEMY_KEY   For robinhood_testnet_alchemy (Anvil fork source)
   ANVIL_FORK_URL / FOUNDRY_FORK_RPC_ALIAS (default robinhood_testnet_alchemy)
   ANVIL_FORK_BLOCK_NUMBER (default Crane pin; set to latest to omit the pin)
-  RPC_URL (default http://127.0.0.1:8545) — must be localhost for broadcast
-  --public-rpc without --fork-latest retargets the pin to head-64.
+  FORGE_LEGACY=1  Force --legacy gas on live (Anvil local already uses legacy)
+  --public-rpc without --fork-latest retargets the Anvil pin to head-64.
 EOF
 }
 
@@ -222,6 +235,95 @@ launch_anvil() {
   echo $!
 }
 
+# Keep overlay, drop the remote fork. Public 46630 nodes prune the fork-block trie
+# mid-session; Anvil then fatal-errors on any never-seen account (CREATE3 / CREATE2).
+# `--load-state` wants SerializableState JSON. `anvil_dumpState` is gzip(JSON) as hex;
+# HTTP anvil_loadState rejects the ~8MB POST, so we decompress to JSON and load on boot.
+launch_anvil_offline() {
+  local state_json="${1:-}"
+  local anvil_cmd=(
+    anvil
+    --host "$ANVIL_HOST"
+    --port "$ANVIL_PORT"
+    --chain-id "$ANVIL_CHAIN_ID"
+    --hardfork prague
+    --disable-code-size-limit
+    --disable-block-gas-limit
+  )
+  if [[ -n "$state_json" ]]; then
+    anvil_cmd+=(--load-state "$state_json")
+  fi
+  nohup "${anvil_cmd[@]}" >"$ANVIL_LOG_DIR/anvil.log" 2>&1 &
+  echo $!
+}
+
+ANVIL_STATE_HEX="${ANVIL_STATE_HEX:-$ANVIL_LOG_DIR/anvil_state.hex}"
+ANVIL_STATE_JSON="${ANVIL_STATE_JSON:-$ANVIL_LOG_DIR/anvil_state.json}"
+DETACHED_FORK=0
+
+dump_anvil_state() {
+  mkdir -p "$ANVIL_LOG_DIR"
+  log_info "Dumping Anvil overlay to $ANVIL_STATE_HEX"
+  perl -e 'alarm shift; exec @ARGV' 180 cast rpc anvil_dumpState --rpc-url "$RPC_URL" >"$ANVIL_STATE_HEX"
+  local bytes
+  bytes="$(wc -c <"$ANVIL_STATE_HEX" | tr -d ' ')"
+  if [[ ! -s "$ANVIL_STATE_HEX" || "$bytes" -lt 32 ]]; then
+    log_error "anvil_dumpState produced an empty dump"
+    return 1
+  fi
+  log_info "Dump size ${bytes} bytes; decoding gzip JSON for --load-state"
+  python3 - "$ANVIL_STATE_HEX" "$ANVIL_STATE_JSON" <<'PY'
+import gzip, json, pathlib, sys
+src, dst = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+raw = src.read_text().strip()
+if raw.startswith('"') and raw.endswith('"'):
+    raw = json.loads(raw)
+if not raw.startswith("0x"):
+    raise SystemExit("anvil_dumpState: expected 0x-prefixed hex")
+data = gzip.decompress(bytes.fromhex(raw[2:]))
+if data[:1] not in (b"{", b"["):
+    raise SystemExit("anvil_dumpState: decompressed payload is not JSON")
+dst.write_bytes(data)
+print(f"wrote {dst} ({len(data)} bytes)")
+PY
+}
+
+verify_offline_overlay() {
+  local factory
+  factory="$(python3 -c 'import json,pathlib,sys; p=pathlib.Path(sys.argv[1]);
+print(json.loads(p.read_text()).get("create3Factory",""))' "$REPO_ROOT/$DEPLOYMENTS_DIR/01_factories.json" 2>/dev/null || true)"
+  if [[ -z "$factory" ]]; then
+    log_error "Cannot verify overlay: $DEPLOYMENTS_DIR/01_factories.json missing create3Factory"
+    return 1
+  fi
+  local size
+  size="$(cast codesize "$factory" --rpc-url "$RPC_URL" 2>/dev/null || echo 0)"
+  if [[ "$size" == "0" || -z "$size" ]]; then
+    log_error "Overlay reload failed: create3Factory $factory has no code"
+    return 1
+  fi
+  log_success "Offline Anvil overlay live (create3Factory code size $size)"
+}
+
+# Public RH RPC: "metadata is not found, <fork-block>" for accounts never seen on
+# the fork. After the node prunes that trie, Anvil cannot CREATE new addresses.
+# Dump overlay, restart without --fork-url, reload. Groups 00-N stay; new CREATE works.
+detach_fork() {
+  dump_anvil_state
+  log_info "Restarting Anvil chain $ANVIL_CHAIN_ID without a remote fork"
+  kill_anvil
+  mkdir -p "$ANVIL_LOG_DIR"
+  local pid
+  pid="$(launch_anvil_offline "$ANVIL_STATE_JSON")"
+  if ! wait_for_rpc "$pid"; then
+    log_error "Offline Anvil failed to start"
+    dump_anvil_log
+    return 1
+  fi
+  verify_offline_overlay
+  DETACHED_FORK=1
+}
+
 start_anvil() {
   if cast_bounded block-number --rpc-url "$RPC_URL" >/dev/null 2>&1; then
     log_info "Reusing Anvil at $RPC_URL"
@@ -281,30 +383,29 @@ start_anvil() {
   fi
 }
 
-require_localhost_broadcast() {
-  if [[ -z "$BROADCAST_FLAG" ]]; then
-    return 0
-  fi
+is_localhost_rpc() {
   case "$RPC_URL" in
     http://127.0.0.1:*|http://localhost:*|https://127.0.0.1:*|https://localhost:*)
+      return 0
       ;;
     *)
-      log_error "Refusing broadcast to non-localhost RPC_URL=$RPC_URL"
-      exit 1
+      return 1
       ;;
   esac
 }
 
-require_dev_address() {
-  if [[ -z "$DEV_ADDRESS" && -z "$SENDER" ]]; then
-    log_error "DEV_ADDRESS / SENDER is not set"
-    echo "Example: export DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+# Broadcast as DEPLOYER_ADDRESS. Foundry/cast wallet signs; no --private-key, no --unlocked.
+require_deployer() {
+  if [[ -z "${DEPLOYER_ADDRESS:-}" ]]; then
+    log_error "DEPLOYER_ADDRESS is not set"
+    echo "Example: export DEPLOYER_ADDRESS=0x..."
+    echo "Forge uses --sender \$DEPLOYER_ADDRESS; cast wallet signs."
     exit 1
   fi
-  SENDER="${SENDER:-$DEV_ADDRESS}"
-  DEV_ADDRESS="${DEV_ADDRESS:-$SENDER}"
-  export SENDER DEV_ADDRESS
-  export OWNER="${OWNER:-$DEV_ADDRESS}"
+  SENDER="$DEPLOYER_ADDRESS"
+  OWNER="${OWNER:-$DEPLOYER_ADDRESS}"
+  UI_WALLET="${UI_WALLET:-$DEPLOYER_ADDRESS}"
+  export DEPLOYER_ADDRESS SENDER OWNER UI_WALLET
 }
 
 run_stage() {
@@ -316,12 +417,13 @@ run_stage() {
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
-  if [[ -n "$SENDER" ]]; then
-    cmd+=(--unlocked --sender "$SENDER")
-  fi
+  cmd+=(--sender "$DEPLOYER_ADDRESS")
   if [[ -n "$BROADCAST_FLAG" ]]; then
     cmd+=("$BROADCAST_FLAG" --slow --gas-estimate-multiplier "${GAS_ESTIMATE_MULTIPLIER:-300}")
-    cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
+    # Anvil forks often fail eth_feeHistory. Live 46630 uses EIP-1559 unless FORGE_LEGACY=1.
+    if is_localhost_rpc || [[ "${FORGE_LEGACY:-0}" == "1" ]]; then
+      cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
+    fi
     # Pre-sim of CREATE3 / deployVault is silent and looks hung. Broadcast as we go.
     case "$label" in
       Group\ 00|Group\ 09) ;;
@@ -332,17 +434,33 @@ run_stage() {
     esac
   fi
 
-  (
-    cd "$REPO_ROOT"
-    OUT_DIR_OVERRIDE="$OUT_DIR_OVERRIDE" \
-      NETWORK_PROFILE="$NETWORK_PROFILE" \
-      SENDER="$SENDER" \
-      OWNER="$OWNER" \
-      UI_WALLET="$UI_WALLET" \
-      FORCE="$FORCE" \
-      RPC_URL="$RPC_URL" \
-      "${cmd[@]}"
-  )
+  run_forge() {
+    (
+      cd "$REPO_ROOT"
+      OUT_DIR_OVERRIDE="$OUT_DIR_OVERRIDE" \
+        NETWORK_PROFILE="$NETWORK_PROFILE" \
+        DEPLOYER_ADDRESS="$DEPLOYER_ADDRESS" \
+        SENDER="$SENDER" \
+        OWNER="$OWNER" \
+        UI_WALLET="$UI_WALLET" \
+        FORCE="$FORCE" \
+        RPC_URL="$RPC_URL" \
+        "${cmd[@]}"
+    )
+  }
+
+  if run_forge; then
+    return 0
+  fi
+  if is_localhost_rpc && [[ "$DETACHED_FORK" -eq 0 && -f "$ANVIL_LOG_DIR/anvil.log" ]] \
+    && grep -q "metadata is not found" "$ANVIL_LOG_DIR/anvil.log"; then
+    log_error "$label failed: public RH RPC pruned the fork trie (metadata is not found)"
+    log_info "Dumping overlay, restarting Anvil without a fork, retrying $label"
+    detach_fork
+    run_forge
+  else
+    return 1
+  fi
 }
 
 stage_script() {
@@ -352,16 +470,12 @@ stage_script() {
     01) echo "$SCRIPT_DIR/Script_01_Factories.s.sol" ;;
     02) echo "$SCRIPT_DIR/Script_02_Platform.s.sol" ;;
     03) echo "$SCRIPT_DIR/Script_03_UniV4Packages.s.sol" ;;
+    03b) echo "$SCRIPT_DIR/Script_03b_OrbitalWeightedPackages.s.sol" ;;
     04) echo "$SCRIPT_DIR/Script_04_Tokens.s.sol" ;;
     05) echo "$SCRIPT_DIR/Script_05_LeafPoolsAndSEs.s.sol" ;;
     06) echo "$SCRIPT_DIR/Script_06_LeafDETFs.s.sol" ;;
-    06a) echo "$SCRIPT_DIR/Script_06a_NvdaS.s.sol" ;;
-    06b) echo "$SCRIPT_DIR/Script_06b_NvdaSmhO.s.sol" ;;
-    06c) echo "$SCRIPT_DIR/Script_06c_IdxQ.s.sol" ;;
-    06d) echo "$SCRIPT_DIR/Script_06d_M7W.s.sol" ;;
     06e) echo "$SCRIPT_DIR/Script_06e_DolQ.s.sol" ;;
-    07) echo "$SCRIPT_DIR/Script_07_NestDETFs.s.sol" ;;
-    08) echo "$SCRIPT_DIR/Script_08_FeeSink.s.sol" ;;
+    06t) echo "$SCRIPT_DIR/Script_06_Ttchir.s.sol" ;;
     09) echo "$SCRIPT_DIR/Script_09_ExportFrontend.s.sol" ;;
     simulate) echo "$SCRIPT_DIR/Script_SimulateLaunch.s.sol" ;;
     *)
@@ -381,16 +495,40 @@ run_stages() {
 ARGS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all|foundation|assets|pools|leaves|nests|feesink|export|simulate)
+    all|foundation|assets|pools|leaves|export|simulate|detach-fork)
       COMMAND="$1"
       shift
       ;;
-    stage[0-9][0-9]|stage[0-9]|stage06[a-e]|stagesimulate)
+    stage[0-9][0-9]|stage[0-9]|stage03b|stage06[et]|stagesimulate)
       COMMAND="$1"
       shift
       ;;
     --dry-run)
       BROADCAST_FLAG=""
+      shift
+      ;;
+    --live)
+      LIVE_BROADCAST=1
+      shift
+      ;;
+    --rpc-url)
+      if [[ $# -lt 2 || "$2" == -* ]]; then
+        log_error "--rpc-url requires a URL"
+        exit 1
+      fi
+      RPC_URL="$2"
+      RPC_URL_EXPLICIT=1
+      export RPC_URL
+      shift 2
+      ;;
+    --rpc-url=*)
+      RPC_URL="${1#--rpc-url=}"
+      if [[ -z "$RPC_URL" ]]; then
+        log_error "--rpc-url requires a URL"
+        exit 1
+      fi
+      RPC_URL_EXPLICIT=1
+      export RPC_URL
       shift
       ;;
     --restart-anvil)
@@ -451,54 +589,87 @@ if [[ "$KILL_ANVIL" -eq 1 ]]; then
   exit 0
 fi
 
+if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
+  if is_localhost_rpc; then
+    if [[ "$RPC_URL_EXPLICIT" -eq 1 ]]; then
+      log_error "--live cannot target a localhost --rpc-url (got $RPC_URL)"
+      exit 1
+    fi
+    RPC_URL="$(resolve_foundry_rpc_alias robinhood_testnet)"
+    export RPC_URL
+  fi
+  if [[ "$RESTART_ANVIL" -eq 1 ]]; then
+    log_error "--live cannot be combined with --restart-anvil"
+    exit 1
+  fi
+  if [[ "$COMMAND" == "detach-fork" ]]; then
+    log_error "detach-fork is Anvil-only"
+    exit 1
+  fi
+  log_info "Live 46630 broadcast RPC=$RPC_URL"
+fi
+
+if [[ "$RESTART_ANVIL" -eq 1 ]] && ! is_localhost_rpc; then
+  log_error "--restart-anvil requires a localhost RPC_URL (got $RPC_URL)"
+  exit 1
+fi
+
 if [[ "${ANVIL_FORK_BLOCK_NUMBER:-}" == "latest" ]]; then
   FORK_LATEST=1
 fi
-if [[ -n "$CLI_FORK_ALIAS" ]]; then
-  FOUNDRY_FORK_RPC_ALIAS="$CLI_FORK_ALIAS"
-  ANVIL_FORK_URL=""
-fi
-if [[ -z "$ANVIL_FORK_URL" ]]; then
-  if ! ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS" 2>/dev/null)"; then
-    if [[ -n "$CLI_FORK_ALIAS" ]]; then
-      log_error "Could not resolve Foundry RPC alias: $FOUNDRY_FORK_RPC_ALIAS"
-      exit 1
-    fi
-    FOUNDRY_FORK_RPC_ALIAS="robinhood_testnet"
-    ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
+
+if is_localhost_rpc; then
+  if [[ -n "$CLI_FORK_ALIAS" ]]; then
+    FOUNDRY_FORK_RPC_ALIAS="$CLI_FORK_ALIAS"
+    ANVIL_FORK_URL=""
   fi
+  if [[ -z "$ANVIL_FORK_URL" ]]; then
+    if ! ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS" 2>/dev/null)"; then
+      if [[ -n "$CLI_FORK_ALIAS" ]]; then
+        log_error "Could not resolve Foundry RPC alias: $FOUNDRY_FORK_RPC_ALIAS"
+        exit 1
+      fi
+      FOUNDRY_FORK_RPC_ALIAS="robinhood_testnet"
+      ANVIL_FORK_URL="$(resolve_foundry_rpc_alias "$FOUNDRY_FORK_RPC_ALIAS")"
+    fi
+  fi
+  _fork_host="${ANVIL_FORK_URL#*://}"
+  _fork_host="${_fork_host%%/*}"
+  log_info "Anvil fork alias $FOUNDRY_FORK_RPC_ALIAS ($_fork_host)"
+  unset _fork_host
 fi
-_fork_host="${ANVIL_FORK_URL#*://}"
-_fork_host="${_fork_host%%/*}"
-log_info "Fork alias $FOUNDRY_FORK_RPC_ALIAS ($_fork_host)"
-unset _fork_host
 
-require_dev_address
-require_localhost_broadcast
+require_deployer
 
-if [[ "$RESTART_ANVIL" -eq 1 ]]; then
-  kill_anvil
-  purge_stage_artifacts
+if is_localhost_rpc; then
+  if [[ "$RESTART_ANVIL" -eq 1 ]]; then
+    kill_anvil
+    purge_stage_artifacts
+  fi
+  start_anvil
+else
+  log_info "Skipping Anvil start (RPC is not localhost)"
 fi
-
-start_anvil
 
 CID="$(perl -e 'alarm shift; exec @ARGV' 10 cast chain-id --rpc-url "$RPC_URL")"
 if [[ "$CID" != "46630" ]]; then
-  log_error "Expected chain id 46630, got $CID — start Anvil with --chain-id 46630"
+  log_error "Expected chain id 46630, got $CID"
+  if is_localhost_rpc; then
+    log_error "Start Anvil with --chain-id 46630 --disable-code-size-limit"
+  fi
   exit 1
 fi
-log_success "Anvil chain id $CID"
+log_success "Chain id $CID RPC=$RPC_URL"
 
-log_header "Anvil Robinhood Testnet deploy: $COMMAND"
-log_info "SENDER=$SENDER OUT_DIR=$OUT_DIR_OVERRIDE"
+log_header "Robinhood testnet (46630) deploy: $COMMAND"
+log_info "DEPLOYER_ADDRESS=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE"
 
 case "$COMMAND" in
   all)
-    run_stages 00 01 02 03 04 05 06a 06b 06c 06e 06 07 08 simulate 09
+    run_stages 00 01 02 03 03b 04 05 06t 06e 09
     ;;
   foundation)
-    run_stages 00 01 02 03
+    run_stages 00 01 02 03 03b
     ;;
   assets)
     run_stages 04
@@ -507,19 +678,20 @@ case "$COMMAND" in
     run_stages 05
     ;;
   leaves)
-    run_stages 06a 06b 06c 06e 06
-    ;;
-  nests)
-    run_stages 07
-    ;;
-  feesink)
-    run_stages 08
+    run_stages 06t 06e
     ;;
   simulate|stagesimulate)
     run_stages simulate
     ;;
   export)
     run_stages 09
+    ;;
+  detach-fork)
+    if ! is_localhost_rpc; then
+      log_error "detach-fork is Anvil-only"
+      exit 1
+    fi
+    detach_fork
     ;;
   stage*)
     n="${COMMAND#stage}"

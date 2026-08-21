@@ -6,8 +6,6 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
-import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalDETF
@@ -119,18 +117,6 @@ contract UniswapV4StandardExchangeOrbitalDETF_AdversarialTest is TestBase_Uniswa
         );
         vm.stopPrank();
         assertTrue(hostileDetfInfo.isReserveLive(), "hostile detf live");
-    }
-
-    function _setBondTermsFor(address vault_) internal {
-        try IVaultFeeOracleManager(address(indexedexManager)).setVaultBondTerms(
-            vault_,
-            BondTerms({
-                minLockDuration: DEFAULT_MIN_LOCK,
-                maxLockDuration: DEFAULT_MAX_LOCK,
-                minBonusPercentage: 0,
-                maxBonusPercentage: 0.5e18
-            })
-        ) {} catch {}
     }
 
     function test_reentrancy_mint_hitsIsLocked() public {

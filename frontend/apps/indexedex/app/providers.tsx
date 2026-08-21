@@ -1,40 +1,72 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import { WagmiProvider, createConfig, createStorage } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { WagmiProvider, createConfig, createStorage, unstable_connector } from 'wagmi';
 import { injected } from 'wagmi/connectors';
-import { base, baseSepolia, foundry, localhost, sepolia } from 'wagmi/chains';
+import { base, baseSepolia, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { http } from 'viem';
+import { fallback, http } from 'viem';
 
 import {
   DeploymentEnvironmentContext,
   DEFAULT_DEPLOYMENT_ENVIRONMENT,
 } from '@indexedex/protocol/deploymentEnvironment';
-import { setDefaultDeploymentEnvironment } from '@indexedex/protocol/addressArtifacts';
 import {
-  DEFAULT_SELECTED_CHAIN_ID,
+  CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
+  setDefaultDeploymentEnvironment,
+  type CanonicalArtifactChainId,
+} from '@indexedex/protocol/addressArtifacts';
+import {
   isCanonicalArtifactChainId,
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from '@indexedex/protocol/networkSelection';
+import { robinhood, robinhoodTestnet, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains';
 import { BrandProvider } from './lib/brandContext';
+import { isLocalRobinhoodTestnet, robinhoodTestnetRpcUrl } from './lib/localRpc';
 
 const queryClient = new QueryClient();
-const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545';
-const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:9545';
-const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ?? sepolia.rpcUrls.default.http[0];
-const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSepolia.rpcUrls.default.http[0];
 
-function isLocalSepoliaEnvironment(environment: string): boolean {
-  // Both supersim and single-chain local_testing point sepolia/base-sepolia
-  // wallet reads at the local Anvil/SuperSim RPC endpoints.
-  return environment === 'supersim_sepolia' || environment === 'local_testing';
+const rhTestnetChain = isLocalRobinhoodTestnet()
+  ? robinhoodTestnetAnvil(robinhoodTestnetRpcUrl())
+  : robinhoodTestnet
+
+/** Prefer the connected wallet's RPC; HTTP is SSR / disconnected fallback only. */
+function walletFirstTransport(fallbackUrl: string) {
+  return fallback([
+    unstable_connector(injected, { retryCount: 0 }),
+    http(fallbackUrl),
+  ])
+}
+
+const wagmiConfig = createConfig({
+  chains: [robinhood, rhTestnetChain, sepolia, baseSepolia, base],
+  multiInjectedProviderDiscovery: false,
+  ssr: true,
+  storage: createStorage({ key: 'indexedex-wagmi-v3' }),
+  connectors: [
+    injected({ target: 'metaMask' }),
+    injected({ target: 'coinbaseWallet' }),
+    injected(),
+  ],
+  transports: {
+    [robinhood.id]: walletFirstTransport(robinhood.rpcUrls.default.http[0]),
+    [rhTestnetChain.id]: walletFirstTransport(rhTestnetChain.rpcUrls.default.http[0]),
+    [sepolia.id]: walletFirstTransport(sepolia.rpcUrls.default.http[0]),
+    [baseSepolia.id]: walletFirstTransport(baseSepolia.rpcUrls.default.http[0]),
+    [base.id]: walletFirstTransport(base.rpcUrls.default.http[0]),
+  },
+});
+
+function coerceIndexedexChainId(value: number): CanonicalArtifactChainId {
+  if (value === CHAIN_ID_ROBINHOOD || value === CHAIN_ID_ROBINHOOD_TESTNET) return value
+  return CHAIN_ID_ROBINHOOD_TESTNET
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const environment = DEFAULT_DEPLOYMENT_ENVIRONMENT;
   const setEnvironment = () => {};
-  const [selectedChainId, setSelectedChainId] = useState(DEFAULT_SELECTED_CHAIN_ID);
+  const [selectedChainId, setSelectedChainId] = useState<CanonicalArtifactChainId>(CHAIN_ID_ROBINHOOD_TESTNET);
 
   useEffect(() => {
     setDefaultDeploymentEnvironment(environment);
@@ -45,7 +77,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     const stored = Number(window.localStorage.getItem(SELECTED_NETWORK_STORAGE_KEY));
     if (Number.isFinite(stored) && isCanonicalArtifactChainId(stored)) {
-      setSelectedChainId(stored);
+      setSelectedChainId(coerceIndexedexChainId(stored));
     }
   }, []);
 
@@ -55,37 +87,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
   }, [selectedChainId]);
 
-  const config = useMemo(
-    () => {
-      const useLocalRpc = isLocalSepoliaEnvironment(environment);
-
-      return createConfig({
-        chains: [sepolia, baseSepolia, foundry, localhost, base],
-        multiInjectedProviderDiscovery: false,
-        ssr: true,
-        storage: createStorage({ key: 'indexedex-wagmi-v3' }),
-        connectors: [
-          injected({ target: 'metaMask' }),
-          injected({ target: 'coinbaseWallet' }),
-          injected(),
-        ],
-        transports: {
-          [foundry.id]: http(localRpcUrl),
-          [localhost.id]: http(localRpcUrl),
-          [base.id]: http(base.rpcUrls.default.http[0]),
-          [sepolia.id]: http(useLocalRpc ? localRpcUrl : sepoliaRpcUrl),
-          [baseSepolia.id]: http(useLocalRpc ? baseRpcUrl : baseSepoliaRpcUrl),
-        },
-      })
-    },
-    [environment]
-  );
-
   return (
     <DeploymentEnvironmentContext.Provider value={{ environment, setEnvironment }}>
       <NetworkSelectionContext.Provider value={{ selectedChainId, setSelectedChainId }}>
         <BrandProvider>
-          <WagmiProvider config={config}>
+          <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
               {children}
             </QueryClientProvider>

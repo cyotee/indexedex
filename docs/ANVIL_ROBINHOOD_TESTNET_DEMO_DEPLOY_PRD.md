@@ -2,7 +2,7 @@
 
 **Status:** **Accepted v2.0 — requirements locked.** Product law stays here. Execution follows the implementation plan. Do **not** treat existing files under `scripts/foundry/anvil_robinhood_testnet/` as accepted implementation until they match that plan.  
 **Date:** 2026-08-15  
-**Owner surface:** Foundry launch-group scripts (Anvil fork of Robinhood Chain Testnet) + later DTF UI artifacts  
+**Owner surface:** Foundry launch-group scripts for public 46630 (rehearsed on an Anvil fork) + DTF UI artifacts  
 **Implementation plan:** [`ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md`](./ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md) — **READY FOR EXECUTION** (groups **00–09** + DTF)
 
 | Doc / path | Role |
@@ -30,13 +30,13 @@
 
 ## 0. One-line goal
 
-Ship a **resumable Anvil pipeline** that **forks Robinhood Chain Testnet (chain id `46630`)** via Foundry alias **`robinhood_testnet_alchemy`**, deploys IndexedEx in **launch-shaped Foundry groups 00–09** (factories → platform → Uni V4 packages → tokens → **ten live + launch-rich DETFs** → frontend `chain/46630/` + DTF list/`/mint`), and lets us **replay proven groups after a reset** and **simulate 01–08 in one Foundry script** for a gas estimate — so we can dress-rehearse the public demo locally and later reshape the **4663 mainnet** scripts to the same groups. **No public broadcast.**
+Ship a **resumable 46630 launch pipeline** (Foundry groups 00–09: factories → platform → Uni V4 packages → tokens → **ten live + launch-rich DETFs** → frontend `chain/46630/` + DTF list/`/mint`) that **broadcasts as `DEPLOYER_ADDRESS`** (forge `--sender`; cast wallet signs) the same way on public Robinhood Chain Testnet and on a **local Anvil fork** (`--chain-id 46630 --disable-code-size-limit`). Rehearse locally, then `--live` to the public RPC. Replay proven groups after an Anvil reset. Simulate 01–08 in one script for a gas estimate. Later reshape the **4663 mainnet** scripts to the same groups.
 
 ---
 
 ## 0.1 How to use this file
 
-- **Now:** this PRD is accepted. Execute the implementation plan (00–09 + DTF). No live public broadcast.
+- **Now:** this PRD is accepted. Execute the implementation plan (00–09 + DTF). Rehearse on Anvil; `--live` is the public 46630 path.
 - **Exploratory code** already on disk under `scripts/foundry/anvil_robinhood_testnet/` is **not** SoT until reconciled to the implementation plan.
 - **Implementors invent nothing.** Every PkgArgs field, fee, seed, and richness gate is in §2 / §2.8. If a field is missing, stop and amend the PRD — do not guess.
 
@@ -58,7 +58,7 @@ The network is **Robinhood Chain Testnet**, not Ethereum Sepolia. Informal nickn
 | Explorer | `https://explorer.testnet.chain.robinhood.com/` |
 | Faucet | `https://faucet.testnet.chain.robinhood.com/` |
 | Local Anvil (when forked) | `http://127.0.0.1:8545`, **chain id 46630** |
-| Anvil mnemonic | Foundry default. **#0** `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` = deployer / owner / SENDER / first-bonder. **#1** `0x70997970C51812dc3A010C7d01b50e0d17dc79C8` = UI wallet. Default 10_000 ETH each; **do not** send extra ETH to #1. |
+| Deployer | `DEPLOYER_ADDRESS` (required). Forge `--sender`; cast wallet signs. No Anvil #0 default. Anvil pre-funds Foundry mnemonic accounts; fund `DEPLOYER_ADDRESS` on the fork if it is not one of those. |
 
 **Wallet add-network (public testnet, not Anvil):**
 
@@ -83,8 +83,8 @@ Do **not** invent RPC URLs. Operator must export `ALCHEMY_KEY` for the Alchemy a
 | D1 | **Happy-path demo money is ours.** The §2.1 mintable table (**13** tokens in group 04) + **`TTRICH`** (group 08) via Crane `ERC20MinterFacade`. Do **not** seed pools, first-bond, or `/mint` against official RH stock tokens, faucet stocks, or explorer “USDC/USDG” clones. | **Locked** |
 | D2 | Anvil **must** be chain id **`46630`**, forked from Robinhood Chain Testnet (`ROBINHOOD_TESTNET` pins). | **Locked** |
 | D3 | **Sibling script family.** Do not mutate `anvil_robinhood_main` / `anvil_robinhood_fee_detf` as the only copy. New tree: `scripts/foundry/anvil_robinhood_testnet/`. Those 4663 trees stay the current mainnet-fork lab until rewritten to these groups. | **Locked** |
-| D4 | **No live 46630 or 4663 broadcast** as part of this PRD. Broadcast only to **localhost Anvil**. | **Locked** |
-| D5 | **Scripted first bond on every DETF** then **launch-rich** (D47). Bonder = Anvil **#0**. Lock **1 day** (`86400`). Max lock **180 days** (`DEFAULT_BOND_MAX_TERM`). Amounts and order in §2.7. Scripts must leave each instance `isReserveLive() == true` and mint-open per D47. | **Locked** |
+| D4 | **These groups are the public 46630 deploy path.** Rehearse on a local Anvil fork (`RPC_URL=http://127.0.0.1:8545`, Anvil `--chain-id 46630 --disable-code-size-limit`). Live: `--live` to the official 46630 RPC. Broadcast as `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet signs). Never `--private-key`. Never `--unlocked` impersonation. Do **not** broadcast to 4663 from this tree. | **Locked** |
+| D5 | **Scripted first bond on every DETF** then **launch-rich** (D47). Bonder = the **deployer EOA** (`DEPLOYER_ADDRESS`). Lock **1 day** (`86400`). Max lock **180 days** (`DEFAULT_BOND_MAX_TERM`). Amounts and order in §2.7. Scripts must leave each instance `isReserveLive() == true` and mint-open per D47. | **Locked** |
 | D6 | **Reuse Crane `ERC20MinterFacade`** (`mintToken(token, amount, recipient)`). Authorize it as `mint` operator on **each mintable stand-in** via `IOperable.setOperatorFor`. Export `erc20MinterFacade` on `platform.json` so `/mint` works. | **Locked** |
 | D7 | Frontend artifacts (group 09): **`frontend/packages/protocol/src/addresses/chain/46630/`**. Register chain **46630** in `@indexedex/protocol`. Do not overwrite `chain/4663/`. | **Locked** |
 | D8 | Official RH testnet ETH / faucet stocks are **flavor / wrap-ETH only**. Official testnet **WETH** is flavor/wrap **and** a **`pairToken`** on **D26** (`TTDOL-Q`) and **D36** (`TTRICH-S`). Faucet stocks are never fixture legs. | **Locked** |
@@ -103,7 +103,7 @@ Do **not** invent RPC URLs. Operator must export `ALCHEMY_KEY` for the Alchemy a
 | D21 | Group 01 includes the **Uni V4 hook diamond factory** with CREATE3 + diamond package factory. `setHookDiamondPackageFactory` runs in **group 02** once IndexedexManager exists. | **Locked** |
 | D22 | Group 02 is the **IndexedEx platform**: FeeCollector, IndexedexManager (Vault Registry + Vault Fee Oracle on that diamond), SE **rate provider DFPkg** (package only, no per-vault instances). | **Locked** |
 | D23 | Group 03 deploys Uni V4 **packages only**: hook DFPkgs (CP / Orbital / Weighted / **Curve Quad Stable Buffer** / Single SE Buffer), Uni V4 SE DFPkg, DETF children (bond NFT + rebasing claim **packages**), Uni V4 DETF DFPkgs (CP / Orbital / Weighted / **Curve Quad Stable**). **No** pools, vault instances, or DETF instances. | **Locked** |
-| D24 | Accounts: Anvil **#0** = deployer / owner / SENDER / first-bonder; Anvil **#1** = UI wallet. | **Locked** |
+| D24 | Accounts: deployer / owner / SENDER / first-bonder = `DEPLOYER_ADDRESS` (required; no Anvil #0 default). `UI_WALLET` env or the deployer. | **Locked** |
 | D25 | DETF / SE **role names only** in code (`rateAsset`, `pairToken`, `underlyingVault`, `vaultShare`, `detfToken`, `reservePool`, `rebasingClaimToken`). No RICH/RICHIR as role names. | **Locked** |
 | D26 | **Dollar Quad leaf is in scope** (fifth leaf). Three Uni V4 SEs: `TTUSDE`/WETH, `TTUSDG`/WETH, `TTUSDG`/`TTUSDE`. `pairToken`s **R1:** `TTUSDE`, `TTUSDG`, **WETH** (pairwise distinct). 3/3 SE-buffered. See §2.3. | **Locked** |
 | D27 | **Leaf showcase = four live + launch-rich DETFs, one per Uni V4 SE family** (CP Single, Orbital, Curve Quad, Weighted). Stories and `pairToken`s in §2.1. No other themed **leaf** books (High-narrative, Semi core-7, Rates-3, …) in this rehearsal. | **Locked** |
@@ -112,24 +112,24 @@ Do **not** invent RPC URLs. Operator must export `ALCHEMY_KEY` for the Alchemy a
 | D30 | **Nested showcase = four live + launch-rich DETFs** whose `pairToken`s are D27 **`detfToken`s**: Showcase nest (Weighted-4), Beta nest (Orbital), Index wrap (CP Single), Mag7 wrap (CP Single). No nested Curve Quad. Table in §2.2. Group **07**. | **Locked** |
 | D31 | **All 14 mintable stand-ins are 18 decimals.** | **Locked** |
 | D32 | **Weighted pair *relative* tape** is the market-cap-ish vector in §2.8 (NVDA-first). **Not** 100% of the book — D54 takes 20% self-leg, then this tape is **80%**. Nest inners are **equal 20% each** after the same 20% self-leg. Frozen demo tape, **not** a live oracle. Do not show as a promised USD index. | **Locked** |
-| D33 | **Group 04 mint path:** facade `maxMintAmount = 10_000_000e18`, `minMintInterval = 0`; mint **1e12** whole units of each of the **13** §2.1 tokens to Anvil #0 and #1; leave facade on. Group 08 does the same for `TTRICH`. | **Locked** |
+| D33 | **Group 04 mint path:** facade `maxMintAmount = 10_000_000e18`, `minMintInterval = 0`; mint **1e12** whole units of each of the **13** §2.1 tokens to `DEPLOYER_ADDRESS` and `UI_WALLET`; leave facade on. Group 08 does the same for `TTRICH`. | **Locked** |
 | D34 | **First UI consumer:** `frontend/apps/dtf` (port 3002). List all **ten** DETFs **equally** (D49), each live + launch-rich, plus `/mint` for the 14 stand-ins. Do not add a second app in this PRD. | **Locked** |
 | D35 | **Fork pin:** bump Crane `ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK` to a **known-good recent testnet head at first implement**. Scripts may override with `ANVIL_FORK_BLOCK_NUMBER`. Do not fork unpinned head. | **Locked** |
 | D36 | **Group 08:** mintable **`TTRICH`** (`Test Token RICH`, 18 dec, facade + 1e12 like D33) + live + launch-rich Uni V4 **CP Single** fee-sink. `pairToken` = official testnet **WETH**. SE = Uni V4 `TTRICH` / WETH at **0.30%**. RP on (shares → `TTRICH`). Same Policy / creation / expansion as D38. Not a pons launch. | **Locked** |
 | D37 | **Fee routing (this rehearsal):** Vault Fee Oracle `feeTo` = **FeeCollector**. Usage/dex fees **accumulate on the FeeCollector**. Do **not** script `pushSingleTokenFee` / donate into `TTRICH-S`. Manual push later (operator / later PRD). `TTRICH-S` still exists as the live fee-sink exhibit. | **Locked** |
-| D38 | **Shared DETF PkgArgs** (all ten): `creationPairPerDetfWad = 1e18` on every external leg (**peg ruler**, not richness). `thresholdMode = Policy`, mint **1.05e18**, burn **0.95e18**. Expansion fields **`0`** → family defaults: epoch **8h**, **R = 10%/yr**, unlimited catch-up. Both Quads `baseAmp = 100`. Orbital `rateAsset`: leaf = `TTNVDA`; Beta nest = **W** `detfToken`. Orbital `detfBindingIndex = 2` (DETF is the third hook token). Caller premines via `UniswapV4DetfHookPremineLib`; `deployVault(args, mineNonce)`; nonce not in PkgArgs. `vaultShares[i] = address(0)` when that leg has an SE (SE diamond is the share). Bond min **1 day**, max **180 days** (set on the fee oracle in group 02 from `DEFAULT_BOND_MIN_TERM` / `DEFAULT_BOND_MAX_TERM` overridden min to `86400`). **Do not** raise creation to “look rich”; richness is D47. | **Locked** |
+| D38 | **Shared DETF PkgArgs** (all ten): `creationPairPerDetfWad = 1e18` on every external leg (**peg ruler**, synthetic 1.0). Uni V4 **opening** `openingPairPerDetfWad` is **2.2e18** (N10: CP Single mint-opens at 2.2e18 after a real first bond; 1.1e18 left mint closed). `thresholdMode = Policy`, mint **1.05e18**, burn **0.95e18**. Expansion fields **`0`** → family defaults: epoch **8h**, **R = 10%/yr**, unlimited catch-up. Both Quads `baseAmp = 100`. Orbital `rateAsset`: leaf = `TTNVDA`; Beta nest = **W** `detfToken`. Orbital `detfBindingIndex = 2` (DETF is the third hook token). Caller premines via `UniswapV4DetfHookPremineLib`; `deployVault(args, mineNonce)`; nonce not in PkgArgs. `vaultShares[i] = address(0)` when that leg has an SE (SE diamond is the share). Bond min **1 day**, max **180 days** (set on the fee oracle in group 02 from `DEFAULT_BOND_MIN_TERM` / `DEFAULT_BOND_MAX_TERM` overridden min to `86400`). **Do not** raise creation to “look rich”; opening is the launch-rich lever. | **Locked** |
 | D39 | **Rate providers on every SE** (leaf, nest, fee-sink). Each RP rates shares → that leg’s `pairToken`. D39 is **not** a price. | **Locked** |
 | D40 | **Fixture Uni V4 pools** (the `pair`/`TTUSDG` or WETH books in §2.5): fee **0.30% (3000 pips)**, tick spacing **60**, init mid **1:1** (`TickMath.getSqrtPriceAtTick(0)`). Reserve-hook product pools use **family plumbing** (typically fee 0 / tick 60 / 1:1) — do not invent other ticks. | **Locked** |
-| D41 | **Public live 46630 is out of this PRD.** D4 stands (localhost Anvil only). | **Locked** |
+| D41 | **Superseded by D4.** Public 46630 broadcast is in scope via `--live` + `DEPLOYER_ADDRESS`. Anvil is the rehearsal target. | **Locked** |
 | D42 | **Crane facade fix before group 04:** `ERC20MinterFacadeTarget` must use the **same** last-mint key for read and write: **`(token, recipient)`**. | **Locked** |
 | D43 | **Tokenlist flavor:** official testnet WETH tagged `weth`; five faucet stocks tagged `rh-faucet`. **Not** `testToken` — `/mint` must not offer them. | **Locked** |
 | D44 | **DETF ERC-20 symbols/names** are the §2.6 table. | **Locked** |
-| D45 | **Seed fixture pools from Anvil #0** after mint/wrap. TT/TT pools: **1e9** whole units each side. Pools with WETH: **100 WETH** + **100** whole units of the TT*. Nest W/Q pools stay **empty**. #1 gets **no extra ETH**. #0 wraps **enough** official WETH for those seeds **plus** `TTDOL-Q` / `TTRICH-S` first-bond **plus** D47 richness buys on WETH-legged books. Do not cap at 300 WETH. | **Locked** |
+| D45 | **Seed fixture pools from the deployer EOA** (`DEPLOYER_ADDRESS`) after mint/wrap. TT/TT pools: **1e9** whole units each side. Pools with WETH: **100 WETH** + **100** whole units of the TT*. Nest W/Q pools stay **empty**. UI wallet gets **no extra ETH**. Deployer wraps **enough** official WETH for those seeds **plus** `TTDOL-Q` / `TTRICH-S` first-bond **plus** D47 richness buys on WETH-legged books. Do not cap at 300 WETH. | **Locked** |
 | D46 | **Vault Fee Oracle (group 02):** `setDefaultUsageFee(5e16)` = **5%**; `setDefaultDexSwapFee(3e14)` = **0.03%**. No per-vault overrides. | **Locked** |
-| D47 | **Launch every DETF rich** (all ten). After each first bond, Anvil **#0** swaps **pair → detfToken** on that reserve until **every external pair** satisfies `syntheticVs(pair) ≥ 10.5e18` (CP Single: `syntheticPrice() ≥ 10.5e18`) **and** `isMintingAllowed(pair)` / `isMintingAllowed()` is true. That is **10×** the D38 mint gate. Script **loops on preview**; do **not** hardcode a swap size. Multi-leg books (Orbital, Weighted, both Quads) must be **all-legs** mint-rich, not only the SE door. Uni V4 hooks ban native donate — do not ERC-20-push surplus. | **Locked** |
+| D47 | **Rescinded for Uni V4 SE DETF.** Diamond impersonation + hook `depositSingle` as the DETF is **forbidden**. First bond as the deployer EOA is the only launch path. Launch-rich is **opening** (`openingPairPerDetfWad` = 2.2e18, N10 recorded). `isReserveLive` after first bond is the live gate. Mint-open is T3 of the peg/opening PRD, not a second LP step. | **Rescinded** |
 | D48 | **No Anvil time warp.** Bonds stay locked. Demo does not mature/claim by `vm.warp`. | **Locked** |
 | D49 | **No featured DETF.** DTF lists all **ten** equally. | **Locked** |
-| D50 | **Implementation plan** covers the **whole PRD except public broadcast**: groups **00–09**, SimulateLaunch **01–08**, shell orchestrator, protocol **46630**, DTF equal list + `/mint`. | **Locked** |
+| D50 | **Implementation plan** covers groups **00–09**, SimulateLaunch **01–08**, shell orchestrator (local Anvil + `--live`), protocol **46630**, DTF equal list + `/mint`. | **Locked** |
 | D51 | **Seigniorage incentive:** product default **5%** (`5e16`). Do not leave the old 50% constant. `setDefaultSeigniorageIncentivePercentage(5e16)` is allowed so a live oracle matches. D47 still runs until S ≥ 10.5. | **Locked** |
 | D52 | **Uni V4 SE liquid reserve:** `setDefaultLiquidReservePercentageOfTypeId(IUniswapV4StandardExchangeLiquidReserve, 0.2e18)` = **20%**. | **Locked** |
 | D53 | **SE vault-share ERC-20:** symbol `SE-{A}-{B}`, name `Test SE A/B`, using the two Uni V4 pool tokens (currency order: address-sorted is fine; symbol string uses the product names in §2.8). Shared SEs keep **one** name. Uni V4 SE `deployVault(poolKey, widthMultiplier)` uses **`widthMultiplier = 1`**. | **Locked** |
@@ -297,9 +297,9 @@ These DETF symbols are protocol-minted shares, **not** facade `/mint` tokens. `/
 
 ## 2.7 First bond + launch-rich (D5, D47)
 
-**Bonder:** Anvil #0. **Lock:** `86400` seconds (min). **`capitalToken`:** the SE-leg `pairToken` below. Excess external capital refunded (family law). After each first bond, `isReserveLive()` is true. After the richness step, D47 holds.
+**Bonder:** `DEPLOYER_ADDRESS`. **Lock:** `86400` seconds (min). **`capitalToken`:** the SE-leg `pairToken` below. Excess external capital refunded (family law). After each first bond, `isReserveLive()` is true. After the richness step, D47 holds.
 
-D38 `creationPairPerDetfWad = 1e18` is the **peg** first bond joins at. Shipped `_firstBondJoin` sizes `detfForJoin = pair / creation`, so first bond lands **on peg**. Seigniorage free-legs usually pull synthetic **below** 1.05. **Launch-rich is the next step**, not a different creation rate.
+D38 `creationPairPerDetfWad = 1e18` remains the **peg** (synthetic 1.0). Empty-book first-bond join is `G = pair / opening`. Opening `0` resolves to creation (at peg). Launch-rich is **opening above peg**, not a second diamond `depositSingle`. D47 diamond impersonation is **rescinded**.
 
 Nested first bonds use **inventory swaps** for free inner `detfToken`. Those same swaps, continued until D47, **are** the leaf richness step.
 
@@ -565,17 +565,17 @@ When this PRD is accepted, the implementation plan is groups **00–09 + Simulat
 - Groups 04–08: 13 tokens + facade; leaf pools/SEs; five leaf DETFs live + D47; four nest DETFs live + D47; `TTRICH` + fee-sink live + D47.
 - Every DETF: `isReserveLive()`, and D47 (all-legs mint-open, S ≥ 10.5e18).
 - Group 09: `chain/46630/` export; protocol package 46630; DTF lists ten DETFs equally; `/mint` lists 14 stand-ins.
-- Shell: `scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil`.
+- Shell: local `scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil`; live `… all --live`. Both require `DEPLOYER_ADDRESS`.
 - `Script_SimulateLaunch` runs **01–08**.
 - Replay `01` … `09` after an Anvil reset succeeds.
-- No Balancer, no pons, no Uni V3, no time warp, no fee push into `TTRICH-S`, no public broadcast.
+- No Balancer, no pons, no Uni V3, no time warp, no fee push into `TTRICH-S`. Broadcast as `DEPLOYER_ADDRESS` (`--sender`; cast wallet) on Anvil and on public 46630. No 4663 broadcast from this tree.
 - 4663 lab scripts and `chain/4663/` unchanged.
 
 ---
 
 ## 10. Explicit non-goals
 
-- Live broadcast to public 46630 or 4663
+- Live broadcast to **4663** from this tree (46630 `--live` is in scope, D4)
 - Using faucet stock tokens or explorer USDC/USDG clones as fixture legs
 - Redeploying RH WETH / Permit2 / Uni V4 cores
 - Deploying Balancer or any Balancer vault / DETF
@@ -585,24 +585,21 @@ When this PRD is accepted, the implementation plan is groups **00–09 + Simulat
 - Changing DETF / SE product behavior
 - Extra themed **leaf** DETFs beyond D27+D26 (High-narrative, Semi core-7, Rates-3, …)
 - Extra **nests** beyond D30
-- Public live 46630 broadcast (D41)
-- Public live 46630 broadcast (already listed; the **local** DTF on Anvil 46630 **is** in scope)
+- Using `--unlocked` / Anvil impersonation as the deploy path (D4)
 
 ---
 
 ## 11. Operator notes (after implementation — not now)
 
 ```bash
+export DEPLOYER_ADDRESS=0x...   # cast wallet; forge --sender
+
+# Local Anvil rehearsal (node may use --disable-code-size-limit)
 export ALCHEMY_KEY=...
-export DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+bash scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil
 
-# Anvil: --chain-id 46630 --fork-url <resolved robinhood_testnet_alchemy> --disable-code-size-limit
-
-forge script scripts/foundry/anvil_robinhood_testnet/Script_SimulateLaunch.s.sol \
-  --rpc-url http://127.0.0.1:8545 \
-  --sender "$DEV_ADDRESS" \
-  --unlocked
-# omit --broadcast for gas estimate
+# Live 46630 (same scripts, same sender)
+bash scripts/shell/anvil_robinhood_testnet.sh all --live
 ```
 
 Wallet against the local fork: `http://127.0.0.1:8545`, chain id **46630**.  
@@ -618,6 +615,8 @@ Wallet against public testnet: §1 add-network table.
 | 2026-08-14 | **v1.0** | Clean requirements PRD: D1–D25, no Balancer, grouped Foundry stages. |
 | 2026-08-15 | **v1.1–v1.8** | D26–D46: showcase set, nests, fees, first-bond live, FeeCollector accumulate. |
 | 2026-08-15 | **v1.9** | D47 launch-rich; D48–D53 warp / featured / 00–08 / seigniorage / SE names. |
-| 2026-08-15 | **v2.0** | Consistency pass + implementation plan. **D54/D55**. D50 = **whole PRD except public broadcast** (00–09 + DTF). |
+| 2026-08-21 | **D4/D41** | 46630 groups are the live deploy path. `--sender $DEPLOYER_ADDRESS` (cast wallet). Anvil fork is rehearsal (`--disable-code-size-limit` on the node). `--live` for public 46630. No `--private-key`, no Anvil #0 default. |
+| 2026-08-20 | **D4/D41** | First live-path rewrite (superseded 2026-08-21). |
+| 2026-08-15 | **v2.0** | Consistency pass + implementation plan. **D54/D55**. D50 = groups 00–09 + DTF (Anvil rehearsal and `--live`). |
 
 **Next:** execute [`ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md`](./ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md) with a goal-command agent.

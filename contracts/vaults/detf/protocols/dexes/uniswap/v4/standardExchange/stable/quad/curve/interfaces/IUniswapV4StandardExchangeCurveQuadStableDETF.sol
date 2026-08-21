@@ -66,6 +66,9 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETF {
     function feeRecipientNftId() external view returns (uint256);
     function creationPairPerDetfWad(uint256 productIndex) external view returns (uint256);
     function creationPairPerDetfWads() external view returns (uint256[] memory);
+    /// @notice Pair per DETF on first bond for product index. Resolved storage (0 at init → creation).
+    function openingPairPerDetfWad(uint256 productIndex) external view returns (uint256);
+    function openingPairPerDetfWads() external view returns (uint256[] memory);
     function lastExpansionTimestamp() external view returns (uint256);
     function expansionEpochLength() external view returns (uint256);
     function expansionClosureRatePerYearWad() external view returns (uint256);
@@ -219,6 +222,7 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETDFPkg is IDiamondFactoryPa
     /// @dev Product-order pair legs: exactly 3. DETF binding free via address sort after diamond exists.
     /// @dev standardExchanges / rateProviders / vaultShares: product-order length 3 (0 = bare).
     /// @dev creationPairPerDetfWad: product-order length 3; each must be > 0.
+    /// @dev openingPairPerDetfWad: empty or length 3; 0 per slot → that slot's creation.
     /// @dev baseAmp: hook D7 0 < baseAmp < 1_000_000.
     /// @dev Trailing expansion: zeros resolve via DETFEpochNaturalExpansionLib.
     /// @dev thresholdMode: 0 = Policy (default), 1 = Open.
@@ -231,6 +235,8 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETDFPkg is IDiamondFactoryPa
         IERC20[] vaultShares; // product order; address(0) → SE diamond is share when SE set
         address[] rateProviders; // product order; optional; only if SE set
         uint256[] creationPairPerDetfWad; // product order; each > 0
+        /// @notice Pair per DETF on first bond. 0 → use creation (open at peg). Empty array → all creation.
+        uint256[] openingPairPerDetfWad;
         uint256 baseAmp; // hook D7
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
@@ -239,6 +245,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableDETDFPkg is IDiamondFactoryPa
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

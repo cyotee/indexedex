@@ -176,7 +176,13 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
     }
 

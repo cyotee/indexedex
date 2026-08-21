@@ -69,7 +69,7 @@ contract UniswapV4StandardExchangeOrbitalDETFInfoFacet is IFacet, UniswapV4Stand
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](23);
+        f = new bytes4[](25);
         f[0] = IUniswapV4StandardExchangeOrbitalDETF.burnThreshold.selector;
         f[1] = IUniswapV4StandardExchangeOrbitalDETF.thresholdMode.selector;
         f[2] = IUniswapV4StandardExchangeOrbitalDETF.isMintingAllowed.selector;
@@ -79,19 +79,21 @@ contract UniswapV4StandardExchangeOrbitalDETFInfoFacet is IFacet, UniswapV4Stand
         f[6] = IUniswapV4StandardExchangeOrbitalDETF.feeRecipientNftId.selector;
         f[7] = IUniswapV4StandardExchangeOrbitalDETF.creationPair0PerDetfWad.selector;
         f[8] = IUniswapV4StandardExchangeOrbitalDETF.creationPair1PerDetfWad.selector;
-        f[9] = IUniswapV4StandardExchangeOrbitalDETF.lastExpansionTimestamp.selector;
-        f[10] = IUniswapV4StandardExchangeOrbitalDETF.expansionEpochLength.selector;
-        f[11] = IUniswapV4StandardExchangeOrbitalDETF.expansionClosureRatePerYearWad.selector;
-        f[12] = IUniswapV4StandardExchangeOrbitalDETF.expansionMaxCatchUpEpochs.selector;
-        f[13] = IUniswapV4StandardExchangeOrbitalDETF.acceptedBondTokens.selector;
-        f[14] = IUniswapV4StandardExchangeOrbitalDETF.protocolLp.selector;
-        f[15] = IUniswapV4StandardExchangeOrbitalDETF.userBondedLp.selector;
-        f[16] = IUniswapV4StandardExchangeOrbitalDETF.capitalModeOf.selector;
-        f[17] = IUniswapV4StandardExchangeOrbitalDETF.capitalToken0Of.selector;
-        f[18] = IUniswapV4StandardExchangeOrbitalDETF.capitalToken1Of.selector;
-        f[19] = IUniswapV4StandardExchangeOrbitalDETF.fdRateAssetWad.selector;
-        f[20] = IUniswapV4StandardExchangeOrbitalDETF.fdPairsOnlyRateAssetWad.selector;
-        f[21] = IUniswapV4StandardExchangeOrbitalDETF.isReserveHookFinalized.selector;
-        f[22] = IUniswapV4StandardExchangeOrbitalDETF.isReserveWired.selector;
+        f[9] = IUniswapV4StandardExchangeOrbitalDETF.openingPair0PerDetfWad.selector;
+        f[10] = IUniswapV4StandardExchangeOrbitalDETF.openingPair1PerDetfWad.selector;
+        f[11] = IUniswapV4StandardExchangeOrbitalDETF.lastExpansionTimestamp.selector;
+        f[12] = IUniswapV4StandardExchangeOrbitalDETF.expansionEpochLength.selector;
+        f[13] = IUniswapV4StandardExchangeOrbitalDETF.expansionClosureRatePerYearWad.selector;
+        f[14] = IUniswapV4StandardExchangeOrbitalDETF.expansionMaxCatchUpEpochs.selector;
+        f[15] = IUniswapV4StandardExchangeOrbitalDETF.acceptedBondTokens.selector;
+        f[16] = IUniswapV4StandardExchangeOrbitalDETF.protocolLp.selector;
+        f[17] = IUniswapV4StandardExchangeOrbitalDETF.userBondedLp.selector;
+        f[18] = IUniswapV4StandardExchangeOrbitalDETF.capitalModeOf.selector;
+        f[19] = IUniswapV4StandardExchangeOrbitalDETF.capitalToken0Of.selector;
+        f[20] = IUniswapV4StandardExchangeOrbitalDETF.capitalToken1Of.selector;
+        f[21] = IUniswapV4StandardExchangeOrbitalDETF.fdRateAssetWad.selector;
+        f[22] = IUniswapV4StandardExchangeOrbitalDETF.fdPairsOnlyRateAssetWad.selector;
+        f[23] = IUniswapV4StandardExchangeOrbitalDETF.isReserveHookFinalized.selector;
+        f[24] = IUniswapV4StandardExchangeOrbitalDETF.isReserveWired.selector;
     }
 }

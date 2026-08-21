@@ -213,6 +213,7 @@ Apply to **true DETFs** in scope (Balancer Single SE, multi-vault weighted, mixe
 - Facets: CREATE3 + `*FactoryService` / `DetfFacetFactoryService` / family `*_Facet_FactoryService`.
 - DETF DFPkg: **Vault Registry / manager** (`indexedexManager.deployPkg` / typed `deploy*DFPkg`). **Never** `new` DFPkg/facets; never bypass registry for registered vault packages.
 - `PkgInit` / `PkgArgs` **on the interface**, not the contract (Crane rule).
+- **Uni V4 SE DETF peg vs opening:** `creationPairPerDetfWad` is the synthetic 1.0 (Policy mint/burn and expansion). `openingPairPerDetfWad` is pair per DETF on empty-book first bond (`0` → creation). After `isReserveLive`, mint/bond quotes use the live curve. Do not impersonate the DETF or hook `depositSingle` as the diamond to fake launch-rich. Law: `UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`.
 - Shared helpers: `contracts/vaults/detf/common/core/*`, `detf/common/factory/*`, bond NFT packages, `StandardExchangeRateProviderDFPkg`, Balancer `WeightedPoolFactory`.
 
 ### Testing expectations (DETF-specific)

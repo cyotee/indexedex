@@ -29,6 +29,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
@@ -110,6 +111,12 @@ interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStan
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -140,6 +147,12 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     IFacet immutable ERC20_FACET;
@@ -329,6 +342,12 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
         cfg.expansionCatchUpCapBps = expCapBps_;
         cfg.creator = args.creator;
+        cfg.claimName = args.claimName;
+        cfg.claimSymbol = args.claimSymbol;
+        cfg.bondName = args.bondName;
+        cfg.bondSymbol = args.bondSymbol;
+        cfg.reserveName = args.reserveName;
+        cfg.reserveSymbol = args.reserveSymbol;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.standardExchangeVaults[i];
             // Vault diamond is the share ERC-20 for Standard Exchange vaults.
@@ -418,8 +437,8 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         address detf_ = address(this);
         bondVault_ = IDETFNFTVault(
             BOND_NFT_VAULT_PKG.deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
                 IERC20(reservePool_),
                 IERC20(detf_),
@@ -452,7 +471,13 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         address detf_ = address(this);
         claimToken_ = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IDetf(detf_), bondVault_, cfg.bufferToken, detfNftId_, detf_
+                IDetf(detf_),
+                bondVault_,
+                cfg.bufferToken,
+                detfNftId_,
+                detf_,
+                DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
         );
     }

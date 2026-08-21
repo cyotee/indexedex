@@ -63,6 +63,9 @@ interface IUniswapV4StandardExchangeWeightedDETF {
     function feeRecipientNftId() external view returns (uint256);
     function creationPairPerDetfWad(uint256 productIndex) external view returns (uint256);
     function creationPairPerDetfWads() external view returns (uint256[] memory);
+    /// @notice Pair per DETF on first bond for product index. Resolved storage (0 at init → creation).
+    function openingPairPerDetfWad(uint256 productIndex) external view returns (uint256);
+    function openingPairPerDetfWads() external view returns (uint256[] memory);
     function lastExpansionTimestamp() external view returns (uint256);
     function expansionEpochLength() external view returns (uint256);
     function expansionClosureRatePerYearWad() external view returns (uint256);
@@ -202,6 +205,7 @@ interface IUniswapV4StandardExchangeWeightedDETDFPkg is IDiamondFactoryPackage, 
     ///      Sum(detfWeight + pairWeights) must be 1e18; each weight ≥ 1%.
     /// @dev standardExchanges / rateProviders / vaultShares: product-order length m (0 = bare).
     /// @dev creationPairPerDetfWad: product-order length m; each must be > 0.
+    /// @dev openingPairPerDetfWad: empty or length m; 0 per slot → that slot's creation.
     /// @dev Trailing expansion: zeros resolve via DETFEpochNaturalExpansionLib.
     /// @dev thresholdMode: 0 = Policy (default), 1 = Open.
     /// @dev NO whole-DETF rateAsset field.
@@ -215,6 +219,8 @@ interface IUniswapV4StandardExchangeWeightedDETDFPkg is IDiamondFactoryPackage, 
         uint256 detfWeight; // DETF self-leg weight (WAD)
         uint256[] pairWeights; // product order length m
         uint256[] creationPairPerDetfWad; // product order; each > 0
+        /// @notice Pair per DETF on first bond. 0 → use creation (open at peg). Empty array → all creation.
+        uint256[] openingPairPerDetfWad;
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
         ThresholdMode thresholdMode; // 0 = Policy
@@ -222,6 +228,10 @@ interface IUniswapV4StandardExchangeWeightedDETDFPkg is IDiamondFactoryPackage, 
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

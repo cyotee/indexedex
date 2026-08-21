@@ -4,15 +4,20 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAccount, useChainId, useConnect, useConnection, useDisconnect, useSwitchChain } from 'wagmi';
-import { baseSepolia, sepolia } from 'wagmi/chains';
 
-import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts';
-import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment';
+import {
+  CHAIN_ID_ANVIL,
+  CHAIN_ID_LOCALHOST,
+  CHAIN_ID_ROBINHOOD,
+  CHAIN_ID_ROBINHOOD_TESTNET,
+} from '@indexedex/protocol/addressArtifacts';
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection';
+import { robinhood, robinhoodTestnet, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains';
 import { useBrand } from '../../lib/brandContext';
 import { isTestnetChainId } from '../../lib/isTestnet';
+import { isLocalRobinhoodTestnet, robinhoodTestnetRpcUrl } from '../../lib/localRpc';
 
-type HeaderChainOption = 'ethereum' | 'base';
+type HeaderChainOption = 'robinhood' | 'robinhood_testnet';
 
 type BrowserEthereumProvider = {
   providers?: BrowserEthereumProvider[];
@@ -61,46 +66,38 @@ type SwitchInspection = {
   summary: string;
 };
 
-const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545';
-const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:9545';
-
-function isLocalSepoliaEnvironment(environment: string): boolean {
-  return environment === 'supersim_sepolia';
-}
-
-function getSwitchableChains(environment: string): Record<HeaderChainOption, SwitchableChain> {
-  const useLocalRpc = isLocalSepoliaEnvironment(environment);
-  const ethereumRpcUrls = useLocalRpc
-    ? [localRpcUrl]
-    : [...sepolia.rpcUrls.default.http];
-  const baseRpcUrls = useLocalRpc
-    ? [baseRpcUrl]
-    : [...baseSepolia.rpcUrls.default.http];
-
+function getSwitchableChains(): Record<HeaderChainOption, SwitchableChain> {
+  const testnet = isLocalRobinhoodTestnet()
+    ? robinhoodTestnetAnvil(robinhoodTestnetRpcUrl())
+    : robinhoodTestnet
   return {
-    ethereum: {
-      option: 'ethereum',
-      label: 'Ethereum Sepolia',
-      chainId: sepolia.id,
-      hexChainId: `0x${sepolia.id.toString(16)}`,
-      chainName: sepolia.name,
-      rpcUrls: ethereumRpcUrls,
-      blockExplorerUrls: sepolia.blockExplorers?.default?.url ? [sepolia.blockExplorers.default.url] : undefined,
+    robinhood: {
+      option: 'robinhood',
+      label: 'Robinhood',
+      chainId: CHAIN_ID_ROBINHOOD,
+      hexChainId: `0x${CHAIN_ID_ROBINHOOD.toString(16)}`,
+      chainName: 'Robinhood',
+      rpcUrls: [...robinhood.rpcUrls.default.http],
+      blockExplorerUrls: robinhood.blockExplorers?.default?.url
+        ? [robinhood.blockExplorers.default.url]
+        : undefined,
     },
-    base: {
-      option: 'base',
-      label: 'Base Sepolia',
-      chainId: baseSepolia.id,
-      hexChainId: `0x${baseSepolia.id.toString(16)}`,
-      chainName: baseSepolia.name,
-      rpcUrls: baseRpcUrls,
-      blockExplorerUrls: baseSepolia.blockExplorers?.default?.url ? [baseSepolia.blockExplorers.default.url] : undefined,
+    robinhood_testnet: {
+      option: 'robinhood_testnet',
+      label: isLocalRobinhoodTestnet() ? 'Robinhood Testnet (Anvil)' : 'Robinhood Testnet',
+      chainId: CHAIN_ID_ROBINHOOD_TESTNET,
+      hexChainId: `0x${CHAIN_ID_ROBINHOOD_TESTNET.toString(16)}`,
+      chainName: testnet.name,
+      rpcUrls: [...testnet.rpcUrls.default.http],
+      blockExplorerUrls: testnet.blockExplorers?.default?.url
+        ? [testnet.blockExplorers.default.url]
+        : undefined,
     },
   };
 }
 
 function resolveHeaderChainOption(chainId: number | undefined): HeaderChainOption {
-  return chainId === baseSepolia.id ? 'base' : 'ethereum';
+  return chainId === CHAIN_ID_ROBINHOOD_TESTNET ? 'robinhood_testnet' : 'robinhood';
 }
 
 function connectorHasRdns(connector: ConnectorLike | undefined, value: string): boolean {
@@ -346,7 +343,6 @@ export function Header() {
   const connection = useConnection();
   const { disconnect } = useDisconnect();
   const { switchChainAsync } = useSwitchChain();
-  const { environment } = useDeploymentEnvironment();
   const { selectedChainId, setSelectedChainId } = useSelectedNetwork();
 
   const preferredConnector = resolvePreferredConnector(connectors);
@@ -379,7 +375,7 @@ export function Header() {
   const [chainSwitchNotice, setChainSwitchNotice] = useState<ChainSwitchNotice | null>(null);
   const [switchInspection, setSwitchInspection] = useState<SwitchInspection | null>(null);
 
-  const chainOptions = getSwitchableChains(environment);
+  const chainOptions = getSwitchableChains();
   const selectedChainOption = resolveHeaderChainOption(selectedChainId);
   const activeConnector = (connection.connector ?? preferredConnector) as SwitchConnector | undefined;
   const connectorId = activeConnector?.id;
@@ -772,6 +768,9 @@ export function Header() {
                 <Link href="/explore" className={navLinkClass}>
                   Explore
                 </Link>
+                <Link href="/insights" className={navLinkClass}>
+                  DETFs
+                </Link>
                 <Link href="/create" className={navLinkClass}>
                   Create
                 </Link>
@@ -805,8 +804,6 @@ export function Header() {
                       <Link href="/swap" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Trade</Link>
                       <Link href="/earn" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Vaults</Link>
                       <Link href="/token" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Token</Link>
-                      <Link href="/batch-swap" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Batch Swap</Link>
-                      <Link href="/insights" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Insights</Link>
                       {isTestnetChainId(selectedChainId) ? (
                         <Link href="/mint" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>
                       ) : null}
@@ -837,8 +834,8 @@ export function Header() {
                 disabled={isPromptingWalletSwitch}
                 title="Select app network"
               >
-                <option value="ethereum">Ethereum Sepolia</option>
-                <option value="base">Base Sepolia</option>
+                <option value="robinhood">Robinhood</option>
+                <option value="robinhood_testnet">Robinhood Testnet</option>
               </select>
               <div className="max-w-[220px] text-right text-[10px] leading-tight text-[var(--text-muted,#9aa3b2)]">
                 Selecting a network updates the app and prompts your wallet when a non-local wallet chain does not match.

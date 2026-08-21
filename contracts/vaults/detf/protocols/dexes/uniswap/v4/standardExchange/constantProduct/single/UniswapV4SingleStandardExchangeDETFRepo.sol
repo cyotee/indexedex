@@ -51,6 +51,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         uint256 detfNftId;
         uint256 feeRecipientNftId;
         uint256 creationPairPerDetfWad;
+        uint256 openingPairPerDetfWad;
         uint256 mintThreshold;
         uint256 burnThreshold;
         ThresholdMode thresholdMode;
@@ -62,6 +63,10 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     /// @dev Core bindings only — thresholds/expansion set via `_initPolicy`.
@@ -77,6 +82,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         uint256 detfNftId;
         uint256 feeRecipientNftId;
         uint256 creationPairPerDetfWad;
+        uint256 openingPairPerDetfWad;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
@@ -113,6 +119,7 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         s.detfNftId = p_.detfNftId;
         s.feeRecipientNftId = p_.feeRecipientNftId;
         s.creationPairPerDetfWad = p_.creationPairPerDetfWad;
+        s.openingPairPerDetfWad = p_.openingPairPerDetfWad;
         s.lastExpansionTimestamp = 0;
         s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
@@ -128,6 +135,19 @@ library UniswapV4SingleStandardExchangeDETFRepo {
         s.expansionEpochLength = p_.expansionEpochLength;
         s.expansionClosureRatePerYearWad = p_.expansionClosureRatePerYearWad;
         s.expansionMaxCatchUpEpochs = p_.expansionMaxCatchUpEpochs;
+    }
+
+    function _setChildTokenMetadata(
+        string memory claimName_,
+        string memory claimSymbol_,
+        string memory bondName_,
+        string memory bondSymbol_
+    ) internal {
+        Storage storage s = _layoutStruct();
+        s.claimName = claimName_;
+        s.claimSymbol = claimSymbol_;
+        s.bondName = bondName_;
+        s.bondSymbol = bondSymbol_;
     }
 
     function _setReserveLive() internal {

@@ -247,6 +247,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
             vaultShares: shares_,
             rateProviders: rps_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](3),
             baseAmp: DEFAULT_BASE_AMP,
             mintThreshold: 0,
             burnThreshold: 0,
@@ -254,7 +255,11 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -336,6 +341,19 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableDETF is
         args.name = string(abi.encodePacked("LaunchRich Quad ", tag_));
         args.symbol = string(abi.encodePacked("lrQ", tag_));
         args.expansionClosureRatePerYearWad = 4.4e18;
+    }
+
+    /// @notice Unique Policy instance with the same opening on every external leg (0 → creation).
+    function _argsWithOpening(string memory tag, uint256 opening_)
+        internal
+        view
+        returns (IUniswapV4StandardExchangeCurveQuadStableDETDFPkg.PkgArgs memory args)
+    {
+        args = _gentleArgsUnique(tag);
+        args.openingPairPerDetfWad = new uint256[](3);
+        args.openingPairPerDetfWad[0] = opening_;
+        args.openingPairPerDetfWad[1] = opening_;
+        args.openingPairPerDetfWad[2] = opening_;
     }
 
     function _deployDetfInstance(IUniswapV4StandardExchangeCurveQuadStableDETDFPkg.PkgArgs memory args)

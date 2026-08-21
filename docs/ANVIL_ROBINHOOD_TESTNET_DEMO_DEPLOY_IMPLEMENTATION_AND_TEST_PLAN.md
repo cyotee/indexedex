@@ -17,9 +17,9 @@ Read both files fully before editing. PRD wins on product. This plan wins on
 file map / phases / DoD. If a PkgArgs field is in neither, STOP and ask —
 do not invent.
 
-Scope: the whole PRD except public broadcast. Groups 00–09, SimulateLaunch
-01–08, shell orchestrator, protocol 46630, DTF list + /mint.
-NOT public 46630/4663 broadcast. NOT Balancer / pons / Uni V3.
+Scope: groups 00–09, SimulateLaunch 01–08, shell orchestrator
+(local Anvil + --live public 46630), protocol 46630, DTF list + /mint.
+NOT 4663 broadcast. NOT Balancer / pons / Uni V3.
 NOT vm.warp. NOT FeeCollector push into TTRICH-S.
 Do not edit anvil_robinhood_main / anvil_robinhood_fee_detf / chain/4663.
 
@@ -56,7 +56,7 @@ exploratory — reconcile to this plan; they are not accepted SoT.
 5. **Do** script first bond + D47 richness on all ten DETFs.  
 6. **Do not** `vm.warp` to mature bonds. **Do not** `pushSingleTokenFee` / donate into `TTRICH-S`.  
 7. **Do not** edit `anvil_robinhood_main/` or `anvil_robinhood_fee_detf/`. **Do not** overwrite `chain/4663/`.  
-8. Broadcast **only** when `RPC_URL` is localhost.  
+8. Broadcast as `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet signs). Local Anvil or `--live` public 46630. Never `--private-key`. Never `--unlocked`.  
 9. Role names only: `rateAsset`, `pairToken`, `underlyingVault`, `vaultShare`, `detfToken`, `reservePool`, `rebasingClaimToken`.  
 10. Production-first: no mocks of SUT (vaults, DETF, manager, registry, fee oracle, facets, DFPkgs).  
 11. Forge cold compile commonly takes **20–40+ minutes**. Wait for process exit. Seed `cache_forge/` + `out/` from a warm checkout before the first forge in a new worktree.
@@ -70,7 +70,7 @@ Deliver a green local path:
 ```bash
 # Repo root = lib/indexedex
 export ALCHEMY_KEY=...
-export DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+export DEPLOYER_ADDRESS=0x...
 
 bash scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil
 # wait for [SUCCESS]
@@ -91,7 +91,7 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 4. Artifacts under `deployments/anvil_robinhood_testnet/`.  
 5. Replay `01`…`09` after an Anvil reset restores the prefix.  
 6. `@indexedex/protocol` resolves **46630**. DTF lists all **ten** DETFs equally. `/mint` offers the **14** stand-ins only (not faucet stocks).  
-7. Fees sit on FeeCollector. No push into `TTRICH-S`. No time warp. No public broadcast.
+7. Fees sit on FeeCollector. No push into `TTRICH-S`. No time warp. Public 46630 via `--live` + `DEPLOYER_ADDRESS`.
 
 ---
 
@@ -99,12 +99,12 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 
 | Role | Address |
 |------|---------|
-| Deployer / owner / SENDER / first-bonder | Anvil **#0** `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` |
-| UI wallet | Anvil **#1** `0x70997970C51812dc3A010C7d01b50e0d17dc79C8` |
+| Deployer / owner / SENDER / first-bonder | `DEPLOYER_ADDRESS` (required; no Anvil #0 default) |
+| UI wallet | `UI_WALLET` or `DEPLOYER_ADDRESS` |
 
 | Env | Value |
 |-----|--------|
-| `RPC_URL` | `http://127.0.0.1:8545` (broadcast localhost only) |
+| `RPC_URL` | Local default `http://127.0.0.1:8545`. `--live` uses public `robinhood_testnet`. |
 | Chain id | **46630** |
 | Fork alias | **`robinhood_testnet_alchemy`** → fallback `robinhood_testnet` |
 | `ANVIL_FORK_BLOCK_NUMBER` | After D35: `ROBINHOOD_TESTNET.DEFAULT_FORK_BLOCK` (bump to a known-good recent 46630 head at first implement) |
@@ -185,7 +185,7 @@ lib/crane/contracts/tokens/ERC20/
 | `Script_SimulateLaunch` = 01+02+03 | **01–08** |
 | README v0.4 / “later inert DETFs” | live + D47; 00–09 + DTF |
 
-**Do create** `deploy_all.sh` + `scripts/shell/anvil_robinhood_testnet.sh`. Copy `anvil_robinhood_main/deploy_all.sh` patterns: `--restart-anvil`, `--force`, `--dry-run`, commands `all` / `foundation` (00–03) / `assets` (04) / `pools` (05) / `leaves` (06) / `nests` (07) / `feesink` (08) / `export` (09) / `stageNN`. Alias `robinhood_testnet_alchemy` then `robinhood_testnet`. `--chain-id 46630 --disable-code-size-limit`. Refuse broadcast if `RPC_URL` is not localhost.
+**Do create** `deploy_all.sh` + `scripts/shell/anvil_robinhood_testnet.sh`. Copy `anvil_robinhood_main/deploy_all.sh` patterns: `--restart-anvil`, `--force`, `--dry-run`, commands `all` / `foundation` (00–03) / `assets` (04) / `pools` (05) / `leaves` (06) / `nests` (07) / `feesink` (08) / `export` (09) / `stageNN`. Alias `robinhood_testnet_alchemy` then `robinhood_testnet`. Anvil node: `--chain-id 46630 --disable-code-size-limit`. Broadcast as `DEPLOYER_ADDRESS` (`--sender`; cast wallet) on localhost and on `--live`.
 
 **Reuse (do not rewrite):**
 
@@ -444,7 +444,7 @@ Cap iterations at a high bound (e.g. 64 per pair) and revert with a clear error 
 | Time warp | **forbidden** |
 | Fee push to TTRICH-S | **forbidden** |
 | Balancer / pons / Uni V3 | **forbidden** |
-| Public broadcast | **forbidden** (localhost Anvil only) |
+| Public broadcast | **`--live` + `DEPLOYER_ADDRESS`**. Cast wallet signs. Local default is Anvil fork. |
 | Group 09 / `chain/46630/` | **required** — new tree only; never overwrite `chain/4663/` |
 | 4663 lab / `chain/4663/` | do not touch |
 | Role names | PRD D25 |
@@ -558,4 +558,4 @@ These are **product non-goals**, not deferred work:
 
 ---
 
-**Next for the operator:** point a new agent at this file with the goal-command bootstrap block. The whole PRD except public broadcast is in scope.
+**Next for the operator:** point a new agent at this file with the goal-command bootstrap block. Groups 00–09, SimulateLaunch, local Anvil rehearsal, and `--live` public 46630 are in scope.

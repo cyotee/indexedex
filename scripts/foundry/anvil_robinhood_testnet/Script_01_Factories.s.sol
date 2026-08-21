@@ -14,7 +14,6 @@ contract Script_01_Factories is LaunchIo {
     function run() external {
         _loadConfig();
         _requireRobinhoodTestnet();
-        _requireLocalhostIfBroadcast();
         RobinhoodCanonicalLib.requireCanonicalPins();
         _logHeader("Group 01: Factories");
 
@@ -27,7 +26,7 @@ contract Script_01_Factories is LaunchIo {
             return;
         }
 
-        vm.startBroadcast();
+        _broadcast();
         Stage_01_Factories.execute(s, owner);
         vm.stopBroadcast();
 

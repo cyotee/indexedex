@@ -18,14 +18,14 @@ import './landing.css'
 const BENEFITS = [
   {
     featured: true,
-    t: 'The basket works in other apps',
-    d: 'Your DETF is not a list of idle tokens. The basket puts money to work in other apps. That is the main difference. You make a DETF to run that plan as one token.',
-    tag: 'plan',
+    t: 'The reserve is at work',
+    d: 'Your DETF is not a list of idle tokens. The reserve is at work earning for you. That is the main difference. You make a DETF to hold that strategy as one token.',
+    tag: 'strategy',
   },
   {
     featured: false,
     t: 'One token for the whole basket',
-    d: 'Hold, move, or sell one token. You do not have to manage each app yourself.',
+    d: 'Hold, move, or sell one token. You do not have to manage each position yourself.',
     tag: 'simpler',
   },
   {
@@ -82,7 +82,7 @@ function AcrossDefiDiagram() {
     <div
       className="landing-across"
       role="img"
-      aria-label="One DETF basket at work across DeFi: trade pools, lending, staking, and vaults."
+      aria-label="One DETF token. The reserve is at work in pools, lending, staking, and vaults."
     >
       <svg className="landing-across__wires" viewBox="0 0 320 320" aria-hidden="true">
         <line x1="160" y1="160" x2="160" y2="52" />
@@ -223,14 +223,14 @@ export default function HomePage() {
               DETF means Decentralized ETF
             </p>
             <h1 className="landing-lab__h1 mt-4">
-              Run your plan
+              Hold a strategy
               <br />
               <span className="landing-lab__h1-accent">as one token.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base md:text-lg text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-              A DETF is one token for a basket you pick. That basket puts money to work in other
-              apps. People can trade the token. That market is how the assets behind it stay
-              useful. This is not a stock ETF. Want to take part when people use IndexedEx? Buy{' '}
+              A DETF is one token for a basket you pick. The reserve is at work earning for you.
+              People can trade the token. That market is how the assets behind it stay useful.
+              This is not a stock ETF. Want to take part when people use IndexedEx? Buy{' '}
               <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong>.
               App fees go to buy it back.
             </p>
@@ -258,8 +258,7 @@ export default function HomePage() {
             <div className="landing-lab__panel p-6 md:p-8">
               <AcrossDefiDiagram />
               <p className="mt-6 text-center text-xs text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-                One basket at work across DeFi. You hold one token. The basket puts money to work
-                in other apps.
+                You hold one token. The reserve is at work earning for you.
               </p>
             </div>
           </div>
@@ -270,11 +269,11 @@ export default function HomePage() {
       <section className="mb-16 md:mb-20">
         <p className="landing-section-label">Why DETFs</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-          A plan you can hold as one token.
+          Hold a strategy as a token.
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          IndexedEx lets you run a money plan as a DETF. One token. One basket. The basket works
-          in other apps. You own a piece of the assets behind that token.
+          One basket. The reserve is at work earning for you. You own a piece of the assets
+          behind that token.
         </p>
 
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -483,8 +482,8 @@ export default function HomePage() {
               Building-block vaults
             </h2>
             <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)] max-w-xl">
-              Deposit into vaults a DETF can put in its basket. Those vaults are how the plan
-              reaches other apps. Use a live DETF from Explore. Or pick vaults when you Create.
+              Deposit into vaults a DETF can put in its basket. Those vaults are how the reserve
+              stays at work. Use a live DETF from Explore. Or pick vaults when you Create.
             </p>
           </div>
           <Link href="/earn">
@@ -516,9 +515,9 @@ export default function HomePage() {
       {/* Closing strip */}
       <section className="pb-4">
         <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          DETF means Decentralized ETF. Run your plan as a basket that works in other apps. Buy
-          $RICH to take part when the app is used. Fees go to buy it back. We only claim what the
-          chain can prove.
+          DETF means Decentralized ETF. Hold a strategy as a token. The reserve is at work earning
+          for you. Buy $RICH to take part when the app is used. Fees go to buy it back. We only
+          claim what the chain can prove.
         </div>
       </section>
     </div>

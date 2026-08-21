@@ -229,13 +229,19 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
             detfBindingIndex: 2,
             creationPair0PerDetfWad: DEFAULT_CREATION,
             creationPair1PerDetfWad: DEFAULT_CREATION,
+            openingPair0PerDetfWad: 0,
+            openingPair1PerDetfWad: 0,
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -290,6 +296,17 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
         args = _gentleArgs();
         args.name = string(abi.encodePacked("Gentle Orb DETF ", tag_));
         args.symbol = string(abi.encodePacked("gO", tag_));
+    }
+
+    /// @notice Unique Policy instance with explicit first-bond opening on both pair legs.
+    function _argsWithOpening(string memory tag, uint256 opening_)
+        internal
+        view
+        returns (IUniswapV4StandardExchangeOrbitalDETDFPkg.PkgArgs memory args)
+    {
+        args = _gentleArgsUnique(tag);
+        args.openingPair0PerDetfWad = opening_;
+        args.openingPair1PerDetfWad = opening_;
     }
 
     function _twoSeArgs()
@@ -385,6 +402,20 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalDETF is
             BondTerms({
                 minLockDuration: minLock_,
                 maxLockDuration: maxLock_,
+                minBonusPercentage: 0,
+                maxBonusPercentage: 0.5e18
+            })
+        ) {} catch {}
+        vm.stopPrank();
+    }
+
+    function _setBondTermsFor(address vault_) internal {
+        vm.startPrank(owner);
+        try IVaultFeeOracleManager(address(indexedexManager)).setVaultBondTerms(
+            vault_,
+            BondTerms({
+                minLockDuration: DEFAULT_MIN_LOCK,
+                maxLockDuration: DEFAULT_MAX_LOCK,
                 minBonusPercentage: 0,
                 maxBonusPercentage: 0.5e18
             })

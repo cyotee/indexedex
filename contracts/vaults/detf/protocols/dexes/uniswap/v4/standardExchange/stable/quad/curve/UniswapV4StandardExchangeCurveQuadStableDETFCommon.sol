@@ -497,13 +497,13 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
         split_.feeToDetf = 0;
     }
 
-    /// @notice Unboosted matching DETF `G` (D24). Empty book uses creationPairPerDetfWad.
+    /// @notice Unboosted matching DETF `G` (D24). Empty book uses openingPairPerDetfWad.
     function _quoteBondJoinDetf(uint8 productIndex_, uint256 pairNative_) internal view returns (uint256 detfOut_) {
         if (pairNative_ == 0) return 0;
         Repo.Storage storage s = Repo._layoutStruct();
         uint8 dec_ = _decimalsOf(address(s.pairTokens[productIndex_]));
         if (!s.isReserveLive) {
-            detfOut_ = Math.mulDiv(_toWad(pairNative_, dec_), ONE_WAD, s.creationPairPerDetfWad[productIndex_]);
+            detfOut_ = Math.mulDiv(_toWad(pairNative_, dec_), ONE_WAD, s.openingPairPerDetfWad[productIndex_]);
             return detfOut_ == 0 ? pairNative_ : detfOut_;
         }
         uint256[] memory nat_;
@@ -519,7 +519,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
                 return pairNative_ * detfBal_ / pairBal_;
             }
         }
-        detfOut_ = Math.mulDiv(_toWad(pairNative_, dec_), ONE_WAD, s.creationPairPerDetfWad[productIndex_]);
+        detfOut_ = Math.mulDiv(_toWad(pairNative_, dec_), ONE_WAD, s.openingPairPerDetfWad[productIndex_]);
         if (detfOut_ == 0) detfOut_ = pairNative_;
     }
 

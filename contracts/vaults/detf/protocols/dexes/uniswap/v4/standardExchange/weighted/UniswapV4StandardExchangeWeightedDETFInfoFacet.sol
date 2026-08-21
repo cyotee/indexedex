@@ -71,7 +71,7 @@ contract UniswapV4StandardExchangeWeightedDETFInfoFacet is IFacet, UniswapV4Stan
     }
 
     function _funcsB() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](24);
+        f = new bytes4[](26);
         f[0] = IUniswapV4StandardExchangeWeightedDETF.syntheticSpotVs.selector;
         f[1] = IUniswapV4StandardExchangeWeightedDETF.pendingExpansionDetf.selector;
         f[2] = IUniswapV4StandardExchangeWeightedDETF.mintThreshold.selector;
@@ -85,16 +85,18 @@ contract UniswapV4StandardExchangeWeightedDETFInfoFacet is IFacet, UniswapV4Stan
         f[10] = IUniswapV4StandardExchangeWeightedDETF.feeRecipientNftId.selector;
         f[11] = IUniswapV4StandardExchangeWeightedDETF.creationPairPerDetfWad.selector;
         f[12] = IUniswapV4StandardExchangeWeightedDETF.creationPairPerDetfWads.selector;
-        f[13] = IUniswapV4StandardExchangeWeightedDETF.lastExpansionTimestamp.selector;
-        f[14] = IUniswapV4StandardExchangeWeightedDETF.expansionEpochLength.selector;
-        f[15] = IUniswapV4StandardExchangeWeightedDETF.expansionClosureRatePerYearWad.selector;
-        f[16] = IUniswapV4StandardExchangeWeightedDETF.expansionMaxCatchUpEpochs.selector;
-        f[17] = IUniswapV4StandardExchangeWeightedDETF.acceptedBondTokens.selector;
-        f[18] = IUniswapV4StandardExchangeWeightedDETF.protocolLp.selector;
-        f[19] = IUniswapV4StandardExchangeWeightedDETF.userBondedLp.selector;
-        f[20] = IUniswapV4StandardExchangeWeightedDETF.capitalTokenOf.selector;
-        f[21] = IUniswapV4StandardExchangeWeightedDETF.isReserveHookFinalized.selector;
-        f[22] = IUniswapV4StandardExchangeWeightedDETF.isReserveWired.selector;
-        f[23] = IUniswapV4StandardExchangeWeightedDETF.previewCloseBondMature.selector;
+        f[13] = IUniswapV4StandardExchangeWeightedDETF.openingPairPerDetfWad.selector;
+        f[14] = IUniswapV4StandardExchangeWeightedDETF.openingPairPerDetfWads.selector;
+        f[15] = IUniswapV4StandardExchangeWeightedDETF.lastExpansionTimestamp.selector;
+        f[16] = IUniswapV4StandardExchangeWeightedDETF.expansionEpochLength.selector;
+        f[17] = IUniswapV4StandardExchangeWeightedDETF.expansionClosureRatePerYearWad.selector;
+        f[18] = IUniswapV4StandardExchangeWeightedDETF.expansionMaxCatchUpEpochs.selector;
+        f[19] = IUniswapV4StandardExchangeWeightedDETF.acceptedBondTokens.selector;
+        f[20] = IUniswapV4StandardExchangeWeightedDETF.protocolLp.selector;
+        f[21] = IUniswapV4StandardExchangeWeightedDETF.userBondedLp.selector;
+        f[22] = IUniswapV4StandardExchangeWeightedDETF.capitalTokenOf.selector;
+        f[23] = IUniswapV4StandardExchangeWeightedDETF.isReserveHookFinalized.selector;
+        f[24] = IUniswapV4StandardExchangeWeightedDETF.isReserveWired.selector;
+        f[25] = IUniswapV4StandardExchangeWeightedDETF.previewCloseBondMature.selector;
     }
 }

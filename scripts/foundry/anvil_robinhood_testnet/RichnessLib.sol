@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {console2} from "forge-std/console2.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {PoolSeedLib, IWeth9} from "./PoolSeedLib.sol";
 
@@ -24,9 +23,9 @@ interface IDetfMultiViews {
 }
 
 /// @title RichnessLib
-/// @notice D47: one closed-form `depositSingle` per pair (Script_20 fd gap), not a crumb loop.
-/// @dev S = (fdPair / supply) / creationRate. `depositSingle` raises fd without minting DETF.
-///      `exchangeIn` mints DETF and dilutes S — use it only to refill nest inventory.
+/// @notice First bond as the deployer EOA. Opening WAD is launch-rich.
+/// @dev Do not impersonate the DETF diamond. Do not hook depositSingle as the diamond.
+///      `ensureBalance` is nest inventory via `exchangeIn` only (not a richness LP path).
 library RichnessLib {
     uint256 private constant ONE_WAD = 1e18;
 
@@ -71,7 +70,7 @@ library RichnessLib {
         require(IDetfMultiViews(detf).isReserveLive(), "D47: reserve not live after first bond");
     }
 
-    /// @notice Mint `need` DETF via pair→detf exchangeIn (nest inventory only).
+    /// @notice Nest inventory via pair→detf exchangeIn only. Not a diamond-LP richness path.
     function ensureBalance(address detf, address pair, uint256 need, address bonder) internal {
         uint256 have = IERC20(detf).balanceOf(bonder);
         if (have >= need) return;
@@ -85,65 +84,12 @@ library RichnessLib {
         require(IERC20(detf).balanceOf(bonder) >= need, "D47: nest inventory short");
     }
 
-    function previewPairNeed(address detf, address pair) internal view returns (uint256) {
-        return _pairNeed(detf, pair);
-    }
-
-    function enrichCp(address detf, address pair, address bonder) internal {
-        _enrichPair(detf, pair, bonder);
-        require(_pairRich(detf, pair), "D47: CP not rich after sized deposit");
-    }
-
-    function enrichMulti(address detf, address[] memory pairs, address bonder) internal {
-        for (uint256 p; p < pairs.length; ++p) {
-            console2.log("D47 enrich pair", p);
-            _enrichPair(detf, pairs[p], bonder);
-            require(_pairRich(detf, pairs[p]), "D47: multi-leg not rich after sized deposit");
+    function _mintOpen(address detf, address pair) private view returns (bool) {
+        try IDetfMultiViews(detf).isMintingAllowed(pair) returns (bool ok) {
+            return ok;
+        } catch {
+            return IDetfCpViews(detf).isMintingAllowed();
         }
-        require(IDetfMultiViews(detf).isReserveLive(), "D47: reserve not live after enrich");
-    }
-
-    /// @dev One deposit of the closed-form fd gap (+10% zap buffer). No crumb loop.
-    function _enrichPair(address detf, address pair, address bonder) private {
-        if (_pairRich(detf, pair)) {
-            console2.log("D47 already rich, S", _synthetic(detf, pair));
-            return;
-        }
-        uint256 need = _pairNeed(detf, pair);
-        require(need > 0, "D47: need is 0 but pair not rich");
-        console2.log("D47 sized deposit", need);
-        console2.log("D47 S before", _synthetic(detf, pair));
-        _depositPairOnHook(detf, pair, need, bonder);
-        console2.log("D47 S after", _synthetic(detf, pair));
-        require(_pairRich(detf, pair), "D47: sized deposit did not reach target");
-    }
-
-    /// @dev need = (target - S) * supply * C / 1e36, plus 10% zap/AMM buffer (Script_20).
-    function _pairNeed(address detf, address pair) private view returns (uint256 need_) {
-        uint256 s0_ = _synthetic(detf, pair);
-        if (s0_ >= FixtureEconomics.RICH_TARGET) return 0;
-        uint256 fd0_ = _fdPairWad(detf, pair);
-        uint256 fdT_ = Math.mulDiv(
-            FixtureEconomics.RICH_TARGET, Math.mulDiv(IERC20(detf).totalSupply(), _creation(detf), ONE_WAD), ONE_WAD
-        );
-        if (fdT_ <= fd0_) return 0;
-        need_ = fdT_ - fd0_;
-        need_ = need_ + need_ / 10;
-    }
-
-    function _fdPairWad(address detf, address pair) private view returns (uint256) {
-        uint256 s0_ = _synthetic(detf, pair);
-        uint256 supply_ = IERC20(detf).totalSupply();
-        uint256 c_ = _creation(detf);
-        if (s0_ == 0 || supply_ == 0 || c_ == 0) return 0;
-        return Math.mulDiv(s0_, Math.mulDiv(supply_, c_, ONE_WAD), ONE_WAD);
-    }
-
-    function _creation(address detf) private view returns (uint256) {
-        try IDetfCpViews(detf).creationPairPerDetfWad() returns (uint256 c) {
-            if (c > 0) return c;
-        } catch {}
-        return FixtureEconomics.CREATION_PAIR_PER_DETF;
     }
 
     function _synthetic(address detf, address pair) private view returns (uint256) {
@@ -151,18 +97,6 @@ library RichnessLib {
             return s;
         } catch {
             return IDetfCpViews(detf).syntheticPrice();
-        }
-    }
-
-    function _pairRich(address detf, address pair) private view returns (bool) {
-        return _synthetic(detf, pair) >= FixtureEconomics.RICH_TARGET && _mintOpen(detf, pair);
-    }
-
-    function _mintOpen(address detf, address pair) private view returns (bool) {
-        try IDetfMultiViews(detf).isMintingAllowed(pair) returns (bool ok) {
-            return ok;
-        } catch {
-            return IDetfCpViews(detf).isMintingAllowed();
         }
     }
 
@@ -176,22 +110,6 @@ library RichnessLib {
         require(IERC20(pair).balanceOf(bonder) >= amount, "D47: pair inventory short");
     }
 
-    function _depositPairOnHook(address detf, address pair, uint256 amount, address bonder) private {
-        _ensurePair(pair, amount, bonder);
-        address hook = IDetfHookViews(detf).reserveHook();
-        address claim = IDetfHookViews(detf).rebasingClaimToken();
-        address lpTo = claim == address(0) ? detf : claim;
-        IERC20(pair).approve(hook, amount);
-        try IReserveHookDeposit(hook).depositSingle(pair, amount, lpTo, 0, block.timestamp + 1 days) {}
-        catch {
-            try IReserveHookDepositOrb(hook).depositSingle(
-                pair, amount, lpTo, 0, block.timestamp + 1 days, bytes("")
-            ) {} catch {
-                revert("D47: depositSingle failed");
-            }
-        }
-    }
-
     function _exchangeIn(address detf, address pair, uint256 amount, address bonder) private {
         _ensurePair(pair, amount, bonder);
         IERC20(pair).approve(detf, amount);
@@ -201,28 +119,6 @@ library RichnessLib {
             IERC20(pair), amount, IERC20(detf), FixtureEconomics.SWAP_MIN_OUT, bonder, false, block.timestamp + 1 days
         );
     }
-}
-
-interface IDetfHookViews {
-    function reserveHook() external view returns (address);
-    function rebasingClaimToken() external view returns (address);
-}
-
-interface IReserveHookDeposit {
-    function depositSingle(address tokenIn, uint256 amountIn, address to, uint256 minLp, uint256 deadline)
-        external
-        returns (uint256);
-}
-
-interface IReserveHookDepositOrb {
-    function depositSingle(
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        uint256 minLp,
-        uint256 deadline,
-        bytes calldata permit2Data
-    ) external returns (uint256);
 }
 
 interface IDetfBond {

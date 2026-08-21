@@ -45,6 +45,8 @@ interface IUniswapV4SingleStandardExchangeDETF {
     function rebasingClaimToken() external view returns (address);
     function feeRecipientNftId() external view returns (uint256);
     function creationPairPerDetfWad() external view returns (uint256);
+    /// @notice Pair per DETF on first bond. Resolved storage (0 at init → creation; never 0 if creation was valid).
+    function openingPairPerDetfWad() external view returns (uint256);
     function lastExpansionTimestamp() external view returns (uint256);
     function expansionEpochLength() external view returns (uint256);
     function expansionClosureRatePerYearWad() external view returns (uint256);
@@ -106,6 +108,9 @@ interface IUniswapV4SingleStandardExchangeDETF {
     /// @notice NFT vault / claim package: unwind protocol LP principal to pair for recipient.
     function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 pairOut);
 
+    /// @notice Zapout quote of `lpAmount` reserve LP to pairToken (claim rebase).
+    function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 pairOut);
+
     event ReserveBondNftWired(
         address indexed reserveHook,
         address bondNftVault,
@@ -159,7 +164,9 @@ interface IUniswapV4SingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IS
         IStandardExchangeProxy standardExchangeVault;
         IERC20 standardExchangeVaultShare; // address(0) → vault diamond is share
         IERC20 pairToken;
-        uint256 creationPairPerDetfWad; // required non-zero; pair per DETF at 1e18 scale
+        uint256 creationPairPerDetfWad; // required non-zero; pair per DETF at 1e18 scale (peg)
+        /// @notice Pair per DETF on first bond. 0 → use creation (open at peg).
+        uint256 openingPairPerDetfWad;
         uint256 mintThreshold; // 0 → 1.05e18
         uint256 burnThreshold; // 0 → 0.95e18
         ThresholdMode thresholdMode; // 0 = Policy
@@ -167,6 +174,14 @@ interface IUniswapV4SingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IS
         uint256 expansionClosureRatePerYearWad; // 0 → 0.10e18
         uint256 expansionMaxCatchUpEpochs; // 0 = unlimited (kept)
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        /// @notice Rebasing claim ERC-20 name. Empty → DETF name + " Claim".
+        string claimName;
+        /// @notice Rebasing claim ERC-20 symbol. Empty → DETF symbol + "IR".
+        string claimSymbol;
+        /// @notice Bond NFT name. Empty → DETF name + " Bond".
+        string bondName;
+        /// @notice Bond NFT symbol. Empty → DETF symbol + "-BOND".
+        string bondSymbol;
     }
 
     function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);

@@ -7,6 +7,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 
@@ -100,6 +101,9 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
         vm.mockCall(
             nft_, abi.encodeWithSelector(IDETFNFTVault.originalSharesOf.selector, tokenId_), abi.encode(originalShares_)
         );
+        vm.mockCall(
+            nft_, abi.encodeWithSelector(IDETFNFTVault.convertToAssets.selector), abi.encode(originalShares_)
+        );
     }
 
     function test_deployToken_success() public {
@@ -128,6 +132,30 @@ contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_VaultComponents {
 
         assertEq(tokenAddr2, tokenAddr1, "expected existing deployment");
         assertGt(tokenAddr2.code.length, 0, "RICHIR proxy not deployed");
+    }
+
+    function test_deployToken_defaultNameSymbol_whenDetfHasNoMetadata() public {
+        address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth3")));
+        address tokenAddr = pkg.deployToken(
+            IDetf(address(0xBEEF)), IDETFNFTVault(address(0xCAFE)), IERC20(mockWeth), 1, owner
+        );
+        assertEq(IERC20Metadata(tokenAddr).name(), "RebasingClaim");
+        assertEq(IERC20Metadata(tokenAddr).symbol(), "RebasingClaim");
+    }
+
+    function test_deployToken_customNameSymbol() public {
+        address mockWeth = address(_deployTestToken("Mock WETH", "mWETH", keccak256("RICHIR_MockWeth4")));
+        address tokenAddr = pkg.deployToken(
+            IDetf(address(0xBEEF)),
+            IDETFNFTVault(address(0xCAFE)),
+            IERC20(mockWeth),
+            3,
+            owner,
+            "Test Claim RICHIR",
+            "TTRICHIR"
+        );
+        assertEq(IERC20Metadata(tokenAddr).name(), "Test Claim RICHIR");
+        assertEq(IERC20Metadata(tokenAddr).symbol(), "TTRICHIR");
     }
 
     function _deployTestTokenPkg() internal returns (ERC20PermitDFPkg pkg_) {

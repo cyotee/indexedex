@@ -228,13 +228,18 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
             detfWeight: 0.5e18,
             pairWeights: pairW_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](1),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -300,13 +305,18 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
             detfWeight: 0.33e18,
             pairWeights: pairW_,
             creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](2),
             mintThreshold: 0,
             burnThreshold: 0,
             thresholdMode: ThresholdMode.Policy,
             expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
             expansionMaxCatchUpEpochs: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
         });
     }
 
@@ -622,6 +632,17 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         args.name = string(abi.encodePacked("LaunchRich Wgt ", tag_));
         args.symbol = string(abi.encodePacked("lrW", tag_));
         args.expansionClosureRatePerYearWad = 4.4e18;
+    }
+
+    /// @notice Unique Policy instance with explicit first-bond opening on the default m=1 book.
+    function _argsWithOpening(string memory tag, uint256 opening_)
+        internal
+        view
+        returns (IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+    {
+        args = _gentleArgsUnique(tag);
+        args.openingPairPerDetfWad = new uint256[](1);
+        args.openingPairPerDetfWad[0] = opening_;
     }
 
     function _feeTo() internal view returns (address) {

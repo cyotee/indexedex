@@ -646,7 +646,13 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         nested_ = indexedexManager.deployVault(
@@ -713,7 +719,13 @@ abstract contract TestBase_MultiVaultWeightedDetf is TestBase_BalancerV3Standard
             expansionClosureRatePerSecond: 0,
             expansionCatchUpMaxSeconds: 0,
             expansionCatchUpCapBps: 0,
-            creator: address(0)
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: "",
+            reserveName: "",
+            reserveSymbol: ""
         });
         vm.startPrank(owner);
         outer_ = indexedexManager.deployVault(

@@ -14,6 +14,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -121,7 +122,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
             uint256 detfFrom_ = Math.mulDiv(
                 _toWad(pairNatives_[i], _decimalsOf(address(s.pairTokens[i]))),
                 ONE_WAD,
-                s.creationPairPerDetfWad[i]
+                s.openingPairPerDetfWad[i]
             );
             if (detfFrom_ < detfForJoin_) detfForJoin_ = detfFrom_;
         }
@@ -132,7 +133,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         uint256[] memory usedPairs_ = new uint256[](s.m);
         for (uint8 i; i < s.m; ++i) {
             uint8 dec_ = _decimalsOf(address(s.pairTokens[i]));
-            uint256 neededWad_ = Math.mulDiv(detfForJoin_, s.creationPairPerDetfWad[i], ONE_WAD);
+            uint256 neededWad_ = Math.mulDiv(detfForJoin_, s.openingPairPerDetfWad[i], ONE_WAD);
             uint256 neededNative_ = _fromWadFloor(neededWad_, dec_);
             if (neededNative_ > pairNatives_[i]) neededNative_ = pairNatives_[i];
             usedPairs_[i] = neededNative_;
@@ -323,8 +324,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         address detf_ = address(this);
         IDETFNFTVault bondVault_ = IDETFNFTVault(
             IDetfSelfNftInventoryDFPkg(s.bondNftVaultPkg).deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                DETFChildTokenMetadata.resolveBondName(s.bondName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveBondSymbol(s.bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
                 IERC20(s.reserveHook),
                 IERC20(detf_),
@@ -360,7 +361,13 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFBondingTarget is
         address detf_ = address(this);
         IRebasingClaimToken claimToken_ = IRebasingClaimToken(
             IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg).deployToken(
-                IDetf(detf_), s.bondNftVault, s.pairTokens[0], s.detfNftId, detf_
+                IDetf(detf_),
+                s.bondNftVault,
+                s.pairTokens[0],
+                s.detfNftId,
+                detf_,
+                DETFChildTokenMetadata.resolveClaimName(s.claimName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveClaimSymbol(s.claimSymbol, ERC20Repo._symbol())
             )
         );
         Repo._setClaim(claimToken_);

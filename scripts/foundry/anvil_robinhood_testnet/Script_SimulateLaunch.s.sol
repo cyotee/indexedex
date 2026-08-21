@@ -7,62 +7,40 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_01_Factories} from "./Stage_01_Factories.sol";
 import {Stage_02_Platform} from "./Stage_02_Platform.sol";
 import {Stage_03_UniV4Packages} from "./Stage_03_UniV4Packages.sol";
+import {Stage_03b_OrbitalWeightedPackages} from "./Stage_03b_OrbitalWeightedPackages.sol";
 import {Stage_04_Tokens} from "./Stage_04_Tokens.sol";
 import {Stage_05_LeafPoolsAndSEs} from "./Stage_05_LeafPoolsAndSEs.sol";
 import {Stage_06_LeafDETFs} from "./Stage_06_LeafDETFs.sol";
-import {Stage_07_NestDETFs} from "./Stage_07_NestDETFs.sol";
-import {Stage_08_FeeSink} from "./Stage_08_FeeSink.sol";
 
 /// @title Script_SimulateLaunch
-/// @notice Runs groups 01–08. Premine windows sit between broadcasts. Omit `--broadcast` for gas estimate.
-/// @dev Group 09 is export-only and is not inside this script.
+/// @notice Alternate to the staged 00–06 + 09 path: runs 01–06 in one script for a gas estimate.
+/// @dev Do not run after a completed staged deploy (CREATE3/CREATE2 collision). Group 09 is export-only.
 contract Script_SimulateLaunch is LaunchIo {
     LaunchState internal s;
 
     function run() external {
         _loadConfig();
         _requireRobinhoodTestnet();
-        _requireLocalhostIfBroadcast();
         RobinhoodCanonicalLib.requireCanonicalPins();
-        _logHeader("Simulate launch: groups 01-08");
+        _logHeader("Simulate launch: groups 01-06");
 
-        vm.startBroadcast();
+        _broadcast();
         Stage_01_Factories.execute(s, owner);
         Stage_02_Platform.execute(s, owner);
         Stage_03_UniV4Packages.execute(s);
+        Stage_03b_OrbitalWeightedPackages.execute(s);
         Stage_04_Tokens.execute(s, owner, uiWallet);
         Stage_05_LeafPoolsAndSEs.execute(s, owner);
         vm.stopBroadcast();
 
         // Mine hook nonces off-chain. If this stays inside startBroadcast, Foundry
         // folds findMineNonce (up to 160_444 CREATE2 hashes) into eth_estimateGas.
-        (, uint256 nNvdaS) = Stage_06_LeafDETFs.premineNvdaS(s);
-        (, uint256 nNvdaSmhO) = Stage_06_LeafDETFs.premineNvdaSmhO(s);
-        (, uint256 nIdxQ) = Stage_06_LeafDETFs.premineIdxQ(s);
+        (, uint256 nChir) = Stage_06_LeafDETFs.premineChir(s);
         (, uint256 nDolQ) = Stage_06_LeafDETFs.premineDolQ(s);
 
-        vm.startBroadcast();
-        Stage_06_LeafDETFs.deployNvdaS(s, owner, nNvdaS);
-        Stage_06_LeafDETFs.deployNvdaSmhO(s, owner, nNvdaSmhO);
-        Stage_06_LeafDETFs.deployIdxQ(s, owner, nIdxQ);
+        _broadcast();
+        Stage_06_LeafDETFs.deployChir(s, owner, nChir);
         Stage_06_LeafDETFs.deployDolQ(s, owner, nDolQ);
-        Stage_07_NestDETFs.deployPoolsAndSes(s);
-        Stage_07_NestDETFs.ensureBondCapital(s, owner);
-        vm.stopBroadcast();
-
-        (, uint256 nBetaO) = Stage_07_NestDETFs.premineBetaO(s);
-        (, uint256 nIdxWrap) = Stage_07_NestDETFs.premineIdxWrap(s);
-
-        vm.startBroadcast();
-        Stage_07_NestDETFs.deployBetaO(s, owner, nBetaO);
-        Stage_07_NestDETFs.deployIdxWrap(s, owner, nIdxWrap);
-        Stage_08_FeeSink.deployTtrichInfra(s, owner, uiWallet);
-        vm.stopBroadcast();
-
-        (, uint256 nRichS) = Stage_08_FeeSink.premineRichS(s);
-
-        vm.startBroadcast();
-        Stage_08_FeeSink.deployRichS(s, owner, nRichS);
         vm.stopBroadcast();
 
         _exportFactories(s);
@@ -71,13 +49,12 @@ contract Script_SimulateLaunch is LaunchIo {
         _exportTokens(s);
         _exportLeafPools(s);
         _exportLeafDetfs(s);
-        _exportNestDetfs(s);
-        _exportFeeSink(s);
 
         _logAddress("Create3Factory:", address(s.create3Factory));
         _logAddress("IndexedexManager:", address(s.indexedexManager));
-        _logAddress("TTNVDA-S:", s.ttNvdaS);
-        _logAddress("TTRICH-S:", s.ttRichS);
-        _logComplete("SimulateLaunch 01-08");
+        _logAddress("TTCHIR:", s.ttChir);
+        _logAddress("TTRICHIR:", s.ttRichir);
+        _logAddress("TTDOL-Q:", s.ttDolQ);
+        _logComplete("SimulateLaunch 01-06");
     }
 }

@@ -35,6 +35,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
@@ -120,6 +121,12 @@ interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVault
         uint256 expansionCatchUpMaxSeconds; // 0 → default
         uint256 expansionCatchUpCapBps; // 0 → default
         address creator; // D26; 0 → feeTo owns id 2 (D21)
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     function deployVault(PkgArgs memory args) external returns (address vault);
@@ -151,6 +158,12 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256 expansionCatchUpMaxSeconds;
         uint256 expansionCatchUpCapBps;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
+        string reserveName;
+        string reserveSymbol;
     }
 
     IFacet immutable ERC20_FACET;
@@ -389,6 +402,12 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             cfg.vaultWeights[i] = args.vaultWeights[i];
         }
         cfg.creator = args.creator;
+        cfg.claimName = args.claimName;
+        cfg.claimSymbol = args.claimSymbol;
+        cfg.bondName = args.bondName;
+        cfg.bondSymbol = args.bondSymbol;
+        cfg.reserveName = args.reserveName;
+        cfg.reserveSymbol = args.reserveSymbol;
     }
 
     function postDeploy(address expectedProxy) public returns (bool) {
@@ -427,7 +446,13 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         address detf_ = address(this);
         claimToken_ = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
-                IDetf(detf_), bondVault_, rateAsset_, detfNftId_, detf_
+                IDetf(detf_),
+                bondVault_,
+                rateAsset_,
+                detfNftId_,
+                detf_,
+                DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
         );
     }
@@ -525,8 +550,8 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         PoolRoleAccounts memory roles_;
         bytes32 salt_ = keccak256(abi.encode(address(this), vaultCount_, block.timestamp));
         pool_ = WEIGHTED_POOL_FACTORY.create(
-            string(abi.encodePacked(ERC20Repo._name(), " Reserve")),
-            string(abi.encodePacked(ERC20Repo._symbol(), "-R")),
+            DETFChildTokenMetadata.resolveReserveName(_deployConfig().reserveName, ERC20Repo._name()),
+            DETFChildTokenMetadata.resolveReserveSymbol(_deployConfig().reserveSymbol, ERC20Repo._symbol()),
             tokens_,
             weights_,
             roles_,
@@ -542,8 +567,8 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         address detf_ = address(this);
         bondVault_ = IDETFNFTVault(
             BOND_NFT_VAULT_PKG.deployVault(
-                string(abi.encodePacked(ERC20Repo._name(), " Bond")),
-                string(abi.encodePacked(ERC20Repo._symbol(), "-BOND")),
+                DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
+                DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
                 IERC20(reservePool_),
                 IERC20(detf_),

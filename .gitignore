@@ -34,8 +34,7 @@ node_modules/
 # Environment variables
 
 # Local RPC / fork URLs and Anvil logs (often contain API keys)
-deployments/**/runtime/fork_url
-deployments/**/runtime/anvil.log
+deployments/**/runtime/
 # Editor directories and files
 .idea
 .vscode

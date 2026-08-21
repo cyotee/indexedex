@@ -59,6 +59,7 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         IERC20[MAX_M] vaultShares;
         address[MAX_M] rateProviders;
         uint256[MAX_M] creationPairPerDetfWad;
+        uint256[MAX_M] openingPairPerDetfWad;
         uint8[MAX_M] pairBindingIndex; // product i → binding j
         // Binding-order weights (length n)
         uint256[MAX_N] weights;
@@ -82,6 +83,10 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
+        string claimName;
+        string claimSymbol;
+        string bondName;
+        string bondSymbol;
     }
 
     struct CoreInit {
@@ -93,6 +98,7 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         IERC20[] vaultShares;
         address[] rateProviders;
         uint256[] creationPairPerDetfWad;
+        uint256[] openingPairPerDetfWad;
         uint8[] pairBindingIndex;
         uint256[] weights; // length n binding
         address reserveHook;
@@ -139,6 +145,7 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
             s.vaultShares[i] = p_.vaultShares[i];
             s.rateProviders[i] = p_.rateProviders[i];
             s.creationPairPerDetfWad[i] = p_.creationPairPerDetfWad[i];
+            s.openingPairPerDetfWad[i] = p_.openingPairPerDetfWad[i];
             s.pairBindingIndex[i] = p_.pairBindingIndex[i];
         }
         for (uint256 j; j < p_.n; ++j) {
@@ -228,5 +235,18 @@ library UniswapV4StandardExchangeWeightedDETFRepo {
         if (address(s.rebasingClaimToken) != address(0)) revert ReserveClaimAlreadyWired();
         if (address(rebasingClaimToken_) == address(0)) revert ZeroAddress();
         s.rebasingClaimToken = rebasingClaimToken_;
+    }
+
+    function _setChildTokenMetadata(
+        string memory claimName_,
+        string memory claimSymbol_,
+        string memory bondName_,
+        string memory bondSymbol_
+    ) internal {
+        Storage storage s = _layoutStruct();
+        s.claimName = claimName_;
+        s.claimSymbol = claimSymbol_;
+        s.bondName = bondName_;
+        s.bondSymbol = bondSymbol_;
     }
 }

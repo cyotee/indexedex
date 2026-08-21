@@ -6,15 +6,13 @@ import {console2} from "forge-std/console2.sol";
 import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_TESTNET.sol";
 
 /// @title DeploymentBase
-/// @notice Shared base for Anvil Robinhood-testnet-fork groups (chain id 46630).
+/// @notice Shared base for Robinhood testnet (46630) launch groups.
+/// @dev Same signed-broadcast path on public 46630 and on a local Anvil fork.
+///      Anvil node flags (`--disable-code-size-limit`) are shell-only, not script cheats.
 abstract contract DeploymentBase is Script {
     string internal constant OUT_DIR = "deployments/anvil_robinhood_testnet";
     uint256 internal constant EXPECTED_CHAIN_ID = 46630;
 
-    address internal constant DEFAULT_DEPLOYER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-    address internal constant DEFAULT_UI_WALLET = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-
-    uint256 internal privateKey;
     address internal deployer;
     address internal owner;
     address internal uiWallet;
@@ -46,17 +44,17 @@ abstract contract DeploymentBase is Script {
     }
 
     function _loadConfig() internal {
-        try vm.envAddress("SENDER") returns (address sender) {
-            deployer = sender != address(0) ? sender : DEFAULT_DEPLOYER;
-        } catch {
-            deployer = DEFAULT_DEPLOYER;
+        address deployerEnv;
+        try vm.envAddress("DEPLOYER_ADDRESS") returns (address envDeployer) {
+            deployerEnv = envDeployer;
+        } catch {}
+        if (deployerEnv == address(0)) {
+            try vm.envAddress("SENDER") returns (address sender) {
+                deployerEnv = sender;
+            } catch {}
         }
-
-        try vm.envUint("PRIVATE_KEY") returns (uint256 envKey) {
-            privateKey = envKey;
-        } catch {
-            privateKey = 0;
-        }
+        require(deployerEnv != address(0), "anvil_robinhood_testnet: DEPLOYER_ADDRESS is required");
+        deployer = deployerEnv;
 
         try vm.envAddress("OWNER") returns (address envOwner) {
             owner = envOwner == address(0) ? deployer : envOwner;
@@ -65,9 +63,9 @@ abstract contract DeploymentBase is Script {
         }
 
         try vm.envAddress("UI_WALLET") returns (address envUi) {
-            uiWallet = envUi == address(0) ? DEFAULT_UI_WALLET : envUi;
+            uiWallet = envUi == address(0) ? deployer : envUi;
         } catch {
-            uiWallet = DEFAULT_UI_WALLET;
+            uiWallet = deployer;
         }
     }
 
@@ -78,24 +76,9 @@ abstract contract DeploymentBase is Script {
         );
     }
 
-    /// @notice Refuse broadcast unless RPC_URL is localhost. Simulation (no env / no broadcast) is allowed.
-    function _requireLocalhostIfBroadcast() internal view {
-        try vm.envString("RPC_URL") returns (string memory rpc) {
-            if (bytes(rpc).length == 0) return;
-            bytes memory b = bytes(rpc);
-            bool local = _startsWith(b, "http://127.0.0.1") || _startsWith(b, "http://localhost")
-                || _startsWith(b, "https://127.0.0.1") || _startsWith(b, "https://localhost");
-            require(local, "anvil_robinhood_testnet: refuse broadcast to non-localhost RPC_URL");
-        } catch {}
-    }
-
-    function _startsWith(bytes memory hay, string memory needle) private pure returns (bool) {
-        bytes memory n = bytes(needle);
-        if (hay.length < n.length) return false;
-        for (uint256 i; i < n.length; ++i) {
-            if (hay[i] != n[i]) return false;
-        }
-        return true;
+    /// @notice Broadcast as `--sender` / `DEPLOYER_ADDRESS`. Cast wallet signs.
+    function _broadcast() internal {
+        vm.startBroadcast();
     }
 
     function _ensureOutDir() internal {
