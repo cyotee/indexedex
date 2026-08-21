@@ -59,7 +59,14 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("p", "erc20MinterFacade", s.erc20MinterFacade);
         json = vm.serializeAddress("p", "create3Factory", address(s.create3Factory));
         json = vm.serializeAddress("p", "diamondPackageFactory", address(s.diamondPackageFactory));
+        json = vm.serializeAddress("p", "vaultRegistry", address(s.indexedexManager));
         json = vm.serializeAddress("p", "uniV4SePkg", address(s.uniV4SePkg));
+        json = vm.serializeAddress("p", "cpHookPkg", s.cpHookPkg);
+        json = vm.serializeAddress("p", "cpDetfPkg", s.cpDetfPkg);
+        json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
+        json = vm.serializeAddress("p", "curveQuadDetfPkg", s.curveQuadDetfPkg);
+        json = vm.serializeAddress("p", "bondNftVaultPkg", s.bondNftVaultPkg);
+        json = vm.serializeAddress("p", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         json = vm.serializeAddress("p", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("p", "TTUSDE", s.ttUSDE);
         json = vm.serializeAddress("p", "TTWETH", s.ttWETH);

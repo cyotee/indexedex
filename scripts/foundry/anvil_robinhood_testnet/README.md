@@ -80,6 +80,15 @@ bash scripts/shell/anvil_robinhood_testnet.sh all --rpc-url https://rpc.testnet.
 
 `--live` does not start Anvil. The deployer needs real 46630 ETH (faucet).
 
+Every group **simulates first**, then broadcasts only if that sim passes. `--skip-simulation` is not used. Dry-run a group against public 46630, then broadcast the same group:
+
+```bash
+bash scripts/shell/anvil_robinhood_testnet.sh stage01 --live --dry-run
+bash scripts/shell/anvil_robinhood_testnet.sh stage01 --live
+```
+
+`all --live` does the same per group (00, 01, 02, 03, 04, 04b, 05, 06t, 06e, 09). Group 09 only writes frontend JSON.
+
 `all` / `fresh_deploy.sh` runs `00`–`05`, `04b`, `06t` (`TTCHIR`), `06e` (`TTDOL-Q`), `09`. It does **not** run `03b` (Orbital + Weighted). Product names: underlying `TTRICH`, DETF `TTCHIR`, claim `TTRICHIR`. USD quad is `TTDOL-Q` / `$$DETF`.
 
 Each leaf script premines via `UniswapV4DetfHookPremineLib` **before** `startBroadcast` (Foundry otherwise folds `findMineNonce` into `eth_estimateGas`), then `deployVault(args, mineNonce)` (nonce is not in PkgArgs; `0` is a legal nonce). `deployVault` leaves a bootstrap hook only (not a ready reserve). Scripts then send one `deployPair` per product door, `finalizeInitialization`, `completeReserveBondNft`, `completeReserveClaim`, then first-bond as the EOA. Opening WAD is launch-rich. Do not impersonate the diamond.

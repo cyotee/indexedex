@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Robinhood testnet (46630) launch groups 00-06 + 09.
-# Broadcast as DEPLOYER_ADDRESS (--sender; cast wallet signs). Simulate is alternate.
+# Broadcast as DEPLOYER_ADDRESS (--sender; cast wallet signs).
+# Every group simulates first. Never --skip-simulation. --dry-run stops after sim.
 # =============================================================================
 set -euo pipefail
 
@@ -93,7 +94,8 @@ Commands:
                 public RH RPC returns "metadata is not found" for new CREATE addresses.
 
 Options:
-  --dry-run         Simulate without broadcasting
+  --dry-run         Simulate each group and stop (no broadcast). Default path still
+                    simulates every group before it broadcasts. Never skips simulation.
   --live            Broadcast to public 46630 (official RPC unless RPC_URL is already set).
                     Does not start Anvil. Requires DEPLOYER_ADDRESS (cast wallet).
   --rpc-url URL     Broadcast RPC (default http://127.0.0.1:8545)
@@ -113,7 +115,8 @@ Signer:
   UI_WALLET         Defaults to DEPLOYER_ADDRESS
 
 Optional:
-  ALCHEMY_KEY   For robinhood_testnet_alchemy (Anvil fork source)
+  ALCHEMY_KEY   Anvil fork source only (`robinhood_testnet_alchemy`). `--live` always uses the public 46630 RPC.
+  FORGE_RPC_RETRIES / FORGE_RPC_RETRY_SLEEP  DNS/connect retry (default 6 x 8s)
   ANVIL_FORK_URL / FOUNDRY_FORK_RPC_ALIAS (default robinhood_testnet_alchemy)
   ANVIL_FORK_BLOCK_NUMBER (default Crane pin; set to latest to omit the pin)
   FORGE_LEGACY=1  Force --legacy gas on live (Anvil local already uses legacy)
@@ -409,48 +412,95 @@ require_deployer() {
   export DEPLOYER_ADDRESS SENDER OWNER UI_WALLET
 }
 
-run_stage() {
-  local label="$1"
-  local script_path="$2"
-  log_info "Running $label"
+run_forge_cmd() {
+  (
+    cd "$REPO_ROOT"
+    OUT_DIR_OVERRIDE="$OUT_DIR_OVERRIDE" \
+      NETWORK_PROFILE="$NETWORK_PROFILE" \
+      DEPLOYER_ADDRESS="$DEPLOYER_ADDRESS" \
+      SENDER="$SENDER" \
+      OWNER="$OWNER" \
+      UI_WALLET="$UI_WALLET" \
+      FORCE="$FORCE" \
+      RPC_URL="$RPC_URL" \
+      "$@"
+  )
+}
 
+is_transient_rpc_error_log() {
+  local file="$1"
+  grep -qiE 'dns error|nodename nor servname|failed to lookup|error sending request|client error \(Connect\)|timed out|timeout|connection reset|429' "$file"
+}
+
+# Retry forge on public-RPC DNS / connect flakes. Never skips simulation.
+run_forge_with_retries() {
+  local attempt=1
+  local max="${FORGE_RPC_RETRIES:-6}"
+  local sleep_s="${FORGE_RPC_RETRY_SLEEP:-8}"
+  local tmp st
+  tmp="$(mktemp)"
+  while true; do
+    set +e
+    run_forge_cmd "$@" 2>&1 | tee "$tmp"
+    st=${PIPESTATUS[0]}
+    set -e
+    if [[ "$st" -eq 0 ]]; then
+      rm -f "$tmp"
+      return 0
+    fi
+    if [[ "$attempt" -ge "$max" ]] || ! is_transient_rpc_error_log "$tmp"; then
+      rm -f "$tmp"
+      return "$st"
+    fi
+    log_info "Transient RPC/DNS error (attempt $attempt/$max). Retry in ${sleep_s}s"
+    sleep "$sleep_s"
+    attempt=$((attempt + 1))
+  done
+}
+
+# Base forge script argv. Never append --skip-simulation.
+forge_script_base() {
+  local script_path="$1"
   local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
   cmd+=(--sender "$DEPLOYER_ADDRESS")
-  if [[ -n "$BROADCAST_FLAG" ]]; then
-    cmd+=("$BROADCAST_FLAG" --slow --gas-estimate-multiplier "${GAS_ESTIMATE_MULTIPLIER:-300}")
-    # Anvil forks often fail eth_feeHistory. Live 46630 uses EIP-1559 unless FORGE_LEGACY=1.
-    if is_localhost_rpc || [[ "${FORGE_LEGACY:-0}" == "1" ]]; then
-      cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
-    fi
-    # Pre-sim of CREATE3 / deployVault is silent and looks hung. Broadcast as we go.
-    case "$label" in
-      Group\ 00|Group\ 09) ;;
-      *)
-        cmd+=(--skip-simulation)
-        log_info "$label broadcasts without pre-sim — txs print as they land"
-        ;;
-    esac
+  printf '%s\n' "${cmd[@]}"
+}
+
+run_stage() {
+  local label="$1"
+  local script_path="$2"
+  local sim_cmd=()
+  local bcast_cmd=()
+  local line
+
+  while IFS= read -r line; do
+    sim_cmd+=("$line")
+  done < <(forge_script_base "$script_path")
+
+  log_info "Simulating $label"
+  if ! run_forge_with_retries "${sim_cmd[@]}"; then
+    log_error "$label simulation failed; not broadcasting"
+    return 1
+  fi
+  log_success "$label simulation passed"
+
+  if [[ -z "$BROADCAST_FLAG" ]]; then
+    log_info "$label dry-run complete (no broadcast)"
+    return 0
   fi
 
-  run_forge() {
-    (
-      cd "$REPO_ROOT"
-      OUT_DIR_OVERRIDE="$OUT_DIR_OVERRIDE" \
-        NETWORK_PROFILE="$NETWORK_PROFILE" \
-        DEPLOYER_ADDRESS="$DEPLOYER_ADDRESS" \
-        SENDER="$SENDER" \
-        OWNER="$OWNER" \
-        UI_WALLET="$UI_WALLET" \
-        FORCE="$FORCE" \
-        RPC_URL="$RPC_URL" \
-        "${cmd[@]}"
-    )
-  }
+  bcast_cmd=("${sim_cmd[@]}")
+  bcast_cmd+=("$BROADCAST_FLAG" --slow --gas-estimate-multiplier "${GAS_ESTIMATE_MULTIPLIER:-300}")
+  # Anvil forks often fail eth_feeHistory. Live 46630 uses EIP-1559 unless FORGE_LEGACY=1.
+  if is_localhost_rpc || [[ "${FORGE_LEGACY:-0}" == "1" ]]; then
+    bcast_cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
+  fi
 
-  if run_forge; then
+  log_info "Broadcasting $label"
+  if run_forge_with_retries "${bcast_cmd[@]}"; then
     return 0
   fi
   if is_localhost_rpc && [[ "$DETACHED_FORK" -eq 0 && -f "$ANVIL_LOG_DIR/anvil.log" ]] \
@@ -458,7 +508,7 @@ run_stage() {
     log_error "$label failed: public RH RPC pruned the fork trie (metadata is not found)"
     log_info "Dumping overlay, restarting Anvil without a fork, retrying $label"
     detach_fork
-    run_forge
+    run_forge_with_retries "${bcast_cmd[@]}"
   else
     return 1
   fi
@@ -653,15 +703,46 @@ else
   log_info "Skipping Anvil start (RPC is not localhost)"
 fi
 
-CID="$(perl -e 'alarm shift; exec @ARGV' 10 cast chain-id --rpc-url "$RPC_URL")"
-if [[ "$CID" != "46630" ]]; then
-  log_error "Expected chain id 46630, got $CID"
-  if is_localhost_rpc; then
-    log_error "Start Anvil with --chain-id 46630 --disable-code-size-limit"
+# Group 09 only writes JSON. Skip the extra `cast chain-id` so a DNS flake
+# cannot block export before forge (which already requires chain 46630).
+if [[ "$COMMAND" != "export" && "$COMMAND" != "stage09" ]]; then
+  log_info "Checking chain id at $RPC_URL"
+  CID=""
+  cid_attempt=1
+  cid_max="${FORGE_RPC_RETRIES:-6}"
+  cid_sleep="${FORGE_RPC_RETRY_SLEEP:-8}"
+  while [[ "$cid_attempt" -le "$cid_max" ]]; do
+    set +e
+    CID="$(cast chain-id --rpc-url "$RPC_URL" 2>/tmp/cast-chain-id.err)"
+    cid_st=$?
+    set -e
+    if [[ "$cid_st" -eq 0 && -n "$CID" ]]; then
+      break
+    fi
+    log_info "cast chain-id failed (attempt $cid_attempt/$cid_max)"
+    if [[ -s /tmp/cast-chain-id.err ]]; then
+      cat /tmp/cast-chain-id.err >&2 || true
+    fi
+    if [[ "$cid_attempt" -eq "$cid_max" ]]; then
+      log_error "cast chain-id failed against $RPC_URL"
+      log_error "Need a working 46630 RPC and foundry cast on PATH."
+      exit 1
+    fi
+    sleep "$cid_sleep"
+    cid_attempt=$((cid_attempt + 1))
+  done
+  CID="$(printf '%s' "$CID" | tr -d '[:space:]')"
+  if [[ "$CID" != "46630" ]]; then
+    log_error "Expected chain id 46630, got ${CID:-<empty>}"
+    if is_localhost_rpc; then
+      log_error "Start Anvil with --chain-id 46630 --disable-code-size-limit"
+    fi
+    exit 1
   fi
-  exit 1
+  log_success "Chain id $CID RPC=$RPC_URL"
+else
+  log_info "Skipping wrapper chain-id check for $COMMAND (group 09 is JSON export)"
 fi
-log_success "Chain id $CID RPC=$RPC_URL"
 
 log_header "Robinhood testnet (46630) deploy: $COMMAND"
 log_info "DEPLOYER_ADDRESS=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE"
