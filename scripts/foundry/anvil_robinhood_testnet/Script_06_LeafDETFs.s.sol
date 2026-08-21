@@ -14,6 +14,7 @@ contract Script_06_LeafDETFs is LaunchIo {
 
     function run() external {
         _loadConfig();
+        _bindCreator(s);
         _requireRobinhoodTestnet();
         RobinhoodCanonicalLib.requireCanonicalPins();
         require(_loadFactories(s), "run Script_01 first");

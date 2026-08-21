@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | Wave 1 + 1.5 + Wave 2 + PR8 + **RiskBadge (partial PR9)** + **Research R1 + R2 note polish + R3 landing** complete (2026-07-27) |
+| **Status** | Wave 1 + 1.5 + Wave 2 + PR8 + **RiskBadge (partial PR9)** + **Research R1 + R2 + R3** + **landing compact** (2026-08-21) |
 | **Next phase** | **R4** curated plots under `public/research/`; residual PR9 USD / brand / Wave 3; optional R5 e2e/OG |
 | **Product / architecture SoT** | [FRONTEND_REDESIGN_DESIGN.md](./FRONTEND_REDESIGN_DESIGN.md) (**rev 9**) |
 | **Wave 2 design SoT** | [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) (**rev 2** — implemented) |
@@ -38,9 +38,9 @@
 
 | | |
 |--|--|
-| **Where we are** | Redesign through **Wave 2 + PR8 + RiskBadge** is **shipped**. **Research R1** + **R2** (`/research/detf` Policy/Open) + **R3** DETF-first landing + research strip **shipped**. Fee-accrual DETF lives on `/staking` (not Earn grid). |
+| **Where we are** | Redesign through **Wave 2 + PR8 + RiskBadge** is **shipped**. **Research R1–R3** shipped. IndexedEx `/` is a **compact choice page** (2026-08-21): Create / Explore / Learn; Protocol DETF is the fees card. Fee-accrual DETF lives on `/staking` (not Earn grid). |
 | **Do next** | **R4** charts under `public/research/`; residual PR9 USD / brand / Wave 3. Do not invent risk tags or USD. |
-| **Do not re-open** | Wave 1 money path / polish; Wave 1.5 deploys; Wave 2 list/IA; PR8 share; RiskBadge inventing levels; inventing USD/APY; DualLiquidity as hero; re-mingling fee DETFs into Earn grid; R3 landing structure (spine §6) |
+| **Do not re-open** | Wave 1 money path / polish; Wave 1.5 deploys; Wave 2 list/IA; PR8 share; RiskBadge inventing levels; inventing USD/APY; DualLiquidity as hero; re-mingling fee DETFs into Earn grid; R3 education dump on `/` (Why grid, Policy/Open band, Earn banner, three-note strip, $RICH in first-screen CTAs) |
 | **Never** | Deploy contracts / restart Anvil stacks / run `local_testing.sh` for frontend tasks |
 
 ---
@@ -71,7 +71,8 @@ Skills while coding: `ethskills-frontend-ux`, `indexedex-ui-refactor` (do not re
 [x] PR9 RiskBadge         tags-only RiskBadge + Earn wire; hide when untagged
 [x] Research R1           /research registry + 3 notes + nav/footer (RESEARCH_SECTION_DESIGN.md)
 [x] Research R2           detf.ts Policy/Open polish (narrative spine)
-[x] Research R3           landing DETF hero + research strip (app/page.tsx, 2026-07-27)
+[x] Research R3           landing DETF-first first screen + research strip (2026-07-27)
+[x] Landing compact       drop education dump on `/` (2026-08-21; spine §6)
 [ ] Research R4           curated plots under public/research/
 [ ] PR9 USD (optional)    only when NEXT_PUBLIC_USD_PRICE_SOURCE ≠ none + real adapter
 [ ] Brand lock / P2-7     production metadata (OG absolute, favicon) when owner locks brand
@@ -96,8 +97,9 @@ Skills while coding: `ethskills-frontend-ux`, `indexedex-ui-refactor` (do not re
 | Wave 2 regression e2e | `e2e/wave2-fee-detf.spec.ts` (landing → staking, Earn exclude, redirect, staking chrome, Token handoff) |
 | **PR8 SharePositionCard** | `components/earn/SharePositionCard.tsx`, `lib/portfolio/sanitizeShareFields.ts` (+ tests), Portfolio Share actions, Token “no invent claim”, `LaunchBanner` env wiring |
 | **RiskBadge (partial PR9)** | `components/earn/RiskBadge.tsx`, `lib/earn/riskFromTags.ts` (+ tests); tags preserved on `TokenListEntry`; Earn table/detail; hide if no `risk-*` / `extensions.risk` |
-| **Research R1–R3** | `/research` registry; `articles/detf.ts` Policy/Open; landing DETF-first hero + benefits + how-it-works + fee DETF + research strip + Earn secondary + disclaimers (`app/page.tsx`); spine `docs/marketing/DETF_NARRATIVE_SPINE.md` |
-| **Landing lab visual** | Lab/experimental tone on `/` only: atmosphere, reserve core, Policy/Open band experiment, terminal fee DETF card, lab notes (`app/landing.css` + `app/page.tsx`) — no heavy Olympus lean |
+| **Research R1–R3** | `/research` registry; `articles/detf.ts` Policy/Open; landing DETF-first first screen (later compacted 2026-08-21) |
+| **Landing compact (2026-08-21)** | IndexedEx `/`: Create / Explore / Learn; three steps; one Protocol DETF / $RICH card; Learn → `/learn`; folded disclaimers. No Why grid, Policy/Open band, Earn banner, research catalog, or closing recap. Spine §6. |
+| **Landing lab visual** | Lab tone on `/` only: atmosphere, basket diagram, fee DETF card, Learn strip (`app/landing.css` + `app/page.tsx`) — no heavy Olympus lean |
 
 ### PR8 acceptance (done 2026-07-26)
 

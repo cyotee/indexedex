@@ -1,9 +1,5 @@
-import { CreatePageFrame } from '../CreatePageFrame'
-
-export const metadata = {
-  title: 'Create: several vaults, fixed weights — IndexedEx',
-}
+import { redirect } from 'next/navigation'
 
 export default function CreateWeightedPage() {
-  return <CreatePageFrame initialTypeId="weighted" />
+  redirect('/create/one-vault')
 }

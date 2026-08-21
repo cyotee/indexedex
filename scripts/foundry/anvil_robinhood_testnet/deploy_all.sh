@@ -79,14 +79,15 @@ These groups are the 46630 launch scripts. Set DEPLOYER_ADDRESS; forge uses
 rehearse, or --live / a public RPC to broadcast to Robinhood Chain Testnet.
 
 Commands:
-  all           Staged deploy: 00-05, 03b (Orbital+Weighted pkgs), 06t (TTCHIR), 06e (TTDOL-Q), 09
-  foundation    Groups 00-03, 03b
-  assets        Group 04
+  all           Staged deploy: 00-05, 04b (Mag7 tokens), 06t (TTCHIR), 06e (TTDOL-Q), 09
+                Packages: Uni V4 SE + CP (Protocol DETF) + Curve Quad (Double Dollar). Not 03b.
+  foundation    Groups 00-03 (CP + Curve Quad packages only)
+  assets        Groups 04 + 04b
   pools         Group 05
   leaves        06t (TTCHIR) + 06e (TTDOL-Q)
   export        Group 09 (frontend JSON)
   simulate      Alternate: Script_SimulateLaunch (01-06 in one script, for gas estimate). Do not run after \`all\`.
-  stageNN       Single group (00-06, 03b, 06t, 06e, 09)
+  stageNN       Single group (00-06, 04b, 06t, 06e, 09). stage03b is optional later (Orbital + Weighted).
   stagesimulate Same as simulate
   detach-fork   Anvil-only: dump overlay, restart without a fork, reload state. Use when the
                 public RH RPC returns "metadata is not found" for new CREATE addresses.
@@ -472,6 +473,7 @@ stage_script() {
     03) echo "$SCRIPT_DIR/Script_03_UniV4Packages.s.sol" ;;
     03b) echo "$SCRIPT_DIR/Script_03b_OrbitalWeightedPackages.s.sol" ;;
     04) echo "$SCRIPT_DIR/Script_04_Tokens.s.sol" ;;
+    04b) echo "$SCRIPT_DIR/Script_04b_SevenTestTokens.s.sol" ;;
     05) echo "$SCRIPT_DIR/Script_05_LeafPoolsAndSEs.s.sol" ;;
     06) echo "$SCRIPT_DIR/Script_06_LeafDETFs.s.sol" ;;
     06e) echo "$SCRIPT_DIR/Script_06e_DolQ.s.sol" ;;
@@ -499,7 +501,7 @@ while [[ $# -gt 0 ]]; do
       COMMAND="$1"
       shift
       ;;
-    stage[0-9][0-9]|stage[0-9]|stage03b|stage06[et]|stagesimulate)
+    stage[0-9][0-9]|stage[0-9]|stage03b|stage04b|stage06[et]|stagesimulate)
       COMMAND="$1"
       shift
       ;;
@@ -666,13 +668,13 @@ log_info "DEPLOYER_ADDRESS=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE"
 
 case "$COMMAND" in
   all)
-    run_stages 00 01 02 03 03b 04 05 06t 06e 09
+    run_stages 00 01 02 03 04 04b 05 06t 06e 09
     ;;
   foundation)
-    run_stages 00 01 02 03 03b
+    run_stages 00 01 02 03
     ;;
   assets)
-    run_stages 04
+    run_stages 04 04b
     ;;
   pools)
     run_stages 05

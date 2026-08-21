@@ -112,7 +112,7 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 | Surface | Style |
 |---------|--------|
-| Landing `/` | Define DETF first; CTAs to **Create**, **Explore**, **Learn**; Protocol DETF still listed as fees path |
+| Landing `/` | Define DETF first; CTAs to **Create**, **Explore**, **Learn**; Protocol DETF is one fees card ($RICH not in the first-screen row). Not the full education walk. |
 | `/explore` | Live DETFs; Protocol DETF first card; opens `/staking?detf=` |
 | `/create` | Basket-shape picker; type pages are deploy homes |
 | `/you` | Positions (vault receipts, DETF tokens, bonds) |
@@ -151,5 +151,5 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 - Spine: `docs/marketing/DETF_NARRATIVE_SPINE.md`  
 - Research article: `frontend/app/content/research/articles/detf.ts`  
-- Landing: `frontend/app/page.tsx`  
+- Landing: `frontend/apps/indexedex/app/page.tsx`  
 - Shared marketing context (if present): `.agents/product-marketing.md`  

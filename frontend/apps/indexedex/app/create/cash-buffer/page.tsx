@@ -1,9 +1,5 @@
-import { CreatePageFrame } from '../CreatePageFrame'
-
-export const metadata = {
-  title: 'Create: one cash token plus vaults — IndexedEx',
-}
+import { redirect } from 'next/navigation'
 
 export default function CreateCashBufferPage() {
-  return <CreatePageFrame initialTypeId="cash-buffer" />
+  redirect('/create/one-vault')
 }

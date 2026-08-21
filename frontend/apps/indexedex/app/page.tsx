@@ -1,68 +1,33 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { Button } from './components/ui/Button'
 import { Card } from './components/ui/Card'
-import { listPublishedResearchArticles } from './content/research'
 import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
 import { getLaunchTokenAddress } from './lib/lab'
 import { feeDetfStakingHref, getBaseTokensForChain } from '@indexedex/protocol/tokenlists'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
-import { useBrand } from './lib/brandContext'
 
 import './landing.css'
-
-const BENEFITS = [
-  {
-    featured: true,
-    t: 'The reserve is at work',
-    d: 'Your DETF is not a list of idle tokens. The reserve is at work earning for you. That is the main difference. You make a DETF to hold that strategy as one token.',
-    tag: 'strategy',
-  },
-  {
-    featured: false,
-    t: 'One token for the whole basket',
-    d: 'Hold, move, or sell one token. You do not have to manage each position yourself.',
-    tag: 'simpler',
-  },
-  {
-    featured: false,
-    t: 'People can trade the token',
-    d: 'The DETF token sits in a market. That market is how the assets behind it stay useful. It is not a side listing.',
-    tag: 'market',
-  },
-  {
-    featured: false,
-    t: 'You pick the rules',
-    d: 'Policy can pause mint and burn when the price is near the target. Open never does. Fees can still apply.',
-    tag: 'rules',
-  },
-  {
-    featured: false,
-    t: 'The rules stay put',
-    d: 'After it goes live, nobody rewrites the rules. A bad setup means a new DETF.',
-    tag: 'trust',
-  },
-] as const
 
 const HOW_IT_WORKS = [
   {
     n: '01',
     t: 'Create',
-    d: 'Make a DETF. You get a bond you cannot cash out. It can collect a cut of new DETF. The DETF stays off until someone bonds.',
+    d: 'Make a DETF. You pick the rules. It stays off until the first bond.',
   },
   {
     n: '02',
     t: 'Bond',
-    d: 'Bond means lock money in. That first bond turns the DETF on and fills the assets behind it.',
+    d: 'Bond means lock money in. That first bond turns the DETF on.',
   },
   {
     n: '03',
     t: 'Use',
-    d: 'Hold the token. Mint more. Or burn to exit. People can still trade the token.',
+    d: 'Hold the token. Mint more, burn to exit, or trade it.',
   },
 ] as const
 
@@ -75,14 +40,12 @@ const DISCLAIMERS = [
   'Smart contracts and markets can lose money. Read research. This is not financial advice.',
 ] as const
 
-type BandMode = 'policy' | 'open'
-
 function AcrossDefiDiagram() {
   return (
     <div
       className="landing-across"
       role="img"
-      aria-label="One DETF token. The reserve is at work in pools, lending, staking, and vaults."
+      aria-label="One DETF token. The basket works in pools, lending, staking, and vaults."
     >
       <svg className="landing-across__wires" viewBox="0 0 320 320" aria-hidden="true">
         <line x1="160" y1="160" x2="160" y2="52" />
@@ -115,83 +78,15 @@ function AcrossDefiDiagram() {
   )
 }
 
-function PolicyBandExperiment() {
-  const [mode, setMode] = useState<BandMode>('policy')
-
-  return (
-    <div className="landing-bleed">
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
-        <div>
-          <p className="landing-section-label">Mint and burn</p>
-          <h2 className="mt-2 text-xl md:text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-            Choose when people can enter and exit
-          </h2>
-          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] max-w-xl">
-            Every DETF picks a mode when you make it.{' '}
-            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Policy</strong> can
-            pause mint and burn when the price is near the target.{' '}
-            <strong className="font-medium text-[var(--text-primary,#EDEDED)]">Open</strong> never
-            pauses for price. Fees can still apply. Neither mode promises a stable price or a
-            return.
-          </p>
-        </div>
-        <div className="landing-mode-toggle" role="group" aria-label="Threshold mode preview">
-          <button
-            type="button"
-            data-active={mode === 'policy'}
-            onClick={() => setMode('policy')}
-          >
-            Policy
-          </button>
-          <button type="button" data-active={mode === 'open'} onClick={() => setMode('open')}>
-            Open
-          </button>
-        </div>
-      </div>
-
-      <div className="landing-band" data-mode={mode}>
-        <div className="landing-band__zone landing-band__zone--burn">burn</div>
-        <div className="landing-band__zone landing-band__zone--dead">near target</div>
-        <div className="landing-band__zone landing-band__zone--mint">mint</div>
-        <div className="landing-band__zone landing-band__zone--open">mint and burn stay open</div>
-      </div>
-      <div className="landing-band__labels">
-        {mode === 'policy' ? (
-          <>
-            <span>burn when price is low</span>
-            <span>paused near target</span>
-            <span>mint when price is high</span>
-          </>
-        ) : (
-          <>
-            <span>mint stays open</span>
-            <span>no pause for price</span>
-            <span>burn stays open</span>
-          </>
-        )}
-      </div>
-
-      <p className="mt-4 text-xs leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-        You choose Policy or Open when you create the DETF.{' '}
-        <Link href="/research/detf" className="text-[var(--accent,#4FD44B)] hover:underline">
-          Read how DETFs work
-        </Link>
-      </p>
-    </div>
-  )
-}
-
 export default function HomePage() {
-  const { brand } = useBrand()
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
 
   const featuredFeeDetfs = useMemo(
-    () => loadFeaturedFeeDetfs(selectedChainId, environment, 3),
+    () => loadFeaturedFeeDetfs(selectedChainId, environment, 1),
     [selectedChainId, environment],
   )
   const heroFee = featuredFeeDetfs[0]
-  const secondaryFees = featuredFeeDetfs.slice(1)
 
   const buyRichHref = useMemo(() => {
     const launch = getLaunchTokenAddress()
@@ -202,11 +97,6 @@ export default function HomePage() {
     return addr ? `/swap?launch=1&tokenOut=${addr}` : '/token'
   }, [selectedChainId, environment])
 
-  const researchNotes = useMemo(() => listPublishedResearchArticles().slice(0, 3), [])
-
-  const featuredBenefit = BENEFITS.find((b) => b.featured)!
-  const otherBenefits = BENEFITS.filter((b) => !b.featured)
-
   return (
     <div className="landing-lab">
       <div className="landing-lab__atmosphere" aria-hidden="true">
@@ -215,24 +105,18 @@ export default function HomePage() {
         <div className="landing-lab__glow landing-lab__glow--secondary" />
       </div>
 
-      {/* Above the fold */}
       <section className="relative pb-14 pt-2 md:pt-4 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           <div className="lg:col-span-7">
-            <p className="landing-lab__eyebrow">
-              DETF means Decentralized ETF
-            </p>
+            <p className="landing-lab__eyebrow">DETF means Decentralized ETF</p>
             <h1 className="landing-lab__h1 mt-4">
               Hold a strategy
               <br />
               <span className="landing-lab__h1-accent">as one token.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base md:text-lg text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-              A DETF is one token for a basket you pick. The reserve is at work earning for you.
-              People can trade the token. That market is how the assets behind it stay useful.
-              This is not a stock ETF. Want to take part when people use IndexedEx? Buy{' '}
-              <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong>.
-              App fees go to buy it back.
+              A DETF is one token for a basket you pick. The basket works in other apps. Create
+              your own, or open one that is already live.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -241,9 +125,9 @@ export default function HomePage() {
                   Create DETF
                 </Button>
               </Link>
-              <Link href={buyRichHref}>
+              <Link href="/explore">
                 <Button size="lg" variant="secondary">
-                  Buy $RICH
+                  Use a live DETF
                 </Button>
               </Link>
               <Link href="/learn">
@@ -258,55 +142,13 @@ export default function HomePage() {
             <div className="landing-lab__panel p-6 md:p-8">
               <AcrossDefiDiagram />
               <p className="mt-6 text-center text-xs text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-                You hold one token. The reserve is at work earning for you.
+                You hold one token. The basket works in other apps.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why / benefits */}
-      <section className="mb-16 md:mb-20">
-        <p className="landing-section-label">Why DETFs</p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-          Hold a strategy as a token.
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          One basket. The reserve is at work earning for you. You own a piece of the assets
-          behind that token.
-        </p>
-
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-5 landing-feature-hero rounded-xl p-6 md:p-7">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent,#4FD44B)]">
-              {featuredBenefit.tag} · primary
-            </p>
-            <h3 className="mt-3 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">
-              {featuredBenefit.t}
-            </h3>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-              {featuredBenefit.d}
-            </p>
-          </div>
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {otherBenefits.map((b) => (
-              <Card key={b.t} className="h-full" padding="sm">
-                <div className="p-1">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted,#9aa3b2)]">
-                    {b.tag}
-                  </p>
-                  <h3 className="mt-2 font-medium text-[var(--text-primary,#EDEDED)]">{b.t}</h3>
-                  <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] leading-relaxed">
-                    {b.d}
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works — timeline */}
       <section className="mb-16 md:mb-20">
         <p className="landing-section-label">The process</p>
         <h2 className="mt-2 mb-5 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
@@ -328,11 +170,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Policy / Open modes */}
-      <section id="modes" className="mb-16 md:mb-20 scroll-mt-24">
-        <PolicyBandExperiment />
-      </section>
-
       {/* Protocol DETF — protocol fees path (Wave 2 — e2e: heading + staking links) */}
       <section id="rich" className="mb-16 md:mb-20 scroll-mt-24">
         <p className="landing-section-label">App fees buy back $RICH</p>
@@ -342,11 +179,45 @@ export default function HomePage() {
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
           <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong> is the
           token for app fees. When people use IndexedEx, those fees go to buy back $RICH. That
-          includes the pons family launch for $RICH. Buy $RICH if you want to take part when the
-          product is used. This is not a promised return.
+          includes the pons family launch for $RICH.
         </p>
 
-        {featuredFeeDetfs.length === 0 ? (
+        {heroFee ? (
+          <div className="mt-5 space-y-3">
+            <Link
+              href={feeDetfStakingHref(heroFee.address)}
+              className="landing-feature-hero block group overflow-hidden rounded-xl transition-shadow"
+            >
+              <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
+                    $RICH
+                  </p>
+                  <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">
+                    Protocol DETF
+                  </h3>
+                  <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+                    $CHIR is the DETF of $RICH. Lock $RICH to earn fees with $CHIR.
+                  </p>
+                </div>
+                <span className="inline-flex items-center text-sm font-medium text-[var(--accent,#4FD44B)]">
+                  Open $CHIR →
+                </span>
+              </div>
+            </Link>
+
+            <div className="pt-1 flex flex-wrap gap-2">
+              <Link href={buyRichHref}>
+                <Button size="sm">Buy $RICH</Button>
+              </Link>
+              <Link href={feeDetfStakingHref(heroFee.address)}>
+                <Button size="sm" variant="secondary">
+                  Open $CHIR
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : (
           <Card className="mt-5">
             <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
               No Protocol DETF is listed on this network yet. You can still buy $RICH when a market
@@ -363,82 +234,20 @@ export default function HomePage() {
               </Link>
             </div>
           </Card>
-        ) : (
-          <div className="mt-5 space-y-3">
-            {heroFee ? (
-              <Link
-                href={feeDetfStakingHref(heroFee.address)}
-                className="landing-feature-hero block group overflow-hidden rounded-xl transition-shadow"
-              >
-                <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-                      $RICH
-                    </p>
-                    <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">
-                      Protocol DETF
-                    </h3>
-                    <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-                      Hold the fee path. Fees buy back $RICH.
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center text-sm font-medium text-[var(--accent,#4FD44B)]">
-                    Open {heroFee.symbol} →
-                  </span>
-                </div>
-              </Link>
-            ) : null}
-
-            {secondaryFees.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {secondaryFees.map((p) => (
-                  <Link
-                    key={p.address}
-                    href={feeDetfStakingHref(p.address)}
-                    className="block group"
-                  >
-                    <Card className="h-full transition-colors group-hover:border-[var(--border-accent,rgba(79,212,75,0.45))]">
-                      <p className="text-[10px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">
-                        Protocol DETF
-                      </p>
-                      <h3 className="mt-2 text-base font-semibold text-[var(--text-primary,#EDEDED)]">
-                        {p.symbol}
-                      </h3>
-                      <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-                        Protocol DETF token
-                      </p>
-                      <p className="mt-3 text-sm text-[var(--accent,#4FD44B)]">Open {p.symbol} →</p>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-
-            <div className="pt-1 flex flex-wrap gap-2">
-              <Link href={buyRichHref}>
-                <Button size="sm">Buy $RICH</Button>
-              </Link>
-              {heroFee ? (
-                <Link href={feeDetfStakingHref(heroFee.address)}>
-                  <Button size="sm" variant="secondary">
-                    Open {heroFee.symbol}
-                  </Button>
-                </Link>
-              ) : null}
-            </div>
-          </div>
         )}
       </section>
 
-      {/* Research */}
       <section className="mb-16 md:mb-20">
         <div className="landing-lab-notes">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
               <p className="landing-section-label">Learn</p>
               <h2 className="mt-2 text-xl md:text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
                 How DETFs work
               </h2>
+              <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
+                Five short chapters on how DETFs work.
+              </p>
             </div>
             <Link
               href="/learn"
@@ -447,52 +256,9 @@ export default function HomePage() {
               Full walk →
             </Link>
           </div>
-
-          {researchNotes.length === 0 ? (
-            <p className="text-sm text-[var(--text-muted,#9aa3b2)]">No published notes yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {researchNotes.map((note, i) => (
-                <Link key={note.slug} href={`/research/${note.slug}`} className="landing-lab-note">
-                  <p className="font-mono text-[10px] text-[var(--text-muted,#9aa3b2)]">
-                    {String(i + 1).padStart(2, '0')} · {note.slug}
-                  </p>
-                  <h3 className="mt-2 text-base font-semibold text-[var(--text-primary,#EDEDED)]">
-                    {note.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)] line-clamp-3 leading-relaxed">
-                    {note.summary}
-                  </p>
-                  <p className="mt-4 font-mono text-xs text-[var(--accent,#4FD44B)]">Read note →</p>
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
-      {/* Secondary Earn */}
-      <section className="mb-12">
-        <Card className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[var(--surface-2,#1c2030)]">
-          <div>
-            <p className="landing-section-label" style={{ color: 'var(--text-muted, #9aa3b2)' }}>
-              Also on {brand.name}
-            </p>
-            <h2 className="mt-1 text-base font-medium text-[var(--text-primary,#EDEDED)]">
-              Building-block vaults
-            </h2>
-            <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)] max-w-xl">
-              Deposit into vaults a DETF can put in its basket. Those vaults are how the reserve
-              stays at work. Use a live DETF from Explore. Or pick vaults when you Create.
-            </p>
-          </div>
-          <Link href="/earn">
-            <Button variant="secondary">Browse vaults</Button>
-          </Link>
-        </Card>
-      </section>
-
-      {/* Disclaimers */}
       <section className="mb-10">
         <details className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4 group">
           <summary className="cursor-pointer list-none flex items-center justify-between gap-3 text-sm font-medium text-[var(--text-primary,#EDEDED)]">
@@ -510,15 +276,6 @@ export default function HomePage() {
             ))}
           </ul>
         </details>
-      </section>
-
-      {/* Closing strip */}
-      <section className="pb-4">
-        <div className="rounded-xl border border-dashed border-[var(--border-subtle,rgba(255,255,255,0.12))] bg-transparent px-4 py-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          DETF means Decentralized ETF. Hold a strategy as a token. The reserve is at work earning
-          for you. Buy $RICH to take part when the app is used. Fees go to buy it back. We only
-          claim what the chain can prove.
-        </div>
       </section>
     </div>
   )

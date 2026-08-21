@@ -108,7 +108,7 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 | Surface | Style |
 |---------|--------|
-| Landing `/` | Define DETF (Decentralized ETF / D) first; then **create-your-own** / many types; Protocol DETF as fees path; CTAs to research + `/staking` + Earn; no package names on cards |
+| Landing `/` | Define DETF first; CTAs to **Create**, **Explore**, **Learn**; Protocol DETF is one fees card ($RICH not in the first-screen row). Not the full education walk. |
 | `/staking` | Title **Protocol DETF**; frame as share of protocol fees; actions named by verb |
 | Earn | Catalog for strategies; cross-promo says **Protocol DETF**, not package |
 | Research | Mechanics + not-claiming; hierarchy clear; cite spine; no fake performance |
@@ -142,5 +142,5 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 - Spine: `docs/marketing/DETF_NARRATIVE_SPINE.md`  
 - Research article: `frontend/app/content/research/articles/detf.ts`  
-- Landing: `frontend/app/page.tsx`  
+- Landing: `frontend/apps/indexedex/app/page.tsx`  
 - Shared marketing context (if present): `.agents/product-marketing.md`  

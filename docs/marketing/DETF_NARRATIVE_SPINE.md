@@ -6,10 +6,10 @@
 |-------|--------|
 | **Status** | Active — use as source of truth for product education |
 | **Created** | 2026-07-27 |
-| **Owner surfaces** | `/` (R3 landing), `/research`, `marketing/research-site/`, `marketing/X_POSTS.md` |
+| **Owner surfaces** | `/` (compact landing), `/research`, `marketing/research-site/`, `marketing/X_POSTS.md` |
 | **Product law (modes)** | `contracts/vaults/detf/DETF_Threshold_Modes_PRD.md` (**PRODUCT LAW LOCKED**) |
 | **Engineering tracker** | `contracts/vaults/detf/DETF_Threshold_Modes_PROGRESS.md` |
-| **Frontend roadmap** | `frontend/ROADMAP.md` → **R3** landing DETF hero + research strip |
+| **Frontend roadmap** | `frontend/ROADMAP.md` → landing compact choice page (post-R3) |
 | **Research design** | `frontend/RESEARCH_SECTION_DESIGN.md` |
 
 **Rule:** Do not invent a second public story. Adapt tone by surface; keep claims, disclaimers, and mode language aligned with this file.
@@ -171,66 +171,60 @@ Engineering gate: prefer P1 (Single Standard Exchange DETF) green before asserti
 
 ---
 
-## 6. Landing page outline (R3)
+## 6. Landing page outline
 
-Target route: `frontend/app/page.tsx`. Structure from `frontend/RESEARCH_SECTION_DESIGN.md` §4.
+Target route: `frontend/apps/indexedex/app/page.tsx`.
+
+`/` is a **choice page**, not the full education walk. Policy vs Open, creator-bond detail, vault legs, and research summaries live on `/create`, `/learn`, and `/research/[slug]`.
 
 ```text
-Hero — create DETFs (premier)
-  → Benefits (pillars §3)
-  → How it works (§4.1–4.2, short)
-  → Modes Policy / Open
-  → Protocol DETF (protocol fees path → /staking)
-  → Research strip (2–3 published notes)
-  → Earn (strategy vaults / legs)
-  → Disclaimers (§8)
+First screen — define DETF + one outcome + diagram
+  CTAs: Create → /create, Use a live DETF → /explore, How DETFs work → /learn
+  → Three steps (Create → Bond → Use)
+  → Protocol DETF (one $RICH / fees card → /staking)
+  → Learn (one line + Full walk → /learn)
+  → Disclaimers (§8, folded)
 ```
 
-### 6.1 Suggested hero copy (editable)
+Do **not** restore on `/`: Why DETFs card grid, Policy/Open band, Earn vaults banner, three-note research strip, closing recap strip, or **Buy $RICH** in the first-screen button row.
 
-**Eyebrow:** DETF = Decentralized ETF · many types  
+### 6.1 First-screen copy
 
-**H1:** Build your own onchain DETF.  
+**Eyebrow:** DETF means Decentralized ETF  
 
-**Lede:** **DETF** means **Decentralized ETF** — the D is decentralized. One onchain share over a real multi-asset reserve. Premier product: stand up **your own DETFs** from a wide family of package types — bond, mint, and burn rules priced from the pool. Want a share of protocol fees? Open **Protocol DETF**.
+**H1:** Hold a strategy as one token.  
 
-**Primary CTA:** How DETFs work → `/research/detf`  
-**Secondary CTA:** Open Protocol DETF → `/staking`  
-**Tertiary:** Browse strategy vaults → `/earn`
+**Lede:** A DETF is one token for a basket you pick. The basket works in other apps. Create your own, or open one that is already live.
 
-### 6.2 Benefits block (short labels)
+**Primary CTA:** Create DETF → `/create`  
+**Secondary CTA:** Use a live DETF → `/explore`  
+**Tertiary:** How DETFs work → `/learn`
 
-| Label | One line |
-|-------|----------|
-| Basket share | One ERC-20 surface over configured reserve legs |
-| Pool-priced | Synthetic valuation from the reserve AMM, not a private ledger |
-| Bond to live | First bond deepens protocol-owned reserve and opens the product |
-| Policy or Open | Default price-gated seigniorage — or Open with no price restrictions |
-| Immutable | No instance owner or admin rebalance after deploy |
+**Buy $RICH** sits on the Protocol DETF card below, not next to Create.
 
-### 6.3 How it works (three steps)
+### 6.2 How it works (three steps)
 
-1. **Bond** — take the instance live; protocol-owned depth.  
-2. **Mint / burn** — vault shares ↔ DETF when mode and liveness allow; fees may apply.  
-3. **Hold or claim** — secondary markets; bond/claim paths where the package wires them.
+1. **Create** — Make a DETF. You pick the rules. It stays off until the first bond.  
+2. **Bond** — Bond means lock money in. That first bond turns the DETF on.  
+3. **Use** — Hold the token. Mint more, burn to exit, or trade it.
 
-### 6.4 Research strip
+Policy vs Open is a Create + Learn lesson, not a landing widget. One line (“You pick the rules”) is enough on `/`.
 
-Pull from published `frontend/app/content/research` articles (title + summary + link). Prefer:
+### 6.3 Protocol DETF (fees path)
 
-1. DETFs: one share over a real onchain reserve (`/research/detf`)  
-2. DETF types (`/research/detf-types`)  
-3. Bond vs mint (`/research/bond-vs-mint`)  
-4. Rate providers / mark integrity (`/research/rate-providers`)  
+One heading **Protocol DETF** and one `/staking?detf=` link (Wave 2 e2e). $RICH copy: app fees buy back $RICH, including the pons family launch. No second grid of Protocol DETF cards (Explore lists live DETFs). Do not add legal hedges or “not a promised return” lines in landing body copy.
 
-Do **not** feature preview-equals-execution as a landing research panel (engineering bar, not a customer value prop).
+### 6.4 Learn strip
+
+One line: five short chapters. Link **Full walk →** `/learn`. Do not stack published-note summaries on `/`.
 
 ### 6.5 What to demote on landing
 
-- Generic “Composed indexed liquidity / deposit once” as the **only** hero (keep as sub-brand if needed, not above DETF).  
-- DualLiquidity as hero.  
+- Generic “Composed indexed liquidity / deposit once” as the **only** first-screen claim (keep as sub-brand if needed, not above DETF).  
+- DualLiquidity as the first-screen product.  
 - Invented TVL / APY / USD when price source is off.  
-- Fee DETFs listed inside the Earn grid (Wave 2 rule stays).
+- Fee DETFs listed inside the Earn grid (Wave 2 rule stays).  
+- Policy/Open experiment, Why DETFs five-card grid, Earn banner, research catalog, $RICH in the first paragraph.
 
 ---
 
@@ -300,7 +294,7 @@ Smart-contract and market risk apply. Read docs and research; this is not financ
 
 | Surface | Tone | Lead with | Modes |
 |---------|------|-----------|--------|
-| Landing `/` | Conversion + clarity | Why desirable + CTA to `/staking` | Policy default; Open as option |
+| Landing `/` | Conversion + clarity | One outcome + Create / Explore / Learn; $RICH on fees card | Policy/Open on Create + Learn, not a landing widget |
 | `/research/detf` | Educational | How it works + not-claiming | Full Policy/Open section |
 | `/staking` | Product UI | Actions (bond, mint, burn, claim) | Show instance mode when available |
 | `marketing/research-site/` | Public teaser | Premier product + roadmap | Sync to §5 |
@@ -364,15 +358,15 @@ Use when preparing landing + research for ship.
 - [x] Sync `marketing/X_POSTS.md` explainer bullets to §5  
 - [ ] Point CTAs at real URLs (app + research-site when deployed)
 
-### UI (R3)
+### UI (R3 shipped; compact `/` 2026-08-21)
 
-- [x] Landing hero DETF-first per §6  
-- [x] Benefits + how-it-works blocks  
-- [x] Keep Protocol DETF featured → `/staking`  
-- [x] Research strip from published registry  
-- [x] Disclaimers §8  
+- [x] Landing first screen DETF-first per §6 (Create / Explore / Learn)  
+- [x] Three steps only (no Why DETFs grid, no Policy/Open band)  
+- [x] Keep Protocol DETF featured → `/staking` (one card; $RICH not in first-screen CTAs)  
+- [x] Learn strip → `/learn` (no three-note research catalog on `/`)  
+- [x] Disclaimers §8 (folded; no closing recap strip)  
 - [x] Public product name is **Protocol DETF** (not deploy package names); e2e matches `Protocol DETF` + staking links  
-- [x] No invented APY/USD; no DualLiquidity hero  
+- [x] No invented APY/USD; no DualLiquidity first-screen product  
 
 ### Product chrome (post Threshold Modes)
 
@@ -408,6 +402,7 @@ Use when preparing landing + research for ship.
 
 | Date | Note |
 |------|------|
+| 2026-08-21 | Landing `/` compact choice page: drop Why grid, Policy/Open band, Earn banner, research catalog, closing strip; $RICH off first-screen CTAs. Spine §6 rewritten. |
 | 2026-08-06 | Public GitHub Pages rewrite: Olympus→DETF product tone; launch map locked to Uni V4 pair / triangle / weighted only. |
 | 2026-07-27 | Initial spine: positioning, desirability, lifecycle, Policy/Open copy law, R3 landing outline, research update targets, disclaimers, copy bank. |
 | 2026-07-27 | Shipped in-app: `frontend/app/content/research/articles/detf.ts` Policy/Open update; R3 landing rewrite on `frontend/app/page.tsx`. |

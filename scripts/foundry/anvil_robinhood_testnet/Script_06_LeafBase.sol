@@ -14,6 +14,7 @@ abstract contract Script_06_LeafBase is LaunchIo {
     function _prepLeaves() internal {
         console2.log("06 prep start");
         _loadConfig();
+        _bindCreator(s);
         _requireRobinhoodTestnet();
         RobinhoodCanonicalLib.requireCanonicalPins();
         require(_loadFactories(s), "run Script_01 first");

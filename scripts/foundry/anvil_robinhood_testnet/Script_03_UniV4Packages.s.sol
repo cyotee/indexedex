@@ -7,7 +7,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_03_UniV4Packages} from "./Stage_03_UniV4Packages.sol";
 
 /// @title Script_03_UniV4Packages
-/// @notice Group 03: Uni V4 hook / SE / DETF packages (no instances).
+/// @notice Group 03: Uni V4 SE + CP (Protocol DETF) + Curve Quad (Double Dollar) packages. No instances.
 contract Script_03_UniV4Packages is LaunchIo {
     LaunchState internal s;
 

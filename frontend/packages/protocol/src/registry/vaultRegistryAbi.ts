@@ -71,6 +71,16 @@ export const vaultRegistryQueryAbi = [
   },
   {
     type: 'function',
+    name: 'vaultsOfPkgOfTokens',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'pkg', type: 'address' },
+      { name: 'tokens_', type: 'address[]' },
+    ],
+    outputs: [{ name: 'vaults_', type: 'address[]' }],
+  },
+  {
+    type: 'function',
     name: 'vaultTypeIds',
     stateMutability: 'view',
     inputs: [],

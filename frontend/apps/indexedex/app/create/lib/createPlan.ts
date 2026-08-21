@@ -7,10 +7,18 @@ export type CreatePlan = {
   typeId: CreateDetfTypeId | ''
   name: string
   symbol: string
+  claimName: string
+  claimSymbol: string
+  bondName: string
+  bondSymbol: string
   mode: ThresholdChoice
-  /** Percent above 1.0 for mint (Policy). "5" → 1.05. */
+  /** Pair per DETF at price index 1 (creationPairPerDetfWad). One string per basket leg. */
+  creationPairPerDetf: string[]
+  /** Pair per DETF on first bond (openingPairPerDetfWad). Blank or 0 uses the peg. */
+  openingPairPerDetf: string[]
+  /** Percent above 1.0 for mint (Policy). "5" → 1.05e18. */
   mintBandPct: string
-  /** Percent below 1.0 for burn (Policy). "5" → 0.95. */
+  /** Percent below 1.0 for burn (Policy). "5" → 0.95e18. */
   burnBandPct: string
   vaults: `0x${string}`[]
   /** Weight percents as strings; used by weighted type. */
@@ -19,14 +27,14 @@ export type CreatePlan = {
   cashToken: `0x${string}` | ''
 }
 
-export const CREATE_STEPS = ['shape', 'name', 'gates', 'basket', 'review'] as const
+export const CREATE_STEPS = ['shape', 'name', 'basket', 'gates', 'review'] as const
 export type CreateStepId = (typeof CREATE_STEPS)[number]
 
 export const CREATE_STEP_LABEL: Record<CreateStepId, string> = {
   shape: 'Shape',
   name: 'Name',
-  gates: 'Mint and burn',
   basket: 'Basket',
+  gates: 'Mint and burn',
   review: 'Review',
 }
 
@@ -35,7 +43,13 @@ export function emptyPlan(): CreatePlan {
     typeId: '',
     name: '',
     symbol: '',
+    claimName: '',
+    claimSymbol: '',
+    bondName: '',
+    bondSymbol: '',
     mode: 'policy',
+    creationPairPerDetf: ['1'],
+    openingPairPerDetf: [''],
     mintBandPct: '5',
     burnBandPct: '5',
     vaults: [],
@@ -66,21 +80,89 @@ export function maxVaults(typeId: CreateDetfTypeId | ''): number {
 }
 
 const SYMBOL_RE = /^[A-Za-z0-9$][A-Za-z0-9$-]{1,11}$/
+const CHILD_SYMBOL_RE = /^[A-Za-z0-9$][A-Za-z0-9$-]{1,19}$/
+
+function validateOptionalName(raw: string, label: string): string | null {
+  const name = raw.trim()
+  if (!name) return null
+  if (name.length < 2) return `${label} name: at least 2 characters, or leave blank for the default.`
+  if (name.length > 40) return `${label} name: keep under 40 characters.`
+  return null
+}
+
+function validateOptionalSymbol(raw: string, label: string): string | null {
+  const symbol = raw.trim()
+  if (!symbol) return null
+  if (!CHILD_SYMBOL_RE.test(symbol)) return `${label} symbol: 2–20 letters, numbers, $, or hyphen, or leave blank.`
+  return null
+}
 
 export function validateName(plan: CreatePlan): string | null {
   const name = plan.name.trim()
   if (name.length < 2) return 'Give the DETF a name.'
   if (name.length > 40) return 'Keep the name under 40 characters.'
-  if (!SYMBOL_RE.test(plan.symbol.trim())) return 'Symbol: 2–12 letters, numbers, $, or hyphen.'
-  return null
+  if (!SYMBOL_RE.test(plan.symbol.trim())) return 'DETF symbol: 2–12 letters, numbers, $, or hyphen.'
+  return (
+    validateOptionalName(plan.claimName, 'Claim') ??
+    validateOptionalSymbol(plan.claimSymbol, 'Claim') ??
+    validateOptionalName(plan.bondName, 'Bond') ??
+    validateOptionalSymbol(plan.bondSymbol, 'Bond')
+  )
+}
+
+export function priceLegCount(plan: CreatePlan): number {
+  if (plan.typeId === 'one-vault') return 1
+  const n = plan.vaults.length
+  if (plan.typeId === 'grouped') return Math.max(n, 2)
+  if (plan.typeId === 'cash-buffer') return Math.max(n, 3)
+  return Math.max(n, 1)
+}
+
+function fillLegs(arr: string[] | undefined, n: number, fallback: string): string[] {
+  const next = (arr ?? []).slice(0, n)
+  while (next.length < n) next.push(next[next.length - 1] ?? fallback)
+  return next
+}
+
+export function withPriceLegs(plan: CreatePlan): CreatePlan {
+  const n = priceLegCount(plan)
+  return {
+    ...plan,
+    creationPairPerDetf: fillLegs(plan.creationPairPerDetf, n, '1'),
+    openingPairPerDetf: fillLegs(plan.openingPairPerDetf, n, ''),
+  }
+}
+
+/** Human decimal → 18-decimal wad string. Empty is not a number. */
+export function humanToWad(raw: string): string | null {
+  const t = raw.trim()
+  if (!t) return null
+  if (!/^\d+(\.\d+)?$/.test(t)) return null
+  const [whole, frac = ''] = t.split('.')
+  const frac18 = (frac + '0'.repeat(18)).slice(0, 18)
+  try {
+    return (BigInt(whole || '0') * 10n ** 18n + BigInt(frac18)).toString()
+  } catch {
+    return null
+  }
 }
 
 export function validateGates(plan: CreatePlan): string | null {
+  const priced = withPriceLegs(plan)
+  for (let i = 0; i < priced.creationPairPerDetf.length; i++) {
+    const wad = humanToWad(priced.creationPairPerDetf[i] ?? '')
+    if (wad == null || wad === '0') return 'Peg must be pair tokens per DETF, greater than 0.'
+    const openRaw = (priced.openingPairPerDetf[i] ?? '').trim()
+    if (openRaw) {
+      const openWad = humanToWad(openRaw)
+      if (openWad == null) return 'First bond must be blank, 0, or pair tokens per DETF.'
+    }
+  }
   if (plan.mode === 'open') return null
   const mint = Number(plan.mintBandPct)
   const burn = Number(plan.burnBandPct)
-  if (!Number.isFinite(mint) || mint < 0 || mint > 50) return 'Mint band should be 0–50%.'
-  if (!Number.isFinite(burn) || burn < 0 || burn > 50) return 'Burn band should be 0–50%.'
+  if (!Number.isFinite(mint) || mint < 0 || mint > 50) return 'Mint line should be 0–50% above 1.'
+  if (!Number.isFinite(burn) || burn < 0 || burn > 50) return 'Burn line should be 0–50% below 1.'
   return null
 }
 
@@ -101,7 +183,11 @@ export function validateBasket(plan: CreatePlan): string | null {
     return min === 1 ? 'Pick one vault for the basket.' : `Pick at least ${min} vaults.`
   }
   if (plan.vaults.length > max) return `At most ${max} vaults for this shape.`
-  if (plan.typeId === 'one-vault' && !plan.pairToken) return 'Pick the pair token this DETF will mint against.'
+  if (plan.typeId === 'one-vault' && !plan.pairToken) {
+    return plan.vaults.length
+      ? 'Pick the pair token from this SE vault.'
+      : 'Pick the pair token this DETF will mint against.'
+  }
   if (plan.typeId === 'cash-buffer' && !plan.cashToken) return 'Pick the cash token burns will return.'
   if (plan.typeId === 'weighted') {
     const total = weightTotal(plan.weights.slice(0, plan.vaults.length))
@@ -154,6 +240,34 @@ export function bondSymbolFrom(symbol: string): string {
   return `${s}-BOND`
 }
 
+export function claimNameFrom(name: string): string {
+  const n = name.trim()
+  if (!n) return ''
+  return `${n} Claim`
+}
+
+export function bondNameFrom(name: string): string {
+  const n = name.trim()
+  if (!n) return ''
+  return `${n} Bond`
+}
+
+export function resolvedClaimName(plan: CreatePlan): string {
+  return plan.claimName.trim() || claimNameFrom(plan.name)
+}
+
+export function resolvedClaimSymbol(plan: CreatePlan): string {
+  return plan.claimSymbol.trim() || claimSymbolFrom(plan.symbol)
+}
+
+export function resolvedBondName(plan: CreatePlan): string {
+  return plan.bondName.trim() || bondNameFrom(plan.name)
+}
+
+export function resolvedBondSymbol(plan: CreatePlan): string {
+  return plan.bondSymbol.trim() || bondSymbolFrom(plan.symbol)
+}
+
 /** Integer percents that sum to 100. Last vault takes the remainder. */
 export function evenWeightPercents(n: number): string[] {
   if (n <= 0) return []
@@ -176,7 +290,7 @@ export function burnPriceFromBand(pct: string): string {
 
 export function applyType(plan: CreatePlan, typeId: CreatePlan['typeId']): CreatePlan {
   const next: CreatePlan = { ...plan, typeId }
-  if (!typeId) return next
+  if (!typeId) return withPriceLegs(next)
   const max = maxVaults(typeId)
   if (next.vaults.length > max) {
     next.vaults = next.vaults.slice(0, max)
@@ -188,7 +302,7 @@ export function applyType(plan: CreatePlan, typeId: CreatePlan['typeId']): Creat
   }
   if (typeId !== 'one-vault') next.pairToken = ''
   if (typeId !== 'cash-buffer') next.cashToken = ''
-  return next
+  return withPriceLegs(next)
 }
 
 export function planReady(plan: CreatePlan): boolean {
@@ -201,27 +315,40 @@ export function planReady(plan: CreatePlan): boolean {
 }
 
 export function serializePlan(plan: CreatePlan): string {
+  const priced = withPriceLegs(plan)
+  const creationWad = priced.creationPairPerDetf.map((v) => humanToWad(v) ?? '0')
+  const openingWad = priced.openingPairPerDetf.map((v) => {
+    const t = v.trim()
+    if (!t) return '0'
+    return humanToWad(t) ?? '0'
+  })
+  const mintWad = humanToWad(mintPriceFromBand(plan.mintBandPct)) ?? '0'
+  const burnWad = humanToWad(burnPriceFromBand(plan.burnBandPct)) ?? '0'
   return JSON.stringify(
     {
       typeId: plan.typeId,
       name: plan.name.trim(),
       symbol: plan.symbol.trim(),
-      mode: plan.mode,
-      mintBandPct: plan.mode === 'policy' ? plan.mintBandPct : null,
-      burnBandPct: plan.mode === 'policy' ? plan.burnBandPct : null,
+      claimName: plan.claimName.trim(),
+      claimSymbol: plan.claimSymbol.trim(),
+      bondName: plan.bondName.trim(),
+      bondSymbol: plan.bondSymbol.trim(),
+      thresholdMode: plan.mode === 'open' ? 1 : 0,
+      creationPairPerDetfWad: creationWad,
+      openingPairPerDetfWad: openingWad,
+      mintThreshold: plan.mode === 'policy' ? mintWad : '0',
+      burnThreshold: plan.mode === 'policy' ? burnWad : '0',
       vaults: plan.vaults,
       weights: plan.typeId === 'weighted' ? plan.weights.slice(0, plan.vaults.length) : null,
       pairToken: plan.typeId === 'one-vault' ? plan.pairToken : null,
       cashToken: plan.typeId === 'cash-buffer' ? plan.cashToken : null,
-      claimSymbol: claimSymbolFrom(plan.symbol),
-      bondSymbol: bondSymbolFrom(plan.symbol),
     },
     null,
     2,
   )
 }
 
-export const PLAN_STORAGE_KEY = 'indexedex.createPlan.v1'
+export const PLAN_STORAGE_KEY = 'indexedex.createPlan.v2'
 
 export function loadStoredPlan(): CreatePlan | null {
   if (typeof window === 'undefined') return null

@@ -34,7 +34,9 @@ export function useStakingContractReads({ detfAddress, dataChainId, platform, ad
   const { data: pairToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'pairToken', args: [], query: { enabled: hasDetfAddress } })
   const { data: rebasingClaimToken } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'rebasingClaimToken', args: [], query: { enabled: hasDetfAddress } })
   const { data: rateAsset } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'rateAsset', args: [], query: { enabled: hasDetfAddress } })
-  const { data: nftVault } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'protocolNFTVault', args: [], query: { enabled: hasDetfAddress } })
+  const { data: bondNftVault } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'bondNftVault', args: [], query: { enabled: hasDetfAddress, retry: false } })
+  const { data: protocolNftVault } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'protocolNFTVault', args: [], query: { enabled: hasDetfAddress, retry: false } })
+  const nftVault = bondNftVault && bondNftVault !== zeroAddress ? bondNftVault : protocolNftVault
   const { data: reservePool } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'reservePool', args: [], query: { enabled: hasDetfAddress } })
   const { data: syntheticPrice, error: syntheticPriceError, refetch: refetchSyntheticPrice } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'syntheticPrice', args: [], query: { enabled: hasDetfAddress } })
   const { data: mintThreshold, error: mintThresholdError, refetch: refetchMintThreshold } = useReadContract({ chainId: dataChainId, address: detfAddress, abi: protocolDetfAbi, functionName: 'mintThreshold', args: [], query: { enabled: hasDetfAddress } })

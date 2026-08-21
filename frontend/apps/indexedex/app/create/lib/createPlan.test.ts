@@ -8,19 +8,24 @@ import {
   claimSymbolFrom,
   emptyPlan,
   evenWeightPercents,
+  humanToWad,
   mintPriceFromBand,
   nextStep,
   planReady,
   prevStep,
   serializePlan,
   validateBasket,
+  validateGates,
   validateName,
   weightTotal,
 } from './createPlan'
 
 describe('create plan steps', () => {
-  it('walks shape → review', () => {
+  it('walks shape → name → basket → gates → review', () => {
     expect(nextStep('shape')).toBe('name')
+    expect(nextStep('name')).toBe('basket')
+    expect(nextStep('basket')).toBe('gates')
+    expect(nextStep('gates')).toBe('review')
     expect(nextStep('review')).toBeNull()
     expect(prevStep('name')).toBe('shape')
     expect(prevStep('shape')).toBeNull()
@@ -58,6 +63,14 @@ describe('validateBasket', () => {
     expect(validateBasket(p)).toMatch(/pair token/)
   })
 
+  it('accepts a one-vault plan with vault and pair token', () => {
+    const p = emptyPlan()
+    p.typeId = 'one-vault'
+    p.vaults = ['0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099']
+    p.pairToken = '0xd97e3BCF599A5dbc893387680868d4Ad76E81206'
+    expect(validateBasket(p)).toBeNull()
+  })
+
   it('requires weights to sum to 100', () => {
     const p = emptyPlan()
     p.typeId = 'weighted'
@@ -82,6 +95,14 @@ describe('derived names', () => {
     expect(claimSymbolFrom('FOO')).toBe('FOOIR')
     expect(bondSymbolFrom('FOO')).toBe('FOO-BOND')
   })
+
+  it('accepts a custom claim symbol', () => {
+    const p = emptyPlan()
+    p.name = 'Foo'
+    p.symbol = 'FOO'
+    p.claimSymbol = 'FOO-CLM'
+    expect(validateName(p)).toBeNull()
+  })
 })
 
 describe('evenWeightPercents', () => {
@@ -96,6 +117,28 @@ describe('price bands', () => {
   it('maps 5% to 1.05 and 0.95', () => {
     expect(mintPriceFromBand('5')).toBe('1.05')
     expect(burnPriceFromBand('5')).toBe('0.95')
+  })
+})
+
+describe('humanToWad', () => {
+  it('maps 1 and 1.1 to 18-decimal wads', () => {
+    expect(humanToWad('1')).toBe('1000000000000000000')
+    expect(humanToWad('1.1')).toBe('1100000000000000000')
+  })
+})
+
+describe('validateGates', () => {
+  it('requires a peg greater than 0', () => {
+    const p = emptyPlan()
+    p.creationPairPerDetf = ['0']
+    expect(validateGates(p)).toMatch(/Peg/)
+  })
+
+  it('accepts a blank first bond', () => {
+    const p = emptyPlan()
+    p.creationPairPerDetf = ['1']
+    p.openingPairPerDetf = ['']
+    expect(validateGates(p)).toBeNull()
   })
 })
 
@@ -124,13 +167,24 @@ describe('planReady', () => {
     expect(planReady(p)).toBe(true)
   })
 
-  it('serializes claim and bond symbols', () => {
+  it('serializes claim, bond, peg, and opening package fields', () => {
     const p = emptyPlan()
     p.typeId = 'one-vault'
     p.name = 'Foo'
     p.symbol = 'FOO'
+    p.claimName = 'Foo Claim'
+    p.claimSymbol = 'FOOIR'
+    p.bondName = 'Foo Bond'
+    p.bondSymbol = 'FOO-BOND'
+    p.creationPairPerDetf = ['1']
+    p.openingPairPerDetf = ['1.1']
     const json = serializePlan(p)
-    expect(json).toMatch(/FOOIR/)
-    expect(json).toMatch(/FOO-BOND/)
+    expect(json).toMatch(/"claimName": "Foo Claim"/)
+    expect(json).toMatch(/"claimSymbol": "FOOIR"/)
+    expect(json).toMatch(/"bondName": "Foo Bond"/)
+    expect(json).toMatch(/"bondSymbol": "FOO-BOND"/)
+    expect(json).toMatch(/"creationPairPerDetfWad"/)
+    expect(json).toMatch(/1100000000000000000/)
+    expect(json).toMatch(/"thresholdMode": 0/)
   })
 })

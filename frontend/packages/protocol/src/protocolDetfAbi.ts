@@ -5,6 +5,7 @@ export const protocolDetfAbi = [
   { type: 'function', name: 'rebasingClaimToken', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'rateAsset', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'underlyingVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
+  { type: 'function', name: 'bondNftVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'protocolNFTVault', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'address' }] },
   { type: 'function', name: 'syntheticPrice', stateMutability: 'view', inputs: [], outputs: [{ name: '', type: 'uint256' }] },

@@ -27,9 +27,15 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_PLATFORM = "02_platform.json";
     string internal constant FILE_UNIV4_PKGS = "03_univ4_packages.json";
     string internal constant FILE_TOKENS = "04_tokens.json";
+    string internal constant FILE_SEVEN_TOKENS = "04b_seven_test_tokens.json";
     string internal constant FILE_LEAF_POOLS = "05_leaf_pools_ses.json";
     string internal constant FILE_LEAF_DETFS = "06_leaf_detfs.json";
     string internal constant FILE_EXPORT = "09_export.json";
+
+    function _bindCreator(LaunchState storage s) internal {
+        s.creator = deployer;
+        require(s.creator != address(0), "PkgArgs.creator requires DEPLOYER_ADDRESS");
+    }
 
     function _loadFactories(LaunchState storage s) internal returns (bool) {
         address a;
@@ -211,6 +217,63 @@ abstract contract LaunchIo is DeploymentBase {
         json = vm.serializeAddress("g04", "uiWallet", uiWallet);
         json = vm.serializeUint("g04", "chainId", block.chainid);
         _writeJson(json, FILE_TOKENS);
+    }
+
+    function _loadSevenTokens()
+        internal
+        view
+        returns (
+            address ttNVDA,
+            address ttMSFT,
+            address ttAAPL,
+            address ttGOOGL,
+            address ttAMZN,
+            address ttMETA,
+            address ttTSLA
+        )
+    {
+        bool ok;
+        (ttNVDA, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTNVDA");
+        if (!(ok && _hasCode(ttNVDA))) ttNVDA = address(0);
+        (ttMSFT, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTMSFT");
+        if (!(ok && _hasCode(ttMSFT))) ttMSFT = address(0);
+        (ttAAPL, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTAAPL");
+        if (!(ok && _hasCode(ttAAPL))) ttAAPL = address(0);
+        (ttGOOGL, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTGOOGL");
+        if (!(ok && _hasCode(ttGOOGL))) ttGOOGL = address(0);
+        (ttAMZN, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTAMZN");
+        if (!(ok && _hasCode(ttAMZN))) ttAMZN = address(0);
+        (ttMETA, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTMETA");
+        if (!(ok && _hasCode(ttMETA))) ttMETA = address(0);
+        (ttTSLA, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, "TTTSLA");
+        if (!(ok && _hasCode(ttTSLA))) ttTSLA = address(0);
+    }
+
+    function _exportSevenTokens(
+        LaunchState storage s,
+        address ttNVDA,
+        address ttMSFT,
+        address ttAAPL,
+        address ttGOOGL,
+        address ttAMZN,
+        address ttMETA,
+        address ttTSLA
+    ) internal {
+        string memory json;
+        json = vm.serializeAddress("g04b", "TTNVDA", ttNVDA);
+        json = vm.serializeAddress("g04b", "TTMSFT", ttMSFT);
+        json = vm.serializeAddress("g04b", "TTAAPL", ttAAPL);
+        json = vm.serializeAddress("g04b", "TTGOOGL", ttGOOGL);
+        json = vm.serializeAddress("g04b", "TTAMZN", ttAMZN);
+        json = vm.serializeAddress("g04b", "TTMETA", ttMETA);
+        json = vm.serializeAddress("g04b", "TTTSLA", ttTSLA);
+        json = vm.serializeAddress("g04b", "TTWETH", s.ttWETH);
+        json = vm.serializeAddress("g04b", "erc20MinterFacade", s.erc20MinterFacade);
+        json = vm.serializeAddress("g04b", "tokenPkg", s.tokenPkg);
+        json = vm.serializeAddress("g04b", "owner", owner);
+        json = vm.serializeUint("g04b", "chainId", block.chainid);
+        json = vm.serializeUint("g04b", "mintAmount", uint256(1_000_000 ether));
+        _writeJson(json, FILE_SEVEN_TOKENS);
     }
 
     function _loadLeafPools(LaunchState storage s) internal returns (bool) {

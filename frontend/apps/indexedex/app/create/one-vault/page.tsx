@@ -1,7 +1,7 @@
 import { CreatePageFrame } from '../CreatePageFrame'
 
 export const metadata = {
-  title: 'Create: one vault — IndexedEx',
+  title: 'Create: Single Pool — IndexedEx',
 }
 
 export default function CreateOneVaultPage() {

@@ -59,10 +59,18 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("p", "erc20MinterFacade", s.erc20MinterFacade);
         json = vm.serializeAddress("p", "create3Factory", address(s.create3Factory));
         json = vm.serializeAddress("p", "diamondPackageFactory", address(s.diamondPackageFactory));
+        json = vm.serializeAddress("p", "uniV4SePkg", address(s.uniV4SePkg));
         json = vm.serializeAddress("p", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("p", "TTUSDE", s.ttUSDE);
         json = vm.serializeAddress("p", "TTWETH", s.ttWETH);
         json = vm.serializeAddress("p", "TTRICH", s.ttRICH);
+        json = vm.serializeAddress("p", "TTNVDA", _seven("TTNVDA"));
+        json = vm.serializeAddress("p", "TTMSFT", _seven("TTMSFT"));
+        json = vm.serializeAddress("p", "TTAAPL", _seven("TTAAPL"));
+        json = vm.serializeAddress("p", "TTGOOGL", _seven("TTGOOGL"));
+        json = vm.serializeAddress("p", "TTAMZN", _seven("TTAMZN"));
+        json = vm.serializeAddress("p", "TTMETA", _seven("TTMETA"));
+        json = vm.serializeAddress("p", "TTTSLA", _seven("TTTSLA"));
         json = vm.serializeAddress("p", "TTCHIR", s.ttChir);
         json = vm.serializeAddress("p", "TTRICHIR", s.ttRichir);
         json = vm.serializeAddress("p", "rebasingClaimToken", s.ttRichir);
@@ -92,6 +100,7 @@ contract Script_09_ExportFrontend is LaunchIo {
             _tok("Test Token WETH", "TTWETH", s.ttWETH, '["token","testToken"]'),
             ",",
             _tok("Test Token RICH", "TTRICH", s.ttRICH, '["token","testToken"]'),
+            _sevenToks(),
             ",",
             _tok("Wrapped Ether", "WETH", RobinhoodCanonicalLib.weth(), '["weth"]'),
             ",",
@@ -159,6 +168,28 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("x", "TTDOL-Q", s.ttDolQ);
         json = vm.serializeString("x", "frontendDir", FRONTEND_DIR);
         _writeJson(json, FILE_EXPORT);
+    }
+
+    function _seven(string memory symbol) private view returns (address addr) {
+        bool ok;
+        (addr, ok) = _readAddressSafe(FILE_SEVEN_TOKENS, symbol);
+        if (!ok || !_hasCode(addr)) return address(0);
+    }
+
+    function _sevenToks() private view returns (string memory extra) {
+        extra = _sevenTok("Test Token NVDA", "TTNVDA");
+        extra = string.concat(extra, _sevenTok("Test Token MSFT", "TTMSFT"));
+        extra = string.concat(extra, _sevenTok("Test Token AAPL", "TTAAPL"));
+        extra = string.concat(extra, _sevenTok("Test Token GOOGL", "TTGOOGL"));
+        extra = string.concat(extra, _sevenTok("Test Token AMZN", "TTAMZN"));
+        extra = string.concat(extra, _sevenTok("Test Token META", "TTMETA"));
+        extra = string.concat(extra, _sevenTok("Test Token TSLA", "TTTSLA"));
+    }
+
+    function _sevenTok(string memory name, string memory symbol) private view returns (string memory) {
+        address addr = _seven(symbol);
+        if (addr == address(0)) return "";
+        return string.concat(",", _tok(name, symbol, addr, '["token","testToken"]'));
     }
 
     function _tok(string memory name, string memory symbol, address addr, string memory tags)

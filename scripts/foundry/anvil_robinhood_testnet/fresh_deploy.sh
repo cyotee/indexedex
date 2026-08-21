@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
-# Staged test env: 00-05, 06t (TTCHIR), 06e (TTDOL-Q), 09.
+# Staged test env: 00-05, 04b (Mag7 tokens), 06t (TTCHIR), 06e (TTDOL-Q), 09.
 # Requires DEPLOYER_ADDRESS (forge --sender; cast wallet signs).
 #
 # Local Anvil rehearsal:

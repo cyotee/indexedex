@@ -48,6 +48,7 @@ import {
 
 /// @title Stage_03b_OrbitalWeightedPackages
 /// @notice Orbital + Weighted Uni V4 hook DFPkgs and DETF DFPkgs. No instances.
+/// @dev Opt-in via `stage03b`. Default launch deploys only CP + Curve Quad (group 03).
 library Stage_03b_OrbitalWeightedPackages {
     using BetterEfficientHashLib for bytes;
     using OrbitalDetfFS for IVaultRegistryDeployment;

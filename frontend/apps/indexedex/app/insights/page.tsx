@@ -4,7 +4,7 @@ import InsightsPageClient from './InsightsPageClient'
 
 export const metadata = {
   title: 'DETFs — IndexedEx',
-  description: 'Listed DETFs: basket, mint and burn, then live price when the RPC can read them.',
+  description: 'DETFs from the vault registry: basket, mint and burn, then live price when the RPC can read them.',
 }
 
 export default function InsightsPage() {

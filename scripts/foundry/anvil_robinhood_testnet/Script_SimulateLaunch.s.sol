@@ -7,8 +7,8 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_01_Factories} from "./Stage_01_Factories.sol";
 import {Stage_02_Platform} from "./Stage_02_Platform.sol";
 import {Stage_03_UniV4Packages} from "./Stage_03_UniV4Packages.sol";
-import {Stage_03b_OrbitalWeightedPackages} from "./Stage_03b_OrbitalWeightedPackages.sol";
 import {Stage_04_Tokens} from "./Stage_04_Tokens.sol";
+import {Stage_04b_SevenTestTokens} from "./Stage_04b_SevenTestTokens.sol";
 import {Stage_05_LeafPoolsAndSEs} from "./Stage_05_LeafPoolsAndSEs.sol";
 import {Stage_06_LeafDETFs} from "./Stage_06_LeafDETFs.sol";
 
@@ -20,6 +20,7 @@ contract Script_SimulateLaunch is LaunchIo {
 
     function run() external {
         _loadConfig();
+        _bindCreator(s);
         _requireRobinhoodTestnet();
         RobinhoodCanonicalLib.requireCanonicalPins();
         _logHeader("Simulate launch: groups 01-06");
@@ -28,8 +29,9 @@ contract Script_SimulateLaunch is LaunchIo {
         Stage_01_Factories.execute(s, owner);
         Stage_02_Platform.execute(s, owner);
         Stage_03_UniV4Packages.execute(s);
-        Stage_03b_OrbitalWeightedPackages.execute(s);
         Stage_04_Tokens.execute(s, owner, uiWallet);
+        Stage_04b_SevenTestTokens.SevenTokens memory mag7;
+        mag7 = Stage_04b_SevenTestTokens.execute(s, deployer, mag7);
         Stage_05_LeafPoolsAndSEs.execute(s, owner);
         vm.stopBroadcast();
 
@@ -47,6 +49,9 @@ contract Script_SimulateLaunch is LaunchIo {
         _exportPlatform(s);
         _exportUniV4Packages(s);
         _exportTokens(s);
+        _exportSevenTokens(
+            s, mag7.ttNVDA, mag7.ttMSFT, mag7.ttAAPL, mag7.ttGOOGL, mag7.ttAMZN, mag7.ttMETA, mag7.ttTSLA
+        );
         _exportLeafPools(s);
         _exportLeafDetfs(s);
 

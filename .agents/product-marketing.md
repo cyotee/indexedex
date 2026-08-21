@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v2  
-**Last updated:** 2026-07-27  
+**Document version:** v3  
+**Last updated:** 2026-08-21  
 
 > Shared context for global `product-marketing` / `copywriting` skills.  
 > **Domain law:** always also load `indexedex-product-voice` and `docs/marketing/DETF_NARRATIVE_SPINE.md`.
@@ -72,8 +72,9 @@
 ## Goals
 
 **Conversion actions (priority order):**  
-1. Understand / explore **DETF types** and how to compose one (`/research/detf`, Earn legs).  
-2. Optionally open **Protocol DETF** for fee-share (`/staking?detf=…`).  
+1. **Create** a DETF (`/create`) or **use a live DETF** (`/explore`).  
+2. **Learn** how DETFs work (`/learn`).  
+3. Optionally **buy $RICH** / open **Protocol DETF** for the fee path (`/staking?detf=…`).  
 
 **Do not:** invent TVL/APY; re-list Protocol DETF in Earn grid; call Protocol DETF the premier product.
 
@@ -85,5 +86,6 @@
 
 ## Changelog
 
+- v3 (2026-08-21) — Landing conversion: Create / Explore / Learn first; $RICH and Protocol DETF are the fees path, not the first-screen CTA.  
 - v2 (2026-07-27) — Premier product = create-your-own DETFs; Protocol DETF = fee-share staking analogue.  
 - v1 (2026-07-27) — Initial context: Protocol DETF naming, Policy/Open truth, banned marketing chrome.

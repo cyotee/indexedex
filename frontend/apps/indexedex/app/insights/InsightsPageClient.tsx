@@ -18,10 +18,13 @@ import {
 } from '@indexedex/protocol/tokenlists'
 import { robinhood, robinhoodTestnet } from '@indexedex/protocol/runtimeChains'
 import { CHAIN_ID_ROBINHOOD } from '@indexedex/protocol/addressArtifacts'
+import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRegistryAddress'
 
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Stat } from '../components/ui/Stat'
+import { createAppReadClient } from '../create/lib/sePoolRead'
+import { entriesFromAddresses, loadRegisteredVaults, selectDetfsFromVaults } from '../lib/detf/discoverDetfs'
 import { DetfAbout } from './components/DetfAbout'
 import { DetfActions } from './components/DetfActions'
 import { ThresholdGauge } from './components/ThresholdGauge'
@@ -39,9 +42,13 @@ type BasketRow = {
   address?: `0x${string}`
 }
 
+const selectClass =
+  'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
+
 function mergeDetfs(
   featured: TokenListEntry[],
   protocol: TokenListEntry[],
+  registry: TokenListEntry[],
   featuredSet: (addr: string) => boolean,
 ): InsightDetf[] {
   const out: InsightDetf[] = []
@@ -55,6 +62,10 @@ function mergeDetfs(
   for (let i = 0; i < featured.length; i++) add(featured[i]!, true)
   for (let i = 0; i < protocol.length; i++) {
     const t = protocol[i]!
+    add(t, featuredSet(t.address))
+  }
+  for (let i = 0; i < registry.length; i++) {
+    const t = registry[i]!
     add(t, featuredSet(t.address))
   }
   return out
@@ -80,12 +91,48 @@ export default function InsightsPageClient() {
     () => getProtocolDetfsForChain(selectedChainId, environment),
     [selectedChainId, environment],
   )
+  const [registryDetfs, setRegistryDetfs] = useState<TokenListEntry[]>([])
+  const [registryLoading, setRegistryLoading] = useState(false)
+  const [registryError, setRegistryError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const registry = getVaultRegistryAddress(selectedChainId, environment)
+    if (!registry) {
+      setRegistryDetfs([])
+      setRegistryError(null)
+      setRegistryLoading(false)
+      return
+    }
+    setRegistryLoading(true)
+    setRegistryError(null)
+    const client = createAppReadClient(selectedChainId)
+    void (async () => {
+      try {
+        const vaults = await loadRegisteredVaults(client, registry)
+        const detfAddresses = await selectDetfsFromVaults(client, vaults)
+        const entries = await entriesFromAddresses(client, selectedChainId, detfAddresses)
+        if (!cancelled) setRegistryDetfs(entries)
+      } catch (error) {
+        if (!cancelled) {
+          setRegistryDetfs([])
+          setRegistryError(String((error as { message?: string })?.message ?? error))
+        }
+      } finally {
+        if (!cancelled) setRegistryLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [selectedChainId, environment])
+
   const detfs = useMemo(
     () =>
-      mergeDetfs(featured, protocol, (addr) =>
+      mergeDetfs(featured, protocol, registryDetfs, (addr) =>
         isFeaturedFeeDetfAddress(selectedChainId, environment, addr),
       ),
-    [featured, protocol, selectedChainId, environment],
+    [featured, protocol, registryDetfs, selectedChainId, environment],
   )
   const labels = useMemo(
     () =>
@@ -94,8 +141,9 @@ export default function InsightsPageClient() {
         getStrategyVaultTokensForChain(selectedChainId, environment),
         featured,
         protocol,
+        registryDetfs,
       ]),
-    [selectedChainId, environment, featured, protocol],
+    [selectedChainId, environment, featured, protocol, registryDetfs],
   )
 
   const qDetf = searchParams.get('detf')
@@ -117,7 +165,18 @@ export default function InsightsPageClient() {
     [router],
   )
 
-  const detf = detfs.find((d) => d.address.toLowerCase() === selected.toLowerCase()) ?? detfs[0]
+  const detf =
+    detfs.find((d) => d.address.toLowerCase() === selected.toLowerCase()) ??
+    (selected && isAddress(selected)
+      ? {
+          chainId: selectedChainId,
+          address: selected as `0x${string}`,
+          name: 'DETF',
+          symbol: 'DETF',
+          decimals: 18,
+          protocolFee: isFeaturedFeeDetfAddress(selectedChainId, environment, selected),
+        }
+      : detfs[0])
   const detfAddr = detf?.address as `0x${string}` | undefined
   const enabled = !!detfAddr
   const profile = detfAddr ? profileFor(detfAddr, detf?.symbol) : undefined
@@ -345,9 +404,13 @@ export default function InsightsPageClient() {
         </h1>
       </section>
 
-      {detfs.length === 0 ? (
+      {detfs.length === 0 && !registryLoading && !detfAddr ? (
         <Card>
-          <p className="text-sm text-[var(--text-muted,#9aa3b2)]">No DETF is listed on this network yet.</p>
+          <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
+            {registryError
+              ? 'Could not read DETFs from the vault registry on this network.'
+              : 'No DETF is on the vault registry for this network yet.'}
+          </p>
           <div className="mt-4">
             <Link href="/create">
               <Button>Create DETF</Button>
@@ -355,42 +418,49 @@ export default function InsightsPageClient() {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
-          <aside>
-            <p className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">Listed DETFs</p>
-            <ul className="mt-2 space-y-1" data-testid="insights-detf-list">
-              {detfs.map((d) => {
-                const active = detfAddr && d.address.toLowerCase() === detfAddr.toLowerCase()
-                const listed = profileFor(d.address, d.symbol)
-                return (
-                  <li key={d.address}>
-                    <button
-                      type="button"
-                      onClick={() => pick(d.address)}
-                      className={`w-full rounded-lg px-3 py-2 text-left text-sm ${
-                        active
-                          ? 'bg-[var(--surface-2,#1c2030)] text-[var(--text-primary,#EDEDED)]'
-                          : 'text-[var(--text-muted,#9aa3b2)] hover:bg-white/5'
-                      }`}
-                    >
-                      <span className="font-medium">{d.symbol}</span>
-                      <span className="mt-0.5 block text-[11px] truncate">{d.name}</span>
-                      {d.protocolFee ? (
-                        <span className="mt-1 inline-block text-[10px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">
-                          Protocol fees
-                        </span>
-                      ) : listed ? (
-                        <span className="mt-1 block text-[11px] text-[var(--text-muted,#9aa3b2)] truncate">
-                          {listed.shape}
-                        </span>
-                      ) : null}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </aside>
+        <div className="space-y-5">
+          <Card>
+            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+              DETF
+              <select
+                className={selectClass}
+                value={detfAddr ?? ''}
+                onChange={(e) => pick(e.target.value)}
+                data-testid="insights-detf-list"
+              >
+                {detfs.length === 0 && !detfAddr ? <option value="">Reading DETFs…</option> : null}
+                {detfAddr &&
+                !detfs.some((d) => d.address.toLowerCase() === detfAddr.toLowerCase()) ? (
+                  <option value={detfAddr}>
+                    {symbol} · {name}
+                  </option>
+                ) : null}
+                {detfs.map((d) => (
+                  <option key={d.address} value={d.address}>
+                    {d.symbol} · {d.name}
+                    {d.protocolFee ? ' · Protocol fees' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+              {registryLoading
+                ? 'Reading DETFs from the vault registry…'
+                : 'All DETFs reported by the vault registry.'}
+            </p>
+            {registryError ? (
+              <p className="mt-2 text-xs text-[var(--danger,#E6386A)]">{registryError}</p>
+            ) : null}
+            <div className="mt-4">
+              <Link href="/create">
+                <Button size="sm" variant="secondary">
+                  Create DETF
+                </Button>
+              </Link>
+            </div>
+          </Card>
 
+          {detfAddr ? (
           <div className="space-y-5">
             <Card>
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -564,6 +634,7 @@ export default function InsightsPageClient() {
               </Link>
             </div>
           </div>
+          ) : null}
         </div>
       )}
     </div>

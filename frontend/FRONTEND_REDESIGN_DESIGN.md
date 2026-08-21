@@ -144,7 +144,7 @@ P0 ships under **Key Decision defaults** without waiting for all 12 owner answer
 
 | Route | Implementation | Redesign fate / status |
 |-------|----------------|------------------------|
-| `/` | Conversion landing (`app/page.tsx`) — hero, product counts, featured, how-it-works | **Shipped** |
+| `/` | Conversion landing (`frontend/apps/indexedex/app/page.tsx`) — DETF first screen, three steps, Protocol DETF fees card, Learn, disclaimers | **Shipped** (compact 2026-08-21) |
 | `/earn` | Catalog: preferred tokenlists + vault registry search (`EarnPageClient.tsx`) | **Shipped** |
 | `/earn/[address]` | Detail tabs + `DepositPanel` (strategy); DETF → staking link | **Shipped scaffold**; DETF incomplete |
 | `/swap` | Full SE router + Permit2 (`swap/page.tsx`) | Logic + **multi-leg ActionCta (PR5) shipped**; residual chrome polish optional |

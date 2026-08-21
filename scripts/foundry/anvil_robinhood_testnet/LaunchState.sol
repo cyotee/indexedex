@@ -66,4 +66,6 @@ struct LaunchState {
     address ttChir;
     address ttRichir;
     address ttDolQ;
+    /// @notice DETF PkgArgs.creator. Bound to DEPLOYER_ADDRESS so reserved bond NFT id 2 is the deployer.
+    address creator;
 }

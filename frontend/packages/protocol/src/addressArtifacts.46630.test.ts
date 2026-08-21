@@ -26,7 +26,7 @@ describe('46630 first-class protocol resolve', () => {
     const testTokens = artifacts.tokenlists.tokens.filter(
       (t) => t.tags?.includes('testToken')
     )
-    expect(testTokens).toHaveLength(14)
+    expect(testTokens).toHaveLength(11)
     const weth = artifacts.tokenlists.tokens.find((t) => t.symbol === 'WETH')
     expect(weth?.tags).toEqual(['weth'])
     const faucet = artifacts.tokenlists.tokens.filter((t) => t.tags?.includes('rh-faucet'))
@@ -34,9 +34,9 @@ describe('46630 first-class protocol resolve', () => {
     faucet.forEach((t) => expect(t.tags).toEqual(['rh-faucet']))
   })
 
-  it('mint list is the 14 stand-ins and excludes WETH and faucet stocks', () => {
+  it('mint list is the 11 stand-ins and excludes WETH and faucet stocks', () => {
     const mintable = getMintableTestTokensForChain(46630, 'anvil_robinhood_testnet')
-    expect(mintable).toHaveLength(14)
+    expect(mintable).toHaveLength(11)
     expect(mintable.every((t) => t.symbol.startsWith('TT'))).toBe(true)
     expect(mintable.some((t) => t.symbol === 'WETH')).toBe(false)
     expect(mintable.some((t) => t.tags?.includes('rh-faucet'))).toBe(false)

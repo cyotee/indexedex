@@ -10,13 +10,16 @@ import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { EmptyState } from '../components/ui/EmptyState'
-import { CREATE_DETF_TYPES, type CreateDetfTypeId } from './detfTypes'
+import { CREATE_DETF_TYPES, isOfferedCreateType, type CreateDetfTypeId } from './detfTypes'
+import { DetfDeployPanel } from './DetfDeployPanel'
+import { SeVaultSlot } from './SeVaultSlot'
 import {
   applyType,
+  bondNameFrom,
   bondSymbolFrom,
   burnPriceFromBand,
   canLeaveStep,
+  claimNameFrom,
   claimSymbolFrom,
   CREATE_STEP_LABEL,
   CREATE_STEPS,
@@ -31,11 +34,16 @@ import {
   planReady,
   prevStep,
   saveStoredPlan,
+  resolvedBondName,
+  resolvedBondSymbol,
+  resolvedClaimName,
+  resolvedClaimSymbol,
   serializePlan,
   type CreatePlan,
   type CreateStepId,
   typeMeta,
   weightTotal,
+  withPriceLegs,
 } from './lib/createPlan'
 
 import '../landing.css'
@@ -46,17 +54,18 @@ const inputClass =
 const STEP_TITLE: Record<CreateStepId, { lead: string; accent: string }> = {
   shape: { lead: 'Pick the', accent: 'basket shape.' },
   name: { lead: 'Name the', accent: 'DETF token.' },
-  gates: { lead: 'Set mint', accent: 'and burn.' },
   basket: { lead: 'Fill the', accent: 'basket.' },
+  gates: { lead: 'Set mint', accent: 'and burn.' },
   review: { lead: 'Review the', accent: 'plan.' },
 }
 
 const STEP_LEDE: Record<CreateStepId, string> = {
   shape: 'Make a DETF. One token. One basket. The basket works in other apps. You get a bond you cannot cash out. Bond later to turn it on.',
-  name: 'People hold this token. A claim token is issued if a bond is sold after it matures. The creator bond cannot be cashed out.',
-  gates: 'Policy pauses mint and burn when the synthetic price is inside a band around 1. Open never does. Fees can still apply.',
-  basket: 'Pick listed vault shares on this network. Those are the working positions behind the token.',
-  review: 'Check the shape, names, mint and burn, and basket. Creating issues a bond you cannot cash out. Amounts are not guaranteed.',
+  name: 'Name the DETF token, the bond NFT, and the rebasing claim token. Blank bond or claim fields use the package default.',
+  basket:
+    'Pick a listed SE vault, or pick two tokens and a Uniswap V3 or V4 pool. Create the pool if it is missing. Deploy the SE vault if that pool has none. Then pick the pair token from the vault.',
+  gates: 'Set the peg price, the opening price, and whether mint and burn use Policy or Open.',
+  review: 'Check the shape, names, peg price, opening price, mint and burn, and basket.',
 }
 
 function shortAddr(addr: string): string {
@@ -107,7 +116,9 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
     const qStep = parseStep(searchParams.get('step'))
     setPlan((prev) => {
       let next = stored ? { ...emptyPlan(), ...stored } : prev
-      if (initialTypeId) next = applyType(next, initialTypeId)
+      const offered = initialTypeId && isOfferedCreateType(initialTypeId) ? initialTypeId : null
+      if (offered) next = applyType(next, offered)
+      else if (next.typeId && !isOfferedCreateType(next.typeId)) next = applyType(next, 'one-vault')
       return next
     })
     if (searchParams.get('step')) setStep(qStep)
@@ -239,9 +250,11 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
         >
           {step === 'shape' ? <StepShape plan={plan} onPick={pickType} /> : null}
           {step === 'name' ? <StepName plan={plan} setPlan={setPlan} /> : null}
-          {step === 'gates' ? <StepGates plan={plan} setPlan={setPlan} /> : null}
           {step === 'basket' ? (
             <StepBasket plan={plan} setPlan={setPlan} vaults={vaults} tokens={tokens} />
+          ) : null}
+          {step === 'gates' ? (
+            <StepGates plan={plan} setPlan={setPlan} vaults={vaults} tokens={tokens} />
           ) : null}
           {step === 'review' ? (
             <StepReview
@@ -331,11 +344,11 @@ function StepShape({
 }) {
   return (
     <section>
-      <p className="landing-section-label">The four types</p>
+      <p className="landing-section-label">Type</p>
       <h2 className="mt-2 mb-5 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-        Match the type to the basket.
+        Single Pool.
       </h2>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid max-w-xl grid-cols-1 gap-4">
         {CREATE_DETF_TYPES.map((t, i) => {
           const selected = plan.typeId === t.id
           const inner = (
@@ -372,69 +385,146 @@ function StepShape({
 }
 
 function StepName({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePlan) => void }) {
-  const claim = claimSymbolFrom(plan.symbol)
-  const bond = bondSymbolFrom(plan.symbol)
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div className="space-y-5">
       <Card>
-        <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-          Name
-          <input
-            className={inputClass}
-            value={plan.name}
-            onChange={(e) => setPlan({ ...plan, name: e.target.value })}
-            maxLength={40}
-            autoComplete="off"
-            data-testid="create-name"
-            placeholder="Double Dollar"
-          />
-        </label>
-        <p className="mt-1 text-[11px] text-[var(--text-muted,#9aa3b2)]">2–40 characters. This is the DETF token name.</p>
-        <label className="mt-5 block text-sm text-[var(--text-primary,#EDEDED)]">
-          Symbol
-          <input
-            className={`${inputClass} font-mono uppercase`}
-            value={plan.symbol}
-            onChange={(e) => setPlan({ ...plan, symbol: e.target.value })}
-            maxLength={12}
-            autoComplete="off"
-            data-testid="create-symbol"
-            placeholder="$$DETF"
-          />
-        </label>
-        <p className="mt-1 text-[11px] text-[var(--text-muted,#9aa3b2)]">
-          2–12 letters, numbers, $, or a hyphen. Example: $$DETF.
+        <p className="landing-section-label">DETF token</p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Name
+            <input
+              className={inputClass}
+              value={plan.name}
+              onChange={(e) => setPlan({ ...plan, name: e.target.value })}
+              maxLength={40}
+              autoComplete="off"
+              data-testid="create-name"
+              placeholder="Double Dollar"
+            />
+          </label>
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Symbol
+            <input
+              className={`${inputClass} font-mono uppercase`}
+              value={plan.symbol}
+              onChange={(e) => setPlan({ ...plan, symbol: e.target.value })}
+              maxLength={12}
+              autoComplete="off"
+              data-testid="create-symbol"
+              placeholder="$$DETF"
+            />
+          </label>
+        </div>
+        <p className="mt-2 text-[11px] text-[var(--text-muted,#9aa3b2)]">
+          Name 2–40 characters. Symbol 2–12 letters, numbers, $, or a hyphen.
         </p>
       </Card>
+
       <Card>
-        <p className="landing-section-label">Also created</p>
-        <dl className="mt-4 space-y-3 text-sm">
-          <div>
-            <dt className="text-[var(--text-muted,#9aa3b2)]">Claim token</dt>
-            <dd className="font-mono text-[var(--text-primary,#EDEDED)]">{claim || '—'}</dd>
-          </div>
-          <div>
-            <dt className="text-[var(--text-muted,#9aa3b2)]">Creator bond</dt>
-            <dd className="font-mono text-[var(--text-primary,#EDEDED)]">{bond || '—'}</dd>
-          </div>
-        </dl>
-        <p className="mt-4 text-xs leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          The bond can collect a cut of new DETF minted to bond holders. You cannot cash the bond out.
+        <p className="landing-section-label">Bond NFT</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          The creator bond. Blank uses the DETF name plus Bond, and the DETF symbol plus -BOND.
         </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Bond name
+            <input
+              className={inputClass}
+              value={plan.bondName}
+              onChange={(e) => setPlan({ ...plan, bondName: e.target.value })}
+              maxLength={40}
+              autoComplete="off"
+              data-testid="create-bond-name"
+              placeholder={bondNameFrom(plan.name) || 'Double Dollar Bond'}
+            />
+          </label>
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Bond symbol
+            <input
+              className={`${inputClass} font-mono`}
+              value={plan.bondSymbol}
+              onChange={(e) => setPlan({ ...plan, bondSymbol: e.target.value })}
+              maxLength={20}
+              autoComplete="off"
+              data-testid="create-bond-symbol"
+              placeholder={bondSymbolFrom(plan.symbol) || '$$DETF-BOND'}
+            />
+          </label>
+        </div>
+      </Card>
+
+      <Card>
+        <p className="landing-section-label">Claim token</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          The rebasing claim token. Blank uses the DETF name plus Claim, and the DETF symbol plus IR.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Claim name
+            <input
+              className={inputClass}
+              value={plan.claimName}
+              onChange={(e) => setPlan({ ...plan, claimName: e.target.value })}
+              maxLength={40}
+              autoComplete="off"
+              data-testid="create-claim-name"
+              placeholder={claimNameFrom(plan.name) || 'Double Dollar Claim'}
+            />
+          </label>
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Claim symbol
+            <input
+              className={`${inputClass} font-mono`}
+              value={plan.claimSymbol}
+              onChange={(e) => setPlan({ ...plan, claimSymbol: e.target.value })}
+              maxLength={20}
+              autoComplete="off"
+              data-testid="create-claim-symbol"
+              placeholder={claimSymbolFrom(plan.symbol) || '$$DETFIR'}
+            />
+          </label>
+        </div>
       </Card>
     </div>
   )
 }
 
-function StepGates({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePlan) => void }) {
+function StepGates({
+  plan,
+  setPlan,
+  vaults,
+  tokens,
+}: {
+  plan: CreatePlan
+  setPlan: (p: CreatePlan) => void
+  vaults: TokenListEntry[]
+  tokens: TokenListEntry[]
+}) {
+  const priced = withPriceLegs(plan)
   const mintLine = mintPriceFromBand(plan.mintBandPct)
   const burnLine = burnPriceFromBand(plan.burnBandPct)
+  const pairLabel =
+    plan.typeId === 'one-vault'
+      ? findToken(tokens, plan.pairToken)?.symbol || 'pair token'
+      : 'pair token'
+
+  const setCreation = (index: number, value: string) => {
+    const next = priced.creationPairPerDetf.slice()
+    next[index] = value
+    setPlan({ ...priced, creationPairPerDetf: next })
+  }
+  const setOpening = (index: number, value: string) => {
+    const next = priced.openingPairPerDetf.slice()
+    next[index] = value
+    setPlan({ ...priced, openingPairPerDetf: next })
+  }
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <button
           type="button"
-          onClick={() => setPlan({ ...plan, mode: 'policy' })}
+          onClick={() => setPlan({ ...priced, mode: 'policy' })}
           data-testid="create-mode-policy"
           className="text-left"
         >
@@ -443,8 +533,8 @@ function StepGates({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePla
               <p className="landing-section-label">Default</p>
               <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Policy</h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                Mint is allowed when the synthetic price is above the mint line. Burn is allowed when it is
-                below the burn line.
+                Mint when the price index is above the mint line. Burn when it is below the burn line.
+                Those lines sit around 1, not around the pair count.
               </p>
             </div>
           ) : (
@@ -452,14 +542,14 @@ function StepGates({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePla
               <p className="landing-section-label">Restricted</p>
               <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Policy</h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                Mint and burn wait on the synthetic price.
+                Mint and burn wait on the price index.
               </p>
             </Card>
           )}
         </button>
         <button
           type="button"
-          onClick={() => setPlan({ ...plan, mode: 'open' })}
+          onClick={() => setPlan({ ...priced, mode: 'open' })}
           data-testid="create-mode-open"
           className="text-left"
         >
@@ -468,8 +558,7 @@ function StepGates({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePla
               <p className="landing-section-label">No price gate</p>
               <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Open</h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                No price restrictions on primary mint and burn. Fees can still apply. This does not promise a
-                stable price.
+                No price restrictions on primary mint and burn. Fees can still apply.
               </p>
             </div>
           ) : (
@@ -484,45 +573,87 @@ function StepGates({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePla
         </button>
       </div>
 
-      {plan.mode === 'policy' ? (
-        <Card>
-          <p className="landing-section-label">Band around 1.0</p>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-              Mint band (%)
-              <input
-                className={`${inputClass} font-mono`}
-                inputMode="decimal"
-                value={plan.mintBandPct}
-                onChange={(e) => setPlan({ ...plan, mintBandPct: e.target.value })}
-                data-testid="create-mint-band"
-              />
-            </label>
-            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-              Burn band (%)
-              <input
-                className={`${inputClass} font-mono`}
-                inputMode="decimal"
-                value={plan.burnBandPct}
-                onChange={(e) => setPlan({ ...plan, burnBandPct: e.target.value })}
-                data-testid="create-burn-band"
-              />
-            </label>
-          </div>
-          <p className="mt-3 text-sm text-[var(--text-muted,#9aa3b2)]">
-            {mintLine && burnLine
-              ? `Mint above ${mintLine}. Burn below ${burnLine}. Typical start is 5% each.`
-              : 'Enter 0–50 for each band.'}
+      <Card>
+        <p className="landing-section-label">Mint and burn</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          Peg price is pair tokens per DETF when the price index is 1. Opening price is pair tokens
+          per DETF on the first bond. Blank opening uses the peg.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {priced.creationPairPerDetf.map((value, i) => {
+            const vault = findToken(vaults, plan.vaults[i] ?? '')
+            const pegLabel =
+              priced.creationPairPerDetf.length === 1
+                ? `Peg price (${pairLabel} per DETF)`
+                : `Peg price · ${vault?.symbol ?? `leg ${i + 1}`}`
+            const openLabel =
+              priced.openingPairPerDetf.length === 1
+                ? 'Opening price (blank = peg)'
+                : `Opening price · ${vault?.symbol ?? `leg ${i + 1}`}`
+            return (
+              <div key={`price-${i}`} className="contents">
+                <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                  {pegLabel}
+                  <input
+                    className={`${inputClass} font-mono`}
+                    inputMode="decimal"
+                    value={value}
+                    onChange={(e) => setCreation(i, e.target.value)}
+                    data-testid={i === 0 ? 'create-peg' : `create-peg-${i}`}
+                  />
+                </label>
+                <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                  {openLabel}
+                  <input
+                    className={`${inputClass} font-mono`}
+                    inputMode="decimal"
+                    value={priced.openingPairPerDetf[i] ?? ''}
+                    onChange={(e) => setOpening(i, e.target.value)}
+                    placeholder={value || '1'}
+                    data-testid={i === 0 ? 'create-opening' : `create-opening-${i}`}
+                  />
+                </label>
+              </div>
+            )
+          })}
+        </div>
+        {plan.mode === 'policy' ? (
+          <>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Mint line (% above 1)
+                <input
+                  className={`${inputClass} font-mono`}
+                  inputMode="decimal"
+                  value={plan.mintBandPct}
+                  onChange={(e) => setPlan({ ...priced, mintBandPct: e.target.value })}
+                  data-testid="create-mint-band"
+                />
+              </label>
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Burn line (% below 1)
+                <input
+                  className={`${inputClass} font-mono`}
+                  inputMode="decimal"
+                  value={plan.burnBandPct}
+                  onChange={(e) => setPlan({ ...priced, burnBandPct: e.target.value })}
+                  data-testid="create-burn-band"
+                />
+              </label>
+            </div>
+            <p className="mt-3 text-sm text-[var(--text-muted,#9aa3b2)]">
+              {mintLine && burnLine
+                ? `Mint above ${mintLine}. Burn below ${burnLine}. Default is 5% each.`
+                : 'Enter 0–50 for each line.'}
+            </p>
+          </>
+        ) : (
+          <p className="mt-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+            Open never pauses mint or burn for the price index. Peg price still sets pair tokens per
+            DETF at 1.
           </p>
-        </Card>
-      ) : (
-        <Card>
-          <p className="text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-            Open does not collapse a deadband. Mint and burn are allowed regardless of synthetic price. Fees
-            can still apply.
-          </p>
-        </Card>
-      )}
+        )}
+      </Card>
     </div>
   )
 }
@@ -538,43 +669,50 @@ function StepBasket({
   vaults: TokenListEntry[]
   tokens: TokenListEntry[]
 }) {
-  const [query, setQuery] = useState('')
   const typeId = plan.typeId
   const min = minVaults(typeId)
   const max = maxVaults(typeId)
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return vaults
-    return vaults.filter(
-      (v) =>
-        v.symbol.toLowerCase().includes(q) ||
-        v.name.toLowerCase().includes(q) ||
-        v.address.toLowerCase().includes(q),
-    )
-  }, [vaults, query])
+  const [openSlots, setOpenSlots] = useState(() =>
+    Math.max(min, plan.vaults.length || (typeId === 'one-vault' ? 1 : min)),
+  )
 
-  const toggle = (addr: `0x${string}`) => {
-    const selected = plan.vaults.includes(addr)
+  useEffect(() => {
+    setOpenSlots((n) => Math.max(n, min, plan.vaults.length, typeId === 'one-vault' ? 1 : 0))
+  }, [min, plan.vaults.length, typeId])
+
+  const slotCount = typeId === 'one-vault' ? 1 : Math.min(max, Math.max(openSlots, min, plan.vaults.length))
+
+  const setVaultAt = (index: number, vault: `0x${string}` | '') => {
     if (typeId === 'one-vault') {
-      setPlan({ ...plan, vaults: [addr] })
+      const sameVault =
+        !!vault && !!plan.vaults[0] && vault.toLowerCase() === plan.vaults[0].toLowerCase()
+      setPlan(
+        withPriceLegs({
+          ...plan,
+          vaults: vault ? [vault] : [],
+          pairToken: sameVault ? plan.pairToken : '',
+        }),
+      )
       return
     }
-    if (selected) {
-      const vaultsNext = plan.vaults.filter((v) => v !== addr)
-      setPlan({
+    const next = plan.vaults.slice()
+    if (!vault) {
+      if (index < next.length) next.splice(index, 1)
+    } else if (index < next.length) {
+      next[index] = vault
+    } else {
+      next.push(vault)
+    }
+    setPlan(
+      withPriceLegs({
         ...plan,
-        vaults: vaultsNext,
-        weights: typeId === 'weighted' ? evenWeightPercents(vaultsNext.length) : plan.weights,
-      })
-      return
-    }
-    if (plan.vaults.length >= max) return
-    const vaultsNext = [...plan.vaults, addr]
-    setPlan({
-      ...plan,
-      vaults: vaultsNext,
-      weights: typeId === 'weighted' ? evenWeightPercents(vaultsNext.length) : plan.weights,
-    })
+        vaults: next,
+        weights:
+          typeId === 'weighted' && next.length !== plan.vaults.length
+            ? evenWeightPercents(next.length)
+            : plan.weights,
+      }),
+    )
   }
 
   const setWeight = (index: number, value: string) => {
@@ -584,101 +722,55 @@ function StepBasket({
     setPlan({ ...plan, weights })
   }
 
-  if (vaults.length === 0) {
-    return (
-      <EmptyState
-        title="No vault shares listed on this network"
-        body="Switch to a network that has strategy vaults, or use a DETF already live."
-        action={
-          <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/earn">
-              <Button>Browse vaults</Button>
-            </Link>
-            <Link href="/explore">
-              <Button variant="secondary">Use one already live</Button>
-            </Link>
-          </div>
-        }
-      />
-    )
-  }
-
   return (
     <div className="space-y-5">
       <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
         {typeId === 'one-vault'
-          ? 'Pick one vault share. Then pick the pair token this DETF will mint against.'
-          : `Pick ${min}–${max} vault shares. ${typeId === 'weighted' ? 'Weights must add to 100%.' : ''}`}
+          ? 'Pick a listed SE vault or build one from a Uniswap pool. Then pick the pair token from that vault.'
+          : `Pick ${min}–${max} SE vaults. ${typeId === 'weighted' ? 'Weights must add to 100%.' : ''} Each vault can be listed or built from a pool.`}
       </p>
-      <input
-        className={inputClass}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search vaults"
-        data-testid="create-vault-search"
-        aria-label="Search vaults"
-      />
-      <ul className="space-y-2" data-testid="create-vault-list">
-        {filtered.map((v) => {
-          const on = plan.vaults.includes(v.address)
-          const idx = plan.vaults.indexOf(v.address)
-          return (
-            <li key={v.address}>
-              <div
-                className={[
-                  'flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3',
-                  on
-                    ? 'border-[var(--border-accent,rgba(79,212,75,0.45))] bg-[color-mix(in_srgb,var(--accent,#4FD44B)_8%,transparent)]'
-                    : 'border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)]',
-                ].join(' ')}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(v.address)}
-                  className="min-w-0 flex-1 text-left"
-                  data-testid={`create-vault-${v.symbol}`}
-                >
-                  <span className="block font-medium text-[var(--text-primary,#EDEDED)]">{v.symbol}</span>
-                  <span className="block truncate text-[11px] text-[var(--text-muted,#9aa3b2)]">
-                    {v.name} · {shortAddr(v.address)}
-                  </span>
-                </button>
-                {on && typeId === 'weighted' && idx >= 0 ? (
-                  <label className="flex items-center gap-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-                    Weight %
-                    <input
-                      className="w-20 rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-2 py-1 font-mono text-sm text-[var(--text-primary,#EDEDED)]"
-                      value={plan.weights[idx] ?? ''}
-                      onChange={(e) => setWeight(idx, e.target.value)}
-                      inputMode="decimal"
-                      aria-label={`Weight for ${v.symbol}`}
-                    />
-                  </label>
-                ) : null}
-              </div>
-            </li>
-          )
-        })}
-      </ul>
-      {filtered.length === 0 ? (
-        <p className="text-sm text-[var(--text-muted,#9aa3b2)]">No vaults match that search.</p>
+
+      {Array.from({ length: slotCount }, (_, i) => (
+        <Card key={`slot-${i}`}>
+          {slotCount > 1 ? <p className="landing-section-label">Vault {i + 1}</p> : null}
+          <div className={slotCount > 1 ? 'mt-4' : undefined}>
+            <SeVaultSlot
+              listedVaults={vaults}
+              tokens={tokens}
+              selectedVault={plan.vaults[i] ?? ''}
+              pairToken={typeId === 'one-vault' && i === 0 ? plan.pairToken : ''}
+              persistPair={typeId === 'one-vault' && i === 0}
+              weight={plan.weights[i]}
+              showWeight={typeId === 'weighted'}
+              onSelectVault={(vault) => setVaultAt(i, vault)}
+              onSelectPair={(pairToken) => {
+                if (typeId === 'one-vault' && i === 0) setPlan({ ...plan, pairToken })
+              }}
+              onWeight={typeId === 'weighted' ? (value) => setWeight(i, value) : undefined}
+              testIdPrefix={`create-slot-${i}`}
+            />
+          </div>
+        </Card>
+      ))}
+
+      {typeId !== 'one-vault' && slotCount < max ? (
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setOpenSlots((n) => Math.min(max, n + 1))}
+          data-testid="create-add-vault-slot"
+        >
+          Add another vault
+        </Button>
       ) : null}
+
       {typeId === 'weighted' && plan.vaults.length > 0 ? (
         <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
           Weights total {weightTotal(plan.weights.slice(0, plan.vaults.length))}%. Need 100%.
         </p>
       ) : null}
 
-      {typeId === 'one-vault' ? (
-        <TokenPick
-          label="Pair token"
-          help="The other token in the reserve market. Mint and bond settle against the rate asset; this is the pair."
-          value={plan.pairToken}
-          tokens={tokens}
-          testId="create-pair-token"
-          onChange={(pairToken) => setPlan({ ...plan, pairToken })}
-        />
-      ) : null}
       {typeId === 'cash-buffer' ? (
         <TokenPick
           label="Cash token"
@@ -749,6 +841,10 @@ function StepReview({
   const type = typeMeta(plan.typeId)
   const mintLine = mintPriceFromBand(plan.mintBandPct)
   const burnLine = burnPriceFromBand(plan.burnBandPct)
+  const priced = withPriceLegs(plan)
+  const openingDisplay = priced.openingPairPerDetf
+    .map((v, i) => v.trim() || priced.creationPairPerDetf[i] || 'peg')
+    .join(' / ')
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -760,8 +856,8 @@ function StepReview({
           <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">{plan.name.trim() || '—'}</p>
           <dl className="mt-4 space-y-2 text-sm">
             <Row k="Shape" v={type ? type.title : '—'} />
-            <Row k="Claim token" v={claimSymbolFrom(plan.symbol) || '—'} />
-            <Row k="Creator bond" v={bondSymbolFrom(plan.symbol) || '—'} />
+            <Row k="Claim token" v={`${resolvedClaimName(plan) || '—'} · ${resolvedClaimSymbol(plan) || '—'}`} />
+            <Row k="Bond NFT" v={`${resolvedBondName(plan) || '—'} · ${resolvedBondSymbol(plan) || '—'}`} />
           </dl>
         </Card>
         <Card>
@@ -769,11 +865,18 @@ function StepReview({
           <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">
             {plan.mode === 'open' ? 'Open' : 'Policy'}
           </h3>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-            {plan.mode === 'open'
-              ? 'No price restrictions on primary mint and burn. Fees can still apply.'
-              : `Mint above ${mintLine || '—'}. Burn below ${burnLine || '—'}.`}
-          </p>
+          <dl className="mt-4 space-y-2 text-sm">
+            <Row k="Peg price" v={priced.creationPairPerDetf.join(' / ') || '—'} />
+            <Row k="Opening price" v={openingDisplay || 'peg'} />
+            <Row
+              k="Mint / burn"
+              v={
+                plan.mode === 'open'
+                  ? 'No price restrictions'
+                  : `Mint above ${mintLine || '—'}. Burn below ${burnLine || '—'}.`
+              }
+            />
+          </dl>
         </Card>
       </div>
 
@@ -796,12 +899,12 @@ function StepReview({
         </ul>
         {plan.typeId === 'one-vault' ? (
           <p className="mt-3 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Pair token: {findToken(tokens, plan.pairToken)?.symbol ?? plan.pairToken || '—'}
+            Pair token: {findToken(tokens, plan.pairToken)?.symbol ?? (plan.pairToken || '—')}
           </p>
         ) : null}
         {plan.typeId === 'cash-buffer' ? (
           <p className="mt-3 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Cash token: {findToken(tokens, plan.cashToken)?.symbol ?? plan.cashToken || '—'}
+            Cash token: {findToken(tokens, plan.cashToken)?.symbol ?? (plan.cashToken || '—')}
           </p>
         ) : null}
       </Card>
@@ -815,30 +918,17 @@ function StepReview({
         </p>
       </div>
 
-      <Card>
-        <p className="landing-section-label">On-chain create</p>
-        <h3 className="mt-2 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Not wired in this wizard yet</h3>
-        <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          A DETF deploys through a package registered on this network. Uniswap v4 DETFs also need a mined
-          hook nonce. This page will not pretend to send that transaction. Copy the plan, or use a DETF
-          already live.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Button type="button" onClick={onCopy} disabled={!ready} data-testid="create-copy-plan">
-            {copied ? 'Copied' : 'Copy plan'}
+      <DetfDeployPanel plan={plan} ready={ready} />
+      <div className="flex flex-wrap gap-3">
+        <Button type="button" onClick={onCopy} disabled={!ready} data-testid="create-copy-plan">
+          {copied ? 'Copied' : 'Copy plan'}
+        </Button>
+        <Link href="/explore">
+          <Button type="button" variant="secondary">
+            Use one already live
           </Button>
-          <Link href="/explore">
-            <Button type="button" variant="secondary">
-              Use one already live
-            </Button>
-          </Link>
-          <Link href="/insights">
-            <Button type="button" variant="ghost">
-              See live DETFs
-            </Button>
-          </Link>
-        </div>
-      </Card>
+        </Link>
+      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | **R1 + R2 + R3 shipped** (2026-07-27) — research routes, DETF note Policy/Open, landing DETF hero + research strip |
+| **Status** | **R1 + R2 + R3 shipped** (2026-07-27); **landing compact** (2026-08-21) — `/` is Create / Explore / Learn, not the research catalog |
 | **Date** | 2026-07-27 |
 | **Frontend root** | `frontend/` |
 | **Agent entry** | [`ROADMAP.md`](./ROADMAP.md) (no-deploy still applies) |
@@ -23,7 +23,7 @@
 ## 1. Information architecture
 
 ```text
-/                         Landing (R3: DETF hero — not in R1)
+/                         Landing (compact choice page; education on /learn)
 /research                 Index of publishable notes
 /research/[slug]          Individual note
 /staking                  Live fee-accrual DETF (unchanged)
@@ -138,13 +138,13 @@ Use existing primitives: `PageHeader`, `Card`, `Button`, design tokens (`--text-
 
 ---
 
-## 4. Landing (R3 — **shipped**)
+## 4. Landing (**compact** — 2026-08-21)
 
 ```text
-Hero DETF → Benefits → How it works → Live fee DETF → Research strip → Secondary Earn → Disclaimers
+First screen DETF → Three steps → Protocol DETF / $RICH card → Learn → /learn → Disclaimers
 ```
 
-Implemented in `app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. Wave 2 fee-accrual DETF → `/staking` preserved.
+Implemented in `frontend/apps/indexedex/app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. Wave 2 Protocol DETF → `/staking` preserved. Policy/Open, research notes, and Earn vaults are **not** on `/`.
 
 ---
 
@@ -154,7 +154,7 @@ Implemented in `app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. 
 |-------|--------|--------|
 | **R1** | Registry, notes, `/research`, `/research/[slug]`, nav + footer | **Shipped 2026-07-27** (catalog evolved: types + bond-vs-mint; dropped preview-execution) |
 | **R2** | Polish DETF note (Policy/Open + spine claims) | **Shipped 2026-07-27** (`articles/detf.ts`) |
-| **R3** | Landing DETF-first rewrite + research teaser strip | **Shipped 2026-07-27** (`app/page.tsx`) |
+| **R3** | Landing DETF-first rewrite + research teaser strip | **Shipped 2026-07-27**; **compacted 2026-08-21** (`frontend/apps/indexedex/app/page.tsx`) |
 | **R4** | Selected plots under `public/research/` | Pending |
 | **R5** | e2e smoke + OG metadata per slug | Pending |
 
