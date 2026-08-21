@@ -50,7 +50,7 @@ export function DetfActions({
   const walletMatches = isConnected && walletChainId === chainId
 
   const [tab, setTab] = useState('mint')
-  const [token, setToken] = useState(pairTokens[0]?.address ?? '')
+  const [token, setToken] = useState<string>(pairTokens[0]?.address ?? '')
   const [amount, setAmount] = useState('')
   const [lockDays, setLockDays] = useState(String(MIN_LOCK_DAYS))
   const [tokenId, setTokenId] = useState('')

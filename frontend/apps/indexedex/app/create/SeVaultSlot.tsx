@@ -339,9 +339,7 @@ export function SeVaultSlot({
     if (connector) connect({ connector })
   }
 
-  const writeOnAppNetwork = async (
-    params: Omit<Parameters<typeof writeContractAsync>[0], 'chainId' | 'chain'>,
-  ) => {
+  const writeOnAppNetwork = async (params: Parameters<typeof writeContractAsync>[0]) => {
     const localWallet =
       walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
     if (
@@ -351,7 +349,8 @@ export function SeVaultSlot({
     ) {
       await switchChainAsync({ chainId: selectedChainId })
     }
-    return writeContractAsync(params)
+    const { chainId: _c, chain: _ch, ...rest } = params as typeof params & { chainId?: number; chain?: unknown }
+    return writeContractAsync(rest)
   }
 
   const runTx = async (kind: 'pool' | 'vault') => {

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useAccount, useReadContract, useReadContracts } from 'wagmi'
+import { useAccount, useReadContract, useReadContracts, type UseReadContractsParameters } from 'wagmi'
 import { erc20Abi, formatUnits, isAddress } from 'viem'
 
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -182,40 +182,41 @@ export default function InsightsPageClient() {
   const profile = detfAddr ? profileFor(detfAddr, detf?.symbol) : undefined
   const pairs = profile ? pairAddresses(profile) : []
 
+  const insightContracts = detfAddr
+    ? [
+        { address: detfAddr, abi: erc20Abi, functionName: 'totalSupply' },
+        { address: detfAddr, abi: erc20Abi, functionName: 'symbol' },
+        { address: detfAddr, abi: erc20Abi, functionName: 'name' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'mintThreshold' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'burnThreshold' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'thresholdMode' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'isReserveLive' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'rebasingClaimToken' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'reservePool' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'rateAsset' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'underlyingVault' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticPrice' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'isMintingAllowed' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'isBurningAllowed' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken0' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken1' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken2' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'standardExchanges' },
+        { address: detfAddr, abi: insightsViewAbi, functionName: 'isAllLegsMintRich' },
+        ...(pairs[0]
+          ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[0]] }]
+          : []),
+        ...(pairs[1]
+          ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[1]] }]
+          : []),
+        ...(pairs[2]
+          ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[2]] }]
+          : []),
+      ]
+    : []
   const reads = useReadContracts({
-    contracts: detfAddr
-      ? [
-          { address: detfAddr, abi: erc20Abi, functionName: 'totalSupply' },
-          { address: detfAddr, abi: erc20Abi, functionName: 'symbol' },
-          { address: detfAddr, abi: erc20Abi, functionName: 'name' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'mintThreshold' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'burnThreshold' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'thresholdMode' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'isReserveLive' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'rebasingClaimToken' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'reservePool' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'rateAsset' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'underlyingVault' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticPrice' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'isMintingAllowed' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'isBurningAllowed' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken0' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken1' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'pairToken2' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'standardExchanges' },
-          { address: detfAddr, abi: insightsViewAbi, functionName: 'isAllLegsMintRich' },
-          ...(pairs[0]
-            ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[0]] }]
-            : []),
-          ...(pairs[1]
-            ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[1]] }]
-            : []),
-          ...(pairs[2]
-            ? [{ address: detfAddr, abi: insightsViewAbi, functionName: 'syntheticVs' as const, args: [pairs[2]] }]
-            : []),
-        ]
-      : [],
+    contracts: insightContracts as UseReadContractsParameters['contracts'],
     query: { enabled, refetchInterval: 15_000 },
     allowFailure: true,
   })

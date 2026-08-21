@@ -186,7 +186,8 @@ export default function StakingPageClient({
       address: detfAddress,
       abi: protocolDetfAbi,
       functionName: 'bond',
-      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, deadline],
+      // pretransferred=false: DETF pulls via transferFrom after ERC-20 approve
+      args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, false, deadline],
     })
     await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond rate asset')
   }, [detfAddress, chain, stakingReads.effectiveWethToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
@@ -207,7 +208,7 @@ export default function StakingPageClient({
       address: detfAddress,
       abi: protocolDetfAbi,
       functionName: 'bond',
-      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, deadline],
+      args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, false, deadline],
     })
     await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond pair token')
   }, [detfAddress, chain, stakingReads.effectiveRichToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
