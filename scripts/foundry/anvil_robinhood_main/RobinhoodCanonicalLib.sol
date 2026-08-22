@@ -4,8 +4,7 @@ pragma solidity ^0.8.0;
 import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 
 /// @title RobinhoodCanonicalLib
-/// @notice Thin accessors + pin checks for Robinhood mainnet (chain 4663) Uni cores.
-/// @dev Scripts must never redeploy PoolManager / Uni V3 factory when forked RH has code.
+/// @notice Pins for Robinhood Chain mainnet (4663). Architecture deploys never recreate these.
 library RobinhoodCanonicalLib {
     function chainId() internal pure returns (uint256) {
         return ROBINHOOD_MAIN.CHAIN_ID;
@@ -47,14 +46,12 @@ library RobinhoodCanonicalLib {
         return ROBINHOOD_MAIN.UNISWAP_UNIVERSAL_ROUTER;
     }
 
-    /// @notice Revert if required RH externals lack bytecode on the fork.
+    /// @notice Required live pins for Uni V4 Protocol DETF packages. Uni V3 is not required.
     function requireCanonicalPins() internal view {
         require(poolManager().code.length > 0, "RH pin: UNISWAP_V4_POOL_MANAGER missing code");
-        require(v3Factory().code.length > 0, "RH pin: UNISWAP_V3_FACTORY missing code");
-        require(v3Npm().code.length > 0, "RH pin: UNISWAP_V3_NFT_POSITION_MANAGER missing code");
+        require(positionManagerV4().code.length > 0, "RH pin: UNISWAP_V4_POSITION_MANAGER missing code");
         require(permit2().code.length > 0, "RH pin: PERMIT2 missing code");
         require(weth().code.length > 0, "RH pin: WETH missing code");
         require(universalRouter().code.length > 0, "RH pin: UNISWAP_UNIVERSAL_ROUTER missing code");
-        require(positionManagerV4().code.length > 0, "RH pin: UNISWAP_V4_POSITION_MANAGER missing code");
     }
 }

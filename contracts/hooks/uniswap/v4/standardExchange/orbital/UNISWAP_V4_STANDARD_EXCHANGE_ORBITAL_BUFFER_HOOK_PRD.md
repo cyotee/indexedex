@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4StandardExchangeOrbitalBufferHook`  
 **Date:** 2026-08-04  
-**Status:** **Draft v0.5 — product law (plan-ready)**  
+**Status:** **Draft v0.6 — product law (plan-ready) + DETF owner-during-lock (Alignment D30)**  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/orbital/`  
 **Package kind:** IndexedEx **Uniswap V4 hook diamond package** that is **also** a vault-compatible multi-asset surface. Instance deploys via the **shared Hook Diamond Package Callback Factory** + Vault Registry `deployHookVault` (CREATE2-mined proxy). **Not** a concentrated-liquidity (CL) reimplementation. **Not** the raw-inventory monomorph `UniswapV4OrbitalSwapHook` under `contracts/hooks/uniswap/v4/orbital/`.
 
@@ -741,9 +741,24 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 
 ---
 
+## 9a. DETF owner path (Alignment D9 / D30) — LOCKED 2026-08-22
+
+When this hook is a true-DETF reserve, the DETF diamond is owner and `ownerOnlyLiquidity` is on. v1 **still has no LP `withdrawSingle` zap-out**. Alignment D15’s last-resort DETF buy is an **owner exact-out swap** of a non-DETF leg → DETF on the residual sphere book, not an LP zap-out.
+
+Required:
+
+- Owner-only exact-in / exact-out swap on the pair doors against the shared book.
+- Must succeed when `PoolManager` is already unlocked (settle on the current unlock or internal book settlement). **Do not** send the DETF through Uniswap SwapRouter.
+- Same trading fee as public swaps on that book.
+- Owner LP add (`deposit` / `depositSingle`) in that same lock state (alignment D29 donate). Owner `depositSingle` at `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**.
+
+Public swaps stay public. Non-owner cannot use the owner path.
+
+---
+
 ## 10. Future (non-goals now)
 
-1. Zap-out / `withdrawSingle`.  
+1. Zap-out / `withdrawSingle` (LP single-asset exit). Owner **swap** for DETF redeem (D30) is **in** v1 when this hook is a DETF reserve.  
 2. \(n > 3\) hypersphere.  
 3. Nested multi-orbit concentration.  
 4. Same SE bound on multiple legs / multi-token SE sharing.  
@@ -785,6 +800,7 @@ Production-first (AGENTS + `indexedex-testing` + hook package skill):
 | **v0.3** | 2026-08-04 | D31a SE exact-out fail → full revert; Q2 native×rate→toWad; Q4 dust=10; Q5 postDeploy pools; Q9 zap-in algorithm §4.5.3; open-item table closed |
 | **v0.4** | 2026-08-04 | D66 Ethereum+Base+RH required; D46 `SEORB-` locked; early D49c draft |
 | **v0.5** | 2026-08-04 | D49c: SE In/Out pull = BasicVaultCommon peer (ERC-20 transferFrom else Permit2 AllowanceTransfer); no SignatureTransfer on canonical exchange ABI |
+| **v0.6** | 2026-08-22 | Alignment D9/D30: owner exact-in/out swap + LP while PoolManager is already unlocked (DETF D15 residual DETF buy; D29 donate). LP zap-out still a non-goal. |
 
 ---
 

@@ -44,7 +44,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
 
     /// @dev Target-derived control set: money + info + bonding selectors (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](42);
+        sels_ = new bytes4[](46);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = IUniswapV4SingleStandardExchangeDETF.bond.selector;
@@ -87,6 +87,10 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         sels_[39] = IUniswapV4SingleStandardExchangeDETF.previewCloseBondMature.selector;
         sels_[40] = IUniswapV4SingleStandardExchangeDETF.previewRedeemClaim.selector;
         sels_[41] = IUniswapV4SingleStandardExchangeDETF.previewClaimLiquidity.selector;
+        sels_[42] = IUniswapV4SingleStandardExchangeDETF.joinDonatedCapital.selector;
+        sels_[43] = IUniswapV4SingleStandardExchangeDETF.previewJoinDonatedCapital.selector;
+        sels_[44] = IUniswapV4SingleStandardExchangeDETF.notifyReserveDonated.selector;
+        sels_[45] = IUniswapV4SingleStandardExchangeDETF.donate.selector;
         // compoundProtocolRewards is on interface but counted separately with atomic in J1.
     }
 
@@ -102,7 +106,7 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
         // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
         IFacet facet_ = detfExchangeInFacet;
         bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 42, "facetFuncs length");
+        assertTrue(funcs_.length >= 46, "facetFuncs length");
 
         bytes4[] memory controls_ = _controlSelectors();
         for (uint256 i; i < controls_.length; ++i) {
@@ -238,6 +242,21 @@ contract Adversarial_UniswapV4SingleSE_CP_Surface_Test is TestBase_UniswapV4Sing
 
         // compound: permissionless best-effort; must not be "function does not exist".
         info_.compoundProtocolRewards();
+
+        info_.previewJoinDonatedCapital(IERC20(address(pairToken)), 1 ether);
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(UniswapV4SingleStandardExchangeDETFRepo.NotAuthorized.selector, attacker)
+        );
+        info_.joinDonatedCapital(IERC20(address(pairToken)), 1 ether, block.timestamp + 1 hours);
+        vm.prank(attacker);
+        vm.expectRevert(
+            abi.encodeWithSelector(UniswapV4SingleStandardExchangeDETFRepo.NotAuthorized.selector, attacker)
+        );
+        info_.notifyReserveDonated();
+        vm.prank(attacker);
+        vm.expectRevert(UniswapV4SingleStandardExchangeDETFRepo.ZeroAmount.selector);
+        info_.donate(IERC20(address(pairToken)), 0, false);
 
         // Explicit anti-theater: do not smoke-call facet implementation address as primary SUT.
         assertTrue(exchangeFacet_ != instance_, "J3 primary target is proxy");

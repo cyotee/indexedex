@@ -90,7 +90,8 @@ contract ComposedStableCommonDetf_ProductLaw_Test is ComposedStableCommonDetf_In
 
     function test_M5_close_noExtraDetf_protocolUnchangedExceptRedeposit() public {
         _goLive();
-        (uint256 tokenId_,) = _bondDai(alice, 1_200e18);
+        _bondDai(bob, 2_000e18);
+        (uint256 tokenId_,) = _bondDai(alice, 100e18);
         _warpPastUnlock(tokenId_);
         vm.prank(alice);
         bondNFTVault.claimRewards(tokenId_, alice);

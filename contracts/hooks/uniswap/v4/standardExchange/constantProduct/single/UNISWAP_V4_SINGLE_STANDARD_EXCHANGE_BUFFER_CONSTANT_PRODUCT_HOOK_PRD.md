@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4SingleStandardExchangeBufferConstantProductHook`  
 **Date:** 2026-08-04  
-**Status:** **Draft v1.3 — product law + vault/SE compatibility surface** (conversation locks applied)  
+**Status:** **Draft v1.4 — product law + vault/SE compatibility + DETF owner-during-lock (D88/D89)** (conversation locks applied)  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/`  
 **Package kind:** IndexedEx **hook product** that is **also** a Standard Exchange / vault-compatible surface. Deploy shape is **architecture-flexible** (see D10 / §2.4): either CREATE3-mined monomorph **or** mined Diamond proxy via a Uniswap V4–aware hook factory. **Not** a Uniswap V4 concentrated-liquidity (CL) reimplementation.
 
@@ -39,7 +39,7 @@ This v1.2 PRD **restates** dual-equivalent product law adapted to asymmetric leg
 
 | Layer | Role |
 |-------|------|
-| **This PRD (v1.3)** | Product law for the hook — **canonical** D/O tables + §4–§7 + vault/SE compatibility |
+| **This PRD (v1.4)** | Product law for the hook — **canonical** D/O tables + §4–§7 + vault/SE compatibility + D88/D89 |
 | **Implementation plan** | Source of truth for coding phases + deploy architecture choice once locked |
 | Dual / single wrapper peers | Pattern and formula references — **do not subclass** |
 
@@ -381,6 +381,28 @@ These IDs mirror dual v3.12 law **adapted** to raw + SE-claim reserves. Implemen
 | O15 | Permit2 placement | Permit2 packing lives in **Target** unless contract size forces externalization |
 | O16 | Adversarial DoD | Required: reentrancy, donation dilution, `feeTo` non-receivable (protocol mint reverts whole op — D75), SE revert mid-zap (full tx reverts; no partial inventory) |
 
+### 3.8 DETF owner path (Alignment D9 / D30) — LOCKED 2026-08-22
+
+When this hook is a true-DETF reserve, the DETF diamond is `owner` and `ownerOnlyLiquidity` is on. Public swaps stay public. Third-party LP add/remove still revert (D9).
+
+Claim redeem (alignment D15) must **buy DETF (raw)** on the residual book after a proportional LP withdraw, in the **same transaction** as that withdraw. Donate (alignment D29) must `depositSingle` as owner. Uniswap SwapRouter and a nested `PoolManager.unlock` fail if the manager is already unlocked.
+
+| # | Decision | Value |
+|---|----------|--------|
+| **D88** | `ownerOnlyLiquidity` | Deploy-time `PkgArgs` flag. **On** for every DETF-reserve instance. When on: `deposit` / `depositSingle` / `withdraw` / `withdrawSingle` (and Permit2 variants) are **`onlyOwner`**. Public `beforeSwap` stays permissionless. Flag **off** remains valid for non-DETF uses (D61P). |
+| **D89** | Owner swap/LP while PM locked | Owner-only exact-in and exact-out swap **rawToken ↔ pairToken** against the **same effective book** as public swaps (D19+D78). **Same 0.3% trading fee as public swaps.** Must succeed when `PoolManager` is **already unlocked** in this transaction: settle on the **current** unlock **or** use **internal book settlement** (O4 / D85 class — no second `unlock`). Owner LP add/remove in that same lock state is required (D88). **Owner `depositSingle` when `totalSupply == MINIMUM_LIQUIDITY` is allowed** (public zaps still revert, D79). Same zap math as a live zap. **`lpOut` must be > 0** or revert — the DETF is joining to put LP on the Bond NFT. Non-owner cannot call this path. **Do not** send the DETF through Uniswap SwapRouter for D15/D29. |
+
+Required surface (names may move; semantics are the law):
+
+```text
+ownerSwapExactIn(tokenIn, tokenOut, amountIn, minAmountOut, deadline) onlyOwner → amountOut
+ownerSwapExactOut(tokenIn, tokenOut, amountOut, maxAmountIn, deadline) onlyOwner → amountIn
+```
+
+Previews: `previewSwapExactIn` / `previewSwapExactOut` already required (D68) and must match these owner paths. Combining withdraw+partial zap into one owner helper is allowed if D15 can still size exact-out = remaining shortfall and rejoin leftover pair.
+
+D62 (hook ships without a DETF package in-tree) stays: DETF is a consumer. D88/D89 **are** hook DoD so a DETF can consume the ABI without a later hook revision.
+
 ---
 
 ## 4. Economics & flows
@@ -719,6 +741,15 @@ previewWithdrawSingle(lpAmount, tokenOut) → amountOut
 previewSwapExactIn(zeroForOne, amountIn) → amountOut
 previewSwapExactOut(zeroForOne, amountOut) → amountIn
 ```
+
+### 6.3b Owner-during-lock (D88 / D89)
+
+```text
+ownerSwapExactIn(tokenIn, tokenOut, amountIn, minAmountOut, deadline) → amountOut   // onlyOwner
+ownerSwapExactOut(tokenIn, tokenOut, amountOut, maxAmountIn, deadline) → amountIn  // onlyOwner
+```
+
+When `ownerOnlyLiquidity` is on, liquidity functions in §6.2 are `onlyOwner`. Owner swaps/LP must run while PoolManager is already unlocked (D89).
 
 ### 6.4 ERC-20 (LP)
 
@@ -1118,9 +1149,11 @@ Informative only — **not** hook DoD:
 | Direct claim new money | `depositSingle(USDC, …)` → LP to rebasing/protocol |
 | Free DETF → claim | `depositSingle(DETF, …)` → LP to protocol |
 | Claim redeem USDC | `withdrawSingle(lp, USDC, …)` |
+| Claim redeem DETF (alignment D15) | Prop `withdraw` of id 0 LP slice, then **owner exact-out swap** leftover pair → DETF on the residual book (D89). Not SwapRouter. |
+| Donate (alignment D29) | Owner `depositSingle` (pair or DETF), LP `to` = Bond NFT |
 | Synthetic / gates | DETF app layer — not this PRD |
 
-Hook PRD **must not** wait on DETF. DETF PRD **must** depend on this hook’s frozen ABI.
+Hook PRD **must not** wait on a DETF package to merge. DETF PRD **must** depend on this hook’s frozen ABI **including D88/D89**.
 
 ---
 
@@ -1171,7 +1204,8 @@ Production-first: no mock hook/SE SUT.
 17. Zap-out: quote residual pre-buffer; buffer last when needed; invariants §4.6.5; Uni V2 locked dust + minAmountOut (D34a).  
 18. Adversarial DoD: reentrancy, donation, feeTo non-receivable, SE revert mid-zap (O16).  
 19. Size within real CREATE3/runtime limits (Option A libs or Option B Diamond — §2.4).  
-20. **Vault/SE compatibility (D84–D87 / §7.6):** `IStandardExchangeIn`/`Out` exact-in/out raw↔pair match book previews; `IBasicVault` virtual pair reserve; `IStandardVault` types/config; proportional + zap APIs still present.
+20. **Vault/SE compatibility (D84–D87 / §7.6):** `IStandardExchangeIn`/`Out` exact-in/out raw↔pair match book previews; `IBasicVault` virtual pair reserve; `IStandardVault` types/config; proportional + zap APIs still present.  
+21. **D88 / D89:** `ownerOnlyLiquidity` flag; owner exact-in/out swap + LP add/remove succeed when PoolManager is already unlocked; non-owner cannot use that path; public swaps still work.
 
 ---
 
@@ -1209,6 +1243,7 @@ Production-first: no mock hook/SE SUT.
 | v1.1 | 2026-08-04 | Plan-readiness lock: Phase 0 ERC-4626 hard gate; D70S SE fees both directions; D34a zap-out thin-book; dual D57–D83 restated; §4.2/§4.6/§7.1–§7.5 |
 | **v1.2** | **2026-08-04** | **Conversation locks:** product = Uni V2 swap fee + growth fee; SE fees orthogonal (D70S demoted); **virtual pair reserve** explicit (D15/§4.1); **buffer-last / quote-before-buffer** (O13); thin Phase 0 verify-only ERC-4626 **wrapper** SE; tests **only** ERC-4626 wrapper SE; dual pattern-copy OK (no dual Phase 0 gate); `currency0`/`currency1` required; Uni V2 locked dust; adversarial DoD (O16); Permit2 in Target unless size; forks may deploy tokens/SE; real size limits |
 | **v1.3** | **2026-08-04** | **Vault/SE compatibility:** `IStandardExchangeIn`/`Out` + `IBasicVault` + `IStandardVault` required (D84–D87, §7.6); SE surface = direct book swap not LP; proportional/zap remain first-class; **D10 deploy flexible** monomorph vs Hook Diamond; factory salt **without** package address + premined V4 flags (§2.4) |
+| **v1.4** | **2026-08-22** | Alignment D9/D30: **D88** `ownerOnlyLiquidity`; **D89** owner exact-in/out swap + LP while PoolManager is already unlocked (no SwapRouter / nested `unlock`). DETF D15 residual DETF buy + D29 donate consume this ABI. |
 
 ---
 
@@ -1219,4 +1254,4 @@ Production-first: no mock hook/SE SUT.
 | Product | Pending (v1.3 vault/SE compatibility + deploy flexibility) |
 | Protocol | Pending |
 
-**Status: Draft v1.3 — product law + plan ready for implementor lock stamp, then code.**
+**Status: Draft v1.4 — product law + D88/D89 owner-during-lock; plan ready for implementor lock stamp, then code.**

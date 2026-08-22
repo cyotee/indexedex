@@ -34,7 +34,7 @@ abstract contract LaunchIo is DeploymentBase {
 
     function _bindCreator(LaunchState storage s) internal {
         s.creator = deployer;
-        require(s.creator != address(0), "PkgArgs.creator requires DEPLOYER_ADDRESS");
+        require(s.creator != address(0), "PkgArgs.creator requires a deployer");
     }
 
     function _loadFactories(LaunchState storage s) internal returns (bool) {

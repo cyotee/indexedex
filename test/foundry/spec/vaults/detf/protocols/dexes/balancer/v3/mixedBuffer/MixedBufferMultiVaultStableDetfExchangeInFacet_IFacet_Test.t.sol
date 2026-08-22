@@ -30,10 +30,12 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet_IFacet_Test is TestBase_
         assertEq(name_, "MixedBufferMultiVaultStableDetfBondingFacet", "name");
         assertEq(ifaces_.length, 1, "1 interface");
         assertEq(ifaces_[0], type(IMixedBufferMultiVaultStableDetfBonding).interfaceId, "bonding iface");
-        assertEq(funcs_.length, 12, "bonding funcs");
+        assertEq(funcs_.length, 16, "bonding funcs");
         assertEq(funcs_[0], IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector, "bootstrap sel");
         assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.buyClaim.selector), "buyClaim");
         assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.closeBondMature.selector), "close");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.joinDonatedCapital.selector), "joinDonated");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.donate.selector), "donate");
         assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
     }
 
@@ -49,7 +51,7 @@ contract MixedBufferMultiVaultStableDetfExchangeInFacet_IFacet_Test is TestBase_
 
     function test_roleFacets_selectorUnion_coversPriorSurface() public pure {
         // Prior mega-Facet 35; product-law drops sellNFT and adds buy/close/preview/claimLiquidity.
-        assertEq(uint256(4 + 12 + 25), 41, "selector count after product-law sell/close/buyClaim");
+        assertEq(uint256(4 + 16 + 25), 45, "selector count after donate surface");
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {

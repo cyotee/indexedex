@@ -70,10 +70,10 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeInTarget is
         uint256 deadline_
     ) private returns (uint256 userOut_) {
         _requireReserveLive();
+        _realizeExpansionIfNeeded();
         if (!_isMintingAllowed()) {
             revert Repo.MintingNotAllowed(_syntheticPrice(), Repo._layoutStruct().mintThreshold);
         }
-        // Does NOT realize expansion.
         PairLegRating memory r_ = _settleToPairLeg(tokenIn_, amountIn_, pretransferred_, deadline_);
         userOut_ = _mintDetfFromPairLeg(r_, recipient_);
     }

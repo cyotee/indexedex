@@ -195,6 +195,24 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
 
     function previewSwapExactOut(bool zeroForOne, uint256 amountOut) external view returns (uint256 amountIn);
 
+    /// @notice D89 / D30: owner exact-in on the same book and 0.3% fee as public swaps. Internal settlement (no nested unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    /// @notice D89 / D30: owner exact-out on the same book and 0.3% fee as public swaps. Internal settlement (no nested unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
     // LP ERC-20, IBasicVault, IStandardVault: shared diamond facets (ERC20 / MultiAsset Basic+Standard).
     // Do not redeclare them here — use IERC20 / IBasicVault / IStandardVault on the proxy.
 }

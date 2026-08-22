@@ -89,6 +89,12 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         }
     }
 
+    function _requireBondNft() internal view {
+        if (msg.sender != address(Repo._layoutStruct().bondNftVault)) {
+            revert Repo.NotAuthorized(msg.sender);
+        }
+    }
+
     function _requireMature(uint256 tokenId_) internal view {
         uint256 unlock_ = Repo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
         if (block.timestamp < unlock_) {
@@ -458,6 +464,48 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
         lpOut_ = IHook(s.reserveHook).depositSingle(address(this), detfAmount_, lpTo_, 0, block.timestamp + 1);
     }
 
+    /// @dev Cap zap-in so MIN-book D25-7 rejoin still mints lpOut > 0 (full amount would NotLive).
+    function _depositSingleDetfCapped(uint256 detfAmount_, address lpTo_)
+        internal
+        returns (uint256 lpOut_)
+    {
+        if (detfAmount_ == 0) return 0;
+        uint256 raw_ = IHook(Repo._layoutStruct().reserveHook).rawReserve();
+        uint256 cap_ = raw_ / 4;
+        if (cap_ == 0) cap_ = detfAmount_ < 1e3 ? detfAmount_ : 1e3;
+        uint256 joinAmt_ = detfAmount_ < cap_ ? detfAmount_ : cap_;
+        if (joinAmt_ == 0) return 0;
+        lpOut_ = _depositSingleDetf(joinAmt_, lpTo_);
+    }
+
+    /// @dev Repeat capped DETF joins so last-exit leftover becomes id 0 LP. Do not
+    ///      send leftover DETF to the Bond NFT (that books as rewards and extracts to ids 1–2).
+    function _depositSingleDetfUntilDust(uint256 detfAmount_, address lpTo_)
+        internal
+        returns (uint256 lpOut_)
+    {
+        if (detfAmount_ == 0) return 0;
+        IERC20 detfToken_ = IERC20(address(this));
+        Repo.Storage storage s = Repo._layoutStruct();
+        IHook hook_ = IHook(s.reserveHook);
+        for (uint256 i; i < 64; ++i) {
+            uint256 remaining_ = detfToken_.balanceOf(address(this));
+            if (remaining_ == 0) break;
+            uint256 cap_ = hook_.rawReserve() / 4;
+            if (cap_ == 0) cap_ = remaining_ < 1e3 ? remaining_ : 1e3;
+            uint256 joinAmt_ = remaining_ < cap_ ? remaining_ : cap_;
+            if (joinAmt_ == 0) break;
+            detfToken_.forceApprove(s.reserveHook, joinAmt_);
+            try hook_.depositSingle(address(this), joinAmt_, lpTo_, 0, block.timestamp + 1) returns (uint256 minted_) {
+                if (minted_ == 0) break;
+                lpOut_ += minted_;
+            } catch {
+                detfToken_.forceApprove(s.reserveHook, 0);
+                break;
+            }
+        }
+    }
+
     function _withdrawSinglePair(uint256 lpAmount_, address to_) internal returns (uint256 pairOut_) {
         Repo.Storage storage s = Repo._layoutStruct();
         IERC20(s.reserveHook).forceApprove(s.reserveHook, lpAmount_);
@@ -494,6 +542,16 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
     function _previewProportionalDetf(uint256 lpAmount_) internal view returns (uint256) {
         (uint256 detfOut_,) = _previewProportional(lpAmount_);
         return detfOut_;
+    }
+
+    /// @dev D15 zap-out: proportional DETF plus pair→DETF at the public swap fee.
+    function _previewZapOutToDetf(uint256 lpAmount_) internal view returns (uint256 detfOut_) {
+        (uint256 detf_, uint256 pair_) = _previewProportional(lpAmount_);
+        detfOut_ = detf_;
+        if (pair_ == 0) return detfOut_;
+        IHook hook_ = IHook(Repo._layoutStruct().reserveHook);
+        bool zfo_ = hook_.currency0() == address(Repo._layoutStruct().pairToken);
+        detfOut_ += hook_.previewSwapExactIn(zfo_, pair_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -629,6 +687,35 @@ abstract contract UniswapV4SingleStandardExchangeDETFCommon is ReentrancyLockMod
 
     function _burnDetf(address from_, uint256 amount_) internal {
         ERC20Repo._burn(from_, amount_);
+    }
+
+    /// @notice Host LP preview for donate join. Unknown / inert returns 0. `lpToken` is not joinable.
+    function _previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        internal
+        view
+        returns (uint256 lpOut_)
+    {
+        if (amount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (!s.isReserveLive) return 0;
+        address hookAddr_ = s.reserveHook;
+        if (address(token_) == hookAddr_) return 0;
+        IHook hook_ = IHook(hookAddr_);
+        if (address(token_) == address(this)) {
+            return hook_.previewDepositSingle(address(this), amount_);
+        }
+        if (address(token_) == address(s.pairToken)) {
+            return hook_.previewDepositSingle(address(s.pairToken), amount_);
+        }
+        if (_isAllowlistedTokenIn(token_)) {
+            try s.standardExchangeVault.previewExchangeIn(token_, amount_, s.pairToken) returns (uint256 pairOut_) {
+                if (pairOut_ == 0) return 0;
+                return hook_.previewDepositSingle(address(s.pairToken), pairOut_);
+            } catch {
+                return 0;
+            }
+        }
+        return 0;
     }
 
     /// @dev Settle tokenIn to pair amount (pair itself, SE share→pair, or SE token→pair).

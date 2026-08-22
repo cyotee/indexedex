@@ -14,6 +14,7 @@ import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20
 
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultRegistryVaultPackageManager} from "contracts/interfaces/IVaultRegistryVaultPackageManager.sol";
@@ -76,13 +77,14 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
 
         address lpToken = address(_deployTestToken("LP Token", "LP", keccak256("DETFNFTVault_Surface_LP")));
         address rewardToken = address(_deployTestToken("Reward Token", "RWD", keccak256("DETFNFTVault_Surface_RWD")));
+        address dummyDetf_ = makeAddr("dummyDetf");
 
         vm.prank(owner);
         vault = IDETFNFTVault(
             pkg.deployVault(
                 "Protocol NFT Vault",
                 "pNFT",
-                IDetf(address(0xBEEF)),
+                IDetf(dummyDetf_),
                 IERC20(lpToken),
                 IERC20(rewardToken),
                 9,
@@ -93,7 +95,7 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
 
     /// @dev Target/product API: IDETFNFTVault + IERC721Metadata.tokenURI + guarded ERC721 transfers.
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](35);
+        sels_ = new bytes4[](40);
         sels_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         sels_[1] = IDETFNFTVault.createPosition.selector;
         sels_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -129,6 +131,11 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         sels_[32] = IERC721.transferFrom.selector;
         sels_[33] = SAFE_TRANSFER_FROM;
         sels_[34] = SAFE_TRANSFER_FROM_DATA;
+        sels_[35] = bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)"));
+        sels_[36] = bytes4(keccak256("donate(address,address,uint256,uint256,bool,uint256)"));
+        sels_[37] = IDetfNftReserveDonation.donateWithPermit2Allowance.selector;
+        sels_[38] = IDetfNftReserveDonation.donateWithPermit2Signature.selector;
+        sels_[39] = IDetfNftReserveDonation.previewDonate.selector;
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {
@@ -142,7 +149,14 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
     function _assertProxyNotFunctionNotFound(address proxy_, bytes memory data_) internal {
         (bool ok_, bytes memory ret_) = proxy_.call(data_);
         if (ok_) return;
-        assertTrue(ret_.length >= 4, "J3 empty revert / FunctionNotFound");
+        bytes4 sel_;
+        if (data_.length >= 4) {
+            sel_ = bytes4(data_);
+        }
+        assertTrue(
+            ret_.length >= 4,
+            string.concat("J3 empty revert / FunctionNotFound sel=", vm.toString(sel_), " retlen=", vm.toString(ret_.length))
+        );
     }
 
     function _cutsContain(IDiamond.FacetCut[] memory cuts_, bytes4 sel_) internal pure returns (bool) {
@@ -195,7 +209,7 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         assertTrue(facetImpl_ != proxy_ && facetImpl_ != address(0), "J3 proxy cut");
 
         // --- Views on proxy ---
-        assertEq(address(vault.detf()), address(0xBEEF));
+        assertEq(address(vault.detf()), makeAddr("dummyDetf"));
         assertTrue(address(vault.lpToken()) != address(0));
         assertTrue(address(vault.rewardToken()) != address(0));
         assertEq(vault.totalShares(), 0);
@@ -281,6 +295,58 @@ contract DETFNFTVault_Surface_Test is TestBase_VaultComponents {
         vm.prank(attacker);
         _assertProxyNotFunctionNotFound(
             proxy_, abi.encodeWithSelector(IDETFNFTVault.reallocateDetfNftRewards.selector, attacker)
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(
+                bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)")),
+                vault.lpToken(),
+                uint256(1),
+                uint256(0),
+                false,
+                block.timestamp + 1
+            )
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(
+                bytes4(keccak256("donate(address,address,uint256,uint256,bool,uint256)")),
+                attacker,
+                vault.lpToken(),
+                uint256(1),
+                uint256(0),
+                false,
+                block.timestamp + 1
+            )
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(
+                IDetfNftReserveDonation.donateWithPermit2Allowance.selector,
+                vault.lpToken(),
+                uint256(1),
+                uint256(0),
+                block.timestamp + 1
+            )
+        );
+        vm.prank(attacker);
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(
+                IDetfNftReserveDonation.donateWithPermit2Signature.selector,
+                vault.lpToken(),
+                uint256(1),
+                uint256(0),
+                block.timestamp + 1,
+                bytes("")
+            )
+        );
+        _assertProxyNotFunctionNotFound(
+            proxy_,
+            abi.encodeWithSelector(IDetfNftReserveDonation.previewDonate.selector, vault.lpToken(), uint256(1e18))
         );
 
         vm.prank(attacker);

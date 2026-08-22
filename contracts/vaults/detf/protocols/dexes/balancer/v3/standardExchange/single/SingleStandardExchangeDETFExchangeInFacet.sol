@@ -38,7 +38,7 @@ contract SingleStandardExchangeDETFExchangeInFacet is
     }
 
     function _facetFuncs() private pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](32);
+        funcs_ = new bytes4[](36);
         funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
@@ -72,6 +72,10 @@ contract SingleStandardExchangeDETFExchangeInFacet is
         funcs_[29] = ISingleStandardExchangeDETFBonding.previewRedeemClaim.selector;
         funcs_[30] = ISingleStandardExchangeDETFBonding.claimLiquidity.selector;
         funcs_[31] = ISingleStandardExchangeDETFBonding.protocolBondOriginalShares.selector;
+        funcs_[32] = ISingleStandardExchangeDETFBonding.joinDonatedCapital.selector;
+        funcs_[33] = ISingleStandardExchangeDETFBonding.previewJoinDonatedCapital.selector;
+        funcs_[34] = ISingleStandardExchangeDETFBonding.notifyReserveDonated.selector;
+        funcs_[35] = ISingleStandardExchangeDETFBonding.donate.selector;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {

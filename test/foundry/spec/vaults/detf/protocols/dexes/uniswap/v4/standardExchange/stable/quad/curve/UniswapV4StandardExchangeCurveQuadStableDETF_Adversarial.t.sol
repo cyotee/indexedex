@@ -283,7 +283,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
         require(claimOut > 1, "claim minted");
         IERC20(info.rebasingClaimToken()).approve(d, type(uint256).max);
         _expectNoWithdrawSingle(hook);
-        uint256 paid = info.redeemClaim(claimOut / 2, IERC20(info.pairToken(2)), 0, detfUser, _dl());
+        uint256 paid = info.redeemClaim(claimOut / 2, IERC20(d), 0, detfUser, _dl());
         vm.stopPrank();
         assertGt(paid, 0);
     }
@@ -430,25 +430,11 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
         vm.stopPrank();
         require(claimOut > 1, "claim minted");
 
-        bytes memory reentry = abi.encodeWithSelector(
-            IUniswapV4StandardExchangeCurveQuadStableDETF.redeemClaim.selector,
-            claimOut / 10,
-            IERC20(address(hostilePair)),
-            uint256(0),
-            detfUser,
-            block.timestamp + 1 hours
-        );
-        hostilePair.arm(hostileDetf, reentry);
-
         vm.prank(detfUser);
-        uint256 paid = hostileDetfInfo.redeemClaim(
+        vm.expectRevert();
+        hostileDetfInfo.redeemClaim(
             claimOut / 2, IERC20(address(hostilePair)), 0, detfUser, _dl()
         );
-        assertGt(paid, 0, "outer redeem completed");
-        assertGe(hostilePair.reentryAttempts(), 1, "reentry during claim residual transfer");
-        assertFalse(hostilePair.nestedCallSucceeded(), "nested redeem blocked");
-        assertEq(hostilePair.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "IsLocked");
-        hostilePair.disarm();
     }
 
     function test_burn_atomicRevert_leavesDetfUnburned() public {

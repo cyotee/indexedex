@@ -30,7 +30,7 @@
 
 ## 0. One-line goal
 
-Ship a **resumable 46630 launch pipeline** (Foundry groups 00–09: factories → platform → Uni V4 packages → tokens → **ten live + launch-rich DETFs** → frontend `chain/46630/` + DTF list/`/mint`) that **broadcasts as `DEPLOYER_ADDRESS`** (forge `--sender`; cast wallet signs) the same way on public Robinhood Chain Testnet and on a **local Anvil fork** (`--chain-id 46630 --disable-code-size-limit`). Rehearse locally, then `--live` to the public RPC. Replay proven groups after an Anvil reset. Simulate 01–08 in one script for a gas estimate. Later reshape the **4663 mainnet** scripts to the same groups.
+Ship a **resumable 46630 launch pipeline** (Foundry groups 00–09: factories → platform → Uni V4 packages → tokens → **ten live + launch-rich DETFs** → frontend `chain/46630/` + DTF list/`/mint`). Local Anvil (`--chain-id 46630 --disable-code-size-limit`) broadcasts as **Anvil Dev 0** with `--unlocked`. `--live` broadcasts to public Robinhood Chain Testnet as `DEPLOYER_ADDRESS` (cast wallet). Replay proven groups after an Anvil reset. Simulate 01–08 in one script for a gas estimate. Later reshape the **4663 mainnet** scripts to the same groups.
 
 ---
 
@@ -58,7 +58,7 @@ The network is **Robinhood Chain Testnet**, not Ethereum Sepolia. Informal nickn
 | Explorer | `https://explorer.testnet.chain.robinhood.com/` |
 | Faucet | `https://faucet.testnet.chain.robinhood.com/` |
 | Local Anvil (when forked) | `http://127.0.0.1:8545`, **chain id 46630** |
-| Deployer | `DEPLOYER_ADDRESS` (required). Forge `--sender`; cast wallet signs. No Anvil #0 default. Anvil pre-funds Foundry mnemonic accounts; fund `DEPLOYER_ADDRESS` on the fork if it is not one of those. |
+| Deployer | Local Anvil: Anvil Dev 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`) with `--unlocked`. `--live`: `DEPLOYER_ADDRESS` (cast wallet). |
 
 **Wallet add-network (public testnet, not Anvil):**
 
@@ -83,7 +83,7 @@ Do **not** invent RPC URLs. Operator must export `ALCHEMY_KEY` for the Alchemy a
 | D1 | **Happy-path demo money is ours.** The §2.1 mintable table (**13** tokens in group 04) + **`TTRICH`** (group 08) via Crane `ERC20MinterFacade`. Do **not** seed pools, first-bond, or `/mint` against official RH stock tokens, faucet stocks, or explorer “USDC/USDG” clones. | **Locked** |
 | D2 | Anvil **must** be chain id **`46630`**, forked from Robinhood Chain Testnet (`ROBINHOOD_TESTNET` pins). | **Locked** |
 | D3 | **Sibling script family.** Do not mutate `anvil_robinhood_main` / `anvil_robinhood_fee_detf` as the only copy. New tree: `scripts/foundry/anvil_robinhood_testnet/`. Those 4663 trees stay the current mainnet-fork lab until rewritten to these groups. | **Locked** |
-| D4 | **These groups are the public 46630 deploy path.** Rehearse on a local Anvil fork (`RPC_URL=http://127.0.0.1:8545`, Anvil `--chain-id 46630 --disable-code-size-limit`). Live: `--live` to the official 46630 RPC. Broadcast as `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet signs). Never `--private-key`. Never `--unlocked` impersonation. Do **not** broadcast to 4663 from this tree. | **Locked** |
+| D4 | **These groups are the 46630 deploy path.** Local Anvil (`RPC_URL=http://127.0.0.1:8545`, `--chain-id 46630 --disable-code-size-limit`) broadcasts as **Anvil Dev 0** with `--unlocked`. Live: `--live` to the official 46630 RPC as `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet). Do **not** broadcast to 4663 from this tree. | **Locked** |
 | D5 | **Scripted first bond on every DETF** then **launch-rich** (D47). Bonder = the **deployer EOA** (`DEPLOYER_ADDRESS`). Lock **1 day** (`86400`). Max lock **180 days** (`DEFAULT_BOND_MAX_TERM`). Amounts and order in §2.7. Scripts must leave each instance `isReserveLive() == true` and mint-open per D47. | **Locked** |
 | D6 | **Reuse Crane `ERC20MinterFacade`** (`mintToken(token, amount, recipient)`). Authorize it as `mint` operator on **each mintable stand-in** via `IOperable.setOperatorFor`. Export `erc20MinterFacade` on `platform.json` so `/mint` works. | **Locked** |
 | D7 | Frontend artifacts (group 09): **`frontend/packages/protocol/src/addresses/chain/46630/`**. Register chain **46630** in `@indexedex/protocol`. Do not overwrite `chain/4663/`. | **Locked** |
@@ -103,7 +103,7 @@ Do **not** invent RPC URLs. Operator must export `ALCHEMY_KEY` for the Alchemy a
 | D21 | Group 01 includes the **Uni V4 hook diamond factory** with CREATE3 + diamond package factory. `setHookDiamondPackageFactory` runs in **group 02** once IndexedexManager exists. | **Locked** |
 | D22 | Group 02 is the **IndexedEx platform**: FeeCollector, IndexedexManager (Vault Registry + Vault Fee Oracle on that diamond), SE **rate provider DFPkg** (package only, no per-vault instances). | **Locked** |
 | D23 | Group 03 deploys Uni V4 **packages only**: hook DFPkgs (CP / Orbital / Weighted / **Curve Quad Stable Buffer** / Single SE Buffer), Uni V4 SE DFPkg, DETF children (bond NFT + rebasing claim **packages**), Uni V4 DETF DFPkgs (CP / Orbital / Weighted / **Curve Quad Stable**). **No** pools, vault instances, or DETF instances. | **Locked** |
-| D24 | Accounts: deployer / owner / SENDER / first-bonder = `DEPLOYER_ADDRESS` (required; no Anvil #0 default). `UI_WALLET` env or the deployer. | **Locked** |
+| D24 | Accounts: deployer / owner / SENDER / first-bonder = Anvil Dev 0 locally, or `DEPLOYER_ADDRESS` on `--live`. Local `UI_WALLET` default is Anvil Dev 1. `--live` `UI_WALLET` defaults to the deployer. | **Locked** |
 | D25 | DETF / SE **role names only** in code (`rateAsset`, `pairToken`, `underlyingVault`, `vaultShare`, `detfToken`, `reservePool`, `rebasingClaimToken`). No RICH/RICHIR as role names. | **Locked** |
 | D26 | **Dollar Quad leaf is in scope** (fifth leaf). Three Uni V4 SEs: `TTUSDE`/WETH, `TTUSDG`/WETH, `TTUSDG`/`TTUSDE`. `pairToken`s **R1:** `TTUSDE`, `TTUSDG`, **WETH** (pairwise distinct). 3/3 SE-buffered. See §2.3. | **Locked** |
 | D27 | **Leaf showcase = four live + launch-rich DETFs, one per Uni V4 SE family** (CP Single, Orbital, Curve Quad, Weighted). Stories and `pairToken`s in §2.1. No other themed **leaf** books (High-narrative, Semi core-7, Rates-3, …) in this rehearsal. | **Locked** |
@@ -565,10 +565,10 @@ When this PRD is accepted, the implementation plan is groups **00–09 + Simulat
 - Groups 04–08: 13 tokens + facade; leaf pools/SEs; five leaf DETFs live + D47; four nest DETFs live + D47; `TTRICH` + fee-sink live + D47.
 - Every DETF: `isReserveLive()`, and D47 (all-legs mint-open, S ≥ 10.5e18).
 - Group 09: `chain/46630/` export; protocol package 46630; DTF lists ten DETFs equally; `/mint` lists 14 stand-ins.
-- Shell: local `scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil`; live `… all --live`. Both require `DEPLOYER_ADDRESS`.
+- Shell: local `scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil` (Anvil Dev 0); live `… all --live` (requires `DEPLOYER_ADDRESS`).
 - `Script_SimulateLaunch` runs **01–08**.
 - Replay `01` … `09` after an Anvil reset succeeds.
-- No Balancer, no pons, no Uni V3, no time warp, no fee push into `TTRICH-S`. Broadcast as `DEPLOYER_ADDRESS` (`--sender`; cast wallet) on Anvil and on public 46630. No 4663 broadcast from this tree.
+- No Balancer, no pons, no Uni V3, no time warp, no fee push into `TTRICH-S`. Local Anvil broadcasts as Anvil Dev 0 with `--unlocked`. `--live` uses `DEPLOYER_ADDRESS` (cast wallet). No 4663 broadcast from this tree.
 - 4663 lab scripts and `chain/4663/` unchanged.
 
 ---
@@ -585,20 +585,19 @@ When this PRD is accepted, the implementation plan is groups **00–09 + Simulat
 - Changing DETF / SE product behavior
 - Extra themed **leaf** DETFs beyond D27+D26 (High-narrative, Semi core-7, Rates-3, …)
 - Extra **nests** beyond D30
-- Using `--unlocked` / Anvil impersonation as the deploy path (D4)
+- Using a custom cast-wallet deployer as the *local* Anvil default (local is Anvil Dev 0; `--live` still uses `DEPLOYER_ADDRESS`)
 
 ---
 
 ## 11. Operator notes (after implementation — not now)
 
 ```bash
-export DEPLOYER_ADDRESS=0x...   # cast wallet; forge --sender
-
-# Local Anvil rehearsal (node may use --disable-code-size-limit)
+# Local Anvil rehearsal (Anvil Dev 0 + --unlocked)
 export ALCHEMY_KEY=...
 bash scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil
 
-# Live 46630 (same scripts, same sender)
+# Live 46630 (cast wallet)
+export DEPLOYER_ADDRESS=0x...
 bash scripts/shell/anvil_robinhood_testnet.sh all --live
 ```
 
@@ -615,7 +614,8 @@ Wallet against public testnet: §1 add-network table.
 | 2026-08-14 | **v1.0** | Clean requirements PRD: D1–D25, no Balancer, grouped Foundry stages. |
 | 2026-08-15 | **v1.1–v1.8** | D26–D46: showcase set, nests, fees, first-bond live, FeeCollector accumulate. |
 | 2026-08-15 | **v1.9** | D47 launch-rich; D48–D53 warp / featured / 00–08 / seigniorage / SE names. |
-| 2026-08-21 | **D4/D41** | 46630 groups are the live deploy path. `--sender $DEPLOYER_ADDRESS` (cast wallet). Anvil fork is rehearsal (`--disable-code-size-limit` on the node). `--live` for public 46630. No `--private-key`, no Anvil #0 default. |
+| 2026-08-22 | **D4/D24** | Local Anvil default is Anvil Dev 0 + `--unlocked`. `--live` still uses `DEPLOYER_ADDRESS` (cast wallet). |
+| 2026-08-21 | **D4/D41** | 46630 groups are the live deploy path. `--sender $DEPLOYER_ADDRESS` (cast wallet). Anvil fork is rehearsal (`--disable-code-size-limit` on the node). `--live` for public 46630. No `--private-key`, no Anvil #0 default. **Superseded 2026-08-22 for the local signer.** |
 | 2026-08-20 | **D4/D41** | First live-path rewrite (superseded 2026-08-21). |
 | 2026-08-15 | **v2.0** | Consistency pass + implementation plan. **D54/D55**. D50 = groups 00–09 + DTF (Anvil rehearsal and `--live`). |
 

@@ -64,6 +64,9 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     using ScalingHelpers for uint256;
 
     uint256 internal constant ONE_WAD = 1e18;
+    /// @dev Cap single-sided DETF join to 25% of live DETF so last-exit rejoin stays
+    ///      under Balancer InvariantRatioAboveMax (300%). Same fraction as Uni V4 D25-7.
+    uint256 internal constant SINGLE_JOIN_MAX_IN_WAD = 25e16;
 
     /// @notice Emitted when detf-owned NFT pending seigniorage DETF is compounded into reserve BPT.
     event ProtocolRewardsCompounded(uint256 detfIn, uint256 bptOut);
@@ -162,6 +165,78 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
             revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
         }
+    }
+
+    function _requireBondNft() internal view {
+        if (msg.sender != address(SingleStandardExchangeDETFRepo._layoutStruct().bondNftVault)) {
+            revert SingleStandardExchangeDETFRepo.NotAuthorized(msg.sender);
+        }
+    }
+
+    /// @dev Linear unbalanced-join quote used by donate preview. Not few-wei closed-form.
+    function _previewUnbalancedBpt(uint256 tokenIndex_, uint256 amountIn_)
+        internal
+        view
+        returns (uint256 bptOut_)
+    {
+        if (amountIn_ == 0) return 0;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return 0;
+        (,, uint256[] memory balances_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        uint256 bal_ = balances_[tokenIndex_];
+        if (bal_ == 0) return 0;
+        return (amountIn_ * bptSupply_) / bal_;
+    }
+
+    /// @notice Host BPT preview for donate join. Unknown / inert / lpToken returns 0.
+    function _previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        internal
+        view
+        returns (uint256 lpOut_)
+    {
+        if (amount_ == 0) return 0;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (!s.isReserveLive) return 0;
+        if (address(token_) == s.reservePool) return 0;
+        if (address(token_) == address(this)) {
+            return _previewUnbalancedBpt(s.detfIndex, amount_);
+        }
+        uint256 vaultShares_ = amount_;
+        if (address(token_) != address(s.standardExchangeVaultShare)) {
+            if (!_isAllowlistedTokenIn(token_)) return 0;
+            try IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(
+                token_, amount_, s.standardExchangeVaultShare
+            ) returns (uint256 sh_) {
+                vaultShares_ = sh_;
+            } catch {
+                return 0;
+            }
+        }
+        return _previewUnbalancedBpt(s.vaultShareIndex, vaultShares_);
+    }
+
+    function _sendJoinBptToNft(uint256 bptOut_) internal {
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (bptOut_ == 0) revert SingleStandardExchangeDETFRepo.ZeroAmount();
+        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptOut_);
+    }
+
+    /// @dev D13: user-bond / donate BPT lives on the Bond NFT. Live mint D11 stays on the diamond.
+    function _custodyBptOnNft(uint256 bptAmount_) internal {
+        if (bptAmount_ == 0) return;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptAmount_);
+    }
+
+    function _pullBptFromNft(uint256 bptAmount_) internal {
+        if (bptAmount_ == 0) return;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        IERC20 bpt_ = IERC20(s.reservePool);
+        uint256 have_ = bpt_.balanceOf(address(this));
+        if (have_ >= bptAmount_) return;
+        uint256 need_ = bptAmount_ - have_;
+        s.bondNftVault.transferHeldToken(bpt_, address(this), need_);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -447,12 +522,42 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
         bptOut_ = _reserveRouter().prepayAddLiquidityUnbalanced(s.reservePool, amountsIn_, 0, "");
     }
 
+    /// @dev Cap zap-in so last-exit D25 rejoin still mints lpOut > 0 (full amount would
+    ///      revert InvariantRatioAboveMax). Unjoined DETF stays on this diamond for the
+    ///      caller to send to Bond NFT inventory.
+    function _joinReserveDetfCapped(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        if (detfAmount_ == 0) return 0;
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        (,, uint256[] memory balances_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        uint256 remaining_ = balances_[s.detfIndex];
+        uint256 cap_ = remaining_ * SINGLE_JOIN_MAX_IN_WAD / ONE_WAD;
+        if (cap_ == 0) cap_ = detfAmount_ < 1e3 ? detfAmount_ : 1e3;
+        uint256 joinAmt_ = detfAmount_ < cap_ ? detfAmount_ : cap_;
+        if (joinAmt_ == 0) return 0;
+        return _joinReserveDetfOnly(joinAmt_);
+    }
+
+    /// @dev Repeat capped DETF joins so last-exit leftover becomes id 0 LP. Do not
+    ///      send leftover DETF to the Bond NFT (that books as rewards and extracts to ids 1–2).
+    function _joinReserveDetfUntilDust(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        if (detfAmount_ == 0) return 0;
+        IERC20 detfToken_ = IERC20(address(this));
+        for (uint256 i; i < 64; ++i) {
+            uint256 remaining_ = detfToken_.balanceOf(address(this));
+            if (remaining_ == 0) break;
+            uint256 minted_ = _joinReserveDetfCapped(remaining_);
+            if (minted_ == 0) break;
+            bptOut_ += minted_;
+        }
+    }
+
     /// @dev Proportional exit of `bptIn_`; returns DETF order amounts [detf, vaultShare] after reorder.
     function _exitReserveProportional(uint256 bptIn_)
         internal
         returns (uint256 detfOut_, uint256 vaultSharesOut_)
     {
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        _pullBptFromNft(bptIn_);
         uint256 n_ = _reserveVault().getCurrentLiveBalances(s.reservePool).length;
         uint256[] memory minOut_ = new uint256[](n_);
         IERC20(s.reservePool).forceApprove(address(_reserveRouter()), bptIn_); // BetterSafeERC20
@@ -465,7 +570,7 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers {
     function _bptForDetfShares(uint256 detfShares_) internal view returns (uint256 bptOut_) {
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
         uint256 supply_ = ERC20Repo._totalSupply();
-        uint256 bptBal_ = IERC20(s.reservePool).balanceOf(address(this));
+        uint256 bptBal_ = IERC20(s.reservePool).balanceOf(address(s.bondNftVault));
         if (supply_ == 0 || bptBal_ == 0) return 0;
         bptOut_ = detfShares_ * bptBal_ / supply_;
     }

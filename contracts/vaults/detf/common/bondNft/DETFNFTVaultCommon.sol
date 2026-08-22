@@ -2,6 +2,12 @@
 pragma solidity ^0.8.0;
 
 /* -------------------------------------------------------------------------- */
+/*                                    Crane                                   */
+/* -------------------------------------------------------------------------- */
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+
+/* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -43,6 +49,9 @@ abstract contract DETFNFTVaultCommon is IDetfErrors {
     error ReservedBondNftsNotWired();
     error ReservedBondNftIdsUnavailable(uint256 nextTokenId);
     error FeeToZero();
+    error ReserveNotLive();
+    error InvalidRoute(IERC20 token, IERC20 expected);
+    error InvalidPermit2Data();
 
     /* ---------------------------------------------------------------------- */
     /*                          Bond Terms Helper                             */

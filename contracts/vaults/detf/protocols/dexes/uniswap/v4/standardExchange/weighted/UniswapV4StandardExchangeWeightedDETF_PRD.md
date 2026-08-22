@@ -6,7 +6,7 @@
 
 ## Status
 
-**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+**SUPERSEDED for mint/bond/burn/claim/close/donate process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../DETF_ALIGNMENT_PRD.md) D1–D31. This file remains for family curve/token-set notes.
 
 **DRAFT v0.4** — Co-design Q1–Q10 + review locks (2026-08-05). Mirrors Orbital DETF economics on the **Weighted SE Buffer Hook** reserve host, with family deltas: **per-route synthetic** (tokenIn/tokenOut pair as unit; **whole-reserve** FD), **all-legs-rich** natural expansion (**epoch-end** gate), **single-asset later bonds**, always-explicit `capitalToken`, **hook-SoT** mint quotes, first-bond **excess capital refund**. Partial book is **not** a normal after-live state for this family (full first bond + hook full-book floors). Product may **LOCK independently** of hook coding; implementors still hard-gate on frozen hook ABI (§17).
 

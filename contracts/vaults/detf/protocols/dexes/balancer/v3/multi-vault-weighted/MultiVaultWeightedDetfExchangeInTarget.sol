@@ -43,6 +43,7 @@ abstract contract MultiVaultWeightedDetfExchangeInTarget is MultiVaultWeightedDe
         if (address(tokenOut_) == address(this)) {
             _requireReserveLive();
             MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
+            _updateExpansionMintOnRewards();
             if (!_isMintingAllowed()) {
                 revert MultiVaultWeightedDetfRepo.MintingNotAllowed(_syntheticPrice(), s.mintThreshold);
             }

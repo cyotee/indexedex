@@ -6,7 +6,7 @@
 
 ## Status
 
-**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+**SUPERSEDED for mint/bond/burn/claim/close/donate process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../../DETF_ALIGNMENT_PRD.md) D1–D31. This file remains for family curve/token-set notes.
 
 **LOCKED v0.4** — co-design Q1–Q23 closed (2026-08-12). Product LOCK stamped 2026-08-12. Implementation plan authorized.
 

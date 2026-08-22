@@ -42,6 +42,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
             _requireReserveLive();
             MixedBufferMultiVaultStableDetfRepo.Storage storage s =
                 MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+            _updateExpansionMintOnRewards();
             if (!_isMintingAllowed()) {
                 revert MixedBufferMultiVaultStableDetfRepo.MintingNotAllowed(_syntheticPrice(), s.mintThreshold);
             }

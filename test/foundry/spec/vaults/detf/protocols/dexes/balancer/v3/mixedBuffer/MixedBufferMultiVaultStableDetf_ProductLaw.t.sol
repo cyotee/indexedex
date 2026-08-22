@@ -219,11 +219,18 @@ contract MixedBufferMultiVaultStableDetf_ProductLaw_Test is TestBase_MixedBuffer
         (uint256 tokenId_,,) = _bootstrapDefault(detf, alice);
         _warpPastUnlock(detf, tokenId_);
         address bpt_ = detfInfo.reservePool();
-        uint256 bal_ = IERC20(bpt_).balanceOf(detf);
-        assertTrue(bal_ > 1, "M8e has bpt");
-        // MixedBuffer BPT is a diamond; `deal` cannot find the ERC-20 slot. Drain via token transfer.
+        address nft_ = detfInfo.bondNftVault();
+        uint256 nftBal_ = IERC20(bpt_).balanceOf(nft_);
+        assertTrue(nftBal_ > 0, "M8e has bpt");
+        // D13: drain every physical BPT. Leaving 1 wei lets convertToAssets round
+        // to 1 and close succeed. Diamond leftover would skip _pullBptFromNft.
         vm.prank(detf);
-        IERC20(bpt_).transfer(address(0xdead), bal_ - 1);
+        IDETFNFTVault(nft_).transferHeldToken(IERC20(bpt_), address(0xdead), nftBal_);
+        uint256 detfBal_ = IERC20(bpt_).balanceOf(detf);
+        if (detfBal_ > 0) {
+            vm.prank(detf);
+            IERC20(bpt_).transfer(address(0xdead), detfBal_);
+        }
         uint256[] memory minOut_ = _closeMinAmountsOut(detf);
         vm.prank(alice);
         vm.expectRevert();

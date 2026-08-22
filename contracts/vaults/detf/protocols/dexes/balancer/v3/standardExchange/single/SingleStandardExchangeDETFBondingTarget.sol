@@ -8,6 +8,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
+import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {
@@ -20,6 +21,7 @@ import {
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 
 /// @title ISingleStandardExchangeDETFBonding
 /// @notice Bond with SE vault shares (or allowlisted assets). First bond bootstraps the reserve.
@@ -72,6 +74,22 @@ interface ISingleStandardExchangeDETFBonding {
     function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 amountOut);
 
     function protocolBondOriginalShares() external view returns (uint256);
+
+    /// @notice Bond NFT only. Settle `token` and single-sided join BPT to the Bond NFT. No DETF mint. No expansion.
+    function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
+        external
+        returns (uint256 lpOut);
+
+    function previewJoinDonatedCapital(IERC20 token, uint256 amount)
+        external
+        view
+        returns (uint256 lpOut);
+
+    /// @notice Bond NFT only. D2 top-up after donate credits id 0.
+    function notifyReserveDonated() external;
+
+    /// @notice Forwards to Bond NFT donate with `minLpOut = 0`. Pretransfer destination is the NFT.
+    function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 }
 
 /// @title SingleStandardExchangeDETFBondingTarget
@@ -136,6 +154,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
             s.bondNftVault, bptOut_, effectiveLock_, recipient_
         );
         shares_ = bptOut_;
+        _custodyBptOnNft(bptOut_);
 
         if (!s.isReserveLive) {
             SingleStandardExchangeDETFRepo._setReserveLive();
@@ -242,6 +261,73 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
     }
 
     /// @inheritdoc ISingleStandardExchangeDETFBonding
+    function joinDonatedCapital(IERC20 token_, uint256 amount_, uint256 deadline_)
+        external
+        nonReentrant
+        returns (uint256 lpOut_)
+    {
+        _requireBondNft();
+        _requireNotDisabled();
+        _requireReserveLive();
+        _requireActive(deadline_, amount_);
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        if (address(token_) == s.reservePool) {
+            revert SingleStandardExchangeDETFRepo.InvalidRoute(address(token_), address(this));
+        }
+        if (address(token_) == address(this)) {
+            uint256 pulled_ = _pullToken(token_, amount_, false);
+            lpOut_ = _joinReserveDetfOnly(pulled_);
+        } else {
+            uint256 vaultShares_;
+            if (address(token_) == address(s.standardExchangeVaultShare)) {
+                vaultShares_ = _pullToken(token_, amount_, false);
+            } else if (_isAllowlistedTokenIn(token_)) {
+                uint256 pulled_ = _pullToken(token_, amount_, false);
+                vaultShares_ = _nestedExchangeInPush(
+                    IStandardExchangeIn(address(s.standardExchangeVault)),
+                    token_,
+                    pulled_,
+                    s.standardExchangeVaultShare,
+                    0,
+                    address(this),
+                    deadline_
+                );
+            } else {
+                revert SingleStandardExchangeDETFRepo.UnsupportedRoute(token_, IERC20(address(this)));
+            }
+            lpOut_ = _joinReserveVaultSharesOnly(vaultShares_);
+        }
+        _sendJoinBptToNft(lpOut_);
+        _syncAllExpectedHoldReserves();
+    }
+
+    /// @inheritdoc ISingleStandardExchangeDETFBonding
+    function previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        external
+        view
+        returns (uint256 lpOut_)
+    {
+        return _previewJoinDonatedCapital(token_, amount_);
+    }
+
+    /// @inheritdoc ISingleStandardExchangeDETFBonding
+    function notifyReserveDonated() external {
+        _requireBondNft();
+        _topUpFeeCreatorShares();
+    }
+
+    /// @inheritdoc ISingleStandardExchangeDETFBonding
+    function donate(IERC20 token_, uint256 amount_, bool pretransferred_) external {
+        _requireNotDisabled();
+        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
+        address nft_ = address(s.bondNftVault);
+        if (nft_ == address(0)) revert SingleStandardExchangeDETFRepo.ReservePoolNotInitialized();
+        IDetfNftReserveDonation(nft_).donate(
+            msg.sender, token_, amount_, 0, pretransferred_, block.timestamp + 1
+        );
+    }
+
+    /// @inheritdoc ISingleStandardExchangeDETFBonding
     function closeBondMature(
         uint256 tokenId_,
         uint256[] calldata minAmountsOut_,
@@ -268,7 +354,15 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
 
         (uint256 detfOut_, uint256 vaultSharesOut_) = _exitReserveProportional(lpOut_);
         if (detfOut_ > 0) {
-            _burnDetf(address(this), detfOut_);
+            uint256 bptRejoin_ = _joinReserveDetfUntilDust(detfOut_);
+            if (bptRejoin_ == 0) revert SingleStandardExchangeDETFRepo.ZeroAmount();
+            DETFBondLifecycleLib._addReservePoolBptToDetfNft(
+                IERC20(s.reservePool),
+                IDetfSelfNftInventoryPolicy(address(s.bondNftVault)),
+                s.bondNftVault.detfNFTId(),
+                bptRejoin_
+            );
+            _topUpFeeCreatorShares();
         }
         if (vaultSharesOut_ < minAmountsOut_[s.vaultShareIndex]) {
             revert SingleStandardExchangeDETFRepo.InvalidRoute(
@@ -321,7 +415,8 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
         _requireActive(deadline_, claimAmount_);
-        // D22: no mint/burn gates.
+        // D22: no mint/burn gates. D31 realize first.
+        _updateExpansionMintOnRewards();
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
@@ -383,9 +478,9 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         returns (uint256 amountOut_)
     {
         if (claimAmount_ == 0) return 0;
-        if (!_isPrimaryBurnTokenOut(tokenOut_)) return 0;
+        if (address(tokenOut_) != address(this)) return 0;
         uint256 bptOut_ = _previewClaimBptOut(claimAmount_);
-        amountOut_ = _previewBptUnwind(bptOut_, tokenOut_);
+        amountOut_ = _previewProportionalDetf(bptOut_);
     }
 
     /// @inheritdoc ISingleStandardExchangeDETFBonding
@@ -411,7 +506,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         }
 
         uint256 userPile_ = _userPileReserved();
-        uint256 bal_ = s.reserveBpt.balanceOf(address(this));
+        uint256 bal_ = s.reserveBpt.balanceOf(address(s.bondNftVault));
         uint256 physicalAvail_ = bal_ > userPile_ ? bal_ - userPile_ : 0;
         if (physicalAvail_ < lpAmount_) {
             revert SingleStandardExchangeDETFRepo.InsufficientReserveBpt(lpAmount_, physicalAvail_);
@@ -435,7 +530,7 @@ abstract contract SingleStandardExchangeDETFBondingTarget is
         if (bptOut_ == 0) revert SingleStandardExchangeDETFRepo.ZeroAmount();
 
         uint256 userPile_ = _userPileReserved();
-        uint256 bal_ = s.reserveBpt.balanceOf(address(this));
+        uint256 bal_ = s.reserveBpt.balanceOf(address(s.bondNftVault));
         uint256 physicalAvail_ = bal_ > userPile_ ? bal_ - userPile_ : 0;
         if (physicalAvail_ < bptOut_) {
             revert SingleStandardExchangeDETFRepo.InsufficientReserveBpt(bptOut_, physicalAvail_);

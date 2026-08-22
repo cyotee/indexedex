@@ -61,22 +61,28 @@ contract MultiVaultWeightedDetf_ProductLaw_Test is TestBase_MultiVaultWeightedDe
     }
 
     function test_M5_close_noExtraDetf_protocolUnchangedExceptRedeposit() public {
-        (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 1_200e18);
+        _goLiveViaBptBond(detf, alice, 1_200e18);
+        uint256 seShares_ = _fundSeShares0(bob, 200e18);
+        vm.startPrank(bob);
+        seShare0.approve(detf, seShares_);
+        (uint256 tokenId_,) =
+            detfBonding.bond(seShare0, seShares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours);
+        vm.stopPrank();
         _warpPastUnlock(detf, tokenId_);
         IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
         uint256 protocolId_ = nft_.detfNFTId();
         uint256 protocolBefore_ = nft_.originalSharesOf(protocolId_);
-        uint256 shareBefore_ = seShare0.balanceOf(alice);
+        uint256 shareBefore_ = seShare0.balanceOf(bob);
         uint256[] memory minOut_ = _closeMinOut(detf);
 
-        vm.prank(alice);
-        uint256[] memory out_ = detfBonding.closeBondMature(tokenId_, minOut_, alice, block.timestamp + 1 hours);
+        vm.prank(bob);
+        uint256[] memory out_ = detfBonding.closeBondMature(tokenId_, minOut_, bob, block.timestamp + 1 hours);
         uint256 settled_;
         for (uint256 i; i < out_.length; ++i) {
             settled_ += out_[i];
         }
         assertTrue(settled_ > 0, "M5 settlement");
-        assertTrue(seShare0.balanceOf(alice) > shareBefore_, "D25 vault shares to user");
+        assertTrue(seShare0.balanceOf(bob) > shareBefore_, "D25 vault shares to user");
         assertTrue(nft_.originalSharesOf(protocolId_) >= protocolBefore_, "M5 protocol not drained");
         assertEq(nft_.effectiveSharesOf(protocolId_), nft_.originalSharesOf(protocolId_), "M5 1:1");
     }
@@ -166,10 +172,16 @@ contract MultiVaultWeightedDetf_ProductLaw_Test is TestBase_MultiVaultWeightedDe
         (uint256 tokenId_,) = _goLiveViaBptBond(detf, alice, 1_000e18);
         _warpPastUnlock(detf, tokenId_);
         address bpt_ = detfInfo.reservePool();
-        uint256 detfBpt_ = IERC20(bpt_).balanceOf(detf);
-        if (detfBpt_ > 1) {
+        address nft_ = detfInfo.bondNftVault();
+        uint256 nftBal_ = IERC20(bpt_).balanceOf(nft_);
+        if (nftBal_ > 0) {
             vm.prank(detf);
-            IERC20(bpt_).transfer(address(1), detfBpt_ - 1);
+            IDETFNFTVault(nft_).transferHeldToken(IERC20(bpt_), address(1), nftBal_);
+        }
+        uint256 detfBpt_ = IERC20(bpt_).balanceOf(detf);
+        if (detfBpt_ > 0) {
+            vm.prank(detf);
+            IERC20(bpt_).transfer(address(1), detfBpt_);
         }
         uint256[] memory minOut_ = _closeMinOut(detf);
         vm.prank(alice);

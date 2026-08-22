@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4StandardExchangeCurveQuadStableBufferHook`  
 **Date:** 2026-08-07  
-**Status:** **LOCKED v0.2 — product law (implementation-plan SoT)**  
+**Status:** **LOCKED v0.3 — product law + DETF owner-during-lock (Alignment D30)**  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/`  
 **Package kind:** IndexedEx **Uniswap V4 hook diamond package** that is **also** a vault-compatible multi-asset surface. Instance deploys via the **shared Hook Diamond Package Callback Factory** + Vault Registry `deployHookVault` (CREATE2-mined proxy). **Not** a concentrated-liquidity (CL) reimplementation. **Not** the raw-inventory `UniswapV4CurveQuadStableSwapHook` under `contracts/hooks/uniswap/v4/stable/quad/curve/`.
 
@@ -618,7 +618,22 @@ Package is **done** when:
 - [ ] Protocol growth on LP paths; `PRODUCT_ID` full type name; LP prefix `SEQS`.  
 - [ ] Hermetic matrix D78; forks Ethereum + Base + 4663.  
 - [ ] Adversarial O11 green.  
-- [ ] **No** DETF / mock SUT in DoD.
+- [ ] **No** DETF **package** / mock SUT in hook DoD. Owner-during-lock ABI (Alignment D30) **is** hook DoD.
+
+---
+
+## 8a. DETF owner path (Alignment D9 / D30) — LOCKED 2026-08-22
+
+When this hook is a true-DETF reserve, the DETF diamond is owner and `ownerOnlyLiquidity` is on.
+
+Required:
+
+- Owner-only exact-in / exact-out swap between the four reserve legs on the rated StableSwap book.
+- Must succeed when `PoolManager` is already unlocked (current unlock or internal book settlement). **Do not** use Uniswap SwapRouter for DETF D15/D29.
+- Same trading fee as public swaps on that book.
+- Owner LP add/remove in that same lock state. Owner one-sided join at `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**.
+
+Public swaps stay public. Non-owner cannot use the owner path. Alignment D15 last-resort DETF buy is that owner exact-out swap of leftover non-DETF → DETF on the residual book.
 
 ---
 
@@ -686,6 +701,7 @@ contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/
 |---------|------|-------|
 | **v0.1** | 2026-08-07 | Initial PRD. Co-design Q1–Q6 locked: ≥1 SE; SE RP + claim; native LP / rated swaps; single-asset aliases (no multi-leg zap); oracle dual-channel fees; first mint all four + witness-zero swaps. Curve from raw Quad StableSwap; buffer process from SE Orbital / Weighted Buffer peers. Plan-ready for implementation plan. |
 | **v0.2** | 2026-08-07 | **Product LOCK.** Review pins: Q7 zero-witness = defensive solver only (not required product matrix); Q8 full shared `IStandardExchangeMultiAssetLiquidity` with unsupported → `InvalidRoute`; Q9 single-asset taxable = `dexSwapFeeOfVault` (Weighted peer). Live inventory SoT wording (D21); D41a / D57b / D59b; test matrix and DoD updated. Co-located implementation plan **v1.0** is implementor SoT for phases/tests. |
+| **v0.3** | 2026-08-22 | Alignment D9/D30: owner exact-in/out swap + LP while PoolManager is already unlocked (DETF D15 residual DETF buy; D29 donate). |
 
 ---
 

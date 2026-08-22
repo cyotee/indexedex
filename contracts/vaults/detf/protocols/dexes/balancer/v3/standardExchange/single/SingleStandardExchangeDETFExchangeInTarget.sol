@@ -66,6 +66,7 @@ abstract contract SingleStandardExchangeDETFExchangeInTarget is SingleStandardEx
         // Mint DETF
         if (address(tokenOut_) == address(this)) {
             _requireReserveLive();
+            _updateExpansionMintOnRewards();
             if (!_isMintingAllowed()) {
                 revert SingleStandardExchangeDETFRepo.MintingNotAllowed(_syntheticPrice(), s.mintThreshold);
             }

@@ -27,6 +27,7 @@ abstract contract MultiVaultWeightedDetfExchangeOutTarget is MultiVaultWeightedD
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
         _requireActive(deadline_, detfIn_);
+        _updateExpansionMintOnRewards();
         if (!_isBurningAllowed()) {
             MultiVaultWeightedDetfRepo.Storage storage s0 = MultiVaultWeightedDetfRepo._layoutStruct();
             revert MultiVaultWeightedDetfRepo.BurningNotAllowed(_syntheticPrice(), s0.burnThreshold);

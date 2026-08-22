@@ -12,6 +12,7 @@ import {DETF_FEE_TO_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBon
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
@@ -172,15 +173,17 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
             revert Repo.InvalidRoute(IERC20(address(s.rebasingClaimToken)), tokenOut_);
         }
 
+        _realizeExpansionIfNeeded();
+
         uint256 lpOut_ = _burnClaimConvertToAssets(claimAmount_);
-        uint256 owed_ = _previewProportionalDetf(lpOut_);
+        uint256 owed_ = _previewZapOutToDetf(lpOut_);
         uint256 harvested_ = s.bondNftVault.reallocateDetfNftRewards(address(this));
 
         if (harvested_ >= owed_) {
             amountOut_ = owed_;
             uint256 leftover_ = harvested_ - owed_;
             if (leftover_ > 0) {
-                uint256 lpBack_ = _depositSingleDetf(leftover_, _bondLpHolder());
+                uint256 lpBack_ = _depositSingleDetfCapped(leftover_, _bondLpHolder());
                 if (lpBack_ > 0) {
                     s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpBack_);
                 }
@@ -190,22 +193,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
             }
         } else {
             _pullNftLp(lpOut_);
-            (uint256 detfFromLp_, uint256 pairOut_) = _withdrawProportional(lpOut_);
-            uint256 shortfall_ = owed_ - harvested_;
-            uint256 fromLp_ = detfFromLp_ < shortfall_ ? detfFromLp_ : shortfall_;
-            amountOut_ = harvested_ + fromLp_;
-            uint256 leftoverDetf_ = detfFromLp_ - fromLp_;
-            uint256 lpBack_;
-            if (leftoverDetf_ > 0 && pairOut_ > 0) {
-                lpBack_ = _depositProportional(leftoverDetf_, pairOut_, _bondLpHolder());
-            } else if (leftoverDetf_ > 0) {
-                lpBack_ = _depositSingleDetf(leftoverDetf_, _bondLpHolder());
-            } else if (pairOut_ > 0) {
-                lpBack_ = _depositSinglePair(pairOut_, _bondLpHolder());
-            }
-            if (lpBack_ > 0) {
-                s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpBack_);
-            }
+            amountOut_ = _fillRedeemShortfall(lpOut_, harvested_, owed_, deadline_);
         }
 
         if (amountOut_ < minOut_) {
@@ -218,6 +206,42 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         _syncAllExpectedHoldReserves();
     }
 
+    function _fillRedeemShortfall(uint256 lpOut_, uint256 harvested_, uint256 owed_, uint256 deadline_)
+        private
+        returns (uint256 amountOut_)
+    {
+        Repo.Storage storage s = Repo._layoutStruct();
+        (uint256 detfFromLp_, uint256 pairOut_) = _withdrawProportional(lpOut_);
+        uint256 shortfall_ = owed_ - harvested_;
+        uint256 fromLp_ = detfFromLp_ < shortfall_ ? detfFromLp_ : shortfall_;
+        amountOut_ = harvested_ + fromLp_;
+        shortfall_ -= fromLp_;
+        uint256 leftoverDetf_ = detfFromLp_ - fromLp_;
+        uint256 nftLpLeft_ = IERC20(s.reserveHook).balanceOf(address(s.bondNftVault));
+        if (shortfall_ > 0 && pairOut_ > 0 && nftLpLeft_ > 0) {
+            s.pairToken.forceApprove(s.reserveHook, pairOut_);
+            uint256 bought_ = IHook(s.reserveHook).ownerSwapExactIn(
+                address(s.pairToken), address(this), pairOut_, 0, deadline_
+            );
+            pairOut_ = 0;
+            uint256 take_ = bought_ < shortfall_ ? bought_ : shortfall_;
+            amountOut_ += take_;
+            leftoverDetf_ += bought_ - take_;
+        }
+        uint256 lpBack_;
+        if (leftoverDetf_ > 0 && pairOut_ > 0) {
+            lpBack_ = _depositProportional(leftoverDetf_, pairOut_, _bondLpHolder());
+        } else if (leftoverDetf_ > 0) {
+            lpBack_ = _depositSingleDetfCapped(leftoverDetf_, _bondLpHolder());
+        } else if (pairOut_ > 0) {
+            lpBack_ = _depositSinglePair(pairOut_, _bondLpHolder());
+        }
+        if (lpBack_ == 0 && (leftoverDetf_ > 0 || pairOut_ > 0)) revert Repo.ZeroAmount();
+        if (lpBack_ > 0) {
+            s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpBack_);
+        }
+    }
+
     function previewRedeemClaim(uint256 claimAmount_, IERC20 tokenOut_)
         external
         view
@@ -226,7 +250,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         if (claimAmount_ == 0) return 0;
         if (address(tokenOut_) != address(this)) return 0;
         uint256 lpOut_ = _previewClaimLpOut(claimAmount_);
-        amountOut_ = _previewProportionalDetf(lpOut_);
+        amountOut_ = _previewZapOutToDetf(lpOut_);
     }
 
     function buyClaim(
@@ -267,6 +291,54 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         claimMinted_ = _previewClaimMinted(lpIn_, _protocolOriginalShares());
     }
 
+    function joinDonatedCapital(IERC20 token_, uint256 amount_, uint256 deadline_)
+        external
+        nonReentrant
+        returns (uint256 lpOut_)
+    {
+        _requireBondNft();
+        _requireNotDisabled();
+        _requireReserveLive();
+        _requireActive(deadline_, amount_);
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(token_) == s.reserveHook) {
+            revert Repo.InvalidRoute(token_, s.pairToken);
+        }
+        if (address(token_) == address(this)) {
+            uint256 pulled_ = _pullToken(token_, amount_, false);
+            lpOut_ = _depositSingleDetf(pulled_, _bondLpHolder());
+        } else {
+            uint256 pairAmount_ = _settleToPair(token_, amount_, false, deadline_);
+            lpOut_ = _depositSinglePair(pairAmount_, _bondLpHolder());
+        }
+        if (lpOut_ == 0) revert Repo.ZeroAmount();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        external
+        view
+        returns (uint256 lpOut_)
+    {
+        return _previewJoinDonatedCapital(token_, amount_);
+    }
+
+    function notifyReserveDonated() external {
+        _requireBondNft();
+        _topUpFeeCreatorShares();
+    }
+
+    /// @inheritdoc IUniswapV4SingleStandardExchangeDETF
+    function donate(IERC20 token_, uint256 amount_, bool pretransferred_) external {
+        _requireNotDisabled();
+        Repo.Storage storage s = Repo._layoutStruct();
+        address nft_ = address(s.bondNftVault);
+        if (nft_ == address(0)) revert Repo.ReserveBondNftNotWired();
+        IDetfNftReserveDonation(nft_).donate(
+            msg.sender, token_, amount_, 0, pretransferred_, block.timestamp + 1
+        );
+    }
+
     function closeBondMature(
         uint256 tokenId_,
         uint256[] calldata minAmountsOut_,
@@ -297,7 +369,10 @@ abstract contract UniswapV4SingleStandardExchangeDETFBondingTarget is
         _pullNftLp(lpOut_);
         (uint256 detfOut_, uint256 pairOut_) = _withdrawProportional(lpOut_);
         if (detfOut_ > 0) {
-            _burnDetf(address(this), detfOut_);
+            uint256 lpRejoin_ = _depositSingleDetfUntilDust(detfOut_, _bondLpHolder());
+            if (lpRejoin_ == 0) revert Repo.ZeroAmount();
+            s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpRejoin_);
+            _topUpFeeCreatorShares();
         }
         if (pairOut_ < minAmountsOut_[1]) {
             revert Repo.InvalidRoute(s.pairToken, IERC20(address(0)));

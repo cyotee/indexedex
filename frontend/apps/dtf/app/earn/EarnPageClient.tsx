@@ -23,6 +23,7 @@ import {
   preferredToRows,
   type VaultSearchRow,
 } from '@indexedex/protocol/registry/mapRegistryToRows'
+import { CHAIN_ID_ROBINHOOD_TESTNET } from '@indexedex/protocol/addressArtifacts'
 import {
   feeDetfStakingHref,
   getBaseTokensForChain,
@@ -31,7 +32,6 @@ import {
 
 function parseTypeParam(raw: string | null): EarnTypeFilter {
   if (raw === 'strategy' || raw === 'detf' || raw === 'protocol-detf') return raw
-  // Legacy query: type=detf meant the old single DETF bucket (now plain DETF, not fee brand).
   return 'all'
 }
 
@@ -182,7 +182,9 @@ function EarnCatalogInner() {
   const rows: VaultSearchRow[] = useMemo(() => {
     const typeFilter = productType === 'all' ? undefined : (productType as EarnProductType)
     const dropFeeDetf = (list: VaultSearchRow[]) =>
-      list.filter((r) => !isFeaturedFeeDetfAddress(selectedChainId, environment, r.address))
+      selectedChainId === CHAIN_ID_ROBINHOOD_TESTNET
+        ? list
+        : list.filter((r) => !isFeaturedFeeDetfAddress(selectedChainId, environment, r.address))
 
     if (!registrySearch.isRegistryMode) {
       // Preferred default or free-text filter on preferred list.
@@ -245,10 +247,7 @@ function EarnCatalogInner() {
 
   return (
     <div>
-      <PageHeader
-        title="Earn"
-        subtitle="Preferred catalog from tokenlists; search uses on-chain Vault Registry views."
-      />
+      <PageHeader title="Earn" />
 
       {!search.trim() ? (
         <Card accent className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -257,15 +256,11 @@ function EarnCatalogInner() {
               Protocol DETF
             </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
-              {featuredFee
-                ? `${featuredFee.symbol} lives on the Protocol DETF workspace (mint / bond / sell) — not in this strategy catalog.`
-                : 'Protocol DETFs use a dedicated workspace for mint, bond, and sell — not this catalog grid.'}
+              Stake your $RICH to earn a share of protocol fees.
             </p>
           </div>
           <Link href={feePromoHref}>
-            <Button size="sm">
-              {featuredFee ? `Open ${featuredFee.symbol}` : 'Open Protocol DETF'}
-            </Button>
+            <Button size="sm">Stake $RICH</Button>
           </Link>
         </Card>
       ) : null}

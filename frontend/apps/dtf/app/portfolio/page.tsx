@@ -1,13 +1,12 @@
- 'use client'
+'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   useAccount,
-  useChainId,
   useConnection,
   useConnectorClient,
-  usePublicClient,
   useWalletClient,
   useWriteContract,
 } from 'wagmi'
@@ -26,12 +25,29 @@ import { useBrowserChainId, useConnectedWalletChainId } from '@indexedex/protoco
 import { useBrand } from '../lib/brandContext'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
+import { createAppReadClient } from '../create/lib/sePoolRead'
+import { resolveSePlatform } from '../create/lib/sePlatform'
+import {
+  DETF_CREATOR_BOND_NFT_ID,
+  DETF_FEE_TO_BOND_NFT_ID,
+  isFunctionNotFound,
+  readBondNftVault,
+  readBondPosition,
+  readDetfNftId,
+} from '../lib/detf/bondNftVault'
+import {
+  entryFromAddress,
+  loadCreatedDetfs,
+  mergeDetfEntries,
+  parseDetfQueryAddress,
+} from '../lib/detf/createdDetfs'
+import { entriesFromAddresses, loadRegisteredVaults, selectDetfsFromVaults } from '../lib/detf/discoverDetfs'
 import { formatBondAmount } from '../lib/portfolio/formatBondAmount'
 import type { SharePositionInput } from '../lib/portfolio/sanitizeShareFields'
 import type { BondNftMetadata, BondPosition, TokenBalance } from '../lib/portfolio/types'
 
 import {
-  CHAIN_ID_SEPOLIA,
+  CHAIN_ID_ROBINHOOD,
   isSupportedChainId,
   resolveArtifactsChainId,
 } from '@indexedex/protocol/addressArtifacts'
@@ -48,24 +64,7 @@ import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
 const ZERO = BigInt(0)
 
-const protocolDetfAbi = [
-  {
-    type: 'function',
-    name: 'protocolNFTVault',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-] as const
-
 const protocolNftVaultAbi = [
-  {
-    type: 'function',
-    name: 'protocolNFTId',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
   {
     type: 'function',
     name: 'claimRewards',
@@ -288,7 +287,9 @@ function isProtocolMetadataUnavailableError(error: unknown): boolean {
   return message.includes('0x23dbef4b') || message.includes('NoTargetFor(bytes4)') || message.includes('PositionNotFound')
 }
 
-export default function PortfolioPage() {
+function PortfolioPage() {
+  const searchParams = useSearchParams()
+  const queryDetf = parseDetfQueryAddress(searchParams.get('detf'))
   const { address, chainId: accountChainId, isConnected } = useAccount()
   const { environment } = useDeploymentEnvironment()
   const { selectedChainId } = useSelectedNetwork()
@@ -304,9 +305,7 @@ export default function PortfolioPage() {
   const resolvedWalletChainId = attachedWalletChainId !== undefined
     ? resolveArtifactsChainId(attachedWalletChainId, environment, selectedChainId)
     : null
-  const resolvedChainId = selectedChainId ?? CHAIN_ID_SEPOLIA
-  const wagmiPublicClient = usePublicClient({ chainId: resolvedChainId })
-  const publicClient = useMemo(() => wagmiPublicClient ?? null, [wagmiPublicClient])
+  const resolvedChainId = selectedChainId ?? CHAIN_ID_ROBINHOOD
   const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)
 
   const targetChain = useMemo(() => resolveAppChain(resolvedChainId), [resolvedChainId])
@@ -329,9 +328,21 @@ export default function PortfolioPage() {
     () => getProtocolDetfTokensForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
   )
-  const protocolDetfs = useMemo(
+  const listedProtocolDetfs = useMemo(
     () => getProtocolDetfsForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
+  )
+  const createdProtocolDetfs = useMemo(
+    () => loadCreatedDetfs(resolvedChainId),
+    [resolvedChainId]
+  )
+  const queryProtocolDetfs = useMemo(
+    () => (queryDetf ? [entryFromAddress(resolvedChainId, queryDetf)] : []),
+    [queryDetf, resolvedChainId]
+  )
+  const protocolDetfs = useMemo(
+    () => mergeDetfEntries(listedProtocolDetfs, createdProtocolDetfs, queryProtocolDetfs),
+    [createdProtocolDetfs, listedProtocolDetfs, queryProtocolDetfs]
   )
   const feeDetfExploreHref = useMemo(() => {
     const fee = loadFeaturedFeeDetfs(resolvedChainId, environment, 1)[0]
@@ -339,7 +350,7 @@ export default function PortfolioPage() {
   }, [environment, resolvedChainId])
 
   const refresh = useCallback(async () => {
-    if (!address || !publicClient) return
+    if (!address) return
 
     setIsLoading(true)
     setErrors([])
@@ -349,9 +360,10 @@ export default function PortfolioPage() {
         setErrors((prev) => (prev.includes(message) ? prev : [...prev, message]))
       }
 
+      const readClient = createAppReadClient(resolvedChainId)
       const defaultLookback = Number(process.env.NEXT_PUBLIC_PORTFOLIO_LOG_SCAN_BLOCKS ?? '2048')
       const lookbackBlocks = BigInt(Number.isFinite(defaultLookback) && defaultLookback > 0 ? defaultLookback : 2048)
-      const latestBlock = await publicClient.getBlockNumber()
+      const latestBlock = await readClient.getBlockNumber()
       const scanFromBlock = clampBlockFromLatest(latestBlock, lookbackBlocks)
       const bytecodeCache = new Map<string, Promise<boolean>>()
 
@@ -360,7 +372,7 @@ export default function PortfolioPage() {
         const cached = bytecodeCache.get(key)
         if (cached) return cached
 
-        const pending = publicClient
+        const pending = readClient
           .getBytecode({ address: candidate })
           .then((code) => Boolean(code && code !== '0x'))
           .catch(() => false)
@@ -385,7 +397,7 @@ export default function PortfolioPage() {
           for (let start = scanFromBlock; start <= latestBlock; start += maxRange) {
             const end = start + maxRange - BigInt(1)
             const toBlock = end > latestBlock ? latestBlock : end
-            const chunk = await publicClient.getLogs({
+            const chunk = await readClient.getLogs({
               ...(baseReq as any),
               fromBlock: start,
               toBlock,
@@ -398,7 +410,7 @@ export default function PortfolioPage() {
         // First try in a single request for performance.
         if (providerMaxGetLogsRange === null) {
           try {
-            return await publicClient.getLogs({
+            return await readClient.getLogs({
               ...(baseReq as any),
               fromBlock: scanFromBlock,
               toBlock: latestBlock,
@@ -428,7 +440,7 @@ export default function PortfolioPage() {
             }
 
             try {
-              const bal = await publicClient.readContract({
+              const bal = await readClient.readContract({
                 address: tokenAddress,
                 abi: erc20Abi,
                 functionName: 'balanceOf',
@@ -446,9 +458,23 @@ export default function PortfolioPage() {
         return results.filter((r) => r.balance !== ZERO)
       }
 
+      const platform = resolveSePlatform(resolvedChainId, environment)
+      let registryDetfs: TokenListEntry[] = []
+      if (platform.registry) {
+        try {
+          const vaults = await loadRegisteredVaults(readClient, platform.registry)
+          const detfAddresses = await selectDetfsFromVaults(readClient, vaults)
+          registryDetfs = await entriesFromAddresses(readClient, resolvedChainId, detfAddresses)
+        } catch (e: any) {
+          appendError(`Failed vault registry DETF scan: ${String(e?.message ?? e)}`)
+        }
+      }
+
+      const scanDetfs = mergeDetfEntries(protocolDetfs, registryDetfs, loadCreatedDetfs(resolvedChainId), queryProtocolDetfs)
+
       const [vaultBals, detfBals] = await Promise.all([
         fetchBalances(strategyVaultTokens),
-        fetchBalances([...protocolDetfTokens]),
+        fetchBalances(mergeDetfEntries([...protocolDetfTokens], scanDetfs)),
       ])
 
       setStrategyVaultBalances(vaultBals)
@@ -462,11 +488,9 @@ export default function PortfolioPage() {
       const discoverBondPositions = async ({
         detfs,
         kind,
-        getVaultAddress,
       }: {
         detfs: TokenListEntry[]
         kind: 'protocol'
-        getVaultAddress: (detfAddress: `0x${string}`) => Promise<`0x${string}`>
       }) => {
         for (const detf of detfs) {
           const detfAddress = detf.address as `0x${string}`
@@ -474,9 +498,12 @@ export default function PortfolioPage() {
 
           let nftVault = zeroAddress as `0x${string}`
           try {
-            nftVault = await getVaultAddress(detfAddress)
+            const vault = await readBondNftVault(readClient, detfAddress)
+            if (!vault) continue
+            nftVault = vault
           } catch (e: any) {
-            appendError(`Failed protocolNFTVault() for ${detf.symbol}: ${String(e?.message ?? e)}`)
+            if (isFunctionNotFound(e)) continue
+            appendError(`Failed to read bond NFT vault for ${detf.symbol}: ${String(e?.message ?? e)}`)
             continue
           }
 
@@ -508,19 +535,19 @@ export default function PortfolioPage() {
             candidateIdList.push(tokenId)
           }
 
+          for (const reservedId of [DETF_FEE_TO_BOND_NFT_ID, DETF_CREATOR_BOND_NFT_ID]) {
+            const key = reservedId.toString()
+            if (!candidateIdSeen[key]) {
+              candidateIdSeen[key] = true
+              candidateIdList.push(reservedId)
+            }
+          }
+
           if (candidateIdList.length === 0) continue
 
           let protocolNftId: bigint | null = null
           if (kind === 'protocol') {
-            try {
-              protocolNftId = (await publicClient.readContract({
-                address: nftVault,
-                abi: protocolNftVaultAbi,
-                functionName: 'protocolNFTId',
-              })) as bigint
-            } catch {
-              protocolNftId = null
-            }
+            protocolNftId = await readDetfNftId(readClient, nftVault)
           }
 
           const ownedIds: bigint[] = []
@@ -529,7 +556,7 @@ export default function PortfolioPage() {
               if (protocolNftId !== null && tokenId === protocolNftId) return
 
               try {
-                const owner = (await publicClient.readContract({
+                const owner = (await readClient.readContract({
                   address: nftVault,
                   abi: protocolNftVaultAbi,
                   functionName: 'ownerOf',
@@ -548,7 +575,7 @@ export default function PortfolioPage() {
           let claimToken: `0x${string}` | undefined
           let rewardToken: `0x${string}` | undefined
           try {
-            rewardToken = (await publicClient.readContract({
+            rewardToken = (await readClient.readContract({
               address: nftVault,
               abi: protocolNftVaultAbi,
               functionName: 'rewardToken',
@@ -570,13 +597,8 @@ export default function PortfolioPage() {
               }
               try {
                 const [position, pending] = await Promise.all([
-                  publicClient.readContract({
-                    address: nftVault,
-                    abi: protocolNftVaultAbi,
-                    functionName: 'getPosition',
-                    args: [tokenId],
-                  }),
-                  publicClient.readContract({
+                  readBondPosition(readClient, nftVault, tokenId),
+                  readClient.readContract({
                     address: nftVault,
                     abi: protocolNftVaultAbi,
                     functionName: 'pendingRewards',
@@ -584,20 +606,21 @@ export default function PortfolioPage() {
                   }),
                 ])
 
-                const originalShares = (position as any).originalShares as bigint
-                if (originalShares === ZERO) {
+                if (!position || (position.originalShares === ZERO && position.effectiveShares === ZERO)) {
                   return null
                 }
 
                 out.lockInfo = {
-                  sharesAwarded: (position as any).effectiveShares,
-                  rewardPerShare: (position as any).rewardDebt,
-                  bonusPercentage: (position as any).bonusMultiplier,
-                  unlockTime: (position as any).unlockTime,
+                  sharesAwarded: position.effectiveShares,
+                  rewardPerShare: position.rewardDebt,
+                  bonusPercentage: position.bonusMultiplier,
+                  unlockTime: position.unlockTime,
                 }
                 out.pendingRewards = pending as bigint
               } catch (e: any) {
-                appendError(`Failed position details for ${detf.symbol} #${tokenId}: ${String(e?.message ?? e)}`)
+                if (!isFunctionNotFound(e)) {
+                  appendError(`Failed position details for ${detf.symbol} #${tokenId}: ${String(e?.message ?? e)}`)
+                }
               }
               return out
             })
@@ -608,28 +631,20 @@ export default function PortfolioPage() {
       }
 
       await discoverBondPositions({
-        detfs: protocolDetfs,
+        detfs: scanDetfs,
         kind: 'protocol',
-        getVaultAddress: async (detfAddress) =>
-          (await publicClient.readContract({
-            address: detfAddress,
-            abi: protocolDetfAbi,
-            functionName: 'protocolNFTVault',
-            args: [],
-          })) as `0x${string}`,
       })
 
       setBondPositions(allBondPositions)
     } finally {
       setIsLoading(false)
     }
-  }, [address, publicClient, strategyVaultTokens, protocolDetfTokens, protocolDetfs])
+  }, [address, environment, protocolDetfTokens, protocolDetfs, queryProtocolDetfs, resolvedChainId, strategyVaultTokens])
 
   const loadMetadata = useCallback(
     async (pos: BondPosition) => {
-      if (!publicClient) return
       try {
-        const tokenUri = await publicClient.readContract({
+        const tokenUri = await createAppReadClient(resolvedChainId).readContract({
           address: pos.nftVault,
           abi: protocolNftVaultAbi,
           functionName: 'tokenURI',
@@ -675,7 +690,7 @@ export default function PortfolioPage() {
         setErrors((prev) => [...prev, `Failed tokenURI for ${pos.detf.symbol} #${pos.tokenId}: ${String(e?.message ?? e)}`])
       }
     },
-    [publicClient]
+    [resolvedChainId]
   )
 
   const claimProtocolRewards = useCallback(
@@ -768,8 +783,8 @@ export default function PortfolioPage() {
   return (
     <div className="max-w-6xl">
       <PageHeader
-        title="Portfolio"
-        subtitle="Vault shares and DETF bond NFTs."
+        title="You"
+        subtitle="Your vault receipts, DETF tokens, and bond NFTs."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Link
@@ -783,7 +798,7 @@ export default function PortfolioPage() {
               variant="primary"
               size="sm"
               onClick={refresh}
-              disabled={!address || !publicClient}
+              disabled={!address}
               loading={isLoading}
             >
               {isLoading ? 'Refreshing…' : 'Refresh'}
@@ -794,7 +809,7 @@ export default function PortfolioPage() {
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card padding="sm">
-          <Stat label="Strategy positions" value={String(strategyVaultBalances.length)} />
+          <Stat label="Vault positions" value={String(strategyVaultBalances.length)} />
         </Card>
         <Card padding="sm">
           <Stat label="DETF balances" value={String(detfBalances.length)} />
@@ -811,7 +826,7 @@ export default function PortfolioPage() {
         <div className="mb-8">
           <EmptyState
             title="No positions yet"
-            body="The index is empty — explore the Protocol DETF to mint, bond, and sell, or browse Earn strategies."
+            body="Nothing here yet. Open Protocol DETF to mint, bond, and sell. Or browse Earn vaults."
             action={
               <div className="flex flex-wrap gap-2">
                 <Link href={feeDetfExploreHref}>
@@ -836,7 +851,7 @@ export default function PortfolioPage() {
             <div>
               <p className="text-xs uppercase tracking-wide text-[var(--accent,#4FD44B)]">Share position</p>
               <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-                Sanitized symbol, amount, and address only — never certificate HTML or tokenURI markup.
+                Symbol, amount, and address only. No extra markup.
               </p>
             </div>
             <Button type="button" variant="ghost" size="sm" onClick={() => setShareTarget(null)}>
@@ -857,7 +872,7 @@ export default function PortfolioPage() {
 
       {/* Strategy vault shares */}
       <Card className="mb-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Strategy Vault Shares</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Vault shares</h2>
         <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
           Non-zero balances from the chain tokenlist. Manage via Earn detail.
         </p>
@@ -1118,5 +1133,13 @@ export default function PortfolioPage() {
         </div>
       </DebugPanel>
     </div>
+  )
+}
+
+export default function PortfolioPageWithSearch() {
+  return (
+    <Suspense fallback={<p className="text-sm text-[var(--text-muted,#9aa3b2)]">Loading positions…</p>}>
+      <PortfolioPage />
+    </Suspense>
   )
 }

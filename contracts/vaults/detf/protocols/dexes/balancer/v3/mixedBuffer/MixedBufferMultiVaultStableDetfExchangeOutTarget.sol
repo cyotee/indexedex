@@ -26,6 +26,7 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeOutTarget is MixedBuffe
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
         _requireActive(deadline_, detfIn_);
+        _updateExpansionMintOnRewards();
         if (!_isBurningAllowed()) {
             MixedBufferMultiVaultStableDetfRepo.Storage storage s0 =
                 MixedBufferMultiVaultStableDetfRepo._layoutStruct();

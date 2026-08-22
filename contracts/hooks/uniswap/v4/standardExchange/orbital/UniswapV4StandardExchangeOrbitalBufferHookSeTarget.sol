@@ -36,6 +36,8 @@ import {
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 
 /// @title UniswapV4StandardExchangeOrbitalBufferHookSeTarget
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
@@ -151,6 +153,68 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         emit Swap(msg.sender, tin, tout, amountIn, amountOut, feeWad);
     }
 
+    /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        if (!_isBound(tokenIn) || !_isBound(tokenOut) || tokenIn == tokenOut) {
+            revert InvalidRoute(tokenIn, tokenOut);
+        }
+        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+    }
 
+    /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireNonZero(amountOut);
+        if (!_isBound(tokenIn) || !_isBound(tokenOut) || tokenIn == tokenOut) {
+            revert InvalidRoute(tokenIn, tokenOut);
+        }
+        amountIn = _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+    }
 
+    function _onlyHookOwner() private view {
+        if (msg.sender != MultiStepOwnableRepo._owner()) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
+    }
+
+    function _payOwnerSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut) private {
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (_seOf(tokenOut) != address(0)) {
+            _unwrapExactTokenOut(tokenOut, amountOut);
+        } else {
+            l.reserves[tokenOut] -= amountOut;
+        }
+        if (_seOf(tokenIn) != address(0)) {
+            _bufferToken(tokenIn, amountIn);
+        } else {
+            l.reserves[tokenIn] += amountIn;
+        }
+        _recomputeL2();
+        IERC20(tokenOut).safeTransfer(msg.sender, amountOut);
+        _syncVaultReserves();
+        emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut, feeWad);
+    }
 }

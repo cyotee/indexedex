@@ -271,7 +271,15 @@ contract ComposedStableCommonDetfBondingFacet is
 
         (uint256 detfOut_, uint256 stableBptOut_, uint256 commonBptOut_) = _exitReserveProportional(lpOut_);
         if (detfOut_ > 0) {
-            _burnDetf(address(this), detfOut_);
+            uint256 bptRejoin_ = _joinReserveDetfOnly(detfOut_);
+            if (bptRejoin_ == 0) revert ZeroAmount();
+            DETFBondLifecycleLib._addReservePoolBptToDetfNft(
+                IERC20(address(layoutStruct.reservePool)),
+                IDetfSelfNftInventoryPolicy(address(bondVault_)),
+                bondVault_.detfNFTId(),
+                bptRejoin_
+            );
+            _topUpFeeCreatorShares();
         }
         if (stableBptOut_ < minAmountsOut[layoutStruct.stablePoolBptIndex]) {
             revert InvalidRoute(address(layoutStruct.stablePoolBpt), address(0));
@@ -336,6 +344,7 @@ contract ComposedStableCommonDetfBondingFacet is
         _requireReservePoolInitialized();
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _updateExpansionMintOnRewards();
 
         ComposedStableCommonDetfRepo.Storage storage s = ComposedStableCommonDetfRepo._layoutStruct();
         if (address(tokenOut_) != address(s.detfToken)) {

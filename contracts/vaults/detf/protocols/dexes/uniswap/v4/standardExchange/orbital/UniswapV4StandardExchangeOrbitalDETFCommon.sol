@@ -116,6 +116,12 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
         }
     }
 
+    function _requireBondNft() internal view {
+        if (msg.sender != address(Repo._layoutStruct().bondNftVault)) {
+            revert Repo.NotAuthorized(msg.sender);
+        }
+    }
+
     function _requireMature(uint256 tokenId_) internal view {
         uint256 unlock_ = Repo._layoutStruct().bondNftVault.unlockTimeOf(tokenId_);
         if (block.timestamp < unlock_) revert Repo.BondNotMature(unlock_);
@@ -657,7 +663,9 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
     /* ---------------------------------------------------------------------- */
 
     function _requireZapEligible() internal view {
-        if (!IHook(Repo._layoutStruct().reserveHook).isZapEligible()) revert Repo.NotZapEligible();
+        address hook_ = Repo._layoutStruct().reserveHook;
+        if (IHook(hook_).isZapEligible()) return;
+        revert Repo.NotZapEligible();
     }
 
     function _depositSingle(address tokenIn_, uint256 amountIn_, address lpTo_)
@@ -666,6 +674,19 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
     {
         Repo.Storage storage s = Repo._layoutStruct();
         _requireZapEligible();
+        IERC20(tokenIn_).forceApprove(s.reserveHook, amountIn_);
+        lpOut_ = IHook(s.reserveHook).depositSingle(
+            tokenIn_, amountIn_, lpTo_, 0, block.timestamp + 1, ""
+        );
+    }
+
+    /// @dev D30/D89: owner MIN rejoin for close/redeem leftover/donate. Public mint still uses `_depositSingle`.
+    function _depositSingleMinRejoin(address tokenIn_, uint256 amountIn_, address lpTo_)
+        internal
+        returns (uint256 lpOut_)
+    {
+        if (amountIn_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
         IERC20(tokenIn_).forceApprove(s.reserveHook, amountIn_);
         lpOut_ = IHook(s.reserveHook).depositSingle(
             tokenIn_, amountIn_, lpTo_, 0, block.timestamp + 1, ""
@@ -875,6 +896,57 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFCommon is ReentrancyLockMo
 
     function _burnDetf(address from_, uint256 amount_) internal {
         ERC20Repo._burn(from_, amount_);
+    }
+
+    /// @notice Host LP preview for donate join. Unknown / inert returns 0. `lpToken` is not joinable.
+    function _previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        internal
+        view
+        returns (uint256 lpOut_)
+    {
+        if (amount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (!s.isReserveLive) return 0;
+        address hookAddr_ = s.reserveHook;
+        if (address(token_) == hookAddr_) return 0;
+        IHook hook_ = IHook(hookAddr_);
+        if (address(token_) == address(this)) {
+            return hook_.previewDepositSingle(address(this), amount_);
+        }
+        if (address(token_) == address(s.pairToken0) || address(token_) == address(s.pairToken1)) {
+            return hook_.previewDepositSingle(address(token_), amount_);
+        }
+        if (_isAllowlistedTokenIn(token_)) {
+            address se_ = address(0);
+            IERC20 pairOut_ = IERC20(address(0));
+            if (
+                address(s.standardExchange0) != address(0)
+                    && (
+                        address(token_) == address(s.vaultShare0)
+                            || _tokenInSeTokens(token_, address(s.standardExchange0))
+                    )
+            ) {
+                se_ = address(s.standardExchange0);
+                pairOut_ = s.pairToken0;
+            } else if (
+                address(s.standardExchange1) != address(0)
+                    && (
+                        address(token_) == address(s.vaultShare1)
+                            || _tokenInSeTokens(token_, address(s.standardExchange1))
+                    )
+            ) {
+                se_ = address(s.standardExchange1);
+                pairOut_ = s.pairToken1;
+            }
+            if (se_ == address(0)) return 0;
+            try IStandardExchangeIn(se_).previewExchangeIn(token_, amount_, pairOut_) returns (uint256 pairAmt_) {
+                if (pairAmt_ == 0) return 0;
+                return hook_.previewDepositSingle(address(pairOut_), pairAmt_);
+            } catch {
+                return 0;
+            }
+        }
+        return 0;
     }
 
     /// @dev Settle tokenIn to native pair units for a funded leg.

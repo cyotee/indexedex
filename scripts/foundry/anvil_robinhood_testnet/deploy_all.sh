@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Robinhood testnet (46630) launch groups 00-06 + 09.
-# Broadcast as DEPLOYER_ADDRESS (--sender; cast wallet signs).
+# Local Anvil: Anvil Dev 0 + --unlocked. --live: DEPLOYER_ADDRESS (cast wallet).
 # Every group simulates first. Never --skip-simulation. --dry-run stops after sim.
 # =============================================================================
 set -euo pipefail
@@ -54,10 +54,13 @@ export NETWORK_PROFILE="${NETWORK_PROFILE:-anvil_robinhood_testnet}"
 export CHAIN_ID="${CHAIN_ID:-46630}"
 export RPC_URL
 
+DEV_ADDRESS="${DEV_ADDRESS:-}"
 DEPLOYER_ADDRESS="${DEPLOYER_ADDRESS:-}"
 SENDER="${SENDER:-}"
 OWNER="${OWNER:-}"
 UI_WALLET="${UI_WALLET:-}"
+ANVIL_DEV0="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+ANVIL_DEV1="0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
 
 BROADCAST_FLAG="--broadcast"
 RESTART_ANVIL=0
@@ -75,9 +78,9 @@ Usage:
   scripts/shell/anvil_robinhood_testnet.sh [command] [options]
   scripts/foundry/anvil_robinhood_testnet/deploy_all.sh [command] [options]
 
-These groups are the 46630 launch scripts. Set DEPLOYER_ADDRESS; forge uses
---sender and the cast wallet signs. Point RPC_URL at a local Anvil fork to
-rehearse, or --live / a public RPC to broadcast to Robinhood Chain Testnet.
+These groups are the 46630 launch scripts. Local Anvil defaults to Anvil Dev 0
+with --unlocked. --live broadcasts to public 46630 as DEPLOYER_ADDRESS (cast
+wallet). Point RPC_URL at a local Anvil fork to rehearse.
 
 Commands:
   all           Staged deploy: 00-05, 04b (Mag7 tokens), 06t (TTCHIR), 06e (TTDOL-Q), 09
@@ -98,6 +101,7 @@ Options:
                     simulates every group before it broadcasts. Never skips simulation.
   --live            Broadcast to public 46630 (official RPC unless RPC_URL is already set).
                     Does not start Anvil. Requires DEPLOYER_ADDRESS (cast wallet).
+                    Does not use Anvil Dev 0.
   --rpc-url URL     Broadcast RPC (default http://127.0.0.1:8545)
   --restart-anvil   Local only: kill port + start a RH testnet fork at chain id 46630
                     with --disable-code-size-limit (Anvil node flag, not a script cheat)
@@ -110,9 +114,12 @@ Options:
   --help, -h
 
 Signer:
-  DEPLOYER_ADDRESS  Required. Passed as forge --sender. Cast wallet signs.
-  OWNER             Defaults to DEPLOYER_ADDRESS
-  UI_WALLET         Defaults to DEPLOYER_ADDRESS
+  SENDER / DEV_ADDRESS / DEPLOYER_ADDRESS
+                    Passed as forge --sender. Local default is Anvil Dev 0
+                    (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266) with --unlocked.
+  OWNER             Defaults to the deployer
+  UI_WALLET         Local default is Anvil Dev 1. --live defaults to the deployer.
+  --live            Requires DEPLOYER_ADDRESS (cast wallet). No --unlocked.
 
 Optional:
   ALCHEMY_KEY   Anvil fork source only (`robinhood_testnet_alchemy`). `--live` always uses the public 46630 RPC.
@@ -398,18 +405,28 @@ is_localhost_rpc() {
   esac
 }
 
-# Broadcast as DEPLOYER_ADDRESS. Foundry/cast wallet signs; no --private-key, no --unlocked.
+# Local: Anvil Dev 0 + --unlocked. --live: DEPLOYER_ADDRESS via the cast wallet.
 require_deployer() {
-  if [[ -z "${DEPLOYER_ADDRESS:-}" ]]; then
-    log_error "DEPLOYER_ADDRESS is not set"
-    echo "Example: export DEPLOYER_ADDRESS=0x..."
-    echo "Forge uses --sender \$DEPLOYER_ADDRESS; cast wallet signs."
-    exit 1
+  if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
+    if [[ -z "${DEPLOYER_ADDRESS:-}" && -z "${SENDER:-}" && -z "${DEV_ADDRESS:-}" ]]; then
+      log_error "--live requires DEPLOYER_ADDRESS (cast wallet account)"
+      echo "Example: export DEPLOYER_ADDRESS=0x..."
+      echo "Forge uses --sender \$DEPLOYER_ADDRESS; cast wallet signs."
+      exit 1
+    fi
   fi
-  SENDER="$DEPLOYER_ADDRESS"
-  OWNER="${OWNER:-$DEPLOYER_ADDRESS}"
-  UI_WALLET="${UI_WALLET:-$DEPLOYER_ADDRESS}"
-  export DEPLOYER_ADDRESS SENDER OWNER UI_WALLET
+  if [[ -z "$SENDER" ]]; then
+    SENDER="${DEPLOYER_ADDRESS:-${DEV_ADDRESS:-$ANVIL_DEV0}}"
+  fi
+  DEV_ADDRESS="${DEV_ADDRESS:-$SENDER}"
+  DEPLOYER_ADDRESS="${DEPLOYER_ADDRESS:-$SENDER}"
+  OWNER="${OWNER:-$SENDER}"
+  if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
+    UI_WALLET="${UI_WALLET:-$SENDER}"
+  else
+    UI_WALLET="${UI_WALLET:-$ANVIL_DEV1}"
+  fi
+  export DEPLOYER_ADDRESS SENDER DEV_ADDRESS OWNER UI_WALLET
 }
 
 run_forge_cmd() {
@@ -419,6 +436,7 @@ run_forge_cmd() {
       NETWORK_PROFILE="$NETWORK_PROFILE" \
       DEPLOYER_ADDRESS="$DEPLOYER_ADDRESS" \
       SENDER="$SENDER" \
+      DEV_ADDRESS="$DEV_ADDRESS" \
       OWNER="$OWNER" \
       UI_WALLET="$UI_WALLET" \
       FORCE="$FORCE" \
@@ -465,7 +483,10 @@ forge_script_base() {
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
-  cmd+=(--sender "$DEPLOYER_ADDRESS")
+  cmd+=(--sender "$SENDER")
+  if is_localhost_rpc && [[ "$LIVE_BROADCAST" -eq 0 ]]; then
+    cmd+=(--unlocked)
+  fi
   printf '%s\n' "${cmd[@]}"
 }
 
@@ -745,7 +766,7 @@ else
 fi
 
 log_header "Robinhood testnet (46630) deploy: $COMMAND"
-log_info "DEPLOYER_ADDRESS=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE"
+log_info "SENDER=$SENDER UI_WALLET=$UI_WALLET OUT_DIR=$OUT_DIR_OVERRIDE"
 
 case "$COMMAND" in
   all)

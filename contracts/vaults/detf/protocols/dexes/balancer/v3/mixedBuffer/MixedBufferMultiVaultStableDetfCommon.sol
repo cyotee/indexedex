@@ -40,6 +40,8 @@ import {
     DETF_FEE_TO_BOND_NFT_ID
 } from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
@@ -51,6 +53,9 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
     using FixedPoint for uint256;
 
     uint256 internal constant ONE_WAD = 1e18;
+    /// @dev Cap single-sided DETF join to 25% of live DETF so last-exit rejoin stays
+    ///      under Balancer InvariantRatioAboveMax (300%). Same fraction as Uni V4 D25-7.
+    uint256 internal constant SINGLE_JOIN_MAX_IN_WAD = 25e16;
     uint256 internal constant DEFAULT_MINT_THRESHOLD = 1.05e18;
     uint256 internal constant DEFAULT_BURN_THRESHOLD = 0.95e18;
 
@@ -106,6 +111,107 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         if (block.timestamp > deadline_) {
             revert MixedBufferMultiVaultStableDetfRepo.DeadlineExpired(deadline_);
         }
+    }
+
+    function _requireNotDisabled() internal view {
+        address reg = address(StandardVaultRepo._feeOracle());
+        if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
+            revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
+        }
+    }
+
+    function _requireBondNft() internal view {
+        if (msg.sender != address(MixedBufferMultiVaultStableDetfRepo._layoutStruct().bondNftVault)) {
+            revert MixedBufferMultiVaultStableDetfRepo.NotAuthorized(msg.sender);
+        }
+    }
+
+    function _previewUnbalancedBpt(uint256 tokenIndex_, uint256 amountIn_)
+        internal
+        view
+        returns (uint256 bptOut_)
+    {
+        if (amountIn_ == 0) return 0;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
+        if (bptSupply_ == 0) return 0;
+        (,, uint256[] memory balances_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        uint256 bal_ = balances_[tokenIndex_];
+        if (bal_ == 0) return 0;
+        return (amountIn_ * bptSupply_) / bal_;
+    }
+
+    /// @notice Host BPT preview for donate join. Unknown / inert / lpToken returns 0.
+    function _previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        internal
+        view
+        returns (uint256 lpOut_)
+    {
+        if (amount_ == 0) return 0;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        if (!s.isReserveLive) return 0;
+        if (address(token_) == s.reservePool || address(token_) == address(s.reserveBpt)) return 0;
+        if (address(token_) == address(this)) {
+            return _previewUnbalancedBpt(s.detfIndex, amount_);
+        }
+        if (MixedBufferMultiVaultStableDetfRepo._isBufferToken(token_)) {
+            try IStandardExchangeIn(address(s.underlyingVaults[0])).previewExchangeIn(
+                token_, amount_, s.vaultShares[0]
+            ) returns (uint256 sh_) {
+                if (sh_ == 0) return 0;
+                return _previewUnbalancedBpt(s.shareIndexes[0], sh_);
+            } catch {
+                return 0;
+            }
+        }
+        (bool found_, uint256 legIndex_) = MixedBufferMultiVaultStableDetfRepo._findVaultShareIndex(token_);
+        if (!found_) return 0;
+        return _previewUnbalancedBpt(s.shareIndexes[legIndex_], amount_);
+    }
+
+    function _joinDonatedBuffer(uint256 bufferAmount_, uint256 deadline_)
+        internal
+        returns (uint256 bptOut_)
+    {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        uint256 sharesOut_ = _nestedExchangeInPush(
+            IStandardExchangeIn(address(s.underlyingVaults[0])),
+            s.bufferToken,
+            bufferAmount_,
+            s.vaultShares[0],
+            0,
+            address(this),
+            deadline_
+        );
+        return _joinReserveVaultShareOnly(0, sharesOut_);
+    }
+
+    function _sendJoinBptToNft(uint256 bptOut_) internal {
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        if (bptOut_ == 0) revert MixedBufferMultiVaultStableDetfRepo.ZeroAmount();
+        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptOut_);
+    }
+
+    function _custodyBptOnNft(uint256 bptAmount_) internal {
+        if (bptAmount_ == 0) return;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        IERC20(s.reservePool).safeTransfer(address(s.bondNftVault), bptAmount_);
+    }
+
+    function _pullBptFromNft(uint256 bptAmount_) internal {
+        if (bptAmount_ == 0) return;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        IERC20 bpt_ = IERC20(s.reservePool);
+        uint256 have_ = bpt_.balanceOf(address(this));
+        if (have_ >= bptAmount_) return;
+        uint256 need_ = bptAmount_ - have_;
+        s.bondNftVault.transferHeldToken(bpt_, address(this), need_);
     }
 
     function _effectiveLockDuration(uint256 lockDuration_) internal view returns (uint256 effective_) {
@@ -465,6 +571,36 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         bptOut_ = _joinReserveUnbalanced(amountsIn_);
     }
 
+    /// @dev Cap zap-in so last-exit D25 rejoin still mints lpOut > 0 (full amount would
+    ///      revert InvariantRatioAboveMax). Unjoined DETF stays on this diamond for the
+    ///      caller to send to Bond NFT inventory.
+    function _joinReserveDetfCapped(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        if (detfAmount_ == 0) return 0;
+        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
+            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        (,, uint256[] memory balances_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
+        uint256 remaining_ = balances_[s.detfIndex];
+        uint256 cap_ = remaining_ * SINGLE_JOIN_MAX_IN_WAD / ONE_WAD;
+        if (cap_ == 0) cap_ = detfAmount_ < 1e3 ? detfAmount_ : 1e3;
+        uint256 joinAmt_ = detfAmount_ < cap_ ? detfAmount_ : cap_;
+        if (joinAmt_ == 0) return 0;
+        return _joinReserveDetfOnly(joinAmt_);
+    }
+
+    /// @dev Repeat capped DETF joins so last-exit leftover becomes id 0 LP. Do not
+    ///      send leftover DETF to the Bond NFT (that books as rewards and extracts to ids 1–2).
+    function _joinReserveDetfUntilDust(uint256 detfAmount_) internal returns (uint256 bptOut_) {
+        if (detfAmount_ == 0) return 0;
+        IERC20 detfToken_ = IERC20(address(this));
+        for (uint256 i; i < 64; ++i) {
+            uint256 remaining_ = detfToken_.balanceOf(address(this));
+            if (remaining_ == 0) break;
+            uint256 minted_ = _joinReserveDetfCapped(remaining_);
+            if (minted_ == 0) break;
+            bptOut_ += minted_;
+        }
+    }
+
     /// @dev Live join of any combination of DETF / buffer / vault-share legs (zero amounts skipped).
     function _joinReserveLegs(uint256 detfAmount_, uint256 bufferAmount_, uint256[] memory vaultShareAmounts_)
         internal
@@ -490,6 +626,7 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
         returns (uint256 detfOut_, uint256 bufferOut_, uint256[] memory vaultSharesOut_)
     {
         MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        _pullBptFromNft(bptIn_);
         uint256 n_ = _reserveVault().getCurrentLiveBalances(s.reservePool).length;
         uint256[] memory minOut_ = new uint256[](n_);
         IERC20(s.reservePool).forceApprove(address(_reserveRouter()), bptIn_);
@@ -506,7 +643,7 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
     function _bptForDetfShares(uint256 detfShares_) internal view returns (uint256 bptOut_) {
         MixedBufferMultiVaultStableDetfRepo.Storage storage s = MixedBufferMultiVaultStableDetfRepo._layoutStruct();
         uint256 supply_ = ERC20Repo._totalSupply();
-        uint256 bptBal_ = IERC20(s.reservePool).balanceOf(address(this));
+        uint256 bptBal_ = IERC20(s.reservePool).balanceOf(address(s.bondNftVault));
         if (supply_ == 0 || bptBal_ == 0) return 0;
         bptOut_ = detfShares_ * bptBal_ / supply_;
     }

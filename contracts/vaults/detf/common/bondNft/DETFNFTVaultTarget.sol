@@ -20,6 +20,15 @@ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+import {
+    IDetfReserveDonation,
+    IDetfNftReserveDonation
+} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {ISignatureTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol";
 import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {
     DETF_CREATOR_BOND_NFT_ID,
@@ -39,7 +48,12 @@ import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol
  *      Users lock LP tokens for a duration and receive boosted reward shares.
  *      The DETF diamond owns this vault and is the only entity that can create lock positions.
  */
-contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, MultiStepOwnableModifiers {
+contract DETFNFTVaultTarget is
+    DETFNFTVaultCommon,
+    ReentrancyLockModifiers,
+    MultiStepOwnableModifiers,
+    IDetfNftReserveDonation
+{
     // IDETFNFTVault
     using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
     using ERC721Repo for ERC721Repo.Storage;
@@ -215,8 +229,8 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
         uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
-        // Get BPT amount (LP) from the canonical share ledger (effectiveShares)
-        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
+        // N10: 4626 input is originalShares, never effectiveShares (lock bonus is reward weight only).
+        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);
         DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         // Grant approval for burn if DETF is calling
@@ -579,6 +593,213 @@ contract DETFNFTVaultTarget is DETFNFTVaultCommon, ReentrancyLockModifiers, Mult
         amount = _harvestRewardsInternal(layoutStruct, protocolTokenId, recipient);
 
         emit IDETFNFTVault.DetfNftRewardsReallocated(recipient, amount);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                          Reserve donation (D29)                        */
+    /* ---------------------------------------------------------------------- */
+
+    address private constant _PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+    uint8 private constant _PULL_TRANSFER = 0;
+    uint8 private constant _PULL_PERMIT2_ALLOWANCE = 1;
+    uint8 private constant _PULL_PERMIT2_SIGNATURE = 2;
+
+    /// @inheritdoc IDetfNftReserveDonation
+    function donate(IERC20 token, uint256 amount, uint256 minLpOut, bool pretransferred, uint256 deadline)
+        external
+        nonReentrant
+        returns (uint256 lpOut)
+    {
+        lpOut = _donate(
+            msg.sender, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+        );
+    }
+
+    /// @inheritdoc IDetfNftReserveDonation
+    function donate(
+        address donor,
+        IERC20 token,
+        uint256 amount,
+        uint256 minLpOut,
+        bool pretransferred,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 lpOut) {
+        if (msg.sender != address(DETFNFTVaultRepo._detf())) {
+            revert NotAuthorized(msg.sender);
+        }
+        if (donor == address(0)) revert NotAuthorized(address(0));
+        lpOut = _donate(
+            donor, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+        );
+    }
+
+    /// @inheritdoc IDetfNftReserveDonation
+    function donateWithPermit2Allowance(IERC20 token, uint256 amount, uint256 minLpOut, uint256 deadline)
+        external
+        nonReentrant
+        returns (uint256 lpOut)
+    {
+        lpOut = _donate(
+            msg.sender, token, amount, minLpOut, false, deadline, _PULL_PERMIT2_ALLOWANCE, bytes("")
+        );
+    }
+
+    /// @inheritdoc IDetfNftReserveDonation
+    function donateWithPermit2Signature(
+        IERC20 token,
+        uint256 amount,
+        uint256 minLpOut,
+        uint256 deadline,
+        bytes calldata permit2Data
+    ) external nonReentrant returns (uint256 lpOut) {
+        lpOut = _donate(
+            msg.sender, token, amount, minLpOut, false, deadline, _PULL_PERMIT2_SIGNATURE, permit2Data
+        );
+    }
+
+    /// @inheritdoc IDetfNftReserveDonation
+    function previewDonate(IERC20 token, uint256 amount) external view returns (uint256 lpOut) {
+        if (amount == 0) return 0;
+        address detf_ = address(DETFNFTVaultRepo._detf());
+        if (!_staticIsReserveLive(detf_)) return 0;
+        if (address(token) == address(DETFNFTVaultRepo._lpToken())) {
+            return amount;
+        }
+        (bool ok_, bytes memory ret_) =
+            detf_.staticcall(abi.encodeCall(IDetfReserveDonation.previewJoinDonatedCapital, (token, amount)));
+        if (!ok_ || ret_.length < 32) return 0;
+        return abi.decode(ret_, (uint256));
+    }
+
+    function _donate(
+        address donor_,
+        IERC20 token_,
+        uint256 amount_,
+        uint256 minLpOut_,
+        bool pretransferred_,
+        uint256 deadline_,
+        uint8 pullMode_,
+        bytes memory permit2Data_
+    ) private returns (uint256 lpOut_) {
+        if (amount_ == 0) revert ZeroAmount();
+        if (DETFBondNFTMathLib._isDeadlineExceeded(deadline_, block.timestamp)) {
+            revert DeadlineExceeded(deadline_, block.timestamp);
+        }
+        IDetf detf_ = DETFNFTVaultRepo._detf();
+        _requireDetfLiveAndEnabled(detf_);
+
+        IERC20 lp_ = DETFNFTVaultRepo._lpToken();
+        uint256 lpBefore_ = lp_.balanceOf(address(this));
+        uint256 amountIn_;
+
+        if (address(token_) == address(lp_)) {
+            if (pretransferred_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+            }
+            amountIn_ = _pullDonate(token_, amount_, donor_, false, pullMode_, permit2Data_);
+            lpOut_ = lp_.balanceOf(address(this)) - lpBefore_;
+            if (lpOut_ == 0) revert ZeroAmount();
+            _creditId0(lpBefore_, lpOut_);
+            if (lpOut_ < minLpOut_) {
+                revert IStandardExchangeErrors.MinAmountNotMet(minLpOut_, lpOut_);
+            }
+            IDetfReserveDonation(address(detf_)).notifyReserveDonated();
+            emit IDetfNftReserveDonation.ReserveDonated(donor_, address(token_), amountIn_, lpOut_);
+            return lpOut_;
+        }
+
+        amountIn_ = _pullDonate(token_, amount_, donor_, pretransferred_, pullMode_, permit2Data_);
+        token_.forceApprove(address(detf_), amountIn_);
+        lpOut_ = IDetfReserveDonation(address(detf_)).joinDonatedCapital(token_, amountIn_, deadline_);
+        token_.forceApprove(address(detf_), 0);
+        if (lpOut_ == 0) revert ZeroAmount();
+        uint256 inboundLp_ = lp_.balanceOf(address(this)) - lpBefore_;
+        if (inboundLp_ < lpOut_) {
+            lpOut_ = inboundLp_;
+        }
+        if (lpOut_ == 0) revert ZeroAmount();
+        _creditId0(lpBefore_, lpOut_);
+        if (lpOut_ < minLpOut_) {
+            revert IStandardExchangeErrors.MinAmountNotMet(minLpOut_, lpOut_);
+        }
+        IDetfReserveDonation(address(detf_)).notifyReserveDonated();
+        emit IDetfNftReserveDonation.ReserveDonated(donor_, address(token_), amountIn_, lpOut_);
+    }
+
+    function _requireDetfLiveAndEnabled(IDetf detf_) private view {
+        address detfAddr_ = address(detf_);
+        address oracle_ = address(StandardVaultRepo._feeOracle());
+        if (oracle_ != address(0)) {
+            try IVaultRegistryDisableQuery(oracle_).isDisabled(detfAddr_) returns (bool disabled_) {
+                if (disabled_) revert IVaultRegistryDisableQuery.VaultDisabled(detfAddr_);
+            } catch {}
+        }
+        if (!_staticIsReserveLive(detfAddr_)) revert ReserveNotLive();
+    }
+
+    function _staticIsReserveLive(address detfAddr_) private view returns (bool) {
+        if (detfAddr_ == address(0) || detfAddr_.code.length == 0) return false;
+        (bool ok_, bytes memory ret_) =
+            detfAddr_.staticcall(abi.encodeWithSelector(IDetfReserveDonation.isReserveLive.selector));
+        if (!ok_ || ret_.length < 32) return false;
+        return abi.decode(ret_, (bool));
+    }
+
+    function _pullDonate(
+        IERC20 token_,
+        uint256 amount_,
+        address from_,
+        bool pretransferred_,
+        uint8 pullMode_,
+        bytes memory permit2Data_
+    ) private returns (uint256 actual_) {
+        if (pretransferred_) {
+            uint256 bal_ = token_.balanceOf(address(this));
+            uint256 booked_ = 0;
+            if (address(token_) == address(DETFNFTVaultRepo._detf())) {
+                booked_ = DETFNFTVaultRepo._lastRewardTokenBalance();
+            }
+            uint256 surplus_ = bal_ > booked_ ? bal_ - booked_ : 0;
+            if (surplus_ == 0) revert ZeroAmount();
+            if (amount_ > surplus_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, surplus_);
+            }
+            return amount_;
+        }
+        uint256 before_ = token_.balanceOf(address(this));
+        if (pullMode_ == _PULL_PERMIT2_ALLOWANCE) {
+            IAllowanceTransfer(_PERMIT2).transferFrom(from_, address(this), uint160(amount_), address(token_));
+        } else if (pullMode_ == _PULL_PERMIT2_SIGNATURE) {
+            _pullPermit2Signature(token_, amount_, from_, permit2Data_);
+        } else {
+            token_.safeTransferFrom(from_, address(this), amount_);
+        }
+        actual_ = token_.balanceOf(address(this)) - before_;
+        if (actual_ == 0) revert ZeroAmount();
+    }
+
+    function _pullPermit2Signature(
+        IERC20 token_,
+        uint256 amount_,
+        address from_,
+        bytes memory permit2Data_
+    ) private {
+        (ISignatureTransfer.PermitTransferFrom memory permit_, bytes memory signature_) =
+            abi.decode(permit2Data_, (ISignatureTransfer.PermitTransferFrom, bytes));
+        if (permit_.permitted.token != address(token_)) revert InvalidPermit2Data();
+        ISignatureTransfer.SignatureTransferDetails memory details_ = ISignatureTransfer
+            .SignatureTransferDetails({to: address(this), requestedAmount: amount_});
+        ISignatureTransfer(_PERMIT2).permitTransferFrom(permit_, details_, from_, signature_);
+    }
+
+    function _creditId0(uint256 lpBefore_, uint256 lpOut_) private {
+        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+        uint256 shares_ = DETFNFTVaultRepo._convertToSharesAtLpReserve(layoutStruct, lpOut_, lpBefore_);
+        if (shares_ == 0) revert ZeroAmount();
+        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+        uint256 protocolId_ = layoutStruct.detfNFTId;
+        DETFNFTVaultRepo._addToPosition(layoutStruct, protocolId_, shares_);
+        emit IDETFNFTVault.DETFNFTUpdated(protocolId_, lpOut_, layoutStruct.totalShares);
     }
 
     /* ---------------------------------------------------------------------- */

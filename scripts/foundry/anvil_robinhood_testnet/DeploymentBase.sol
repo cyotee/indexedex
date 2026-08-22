@@ -7,12 +7,18 @@ import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_T
 
 /// @title DeploymentBase
 /// @notice Shared base for Robinhood testnet (46630) launch groups.
-/// @dev Same signed-broadcast path on public 46630 and on a local Anvil fork.
+/// @dev Local Anvil defaults to Dev 0 + `--unlocked`. `--live` uses DEPLOYER_ADDRESS.
 ///      Anvil node flags (`--disable-code-size-limit`) are shell-only, not script cheats.
 abstract contract DeploymentBase is Script {
     string internal constant OUT_DIR = "deployments/anvil_robinhood_testnet";
     uint256 internal constant EXPECTED_CHAIN_ID = 46630;
 
+    /// @dev Anvil account(0) — deployer / owner / first-bonder when env is unset.
+    address internal constant DEFAULT_DEPLOYER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+    /// @dev Anvil account(1) — UI wallet default on local forks.
+    address internal constant DEFAULT_UI_WALLET = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+
+    uint256 internal privateKey;
     address internal deployer;
     address internal owner;
     address internal uiWallet;
@@ -53,8 +59,18 @@ abstract contract DeploymentBase is Script {
                 deployerEnv = sender;
             } catch {}
         }
-        require(deployerEnv != address(0), "anvil_robinhood_testnet: DEPLOYER_ADDRESS is required");
-        deployer = deployerEnv;
+        if (deployerEnv == address(0)) {
+            try vm.envAddress("DEV_ADDRESS") returns (address dev) {
+                deployerEnv = dev;
+            } catch {}
+        }
+        deployer = deployerEnv == address(0) ? DEFAULT_DEPLOYER : deployerEnv;
+
+        try vm.envUint("PRIVATE_KEY") returns (uint256 envKey) {
+            privateKey = envKey;
+        } catch {
+            privateKey = 0;
+        }
 
         try vm.envAddress("OWNER") returns (address envOwner) {
             owner = envOwner == address(0) ? deployer : envOwner;
@@ -63,9 +79,9 @@ abstract contract DeploymentBase is Script {
         }
 
         try vm.envAddress("UI_WALLET") returns (address envUi) {
-            uiWallet = envUi == address(0) ? deployer : envUi;
+            uiWallet = envUi == address(0) ? DEFAULT_UI_WALLET : envUi;
         } catch {
-            uiWallet = deployer;
+            uiWallet = DEFAULT_UI_WALLET;
         }
     }
 
@@ -76,9 +92,13 @@ abstract contract DeploymentBase is Script {
         );
     }
 
-    /// @notice Broadcast as `--sender` / `DEPLOYER_ADDRESS`. Cast wallet signs.
+    /// @notice Broadcast as `--sender`. Local Anvil uses `--unlocked`; `--live` uses the cast wallet.
     function _broadcast() internal {
-        vm.startBroadcast();
+        if (privateKey != 0) {
+            vm.startBroadcast(privateKey);
+        } else {
+            vm.startBroadcast();
+        }
     }
 
     function _ensureOutDir() internal {

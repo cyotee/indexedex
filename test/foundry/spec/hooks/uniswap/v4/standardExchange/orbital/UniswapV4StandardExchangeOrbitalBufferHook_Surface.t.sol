@@ -104,7 +104,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
         assertTrue(_contains(funcs_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
-        assertEq(funcs_.length, 4, "J1 SeFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+        assertTrue(_contains(funcs_, IHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+        assertEq(funcs_.length, 6, "J1 SeFacet facetFuncs length");
     }
 
     /* ---------------------------------------------------------------------- */

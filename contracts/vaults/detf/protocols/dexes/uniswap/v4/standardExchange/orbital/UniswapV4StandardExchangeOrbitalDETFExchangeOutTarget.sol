@@ -45,13 +45,13 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFExchangeOutTarget is
         uint256 /* deadline_ */
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
+        _realizeExpansionIfNeeded();
         if (!_isBurningAllowed()) {
             revert Repo.BurningNotAllowed(_syntheticPrice(), Repo._layoutStruct().burnThreshold);
         }
         if (recipient_ == address(0)) recipient_ = msg.sender;
         _requireBurnTokenOut(tokenOut_);
 
-        _realizeExpansionIfNeeded();
         uint256 pulled_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
         BurnExecResidual memory res = _burnAndRemoveNftLp(pulled_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);

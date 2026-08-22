@@ -6,15 +6,16 @@ import {console2} from "forge-std/console2.sol";
 import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 
 /// @title DeploymentBase
-/// @notice Shared base for Anvil Robinhood-mainnet-fork staged deploys (chain id 4663).
-/// @dev Stages 00–13 = lab; 14–21 = fee-DETF (CHIR); 22 = unified frontend export.
+/// @notice Shared base for Anvil Robinhood-mainnet-fork architecture deploys (chain id 4663).
+/// @dev Groups 00–03 deploy Crane + IndexedEx platform + Uni V4 SE / Protocol DETF packages.
+///      No test tokens. No DETF instances. Anvil node flags stay in the shell wrapper.
 abstract contract DeploymentBase is Script {
     string internal constant OUT_DIR = "deployments/anvil_robinhood_main";
     uint256 internal constant EXPECTED_CHAIN_ID = 4663;
 
-    /// @dev Anvil account(0) — deployer / owner / SENDER.
+    /// @dev Anvil account(0) — deployer / owner when env is unset.
     address internal constant DEFAULT_DEPLOYER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-    /// @dev Anvil account(1) — UI wallet.
+    /// @dev Anvil account(1) — UI wallet default (unused by architecture groups).
     address internal constant DEFAULT_UI_WALLET = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     uint256 internal privateKey;
@@ -49,15 +50,21 @@ abstract contract DeploymentBase is Script {
     }
 
     function _loadConfig() internal {
-        try vm.envAddress("SENDER") returns (address sender) {
-            if (sender != address(0)) {
-                deployer = sender;
-            } else {
-                deployer = DEFAULT_DEPLOYER;
-            }
-        } catch {
-            deployer = DEFAULT_DEPLOYER;
+        address deployerEnv;
+        try vm.envAddress("DEPLOYER_ADDRESS") returns (address envDeployer) {
+            deployerEnv = envDeployer;
+        } catch {}
+        if (deployerEnv == address(0)) {
+            try vm.envAddress("SENDER") returns (address sender) {
+                deployerEnv = sender;
+            } catch {}
         }
+        if (deployerEnv == address(0)) {
+            try vm.envAddress("DEV_ADDRESS") returns (address dev) {
+                deployerEnv = dev;
+            } catch {}
+        }
+        deployer = deployerEnv == address(0) ? DEFAULT_DEPLOYER : deployerEnv;
 
         try vm.envUint("PRIVATE_KEY") returns (uint256 envKey) {
             privateKey = envKey;
@@ -83,6 +90,15 @@ abstract contract DeploymentBase is Script {
         require(block.chainid == ROBINHOOD_MAIN.CHAIN_ID, "anvil_robinhood_main: ROBINHOOD_MAIN.CHAIN_ID mismatch");
     }
 
+    /// @notice Broadcast as `--sender`. Cast wallet or Anvil `--unlocked` signs.
+    function _broadcast() internal {
+        if (privateKey != 0) {
+            vm.startBroadcast(privateKey);
+        } else {
+            vm.startBroadcast();
+        }
+    }
+
     function _ensureOutDir() internal {
         vm.createDir(_outDir(), true);
     }
@@ -105,18 +121,6 @@ abstract contract DeploymentBase is Script {
             }
         } catch {
             return (address(0), false);
-        }
-    }
-
-    function _readUintSafe(string memory file, string memory key) internal view returns (uint256 value, bool exists) {
-        try vm.readFile(_artifactPath(file)) returns (string memory json) {
-            try vm.parseJsonUint(json, string.concat(".", key)) returns (uint256 parsed) {
-                return (parsed, true);
-            } catch {
-                return (0, false);
-            }
-        } catch {
-            return (0, false);
         }
     }
 

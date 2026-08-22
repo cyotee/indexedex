@@ -105,6 +105,22 @@ interface IUniswapV4SingleStandardExchangeDETF {
 
     function previewRedeemClaim(uint256 claimAmount, IERC20 tokenOut) external view returns (uint256 amountOut);
 
+    /// @notice Bond NFT only. Settle `token` and single-sided join LP to the Bond NFT. No DETF mint. No expansion.
+    function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
+        external
+        returns (uint256 lpOut);
+
+    function previewJoinDonatedCapital(IERC20 token, uint256 amount)
+        external
+        view
+        returns (uint256 lpOut);
+
+    /// @notice Bond NFT only. D2 top-up after donate credits id 0.
+    function notifyReserveDonated() external;
+
+    /// @notice Forwards to Bond NFT donate with `minLpOut = 0`. Pretransfer destination is the NFT. Void ABI freeze.
+    function donate(IERC20 token, uint256 amount, bool pretransferred) external;
+
     /// @notice NFT vault / claim package: unwind protocol LP principal to pair for recipient.
     function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 pairOut);
 

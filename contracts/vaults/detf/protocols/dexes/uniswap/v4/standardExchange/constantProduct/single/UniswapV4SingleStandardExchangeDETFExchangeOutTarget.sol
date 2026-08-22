@@ -31,6 +31,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeOutTarget is
         uint256 /* deadline_ */
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
+        _realizeExpansionIfNeeded();
         if (!_isBurningAllowed()) {
             Repo.Storage storage s0 = Repo._layoutStruct();
             revert Repo.BurningNotAllowed(_syntheticPrice(), s0.burnThreshold);

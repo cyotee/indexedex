@@ -2,7 +2,7 @@
 
 **Name:** `UniswapV4StandardExchangeWeightedBufferHook`  
 **Date:** 2026-08-05  
-**Status:** **Draft v0.6 — product law (plan-ready)**  
+**Status:** **Draft v0.7 — product law (plan-ready) + DETF owner-during-lock (Alignment D30)**  
 **Package path:** `contracts/hooks/uniswap/v4/standardExchange/weighted/`  
 **Package kind:** IndexedEx **Uniswap V4 hook diamond package** that is **also** a vault-compatible multi-asset surface. Instance deploys via the **shared Hook Diamond Package Callback Factory** + Vault Registry `deployHookVault` (CREATE2-mined proxy). **Not** a concentrated-liquidity (CL) reimplementation. **Not** the raw-inventory monomorph `UniswapV4WeightedSwapHook` under `contracts/hooks/uniswap/v4/weighted/`.
 
@@ -870,9 +870,24 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 
 ---
 
+## 8a. DETF owner path (Alignment D9 / D30) — LOCKED 2026-08-22
+
+When this hook is a true-DETF reserve, the DETF diamond is owner and `ownerOnlyLiquidity` is on.
+
+Required:
+
+- Owner-only exact-in / exact-out swap between reserve legs on the shared weighted book.
+- Must succeed when `PoolManager` is already unlocked (current unlock or internal book settlement). **Do not** use Uniswap SwapRouter for DETF D15/D29.
+- Same trading fee as public swaps on that book.
+- Owner LP add/remove in that same lock state. Owner `depositSingle` at `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**.
+
+Public swaps stay public. Non-owner cannot use the owner path. Alignment D15 last-resort DETF buy is that owner exact-out swap of leftover non-DETF → DETF on the residual book.
+
+---
+
 ## 9. Out of scope (explicit)
 
-- Building any DETF family on this hook.  
+- Building any DETF family **package** in this hook repo (the DETF is a consumer). Owner-during-lock ABI **is** in scope (D30).  
 - Migrating the raw Weighted monomorph onto this package.  
 - LBP weight ramps, Morpho buffering, native ETH, fee-on-transfer pair tokens.  
 - Zero-SE “just use weighted” mode inside this package.
@@ -889,6 +904,7 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 | **v0.4** | 2026-08-05 | Q13–Q18: PRODUCT_ID; LP caps; ensurePairPools; gross buffer; n∈{2,3,4,8}; forks ETH+Base+4663 |
 | **v0.5** | 2026-08-05 | Q19–Q24: MultiAssetLiquidity=hook ABI 1:1; inventory WAD per decimals; D42a ship-if-closed-form; partial floor order; event fields D72b; LP Permit2 AllowanceTransfer only (no SignatureTransfer) |
 | **v0.6** | 2026-08-05 | Clarity review: Q25 dual inv/rated scales; Q26 live SE `balanceOf` is book; Q27 `joinSingleAssetExactOut` required if Weighted peer has it; Q28 scrub multi-leg “zap” wording; fix DoD § ref; growth measure wording |
+| **v0.7** | 2026-08-22 | Alignment D9/D30: owner exact-in/out swap + LP while PoolManager is already unlocked (DETF D15 / D29). |
 
 ---
 
@@ -896,4 +912,4 @@ Production-first (`indexedex-testing` + `indexedex-uniswap-v4-hook-packages`):
 
 Implementation plan is co-located: [`UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md) (**v1.0**). **Only remaining implementor branch:** Phase 0a closed-form audit → ship or omit **`withdrawSingleExactOut`** / exit exact-token-out (Q21 / D42a). **`joinSingleAssetExactOut` is required** (Q27). Everything else is locked product law — implement per plan phases 0–K.
 
-**End of PRD — UniswapV4StandardExchangeWeightedBufferHook (Draft v0.6)**
+**End of PRD — UniswapV4StandardExchangeWeightedBufferHook (Draft v0.7)**

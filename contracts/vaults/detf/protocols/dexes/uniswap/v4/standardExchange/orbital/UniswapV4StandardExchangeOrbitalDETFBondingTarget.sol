@@ -10,6 +10,7 @@ import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLi
 import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {
@@ -302,7 +303,12 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
         s.bondNftVault.retireMaturePosition(tokenId_, recipient_);
         _pullBondLp(lpOut_);
         (uint256 aDetf_, uint256 a0_, uint256 a1_) = _removeLiquidity(lpOut_, address(this));
-        if (aDetf_ > 0) _burnDetf(address(this), aDetf_);
+        if (aDetf_ > 0) {
+            uint256 lpRejoin_ = _depositSingleMinRejoin(address(this), aDetf_, _bondLpHolder());
+            if (lpRejoin_ == 0) revert Repo.ZeroAmount();
+            s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpRejoin_);
+            _topUpFeeCreatorShares();
+        }
         if (a0_ < minAmountsOut_[1] || a1_ < minAmountsOut_[2]) {
             revert Repo.SlippageExceeded(minAmountsOut_[1] + minAmountsOut_[2], a0_ + a1_);
         }
@@ -416,6 +422,54 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
         }
     }
 
+    function joinDonatedCapital(IERC20 token_, uint256 amount_, uint256 deadline_)
+        external
+        nonReentrant
+        returns (uint256 lpOut_)
+    {
+        _requireBondNft();
+        _requireNotDisabled();
+        _requireReserveLive();
+        _requireActive(deadline_, amount_);
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(token_) == s.reserveHook) {
+            revert Repo.InvalidRoute(token_, s.pairToken0);
+        }
+        if (address(token_) == address(this)) {
+            uint256 pulled_ = _pullToken(token_, amount_, false);
+            lpOut_ = _depositSingleMinRejoin(address(this), pulled_, _bondLpHolder());
+        } else {
+            PairLegRating memory r_ = _settleToPairLeg(token_, amount_, false, deadline_);
+            address pair_ = r_.fundedPairLeg == 0 ? address(s.pairToken0) : address(s.pairToken1);
+            lpOut_ = _depositSingleMinRejoin(pair_, r_.pairNotionalNative, _bondLpHolder());
+        }
+        if (lpOut_ == 0) revert Repo.ZeroAmount();
+        _syncAllExpectedHoldReserves();
+    }
+
+    function previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        external
+        view
+        returns (uint256 lpOut_)
+    {
+        return _previewJoinDonatedCapital(token_, amount_);
+    }
+
+    function notifyReserveDonated() external {
+        _requireBondNft();
+        _topUpFeeCreatorShares();
+    }
+
+    function donate(IERC20 token_, uint256 amount_, bool pretransferred_) external {
+        _requireNotDisabled();
+        Repo.Storage storage s = Repo._layoutStruct();
+        address nft_ = address(s.bondNftVault);
+        if (nft_ == address(0)) revert Repo.ReserveBondNftNotWired();
+        IDetfNftReserveDonation(nft_).donate(
+            msg.sender, token_, amount_, 0, pretransferred_, block.timestamp + 1
+        );
+    }
+
     function _buyClaim(
         uint256 detfAmount_,
         uint256 minClaimOut_,
@@ -454,6 +508,7 @@ abstract contract UniswapV4StandardExchangeOrbitalDETFBondingTarget is UniswapV4
         _requireReserveLive();
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _realizeExpansionIfNeeded();
         if (address(tokenOut_) != address(this)) {
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }

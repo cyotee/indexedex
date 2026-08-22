@@ -14,6 +14,8 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
@@ -121,6 +123,69 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
             _bufferToken(ii, amountIn);
         } else {
             _creditRawIntentional(ii, amountIn);
+        }
+        _syncVaultReserves();
+    }
+
+    /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        if (amountIn == 0) revert ZeroAmount();
+        if (tokenIn == tokenOut) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        _tokenIndex(tokenIn);
+        _tokenIndex(tokenOut);
+        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        if (amountOut < minAmountOut) revert Slippage();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+    }
+
+    /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        if (amountOut == 0) revert ZeroAmount();
+        if (tokenIn == tokenOut) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        amountIn = _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        if (amountIn > maxAmountIn) revert Slippage();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+    }
+
+    function _onlyHookOwner() private view {
+        if (msg.sender != MultiStepOwnableRepo._owner()) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
+    }
+
+    function _payOwnerSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut) private {
+        uint8 j = _tokenIndex(tokenOut);
+        uint8 i = _tokenIndex(tokenIn);
+        Repo.Layout storage l = Repo._layout();
+        if (l.standardExchanges[j] != address(0)) {
+            _unwrapExactTokenOut(j, amountOut, msg.sender);
+        } else {
+            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
+            _debitRawIntentional(j, amountOut);
+            IERC20(tokenOut).safeTransfer(msg.sender, amountOut);
+        }
+        if (l.standardExchanges[i] != address(0)) {
+            _bufferToken(i, amountIn);
+        } else {
+            _creditRawIntentional(i, amountIn);
         }
         _syncVaultReserves();
     }

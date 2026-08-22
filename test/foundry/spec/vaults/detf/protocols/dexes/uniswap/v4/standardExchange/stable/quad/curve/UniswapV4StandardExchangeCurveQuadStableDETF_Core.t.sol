@@ -460,9 +460,9 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         uint256 claimOut = info.depositClaim(IERC20(info.pairToken(0)), 2 ether, 0, detfUser, false, _dl());
         require(claimOut > 0, "claim minted");
         IERC20(info.rebasingClaimToken()).approve(d, type(uint256).max);
-        vm.expectRevert();
-        info.redeemClaim(claimOut / 2, IERC20(d), 0, detfUser, _dl());
+        uint256 paid = info.redeemClaim(claimOut / 2, IERC20(d), 0, detfUser, _dl());
         vm.stopPrank();
+        assertGt(paid, 0, "D15 DETF-only redeem");
     }
 
     function test_claim_redeem_pair() public {
@@ -475,13 +475,16 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Core is
         amts[1] = BOND_AMT;
         amts[2] = BOND_AMT;
         _firstBondOn(d, amts, info.pairToken(0));
+        IERC20 pairOut_ = IERC20(info.pairToken(2));
         vm.startPrank(detfUser);
         IERC20(info.pairToken(0)).approve(d, type(uint256).max);
         uint256 claimOut = info.depositClaim(IERC20(info.pairToken(0)), 3 ether, 0, detfUser, false, _dl());
         IERC20(info.rebasingClaimToken()).approve(d, type(uint256).max);
-        uint256 paid = info.redeemClaim(claimOut / 2, IERC20(info.pairToken(2)), 0, detfUser, _dl());
         vm.stopPrank();
-        assertGt(paid, 0);
+        // Cache tokenOut before expectRevert: pairToken() would consume the cheatcode.
+        vm.prank(detfUser);
+        vm.expectRevert(abi.encodeWithSelector(Repo.InvalidRoute.selector, IERC20(d), pairOut_));
+        info.redeemClaim(claimOut / 2, pairOut_, 0, detfUser, _dl());
     }
 
     /* ---------------------------------------------------------------------- */

@@ -2,6 +2,10 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { getResearchArticle, getResearchSlugs } from '../../content/research'
+import { BondVsMintView } from '../components/BondVsMintView'
+import { DetfTypesView } from '../components/DetfTypesView'
+import { DetfView } from '../components/DetfView'
+import { RateProvidersView } from '../components/RateProvidersView'
 import { ResearchArticleView } from '../components/ResearchArticleView'
 
 type PageProps = {
@@ -15,10 +19,10 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: PageProps): Metadata {
   const article = getResearchArticle(params.slug)
   if (!article) {
-    return { title: 'Research note — IndexedEx' }
+    return { title: 'Research note — Down To Finance' }
   }
   return {
-    title: `${article.title} — Research — IndexedEx`,
+    title: `${article.title} — Research — Down To Finance`,
     description: article.summary,
   }
 }
@@ -26,5 +30,17 @@ export function generateMetadata({ params }: PageProps): Metadata {
 export default function ResearchArticlePage({ params }: PageProps) {
   const article = getResearchArticle(params.slug)
   if (!article) notFound()
+  if (article.slug === 'bond-vs-mint') {
+    return <BondVsMintView article={article} />
+  }
+  if (article.slug === 'detf') {
+    return <DetfView article={article} />
+  }
+  if (article.slug === 'rate-providers') {
+    return <RateProvidersView article={article} />
+  }
+  if (article.slug === 'detf-types') {
+    return <DetfTypesView article={article} />
+  }
   return <ResearchArticleView article={article} />
 }

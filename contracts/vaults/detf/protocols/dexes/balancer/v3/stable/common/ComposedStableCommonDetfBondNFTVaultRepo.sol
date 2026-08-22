@@ -392,6 +392,12 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         _removeFromPosition(_layoutStruct(), tokenId_, shares_);
     }
 
+    /**
+     * @notice Converts LP to shares.
+     * @dev N10 deferred: this family still reads diamond `reserveOfToken` (LP is not on this NFT).
+     *      Do not apply the shared Bond NFT physical-LP / `totalOriginalShares` formula until D13
+     *      custody moves reserve LP onto `DETFNFTVault`. Donate is not shipped on Composed.
+     */
     function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_) internal view returns (uint256 shares_) {
         uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
         uint256 totalShares_ = layoutStruct_.totalShares;
@@ -407,6 +413,11 @@ library ComposedStableCommonDetfBondNFTVaultRepo {
         return _convertToShares(_layoutStruct(), lpAmount_);
     }
 
+    /**
+     * @notice Converts shares to LP.
+     * @dev N10 deferred: diamond `reserveOfToken` until D13 NFT custody. Input at close/claim
+     *      call sites must still be originalShares (not effectiveShares).
+     */
     function _convertToAssets(Storage storage layoutStruct_, uint256 shares_) internal view returns (uint256 lpAmount_) {
         uint256 totalLpReserve = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
         uint256 totalShares_ = layoutStruct_.totalShares;

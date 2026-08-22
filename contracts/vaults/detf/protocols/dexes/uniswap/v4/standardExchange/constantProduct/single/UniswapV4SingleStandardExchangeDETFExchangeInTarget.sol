@@ -69,6 +69,7 @@ abstract contract UniswapV4SingleStandardExchangeDETFExchangeInTarget is
         uint256 deadline_
     ) private returns (uint256 userOut_) {
         _requireReserveLive();
+        _realizeExpansionIfNeeded();
         if (!_isMintingAllowed()) {
             revert Repo.MintingNotAllowed(_syntheticPrice(), Repo._layoutStruct().mintThreshold);
         }

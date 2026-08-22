@@ -74,7 +74,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
         assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
-        assertEq(funcs_.length, 35, "J1 SeFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+        assertTrue(_contains(funcs_, IHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+        assertEq(funcs_.length, 37, "J1 SeFacet facetFuncs length");
     }
 
     /// @notice J1: deposit / zap / SE-share multipath money entrypoints are cut.

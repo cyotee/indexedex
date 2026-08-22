@@ -52,12 +52,13 @@ test.describe('Connected wallet UI (DTF)', () => {
 })
 
 test.describe('Shell without requiring chain', () => {
-  test('primary nav exposes Earn Swap Portfolio Token', async ({ walletPage }) => {
+  test('primary nav exposes Explore DETFs Create You Learn', async ({ walletPage }) => {
     await walletPage.goto('/')
     const nav = walletPage.getByRole('navigation')
-    await expect(nav.getByRole('link', { name: 'Earn', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Swap', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Portfolio', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'Token', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Explore', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'DETFs', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Create', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'You', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Learn', exact: true })).toBeVisible()
   })
 })

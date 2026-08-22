@@ -33,6 +33,8 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.redeemClaim.selector), "redeemClaim");
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.buyClaim.selector), "buyClaim");
         assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.closeBondMature.selector), "closeBondMature");
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.joinDonatedCapital.selector), "joinDonated");
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.donate.selector), "donate");
         assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
 
         bytes4[] memory ifuncs_ = multiVaultWeightedDetfInfoFacet.facetFuncs();

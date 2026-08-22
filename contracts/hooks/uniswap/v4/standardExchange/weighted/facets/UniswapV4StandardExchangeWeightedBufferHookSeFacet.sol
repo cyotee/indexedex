@@ -10,6 +10,9 @@ import {
 import {
     UniswapV4StandardExchangeWeightedBufferHookSeTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol";
+import {
+    IUniswapV4StandardExchangeWeightedBufferHook
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
 
 contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     UniswapV4StandardExchangeWeightedBufferHookSeTarget,
@@ -27,11 +30,13 @@ contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](4);
+        funcs = new bytes4[](6);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
+        funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactIn.selector;
+        funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactOut.selector;
     }
 
     function facetMetadata()

@@ -6,20 +6,20 @@ describe('lab flags', () => {
     vi.resetModules()
   })
 
-  it('isEarnDetfEmbedEnabled defaults false', async () => {
+  it('isEarnDetfEmbedEnabled defaults on unless explicitly "false"', async () => {
     vi.stubEnv('NEXT_PUBLIC_EARN_DETF_EMBED', undefined)
     const { isEarnDetfEmbedEnabled } = await import('./lab')
-    expect(isEarnDetfEmbedEnabled()).toBe(false)
+    expect(isEarnDetfEmbedEnabled()).toBe(true)
   })
 
-  it('isEarnDetfEmbedEnabled true only when set to "true"', async () => {
+  it('isEarnDetfEmbedEnabled true when set to "true"', async () => {
     vi.stubEnv('NEXT_PUBLIC_EARN_DETF_EMBED', 'true')
     const { isEarnDetfEmbedEnabled } = await import('./lab')
     expect(isEarnDetfEmbedEnabled()).toBe(true)
   })
 
-  it('isEarnDetfEmbedEnabled rejects "1" / "yes"', async () => {
-    vi.stubEnv('NEXT_PUBLIC_EARN_DETF_EMBED', '1')
+  it('isEarnDetfEmbedEnabled false only when set to "false"', async () => {
+    vi.stubEnv('NEXT_PUBLIC_EARN_DETF_EMBED', 'false')
     const { isEarnDetfEmbedEnabled } = await import('./lab')
     expect(isEarnDetfEmbedEnabled()).toBe(false)
   })

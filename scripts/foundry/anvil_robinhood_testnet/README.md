@@ -3,12 +3,13 @@
 **PRD:** [`docs/ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_PRD.md`](../../../docs/ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_PRD.md) v2.0  
 **Plan:** [`docs/ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md`](../../../docs/ANVIL_ROBINHOOD_TESTNET_DEMO_DEPLOY_IMPLEMENTATION_AND_TEST_PLAN.md)
 
-These Foundry groups are the **46630 deploy path**. Set `DEPLOYER_ADDRESS`; forge uses `--sender` and the **cast wallet** signs (Anvil fork or public RPC). Point them at a **local Anvil fork** to rehearse and drive the UI, or `--live` to broadcast to public Robinhood Chain Testnet.
+These Foundry groups are the **46630 deploy path**. Local Anvil defaults to **Anvil Dev 0** with `--unlocked`. `--live` broadcasts to public Robinhood Chain Testnet as `DEPLOYER_ADDRESS` (cast wallet).
 
 | | Value |
 |--|--|
 | Chain id | **46630** |
-| Broadcast | `--sender $DEPLOYER_ADDRESS` (cast wallet; no `--private-key`, no `--unlocked`) |
+| Local broadcast | Anvil Dev 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`) + `--unlocked` |
+| Live broadcast | `--sender $DEPLOYER_ADDRESS` (cast wallet) |
 | Local RPC | `http://127.0.0.1:8545` (default) |
 | Live RPC | `--live` → Foundry alias `robinhood_testnet`, or `--rpc-url` |
 | Anvil node (local only) | `--chain-id 46630 --disable-code-size-limit` |
@@ -38,27 +39,27 @@ No Balancer. No pons. No Uni V3. No `vm.warp`. No nested DETFs. Demo products ar
 
 ## Local Anvil rehearsal
 
+Default signer is Anvil Dev 0. Tokens also mint to Anvil Dev 1 (`0x70997970C51812dc3A010C7d01b50e0d17dc79C8`) for the UI.
+
 ```bash
-export DEPLOYER_ADDRESS=0x...   # cast wallet account; required
-
-# Official public 46630 RPC at the remote tip (Anvil default; no historical pin).
-bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --public-rpc --fork-latest
-# --public-rpc alone still pins head-64 (prunes mid-run on this node).
-
-# Alchemy archive (needs ALCHEMY_KEY + working DNS)
-# export ALCHEMY_KEY=...
-# bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh
+# Alchemy archive (needs ALCHEMY_KEY). Restarts Anvil on :8545.
+bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh
 # wait for [SUCCESS]
 
 cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 ```
 
-No Anvil account default. `DEPLOYER_ADDRESS` must have ETH on the fork. Anvil may run `--disable-code-size-limit` (node flag).
+Official public 46630 RPC at the remote tip (no historical pin):
+
+```bash
+bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --public-rpc --fork-latest
+```
+
+`--public-rpc` alone still pins head-64 (this node prunes mid-run). Anvil may run `--disable-code-size-limit` (node flag).
 
 If Anvil is already a 46630 fork on `:8545`:
 
 ```bash
-export DEPLOYER_ADDRESS=0x...
 bash scripts/shell/anvil_robinhood_testnet.sh all
 ```
 
@@ -69,7 +70,7 @@ If the public RPC returns `metadata is not found` mid-run, `detach-fork` dumps t
 ## Live public 46630
 
 ```bash
-export DEPLOYER_ADDRESS=0x...     # same cast wallet account as local
+export DEPLOYER_ADDRESS=0x...     # cast wallet; required for --live
 # optional: export UI_WALLET=0x...  (defaults to DEPLOYER_ADDRESS)
 bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --live
 # or:
@@ -98,7 +99,6 @@ Each leaf script premines via `UniswapV4DetfHookPremineLib` **before** `startBro
 Fresh Anvil, then SimulateLaunch only. Do **not** run this after a completed staged `all`.
 
 ```bash
-export DEPLOYER_ADDRESS=0x...
 bash scripts/shell/anvil_robinhood_testnet.sh simulate --restart-anvil --dry-run
 # or omit --dry-run to broadcast 01–06 in one script
 ```
@@ -112,5 +112,5 @@ NEXT_PUBLIC_LOCAL_RPC_URL=http://127.0.0.1:8545 \
 npm run dev -w @indexedex/app-dtf
 ```
 
-Wallet: RPC `http://127.0.0.1:8545`, chain id **46630**, currency ETH.  
+Wallet: RPC `http://127.0.0.1:8545`, chain id **46630**, currency ETH. Import Anvil Dev 0 (deployer) or Dev 1 (UI).  
 Lists `TTCHIR` and `TTDOL-Q`. `/mint` offers `TTRICH`, `TTUSDG`, `TTUSDE`, `TTWETH` (not canonical WETH, not faucet stocks). Canonical RH WETH still exists for V4/Permit2 pins; demo pools wrap nothing and mint `TTWETH` instead.

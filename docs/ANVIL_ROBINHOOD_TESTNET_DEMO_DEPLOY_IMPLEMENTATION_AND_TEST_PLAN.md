@@ -56,7 +56,7 @@ exploratory — reconcile to this plan; they are not accepted SoT.
 5. **Do** script first bond + D47 richness on all ten DETFs.  
 6. **Do not** `vm.warp` to mature bonds. **Do not** `pushSingleTokenFee` / donate into `TTRICH-S`.  
 7. **Do not** edit `anvil_robinhood_main/` or `anvil_robinhood_fee_detf/`. **Do not** overwrite `chain/4663/`.  
-8. Broadcast as `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet signs). Local Anvil or `--live` public 46630. Never `--private-key`. Never `--unlocked`.  
+8. Local Anvil broadcasts as Anvil Dev 0 with `--unlocked`. `--live` uses `DEPLOYER_ADDRESS` (`forge --sender`; cast wallet). Never broadcast to 4663 from this tree.  
 9. Role names only: `rateAsset`, `pairToken`, `underlyingVault`, `vaultShare`, `detfToken`, `reservePool`, `rebasingClaimToken`.  
 10. Production-first: no mocks of SUT (vaults, DETF, manager, registry, fee oracle, facets, DFPkgs).  
 11. Forge cold compile commonly takes **20–40+ minutes**. Wait for process exit. Seed `cache_forge/` + `out/` from a warm checkout before the first forge in a new worktree.
@@ -70,10 +70,10 @@ Deliver a green local path:
 ```bash
 # Repo root = lib/indexedex
 export ALCHEMY_KEY=...
-export DEPLOYER_ADDRESS=0x...
 
 bash scripts/shell/anvil_robinhood_testnet.sh all --restart-anvil
 # wait for [SUCCESS]
+# Local signer is Anvil Dev 0 (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266).
 
 cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 
@@ -99,8 +99,8 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must print 46630
 
 | Role | Address |
 |------|---------|
-| Deployer / owner / SENDER / first-bonder | `DEPLOYER_ADDRESS` (required; no Anvil #0 default) |
-| UI wallet | `UI_WALLET` or `DEPLOYER_ADDRESS` |
+| Deployer / owner / SENDER / first-bonder | Anvil Dev 0 locally; `DEPLOYER_ADDRESS` on `--live` |
+| UI wallet | Local default Anvil Dev 1; `--live` defaults to the deployer |
 
 | Env | Value |
 |-----|--------|
@@ -185,7 +185,7 @@ lib/crane/contracts/tokens/ERC20/
 | `Script_SimulateLaunch` = 01+02+03 | **01–08** |
 | README v0.4 / “later inert DETFs” | live + D47; 00–09 + DTF |
 
-**Do create** `deploy_all.sh` + `scripts/shell/anvil_robinhood_testnet.sh`. Copy `anvil_robinhood_main/deploy_all.sh` patterns: `--restart-anvil`, `--force`, `--dry-run`, commands `all` / `foundation` (00–03) / `assets` (04) / `pools` (05) / `leaves` (06) / `nests` (07) / `feesink` (08) / `export` (09) / `stageNN`. Alias `robinhood_testnet_alchemy` then `robinhood_testnet`. Anvil node: `--chain-id 46630 --disable-code-size-limit`. Broadcast as `DEPLOYER_ADDRESS` (`--sender`; cast wallet) on localhost and on `--live`.
+**Do create** `deploy_all.sh` + `scripts/shell/anvil_robinhood_testnet.sh`. Copy `anvil_robinhood_main/deploy_all.sh` patterns: `--restart-anvil`, `--force`, `--dry-run`, commands `all` / `foundation` (00–03) / `assets` (04) / `pools` (05) / `leaves` (06) / `nests` (07) / `feesink` (08) / `export` (09) / `stageNN`. Alias `robinhood_testnet_alchemy` then `robinhood_testnet`. Anvil node: `--chain-id 46630 --disable-code-size-limit`. Local Anvil: Anvil Dev 0 + `--unlocked`. `--live`: `DEPLOYER_ADDRESS` (cast wallet).
 
 **Reuse (do not rewrite):**
 
@@ -444,7 +444,7 @@ Cap iterations at a high bound (e.g. 64 per pair) and revert with a clear error 
 | Time warp | **forbidden** |
 | Fee push to TTRICH-S | **forbidden** |
 | Balancer / pons / Uni V3 | **forbidden** |
-| Public broadcast | **`--live` + `DEPLOYER_ADDRESS`**. Cast wallet signs. Local default is Anvil fork. |
+| Public broadcast | **`--live` + `DEPLOYER_ADDRESS`**. Cast wallet signs. Local Anvil default is Anvil Dev 0 + `--unlocked`. |
 | Group 09 / `chain/46630/` | **required** — new tree only; never overwrite `chain/4663/` |
 | 4663 lab / `chain/4663/` | do not touch |
 | Role names | PRD D25 |

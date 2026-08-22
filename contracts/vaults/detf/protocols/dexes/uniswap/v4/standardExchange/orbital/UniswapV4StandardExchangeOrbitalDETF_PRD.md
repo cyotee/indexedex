@@ -6,7 +6,7 @@
 
 ## Status
 
-**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+**SUPERSEDED for mint/bond/burn/claim/close/donate process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../DETF_ALIGNMENT_PRD.md) D1–D31. This file remains for family curve/token-set notes.
 
 **DRAFT v0.6** — Co-design Q1–Q17 closed; v0.6 locks FD extractable residual (incl. DETF→rateAsset), dual-capital close = residual composition, multi-leg `effectiveShares` via open-time sphere mids, mature-only sell at DETF surface (+ optional shared flag), burn usage fee, dust, creation-rate/`rateAsset` validation. Ready for product LOCK sign-off.
 

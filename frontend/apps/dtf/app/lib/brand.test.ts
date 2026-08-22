@@ -2,16 +2,16 @@ import { describe, expect, it } from 'vitest'
 
 import { getBrand, getDefaultBrandId, normalizeBrandId } from './brand'
 
-describe('site identity (Pachira app)', () => {
-  it('is always pachira', () => {
-    expect(getDefaultBrandId()).toBe('pachira')
-    expect(normalizeBrandId('indexedex')).toBe('pachira')
-    expect(normalizeBrandId(null)).toBe('pachira')
+describe('site identity (DTF app)', () => {
+  it('is always dtf', () => {
+    expect(getDefaultBrandId()).toBe('dtf')
+    expect(normalizeBrandId('indexedex')).toBe('dtf')
+    expect(normalizeBrandId(null)).toBe('dtf')
   })
 
-  it('returns Pachira brand definition', () => {
+  it('returns Down To Finance brand definition', () => {
     const brand = getBrand()
-    expect(brand.id).toBe('pachira')
-    expect(brand.name).toBe('Pachira')
+    expect(brand.id).toBe('dtf')
+    expect(brand.name).toBe('Down To Finance')
   })
 })

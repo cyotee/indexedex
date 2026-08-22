@@ -4,6 +4,10 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {
+    DETF_FEE_TO_BOND_NFT_ID,
+    DETF_FIRST_USER_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+import {
     TestBase_UniswapV4SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeDETF.sol";
 import {
@@ -79,6 +83,38 @@ contract UniswapV4SingleStandardExchangeDETF_BondTest is TestBase_UniswapV4Singl
         assertGe(IERC20(hook).balanceOf(bond), shares, "bond NFT holds user LP");
         assertEq(IERC20(hook).balanceOf(detf), 0, "diamond does not hold user bond LP");
         assertEq(detfInfo.protocolLp(), 0, "first bond creates no protocol LP");
+    }
+
+    /// @notice N10: after sell-in credits id 0, a remaining user bond does not absorb that LP.
+    /// @dev Pre-N10 haircut used physical LP / (totalShares − id0 effective), so the remaining
+    ///      user convertToAssets approached the whole NFT LP book.
+    function test_N10_userBondDoesNotAbsorbId0Lp() public {
+        address bob = makeAddr("bobN10");
+        IDETFNFTVault nft_ = IDETFNFTVault(detfInfo.bondNftVault());
+        uint256 aliceId = DETF_FIRST_USER_BOND_NFT_ID;
+        assertEq(nft_.ownerOf(aliceId), detfUser, "setUp first bond is id 3");
+
+        (uint256 bobId,) = _bootstrapViaFirstBond(bob, 50 ether);
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+        vm.prank(detfUser);
+        detfInfo.sellPositionToDetfNft(aliceId, detfUser);
+
+        uint256 bobOrig_ = nft_.originalSharesOf(bobId);
+        uint256 id0Orig_ = nft_.originalSharesOf(nft_.detfNFTId());
+        assertTrue(id0Orig_ > 0, "id 0 credited by sell-in");
+        assertTrue(bobOrig_ > 0, "bob originalShares");
+
+        address hook = detfInfo.reserveHook();
+        uint256 physical_ = IERC20(hook).balanceOf(address(nft_));
+        uint256 bobLp_ = nft_.convertToAssets(bobOrig_);
+        uint256 id0Lp_ = nft_.convertToAssets(id0Orig_);
+
+        assertTrue(physical_ > 0, "LP on NFT");
+        assertTrue(bobLp_ < physical_, "bob does not take all physical LP");
+        assertTrue(id0Lp_ > 0, "id 0 convertToAssets > 0");
+        assertTrue(bobLp_ + id0Lp_ <= physical_, "claims do not exceed physical");
+        assertTrue(bobLp_ < physical_ / 2, "bob is the smaller originalShares holder");
+        assertEq(nft_.convertToAssets(nft_.originalSharesOf(DETF_FEE_TO_BOND_NFT_ID)), 0, "id1 not 4626 LP");
     }
 
     function test_claimRewards_realizesExpansion() public {

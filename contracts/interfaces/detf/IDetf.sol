@@ -228,12 +228,14 @@ interface IDetf {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice Accepts fee donations from FeeCollector.
-     * @dev rateAsset: Single-sided deposit into the underlying vault path, unbalanced to reserve.
-     *      DETF token: Simply burned.
-     * @param token Token to donate (rateAsset or DETF token only)
-     * @param amount Amount to donate
-     * @param pretransferred Whether tokens were already transferred
+     * @notice Forwards a reserve donation to the Bond NFT (`DETF_RESERVE_DONATION_PRD` v0.3).
+     * @dev Joins accepted capital (or inbound reserve LP) onto the Bond NFT and credits
+     *      originalShares to token id 0. Mints no DETF. Does not realize expansion.
+     *      Pretransfer destination is the Bond NFT. `minLpOut` is 0 (FeeCollector).
+     *      Donor recorded on `ReserveDonated` is this caller's `msg.sender`.
+     * @param token Family mint/bond capital, DETF, or `lpToken`.
+     * @param amount Amount to donate (observed inbound / unbooked surplus is booked, not this claim alone).
+     * @param pretransferred True if non-LP tokens already sit on the Bond NFT.
      */
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 

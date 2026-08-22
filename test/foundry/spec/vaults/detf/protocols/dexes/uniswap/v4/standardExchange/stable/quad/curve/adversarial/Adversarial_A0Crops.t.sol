@@ -109,7 +109,7 @@ contract Adversarial_CurveQuad_A0Crops is TestBase_UniswapV4StandardExchangeCurv
         uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(detfUser);
         uint256 redeemAmt_ = claimBal_ / 2;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(p0_), 0, detfUser, _dl());
+        uint256 redeemOut_ = info_.redeemClaim(redeemAmt_, IERC20(instance_), 0, detfUser, _dl());
         assertGt(redeemOut_, 0, "redeemClaim after disable");
         vm.stopPrank();
     }

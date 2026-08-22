@@ -38,8 +38,10 @@ contract MultiVaultWeightedDetfExchangeInFacet_IFacet_Test is Test {
         assertEq(keccak256(bytes(name_)), keccak256(bytes("MultiVaultWeightedDetfBondingFacet")));
         assertEq(ifaces_.length, 1, "interfaces");
         assertEq(ifaces_[0], type(IMultiVaultWeightedDetfBonding).interfaceId);
-        assertEq(funcs_.length, 12, "bonding funcs");
+        assertEq(funcs_.length, 16, "bonding funcs");
         assertEq(funcs_[0], IMultiVaultWeightedDetfBonding.bond.selector);
+        assertEq(funcs_[12], IMultiVaultWeightedDetfBonding.joinDonatedCapital.selector);
+        assertEq(funcs_[15], IMultiVaultWeightedDetfBonding.donate.selector);
     }
 
     function test_infoFacet_metadata() public {
@@ -54,6 +56,6 @@ contract MultiVaultWeightedDetfExchangeInFacet_IFacet_Test is Test {
 
     function test_roleFacets_selectorUnion_coversPriorSurface() public pure {
         // Prior mega-Facet exposed 33 selectors; union of role Facets must stay complete.
-        assertEq(uint256(4 + 12 + 23), 39, "selector count after product-law sell/close/buyClaim");
+        assertEq(uint256(4 + 16 + 23), 43, "selector count after donate surface");
     }
 }

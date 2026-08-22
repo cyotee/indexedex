@@ -41,6 +41,8 @@ import {
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget
@@ -694,6 +696,62 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         } else {
             _bufferPair(amountIn);
             IERC20(l.rawToken).safeTransfer(recipient, amountOut);
+        }
+        _syncReserves();
+    }
+
+    /// @notice D89: owner exact-in; internal book settlement so this works while PoolManager is already unlocked.
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireLive();
+        bool zfo = _routeZeroForOne(tokenIn, tokenOut);
+        amountOut = _quoteExactIn(zfo, amountIn);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(zfo, amountIn, amountOut);
+    }
+
+    /// @notice D89: owner exact-out; internal book settlement so this works while PoolManager is already unlocked.
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _onlyHookOwner();
+        _requireDeadline(deadline);
+        _requireLive();
+        bool zfo = _routeZeroForOne(tokenIn, tokenOut);
+        amountIn = _quoteExactOut(zfo, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _payOwnerSwap(zfo, amountIn, amountOut);
+    }
+
+    function _onlyHookOwner() private view {
+        address owner_ = IMultiStepOwnable(address(this)).owner();
+        if (msg.sender != owner_) {
+            revert IMultiStepOwnable.NotOwner(msg.sender);
+        }
+    }
+
+    function _payOwnerSwap(bool zfo, uint256 amountIn, uint256 amountOut) private {
+        Repo.Layout storage l = Repo._layout();
+        bool rawIn = zfo == _zeroForOneIsRawIn();
+        if (rawIn) {
+            _unwrapExactPairOut(amountOut);
+            IERC20(l.pairToken).safeTransfer(msg.sender, amountOut);
+        } else {
+            _bufferPair(amountIn);
+            IERC20(l.rawToken).safeTransfer(msg.sender, amountOut);
         }
         _syncReserves();
     }

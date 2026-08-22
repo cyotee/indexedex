@@ -27,7 +27,7 @@ import {
 contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultStableDetf_Adversarial {
     /// @dev Target-derived control set: money + bonding + info (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](40);
+        sels_ = new bytes4[](44);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = bytes4(keccak256("previewExchangeOut(address,address,uint256)"));
@@ -68,6 +68,10 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         sels_[37] = IMixedBufferMultiVaultStableDetfInfo.expansionClosureRatePerSecond.selector;
         sels_[38] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpMaxSeconds.selector;
         sels_[39] = IMixedBufferMultiVaultStableDetfInfo.expansionCatchUpCapBps.selector;
+        sels_[40] = IMixedBufferMultiVaultStableDetfBonding.joinDonatedCapital.selector;
+        sels_[41] = IMixedBufferMultiVaultStableDetfBonding.previewJoinDonatedCapital.selector;
+        sels_[42] = IMixedBufferMultiVaultStableDetfBonding.notifyReserveDonated.selector;
+        sels_[43] = IMixedBufferMultiVaultStableDetfBonding.donate.selector;
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {
@@ -93,6 +97,8 @@ contract Adversarial_MixedBuffer_Surface_Test is TestBase_MixedBufferMultiVaultS
         assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector), "redeemClaim");
         assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.buyClaim.selector), "buyClaim");
         assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.closeBondMature.selector), "close");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.joinDonatedCapital.selector), "joinDonated");
+        assertTrue(_contains(funcs_, IMixedBufferMultiVaultStableDetfBonding.donate.selector), "donate");
         assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
 
         bytes4[] memory ifuncs_ = mixedBufferDetfInfoFacet.facetFuncs();

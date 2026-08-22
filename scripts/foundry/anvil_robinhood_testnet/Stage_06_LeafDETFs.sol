@@ -107,7 +107,7 @@ library Stage_06_LeafDETFs {
         args.expansionEpochLength = FixtureEconomics.EXPANSION_EPOCH;
         args.expansionClosureRatePerYearWad = FixtureEconomics.EXPANSION_R;
         args.expansionMaxCatchUpEpochs = FixtureEconomics.EXPANSION_CATCHUP;
-        require(s.creator != address(0), "TTCHIR creator is DEPLOYER_ADDRESS");
+        require(s.creator != address(0), "TTCHIR creator is the deployer");
         args.creator = s.creator;
     }
 
@@ -170,7 +170,7 @@ library Stage_06_LeafDETFs {
         args.openingPairPerDetfWad[0] = FixtureEconomics.OPENING_PAIR_PER_DETF;
         args.openingPairPerDetfWad[1] = FixtureEconomics.OPENING_PAIR_PER_DETF;
         args.openingPairPerDetfWad[2] = FixtureEconomics.OPENING_PAIR_PER_DETF;
-        require(s.creator != address(0), "$$DETF creator is DEPLOYER_ADDRESS");
+        require(s.creator != address(0), "$$DETF creator is the deployer");
         args.creator = s.creator;
     }
 

@@ -43,13 +43,13 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFExchangeOutTarget 
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }
         uint8 outIdx_ = _pairProductIndexForBurnOut(tokenOut_);
+        try IQuadDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
         if (!_isBurningAllowed(outIdx_)) {
             revert Repo.BurningNotAllowed(_syntheticVs(outIdx_), Repo._layoutStruct().burnThreshold);
         }
         if (recipient_ == address(0)) recipient_ = msg.sender;
 
         uint256 pulled_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
-        try IQuadDetfCompoundSelf(address(this)).realizeExpansionExternal() {} catch {}
         BurnExecResidual memory res = _burnAndRemoveNftLp(pulled_);
         amountOut_ = _settleBurnResidual(tokenOut_, res, recipient_, minOut_);
         _syncAllExpectedHoldReserves();

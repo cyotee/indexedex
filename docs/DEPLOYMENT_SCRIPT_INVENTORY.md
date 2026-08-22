@@ -17,7 +17,7 @@ Notes:
 ### Active staged deployment families
 
 - `scripts/foundry/anvil_base_main/`: full Base-mainnet-fork local deployment pipeline.
-- `scripts/foundry/anvil_robinhood_main/`: Robinhood-mainnet-fork (Anvil **chain id 4663**) Uni V3/V4 SE + hook + inert DETF pipeline. Entry: `scripts/shell/anvil_robinhood_main.sh` → `deploy_all.sh`.
+- `scripts/foundry/anvil_robinhood_main/`: Robinhood-mainnet-fork (Anvil **chain id 4663**) IndexedEx architecture + Uni V4 Protocol DETF / Curve Quad packages (no tokens, no DETF instances). Entry: `scripts/shell/anvil_robinhood_main.sh` → `deploy_all.sh`. Gas estimate: `Script_SimulateArchitecture.s.sol` without `--broadcast`.
 - `scripts/foundry/anvil_robinhood_testnet/`: Robinhood-**testnet**-fork (Anvil **chain id 46630**) Uni V4 live + launch-rich ten-DETF demo. Entry: `scripts/shell/anvil_robinhood_testnet.sh` → `deploy_all.sh`. No Balancer / pons / Uni V3.
 - `scripts/foundry/anvil_sepolia/`: Sepolia-fork local deployment pipeline.
 - `scripts/foundry/public_sepolia/`: current public testnet deployment entrypoints for Ethereum Sepolia and Base Sepolia.
@@ -41,26 +41,16 @@ Notes:
 
 ### `anvil_robinhood_main/`
 
-Anvil fork of **Robinhood Chain mainnet** at **chain id 4663**. Uses `ROBINHOOD_MAIN` Uni V3/V4/Permit2 pins (never redeploys RH cores). Deploys Crane foundation, IndexedEx manager, TT0–TT7, V3/V4 SE vaults, rate providers, hook packages (CP / Orbital / Weighted / Single SE Buffer), DETF packages, and **inert** demos (no `.bond(`). Exports `frontend/packages/protocol/src/addresses/chain/4663/`.
+Anvil fork of **Robinhood Chain mainnet** at **chain id 4663**. Uses `ROBINHOOD_MAIN` Uni V4 / Permit2 / WETH pins (never redeploys RH cores). Deploys Crane factories, IndexedEx manager, Uni V4 SE DFPkg, CP Protocol DETF hook+DFPkg, Curve Quad Stable hook+DFPkg, bond NFT + rebasing claim packages. **No** test tokens, pools, vault instances, or DETF instances.
 
 | Script | What it deploys or does |
 | --- | --- |
-| `Script_00_Preflight.s.sol` | Asserts chain 4663 + RH pin bytecode; writes `00_preflight.json`. |
-| `Script_01_DeployCraneFoundation.s.sol` | CREATE3 + diamond package factory + shared facets. |
-| `Script_02_DeployIndexedexCore.s.sol` | FeeCollector + IndexedexManager. |
-| `Script_03_DeployHookFactory.s.sol` | Uni V4 hook diamond package factory; sets on manager. |
-| `Script_04_DeployTestTokens.s.sol` | TT0–TT7 mintable; mints 1e12 units to deployer + UI wallet. |
-| `Script_05_DeployUniV3PoolsAndSeed.s.sol` | Uni V3 pool graph + NPM liquidity on RH factory. |
-| `Script_06_DeployUniV4PoolsAndSeed.s.sol` | Uni V4 SE underlying pools + seeder on RH PoolManager. |
-| `Script_07_DeployUniV3StandardExchange.s.sol` | Uni V3 SE DFPkg + vault instances. |
-| `Script_08_DeployUniV4StandardExchange.s.sol` | Uni V4 SE DFPkg + vault instances. |
-| `Script_09_DeployRateProviders.s.sol` | SE rate providers for buffered legs. |
-| `Script_10_DeployHookPackages.s.sol` | CP / Orbital / Weighted / Single SE Buffer hook DFPkgs. |
-| `Script_11_DeployDetfChildren.s.sol` | Bond NFT + rebasing claim DFPkgs; default bond terms. |
-| `Script_12_DeployDetfPackages.s.sol` | CP / Orbital / Weighted DETF DFPkgs. |
-| `Script_13_DeployInertDemos.s.sol` | Weighted buffer n=8, single SE buffers, 6 inert DETFs (no bond). |
-| `Script_14_ExportFrontendArtifacts.s.sol` | Writes `chain/4663` platform + tokenlists. |
-| `deploy_all.sh` | Orchestrator (`all`, `foundation`, `assets`, `pools`, `se`, `packages`, `demos`, `export`, `stageNN`). |
+| `Script_00_Preflight.s.sol` | Asserts chain 4663 + required V4 pin bytecode; writes `00_preflight.json`. |
+| `Script_01_Factories.s.sol` | CREATE3 + diamond factory + hook factory + shared facets. |
+| `Script_02_Platform.s.sol` | FeeCollector + IndexedexManager + SE rate-provider DFPkg + fee/bond defaults. |
+| `Script_03_UniV4Packages.s.sol` | Uni V4 SE DFPkg, CP hook + DETF DFPkg, Curve Quad hook + DETF DFPkg, DETF children. No instances. |
+| `Script_SimulateArchitecture.s.sol` | Groups 01–03 in one script for a single `forge script` gas estimate (run without `--broadcast`). Shell `simulate` is EIP-1559 (no forced gas price) and quotes deployer funding from the fork-source fee market. |
+| `deploy_all.sh` | Orchestrator (`all` / `foundation` = 00–03, `simulate`, `stageNN`). |
 
 Shell entry: `scripts/shell/anvil_robinhood_main.sh`. Artifacts: `deployments/anvil_robinhood_main/`.
 

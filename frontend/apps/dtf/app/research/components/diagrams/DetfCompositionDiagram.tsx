@@ -344,27 +344,27 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
   return (
     <DiagramShell
       className={className}
-      title="Single Standard Exchange DETF"
-      caption="You hold the DETF ERC-20. The other reserve leg is one SE vault share — IndexedEx’s deposit / share / redeem adapter over an external protocol (e.g. Uniswap V4, Euler). Mint and burn move value between free DETF and that share (live + Policy/Open)."
+      title="One vault"
+      caption="You hold the DETF token. The other reserve leg is one vault share from a vault that wraps another protocol. Mint and burn move between that vault share and the DETF token."
     >
       <div className="mb-1 flex justify-center">
         <div
           className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
           style={holdPillStyle}
         >
-          You hold → DETF share (ERC-20)
+          You hold → DETF token
         </div>
       </div>
       <Connector />
 
       <PoolFrame
-        label="Weighted reserve pool (Balancer V3)"
+        label="Reserve: DETF token plus one vault share"
         footer={
           <WeightBar
-            ariaLabel="Example weights: about 80% DETF, about 20% SE vault share"
+            ariaLabel="Example weights: about 80% DETF, about 20% vault share"
             segments={[
               { width: '80%', label: '~80% DETF', tone: 'accent' },
-              { width: '20%', label: '~20% SE share', tone: 'secondary' },
+              { width: '20%', label: '~20% vault share', tone: 'secondary' },
             ]}
           />
         }
@@ -372,15 +372,15 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
           <Leg
             accent
-            title="DETF (self)"
-            subtitle="This diamond’s own share token in the pool"
+            title="DETF token"
+            subtitle="The DETF token in the reserve"
             weight="Default ~80%"
           />
           <Plus />
           <Leg
             secondary
-            title="SE vault share"
-            subtitle="Exactly one Standard Exchange vault share"
+            title="Vault share"
+            subtitle="Exactly one vault share"
             weight="Default ~20%"
           />
         </div>
@@ -389,10 +389,10 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
       <Connector label="is" />
 
       <div className="rounded-xl border px-4 py-4" style={seBoxStyle}>
-        <p className="text-base font-medium text-amber-100">Standard Exchange vault</p>
+        <p className="text-base font-medium text-amber-100">Earn vault</p>
         <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-muted)]">
-          Vault standard — not a DETF type. Same deposit / share / redeem interface wrapping an
-          external protocol. The DETF holds the SE share only; Uni or Euler stay behind the vault.
+          A building-block vault, not a DETF type. Deposit, receive a vault share, redeem later.
+          The DETF holds that vault share. The other protocol stays behind the vault.
         </p>
         <ExampleChips labels={SE_VAULT_EXAMPLES} />
       </div>
@@ -407,9 +407,9 @@ function SingleStandardExchangeDiagram({ className }: { className?: string }) {
 /** Illustrative multi-leg weights (not a product default). Three SE legs filled of seven. */
 const MULTI_WEIGHTED_SEGMENTS: readonly WeightSegment[] = [
   { width: '40%', label: '~40% DETF', tone: 'accent' },
-  { width: '25%', label: '~25% SE₁', tone: 'secondary' },
-  { width: '20%', label: '~20% SE₂', tone: 'secondary' },
-  { width: '15%', label: '~15% SE₃', tone: 'secondary' },
+  { width: '25%', label: '~25% vault 1', tone: 'secondary' },
+  { width: '20%', label: '~20% vault 2', tone: 'secondary' },
+  { width: '15%', label: '~15% vault 3', tone: 'secondary' },
 ]
 
 /** How many SE vault slots to show as filled (rest are open capacity through 7). */
@@ -420,24 +420,24 @@ function MultiVaultWeightedDiagram({ className }: { className?: string }) {
   return (
     <DiagramShell
       className={className}
-      title="Multi-Vault Weighted DETF"
-      caption="You hold the DETF ERC-20. The reserve is one weighted Balancer pool: DETF plus one to seven SE vault shares in a single line, each with a custom immutable weight and independent valuation. Filled slots are an example; dimmed slots are open capacity (up to 7). Weights in the bar are illustrative only. Mint and burn against configured vault shares (live + Policy/Open); first live path is initialize reserve, then bond reserve BPT."
+      title="Several vaults, fixed weights"
+      caption="You hold the DETF token. The reserve holds that token plus one to seven vault shares, each with a set weight. Filled slots are an example. Dimmed slots are open capacity. Weights in the bar are only an example."
     >
       <div className="mb-1 flex justify-center">
         <div
           className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
           style={holdPillStyle}
         >
-          You hold → DETF share (ERC-20)
+          You hold → DETF token
         </div>
       </div>
       <Connector />
 
       <PoolFrame
-        label="Weighted reserve pool (Balancer V3) — DETF + up to 7 SE vault shares"
+        label="Reserve: DETF token plus up to 7 vault shares"
         footer={
           <WeightBar
-            ariaLabel="Example custom weights across DETF and filled SE vault shares"
+            ariaLabel="Example custom weights across DETF and filled vault shares"
             segments={MULTI_WEIGHTED_SEGMENTS}
           />
         }
@@ -471,7 +471,7 @@ function MultiVaultWeightedDiagram({ className }: { className?: string }) {
 function SeCapacitySlot({
   index,
   filled,
-  labelPrefix = 'SE',
+  labelPrefix = 'Vault',
 }: {
   index: number
   filled: boolean
@@ -497,7 +497,7 @@ function SeCapacitySlot({
           filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
         }`}
       >
-        {filled ? 'share' : 'open'}
+        {filled ? 'vault share' : 'open'}
       </p>
     </div>
   )
@@ -538,8 +538,8 @@ function PoolSlot({
  */
 const MULTI_STABLE_TOP_SEGMENTS: readonly WeightSegment[] = [
   { width: '50%', label: '~50% DETF', tone: 'accent' },
-  { width: '25%', label: '~25% Stable BPT', tone: 'secondary' },
-  { width: '25%', label: '~25% Common BPT', tone: 'secondary' },
+  { width: '25%', label: '~25% own-mark group', tone: 'secondary' },
+  { width: '25%', label: '~25% shared-mark group', tone: 'secondary' },
 ]
 
 /** Example instance: 4 independent SE vaults → 8 rate providers → 2 intermediate stables. */
@@ -570,7 +570,7 @@ function IntermediateStablePool({
             key={`${title}-se-${i + 1}`}
             index={i + 1}
             filled
-            labelPrefix="SE"
+            labelPrefix="Vault"
           />
         ))}
       </div>
@@ -610,10 +610,10 @@ function RateProviderBlock({
         {isStable ? 'S' : 'C'}
       </p>
       <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
-        {isStable ? '→ Stable Pool' : '→ Common Pool'}
+        {isStable ? '→ own-mark' : '→ shared-mark'}
       </p>
       <p className="mt-0.5 text-[8px] leading-tight text-[var(--text-muted)]/80 sm:text-[9px]">
-        rates SE {seIndex}
+        marks vault {seIndex}
       </p>
     </div>
   )
@@ -624,12 +624,12 @@ function IndependentSeVaultBlock({ index }: { index: number }) {
     <div
       className="flex min-h-[4.5rem] min-w-0 flex-1 flex-col justify-center rounded-lg border border-amber-300/45 bg-amber-400/15 px-2 py-2.5 text-center shadow-[0_0_12px_rgba(251,191,36,0.1)]"
     >
-      <p className="font-mono text-[10px] uppercase tracking-wide text-amber-100">SE Vault {index}</p>
+      <p className="font-mono text-[10px] uppercase tracking-wide text-amber-100">Vault {index}</p>
       <p className="mt-0.5 text-[9px] leading-snug text-[var(--text-muted)] sm:text-[10px]">
         Independent vault
       </p>
       <p className="mt-1 text-[8px] leading-snug text-[var(--text-muted)]/80 sm:text-[9px]">
-        2 rate providers (S + C)
+        marked two ways
       </p>
     </div>
   )
@@ -685,21 +685,21 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
   return (
     <DiagramShell
       className={className}
-      title="Multi-Vault Stable (Composed)"
-      caption="You hold the DETF ERC-20. DETF lives only on the top weighted reserve: DETF + Stable Pool BPT + Common Pool BPT. Example: four independent SE vaults are each marked into both intermediate stable pools by a pair of rate providers (8 providers total) — unique targets on the Stable Pool, shared common target on the Common Pool. Crossing lines: each vault reaches its Stable RP and Common RP. Not Mixed-buffer."
+      title="Several similar vaults, grouped"
+      caption="You hold the DETF token. It sits next to two grouped pools of the same vaults. One group marks each vault on its own. The other marks them against one shared target. This is not the one-cash-token design."
     >
       <div className="mb-1 flex justify-center">
         <div
           className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
           style={holdPillStyle}
         >
-          You hold → DETF share (ERC-20)
+          You hold → DETF token
         </div>
       </div>
       <Connector />
 
       <PoolFrame
-        label="Top weighted reserve (Balancer V3) — DETF only here"
+        label="Reserve: DETF token plus two grouped pools"
         footer={
           <WeightBar
             ariaLabel="Example top-reserve weights: DETF, Stable BPT, Common BPT"
@@ -708,37 +708,37 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
         }
       >
         <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
-          <PoolSlot accent title="DETF" subtitle="self leg" flexClass="flex-[1.1]" />
+          <PoolSlot accent title="DETF token" subtitle="in the reserve" flexClass="flex-[1.1]" />
           <Plus />
-          <PoolSlot secondary title="Stable BPT" subtitle="intermediate receipt" />
+          <PoolSlot secondary title="Own-mark group" subtitle="each vault marked on its own" />
           <Plus />
-          <PoolSlot secondary title="Common BPT" subtitle="intermediate receipt" />
+          <PoolSlot secondary title="Shared-mark group" subtitle="one shared target" />
         </div>
       </PoolFrame>
 
-      <Connector label="BPTs are claims on" />
+      <Connector label="those groups hold" />
 
       <div>
         <p className="mb-2.5 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Intermediate stable pools — each lists the SE vault legs it holds
+          Grouped pools. Each lists the vault shares it holds.
         </p>
         <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-stretch">
           <IntermediateStablePool
-            title="Stable Pool"
-            rateNote="Per-vault rate targets (unique per SE)"
+            title="Own-mark pool"
+            rateNote="Each vault marked on its own"
           />
           <IntermediateStablePool
-            title="Common Pool"
-            rateNote="One common rate target for every SE"
+            title="Shared-mark pool"
+            rateNote="One shared target for every vault"
           />
         </div>
       </div>
 
-      <Connector label="via 8 rate providers" />
+      <Connector label="each vault is marked two ways" />
 
       <div>
         <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Rate providers — 4 × Stable + 4 × Common (8 total)
+          Rate providers: each vault, two marks
         </p>
         <div className="flex w-full flex-row items-stretch gap-1 sm:gap-1.5">
           {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
@@ -757,7 +757,7 @@ function MultiVaultStableDiagram({ className }: { className?: string }) {
 
       <div>
         <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Independent SE vaults (not one grouped set)
+          Independent vaults, not one grouped set
         </p>
         <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
           {Array.from({ length: MULTI_STABLE_SE_COUNT }, (_, i) => (
@@ -787,20 +787,20 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
   return (
     <DiagramShell
       className={className}
-      title="Mixed-Buffer Multi-Vault Stable"
-      caption="You hold the DETF ERC-20. The reserve is one MixedBuffer stable pool — not a weighted multi-risk basket and not dual intermediate stables. Legs: unpaired DETF, exactly one buffer token (shared cash every vault accepts and produces), and one to three SE vault shares. Filled SE slots are an example; dimmed slots are open capacity (max 3). Live mint: buffer or vault share → DETF. Burn: DETF → buffer only. First live path: permissionless bootstrap first-bond."
+      title="One cash token plus vaults"
+      caption="You hold the DETF token. The reserve holds that token, exactly one cash token, and one to three vaults that all take and give that cash. Mint with cash or a vault share. Burn returns the cash token only."
     >
       <div className="mb-1 flex justify-center">
         <div
           className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
           style={holdPillStyle}
         >
-          You hold → DETF share (ERC-20)
+          You hold → DETF token
         </div>
       </div>
       <Connector />
 
-      <PoolFrame label="MixedBuffer stable pool (Balancer V3) — one reserve, one buffer">
+      <PoolFrame label="Reserve: DETF token, one cash token, and vaults">
         <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
           <div
             className="flex min-h-[4.5rem] min-w-0 flex-[1.15] flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5"
@@ -818,12 +818,12 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
             className="flex min-h-[4.5rem] min-w-0 flex-[1.2] flex-col justify-center rounded-lg border px-2 py-2.5 text-center sm:px-2.5"
             style={bufferLegStyle}
           >
-            <p className="text-sm font-medium leading-snug text-[var(--text-primary)]">Buffer</p>
+            <p className="text-sm font-medium leading-snug text-[var(--text-primary)]">Cash token</p>
             <p className="mt-0.5 text-[9px] leading-tight text-[var(--text-muted)] sm:text-[10px]">
-              shared cash unit
+              shared cash
             </p>
             <p className="mt-1 text-[8px] leading-tight text-[var(--text-muted)]/90 sm:text-[9px]">
-              exactly one · burn settles here
+              exactly one · burn returns this
             </p>
           </div>
 
@@ -837,11 +837,11 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
         </div>
       </PoolFrame>
 
-      <Connector label="vaults process buffer" />
+      <Connector label="vaults take and give that cash" />
 
       <div>
         <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
-          Independent SE vaults (1–3) — each accepts & produces the buffer
+          Independent vaults (1–3). Each takes and gives the cash token.
         </p>
         <div className="flex w-full flex-row items-stretch gap-1.5 sm:gap-2">
           {Array.from({ length: MIXED_BUFFER_SE_CAPACITY }, (_, i) => {
@@ -860,14 +860,14 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
                     filled ? 'text-amber-100' : 'text-amber-200/45'
                   }`}
                 >
-                  SE Vault {i + 1}
+                  Vault {i + 1}
                 </p>
                 <p
                   className={`mt-0.5 text-[9px] leading-snug sm:text-[10px] ${
                     filled ? 'text-[var(--text-muted)]' : 'text-[var(--text-muted)]/50'
                   }`}
                 >
-                  {filled ? 'buffer in / out' : 'open capacity'}
+                  {filled ? 'cash in / out' : 'open capacity'}
                 </p>
               </div>
             )

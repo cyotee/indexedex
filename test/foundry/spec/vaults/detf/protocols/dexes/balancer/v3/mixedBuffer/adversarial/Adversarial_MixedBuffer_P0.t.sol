@@ -268,17 +268,19 @@ contract Adversarial_MixedBuffer_P0_Test is TestBase_MixedBufferMultiVaultStable
 
         IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
         uint256 claimBal_ = claim_.balanceOf(alice);
-        uint256 bptBefore_ = IERC20(info_.reservePool()).balanceOf(instance_);
+        uint256 detfBefore_ = IERC20(instance_).balanceOf(alice);
         uint256 redeemAmt_ = claimBal_ / 5;
         if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
 
         vm.prank(alice);
-        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
+        uint256 paid_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
 
-        uint256 bptAfter_ = IERC20(info_.reservePool()).balanceOf(instance_);
-        assertTrue(bptBefore_ >= bptAfter_, "BPT decreased or same");
-        // Exit cannot exceed claim principal scale (claim units track bond principal).
-        assertTrue(bptBefore_ - bptAfter_ <= claimBal_ + 1, "D6: exit bounded by claim scale");
+        assertGt(paid_, 0, "D15 DETF paid");
+        assertLt(claim_.balanceOf(alice), claimBal_, "claim burned");
+        assertGt(IERC20(instance_).balanceOf(alice), detfBefore_, "user DETF increased");
+        vm.prank(alice);
+        vm.expectRevert();
+        bonding_.redeemClaim(claimBal_ + 1e18, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
     }
 
     /* ---------------------------------------------------------------------- */

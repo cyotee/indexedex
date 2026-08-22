@@ -29,6 +29,7 @@ abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardE
     ) internal returns (uint256 amountOut_) {
         _requireReserveLive();
         _requireActive(deadline_, detfIn_);
+        _updateExpansionMintOnRewards();
         if (!_isBurningAllowed()) {
             SingleStandardExchangeDETFRepo.Storage storage s0 = SingleStandardExchangeDETFRepo._layoutStruct();
             revert SingleStandardExchangeDETFRepo.BurningNotAllowed(_syntheticPrice(), s0.burnThreshold);

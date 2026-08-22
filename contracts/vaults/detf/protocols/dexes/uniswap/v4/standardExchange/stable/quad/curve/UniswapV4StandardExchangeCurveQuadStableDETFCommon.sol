@@ -75,6 +75,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
     uint256 internal constant RESIDUAL_DUST = 1;
     /// @dev Hook MINIMUM_LIQUIDITY (must match CurveQuadStableBufferHookMath).
     uint256 internal constant HOOK_MINIMUM_LIQUIDITY = 1000;
+    uint256 internal constant SINGLE_JOIN_MAX_IN_WAD = 25e16;
 
     error NotSelf();
     error CompoundJoinProducedZeroLp();
@@ -132,6 +133,12 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
         address reg = address(StandardVaultRepo._feeOracle());
         if (IVaultRegistryDisableQuery(reg).isDisabled(address(this))) {
             revert IVaultRegistryDisableQuery.VaultDisabled(address(this));
+        }
+    }
+
+    function _requireBondNft() internal view {
+        if (msg.sender != address(Repo._layoutStruct().bondNftVault)) {
+            revert Repo.NotAuthorized(msg.sender);
         }
     }
 
@@ -684,7 +691,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
     function _isSingleAssetEligible() internal view returns (bool) {
         address hook_ = Repo._layoutStruct().reserveHook;
         if (!IHook(hook_).isFullBook()) return false;
-        if (IERC20(hook_).totalSupply() <= HOOK_MINIMUM_LIQUIDITY) return false;
+        uint256 supply_ = IERC20(hook_).totalSupply();
+        if (supply_ <= HOOK_MINIMUM_LIQUIDITY) return false;
         return true;
     }
 
@@ -696,6 +704,58 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
         _requireSingleAssetEligible();
         IERC20(tokenIn_).forceApprove(s.reserveHook, amountIn_);
         lpOut_ = IHook(s.reserveHook).depositSingle(tokenIn_, amountIn_, lpTo_, 0, block.timestamp + 1);
+    }
+
+    function _hookNativeOf(address token_) internal view returns (uint256) {
+        address hook_ = Repo._layoutStruct().reserveHook;
+        address[] memory toks_ = IHook(hook_).tokens();
+        uint256[] memory nat_ = IHook(hook_).nativeReserves();
+        uint256 n_ = toks_.length < nat_.length ? toks_.length : nat_.length;
+        for (uint256 i; i < n_; ++i) {
+            if (toks_[i] == token_) return nat_[i];
+        }
+        return 0;
+    }
+
+    function _depositSingleDetfCapped(uint256 detfAmount_, address lpTo_)
+        internal
+        returns (uint256 lpOut_)
+    {
+        if (detfAmount_ == 0) return 0;
+        uint256 bal_ = _hookNativeOf(address(this));
+        uint256 cap_ = bal_ * SINGLE_JOIN_MAX_IN_WAD / ONE_WAD;
+        if (cap_ == 0) cap_ = detfAmount_ < 1e3 ? detfAmount_ : 1e3;
+        uint256 joinAmt_ = detfAmount_ < cap_ ? detfAmount_ : cap_;
+        if (joinAmt_ == 0) return 0;
+        lpOut_ = _depositSingle(address(this), joinAmt_, lpTo_);
+    }
+
+    /// @dev Repeat capped DETF joins so last-exit leftover becomes id 0 LP. Do not
+    ///      send leftover DETF to the Bond NFT (that books as rewards and extracts to ids 1–2).
+    function _depositSingleDetfUntilDust(uint256 detfAmount_, address lpTo_)
+        internal
+        returns (uint256 lpOut_)
+    {
+        if (detfAmount_ == 0) return 0;
+        IERC20 detfToken_ = IERC20(address(this));
+        Repo.Storage storage s = Repo._layoutStruct();
+        IHook hook_ = IHook(s.reserveHook);
+        for (uint256 i; i < 64; ++i) {
+            uint256 remaining_ = detfToken_.balanceOf(address(this));
+            if (remaining_ == 0) break;
+            uint256 cap_ = _hookNativeOf(address(this)) * SINGLE_JOIN_MAX_IN_WAD / ONE_WAD;
+            if (cap_ == 0) cap_ = remaining_ < 1e3 ? remaining_ : 1e3;
+            uint256 joinAmt_ = remaining_ < cap_ ? remaining_ : cap_;
+            if (joinAmt_ == 0) break;
+            detfToken_.forceApprove(s.reserveHook, joinAmt_);
+            try hook_.depositSingle(address(this), joinAmt_, lpTo_, 0, block.timestamp + 1) returns (uint256 minted_) {
+                if (minted_ == 0) break;
+                lpOut_ += minted_;
+            } catch {
+                detfToken_.forceApprove(s.reserveHook, 0);
+                break;
+            }
+        }
     }
 
     function _depositSingleFlexible(address pairToken_, uint256 shareAmount_, address lpTo_)
@@ -965,6 +1025,53 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFCommon is Reentran
 
     function _burnDetf(address from_, uint256 amount_) internal {
         ERC20Repo._burn(from_, amount_);
+    }
+
+    /// @notice Host LP preview for donate join. Unknown / inert / lpToken returns 0.
+    function _previewJoinDonatedCapital(IERC20 token_, uint256 amount_)
+        internal
+        view
+        returns (uint256 lpOut_)
+    {
+        if (amount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (!s.isReserveLive) return 0;
+        address hookAddr_ = s.reserveHook;
+        if (address(token_) == hookAddr_) return 0;
+        IHook hook_ = IHook(hookAddr_);
+        if (address(token_) == address(this)) {
+            return hook_.previewDepositSingle(address(this), amount_);
+        }
+        for (uint8 i; i < s.m; ++i) {
+            if (address(token_) == address(s.pairTokens[i])) {
+                return hook_.previewDepositSingle(address(token_), amount_);
+            }
+        }
+        if (_isAllowlistedTokenIn(token_)) {
+            for (uint8 i; i < s.m; ++i) {
+                if (address(s.standardExchanges[i]) == address(0)) continue;
+                if (address(token_) == address(s.vaultShares[i])) {
+                    try hook_.previewDepositSingleFlexible(address(s.pairTokens[i]), amount_, true) returns (
+                        uint256 sh_
+                    ) {
+                        return sh_;
+                    } catch {
+                        return 0;
+                    }
+                }
+                if (_tokenInSeTokens(token_, address(s.standardExchanges[i]))) {
+                    try IStandardExchangeIn(address(s.standardExchanges[i])).previewExchangeIn(
+                        token_, amount_, s.pairTokens[i]
+                    ) returns (uint256 pairAmt_) {
+                        if (pairAmt_ == 0) return 0;
+                        return hook_.previewDepositSingle(address(s.pairTokens[i]), pairAmt_);
+                    } catch {
+                        return 0;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     function _settleToPairLeg(IERC20 tokenIn_, uint256 amountIn_, bool pretransferred_, uint256 deadline_)

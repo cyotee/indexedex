@@ -13,6 +13,7 @@ import {IERC721Metadata} from "@crane/contracts/interfaces/IERC721Metadata.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {DETFNFTVaultTarget} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol";
 
 /**
@@ -40,8 +41,20 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
+        bytes4[] memory a = _funcsA();
+        bytes4[] memory b = _funcsB();
+        funcs_ = new bytes4[](a.length + b.length);
+        for (uint256 i; i < a.length; ++i) {
+            funcs_[i] = a[i];
+        }
+        for (uint256 j; j < b.length; ++j) {
+            funcs_[a.length + j] = b[j];
+        }
+    }
+
+    function _funcsA() private pure returns (bytes4[] memory funcs_) {
         // Product surface (no retired markDETFNFTSold / detfNFTSold).
-        funcs_ = new bytes4[](32);
+        funcs_ = new bytes4[](20);
         funcs_[0] = IDETFNFTVault.initializeDETFNFT.selector;
         funcs_[1] = IDETFNFTVault.createPosition.selector;
         funcs_[2] = IDETFNFTVault.redeemPosition.selector;
@@ -62,18 +75,27 @@ contract DETFNFTVaultFacet is DETFNFTVaultTarget, IFacet {
         funcs_[17] = IDETFNFTVault.isUnlocked.selector;
         funcs_[18] = IDETFNFTVault.convertToShares.selector;
         funcs_[19] = IDETFNFTVault.convertToAssets.selector;
-        funcs_[20] = IDETFNFTVault.reallocateDetfNftRewards.selector;
-        funcs_[21] = IERC721Metadata.tokenURI.selector;
-        funcs_[22] = IDETFNFTVault.transferHeldToken.selector;
-        funcs_[23] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
-        funcs_[24] = IDETFNFTVault.lockInfoOf.selector;
-        funcs_[25] = IDETFNFTVault.rewardPerShares.selector;
-        funcs_[26] = IDETFNFTVault.removeFromDETFNFT.selector;
-        funcs_[27] = IDETFNFTVault.totalOriginalShares.selector;
-        funcs_[28] = IDETFNFTVault.initializeReservedBondNfts.selector;
-        funcs_[29] = IDETFNFTVault.reservedBondNftsWired.selector;
-        funcs_[30] = IDETFNFTVault.addEffectiveSharesOnly.selector;
-        funcs_[31] = IDETFNFTVault.retireMaturePosition.selector;
+    }
+
+    function _funcsB() private pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](17);
+        funcs_[0] = IDETFNFTVault.reallocateDetfNftRewards.selector;
+        funcs_[1] = IERC721Metadata.tokenURI.selector;
+        funcs_[2] = IDETFNFTVault.transferHeldToken.selector;
+        funcs_[3] = IDETFNFTVault.createPositionWithEffectiveBase.selector;
+        funcs_[4] = IDETFNFTVault.lockInfoOf.selector;
+        funcs_[5] = IDETFNFTVault.rewardPerShares.selector;
+        funcs_[6] = IDETFNFTVault.removeFromDETFNFT.selector;
+        funcs_[7] = IDETFNFTVault.totalOriginalShares.selector;
+        funcs_[8] = IDETFNFTVault.initializeReservedBondNfts.selector;
+        funcs_[9] = IDETFNFTVault.reservedBondNftsWired.selector;
+        funcs_[10] = IDETFNFTVault.addEffectiveSharesOnly.selector;
+        funcs_[11] = IDETFNFTVault.retireMaturePosition.selector;
+        funcs_[12] = bytes4(keccak256("donate(address,uint256,uint256,bool,uint256)"));
+        funcs_[13] = bytes4(keccak256("donate(address,address,uint256,uint256,bool,uint256)"));
+        funcs_[14] = IDetfNftReserveDonation.donateWithPermit2Allowance.selector;
+        funcs_[15] = IDetfNftReserveDonation.donateWithPermit2Signature.selector;
+        funcs_[16] = IDetfNftReserveDonation.previewDonate.selector;
     }
 
     /// @inheritdoc IFacet

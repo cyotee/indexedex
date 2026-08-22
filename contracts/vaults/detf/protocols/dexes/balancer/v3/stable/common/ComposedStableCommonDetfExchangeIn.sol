@@ -154,6 +154,7 @@ contract ComposedStableCommonDetfExchangeIn is
 
     function _executeMintRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
         _ensureReservedBondNftsWired();
+        _updateExpansionMintOnRewards();
         uint256 syntheticPrice = _syntheticDetfEthPrice();
         if (!_isMintingAllowed(syntheticPrice)) {
             revert MintingNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._mintThreshold());
@@ -187,6 +188,7 @@ contract ComposedStableCommonDetfExchangeIn is
 
     function _executeBurnRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
         _requireReservePoolInitialized();
+        _updateExpansionMintOnRewards();
 
         uint256 syntheticPrice = _syntheticDetfEthPrice();
         if (!_isBurningAllowed(syntheticPrice)) {

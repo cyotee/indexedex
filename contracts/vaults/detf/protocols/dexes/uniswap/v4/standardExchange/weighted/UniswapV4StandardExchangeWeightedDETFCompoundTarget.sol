@@ -128,6 +128,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFCompoundTarget is Uniswap
         _requireReserveLive();
         _requireActive(deadline_, claimAmount_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
+        _realizeExpansionIfNeeded();
         if (address(tokenOut_) != address(this)) {
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }

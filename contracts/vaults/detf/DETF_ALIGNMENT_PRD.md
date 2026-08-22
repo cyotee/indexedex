@@ -6,16 +6,16 @@
 
 ## Status
 
-**DRAFT — D1–D28 locked. Implementation plan opened 2026-08-19.** This is the single working PRD for upcoming DETF work. Only decisions in §0 are accepted. New topics are discussed, then written here. Implement only from [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md).
+**DRAFT — D1–D31 locked. Implementation plan opened 2026-08-19.** This is the single working PRD for upcoming DETF work. Only decisions in §0 are accepted. New topics are discussed, then written here. Implement only from [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md). Reserve donation (D29) is specified in [`DETF_RESERVE_DONATION_PRD.md`](./DETF_RESERVE_DONATION_PRD.md). Implement D15/D25/D29/D30/D31 and N10 only from [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md) Stages **I–O**. Uni V4 owner ops while PoolManager is locked are D30. Expansion realize-then-gate on mint/burn/redeem/close is D31.
 
 | Field | Value |
 |-------|--------|
-| **Status** | **DRAFT** — 2026-08-19. D1–D28 locked. Impl plan opened. Bond free-`U` uses plan launch default L1 |
+| **Status** | **DRAFT** — 2026-08-22. D1–D31 locked. Impl plan opened. Bond free-`U` uses plan launch default L1 |
 | **Home** | This file, co-located with the DETF tree: `contracts/vaults/detf/DETF_ALIGNMENT_PRD.md` |
 | **Scope** | Every true DETF under `contracts/vaults/detf/protocols/dexes/**` |
 | **This file** | Cross-family product law. Append locked decisions here. Do not open a sibling PRD for the same questions |
 | **Impl / test plan** | [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md) |
-| **Not this file** | Per-family **curve, reserve token set, and mint `tokenIn` list** (stay in family PRDs; see §16). Directory layout ([`DETF_DIRECTORY_REORGANIZATION_PRD.md`](./DETF_DIRECTORY_REORGANIZATION_PRD.md)). Protocol compound and natural expansion (already LOCKED in [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md)) except where D2/D10/D15 cross-cut. |
+| **Not this file** | Per-family **curve, reserve token set, and mint `tokenIn` list** (stay in family PRDs; see §16). Directory layout ([`DETF_DIRECTORY_REORGANIZATION_PRD.md`](./DETF_DIRECTORY_REORGANIZATION_PRD.md)). Protocol compound and natural expansion (already LOCKED in [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](../../../docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md)) except where D2/D10/D15 cross-cut. Reserve donation process: [`DETF_RESERVE_DONATION_PRD.md`](./DETF_RESERVE_DONATION_PRD.md) (D29 lock row here). |
 
 ---
 
@@ -32,12 +32,12 @@
 | **D7** | Reserved bond NFT ids | Token id **0** = protocol / rebasing-claim reserve. Id **1** = `feeTo()` standing bond. Id **2** = creator standing bond. User bonds start at **3**. Ids **1** and **2** **must not** be sold to the protocol for rebasing claim. | 2026-08-18 |
 | **D8** | Mint / burn quote | **Live only.** Every true DETF sizes **free** liquid DETF (and the burn return) from the **same curve and live reserves as the reserve pool**. Mint quote applies the seigniorage **capital bonus to amount in**, then runs that curve. Physical join still uses unboosted capital. Empty first bond does **not** use this quote (family creation / weights). Bonds do **not** use this bonus (D24). | 2026-08-19 |
 | **D9** | DETF-owned reserve liquidity | **Uni V4:** the DETF instance must be the **only** party that can add or remove reserve liquidity. Hooks: **MultiStepOwnable** + deploy flag **owner-only add/remove LP**. DETF instances deploy hooks with that flag on; owner = the DETF. **Balancer V3:** keep the **current open public join**. Allowed to deviate for now. | 2026-08-19 |
-| **D10** | Reserve shares, sell-in, rebasing claim | Bond principal is **ERC-4626** on reserve LP; lock bonus applies only to `effectiveShares`. Sell-to-claim **transfers `originalShares` to token id 0**. Claim token is 4626 on id 0 (shares of shares). Rebase quotes **DETF extractable** = LP unwind to DETF **plus** id 0 bond-holder rewards. | 2026-08-19 |
+| **D10** | Reserve shares, sell-in, rebasing claim | Bond principal is **ERC-4626** on reserve LP; lock bonus applies only to `effectiveShares`. Sell-to-claim **transfers `originalShares` to token id 0**. Claim token is 4626 on id 0 (shares of shares). Rebase quotes **DETF extractable** = **zap-out to DETF** of that holder’s slice of id 0 LP **plus** id 0 pending rewards. Conversion: physical NFT LP / `totalOriginalShares` + `decimalOffset` (no protocol-effective haircut). | 2026-08-22 |
 | **D11** | Live mint vs bond join | Liquid mint does **not** mint DETF into the reserve. Bond is the **only** path that mints **new** DETF directly into liquidity. That join amount `G` is **unboosted** matching DETF (D24). Live mint may still join **non-DETF** capital; that LP sits in the NFT and **changes NAV** of existing `originalShares` (no new NFT shares for that deposit). | 2026-08-19 |
 | **D12** | Burn burns DETF | `exchangeIn`/`exchangeOut` redeem of DETF **burns** that DETF. It is not a swap of DETF into the pool (Composed’s shipped path is out of spec). | 2026-08-19 |
-| **D13** | LP in the NFT; 4626 like V4 SE | Reserve LP is held by the **bond NFT vault**. Liquidity add/remove goes **through the NFT**, which mints/burns 4626 `originalShares` so the ledger stays consistent. DETF burn sizes LP as V4 SE: `lpOut = detfIn * nftLp / detfSupply` (after expansion mint-on-update). | 2026-08-19 |
+| **D13** | LP in the NFT; 4626 like V4 SE | Reserve LP is held by the **bond NFT vault**. Liquidity add/remove goes **through the NFT**, which mints/burns 4626 `originalShares` so the ledger stays consistent (N10 conversion). DETF burn sizes LP as V4 SE: `lpOut = detfIn * nftLp / detfSupply` (after expansion mint-on-update) and **dilutes** originalShares holders. Live mint (D11) is the unassigned-LP exception. | 2026-08-22 |
 | **D14** | No DETF to `feeTo` on mint/burn | Mint does not mint free DETF to `feeTo()`. Burn does not transfer DETF to `feeTo()`. `feeTo` earns only via token id 1 (D2). | 2026-08-19 |
-| **D15** | Claim redeem = DETF only | Redeem **only for DETF**. Pay from id 0 **pending first**. **Compound leftover pending**. Shortfall (or no pending) from **proportional LP withdraw**; redeposit all non-DETF. | 2026-08-19 |
+| **D15** | Claim redeem = DETF only | Redeem **only for DETF**. Quote = pending + **zap-out to DETF** of the holder’s id 0 LP slice. Pay **pending first**. Compound leftover pending to id 0. Shortfall: proportional withdraw, then **buy DETF on the residual reserve** (exact-out = remaining shortfall) with withdrawn non-DETF, rejoin leftover to id 0. Owner host swap (D30), not the public router. | 2026-08-22 |
 | **D16** | First bond | First bond **must** fund **all non-DETF** reserve legs (plus the DETF self-leg). Ungated. That is how the instance goes live. | 2026-08-19 |
 | **D17** | Ids 1 and 2 | Always `claimRewards`. **Never** sell-to-protocol. **Never** redeem for capital/LP. | 2026-08-19 |
 | **D18** | `buyClaim` is `exchangeIn` | DETF → claim is `exchangeIn`. **No new DETF mint.** The user’s DETF is **moved into liquidity** (self-leg join). NFT credits **id 0** 4626 for that LP. Only **bonds** mint new DETF into the pool. | 2026-08-19 |
@@ -47,10 +47,13 @@
 | **D22** | Claim paths ungated | `exchangeIn` DETF ↔ rebasing claim is **not** subject to mint/burn synthetic threshold gates. Live-only is enough. | 2026-08-19 |
 | **D23** | Exact-out | If a **closed-form** exact-out exists on that family’s reserve curve, support it. If not, keep reverting `InvalidRoute`. No binary-search solvers. | 2026-08-19 |
 | **D24** | Bonus vs bond matching | Free mint/burn and bond join are **different processes**. Live **mint** applies the **amountIn bonus** (D8) so expanding supply can move price. Live **burn** contracts supply (D12/D20; D8 bonus still off on burn). A bond mints **unboosted** proportional matching DETF (`G`) into liquidity to **deepen** the book, not to move price. Do not size `G` from a D8 boosted quote. | 2026-08-19 |
-| **D25** | Mature close | Global. A mature user bond (id ≥ 3) `convertToAssets` → **proportional** reserve withdraw → **burn the withdrawn DETF** → send the **remaining** withdrawn tokens to the user. Not D20 single-sided. Distinct from sell-to-claim (D10). | 2026-08-19 |
+| **D25** | Mature close | Global. A mature user bond (id ≥ 3) `convertToAssets(originalShares)` → **proportional** reserve withdraw → **rejoin the withdrawn DETF** to the reserve and **credit originalShares to id 0** → send the **remaining** (non-DETF) tokens to the user. Do **not** burn that DETF. Not D20. Distinct from sell-to-claim (D10). | 2026-08-22 |
 | **D26** | `PkgArgs.creator` | Every true DETF family `PkgArgs` has `address creator`. Wire mints token id 2 to that address. `creator == 0` still follows D21. | 2026-08-19 |
 | **D27** | Live-mint `U` = D8 `Gross` | Q2 locked. On a live liquid mint, `U` is the entire D8 `Gross`. D3 then splits it. The non-user slice is **only** pot (old `feeToDetf` + `inventoryDetf` destinations merge). See §9. | 2026-08-19 |
 | **D28** | Ids 1–2 claim tests | Every family must prove `feeTo` (id 1) and creator (id 2) **can** `claimRewards`, and that after D2 share top-ups and pot deposits they receive **only** their `effectiveShares` share of **new** pot. No leak that pays them more than due. Ship gate. Matrix in §20. | 2026-08-19 |
+| **D29** | Reserve donation | Permissionless donate of joinable capital (`pairToken` / `vaultShare` / family mint-bond tokens / DETF / already-minted reserve LP) onto the Bond NFT. **No DETF mint. New `originalShares` to id 0 only.** Public function is on the Bond NFT; Uni V4 host join stays DETF-only (D9). Distinct from D11 live mint. Full law: [`DETF_RESERVE_DONATION_PRD.md`](./DETF_RESERVE_DONATION_PRD.md). | 2026-08-22 |
+| **D30** | Owner host ops while locked | Uni V4 DETF-reserve hooks (and Balancer analog inside Vault unlock) must let the **owner (the DETF diamond)** add/remove LP and **swap exact-in/exact-out** between reserve legs **while PoolManager / Vault is already unlocked**. Do not use Uniswap SwapRouter or a nested `unlock` if one is open. Required for D15’s residual DETF buy and D29 join. Owner `depositSingle` at hook `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**. | 2026-08-22 |
+| **D31** | Expansion then gate | Live **mint**, live **burn**, **redeemClaim**, and **closeBondMature** **realize pending natural expansion first** (Policy; Open is a no-op). Then recompute synthetic from **minted** `totalSupply` and apply Policy mint/burn gates. If the post-realize synthetic fails the gate, the **whole tx reverts** (expansion does not stick). Desired: expansion can block a mint/burn that would overshoot the band. Donate does **not** realize. | 2026-08-22 |
 
 ---
 
@@ -58,7 +61,9 @@
 
 True DETFs share one product shape: the diamond is the share ERC-20, a reserve with a DETF self-leg prices mint/burn, and bond NFTs lock principal and weight seigniorage / expansion by `effectiveShares`.
 
-Shipped families do not follow one process. This PRD is where we lock the common law, then implement it on every remaining family. DualLiquidity is the first lock because it cannot be aligned (see §2). User-bond top-up of `feeTo` and creator effective shares is locked as a method in §3. The pot is funded from free `userDetf` (D3) and from bond join DETF (D4), not from expansion. Oracle mapping is §6; initial `p`/`f`/`c` are §7; reserved NFT ids are §8. Mint/burn quote is §10. DETF-only reserve LP is §11 (Balancer open-join exception in D9). Reserve-share / rebasing claim law is §14. Mint vs bond join, burn, NFT custody, claim redeem, first bond, and `exchangeIn` claim are §15. Mint/burn bonus vs unboosted bond `G` is §17. Mature close is §18. `PkgArgs.creator` is §19. Ids 1–2 claim tests are §20 (D28). **What is universal vs family-specific is §16.** Live-mint `U` = D8 `Gross` is §9 (D27).
+Shipped families do not follow one process. This PRD is where we lock the common law, then implement it on every remaining family. DualLiquidity is the first lock because it cannot be aligned (see §2). User-bond top-up of `feeTo` and creator effective shares is locked as a method in §3. The pot is funded from free `userDetf` (D3) and from bond join DETF (D4), not from expansion. Oracle mapping is §6; initial `p`/`f`/`c` are §7; reserved NFT ids are §8. Mint/burn quote is §10. DETF-only reserve LP is §11 (Balancer open-join exception in D9). Reserve-share / rebasing claim law is §14. Mint vs bond join, burn, NFT custody, claim redeem, first bond, and `exchangeIn` claim are §15. Mint/burn bonus vs unboosted bond `G` is §17. Mature close is §18. `PkgArgs.creator` is §19. Ids 1–2 claim tests are §20 (D28). Reserve donation is §21 (D29). Owner host ops while locked are §22 (D30). Expansion realize-then-gate is §23 (D31). **What is universal vs family-specific is §16.** Live-mint `U` = D8 `Gross` is §9 (D27).
+
+The DETF owns liquidity through Bond NFT `originalShares`. Users buy that ownership by bonding capital plus unboosted matching DETF (`G`). Token id 0 is the protocol slice; the rebasing claim token is a 4626 on id 0. Ids 1 and 2 never provided reserve capital: they cannot close or sell, and they take only a fee-oracle cut of minted DETF rewards (D2/D17). Protocol-acquired LP (sell-in, `buyClaim`, mature-close DETF rejoin, donate) is booked on id 0. Free liquid DETF is a second claim on the same NFT LP (D13).
 
 **In-scope families (after D1):**
 
@@ -356,6 +361,8 @@ Burn must be honest against the same book: payout is what that curve can return 
 
 Do not size bond matching DETF with this process.
 
+**D31 (mint/burn execute):** before the D8 quote and before the Policy gate, **realize pending expansion** (mint expansion DETF to the Bond NFT, Policy only). Then gate on synthetic computed from the **post-realize** `totalSupply`. Views `isMintingAllowed` / `isBurningAllowed` must match: they count pending expansion in the denominator so they equal post-realize synthetic without minting in the view. If realize + gate fails, the whole tx reverts.
+
 ---
 
 ## 11. D9 — Only the DETF may add or remove reserve liquidity (LOCKED)
@@ -385,9 +392,22 @@ Coverability of a D8 burn quote against Balancer reserves is therefore **not** t
 
 Applies to Single SE, multi-vault weighted, mixed-buffer, and composed stable.
 
-### 11.3 What D9 does not lock
+### 11.3 Owner ops while the host is locked (D30)
 
-- Whether hook **swaps** stay permissionless (default **yes**).
+Public swaps stay permissionless (default **yes**). The DETF, as hook owner, also needs **private** swap and LP add/remove that work when Uniswap `PoolManager` is **already unlocked** (this transaction is inside `unlockCallback`, or a nested liquidity op). Claim redeem (D15) must **buy DETF** on the residual reserve after a proportional LP withdraw; donate (D29) must `depositSingle` in the same class of tx. Neither may call Uniswap SwapRouter or start a second `PoolManager.unlock` if one is open.
+
+**Required on every Uni V4 hook used as a DETF reserve** (CP, Orbital, Weighted, Curve Quad buffer packages):
+
+- Owner-only exact-in and exact-out swap between reserve legs (DETF/raw ↔ pair / buffer legs).
+- Owner-only `deposit` / `depositSingle` / `withdraw` / `withdrawSingle` (already D9 `onlyOwner` when the flag is on).
+- If `PoolManager` is locked: settle on the **current** unlock or use **internal book settlement** (same class as zap internal swaps). If it is not locked: the owner may open a normal unlock.
+- Non-owner cannot use this path.
+
+Balancer: the analog is a swap/join/exit **inside** an already-open Vault unlock, not a nested Router call.
+
+### 11.4 What D9 / D30 do not lock
+
+- Whether hook **swaps** stay permissionless for the public (default **yes**).
 - Ownership transfer of the hook after DETF deploy (default: **no**; DETF is immutable owner).
 - Implementation of MultiStepOwnable on each hook package.
 - A later pass that might close Balancer join. Not this PRD’s current law.
@@ -443,18 +463,32 @@ Redeem of claim burns claim shares and releases a pro-rata slice of id 0 `origin
 
 The claim token **rebases in DETF**, not in rateAsset. `balanceOf` / `redemptionRate` quote how much **DETF** that holder can extract, as the sum of:
 
-1. **Liquidity unwind:** DETF from withdrawing that holder’s slice of id 0’s reserve LP on the reserve curve (D8). Include the DETF self-leg (and any family-defined conversion of other exit legs into DETF if the unwind is not DETF-only).
+1. **Liquidity unwind (zap-out to DETF):** DETF from that holder’s slice of id 0’s reserve LP if that slice were fully unwound to DETF on the reserve curve: the DETF self-leg of a proportional withdraw **plus** converting the other exit legs to DETF on the **residual** book (other originalShares still in the pool). Not DETF-leg-only.
 2. **Bond-holder rewards:** that holder’s pro-rata slice of **pending DETF** on token id 0 (`pendingRewards(0)`), the same pot D3/D4/expansion pay into.
 
 ```
-totalDetf  = unwindToDetf(lpOf(id 0)) + pendingRewards(0)
+totalDetf  = zapOutToDetf(lpOf(id 0)) + pendingRewards(0)
 rate       = totalDetf / totalClaimShares     (1e18 if totalClaimShares == 0)
 balanceOf  = claimShares * rate / 1e18
 ```
 
+`zapOutToDetf` and D15 execute **must use the same identity**. The last-resort DETF buy is that zap-out’s pair→DETF leg; it is not a third product path. In the normal case (residual LP remains) the leftover non-DETF from the proportional withdraw is exactly what that buy needs.
+
 Protocol compound may still auto-compound id 0’s pending into reserve LP (existing compound law). After compound, (2) falls and (1) rises; the DETF quote should stay continuous aside from curve fees/slippage.
 
-Shipped claim tokens that preview **rateAsset** via `previewExchangeIn(BPT → rateAsset)` and that **omit** id 0 pending rewards are **out of spec** under D10.
+Shipped claim tokens that preview **rateAsset** via `previewExchangeIn(BPT → rateAsset)`, that **omit** id 0 pending rewards, or that quote **only** the DETF leg of a proportional withdraw are **out of spec** under D10.
+
+### 14.5 4626 conversion (N10)
+
+`convertToAssets(s)` / `convertToShares(lp)`:
+
+- Numerator / assets: `lpToken.balanceOf(bondNft)` (physical LP on the NFT).
+- Denominator / shares: **`totalOriginalShares`**. Never `totalShares` (effective). **Do not** subtract protocol / id 0 effective shares from the denominator.
+- `s` is **originalShares**, never `effectiveShares`.
+- Keep existing `BetterMath` + `decimalOffset`.
+- Mature close and claim `lpOut` must pass originalShares into this conversion.
+
+Shipped `DETFNFTVaultRepo._totalLpReserveForConversion` that haircuts protocol effective shares while using all physical LP is **out of spec**. That overpays user bonds and leaks id 0 LP (donate, D25 rejoin, `buyClaim`) to users.
 
 ---
 
@@ -486,23 +520,35 @@ lpOut = detfIn * nftLp / detfTotalSupply
 
 Same shape as Uni V4 Standard Exchange (`sharesBurned * reserves / totalShares`). Do **not** use diamond `balanceOf` BPT or `supply + unminted expansion`. Then remove along the **DETF–tokenOut** curve (D20); **rejoin all other legs**.
 
-Live-mint capital deposits increase NFT `totalLp` **without** a matching `originalShares` mint (D11). Bond and DETF→claim deposits **do** mint 4626 shares (user id or id 0).
+Live-mint capital deposits increase NFT `totalLp` **without** a matching `originalShares` mint (D11). Bond mints 4626 to the **user** id. DETF→claim, donate, protocol compound, and mature-close DETF rejoin mint 4626 to **id 0**.
+
+Free DETF burn still sizes LP as `detfIn * nftLp / detfSupply` (this section). That second claim dilutes every originalShares holder, including id 0. Accepted.
 
 ### 15.4 D14 — No `feeTo` DETF on mint or burn
 
 Mint does not `_mintDetf(_feeTo(), …)`. Burn does not `safeTransfer(_feeTo(), feeDetf)`. Oracle `usageFeeOfVault` is unused on these DETF mint/burn paths. `feeTo`’s DETF income is **only** `claimRewards` on token id 1.
 
-### 15.5 D15 — Claim redeem is DETF, rewards first
+### 15.5 D15 — Claim redeem is DETF, rewards first, zap-out fill
 
-`exchangeIn(claim, amount, DETF, …)` / `redeem`:
+`exchangeIn(claim, amount, DETF, …)` / `redeem`. User receives **DETF only**.
 
-1. Pull claim tokens; burn claim shares (D10 4626).
-2. Pay as much as possible from id 0 **pending** DETF.
-3. **Compound leftover pending** (join remainder into reserve; credit id 0 LP / 4626).
-4. If pending was **zero or short**, take the unpaid DETF from **liquidity**: NFT proportional withdraw of id 0 LP; **redeposit every non-DETF** token; keep the DETF leg.
-5. Pay DETF only. No rateAsset redeem.
+`owed` = this holder’s claim on `pendingRewards(id 0) + zapOutToDetf(id 0 LP slice)` (D10 §14.4). Preview and execute share that identity. Zap-out’s leftover→DETF leg uses **post-withdraw** residual reserves and the **same trading fee as public swaps** (Uni V4 CP: 0.3%).
 
-Do not auto-compound pending **before** step 2 in this transaction.
+1. **Realize pending expansion** (D31). Expansion DETF is minted to the Bond NFT and enters the `rewardPerShares` ledger. Open: no-op.
+2. Pull claim tokens; burn claim shares (D10 4626). `lpOut` = `convertToAssets` of the released id 0 originalShares (N10).
+3. **Harvest all** id 0 pending DETF (not this holder’s pro-rata only). Pay as much as possible toward `owed`. Leftover pending: compound to id 0 (self-leg join, 4626 to id 0).
+4. If harvested pending ≥ `owed`: **do not** withdraw LP. Credit that `lpOut` back to id 0 (`addToDETFNFT`). Pay `owed`. Done.
+5. If still short: proportional withdraw of `lpOut`. Keep the DETF leg.
+6. **Buy DETF** on the **residual** reserve. Exact-out = remaining shortfall. Pay with withdrawn non-DETF. Do **not** redeem other bonders’ `originalShares`. Owner host swap (D30), not Uniswap SwapRouter.
+7. **Sell order:** after the proportional withdraw, snapshot each leftover non-DETF token’s **DETF-buying power** (preview exact-in of the full leftover → DETF on the residual book). Sort descending once. Do not re-sort after each fill. For each leftover in that order: if it cannot fill the remaining shortfall even sold in full, sell **all** of it (exact-in); else sell exact-out only the remainder and **stop**. Uni V4 CP: the only leftover is `pairToken`.
+8. Rejoin leftover non-DETF and leftover DETF to the NFT; `originalShares` to id 0. Owner `depositSingle` at hook `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0** (same zap math as a live zap). Zero LP reverts; do not skip the rejoin.
+9. Pay DETF only. `minOut` still applies. No rateAsset redeem.
+
+Claim redeem is **not** Policy mint/burn gated (D22). Expansion realize still runs so the claim holder is paid from id 0 inventory that includes id 0’s share of that expansion.
+
+**Last exit** (this withdraw empties NFT-held LP; hook may retain `MINIMUM_LIQUIDITY` on `address(0)`): skip the residual buy. Pay pending + DETF from the proportional withdraw. Owner `depositSingle` leftover pair to id 0 (D30 MIN exception; **lpOut > 0** or revert). Never send pair to the redeemer.
+
+Do not auto-compound pending **before** step 3 in this transaction. Do not add a D20 user-burn of free DETF as a redeem path.
 
 ### 15.6 D16 — First bond
 
@@ -552,11 +598,11 @@ This is the stipulation asked for: **one process**, **family-owned curve and tok
 
 ### 16.1 Must be the same on every true DETF
 
-Bond NFTs (ids 0 / 1 / 2 / ≥3), D2 weights, pot funding (D3/D4), no DETF to `feeTo` on mint/burn, ERC-4626 + lock bonus, sell-in of `originalShares` to id 0, claim = shares of id 0, rebase in DETF, live mint does not mint DETF into the pool, only bonds mint new DETF into liquidity and that `G` is **unboosted matching** (D24), DETF→claim moves provided DETF in (no new mint), burn **burns** DETF, LP lives in the NFT, burn LP size `detfIn * nftLp / supply`, claim redeem pending-then-compound-then-LP, first bond funds **all** non-DETF legs, ids 1–2 claim-only, claim `exchangeIn` ungated, `feeTo` change does not move id 1, `creator` on every family `PkgArgs` (D26), `creator == 0` mints id 2 to `feeTo`, quote shape D8 (bonus on **live free mint** `amountIn` only), mature close is proportional withdraw then burn withdrawn DETF then send the rest (D25), exact-out only if closed-form, **D28 claim-share tests on ids 1 and 2**.
+Bond NFTs (ids 0 / 1 / 2 / ≥3), D2 weights, pot funding (D3/D4), no DETF to `feeTo` on mint/burn, ERC-4626 + lock bonus, sell-in of `originalShares` to id 0, claim = shares of id 0, rebase in DETF, live mint does not mint DETF into the pool, only bonds mint new DETF into liquidity and that `G` is **unboosted matching** (D24), DETF→claim moves provided DETF in (no new mint), burn **burns** DETF, LP lives in the NFT, burn LP size `detfIn * nftLp / supply`, claim redeem pending-then-compound-then-prop-withdraw-then-buy-DETF-on-residual-then-rejoin, first bond funds **all** non-DETF legs, ids 1–2 claim-only, claim `exchangeIn` ungated, `feeTo` change does not move id 1, `creator` on every family `PkgArgs` (D26), `creator == 0` mints id 2 to `feeTo`, quote shape D8 (bonus on **live free mint** `amountIn` only), mature close is proportional withdraw then **rejoin withdrawn DETF to id 0** then send the rest (D25), exact-out only if closed-form, **D28 claim-share tests on ids 1 and 2**, **D29 reserve donation** (Bond NFT public `donate`, DETF-only host join, no DETF mint, **originalShares to id 0**), **D30 owner host swap/LP while locked**, **D31 expansion then mint/burn gate**.
 
 Uni V4: DETF-only add/remove LP. Balancer: open public join allowed (D9).
 
-Policy/Open gates, protocol compound (id 0 only), and natural expansion stay as in the compound/threshold PRDs, except D15’s redeem order and D22 (claim ungated).
+Policy/Open gates, protocol compound (id 0 only), and natural expansion stay as in the compound/threshold PRDs, except D15’s redeem order, D22 (claim ungated), and **D31** (realize expansion on mint/burn/redeem/close before the gate).
 
 ### 16.2 Family-owned (do not “standardize away”)
 
@@ -564,14 +610,14 @@ Policy/Open gates, protocol compound (id 0 only), and natural expansion stay as 
 |---------|----------------|-----|
 | **Reserve curve** | Family | D8: use **this instance’s** reserve book. Weighted, mixed-buffer stable, composed-of-BPTs, Uni V4 CP, orbital sphere, V4 weighted, quad StableSwap. |
 | **Reserve token set** | Family | Which legs sit next to the DETF self-leg. |
-| **Live mint `tokenIn`** | Family | Vault share, buffer, pair, or SE zap **into** a reserve leg. Not share↔share on the DETF. |
+| **Live mint `tokenIn`** | Family | Vault share, buffer, pair, or SE zap **into** a reserve leg. Not share↔share on the DETF. Donate (D29) uses this same list plus **DETF** and reserve `lpToken`. |
 | **Burn `tokenOut`** | Family ∩ D20 | Any **reserve** token, or that SE leg’s buffer/rate asset. Quote DETF–`tokenOut` on **that** curve. |
 | **First-bond capital** | Family | The concrete non-DETF legs D16 requires (see §16.3). |
 | **Empty-pool / first-bond quote** | Family | Pool is empty: **Uni V4 uses `openingPairPerDetfWad`** (0 → creation at init). Synthetic peg stays **`creationPairPerDetfWad`**. **D8 does not run here.** D8’s live curve + amountIn bonus applies **after** live, and only to free mint/burn. Balancer Single SE / MVW: weights (`detfWeight` / `vaultWeights`). Mixed-buffer: amp + first-bond amounts. Composed: existing reserve + first join. Do **not** add a Uni-style opening field to Balancer families. |
 | **Closed-form exact-out?** | Family curve | D23: implement if the host has `inGivenOut`; else `InvalidRoute`. |
 | **Synthetic / expansion numeraire** | Family + existing PRDs | Single synthetic vs per-route / all-legs-rich (Weighted, Quad). |
 | **SE passthrough** (no DETF mint/burn) | Family extra | Not required for conformance. |
-| **Mature close token set** | Family ∩ D25 | Process is universal (prop withdraw, burn DETF, send rest). Which non-DETF tokens appear in “the rest” is that family’s reserve list. |
+| **Mature close token set** | Family ∩ D25 | Process is universal (prop withdraw, rejoin DETF to id 0, send rest). Which non-DETF tokens appear in “the rest” is that family’s reserve list. |
 
 Family PRDs that contradict §16.1 (e.g. MixedBuffer “burn buffer only”, MVW “first bond is BPT-only”, Uni V4 mid-based `effectiveBase`, Composed swap-not-burn, claim redeem to rateAsset) are **superseded** on those points.
 
@@ -636,34 +682,34 @@ Lock-duration bonus remains on `effectiveShares` only (D10). It is not a DETF mi
 
 ---
 
-## 18. D25 — Mature close: proportional withdraw, burn DETF, send the rest (LOCKED)
+## 18. D25 — Mature close: proportional withdraw, rejoin DETF to id 0, send the rest (LOCKED)
 
-Global. Replaces family-specific single-sided mature close (shipped Single SE `tokenOut`, Orbital consolidate-to-capital, MixedBuffer buffer-only, and any D20-shaped close).
+Global. Replaces family-specific single-sided mature close (shipped Single SE `tokenOut`, Orbital consolidate-to-capital, MixedBuffer buffer-only, and any D20-shaped close). **Overrides** any earlier D25 text that burned the withdrawn DETF.
 
 Sell-to-claim (D10) is unchanged and remains a **different** mature path: transfer `originalShares` to id 0, mint claim shares. No LP withdraw.
 
 ### 18.1 Process (id ≥ 3, mature)
 
-1. `claimRewards` on that NFT so pending DETF is not destroyed when the position is retired.
-2. `lp = convertToAssets(originalShares)` (ERC-4626, D10).
+1. **Realize pending expansion** (D31). Then `claimRewards` on that NFT so the bonder receives **their `effectiveShares` slice** of that expansion (and any other pending) as free DETF. Do not destroy it with the retire.
+2. `lp = convertToAssets(originalShares)` (ERC-4626, D10 / N10). Input is originalShares, not effectiveShares.
 3. Through the NFT (D13): **proportional** withdraw of `lp` from the reserve. Every reserve leg comes out, including the DETF self-leg.
-4. **Burn** the DETF that came out of that withdraw. Do not send it to the user. Do not swap it. Do not redeposit it.
-5. Send **every remaining withdrawn token** (all non-DETF legs) to the user.
-6. Retire the NFT (burn `originalShares` / `effectiveShares` of that id).
+4. **Rejoin** the DETF that came out of that withdraw as the self-leg. Credit **originalShares to id 0** (`addToDETFNFT`, 1×). Do **not** burn that DETF. Do **not** send it to the user. Owner `depositSingle` at hook `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**. D2 then runs.
+5. Send **every remaining withdrawn token** (all non-DETF legs) to the user. **Basket.** Do not consolidate to a single `tokenOut` / buffer. Balancer family close text that swaps leftover legs into one settlement asset is **superseded**.
+6. Retire the NFT (burn that id’s `originalShares` / `effectiveShares`).
 
-Ids 1 and 2 cannot take this path (D17).
+Ids 1 and 2 cannot take this path (D17). Close is not Policy mint/burn gated.
 
 ### 18.2 What the user receives
 
-The basket of non-DETF tokens from that proportional exit. Which tokens exist is family-owned (§16.2). The process is not.
+Free DETF from step 1 (`claimRewards`, including their expansion share) **plus** the basket of non-DETF tokens from the proportional exit. Which non-DETF tokens exist is family-owned (§16.2). The process is not. The protocol keeps the DETF self-leg on id 0.
 
 Do not:
 
 - Quote D8 or D20 on this path.
 - Rejoin non-DETF and pay a single `tokenOut` (that is liquid burn / old close).
-- Leave withdrawn DETF in the diamond, the NFT, or the user’s wallet.
+- Burn withdrawn DETF or leave it in the diamond, the NFT, or the user’s wallet.
 
-Slippage protection is implementation (`minOut` per token vs one primary). Preview must match execute.
+Slippage: launch default L2 (`minAmountsOut` array, DETF slot **must be 0**). Preview must match execute.
 
 ---
 
@@ -726,6 +772,65 @@ Per family: `<Family>_Alignment_FeeCreatorClaim.t.sol` with `test_FC1_` … `tes
 
 ---
 
+## 21. D29 — Reserve donation (LOCKED)
+
+Joinable capital (`pairToken` / buffer / rateAsset, `vaultShare`, family mint/bond tokens, **DETF**, or already-minted reserve LP) may be pushed into a **live** DETF without minting DETF. Physical reserve LP on the NFT rises. New 4626 `originalShares` are minted **only to token id 0** at the current conversion rate (N10). User-bond `convertToAssets` stays flat. Ids 1 and 2 still have zero redeemable LP; D2 tops up their **effectiveShares** because id 0 changed `O`.
+
+Donate(DETF) is a self-leg join of **existing** DETF (no burn, no claim mint). That is `buyClaim` without paying the donor in claim tokens.
+
+**Public function lives on the Bond NFT** (`detf/common/bondNft`), because that vault already holds the LP (D13). **Host join stays on the DETF diamond** (`onlyBondNft`). Uni V4 hooks remain owner-only add/remove (D9); the NFT must not call `depositSingle`. `IDetf.donate` is a FeeCollector forwarder onto the NFT (`minLpOut = 0`; pretransfer destination is the NFT; event donor is the collector).
+
+Donate is not a bond, not live mint (D11 still unassigned LP + free DETF to the caller), not protocol compound, and not expansion realize. Full process, family join table, conversion rule (N10), and ship-gate tests: [`DETF_RESERVE_DONATION_PRD.md`](./DETF_RESERVE_DONATION_PRD.md).
+
+Do **not** treat idle ERC-20 on the DETF diamond or a raw `vaultShare` transfer to the hook as donate.
+
+---
+
+## 22. D30 — Owner host ops while PoolManager / Vault is locked (LOCKED)
+
+Normative detail is §11.3. Summary:
+
+- DETF is the Uni V4 reserve-hook owner. Public swaps stay public. Add/remove LP stays owner-only when `ownerOnlyLiquidity` is on (D9).
+- D15 must **buy DETF** on the residual book after a proportional LP withdraw. D29 must `depositSingle` in the same class of transaction. Uniswap SwapRouter / a nested `PoolManager.unlock` will fail if the manager is already unlocked.
+- Every Uni V4 DETF-reserve hook (CP, Orbital, Weighted, Curve Quad buffer) exposes **owner-only** exact-in/exact-out swap and LP add/remove that settle on the **current** unlock or via internal book settlement (zap-internal class). Non-owner cannot use that path.
+- Balancer analog: swap/join/exit inside an already-open Vault unlock, not a nested Router call.
+
+Owner `depositSingle` / `deposit` when hook `totalSupply == MINIMUM_LIQUIDITY`: **allowed for the owner only**. Same zap math as a live zap (impact against dust accepted). **lpOut must be > 0** or revert. Public zaps still revert at MIN (hook D79). This is how D25 DETF rejoin and D15 leftover rejoin stay LP on the NFT.
+
+Family hook PRDs must carry this lock. Co-located starting point: [`UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md`](../../hooks/uniswap/v4/standardExchange/constantProduct/single/UNISWAP_V4_SINGLE_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md) D88–D89.
+
+---
+
+## 23. D31 — Realize expansion, then gate (LOCKED)
+
+Cross-cut of the compound/expansion PRD. **Mint/burn quote, split, D11 join, D13 burn sizing, Policy vs Open inequalities, and pot rewards do not change.** What changes is **when** expansion is minted relative to the gate.
+
+| Path | Realize expansion first? | Then Policy mint/burn gate? |
+|------|--------------------------|------------------------------|
+| Live mint | **Yes** | **Yes** (post-realize synthetic) |
+| Live burn | **Yes** | **Yes** (post-realize synthetic) |
+| `redeemClaim` | **Yes** | **No** (D22) |
+| `closeBondMature` | **Yes** | **No** |
+| Bond | **Yes** (already) | **No** |
+| Donate | **No** | **No** |
+| Open mode | Realize is a no-op | Mint/burn gates always pass when live |
+
+Execute order on live mint/burn:
+
+1. Require live.
+2. Realize pending expansion (mint DETF to the Bond NFT; `rewardPerShares` updates). Open: skip.
+3. Compute synthetic from **minted** `totalSupply` (pending expansion is now 0).
+4. Policy: mint iff `synthetic > mintThreshold`; burn iff `synthetic < burnThreshold`. Fail → **revert the whole tx**, including the expansion mint. That can block the mint/burn that triggered realize. **Desired** (stops overshooting the band).
+5. Proceed with the existing mint or burn process.
+
+Views: `isMintingAllowed` / `isBurningAllowed` count pending expansion in the denominator so they equal step 3 without minting in the view.
+
+Close: after realize, `claimRewards` on that user NFT pays **that bonder’s** expansion (and other pending) as free DETF, then the LP unwind.
+
+Redeem: after realize, harvest **all** id 0 pending (includes id 0’s expansion slice) toward `owed`. Other bonders keep expansion on their own pending.
+
+---
+
 ## 12. Non-goals (until explicitly unlocked)
 
 - Implementing any topic before it is locked in §0 and listed in the impl plan.
@@ -742,4 +847,4 @@ Per family: `<Family>_Alignment_FeeCreatorClaim.t.sol` with `test_FC1_` … `tes
 3. Expand the matching section with normative text.
 4. Only then open an implementation-and-test plan.
 
-§9.2 (bond free `U`) stays open as product; the impl plan uses launch default L1 until this PRD changes it. §16 is the universal vs family index. Execute [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md).
+§9.2 (bond free `U`) stays open as product; the impl plan uses launch default L1 until this PRD changes it. §16 is the universal vs family index. D25 (rejoin DETF to id 0, basket), D15 (zap-out buy), D29 (id 0 originalShares), D30 (owner-during-lock), and D31 (expansion then gate) override earlier rows dated before 2026-08-22. Execute [`DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md`](./DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md) Stages **I–O**.

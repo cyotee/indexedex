@@ -19,8 +19,8 @@ contract MixedBufferMultiVaultStableDetfBondingFacet is IFacet, MixedBufferMulti
         interfaces_[0] = type(IMixedBufferMultiVaultStableDetfBonding).interfaceId;
     }
 
-    function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](12);
+    function facetFuncs() public pure returns (bytes4[] memory funcs_) {
+        funcs_ = new bytes4[](16);
         funcs_[0] = IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector;
         funcs_[1] = IMixedBufferMultiVaultStableDetfBonding.bond.selector;
         funcs_[2] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToDetfNft.selector;
@@ -33,6 +33,10 @@ contract MixedBufferMultiVaultStableDetfBondingFacet is IFacet, MixedBufferMulti
         funcs_[9] = IMixedBufferMultiVaultStableDetfBonding.previewRedeemClaim.selector;
         funcs_[10] = IMixedBufferMultiVaultStableDetfBonding.claimLiquidity.selector;
         funcs_[11] = IMixedBufferMultiVaultStableDetfBonding.protocolBondOriginalShares.selector;
+        funcs_[12] = IMixedBufferMultiVaultStableDetfBonding.joinDonatedCapital.selector;
+        funcs_[13] = IMixedBufferMultiVaultStableDetfBonding.previewJoinDonatedCapital.selector;
+        funcs_[14] = IMixedBufferMultiVaultStableDetfBonding.notifyReserveDonated.selector;
+        funcs_[15] = IMixedBufferMultiVaultStableDetfBonding.donate.selector;
     }
 
     function facetMetadata()
@@ -43,18 +47,6 @@ contract MixedBufferMultiVaultStableDetfBondingFacet is IFacet, MixedBufferMulti
         name_ = "MixedBufferMultiVaultStableDetfBondingFacet";
         interfaces_ = new bytes4[](1);
         interfaces_[0] = type(IMixedBufferMultiVaultStableDetfBonding).interfaceId;
-        funcs_ = new bytes4[](12);
-        funcs_[0] = IMixedBufferMultiVaultStableDetfBonding.bootstrapFirstBond.selector;
-        funcs_[1] = IMixedBufferMultiVaultStableDetfBonding.bond.selector;
-        funcs_[2] = IMixedBufferMultiVaultStableDetfBonding.sellPositionToDetfNft.selector;
-        funcs_[3] = IMixedBufferMultiVaultStableDetfBonding.acceptedBondTokens.selector;
-        funcs_[4] = IMixedBufferMultiVaultStableDetfBonding.redeemClaim.selector;
-        funcs_[5] = IMixedBufferMultiVaultStableDetfBonding.buyClaim.selector;
-        funcs_[6] = IMixedBufferMultiVaultStableDetfBonding.previewBuyClaim.selector;
-        funcs_[7] = IMixedBufferMultiVaultStableDetfBonding.closeBondMature.selector;
-        funcs_[8] = IMixedBufferMultiVaultStableDetfBonding.previewCloseBondMature.selector;
-        funcs_[9] = IMixedBufferMultiVaultStableDetfBonding.previewRedeemClaim.selector;
-        funcs_[10] = IMixedBufferMultiVaultStableDetfBonding.claimLiquidity.selector;
-        funcs_[11] = IMixedBufferMultiVaultStableDetfBonding.protocolBondOriginalShares.selector;
+        funcs_ = facetFuncs();
     }
 }

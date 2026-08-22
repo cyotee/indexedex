@@ -31,6 +31,7 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {
     UniswapV4HookOwnerOnlyLiquidityLib
 } from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
@@ -151,6 +152,13 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (_totalSupply() <= Repo.MINIMUM_LIQUIDITY) return false;
         (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
         return e0 > 0 && e1 > 0 && e2 > 0;
+    }
+
+    /// @dev D89: owner may zap at MINIMUM_LIQUIDITY. Public still sees isZapEligible()==false.
+    function _requireZapEligibleOrOwnerMin() internal view {
+        if (isZapEligible()) return;
+        if (_totalSupply() == Repo.MINIMUM_LIQUIDITY && msg.sender == MultiStepOwnableRepo._owner()) return;
+        revert NotZapEligible();
     }
 
     modifier nonReentrant() {
@@ -1661,7 +1669,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
         if (to == address(0)) revert ZeroAddress();
-        if (!isZapEligible()) revert NotZapEligible();
+        _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
 
         _maybeMintProtocolFee();
@@ -1757,7 +1765,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
 
     function _planZap(address tokenIn, uint256 amountIn) internal view returns (ZapPlan memory p) {
-        if (!isZapEligible()) revert NotZapEligible();
+        _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
         _requireNonZero(amountIn);
 

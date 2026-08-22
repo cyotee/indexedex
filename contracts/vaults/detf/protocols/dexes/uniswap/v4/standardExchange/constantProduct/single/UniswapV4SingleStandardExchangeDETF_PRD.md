@@ -6,7 +6,7 @@
 
 ## Status
 
-**SUPERSEDED for mint/bond/burn/claim/close process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../DETF_ALIGNMENT_PRD.md) D1–D28. This file remains for family curve/token-set notes.
+**SUPERSEDED for mint/bond/burn/claim/close/donate process** — use [`DETF_ALIGNMENT_PRD.md`](../../../../../../DETF_ALIGNMENT_PRD.md) D1–D31. This file remains for family curve/token-set notes.
 
 **DRAFT v0.5** — Clarifications LOCK-ready: bond ungated when live; expansion realize on reward/compound/bond only; burn uses effective supply; shared epoch amendment planned. Co-located (internal product law).
 
@@ -104,6 +104,7 @@ A **true DETF**: diamond **is** the DETF ERC-20; seigniorage mint/burn vs a **Un
 | Hook / children deploy | Hook: create3; bond NFT + rebasing: pure Crane; owner = DETF diamond |
 | Fee-recipient NFT | **Wire like Balancer Single SE** (claimable free DETF; no auto-compound v1) |
 | Compound | Shared law (protocol NFT only → single-sided DETF join) |
+| Reserve donation | Alignment **D29** / [`DETF_RESERVE_DONATION_PRD.md`](../../../../../../../DETF_RESERVE_DONATION_PRD.md): Bond NFT `donate` of `pairToken` / `vaultShare` / DETF / hook LP. No DETF mint. **originalShares to id 0.** DETF executes hook join (D9 / D30). |
 | Natural expansion | Deploy-time epochs + premium-closure; unlimited whole-epoch catch-up (`maxCatchUpEpochs=0`); **not** fee-oracle; **shared amendment planned** for all true DETFs |
 | Synthetic + epoch debt | Pending expansion in synthetic denominator (§5.5) |
 | Launch-rich narrative | High early token APY while rich; decays with premium; peg walk months–~1y; not year-long 4-digit APY (§10.3–§10.4) |

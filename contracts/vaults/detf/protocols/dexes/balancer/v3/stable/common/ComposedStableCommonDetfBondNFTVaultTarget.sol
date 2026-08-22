@@ -185,7 +185,7 @@ contract ComposedStableCommonDetfBondNFTVaultTarget is
         uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
 
         uint256 lpAmount =
-            ComposedStableCommonDetfBondNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.effectiveSharesOf[tokenId]);
+            ComposedStableCommonDetfBondNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);
         ComposedStableCommonDetfBondNFTVaultRepo._removePosition(layoutStruct, tokenId);
 
         if (msg.sender == address(layoutStruct.detf)) {

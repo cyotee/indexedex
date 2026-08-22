@@ -90,6 +90,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableDETFExchangeInTarget i
         _requireReserveLive();
         if (!_isAllowlistedTokenIn(tokenIn_)) revert Repo.InvalidRoute(tokenIn_, IERC20(address(this)));
         PairLegRating memory pre_ = _rateTokenInToPairLeg(tokenIn_, amountIn_);
+        _realizeExpansionIfNeeded();
         if (!_isMintingAllowed(pre_.fundedProductIndex)) {
             revert Repo.MintingNotAllowed(
                 _syntheticVs(pre_.fundedProductIndex), Repo._layoutStruct().mintThreshold

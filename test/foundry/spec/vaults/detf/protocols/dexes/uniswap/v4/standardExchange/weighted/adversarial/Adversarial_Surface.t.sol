@@ -43,6 +43,8 @@ contract Adversarial_Weighted_Surface is TestBase_UniswapV4StandardExchangeWeigh
         assertTrue(
             _contains(bfuncs_, IUniswapV4StandardExchangeWeightedDETF.sellPositionToDetfNft.selector), "sell"
         );
+        assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeWeightedDETF.joinDonatedCapital.selector), "joinDonated");
+        assertTrue(_contains(bfuncs_, IUniswapV4StandardExchangeWeightedDETF.donate.selector), "donate");
 
         bytes4[] memory cfuncs_ = detfCompoundFacet.facetFuncs();
         assertTrue(_contains(cfuncs_, IUniswapV4StandardExchangeWeightedDETF.depositClaim.selector), "depositClaim");

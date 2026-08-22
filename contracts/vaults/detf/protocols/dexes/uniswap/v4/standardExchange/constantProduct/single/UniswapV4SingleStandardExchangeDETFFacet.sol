@@ -105,7 +105,7 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
     }
 
     function _funcsC() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](10);
+        f = new bytes4[](14);
         f[0] = IUniswapV4SingleStandardExchangeDETF.isReserveHookFinalized.selector;
         f[1] = IUniswapV4SingleStandardExchangeDETF.isReserveWired.selector;
         f[2] = IUniswapV4SingleStandardExchangeDETF.completeReserveBondNft.selector;
@@ -116,5 +116,9 @@ contract UniswapV4SingleStandardExchangeDETFFacet is
         f[7] = IUniswapV4SingleStandardExchangeDETF.previewCloseBondMature.selector;
         f[8] = IUniswapV4SingleStandardExchangeDETF.previewRedeemClaim.selector;
         f[9] = IUniswapV4SingleStandardExchangeDETF.previewClaimLiquidity.selector;
+        f[10] = IUniswapV4SingleStandardExchangeDETF.joinDonatedCapital.selector;
+        f[11] = IUniswapV4SingleStandardExchangeDETF.previewJoinDonatedCapital.selector;
+        f[12] = IUniswapV4SingleStandardExchangeDETF.notifyReserveDonated.selector;
+        f[13] = IUniswapV4SingleStandardExchangeDETF.donate.selector;
     }
 }

@@ -17,21 +17,30 @@ export function Footer() {
             <p className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">{brand.name}</p>
             <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)] max-w-sm">{brand.tagline}</p>
             <p className="mt-3 text-xs text-[var(--text-muted,#9aa3b2)] italic">
-              Indexed liquidity. Employed bags.
+              One token. A basket that works.
             </p>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <Link href="/explore" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Explore
+            </Link>
+            <Link href="/insights" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              DETFs
+            </Link>
+            <Link href="/create" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Create
+            </Link>
+            <Link href="/you" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              You
+            </Link>
+            <Link href="/learn" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Learn
+            </Link>
+            <Link href="/swap" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Trade
+            </Link>
             <Link href="/earn" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
-              Earn
-            </Link>
-            <Link href="/research" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
-              Research
-            </Link>
-            <Link href="/token" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
-              Token
-            </Link>
-            <Link href="/portfolio" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
-              Portfolio
+              Vaults
             </Link>
             <a
               href={docsUrl}
@@ -56,7 +65,7 @@ export function Footer() {
           </div>
         </div>
         <p className="mt-6 text-[10px] text-[var(--text-muted,#9aa3b2)]">
-          Smart contracts involve risk. APYs are not guarantees. Read risks before depositing.
+          Smart contracts involve risk. APYs are not promises. Read the notes before you deposit.
         </p>
       </div>
     </footer>

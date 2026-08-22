@@ -144,6 +144,24 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook {
         view
         returns (uint256 amountIn);
 
+    /// @notice D89 / D30: owner exact-in on the sphere book. Internal settlement (no nested unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    /// @notice D89 / D30: owner exact-out on the sphere book. Internal settlement (no nested unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
     /// @param permit2Data empty => SafeERC20 transferFrom only; non-empty => Permit2 packing
     function addLiquidity(
         uint256 a0Max,

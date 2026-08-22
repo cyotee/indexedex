@@ -159,10 +159,13 @@ contract SingleStandardExchangeDETF_ProductLaw_Test is TestBase_SingleStandardEx
         _bootstrapViaFirstBond(alice, 800e18);
         uint256 before_ = detfBonding.protocolBondOriginalShares();
         uint256 rateBefore_ = IRebasingClaimToken(detfInfo.rebasingClaimToken()).redemptionRate();
-        // User-bond BPT sits on the diamond but is not protocol originalShares (A3 idle / user pile).
+        // D13: user-bond BPT sits on the Bond NFT, not the diamond. Protocol originalShares stay 0.
         assertEq(before_, 0, "M8c user pile is not protocol assets");
         assertEq(IRebasingClaimToken(detfInfo.rebasingClaimToken()).redemptionRate(), rateBefore_, "M8c rate");
-        assertTrue(IERC20(detfInfo.reservePool()).balanceOf(detf) > before_, "physical BPT > protocol");
+        address nft_ = detfInfo.bondNftVault();
+        assertTrue(
+            IERC20(detfInfo.reservePool()).balanceOf(nft_) > before_, "physical NFT BPT > protocol"
+        );
     }
 
     function test_M8d_minClaimOut_tooHigh_reverts() public {
@@ -177,10 +180,16 @@ contract SingleStandardExchangeDETF_ProductLaw_Test is TestBase_SingleStandardEx
         (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 1_000e18);
         _warpPastUnlock(detf, tokenId_);
         address bpt_ = detfInfo.reservePool();
-        uint256 bal_ = IERC20(bpt_).balanceOf(detf);
-        if (bal_ > 1) {
+        address nft_ = detfInfo.bondNftVault();
+        uint256 nftBal_ = IERC20(bpt_).balanceOf(nft_);
+        if (nftBal_ > 0) {
             vm.prank(detf);
-            IERC20(bpt_).transfer(address(1), bal_ - 1);
+            IDETFNFTVault(nft_).transferHeldToken(IERC20(bpt_), address(1), nftBal_);
+        }
+        uint256 detfBal_ = IERC20(bpt_).balanceOf(detf);
+        if (detfBal_ > 0) {
+            vm.prank(detf);
+            IERC20(bpt_).transfer(address(1), detfBal_);
         }
         vm.prank(alice);
         vm.expectRevert();

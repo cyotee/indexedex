@@ -25,6 +25,7 @@ import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Ba
 import {
     UniswapV4HookOwnerOnlyLiquidityLib
 } from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
@@ -229,7 +230,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _requireZapEligible() internal view {
-        if (!_isZapEligible()) revert NotZapEligible();
+        if (_isZapEligible()) return;
+        // D89: owner may depositSingle at MINIMUM_LIQUIDITY (public still reverts).
+        if (
+            ERC20Repo._totalSupply() == Repo.MINIMUM_LIQUIDITY && _isLive()
+                && msg.sender == MultiStepOwnableRepo._owner()
+        ) {
+            return;
+        }
+        revert NotZapEligible();
     }
 
     function _requireNonZero(uint256 amount) internal pure {

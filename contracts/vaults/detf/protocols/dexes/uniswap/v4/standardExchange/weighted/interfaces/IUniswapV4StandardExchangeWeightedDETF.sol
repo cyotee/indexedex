@@ -120,6 +120,22 @@ interface IUniswapV4StandardExchangeWeightedDETF {
     /// @notice Preview D25 close. DETF binding slot is 0; other slots are non-DETF payouts.
     function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
 
+    /// @notice Bond NFT only. Settle `token` and single-sided join LP to the Bond NFT. No DETF mint. No expansion.
+    function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
+        external
+        returns (uint256 lpOut);
+
+    function previewJoinDonatedCapital(IERC20 token, uint256 amount)
+        external
+        view
+        returns (uint256 lpOut);
+
+    /// @notice Bond NFT only. D2 top-up after donate credits id 0.
+    function notifyReserveDonated() external;
+
+    /// @notice Forwards to Bond NFT donate with `minLpOut = 0`. Pretransfer destination is the NFT.
+    function donate(IERC20 token, uint256 amount, bool pretransferred) external;
+
     function claimRewards(uint256 tokenId, address recipient) external returns (uint256 rewards);
 
     /// @notice Direct claim deposit (pair/share/SE/free DETF). Reverts if not single-asset eligible.

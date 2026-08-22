@@ -149,6 +149,24 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
         view
         returns (uint256 amountIn);
 
+    /// @notice D89 / D30: owner exact-in on the StableSwap book. Internal settlement (no nested unlock).
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external returns (uint256 amountOut);
+
+    /// @notice D89 / D30: owner exact-out on the StableSwap book. Internal settlement (no nested unlock).
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external returns (uint256 amountIn);
+
     function previewJoinProportional(uint256[] calldata amounts)
         external
         view

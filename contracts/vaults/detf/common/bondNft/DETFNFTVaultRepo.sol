@@ -496,33 +496,27 @@ library DETFNFTVaultRepo {
     /* ---------------------------------------------------------------------- */
 
     /**
-     * @notice LP inventory used for share↔asset conversion.
-     * @dev Prefer physical LP held by this vault (Uni V4 PRD: user bond LP on bond NFT).
-     *      Fallback to DETF `reserveOfToken` (Balancer peer diamond BPT custody).
-     *      When LP is held here, exclude protocol NFT effective shares from the denominator —
-     *      protocol principal LP lives on the rebasing claim package after sell / primary mint.
+     * @notice LP inventory used for share↔asset conversion (alignment N10).
+     * @dev Numerator is physical `lpToken.balanceOf(this)`. Denominator is `totalOriginalShares`.
+     *      Do not use `totalShares` (effective) and do not subtract protocol / id 0 effective shares.
+     *      Empty originalShares or empty physical LP is the 1:1 branch in `_convertToShares` /
+     *      `_convertToAssets` (no diamond call). Diamond `reserveOfToken` is only for peers that
+     *      still custody BPT on the DETF while originalShares are already non-zero.
      */
     function _totalLpReserveForConversion(Storage storage layoutStruct_)
         internal
         view
         returns (uint256 totalLpReserve_, uint256 totalShares_)
     {
-        totalShares_ = layoutStruct_.totalShares;
+        totalShares_ = layoutStruct_.totalOriginalShares;
         totalLpReserve_ = layoutStruct_.lpToken.balanceOf(address(this));
         if (totalLpReserve_ > 0) {
-            if (layoutStruct_.protocolNftInitialized) {
-                uint256 protocolId_ = layoutStruct_.detfNFTId;
-                uint256 protocolEff_ = layoutStruct_.effectiveSharesOf[protocolId_];
-                if (protocolEff_ > 0 && protocolEff_ < totalShares_) {
-                    totalShares_ -= protocolEff_;
-                } else if (protocolEff_ >= totalShares_) {
-                    // Only protocol shares remain — no user LP conversion basis.
-                    totalShares_ = 0;
-                }
-            }
             return (totalLpReserve_, totalShares_);
         }
-        // Diamond-custody peers: all LP (user + protocol) on DETF.
+        if (totalShares_ == 0) {
+            return (0, 0);
+        }
+        // Diamond-custody peers: BPT still on the DETF (not this NFT).
         totalLpReserve_ = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
     }
 
@@ -541,6 +535,22 @@ library DETFNFTVaultRepo {
 
     function _convertToShares(uint256 lpAmount_) internal view returns (uint256) {
         return _convertToShares(_layoutStruct(), lpAmount_);
+    }
+
+    /// @notice Convert inbound LP using a **pre-credit** physical LP snapshot (N10 / donate N4).
+    /// @dev After LP has already landed, `convertToShares(ΔL)` would use L' and under-mint id 0.
+    function _convertToSharesAtLpReserve(
+        Storage storage layoutStruct_,
+        uint256 lpAmount_,
+        uint256 lpReserveBefore_
+    ) internal view returns (uint256 shares_) {
+        uint256 totalShares_ = layoutStruct_.totalOriginalShares;
+        if (totalShares_ == 0 || lpReserveBefore_ == 0) {
+            return lpAmount_;
+        }
+        shares_ = BetterMath._convertToSharesUp(
+            lpAmount_, lpReserveBefore_, totalShares_, layoutStruct_.decimalOffset
+        );
     }
 
     /**

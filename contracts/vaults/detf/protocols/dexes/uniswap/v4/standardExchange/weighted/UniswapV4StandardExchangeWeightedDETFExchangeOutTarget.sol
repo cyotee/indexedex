@@ -43,6 +43,7 @@ abstract contract UniswapV4StandardExchangeWeightedDETFExchangeOutTarget is
             revert Repo.InvalidRoute(IERC20(address(this)), tokenOut_);
         }
         uint8 outIdx_ = _pairProductIndexForBurnOut(tokenOut_);
+        _realizeExpansionIfNeeded();
         if (!_isBurningAllowed(outIdx_)) {
             revert Repo.BurningNotAllowed(_syntheticVs(outIdx_), Repo._layoutStruct().burnThreshold);
         }

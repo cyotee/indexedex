@@ -9,9 +9,10 @@ import { chainIdMatches, ensureWeth, erc20Balance, rpcAlive } from './helpers/rp
 
 /**
  * Live swap/deposit txs via DTF UI when the stack has SE vaults + router.
- * RH fee_detf may only have Uni V3 SE (no Balancer router) — cases skip cleanly.
+ * Skipped: Trade now uses the Universal Router V4 surface. The Balancer
+ * swap page is archived at swap/page.archived.tsx.
  */
-test.describe('Live swap routes (DTF / Anvil)', () => {
+test.describe.skip('Live swap routes (DTF / Anvil; archived Balancer swap)', () => {
   test.setTimeout(180_000)
 
   test.beforeEach(async ({ walletPage }) => {
