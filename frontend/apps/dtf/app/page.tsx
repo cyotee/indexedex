@@ -177,54 +177,11 @@ export default function HomePage() {
       <section id="example-basket" className="mb-16 md:mb-20 scroll-mt-24">
         <p className="landing-section-label">Example basket</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-          One token over Morpho and Uniswap
+          One token, many strategies
         </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          A DETF is a Decentralized ETF: one token over a basket you pick. This example puts two
-          vaults in that basket. A Morpho vault marked in USDG. A Uniswap V4 vault on a USDG/WETH
-          pool, marked in WETH. You hold the DETF token. The vaults keep working in those apps.
-        </p>
 
         <div className="mt-6">
           <OrbitalMorphoUniv4ExampleDiagram />
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Card>
-            <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-              One position
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-              You do not keep a Morpho receipt and a Uniswap vault receipt as two separate
-              positions. You mint, burn, or trade the DETF.
-            </p>
-          </Card>
-          <Card>
-            <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-              Work in other apps
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-              The basket is not a static pile of USDG and WETH. It is vault shares. Morpho keeps
-              the USDG working. Uniswap keeps the USDG/WETH pool working.
-            </p>
-          </Card>
-        </div>
-
-        <p className="mt-5 max-w-2xl text-xs leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          This is an example of a three-part basket: the DETF token plus two vaults. It is not a
-          live listing on this page. Returns are not promised. Create your own basket, or read how
-          types work.
-        </p>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link href="/create">
-            <Button size="sm">Create DETF</Button>
-          </Link>
-          <Link href="/research/detf-types">
-            <Button size="sm" variant="secondary">
-              Basket shapes
-            </Button>
-          </Link>
         </div>
       </section>
 
