@@ -1,4 +1,13 @@
-import type { CSSProperties, ReactNode } from 'react'
+'use client'
+
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 
 import type { ResearchDiagramId } from '../../../content/research/types'
 
@@ -141,15 +150,17 @@ function PoolFrame({
   children,
   footer,
 }: {
-  label: string
+  label?: string
   children: ReactNode
   footer?: ReactNode
 }) {
   return (
     <div className="rounded-xl border p-3.5 sm:p-5" style={poolStyle}>
-      <p className="mb-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
-        {label}
-      </p>
+      {label ? (
+        <p className="mb-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
+          {label}
+        </p>
+      ) : null}
       {children}
       {footer ? <div className="mt-4">{footer}</div> : null}
     </div>
@@ -880,10 +891,73 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
   )
 }
 
-function PoolDoor({ label }: { label: string }) {
+const POOL_WIRE_ACCENT = 'var(--accent)'
+const POOL_WIRE_AMBER = 'rgb(251 191 36)'
+
+type DiagramWire = {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  stroke: string
+}
+
+/**
+ * Six pool→token edges. Indices: pools [DETF/USDG, DETF/WETH, USDG/WETH],
+ * tokens [DETF token, Morpho vault, Uniswap V4 vault].
+ * fx/tx are left/right ports on each card so two wires per cell stay distinct.
+ */
+const POOL_TOKEN_WIRE_SPEC: readonly {
+  from: 0 | 1 | 2
+  to: 0 | 1 | 2
+  fx: number
+  tx: number
+  stroke: string
+}[] = [
+  { from: 0, to: 0, fx: 0.32, tx: 0.32, stroke: POOL_WIRE_ACCENT },
+  { from: 0, to: 1, fx: 0.68, tx: 0.32, stroke: POOL_WIRE_AMBER },
+  { from: 1, to: 0, fx: 0.32, tx: 0.68, stroke: POOL_WIRE_ACCENT },
+  { from: 1, to: 2, fx: 0.68, tx: 0.32, stroke: POOL_WIRE_AMBER },
+  { from: 2, to: 1, fx: 0.32, tx: 0.68, stroke: POOL_WIRE_AMBER },
+  { from: 2, to: 2, fx: 0.68, tx: 0.68, stroke: POOL_WIRE_AMBER },
+]
+
+/** Vault card → protocol block. tokens[1]=Morpho vault, tokens[2]=Uni vault. */
+const VAULT_PROTO_WIRE_SPEC: readonly {
+  from: 1 | 2
+  proto: 0 | 1
+  fx: number
+  tx: number
+  stroke: string
+}[] = [
+  { from: 1, proto: 0, fx: 0.5, tx: 0.5, stroke: POOL_WIRE_AMBER },
+  { from: 2, proto: 1, fx: 0.5, tx: 0.5, stroke: POOL_WIRE_AMBER },
+]
+
+function cardEdgePoint(
+  el: HTMLElement,
+  origin: DOMRect,
+  xFrac: number,
+  edge: 'top' | 'bottom',
+) {
+  const r = el.getBoundingClientRect()
+  return {
+    x: r.left - origin.left + r.width * xFrac,
+    y: edge === 'bottom' ? r.bottom - origin.top : r.top - origin.top,
+  }
+}
+
+function PoolDoor({
+  label,
+  cardRef,
+}: {
+  label: string
+  cardRef: (el: HTMLDivElement | null) => void
+}) {
   return (
     <div
-      className="flex min-h-[4.25rem] min-w-0 items-center justify-center rounded-lg border px-2 py-2 text-center"
+      ref={cardRef}
+      className="relative z-[2] flex min-h-[4.25rem] min-w-0 items-center justify-center rounded-lg border px-2 py-2 text-center"
       style={{
         borderColor: 'color-mix(in srgb, var(--accent) 55%, transparent)',
         background: 'color-mix(in srgb, var(--accent-muted) 82%, transparent)',
@@ -894,12 +968,91 @@ function PoolDoor({ label }: { label: string }) {
   )
 }
 
+function DiagramWires({ wires, width, height }: { wires: DiagramWire[]; width: number; height: number }) {
+  if (width <= 0 || height <= 0 || wires.length === 0) return null
+
+  return (
+    <svg
+      className="pointer-events-none absolute inset-0 z-[1] overflow-visible"
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden="true"
+    >
+      {wires.map((w) => {
+        const dy = Math.max(28, Math.abs(w.y2 - w.y1) * 0.42)
+        const sameColumn = Math.abs(w.x2 - w.x1) < 12
+        const bow = sameColumn ? (w.x1 < width / 2 ? 26 : -26) : 0
+        const d = `M ${w.x1} ${w.y1} C ${w.x1 + bow} ${w.y1 + dy}, ${w.x2 + bow} ${w.y2 - dy}, ${w.x2} ${w.y2}`
+        const key = `${w.x1.toFixed(1)}-${w.y1.toFixed(1)}-${w.x2.toFixed(1)}-${w.y2.toFixed(1)}-${w.stroke}`
+        return (
+          <g key={key}>
+            <path
+              d={d}
+              fill="none"
+              stroke={w.stroke}
+              strokeWidth="2"
+              strokeOpacity="0.9"
+              strokeLinecap="round"
+            />
+            <circle cx={w.x1} cy={w.y1} r="3.2" fill={w.stroke} />
+            <circle cx={w.x2} cy={w.y2} r="3.2" fill={w.stroke} />
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 /**
  * Landing example: Orbital-style reserve (three pair pools).
  * Customer copy must not use the package name. Tokens: DETF, Morpho vault (USDG),
  * Uniswap V4 vault (WETH). Each token is pooled against each of the others.
  */
 export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: string }) {
+  const rootRef = useRef<HTMLDivElement>(null)
+  const poolRefs = useRef<(HTMLDivElement | null)[]>([null, null, null])
+  const tokenRefs = useRef<(HTMLDivElement | null)[]>([null, null, null])
+  const protoRefs = useRef<(HTMLDivElement | null)[]>([null, null])
+  const [wires, setWires] = useState<DiagramWire[]>([])
+  const [box, setBox] = useState({ w: 0, h: 0 })
+
+  const measure = useCallback(() => {
+    const root = rootRef.current
+    if (!root) return
+    const origin = root.getBoundingClientRect()
+    setBox({ w: origin.width, h: origin.height })
+
+    const pools = poolRefs.current
+    const tokens = tokenRefs.current
+    const protos = protoRefs.current
+    if (pools.some((el) => !el) || tokens.some((el) => !el) || protos.some((el) => !el)) return
+
+    const poolToken = POOL_TOKEN_WIRE_SPEC.map((spec) => {
+      const start = cardEdgePoint(pools[spec.from]!, origin, spec.fx, 'bottom')
+      const end = cardEdgePoint(tokens[spec.to]!, origin, spec.tx, 'top')
+      return { x1: start.x, y1: start.y, x2: end.x, y2: end.y, stroke: spec.stroke }
+    })
+    const vaultProto = VAULT_PROTO_WIRE_SPEC.map((spec) => {
+      const start = cardEdgePoint(tokens[spec.from]!, origin, spec.fx, 'bottom')
+      const end = cardEdgePoint(protos[spec.proto]!, origin, spec.tx, 'top')
+      return { x1: start.x, y1: start.y, x2: end.x, y2: end.y, stroke: spec.stroke }
+    })
+    setWires([...poolToken, ...vaultProto])
+  }, [])
+
+  useLayoutEffect(() => {
+    measure()
+    const root = rootRef.current
+    if (!root || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(measure)
+    ro.observe(root)
+    for (const el of [...poolRefs.current, ...tokenRefs.current, ...protoRefs.current]) {
+      if (el) ro.observe(el)
+    }
+    return () => ro.disconnect()
+  }, [measure])
+
   return (
     <DiagramShell
       className={className}
@@ -917,40 +1070,94 @@ export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: st
       </div>
       <Connector />
 
-      <div className="space-y-3">
+      <div ref={rootRef} className="relative">
         <PoolFrame label="Pools">
           <div className="grid grid-cols-3 items-stretch gap-1.5 sm:gap-2">
-            <PoolDoor label="DETF/USDG (Morpho)" />
-            <PoolDoor label="DETF/WETH (Uniswap V4 (USDG/WETH))" />
-            <PoolDoor label="USDG (Morpho) / WETH (Uniswap V4 (USDG/WETH))" />
+            <PoolDoor
+              label="DETF/USDG (Morpho)"
+              cardRef={(el) => {
+                poolRefs.current[0] = el
+              }}
+            />
+            <PoolDoor
+              label="DETF/WETH (Uniswap V4 (USDG/WETH))"
+              cardRef={(el) => {
+                poolRefs.current[1] = el
+              }}
+            />
+            <PoolDoor
+              label="USDG (Morpho) / WETH (Uniswap V4 (USDG/WETH))"
+              cardRef={(el) => {
+                poolRefs.current[2] = el
+              }}
+            />
           </div>
         </PoolFrame>
 
-        <PoolFrame label="Tokens in those pools">
+        <div className="h-12 sm:h-16" aria-hidden="true" />
+
+        <PoolFrame
+          footer={
+            <p className="max-w-[32%] font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
+              Tokens in those pools
+            </p>
+          }
+        >
           <div className="grid grid-cols-3 items-stretch gap-1.5 sm:gap-2">
-            <Leg accent title="DETF token" subtitle="You hold this" />
-            <Leg secondary title="Morpho vault" subtitle="USDG" />
-            <Leg secondary title="Uniswap V4 vault" subtitle="WETH" />
+            <div
+              ref={(el) => {
+                tokenRefs.current[0] = el
+              }}
+              className="relative z-[2] flex min-w-0"
+            >
+              <Leg accent title="DETF token" subtitle="You hold this" />
+            </div>
+            <div
+              ref={(el) => {
+                tokenRefs.current[1] = el
+              }}
+              className="relative z-[2] flex min-w-0"
+            >
+              <Leg secondary title="Morpho vault" subtitle="USDG" />
+            </div>
+            <div
+              ref={(el) => {
+                tokenRefs.current[2] = el
+              }}
+              className="relative z-[2] flex min-w-0"
+            >
+              <Leg secondary title="Uniswap V4 vault" subtitle="WETH" />
+            </div>
           </div>
         </PoolFrame>
-      </div>
 
-      <div className="grid grid-cols-3 items-start gap-1.5 sm:gap-2">
-        <div />
-        <div className="flex min-w-0 flex-col">
-          <Connector label="Morpho" />
-          <div className="rounded-xl border px-3 py-4 sm:px-4" style={seBoxStyle}>
+        <div className="h-12 sm:h-16" aria-hidden="true" />
+
+        <div className="grid grid-cols-3 items-start gap-1.5 px-3.5 sm:gap-2 sm:px-5">
+          <div />
+          <div
+            ref={(el) => {
+              protoRefs.current[0] = el
+            }}
+            className="relative z-[2] min-w-0 rounded-xl border px-3 py-4 sm:px-4"
+            style={seBoxStyle}
+          >
             <p className="text-base font-medium text-amber-100">Morpho</p>
             <p className="mt-2 font-mono text-sm uppercase tracking-wide text-amber-100">USDG</p>
           </div>
-        </div>
-        <div className="flex min-w-0 flex-col">
-          <Connector label="Uniswap V4" />
-          <div className="rounded-xl border px-3 py-4 sm:px-4" style={seBoxStyle}>
+          <div
+            ref={(el) => {
+              protoRefs.current[1] = el
+            }}
+            className="relative z-[2] min-w-0 rounded-xl border px-3 py-4 sm:px-4"
+            style={seBoxStyle}
+          >
             <p className="text-base font-medium text-amber-100">Uniswap V4</p>
             <p className="mt-2 font-mono text-sm uppercase tracking-wide text-amber-100">USDG/WETH</p>
           </div>
         </div>
+
+        <DiagramWires wires={wires} width={box.w} height={box.h} />
       </div>
     </DiagramShell>
   )
