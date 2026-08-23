@@ -18,7 +18,6 @@ import {
   type DeploymentEnvironment,
 } from '@indexedex/protocol/addressArtifacts'
 import {
-  isCanonicalArtifactChainId,
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from '@indexedex/protocol/networkSelection'
@@ -34,7 +33,7 @@ const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSe
 /** DTF launch target is Robinhood (4663) unless the 46630 Anvil rehearsal env is selected. */
 const envDefaultChain = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
 const DTF_DEFAULT_CHAIN_ID: CanonicalArtifactChainId =
-  Number.isFinite(envDefaultChain) && isCanonicalArtifactChainId(envDefaultChain)
+  envDefaultChain === CHAIN_ID_ROBINHOOD || envDefaultChain === CHAIN_ID_ROBINHOOD_TESTNET
     ? envDefaultChain
     : process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT === 'anvil_robinhood_testnet'
       ? CHAIN_ID_ROBINHOOD_TESTNET
@@ -52,6 +51,11 @@ function resolveDtfEnvironment(): DeploymentEnvironment {
   return 'anvil_robinhood_main'
 }
 
+function coerceDtfChainId(value: number): CanonicalArtifactChainId {
+  if (value === CHAIN_ID_ROBINHOOD || value === CHAIN_ID_ROBINHOOD_TESTNET) return value
+  return DTF_DEFAULT_CHAIN_ID
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
   // DTF defaults to RH Anvil registry; override with NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT.
   const environment = resolveDtfEnvironment()
@@ -67,8 +71,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     if (typeof window === 'undefined') return
 
     const stored = Number(window.localStorage.getItem(SELECTED_NETWORK_STORAGE_KEY))
-    if (Number.isFinite(stored) && isCanonicalArtifactChainId(stored)) {
-      setSelectedChainId(stored)
+    if (Number.isFinite(stored)) {
+      setSelectedChainId(coerceDtfChainId(stored))
     }
   }, [])
 

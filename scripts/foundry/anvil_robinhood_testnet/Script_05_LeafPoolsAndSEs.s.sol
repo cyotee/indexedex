@@ -7,7 +7,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_05_LeafPoolsAndSEs} from "./Stage_05_LeafPoolsAndSEs.sol";
 
 /// @title Script_05_LeafPoolsAndSEs
-/// @notice Group 05: required `TTRICH`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
+/// @notice Group 05: required `DTF`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
 contract Script_05_LeafPoolsAndSEs is LaunchIo {
     LaunchState internal s;
 
@@ -19,7 +19,7 @@ contract Script_05_LeafPoolsAndSEs is LaunchIo {
         require(_loadPlatform(s), "run Script_02 first");
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
-        require(_hasCode(s.ttRICH), "run Script_04 for TTRICH");
+        require(_hasCode(s.ttRICH), "run Script_04 for DTF");
         require(_hasCode(s.ttWETH), "run Script_04 for TTWETH");
         _logHeader("Group 05: Leaf pools + SEs");
 

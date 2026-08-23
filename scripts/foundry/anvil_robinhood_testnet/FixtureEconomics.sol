@@ -33,6 +33,8 @@ library FixtureEconomics {
     uint256 internal constant EXPANSION_R = 0;
     uint256 internal constant EXPANSION_CATCHUP = 0;
     uint256 internal constant BASE_AMP = 100;
+    /// @dev Morpho Blue LLTV enabled on rehearsal Morpho (80%).
+    uint256 internal constant MORPHO_LLTV = 0.8e18;
     uint8 internal constant ORBITAL_DETF_BINDING = 2;
     uint256 internal constant DETF_WEIGHT = 0.2e18;
     // Mint-open plus a little room (Policy mint is 1.05e18). 10.5e18 is a 15x fd
@@ -50,7 +52,7 @@ library FixtureEconomics {
     uint256 internal constant WETH_POOL_SEED = 100 ether;
     uint256 internal constant LEAF_FIRST_BOND = 10 ether;
     uint256 internal constant TTDOL_FIRST_BOND = 10 ether;
-    uint256 internal constant TTCHIR_FIRST_BOND = 10 ether;
+    uint256 internal constant DTF_DETF_FIRST_BOND = 10 ether;
     uint256 internal constant INVENTORY_STARTER = 100_000 ether;
     uint256 internal constant SWAP_MIN_OUT = 1;
 

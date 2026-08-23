@@ -68,6 +68,7 @@ KILL_ANVIL=0
 FORCE=0
 FORK_LATEST=0
 LIVE_BROADCAST=0
+USE_ANVIL_DEV0=0
 RPC_URL_EXPLICIT=0
 FORGE_VERBOSITY=""
 COMMAND="all"
@@ -83,15 +84,15 @@ with --unlocked. --live broadcasts to public 46630 as DEPLOYER_ADDRESS (cast
 wallet). Point RPC_URL at a local Anvil fork to rehearse.
 
 Commands:
-  all           Staged deploy: 00-05, 04b (Mag7 tokens), 06t (TTCHIR), 06e (TTDOL-Q), 09
-                Packages: Uni V4 SE + CP (Protocol DETF) + Curve Quad (Double Dollar). Not 03b.
-  foundation    Groups 00-03 (CP + Curve Quad packages only)
+  all           Staged deploy: 00-05, 03b (Weighted+Orbital pkgs), 03c (Morpho Blue SE pkg),
+                04b, 06t (DTF-DETF), 06e (TTDOL-Q), 09. No Morpho SE instances (create those in the UI).
+  foundation    Groups 00-03, 03b, 03c (packages only, including Weighted + Morpho Blue SE)
   assets        Groups 04 + 04b
   pools         Group 05
-  leaves        06t (TTCHIR) + 06e (TTDOL-Q)
+  leaves        06t (DTF-DETF) + 06e (TTDOL-Q)
   export        Group 09 (frontend JSON)
   simulate      Alternate: Script_SimulateLaunch (01-06 in one script, for gas estimate). Do not run after \`all\`.
-  stageNN       Single group (00-06, 04b, 06t, 06e, 09). stage03b is optional later (Orbital + Weighted).
+  stageNN       Single group (00-06, 03b, 03c, 04b, 06t, 06e, 09).
   stagesimulate Same as simulate
   detach-fork   Anvil-only: dump overlay, restart without a fork, reload state. Use when the
                 public RH RPC returns "metadata is not found" for new CREATE addresses.
@@ -102,6 +103,8 @@ Options:
   --live            Broadcast to public 46630 (official RPC unless RPC_URL is already set).
                     Does not start Anvil. Requires DEPLOYER_ADDRESS (cast wallet).
                     Does not use Anvil Dev 0.
+  --anvil-dev0      Local only: forge --sender is Anvil Dev 0. Ignores DEPLOYER_ADDRESS,
+                    SENDER, and DEV_ADDRESS. Cannot combine with --live.
   --rpc-url URL     Broadcast RPC (default http://127.0.0.1:8545)
   --restart-anvil   Local only: kill port + start a RH testnet fork at chain id 46630
                     with --disable-code-size-limit (Anvil node flag, not a script cheat)
@@ -116,7 +119,9 @@ Options:
 Signer:
   SENDER / DEV_ADDRESS / DEPLOYER_ADDRESS
                     Passed as forge --sender. Local default is Anvil Dev 0
-                    (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266) with --unlocked.
+                    (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266) with --unlocked
+                    unless DEPLOYER_ADDRESS is already set in the environment.
+  --anvil-dev0      Force that Anvil Dev 0 sender even when DEPLOYER_ADDRESS is set.
   OWNER             Defaults to the deployer
   UI_WALLET         Local default is Anvil Dev 1. --live defaults to the deployer.
   --live            Requires DEPLOYER_ADDRESS (cast wallet). No --unlocked.
@@ -405,8 +410,23 @@ is_localhost_rpc() {
   esac
 }
 
-# Local: Anvil Dev 0 + --unlocked. --live: DEPLOYER_ADDRESS via the cast wallet.
+# Local: Anvil Dev 0 + --unlocked unless DEPLOYER_ADDRESS/SENDER is set.
+# --anvil-dev0: ignore those env vars. --live: DEPLOYER_ADDRESS via the cast wallet.
 require_deployer() {
+  if [[ "$USE_ANVIL_DEV0" -eq 1 ]]; then
+    if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
+      log_error "--anvil-dev0 cannot be combined with --live"
+      exit 1
+    fi
+    SENDER="$ANVIL_DEV0"
+    DEV_ADDRESS="$ANVIL_DEV0"
+    DEPLOYER_ADDRESS="$ANVIL_DEV0"
+    OWNER="$ANVIL_DEV0"
+    UI_WALLET="${UI_WALLET:-$ANVIL_DEV1}"
+    log_info "Using Anvil Dev 0 as deployer (ignoring DEPLOYER_ADDRESS/SENDER/DEV_ADDRESS)"
+    export DEPLOYER_ADDRESS SENDER DEV_ADDRESS OWNER UI_WALLET
+    return
+  fi
   if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
     if [[ -z "${DEPLOYER_ADDRESS:-}" && -z "${SENDER:-}" && -z "${DEV_ADDRESS:-}" ]]; then
       log_error "--live requires DEPLOYER_ADDRESS (cast wallet account)"
@@ -543,6 +563,7 @@ stage_script() {
     02) echo "$SCRIPT_DIR/Script_02_Platform.s.sol" ;;
     03) echo "$SCRIPT_DIR/Script_03_UniV4Packages.s.sol" ;;
     03b) echo "$SCRIPT_DIR/Script_03b_OrbitalWeightedPackages.s.sol" ;;
+    03c) echo "$SCRIPT_DIR/Script_03c_MorphoBlueSePkg.s.sol" ;;
     04) echo "$SCRIPT_DIR/Script_04_Tokens.s.sol" ;;
     04b) echo "$SCRIPT_DIR/Script_04b_SevenTestTokens.s.sol" ;;
     05) echo "$SCRIPT_DIR/Script_05_LeafPoolsAndSEs.s.sol" ;;
@@ -572,7 +593,7 @@ while [[ $# -gt 0 ]]; do
       COMMAND="$1"
       shift
       ;;
-    stage[0-9][0-9]|stage[0-9]|stage03b|stage04b|stage06[et]|stagesimulate)
+    stage[0-9][0-9]|stage[0-9]|stage03b|stage03c|stage04b|stage06[et]|stagesimulate)
       COMMAND="$1"
       shift
       ;;
@@ -582,6 +603,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --live)
       LIVE_BROADCAST=1
+      shift
+      ;;
+    --anvil-dev0)
+      USE_ANVIL_DEV0=1
       shift
       ;;
     --rpc-url)
@@ -673,6 +698,10 @@ if [[ "$LIVE_BROADCAST" -eq 1 ]]; then
   fi
   if [[ "$RESTART_ANVIL" -eq 1 ]]; then
     log_error "--live cannot be combined with --restart-anvil"
+    exit 1
+  fi
+  if [[ "$USE_ANVIL_DEV0" -eq 1 ]]; then
+    log_error "--live cannot be combined with --anvil-dev0"
     exit 1
   fi
   if [[ "$COMMAND" == "detach-fork" ]]; then
@@ -770,10 +799,10 @@ log_info "SENDER=$SENDER UI_WALLET=$UI_WALLET OUT_DIR=$OUT_DIR_OVERRIDE"
 
 case "$COMMAND" in
   all)
-    run_stages 00 01 02 03 04 04b 05 06t 06e 09
+    run_stages 00 01 02 03 03b 03c 04 04b 05 06t 06e 09
     ;;
   foundation)
-    run_stages 00 01 02 03
+    run_stages 00 01 02 03 03b 03c
     ;;
   assets)
     run_stages 04 04b

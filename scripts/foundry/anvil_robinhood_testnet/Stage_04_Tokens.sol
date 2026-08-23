@@ -22,7 +22,7 @@ import {
 } from "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
 
 /// @title Stage_04_Tokens
-/// @notice Required `TTRICH` plus mintable stand-ins `TTUSDG` / `TTUSDE` / `TTWETH` + facade + 1e12 to #0 and #1.
+/// @notice Required `DTF` plus mintable stand-ins `TTUSDG` / `TTUSDE` / `TTWETH` + facade + 1e12 to #0 and #1.
 library Stage_04_Tokens {
     using BetterEfficientHashLib for bytes;
 
@@ -94,13 +94,13 @@ library Stage_04_Tokens {
         IERC20MintBurn(token).mint(uiWallet_, FixtureEconomics.PREMINT);
     }
 
-    /// @notice Required architecture token. Resume-safe if `TTRICH` is missing from an older 04 artifact.
+    /// @notice Required architecture token. Resume-safe if `DTF` is missing from an older 04 artifact.
     function deployAndMintTtrich(LaunchState storage s, address owner_, address uiWallet_) internal {
         require(s.tokenPkg != address(0), "Stage_04: tokenPkg missing");
         require(s.erc20MinterFacade != address(0), "Stage_04: facade missing");
         if (s.ttRICH != address(0) && s.ttRICH.code.length > 0) return;
         IERC20MintBurnOwnableOperableDFPkg tokenPkg = IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
-        s.ttRICH = tokenPkg.deployToken("Test Token RICH", "TTRICH", 18, owner_, _salt("TTRICH"));
+        s.ttRICH = tokenPkg.deployToken("Test Token DTF", "DTF", 18, owner_, _salt("DTF"));
         _authorizeAndMint(s, s.ttRICH, owner_, uiWallet_);
     }
 

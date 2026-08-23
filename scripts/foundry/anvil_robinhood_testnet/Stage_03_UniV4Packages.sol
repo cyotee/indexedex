@@ -62,7 +62,7 @@ import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/inte
 
 /// @title Stage_03_UniV4Packages
 /// @notice Uni V4 SE + packages for Protocol DETF (CP) and Double Dollar (Curve Quad). No instances.
-/// @dev Does not deploy Orbital or Weighted (group 03b, opt-in later).
+/// @dev Orbital + Weighted packages are group 03b (part of `all` / `foundation`).
 library Stage_03_UniV4Packages {
     using BetterEfficientHashLib for bytes;
     using VaultComponentFactoryService for ICreate3FactoryProxy;

@@ -7,7 +7,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_04_Tokens} from "./Stage_04_Tokens.sol";
 
 /// @title Script_04_Tokens
-/// @notice Group 04: `TTRICH` + `TTUSDG` / `TTUSDE` / `TTWETH` + facade + 1e12 to deployer and UI_WALLET.
+/// @notice Group 04: `DTF` + `TTUSDG` / `TTUSDE` / `TTWETH` + facade + 1e12 to deployer and UI_WALLET.
 contract Script_04_Tokens is LaunchIo {
     LaunchState internal s;
 
@@ -27,7 +27,7 @@ contract Script_04_Tokens is LaunchIo {
                 vm.stopBroadcast();
             }
             _exportTokens(s);
-            _logAddress("TTRICH:", s.ttRICH);
+            _logAddress("DTF:", s.ttRICH);
             _logAddress("TTWETH:", s.ttWETH);
             _logComplete("Group 04 (cached)");
             return;
@@ -41,7 +41,7 @@ contract Script_04_Tokens is LaunchIo {
         _logAddress("erc20MinterFacade:", s.erc20MinterFacade);
         _logAddress("TTUSDG:", s.ttUSDG);
         _logAddress("TTWETH:", s.ttWETH);
-        _logAddress("TTRICH:", s.ttRICH);
+        _logAddress("DTF:", s.ttRICH);
         _logComplete("Group 04");
     }
 }

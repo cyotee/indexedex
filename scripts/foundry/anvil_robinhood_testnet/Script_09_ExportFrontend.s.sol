@@ -23,12 +23,13 @@ contract Script_09_ExportFrontend is LaunchIo {
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
         require(_loadLeafPools(s), "run Script_05 first");
-        require(_loadLeafDetfs(s), "run Script_06 first (TTCHIR required)");
-        _requireChirArchitecture(s);
-        if (!_hasCode(s.ttRichir) && _hasCode(s.ttChir)) {
-            s.ttRichir = address(IDetf(s.ttChir).rebasingClaimToken());
+        _loadMorphoBlue(s);
+        require(_loadLeafDetfs(s), "run Script_06 first (DTF-DETF required)");
+        _requireDtfArchitecture(s);
+        if (!_hasCode(s.dtfClaim) && _hasCode(s.dtfDetf)) {
+            s.dtfClaim = address(IDetf(s.dtfDetf).rebasingClaimToken());
         }
-        require(_hasCode(s.ttRichir), "TTRICHIR required (wire TTCHIR claim)");
+        require(_hasCode(s.dtfClaim), "DTF-CLAIM required (wire DTF-DETF claim)");
         _logHeader("Group 09: Frontend export (46630)");
 
         vm.createDir(FRONTEND_DIR, true);
@@ -65,11 +66,27 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("p", "cpDetfPkg", s.cpDetfPkg);
         json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
         json = vm.serializeAddress("p", "curveQuadDetfPkg", s.curveQuadDetfPkg);
+        json = vm.serializeAddress("p", "orbitalHookPkg", s.orbitalHookPkg);
+        json = vm.serializeAddress("p", "orbitalDetfPkg", s.orbitalDetfPkg);
+        json = vm.serializeAddress("p", "weightedHookPkg", s.weightedHookPkg);
+        json = vm.serializeAddress("p", "weightedDetfPkg", s.weightedDetfPkg);
+        json = vm.serializeAddress("p", "morphoPin", RobinhoodCanonicalLib.morpho());
+        json = vm.serializeAddress("p", "morphoIrmPin", RobinhoodCanonicalLib.morphoIrm());
+        json = vm.serializeAddress("p", "morphoOracleFactory", RobinhoodCanonicalLib.morphoOracleFactory());
+        json = vm.serializeAddress("p", "morphoVaultV2Factory", RobinhoodCanonicalLib.morphoVaultV2Factory());
+        json = vm.serializeAddress("p", "morphoRegistry", RobinhoodCanonicalLib.morphoRegistry());
+        json = vm.serializeAddress("p", "morphoBundler3", RobinhoodCanonicalLib.morphoBundler3());
+        json = vm.serializeAddress("p", "morpho", s.morpho);
+        json = vm.serializeAddress("p", "morphoBlue", s.morpho);
+        json = vm.serializeAddress("p", "morphoIrm", s.morphoIrm);
+        json = vm.serializeAddress("p", "morphoOracle", s.morphoOracle);
+        json = vm.serializeAddress("p", "morphoBlueSePkg", s.morphoBlueSePkg);
         json = vm.serializeAddress("p", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("p", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         json = vm.serializeAddress("p", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("p", "TTUSDE", s.ttUSDE);
         json = vm.serializeAddress("p", "TTWETH", s.ttWETH);
+        json = vm.serializeAddress("p", "DTF", s.ttRICH);
         json = vm.serializeAddress("p", "TTRICH", s.ttRICH);
         json = vm.serializeAddress("p", "TTNVDA", _seven("TTNVDA"));
         json = vm.serializeAddress("p", "TTMSFT", _seven("TTMSFT"));
@@ -78,9 +95,9 @@ contract Script_09_ExportFrontend is LaunchIo {
         json = vm.serializeAddress("p", "TTAMZN", _seven("TTAMZN"));
         json = vm.serializeAddress("p", "TTMETA", _seven("TTMETA"));
         json = vm.serializeAddress("p", "TTTSLA", _seven("TTTSLA"));
-        json = vm.serializeAddress("p", "TTCHIR", s.ttChir);
-        json = vm.serializeAddress("p", "TTRICHIR", s.ttRichir);
-        json = vm.serializeAddress("p", "rebasingClaimToken", s.ttRichir);
+        json = vm.serializeAddress("p", "DTF-DETF", s.dtfDetf);
+        json = vm.serializeAddress("p", "DTF-CLAIM", s.dtfClaim);
+        json = vm.serializeAddress("p", "rebasingClaimToken", s.dtfClaim);
         json = vm.serializeAddress("p", "seUsdeWeth", s.seUsdeWeth);
         json = vm.serializeAddress("p", "seUsdgWeth", s.seUsdgWeth);
         json = vm.serializeAddress("p", "seUsdgUsde", s.seUsdgUsde);
@@ -106,7 +123,9 @@ contract Script_09_ExportFrontend is LaunchIo {
             ",",
             _tok("Test Token WETH", "TTWETH", s.ttWETH, '["token","testToken"]'),
             ",",
-            _tok("Test Token RICH", "TTRICH", s.ttRICH, '["token","testToken"]'),
+            _tok("Test Token DTF", "DTF", s.ttRICH, '["token","testToken"]'),
+            ",",
+            _tok("Test Claim DTF-CLAIM", "DTF-CLAIM", s.dtfClaim, '["token","claim"]'),
             _sevenToks(),
             ",",
             _tok("Wrapped Ether", "WETH", RobinhoodCanonicalLib.weth(), '["weth"]'),
@@ -142,14 +161,14 @@ contract Script_09_ExportFrontend is LaunchIo {
             ",",
             _tok("Test SE TTUSDG/TTUSDE", "SE-TTUSDG-TTUSDE", s.seUsdgUsde, '["vault","se","strat"]'),
             ",",
-            _tok("Test SE TTRICH/TTWETH", "SE-TTRICH-TTWETH", s.seRichWeth, '["vault","se","strat"]')
+            _tok("Test SE DTF/TTWETH", "SE-DTF-TTWETH", s.seRichWeth, '["vault","se","strat"]')
         );
         vm.writeFile(_frontendPath("strategy-vaults.tokenlist.json"), _list("IndexedEx Robinhood Testnet Strategy Vaults", body));
     }
 
     function _writeProtocolDetfs() internal {
         string memory body = string.concat(
-            _tok("Test DETF CHIR Single", "TTCHIR", s.ttChir, '["vault","detf"]'),
+            _tok("Test DETF DTF-DETF", "DTF-DETF", s.dtfDetf, '["vault","detf"]'),
             ",",
             _tok("Double Dollar DETF", "$$DETF", s.ttDolQ, '["vault","detf"]')
         );
@@ -157,7 +176,7 @@ contract Script_09_ExportFrontend is LaunchIo {
     }
 
     function _writeFeaturedFee() internal {
-        string memory body = _tok("Test DETF CHIR Single", "TTCHIR", s.ttChir, '["vault","detf","fee"]');
+        string memory body = _tok("Test DETF DTF-DETF", "DTF-DETF", s.dtfDetf, '["vault","detf","fee"]');
         vm.writeFile(
             _frontendPath("featured-fee-detfs.tokenlist.json"),
             _list("IndexedEx Robinhood Testnet Featured Fee DETFs", body)
@@ -168,10 +187,10 @@ contract Script_09_ExportFrontend is LaunchIo {
         string memory json;
         json = vm.serializeUint("x", "chainId", uint256(46630));
         json = vm.serializeAddress("x", "erc20MinterFacade", s.erc20MinterFacade);
-        json = vm.serializeAddress("x", "TTRICH", s.ttRICH);
+        json = vm.serializeAddress("x", "DTF", s.ttRICH);
         json = vm.serializeAddress("x", "TTWETH", s.ttWETH);
-        json = vm.serializeAddress("x", "TTCHIR", s.ttChir);
-        json = vm.serializeAddress("x", "TTRICHIR", s.ttRichir);
+        json = vm.serializeAddress("x", "DTF-DETF", s.dtfDetf);
+        json = vm.serializeAddress("x", "DTF-CLAIM", s.dtfClaim);
         json = vm.serializeAddress("x", "TTDOL-Q", s.ttDolQ);
         json = vm.serializeString("x", "frontendDir", FRONTEND_DIR);
         _writeJson(json, FILE_EXPORT);

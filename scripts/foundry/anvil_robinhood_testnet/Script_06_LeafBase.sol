@@ -22,7 +22,7 @@ abstract contract Script_06_LeafBase is LaunchIo {
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
         require(_loadLeafPools(s), "run Script_05 first");
-        _requireChirArchitecture(s);
+        _requireDtfArchitecture(s);
         _loadLeafDetfsPartial(s);
     }
 

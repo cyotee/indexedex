@@ -6,6 +6,8 @@ import {
   burnPriceFromBand,
   canLeaveStep,
   claimSymbolFrom,
+  concatDetfName,
+  concatDetfSymbol,
   emptyPlan,
   evenWeightPercents,
   humanToWad,
@@ -21,13 +23,14 @@ import {
 } from './createPlan'
 
 describe('create plan steps', () => {
-  it('walks shape → name → basket → gates → review', () => {
-    expect(nextStep('shape')).toBe('name')
-    expect(nextStep('name')).toBe('basket')
-    expect(nextStep('basket')).toBe('gates')
+  it('walks shape → basket → name → gates → review', () => {
+    expect(nextStep('shape')).toBe('basket')
+    expect(nextStep('basket')).toBe('name')
+    expect(nextStep('name')).toBe('gates')
     expect(nextStep('gates')).toBe('review')
     expect(nextStep('review')).toBeNull()
-    expect(prevStep('name')).toBe('shape')
+    expect(prevStep('basket')).toBe('shape')
+    expect(prevStep('name')).toBe('basket')
     expect(prevStep('shape')).toBeNull()
   })
 })
@@ -94,6 +97,20 @@ describe('derived names', () => {
   it('builds claim and bond symbols', () => {
     expect(claimSymbolFrom('FOO')).toBe('FOOIR')
     expect(bondSymbolFrom('FOO')).toBe('FOO-BOND')
+  })
+
+  it('concatenates underlying token names and symbols', () => {
+    const usd = { name: 'USD Coin', symbol: 'USDC' }
+    const weth = { name: 'Wrapped Ether', symbol: 'WETH' }
+    expect(concatDetfName([usd, weth])).toBe('USD Coin (USDC) / Wrapped Ether (WETH)')
+    expect(concatDetfSymbol([usd, weth])).toBe('USDC-WETH')
+  })
+
+  it('falls back to names when name-plus-symbol is too long', () => {
+    const a = { name: 'Test Token USDG', symbol: 'TTUSDG' }
+    const b = { name: 'Test Token WETH', symbol: 'TTWETH' }
+    expect(concatDetfName([a, b])).toBe('Test Token USDG / Test Token WETH')
+    expect(concatDetfSymbol([a, b])).toBe('TTUSDGTTWETH')
   })
 
   it('accepts a custom claim symbol', () => {

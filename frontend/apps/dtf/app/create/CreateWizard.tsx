@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import type { Address } from 'viem'
+import { useReadContract, useReadContracts } from 'wagmi'
 
 import { getBaseTokensForChain, getStrategyVaultTokensForChain, type TokenListEntry } from '@indexedex/protocol/tokenlists'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -21,6 +23,8 @@ import {
   canLeaveStep,
   claimNameFrom,
   claimSymbolFrom,
+  concatDetfName,
+  concatDetfSymbol,
   CREATE_STEP_LABEL,
   CREATE_STEPS,
   emptyPlan,
@@ -45,6 +49,7 @@ import {
   weightTotal,
   withPriceLegs,
 } from './lib/createPlan'
+import { ERC20_META_ABI, VAULT_TOKENS_ABI } from './lib/seAbi'
 
 import '../landing.css'
 
@@ -61,11 +66,11 @@ const STEP_TITLE: Record<CreateStepId, { lead: string; accent: string }> = {
 
 const STEP_LEDE: Record<CreateStepId, string> = {
   shape: 'Make a DETF. One token. One basket. The basket works in other apps. You get a bond you cannot cash out. Bond later to turn it on.',
-  name: 'Name the DETF token, the bond NFT, and the rebasing claim token. Blank bond or claim fields use the package default.',
+  name: 'Names start from the tokens in the SE vault. You can edit them. Blank bond or claim fields use the package default.',
   basket:
     'Pick a listed SE vault, or pick two tokens and a Uniswap V3 or V4 pool. Create the pool if it is missing. Deploy the SE vault if that pool has none. Then pick the pair token from the vault.',
   gates: 'Set the peg price, the opening price, and whether mint and burn use Policy or Open.',
-  review: 'Check the shape, names, peg price, opening price, mint and burn, and basket.',
+  review: 'Check the shape, basket, names, peg price, opening price, mint and burn.',
 }
 
 function shortAddr(addr: string): string {
@@ -97,7 +102,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
     const base = emptyPlan()
     return initialTypeId ? applyType(base, initialTypeId) : base
   })
-  const [step, setStep] = useState<CreateStepId>(() => (initialTypeId ? 'name' : 'shape'))
+  const [step, setStep] = useState<CreateStepId>(() => (initialTypeId ? 'basket' : 'shape'))
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [hydrated, setHydrated] = useState(false)
@@ -122,7 +127,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       return next
     })
     if (searchParams.get('step')) setStep(qStep)
-    else setStep(initialTypeId ? 'name' : 'shape')
+    else setStep(initialTypeId ? 'basket' : 'shape')
     setHydrated(true)
     // URL + type on first paint only. Later step changes write the URL themselves.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +154,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
     const next = applyType(plan, typeId)
     setPlan(next)
     saveStoredPlan(next)
-    go('name', next)
+    go('basket', next)
   }
 
   const continueNext = () => {
@@ -249,7 +254,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
           }}
         >
           {step === 'shape' ? <StepShape plan={plan} onPick={pickType} /> : null}
-          {step === 'name' ? <StepName plan={plan} setPlan={setPlan} /> : null}
+          {step === 'name' ? <StepName plan={plan} setPlan={setPlan} tokens={tokens} /> : null}
           {step === 'basket' ? (
             <StepBasket plan={plan} setPlan={setPlan} vaults={vaults} tokens={tokens} />
           ) : null}
@@ -384,11 +389,79 @@ function StepShape({
   )
 }
 
-function StepName({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePlan) => void }) {
+function StepName({
+  plan,
+  setPlan,
+  tokens,
+}: {
+  plan: CreatePlan
+  setPlan: (p: CreatePlan) => void
+  tokens: TokenListEntry[]
+}) {
+  const { selectedChainId } = useSelectedNetwork()
+  const vault = plan.vaults[0]
+  const lastApplied = useRef({ vault: '', name: '', symbol: '' })
+
+  const { data: vaultTokenAddrs } = useReadContract({
+    address: vault || undefined,
+    abi: VAULT_TOKENS_ABI,
+    functionName: 'vaultTokens',
+    chainId: selectedChainId,
+    query: { enabled: !!vault },
+  })
+
+  const addrs = useMemo(
+    () => ((vaultTokenAddrs as Address[] | undefined) ?? []).filter((a) => !!a),
+    [vaultTokenAddrs],
+  )
+
+  const { data: onchainMeta } = useReadContracts({
+    contracts: addrs.flatMap((address) => [
+      { address, abi: ERC20_META_ABI, functionName: 'name' as const, chainId: selectedChainId },
+      { address, abi: ERC20_META_ABI, functionName: 'symbol' as const, chainId: selectedChainId },
+    ]),
+    query: { enabled: addrs.length > 0 },
+  })
+
+  const suggested = useMemo(() => {
+    const rows = addrs.map((address, i) => {
+      const known = findToken(tokens, address)
+      const nameResult = onchainMeta?.[i * 2]
+      const symbolResult = onchainMeta?.[i * 2 + 1]
+      const onchainName = nameResult?.status === 'success' ? String(nameResult.result) : ''
+      const onchainSymbol = symbolResult?.status === 'success' ? String(symbolResult.result) : ''
+      return {
+        name: known?.name || onchainName,
+        symbol: known?.symbol || onchainSymbol,
+      }
+    })
+    return {
+      name: concatDetfName(rows),
+      symbol: concatDetfSymbol(rows),
+    }
+  }, [addrs, onchainMeta, tokens])
+
+  useEffect(() => {
+    if (!vault || (!suggested.name && !suggested.symbol)) return
+    const vaultChanged = lastApplied.current.vault.toLowerCase() !== vault.toLowerCase()
+    const nameUnlocked = !plan.name.trim() || plan.name === lastApplied.current.name
+    const symbolUnlocked = !plan.symbol.trim() || plan.symbol === lastApplied.current.symbol
+    if (!vaultChanged && !nameUnlocked && !symbolUnlocked) return
+    const nextName = vaultChanged || nameUnlocked ? suggested.name : plan.name
+    const nextSymbol = vaultChanged || symbolUnlocked ? suggested.symbol : plan.symbol
+    lastApplied.current = { vault, name: suggested.name, symbol: suggested.symbol }
+    if (nextName === plan.name && nextSymbol === plan.symbol) return
+    setPlan({ ...plan, name: nextName, symbol: nextSymbol })
+  }, [plan, setPlan, suggested.name, suggested.symbol, vault])
+
   return (
     <div className="space-y-5">
       <Card>
         <p className="landing-section-label">DETF token</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          Filled from the names and symbols of the tokens in the SE vault. Edit if you want a
+          different DETF name.
+        </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
             Name
@@ -399,7 +472,7 @@ function StepName({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePlan
               maxLength={40}
               autoComplete="off"
               data-testid="create-name"
-              placeholder="Double Dollar"
+              placeholder={suggested.name || 'Double Dollar'}
             />
           </label>
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
@@ -411,7 +484,7 @@ function StepName({ plan, setPlan }: { plan: CreatePlan; setPlan: (p: CreatePlan
               maxLength={12}
               autoComplete="off"
               data-testid="create-symbol"
-              placeholder="$$DETF"
+              placeholder={suggested.symbol || '$$DETF'}
             />
           </label>
         </div>

@@ -17,7 +17,7 @@ import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap
 
 /// @title LaunchState
 /// @notice In-memory / storage bag shared by group libraries and Script_SimulateLaunch.
-/// @dev Demo products: required fee DETF `TTCHIR` and USD quad `TTDOL-Q`.
+/// @dev Demo products: required fee DETF `DTF-DETF` and USD quad `TTDOL-Q`.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
     IDiamondPackageCallBackFactory diamondPackageFactory;
@@ -48,6 +48,12 @@ struct LaunchState {
     address orbitalDetfPkg;
     address weightedHookPkg;
     address weightedDetfPkg;
+    address morpho;
+    address morphoIrm;
+    address morphoOracle;
+    address morphoBlueSePkg;
+    /// @notice True when 03c deployed Morpho Blue on this chain (pin had no code).
+    bool morphoLocal;
     address erc20MinterFacade;
     address tokenPkg;
     address ttUSDG;
@@ -63,8 +69,8 @@ struct LaunchState {
     address rpUsdgUsde;
     address rpRichWeth;
     address v4Seeder;
-    address ttChir;
-    address ttRichir;
+    address dtfDetf;
+    address dtfClaim;
     address ttDolQ;
     /// @notice DETF PkgArgs.creator. Bound to the deployer so reserved bond NFT id 2 is that EOA.
     address creator;

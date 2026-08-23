@@ -45,7 +45,7 @@ describe('assembleEarnProducts', () => {
           address: B,
           chainId: 1,
           name: 'Fee DETF',
-          symbol: 'CHIR',
+          symbol: 'DTF-DETF',
           decimals: 18,
           tags: ['vault', 'detf', 'fee-detf'],
         },
@@ -59,7 +59,7 @@ describe('assembleEarnProducts', () => {
         },
       ],
     })
-    expect(products.find((p) => p.symbol === 'CHIR')?.productType).toBe('protocol-detf')
+    expect(products.find((p) => p.symbol === 'DTF-DETF')?.productType).toBe('protocol-detf')
     expect(products.find((p) => p.symbol === 'gDETF')?.productType).toBe('detf')
   })
 

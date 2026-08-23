@@ -102,7 +102,7 @@ function DiagramShell({
   className = '',
   kicker = 'Composition',
 }: {
-  title: string
+  title?: string
   caption: string
   children: ReactNode
   className?: string
@@ -121,7 +121,9 @@ function DiagramShell({
         <p className="pl-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
           {kicker}
         </p>
-        <p className="mt-0.5 pl-2 text-base font-medium text-[var(--text-primary)]">{title}</p>
+        {title ? (
+          <p className="mt-0.5 pl-2 text-base font-medium text-[var(--text-primary)]">{title}</p>
+        ) : null}
       </figcaption>
       <div className="relative px-4 py-6 sm:px-6 sm:py-7">
         <div className="pointer-events-none absolute inset-0" style={canvasStyle} aria-hidden="true" />
@@ -1057,7 +1059,6 @@ export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: st
     <DiagramShell
       className={className}
       kicker="Example"
-      title="One token, three pools"
       caption="The reserve is three pools. Each token is paired with each of the others. Morpho keeps USDG. Uniswap V4 keeps the USDG/WETH pool."
     >
       <div className="mb-1 flex justify-center">

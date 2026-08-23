@@ -8,7 +8,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {Stage_06_LeafDETFs} from "./Stage_06_LeafDETFs.sol";
 
 /// @title Script_06_LeafDETFs
-/// @notice Group 06: required TTCHIR then USD quad TTDOL-Q.
+/// @notice Group 06: required DTF-DETF then USD quad TTDOL-Q.
 contract Script_06_LeafDETFs is LaunchIo {
     LaunchState internal s;
 
@@ -22,31 +22,31 @@ contract Script_06_LeafDETFs is LaunchIo {
         require(_loadUniV4Packages(s), "run Script_03 first");
         require(_loadTokens(s), "run Script_04 first");
         require(_loadLeafPools(s), "run Script_05 first");
-        _requireChirArchitecture(s);
+        _requireDtfArchitecture(s);
         _loadLeafDetfsPartial(s);
-        _logHeader("Group 06: TTCHIR + TTDOL-Q");
+        _logHeader("Group 06: DTF-DETF + TTDOL-Q");
 
-        _runChir();
+        _runDtfDetf();
         _runDolQ();
 
         _exportLeafDetfs(s);
-        _logAddress("TTCHIR:", s.ttChir);
-        _logAddress("TTRICHIR:", s.ttRichir);
+        _logAddress("DTF-DETF:", s.dtfDetf);
+        _logAddress("DTF-CLAIM:", s.dtfClaim);
         _logAddress("TTDOL-Q:", s.ttDolQ);
         _logComplete("Group 06");
     }
 
-    function _runChir() internal {
+    function _runDtfDetf() internal {
         uint256 nonce;
-        if (!_hasCode(s.ttChir)) {
-            console2.log("06 premine TTCHIR CP hook nonce (off-chain)");
-            (, nonce) = Stage_06_LeafDETFs.premineChir(s);
+        if (!_hasCode(s.dtfDetf)) {
+            console2.log("06 premine DTF-DETF CP hook nonce (off-chain)");
+            (, nonce) = Stage_06_LeafDETFs.premineDtfDetf(s);
         }
         _broadcast();
-        if (_hasCode(s.ttChir)) {
-            Stage_06_LeafDETFs.enrichChir(s, owner);
+        if (_hasCode(s.dtfDetf)) {
+            Stage_06_LeafDETFs.enrichDtfDetf(s, owner);
         } else {
-            Stage_06_LeafDETFs.deployChir(s, owner, nonce);
+            Stage_06_LeafDETFs.deployDtfDetf(s, owner, nonce);
         }
         vm.stopBroadcast();
     }

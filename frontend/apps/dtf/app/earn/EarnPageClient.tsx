@@ -256,11 +256,11 @@ function EarnCatalogInner() {
               Protocol DETF
             </p>
             <p className="text-sm text-[var(--text-primary,#EDEDED)] mt-1">
-              Stake your $RICH to earn a share of protocol fees.
+              Stake your $DTF to earn a share of protocol fees.
             </p>
           </div>
           <Link href={feePromoHref}>
-            <Button size="sm">Stake $RICH</Button>
+            <Button size="sm">Stake $DTF</Button>
           </Link>
         </Card>
       ) : null}

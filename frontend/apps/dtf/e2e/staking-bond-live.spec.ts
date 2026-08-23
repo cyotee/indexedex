@@ -17,7 +17,7 @@ import {
  * Prerequisites:
  *   - Anvil at E2E_RPC_URL (default http://127.0.0.1:8545)
  *   - cast chain-id === E2E_CHAIN_ID (default 4663)
- *   - fee_detf stack preferred (CHIR live after scripted first bond)
+ *   - fee_detf stack preferred (DTF-DETF live after scripted first bond)
  *   - Account #0 has WETH (wrap ETH if needed)
  *
  * Run:

@@ -17,21 +17,22 @@ These Foundry groups are the **46630 deploy path**. Local Anvil defaults to **An
 | Artifacts | `deployments/anvil_robinhood_testnet/` |
 | Frontend | `frontend/packages/protocol/src/addresses/chain/46630/` |
 
-No Balancer. No pons. No Uni V3. No `vm.warp`. No nested DETFs. Demo products are the required fee DETF (`TTRICH` / `TTCHIR` / `TTRICHIR`) and the USD quad (`TTDOL-Q`).
+No Balancer. No pons. No Uni V3. No `vm.warp`. No nested DETFs. Demo products are the required fee DETF (`DTF` / `DTF-DETF` / `DTF-CLAIM`) and the USD quad (`TTDOL-Q`).
 
 ## Groups
 
 | Group | Script | What |
 |-------|--------|------|
-| 00 | `Script_00_Preflight.s.sol` | Required RH pins only |
+| 00 | `Script_00_Preflight.s.sol` | Required Uni V4 / Permit2 / WETH / UR pins (must have code). Morpho Blue CREATE2 pins (same as Robinhood main) are exported even when 46630 has no code. |
 | 01 | `Script_01_Factories.s.sol` | CREATE3, diamond factory, hook factory, shared facets |
 | 02 | `Script_02_Platform.s.sol` | FeeCollector, manager, RP pkg, D46/D52/bond terms |
-| 03 | `Script_03_UniV4Packages.s.sol` | Uni V4 SE + CP (Protocol DETF / TTCHIR) + Curve Quad (Double Dollar / `$$DETF`) **packages**. No instances. No Orbital or Weighted. |
-| 03b | `Script_03b_OrbitalWeightedPackages.s.sol` | **Opt-in later.** Orbital + Weighted hook / DETF packages. Not in `all`. |
-| 04 | `Script_04_Tokens.s.sol` | `TTRICH`, `TTUSDG`, `TTUSDE`, `TTWETH` + facade + 1e12 to deployer and `UI_WALLET` |
+| 03 | `Script_03_UniV4Packages.s.sol` | Uni V4 SE + CP (Protocol DETF / DTF-DETF) + Curve Quad (Double Dollar / `$$DETF`) **packages**. No instances. |
+| 03b | `Script_03b_OrbitalWeightedPackages.s.sol` | Orbital + Weighted hook / DETF **packages**. No instances. In `all`. |
+| 03c | `Script_03c_MorphoBlueSePkg.s.sol` | Morpho Blue SE **package**. If the 46630 Morpho pin has no code, deploys a rehearsal Morpho + AdaptiveCurveIRM + oracle. |
+| 04 | `Script_04_Tokens.s.sol` | `DTF`, `TTUSDG`, `TTUSDE`, `TTWETH` + facade + 1e12 to deployer and `UI_WALLET` |
 | 04b | `Script_04b_SevenTestTokens.s.sol` | Mag7 `TTNVDA`…`TTTSLA`. Facade as **global** operator on those plus group-04 tokens. 1e6 of each Mag7 token and of `TTWETH` to `DEPLOYER_ADDRESS`. |
-| 05 | `Script_05_LeafPoolsAndSEs.s.sol` | `TTRICH`/`TTWETH` SE + three USD SEs for `TTDOL-Q` |
-| 06t | `Script_06_Ttchir.s.sol` | Required first DETF: `TTCHIR` (pair `TTWETH`, SE `TTRICH`/`TTWETH`). Claim `TTRICHIR`. First-bond 10 TTWETH as the deployer EOA. Opening WAD is launch-rich. |
+| 05 | `Script_05_LeafPoolsAndSEs.s.sol` | `DTF`/`TTWETH` SE + three USD SEs for `TTDOL-Q` |
+| 06t | `Script_06_Ttchir.s.sol` | Required first DETF: `DTF-DETF` (pair `TTWETH`, SE `DTF`/`TTWETH`). Claim `DTF-CLAIM`. First-bond 10 TTWETH as the deployer EOA. Opening WAD is launch-rich. |
 | 06e | `Script_06e_DolQ.s.sol` | USD quad `TTDOL-Q` (TTUSDE, TTUSDG, TTWETH) + first-bond as the deployer EOA. Opening WAD is launch-rich. |
 | 06 | `Script_06_LeafDETFs.s.sol` | Both DETFs in one script (resume-safe). Used by SimulateLaunch |
 | 09 | `Script_09_ExportFrontend.s.sol` | `chain/46630/` export (no on-chain txs). Includes Mag7 from `04b_seven_test_tokens.json`. Final step of `all` / `fresh_deploy.sh`. |
@@ -63,7 +64,13 @@ If Anvil is already a 46630 fork on `:8545`:
 bash scripts/shell/anvil_robinhood_testnet.sh all
 ```
 
-Replay after reset: `--restart-anvil` then `all` again. Resume `TTCHIR` with `stage06t`. Resume `TTDOL-Q` with `stage06e`. Resume Mag7 with `stage04b`.
+If `DEPLOYER_ADDRESS` is set in the environment (a live wallet), local Anvil cannot sign it (`No Signer available`). Force Anvil Dev 0:
+
+```bash
+bash scripts/shell/anvil_robinhood_testnet.sh all --anvil-dev0
+```
+
+Replay after reset: `--restart-anvil` then `all` again. Resume `DTF-DETF` with `stage06t`. Resume `TTDOL-Q` with `stage06e`. Resume Mag7 with `stage04b`.
 
 If the public RPC returns `metadata is not found` mid-run, `detach-fork` dumps the overlay and restarts Anvil without a fork, then retries the failed group.
 
@@ -88,9 +95,9 @@ bash scripts/shell/anvil_robinhood_testnet.sh stage01 --live --dry-run
 bash scripts/shell/anvil_robinhood_testnet.sh stage01 --live
 ```
 
-`all --live` does the same per group (00, 01, 02, 03, 04, 04b, 05, 06t, 06e, 09). Group 09 only writes frontend JSON.
+`all --live` does the same per group (`00 01 02 03 03b 03c 04 04b 05 06t 06e 09`). Group 09 only writes frontend JSON.
 
-`all` / `fresh_deploy.sh` runs `00`–`05`, `04b`, `06t` (`TTCHIR`), `06e` (`TTDOL-Q`), `09`. It does **not** run `03b` (Orbital + Weighted). Product names: underlying `TTRICH`, DETF `TTCHIR`, claim `TTRICHIR`. USD quad is `TTDOL-Q` / `$$DETF`.
+`all` / `fresh_deploy.sh` runs `00`–`05`, `03b` (Weighted + Orbital packages), `03c` (Morpho Blue SE package), `04b`, `06t` (`DTF-DETF`), `06e` (`TTDOL-Q`), `09`. Product names: underlying `DTF`, DETF `DTF-DETF`, claim `DTF-CLAIM`. USD quad is `TTDOL-Q` / `$$DETF`. Weighted DETF package is `weightedDetfPkg`. Morpho Blue pins are in group 00; live Morpho on 46630 is missing at those CREATE2 addresses, so 03c deploys a rehearsal Morpho and the Morpho Blue SE package. Morpho SE **instances** are not launched; create those in the UI.
 
 Each leaf script premines via `UniswapV4DetfHookPremineLib` **before** `startBroadcast` (Foundry otherwise folds `findMineNonce` into `eth_estimateGas`), then `deployVault(args, mineNonce)` (nonce is not in PkgArgs; `0` is a legal nonce). `deployVault` leaves a bootstrap hook only (not a ready reserve). Scripts then send one `deployPair` per product door, `finalizeInitialization`, `completeReserveBondNft`, `completeReserveClaim`, then first-bond as the EOA. Opening WAD is launch-rich. Do not impersonate the diamond.
 
@@ -113,4 +120,6 @@ npm run dev -w @indexedex/app-dtf
 ```
 
 Wallet: RPC `http://127.0.0.1:8545`, chain id **46630**, currency ETH. Import Anvil Dev 0 (deployer) or Dev 1 (UI).  
-Lists `TTCHIR` and `TTDOL-Q`. `/mint` offers `TTRICH`, `TTUSDG`, `TTUSDE`, `TTWETH` (not canonical WETH, not faucet stocks). Canonical RH WETH still exists for V4/Permit2 pins; demo pools wrap nothing and mint `TTWETH` instead.
+Lists `DTF-DETF` and `TTDOL-Q`. `/mint` offers `DTF`, `TTUSDG`, `TTUSDE`, `TTWETH` (not canonical WETH, not faucet stocks). Canonical RH WETH still exists for V4/Permit2 pins; demo pools wrap nothing and mint `TTWETH` instead.
+
+After `all` + group 09, `platform.json` includes `weightedDetfPkg`, `curveQuadDetfPkg`, `morphoBlueSePkg`, and the live rehearsal `morpho` address. Uni V4 SEs are listed. Create Morpho Blue SE vaults in the UI, then Weighted / Stable DETFs against Uni V4 SEs, Morpho Blue SEs, or a mix.

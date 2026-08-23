@@ -21,8 +21,8 @@ export type DetfProfile = {
   legs: DetfLeg[]
 }
 
-const TTCHIR: DetfProfile = {
-  symbols: ['TTCHIR'],
+const PROTOCOL_DTF_DETF: DetfProfile = {
+  symbols: ['DTF-DETF', 'UP', 'TTUP', 'TTCHIR'],
   addresses: ['0xb5F0543DD9D758F8DD577856A5Df848674af335d'],
   family: 'one-vault',
   kicker: 'Protocol DETF',
@@ -31,7 +31,7 @@ const TTCHIR: DetfProfile = {
   firstBonded: true,
   openedHow: 'Opened by the first bond: 10 TTWETH, 1 day lock. Later bonds still work.',
   blurb:
-    'One token over one vault: TTRICH paired with TTWETH. Protocol fees can accrue here. That is not a promised yield. The first bond already opened it. Mint is allowed when the synthetic price is above 1.05. Burn is allowed when it is below 0.95.',
+    'One token over one vault: DTF paired with TTWETH. Protocol fees can accrue here. That is not a promised yield. The first bond already opened it. Mint is allowed when the synthetic price is above 1.05. Burn is allowed when it is below 0.95. DTF-CLAIM is the rebasing claim token.',
   legs: [
     {
       role: 'Pair token',
@@ -41,14 +41,14 @@ const TTCHIR: DetfProfile = {
     },
     {
       role: 'Underlying vault',
-      symbol: 'SE-TTRICH-TTWETH',
-      name: 'Test SE TTRICH/TTWETH',
+      symbol: 'SE-DTF-TTWETH',
+      name: 'Test SE DTF/TTWETH',
       address: '0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099',
     },
     {
       role: 'Claim token',
-      symbol: 'TTRICHIR',
-      name: 'Test Claim RICHIR',
+      symbol: 'DTF-CLAIM',
+      name: 'Test Claim DTF-CLAIM',
       address: '0xdD2E0A3D11E55d10D3440AFa3fcF102992977E7e',
     },
   ],
@@ -112,7 +112,7 @@ const DOUBLE_DOLLAR: DetfProfile = {
   ],
 }
 
-export const DETF_PROFILES: readonly DetfProfile[] = [TTCHIR, DOUBLE_DOLLAR]
+export const DETF_PROFILES: readonly DetfProfile[] = [PROTOCOL_DTF_DETF, DOUBLE_DOLLAR]
 
 export function profileFor(address: string, symbol?: string): DetfProfile | undefined {
   const key = address.trim().toLowerCase()

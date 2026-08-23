@@ -30,7 +30,45 @@ library RobinhoodCanonicalLib {
         return ROBINHOOD_TESTNET.UNISWAP_UNIVERSAL_ROUTER;
     }
 
-    /// @notice Required live pins only. Does not require Uni V3 or pons.
+    function morpho() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO;
+    }
+
+    function morphoIrm() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_ADAPTIVE_CURVE_IRM;
+    }
+
+    function morphoOracleFactory() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_CHAINLINK_ORACLE_V2_FACTORY;
+    }
+
+    function morphoVaultV2Factory() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_VAULT_V2_FACTORY;
+    }
+
+    function morphoRegistry() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_REGISTRY;
+    }
+
+    function morphoBundler3() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_BUNDLER3;
+    }
+
+    function morphoVaultV1AdapterFactory() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_VAULT_V1_ADAPTER_FACTORY;
+    }
+
+    function morphoMarketV1AdapterV2Factory() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_MARKET_V1_ADAPTER_V2_FACTORY;
+    }
+
+    function morphoGeneralAdapter1() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.MORPHO_GENERAL_ADAPTER_1;
+    }
+
+    /// @notice Required live pins only. Does not require Uni V3, pons, or Morpho.
+    /// @dev Morpho Blue is documented at the same CREATE2 as Robinhood main. 46630
+    ///      currently has no code there; group 03c deploys a rehearsal Morpho if missing.
     function requireCanonicalPins() internal view {
         require(poolManager().code.length > 0, "RH testnet pin: UNISWAP_V4_POOL_MANAGER missing code");
         require(positionManagerV4().code.length > 0, "RH testnet pin: UNISWAP_V4_POSITION_MANAGER missing code");

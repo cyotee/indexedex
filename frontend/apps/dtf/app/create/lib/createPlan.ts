@@ -27,7 +27,7 @@ export type CreatePlan = {
   cashToken: `0x${string}` | ''
 }
 
-export const CREATE_STEPS = ['shape', 'name', 'basket', 'gates', 'review'] as const
+export const CREATE_STEPS = ['shape', 'basket', 'name', 'gates', 'review'] as const
 export type CreateStepId = (typeof CREATE_STEPS)[number]
 
 export const CREATE_STEP_LABEL: Record<CreateStepId, string> = {
@@ -81,6 +81,46 @@ export function maxVaults(typeId: CreateDetfTypeId | ''): number {
 
 const SYMBOL_RE = /^[A-Za-z0-9$][A-Za-z0-9$-]{1,11}$/
 const CHILD_SYMBOL_RE = /^[A-Za-z0-9$][A-Za-z0-9$-]{1,19}$/
+
+export type UnderlyingTokenMeta = {
+  name: string
+  symbol: string
+}
+
+function sanitizeSymbolPart(raw: string): string {
+  return raw.trim().replace(/[^A-Za-z0-9$]/g, '')
+}
+
+/** DETF name from SE vault underlyings: names, and symbols when they still fit. */
+export function concatDetfName(tokens: readonly UnderlyingTokenMeta[]): string {
+  if (tokens.length === 0) return ''
+  const withBoth = tokens
+    .map((t) => {
+      const n = t.name.trim()
+      const s = t.symbol.trim()
+      if (n && s && n.toLowerCase() !== s.toLowerCase()) return `${n} (${s})`
+      return n || s
+    })
+    .filter(Boolean)
+    .join(' / ')
+  if (withBoth.length >= 2 && withBoth.length <= 40) return withBoth
+  const names = tokens.map((t) => t.name.trim()).filter(Boolean).join(' / ')
+  if (names.length >= 2 && names.length <= 40) return names
+  const symbols = tokens.map((t) => t.symbol.trim()).filter(Boolean).join(' / ')
+  if (symbols.length >= 2) return symbols.slice(0, 40)
+  return withBoth.slice(0, 40)
+}
+
+/** DETF symbol from concatenated underlying symbols (2–12, hyphen when it fits). */
+export function concatDetfSymbol(tokens: readonly UnderlyingTokenMeta[]): string {
+  const parts = tokens.map((t) => sanitizeSymbolPart(t.symbol)).filter((s) => s.length > 0)
+  if (parts.length === 0) return ''
+  const hyphen = parts.join('-')
+  if (SYMBOL_RE.test(hyphen)) return hyphen
+  const packed = parts.join('')
+  if (packed.length >= 2) return packed.slice(0, 12)
+  return ''
+}
 
 function validateOptionalName(raw: string, label: string): string | null {
   const name = raw.trim()

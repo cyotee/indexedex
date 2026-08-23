@@ -26,6 +26,7 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_FACTORIES = "01_factories.json";
     string internal constant FILE_PLATFORM = "02_platform.json";
     string internal constant FILE_UNIV4_PKGS = "03_univ4_packages.json";
+    string internal constant FILE_MORPHO = "03c_morpho_blue_se.json";
     string internal constant FILE_TOKENS = "04_tokens.json";
     string internal constant FILE_SEVEN_TOKENS = "04b_seven_test_tokens.json";
     string internal constant FILE_LEAF_POOLS = "05_leaf_pools_ses.json";
@@ -167,6 +168,7 @@ abstract contract LaunchIo is DeploymentBase {
     }
 
     function _exportUniV4Packages(LaunchState storage s) internal {
+        _keepOptionalUniV4Pkg(s);
         string memory json;
         json = vm.serializeAddress("g03", "cpHookPkg", s.cpHookPkg);
         json = vm.serializeAddress("g03", "uniV4SePkg", address(s.uniV4SePkg));
@@ -184,6 +186,68 @@ abstract contract LaunchIo is DeploymentBase {
         _writeJson(json, FILE_UNIV4_PKGS);
     }
 
+    function _keepOptionalUniV4Pkg(LaunchState storage s) private {
+        address a;
+        bool ok;
+        if (s.orbitalHookPkg == address(0) || s.orbitalHookPkg.code.length == 0) {
+            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalHookPkg");
+            if (ok && _hasCode(a)) s.orbitalHookPkg = a;
+        }
+        if (s.orbitalDetfPkg == address(0) || s.orbitalDetfPkg.code.length == 0) {
+            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalDetfPkg");
+            if (ok && _hasCode(a)) s.orbitalDetfPkg = a;
+        }
+        if (s.weightedHookPkg == address(0) || s.weightedHookPkg.code.length == 0) {
+            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedHookPkg");
+            if (ok && _hasCode(a)) s.weightedHookPkg = a;
+        }
+        if (s.weightedDetfPkg == address(0) || s.weightedDetfPkg.code.length == 0) {
+            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedDetfPkg");
+            if (ok && _hasCode(a)) s.weightedDetfPkg = a;
+        }
+    }
+
+    function _loadMorphoBlue(LaunchState storage s) internal returns (bool) {
+        address a;
+        bool ok;
+        (a, ok) = _readAddressSafe(FILE_MORPHO, "morphoBlueSePkg");
+        if (!ok || !_hasCode(a)) return false;
+        s.morphoBlueSePkg = a;
+        (a, ok) = _readAddressSafe(FILE_MORPHO, "morpho");
+        if (ok && _hasCode(a)) s.morpho = a;
+        (a, ok) = _readAddressSafe(FILE_MORPHO, "morphoIrm");
+        if (ok && _hasCode(a)) s.morphoIrm = a;
+        (a, ok) = _readAddressSafe(FILE_MORPHO, "morphoOracle");
+        if (ok && _hasCode(a)) s.morphoOracle = a;
+        try vm.readFile(_artifactPath(FILE_MORPHO)) returns (string memory raw) {
+            try vm.parseJsonBool(raw, ".morphoLocal") returns (bool local_) {
+                s.morphoLocal = local_;
+            } catch {}
+        } catch {}
+        if (
+            !s.morphoLocal && _hasCode(s.morpho)
+                && (RobinhoodCanonicalLib.morpho().code.length == 0 || s.morpho != RobinhoodCanonicalLib.morpho())
+        ) {
+            s.morphoLocal = true;
+        }
+        return true;
+    }
+
+    function _exportMorphoBlue(LaunchState storage s) internal {
+        string memory json;
+        json = vm.serializeAddress("g03c", "morpho", s.morpho);
+        json = vm.serializeAddress("g03c", "morphoBlue", s.morpho);
+        json = vm.serializeAddress("g03c", "morphoIrm", s.morphoIrm);
+        json = vm.serializeAddress("g03c", "morphoOracle", s.morphoOracle);
+        json = vm.serializeAddress("g03c", "morphoBlueSePkg", s.morphoBlueSePkg);
+        json = vm.serializeBool("g03c", "morphoLocal", s.morphoLocal);
+        json = vm.serializeAddress("g03c", "morphoPin", RobinhoodCanonicalLib.morpho());
+        json = vm.serializeAddress("g03c", "morphoIrmPin", RobinhoodCanonicalLib.morphoIrm());
+        json = vm.serializeAddress("g03c", "morphoOracleFactory", RobinhoodCanonicalLib.morphoOracleFactory());
+        json = vm.serializeUint("g03c", "chainId", block.chainid);
+        _writeJson(json, FILE_MORPHO);
+    }
+
     function _loadTokens(LaunchState storage s) internal returns (bool) {
         address a;
         bool ok;
@@ -198,7 +262,7 @@ abstract contract LaunchIo is DeploymentBase {
         s.ttUSDE = a;
         (a, ok) = _readAddressSafe(FILE_TOKENS, "TTWETH");
         if (ok && _hasCode(a)) s.ttWETH = a;
-        (a, ok) = _readAddressSafe(FILE_TOKENS, "TTRICH");
+        (a, ok) = _readAddressAliased(FILE_TOKENS, "DTF", "TTRICH");
         if (ok && _hasCode(a)) s.ttRICH = a;
         (a, ok) = _readAddressSafe(FILE_TOKENS, "tokenPkg");
         if (ok) s.tokenPkg = a;
@@ -212,6 +276,7 @@ abstract contract LaunchIo is DeploymentBase {
         json = vm.serializeAddress("g04", "TTUSDG", s.ttUSDG);
         json = vm.serializeAddress("g04", "TTUSDE", s.ttUSDE);
         json = vm.serializeAddress("g04", "TTWETH", s.ttWETH);
+        json = vm.serializeAddress("g04", "DTF", s.ttRICH);
         json = vm.serializeAddress("g04", "TTRICH", s.ttRICH);
         json = vm.serializeAddress("g04", "owner", owner);
         json = vm.serializeAddress("g04", "uiWallet", uiWallet);
@@ -321,31 +386,31 @@ abstract contract LaunchIo is DeploymentBase {
     function _loadLeafDetfsPartial(LaunchState storage s) internal {
         address a;
         bool ok;
-        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTCHIR");
-        if (ok && _hasCode(a)) s.ttChir = a;
-        (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTRICHIR");
-        if (ok && _hasCode(a)) s.ttRichir = a;
+        (a, ok) = _readAddressAny(FILE_LEAF_DETFS, "DTF-DETF", "UP", "TTCHIR");
+        if (ok && _hasCode(a)) s.dtfDetf = a;
+        (a, ok) = _readAddressAny(FILE_LEAF_DETFS, "DTF-CLAIM", "UPPER", "TTRICHIR");
+        if (ok && _hasCode(a)) s.dtfClaim = a;
         (a, ok) = _readAddressSafe(FILE_LEAF_DETFS, "TTDOL-Q");
         if (ok && _hasCode(a)) s.ttDolQ = a;
     }
 
     function _loadLeafDetfs(LaunchState storage s) internal returns (bool) {
         _loadLeafDetfsPartial(s);
-        return _hasCode(s.ttChir) && _hasCode(s.ttDolQ);
+        return _hasCode(s.dtfDetf) && _hasCode(s.ttDolQ);
     }
 
     function _exportLeafDetfs(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g06", "TTCHIR", s.ttChir);
-        json = vm.serializeAddress("g06", "TTRICHIR", s.ttRichir);
+        json = vm.serializeAddress("g06", "DTF-DETF", s.dtfDetf);
+        json = vm.serializeAddress("g06", "DTF-CLAIM", s.dtfClaim);
         json = vm.serializeAddress("g06", "TTDOL-Q", s.ttDolQ);
         json = vm.serializeUint("g06", "chainId", block.chainid);
         _writeJson(json, FILE_LEAF_DETFS);
     }
 
-    function _requireChirArchitecture(LaunchState storage s) internal view {
-        require(_hasCode(s.ttRICH), "TTRICH required (run Script_04)");
+    function _requireDtfArchitecture(LaunchState storage s) internal view {
+        require(_hasCode(s.ttRICH), "DTF required (run Script_04)");
         require(_hasCode(s.ttWETH), "TTWETH required (run Script_04)");
-        require(_hasCode(s.seRichWeth), "TTRICH/TTWETH SE required (run Script_05)");
+        require(_hasCode(s.seRichWeth), "DTF/TTWETH SE required (run Script_05)");
     }
 }

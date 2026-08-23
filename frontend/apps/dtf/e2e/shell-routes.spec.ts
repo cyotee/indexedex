@@ -24,6 +24,6 @@ test.describe('App routes & redirects (DTF)', () => {
   test('staking workspace loads', async ({ walletPage }) => {
     await walletPage.goto('/staking')
     const body = await walletPage.locator('body').innerText()
-    expect(/DETF|Staking|workspace|CHIR|mint|bond/i.test(body)).toBe(true)
+    expect(/DETF|Staking|workspace|DTF-DETF|mint|bond/i.test(body)).toBe(true)
   })
 })

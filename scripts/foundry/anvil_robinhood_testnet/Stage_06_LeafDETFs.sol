@@ -30,35 +30,35 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
 
 /// @title Stage_06_LeafDETFs
-/// @notice Required `TTCHIR` then USD quad `TTDOL-Q` + first-bond as EOA (opening is launch-rich).
+/// @notice Required `DTF-DETF` then USD quad `TTDOL-Q` + first-bond as EOA (opening is launch-rich).
 library Stage_06_LeafDETFs {
     function enrichAll(LaunchState storage s, address bonder) internal {
-        enrichChir(s, bonder);
+        enrichDtfDetf(s, bonder);
         enrichDolQ(s, bonder);
     }
 
-    function premineChir(LaunchState storage s) internal view returns (address predicted, uint256 nonce) {
+    function premineDtfDetf(LaunchState storage s) internal view returns (address predicted, uint256 nonce) {
         return UniswapV4DetfHookPremineLib.premineCp(
             s.diamondPackageFactory,
             s.hookFactory,
             IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg),
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(s.cpHookPkg),
-            _chirArgs(s),
+            _dtfDetfArgs(s),
             RobinhoodCanonicalLib.poolManager(),
             address(s.indexedexManager)
         );
     }
 
-    function deployChir(LaunchState storage s, address bonder, uint256 nonce) internal {
-        console2.log("06 TTCHIR deploy+first-bond as EOA");
-        _deployChir(s, bonder, nonce);
-        enrichChir(s, bonder);
+    function deployDtfDetf(LaunchState storage s, address bonder, uint256 nonce) internal {
+        console2.log("06 DTF-DETF deploy+first-bond as EOA");
+        _deployDtfDetf(s, bonder, nonce);
+        enrichDtfDetf(s, bonder);
     }
 
-    function enrichChir(LaunchState storage s, address /* bonder */) internal {
+    function enrichDtfDetf(LaunchState storage s, address /* bonder */) internal {
         // First bond as the EOA is the live / launch-rich gate. Opening WAD is the lever.
         // Do not impersonate the diamond or hook depositSingle as the diamond.
-        _captureChirClaim(s);
+        _captureDtfClaim(s);
     }
 
     function premineDolQ(LaunchState storage s) internal view returns (address predicted, uint256 nonce) {
@@ -85,17 +85,17 @@ library Stage_06_LeafDETFs {
         s;
     }
 
-    function _chirArgs(LaunchState storage s)
+    function _dtfDetfArgs(LaunchState storage s)
         private
         view
         returns (IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args)
     {
-        args.name = "Test DETF CHIR Single";
-        args.symbol = "TTCHIR";
-        args.claimName = "Test Claim RICHIR";
-        args.claimSymbol = "TTRICHIR";
-        args.bondName = "Test Bond CHIR";
-        args.bondSymbol = "TTCHIR-BOND";
+        args.name = "Test DETF DTF-DETF";
+        args.symbol = "DTF-DETF";
+        args.claimName = "Test Claim DTF-CLAIM";
+        args.claimSymbol = "DTF-CLAIM";
+        args.bondName = "Test Bond DTF-DETF";
+        args.bondSymbol = "DTF-DETF-BOND";
         args.standardExchangeVault = IStandardExchangeProxy(s.seRichWeth);
         args.standardExchangeVaultShare = IERC20(address(0));
         args.pairToken = IERC20(s.ttWETH);
@@ -107,27 +107,27 @@ library Stage_06_LeafDETFs {
         args.expansionEpochLength = FixtureEconomics.EXPANSION_EPOCH;
         args.expansionClosureRatePerYearWad = FixtureEconomics.EXPANSION_R;
         args.expansionMaxCatchUpEpochs = FixtureEconomics.EXPANSION_CATCHUP;
-        require(s.creator != address(0), "TTCHIR creator is the deployer");
+        require(s.creator != address(0), "DTF-DETF creator is the deployer");
         args.creator = s.creator;
     }
 
-    function _deployChir(LaunchState storage s, address bonder, uint256 nonce) private {
-        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args = _chirArgs(s);
+    function _deployDtfDetf(LaunchState storage s, address bonder, uint256 nonce) private {
+        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args = _dtfDetfArgs(s);
         address predicted = s.diamondPackageFactory.calcAddress(
             IDiamondFactoryPackage(s.cpDetfPkg), abi.encode(args, uint256(0))
         );
-        s.ttChir = IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg).deployVault(args, nonce);
-        require(s.ttChir == predicted, "detf != predicted");
-        UniswapV4DetfScriptWireLib._wireCp(s.ttChir);
+        s.dtfDetf = IUniswapV4SingleStandardExchangeDETDFPkg(s.cpDetfPkg).deployVault(args, nonce);
+        require(s.dtfDetf == predicted, "detf != predicted");
+        UniswapV4DetfScriptWireLib._wireCp(s.dtfDetf);
         RichnessLib.firstBondCp(
-            s.ttChir, IERC20(s.ttWETH), FixtureEconomics.TTCHIR_FIRST_BOND, bonder
+            s.dtfDetf, IERC20(s.ttWETH), FixtureEconomics.DTF_DETF_FIRST_BOND, bonder
         );
-        _captureChirClaim(s);
+        _captureDtfClaim(s);
     }
 
-    function _captureChirClaim(LaunchState storage s) private {
-        if (s.ttChir == address(0) || s.ttChir.code.length == 0) return;
-        s.ttRichir = address(IDetf(s.ttChir).rebasingClaimToken());
+    function _captureDtfClaim(LaunchState storage s) private {
+        if (s.dtfDetf == address(0) || s.dtfDetf.code.length == 0) return;
+        s.dtfClaim = address(IDetf(s.dtfDetf).rebasingClaimToken());
     }
 
     function _dolQArgs(LaunchState storage s)

@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest'
 import { pairAddresses, profileFor } from './detfProfiles'
 
 describe('profileFor', () => {
-  it('finds TTCHIR by address', () => {
+  it('finds DTF-DETF by address', () => {
     const p = profileFor('0xb5F0543DD9D758F8DD577856A5Df848674af335d')
-    expect(p?.symbols).toContain('TTCHIR')
+    expect(p?.symbols).toContain('DTF-DETF')
     expect(p?.family).toBe('one-vault')
     expect(p?.kicker).toMatch(/Protocol DETF/)
     expect(p?.firstBonded).toBe(true)

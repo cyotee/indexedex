@@ -130,6 +130,31 @@ abstract contract DeploymentBase is Script {
         }
     }
 
+    /// @notice Read `key`, then `legacy` (older TTRICH artifacts).
+    function _readAddressAliased(string memory file, string memory key, string memory legacy)
+        internal
+        view
+        returns (address addr, bool exists)
+    {
+        (addr, exists) = _readAddressSafe(file, key);
+        if (exists && addr != address(0)) return (addr, true);
+        if (bytes(legacy).length == 0) return (addr, exists);
+        return _readAddressSafe(file, legacy);
+    }
+
+    /// @notice Read the first non-zero address among three JSON keys (current, then two legacy).
+    function _readAddressAny(string memory file, string memory k0, string memory k1, string memory k2)
+        internal
+        view
+        returns (address addr, bool exists)
+    {
+        (addr, exists) = _readAddressSafe(file, k0);
+        if (exists && addr != address(0)) return (addr, true);
+        (addr, exists) = _readAddressSafe(file, k1);
+        if (exists && addr != address(0)) return (addr, true);
+        return _readAddressSafe(file, k2);
+    }
+
     function _artifactValid(string memory file, string memory key) internal view returns (bool) {
         if (_force()) return false;
         (address addr, bool exists) = _readAddressSafe(file, key);

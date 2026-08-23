@@ -17,8 +17,10 @@ export async function prepareLocalChain(page: Page, chainId: number = DEFAULT_E2
   // Prefer App Network control when Robinhood option is present
   const selector = page.locator('#header-chain-selector')
   if (await selector.isVisible().catch(() => false)) {
-    const hasRh = await selector.locator('option[value="robinhood"]').count()
-    if (hasRh > 0 && chainId === 4663) {
+    if (chainId === 46630 && (await selector.locator('option[value="robinhood_testnet"]').count()) > 0) {
+      await selector.selectOption('robinhood_testnet')
+      await page.waitForTimeout(300)
+    } else if (chainId === 4663 && (await selector.locator('option[value="robinhood"]').count()) > 0) {
       await selector.selectOption('robinhood')
       await page.waitForTimeout(300)
     }

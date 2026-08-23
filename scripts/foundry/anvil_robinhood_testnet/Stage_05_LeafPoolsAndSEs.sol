@@ -14,7 +14,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
 
 /// @title Stage_05_LeafPoolsAndSEs
-/// @notice Required `TTRICH`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
+/// @notice Required `DTF`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
 library Stage_05_LeafPoolsAndSEs {
     function execute(LaunchState storage s, address owner_) internal {
         require(s.ttWETH != address(0) && s.ttWETH.code.length > 0, "Stage_05: TTWETH required");
@@ -38,7 +38,7 @@ library Stage_05_LeafPoolsAndSEs {
 
     /// @notice Required architecture SE. Resume-safe if an older 05 artifact omitted it.
     function deployTtrichWeth(LaunchState storage s, address owner_) internal {
-        require(s.ttRICH != address(0) && s.ttRICH.code.length > 0, "Stage_05: TTRICH required");
+        require(s.ttRICH != address(0) && s.ttRICH.code.length > 0, "Stage_05: DTF required");
         require(s.ttWETH != address(0) && s.ttWETH.code.length > 0, "Stage_05: TTWETH required");
         if (s.seRichWeth != address(0) && s.seRichWeth.code.length > 0) return;
         IPoolManager pm = IPoolManager(RobinhoodCanonicalLib.poolManager());

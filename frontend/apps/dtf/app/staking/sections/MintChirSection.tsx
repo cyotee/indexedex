@@ -254,7 +254,7 @@ export default function MintChirSection({
         args: swapArgs,
         value: wrapEthBeforeMint ? parsedMintWeth : undefined,
       })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Mint CHIR')
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Mint DTF-DETF')
       clearSignedState()
       await refetchPreviewMintOut()
     } catch (error) {
@@ -391,7 +391,7 @@ export default function MintChirSection({
         functionName: 'swapSingleTokenExactInWithPermit',
         args: [swapParams, permit, storedPermitSignature.signature],
       })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Mint CHIR')
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Mint DTF-DETF')
       clearSignedState()
       await refetchPreviewMintOut()
     } catch (error) {

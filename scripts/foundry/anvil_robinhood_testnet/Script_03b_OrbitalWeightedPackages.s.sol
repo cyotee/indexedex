@@ -8,7 +8,7 @@ import {Stage_03b_OrbitalWeightedPackages} from "./Stage_03b_OrbitalWeightedPack
 
 /// @title Script_03b_OrbitalWeightedPackages
 /// @notice Group 03b: Orbital + Weighted hook DFPkgs and DETF DFPkgs (no instances).
-/// @dev Opt-in. Not part of `all` / `foundation` / SimulateLaunch. Requires groups 01–03.
+/// @dev Part of `all` / `foundation`. Requires groups 01–03.
 contract Script_03b_OrbitalWeightedPackages is LaunchIo {
     LaunchState internal s;
 

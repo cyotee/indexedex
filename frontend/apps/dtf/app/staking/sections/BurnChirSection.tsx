@@ -225,7 +225,7 @@ export default function BurnChirSection({
         functionName: 'swapSingleTokenExactIn',
         args: swapArgs,
       })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Burn CHIR')
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Burn DTF-DETF')
       clearSignedState()
       await refetchPreviewBurnOut()
     } catch (error) {
@@ -362,7 +362,7 @@ export default function BurnChirSection({
         functionName: 'swapSingleTokenExactInWithPermit',
         args: [swapParams, permit, storedPermitSignature.signature],
       })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Burn CHIR')
+      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Burn DTF-DETF')
       clearSignedState()
       await refetchPreviewBurnOut()
     } catch (error) {

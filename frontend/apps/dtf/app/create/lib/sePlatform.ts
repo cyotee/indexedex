@@ -21,6 +21,11 @@ export type SePlatform = {
   uniV3SePkg: Address | null
   cpDetfPkg: Address | null
   cpHookPkg: Address | null
+  curveQuadDetfPkg: Address | null
+  weightedDetfPkg: Address | null
+  weightedHookPkg: Address | null
+  morpho: Address | null
+  morphoBlueSePkg: Address | null
   hookFactory: Address | null
   diamondPackageFactory: Address | null
   feeOracle: Address | null
@@ -46,6 +51,11 @@ export function resolveSePlatform(
     uniV3SePkg: asAddr(platform.uniV3SePkg) ?? asAddr(platform.uniV3SePkg_rich),
     cpDetfPkg: asAddr(platform.cpDetfPkg) ?? asAddr(platform.chirDetfPkg),
     cpHookPkg: asAddr(platform.cpHookPkg) ?? asAddr(platform.bufferCpHookPkg),
+    curveQuadDetfPkg: asAddr(platform.curveQuadDetfPkg),
+    weightedDetfPkg: asAddr(platform.weightedDetfPkg),
+    weightedHookPkg: asAddr(platform.weightedHookPkg),
+    morpho: asAddr(platform.morpho) ?? asAddr(platform.morphoBlue),
+    morphoBlueSePkg: asAddr(platform.morphoBlueSePkg),
     hookFactory: asAddr(platform.hookFactory),
     diamondPackageFactory: asAddr(platform.diamondPackageFactory),
     feeOracle: asAddr(platform.indexedexManager) ?? asAddr(platform.feeOracle),

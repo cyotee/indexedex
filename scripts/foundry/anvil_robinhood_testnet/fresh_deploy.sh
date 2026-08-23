@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
-# Staged test env: 00-05, 04b (Mag7 tokens), 06t (TTCHIR), 06e (TTDOL-Q), 09.
+# Staged test env: 00-05, 03b (Weighted+Orbital pkgs), 03c (Morpho Blue SE pkg),
+# 04b, 06t (DTF-DETF), 06e (TTDOL-Q), 09. No Morpho SE instances.
 # Local default: Anvil Dev 0 + --unlocked on a 46630 fork.
+# Pass --anvil-dev0 when DEPLOYER_ADDRESS is set (live wallet) so Anvil signs as Dev 0.
 #
 #   bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh
+#   bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --anvil-dev0
 # Live 46630:
 #   export DEPLOYER_ADDRESS=0x...
 #   bash scripts/foundry/anvil_robinhood_testnet/fresh_deploy.sh --live

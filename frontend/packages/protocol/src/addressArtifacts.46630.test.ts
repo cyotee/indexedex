@@ -21,7 +21,8 @@ describe('46630 first-class protocol resolve', () => {
     expect(artifacts.chainId).toBe(46630)
     expect(artifacts.environment).toBe('anvil_robinhood_testnet')
     expect(artifacts.platform.chainId).toBe(46630)
-    expect(artifacts.tokenlists.protocolDetf).toHaveLength(10)
+    expect(artifacts.tokenlists.protocolDetf).toHaveLength(2)
+    expect(artifacts.tokenlists.protocolDetf.map((t) => t.symbol).sort()).toEqual(['$$DETF', 'DTF-DETF'])
     expect(artifacts.tokenlists.protocolDetf.some((t) => t.tags?.includes('fee-detf'))).toBe(false)
     const testTokens = artifacts.tokenlists.tokens.filter(
       (t) => t.tags?.includes('testToken')
@@ -37,7 +38,8 @@ describe('46630 first-class protocol resolve', () => {
   it('mint list is the 11 stand-ins and excludes WETH and faucet stocks', () => {
     const mintable = getMintableTestTokensForChain(46630, 'anvil_robinhood_testnet')
     expect(mintable).toHaveLength(11)
-    expect(mintable.every((t) => t.symbol.startsWith('TT'))).toBe(true)
+    expect(mintable.every((t) => t.symbol.startsWith('TT') || t.symbol === 'DTF')).toBe(true)
+    expect(mintable.some((t) => t.symbol === 'DTF')).toBe(true)
     expect(mintable.some((t) => t.symbol === 'WETH')).toBe(false)
     expect(mintable.some((t) => t.tags?.includes('rh-faucet'))).toBe(false)
   })
