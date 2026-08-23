@@ -91,15 +91,17 @@ function DiagramShell({
   caption,
   children,
   className = '',
+  kicker = 'Composition',
 }: {
   title: string
   caption: string
   children: ReactNode
   className?: string
+  kicker?: string
 }) {
   return (
     <figure
-      className={`mt-6 overflow-hidden rounded-2xl border-2 ${className}`}
+      className={`overflow-hidden rounded-2xl border-2 ${className.includes('mt-') ? className : `mt-6 ${className}`}`}
       style={shellStyle}
     >
       <figcaption className="relative border-b px-4 py-3 sm:px-5" style={headerStyle}>
@@ -108,7 +110,7 @@ function DiagramShell({
           aria-hidden="true"
         />
         <p className="pl-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
-          Composition
+          {kicker}
         </p>
         <p className="mt-0.5 pl-2 text-base font-medium text-[var(--text-primary)]">{title}</p>
       </figcaption>
@@ -872,6 +874,75 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
               </div>
             )
           })}
+        </div>
+      </div>
+    </DiagramShell>
+  )
+}
+
+/**
+ * Landing example: three-part Orbital-style basket.
+ * Customer copy must not use the package name. Two SE-buffered external legs:
+ * Morpho vault marked in USDG, Uniswap V4 USDG/WETH vault marked in WETH.
+ */
+export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: string }) {
+  return (
+    <DiagramShell
+      className={className}
+      kicker="Example"
+      title="One token, two vaults"
+      caption="You hold the DETF token. This example basket holds two vault shares: a Morpho vault marked in USDG, and a Uniswap V4 vault on a USDG/WETH pool marked in WETH. Each vault keeps working in its own app."
+    >
+      <div className="mb-1 flex justify-center">
+        <div
+          className="rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wide text-[var(--text-primary)]"
+          style={holdPillStyle}
+        >
+          You hold → DETF token
+        </div>
+      </div>
+      <Connector />
+
+      <PoolFrame label="Assets behind the token: DETF plus two vault shares">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-2">
+          <Leg
+            accent
+            title="DETF token"
+            subtitle="The token you hold. It sits in the basket too."
+          />
+          <Plus />
+          <Leg
+            secondary
+            title="Morpho vault share"
+            subtitle="Marked in USDG"
+          />
+          <Plus />
+          <Leg
+            secondary
+            title="Uniswap V4 vault share"
+            subtitle="Marked in WETH"
+          />
+        </div>
+      </PoolFrame>
+
+      <Connector label="those vaults wrap" />
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border px-4 py-4" style={seBoxStyle}>
+          <p className="text-base font-medium text-amber-100">Morpho</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-muted)]">
+            A vault that takes USDG. The Morpho market keeps that USDG working. The DETF holds the
+            vault share, not a raw USDG pile.
+          </p>
+          <ExampleChips labels={['USDG']} />
+        </div>
+        <div className="rounded-xl border px-4 py-4" style={seBoxStyle}>
+          <p className="text-base font-medium text-amber-100">Uniswap V4</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-[var(--text-muted)]">
+            A vault on a USDG/WETH pool. The share is marked in WETH. The pool stays a Uniswap V4
+            market.
+          </p>
+          <ExampleChips labels={['USDG/WETH', 'WETH']} />
         </div>
       </div>
     </DiagramShell>

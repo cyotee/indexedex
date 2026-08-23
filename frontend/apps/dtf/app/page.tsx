@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 
 import { Button } from './components/ui/Button'
 import { Card } from './components/ui/Card'
+import { OrbitalMorphoUniv4ExampleDiagram } from './research/components/diagrams/DetfCompositionDiagram'
 import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
 import { getLaunchTokenAddress } from './lib/lab'
 import { feeDetfStakingHref, getBaseTokensForChain } from '@indexedex/protocol/tokenlists'
@@ -36,7 +37,7 @@ const DISCLAIMERS = [
   'Holding DETF is not legal ownership of stocks or other offchain assets.',
   'Policy and Open do not promise a stable price, easy trades, or a return.',
   'There is no promised APY or guaranteed return.',
-  'Fees used to buy back $RICH do not promise a higher price or a profit.',
+  'Fees used to buy back $DTF do not promise a higher price or a profit.',
   'Smart contracts and markets can lose money. Read research. This is not financial advice.',
 ] as const
 
@@ -88,12 +89,13 @@ export default function HomePage() {
   )
   const heroFee = featuredFeeDetfs[0]
 
-  const buyRichHref = useMemo(() => {
+  const buyDtfHref = useMemo(() => {
     const launch = getLaunchTokenAddress()
-    const rich = getBaseTokensForChain(selectedChainId, environment).find(
-      (t) => t.symbol.toUpperCase() === 'RICH',
-    )
-    const addr = rich?.address ?? launch
+    const dtf = getBaseTokensForChain(selectedChainId, environment).find((t) => {
+      const symbol = t.symbol.toUpperCase()
+      return symbol === 'DTF' || symbol === 'TTDTF' || symbol === 'TTRICH' || symbol === 'RICH'
+    })
+    const addr = dtf?.address ?? launch
     return addr ? `/swap?launch=1&tokenOut=${addr}` : '/token'
   }, [selectedChainId, environment])
 
@@ -172,14 +174,68 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="rich" className="mb-16 md:mb-20 scroll-mt-24">
-        <p className="landing-section-label">App fees buy back $RICH</p>
+      <section id="example-basket" className="mb-16 md:mb-20 scroll-mt-24">
+        <p className="landing-section-label">Example basket</p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
+          One token over Morpho and Uniswap
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          A DETF is a Decentralized ETF: one token over a basket you pick. This example puts two
+          vaults in that basket. A Morpho vault marked in USDG. A Uniswap V4 vault on a USDG/WETH
+          pool, marked in WETH. You hold the DETF token. The vaults keep working in those apps.
+        </p>
+
+        <div className="mt-6">
+          <OrbitalMorphoUniv4ExampleDiagram />
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Card>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
+              One position
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+              You do not keep a Morpho receipt and a Uniswap vault receipt as two separate
+              positions. You mint, burn, or trade the DETF.
+            </p>
+          </Card>
+          <Card>
+            <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
+              Work in other apps
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+              The basket is not a static pile of USDG and WETH. It is vault shares. Morpho keeps
+              the USDG working. Uniswap keeps the USDG/WETH pool working.
+            </p>
+          </Card>
+        </div>
+
+        <p className="mt-5 max-w-2xl text-xs leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          This is an example of a three-part basket: the DETF token plus two vaults. It is not a
+          live listing on this page. Returns are not promised. Create your own basket, or read how
+          types work.
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href="/create">
+            <Button size="sm">Create DETF</Button>
+          </Link>
+          <Link href="/research/detf-types">
+            <Button size="sm" variant="secondary">
+              Basket shapes
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <section id="dtf" className="mb-16 md:mb-20 scroll-mt-24">
+        <p className="landing-section-label">App fees buy back $DTF</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
           Protocol DETF
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted,#9aa3b2)]">
-          <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$RICH</strong> is the
-          token for app fees. When people use Down To Finance, those fees go to buy back $RICH.
+          <strong className="font-medium text-[var(--text-primary,#EDEDED)]">$DTF</strong> is the
+          token for app fees. When people use Down To Finance, those fees go to buy back $DTF.
         </p>
 
         {heroFee ? (
@@ -191,28 +247,29 @@ export default function HomePage() {
               <div className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-                    $RICH
+                    $DTF
                   </p>
                   <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">
                     Protocol DETF
                   </h3>
                   <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-                    $CHIR is the DETF of $RICH. Lock $RICH to earn fees with $CHIR.
+                    $DTF-DETF is the DETF of $DTF. Lock $DTF to earn fees with $DTF-DETF. $DTF-CLAIM
+                    is the rebasing claim token.
                   </p>
                 </div>
                 <span className="inline-flex items-center text-sm font-medium text-[var(--accent,#4FD44B)]">
-                  Open $CHIR →
+                  Open $DTF-DETF →
                 </span>
               </div>
             </Link>
 
             <div className="pt-1 flex flex-wrap gap-2">
-              <Link href={buyRichHref}>
-                <Button size="sm">Buy $RICH</Button>
+              <Link href={buyDtfHref}>
+                <Button size="sm">Buy $DTF</Button>
               </Link>
               <Link href={feeDetfStakingHref(heroFee.address)}>
                 <Button size="sm" variant="secondary">
-                  Open $CHIR
+                  Open $DTF-DETF
                 </Button>
               </Link>
             </div>
@@ -220,12 +277,12 @@ export default function HomePage() {
         ) : (
           <Card className="mt-5">
             <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-              No Protocol DETF is listed on this network yet. You can still buy $RICH when a market
+              No Protocol DETF is listed on this network yet. You can still buy $DTF when a market
               is set.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Link href={buyRichHref}>
-                <Button size="sm">Buy $RICH</Button>
+              <Link href={buyDtfHref}>
+                <Button size="sm">Buy $DTF</Button>
               </Link>
               <Link href="/staking">
                 <Button variant="secondary" size="sm">
