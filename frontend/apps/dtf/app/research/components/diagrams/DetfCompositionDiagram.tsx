@@ -880,18 +880,32 @@ function MixedBufferMultiVaultStableDiagram({ className }: { className?: string 
   )
 }
 
+function PoolDoor({ label }: { label: string }) {
+  return (
+    <div
+      className="flex min-h-[4.25rem] min-w-0 items-center justify-center rounded-lg border px-2 py-2 text-center"
+      style={{
+        borderColor: 'color-mix(in srgb, var(--accent) 55%, transparent)',
+        background: 'color-mix(in srgb, var(--accent-muted) 82%, transparent)',
+      }}
+    >
+      <p className="font-mono text-[10px] leading-snug text-[var(--accent)] sm:text-[11px]">{label}</p>
+    </div>
+  )
+}
+
 /**
- * Landing example: three-part Orbital-style basket.
- * Customer copy must not use the package name. Two SE-buffered external legs:
- * Morpho vault marked in USDG, Uniswap V4 USDG/WETH vault marked in WETH.
+ * Landing example: Orbital-style reserve (three pair pools).
+ * Customer copy must not use the package name. Tokens: DETF, Morpho vault (USDG),
+ * Uniswap V4 vault (WETH). Each token is pooled against each of the others.
  */
 export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: string }) {
   return (
     <DiagramShell
       className={className}
       kicker="Example"
-      title="One token, two vaults"
-      caption="You hold the DETF token. This example basket holds two vaults: a Morpho vault marked in USDG, and a Uniswap V4 vault on a USDG/WETH pool marked in WETH. Each vault keeps working in its own app."
+      title="One token, three pools"
+      caption="The reserve is three pools. Each token is paired with each of the others. Morpho keeps USDG. Uniswap V4 keeps the USDG/WETH pool."
     >
       <div className="mb-1 flex justify-center">
         <div
@@ -903,19 +917,26 @@ export function OrbitalMorphoUniv4ExampleDiagram({ className }: { className?: st
       </div>
       <Connector />
 
-      <PoolFrame label="Assets behind the token: DETF plus two vaults">
-        <Leg
-          accent
-          title="DETF token"
-          subtitle="The token you hold. It sits in the basket too."
-        />
-        <div className="mt-3 grid grid-cols-2 items-stretch gap-2 sm:gap-3">
-          <Leg secondary title="Morpho vault" subtitle="Marked in USDG" />
-          <Leg secondary title="Uniswap V4 vault" subtitle="Marked in WETH" />
-        </div>
-      </PoolFrame>
+      <div className="space-y-3">
+        <PoolFrame label="Pools">
+          <div className="grid grid-cols-3 items-stretch gap-1.5 sm:gap-2">
+            <PoolDoor label="DETF/USDG (Morpho)" />
+            <PoolDoor label="DETF/WETH (Uniswap V4 (USDG/WETH))" />
+            <PoolDoor label="USDG (Morpho) / WETH (Uniswap V4 (USDG/WETH))" />
+          </div>
+        </PoolFrame>
 
-      <div className="grid grid-cols-2 items-start gap-2 sm:gap-3">
+        <PoolFrame label="Tokens in those pools">
+          <div className="grid grid-cols-3 items-stretch gap-1.5 sm:gap-2">
+            <Leg accent title="DETF token" subtitle="You hold this" />
+            <Leg secondary title="Morpho vault" subtitle="USDG" />
+            <Leg secondary title="Uniswap V4 vault" subtitle="WETH" />
+          </div>
+        </PoolFrame>
+      </div>
+
+      <div className="grid grid-cols-3 items-start gap-1.5 sm:gap-2">
+        <div />
         <div className="flex min-w-0 flex-col">
           <Connector label="Morpho" />
           <div className="rounded-xl border px-3 py-4 sm:px-4" style={seBoxStyle}>
