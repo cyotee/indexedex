@@ -15,9 +15,11 @@ import {
 
 /**
  * @title UniswapV3StandardExchangeInFacet
- * @notice Facet for exchange-in routes and Uni V3 mint/swap callbacks.
+ * @notice Facet for exchange-in routes and Uni V3 mint/swap callbacks. Constructor-injected CREATE3 delegate.
  */
 contract UniswapV3StandardExchangeInFacet is UniswapV3StandardExchangeInTarget, IFacet {
+    constructor(address executionDelegate) UniswapV3StandardExchangeInTarget(executionDelegate) {}
+
     function facetName() public pure override returns (string memory name) {
         return type(UniswapV3StandardExchangeInFacet).name;
     }
@@ -30,7 +32,6 @@ contract UniswapV3StandardExchangeInFacet is UniswapV3StandardExchangeInTarget, 
     }
 
     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
-        // previewExchangeIn lives on InQueryFacet (EIP-170 size split).
         funcs = new bytes4[](3);
         funcs[0] = IStandardExchangeIn.exchangeIn.selector;
         funcs[1] = IUniswapV3MintCallback.uniswapV3MintCallback.selector;

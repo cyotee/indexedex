@@ -177,7 +177,7 @@ If both tokens within band: skip unlock (public rebalance returns success).
 
 1. Compute `excess_i = free_i - targetFree_i` for each token that trips high.
 2. Use existing managed-liquidity plan / add-liquidity path with **available free balances** as budgets (not a swap of one token for the other).
-3. Prefer single unlock: add liquidity to center (and wings if package still allocates free budgets via existing `_managedLiquidityPlan`).
+3. Prefer single unlock: add liquidity to the full-range center only (D30). Do not mint wings.
 4. Only spend free inventory; do not pull from outside.
 5. Best-effort: if range allows only one currency (OOR), deploy what the plan can; leave residual free (D11).
 

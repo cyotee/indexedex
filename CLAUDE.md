@@ -61,6 +61,7 @@ Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as cu
 | Task | Skills / agents (prefer Crane path when listed) |
 |------|--------------------------------------------------|
 | Deploy / DFPkg / CREATE3 | `crane-deployment`, `crane-architecture` |
+| Foundry launch / Anvil / gas estimate | `indexedex-launch-scripts` (Phase/Stage layout + 4663 EIP-1559 quote vs 46630 lab) |
 | Tests / TestBases | `crane-testing`, `indexedex-testing` (LR-7 + proxy surface matrix + trust-flag negatives) |
 | Adversarial / abuse | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + **A0/L/M/N/O**; I=pretransfer claim, J=facet/proxy surface; ship gate: `implementation-test-dod.md`) |
 | Incident-driven security / DeFiHackLabs | `defi-incident-patterns` (maps `lib/DeFiHackLabs` themes → catalog IDs + secure-dev checklist; **reference only** — hermetic production-first tests remain the bar) |

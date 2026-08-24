@@ -19,6 +19,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {
     IUniswapV3StandardExchangeDFPkg
@@ -26,6 +27,9 @@ import {
 import {
     UniswapV3_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
+import {
+    IUniswapV3StandardExchangeLiquidReserve
+} from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
 
 /**
  * @title TestBase_UniswapV3StandardExchange
@@ -43,12 +47,19 @@ contract TestBase_UniswapV3StandardExchange is
 
     uint24 internal constant DEFAULT_WIDTH_MULTIPLIER = 10;
     uint24 internal constant FEE_MEDIUM = 3000;
+    uint256 internal constant DEFAULT_V3_LIQUID_RESERVE_PCT = 0.20e18;
 
     IUniswapV3Factory internal uniswapV3Factory;
     IFacet internal uniswapV3StandardExchangeInFacet;
     IFacet internal uniswapV3StandardExchangeInQueryFacet;
     IFacet internal uniswapV3StandardExchangeOutFacet;
+    IFacet internal uniswapV3StandardExchangeOutQueryFacet;
     IFacet internal uniswapV3StandardExchangePositionImportFacet;
+    IFacet internal uniswapV3StandardExchangeLiquidReserveFacet;
+    IFacet internal uniswapV3StandardExchangeInMultiFacet;
+    IFacet internal uniswapV3StandardExchangeInMultiQueryFacet;
+    IFacet internal uniswapV3StandardExchangeOutMultiFacet;
+    IFacet internal uniswapV3StandardExchangeOutMultiQueryFacet;
     IUniswapV3StandardExchangeDFPkg internal uniswapV3StandardExchangeDFPkg;
 
     function setUp() public virtual override(TestBase_Permit2, TestBase_VaultComponents) {
@@ -61,9 +72,14 @@ contract TestBase_UniswapV3StandardExchange is
         uniswapV3StandardExchangeInFacet = create3Factory.deployUniswapV3StandardExchangeInFacet();
         uniswapV3StandardExchangeInQueryFacet = create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
         uniswapV3StandardExchangeOutFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
+        uniswapV3StandardExchangeOutQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutQueryFacet();
         uniswapV3StandardExchangePositionImportFacet = create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
+        uniswapV3StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV3StandardExchangeLiquidReserveFacet();
+        uniswapV3StandardExchangeInMultiFacet = create3Factory.deployUniswapV3StandardExchangeInMultiFacet();
+        uniswapV3StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeInMultiQueryFacet();
+        uniswapV3StandardExchangeOutMultiFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiFacet();
+        uniswapV3StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiQueryFacet();
 
-        // Sequential PkgInit field writes — avoids 13-arg stack-too-deep under heavy TestBase inheritance.
         IUniswapV3StandardExchangeDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = erc20Facet;
         pkgInit.erc5267Facet = erc5267Facet;
@@ -73,13 +89,25 @@ contract TestBase_UniswapV3StandardExchange is
         pkgInit.uniswapV3StandardExchangeInFacet = uniswapV3StandardExchangeInFacet;
         pkgInit.uniswapV3StandardExchangeInQueryFacet = uniswapV3StandardExchangeInQueryFacet;
         pkgInit.uniswapV3StandardExchangeOutFacet = uniswapV3StandardExchangeOutFacet;
+        pkgInit.uniswapV3StandardExchangeOutQueryFacet = uniswapV3StandardExchangeOutQueryFacet;
         pkgInit.uniswapV3StandardExchangePositionImportFacet = uniswapV3StandardExchangePositionImportFacet;
+        pkgInit.uniswapV3StandardExchangeLiquidReserveFacet = uniswapV3StandardExchangeLiquidReserveFacet;
+        pkgInit = UniswapV3_Component_FactoryService.attachUniswapV3StandardExchangeMultiFacets(
+            pkgInit,
+            uniswapV3StandardExchangeInMultiFacet,
+            uniswapV3StandardExchangeInMultiQueryFacet,
+            uniswapV3StandardExchangeOutMultiFacet,
+            uniswapV3StandardExchangeOutMultiQueryFacet
+        );
         pkgInit.vaultFeeOracleQuery = indexedexManager;
         pkgInit.vaultRegistryDeployment = indexedexManager;
         pkgInit.permit2 = permit2;
         pkgInit.uniswapV3Factory = uniswapV3Factory;
 
         vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
+            type(IUniswapV3StandardExchangeLiquidReserve).interfaceId, DEFAULT_V3_LIQUID_RESERVE_PCT
+        );
         uniswapV3StandardExchangeDFPkg = indexedexManager.deployUniswapV3StandardExchangeDFPkg(pkgInit);
         vm.stopPrank();
     }
@@ -90,7 +118,6 @@ contract TestBase_UniswapV3StandardExchange is
     {
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         pool = IUniswapV3Pool(uniswapV3Factory.createPool(token0, token1, fee));
-        // 1:1 price
         pool.initialize(uint160(uint256(1) << 96));
         vm.label(address(pool), "V3Pool");
     }
@@ -104,7 +131,6 @@ contract TestBase_UniswapV3StandardExchange is
 
     function _seedExternalLiquidity(IUniswapV3Pool pool, uint128 liquidity) internal {
         int24 tickSpacing = pool.tickSpacing();
-        // Wide range so large vault zaps cannot push price to sqrt limits.
         int24 tickLower = (-887220 / tickSpacing) * tickSpacing;
         int24 tickUpper = (887220 / tickSpacing) * tickSpacing;
         if (tickLower >= tickUpper) {
@@ -114,11 +140,9 @@ contract TestBase_UniswapV3StandardExchange is
 
         address token0 = pool.token0();
         address token1 = pool.token1();
-        // Fund generously for deep external book.
         ERC20PermitMintableStub(token0).mint(address(this), 100_000_000 ether);
         ERC20PermitMintableStub(token1).mint(address(this), 100_000_000 ether);
 
-        // Cap requested liquidity if mint would require more than funded — use large fixed liquidity.
         uint128 liq = liquidity < 1e18 ? 50_000_000e18 : liquidity;
         pool.mint(address(this), tickLower, tickUpper, liq, abi.encode(address(this)));
     }

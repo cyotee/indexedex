@@ -1,0 +1,199 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - link "Down To Finance Down To Finance" [ref=e7] [cursor=pointer]:
+            - /url: /
+            - img "Down To Finance" [ref=e8]
+            - generic [ref=e9]: Down To Finance
+          - navigation "Primary" [ref=e10]:
+            - link "Explore" [ref=e11] [cursor=pointer]:
+              - /url: /explore
+            - link "DETFs" [ref=e12] [cursor=pointer]:
+              - /url: /insights
+            - link "Create" [ref=e13] [cursor=pointer]:
+              - /url: /create
+            - link "You" [ref=e14] [cursor=pointer]:
+              - /url: /you
+            - link "Learn" [ref=e15] [cursor=pointer]:
+              - /url: /learn
+            - button "More" [ref=e17]
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: App Network
+            - combobox "App Network" [ref=e23]:
+              - option "Robinhood (Anvil)"
+              - option "Ethereum Sepolia" [selected]
+              - option "Base Sepolia"
+            - generic [ref=e24]: Selecting a network updates the app and prompts your wallet when a non-local wallet chain does not match.
+          - button "Connect Wallet" [ref=e26]
+    - main [ref=e27]:
+      - generic [ref=e29]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - paragraph [ref=e33]: DTF · Down To Finance · DETF means Decentralized ETF
+            - heading "You free tonight? We're Down To Finance." [level=1] [ref=e34]: You free tonight?We're Down To Finance.
+            - paragraph [ref=e35]: A DETF is one token for a basket you pick. The basket works in other apps. Create your own, or open one that is already live.
+            - generic [ref=e36]:
+              - link [ref=e37] [cursor=pointer]:
+                - /url: /create
+                - button "Create DETF" [ref=e38]
+              - link [ref=e39] [cursor=pointer]:
+                - /url: /explore
+                - button "Use a live DETF" [ref=e40]
+              - link [ref=e41] [cursor=pointer]:
+                - /url: /learn
+                - button "How DETFs work" [ref=e42]
+          - generic [ref=e44]:
+            - img "One DETF token. The basket works in pools, lending, staking, and vaults." [ref=e45]:
+              - generic [ref=e47]:
+                - generic [ref=e48]: You hold
+                - strong [ref=e49]: DETF token
+                - generic [ref=e50]: one basket
+              - generic [ref=e51]:
+                - generic [ref=e52]: Trade
+                - generic [ref=e53]: pools
+              - generic [ref=e54]:
+                - generic [ref=e55]: Lend
+                - generic [ref=e56]: books
+              - generic [ref=e57]:
+                - generic [ref=e58]: Vaults
+                - generic [ref=e59]: receipts
+              - generic [ref=e60]:
+                - generic [ref=e61]: Stake
+                - generic [ref=e62]: locks
+            - paragraph [ref=e63]: You hold one token. The basket works in other apps.
+        - generic [ref=e64]:
+          - paragraph [ref=e65]: The process
+          - heading "Three steps" [level=2] [ref=e66]
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]: "01"
+              - heading "Create" [level=3] [ref=e70]
+              - paragraph [ref=e71]: Make a DETF. You pick the rules. It stays off until the first bond.
+            - generic [ref=e72]:
+              - generic [ref=e73]: "02"
+              - heading "Bond" [level=3] [ref=e74]
+              - paragraph [ref=e75]: Bond means lock money in. That first bond turns the DETF on.
+            - generic [ref=e76]:
+              - generic [ref=e77]: "03"
+              - heading "Use" [level=3] [ref=e78]
+              - paragraph [ref=e79]: Hold the token. Mint more, burn to exit, or trade it.
+        - generic [ref=e80]:
+          - paragraph [ref=e81]: Example basket
+          - heading "One token over Morpho and Uniswap" [level=2] [ref=e82]
+          - paragraph [ref=e83]: "A DETF is a Decentralized ETF: one token over a basket you pick. This example puts two vaults in that basket. A Morpho vault marked in USDG. A Uniswap V4 vault on a USDG/WETH pool, marked in WETH. You hold the DETF token. The vaults keep working in those apps."
+          - figure [ref=e85]:
+            - generic [ref=e86]:
+              - paragraph [ref=e87]: Example
+              - paragraph [ref=e88]: One token, two vaults
+            - generic [ref=e90]:
+              - generic [ref=e91]: You hold → DETF token
+              - generic [ref=e97]:
+                - paragraph [ref=e98]: "Assets behind the token: DETF plus two vault shares"
+                - generic [ref=e99]:
+                  - generic [ref=e100]:
+                    - paragraph [ref=e101]: DETF token
+                    - paragraph [ref=e102]: The token you hold. It sits in the basket too.
+                  - generic [ref=e103]: +
+                  - generic [ref=e104]:
+                    - paragraph [ref=e105]: Morpho vault share
+                    - paragraph [ref=e106]: Marked in USDG
+                  - generic [ref=e107]: +
+                  - generic [ref=e108]:
+                    - paragraph [ref=e109]: Uniswap V4 vault share
+                    - paragraph [ref=e110]: Marked in WETH
+              - generic [ref=e111]: those vaults wrap
+              - generic [ref=e116]:
+                - generic [ref=e117]:
+                  - paragraph [ref=e118]: Morpho
+                  - paragraph [ref=e119]: A vault that takes USDG. The Morpho market keeps that USDG working. The DETF holds the vault share, not a raw USDG pile.
+                  - generic [ref=e120]:
+                    - paragraph [ref=e121]: Example integrations
+                    - list [ref=e122]:
+                      - listitem [ref=e123]: USDG
+                - generic [ref=e124]:
+                  - paragraph [ref=e125]: Uniswap V4
+                  - paragraph [ref=e126]: A vault on a USDG/WETH pool. The share is marked in WETH. The pool stays a Uniswap V4 market.
+                  - generic [ref=e127]:
+                    - paragraph [ref=e128]: Example integrations
+                    - list [ref=e129]:
+                      - listitem [ref=e130]: USDG/WETH
+                      - listitem [ref=e131]: WETH
+            - paragraph [ref=e132]: "You hold the DETF token. This example basket holds two vault shares: a Morpho vault marked in USDG, and a Uniswap V4 vault on a USDG/WETH pool marked in WETH. Each vault keeps working in its own app."
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - paragraph [ref=e135]: One position
+              - paragraph [ref=e136]: You do not keep a Morpho receipt and a Uniswap vault receipt as two separate positions. You mint, burn, or trade the DETF.
+            - generic [ref=e137]:
+              - paragraph [ref=e138]: Work in other apps
+              - paragraph [ref=e139]: The basket is not a static pile of USDG and WETH. It is vault shares. Morpho keeps the USDG working. Uniswap keeps the USDG/WETH pool working.
+          - paragraph [ref=e140]: "This is an example of a three-part basket: the DETF token plus two vaults. It is not a live listing on this page. Returns are not promised. Create your own basket, or read how types work."
+          - generic [ref=e141]:
+            - link [ref=e142] [cursor=pointer]:
+              - /url: /create
+              - button "Create DETF" [ref=e143]
+            - link [ref=e144] [cursor=pointer]:
+              - /url: /research/detf-types
+              - button "Basket shapes" [ref=e145]
+        - generic [ref=e146]:
+          - paragraph [ref=e147]: App fees buy back $DTF
+          - heading "Protocol DETF" [level=2] [ref=e148]
+          - paragraph [ref=e149]:
+            - strong [ref=e150]: $DTF
+            - text: is the token for app fees. When people use Down To Finance, those fees go to buy back $DTF.
+          - generic [ref=e151]:
+            - link "$DTF Protocol DETF $DTF-DETF is the DETF of $DTF. Lock $DTF to earn fees with $DTF-DETF. $DTF-CLAIM is the rebasing claim token. Open $DTF-DETF →" [ref=e152] [cursor=pointer]:
+              - /url: /staking?detf=0xB9355C67ccDab9f412503a20357140739a951735
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - paragraph [ref=e155]: $DTF
+                  - heading "Protocol DETF" [level=3] [ref=e156]
+                  - paragraph [ref=e157]: $DTF-DETF is the DETF of $DTF. Lock $DTF to earn fees with $DTF-DETF. $DTF-CLAIM is the rebasing claim token.
+                - generic [ref=e158]: Open $DTF-DETF →
+            - generic [ref=e159]:
+              - link [ref=e160] [cursor=pointer]:
+                - /url: /swap?launch=1&tokenOut=0x4C878757E6A7764c2feaD18C51e3d1771bacAacc
+                - button "Buy $DTF" [ref=e161]
+              - link [ref=e162] [cursor=pointer]:
+                - /url: /staking?detf=0xB9355C67ccDab9f412503a20357140739a951735
+                - button "Open $DTF-DETF" [ref=e163]
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - paragraph [ref=e168]: Learn
+            - heading "How DETFs work" [level=2] [ref=e169]
+            - paragraph [ref=e170]: Five short chapters on how DETFs work.
+          - link "Full walk →" [ref=e171] [cursor=pointer]:
+            - /url: /learn
+        - group [ref=e173]:
+          - generic "Disclaimers expand" [ref=e174] [cursor=pointer]:
+            - text: Disclaimers
+            - generic [ref=e175]: expand
+    - contentinfo [ref=e176]:
+      - generic [ref=e177]:
+        - generic [ref=e178]:
+          - generic [ref=e179]:
+            - paragraph [ref=e180]: Down To Finance
+            - paragraph [ref=e181]: You free tonight? We’re Down To Finance.
+            - paragraph [ref=e182]: One token. A basket that works.
+          - generic [ref=e183]:
+            - link "Explore" [ref=e184] [cursor=pointer]:
+              - /url: /explore
+            - link "DETFs" [ref=e185] [cursor=pointer]:
+              - /url: /insights
+            - link "Create" [ref=e186] [cursor=pointer]:
+              - /url: /create
+            - link "You" [ref=e187] [cursor=pointer]:
+              - /url: /you
+            - link "Learn" [ref=e188] [cursor=pointer]:
+              - /url: /learn
+            - link "Trade" [ref=e189] [cursor=pointer]:
+              - /url: /swap
+            - link "Vaults" [ref=e190] [cursor=pointer]:
+              - /url: /earn
+            - link "Docs" [ref=e191] [cursor=pointer]:
+              - /url: https://github.com
+            - generic [ref=e192]: "Audits: pending"
+        - paragraph [ref=e193]: Smart contracts involve risk. APYs are not promises. Read the notes before you deposit.
+  - alert [ref=e194]

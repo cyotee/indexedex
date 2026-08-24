@@ -48,6 +48,10 @@ Always-on routers stay lean; this Discovery block is the deep entry into invento
    - Mirrored for Grok/OpenCode: `.grok/skills/indexedex-uniswap-v4-hook-packages/`, `.opencode/skills/indexedex-uniswap-v4-hook-packages/`.
    - **Not** monomorph CREATE3 hooks (weighted/orbital/quad) unless migrating to this path.
 
+5. IndexedEx **launch scripts / Anvil** (when adding Foundry Stages, Anvil wrappers, or a gas/funding quote):
+   - `.claude/skills/indexedex-launch-scripts/`: Phase/Stage layout; 4663 EIP-1559 quote vs 46630 lab. Gold: `anvil_robinhood_main` `simulate`, `anvil_robinhood_testnet` Phase/Stage.
+   - Do **not** start Anvil with a bare `--fork-url`. Do **not** copy `--disable-code-size-limit` onto a 4663 estimate.
+
 **Skill source of truth:** Crane skills are authored under `lib/crane/.claude/skills/`. After editing them in Crane, run `./scripts/sync-crane-skills.sh` to refresh IndexedEx `.claude/skills/`, `.opencode/skills/`, and `.grok/skills/` copies. Prefer reading the Crane path when in doubt.
 
 **IndexedEx-local skills** (this repo, not Crane): author under `.claude/skills/<name>/` and **mirror** to `.grok/skills/` and `.opencode/skills/` (e.g. `rsync -a .claude/skills/<name>/ .grok/skills/<name>/`).
@@ -304,9 +308,10 @@ FOUNDRY_PROFILE=fork forge test --match-path 'test/foundry/fork/base_main/**' -v
 # Format Solidity
 forge fmt
 
-# Local development with Anvil fork
-anvil --fork-url <RPC_URL>
-forge script scripts/foundry/UI_Dev_Anvil.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
+# Local Anvil / launch scripts: load skill `indexedex-launch-scripts`.
+# Gas/funding quote (4663, EIP-170 on):  scripts/shell/anvil_robinhood_main.sh simulate --restart-anvil
+# Dev lab (46630 Phase/Stage):           scripts/shell/anvil_robinhood_testnet.sh all
+# Do not use a bare `anvil --fork-url` for either path.
 ```
 
 ## Architecture: 3-Tier Diamond Deployment

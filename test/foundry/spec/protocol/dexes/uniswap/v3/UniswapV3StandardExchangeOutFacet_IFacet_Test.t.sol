@@ -21,8 +21,7 @@ contract UniswapV3StandardExchangeOutFacet_IFacet_Test is TestBase_UniswapV3Stan
         assertEq(interfaces[0], type(IStandardExchangeOut).interfaceId);
 
         bytes4[] memory funcs = facet.facetFuncs();
-        assertEq(funcs.length, 2);
-        assertEq(funcs[0], IStandardExchangeOut.previewExchangeOut.selector);
-        assertEq(funcs[1], IStandardExchangeOut.exchangeOut.selector);
+        assertEq(funcs.length, 1);
+        assertEq(funcs[0], IStandardExchangeOut.exchangeOut.selector);
     }
 }

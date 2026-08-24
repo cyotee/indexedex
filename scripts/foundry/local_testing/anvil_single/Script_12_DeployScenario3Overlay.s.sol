@@ -45,6 +45,15 @@ import {
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    IUniswapV4MultiPoolTwapOracleDFPkg
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
+import {
+    UniswapV4TwapOracleFactoryService
+} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapOracleFactoryService.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
@@ -70,6 +79,7 @@ import {UniswapV4LiquiditySeeder} from "../../shared/UniswapV4LiquiditySeeder.so
 contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
+    using UniswapV4TwapOracleFactoryService for ICreate3FactoryProxy;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for IVaultRegistryDeployment;
@@ -118,6 +128,10 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IFacet private uniswapV4StandardExchangeOutFacet;
     IFacet private uniswapV4StandardExchangeOutQueryFacet;
     IFacet private uniswapV4StandardExchangeLiquidReserveFacet;
+    IFacet private uniswapV4StandardExchangeInMultiFacet;
+    IFacet private uniswapV4StandardExchangeInMultiQueryFacet;
+    IFacet private uniswapV4StandardExchangeOutMultiFacet;
+    IFacet private uniswapV4StandardExchangeOutMultiQueryFacet;
     IFacet private erc721Facet;
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
@@ -125,6 +139,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
     ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
+    IUniswapV4MultiPoolTwapOracle private twapOracle;
     UniswapV4LiquiditySeeder private liquiditySeeder;
 
     address private pairToken;
@@ -278,6 +293,10 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
         uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutQueryFacet();
         uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
+        uniswapV4StandardExchangeInMultiFacet = create3Factory.deployUniswapV4StandardExchangeInMultiFacet();
+        uniswapV4StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV4StandardExchangeInMultiQueryFacet();
+        uniswapV4StandardExchangeOutMultiFacet = create3Factory.deployUniswapV4StandardExchangeOutMultiFacet();
+        uniswapV4StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutMultiQueryFacet();
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
@@ -300,6 +319,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 )
             );
         }
+
+        IFacet twapFacet = create3Factory.deployUniswapV4MultiPoolTwapOracleFacet();
+        IUniswapV4MultiPoolTwapOracleDFPkg twapPkg =
+            create3Factory.deployUniswapV4MultiPoolTwapOracleDFPkg(twapFacet, diamondPackageFactory);
+        twapOracle = twapPkg.deployOracle(
+            IUniswapV4MultiPoolTwapOracleDFPkg.PkgArgs({poolManager: address(poolManager)})
+        );
 
         (address existingSeeder, bool hasSeeder) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (hasSeeder && existingSeeder != address(0) && existingSeeder.code.length > 0) {
@@ -356,22 +382,33 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         underlyingVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
             vaultRegistry,
-            UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
-                erc20Facet,
-                erc5267Facet,
-                erc2612Facet,
-                multiAssetBasicVaultFacet,
-                multiAssetStandardVaultFacet,
-                uniswapV4StandardExchangeInFacet,
-                uniswapV4StandardExchangeInQueryFacet,
-                uniswapV4StandardExchangePositionImportFacet,
-                uniswapV4StandardExchangeOutFacet,
-                uniswapV4StandardExchangeOutQueryFacet,
-                uniswapV4StandardExchangeLiquidReserveFacet,
-                feeOracle,
-                vaultRegistry,
-                permit2,
-                poolManager
+            UniswapV4_Component_FactoryService.attachTwapOracle(
+            UniswapV4_Component_FactoryService.attachUniswapV4StandardExchangeMultiFacets(
+                UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
+                    UniswapV4_Component_FactoryService.Univ4SePkgInitCore({
+                        erc20Facet: erc20Facet,
+                        erc5267Facet: erc5267Facet,
+                        erc2612Facet: erc2612Facet,
+                        multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                        uniswapV4StandardExchangeInFacet: uniswapV4StandardExchangeInFacet,
+                        uniswapV4StandardExchangeInQueryFacet: uniswapV4StandardExchangeInQueryFacet,
+                        uniswapV4StandardExchangePositionImportFacet: uniswapV4StandardExchangePositionImportFacet,
+                        uniswapV4StandardExchangeOutFacet: uniswapV4StandardExchangeOutFacet,
+                        uniswapV4StandardExchangeOutQueryFacet: uniswapV4StandardExchangeOutQueryFacet,
+                        uniswapV4StandardExchangeLiquidReserveFacet: uniswapV4StandardExchangeLiquidReserveFacet,
+                        vaultFeeOracleQuery: feeOracle,
+                        vaultRegistryDeployment: vaultRegistry,
+                        permit2: permit2,
+                        poolManager: poolManager
+                    })
+                ),
+                uniswapV4StandardExchangeInMultiFacet,
+                uniswapV4StandardExchangeInMultiQueryFacet,
+                uniswapV4StandardExchangeOutMultiFacet,
+                uniswapV4StandardExchangeOutMultiQueryFacet
+            ),
+                twapOracle
             )
         );
 

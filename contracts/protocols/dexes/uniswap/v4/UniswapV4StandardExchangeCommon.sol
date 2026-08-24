@@ -25,6 +25,7 @@ import {Position} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Po
 import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
 import {SafeCast} from "@crane/contracts/external/openzeppelin-contracts/utils/math/SafeCast.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
+import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 
@@ -44,6 +45,12 @@ import {UniswapV4QuoteService} from "contracts/protocols/dexes/uniswap/v4/Uniswa
 import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    UniswapV4TwapOracleAwareRepo
+} from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
 abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePullErrors {
     using BetterSafeERC20 for IERC20;
@@ -110,6 +117,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     /// @notice Blocked amount-out cannot be covered by free local inventory of `token`.
     error UniswapV4Exchange_InsufficientLocalReserve(address token, uint256 requested, uint256 available);
 
+    event TwapOracleUpdateFailed(bytes32 poolId, bytes reason);
+
     /// @dev Relative deadband: 5% of target free (D22).
     uint256 internal constant LIQUID_RESERVE_RELATIVE_TOL_WAD = 0.05e18;
     /// @dev Sink for residual first-mint dead shares (A0). Not `address(this)` so self-balance stays 0.
@@ -122,6 +131,18 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
      */
     function canOpenPoolManagerUnlock() public view virtual returns (bool) {
         return !TransientStateLibrary.isUnlocked(_poolManager());
+    }
+
+    function twapOracle() public view virtual returns (IUniswapV4MultiPoolTwapOracle) {
+        return UniswapV4TwapOracleAwareRepo._twapOracle();
+    }
+
+    function _pokeBoundPoolTwap() internal {
+        PoolKey memory key = _poolKey();
+        try twapOracle().update(key) returns (bool) {}
+        catch (bytes memory reason) {
+            emit TwapOracleUpdateFailed(PoolId.unwrap(key.toId()), reason);
+        }
     }
 
     /// @dev Free ERC-20 balances of pool currencies on this diamond (D29). Never includes position math.
@@ -362,9 +383,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     ) internal view returns (ManagedLiquidityPlan memory plan) {
         ManagedLiquidityBudgets memory budgets = _managedLiquidityBudgets(available0, available1);
 
+        // D30: center only. Do not call wing plan setters (wing storage slots remain unused).
         _setCenterPlan(plan, managedTicks, sqrtPriceX96, tick, budgets);
-        _setLowerWingPlan(plan, managedTicks, sqrtPriceX96, tick, budgets);
-        _setUpperWingPlan(plan, managedTicks, sqrtPriceX96, tick, budgets);
     }
 
     function _managedLiquidityBudgets(uint256 available0, uint256 available1)
@@ -372,10 +392,11 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         view
         returns (ManagedLiquidityBudgets memory budgets)
     {
-        budgets.centerBudget0 = (available0 * UniswapV4PositionRepo._activeLiquidityBps()) / 10_000;
-        budgets.centerBudget1 = (available1 * UniswapV4PositionRepo._activeLiquidityBps()) / 10_000;
-        budgets.upperWingBudget0 = available0 - budgets.centerBudget0;
-        budgets.lowerWingBudget1 = available1 - budgets.centerBudget1;
+        // D30: 100% of deployable inventory to the full-range center. Wings stay unused.
+        budgets.centerBudget0 = available0;
+        budgets.centerBudget1 = available1;
+        budgets.upperWingBudget0 = 0;
+        budgets.lowerWingBudget1 = 0;
     }
 
     function _setCenterPlan(
@@ -394,48 +415,6 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         );
         (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
             sqrtPriceX96, tick, managedTicks.centerLower, managedTicks.centerUpper, plan.centerLiquidity
-        );
-        plan.amount0Used += amount0;
-        plan.amount1Used += amount1;
-    }
-
-    function _setLowerWingPlan(
-        ManagedLiquidityPlan memory plan,
-        ManagedTicks memory managedTicks,
-        uint160 sqrtPriceX96,
-        int24 tick,
-        ManagedLiquidityBudgets memory budgets
-    ) internal pure {
-        plan.lowerWingLiquidity = LiquidityAmounts.getLiquidityForAmounts(
-            sqrtPriceX96,
-            TickMath.getSqrtPriceAtTick(managedTicks.lowerWingLower),
-            TickMath.getSqrtPriceAtTick(managedTicks.lowerWingUpper),
-            0,
-            budgets.lowerWingBudget1
-        );
-        (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96, tick, managedTicks.lowerWingLower, managedTicks.lowerWingUpper, plan.lowerWingLiquidity
-        );
-        plan.amount0Used += amount0;
-        plan.amount1Used += amount1;
-    }
-
-    function _setUpperWingPlan(
-        ManagedLiquidityPlan memory plan,
-        ManagedTicks memory managedTicks,
-        uint160 sqrtPriceX96,
-        int24 tick,
-        ManagedLiquidityBudgets memory budgets
-    ) internal pure {
-        plan.upperWingLiquidity = LiquidityAmounts.getLiquidityForAmounts(
-            sqrtPriceX96,
-            TickMath.getSqrtPriceAtTick(managedTicks.upperWingLower),
-            TickMath.getSqrtPriceAtTick(managedTicks.upperWingUpper),
-            budgets.upperWingBudget0,
-            0
-        );
-        (uint256 amount0, uint256 amount1) = _amountsForLiquidityAtPrice(
-            sqrtPriceX96, tick, managedTicks.upperWingLower, managedTicks.upperWingUpper, plan.upperWingLiquidity
         );
         plan.amount0Used += amount0;
         plan.amount1Used += amount1;
@@ -581,6 +560,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
 
     /**
      * @dev Core rebalance: deploy excess free and/or remove to refill deficit (add/remove only).
+     *      Does not move ticks. Non-imported deployed book is full-range (D30).
      * @return moved True if any liquidity was added or removed.
      */
     function _rebalanceLiquidReserveInternal() internal returns (bool moved) {
@@ -662,52 +642,22 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         _createManagedPositionsIfNeededCommon(managedTicks);
 
         ManagedLiquidityPlan memory plan = _managedLiquidityPlan(managedTicks, excess0, excess1);
-        if (plan.centerLiquidity == 0 && plan.lowerWingLiquidity == 0 && plan.upperWingLiquidity == 0) {
+        if (plan.centerLiquidity == 0) {
             return false;
         }
 
-        if (plan.centerLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: managedTicks.centerLower,
-                    tickUpper: managedTicks.centerUpper,
-                    liquidity: plan.centerLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
-                })
-            );
-            moved = true;
-        }
-        if (plan.lowerWingLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: managedTicks.lowerWingLower,
-                    tickUpper: managedTicks.lowerWingUpper,
-                    liquidity: plan.lowerWingLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.LowerWing)
-                })
-            );
-            moved = true;
-        }
-        if (plan.upperWingLiquidity > 0) {
-            _executeUnlock(
-                OperationParams({
-                    op: Operation.AddLiquidity,
-                    zeroForOne: false,
-                    amountSpecified: 0,
-                    tickLower: managedTicks.upperWingLower,
-                    tickUpper: managedTicks.upperWingUpper,
-                    liquidity: plan.upperWingLiquidity,
-                    salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.UpperWing)
-                })
-            );
-            moved = true;
-        }
+        _executeUnlock(
+            OperationParams({
+                op: Operation.AddLiquidity,
+                zeroForOne: false,
+                amountSpecified: 0,
+                tickLower: managedTicks.centerLower,
+                tickUpper: managedTicks.centerUpper,
+                liquidity: plan.centerLiquidity,
+                salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
+            })
+        );
+        moved = true;
     }
 
     function _deployExcessImported(uint256 excess0, uint256 excess1) internal returns (bool moved) {
@@ -773,12 +723,6 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.Center, burnShares, scale)) {
             moved = true;
         }
-        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.LowerWing, burnShares, scale)) {
-            moved = true;
-        }
-        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.UpperWing, burnShares, scale)) {
-            moved = true;
-        }
     }
 
     function _burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind kind, uint256 burnShares, uint256 scale)
@@ -812,14 +756,9 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         if (UniswapV4PositionRepo._isPositionCreated()) {
             return;
         }
+        // D30: center only. Wings are not created.
         UniswapV4PositionRepo._createPositionIfNeeded(
             UniswapV4PositionRepo.PositionKind.Center, managedTicks.centerLower, managedTicks.centerUpper
-        );
-        UniswapV4PositionRepo._createPositionIfNeeded(
-            UniswapV4PositionRepo.PositionKind.LowerWing, managedTicks.lowerWingLower, managedTicks.lowerWingUpper
-        );
-        UniswapV4PositionRepo._createPositionIfNeeded(
-            UniswapV4PositionRepo.PositionKind.UpperWing, managedTicks.upperWingLower, managedTicks.upperWingUpper
         );
     }
 
@@ -1016,64 +955,94 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         sharesIn = shares0 > shares1 ? shares0 : shares1;
     }
 
-    function _snapTick(int24 tick_, int24 tickSpacing_) internal pure returns (int24 snappedTick_) {
-        int24 compressed = tick_ / tickSpacing_;
-        if (tick_ < 0 && tick_ % tickSpacing_ != 0) {
-            compressed -= 1;
-        }
-        snappedTick_ = compressed * tickSpacing_;
-    }
-
     function _deriveInitialTicks() internal view returns (int24 tickLower, int24 tickUpper) {
         ManagedTicks memory managedTicks = _deriveManagedTicks();
         tickLower = managedTicks.centerLower;
         tickUpper = managedTicks.centerUpper;
     }
 
+    /**
+     * @dev D30: one full-range center. `widthMultiplier` does not size ticks.
+     *      Wings unused (zero-width placeholders). Rebalance never recasts ticks (D35).
+     */
     function _deriveManagedTicks() internal view returns (ManagedTicks memory managedTicks) {
-        (, int24 currentTick,,) = _slot0();
         int24 tickSpacing = UniswapV4PoolKeyAwareRepo._tickSpacing();
-        int24 outerHalfWidth = int24(uint24(UniswapV4PositionRepo._widthMultiplier())) * tickSpacing / 2;
-        int24 centerHalfWidth = int24(uint24(UniswapV4PositionRepo._centerWidthMultiplier())) * tickSpacing / 2;
-
-        if (centerHalfWidth < tickSpacing) {
-            centerHalfWidth = tickSpacing;
-        }
-        if (outerHalfWidth <= centerHalfWidth) {
-            outerHalfWidth = centerHalfWidth + tickSpacing;
-        }
-
-        managedTicks.centerLower = _snapTick(currentTick - centerHalfWidth, tickSpacing);
-        managedTicks.centerUpper = _snapTick(currentTick + centerHalfWidth, tickSpacing);
-
-        if (managedTicks.centerLower < TickMath.MIN_TICK) {
-            managedTicks.centerLower = _snapTick(TickMath.MIN_TICK, tickSpacing);
-        }
-        if (managedTicks.centerUpper > TickMath.MAX_TICK) {
-            managedTicks.centerUpper = _snapTick(TickMath.MAX_TICK, tickSpacing);
-        }
-        if (managedTicks.centerLower == managedTicks.centerUpper) {
-            managedTicks.centerUpper = managedTicks.centerLower + tickSpacing;
-        }
-
-        managedTicks.lowerWingLower = _snapTick(currentTick - outerHalfWidth, tickSpacing);
+        managedTicks.centerLower = TickMath.minUsableTick(tickSpacing);
+        managedTicks.centerUpper = TickMath.maxUsableTick(tickSpacing);
+        managedTicks.lowerWingLower = managedTicks.centerLower;
         managedTicks.lowerWingUpper = managedTicks.centerLower;
         managedTicks.upperWingLower = managedTicks.centerUpper;
-        managedTicks.upperWingUpper = _snapTick(currentTick + outerHalfWidth, tickSpacing);
+        managedTicks.upperWingUpper = managedTicks.centerUpper;
+    }
 
-        if (managedTicks.lowerWingLower < TickMath.MIN_TICK) {
-            managedTicks.lowerWingLower = _snapTick(TickMath.MIN_TICK, tickSpacing);
+    /**
+     * @dev D41/D42: Multi arrays must be exactly the two PoolKey currencies, unique, strictly ascending.
+     */
+    function _isDualPoolCurrencies(address[] calldata tokens) internal view returns (bool) {
+        if (tokens.length != 2) {
+            return false;
         }
-        if (managedTicks.upperWingUpper > TickMath.MAX_TICK) {
-            managedTicks.upperWingUpper = _snapTick(TickMath.MAX_TICK, tickSpacing);
+        if (tokens[0] >= tokens[1]) {
+            return false;
         }
+        return tokens[0] == _token0() && tokens[1] == _token1();
+    }
 
-        if (managedTicks.lowerWingLower >= managedTicks.lowerWingUpper) {
-            managedTicks.lowerWingLower = managedTicks.lowerWingUpper - tickSpacing;
+    function _dualAmountsPositive(uint256[] calldata amounts) internal pure returns (bool) {
+        return amounts.length == 2 && amounts[0] > 0 && amounts[1] > 0;
+    }
+
+    /**
+     * @dev D52: implied exact-out share burns. Zero total on a listed token or empty supply reverts.
+     *      Callers require `s0 == s1` for a proportional exit.
+     */
+    function _dualExitShareBurns(
+        uint256 amount0,
+        uint256 amount1,
+        uint256 total0,
+        uint256 total1,
+        uint256 supply
+    ) internal pure returns (uint256 s0, uint256 s1) {
+        if (total0 == 0 || total1 == 0 || supply == 0) {
+            revert UniswapV4Exchange_ZeroAmount();
         }
-        if (managedTicks.upperWingUpper <= managedTicks.upperWingLower) {
-            managedTicks.upperWingUpper = managedTicks.upperWingLower + tickSpacing;
+        s0 = FullMath.mulDivRoundingUp(amount0, supply, total0);
+        s1 = FullMath.mulDivRoundingUp(amount1, supply, total1);
+    }
+
+    /**
+     * @dev Remove `floor(shares * centerL / supply)` from the center (imported: decrease NFT).
+     *      Wings are unused (D30). Idle Multi exit uses this even if the sleeve would cover (D3).
+     */
+    function _burnCenterLiquidityForShares(uint256 sharesBurned, uint256 totalShares) internal {
+        if (sharesBurned == 0 || totalShares == 0) {
+            return;
         }
+        uint128 currentLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
+        if (currentLiquidity == 0) {
+            return;
+        }
+        uint128 liquidityToBurn = uint128((uint256(currentLiquidity) * sharesBurned) / totalShares);
+        if (liquidityToBurn == 0) {
+            return;
+        }
+        if (UniswapV4PositionRepo._isImportedPosition()) {
+            _burnImportedLiquidityCommon(liquidityToBurn);
+            return;
+        }
+        (int24 tickLower, int24 tickUpper) =
+            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
+        _executeUnlock(
+            OperationParams({
+                op: Operation.RemoveLiquidity,
+                zeroForOne: false,
+                amountSpecified: 0,
+                tickLower: tickLower,
+                tickUpper: tickUpper,
+                liquidity: liquidityToBurn,
+                salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
+            })
+        );
     }
 
     /**

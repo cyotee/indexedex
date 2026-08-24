@@ -46,6 +46,14 @@ library RobinhoodCanonicalLib {
         return ROBINHOOD_MAIN.UNISWAP_UNIVERSAL_ROUTER;
     }
 
+    function quoter() internal pure returns (address) {
+        return ROBINHOOD_MAIN.UNISWAP_V4_QUOTER;
+    }
+
+    function stateView() internal pure returns (address) {
+        return ROBINHOOD_MAIN.UNISWAP_V4_STATE_VIEW;
+    }
+
     /// @notice Required live pins for Uni V4 Protocol DETF packages. Uni V3 is not required.
     function requireCanonicalPins() internal view {
         require(poolManager().code.length > 0, "RH pin: UNISWAP_V4_POOL_MANAGER missing code");

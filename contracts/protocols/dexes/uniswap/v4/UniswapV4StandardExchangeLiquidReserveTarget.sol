@@ -9,6 +9,9 @@ import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
     UniswapV4StandardExchangeCommon
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol";
 
@@ -29,6 +32,16 @@ contract UniswapV4StandardExchangeLiquidReserveTarget is
         returns (bool)
     {
         return UniswapV4StandardExchangeCommon.canOpenPoolManagerUnlock();
+    }
+
+    /// @inheritdoc IUniswapV4StandardExchangeLiquidReserve
+    function twapOracle()
+        public
+        view
+        override(UniswapV4StandardExchangeCommon, IUniswapV4StandardExchangeLiquidReserve)
+        returns (IUniswapV4MultiPoolTwapOracle)
+    {
+        return UniswapV4StandardExchangeCommon.twapOracle();
     }
 
     /// @inheritdoc IUniswapV4StandardExchangeLiquidReserve
@@ -72,10 +85,12 @@ contract UniswapV4StandardExchangeLiquidReserveTarget is
     /**
      * @inheritdoc IUniswapV4StandardExchangeLiquidReserve
      * @dev Reverts when blocked. Idle success when both tokens already within deadband (no unlock).
+     *      Does not move ticks. Non-imported deployed book is full-range (D30); sleeve is lock-safe free inventory.
      */
     function rebalanceLiquidReserve() external nonReentrant {
         _requireNotDisabled();
         _requireCanOpenPoolManagerUnlock();
         _rebalanceLiquidReserveInternal();
+        _pokeBoundPoolTwap();
     }
 }

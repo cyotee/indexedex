@@ -14,9 +14,15 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    IUniswapV4MultiPoolTwapOracleDFPkg
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
 
 /// @title LaunchState
-/// @notice In-memory bag for architecture groups and Script_SimulateArchitecture.
+/// @notice Architecture bag: factories, manager, TWAP, Uni V4 SE pkg, CP DETF pkg.
 /// @dev Packages only. No token or DETF instance fields.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
@@ -37,11 +43,13 @@ struct LaunchState {
     IFeeCollectorProxy feeCollector;
     IIndexedexManagerProxy indexedexManager;
     IStandardExchangeRateProviderDFPkg rateProviderPkg;
+    IFacet twapOracleFacet;
+    IUniswapV4MultiPoolTwapOracleDFPkg twapOraclePkg;
+    IUniswapV4MultiPoolTwapOracle twapOracle;
+    address twapAdapterFactory;
     address cpHookPkg;
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
     address cpDetfPkg;
-    address curveQuadHookPkg;
-    address curveQuadDetfPkg;
 }

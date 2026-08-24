@@ -107,7 +107,13 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         IFacet inFacet = create3Factory.deployUniswapV3StandardExchangeInFacet();
         IFacet inQueryFacet = create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
         IFacet outFacet = create3Factory.deployUniswapV3StandardExchangeOutFacet();
+        IFacet outQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutQueryFacet();
         IFacet posImportFacet = create3Factory.deployUniswapV3StandardExchangePositionImportFacet();
+        IFacet liquidReserveFacet = create3Factory.deployUniswapV3StandardExchangeLiquidReserveFacet();
+        IFacet inMultiFacet = create3Factory.deployUniswapV3StandardExchangeInMultiFacet();
+        IFacet inMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeInMultiQueryFacet();
+        IFacet outMultiFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiFacet();
+        IFacet outMultiQueryFacet = create3Factory.deployUniswapV3StandardExchangeOutMultiQueryFacet();
 
         IUniswapV3StandardExchangeDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = erc20Facet;
@@ -118,7 +124,12 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         pkgInit.uniswapV3StandardExchangeInFacet = inFacet;
         pkgInit.uniswapV3StandardExchangeInQueryFacet = inQueryFacet;
         pkgInit.uniswapV3StandardExchangeOutFacet = outFacet;
+        pkgInit.uniswapV3StandardExchangeOutQueryFacet = outQueryFacet;
         pkgInit.uniswapV3StandardExchangePositionImportFacet = posImportFacet;
+        pkgInit.uniswapV3StandardExchangeLiquidReserveFacet = liquidReserveFacet;
+        pkgInit = UniswapV3_Component_FactoryService.attachUniswapV3StandardExchangeMultiFacets(
+            pkgInit, inMultiFacet, inMultiQueryFacet, outMultiFacet, outMultiQueryFacet
+        );
         pkgInit.vaultFeeOracleQuery = indexedexManager;
         pkgInit.vaultRegistryDeployment = indexedexManager;
         pkgInit.permit2 = IPermit2(RobinhoodCanonicalLib.permit2());

@@ -16,151 +16,215 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    IUniswapV4MultiPoolTwapOracleDFPkg
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 
 /// @title LaunchIo
-/// @notice JSON hydrate helpers for architecture groups 01–03.
+/// @notice Per-Stage JSON hydrate/export for 4663 architecture catalog.
 abstract contract LaunchIo is DeploymentBase {
-    string internal constant FILE_PREFLIGHT = "00_preflight.json";
-    string internal constant FILE_FACTORIES = "01_factories.json";
-    string internal constant FILE_PLATFORM = "02_platform.json";
-    string internal constant FILE_UNIV4_PKGS = "03_univ4_packages.json";
+    string internal constant FILE_00_01 = "phase00_stage01_anvil_env.json";
+    string internal constant FILE_01_01 = "phase01_stage01_permit2.json";
+    string internal constant FILE_01_02 = "phase01_stage02_weth.json";
+    string internal constant FILE_01_03 = "phase01_stage03_uniswap_v4.json";
+    string internal constant FILE_02_01 = "phase02_stage01_create3_factory.json";
+    string internal constant FILE_02_02 = "phase02_stage02_diamond_package_factory.json";
+    string internal constant FILE_02_03 = "phase02_stage03_hook_factory.json";
+    string internal constant FILE_03_01 = "phase03_stage01_common_facets.json";
+    string internal constant FILE_04_01 = "phase04_stage01_fee_collector_and_manager.json";
+    string internal constant FILE_05_01 = "phase05_stage01_se_rate_provider_pkg.json";
+    string internal constant FILE_05_02 = "phase05_stage02_uniswap_v4_twap_oracle.json";
+    string internal constant FILE_05_03 = "phase05_stage03_uniswap_v4_standard_exchange_pkg.json";
+    string internal constant FILE_06_01 = "phase06_stage01_bond_nft_pkg.json";
+    string internal constant FILE_06_02 = "phase06_stage02_rebasing_claim_pkg.json";
+    string internal constant FILE_06_03 = "phase06_stage03_cp_buffer_hook_pkg.json";
+    string internal constant FILE_06_07 = "phase06_stage07_cp_detf_pkg.json";
 
-    function _loadFactories(LaunchState storage s) internal returns (bool) {
-        address a;
-        bool ok;
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "create3Factory");
-        if (!ok || !_hasCode(a)) return false;
+    function _loadAddr(string memory file, string memory key) internal view returns (address) {
+        (address a, bool ok) = _readAddressSafe(file, key);
+        return (ok && _hasCode(a)) ? a : address(0);
+    }
+
+    function _requireCreate3(LaunchState storage s) internal {
+        address a = _loadAddr(FILE_02_01, "create3Factory");
+        require(_hasCode(a), "run Phase 02 Stage 01 first");
         s.create3Factory = ICreate3FactoryProxy(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "diamondPackageFactory");
-        if (!ok || !_hasCode(a)) return false;
+    }
+
+    function _requireDiamondFactory(LaunchState storage s) internal {
+        _requireCreate3(s);
+        address a = _loadAddr(FILE_02_02, "diamondPackageFactory");
+        require(_hasCode(a), "run Phase 02 Stage 02 first");
         s.diamondPackageFactory = IDiamondPackageCallBackFactory(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "hookFactory");
-        if (!ok || !_hasCode(a)) return false;
+    }
+
+    function _requireHookFactory(LaunchState storage s) internal {
+        address a = _loadAddr(FILE_02_03, "hookFactory");
+        require(_hasCode(a), "run Phase 02 Stage 03 first");
         s.hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "hookFlagsFacet");
-        if (ok) s.hookFlagsFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc20Facet");
-        if (!ok || !_hasCode(a)) return false;
+        address flags = _loadAddr(FILE_02_03, "hookFlagsFacet");
+        if (_hasCode(flags)) s.hookFlagsFacet = IFacet(flags);
+    }
+
+    function _requireCommonFacets(LaunchState storage s) internal {
+        address a;
+        a = _loadAddr(FILE_03_01, "erc20Facet");
+        require(_hasCode(a), "run Phase 03 Stage 01 first (erc20Facet)");
         s.erc20Facet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc2612Facet");
-        if (ok) s.erc2612Facet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc5267Facet");
-        if (ok) s.erc5267Facet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc4626Facet");
-        if (ok) s.erc4626Facet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc4626BasicVaultFacet");
-        if (ok) s.erc4626BasicVaultFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "erc4626StandardVaultFacet");
-        if (ok) s.erc4626StandardVaultFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "multiAssetBasicVaultFacet");
-        if (!ok || !_hasCode(a)) return false;
+        a = _loadAddr(FILE_03_01, "erc2612Facet");
+        if (_hasCode(a)) s.erc2612Facet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "erc5267Facet");
+        if (_hasCode(a)) s.erc5267Facet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "erc4626Facet");
+        if (_hasCode(a)) s.erc4626Facet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "erc4626BasicVaultFacet");
+        if (_hasCode(a)) s.erc4626BasicVaultFacet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "erc4626StandardVaultFacet");
+        if (_hasCode(a)) s.erc4626StandardVaultFacet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "multiAssetBasicVaultFacet");
+        require(_hasCode(a), "run Phase 03 Stage 01 first (multiAssetBasicVaultFacet)");
         s.multiAssetBasicVaultFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "multiAssetStandardVaultFacet");
-        if (!ok || !_hasCode(a)) return false;
+        a = _loadAddr(FILE_03_01, "multiAssetStandardVaultFacet");
+        require(_hasCode(a), "run Phase 03 Stage 01 first (multiAssetStandardVaultFacet)");
         s.multiAssetStandardVaultFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "multiStepOwnableFacet");
-        if (!ok || !_hasCode(a)) return false;
+        a = _loadAddr(FILE_03_01, "multiStepOwnableFacet");
+        require(_hasCode(a), "run Phase 03 Stage 01 first (multiStepOwnableFacet)");
         s.multiStepOwnableFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "operableFacet");
-        if (ok) s.operableFacet = IFacet(a);
-        (a, ok) = _readAddressSafe(FILE_FACTORIES, "diamondCutFacet");
-        if (!ok || !_hasCode(a)) return false;
+        a = _loadAddr(FILE_03_01, "operableFacet");
+        if (_hasCode(a)) s.operableFacet = IFacet(a);
+        a = _loadAddr(FILE_03_01, "diamondCutFacet");
+        require(_hasCode(a), "run Phase 03 Stage 01 first (diamondCutFacet)");
         s.diamondCutFacet = IFacet(a);
-        return true;
     }
 
-    function _loadPlatform(LaunchState storage s) internal returns (bool) {
-        address a;
-        bool ok;
-        (a, ok) = _readAddressSafe(FILE_PLATFORM, "indexedexManager");
-        if (!ok || !_hasCode(a)) return false;
-        s.indexedexManager = IIndexedexManagerProxy(a);
-        (a, ok) = _readAddressSafe(FILE_PLATFORM, "feeCollector");
-        if (!ok || !_hasCode(a)) return false;
-        s.feeCollector = IFeeCollectorProxy(a);
-        (a, ok) = _readAddressSafe(FILE_PLATFORM, "rateProviderPkg");
-        if (!ok || !_hasCode(a)) return false;
+    function _requireManager(LaunchState storage s) internal {
+        address mgr = _loadAddr(FILE_04_01, "indexedexManager");
+        require(_hasCode(mgr), "run Phase 04 Stage 01 first");
+        s.indexedexManager = IIndexedexManagerProxy(mgr);
+        address fee = _loadAddr(FILE_04_01, "feeCollector");
+        require(_hasCode(fee), "run Phase 04 Stage 01 first (feeCollector)");
+        s.feeCollector = IFeeCollectorProxy(fee);
+    }
+
+    function _requireRateProviderPkg(LaunchState storage s) internal {
+        address a = _loadAddr(FILE_05_01, "rateProviderPkg");
+        require(_hasCode(a), "run Phase 05 Stage 01 first");
         s.rateProviderPkg = IStandardExchangeRateProviderDFPkg(a);
-        return true;
     }
 
-    function _loadUniV4Packages(LaunchState storage s) internal returns (bool) {
-        address a;
-        bool ok;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "uniV4SePkg");
-        if (!ok || !_hasCode(a)) return false;
+    function _requireTwapOracle(LaunchState storage s) internal {
+        address facet = _loadAddr(FILE_05_02, "twapOracleFacet");
+        if (_hasCode(facet)) s.twapOracleFacet = IFacet(facet);
+        address pkg = _loadAddr(FILE_05_02, "twapOraclePkg");
+        require(_hasCode(pkg), "run Phase 05 Stage 02 first (twapOraclePkg)");
+        s.twapOraclePkg = IUniswapV4MultiPoolTwapOracleDFPkg(pkg);
+        address oracle = _loadAddr(FILE_05_02, "twapOracle");
+        require(_hasCode(oracle), "run Phase 05 Stage 02 first (twapOracle)");
+        s.twapOracle = IUniswapV4MultiPoolTwapOracle(oracle);
+        s.twapAdapterFactory = _loadAddr(FILE_05_02, "twapAdapterFactory");
+        require(_hasCode(s.twapAdapterFactory), "run Phase 05 Stage 02 first (twapAdapterFactory)");
+        require(
+            s.twapOracle.poolManager() == RobinhoodCanonicalLib.poolManager(),
+            "Phase 05-02: twapOracle.poolManager mismatch"
+        );
+    }
+
+    function _requireUniV4SePkg(LaunchState storage s) internal {
+        address a = _loadAddr(FILE_05_03, "uniV4SePkg");
+        require(_hasCode(a), "run Phase 05 Stage 03 first");
         s.uniV4SePkg = IUniswapV4StandardExchangeDFPkg(a);
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpHookPkg");
-        if (!ok || !_hasCode(a)) return false;
-        s.cpHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "bondNftVaultPkg");
-        if (ok) s.bondNftVaultPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "rebasingClaimTokenPkg");
-        if (ok) s.rebasingClaimTokenPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpDetfPkg");
-        if (!ok || !_hasCode(a)) return false;
-        s.cpDetfPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadHookPkg");
-        if (!ok || !_hasCode(a)) return false;
-        s.curveQuadHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadDetfPkg");
-        if (!ok || !_hasCode(a)) return false;
-        s.curveQuadDetfPkg = a;
-        return true;
     }
 
-    function _exportFactories(LaunchState storage s) internal {
+    function _exportCreate3(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g01", "create3Factory", address(s.create3Factory));
-        json = vm.serializeAddress("g01", "diamondPackageFactory", address(s.diamondPackageFactory));
-        json = vm.serializeAddress("g01", "hookFactory", address(s.hookFactory));
-        json = vm.serializeAddress("g01", "hookFlagsFacet", address(s.hookFlagsFacet));
-        json = vm.serializeAddress("g01", "erc20Facet", address(s.erc20Facet));
-        json = vm.serializeAddress("g01", "erc2612Facet", address(s.erc2612Facet));
-        json = vm.serializeAddress("g01", "erc5267Facet", address(s.erc5267Facet));
-        json = vm.serializeAddress("g01", "erc4626Facet", address(s.erc4626Facet));
-        json = vm.serializeAddress("g01", "erc4626BasicVaultFacet", address(s.erc4626BasicVaultFacet));
-        json = vm.serializeAddress("g01", "erc4626StandardVaultFacet", address(s.erc4626StandardVaultFacet));
-        json = vm.serializeAddress("g01", "multiAssetBasicVaultFacet", address(s.multiAssetBasicVaultFacet));
-        json = vm.serializeAddress("g01", "multiAssetStandardVaultFacet", address(s.multiAssetStandardVaultFacet));
-        json = vm.serializeAddress("g01", "multiStepOwnableFacet", address(s.multiStepOwnableFacet));
-        json = vm.serializeAddress("g01", "operableFacet", address(s.operableFacet));
-        json = vm.serializeAddress("g01", "diamondCutFacet", address(s.diamondCutFacet));
-        json = vm.serializeAddress("g01", "owner", owner);
-        json = vm.serializeAddress("g01", "deployer", deployer);
-        json = vm.serializeUint("g01", "chainId", block.chainid);
-        json = vm.serializeString("g01", "networkProfile", _networkProfile());
-        _writeJson(json, FILE_FACTORIES);
+        json = vm.serializeAddress("p0201", "create3Factory", address(s.create3Factory));
+        json = vm.serializeAddress("p0201", "owner", owner);
+        json = vm.serializeAddress("p0201", "deployer", deployer);
+        json = vm.serializeUint("p0201", "chainId", block.chainid);
+        json = vm.serializeString("p0201", "networkProfile", _networkProfile());
+        _writeJson(json, FILE_02_01);
     }
 
-    function _exportPlatform(LaunchState storage s) internal {
+    function _exportDiamondFactory(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g02", "feeCollector", address(s.feeCollector));
-        json = vm.serializeAddress("g02", "indexedexManager", address(s.indexedexManager));
-        json = vm.serializeAddress("g02", "vaultRegistry", address(s.indexedexManager));
-        json = vm.serializeAddress("g02", "vaultFeeOracle", address(s.indexedexManager));
-        json = vm.serializeAddress("g02", "rateProviderPkg", address(s.rateProviderPkg));
-        json = vm.serializeAddress("g02", "hookFactory", address(s.hookFactory));
-        json = vm.serializeAddress("g02", "owner", owner);
-        json = vm.serializeUint("g02", "chainId", block.chainid);
-        _writeJson(json, FILE_PLATFORM);
+        json = vm.serializeAddress("p0202", "diamondPackageFactory", address(s.diamondPackageFactory));
+        json = vm.serializeAddress("p0202", "create3Factory", address(s.create3Factory));
+        json = vm.serializeUint("p0202", "chainId", block.chainid);
+        _writeJson(json, FILE_02_02);
     }
 
-    function _exportUniV4Packages(LaunchState storage s) internal {
+    function _exportHookFactory(LaunchState storage s) internal {
         string memory json;
-        json = vm.serializeAddress("g03", "cpHookPkg", s.cpHookPkg);
-        json = vm.serializeAddress("g03", "uniV4SePkg", address(s.uniV4SePkg));
-        json = vm.serializeAddress("g03", "bondNftVaultPkg", s.bondNftVaultPkg);
-        json = vm.serializeAddress("g03", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
-        json = vm.serializeAddress("g03", "cpDetfPkg", s.cpDetfPkg);
-        json = vm.serializeAddress("g03", "curveQuadHookPkg", s.curveQuadHookPkg);
-        json = vm.serializeAddress("g03", "curveQuadDetfPkg", s.curveQuadDetfPkg);
-        json = vm.serializeAddress("g03", "poolManager", RobinhoodCanonicalLib.poolManager());
-        json = vm.serializeAddress("g03", "positionManagerV4", RobinhoodCanonicalLib.positionManagerV4());
-        json = vm.serializeAddress("g03", "permit2", RobinhoodCanonicalLib.permit2());
-        json = vm.serializeUint("g03", "chainId", block.chainid);
-        _writeJson(json, FILE_UNIV4_PKGS);
+        json = vm.serializeAddress("p0203", "hookFactory", address(s.hookFactory));
+        json = vm.serializeAddress("p0203", "hookFlagsFacet", address(s.hookFlagsFacet));
+        json = vm.serializeUint("p0203", "chainId", block.chainid);
+        _writeJson(json, FILE_02_03);
+    }
+
+    function _exportCommonFacets(LaunchState storage s) internal {
+        string memory json;
+        json = vm.serializeAddress("p0301", "erc20Facet", address(s.erc20Facet));
+        json = vm.serializeAddress("p0301", "erc2612Facet", address(s.erc2612Facet));
+        json = vm.serializeAddress("p0301", "erc5267Facet", address(s.erc5267Facet));
+        json = vm.serializeAddress("p0301", "erc4626Facet", address(s.erc4626Facet));
+        json = vm.serializeAddress("p0301", "erc4626BasicVaultFacet", address(s.erc4626BasicVaultFacet));
+        json = vm.serializeAddress("p0301", "erc4626StandardVaultFacet", address(s.erc4626StandardVaultFacet));
+        json = vm.serializeAddress("p0301", "multiAssetBasicVaultFacet", address(s.multiAssetBasicVaultFacet));
+        json = vm.serializeAddress("p0301", "multiAssetStandardVaultFacet", address(s.multiAssetStandardVaultFacet));
+        json = vm.serializeAddress("p0301", "multiStepOwnableFacet", address(s.multiStepOwnableFacet));
+        json = vm.serializeAddress("p0301", "operableFacet", address(s.operableFacet));
+        json = vm.serializeAddress("p0301", "diamondCutFacet", address(s.diamondCutFacet));
+        json = vm.serializeUint("p0301", "chainId", block.chainid);
+        _writeJson(json, FILE_03_01);
+    }
+
+    function _exportFeeCollectorAndManager(LaunchState storage s) internal {
+        string memory json;
+        json = vm.serializeAddress("p0401", "feeCollector", address(s.feeCollector));
+        json = vm.serializeAddress("p0401", "indexedexManager", address(s.indexedexManager));
+        json = vm.serializeAddress("p0401", "vaultRegistry", address(s.indexedexManager));
+        json = vm.serializeAddress("p0401", "vaultFeeOracle", address(s.indexedexManager));
+        json = vm.serializeAddress("p0401", "hookFactory", address(s.hookFactory));
+        json = vm.serializeAddress("p0401", "owner", owner);
+        json = vm.serializeUint("p0401", "chainId", block.chainid);
+        _writeJson(json, FILE_04_01);
+    }
+
+    function _exportPkg(string memory obj, string memory file, string memory key, address pkg) internal {
+        string memory json;
+        json = vm.serializeAddress(obj, key, pkg);
+        json = vm.serializeUint(obj, "chainId", block.chainid);
+        _writeJson(json, file);
+    }
+
+    function _exportTwapOracle(LaunchState storage s) internal {
+        string memory json;
+        json = vm.serializeAddress("p0502", "twapOracleFacet", address(s.twapOracleFacet));
+        json = vm.serializeAddress("p0502", "twapOraclePkg", address(s.twapOraclePkg));
+        json = vm.serializeAddress("p0502", "twapOracle", address(s.twapOracle));
+        json = vm.serializeAddress("p0502", "twapAdapterFactory", s.twapAdapterFactory);
+        json = vm.serializeAddress("p0502", "poolManager", RobinhoodCanonicalLib.poolManager());
+        json = vm.serializeUint("p0502", "chainId", block.chainid);
+        _writeJson(json, FILE_05_02);
+    }
+
+    function _exportArchitecture(LaunchState storage s) internal {
+        _exportCreate3(s);
+        _exportDiamondFactory(s);
+        _exportHookFactory(s);
+        _exportCommonFacets(s);
+        _exportFeeCollectorAndManager(s);
+        _exportPkg("p0501", FILE_05_01, "rateProviderPkg", address(s.rateProviderPkg));
+        _exportTwapOracle(s);
+        _exportPkg("p0503", FILE_05_03, "uniV4SePkg", address(s.uniV4SePkg));
+        _exportPkg("p0601", FILE_06_01, "bondNftVaultPkg", s.bondNftVaultPkg);
+        _exportPkg("p0602", FILE_06_02, "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
+        _exportPkg("p0603", FILE_06_03, "cpHookPkg", s.cpHookPkg);
+        _exportPkg("p0607", FILE_06_07, "cpDetfPkg", s.cpDetfPkg);
     }
 }

@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+
 /**
  * @title IUniswapV4StandardExchangeLiquidReserve
  * @notice Local free-sleeve views + permissionless rebalance for Uniswap V4 Standard Exchange.
@@ -43,6 +47,9 @@ interface IUniswapV4StandardExchangeLiquidReserve {
      * @notice Permissionless rebalance free↔deployed toward the oracle liquid target (add/remove only).
      * @dev Reverts with `UniswapV4Exchange_PoolManagerInteractionBlocked` when the manager is in-session.
      *      Succeeds without unlock when both tokens are already within the deadband.
+     *      Add/remove only on the existing full-range (or imported) ticks; does not recast.
      */
     function rebalanceLiquidReserve() external;
+
+    function twapOracle() external view returns (IUniswapV4MultiPoolTwapOracle);
 }

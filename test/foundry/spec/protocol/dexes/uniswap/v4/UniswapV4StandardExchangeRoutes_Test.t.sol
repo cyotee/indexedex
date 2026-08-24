@@ -695,21 +695,17 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
 
     function _vaultManagedTicks() internal view returns (ManagedTicks memory ticks) {
         int24 tickSpacing = poolKey.tickSpacing;
-        int24 centerHalfWidth = tickSpacing;
-        int24 outerHalfWidth = int24(uint24(60)) * tickSpacing / 2;
-        ticks.centerLower = -(centerHalfWidth / tickSpacing) * tickSpacing;
-        ticks.centerUpper = (centerHalfWidth / tickSpacing) * tickSpacing;
-        ticks.lowerWingLower = -(outerHalfWidth / tickSpacing) * tickSpacing;
+        ticks.centerLower = TickMath.minUsableTick(tickSpacing);
+        ticks.centerUpper = TickMath.maxUsableTick(tickSpacing);
+        ticks.lowerWingLower = ticks.centerLower;
         ticks.lowerWingUpper = ticks.centerLower;
         ticks.upperWingLower = ticks.centerUpper;
-        ticks.upperWingUpper = (outerHalfWidth / tickSpacing) * tickSpacing;
+        ticks.upperWingUpper = ticks.centerUpper;
     }
 
     function _feeGrowthSnapshot() internal view returns (FeeGrowthSnapshot memory snapshot) {
         ManagedTicks memory ticks = _vaultManagedTicks();
         _accumulateFeeGrowth(snapshot, _centerRange(ticks));
-        _accumulateFeeGrowth(snapshot, _lowerWingRange(ticks));
-        _accumulateFeeGrowth(snapshot, _upperWingRange(ticks));
     }
 
     function _executeSmallToken0Deposit() internal returns (uint256 sharesOut) {
@@ -725,15 +721,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _currentVaultPositionAmounts() internal view returns (uint256 amount0, uint256 amount1) {
         (uint160 sqrtPriceX96, int24 tick,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
         ManagedTicks memory ticks = _vaultManagedTicks();
-        (uint256 centerAmount0, uint256 centerAmount1) =
-            _positionAmountsForRange(sqrtPriceX96, tick, _centerRange(ticks));
-        (uint256 lowerWingAmount0, uint256 lowerWingAmount1) =
-            _positionAmountsForRange(sqrtPriceX96, tick, _lowerWingRange(ticks));
-        (uint256 upperWingAmount0, uint256 upperWingAmount1) =
-            _positionAmountsForRange(sqrtPriceX96, tick, _upperWingRange(ticks));
-
-        amount0 = centerAmount0 + lowerWingAmount0 + upperWingAmount0;
-        amount1 = centerAmount1 + lowerWingAmount1 + upperWingAmount1;
+        return _positionAmountsForRange(sqrtPriceX96, tick, _centerRange(ticks));
     }
 
     function _accumulateFeeGrowth(FeeGrowthSnapshot memory snapshot, RangeView memory range) internal view {

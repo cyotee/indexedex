@@ -354,12 +354,16 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
 
         uint256 amountIn = 30 ether;
         hostile.mint(attacker, amountIn + 1 ether);
+        address other = h0 == address(hostile) ? h1 : h0;
+        MockERC20(other).mint(attacker, amountIn);
 
         vm.startPrank(attacker);
         tokenIn.approve(address(hostileVault), type(uint256).max);
+        IERC20(other).approve(address(hostileVault), type(uint256).max);
         uint256 shares = hostileVault.exchangeIn(
             tokenIn, amountIn, tokenOut, 0, attacker, false, block.timestamp + 1
         );
+        hostileVault.exchangeIn(IERC20(other), amountIn, tokenOut, 0, attacker, false, block.timestamp + 1);
         vm.stopPrank();
 
         assertGt(shares, 0, "C4 outer zap completed");

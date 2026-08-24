@@ -106,6 +106,10 @@ For the local Base Sepolia rehearsal:
 - Redact upstream provider secrets.
 - Keep final post-deploy balance sweeping separate from the deployment workflow.
 
+## Related (not this skill)
+
+Robinhood Anvil launch trees (4663 / 46630), Phase/Stage file layout, and EIP-1559 gas quotes: `skill:indexedex-launch-scripts`.
+
 ## Anti-Patterns
 
 - `/bin/sh` wrapper that uses Bash-only syntax

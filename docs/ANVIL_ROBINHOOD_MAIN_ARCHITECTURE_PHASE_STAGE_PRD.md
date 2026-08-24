@@ -1,0 +1,53 @@
+# PRD: 4663 architecture launch as Phases / Stages
+
+**Date:** 2026-08-24  
+**Status:** Accepted for implementation  
+**Tree:** `scripts/foundry/anvil_robinhood_main/`  
+**Chain:** Robinhood mainnet **4663**
+
+**Related:** 46630 lab rewrite (`docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`) stays the token/instance lab. This tree is **packages only**.
+
+## Goal
+
+Stand up Crane factories and IndexedEx architecture on 4663 so a Protocol DETF instance can be deployed later, after a pons Family sale supplies the Uni V4 `PoolKey`. No test tokens. No SE vault instances. No Protocol DETF instances in this catalog.
+
+## Catalog (locked)
+
+| Phase | Stage | File | Skip keys |
+|-------|-------|------|-----------|
+| 00 | 01 | `Phase_00_Stage_01_AnvilEnv` | none (Anvil shell only) |
+| 01 | 01 | Permit2 pin | `permit2` |
+| 01 | 02 | WETH pin | `weth` |
+| 01 | 03 | Uni V4 cores pin | `poolManager`, `positionManagerV4`, `universalRouter` |
+| 02 | 01 | CREATE3 | `create3Factory` |
+| 02 | 02 | Diamond Package Factory | `diamondPackageFactory` |
+| 02 | 03 | Uni V4 Hook Factory | `hookFactory` |
+| 03 | 01 | Common facets | `erc20Facet`, `multiAssetBasicVaultFacet`, `diamondCutFacet` |
+| 04 | 01 | FeeCollector + Indexedex Manager | `feeCollector`, `indexedexManager` |
+| 05 | 01 | SE rate-provider DFPkg | `rateProviderPkg` |
+| 05 | 02 | Uni V4 TWAP oracle (facet + DFPkg + canonical instance + adapter factory) | `twapOraclePkg`, `twapOracle`, `twapAdapterFactory` |
+| 05 | 03 | Uni V4 SE DFPkg | `uniV4SePkg` |
+| 06 | 01 | Bond NFT DFPkg | `bondNftVaultPkg` |
+| 06 | 02 | Rebasing claim DFPkg | `rebasingClaimTokenPkg` |
+| 06 | 03 | CP buffer hook DFPkg | `cpHookPkg` |
+| 06 | 07 | CP single SE DETF DFPkg | `cpDetfPkg` |
+
+Stage **06-07** keeps the 46630 number for the CP DETF package so later families (04–06 hooks, 08–10 DETFs) can fill gaps without renaming.
+
+## Out of this catalog
+
+- Minter facade, test tokens, Mag7
+- Uni V3 / Morpho rehearsal or SE packages
+- Weighted / Orbital / Curve Quad hook or DETF packages
+- SE vault instances and Protocol DETF instances
+- Frontend `chain/4663/` export (follow-on)
+
+A later Stage (Phase 08) will `deployPair` / first-bond a Protocol DETF from a pons `PoolKey`. Do not add that Stage until the key exists.
+
+## Shells
+
+1. **Anvil:** `scripts/shell/anvil_robinhood_main.sh` — fork 4663, Dev 0, `--unlocked`, Phase 00 then 01–06 catalog. EIP-170 **on**.
+2. **Public:** `scripts/shell/robinhood_main.sh` — `DEPLOYER_ADDRESS`, no Phase 00.
+3. **Simulate (quote):** `Script_SimulateArchitecture.s.sol` still wraps library `execute()` in one `startBroadcast` window. Not the deploy path.
+
+Same skip/FORCE/JSON rules as 46630. Never `--skip-simulation`. Never `new` facets/DFPkgs. TWAP is not a vault.

@@ -58,6 +58,7 @@ abstract contract UniswapV4StandardExchangeOutExecuteTarget is UniswapV4Standard
             _refundExcess(tokenIn, providedAmountIn, amountIn, msg.sender);
             _syncVaultReserves();
             _rebalanceLiquidReserveBestEffort();
+            _pokeBoundPoolTwap();
             return amountIn;
         }
 
@@ -66,6 +67,7 @@ abstract contract UniswapV4StandardExchangeOutExecuteTarget is UniswapV4Standard
                 address(tokenOut), maxAmountIn, amountOut, recipient, pretransferred
             );
             _rebalanceLiquidReserveBestEffort();
+            _pokeBoundPoolTwap();
             return amountIn;
         }
 

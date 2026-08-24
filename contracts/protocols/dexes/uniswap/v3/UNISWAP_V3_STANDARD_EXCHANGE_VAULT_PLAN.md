@@ -182,13 +182,13 @@ Requirements:
 **Organic first deposit** (`totalSupply == 0`, no positions created):
 
 1. Read `slot0` + `tickSpacing`.  
-2. Derive center + lower + upper wings exactly as Slipstream (`widthMultiplier`, `centerWidthMultiplier`, snap/clamp).  
-3. Persist three position records; allocate with `activeLiquidityBps`.  
-4. `pool.mint` with `recipient = address(this)`.
+2. Center ticks = Crane V3 `TickMath.minUsableTick` / `maxUsableTick` for that spacing. `widthMultiplier` is still required (`>= 1`) and does not size ticks. Wing storage is deleted.  
+3. Persist one center position record.  
+4. Idle path then sleeve-then-deploy-excess (20% free) via `pool.mint` with `recipient = address(this)` when both tokens exist.
 
-**Subsequent deposits (organic and post-import):** add only to **already created** positions (no re-centering, no wing create). After import → center only.
+**Subsequent deposits:** add only to the stored center (no recast). Rebalance never rewrites ticks.
 
-**Import:** center = NFT ticks; wings uncreated.
+**Import:** center = NFT ticks as-is (not rewritten to min/max). Empty NFT retained.
 
 ---
 

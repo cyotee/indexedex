@@ -37,6 +37,7 @@ contract UniswapV4StandardExchangePositionImportTarget is
             revert UniswapV4ExchangeIn_PositionImportUnavailable();
         }
         sharesOut = _executeAuthorizedImport(positionManager, positionTokenId, minSharesOut, recipient);
+        _pokeBoundPoolTwap();
     }
 
     function _requireAuthorizedImport(IPositionManager positionManager, address owner, uint256 positionTokenId)

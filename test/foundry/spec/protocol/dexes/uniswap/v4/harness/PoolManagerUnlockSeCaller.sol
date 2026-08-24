@@ -7,6 +7,8 @@ import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/inter
 import {TransientStateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TransientStateLibrary.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 
 /**
  * @title PoolManagerUnlockSeCaller
@@ -19,7 +21,9 @@ contract PoolManagerUnlockSeCaller is IUnlockCallback {
 
     enum Op {
         ExchangeIn,
-        ExchangeOut
+        ExchangeOut,
+        ExchangeInMany,
+        ExchangeOutMany
     }
 
     struct CallData {
@@ -32,6 +36,8 @@ contract PoolManagerUnlockSeCaller is IUnlockCallback {
         address recipient;
         bool pretransferred;
         uint256 deadline;
+        address[] tokens;
+        uint256[] amounts;
     }
 
     constructor(IPoolManager poolManager_) {
@@ -59,7 +65,9 @@ contract PoolManagerUnlockSeCaller is IUnlockCallback {
                     minOrExactOut: minAmountOut,
                     recipient: recipient,
                     pretransferred: pretransferred,
-                    deadline: deadline
+                    deadline: deadline,
+                    tokens: new address[](0),
+                    amounts: new uint256[](0)
                 })
             )
         );
@@ -87,7 +95,69 @@ contract PoolManagerUnlockSeCaller is IUnlockCallback {
                     minOrExactOut: amountOut,
                     recipient: recipient,
                     pretransferred: pretransferred,
-                    deadline: deadline
+                    deadline: deadline,
+                    tokens: new address[](0),
+                    amounts: new uint256[](0)
+                })
+            )
+        );
+        return abi.decode(result, (uint256));
+    }
+
+    function runExchangeInManyToOne(
+        address se,
+        address[] memory tokenIn,
+        uint256[] memory amountsIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 amountOut) {
+        bytes memory result = poolManager.unlock(
+            abi.encode(
+                CallData({
+                    op: Op.ExchangeInMany,
+                    se: se,
+                    tokenIn: address(0),
+                    tokenOut: address(tokenOut),
+                    amountInOrMax: 0,
+                    minOrExactOut: minAmountOut,
+                    recipient: recipient,
+                    pretransferred: pretransferred,
+                    deadline: deadline,
+                    tokens: tokenIn,
+                    amounts: amountsIn
+                })
+            )
+        );
+        return abi.decode(result, (uint256));
+    }
+
+    function runExchangeOutOneToMany(
+        address se,
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        address[] memory tokensOut,
+        uint256[] memory amountsOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) external returns (uint256 amountIn) {
+        bytes memory result = poolManager.unlock(
+            abi.encode(
+                CallData({
+                    op: Op.ExchangeOutMany,
+                    se: se,
+                    tokenIn: address(tokenIn),
+                    tokenOut: address(0),
+                    amountInOrMax: maxAmountIn,
+                    minOrExactOut: 0,
+                    recipient: recipient,
+                    pretransferred: pretransferred,
+                    deadline: deadline,
+                    tokens: tokensOut,
+                    amounts: amountsOut
                 })
             )
         );
@@ -111,6 +181,32 @@ contract PoolManagerUnlockSeCaller is IUnlockCallback {
                     c.deadline
                 );
             return abi.encode(amountOut);
+        }
+        if (c.op == Op.ExchangeInMany) {
+            uint256 sharesOut = IStandardExchangeInMulti(c.se)
+                .exchangeInManyToOne(
+                    c.tokens,
+                    c.amounts,
+                    IERC20(c.tokenOut),
+                    c.minOrExactOut,
+                    c.recipient,
+                    c.pretransferred,
+                    c.deadline
+                );
+            return abi.encode(sharesOut);
+        }
+        if (c.op == Op.ExchangeOutMany) {
+            uint256 sharesIn = IStandardExchangeOutMulti(c.se)
+                .exchangeOutOneToMany(
+                    IERC20(c.tokenIn),
+                    c.amountInOrMax,
+                    c.tokens,
+                    c.amounts,
+                    c.recipient,
+                    c.pretransferred,
+                    c.deadline
+                );
+            return abi.encode(sharesIn);
         }
 
         uint256 amountIn = IStandardExchangeOut(c.se)

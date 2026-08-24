@@ -7,6 +7,8 @@
 **Primary behavioral template:** Slipstream Standard Exchange  
 **Secondary layout reference:** Uniswap V4 Standard Exchange (package wiring, position import surface)
 
+**Range / sleeve / Multi (2026-08-24):** product law for full-range center, 20% liquid sleeve, and `IStandardExchangeInMulti` / `OutMulti` is [`UNISWAP_V3_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md`](./UNISWAP_V3_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md). That file **supersedes** this document on v1 D3 (center+wings), D6 (compound all free into L), D10 (no rebalance), and share SoT that ignored free ERC-20. Factory check, NPM import vehicle, empty NFT, ERC-20-only, and no ERC-4626 in this file still stand.
+
 ---
 
 ## 1. Goal

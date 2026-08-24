@@ -6,22 +6,20 @@ import {console2} from "forge-std/console2.sol";
 import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 
 /// @title DeploymentBase
-/// @notice Shared base for Anvil Robinhood-mainnet-fork architecture deploys (chain id 4663).
-/// @dev Groups 00–03 deploy Crane + IndexedEx platform + Uni V4 SE / Protocol DETF packages.
-///      No test tokens. No DETF instances. Anvil node flags stay in the shell wrapper.
+/// @notice Shared base for Robinhood mainnet (4663) architecture Stages.
+/// @dev No test tokens. No DETF instances. Anvil node flags stay in the shell.
 abstract contract DeploymentBase is Script {
     string internal constant OUT_DIR = "deployments/anvil_robinhood_main";
     uint256 internal constant EXPECTED_CHAIN_ID = 4663;
 
-    /// @dev Anvil account(0) — deployer / owner when env is unset.
     address internal constant DEFAULT_DEPLOYER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-    /// @dev Anvil account(1) — UI wallet default (unused by architecture groups).
     address internal constant DEFAULT_UI_WALLET = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     uint256 internal privateKey;
     address internal deployer;
     address internal owner;
     address internal uiWallet;
+    bool internal forceEnabled;
 
     function _outDir() internal view returns (string memory outDir) {
         try vm.envString("OUT_DIR_OVERRIDE") returns (string memory overrideDir) {
@@ -41,12 +39,21 @@ abstract contract DeploymentBase is Script {
         return "anvil_robinhood_main";
     }
 
-    function _force() internal view returns (bool) {
-        try vm.envBool("FORCE") returns (bool f) {
-            return f;
+    function _parseForceEnv() internal view returns (bool) {
+        try vm.envString("FORCE") returns (string memory s) {
+            bytes memory b = bytes(s);
+            if (b.length == 0) return false;
+            bytes1 c = b[0];
+            if (c == "0" || c == "f" || c == "F") return false;
+            if (c == "1" || c == "t" || c == "T") return true;
+            return false;
         } catch {
             return false;
         }
+    }
+
+    function _force() internal view returns (bool) {
+        return forceEnabled;
     }
 
     function _loadConfig() internal {
@@ -83,6 +90,8 @@ abstract contract DeploymentBase is Script {
         } catch {
             uiWallet = DEFAULT_UI_WALLET;
         }
+
+        forceEnabled = _parseForceEnv();
     }
 
     function _requireRobinhoodChain() internal view {
@@ -90,7 +99,6 @@ abstract contract DeploymentBase is Script {
         require(block.chainid == ROBINHOOD_MAIN.CHAIN_ID, "anvil_robinhood_main: ROBINHOOD_MAIN.CHAIN_ID mismatch");
     }
 
-    /// @notice Broadcast as `--sender`. Cast wallet or Anvil `--unlocked` signs.
     function _broadcast() internal {
         if (privateKey != 0) {
             vm.startBroadcast(privateKey);
@@ -124,10 +132,46 @@ abstract contract DeploymentBase is Script {
         }
     }
 
-    function _artifactValid(string memory file, string memory key) internal view returns (bool) {
-        if (_force()) return false;
+    function _artifactHasLiveCode(string memory file, string memory key) internal view returns (bool) {
         (address addr, bool exists) = _readAddressSafe(file, key);
         return exists && addr != address(0) && addr.code.length > 0;
+    }
+
+    function _shouldSkipStage(string memory file, string memory key) internal view returns (bool) {
+        if (_force()) return false;
+        return _artifactHasLiveCode(file, key);
+    }
+
+    function _shouldSkipStage(string memory file, string[] memory keys) internal view returns (bool) {
+        if (_force()) return false;
+        uint256 n = keys.length;
+        if (n == 0) return false;
+        for (uint256 i; i < n; ++i) {
+            if (!_artifactHasLiveCode(file, keys[i])) return false;
+        }
+        return true;
+    }
+
+    function _skipKeys(string memory k0) internal pure returns (string[] memory keys) {
+        keys = new string[](1);
+        keys[0] = k0;
+    }
+
+    function _skipKeys(string memory k0, string memory k1) internal pure returns (string[] memory keys) {
+        keys = new string[](2);
+        keys[0] = k0;
+        keys[1] = k1;
+    }
+
+    function _skipKeys(string memory k0, string memory k1, string memory k2)
+        internal
+        pure
+        returns (string[] memory keys)
+    {
+        keys = new string[](3);
+        keys[0] = k0;
+        keys[1] = k1;
+        keys[2] = k2;
     }
 
     function _writeJson(string memory json, string memory filename) internal {
@@ -146,10 +190,6 @@ abstract contract DeploymentBase is Script {
     }
 
     function _logString(string memory name, string memory value) internal pure {
-        console2.log(name, value);
-    }
-
-    function _logUint(string memory name, uint256 value) internal pure {
         console2.log(name, value);
     }
 

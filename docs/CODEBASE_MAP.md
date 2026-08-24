@@ -67,6 +67,7 @@ indexedex/
 │   ├── manager/                   # IndexedexManager DFPkg + FactoryService
 │   ├── registries/vault/          # Package register / deploy / query / disable
 │   ├── oracles/fee/               # Vault fee oracle
+│   ├── oracles/uniswap/v4/twap/   # Multi-pool V4 poke TWAP DFPkg (instance per PoolManager; not a hook)
 │   ├── fee/collector/             # Fee collector package
 │   ├── constants/ · interfaces/
 │   ├── vaults/
@@ -95,6 +96,7 @@ indexedex/
 | Manager | `contracts/manager/` | `IndexedexManagerDFPkg`, `IndexedexManagerFactoryService` — platform diamond package |
 | Vault registry | `contracts/registries/vault/` | Deploy facets/targets/repos for package lifecycle and vault queries |
 | Fee oracle | `contracts/oracles/fee/` | Fee queries for vaults/DETFs |
+| Uni V4 TWAP oracle | `contracts/oracles/uniswap/v4/twap/` | Poke TWAP DFPkg; diamond instance per `PkgArgs.poolManager`. Not a hook or vault. PRD co-located. |
 | Fee collector | `contracts/fee/collector/` | Collection package |
 | Constants / interfaces | `contracts/constants/`, `contracts/interfaces/` | Shared config + `IDetf*`, proxy interfaces |
 

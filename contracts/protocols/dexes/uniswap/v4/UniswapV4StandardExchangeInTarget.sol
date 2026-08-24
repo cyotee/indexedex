@@ -56,18 +56,21 @@ contract UniswapV4StandardExchangeInTarget is UniswapV4StandardExchangeInBase {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = _executeDirectSwapIn(address(tokenIn), actualIn, recipient);
             if (amountOut < minAmountOut) revert UniswapV4ExchangeIn_SlippageExceeded();
+            _pokeBoundPoolTwap();
             return amountOut;
         }
 
         if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             amountOut = _delegateExecuteZapInDeposit(address(tokenIn), actualIn, minAmountOut, recipient);
+            _pokeBoundPoolTwap();
             return amountOut;
         }
 
         if (address(tokenIn) == address(this) && (address(tokenOut) == token0 || address(tokenOut) == token1)) {
             uint256 actualIn = _secureShareDelivery(amountIn, pretransferred);
             amountOut = _delegateExecuteZapOutExactIn(address(tokenOut), actualIn, minAmountOut, recipient);
+            _pokeBoundPoolTwap();
             return amountOut;
         }
 

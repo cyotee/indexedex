@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Anvil Robinhood mainnet fork — IndexedEx architecture (chain 4663)
-# Groups 00–03: pins, factories, platform, Uni V4 SE + Protocol DETF packages.
-# No test tokens. No DETF instances.
+# Phase/Stage catalog: Crane factories, IndexedEx manager, TWAP, Uni V4 SE pkg,
+# CP single DETF pkg. No test tokens. No DETF instances.
 # =============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+RH_FOUNDRY_DIR="$SCRIPT_DIR"
+# shellcheck disable=SC1091
+source "$REPO_ROOT/scripts/shell/lib/rh_4663_stages.sh"
 
 # shellcheck source=../../shell/lib/sanitize_dev_accounts.sh
 if [[ -f "$REPO_ROOT/scripts/shell/lib/sanitize_dev_accounts.sh" ]]; then
@@ -74,6 +77,8 @@ FORCE=0
 RPC_URL_EXPLICIT=0
 FORGE_VERBOSITY=""
 COMMAND="all"
+FROM_PHASE=""
+FROM_STAGE=""
 
 usage() {
   cat <<EOF
@@ -81,17 +86,19 @@ Usage:
   scripts/shell/anvil_robinhood_main.sh [command] [options]
   scripts/foundry/anvil_robinhood_main/deploy_all.sh [command] [options]
 
-Deploys IndexedEx architecture + Uni V4 packages for Protocol DETF
-(constant-product single) and Curve Quad Stable. No tokens. No DETF instances.
+Deploys Crane factories + IndexedEx architecture (FeeCollector, Manager,
+TWAP oracle) + Uni V4 SE package + CP single SE DETF package.
+No tokens. No SE vaults. No Protocol DETF instances.
 
 Commands:
-  all           Groups 00-03 (preflight, factories, platform, Uni V4 packages)
+  all           Phase 00 then catalog Phases 01–06 (architecture packages)
   foundation    Same as all
-  simulate      Script_SimulateArchitecture (01-03 in one Foundry script).
-                Default is no broadcast. EIP-1559 from the fork source (no
-                --legacy / --gas-price). Prints a deployer funding quote.
-                Do not run after a completed staged \`all\`.
-  stageNN       Single group (00-03)
+  simulate      Script_SimulateArchitecture (library execute 02–06 in one
+                Foundry script). Default is no broadcast. EIP-1559 from the
+                fork source (no --legacy / --gas-price). Prints a deployer
+                funding quote. Do not run after a completed staged \`all\`.
+
+Public 4663 (no Phase 00): scripts/shell/robinhood_main.sh
 
 Options:
   --dry-run         Simulate without broadcasting (default for simulate)
@@ -100,7 +107,9 @@ Options:
   --restart-anvil   Kill port + start a RH mainnet fork at chain id 4663
                     (EIP-170 stays on; public RPC at remote tip)
   --kill-anvil      Kill Anvil and exit
-  --force           Re-run groups (purge stage JSON first when restarting)
+  --force           Re-run Stages (purge stage JSON first when restarting)
+  --from-phase PP   Resume catalog at Phase PP (with --from-stage, default 01)
+  --from-stage SS   Resume catalog at Stage SS of --from-phase
   --fork-alias NAME Foundry [rpc_endpoints] alias (default robinhood_mainnet)
   --public-rpc      Same as --fork-alias robinhood_mainnet
   --fork-latest     Fork remote tip (default). Omit --fork-block-number.
@@ -522,35 +531,44 @@ run_stage() {
 stage_script() {
   local n="$1"
   case "$n" in
-    00) echo "$SCRIPT_DIR/Script_00_Preflight.s.sol" ;;
-    01) echo "$SCRIPT_DIR/Script_01_Factories.s.sol" ;;
-    02) echo "$SCRIPT_DIR/Script_02_Platform.s.sol" ;;
-    03) echo "$SCRIPT_DIR/Script_03_UniV4Packages.s.sol" ;;
     simulate) echo "$SCRIPT_DIR/Script_SimulateArchitecture.s.sol" ;;
     *)
-      log_error "Unknown stage $n"
+      log_error "Unknown simulate target $n"
       exit 1
       ;;
   esac
-}
-
-run_stages() {
-  local stages=("$@")
-  for n in "${stages[@]}"; do
-    run_stage "Group $n" "$(stage_script "$n")"
-  done
 }
 
 ARGS=()
 SIMULATE_BROADCAST_OVERRIDE=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all|foundation|simulate)
+    all|foundation|simulate|stagesimulate)
       COMMAND="$1"
       shift
       ;;
-    stage[0-9][0-9]|stage[0-9]|stagesimulate)
-      COMMAND="$1"
+    --from-phase)
+      if [[ $# -lt 2 || "$2" == -* ]]; then
+        log_error "--from-phase requires PP"
+        exit 1
+      fi
+      FROM_PHASE="$2"
+      shift 2
+      ;;
+    --from-phase=*)
+      FROM_PHASE="${1#--from-phase=}"
+      shift
+      ;;
+    --from-stage)
+      if [[ $# -lt 2 || "$2" == -* ]]; then
+        log_error "--from-stage requires SS"
+        exit 1
+      fi
+      FROM_STAGE="$2"
+      shift 2
+      ;;
+    --from-stage=*)
+      FROM_STAGE="${1#--from-stage=}"
       shift
       ;;
     --dry-run)
@@ -701,20 +719,13 @@ fi
 
 case "$COMMAND" in
   all|foundation)
-    run_stages 00 01 02 03
+    rh_run_catalog 1 "$FROM_PHASE" "${FROM_STAGE:-00}"
     ;;
   simulate|stagesimulate)
-    run_stages simulate
+    run_stage "Simulate architecture" "$(stage_script simulate)"
     if [[ -z "$BROADCAST_FLAG" ]]; then
       quote_simulate_funding
     fi
-    ;;
-  stage*)
-    n="${COMMAND#stage}"
-    if [[ ${#n} -eq 1 ]]; then
-      n="0$n"
-    fi
-    run_stages "$n"
     ;;
   *)
     log_error "Unknown command: $COMMAND"

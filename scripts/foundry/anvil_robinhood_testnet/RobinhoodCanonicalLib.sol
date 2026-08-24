@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_TESTNET.sol";
 
 /// @title RobinhoodCanonicalLib
-/// @notice Pins for Robinhood Chain Testnet (46630). Uni V3 / pons / USDG are absent.
+/// @notice Live-46630 pin getters: Uni V4 cores, Permit2, WETH only.
+/// @dev Morpho / Uni V3 live addresses come from Phase 01 JSON, not main CREATE2 dumps.
 library RobinhoodCanonicalLib {
     function chainId() internal pure returns (uint256) {
         return ROBINHOOD_TESTNET.CHAIN_ID;
@@ -28,6 +29,20 @@ library RobinhoodCanonicalLib {
 
     function universalRouter() internal pure returns (address) {
         return ROBINHOOD_TESTNET.UNISWAP_UNIVERSAL_ROUTER;
+    }
+
+    function quoter() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.UNISWAP_V4_QUOTER;
+    }
+
+    function stateView() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.UNISWAP_V4_STATE_VIEW;
+    }
+
+    /// @dev Other-tree / future-constants accessors. 46630 Phase 01 JSON must not write these
+    ///      when they have no code. Sibling `anvil_robinhood_fee_detf` still reads them.
+    function v3Factory() internal pure returns (address) {
+        return ROBINHOOD_TESTNET.UNISWAP_V3_FACTORY;
     }
 
     function morpho() internal pure returns (address) {
@@ -66,9 +81,7 @@ library RobinhoodCanonicalLib {
         return ROBINHOOD_TESTNET.MORPHO_GENERAL_ADAPTER_1;
     }
 
-    /// @notice Required live pins only. Does not require Uni V3, pons, or Morpho.
-    /// @dev Morpho Blue is documented at the same CREATE2 as Robinhood main. 46630
-    ///      currently has no code there; group 03c deploys a rehearsal Morpho if missing.
+    /// @notice Required live 46630 pins only. Does not require Uni V3, pons, Morpho, or Balancer.
     function requireCanonicalPins() internal view {
         require(poolManager().code.length > 0, "RH testnet pin: UNISWAP_V4_POOL_MANAGER missing code");
         require(positionManagerV4().code.length > 0, "RH testnet pin: UNISWAP_V4_POSITION_MANAGER missing code");

@@ -20,6 +20,7 @@ Cartographer (2026-08-09): IndexedEx graph ~5408 files / 7264 nodes under `.cart
 | `contracts/manager/` | IndexedexManager DFPkg + FactoryService | IndexedEx | — | via `IndexedexTest` / manager specs |
 | `contracts/registries/vault/` | Vault registry: package register, deploy, query, disable | IndexedEx | — | registry / manager tests under `test/foundry/` |
 | `contracts/oracles/fee/` | Vault fee oracle facets | IndexedEx | — | fee oracle tests |
+| `contracts/oracles/uniswap/v4/twap/` | Uni V4 poke TWAP DFPkg (proxy per PoolManager) + Morpho/AggregatorV3 adapters | IndexedEx | `UNISWAP_V4_MULTI_POOL_TWAP_ORACLE_PRD.md` | planned `test/foundry/spec/oracles/uniswap/v4/twap/` |
 | `contracts/fee/collector/` | Fee collector DFPkg + facets | IndexedEx | — | fee collector tests |
 | `contracts/constants/` | IndexedEx constants | IndexedEx | — | — |
 | `contracts/interfaces/` | Shared interfaces (+ proxies, detf) | IndexedEx | — | — |

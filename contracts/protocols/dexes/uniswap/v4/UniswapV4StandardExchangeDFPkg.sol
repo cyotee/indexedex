@@ -28,6 +28,8 @@ import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/P
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -46,9 +48,17 @@ import {
 import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    UniswapV4TwapOracleAwareRepo
+} from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
 interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
+    error ZeroTwapOracle();
+    error TwapOraclePoolManagerMismatch();
 
     struct PkgInit {
         IFacet erc20Facet;
@@ -62,11 +72,16 @@ interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet uniswapV4StandardExchangeOutFacet;
         IFacet uniswapV4StandardExchangeOutQueryFacet;
         IFacet uniswapV4StandardExchangeLiquidReserveFacet;
+        IFacet uniswapV4StandardExchangeInMultiFacet;
+        IFacet uniswapV4StandardExchangeInMultiQueryFacet;
+        IFacet uniswapV4StandardExchangeOutMultiFacet;
+        IFacet uniswapV4StandardExchangeOutMultiQueryFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
         IPoolManager poolManager;
         IPositionManager positionManager;
+        IUniswapV4MultiPoolTwapOracle twapOracle;
     }
 
     struct PkgArgs {
@@ -91,11 +106,16 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET;
     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_QUERY_FACET;
     IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET;
+    IFacet immutable UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
     IPoolManager immutable POOL_MANAGER;
     IPositionManager immutable POSITION_MANAGER;
+    IUniswapV4MultiPoolTwapOracle immutable TWAP_ORACLE;
 
     constructor(PkgInit memory pkgInit) {
         ERC20_FACET = pkgInit.erc20Facet;
@@ -109,11 +129,22 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET = pkgInit.uniswapV4StandardExchangeOutFacet;
         UNISWAP_V4_STANDARD_EXCHANGE_OUT_QUERY_FACET = pkgInit.uniswapV4StandardExchangeOutQueryFacet;
         UNISWAP_V4_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET = pkgInit.uniswapV4StandardExchangeLiquidReserveFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_FACET = pkgInit.uniswapV4StandardExchangeInMultiFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET = pkgInit.uniswapV4StandardExchangeInMultiQueryFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET = pkgInit.uniswapV4StandardExchangeOutMultiFacet;
+        UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET = pkgInit.uniswapV4StandardExchangeOutMultiQueryFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
         POOL_MANAGER = pkgInit.poolManager;
         POSITION_MANAGER = pkgInit.positionManager;
+        if (address(pkgInit.twapOracle) == address(0)) {
+            revert ZeroTwapOracle();
+        }
+        if (pkgInit.twapOracle.poolManager() != address(pkgInit.poolManager)) {
+            revert TwapOraclePoolManagerMismatch();
+        }
+        TWAP_ORACLE = pkgInit.twapOracle;
     }
 
     function name() public pure override returns (string memory) {
@@ -136,7 +167,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20).interfaceId ^ type(IERC20Metadata).interfaceId;
@@ -147,6 +178,8 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         interfaces[7] = type(IStandardExchangeOut).interfaceId;
         interfaces[8] = type(IUniswapV4StandardExchangePositionImport).interfaceId;
         interfaces[9] = type(IUniswapV4StandardExchangeLiquidReserve).interfaceId;
+        interfaces[10] = type(IStandardExchangeInMulti).interfaceId;
+        interfaces[11] = type(IStandardExchangeOutMulti).interfaceId;
     }
 
     function packageName() public pure override returns (string memory) {
@@ -154,7 +187,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetCuts() public view override returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](11);
+        facetCuts_ = new IDiamond.FacetCut[](15);
         facetCuts_[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
             action: IDiamond.FacetCutAction.Add,
@@ -210,10 +243,30 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET.facetFuncs()
         });
+        facetCuts_[11] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_FACET.facetFuncs()
+        });
+        facetCuts_[12] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET.facetFuncs()
+        });
+        facetCuts_[13] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET.facetFuncs()
+        });
+        facetCuts_[14] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET.facetFuncs()
+        });
     }
 
     function diamondConfig() public view override returns (DiamondConfig memory config) {
-        config = DiamondConfig({facetCuts: facetCuts(), interfaces: new bytes4[](0)});
+        config = DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
     }
 
     function calcSalt(bytes memory pkgArgs) public pure override returns (bytes32) {
@@ -223,6 +276,9 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     function processArgs(bytes memory pkgArgs) public view returns (bytes memory processedPkgArgs) {
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
+        }
+        if (TWAP_ORACLE.poolManager() != address(POOL_MANAGER)) {
+            revert TwapOraclePoolManagerMismatch();
         }
         return pkgArgs;
     }
@@ -245,6 +301,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         VaultFeeOracleQueryAwareRepo._initialize(VAULT_FEE_ORACLE_QUERY);
         Permit2AwareRepo._initialize(PERMIT2);
         UniswapV4PoolManagerAwareRepo._initialize(POOL_MANAGER);
+        UniswapV4TwapOracleAwareRepo._initialize(TWAP_ORACLE);
         UniswapV4PoolKeyAwareRepo._initialize(decodedArgs.poolKey);
         UniswapV4PositionRepo._initialize(decodedArgs.widthMultiplier, bytes32(0));
         UniswapV4PositionRepo._setAuthorizedPositionManager(POSITION_MANAGER);
@@ -265,7 +322,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](11);
+        facetAddresses_ = new address[](15);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -277,6 +334,10 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         facetAddresses_[8] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_FACET);
         facetAddresses_[9] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_QUERY_FACET);
         facetAddresses_[10] = address(UNISWAP_V4_STANDARD_EXCHANGE_LIQUID_RESERVE_FACET);
+        facetAddresses_[11] = address(UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_FACET);
+        facetAddresses_[12] = address(UNISWAP_V4_STANDARD_EXCHANGE_IN_MULTI_QUERY_FACET);
+        facetAddresses_[13] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_FACET);
+        facetAddresses_[14] = address(UNISWAP_V4_STANDARD_EXCHANGE_OUT_MULTI_QUERY_FACET);
     }
 
     function packageMetadata()

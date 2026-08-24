@@ -333,21 +333,14 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
         view
         returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit_)
     {
-        pkgInit_ = erc20Facet.buildArgsUniswapV4StandardExchangePkgInit(
-            erc5267Facet,
-            erc2612Facet,
-            multiAssetBasicVaultFacet,
-            multiAssetStandardVaultFacet,
-            uniswapV4StandardExchangeInFacet,
-            uniswapV4StandardExchangeInQueryFacet,
-            uniswapV4StandardExchangePositionImportFacet,
-            uniswapV4StandardExchangeOutFacet,
-            uniswapV4StandardExchangeOutQueryFacet,
-            uniswapV4StandardExchangeLiquidReserveFacet,
-            indexedexManager,
-            indexedexManager,
-            permit2,
-            poolManager
+        pkgInit_ = UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(_univ4SePkgInitCore());
+        pkgInit_ = UniswapV4_Component_FactoryService.attachTwapOracle(pkgInit_, twapOracle);
+        pkgInit_ = UniswapV4_Component_FactoryService.attachUniswapV4StandardExchangeMultiFacets(
+            pkgInit_,
+            uniswapV4StandardExchangeInMultiFacet,
+            uniswapV4StandardExchangeInMultiQueryFacet,
+            uniswapV4StandardExchangeOutMultiFacet,
+            uniswapV4StandardExchangeOutMultiQueryFacet
         );
         pkgInit_.positionManager = positionManager_;
     }

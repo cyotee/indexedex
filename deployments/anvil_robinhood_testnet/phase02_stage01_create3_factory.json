@@ -1,0 +1,7 @@
+{
+  "chainId": 46630,
+  "create3Factory": "0x1742c1Ba9fA0b40a940bCe12e8B2664A11d1e188",
+  "deployer": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "networkProfile": "anvil_robinhood_testnet",
+  "owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B"
+}

@@ -9,7 +9,11 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {UniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
 import {
     TestBase_UniswapV4StandardExchange
@@ -31,8 +35,8 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
             UniswapV4StandardExchangeDFPkg(address(uniswapV4StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 10, "interface count");
-        assertEq(facets.length, 11, "facet count");
+        assertEq(interfaces.length, 12, "interface count");
+        assertEq(facets.length, 15, "facet count");
 
         assertEq(facets[0], address(erc20Facet), "erc20 facet");
         assertEq(facets[1], address(erc5267Facet), "erc5267 facet");
@@ -45,6 +49,10 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(facets[8], address(uniswapV4StandardExchangeOutFacet), "exchange out facet");
         assertEq(facets[9], address(uniswapV4StandardExchangeOutQueryFacet), "exchange out query facet");
         assertEq(facets[10], address(uniswapV4StandardExchangeLiquidReserveFacet), "liquid reserve facet");
+        assertEq(facets[11], address(uniswapV4StandardExchangeInMultiFacet), "exchange in multi facet");
+        assertEq(facets[12], address(uniswapV4StandardExchangeInMultiQueryFacet), "exchange in multi query facet");
+        assertEq(facets[13], address(uniswapV4StandardExchangeOutMultiFacet), "exchange out multi facet");
+        assertEq(facets[14], address(uniswapV4StandardExchangeOutMultiQueryFacet), "exchange out multi query facet");
     }
 
     function test_deployVault_registersVaultAndInitializesConfig() public {
@@ -72,7 +80,11 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(config.tokens.length, 2, "config token count");
         assertEq(config.tokens[0], expectedTokens[0], "config token0");
         assertEq(config.tokens[1], expectedTokens[1], "config token1");
-        assertEq(config.vaultTypes.length, 10, "vault types count");
+        assertEq(config.vaultTypes.length, 12, "vault types count");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeIn).interfaceId), "erc165 in");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOut).interfaceId), "erc165 out");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeInMulti).interfaceId), "erc165 in multi");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOutMulti).interfaceId), "erc165 out multi");
         assertEq(config.contentsId, indexedexManager.calcContentsId(expectedTokens), "contents id");
 
         assertEq(IERC20Metadata(vault).symbol(), "UV4X", "symbol");

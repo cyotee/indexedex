@@ -10,6 +10,9 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {
@@ -36,6 +39,18 @@ import {
 import {
     UniswapV4StandardExchangeLiquidReserveFacet
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol";
+import {
+    UniswapV4StandardExchangeInMultiFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiFacet.sol";
+import {
+    UniswapV4StandardExchangeInMultiQueryFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol";
+import {
+    UniswapV4StandardExchangeOutMultiFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiFacet.sol";
+import {
+    UniswapV4StandardExchangeOutMultiQueryFacet
+} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol";
 import {
     IUniswapV4StandardExchangeDFPkg,
     UniswapV4StandardExchangeDFPkg
@@ -136,6 +151,64 @@ library UniswapV4_Component_FactoryService {
         vm.label(address(instance), type(UniswapV4StandardExchangeLiquidReserveFacet).name);
     }
 
+    function deployUniswapV4StandardExchangeInMultiFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeInMultiFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeInMultiFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeInMultiFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangeInMultiQueryFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeInMultiQueryFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeInMultiQueryFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeInMultiQueryFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangeOutMultiFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeOutMultiFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeOutMultiFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeOutMultiFacet).name);
+    }
+
+    function deployUniswapV4StandardExchangeOutMultiQueryFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4StandardExchangeOutMultiQueryFacet).creationCode,
+            abi.encode(type(UniswapV4StandardExchangeOutMultiQueryFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4StandardExchangeOutMultiQueryFacet).name);
+    }
+
+    function attachUniswapV4StandardExchangeMultiFacets(
+        IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit,
+        IFacet uniswapV4StandardExchangeInMultiFacet,
+        IFacet uniswapV4StandardExchangeInMultiQueryFacet,
+        IFacet uniswapV4StandardExchangeOutMultiFacet,
+        IFacet uniswapV4StandardExchangeOutMultiQueryFacet
+    ) internal pure returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory) {
+        pkgInit.uniswapV4StandardExchangeInMultiFacet = uniswapV4StandardExchangeInMultiFacet;
+        pkgInit.uniswapV4StandardExchangeInMultiQueryFacet = uniswapV4StandardExchangeInMultiQueryFacet;
+        pkgInit.uniswapV4StandardExchangeOutMultiFacet = uniswapV4StandardExchangeOutMultiFacet;
+        pkgInit.uniswapV4StandardExchangeOutMultiQueryFacet = uniswapV4StandardExchangeOutMultiQueryFacet;
+        return pkgInit;
+    }
+
     function deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
         IVaultRegistryDeployment vaultRegistry,
         IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit
@@ -152,77 +225,55 @@ library UniswapV4_Component_FactoryService {
         vm.label(address(instance), type(UniswapV4StandardExchangeDFPkg).name);
     }
 
-    function buildArgsUniswapV4StandardExchangePkgInit(
-        IFacet erc20Facet,
-        IFacet erc5267Facet,
-        IFacet erc2612Facet,
-        IFacet multiAssetBasicVaultFacet,
-        IFacet multiAssetStandardVaultFacet,
-        IFacet uniswapV4StandardExchangeInFacet,
-        IFacet uniswapV4StandardExchangeInQueryFacet,
-        IFacet uniswapV4StandardExchangePositionImportFacet,
-        IFacet uniswapV4StandardExchangeOutFacet,
-        IFacet uniswapV4StandardExchangeOutQueryFacet,
-        IFacet uniswapV4StandardExchangeLiquidReserveFacet,
-        IVaultFeeOracleQuery vaultFeeOracleQuery,
-        IVaultRegistryDeployment vaultRegistryDeployment,
-        IPermit2 permit2,
-        IPoolManager poolManager
-    ) internal pure returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit) {
-        pkgInit.erc20Facet = erc20Facet;
-        pkgInit.erc5267Facet = erc5267Facet;
-        pkgInit.erc2612Facet = erc2612Facet;
-        pkgInit.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
-        pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
-        pkgInit.uniswapV4StandardExchangeInFacet = uniswapV4StandardExchangeInFacet;
-        pkgInit.uniswapV4StandardExchangeInQueryFacet = uniswapV4StandardExchangeInQueryFacet;
-        pkgInit.uniswapV4StandardExchangePositionImportFacet = uniswapV4StandardExchangePositionImportFacet;
-        pkgInit.uniswapV4StandardExchangeOutFacet = uniswapV4StandardExchangeOutFacet;
-        pkgInit.uniswapV4StandardExchangeOutQueryFacet = uniswapV4StandardExchangeOutQueryFacet;
-        pkgInit.uniswapV4StandardExchangeLiquidReserveFacet = uniswapV4StandardExchangeLiquidReserveFacet;
-        pkgInit.vaultFeeOracleQuery = vaultFeeOracleQuery;
-        pkgInit.vaultRegistryDeployment = vaultRegistryDeployment;
-        pkgInit.permit2 = permit2;
-        pkgInit.poolManager = poolManager;
-        // positionManager defaults to address(0) — import disabled until bound.
+    /// @dev Packed PkgInit core. A 15-arg `buildArgs` is stack-too-deep without via_ir
+    ///      when this library compiles as a small incremental unit.
+    struct Univ4SePkgInitCore {
+        IFacet erc20Facet;
+        IFacet erc5267Facet;
+        IFacet erc2612Facet;
+        IFacet multiAssetBasicVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
+        IFacet uniswapV4StandardExchangeInFacet;
+        IFacet uniswapV4StandardExchangeInQueryFacet;
+        IFacet uniswapV4StandardExchangePositionImportFacet;
+        IFacet uniswapV4StandardExchangeOutFacet;
+        IFacet uniswapV4StandardExchangeOutQueryFacet;
+        IFacet uniswapV4StandardExchangeLiquidReserveFacet;
+        IVaultFeeOracleQuery vaultFeeOracleQuery;
+        IVaultRegistryDeployment vaultRegistryDeployment;
+        IPermit2 permit2;
+        IPoolManager poolManager;
     }
 
-    function buildArgsUniswapV4StandardExchangePkgInit(
-        IFacet erc20Facet,
-        IFacet erc5267Facet,
-        IFacet erc2612Facet,
-        IFacet multiAssetBasicVaultFacet,
-        IFacet multiAssetStandardVaultFacet,
-        IFacet uniswapV4StandardExchangeInFacet,
-        IFacet uniswapV4StandardExchangeInQueryFacet,
-        IFacet uniswapV4StandardExchangePositionImportFacet,
-        IFacet uniswapV4StandardExchangeOutFacet,
-        IFacet uniswapV4StandardExchangeOutQueryFacet,
-        IFacet uniswapV4StandardExchangeLiquidReserveFacet,
-        IVaultFeeOracleQuery vaultFeeOracleQuery,
-        IVaultRegistryDeployment vaultRegistryDeployment,
-        IPermit2 permit2,
-        IPoolManager poolManager,
-        IPositionManager positionManager
-    ) internal pure returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit) {
-        pkgInit = buildArgsUniswapV4StandardExchangePkgInit(
-            erc20Facet,
-            erc5267Facet,
-            erc2612Facet,
-            multiAssetBasicVaultFacet,
-            multiAssetStandardVaultFacet,
-            uniswapV4StandardExchangeInFacet,
-            uniswapV4StandardExchangeInQueryFacet,
-            uniswapV4StandardExchangePositionImportFacet,
-            uniswapV4StandardExchangeOutFacet,
-            uniswapV4StandardExchangeOutQueryFacet,
-            uniswapV4StandardExchangeLiquidReserveFacet,
-            vaultFeeOracleQuery,
-            vaultRegistryDeployment,
-            permit2,
-            poolManager
-        );
-        pkgInit.positionManager = positionManager;
+    function buildArgsUniswapV4StandardExchangePkgInit(Univ4SePkgInitCore memory a)
+        internal
+        pure
+        returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit)
+    {
+        pkgInit.erc20Facet = a.erc20Facet;
+        pkgInit.erc5267Facet = a.erc5267Facet;
+        pkgInit.erc2612Facet = a.erc2612Facet;
+        pkgInit.multiAssetBasicVaultFacet = a.multiAssetBasicVaultFacet;
+        pkgInit.multiAssetStandardVaultFacet = a.multiAssetStandardVaultFacet;
+        pkgInit.uniswapV4StandardExchangeInFacet = a.uniswapV4StandardExchangeInFacet;
+        pkgInit.uniswapV4StandardExchangeInQueryFacet = a.uniswapV4StandardExchangeInQueryFacet;
+        pkgInit.uniswapV4StandardExchangePositionImportFacet = a.uniswapV4StandardExchangePositionImportFacet;
+        pkgInit.uniswapV4StandardExchangeOutFacet = a.uniswapV4StandardExchangeOutFacet;
+        pkgInit.uniswapV4StandardExchangeOutQueryFacet = a.uniswapV4StandardExchangeOutQueryFacet;
+        pkgInit.uniswapV4StandardExchangeLiquidReserveFacet = a.uniswapV4StandardExchangeLiquidReserveFacet;
+        pkgInit.vaultFeeOracleQuery = a.vaultFeeOracleQuery;
+        pkgInit.vaultRegistryDeployment = a.vaultRegistryDeployment;
+        pkgInit.permit2 = a.permit2;
+        pkgInit.poolManager = a.poolManager;
+        // positionManager defaults to address(0). twapOracle via attachTwapOracle.
+    }
+
+    function attachTwapOracle(
+        IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit,
+        IUniswapV4MultiPoolTwapOracle twapOracle
+    ) internal pure returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory) {
+        pkgInit.twapOracle = twapOracle;
+        return pkgInit;
     }
 
     function deployUniswapV4StandardExchangeDFPkg(

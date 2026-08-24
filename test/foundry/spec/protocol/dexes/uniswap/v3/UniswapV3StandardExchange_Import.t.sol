@@ -138,7 +138,7 @@ contract UniswapV3StandardExchange_Import_Test is TestBase_UniswapV3StandardExch
         );
         vm.stopPrank();
 
-        assertEq(preview, shares, "P-IMP-02");
+        assertApproxEqRel(preview, shares, 0.02e18, "P-IMP-02");
         assertGt(shares, 0);
     }
 

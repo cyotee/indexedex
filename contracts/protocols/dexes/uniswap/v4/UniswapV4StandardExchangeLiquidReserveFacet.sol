@@ -20,13 +20,14 @@ contract UniswapV4StandardExchangeLiquidReserveFacet is UniswapV4StandardExchang
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](7);
         funcs[0] = IUniswapV4StandardExchangeLiquidReserve.canOpenPoolManagerUnlock.selector;
         funcs[1] = IUniswapV4StandardExchangeLiquidReserve.localReserve.selector;
         funcs[2] = IUniswapV4StandardExchangeLiquidReserve.deployedReserve.selector;
         funcs[3] = IUniswapV4StandardExchangeLiquidReserve.targetLiquidReservePercentage.selector;
         funcs[4] = IUniswapV4StandardExchangeLiquidReserve.actualLiquidReservePercentage.selector;
         funcs[5] = IUniswapV4StandardExchangeLiquidReserve.rebalanceLiquidReserve.selector;
+        funcs[6] = IUniswapV4StandardExchangeLiquidReserve.twapOracle.selector;
     }
 
     function facetMetadata()

@@ -6,8 +6,16 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {UniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol";
 
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {
+    IUniswapV3StandardExchangeLiquidReserve
+} from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
 import {
     UniswapV3StandardExchangeDFPkg,
     IUniswapV3StandardExchangeDFPkg
@@ -33,13 +41,19 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
             UniswapV3StandardExchangeDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV3StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 9, "interface count");
-        assertEq(facets.length, 9, "facet count");
+        assertEq(interfaces.length, 12, "interface count");
+        assertEq(facets.length, 15, "facet count");
         assertEq(facets[0], address(erc20Facet), "erc20");
         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
         assertEq(facets[6], address(uniswapV3StandardExchangeInQueryFacet), "in query");
         assertEq(facets[7], address(uniswapV3StandardExchangeOutFacet), "out");
-        assertEq(facets[8], address(uniswapV3StandardExchangePositionImportFacet), "import");
+        assertEq(facets[8], address(uniswapV3StandardExchangeOutQueryFacet), "out query");
+        assertEq(facets[9], address(uniswapV3StandardExchangePositionImportFacet), "import");
+        assertEq(facets[10], address(uniswapV3StandardExchangeLiquidReserveFacet), "liquid reserve");
+        assertEq(facets[11], address(uniswapV3StandardExchangeInMultiFacet), "in multi");
+        assertEq(facets[12], address(uniswapV3StandardExchangeInMultiQueryFacet), "in multi query");
+        assertEq(facets[13], address(uniswapV3StandardExchangeOutMultiFacet), "out multi");
+        assertEq(facets[14], address(uniswapV3StandardExchangeOutMultiQueryFacet), "out multi query");
     }
 
     function test_deployVault_registersAndInitializesPoolAndWidth() public {
@@ -60,6 +74,18 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
         // assert init via successful registry + token wiring above and factory-mismatch below.
         IStandardVault.VaultConfig memory config = IStandardVault(vault).vaultConfig();
         assertEq(config.tokens.length, 2);
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeIn).interfaceId), "erc165 in");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOut).interfaceId), "erc165 out");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeInMulti).interfaceId), "erc165 in multi");
+        assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOutMulti).interfaceId), "erc165 out multi");
+        assertTrue(
+            IERC165(vault).supportsInterface(type(IUniswapV3StandardExchangeLiquidReserve).interfaceId),
+            "erc165 liquid reserve"
+        );
+        assertTrue(
+            IERC165(vault).supportsInterface(type(IUniswapV3StandardExchangeLiquidReserve).interfaceId),
+            "erc165 liquid reserve"
+        );
     }
 
     function test_deployVault_revertsWhenPoolFactoryMismatch() public {

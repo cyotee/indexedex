@@ -17,6 +17,8 @@ import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/inter
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
@@ -452,11 +454,15 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
     /* ---------------------------------------------------------------------- */
 
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](4);
+        sels_ = new bytes4[](8);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         sels_[2] = IStandardExchangeOut.exchangeOut.selector;
         sels_[3] = IStandardExchangeOut.previewExchangeOut.selector;
+        sels_[4] = IStandardExchangeInMulti.exchangeInManyToOne.selector;
+        sels_[5] = IStandardExchangeInMulti.previewExchangeInManyToOne.selector;
+        sels_[6] = IStandardExchangeOutMulti.exchangeOutOneToMany.selector;
+        sels_[7] = IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector;
     }
 
     function _facetFuncsContains(bytes4[] memory funcs_, bytes4 sel_) internal pure returns (bool) {
@@ -490,6 +496,33 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
             ),
             "J1 previewExchangeOut"
         );
+        assertTrue(
+            _facetFuncsContains(
+                uniswapV4StandardExchangeInMultiFacet.facetFuncs(), IStandardExchangeInMulti.exchangeInManyToOne.selector
+            ),
+            "J1 exchangeInManyToOne"
+        );
+        assertTrue(
+            _facetFuncsContains(
+                uniswapV4StandardExchangeInMultiQueryFacet.facetFuncs(),
+                IStandardExchangeInMulti.previewExchangeInManyToOne.selector
+            ),
+            "J1 previewExchangeInManyToOne"
+        );
+        assertTrue(
+            _facetFuncsContains(
+                uniswapV4StandardExchangeOutMultiFacet.facetFuncs(),
+                IStandardExchangeOutMulti.exchangeOutOneToMany.selector
+            ),
+            "J1 exchangeOutOneToMany"
+        );
+        assertTrue(
+            _facetFuncsContains(
+                uniswapV4StandardExchangeOutMultiQueryFacet.facetFuncs(),
+                IStandardExchangeOutMulti.previewExchangeOutOneToMany.selector
+            ),
+            "J1 previewExchangeOutOneToMany"
+        );
     }
 
     /// @notice J2: loupe facetAddress(sel) != 0 for product controls on production proxy.
@@ -520,6 +553,12 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         vm.expectRevert();
         IStandardExchangeIn(address(vault)).exchangeIn(
             IERC20(_token0()), 0, IERC20(address(vault)), 0, attacker, false, _deadline()
+        );
+
+        vm.prank(attacker);
+        vm.expectRevert();
+        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            new address[](1), new uint256[](1), IERC20(address(vault)), 0, attacker, false, _deadline()
         );
     }
 }

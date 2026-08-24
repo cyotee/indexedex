@@ -407,13 +407,13 @@ Use the same consistency principles as the existing constant-product and Slipstr
 
 ## Tick Range Plan
 
-For the first deposit:
+For the first deposit (non-imported, D30):
 
-1. read current tick from `StateLibrary.getSlot0(...)`,
-2. compute half-width from `widthMultiplier * tickSpacing`,
-3. snap both bounds to valid multiples of `tickSpacing`,
-4. clamp to V4 tick bounds,
-5. persist canonical `tickLower` and `tickUpper`.
+1. read `tickSpacing` from the bound `PoolKey`,
+2. set `tickLower = TickMath.minUsableTick(tickSpacing)` and `tickUpper = TickMath.maxUsableTick(tickSpacing)`,
+3. persist those bounds on the center position only (no wings).
+
+`widthMultiplier` stays on `deployVault` for ABI compatibility and does not size ticks (D31). Imported PositionManager positions keep the NFT ticks (D15).
 
 Do not store unsnapped ticks.
 

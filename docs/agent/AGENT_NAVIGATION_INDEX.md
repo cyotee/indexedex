@@ -26,6 +26,8 @@ method: cartographer+survey
 | Task | Skill / agent | Law / PRD | Map / path |
 |------|---------------|-----------|------------|
 | CREATE3 facet / DFPkg / FactoryService | `crane-deployment`, `crane-architecture` | Crane `AGENTS.md` | `lib/crane/contracts/factories`, `lib/crane/contracts/proxies` |
+| Foundry launch scripts / Anvil / 4663 gas quote | `indexedex-launch-scripts` | 46630 rewrite PRD + plan; 4663 `anvil_robinhood_main` README | `scripts/foundry/anvil_robinhood_testnet/`, `scripts/foundry/anvil_robinhood_main/` |
+| 46630 `platform.json` / tokenlists / UI export | `indexedex-launch-scripts` → `references/frontend-export.md` | Phase 09 writer | `frontend/packages/protocol/src/addresses/chain/46630/`, `addressArtifacts.ts` |
 | Deploy vault or DETF package | `indexedex-testing` (deploy path) | Agent law deploy section | `contracts/manager`, `contracts/registries/vault` — `indexedexManager.deploy*DFPkg` / registry, then package `deployVault` |
 | Write hermetic Foundry tests | `crane-testing` → `indexedex-testing` | Agent law testing matrix | `contracts/test/IndexedexTest.sol`, package `TestBase_*`, `test/foundry/` |
 | Adversarial / donation / reentrancy | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + A0/L/M/N/O) | Agent law | DETF/SE package tests co-located or under `test/foundry/` |
@@ -44,6 +46,7 @@ method: cartographer+survey
 | Morpho port status / integration | `crane-morpho`, `morpho-architecture` | Crane capability inventory | `lib/crane/contracts/protocols/lending/morpho/` |
 | Olympus port status / integration | `crane-olympus`, `olympus-architecture` | Crane capability inventory | Crane tokens/stable olympus area + skills; see Crane inventory |
 | Fee oracle / fee collector | — | Agent law platform | `contracts/oracles/fee`, `contracts/fee/collector` |
+| Uni V4 multi-pool TWAP oracle (poke, Morpho adapters) | — | [`UNISWAP_V4_MULTI_POOL_TWAP_ORACLE_PRD.md`](../../contracts/oracles/uniswap/v4/twap/UNISWAP_V4_MULTI_POOL_TWAP_ORACLE_PRD.md) | `contracts/oracles/uniswap/v4/twap/` — DFPkg; diamond **instance per `PkgArgs.poolManager`**; **not** a V4 hook or vault |
 | Frontend product / redesign | `indexedex-ui-refactor` (env/registry) | `frontend/ROADMAP.md` | `frontend/apps/**` |
 | Frontend live TX / UI e2e (DTF, RH 4663) | `indexedex-ui-tx-testing` | `frontend/apps/dtf/e2e/README.md` | `frontend/apps/dtf/e2e/**` |
 | UI product copy | `indexedex-product-voice` | — | frontend copy surfaces |

@@ -11,6 +11,7 @@
 | Artifact | Role |
 |----------|------|
 | [`UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_IMPLEMENTATION_AND_TEST_PLAN.md) | **Coding plan** — phases, file map, algorithms, test matrix, DoD. |
+| [`UNISWAP_V4_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md`](./UNISWAP_V4_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md) | **Range / fee-exposure product law** (D30/D31). This buffer PRD owns sleeve + PoolManager lock. |
 | [`UNISWAP_V4_STANDARD_EXCHANGE_VAULT_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_VAULT_PLAN.md) | Original bring-up plan for the V4 SE vault (scaffold + routes). |
 | Staking SE liquid sleeve (Lido / Rocket Pool / EtherFi) | **Behavioral peer** for `liquidReservePercentage` + rebalance math. |
 | Single / Dual SE Buffer CP hooks | **Primary consumers** that call SE `exchangeIn` / buffer paths **during** a V4 `unlock` session. |
@@ -35,7 +36,7 @@
 | **In-session (Manager unlocked)** | Transient lock is open: `isUnlocked(poolManager) == true`. Nested `unlock` reverts `AlreadyUnlocked`. Vault **must not** call `unlock`. |
 | **Interaction-free / can open unlock** | Product gate: Manager is **idle**. Normative predicate: `canOpenPoolManagerUnlock() == true`. |
 | **Interaction-blocked** | Product gate: Manager is **in-session**. Normative predicate: `canOpenPoolManagerUnlock() == false`. |
-| **Deployed inventory** | Token0/token1 value locked in this vault’s managed V4 position(s) (center + wings / imported position as already implemented). |
+| **Deployed inventory** | Token0/token1 value locked in this vault’s managed V4 position (full-range center, D30) or an imported PositionManager position (D15). |
 | **Local liquid sleeve / free inventory** | Token0 and/or token1 ERC-20 balances held **on the vault diamond** and counted as vault reserves, **not** in the V4 position. Still **vault-controlled assets**. **SoT for free:** `IERC20(token).balanceOf(address(this))` for each pool currency (D29) — includes unsolicited transfers/donations. |
 | **Total vault reserve** | Deployed inventory + local liquid sleeve. **Share SoT:** assets the vault controls, regardless of free vs V4 placement. |
 | **Target liquid percentage** | WAD fraction of **total** reserve that should remain in the local liquid sleeve under steady state. Resolved via fee oracle `liquidReservePercentageOfVault(this)`. |
@@ -124,7 +125,7 @@ The **20% default sleeve** exists so steady-state free inventory is large enough
 1. Joining an **existing** outer unlock session as a co-settler (no “piggyback unlockCallback” protocol in v1).
 2. Multi-PoolManager or cross-manager inventory.
 3. Changing hook product law (hooks still buffer-last into SE; this PRD makes SE accept that call under lock).
-4. Active market-making rebalance of tick ranges / wings (existing managed-tick policy stays; this PRD is **liquid vs deployed**, not range strategy).
+4. Tick recast / recenter / JIT. Managed (non-imported) range is **full-range** (D30) and frozen at first create; rebalance is **liquid vs deployed** only.
 5. ERC-4626 conversion of the multi-asset V4 SE.
 6. Guaranteeing amount-out **while interaction-blocked** if free inventory of the requested token is insufficient (D18).
 7. A new fee-oracle field named “locked buffer percentage” if `liquidReservePercentage` already models the same sleeve.
@@ -166,6 +167,8 @@ The **20% default sleeve** exists so steady-state free inventory is large enough
 | **D27** | Free-path deposit order | **Sleeve-then-deploy-excess (LOCKED).** When interaction-free: (1) pull tokens into vault free balances; (2) mint shares against total reserves (user op complete); (3) tail-rebalance **deploys only** `free_i - targetFree_i` (when excess beyond deadband) into the V4 position. Do **not** use “fully deploy deposit into position then remove liquidity back to 20% free” as the primary free-deposit shape. Blocked path is the same (1)–(2) without step (3). |
 | **D28** | Rebalance composition / no swaps | **No token0↔token1 swap as a rebalance tool.** Rebalance may only **add liquidity** (deploy excess free) or **remove liquidity** (refill free toward target) via PoolManager. If pool range / ratio prevents both tokens from hitting targetFree independently, apply **best-effort per token** without deliberate cross-token rebalance swaps. Incidental residual handling inside existing liquidity math is OK; do not add a “rebalance swap” route. |
 | **D29** | Free inventory SoT / donations | **`free_i = IERC20(token_i).balanceOf(address(this))`** for pool currencies. Unsolicited transfers (donations/dust) **count** as free sleeve and therefore as total vault reserves (share-price donation surface — accepted; cover in adversarial notes). Do **not** maintain a separate internal free ledger that ignores `balanceOf` in v1. Never double-count PoolManager ERC-6909 claims as free unless the package already treats them as vault inventory. |
+| **D30** | Managed range (non-imported) | **One** full-range position: `tickLower = minUsableTick(tickSpacing)`, `tickUpper = maxUsableTick(tickSpacing)`, salt = center salt (`bytes32(0)`). Wings are **not** created and must hold 0 liquidity. Ticks freeze at first create; no recast. Deployed capital stays in range for every tradable price. |
+| **D31** | `widthMultiplier` | Remains on `PkgArgs` / `deployVault` (`>= 1`) for ABI compatibility. **Does not size ticks.** Allocation is 100% of deployable inventory to the full-range center. |
 
 ---
 

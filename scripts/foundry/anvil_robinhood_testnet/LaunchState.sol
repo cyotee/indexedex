@@ -14,9 +14,15 @@ import {
     IStandardExchangeRateProviderDFPkg
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+import {
+    IUniswapV4MultiPoolTwapOracleDFPkg
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
 
 /// @title LaunchState
-/// @notice In-memory / storage bag shared by group libraries and Script_SimulateLaunch.
+/// @notice In-memory / storage bag shared by Phase Stage libraries.
 /// @dev Demo products: required fee DETF `DTF-DETF` and USD quad `TTDOL-Q`.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
@@ -37,6 +43,10 @@ struct LaunchState {
     IFeeCollectorProxy feeCollector;
     IIndexedexManagerProxy indexedexManager;
     IStandardExchangeRateProviderDFPkg rateProviderPkg;
+    IFacet twapOracleFacet;
+    IUniswapV4MultiPoolTwapOracleDFPkg twapOraclePkg;
+    IUniswapV4MultiPoolTwapOracle twapOracle;
+    address twapAdapterFactory;
     address cpHookPkg;
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
     address bondNftVaultPkg;
@@ -54,12 +64,23 @@ struct LaunchState {
     address morphoBlueSePkg;
     /// @notice True when 03c deployed Morpho Blue on this chain (pin had no code).
     bool morphoLocal;
+    address v3Factory;
+    address uniV3SePkg;
+    /// @notice True when 03d deployed UniswapV3Factory on this chain (no canonical V3).
+    bool v3Local;
     address erc20MinterFacade;
     address tokenPkg;
     address ttUSDG;
     address ttUSDE;
     address ttWETH;
     address ttRICH;
+    address ttNVDA;
+    address ttMSFT;
+    address ttAAPL;
+    address ttGOOGL;
+    address ttAMZN;
+    address ttMETA;
+    address ttTSLA;
     address seUsdeWeth;
     address seUsdgWeth;
     address seUsdgUsde;

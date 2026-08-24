@@ -1,69 +1,66 @@
-# Anvil Robinhood mainnet fork — IndexedEx architecture (4663)
+# Robinhood mainnet (4663) — architecture Phases and Stages
 
-**Chain id:** `4663` (Robinhood mainnet fork via Anvil)
+**PRD:** [`docs/ANVIL_ROBINHOOD_MAIN_ARCHITECTURE_PHASE_STAGE_PRD.md`](../../../docs/ANVIL_ROBINHOOD_MAIN_ARCHITECTURE_PHASE_STAGE_PRD.md)
 
-These scripts stand up Crane factories, the IndexedEx manager, and the Uni V4 packages needed later to deploy:
+**Chain id:** **4663**. Packages only. No test tokens. No SE vault instances. No Protocol DETF instances.
 
-- Protocol DETF (constant-product single) from `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single`
-- Curve Quad Stable DETF from `contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve`
+Same Foundry Stages. Two shells plus a gas-quote `simulate`.
 
-They do **not** deploy test tokens, pools, Standard Exchange vaults, or DETF instances.
+| | Value |
+|--|--|
+| Chain id | **4663** |
+| Anvil shell | `scripts/shell/anvil_robinhood_main.sh` — fork 4663, Anvil Dev 0, `--unlocked`, Phase 00 then 01–06 |
+| Public shell | `scripts/shell/robinhood_main.sh` — `--sender $DEPLOYER_ADDRESS`, no Phase 00 |
+| Anvil node | `--chain-id 4663`. EIP-170 **on**. Never `--disable-code-size-limit` |
+| Fork source | `robinhood_mainnet` (public tip; not archive) |
+| Artifacts | `deployments/anvil_robinhood_main/phase<PP>_stage<SS>_<slug>.json` |
 
-Uni V4 PoolManager, PositionManager, Permit2, WETH, and Universal Router are Robinhood-canonical (`ROBINHOOD_MAIN`). They are never redeployed.
+Each Stage simulates, then broadcasts. Never `--skip-simulation`. `FORCE=1` / `--force` re-runs. Resume: `--from-phase PP --from-stage SS`.
 
-## Gas estimate (one Foundry script, no broadcast)
+After a pons Family sale, add a **later** Stage that deploys the Protocol DETF instance from that pool’s `PoolKey`. Do not put instances in this catalog.
 
-`Script_SimulateArchitecture` runs groups 01–03 inside a single `startBroadcast` / `stopBroadcast` window so `forge script` without `--broadcast` collects one dry-run.
+## Phases
 
-`simulate` is EIP-1559 only: it does **not** pass `--legacy` or `--gas-price`. Anvil is started with the fork-source `baseFee` and `--disable-min-priority-fee`. After the dry-run, the wrapper re-reads **live** 4663 `baseFee` / `maxPriorityFeePerGas` / `eth_gasPrice` from the fork RPC and quotes deployer funding from dry-run **gas limits** × current `eth_gasPrice`, plus `FUND_ETH_BUFFER_BPS` (default 2500 = 25%). Use that quote to fund a live deployer, not Foundry's on-screen ETH total (Anvil's local fee market can still diverge).
+| Phase | Stage | File | What |
+|-------|-------|------|------|
+| 00 | 01 | `Phase_00_Stage_01_AnvilEnv.s.sol` | Anvil-only: chain 4663, `deal` Dev 0 / Dev 1 if low |
+| 01 | 01 | `Phase_01_Stage_01_Permit2.s.sol` | Pin Permit2. Fail if no code |
+| 01 | 02 | `Phase_01_Stage_02_Weth.s.sol` | Pin WETH. Fail if no code |
+| 01 | 03 | `Phase_01_Stage_03_UniswapV4.s.sol` | Pin live V4 cores. Never deploy V4 |
+| 02 | 01 | `Phase_02_Stage_01_Create3Factory.s.sol` | New CREATE3 for this tree |
+| 02 | 02 | `Phase_02_Stage_02_DiamondPackageFactory.s.sol` | Diamond Package Factory via CREATE3 |
+| 02 | 03 | `Phase_02_Stage_03_HookFactory.s.sol` | Uni V4 Hook Diamond Package Factory |
+| 03 | 01 | `Phase_03_Stage_01_CommonFacets.s.sol` | Shared ERC20 / vault / ownable / DiamondCut facets |
+| 04 | 01 | `Phase_04_Stage_01_FeeCollectorAndManager.s.sol` | FeeCollector + Manager diamonds, fee defaults |
+| 05 | 01 | `Phase_05_Stage_01_SeRateProviderPkg.s.sol` | SE rate-provider DFPkg |
+| 05 | 02 | `Phase_05_Stage_02_UniswapV4TwapOracle.s.sol` | TWAP facet + DFPkg + canonical instance + adapter factory |
+| 05 | 03 | `Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol` | Uni V4 SE DFPkg (`PkgInit.twapOracle` from 05-02) |
+| 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Bond NFT DFPkg |
+| 06 | 02 | `Phase_06_Stage_02_RebasingClaimPkg.s.sol` | Rebasing claim DFPkg |
+| 06 | 03 | `Phase_06_Stage_03_CpBufferHookPkg.s.sol` | CP buffer hook DFPkg |
+| 06 | 07 | `Phase_06_Stage_07_CpDetfPkg.s.sol` | CP single SE DETF DFPkg |
+
+06-07 keeps the 46630 number for the CP DETF package.
+
+Not in this catalog: minter facade, test tokens, Uni V3 / Morpho, Weighted / Orbital / Curve Quad packages, DETF instances, frontend export.
+
+## Shells
 
 ```bash
+# Anvil: fork 4663, Dev 0, Phase 00 then architecture catalog
+DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  bash scripts/shell/anvil_robinhood_main.sh all --restart-anvil
+
+# Resume after TWAP (example)
+bash scripts/shell/anvil_robinhood_main.sh all --from-phase 05 --from-stage 03
+
+# Public 4663 (no Phase 00)
+export DEPLOYER_ADDRESS=0x...
+bash scripts/shell/robinhood_main.sh all
+
+# Gas / funding quote (EIP-1559, no broadcast, EIP-170 on)
 DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
   bash scripts/shell/anvil_robinhood_main.sh simulate --restart-anvil
 ```
 
-`--restart-anvil` forks **public** Robinhood mainnet (`https://rpc.mainnet.chain.robinhood.com`) at the remote tip, chain id 4663. EIP-170 stays on. No stub pins. If the fork RPC cannot start, the command fails. Restarting Anvil is recommended so the node is not carrying a decayed local `baseFee`.
-
-Or call forge directly (no funding quote):
-
-```bash
-forge script scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol \
-  --rpc-url http://127.0.0.1:8545 \
-  --sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-  --unlocked
-```
-
-Do not run `simulate` after a completed staged `all` on the same Anvil (CREATE3 / CREATE2 collision).
-
-`simulate` defaults to no broadcast. Pass `--broadcast` only if you want 01–03 sent as one script (still EIP-1559, no forced gas price). Staged `all` still uses legacy 2 gwei on Anvil.
-
-## Staged deploy (broadcast)
-
-```bash
-DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-  bash scripts/shell/anvil_robinhood_main.sh all --restart-anvil
-```
-
-Anvil forks public Robinhood mainnet at the remote tip (`--chain-id 4663`). EIP-170 stays on. Broadcast is localhost-only.
-
-## Groups
-
-| Group | Script | What |
-|-------|--------|------|
-| 00 | `Script_00_Preflight.s.sol` | Chain 4663 + required V4 / Permit2 / WETH pins |
-| 01 | `Script_01_Factories.s.sol` | CREATE3, diamond factory, hook factory, shared facets |
-| 02 | `Script_02_Platform.s.sol` | FeeCollector, IndexedexManager, SE rate-provider package, fee/bond defaults |
-| 03 | `Script_03_UniV4Packages.s.sol` | Uni V4 SE DFPkg, CP hook + DETF DFPkg, Curve Quad hook + DETF DFPkg, bond NFT + rebasing claim packages. No instances. |
-| Sim | `Script_SimulateArchitecture.s.sol` | Groups 01–03 in one script for a gas estimate |
-
-Shell entry: `scripts/shell/anvil_robinhood_main.sh` → `deploy_all.sh`.
-
-Artifacts: `deployments/anvil_robinhood_main/` (`00_preflight.json`, `01_factories.json`, `02_platform.json`, `03_univ4_packages.json`).
-
-## Accounts
-
-| Role | Address |
-|------|---------|
-| Deployer / owner (Anvil #0) | `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` |
-
-Override with `SENDER`, `DEV_ADDRESS`, or `DEPLOYER_ADDRESS`.
+`simulate` is not `all`. Do not run it after a completed staged deploy on the same Anvil (CREATE3 collision).

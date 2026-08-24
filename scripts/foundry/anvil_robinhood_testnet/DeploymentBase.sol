@@ -22,6 +22,8 @@ abstract contract DeploymentBase is Script {
     address internal deployer;
     address internal owner;
     address internal uiWallet;
+    /// @dev FORCE env, snapshotted in `_loadConfig`. Live env reads race when tests run in parallel.
+    bool internal forceEnabled;
 
     function _outDir() internal view returns (string memory outDir) {
         try vm.envString("OUT_DIR_OVERRIDE") returns (string memory overrideDir) {
@@ -41,12 +43,22 @@ abstract contract DeploymentBase is Script {
         return "anvil_robinhood_testnet";
     }
 
-    function _force() internal view returns (bool) {
-        try vm.envBool("FORCE") returns (bool f) {
-            return f;
+    function _parseForceEnv() internal view returns (bool) {
+        // Shell exports FORCE=1. Prefer the string form so "0"/"1" match.
+        try vm.envString("FORCE") returns (string memory s) {
+            bytes memory b = bytes(s);
+            if (b.length == 0) return false;
+            bytes1 c = b[0];
+            if (c == "0" || c == "f" || c == "F") return false;
+            if (c == "1" || c == "t" || c == "T") return true;
+            return false;
         } catch {
             return false;
         }
+    }
+
+    function _force() internal view returns (bool) {
+        return forceEnabled;
     }
 
     function _loadConfig() internal {
@@ -83,6 +95,8 @@ abstract contract DeploymentBase is Script {
         } catch {
             uiWallet = DEFAULT_UI_WALLET;
         }
+
+        forceEnabled = _parseForceEnv();
     }
 
     function _requireRobinhoodTestnet() internal view {
@@ -157,8 +171,65 @@ abstract contract DeploymentBase is Script {
 
     function _artifactValid(string memory file, string memory key) internal view returns (bool) {
         if (_force()) return false;
+        return _artifactHasLiveCode(file, key);
+    }
+
+    /// @notice True when JSON `key` is a non-zero address with bytecode. Ignores FORCE.
+    function _artifactHasLiveCode(string memory file, string memory key) internal view returns (bool) {
         (address addr, bool exists) = _readAddressSafe(file, key);
         return exists && addr != address(0) && addr.code.length > 0;
+    }
+
+    /// @notice Catalog skip rule: skip when `key` is live unless FORCE=1.
+    function _shouldSkipStage(string memory file, string memory key) internal view returns (bool) {
+        if (_force()) return false;
+        return _artifactHasLiveCode(file, key);
+    }
+
+    /// @notice Catalog skip rule: skip when every key is live unless FORCE=1.
+    /// @dev Empty `keys` never skips (Phase 00 / Phase 09 always run).
+    function _shouldSkipStage(string memory file, string[] memory keys) internal view returns (bool) {
+        if (_force()) return false;
+        uint256 n = keys.length;
+        if (n == 0) return false;
+        for (uint256 i; i < n; ++i) {
+            if (!_artifactHasLiveCode(file, keys[i])) return false;
+        }
+        return true;
+    }
+
+    function _skipKeys(string memory k0) internal pure returns (string[] memory keys) {
+        keys = new string[](1);
+        keys[0] = k0;
+    }
+
+    function _skipKeys(string memory k0, string memory k1) internal pure returns (string[] memory keys) {
+        keys = new string[](2);
+        keys[0] = k0;
+        keys[1] = k1;
+    }
+
+    function _skipKeys(string memory k0, string memory k1, string memory k2)
+        internal
+        pure
+        returns (string[] memory keys)
+    {
+        keys = new string[](3);
+        keys[0] = k0;
+        keys[1] = k1;
+        keys[2] = k2;
+    }
+
+    function _skipKeys(string memory k0, string memory k1, string memory k2, string memory k3)
+        internal
+        pure
+        returns (string[] memory keys)
+    {
+        keys = new string[](4);
+        keys[0] = k0;
+        keys[1] = k1;
+        keys[2] = k2;
+        keys[3] = k3;
     }
 
     function _writeJson(string memory json, string memory filename) internal {

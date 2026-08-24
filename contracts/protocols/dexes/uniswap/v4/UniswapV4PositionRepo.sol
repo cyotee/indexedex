@@ -55,8 +55,11 @@ library UniswapV4PositionRepo {
 
     function _initialize(Storage storage layout_, uint24 widthMultiplier_, bytes32 salt_) internal {
         require(widthMultiplier_ >= 1, "widthMultiplier must be >= 1");
-        layout_.strategy =
-            StrategyConfig({widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: 1000});
+        // D30/D31: ticks are full-range; widthMultiplier is ABI-only. Allocate 100% of
+        // deployable inventory to the center (wings unused).
+        layout_.strategy = StrategyConfig({
+            widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: MAX_BPS
+        });
         layout_.centerPosition.salt = salt_;
         layout_.lowerWingPosition.salt = LOWER_WING_SALT;
         layout_.upperWingPosition.salt = UPPER_WING_SALT;

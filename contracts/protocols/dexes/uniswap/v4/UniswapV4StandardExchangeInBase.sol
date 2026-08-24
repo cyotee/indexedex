@@ -335,6 +335,66 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         }
     }
 
+    /**
+     * @dev Preview dual-sided deposit shares from total-reserve mint math only (D24).
+     *      View path: reserves are pre-deposit (caller has not transferred).
+     */
+    function _previewZapInDualDeposit(uint256 amount0Added, uint256 amount1Added)
+        internal
+        view
+        returns (uint256 sharesOut)
+    {
+        if (amount0Added == 0 || amount1Added == 0) {
+            return 0;
+        }
+        uint256 totalShares = IERC20(address(this)).totalSupply();
+        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
+        return _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
+    }
+
+    /**
+     * @dev Dual-sided sleeve-then-deploy-excess join (D27/D45). Both amounts already pulled.
+     *      User pays both `amountsIn` in full; surplus stays sleeve. No token0↔token1 swap.
+     */
+    function _executeZapInDualDeposit(
+        uint256 amount0Added,
+        uint256 amount1Added,
+        uint256 minSharesOut,
+        address recipient
+    ) internal returns (uint256 sharesOut) {
+        if (amount0Added == 0 || amount1Added == 0) {
+            revert UniswapV4Exchange_ZeroAmount();
+        }
+
+        uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
+        (uint256 total0, uint256 total1) = _totalVaultReserves();
+        uint256 reserve0Before = total0 - amount0Added;
+        uint256 reserve1Before = total1 - amount1Added;
+
+        sharesOut = _sharesOutForDeposit(amount0Added, amount1Added, totalSharesBefore, reserve0Before, reserve1Before);
+        if (sharesOut == 0) {
+            revert UniswapV4Exchange_ZeroAmount();
+        }
+        if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
+
+        if (totalSharesBefore == 0) {
+            uint256 residual = reserve0Before + reserve1Before;
+            if (residual > 0) {
+                ERC20Repo._mint(DEAD_SHARES_SINK, residual);
+            }
+        }
+
+        ERC20Repo._mint(recipient, sharesOut);
+        _syncVaultReserves();
+
+        if (canOpenPoolManagerUnlock()) {
+            _rebalanceLiquidReserveBestEffort();
+        } else {
+            emit IUniswapV4StandardExchangeLiquidReserve.LocalDepositWhileBlocked(_token0(), amount0Added, sharesOut);
+            emit IUniswapV4StandardExchangeLiquidReserve.LocalDepositWhileBlocked(_token1(), amount1Added, sharesOut);
+        }
+    }
+
     function _increaseImportedPosition(uint128 liquidity, uint128 amount0Max, uint128 amount1Max) internal {
         _increaseImportedPositionCommon(liquidity, amount0Max, amount1Max);
     }
