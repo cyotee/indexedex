@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   SQRT_PRICE_1_1,
   isPoolAlreadyExistsError,
+  isPoolInitWalletRevert,
   poolActionLabel,
   poolReadyState,
   poolStatusCopy,
@@ -53,6 +54,15 @@ describe('sePool', () => {
   it('detects an already-initialized pool error', () => {
     expect(isPoolAlreadyExistsError(new Error('PoolAlreadyInitialized()'))).toBe(true)
     expect(isPoolAlreadyExistsError({ shortMessage: 'Pool already initialized' })).toBe(true)
+    expect(isPoolAlreadyExistsError({ data: '0x7983c051' })).toBe(true)
+    expect(isPoolAlreadyExistsError({ cause: { data: { errorName: 'PoolAlreadyInitialized' } } })).toBe(true)
     expect(isPoolAlreadyExistsError(new Error('insufficient funds'))).toBe(false)
+  })
+
+  it('treats wallet insufficient-gas initialize as the pool already existing', () => {
+    expect(isPoolInitWalletRevert(new Error('insufficient gas'))).toBe(true)
+    expect(isPoolInitWalletRevert(new Error('intrinsic gas too low'))).toBe(true)
+    expect(isPoolInitWalletRevert(new Error('insufficient funds for gas'))).toBe(false)
+    expect(isPoolInitWalletRevert(new Error('Internal JSON-RPC error.'))).toBe(true)
   })
 })

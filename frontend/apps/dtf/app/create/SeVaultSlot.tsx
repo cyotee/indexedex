@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { decodeEventLog, type Address } from 'viem'
-import { useAccount, useConnect, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
+import {
+  useAccount,
+  useConnect,
+  useReadContract,
+  useSwitchChain,
+  useWriteContract,
+} from 'wagmi'
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 import type { TokenListEntry } from '@indexedex/protocol/tokenlists'
@@ -24,16 +30,21 @@ import {
   V3_SE_PKG_ABI,
   V4_POOL_MANAGER_ABI,
   V4_SE_PKG_ABI,
+  V4_STATE_VIEW_ABI,
   VAULT_REGISTRY_SE_ABI,
   VAULT_TOKENS_ABI,
 } from './lib/seAbi'
 import { resolveSePlatform } from './lib/sePlatform'
-import { createAppReadClient, readV4PoolInitialized, uniqueAddresses } from './lib/sePoolRead'
+import { slot0IsInitialized, uniqueAddresses } from './lib/sePoolRead'
+import { requireContractCode, resolveWalletProvider, waitForCreateReceipt } from './lib/seTx'
+import { useCreateChainClients } from './lib/useCreateChainClients'
+import { MorphoMarketForm } from './MorphoMarketForm'
+import type { CreateSeHostId } from './detfTypes'
 import {
   SQRT_PRICE_1_1,
   V3_FEE_TIERS,
   V4_FEE_TIERS,
-  isPoolAlreadyExistsError,
+  isPoolInitWalletRevert,
   poolActionLabel,
   poolReadyState,
   poolStatusCopy,
@@ -54,6 +65,30 @@ function same(a: string, b: string): boolean {
   return a.toLowerCase() === b.toLowerCase()
 }
 
+type SlotSource = 'listed' | 'build' | CreateSeHostId
+
+function isBuildSource(source: SlotSource): boolean {
+  return source === 'build' || source === 'uniswap-v3' || source === 'uniswap-v4'
+}
+
+function initialSlotSource(
+  seHost: CreateSeHostId | '',
+  hasListed: boolean,
+  hostPerSlot: boolean,
+): SlotSource {
+  if (seHost === 'morpho') return 'morpho'
+  if (seHost === 'uniswap-v3') return 'uniswap-v3'
+  if (seHost === 'uniswap-v4') return 'uniswap-v4'
+  if (hasListed) return 'listed'
+  if (hostPerSlot) return 'uniswap-v4'
+  return 'build'
+}
+
+function slotSourceToHost(source: SlotSource): CreateSeHostId | '' {
+  if (source === 'uniswap-v3' || source === 'uniswap-v4' || source === 'morpho') return source
+  return ''
+}
+
 export function SeVaultSlot({
   listedVaults,
   tokens,
@@ -64,11 +99,16 @@ export function SeVaultSlot({
   persistPair,
   onSelectVault,
   onSelectPair,
+  onSelectHost,
   onWeight,
   testIdPrefix,
+  seHost = '',
+  hostPerSlot = false,
 }: {
   listedVaults: TokenListEntry[]
   tokens: TokenListEntry[]
+  seHost?: CreateSeHostId | ''
+  hostPerSlot?: boolean
   selectedVault: `0x${string}` | ''
   pairToken: `0x${string}` | ''
   weight?: string
@@ -76,6 +116,7 @@ export function SeVaultSlot({
   persistPair?: boolean
   onSelectVault: (vault: `0x${string}` | '') => void
   onSelectPair: (token: `0x${string}` | '') => void
+  onSelectHost?: (host: CreateSeHostId | '') => void
   onWeight?: (value: string) => void
   testIdPrefix: string
 }) {
@@ -84,18 +125,21 @@ export function SeVaultSlot({
   const { connect, connectors } = useConnect()
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
-  const publicClient = usePublicClient({ chainId: selectedChainId })
-  const { isConnected, chainId: walletChainId } = useAccount()
+  const { address, isConnected, chainId: walletChainId, connector } = useAccount()
+  const { readClient } = useCreateChainClients(selectedChainId)
 
   const platform = useMemo(
     () => resolveSePlatform(selectedChainId, environment),
     [selectedChainId, environment],
   )
 
-  const [source, setSource] = useState<'listed' | 'build'>(listedVaults.length > 0 ? 'listed' : 'build')
+  const startSource = initialSlotSource(seHost, listedVaults.length > 0, hostPerSlot)
+  const [source, setSource] = useState<SlotSource>(startSource)
   const [tokenA, setTokenA] = useState<`0x${string}` | ''>('')
   const [tokenB, setTokenB] = useState<`0x${string}` | ''>('')
-  const [version, setVersion] = useState<PoolVersion>('v4')
+  const [version, setVersion] = useState<PoolVersion>(
+    seHost === 'uniswap-v3' || startSource === 'uniswap-v3' ? 'v3' : 'v4',
+  )
   const [fee, setFee] = useState(3000)
   const [tickSpacing, setTickSpacing] = useState(60)
   const [hooks, setHooks] = useState<string>(ZERO_ADDRESS)
@@ -106,11 +150,31 @@ export function SeVaultSlot({
   const [deployAnother, setDeployAnother] = useState(false)
   const [confirmedPoolKey, setConfirmedPoolKey] = useState('')
   const [discoverTick, setDiscoverTick] = useState(0)
-  const [v4Live, setV4Live] = useState(false)
   const [httpVaults, setHttpVaults] = useState<Address[]>([])
   const [localPair, setLocalPair] = useState<`0x${string}` | ''>(pairToken)
 
-  const readClient = useMemo(() => createAppReadClient(selectedChainId), [selectedChainId])
+  const morphoHost = seHost === 'morpho' || source === 'morpho'
+  const lockPoolType =
+    seHost === 'uniswap-v3' ||
+    seHost === 'uniswap-v4' ||
+    source === 'uniswap-v3' ||
+    source === 'uniswap-v4'
+
+  useEffect(() => {
+    if (seHost === 'uniswap-v3' || source === 'uniswap-v3') {
+      setVersion('v3')
+      setTickSpacing(tickSpacingForV3Fee(fee))
+    } else if (seHost === 'uniswap-v4' || source === 'uniswap-v4') {
+      setVersion('v4')
+    }
+  }, [seHost, source, fee])
+
+  useEffect(() => {
+    if (!hostPerSlot) return
+    if (seHost === 'uniswap-v3' || seHost === 'uniswap-v4' || seHost === 'morpho') {
+      setSource(seHost)
+    }
+  }, [hostPerSlot, seHost])
 
   const sorted = useMemo(() => {
     if (!tokenA || !tokenB || same(tokenA, tokenB)) return null
@@ -135,13 +199,21 @@ export function SeVaultSlot({
 
   const v4PoolId = v4Key ? toPoolId(v4Key) : undefined
 
-  const { data: v3PoolAddr, refetch: refetchV3Pool } = useReadContract({
+  const pkg = version === 'v4' ? platform.uniV4SePkg : platform.uniV3SePkg
+  const pairTokens = useMemo(
+    () => (sorted ? ([sorted.currency0, sorted.currency1] as Address[]) : undefined),
+    [sorted],
+  )
+
+  const building = isBuildSource(source) && !!sorted
+
+  const { data: v3PoolAddr, refetch: refetchV3Pool, isFetched: v3PoolFetched } = useReadContract({
     address: platform.v3Factory ?? undefined,
     abi: V3_FACTORY_ABI,
     functionName: 'getPool',
     args: sorted ? [sorted.currency0, sorted.currency1, fee] : undefined,
     chainId: selectedChainId,
-    query: { enabled: version === 'v3' && !!platform.v3Factory && !!sorted },
+    query: { enabled: building && version === 'v3' && !!platform.v3Factory },
   })
 
   const { data: v3Slot0, refetch: refetchV3Slot } = useReadContract({
@@ -149,74 +221,8 @@ export function SeVaultSlot({
     abi: V3_POOL_ABI,
     functionName: 'slot0',
     chainId: selectedChainId,
-    query: { enabled: version === 'v3' && !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS },
+    query: { enabled: building && version === 'v3' && !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS },
   })
-
-  const pkg = version === 'v4' ? platform.uniV4SePkg : platform.uniV3SePkg
-  const pairTokens = useMemo(
-    () => (sorted ? ([sorted.currency0, sorted.currency1] as Address[]) : undefined),
-    [sorted],
-  )
-
-  const candidateVaults = httpVaults
-
-  useEffect(() => {
-    if (source !== 'build' || !sorted) {
-      setV4Live(false)
-      setHttpVaults([])
-      return
-    }
-    let cancelled = false
-    const run = async () => {
-      try {
-        if (version === 'v4') {
-          if (!platform.poolManager || !v4PoolId) {
-            if (!cancelled) {
-              setV4Live(false)
-              setHttpVaults([])
-            }
-            return
-          }
-          const live = await readV4PoolInitialized(readClient, platform.poolManager, v4PoolId)
-          if (cancelled) return
-          setV4Live(live)
-          if (!live || !platform.registry || !pkg || !pairTokens) {
-            setHttpVaults([])
-            return
-          }
-          const raw = (await readClient.readContract({
-            address: platform.registry,
-            abi: VAULT_REGISTRY_SE_ABI,
-            functionName: 'vaultsOfPkgOfTokens',
-            args: [pkg, pairTokens],
-          })) as Address[]
-          if (!cancelled) setHttpVaults(uniqueAddresses(raw))
-          return
-        }
-        if (!cancelled) setV4Live(false)
-      } catch {
-        if (!cancelled) {
-          setV4Live(false)
-          setHttpVaults([])
-        }
-      }
-    }
-    void run()
-    return () => {
-      cancelled = true
-    }
-  }, [
-    source,
-    sorted,
-    version,
-    v4PoolId,
-    pairTokens,
-    pkg,
-    platform.poolManager,
-    platform.registry,
-    readClient,
-    discoverTick,
-  ])
 
   const { data: selectedVaultTokens, refetch: refetchVaultTokens } = useReadContract({
     address: selectedVault || undefined,
@@ -225,6 +231,77 @@ export function SeVaultSlot({
     chainId: selectedChainId,
     query: { enabled: !!selectedVault },
   })
+
+  const {
+    data: v4Slot0,
+    isFetched: v4SlotFetched,
+    refetch: refetchV4Slot,
+  } = useReadContract({
+    address: platform.stateView ?? undefined,
+    abi: V4_STATE_VIEW_ABI,
+    functionName: 'getSlot0',
+    args: v4PoolId ? [v4PoolId] : undefined,
+    chainId: selectedChainId,
+    query: {
+      enabled: building && version === 'v4' && !!platform.stateView && !!v4PoolId,
+      staleTime: 0,
+    },
+  })
+  const v4SlotLive = slot0IsInitialized(
+    Array.isArray(v4Slot0) ? (v4Slot0[0] as bigint) : undefined,
+  )
+
+  const widthMul = (() => {
+    const n = Number(width)
+    if (!Number.isFinite(n) || n < 1 || n > 1_000_000) return 1
+    return Math.floor(n)
+  })()
+
+  useEffect(() => {
+    if (!isBuildSource(source) || version !== 'v4') {
+      setHttpVaults([])
+      return
+    }
+    const found = v4SlotLive || confirmedPoolKey === pairKey
+    if (!found || !readClient || !platform.registry || !pkg || !pairTokens) {
+      setHttpVaults([])
+      return
+    }
+    let cancelled = false
+    const run = async () => {
+      try {
+        const raw = (await readClient.readContract({
+          address: platform.registry!,
+          abi: VAULT_REGISTRY_SE_ABI,
+          functionName: 'vaultsOfPkgOfTokens',
+          args: [pkg, pairTokens],
+        })) as Address[]
+        if (!cancelled) setHttpVaults(uniqueAddresses(raw))
+      } catch {
+        if (!cancelled) setHttpVaults([])
+      }
+    }
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [
+    source,
+    version,
+    v4SlotLive,
+    confirmedPoolKey,
+    pairKey,
+    readClient,
+    platform.registry,
+    pkg,
+    pairTokens,
+    discoverTick,
+  ])
+
+  const candidateVaults = httpVaults
+  const v3PoolExists = !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS
+  const v3Initialized = v3PoolExists && !!v3Slot0 && (v3Slot0[0] as bigint) > 0n
+  const v4Exists = v4SlotLive || (confirmedPoolKey !== '' && confirmedPoolKey === pairKey)
 
   const pairOptions = useMemo(() => {
     const addrs = (selectedVaultTokens as Address[] | undefined) ?? []
@@ -244,32 +321,34 @@ export function SeVaultSlot({
     if (!selectedVault || pairOptions.length === 0) return
     const ok = pairOptions.some((p) => effectivePair && same(p.address, effectivePair))
     if (ok) return
+    if (pairOptions.length === 1) {
+      const next = pairOptions[0]!.address as `0x${string}`
+      setLocalPair(next)
+      onSelectPair(next)
+      return
+    }
     const next = '' as const
     setLocalPair(next)
     if (pairToken) onSelectPair(next)
   }, [selectedVault, pairOptions, effectivePair, pairToken, onSelectPair])
 
   useEffect(() => {
-    if (source !== 'build') return
+    if (!isBuildSource(source)) return
     if (prevPairKey.current === pairKey) return
     prevPairKey.current = pairKey
     setDeployAnother(false)
     setConfirmedPoolKey('')
-    setV4Live(false)
     setHttpVaults([])
     if (selectedVault) onSelectVault('')
   }, [pairKey, source, selectedVault, onSelectVault])
 
   useEffect(() => {
-    if (source !== 'build') return
+    if (!isBuildSource(source)) return
     if (selectedVault) return
     if (confirmedPoolKey === pairKey) return
     if (candidateVaults.length === 1) onSelectVault(candidateVaults[0]!)
   }, [source, selectedVault, candidateVaults, onSelectVault, confirmedPoolKey, pairKey])
 
-  const v3PoolExists = !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS
-  const v3Initialized = v3PoolExists && !!v3Slot0 && (v3Slot0[0] as bigint) > BigInt(0)
-  const v4Exists = v4Live
   const justCreatedThisPool = confirmedPoolKey !== '' && confirmedPoolKey === pairKey
   const readyState = poolReadyState({
     version,
@@ -278,6 +357,19 @@ export function SeVaultSlot({
     v4Exists: v4Exists || (version === 'v4' && justCreatedThisPool),
   })
   const poolExists = readyState === 'ready' || justCreatedThisPool
+  const poolLookupDone =
+    !sorted ||
+    (version === 'v3'
+      ? !platform.v3Factory || v3PoolFetched
+      : !platform.stateView || v4SlotFetched)
+  const localWallet =
+    walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
+  const isWrongNetwork = Boolean(
+    isConnected &&
+      typeof walletChainId === 'number' &&
+      walletChainId !== selectedChainId &&
+      !localWallet,
+  )
 
   const listedOptions = useMemo(() => {
     const list = listedVaults.slice()
@@ -302,17 +394,16 @@ export function SeVaultSlot({
 
   const poolGate = resolveWalletGate({
     isConnected,
-    isWrongNetwork: false,
-    amountValid: canAct && networkReady,
-    hasPreview: canAct && networkReady,
+    isWrongNetwork,
+    amountValid: canAct && networkReady && poolLookupDone,
+    hasPreview: canAct && networkReady && poolLookupDone,
     needsTokenApproval: false,
     needsPermit2Approval: false,
-    executeLabel: poolActionLabel(readyState),
+    executeLabel: poolLookupDone ? poolActionLabel(readyState) : 'Checking pool',
   })
-
   const vaultGate = resolveWalletGate({
     isConnected,
-    isWrongNetwork: false,
+    isWrongNetwork,
     amountValid: canAct && pkgReady,
     hasPreview: canAct && pkgReady,
     needsTokenApproval: false,
@@ -320,28 +411,20 @@ export function SeVaultSlot({
     executeLabel: 'Deploy SE vault',
   })
 
-  const widthMul = (() => {
-    const n = Number(width)
-    if (!Number.isFinite(n) || n < 1 || n > 1_000_000) return 1
-    return Math.floor(n)
-  })()
-
   const refetchAll = async () => {
     setDiscoverTick((n) => n + 1)
-    await Promise.all([refetchV3Pool(), refetchV3Slot(), refetchVaultTokens()])
+    await Promise.all([refetchV3Pool(), refetchV3Slot(), refetchVaultTokens(), refetchV4Slot()])
   }
 
   const connectWallet = () => {
-    const connector =
+    const next =
       connectors.find((c) => c.id === 'metaMask' || c.id === 'metaMaskSDK') ??
       connectors.find((c) => c.id === 'injected') ??
       connectors[0]
-    if (connector) connect({ connector })
+    if (next) connect({ connector: next })
   }
 
-  const writeOnAppNetwork = async (params: Parameters<typeof writeContractAsync>[0]) => {
-    const localWallet =
-      walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
+  const writeOnWallet = async (params: Parameters<typeof writeContractAsync>[0]) => {
     if (
       typeof walletChainId === 'number' &&
       walletChainId !== selectedChainId &&
@@ -349,8 +432,24 @@ export function SeVaultSlot({
     ) {
       await switchChainAsync({ chainId: selectedChainId })
     }
-    const { chainId: _c, chain: _ch, ...rest } = params as typeof params & { chainId?: number; chain?: unknown }
+    const { chainId: _c, chain: _ch, ...rest } = params as typeof params & {
+      chainId?: number
+      chain?: unknown
+    }
     return writeContractAsync(rest)
+  }
+
+  const waitMined = async (hash: `0x${string}`) => {
+    const walletProvider = await resolveWalletProvider(
+      connector?.getProvider ? () => connector.getProvider() : undefined,
+    )
+    const receipt = await waitForCreateReceipt({
+      hash,
+      readClient,
+      walletProvider,
+      timeoutMs: 180_000,
+    })
+    return receipt
   }
 
   const runTx = async (kind: 'pool' | 'vault') => {
@@ -359,63 +458,85 @@ export function SeVaultSlot({
       setStatus('Pick two different tokens.')
       return
     }
-    if (!publicClient) {
+    if (!readClient) {
       setStatus('No RPC client.')
       return
     }
+    const walletProvider = await resolveWalletProvider(
+      connector?.getProvider ? () => connector.getProvider() : undefined,
+    )
+    if (!walletProvider) {
+      setStatus('Connect a wallet.')
+      return
+    }
     setPending(kind)
+    let submittedHash: `0x${string}` | undefined
     try {
       const sqrtPrice = sqrtPriceX96FromHuman(initPrice) || SQRT_PRICE_1_1
       if (kind === 'pool') {
         if (version === 'v3') {
           if (!platform.v3Factory) throw new Error('No Uniswap V3 factory on this network.')
           if (!v3PoolExists) {
-            const hash = await writeOnAppNetwork({
-              address: platform.v3Factory,
-              abi: V3_FACTORY_ABI,
-              functionName: 'createPool',
-              args: [sorted.currency0, sorted.currency1, fee],
-            })
-            await publicClient.waitForTransactionReceipt({ hash })
+            try {
+              submittedHash = await writeOnWallet({
+                address: platform.v3Factory,
+                abi: V3_FACTORY_ABI,
+                functionName: 'createPool',
+                args: [sorted.currency0, sorted.currency1, fee],
+              })
+              setStatus('Waiting for the pool transaction…')
+              await waitMined(submittedHash)
+            } catch (err) {
+              if (!isPoolInitWalletRevert(err)) throw err
+            }
           }
-          const pool = (await publicClient.readContract({
+          const pool = (await readClient.readContract({
             address: platform.v3Factory,
             abi: V3_FACTORY_ABI,
             functionName: 'getPool',
             args: [sorted.currency0, sorted.currency1, fee],
           })) as Address
           if (!pool || pool === ZERO_ADDRESS) throw new Error('Pool was not created.')
-          const slot = await publicClient.readContract({
+          const slot = await readClient.readContract({
             address: pool,
             abi: V3_POOL_ABI,
             functionName: 'slot0',
           })
           if (!slot || (slot[0] as bigint) === BigInt(0)) {
             try {
-              const hash = await writeOnAppNetwork({
+              submittedHash = await writeOnWallet({
                 address: pool,
                 abi: V3_POOL_ABI,
                 functionName: 'initialize',
                 args: [sqrtPrice],
               })
-              await publicClient.waitForTransactionReceipt({ hash })
+              setStatus('Waiting for the pool transaction…')
+              await waitMined(submittedHash)
             } catch (err) {
-              if (!isPoolAlreadyExistsError(err)) throw err
+              if (!isPoolInitWalletRevert(err)) throw err
             }
           }
         } else {
           if (!platform.poolManager) throw new Error('No Uniswap V4 pool manager on this network.')
           if (!v4Key) throw new Error('Need two tokens, fee, and tick spacing.')
-          try {
-            const hash = await writeOnAppNetwork({
-              address: platform.poolManager,
-              abi: V4_POOL_MANAGER_ABI,
-              functionName: 'initialize',
-              args: [v4Key, sqrtPrice],
-            })
-            await publicClient.waitForTransactionReceipt({ hash })
-          } catch (err) {
-            if (!isPoolAlreadyExistsError(err)) throw err
+          await requireContractCode({
+            walletProvider,
+            address: platform.poolManager,
+            label: 'The pool manager',
+          })
+          if (!v4Exists && !justCreatedThisPool) {
+            try {
+              submittedHash = await writeOnWallet({
+                address: platform.poolManager,
+                abi: V4_POOL_MANAGER_ABI,
+                functionName: 'initialize',
+                args: [v4Key, sqrtPrice],
+              })
+              setStatus('Waiting for the pool transaction…')
+              await waitMined(submittedHash)
+            } catch (err) {
+              if (!isPoolInitWalletRevert(err)) throw err
+            }
           }
         }
         setConfirmedPoolKey(pairKey)
@@ -426,33 +547,59 @@ export function SeVaultSlot({
         if (version === 'v4') {
           if (!platform.uniV4SePkg) throw new Error('No Uniswap V4 SE package on this network.')
           if (!v4Key) throw new Error('Need a V4 pool key.')
-          const hash = await writeOnAppNetwork({
+          await requireContractCode({
+            walletProvider,
+            address: platform.uniV4SePkg,
+            label: 'The strategy vault factory',
+          })
+          let gas: bigint | undefined
+          try {
+            gas = await readClient.estimateContractGas({
+              address: platform.uniV4SePkg,
+              abi: V4_SE_PKG_ABI,
+              functionName: 'deployVault',
+              args: [v4Key, w],
+              account: address,
+              gas: 16_000_000n,
+            })
+          } catch {
+            gas = undefined
+          }
+          submittedHash = await writeOnWallet({
             address: platform.uniV4SePkg,
             abi: V4_SE_PKG_ABI,
             functionName: 'deployVault',
             args: [v4Key, w],
+            ...(gas && gas > 1_000_000n ? { gas } : {}),
           })
-          const receipt = await publicClient.waitForTransactionReceipt({ hash })
+          setStatus('Waiting for the vault transaction…')
+          const receipt = await waitMined(submittedHash)
           vault = vaultFromReceipt(receipt.logs, platform.uniV4SePkg)
         } else {
           if (!platform.uniV3SePkg) throw new Error('No Uniswap V3 SE package on this network.')
+          await requireContractCode({
+            walletProvider,
+            address: platform.uniV3SePkg,
+            label: 'The strategy vault factory',
+          })
           const pool =
             v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS
               ? v3PoolAddr
-              : ((await publicClient.readContract({
+              : ((await readClient.readContract({
                   address: platform.v3Factory!,
                   abi: V3_FACTORY_ABI,
                   functionName: 'getPool',
                   args: [sorted.currency0, sorted.currency1, fee],
                 })) as Address)
           if (!pool || pool === ZERO_ADDRESS) throw new Error('Create the V3 pool first.')
-          const hash = await writeOnAppNetwork({
+          submittedHash = await writeOnWallet({
             address: platform.uniV3SePkg,
             abi: V3_SE_PKG_ABI,
             functionName: 'deployVault',
             args: [pool, w],
           })
-          const receipt = await publicClient.waitForTransactionReceipt({ hash })
+          setStatus('Waiting for the vault transaction…')
+          const receipt = await waitMined(submittedHash)
           vault = vaultFromReceipt(receipt.logs, platform.uniV3SePkg)
         }
         if (vault) {
@@ -463,7 +610,23 @@ export function SeVaultSlot({
       }
       await refetchAll()
     } catch (err) {
-      setStatus(parseContractError(err))
+      const parsed = parseContractError(err)
+      if (kind === 'pool' && isPoolInitWalletRevert(err)) {
+        setConfirmedPoolKey(pairKey)
+        setStatus('This pool already exists. Deploy the SE vault next.')
+        await refetchAll()
+      } else if (kind === 'pool' && submittedHash) {
+        setConfirmedPoolKey(pairKey)
+        setStatus('Wallet confirmed the pool. Deploy the SE vault next.')
+      } else if (
+        kind === 'pool' &&
+        /could not simulate|already exists|interaction failed|insufficient gas/i.test(parsed)
+      ) {
+        setConfirmedPoolKey(pairKey)
+        setStatus('This pool already exists. Deploy the SE vault next.')
+      } else {
+        setStatus(parsed)
+      }
     } finally {
       setPending(null)
     }
@@ -480,29 +643,91 @@ export function SeVaultSlot({
     onSelectPair(token)
   }
 
+  const pickSource = (next: SlotSource) => {
+    if (next === source) return
+    setSource(next)
+    if (selectedVault) onSelectVault('')
+    if (next === 'uniswap-v3') {
+      setVersion('v3')
+      setTickSpacing(tickSpacingForV3Fee(fee))
+    }
+    if (next === 'uniswap-v4') setVersion('v4')
+    onSelectHost?.(slotSourceToHost(next))
+  }
+
   return (
     <div className="space-y-4" data-testid={testIdPrefix}>
-      <div className="flex flex-wrap gap-2">
-        <Button
-          type="button"
-          size="sm"
-          variant={source === 'listed' ? 'primary' : 'secondary'}
-          onClick={() => setSource('listed')}
-        >
-          Listed SE vault
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant={source === 'build' ? 'primary' : 'secondary'}
-          onClick={() => setSource('build')}
-          data-testid={`${testIdPrefix}-build`}
-        >
-          Tokens and pool
-        </Button>
-      </div>
+      {hostPerSlot ? (
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'listed' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('listed')}
+            data-testid={`${testIdPrefix}-listed-mode`}
+          >
+            Listed SE vault
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'uniswap-v3' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('uniswap-v3')}
+            data-testid={`${testIdPrefix}-host-uniswap-v3`}
+          >
+            Uniswap V3
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'uniswap-v4' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('uniswap-v4')}
+            data-testid={`${testIdPrefix}-host-uniswap-v4`}
+          >
+            Uniswap V4
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'morpho' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('morpho')}
+            data-testid={`${testIdPrefix}-host-morpho`}
+          >
+            Morpho Blue
+          </Button>
+        </div>
+      ) : morphoHost ? null : (
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'listed' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('listed')}
+          >
+            Listed SE vault
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={source === 'build' ? 'primary' : 'secondary'}
+            onClick={() => pickSource('build')}
+            data-testid={`${testIdPrefix}-build`}
+          >
+            Tokens and pool
+          </Button>
+        </div>
+      )}
 
-      {source === 'listed' ? (
+      {morphoHost ? (
+        <MorphoMarketForm
+          tokens={tokens}
+          selectedVault={selectedVault}
+          onSelectVault={onSelectVault}
+          onSelectPair={onSelectPair}
+          persistPair={persistPair}
+          testIdPrefix={testIdPrefix}
+        />
+      ) : source === 'listed' ? (
         <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
           SE vault
           <select
@@ -520,7 +745,9 @@ export function SeVaultSlot({
           </select>
           {listedVaults.length === 0 ? (
             <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-              No listed SE vaults on this network. Use Tokens and pool to create one.
+              {hostPerSlot
+                ? 'No listed SE vaults on this network. Pick Uniswap V3, Uniswap V4, or Morpho Blue to create one.'
+                : 'No listed SE vaults on this network. Use Tokens and pool to create one.'}
             </p>
           ) : null}
         </label>
@@ -544,22 +771,24 @@ export function SeVaultSlot({
               testId={`${testIdPrefix}-token-b`}
               onChange={setTokenB}
             />
-            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-              Pool type
-              <select
-                className={inputClass}
-                value={version}
-                onChange={(e) => {
-                  const next = e.target.value as PoolVersion
-                  setVersion(next)
-                  setTickSpacing(tickSpacingForV3Fee(fee))
-                }}
-                data-testid={`${testIdPrefix}-version`}
-              >
-                <option value="v4">Uniswap V4</option>
-                <option value="v3">Uniswap V3</option>
-              </select>
-            </label>
+            {lockPoolType ? null : (
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Pool type
+                <select
+                  className={inputClass}
+                  value={version}
+                  onChange={(e) => {
+                    const next = e.target.value as PoolVersion
+                    setVersion(next)
+                    setTickSpacing(tickSpacingForV3Fee(fee))
+                  }}
+                  data-testid={`${testIdPrefix}-version`}
+                >
+                  <option value="v4">Uniswap V4</option>
+                  <option value="v3">Uniswap V3</option>
+                </select>
+              </label>
+            )}
             <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
               Fee
               <select
@@ -678,11 +907,15 @@ export function SeVaultSlot({
           ) : null}
 
           <div className="mt-4 flex flex-wrap gap-3">
-            {!poolExists ? (
+            {sorted && !poolLookupDone ? (
+              <p className="text-sm text-[var(--text-muted,#9aa3b2)]">Checking if this pool exists…</p>
+            ) : null}
+            {!poolExists && poolLookupDone ? (
               <ActionCta
                 gate={poolGate}
                 pendingLeg={pending === 'pool' ? 'execute' : null}
                 onConnect={connectWallet}
+                onSwitchNetwork={() => void switchChainAsync({ chainId: selectedChainId })}
                 onExecute={() => void runTx('pool')}
                 data-testid={`${testIdPrefix}-create-pool`}
               />
@@ -692,6 +925,7 @@ export function SeVaultSlot({
                 gate={vaultGate}
                 pendingLeg={pending === 'vault' ? 'execute' : null}
                 onConnect={connectWallet}
+                onSwitchNetwork={() => void switchChainAsync({ chainId: selectedChainId })}
                 onExecute={() => void runTx('vault')}
                 data-testid={`${testIdPrefix}-deploy-vault`}
               />
@@ -714,6 +948,7 @@ export function SeVaultSlot({
                 value={weight ?? ''}
                 onChange={(e) => onWeight(e.target.value)}
                 inputMode="decimal"
+                data-testid={`${testIdPrefix}-weight`}
               />
             </label>
           ) : null}
@@ -723,7 +958,9 @@ export function SeVaultSlot({
               className={inputClass}
               value={effectivePair}
               onChange={(e) => pickPair((e.target.value as `0x${string}`) || '')}
-              data-testid={persistPair ? 'create-pair-token' : `${testIdPrefix}-pair`}
+              data-testid={
+                persistPair && !hostPerSlot ? 'create-pair-token' : `${testIdPrefix}-pair`
+              }
             >
               <option value="">Select a pair token</option>
               {pairOptions.map((t) => (
@@ -734,7 +971,8 @@ export function SeVaultSlot({
             </select>
           </label>
           <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
-            Options are the tokens in this SE vault. Mint and bond settle against the pair token.
+            This is the pair token the DETF settles against. First bond can use this, the other
+            tokens this vault lists, or the vault token.
           </p>
           {pairOptions.length === 0 ? (
             <p className="text-xs text-[var(--text-muted,#9aa3b2)]">Reading vault tokens…</p>

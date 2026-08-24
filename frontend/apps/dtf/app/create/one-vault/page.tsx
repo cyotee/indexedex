@@ -1,7 +1,7 @@
 import { CreatePageFrame } from '../CreatePageFrame'
 
 export const metadata = {
-  title: 'Create: Single Pool — Down To Finance',
+  title: 'Create: one strategy — Down To Finance',
 }
 
 export default function CreateOneVaultPage() {

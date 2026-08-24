@@ -1,5 +1,9 @@
-import { redirect } from 'next/navigation'
+import { CreatePageFrame } from '../CreatePageFrame'
+
+export const metadata = {
+  title: 'Create: several strategies — Down To Finance',
+}
 
 export default function CreateWeightedPage() {
-  redirect('/create/one-vault')
+  return <CreatePageFrame initialTypeId="weighted" />
 }

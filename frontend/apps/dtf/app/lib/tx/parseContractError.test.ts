@@ -24,6 +24,44 @@ describe('parseContractError', () => {
     expect(parseContractError(new Error('insufficient funds for gas'))).toMatch(/balance/i)
   })
 
+  it('does not treat a revert selector as missing ETH', () => {
+    expect(
+      parseContractError({
+        message: 'insufficient funds for gas',
+        data: '0x3dec0665',
+      }),
+    ).toMatch(/pair-side book/i)
+  })
+
+  it('maps InsufficientTokenOut', () => {
+    expect(parseContractError({ data: '0x3dec0665', message: 'execution reverted' })).toMatch(
+      /could not add that token/i,
+    )
+  })
+
+  it('maps TransferFromFailed', () => {
+    expect(parseContractError({ data: '0x7939f424', message: 'execution reverted' })).toMatch(
+      /approve/i,
+    )
+  })
+
+  it('maps an already-initialized pool', () => {
+    expect(parseContractError(new Error('PoolAlreadyInitialized()'))).toMatch(/already exists/i)
+    expect(parseContractError({ data: '0x7983c051', message: 'execution reverted' })).toMatch(/already exists/i)
+  })
+
+  it('keeps a long factory error instead of the generic fallback', () => {
+    const msg =
+      'The connected wallet has no vault factory at this address. The app sees it on a different node. Point the wallet at the same RPC as the app, then try again.'
+    expect(parseContractError(new Error(msg))).toBe(msg)
+  })
+
+  it('maps MetaMask interaction-failed simulation', () => {
+    expect(parseContractError(new Error('MetaMask - Interaction Failed'))).toMatch(/simulate/i)
+    expect(parseContractError({ shortMessage: 'Internal JSON-RPC error.' })).toMatch(/simulate/i)
+  })
+
+
   it('returns safe fallback for unknown errors', () => {
     const msg = parseContractError({ weird: true })
     expect(msg.length).toBeGreaterThan(0)

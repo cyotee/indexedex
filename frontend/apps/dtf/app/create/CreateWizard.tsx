@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { Address } from 'viem'
-import { useReadContract, useReadContracts } from 'wagmi'
+import { useReadContracts } from 'wagmi'
 
 import { getBaseTokensForChain, getStrategyVaultTokensForChain, type TokenListEntry } from '@indexedex/protocol/tokenlists'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -12,7 +12,17 @@ import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { CREATE_DETF_TYPES, isOfferedCreateType, type CreateDetfTypeId } from './detfTypes'
+import {
+  CREATE_DETF_TYPES,
+  CREATE_SE_HOSTS,
+  isComingSoonCreateType,
+  isOfferedCreateType,
+  seHostMeta,
+  seHostNameTag,
+  seHostSymbolTag,
+  type CreateDetfTypeId,
+  type CreateSeHostId,
+} from './detfTypes'
 import { DetfDeployPanel } from './DetfDeployPanel'
 import { SeVaultSlot } from './SeVaultSlot'
 import {
@@ -25,10 +35,12 @@ import {
   claimSymbolFrom,
   concatDetfName,
   concatDetfSymbol,
+  concatWeightedDetfName,
+  concatWeightedDetfSymbol,
   CREATE_STEP_LABEL,
-  CREATE_STEPS,
   emptyPlan,
-  evenWeightPercents,
+  stepsFor,
+  evenWeightedSplit,
   loadStoredPlan,
   maxVaults,
   minVaults,
@@ -46,7 +58,8 @@ import {
   type CreatePlan,
   type CreateStepId,
   typeMeta,
-  weightTotal,
+  weightedWeightTotal,
+  weightsSumToHundred,
   withPriceLegs,
 } from './lib/createPlan'
 import { ERC20_META_ABI, VAULT_TOKENS_ABI } from './lib/seAbi'
@@ -57,7 +70,8 @@ const inputClass =
   'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)] placeholder:text-[var(--text-muted,#9aa3b2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent,#4FD44B)]'
 
 const STEP_TITLE: Record<CreateStepId, { lead: string; accent: string }> = {
-  shape: { lead: 'Pick the', accent: 'basket shape.' },
+  shape: { lead: 'How many', accent: 'strategies?' },
+  venue: { lead: 'Where does', accent: 'this strategy work?' },
   name: { lead: 'Name the', accent: 'DETF token.' },
   basket: { lead: 'Fill the', accent: 'basket.' },
   gates: { lead: 'Set mint', accent: 'and burn.' },
@@ -65,12 +79,18 @@ const STEP_TITLE: Record<CreateStepId, { lead: string; accent: string }> = {
 }
 
 const STEP_LEDE: Record<CreateStepId, string> = {
-  shape: 'Make a DETF. One token. One basket. The basket works in other apps. You get a bond you cannot cash out. Bond later to turn it on.',
-  name: 'Names start from the tokens in the SE vault. You can edit them. Blank bond or claim fields use the package default.',
+  shape:
+    'A strategy is one working position in another app. Pick one, several, or a small set of stablecoins. That choice picks the rest of the steps.',
+  venue: 'Pick a Uniswap V3 pool, a Uniswap V4 pool, or a Morpho market. The strategy vault sits on the one you pick.',
+  name: 'Names start from the tokens in the SE vault. You can edit them. Blank bond or claim fields use the default.',
   basket:
-    'Pick a listed SE vault, or pick two tokens and a Uniswap V3 or V4 pool. Create the pool if it is missing. Deploy the SE vault if that pool has none. Then pick the pair token from the vault.',
+    'Pick listed SE vaults, or build one from the market you chose. Create the pool if it is missing. Deploy the vault if that market has none.',
   gates: 'Set the peg price, the opening price, and whether mint and burn use Policy or Open.',
-  review: 'Check the shape, basket, names, peg price, opening price, mint and burn.',
+  review: 'Check the mix, basket, names, peg price, opening price, mint and burn.',
+}
+
+function firstStepAfterShape(typeId: CreateDetfTypeId | ''): CreateStepId {
+  return typeId === 'one-vault' ? 'venue' : 'basket'
 }
 
 function shortAddr(addr: string): string {
@@ -102,7 +122,10 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
     const base = emptyPlan()
     return initialTypeId ? applyType(base, initialTypeId) : base
   })
-  const [step, setStep] = useState<CreateStepId>(() => (initialTypeId ? 'basket' : 'shape'))
+  const [step, setStep] = useState<CreateStepId>(() => {
+    if (searchParams.get('step')) return parseStep(searchParams.get('step'))
+    return initialTypeId ? firstStepAfterShape(initialTypeId) : 'shape'
+  })
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [hydrated, setHydrated] = useState(false)
@@ -123,11 +146,12 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       let next = stored ? { ...emptyPlan(), ...stored } : prev
       const offered = initialTypeId && isOfferedCreateType(initialTypeId) ? initialTypeId : null
       if (offered) next = applyType(next, offered)
+      else if (next.typeId && isComingSoonCreateType(next.typeId)) next = applyType(next, '')
       else if (next.typeId && !isOfferedCreateType(next.typeId)) next = applyType(next, 'one-vault')
       return next
     })
     if (searchParams.get('step')) setStep(qStep)
-    else setStep(initialTypeId ? 'basket' : 'shape')
+    else setStep(initialTypeId ? firstStepAfterShape(initialTypeId) : 'shape')
     setHydrated(true)
     // URL + type on first paint only. Later step changes write the URL themselves.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,10 +175,11 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
   )
 
   const pickType = (typeId: CreateDetfTypeId) => {
+    if (isComingSoonCreateType(typeId)) return
     const next = applyType(plan, typeId)
     setPlan(next)
     saveStoredPlan(next)
-    go('basket', next)
+    setError(null)
   }
 
   const continueNext = () => {
@@ -163,12 +188,12 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       setError(blocked)
       return
     }
-    const nxt = nextStep(step)
+    const nxt = nextStep(step, plan)
     if (nxt) go(nxt)
   }
 
   const back = () => {
-    const prev = prevStep(step)
+    const prev = prevStep(step, plan)
     if (!prev) return
     if (prev === 'shape') {
       setError(null)
@@ -180,8 +205,10 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
   }
 
   const jumpTo = (target: CreateStepId) => {
-    const from = CREATE_STEPS.indexOf(step)
-    const to = CREATE_STEPS.indexOf(target)
+    const steps = stepsFor(plan)
+    const from = steps.indexOf(step)
+    const to = steps.indexOf(target)
+    if (to < 0) return
     if (to <= from) {
       if (target === 'shape') {
         setError(null)
@@ -193,7 +220,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       return
     }
     for (let i = 0; i < to; i++) {
-      const id = CREATE_STEPS[i]!
+      const id = steps[i]!
       const blocked = canLeaveStep(id, plan)
       if (blocked) {
         setError(blocked)
@@ -203,6 +230,13 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       }
     }
     go(target)
+  }
+
+  const pickHost = (seHost: CreateSeHostId) => {
+    const next = { ...plan, seHost }
+    setPlan(next)
+    saveStoredPlan(next)
+    setError(null)
   }
 
   const copyPlan = async () => {
@@ -235,16 +269,21 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
             <span className="landing-lab__h1-accent">{STEP_TITLE[step].accent}</span>
           </h1>
           <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-            {STEP_LEDE[step]}
+            {step === 'name' && plan.typeId === 'weighted'
+              ? 'Names start from the tokens in the basket, the strategies you picked, and the weights. DETF token first, then each strategy. You can edit them.'
+              : step === 'basket' && plan.typeId === 'weighted'
+                ? 'Pick listed SE vaults, or build one per strategy. The reserve also holds the DETF token. Give that token a weight too.'
+                : STEP_LEDE[step]}
           </p>
           {type && step !== 'shape' ? (
             <p className="mt-3 text-sm text-[var(--accent,#4FD44B)]">
-              {type.kicker}: {type.title}
+              {type.title}
+              {plan.seHost && step !== 'venue' ? ` · ${seHostMeta(plan.seHost)?.title}` : ''}
             </p>
           ) : null}
         </section>
 
-        <Stepper step={step} onJump={jumpTo} />
+        <Stepper steps={stepsFor(plan)} step={step} onJump={jumpTo} />
 
         <form
           data-testid={`create-step-${step}`}
@@ -254,6 +293,7 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
           }}
         >
           {step === 'shape' ? <StepShape plan={plan} onPick={pickType} /> : null}
+          {step === 'venue' ? <StepVenue plan={plan} onPick={pickHost} /> : null}
           {step === 'name' ? <StepName plan={plan} setPlan={setPlan} tokens={tokens} /> : null}
           {step === 'basket' ? (
             <StepBasket plan={plan} setPlan={setPlan} vaults={vaults} tokens={tokens} />
@@ -285,8 +325,17 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
               </Button>
             ) : null}
             {step !== 'review' ? (
-              <Button type="submit" data-testid="create-next">
-                {step === 'shape' ? 'Continue' : `Continue to ${CREATE_STEP_LABEL[nextStep(step)!]}`}
+              <Button
+                type="submit"
+                data-testid="create-next"
+                disabled={
+                  (step === 'shape' && (!plan.typeId || isComingSoonCreateType(plan.typeId))) ||
+                  (step === 'venue' && !plan.seHost)
+                }
+              >
+                {step === 'shape' || step === 'venue'
+                  ? 'Continue'
+                  : `Continue to ${CREATE_STEP_LABEL[nextStep(step, plan)!]}`}
               </Button>
             ) : null}
             <Link href="/learn">
@@ -308,11 +357,19 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
   )
 }
 
-function Stepper({ step, onJump }: { step: CreateStepId; onJump: (s: CreateStepId) => void }) {
-  const current = CREATE_STEPS.indexOf(step)
+function Stepper({
+  steps,
+  step,
+  onJump,
+}: {
+  steps: CreateStepId[]
+  step: CreateStepId
+  onJump: (s: CreateStepId) => void
+}) {
+  const current = steps.indexOf(step)
   return (
     <ol className="flex flex-wrap gap-2" aria-label="Create steps">
-      {CREATE_STEPS.map((id, i) => {
+      {steps.map((id, i) => {
         const active = id === step
         const done = i < current
         return (
@@ -349,32 +406,109 @@ function StepShape({
 }) {
   return (
     <section>
-      <p className="landing-section-label">Type</p>
+      <p className="landing-section-label">Include</p>
       <h2 className="mt-2 mb-5 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
-        Single Pool.
+        What goes in the basket.
       </h2>
-      <div className="grid max-w-xl grid-cols-1 gap-4">
-        {CREATE_DETF_TYPES.map((t, i) => {
-          const selected = plan.typeId === t.id
+      <div className="grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
+        {CREATE_DETF_TYPES.map((t) => {
+          const soon = !!t.comingSoon
+          const selected = !soon && plan.typeId === t.id
           const inner = (
             <>
               <p className="landing-section-label">{t.kicker}</p>
               <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">{t.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">{t.blurb}</p>
+              {!soon ? (
+                <p className="mt-4 text-sm text-[var(--accent,#4FD44B)]">
+                  {selected ? 'Selected' : 'Include this'}
+                </p>
+              ) : null}
+            </>
+          )
+          return (
+            <div key={t.id} className="relative h-full">
+              <button
+                type="button"
+                onClick={() => onPick(t.id)}
+                disabled={soon}
+                data-testid={`create-type-${t.id}`}
+                aria-pressed={selected}
+                aria-disabled={soon || undefined}
+                className={[
+                  'group h-full w-full text-left',
+                  soon ? 'cursor-not-allowed' : '',
+                ].join(' ')}
+              >
+                {selected ? (
+                  <div className="landing-feature-hero h-full rounded-xl p-6">{inner}</div>
+                ) : (
+                  <Card
+                    className={[
+                      'h-full',
+                      soon
+                        ? 'opacity-40 grayscale'
+                        : 'transition-colors group-hover:border-[var(--border-accent,rgba(79,212,75,0.45))]',
+                    ].join(' ')}
+                  >
+                    {inner}
+                  </Card>
+                )}
+              </button>
+              {soon ? (
+                <div
+                  className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                  data-testid={`create-type-${t.id}-soon`}
+                >
+                  <span className="rounded-md bg-[var(--surface-0,#0a0a0a)]/85 px-3 py-1.5 text-sm font-semibold tracking-wide text-[var(--text-primary,#EDEDED)]">
+                    Coming Soon
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+function StepVenue({
+  plan,
+  onPick,
+}: {
+  plan: CreatePlan
+  onPick: (id: CreateSeHostId) => void
+}) {
+  return (
+    <section>
+      <p className="landing-section-label">Market</p>
+      <h2 className="mt-2 mb-5 text-2xl font-semibold tracking-tight text-[var(--text-primary,#EDEDED)]">
+        Uniswap or Morpho.
+      </h2>
+      <div className="grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
+        {CREATE_SE_HOSTS.map((h) => {
+          const selected = plan.seHost === h.id
+          const inner = (
+            <>
+              <p className="landing-section-label">{h.kicker}</p>
+              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">{h.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">{h.blurb}</p>
               <p className="mt-4 text-sm text-[var(--accent,#4FD44B)]">
-                {selected ? 'Selected' : 'Use this type'}
+                {selected ? 'Selected' : 'Use this'}
               </p>
             </>
           )
           return (
             <button
-              key={t.id}
+              key={h.id}
               type="button"
-              onClick={() => onPick(t.id)}
-              data-testid={`create-type-${t.id}`}
+              onClick={() => onPick(h.id)}
+              data-testid={`create-host-${h.id}`}
+              aria-pressed={selected}
               className="group h-full text-left"
             >
-              {i === 0 || selected ? (
+              {selected ? (
                 <div className="landing-feature-hero h-full rounded-xl p-6">{inner}</div>
               ) : (
                 <Card className="h-full transition-colors group-hover:border-[var(--border-accent,rgba(79,212,75,0.45))]">
@@ -399,21 +533,40 @@ function StepName({
   tokens: TokenListEntry[]
 }) {
   const { selectedChainId } = useSelectedNetwork()
-  const vault = plan.vaults[0]
-  const lastApplied = useRef({ vault: '', name: '', symbol: '' })
+  const weighted = plan.typeId === 'weighted'
+  const vaults = plan.vaults
+  const vaultKey = vaults.join(',').toLowerCase()
+  const hostKey = weighted ? plan.seHosts.slice(0, vaults.length).join(',') : plan.seHost
+  const weightKey = weighted
+    ? [plan.detfWeight, ...plan.weights.slice(0, vaults.length)].join(',')
+    : ''
+  const lastApplied = useRef({ vault: '', host: '', weight: '', name: '', symbol: '' })
 
-  const { data: vaultTokenAddrs } = useReadContract({
-    address: vault || undefined,
-    abi: VAULT_TOKENS_ABI,
-    functionName: 'vaultTokens',
-    chainId: selectedChainId,
-    query: { enabled: !!vault },
+  const { data: vaultTokenResults } = useReadContracts({
+    contracts: vaults.map((address) => ({
+      address,
+      abi: VAULT_TOKENS_ABI,
+      functionName: 'vaultTokens' as const,
+      chainId: selectedChainId,
+    })),
+    query: { enabled: vaults.length > 0 },
   })
 
-  const addrs = useMemo(
-    () => ((vaultTokenAddrs as Address[] | undefined) ?? []).filter((a) => !!a),
-    [vaultTokenAddrs],
-  )
+  const addrs = useMemo(() => {
+    const out: Address[] = []
+    const seen = new Set<string>()
+    for (const r of vaultTokenResults ?? []) {
+      if (r.status !== 'success' || !r.result) continue
+      for (const a of r.result as Address[]) {
+        if (!a) continue
+        const k = a.toLowerCase()
+        if (seen.has(k)) continue
+        seen.add(k)
+        out.push(a)
+      }
+    }
+    return out
+  }, [vaultTokenResults])
 
   const { data: onchainMeta } = useReadContracts({
     contracts: addrs.flatMap((address) => [
@@ -435,32 +588,81 @@ function StepName({
         symbol: known?.symbol || onchainSymbol,
       }
     })
-    return {
-      name: concatDetfName(rows),
-      symbol: concatDetfSymbol(rows),
+    if (weighted) {
+      const input = {
+        tokens: rows,
+        strategySymbols: plan.seHosts.slice(0, plan.vaults.length).map((h) => seHostSymbolTag(h)),
+        detfWeightPct: plan.detfWeight,
+        pairWeightPcts: plan.weights.slice(0, plan.vaults.length),
+      }
+      return {
+        name: concatWeightedDetfName(input),
+        symbol: concatWeightedDetfSymbol(input),
+      }
     }
-  }, [addrs, onchainMeta, tokens])
+    const hint = {
+      strategyName: seHostNameTag(plan.seHost),
+      strategySymbol: seHostSymbolTag(plan.seHost),
+    }
+    return {
+      name: concatDetfName(rows, hint),
+      symbol: concatDetfSymbol(rows, hint),
+    }
+  }, [
+    addrs,
+    onchainMeta,
+    tokens,
+    weighted,
+    plan.seHost,
+    plan.seHosts,
+    plan.vaults.length,
+    plan.detfWeight,
+    plan.weights,
+  ])
 
   useEffect(() => {
-    if (!vault || (!suggested.name && !suggested.symbol)) return
-    const vaultChanged = lastApplied.current.vault.toLowerCase() !== vault.toLowerCase()
+    if (vaults.length === 0 || (!suggested.name && !suggested.symbol)) return
+    if (weighted && addrs.length === 0) return
+    const vaultChanged = lastApplied.current.vault !== vaultKey
+    const hostChanged = lastApplied.current.host !== hostKey
+    const weightChanged = lastApplied.current.weight !== weightKey
     const nameUnlocked = !plan.name.trim() || plan.name === lastApplied.current.name
     const symbolUnlocked = !plan.symbol.trim() || plan.symbol === lastApplied.current.symbol
-    if (!vaultChanged && !nameUnlocked && !symbolUnlocked) return
-    const nextName = vaultChanged || nameUnlocked ? suggested.name : plan.name
-    const nextSymbol = vaultChanged || symbolUnlocked ? suggested.symbol : plan.symbol
-    lastApplied.current = { vault, name: suggested.name, symbol: suggested.symbol }
+    if (!vaultChanged && !hostChanged && !weightChanged && !nameUnlocked && !symbolUnlocked) return
+    const nextName =
+      vaultChanged || hostChanged || weightChanged || nameUnlocked ? suggested.name : plan.name
+    const nextSymbol =
+      vaultChanged || hostChanged || weightChanged || symbolUnlocked ? suggested.symbol : plan.symbol
+    lastApplied.current = {
+      vault: vaultKey,
+      host: hostKey,
+      weight: weightKey,
+      name: suggested.name,
+      symbol: suggested.symbol,
+    }
     if (nextName === plan.name && nextSymbol === plan.symbol) return
     setPlan({ ...plan, name: nextName, symbol: nextSymbol })
-  }, [plan, setPlan, suggested.name, suggested.symbol, vault])
+  }, [
+    plan,
+    setPlan,
+    suggested.name,
+    suggested.symbol,
+    vaultKey,
+    hostKey,
+    weightKey,
+    vaults.length,
+    weighted,
+    addrs.length,
+  ])
 
   return (
     <div className="space-y-5">
       <Card>
         <p className="landing-section-label">DETF token</p>
         <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          Filled from the names and symbols of the tokens in the SE vault. Edit if you want a
-          different DETF name.
+          {weighted
+            ? 'Defaults use the tokens in each vault, the strategy on each slot (V3, V4, or Morpho Blue), and the weights with the DETF token first. Edit if you want a different DETF name.'
+            : 'Defaults use the vault tokens plus the strategy you picked (Uniswap V3, Uniswap V4, or Morpho Blue). Edit if you want a different DETF name.'}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
@@ -472,7 +674,7 @@ function StepName({
               maxLength={40}
               autoComplete="off"
               data-testid="create-name"
-              placeholder={suggested.name || 'Double Dollar'}
+              placeholder={suggested.name || 'Double Dollar DETF'}
             />
           </label>
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
@@ -481,15 +683,19 @@ function StepName({
               className={`${inputClass} font-mono uppercase`}
               value={plan.symbol}
               onChange={(e) => setPlan({ ...plan, symbol: e.target.value })}
-              maxLength={12}
+              maxLength={20}
               autoComplete="off"
               data-testid="create-symbol"
-              placeholder={suggested.symbol || '$$DETF'}
+              placeholder={suggested.symbol || '$$-DETF'}
             />
           </label>
         </div>
         <p className="mt-2 text-[11px] text-[var(--text-muted,#9aa3b2)]">
-          Name 2–40 characters. Symbol 2–12 letters, numbers, $, or a hyphen.
+          Name 2–40 characters. Symbol 2–20 letters, numbers, $, or a hyphen. Those caps are from
+          this form so names stay short in wallets.
+          {weighted
+            ? ' Defaults add strategies, DETF-first weights, and DETF.'
+            : ' Defaults add the strategy and DETF.'}
         </p>
       </Card>
 
@@ -769,21 +975,39 @@ function StepBasket({
       return
     }
     const next = plan.vaults.slice()
+    const nextHosts = plan.seHosts.slice()
+    const nextPairs = plan.pairTokens.slice()
     if (!vault) {
-      if (index < next.length) next.splice(index, 1)
+      if (index < next.length) {
+        next.splice(index, 1)
+        if (index < nextHosts.length) nextHosts.splice(index, 1)
+        if (index < nextPairs.length) nextPairs.splice(index, 1)
+      }
     } else if (index < next.length) {
+      const changed = next[index]?.toLowerCase() !== vault.toLowerCase()
       next[index] = vault
+      if (changed) {
+        while (nextPairs.length < next.length) nextPairs.push('')
+        nextPairs[index] = ''
+      }
     } else {
       next.push(vault)
+      while (nextHosts.length < next.length) nextHosts.push('')
+      while (nextPairs.length < next.length) nextPairs.push('')
     }
+    const split =
+      typeId === 'weighted' && next.length !== plan.vaults.length
+        ? evenWeightedSplit(next.length)
+        : null
     setPlan(
       withPriceLegs({
         ...plan,
         vaults: next,
-        weights:
-          typeId === 'weighted' && next.length !== plan.vaults.length
-            ? evenWeightPercents(next.length)
-            : plan.weights,
+        seHosts: nextHosts.slice(0, next.length),
+        pairTokens: nextPairs.slice(0, next.length),
+        ...(split
+          ? { detfWeight: split.detfWeight, weights: split.weights }
+          : { weights: plan.weights }),
       }),
     )
   }
@@ -795,30 +1019,105 @@ function StepBasket({
     setPlan({ ...plan, weights })
   }
 
+  const setHostAt = (index: number, host: CreateSeHostId | '') => {
+    const nextHosts = plan.seHosts.slice()
+    while (nextHosts.length < Math.max(index + 1, plan.vaults.length)) nextHosts.push('')
+    nextHosts[index] = host
+    setPlan({ ...plan, seHosts: nextHosts })
+  }
+
+  const setPairAt = (index: number, pair: `0x${string}` | '') => {
+    const nextPairs = plan.pairTokens.slice()
+    while (nextPairs.length < Math.max(index + 1, plan.vaults.length)) nextPairs.push('')
+    nextPairs[index] = pair
+    setPlan({ ...plan, pairTokens: nextPairs })
+  }
+
+  const weightSum = weightedWeightTotal(plan)
+  const weightsOk = weightsSumToHundred(weightSum)
+
   return (
     <div className="space-y-5">
       <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-        {typeId === 'one-vault'
-          ? 'Pick a listed SE vault or build one from a Uniswap pool. Then pick the pair token from that vault.'
-          : `Pick ${min}–${max} SE vaults. ${typeId === 'weighted' ? 'Weights must add to 100%.' : ''} Each vault can be listed or built from a pool.`}
+        {typeId === 'one-vault' && plan.seHost === 'morpho'
+          ? 'Pick a lending token and a collateral token. If that Morpho market is not on this network yet, create it, then deploy the strategy vault.'
+          : typeId === 'one-vault'
+          ? 'Pick a listed SE vault or build one from the pool type you chose. Then pick the pair token from that vault.'
+          : typeId === 'stables'
+            ? `Pick ${min}–${max} dollar vaults. Each one can be listed or built from a pool.`
+            : typeId === 'weighted'
+              ? `Pick ${min}–${max} strategy vaults. The reserve also holds the DETF token, so it needs a weight too. DETF plus strategies must add to 100%. Each at least 1%.`
+              : `Pick ${min}–${max} strategy vaults. Each vault can be listed or built from a pool.`}
       </p>
+
+      {typeId === 'weighted' ? (
+        <>
+          <div data-testid="create-weight-total">
+            <p className="text-sm text-[var(--text-primary,#EDEDED)]">
+              Weights total {weightSum}%
+            </p>
+            {weightsOk ? null : (
+              <p
+                className="mt-1 text-sm text-[var(--danger,#E6386A)]"
+                role="alert"
+                data-testid="create-weight-warning"
+              >
+                Weights must add to 100%.
+              </p>
+            )}
+          </div>
+          <Card>
+            <p className="landing-section-label">DETF token</p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+              The weighted reserve holds the DETF token plus each strategy pair. Set how much of
+              the reserve is the DETF token. If 100% does not split evenly, the leftover goes here.
+            </p>
+            <label className="mt-4 flex items-center gap-2 text-sm text-[var(--text-primary,#EDEDED)]">
+              Weight %
+              <input
+                className="w-20 rounded-md border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-2 py-1 font-mono text-sm"
+                value={plan.detfWeight}
+                onChange={(e) => setPlan({ ...plan, detfWeight: e.target.value })}
+                inputMode="decimal"
+                data-testid="create-detf-weight"
+              />
+            </label>
+          </Card>
+        </>
+      ) : null}
 
       {Array.from({ length: slotCount }, (_, i) => (
         <Card key={`slot-${i}`}>
-          {slotCount > 1 ? <p className="landing-section-label">Vault {i + 1}</p> : null}
+          {slotCount > 1 ? (
+            <p className="landing-section-label">
+              {typeId === 'stables' ? `Stablecoin ${i + 1}` : `Strategy ${i + 1}`}
+            </p>
+          ) : null}
           <div className={slotCount > 1 ? 'mt-4' : undefined}>
             <SeVaultSlot
-              listedVaults={vaults}
+              listedVaults={
+                typeId === 'one-vault' && plan.seHost && plan.seHost !== 'uniswap-v4' ? [] : vaults
+              }
               tokens={tokens}
+              seHost={typeId === 'one-vault' ? plan.seHost : (plan.seHosts[i] ?? '')}
+              hostPerSlot={typeId === 'weighted'}
               selectedVault={plan.vaults[i] ?? ''}
-              pairToken={typeId === 'one-vault' && i === 0 ? plan.pairToken : ''}
-              persistPair={typeId === 'one-vault' && i === 0}
+              pairToken={
+                typeId === 'one-vault' && i === 0
+                  ? plan.pairToken
+                  : typeId === 'weighted'
+                    ? (plan.pairTokens[i] ?? '')
+                    : ''
+              }
+              persistPair={(typeId === 'one-vault' && i === 0) || typeId === 'weighted'}
               weight={plan.weights[i]}
               showWeight={typeId === 'weighted'}
               onSelectVault={(vault) => setVaultAt(i, vault)}
               onSelectPair={(pairToken) => {
                 if (typeId === 'one-vault' && i === 0) setPlan({ ...plan, pairToken })
+                if (typeId === 'weighted') setPairAt(i, pairToken)
               }}
+              onSelectHost={typeId === 'weighted' ? (host) => setHostAt(i, host) : undefined}
               onWeight={typeId === 'weighted' ? (value) => setWeight(i, value) : undefined}
               testIdPrefix={`create-slot-${i}`}
             />
@@ -834,14 +1133,8 @@ function StepBasket({
           onClick={() => setOpenSlots((n) => Math.min(max, n + 1))}
           data-testid="create-add-vault-slot"
         >
-          Add another vault
+          {typeId === 'stables' ? 'Add another stablecoin' : 'Add another strategy'}
         </Button>
-      ) : null}
-
-      {typeId === 'weighted' && plan.vaults.length > 0 ? (
-        <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-          Weights total {weightTotal(plan.weights.slice(0, plan.vaults.length))}%. Need 100%.
-        </p>
       ) : null}
 
       {typeId === 'cash-buffer' ? (
@@ -928,7 +1221,10 @@ function StepReview({
           </h3>
           <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">{plan.name.trim() || '—'}</p>
           <dl className="mt-4 space-y-2 text-sm">
-            <Row k="Shape" v={type ? type.title : '—'} />
+            <Row k="Include" v={type ? type.title : '—'} />
+            {plan.typeId === 'one-vault' ? (
+              <Row k="Market" v={seHostMeta(plan.seHost)?.title ?? '—'} />
+            ) : null}
             <Row k="Claim token" v={`${resolvedClaimName(plan) || '—'} · ${resolvedClaimSymbol(plan) || '—'}`} />
             <Row k="Bond NFT" v={`${resolvedBondName(plan) || '—'} · ${resolvedBondSymbol(plan) || '—'}`} />
           </dl>
@@ -956,14 +1252,30 @@ function StepReview({
       <Card>
         <p className="landing-section-label">Basket</p>
         <ul className="mt-3 divide-y divide-[var(--border-subtle,rgba(255,255,255,0.08))]">
+          {plan.typeId === 'weighted' ? (
+            <li className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+              <div>
+                <div className="text-[var(--text-primary,#EDEDED)]">DETF token</div>
+                <div className="text-[11px] text-[var(--text-muted,#9aa3b2)]">DETF token in the reserve</div>
+              </div>
+              <span className="font-mono text-[var(--text-muted,#9aa3b2)]">{plan.detfWeight || '0'}%</span>
+            </li>
+          ) : null}
           {plan.vaults.map((addr, i) => {
             const v = findToken(vaults, addr)
             const w = plan.typeId === 'weighted' ? plan.weights[i] : null
+            const host = plan.typeId === 'weighted' ? seHostMeta(plan.seHosts[i] ?? '')?.title : null
+            const pair = plan.typeId === 'weighted' ? plan.pairTokens[i] : null
+            const pairMeta = pair ? findToken(tokens, pair) : null
             return (
               <li key={addr} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
                 <div>
                   <div className="text-[var(--text-primary,#EDEDED)]">{v?.symbol ?? shortAddr(addr)}</div>
-                  <div className="text-[11px] text-[var(--text-muted,#9aa3b2)]">{v?.name ?? addr}</div>
+                  <div className="text-[11px] text-[var(--text-muted,#9aa3b2)]">
+                    {host ? `${host} · ` : ''}
+                    {pairMeta?.symbol ? `Pair ${pairMeta.symbol} · ` : pair ? `Pair ${shortAddr(pair)} · ` : ''}
+                    {v?.name ?? addr}
+                  </div>
                 </div>
                 {w != null ? <span className="font-mono text-[var(--text-muted,#9aa3b2)]">{w}%</span> : null}
               </li>

@@ -26,6 +26,8 @@ export type SePlatform = {
   weightedHookPkg: Address | null
   morpho: Address | null
   morphoBlueSePkg: Address | null
+  morphoIrm: Address | null
+  morphoOracle: Address | null
   hookFactory: Address | null
   diamondPackageFactory: Address | null
   feeOracle: Address | null
@@ -56,6 +58,8 @@ export function resolveSePlatform(
     weightedHookPkg: asAddr(platform.weightedHookPkg),
     morpho: asAddr(platform.morpho) ?? asAddr(platform.morphoBlue),
     morphoBlueSePkg: asAddr(platform.morphoBlueSePkg),
+    morphoIrm: asAddr(platform.morphoIrm) ?? asAddr(platform.morphoAdaptiveCurveIrm),
+    morphoOracle: asAddr(platform.morphoOracle),
     hookFactory: asAddr(platform.hookFactory),
     diamondPackageFactory: asAddr(platform.diamondPackageFactory),
     feeOracle: asAddr(platform.indexedexManager) ?? asAddr(platform.feeOracle),

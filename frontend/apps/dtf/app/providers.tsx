@@ -4,7 +4,6 @@ import { WagmiProvider, createConfig, createStorage } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { base, baseSepolia, foundry, localhost, sepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { http } from 'viem';
 
 import {
   DeploymentEnvironmentContext,
@@ -21,8 +20,10 @@ import {
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from '@indexedex/protocol/networkSelection'
-import { robinhoodAnvil, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains'
+import { robinhood, robinhoodAnvil, robinhoodTestnet, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains'
 import { BrandProvider } from './lib/brandContext'
+import { isLocalRobinhoodTestnet, robinhoodTestnetRpcUrl } from './lib/localRpc'
+import { walletFirstTransport } from './lib/walletFirstTransport'
 
 const queryClient = new QueryClient()
 const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545'
@@ -84,9 +85,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const config = useMemo(() => {
     const useLocalRpc = isLocalSepoliaEnvironment(environment)
-    // DTF always exposes Robinhood as Anvil-local RPC for launch testing.
-    const rhChain = robinhoodAnvil(localRpcUrl)
-    const rhTestnetChain = robinhoodTestnetAnvil(localRpcUrl)
+    const rhChain = isLocalRobinhoodTestnet() ? robinhoodAnvil(localRpcUrl) : robinhood
+    const rhTestnetChain = isLocalRobinhoodTestnet()
+      ? robinhoodTestnetAnvil(robinhoodTestnetRpcUrl())
+      : robinhoodTestnet
 
     return createConfig({
       chains: [rhChain, rhTestnetChain, sepolia, baseSepolia, foundry, localhost, base],
@@ -99,13 +101,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
         injected(),
       ],
       transports: {
-        [CHAIN_ID_ROBINHOOD]: http(localRpcUrl),
-        [CHAIN_ID_ROBINHOOD_TESTNET]: http(localRpcUrl),
-        [foundry.id]: http(localRpcUrl),
-        [localhost.id]: http(localRpcUrl),
-        [base.id]: http(base.rpcUrls.default.http[0]),
-        [sepolia.id]: http(useLocalRpc ? localRpcUrl : sepoliaRpcUrl),
-        [baseSepolia.id]: http(useLocalRpc ? baseRpcUrl : baseSepoliaRpcUrl),
+        [CHAIN_ID_ROBINHOOD]: walletFirstTransport(rhChain.rpcUrls.default.http[0]),
+        [CHAIN_ID_ROBINHOOD_TESTNET]: walletFirstTransport(rhTestnetChain.rpcUrls.default.http[0]),
+        [foundry.id]: walletFirstTransport(localRpcUrl),
+        [localhost.id]: walletFirstTransport(localRpcUrl),
+        [base.id]: walletFirstTransport(base.rpcUrls.default.http[0]),
+        [sepolia.id]: walletFirstTransport(useLocalRpc ? localRpcUrl : sepoliaRpcUrl),
+        [baseSepolia.id]: walletFirstTransport(useLocalRpc ? baseRpcUrl : baseSepoliaRpcUrl),
       },
     })
   }, [environment])

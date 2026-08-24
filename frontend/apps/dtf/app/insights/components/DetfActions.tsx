@@ -1,20 +1,32 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { erc20Abi, formatUnits, parseUnits } from 'viem'
-import { useAccount, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
+import { useAccount, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
 
-import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
+import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
+import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
+import {
+  asBondLockTerms,
+  clampLockDays,
+  lockRangeFromBondTerms,
+  lockSecondsFromDays as lockSecondsFromNumber,
+} from '../../create/lib/bondLock'
+import { FEE_ORACLE_BOND_ABI } from '../../create/lib/detfAbi'
+import { resolveSePlatform } from '../../create/lib/sePlatform'
+import { parseContractError } from '../../lib/tx/parseContractError'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
 import { isZero } from '../lib/tokenLabels'
-import { lockSecondsFromDays, MAX_LOCK_DAYS, MIN_LOCK_DAYS } from '../lib/lockSeconds'
+import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
+import type { ActionToken } from '../lib/actionTokens'
+import { DetfStaking } from './DetfStaking'
 
-export type ActionToken = { address: `0x${string}`; symbol: string }
+export type { ActionToken }
 
 const inputClass =
   'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
@@ -37,28 +49,75 @@ export function DetfActions({
   detfSymbol,
   pairTokens,
   chainId,
+  claimToken,
+  claimSymbol,
+  reserveLive,
+  initialTab,
+  explorer,
 }: {
   detf?: `0x${string}`
   detfSymbol: string
   pairTokens: ActionToken[]
   chainId: number
+  claimToken?: `0x${string}`
+  claimSymbol?: string
+  reserveLive?: boolean
+  initialTab?: string
+  explorer?: string
 }) {
   const { address, isConnected, chainId: walletChainId } = useAccount()
+  const { environment } = useDeploymentEnvironment()
   const publicClient = usePublicClient({ chainId })
-  const { writeContractAsync, isPending } = useWriteContract()
-  const targetChain = resolveAppChain(chainId)
-  const walletMatches = isConnected && walletChainId === chainId
+  const { writeContractAsync } = useWriteContract()
+  const { switchChainAsync } = useSwitchChain()
+  const localWallet = walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
+  const walletMatches = isConnected && (walletChainId === chainId || localWallet)
+  const platform = useMemo(() => resolveSePlatform(chainId, environment), [chainId, environment])
 
-  const [tab, setTab] = useState('mint')
+  const [tab, setTab] = useState(() =>
+    initialTab === 'stake' || initialTab === 'bond' || initialTab === 'claim' || initialTab === 'mint'
+      ? initialTab
+      : 'mint',
+  )
+
+  useEffect(() => {
+    if (
+      initialTab === 'stake' ||
+      initialTab === 'bond' ||
+      initialTab === 'claim' ||
+      initialTab === 'mint'
+    ) {
+      setTab(initialTab)
+    }
+  }, [initialTab])
   const [token, setToken] = useState<string>(pairTokens[0]?.address ?? '')
   const [amount, setAmount] = useState('')
   const [lockDays, setLockDays] = useState(String(MIN_LOCK_DAYS))
   const [tokenId, setTokenId] = useState('')
   const [status, setStatus] = useState('')
+  const [pendingLeg, setPendingLeg] = useState<'approve' | 'mint' | 'bond' | 'claim' | null>(null)
+  const [approvedSpend, setApprovedSpend] = useState(0n)
+
+  useEffect(() => {
+    if (pairTokens.length === 0) return
+    const ok = pairTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())
+    if (!ok) setToken(pairTokens[0]!.address)
+  }, [pairTokens, token])
 
   const tokenAddr = (token || pairTokens[0]?.address || '') as `0x${string}` | ''
   const tokenMeta = pairTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? pairTokens[0]
-  const decimals = 18
+
+  useEffect(() => {
+    setApprovedSpend(0n)
+  }, [tokenAddr, detf, address])
+
+  const { data: tokenDecimals } = useReadContract({
+    address: tokenAddr || undefined,
+    abi: erc20Abi,
+    functionName: 'decimals',
+    query: { enabled: !!tokenAddr },
+  })
+  const decimals = tokenDecimals == null ? 18 : Number(tokenDecimals)
   const parsed = parseAmount(amount, decimals)
   const lock = lockSecondsFromDays(lockDays)
   const parsedId = useMemo(() => {
@@ -77,13 +136,31 @@ export function DetfActions({
     args: address ? [address] : undefined,
     query: { enabled: !!tokenAddr && !!address },
   })
-  const { data: allowance } = useReadContract({
+  const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: tokenAddr || undefined,
     abi: erc20Abi,
     functionName: 'allowance',
     args: address && detf ? [address, detf] : undefined,
     query: { enabled: !!tokenAddr && !!address && !!detf },
   })
+  const { data: oracleTerms } = useReadContract({
+    address: platform.feeOracle ?? undefined,
+    abi: FEE_ORACLE_BOND_ABI,
+    functionName: 'bondTermsOfVault',
+    args: detf ? [detf] : undefined,
+    query: { enabled: !!detf && !!platform.feeOracle },
+  })
+  const { minDays, maxDays } = useMemo(
+    () => lockRangeFromBondTerms(asBondLockTerms(oracleTerms)),
+    [oracleTerms],
+  )
+
+  useEffect(() => {
+    const n = Number(lockDays)
+    if (!Number.isFinite(n) || n < minDays || n > maxDays) {
+      setLockDays(String(minDays))
+    }
+  }, [minDays, maxDays, lockDays])
   const { data: preview } = useReadContract({
     address: detf,
     abi: insightsViewAbi,
@@ -106,7 +183,7 @@ export function DetfActions({
   const nftVault =
     bondVault && !isZero(bondVault) ? bondVault : protocolVault && !isZero(protocolVault) ? protocolVault : undefined
 
-  const { data: pending } = useReadContract({
+  const { data: pendingRewards } = useReadContract({
     address: nftVault,
     abi: bondNftAbi,
     functionName: 'pendingRewards',
@@ -121,71 +198,126 @@ export function DetfActions({
     query: { enabled: tab === 'claim' && !!nftVault && parsedId !== undefined },
   })
 
-  const needApprove = parsed != null && parsed > BigInt(0) && (allowance == null || allowance < parsed)
-  const canSign = isConnected && walletMatches && !!detf && !!address && !isPending
+  const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
+  const needApprove = parsed != null && parsed > 0n && covered < parsed
+  const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
+  const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
+
+  async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0]) {
+    if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) {
+      await switchChainAsync({ chainId })
+    }
+    const { chain: _chain, chainId: _cid, ...rest } = params as typeof params & {
+      chain?: unknown
+      chainId?: number
+    }
+    return writeContractAsync(localWallet ? rest : params)
+  }
 
   async function wait(hash: `0x${string}`, label: string) {
     setStatus(`${label} submitted.`)
     if (publicClient) {
-      await publicClient.waitForTransactionReceipt({ hash })
+      const receipt = await publicClient.waitForTransactionReceipt({ hash })
+      if (receipt.status === 'reverted') throw new Error('Transaction reverted')
       setStatus(`${label} confirmed.`)
     }
   }
 
   async function approve() {
     if (!detf || !tokenAddr || parsed == null || !address) return
-    const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
-      address: tokenAddr,
-      abi: erc20Abi,
-      functionName: 'approve',
-      args: [detf, parsed],
-    })
-    await wait(hash, 'Approve')
+    setPendingLeg('approve')
+    setStatus('')
+    try {
+      const hash = await writeOnWallet({
+        account: address,
+        address: tokenAddr,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [detf, parsed],
+      })
+      await wait(hash, 'Approve')
+      setApprovedSpend(parsed)
+      await refetchAllowance()
+      setStatus('Approved. Bond or mint next.')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
   }
 
   async function mint() {
     if (!detf || !tokenAddr || parsed == null || !address) return
-    const minOut =
-      preview != null && preview > BigInt(0) ? (preview * BigInt(99)) / BigInt(100) : BigInt(0)
-    const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
-      address: detf,
-      abi: insightsViewAbi,
-      functionName: 'exchangeIn',
-      args: [tokenAddr, parsed, detf, minOut, address, false, deadline()],
-    })
-    await wait(hash, 'Mint')
+    setPendingLeg('mint')
+    setStatus('')
+    try {
+      const minOut =
+        preview != null && preview > BigInt(0) ? (preview * BigInt(99)) / BigInt(100) : BigInt(0)
+      const args = [tokenAddr, parsed, detf, minOut, address, false, deadline()] as const
+      if (publicClient) {
+        await publicClient.simulateContract({
+          account: address,
+          address: detf,
+          abi: insightsViewAbi,
+          functionName: 'exchangeIn',
+          args,
+        })
+      }
+      const hash = await writeOnWallet({
+        account: address,
+        address: detf,
+        abi: insightsViewAbi,
+        functionName: 'exchangeIn',
+        args,
+      })
+      await wait(hash, 'Mint')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
   }
 
   async function bond() {
-    if (!detf || !tokenAddr || parsed == null || !address || lock == null) return
-    const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
-      address: detf,
-      abi: insightsViewAbi,
-      functionName: 'bond',
-      args: [tokenAddr, parsed, lock, address, false, deadline()],
-    })
-    await wait(hash, 'Bond')
+    if (!detf || !tokenAddr || parsed == null || !address) return
+    setPendingLeg('bond')
+    setStatus('')
+    try {
+      const hash = await writeOnWallet({
+        account: address,
+        address: detf,
+        abi: insightsViewAbi,
+        functionName: 'bond',
+        args: [tokenAddr, parsed, oracleLock, address, false, deadline()],
+      })
+      await wait(hash, 'Bond')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
   }
 
   async function claim() {
     if (!address || parsedId === undefined) return
     const target = nftVault ?? detf
     if (!target) return
-    const hash = await writeContractAsync({
-      chain: targetChain,
-      account: address,
-      address: target,
-      abi: bondNftAbi,
-      functionName: 'claimRewards',
-      args: [parsedId, address],
-    })
-    await wait(hash, 'Claim rewards')
+    setPendingLeg('claim')
+    setStatus('')
+    try {
+      const hash = await writeOnWallet({
+        account: address,
+        address: target,
+        abi: bondNftAbi,
+        functionName: 'claimRewards',
+        args: [parsedId, address],
+      })
+      await wait(hash, 'Claim rewards')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
   }
 
   if (!detf) return null
@@ -199,10 +331,11 @@ export function DetfActions({
   return (
     <Card id="detf-actions" data-testid="detf-actions">
       <p className="text-[11px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">Use this DETF</p>
-      <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Mint, bond, claim</h3>
+      <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Mint, bond, stake, claim</h3>
       <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-        Mint pays pair token and receives {detfSymbol}. Bond locks pair token for a bond NFT. Claim
-        takes DETF that accrued to that bond. Claiming is not cashing the bond out.
+        Mint pays a pair token and receives {detfSymbol}. Bond locks a pair token for a bond NFT.
+        Stake mints the rebasing claim token. That is not minting {detfSymbol}. Claim takes DETF that
+        accrued to a bond. Claiming is not cashing the bond out.
       </p>
 
       <div className="mt-4">
@@ -210,6 +343,7 @@ export function DetfActions({
           tabs={[
             { id: 'mint', label: 'Mint' },
             { id: 'bond', label: 'Bond' },
+            { id: 'stake', label: 'Stake' },
             { id: 'claim', label: 'Claim rewards' },
           ]}
           active={tab}
@@ -217,7 +351,7 @@ export function DetfActions({
         />
       </div>
 
-      {tab !== 'claim' ? (
+      {tab === 'mint' || tab === 'bond' ? (
         <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
           Pair token
           <select
@@ -226,11 +360,15 @@ export function DetfActions({
             onChange={(e) => setToken(e.target.value)}
             data-testid="detf-action-token"
           >
-            {pairTokens.map((t) => (
-              <option key={t.address} value={t.address}>
-                {t.symbol}
-              </option>
-            ))}
+            {pairTokens.length === 0 ? (
+              <option value="">Reading pair tokens…</option>
+            ) : (
+              pairTokens.map((t) => (
+                <option key={t.address} value={t.address}>
+                  {t.symbol}
+                </option>
+              ))
+            )}
           </select>
         </label>
       ) : null}
@@ -248,15 +386,28 @@ export function DetfActions({
         />
         <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
           Preview: {preview != null ? `${formatUnits(preview, 18)} ${detfSymbol}` : '—'}
+          . Preview is a quote, not a guarantee the reserve can take the token in.
         </p>
         {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
         <div className="mt-4 flex flex-wrap gap-2">
           {needApprove ? (
-            <Button type="button" onClick={() => void approve().catch((e) => setStatus(String(e?.shortMessage ?? e)))} disabled={!canSign || parsed == null} loading={isPending}>
+            <Button
+              type="button"
+              onClick={() => void approve()}
+              disabled={!canSign || parsed == null}
+              loading={pendingLeg === 'approve'}
+              data-testid="detf-approve"
+            >
               Approve {tokenMeta?.symbol ?? 'token'}
             </Button>
           ) : (
-            <Button type="button" onClick={() => void mint().catch((e) => setStatus(String(e?.shortMessage ?? e)))} disabled={!canSign || parsed == null} loading={isPending} data-testid="detf-mint">
+            <Button
+              type="button"
+              onClick={() => void mint()}
+              disabled={!canSign || parsed == null}
+              loading={pendingLeg === 'mint'}
+              data-testid="detf-mint"
+            >
               Mint {detfSymbol}
             </Button>
           )}
@@ -285,26 +436,47 @@ export function DetfActions({
           />
         </label>
         <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Minimum {MIN_LOCK_DAYS} day. Maximum {MAX_LOCK_DAYS} days. You cannot cash the bond principal until it
-          matures.
+          Minimum {minDays} days. Maximum {maxDays} days. Set by the vault fee oracle. You cannot cash
+          the bond principal until it matures.
         </p>
         {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
         <div className="mt-4 flex flex-wrap gap-2">
           {needApprove ? (
-            <Button type="button" onClick={() => void approve().catch((e) => setStatus(String(e?.shortMessage ?? e)))} disabled={!canSign || parsed == null} loading={isPending}>
+            <Button
+              type="button"
+              onClick={() => void approve()}
+              disabled={!canSign || parsed == null}
+              loading={pendingLeg === 'approve'}
+              data-testid="detf-approve"
+            >
               Approve {tokenMeta?.symbol ?? 'token'}
             </Button>
           ) : (
             <Button
               type="button"
-              onClick={() => void bond().catch((e) => setStatus(String(e?.shortMessage ?? e)))}
+              onClick={() => void bond()}
               disabled={!canSign || parsed == null || lock == null}
-              loading={isPending}
+              loading={pendingLeg === 'bond'}
               data-testid="detf-bond"
             >
               Bond {tokenMeta?.symbol ?? ''}
             </Button>
           )}
+        </div>
+      </TabPanel>
+
+      <TabPanel when="stake" active={tab}>
+        <div className="mt-4">
+          <DetfStaking
+            detf={detf}
+            detfSymbol={detfSymbol}
+            claimToken={claimToken}
+            claimSymbol={claimSymbol || 'claim'}
+            pairTokens={pairTokens}
+            chainId={chainId}
+            reserveLive={reserveLive}
+            explorer={explorer}
+          />
         </div>
       </TabPanel>
 
@@ -320,7 +492,7 @@ export function DetfActions({
           />
         </label>
         <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Pending: {pending != null ? `${formatUnits(pending, 18)} ${detfSymbol}` : '—'}
+          Pending: {pendingRewards != null ? `${formatUnits(pendingRewards, 18)} ${detfSymbol}` : '—'}
           {ownerOf && address && ownerOf.toLowerCase() !== address.toLowerCase()
             ? '. This wallet does not own that bond.'
             : ''}
@@ -329,9 +501,9 @@ export function DetfActions({
         <Button
           type="button"
           className="mt-4"
-          onClick={() => void claim().catch((e) => setStatus(String(e?.shortMessage ?? e)))}
+          onClick={() => void claim()}
           disabled={!canSign || parsedId === undefined}
-          loading={isPending}
+          loading={pendingLeg === 'claim'}
           data-testid="detf-claim"
         >
           Claim rewards

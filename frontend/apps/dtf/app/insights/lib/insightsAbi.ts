@@ -8,6 +8,28 @@ export const insightsViewAbi = [
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'rateAsset', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'pairToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  {
+    type: 'function',
+    name: 'pairTokens',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'acceptedBondTokens',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultShares',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  { type: 'function', name: 'm', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint8' }] },
   { type: 'function', name: 'underlyingVault', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'syntheticPrice', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'isMintingAllowed', stateMutability: 'view', inputs: [], outputs: [{ type: 'bool' }] },
@@ -85,6 +107,97 @@ export const insightsViewAbi = [
     ],
     outputs: [{ name: 'rewards', type: 'uint256' }],
   },
+  {
+    type: 'function',
+    name: 'depositClaim',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'tokenIn', type: 'address' },
+      { name: 'amountIn', type: 'uint256' },
+      { name: 'minClaimOut', type: 'uint256' },
+      { name: 'recipient', type: 'address' },
+      { name: 'pretransferred', type: 'bool' },
+      { name: 'deadline', type: 'uint256' },
+    ],
+    outputs: [{ name: 'claimOut', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'buyClaim',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'detfAmount', type: 'uint256' },
+      { name: 'minClaimOut', type: 'uint256' },
+      { name: 'recipient', type: 'address' },
+      { name: 'pretransferred', type: 'bool' },
+      { name: 'deadline', type: 'uint256' },
+    ],
+    outputs: [{ name: 'claimMinted', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'previewBuyClaim',
+    stateMutability: 'view',
+    inputs: [{ name: 'detfAmount', type: 'uint256' }],
+    outputs: [{ name: 'claimMinted', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'redeemClaim',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'claimAmount', type: 'uint256' },
+      { name: 'tokenOut', type: 'address' },
+      { name: 'minOut', type: 'uint256' },
+      { name: 'recipient', type: 'address' },
+      { name: 'deadline', type: 'uint256' },
+    ],
+    outputs: [{ name: 'amountOut', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'previewRedeemClaim',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'claimAmount', type: 'uint256' },
+      { name: 'tokenOut', type: 'address' },
+    ],
+    outputs: [{ name: 'amountOut', type: 'uint256' }],
+  },
+] as const
+
+export const diamondLoupeAbi = [
+  {
+    type: 'function',
+    name: 'facetAddress',
+    stateMutability: 'view',
+    inputs: [{ name: '_functionSelector', type: 'bytes4' }],
+    outputs: [{ name: 'facetAddress_', type: 'address' }],
+  },
+] as const
+
+export const rebasingClaimAbi = [
+  { type: 'function', name: 'name', stateMutability: 'view', inputs: [], outputs: [{ type: 'string' }] },
+  { type: 'function', name: 'symbol', stateMutability: 'view', inputs: [], outputs: [{ type: 'string' }] },
+  { type: 'function', name: 'decimals', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint8' }] },
+  { type: 'function', name: 'totalSupply', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
+  {
+    type: 'function',
+    name: 'balanceOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'sharesOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ type: 'uint256' }],
+  },
+  { type: 'function', name: 'totalShares', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
+  { type: 'function', name: 'redemptionRate', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
+  { type: 'function', name: 'detf', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
 ] as const
 
 export const bondNftAbi = [

@@ -3,7 +3,7 @@ import { parseAbiItem, type PublicClient } from 'viem'
 import type { Address, V4PoolKey } from './v4Types'
 import { poolKeyId, sortCurrencies } from './v4Types'
 
-const INITIALIZE_EVENT = parseAbiItem(
+export const V4_INITIALIZE_EVENT = parseAbiItem(
   'event Initialize(bytes32 indexed id, address indexed currency0, address indexed currency1, uint24 fee, int24 tickSpacing, address hooks, uint160 sqrtPriceX96, int24 tick)',
 )
 
@@ -31,7 +31,7 @@ export async function indexPoolsFromInitialize(args: {
   try {
     const logs = await client.getLogs({
       address: poolManager,
-      event: INITIALIZE_EVENT,
+      event: V4_INITIALIZE_EVENT,
       fromBlock,
       toBlock,
     })

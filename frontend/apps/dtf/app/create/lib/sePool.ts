@@ -76,23 +76,46 @@ export function errorText(err: unknown): string {
   return String(err)
 }
 
+const POOL_ALREADY_INITIALIZED_SEL = '0x7983c051'
+
+function dataLooksLikeAlreadyInitialized(data: unknown): boolean {
+  if (typeof data === 'string' && data.toLowerCase().startsWith(POOL_ALREADY_INITIALIZED_SEL)) return true
+  if (data && typeof data === 'object') {
+    const o = data as { errorName?: string; data?: unknown }
+    if (o.errorName === 'PoolAlreadyInitialized') return true
+    if (typeof o.data === 'string' && o.data.toLowerCase().startsWith(POOL_ALREADY_INITIALIZED_SEL)) return true
+  }
+  return false
+}
+
 /** PoolManager.initialize / V3 initialize when the pool is already live. */
 export function isPoolAlreadyExistsError(err: unknown): boolean {
   let current: unknown = err
   for (let i = 0; i < 8 && current != null; i++) {
-    if (/already initialized|pool already exists|PoolAlreadyInitialized/i.test(errorText(current))) {
+    const text = errorText(current)
+    if (
+      /already initialized|pool already exists|PoolAlreadyInitialized|0x7983c051/i.test(text)
+    ) {
       return true
     }
     if (typeof current === 'object') {
       const o = current as Record<string, unknown>
-      const data = o.data
-      if (data && typeof data === 'object' && (data as { errorName?: string }).errorName === 'PoolAlreadyInitialized') {
-        return true
-      }
+      if (dataLooksLikeAlreadyInitialized(o.data)) return true
       current = o.cause
       continue
     }
     break
   }
   return false
+}
+
+/** Wallet often reports a low-level initialize revert as "insufficient gas". */
+export function isPoolInitWalletRevert(err: unknown): boolean {
+  if (isPoolAlreadyExistsError(err)) return true
+  const text = errorText(err)
+  return (
+    /insufficient gas|intrinsic gas|gas too low|out of gas|execution reverted|returned no data|Internal JSON-RPC/i.test(
+      text,
+    ) && !/insufficient funds/i.test(text)
+  )
 }

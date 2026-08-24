@@ -12,6 +12,15 @@ export const CP_HOOK_REQUIRED_FLAGS =
   (1n << 7n) | // BEFORE_SWAP
   (1n << 3n) // BEFORE_SWAP_RETURNS_DELTA
 
+/** Weighted SE buffer hook flags (DFPkg.requiredHookFlags). */
+export const WEIGHTED_HOOK_REQUIRED_FLAGS =
+  (1n << 13n) | // BEFORE_INITIALIZE
+  (1n << 11n) | // BEFORE_ADD_LIQUIDITY
+  (1n << 9n) | // BEFORE_REMOVE_LIQUIDITY
+  (1n << 7n) | // BEFORE_SWAP
+  (1n << 5n) | // BEFORE_DONATE
+  (1n << 3n) // BEFORE_SWAP_RETURNS_DELTA
+
 export function previewFinalSalt(packageSalt: Hex, mineNonce: bigint): Hex {
   return keccak256(
     encodeAbiParameters(

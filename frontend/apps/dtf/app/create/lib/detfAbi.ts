@@ -1,3 +1,118 @@
+export const WEIGHTED_DETF_PKG_ARGS_COMPONENTS = [
+  { name: 'name', type: 'string' },
+  { name: 'symbol', type: 'string' },
+  { name: 'pairTokens', type: 'address[]' },
+  { name: 'standardExchanges', type: 'address[]' },
+  { name: 'vaultShares', type: 'address[]' },
+  { name: 'rateProviders', type: 'address[]' },
+  { name: 'detfWeight', type: 'uint256' },
+  { name: 'pairWeights', type: 'uint256[]' },
+  { name: 'creationPairPerDetfWad', type: 'uint256[]' },
+  { name: 'openingPairPerDetfWad', type: 'uint256[]' },
+  { name: 'mintThreshold', type: 'uint256' },
+  { name: 'burnThreshold', type: 'uint256' },
+  { name: 'thresholdMode', type: 'uint8' },
+  { name: 'expansionEpochLength', type: 'uint256' },
+  { name: 'expansionClosureRatePerYearWad', type: 'uint256' },
+  { name: 'expansionMaxCatchUpEpochs', type: 'uint256' },
+  { name: 'creator', type: 'address' },
+  { name: 'claimName', type: 'string' },
+  { name: 'claimSymbol', type: 'string' },
+  { name: 'bondName', type: 'string' },
+  { name: 'bondSymbol', type: 'string' },
+] as const
+
+export const WEIGHTED_HOOK_ARGS_COMPONENTS = [
+  { name: 'poolManager', type: 'address' },
+  { name: 'feeOracle', type: 'address' },
+  { name: 'n', type: 'uint8' },
+  { name: 'tokens', type: 'address[]' },
+  { name: 'weights', type: 'uint256[]' },
+  { name: 'standardExchanges', type: 'address[]' },
+  { name: 'rateProviders', type: 'address[]' },
+  { name: 'ownerOnlyLiquidity', type: 'bool' },
+  { name: 'owner', type: 'address' },
+] as const
+
+export const WEIGHTED_DETF_PKG_ABI = [
+  {
+    type: 'function',
+    name: 'deployVault',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'args', type: 'tuple', components: WEIGHTED_DETF_PKG_ARGS_COMPONENTS },
+      { name: 'mineNonce', type: 'uint256' },
+    ],
+    outputs: [{ name: 'vault', type: 'address' }],
+  },
+] as const
+
+export const WEIGHTED_DETF_INFO_ABI = [
+  {
+    type: 'function',
+    name: 'm',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'uint8' }],
+  },
+  {
+    type: 'function',
+    name: 'pairTokens',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'pairToken',
+    stateMutability: 'view',
+    inputs: [{ name: 'productIndex', type: 'uint256' }],
+    outputs: [{ type: 'address' }],
+  },
+  {
+    type: 'function',
+    name: 'standardExchanges',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'vaultShares',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+  {
+    type: 'function',
+    name: 'acceptedBondTokens',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address[]' }],
+  },
+] as const
+
+export const WEIGHTED_BOND_ABI = [
+  {
+    type: 'function',
+    name: 'bond',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'tokenIns', type: 'address[]' },
+      { name: 'amountsIn', type: 'uint256[]' },
+      { name: 'capitalToken', type: 'address' },
+      { name: 'lockDuration', type: 'uint256' },
+      { name: 'recipient', type: 'address' },
+      { name: 'pretransferred', type: 'bool' },
+      { name: 'deadline', type: 'uint256' },
+    ],
+    outputs: [
+      { name: 'tokenId', type: 'uint256' },
+      { name: 'shares', type: 'uint256' },
+    ],
+  },
+] as const
+
 export const DETF_PKG_ARGS_COMPONENTS = [
   { name: 'name', type: 'string' },
   { name: 'symbol', type: 'string' },

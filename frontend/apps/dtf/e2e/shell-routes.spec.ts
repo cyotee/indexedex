@@ -26,4 +26,12 @@ test.describe('App routes & redirects (DTF)', () => {
     const body = await walletPage.locator('body').innerText()
     expect(/DETF|Staking|workspace|DTF-DETF|mint|bond/i.test(body)).toBe(true)
   })
+
+  test('insights stake tab is on the DETF actions panel', async ({ walletPage }) => {
+    await walletPage.goto('/insights?tab=stake')
+    await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
+    await expect(walletPage.getByRole('button', { name: /^Stake$/ })).toBeVisible()
+    const body = await walletPage.locator('body').innerText()
+    expect(/claim token|rebasing claim|Stake/i.test(body)).toBe(true)
+  })
 })

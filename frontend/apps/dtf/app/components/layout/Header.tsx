@@ -75,7 +75,7 @@ function getSwitchableChains(): Record<HeaderChainOption, SwitchableChain> {
       label: 'Robinhood',
       chainId: CHAIN_ID_ROBINHOOD,
       hexChainId: `0x${CHAIN_ID_ROBINHOOD.toString(16)}`,
-      chainName: 'Robinhood',
+      chainName: robinhood.name,
       rpcUrls: [...robinhood.rpcUrls.default.http],
       blockExplorerUrls: robinhood.blockExplorers?.default?.url
         ? [robinhood.blockExplorers.default.url]

@@ -6,34 +6,24 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useAccount, useReadContract, useReadContracts, type UseReadContractsParameters } from 'wagmi'
 import { erc20Abi, formatUnits, isAddress } from 'viem'
 
-import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
-import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
-import {
-  getBaseTokensForChain,
-  getFeaturedFeeDetfsForChain,
-  getProtocolDetfsForChain,
-  getStrategyVaultTokensForChain,
-  isFeaturedFeeDetfAddress,
-  type TokenListEntry,
-} from '@indexedex/protocol/tokenlists'
+import { isFeaturedFeeDetfAddress } from '@indexedex/protocol/tokenlists'
 import { robinhood, robinhoodTestnet } from '@indexedex/protocol/runtimeChains'
 import { CHAIN_ID_ROBINHOOD } from '@indexedex/protocol/addressArtifacts'
-import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRegistryAddress'
 
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Stat } from '../components/ui/Stat'
-import { createAppReadClient } from '../create/lib/sePoolRead'
-import { entriesFromAddresses, loadRegisteredVaults, selectDetfsFromVaults } from '../lib/detf/discoverDetfs'
+import { VAULT_TOKENS_ABI } from '../create/lib/seAbi'
 import { DetfAbout } from './components/DetfAbout'
 import { DetfActions } from './components/DetfActions'
 import { ThresholdGauge } from './components/ThresholdGauge'
-import { insightsViewAbi } from './lib/insightsAbi'
+import { collectActionTokenAddresses } from './lib/actionTokens'
+import { insightsStakingHref } from './lib/claimMint'
+import { insightsViewAbi, rebasingClaimAbi } from './lib/insightsAbi'
 import { pairAddresses, profileFor, type DetfLeg } from './lib/detfProfiles'
 import { formatWad, scaleThresholds } from './lib/thresholdScale'
-import { indexTokens, isZero, labelFor, shortAddr } from './lib/tokenLabels'
-
-type InsightDetf = TokenListEntry & { protocolFee: boolean }
+import { isZero, labelFor, shortAddr } from './lib/tokenLabels'
+import { useInsightDetfCatalog } from './lib/useInsightDetfCatalog'
 
 type BasketRow = {
   role: string
@@ -45,32 +35,6 @@ type BasketRow = {
 const selectClass =
   'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
 
-function mergeDetfs(
-  featured: TokenListEntry[],
-  protocol: TokenListEntry[],
-  registry: TokenListEntry[],
-  featuredSet: (addr: string) => boolean,
-): InsightDetf[] {
-  const out: InsightDetf[] = []
-  const seen = new Set<string>()
-  const add = (t: TokenListEntry, protocolFee: boolean) => {
-    const k = t.address.toLowerCase()
-    if (seen.has(k)) return
-    seen.add(k)
-    out.push({ ...t, protocolFee })
-  }
-  for (let i = 0; i < featured.length; i++) add(featured[i]!, true)
-  for (let i = 0; i < protocol.length; i++) {
-    const t = protocol[i]!
-    add(t, featuredSet(t.address))
-  }
-  for (let i = 0; i < registry.length; i++) {
-    const t = registry[i]!
-    add(t, featuredSet(t.address))
-  }
-  return out
-}
-
 function asAddr(v: unknown): `0x${string}` | undefined {
   if (typeof v !== 'string' || !isAddress(v) || isZero(v)) return undefined
   return v as `0x${string}`
@@ -80,74 +44,12 @@ export default function InsightsPageClient() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { address: wallet, isConnected } = useAccount()
-  const { selectedChainId } = useSelectedNetwork()
-  const { environment } = useDeploymentEnvironment()
-
-  const featured = useMemo(
-    () => getFeaturedFeeDetfsForChain(selectedChainId, environment),
-    [selectedChainId, environment],
-  )
-  const protocol = useMemo(
-    () => getProtocolDetfsForChain(selectedChainId, environment),
-    [selectedChainId, environment],
-  )
-  const [registryDetfs, setRegistryDetfs] = useState<TokenListEntry[]>([])
-  const [registryLoading, setRegistryLoading] = useState(false)
-  const [registryError, setRegistryError] = useState<string | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    const registry = getVaultRegistryAddress(selectedChainId, environment)
-    if (!registry) {
-      setRegistryDetfs([])
-      setRegistryError(null)
-      setRegistryLoading(false)
-      return
-    }
-    setRegistryLoading(true)
-    setRegistryError(null)
-    const client = createAppReadClient(selectedChainId)
-    void (async () => {
-      try {
-        const vaults = await loadRegisteredVaults(client, registry)
-        const detfAddresses = await selectDetfsFromVaults(client, vaults)
-        const entries = await entriesFromAddresses(client, selectedChainId, detfAddresses)
-        if (!cancelled) setRegistryDetfs(entries)
-      } catch (error) {
-        if (!cancelled) {
-          setRegistryDetfs([])
-          setRegistryError(String((error as { message?: string })?.message ?? error))
-        }
-      } finally {
-        if (!cancelled) setRegistryLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [selectedChainId, environment])
-
-  const detfs = useMemo(
-    () =>
-      mergeDetfs(featured, protocol, registryDetfs, (addr) =>
-        isFeaturedFeeDetfAddress(selectedChainId, environment, addr),
-      ),
-    [featured, protocol, registryDetfs, selectedChainId, environment],
-  )
-  const labels = useMemo(
-    () =>
-      indexTokens([
-        getBaseTokensForChain(selectedChainId, environment),
-        getStrategyVaultTokensForChain(selectedChainId, environment),
-        featured,
-        protocol,
-        registryDetfs,
-      ]),
-    [selectedChainId, environment, featured, protocol, registryDetfs],
-  )
+  const { selectedChainId, environment, detfs, labels, registryLoading, registryError } =
+    useInsightDetfCatalog()
 
   const qDetf = searchParams.get('detf')
-  const [selected, setSelected] = useState('')
+  const qTab = searchParams.get('tab') ?? undefined
+  const [selected, setSelected] = useState(() => (qDetf && isAddress(qDetf) ? qDetf : ''))
 
   useEffect(() => {
     if (qDetf && isAddress(qDetf)) {
@@ -160,9 +62,10 @@ export default function InsightsPageClient() {
   const pick = useCallback(
     (addr: string) => {
       setSelected(addr)
-      router.replace(`/insights?detf=${addr}`, { scroll: false })
+      const tab = qTab ? `&tab=${encodeURIComponent(qTab)}` : ''
+      router.replace(`/insights?detf=${addr}${tab}`, { scroll: false })
     },
-    [router],
+    [router, qTab],
   )
 
   const detf =
@@ -221,6 +124,25 @@ export default function InsightsPageClient() {
     allowFailure: true,
   })
 
+  const { data: weightedPairTokens } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'pairTokens',
+    query: { enabled, retry: 0 },
+  })
+  const { data: acceptedBondTokens } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'acceptedBondTokens',
+    query: { enabled, retry: 0 },
+  })
+  const { data: vaultShares } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'vaultShares',
+    query: { enabled, retry: 0 },
+  })
+
   const { data: walletBal } = useReadContract({
     address: detfAddr,
     abi: erc20Abi,
@@ -242,7 +164,20 @@ export default function InsightsPageClient() {
   const burnThreshold = result<bigint>(4)
   const thresholdMode = result<number>(5)
   const reserveLive = result<boolean>(6)
-  const claimToken = asAddr(result<`0x${string}`>(7))
+  const claimFromBundle = asAddr(result<`0x${string}`>(7))
+  const { data: claimRaw } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'rebasingClaimToken',
+    query: { enabled, retry: 0 },
+  })
+  const claimToken = claimFromBundle ?? asAddr(claimRaw)
+  const { data: claimSymbol } = useReadContract({
+    address: claimToken,
+    abi: rebasingClaimAbi,
+    functionName: 'symbol',
+    query: { enabled: !!claimToken },
+  })
   const reservePool = asAddr(result<`0x${string}`>(8))
   const rateAsset = asAddr(result<`0x${string}`>(9))
   const pairToken = asAddr(result<`0x${string}`>(10))
@@ -255,6 +190,26 @@ export default function InsightsPageClient() {
   const pair2 = asAddr(result<`0x${string}`>(17))
   const exchanges = result<readonly `0x${string}`[]>(18)
   const allLegsMint = result<boolean>(19)
+  const seList = useMemo(
+    () => (exchanges ?? []).map((a) => asAddr(a)).filter((a): a is `0x${string}` => !!a),
+    [exchanges],
+  )
+  const seTokenReads = useReadContracts({
+    contracts: seList.map((address) => ({
+      address,
+      abi: VAULT_TOKENS_ABI,
+      functionName: 'vaultTokens' as const,
+    })),
+    query: { enabled: seList.length > 0 },
+    allowFailure: true,
+  })
+  const seVaultTokens = useMemo(
+    () =>
+      (seTokenReads.data ?? []).map((row) =>
+        row.status === 'success' ? (row.result as readonly `0x${string}`[]) : [],
+      ),
+    [seTokenReads.data],
+  )
   const vs0 = pairs[0] ? result<bigint>(20) : undefined
   const vs1 = pairs[1] ? result<bigint>(21) : undefined
   const vs2 = pairs[2] ? result<bigint>(22) : undefined
@@ -265,7 +220,8 @@ export default function InsightsPageClient() {
     mintThreshold != null ||
     syntheticPrice != null ||
     pair0 != null ||
-    reserveLive != null
+    reserveLive != null ||
+    (Array.isArray(weightedPairTokens) && weightedPairTokens.length > 0)
   const noContractRead = readsReady && !anyLive
   const isQuad = profile?.family === 'quad' || pair0 != null
   const priceForGauge = isQuad ? vs0 : syntheticPrice
@@ -342,13 +298,24 @@ export default function InsightsPageClient() {
       return rows
     }
 
+    const weightedPairs = ((weightedPairTokens as readonly `0x${string}`[] | undefined) ?? []).filter(
+      (a) => asAddr(a),
+    )
     const fallback: { role: string; address?: `0x${string}`; meaning: string }[] = [
       { role: 'Rate asset', address: rateAsset, meaning: 'Settlement token used to mint and bond' },
-      { role: 'Pair token', address: pairToken ?? pair0, meaning: 'The other token in the reserve market' },
-      { role: 'Pair token', address: pair1, meaning: 'Second pair token' },
-      { role: 'Pair token', address: pair2, meaning: 'Third pair token' },
+      ...(weightedPairs.length
+        ? weightedPairs.map((address) => ({
+            role: 'Pair token',
+            address,
+            meaning: 'A pair token in the weighted reserve',
+          }))
+        : [
+            { role: 'Pair token', address: pairToken ?? pair0, meaning: 'The other token in the reserve market' },
+            { role: 'Pair token', address: pair1, meaning: 'Second pair token' },
+            { role: 'Pair token', address: pair2, meaning: 'Third pair token' },
+          ]),
       { role: 'Underlying vault', address: underlyingVault, meaning: 'Standard Exchange the basket holds' },
-      { role: 'Claim token', address: claimToken, meaning: 'Claim issued when a bond is sold after maturity' },
+      { role: 'Claim token', address: claimToken, meaning: 'Rebasing claim token. Stake to mint it.' },
       { role: 'Reserve pool', address: reservePool, meaning: 'Market for the DETF token' },
     ]
     if (exchanges) {
@@ -374,6 +341,7 @@ export default function InsightsPageClient() {
     pair0,
     pair1,
     pair2,
+    weightedPairTokens,
     underlyingVault,
     exchanges,
     claimToken,
@@ -382,16 +350,59 @@ export default function InsightsPageClient() {
   ])
 
   const tradeHref = detfAddr ? `/swap?tokenOut=${detfAddr}` : '/swap'
+  const actionAddrs = useMemo(
+    () =>
+      collectActionTokenAddresses({
+        pairTokens: weightedPairTokens as readonly unknown[] | undefined,
+        acceptedBondTokens: acceptedBondTokens as readonly unknown[] | undefined,
+        vaultShares: vaultShares as readonly unknown[] | undefined,
+        standardExchanges: exchanges,
+        seVaultTokens,
+        pairToken,
+        pair0,
+        pair1,
+        pair2,
+      }),
+    [
+      weightedPairTokens,
+      acceptedBondTokens,
+      vaultShares,
+      exchanges,
+      seVaultTokens,
+      pairToken,
+      pair0,
+      pair1,
+      pair2,
+    ],
+  )
+  const { data: actionMeta } = useReadContracts({
+    contracts: actionAddrs.map((address) => ({
+      address,
+      abi: erc20Abi,
+      functionName: 'symbol' as const,
+    })),
+    query: { enabled: actionAddrs.length > 0 },
+    allowFailure: true,
+  })
   const actionTokens = useMemo(() => {
+    const fromChain = actionAddrs.map((address, i) => {
+      const listed = labelFor(labels, address)
+      const onchain =
+        actionMeta?.[i]?.status === 'success' ? String(actionMeta[i]!.result) : undefined
+      const listedOk = listed && listed.name !== 'Not in the local list'
+      return {
+        address,
+        symbol: listedOk ? listed.symbol : onchain || listed?.symbol || shortAddr(address),
+      }
+    })
+    if (fromChain.length > 0) return fromChain
     if (profile) {
       return profile.legs
         .filter((l) => l.role === 'Pair token')
         .map((l) => ({ address: l.address, symbol: l.symbol }))
     }
-    return [pairToken, pair0, pair1, pair2]
-      .filter((a): a is `0x${string}` => !!a)
-      .map((a) => ({ address: a, symbol: labelFor(labels, a)?.symbol ?? shortAddr(a) }))
-  }, [profile, pairToken, pair0, pair1, pair2, labels])
+    return []
+  }, [actionAddrs, actionMeta, labels, profile])
   const protocolFee = !!detf?.protocolFee
 
   return (
@@ -491,6 +502,21 @@ export default function InsightsPageClient() {
                   >
                     Mint or bond {symbol}
                   </Button>
+                  {claimToken ? (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      data-testid="insights-stake"
+                      onClick={() => {
+                        router.replace(insightsStakingHref(detfAddr), { scroll: false })
+                        document
+                          .getElementById('detf-actions')
+                          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
+                    >
+                      Stake {claimSymbol || 'claim token'}
+                    </Button>
+                  ) : null}
                   <Link href={tradeHref}>
                     <Button size="sm" variant="secondary">
                       Trade {symbol}
@@ -527,6 +553,11 @@ export default function InsightsPageClient() {
               detfSymbol={symbol}
               pairTokens={actionTokens}
               chainId={selectedChainId}
+              claimToken={claimToken}
+              claimSymbol={claimSymbol}
+              reserveLive={reserveLive}
+              initialTab={qTab}
+              explorer={explorer}
             />
 
             <Card>
@@ -609,18 +640,34 @@ export default function InsightsPageClient() {
                       </div>
                       <div className="text-[11px] text-[var(--text-muted,#9aa3b2)]">{r.name}</div>
                     </div>
-                    {r.address ? (
-                      <a
-                        href={`${explorer}/address/${r.address}`}
-                        className="font-mono text-xs text-[var(--text-muted,#9aa3b2)] underline-offset-2 hover:underline"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shortAddr(r.address)}
-                      </a>
-                    ) : (
-                      <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Not on this DETF</span>
-                    )}
+                    <div className="flex flex-wrap items-center gap-3">
+                      {r.role === 'Claim token' && detfAddr ? (
+                        <button
+                          type="button"
+                          className="text-xs text-[var(--accent,#4FD44B)] underline-offset-2 hover:underline"
+                          onClick={() => {
+                            router.replace(insightsStakingHref(detfAddr), { scroll: false })
+                            document
+                              .getElementById('detf-actions')
+                              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                          }}
+                        >
+                          Stake
+                        </button>
+                      ) : null}
+                      {r.address ? (
+                        <a
+                          href={`${explorer}/address/${r.address}`}
+                          className="font-mono text-xs text-[var(--text-muted,#9aa3b2)] underline-offset-2 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {shortAddr(r.address)}
+                        </a>
+                      ) : (
+                        <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Not on this DETF</span>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
