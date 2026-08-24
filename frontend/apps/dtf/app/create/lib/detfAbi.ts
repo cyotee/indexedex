@@ -179,9 +179,44 @@ export const DETF_BOND_ABI = [
   },
   {
     type: 'function',
+    name: 'standardExchangeVault',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address' }],
+  },
+  {
+    type: 'function',
+    name: 'standardExchangeVaultShare',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address' }],
+  },
+  {
+    type: 'function',
     name: 'isReserveLive',
     stateMutability: 'view',
     inputs: [],
     outputs: [{ type: 'bool' }],
+  },
+] as const
+
+export const FEE_ORACLE_BOND_ABI = [
+  {
+    type: 'function',
+    name: 'bondTermsOfVault',
+    stateMutability: 'view',
+    inputs: [{ name: 'vault', type: 'address' }],
+    outputs: [
+      {
+        name: 'bondTerms_',
+        type: 'tuple',
+        components: [
+          { name: 'minLockDuration', type: 'uint256' },
+          { name: 'maxLockDuration', type: 'uint256' },
+          { name: 'minBonusPercentage', type: 'uint256' },
+          { name: 'maxBonusPercentage', type: 'uint256' },
+        ],
+      },
+    ],
   },
 ] as const
