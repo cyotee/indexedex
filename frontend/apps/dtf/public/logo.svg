@@ -1,10 +1,10 @@
 <svg width="168" height="36" viewBox="0 0 168 36" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Down To Finance">
-  <path d="M18 4 L28 12 L26 12 L26 28 L10 28 L10 12 L8 12 Z" fill="#C9A227"/>
-  <rect x="12" y="14" width="3" height="12" fill="#0C0914"/>
-  <rect x="17.5" y="14" width="3" height="12" fill="#0C0914"/>
-  <rect x="23" y="14" width="3" height="12" fill="#0C0914"/>
-  <path d="M8 28 H28 V30 H8 Z" fill="#F0D060"/>
-  <circle cx="18" cy="9" r="1.6" fill="#F0D060"/>
-  <text x="36" y="15" fill="#F0D060" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="700" letter-spacing="0.12em">DTF</text>
-  <text x="36" y="28" fill="#A898BC" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" font-weight="500" letter-spacing="0.04em">Down To Finance</text>
+  <path d="M18 4 L28 12 L26 12 L26 28 L10 28 L10 12 L8 12 Z" fill="#8cd6c5"/>
+  <rect x="12" y="14" width="3" height="12" fill="#050c1d"/>
+  <rect x="17.5" y="14" width="3" height="12" fill="#050c1d"/>
+  <rect x="23" y="14" width="3" height="12" fill="#050c1d"/>
+  <path d="M8 28 H28 V30 H8 Z" fill="#bdffdb"/>
+  <circle cx="18" cy="9" r="1.6" fill="#bdffdb"/>
+  <text x="36" y="15" fill="#8cd6c5" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="700" letter-spacing="0.12em">DTF</text>
+  <text x="36" y="28" fill="#9b8ad6" font-family="ui-sans-serif, system-ui, sans-serif" font-size="9" font-weight="500" letter-spacing="0.04em">Down To Finance</text>
 </svg>

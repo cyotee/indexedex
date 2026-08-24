@@ -35,7 +35,7 @@
   transform: translateX(-50%);
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--accent, #4fd44b) 28%, transparent),
+    color-mix(in srgb, var(--accent, #8cd6c5) 28%, transparent),
     transparent 68%
   );
   filter: blur(4px);
@@ -49,7 +49,7 @@
   height: min(30vh, 260px);
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--accent, #4fd44b) 12%, transparent),
+    color-mix(in srgb, var(--accent-2, #9b8ad6) 18%, transparent),
     transparent 70%
   );
   animation-delay: -4s;
@@ -69,7 +69,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent, #4fd44b);
+  color: var(--accent, #8cd6c5);
 }
 
 .landing-lab__eyebrow::before {
@@ -77,8 +77,8 @@
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 999px;
-  background: var(--accent, #4fd44b);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #4fd44b) 80%, transparent);
+  background: var(--accent, #8cd6c5);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #8cd6c5) 80%, transparent);
   animation: landing-pulse-dot 2.4s ease-in-out infinite;
 }
 
@@ -93,9 +93,8 @@
 .landing-lab__h1-accent {
   background: linear-gradient(
     120deg,
-    var(--text-primary, #ededed) 0%,
-    var(--accent, #4fd44b) 45%,
-    color-mix(in srgb, var(--accent, #4fd44b) 55%, #fff) 100%
+    var(--accent, #8cd6c5) 0%,
+    var(--accent-2, #9b8ad6) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -124,8 +123,8 @@
 
 .landing-lab__cta-primary {
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent, #4fd44b) 35%, transparent),
-    0 0 28px color-mix(in srgb, var(--accent, #4fd44b) 28%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--accent, #8cd6c5) 35%, transparent),
+    0 0 28px color-mix(in srgb, var(--accent, #8cd6c5) 28%, transparent);
   animation: landing-cta-glow 3.2s ease-in-out infinite;
 }
 
@@ -137,7 +136,7 @@
   background:
     linear-gradient(
       165deg,
-      color-mix(in srgb, var(--accent, #4fd44b) 8%, var(--surface-1, #14171f)),
+      color-mix(in srgb, var(--accent, #8cd6c5) 8%, var(--surface-1, #14171f)),
       var(--surface-1, #14171f) 42%
     );
 }
@@ -176,7 +175,7 @@
 }
 
 .landing-across__wires line {
-  stroke: color-mix(in srgb, var(--accent, #4fd44b) 55%, transparent);
+  stroke: color-mix(in srgb, var(--accent, #8cd6c5) 55%, transparent);
   stroke-width: 1.5;
   stroke-linecap: round;
 }
@@ -197,14 +196,14 @@
   height: 7.25rem;
   transform: translate(-50%, -50%);
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent, #4fd44b) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #8cd6c5) 55%, transparent);
   background:
     radial-gradient(
       circle at 50% 40%,
-      color-mix(in srgb, var(--accent, #4fd44b) 22%, transparent),
+      color-mix(in srgb, var(--accent, #8cd6c5) 22%, transparent),
       var(--surface-1, #14171f) 70%
     );
-  box-shadow: 0 0 28px color-mix(in srgb, var(--accent, #4fd44b) 18%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent, #8cd6c5) 18%, transparent);
 }
 
 .landing-across__kicker,
@@ -227,7 +226,7 @@
 .landing-across__sub {
   margin-top: 0.2rem;
   font-size: 0.68rem;
-  color: var(--accent, #4fd44b);
+  color: var(--accent, #8cd6c5);
 }
 
 .landing-across__node {
@@ -235,20 +234,20 @@
   min-height: 3.1rem;
   padding: 0.35rem 0.3rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(251, 191, 36, 0.4);
-  background: color-mix(in srgb, #78350f 28%, var(--surface-0, #0a0a0a));
-  box-shadow: 0 0 14px rgba(251, 191, 36, 0.1);
+  border: 1px solid color-mix(in srgb, var(--accent-2, #9b8ad6) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-2, #9b8ad6) 16%, var(--surface-0, #050c1d));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-2, #9b8ad6) 16%, transparent);
 }
 
 .landing-across__node span {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #fde68a;
+  color: var(--accent, #8cd6c5);
 }
 
 .landing-across__node small {
   margin-top: 0.15rem;
-  color: color-mix(in srgb, #fde68a 70%, #9aa3b2);
+  color: color-mix(in srgb, var(--accent, #8cd6c5) 70%, #8b9bb0);
 }
 
 .landing-across__node--n {
@@ -314,7 +313,7 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
-  color: var(--accent, #4fd44b);
+  color: var(--accent, #8cd6c5);
 }
 
 .landing-step__rail {
@@ -331,7 +330,7 @@
     height: 1px;
     background: linear-gradient(
       90deg,
-      color-mix(in srgb, var(--accent, #4fd44b) 55%, transparent),
+      color-mix(in srgb, var(--accent, #8cd6c5) 55%, transparent),
       transparent
     );
     pointer-events: none;
@@ -344,15 +343,15 @@
 
 /* Feature spotlight */
 .landing-feature-hero {
-  border: 1px solid color-mix(in srgb, var(--accent, #4fd44b) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #8cd6c5) 40%, transparent);
   background:
     radial-gradient(
       120% 80% at 0% 0%,
-      color-mix(in srgb, var(--accent, #4fd44b) 14%, transparent),
+      color-mix(in srgb, var(--accent, #8cd6c5) 14%, transparent),
       transparent 55%
     ),
     var(--surface-1, #14171f);
-  box-shadow: 0 0 40px color-mix(in srgb, var(--accent, #4fd44b) 10%, transparent);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--accent, #8cd6c5) 10%, transparent);
 }
 
 /* Learn strip / lab notes */
@@ -368,7 +367,7 @@
   height: 100%;
   border-radius: 0.75rem;
   border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  border-left: 3px solid color-mix(in srgb, var(--accent, #4fd44b) 45%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--accent, #8cd6c5) 45%, transparent);
   background: var(--surface-1, #14171f);
   padding: 1rem 1.05rem;
   transition:
@@ -378,8 +377,8 @@
 }
 
 .landing-lab-note:hover {
-  border-color: color-mix(in srgb, var(--accent, #4fd44b) 40%, transparent);
-  border-left-color: var(--accent, #4fd44b);
+  border-color: color-mix(in srgb, var(--accent, #8cd6c5) 40%, transparent);
+  border-left-color: var(--accent, #8cd6c5);
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
@@ -389,7 +388,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent, #4fd44b);
+  color: var(--accent, #8cd6c5);
 }
 
 @keyframes landing-glow-breathe {
@@ -420,13 +419,13 @@
   0%,
   100% {
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--accent, #4fd44b) 30%, transparent),
-      0 0 18px color-mix(in srgb, var(--accent, #4fd44b) 18%, transparent);
+      0 0 0 1px color-mix(in srgb, var(--accent, #8cd6c5) 30%, transparent),
+      0 0 18px color-mix(in srgb, var(--accent, #8cd6c5) 18%, transparent);
   }
   50% {
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--accent, #4fd44b) 55%, transparent),
-      0 0 36px color-mix(in srgb, var(--accent, #4fd44b) 35%, transparent);
+      0 0 0 1px color-mix(in srgb, var(--accent, #8cd6c5) 55%, transparent),
+      0 0 36px color-mix(in srgb, var(--accent, #8cd6c5) 35%, transparent);
   }
 }
 
