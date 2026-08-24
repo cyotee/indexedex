@@ -4,10 +4,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { type ReactNode } from 'react'
 
 import { Providers } from './providers'
-import { Header } from './components/layout/Header'
-import { Footer } from './components/layout/Footer'
-import { LaunchBanner } from './components/ui/LaunchBanner'
-import { AppShell } from './components/ui/AppShell'
+import { AppFrame } from './components/layout/AppFrame'
 import { SITE } from './lib/site'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
@@ -34,14 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
         <Providers>
-          <div className="min-h-screen flex flex-col bg-[var(--surface-0,#0a0a0a)]">
-            <LaunchBanner />
-            <Header />
-            <main className="flex-1 py-6 md:py-8">
-              <AppShell wide>{children}</AppShell>
-            </main>
-            <Footer />
-          </div>
+          <AppFrame>{children}</AppFrame>
         </Providers>
       </body>
     </html>

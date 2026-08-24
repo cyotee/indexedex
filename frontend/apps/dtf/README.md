@@ -5,7 +5,8 @@
 | **Package** | `@indexedex/app-dtf` |
 | **Vercel project** | `dtfinance` |
 | **Project ID** | `prj_C2isVxdLcM7hTwg3v55drxe5wZKT` |
-| **Production URL** | https://dtfinance.vercel.app |
+| **Production URL** | https://downto.finance |
+| **App host** | https://app.downto.finance (`/` redirects to `/explore`) |
 | **Root Directory** | `frontend/apps/dtf` |
 | **Git repo** | https://github.com/cyotee/indexedex (connected) |
 
@@ -42,6 +43,10 @@ npm run test:e2e:dtf:live     # bond + deposit live paths
 ## Deploy
 
 Git pushes to the connected branch trigger builds when `frontend/apps/dtf`, `frontend/packages/protocol`, or workspace root change (`vercel-ignore-build.sh dtf`).
+
+**Hosts:** `downto.finance` is the marketing landing. `app.downto.finance` is the product (Explore, Create, wallet). Middleware redirects `app.downto.finance/` to `/explore` and sends other apex paths to the app host. Localhost and `*.vercel.app` stay single-origin.
+
+Set `NEXT_PUBLIC_APP_ORIGIN=https://app.downto.finance` on the Vercel **production** environment so landing CTAs leave the apex. Leave it unset locally.
 
 Settings (already applied on the Vercel project):
 
