@@ -218,7 +218,8 @@ library UniswapV4_Component_FactoryService {
                 vaultRegistry.deployPkg(
                     type(UniswapV4StandardExchangeDFPkg).creationCode,
                     abi.encode(pkgInit),
-                    abi.encode(type(UniswapV4StandardExchangeDFPkg).name)._hash()
+                    // v1 was name-only; that CREATE3 slot is occupied on 4663 with pre-native-ETH bytecode.
+                    abi.encode(type(UniswapV4StandardExchangeDFPkg).name, "nativeEth")._hash()
                 )
             )
         );
