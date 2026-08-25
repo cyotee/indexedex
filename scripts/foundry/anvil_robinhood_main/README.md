@@ -35,14 +35,20 @@ After a pons Family sale, add a **later** Stage that deploys the Protocol DETF i
 | 05 | 01 | `Phase_05_Stage_01_SeRateProviderPkg.s.sol` | SE rate-provider DFPkg |
 | 05 | 02 | `Phase_05_Stage_02_UniswapV4TwapOracle.s.sol` | TWAP facet + DFPkg + canonical instance + adapter factory |
 | 05 | 03 | `Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol` | Uni V4 SE DFPkg (`PkgInit.twapOracle` from 05-02) |
+| 05 | 05 | `Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol` | Morpho Blue SE DFPkg (no vaults; Morpho is `PkgArgs`) |
 | 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Bond NFT DFPkg |
 | 06 | 02 | `Phase_06_Stage_02_RebasingClaimPkg.s.sol` | Rebasing claim DFPkg |
 | 06 | 03 | `Phase_06_Stage_03_CpBufferHookPkg.s.sol` | CP buffer hook DFPkg |
+| 06 | 04 | `Phase_06_Stage_04_WeightedBufferHookPkg.s.sol` | Weighted buffer hook DFPkg |
+| 06 | 06 | `Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol` | Curve Quad buffer hook DFPkg |
 | 06 | 07 | `Phase_06_Stage_07_CpDetfPkg.s.sol` | CP single SE DETF DFPkg |
+| 06 | 08 | `Phase_06_Stage_08_WeightedDetfPkg.s.sol` | Weighted DETF DFPkg |
+| 06 | 10 | `Phase_06_Stage_10_CurveQuadDetfPkg.s.sol` | Curve Quad DETF DFPkg |
+| 09 | 01 | `Phase_09_Stage_01_ExportFrontend.s.sol` | Frontend `chain/4663/` export. No txs |
 
-06-07 keeps the 46630 number for the CP DETF package.
+Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 / 06-09 (Orbital) stay unused.
 
-Not in this catalog: minter facade, test tokens, Uni V3 / Morpho, Weighted / Orbital / Curve Quad packages, DETF instances, frontend export.
+Not in this catalog: minter facade, test tokens, Uni V3 rehearsal or SE package, Orbital hook/DETF packages, SE vault instances, Protocol DETF instances.
 
 ## Shells
 

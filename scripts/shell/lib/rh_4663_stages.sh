@@ -17,8 +17,8 @@ rh_stage_script() {
   echo "${matches[0]}"
 }
 
-# Catalog order: Phase 00 Stage 01, then architecture Stages of 01–06.
-# 06-07 is the CP single DETF package (same number as 46630).
+# Catalog order: Phase 00 Stage 01, architecture Stages of 01–06, then Phase 09 export.
+# Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05/06-09 (Orbital) stay unused.
 rh_catalog_rows() {
   cat <<'EOF'
 00 01
@@ -33,10 +33,16 @@ rh_catalog_rows() {
 05 01
 05 02
 05 03
+05 05
 06 01
 06 02
 06 03
+06 04
+06 06
 06 07
+06 08
+06 10
+09 01
 EOF
 }
 

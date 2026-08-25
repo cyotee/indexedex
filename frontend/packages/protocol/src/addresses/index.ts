@@ -50,7 +50,7 @@ import supersimBaseAerodromeStrategyVaultsJson from './supersim_sepolia/base/sup
 import supersimBaseBalancerPoolsJson from './supersim_sepolia/base/supersim_sepolia-balancerv3-pools.tokenlist.json'
 import supersimBaseProtocolDetfJson from './supersim_sepolia/base/supersim_sepolia-protocol-detf.tokenlist.json'
 
-// Anvil Robinhood fork (chain 4663) — filled by deploy stage 14
+// Robinhood mainnet (chain 4663) — filled by Phase 09 frontend export
 import robinhoodAnvilPlatformJson from './chain/4663/platform.json'
 import robinhoodAnvilBaseTokensJson from './chain/4663/base-tokens.tokenlist.json'
 import robinhoodAnvilStrategyVaultsJson from './chain/4663/strategy-vaults.tokenlist.json'

@@ -2,7 +2,8 @@
 # =============================================================================
 # Anvil Robinhood mainnet fork — IndexedEx architecture (chain 4663)
 # Phase/Stage catalog: Crane factories, IndexedEx manager, TWAP, Uni V4 SE pkg,
-# CP single DETF pkg. No test tokens. No DETF instances.
+# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook + DETF pkgs.
+# No test tokens. No SE vault instances. No DETF instances.
 # =============================================================================
 set -euo pipefail
 
@@ -87,7 +88,8 @@ Usage:
   scripts/foundry/anvil_robinhood_main/deploy_all.sh [command] [options]
 
 Deploys Crane factories + IndexedEx architecture (FeeCollector, Manager,
-TWAP oracle) + Uni V4 SE package + CP single SE DETF package.
+TWAP oracle) + Uni V4 SE package + Morpho Blue SE package + CP / Weighted /
+Curve Quad hook and DETF packages.
 No tokens. No SE vaults. No Protocol DETF instances.
 
 Commands:

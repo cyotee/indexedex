@@ -2,7 +2,7 @@
 
 Operator notes for the Anvil Robinhood-mainnet-fork **architecture** deploy.
 
-No test tokens. No DETF instances. Stage JSON for factories, platform, and Uni V4 packages lands here.
+No test tokens. No SE vault instances. No DETF instances. Stage JSON for factories, platform, Uni V4 / Morpho SE packages, and CP / Weighted / Curve Quad hook and DETF packages lands here. Phase 09 copies architecture keys to `frontend/packages/protocol/src/addresses/chain/4663/`.
 
 ## Accounts
 

@@ -3,7 +3,8 @@
 # Public Robinhood Chain mainnet (4663) architecture launch.
 # No Phase 00. --sender $DEPLOYER_ADDRESS (cast wallet).
 # Catalog: pins, Crane factories, FeeCollector, Manager, TWAP, Uni V4 SE pkg,
-# CP single DETF pkg. No tokens. No Protocol DETF instances.
+# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook + DETF pkgs.
+# No tokens. No Protocol DETF instances.
 # Simulate each Foundry Stage then broadcast. Never --skip-simulation.
 # =============================================================================
 set -euo pipefail
@@ -55,10 +56,11 @@ Usage:
 
 Public 4663 architecture path. Does not run Phase 00. Requires DEPLOYER_ADDRESS.
 Deploys Crane factories, FeeCollector, Manager, TWAP oracle, Uni V4 SE package,
-and CP single SE DETF package. No tokens. No Protocol DETF instances.
+Morpho Blue SE package, and CP / Weighted / Curve Quad hook and DETF packages.
+No tokens. No Protocol DETF instances.
 
 Commands:
-  all     Phases 01–06 architecture catalog
+  all     Phases 01–06 architecture catalog, then Phase 09 frontend export
 
 Options:
   --dry-run         Simulate each Stage, do not broadcast

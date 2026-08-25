@@ -22,7 +22,7 @@ import {
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
 
 /// @title LaunchState
-/// @notice Architecture bag: factories, manager, TWAP, Uni V4 SE pkg, CP DETF pkg.
+/// @notice Architecture bag: factories, manager, TWAP, SE pkgs, hook pkgs, DETF pkgs.
 /// @dev Packages only. No token or DETF instance fields.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
@@ -49,7 +49,12 @@ struct LaunchState {
     address twapAdapterFactory;
     address cpHookPkg;
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
+    address morphoBlueSePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
     address cpDetfPkg;
+    address weightedHookPkg;
+    address weightedDetfPkg;
+    address curveQuadHookPkg;
+    address curveQuadDetfPkg;
 }

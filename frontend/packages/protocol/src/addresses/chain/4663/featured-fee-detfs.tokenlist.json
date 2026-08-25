@@ -1,1 +1,1 @@
-{"name":"Indexedex Robinhood Featured Fee DETFs","timestamp":"1786489169","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","featured","fee-detf"],"tokens":[{"chainId":4663,"address":"0xcecf3b38d8b8835f28fef7a9adaca213b106d364","name":"IndexedEx Fee DETF","symbol":"CHIR","decimals":18,"tags":["vault","detf","fee-detf","featured"]}]}
+{"name":"IndexedEx Robinhood Featured Fee DETFs","timestamp":"0","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","4663"],"tokens":[]}

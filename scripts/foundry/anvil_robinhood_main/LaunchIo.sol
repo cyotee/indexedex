@@ -40,10 +40,16 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_05_01 = "phase05_stage01_se_rate_provider_pkg.json";
     string internal constant FILE_05_02 = "phase05_stage02_uniswap_v4_twap_oracle.json";
     string internal constant FILE_05_03 = "phase05_stage03_uniswap_v4_standard_exchange_pkg.json";
+    string internal constant FILE_05_05 = "phase05_stage05_morpho_blue_standard_exchange_pkg.json";
     string internal constant FILE_06_01 = "phase06_stage01_bond_nft_pkg.json";
     string internal constant FILE_06_02 = "phase06_stage02_rebasing_claim_pkg.json";
     string internal constant FILE_06_03 = "phase06_stage03_cp_buffer_hook_pkg.json";
+    string internal constant FILE_06_04 = "phase06_stage04_weighted_buffer_hook_pkg.json";
+    string internal constant FILE_06_06 = "phase06_stage06_curve_quad_buffer_hook_pkg.json";
     string internal constant FILE_06_07 = "phase06_stage07_cp_detf_pkg.json";
+    string internal constant FILE_06_08 = "phase06_stage08_weighted_detf_pkg.json";
+    string internal constant FILE_06_10 = "phase06_stage10_curve_quad_detf_pkg.json";
+    string internal constant FILE_09_01 = "phase09_stage01_export_frontend.json";
 
     function _loadAddr(string memory file, string memory key) internal view returns (address) {
         (address a, bool ok) = _readAddressSafe(file, key);
@@ -140,6 +146,12 @@ abstract contract LaunchIo is DeploymentBase {
         s.uniV4SePkg = IUniswapV4StandardExchangeDFPkg(a);
     }
 
+    function _requireMorphoBlueSePkg(LaunchState storage s) internal {
+        address a = _loadAddr(FILE_05_05, "morphoBlueSePkg");
+        require(_hasCode(a), "run Phase 05 Stage 05 first");
+        s.morphoBlueSePkg = a;
+    }
+
     function _exportCreate3(LaunchState storage s) internal {
         string memory json;
         json = vm.serializeAddress("p0201", "create3Factory", address(s.create3Factory));
@@ -222,9 +234,40 @@ abstract contract LaunchIo is DeploymentBase {
         _exportPkg("p0501", FILE_05_01, "rateProviderPkg", address(s.rateProviderPkg));
         _exportTwapOracle(s);
         _exportPkg("p0503", FILE_05_03, "uniV4SePkg", address(s.uniV4SePkg));
+        _exportPkg("p0505", FILE_05_05, "morphoBlueSePkg", s.morphoBlueSePkg);
         _exportPkg("p0601", FILE_06_01, "bondNftVaultPkg", s.bondNftVaultPkg);
         _exportPkg("p0602", FILE_06_02, "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         _exportPkg("p0603", FILE_06_03, "cpHookPkg", s.cpHookPkg);
+        _exportPkg("p0604", FILE_06_04, "weightedHookPkg", s.weightedHookPkg);
+        _exportPkg("p0606", FILE_06_06, "curveQuadHookPkg", s.curveQuadHookPkg);
         _exportPkg("p0607", FILE_06_07, "cpDetfPkg", s.cpDetfPkg);
+        _exportPkg("p0608", FILE_06_08, "weightedDetfPkg", s.weightedDetfPkg);
+        _exportPkg("p0610", FILE_06_10, "curveQuadDetfPkg", s.curveQuadDetfPkg);
+    }
+
+    function _loadPhasePriorForExport(LaunchState storage s) internal {
+        _requireDiamondFactory(s);
+        _requireHookFactory(s);
+        _requireManager(s);
+        _requireRateProviderPkg(s);
+        _requireTwapOracle(s);
+        _requireUniV4SePkg(s);
+        _requireMorphoBlueSePkg(s);
+        s.bondNftVaultPkg = _loadAddr(FILE_06_01, "bondNftVaultPkg");
+        require(_hasCode(s.bondNftVaultPkg), "run Phase 06 Stage 01 first");
+        s.rebasingClaimTokenPkg = _loadAddr(FILE_06_02, "rebasingClaimTokenPkg");
+        require(_hasCode(s.rebasingClaimTokenPkg), "run Phase 06 Stage 02 first");
+        s.cpHookPkg = _loadAddr(FILE_06_03, "cpHookPkg");
+        require(_hasCode(s.cpHookPkg), "run Phase 06 Stage 03 first");
+        s.weightedHookPkg = _loadAddr(FILE_06_04, "weightedHookPkg");
+        require(_hasCode(s.weightedHookPkg), "run Phase 06 Stage 04 first");
+        s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
+        require(_hasCode(s.curveQuadHookPkg), "run Phase 06 Stage 06 first");
+        s.cpDetfPkg = _loadAddr(FILE_06_07, "cpDetfPkg");
+        require(_hasCode(s.cpDetfPkg), "run Phase 06 Stage 07 first");
+        s.weightedDetfPkg = _loadAddr(FILE_06_08, "weightedDetfPkg");
+        require(_hasCode(s.weightedDetfPkg), "run Phase 06 Stage 08 first");
+        s.curveQuadDetfPkg = _loadAddr(FILE_06_10, "curveQuadDetfPkg");
+        require(_hasCode(s.curveQuadDetfPkg), "run Phase 06 Stage 10 first");
     }
 }
