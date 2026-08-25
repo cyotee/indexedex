@@ -24,6 +24,7 @@ import { insightsViewAbi, rebasingClaimAbi } from './lib/insightsAbi'
 import { pairAddresses, profileFor, type DetfLeg } from './lib/detfProfiles'
 import { formatWad, scaleThresholds } from './lib/thresholdScale'
 import { isZero, labelFor, shortAddr } from './lib/tokenLabels'
+import { displayTokenLabel, displayTokenSymbol, isRetiredRichBrand } from '../lib/customerSymbols'
 import { useInsightDetfCatalog } from './lib/useInsightDetfCatalog'
 
 type BasketRow = {
@@ -252,8 +253,20 @@ export default function InsightsPageClient() {
   const isQuad = profile?.family === 'quad' || pair0 != null
   const priceForGauge = isQuad ? vs0 : syntheticPrice
   const scale = scaleThresholds(burnThreshold, priceForGauge, mintThreshold)
-  const symbol = onchainSymbol || detf?.symbol || 'DETF'
-  const name = onchainName || detf?.name || symbol
+  const rawSymbol = onchainSymbol || detf?.symbol || 'DETF'
+  const rawName = onchainName || detf?.name || rawSymbol
+  const symbol = displayTokenSymbol(rawSymbol) || rawSymbol
+  const name = displayTokenLabel(rawName)
+  const richBrandUnlisted =
+    !!detfAddr &&
+    !detfs.some((d) => d.address.toLowerCase() === detfAddr.toLowerCase()) &&
+    (isRetiredRichBrand(rawSymbol) || isRetiredRichBrand(rawName))
+
+  useEffect(() => {
+    if (!richBrandUnlisted) return
+    const next = detfs[0]?.address
+    if (next && next.toLowerCase() !== detfAddr.toLowerCase()) pick(next)
+  }, [richBrandUnlisted, detfs, detfAddr, pick])
   const supplyLabel = totalSupply != null ? formatUnits(totalSupply, detf?.decimals ?? 18) : '—'
   const holdLabel =
     walletBal != null ? formatUnits(walletBal, detf?.decimals ?? 18) : isConnected ? '0' : 'Connect to see'
@@ -428,7 +441,10 @@ export default function InsightsPageClient() {
       const listedOk = listed && listed.name !== 'Not in the local list'
       return {
         address,
-        symbol: listedOk ? listed.symbol : onchain || listed?.symbol || shortAddr(address),
+        symbol:
+          displayTokenSymbol(
+            listedOk ? listed.symbol : onchain || listed?.symbol || shortAddr(address),
+          ) || shortAddr(address),
       }
     })
     if (fromChain.length > 0) return fromChain
@@ -478,7 +494,9 @@ export default function InsightsPageClient() {
               >
                 {detfs.length === 0 && !detfAddr ? <option value="">Reading DETFs…</option> : null}
                 {detfAddr &&
-                !detfs.some((d) => d.address.toLowerCase() === detfAddr.toLowerCase()) ? (
+                !detfs.some((d) => d.address.toLowerCase() === detfAddr.toLowerCase()) &&
+                !isRetiredRichBrand(rawSymbol) &&
+                !isRetiredRichBrand(rawName) ? (
                   <option value={detfAddr}>
                     {symbol} · {name}
                   </option>

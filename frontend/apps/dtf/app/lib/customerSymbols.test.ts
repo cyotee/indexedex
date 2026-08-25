@@ -4,6 +4,8 @@ import {
   displayTokenLabel,
   displayTokenSymbol,
   displayTokenTicker,
+  isRetiredRichBrand,
+  omitRetiredRichEntries,
   relabelChirEntry,
   relabelChirList,
 } from './customerSymbols'
@@ -15,6 +17,15 @@ describe('customerSymbols', () => {
     expect(displayTokenSymbol('ttchir')).toBe('DTF-DETF')
     expect(displayTokenTicker('CHIR')).toBe('$DTF-DETF')
     expect(displayTokenTicker(undefined)).toBe('$DTF-DETF')
+  })
+
+  it('maps RICH aliases to DTF, not a DETF ticker', () => {
+    expect(displayTokenSymbol('RICH')).toBe('DTF')
+    expect(displayTokenSymbol('$RICH')).toBe('DTF')
+    expect(displayTokenSymbol('ttrich')).toBe('DTF')
+    expect(displayTokenSymbol('RICHIR')).toBe('DTF-CLAIM')
+    expect(displayTokenLabel('$RICH vault')).toBe('$DTF vault')
+    expect(displayTokenLabel('TTRICHIR claim')).toBe('DTF-CLAIM claim')
   })
 
   it('rewrites CHIR inside labels without eating TTCHIR', () => {
@@ -41,5 +52,26 @@ describe('customerSymbols', () => {
     const out = relabelChirEntry(src)
     expect(src.symbol).toBe('CHIR')
     expect(out.symbol).toBe('DTF-DETF')
+  })
+
+  it('detects retired RICH tickers', () => {
+    expect(isRetiredRichBrand('RICH')).toBe(true)
+    expect(isRetiredRichBrand('$RICH')).toBe(true)
+    expect(isRetiredRichBrand('ttrich')).toBe(true)
+    expect(isRetiredRichBrand('RICHIR')).toBe(true)
+    expect(isRetiredRichBrand('TTRICHIR')).toBe(true)
+    expect(isRetiredRichBrand('DTF-DETF')).toBe(false)
+    expect(isRetiredRichBrand('DTF')).toBe(false)
+    expect(isRetiredRichBrand('WETH')).toBe(false)
+  })
+
+  it('drops RICH-labeled DETF picker rows and keeps DTF-DETF', () => {
+    const out = omitRetiredRichEntries([
+      { symbol: 'RICH', name: 'RICH', address: '0x1' },
+      { symbol: 'RICH', name: 'Rich Token', address: '0x2' },
+      { symbol: 'DTF-DETF', name: 'Protocol DETF', address: '0x3' },
+      { symbol: '$$DETF', name: 'Double Dollar', address: '0x4' },
+    ])
+    expect(out.map((row) => row.symbol)).toEqual(['DTF-DETF', '$$DETF'])
   })
 })

@@ -11,46 +11,15 @@ import {
   type TokenListEntry,
 } from '@indexedex/protocol/tokenlists'
 import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../../lib/earn/loadEarnProducts'
-import { relabelChirEntry } from '../../lib/customerSymbols'
 import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRegistryAddress'
 
 import { createAppReadClient } from '../../create/lib/sePoolRead'
 import { loadCreatedDetfs } from '../../lib/detf/createdDetfs'
 import { entriesFromAddresses, loadRegisteredVaults, selectDetfsFromVaults } from '../../lib/detf/discoverDetfs'
+import { mergeDetfs } from './mergeInsightDetfs'
 import { indexTokens } from './tokenLabels'
 
-export type InsightDetf = TokenListEntry & { protocolFee: boolean }
-
-function mergeDetfs(
-  featured: TokenListEntry[],
-  protocol: TokenListEntry[],
-  registry: TokenListEntry[],
-  created: TokenListEntry[],
-  featuredSet: (addr: string) => boolean,
-): InsightDetf[] {
-  const out: InsightDetf[] = []
-  const seen = new Set<string>()
-  const add = (t: TokenListEntry, protocolFee: boolean) => {
-    const k = t.address.toLowerCase()
-    if (seen.has(k)) return
-    seen.add(k)
-    out.push({ ...relabelChirEntry(t), protocolFee })
-  }
-  for (let i = 0; i < featured.length; i++) add(featured[i]!, true)
-  for (let i = 0; i < protocol.length; i++) {
-    const t = protocol[i]!
-    add(t, featuredSet(t.address))
-  }
-  for (let i = 0; i < created.length; i++) {
-    const t = created[i]!
-    add(t, featuredSet(t.address))
-  }
-  for (let i = 0; i < registry.length; i++) {
-    const t = registry[i]!
-    add(t, featuredSet(t.address))
-  }
-  return out
-}
+export type { InsightDetf } from './mergeInsightDetfs'
 
 export function useInsightDetfCatalog() {
   const { selectedChainId } = useSelectedNetwork()
