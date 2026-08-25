@@ -480,12 +480,7 @@ export function SeVaultSlot({
               gas: 16_000_000n,
             })
           } catch (err) {
-            const nativeEth = v4Key.currency0.toLowerCase() === ZERO_ADDRESS
-            throw new Error(
-              nativeEth
-                ? 'Native ETH is not an ERC-20. The factory on this network still tries to approve it, so this transaction would revert. Redeploy the Uniswap V4 SE factory, then try again.'
-                : parseContractError(err),
-            )
+            throw new Error(parseContractError(err))
           }
           const hash = await writeOnAppNetwork({
             address: platform.uniV4SePkg,
