@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { erc20Abi, formatUnits, parseUnits } from 'viem'
-import { useAccount, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
+import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -19,11 +19,12 @@ import {
 } from '../../create/lib/bondLock'
 import { FEE_ORACLE_BOND_ABI } from '../../create/lib/detfAbi'
 import { resolveSePlatform } from '../../create/lib/sePlatform'
+import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
 import { isZero } from '../lib/tokenLabels'
 import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
-import type { ActionToken } from '../lib/actionTokens'
+import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
 import { DetfStaking } from './DetfStaking'
 
 export type { ActionToken }
@@ -48,6 +49,7 @@ export function DetfActions({
   detf,
   detfSymbol,
   pairTokens,
+  vaultShare,
   chainId,
   claimToken,
   claimSymbol,
@@ -58,6 +60,7 @@ export function DetfActions({
   detf?: `0x${string}`
   detfSymbol: string
   pairTokens: ActionToken[]
+  vaultShare?: `0x${string}` | null
   chainId: number
   claimToken?: `0x${string}`
   claimSymbol?: string
@@ -98,26 +101,34 @@ export function DetfActions({
   const [pendingLeg, setPendingLeg] = useState<'approve' | 'mint' | 'bond' | 'claim' | null>(null)
   const [approvedSpend, setApprovedSpend] = useState(0n)
 
-  useEffect(() => {
-    if (pairTokens.length === 0) return
-    const ok = pairTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())
-    if (!ok) setToken(pairTokens[0]!.address)
-  }, [pairTokens, token])
+  const payTokens = useMemo(
+    () =>
+      withEthPayOption(pairTokens, platform.weth, { address: ETH_PAY, symbol: 'ETH' }),
+    [pairTokens, platform.weth],
+  )
 
-  const tokenAddr = (token || pairTokens[0]?.address || '') as `0x${string}` | ''
-  const tokenMeta = pairTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? pairTokens[0]
+  useEffect(() => {
+    if (payTokens.length === 0) return
+    const ok = payTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())
+    if (!ok) setToken(payTokens[0]!.address)
+  }, [payTokens, token])
+
+  const tokenAddr = (token || payTokens[0]?.address || '') as `0x${string}` | ''
+  const tokenMeta = payTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? payTokens[0]
+  const payEth = isEthPay(tokenAddr)
+  const spendToken = settlePayToken(tokenAddr, platform.weth)
 
   useEffect(() => {
     setApprovedSpend(0n)
   }, [tokenAddr, detf, address])
 
   const { data: tokenDecimals } = useReadContract({
-    address: tokenAddr || undefined,
+    address: payEth ? undefined : tokenAddr || undefined,
     abi: erc20Abi,
     functionName: 'decimals',
-    query: { enabled: !!tokenAddr },
+    query: { enabled: !!tokenAddr && !payEth },
   })
-  const decimals = tokenDecimals == null ? 18 : Number(tokenDecimals)
+  const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
   const parsed = parseAmount(amount, decimals)
   const lock = lockSecondsFromDays(lockDays)
   const parsedId = useMemo(() => {
@@ -129,19 +140,25 @@ export function DetfActions({
     }
   }, [tokenId])
 
-  const { data: balance } = useReadContract({
-    address: tokenAddr || undefined,
+  const { data: ethBal } = useBalance({
+    address,
+    chainId,
+    query: { enabled: payEth && !!address },
+  })
+  const { data: erc20Bal } = useReadContract({
+    address: payEth ? undefined : tokenAddr || undefined,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
-    query: { enabled: !!tokenAddr && !!address },
+    query: { enabled: !!tokenAddr && !!address && !payEth },
   })
+  const balance = payEth ? ethBal?.value : erc20Bal
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: tokenAddr || undefined,
+    address: spendToken || undefined,
     abi: erc20Abi,
     functionName: 'allowance',
-    args: address && detf ? [address, detf] : undefined,
-    query: { enabled: !!tokenAddr && !!address && !!detf },
+    args: address && detf && spendToken ? [address, detf] : undefined,
+    query: { enabled: !!spendToken && !!address && !!detf },
   })
   const { data: oracleTerms } = useReadContract({
     address: platform.feeOracle ?? undefined,
@@ -165,8 +182,8 @@ export function DetfActions({
     address: detf,
     abi: insightsViewAbi,
     functionName: 'previewExchangeIn',
-    args: parsed && tokenAddr && detf ? [tokenAddr, parsed, detf] : undefined,
-    query: { enabled: tab === 'mint' && !!detf && !!tokenAddr && parsed != null && parsed > BigInt(0) },
+    args: parsed && spendToken && detf ? [spendToken, parsed, detf] : undefined,
+    query: { enabled: tab === 'mint' && !!detf && !!spendToken && parsed != null && parsed > BigInt(0) },
   })
   const { data: bondVault } = useReadContract({
     address: detf,
@@ -199,7 +216,7 @@ export function DetfActions({
   })
 
   const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
-  const needApprove = parsed != null && parsed > 0n && covered < parsed
+  const needApprove = !payEth && parsed != null && parsed > 0n && covered < parsed
   const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
   const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
 
@@ -223,14 +240,42 @@ export function DetfActions({
     }
   }
 
+  async function wrapEth() {
+    if (!payEth || !platform.weth || !address || parsed == null) return
+    const hash = await writeOnWallet({
+      account: address,
+      address: platform.weth,
+      abi: WETH9_DEPOSIT_ABI,
+      functionName: 'deposit',
+      value: parsed,
+    })
+    await wait(hash, 'Wrap')
+  }
+
+  async function approveWethIfNeeded() {
+    if (!detf || !spendToken || !address || parsed == null) return
+    const coveredNow = allowance != null && allowance >= parsed ? allowance : approvedSpend
+    if (coveredNow >= parsed) return
+    const hash = await writeOnWallet({
+      account: address,
+      address: spendToken,
+      abi: erc20Abi,
+      functionName: 'approve',
+      args: [detf, parsed],
+    })
+    await wait(hash, 'Approve')
+    setApprovedSpend(parsed)
+    await refetchAllowance()
+  }
+
   async function approve() {
-    if (!detf || !tokenAddr || parsed == null || !address) return
+    if (!detf || !spendToken || parsed == null || !address) return
     setPendingLeg('approve')
     setStatus('')
     try {
       const hash = await writeOnWallet({
         account: address,
-        address: tokenAddr,
+        address: spendToken,
         abi: erc20Abi,
         functionName: 'approve',
         args: [detf, parsed],
@@ -247,13 +292,15 @@ export function DetfActions({
   }
 
   async function mint() {
-    if (!detf || !tokenAddr || parsed == null || !address) return
+    if (!detf || !spendToken || parsed == null || !address) return
     setPendingLeg('mint')
     setStatus('')
     try {
+      await wrapEth()
+      if (payEth) await approveWethIfNeeded()
       const minOut =
         preview != null && preview > BigInt(0) ? (preview * BigInt(99)) / BigInt(100) : BigInt(0)
-      const args = [tokenAddr, parsed, detf, minOut, address, false, deadline()] as const
+      const args = [spendToken, parsed, detf, minOut, address, false, deadline()] as const
       if (publicClient) {
         await publicClient.simulateContract({
           account: address,
@@ -279,16 +326,18 @@ export function DetfActions({
   }
 
   async function bond() {
-    if (!detf || !tokenAddr || parsed == null || !address) return
+    if (!detf || !spendToken || parsed == null || !address) return
     setPendingLeg('bond')
     setStatus('')
     try {
+      await wrapEth()
+      if (payEth) await approveWethIfNeeded()
       const hash = await writeOnWallet({
         account: address,
         address: detf,
         abi: insightsViewAbi,
         functionName: 'bond',
-        args: [tokenAddr, parsed, oracleLock, address, false, deadline()],
+        args: [spendToken, parsed, oracleLock, address, false, deadline()],
       })
       await wait(hash, 'Bond')
     } catch (e) {
@@ -333,9 +382,9 @@ export function DetfActions({
       <p className="text-[11px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">Use this DETF</p>
       <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Mint, bond, stake, claim</h3>
       <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-        Mint pays a pair token and receives {detfSymbol}. Bond locks a pair token for a bond NFT.
-        Stake mints the rebasing claim token. That is not minting {detfSymbol}. Claim takes DETF that
-        accrued to a bond. Claiming is not cashing the bond out.
+        Mint pays a token this DETF accepts and receives {detfSymbol}. Bond locks from the same
+        list. Stake mints the rebasing claim token. That is not minting {detfSymbol}. Claim takes
+        DETF that accrued to a bond. Claiming is not cashing the bond out.
       </p>
 
       <div className="mt-4">
@@ -352,24 +401,28 @@ export function DetfActions({
       </div>
 
       {tab === 'mint' || tab === 'bond' ? (
-        <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-          Pair token
+        <label className="mt-4 block text-sm text-[var(--text-primary,#EDEDED)]">
+          Pay with
           <select
             className={inputClass}
             value={tokenAddr}
             onChange={(e) => setToken(e.target.value)}
             data-testid="detf-action-token"
           >
-            {pairTokens.length === 0 ? (
-              <option value="">Reading pair tokens…</option>
+            {payTokens.length === 0 ? (
+              <option value="">Reading tokens…</option>
             ) : (
-              pairTokens.map((t) => (
+              payTokens.map((t) => (
                 <option key={t.address} value={t.address}>
-                  {t.symbol}
+                  {isEthPay(t.address) ? 'ETH' : actionTokenOptionLabel(t, vaultShare)}
                 </option>
               ))
             )}
           </select>
+          <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
+            Pair token, vault token, and the tokens in the vault.
+            {platform.weth ? ' ETH wraps to WETH, then this DETF takes WETH.' : ''}
+          </span>
         </label>
       ) : null}
 
@@ -404,7 +457,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void mint()}
-              disabled={!canSign || parsed == null}
+              disabled={!canSign || parsed == null || !spendToken}
               loading={pendingLeg === 'mint'}
               data-testid="detf-mint"
             >
@@ -455,7 +508,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void bond()}
-              disabled={!canSign || parsed == null || lock == null}
+              disabled={!canSign || parsed == null || lock == null || !spendToken}
               loading={pendingLeg === 'bond'}
               data-testid="detf-bond"
             >
@@ -473,6 +526,8 @@ export function DetfActions({
             claimToken={claimToken}
             claimSymbol={claimSymbol || 'claim'}
             pairTokens={pairTokens}
+            vaultShare={vaultShare}
+            weth={platform.weth}
             chainId={chainId}
             reserveLive={reserveLive}
             explorer={explorer}

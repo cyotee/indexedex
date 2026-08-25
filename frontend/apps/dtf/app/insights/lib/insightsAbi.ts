@@ -8,6 +8,14 @@ export const insightsViewAbi = [
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'rateAsset', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'pairToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'standardExchangeVault', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  {
+    type: 'function',
+    name: 'standardExchangeVaultShare',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'address' }],
+  },
   {
     type: 'function',
     name: 'pairTokens',

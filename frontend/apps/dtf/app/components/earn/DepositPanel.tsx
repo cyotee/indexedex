@@ -8,6 +8,7 @@ import {
 } from 'viem'
 import {
   useAccount,
+  useBalance,
   useChainId,
   useConnect,
   usePublicClient,
@@ -39,6 +40,7 @@ import {
   resolveWalletGate,
   type PendingLeg,
 } from '../../lib/tx/actionState'
+import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { ActionCta } from '../ui/ActionCta'
 import { AmountField, parseAmountFieldValue } from '../ui/AmountField'
@@ -109,6 +111,8 @@ export function DepositPanel({
       return getAddressArtifacts(chainId, environment).platform as {
         balancerV3StandardExchangeRouter?: `0x${string}`
         permit2?: `0x${string}`
+        weth?: `0x${string}`
+        weth9?: `0x${string}`
       }
     } catch {
       return {}
@@ -117,6 +121,7 @@ export function DepositPanel({
 
   const routerAddress = platform.balancerV3StandardExchangeRouter ?? null
   const permit2Address = platform.permit2 ?? null
+  const weth = (platform.weth9 ?? platform.weth ?? null) as `0x${string}` | null
   const vaultAddress = product.address
 
   const { data: vaultTokensLegacy } = useReadContract({
@@ -142,6 +147,21 @@ export function DepositPanel({
         : []
     return (raw as unknown[]).filter((t): t is `0x${string}` => typeof t === 'string' && t.startsWith('0x'))
   }, [vaultTokensLegacy, vaultTokensMulti])
+
+  const depositAssets = useMemo(
+    () =>
+      withEthPayOption(
+        underlyingTokens.map((address) => ({
+          address,
+          symbol: assetSymbols[address.toLowerCase()] ?? `${address.slice(0, 6)}…${address.slice(-4)}`,
+        })),
+        weth,
+        { address: ETH_PAY, symbol: 'ETH' },
+      ),
+    [underlyingTokens, assetSymbols, weth],
+  )
+  const payEth = isEthPay(tokenIn)
+  const spendToken = tokenIn ? settlePayToken(tokenIn, weth) : null
 
   useEffect(() => {
     if (mode === 'deposit' && underlyingTokens[0] && !tokenIn) {
@@ -182,7 +202,11 @@ export function DepositPanel({
   const withdrawTokenOut = underlyingTokens[0] as `0x${string}` | undefined
 
   const assetForBalance =
-    mode === 'deposit' ? (tokenIn as `0x${string}` | undefined) : vaultAddress
+    mode === 'deposit'
+      ? payEth
+        ? undefined
+        : (tokenIn as `0x${string}` | undefined)
+      : vaultAddress
 
   // Output token for preview display: deposit → vault shares; withdraw → underlying
   const assetForOut =
@@ -205,6 +229,11 @@ export function DepositPanel({
     chainId,
     query: { enabled: !!assetForBalance },
   })
+  const { data: ethBal } = useBalance({
+    address,
+    chainId,
+    query: { enabled: payEth && mode === 'deposit' && !!address },
+  })
 
   const { data: outDecimalsRaw } = useReadContract({
     address: assetForOut,
@@ -222,7 +251,7 @@ export function DepositPanel({
     query: { enabled: !!assetForOut },
   })
 
-  const { data: balance, refetch: refetchBalance } = useReadContract({
+  const { data: erc20Bal, refetch: refetchBalance } = useReadContract({
     address: assetForBalance,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -230,8 +259,9 @@ export function DepositPanel({
     chainId,
     query: { enabled: !!assetForBalance && !!address },
   })
+  const balance = payEth && mode === 'deposit' ? ethBal?.value : erc20Bal
 
-  const dec = typeof decimals === 'number' ? decimals : 18
+  const dec = payEth && mode === 'deposit' ? 18 : typeof decimals === 'number' ? decimals : 18
   // Prefer on-chain out decimals; fall back to product.decimals for vault shares
   const outDec =
     typeof outDecimalsRaw === 'number'
@@ -252,7 +282,7 @@ export function DepositPanel({
   const amountValid = parsedAmount != null && parsedAmount > BigInt(0)
 
   const approval = useApprovalFlow({
-    tokenAddress: mode === 'deposit' ? (tokenIn as `0x${string}`) || null : vaultAddress,
+    tokenAddress: mode === 'deposit' ? spendToken : vaultAddress,
     permit2Address,
     routerAddress,
     publicClient: publicClient ?? null,
@@ -272,7 +302,7 @@ export function DepositPanel({
       setPreviewLoading(false)
       return
     }
-    if (mode === 'deposit' && !tokenIn) {
+    if (mode === 'deposit' && !spendToken) {
       setPreviewOut(null)
       return
     }
@@ -292,7 +322,7 @@ export function DepositPanel({
           mode === 'deposit'
             ? toVaultDepositQueryArgs({
                 vault: vaultAddress,
-                tokenIn: tokenIn as `0x${string}`,
+                tokenIn: spendToken as `0x${string}`,
                 amountIn: parsedAmount,
               })
             : toVaultWithdrawQueryArgs({
@@ -335,6 +365,7 @@ export function DepositPanel({
     parsedAmount,
     mode,
     tokenIn,
+    spendToken,
     withdrawTokenOut,
     vaultAddress,
   ])
@@ -418,7 +449,7 @@ export function DepositPanel({
       setStatus('Quote required before deposit. Continue via Swap if preview fails.')
       return
     }
-    if (mode === 'deposit' && !tokenIn) {
+    if (mode === 'deposit' && !spendToken) {
       setStatus('Select an underlying token to deposit.')
       return
     }
@@ -437,13 +468,23 @@ export function DepositPanel({
       setSuccessHash(null)
       setPendingLeg('execute')
       setTxPhase('submit')
+      if (payEth && weth) {
+        const wrapHash = await writeContractAsync({
+          address: weth,
+          abi: WETH9_DEPOSIT_ABI,
+          functionName: 'deposit',
+          value: parsedAmount,
+          chainId,
+        })
+        await publicClient.waitForTransactionReceipt({ hash: wrapHash })
+      }
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200)
 
       const args =
         mode === 'deposit'
           ? buildStrategyVaultDepositArgs({
               vault: vaultAddress,
-              tokenIn: tokenIn as `0x${string}`,
+              tokenIn: spendToken as `0x${string}`,
               amountIn: parsedAmount,
               minAmountOut: minOut,
               deadline,
@@ -492,6 +533,9 @@ export function DepositPanel({
     minOut,
     mode,
     tokenIn,
+    spendToken,
+    payEth,
+    weth,
     withdrawTokenOut,
     writeContractAsync,
     vaultAddress,
@@ -588,14 +632,11 @@ export function DepositPanel({
             value={tokenIn}
             onChange={(e) => setTokenIn(e.target.value as `0x${string}`)}
           >
-            {underlyingTokens.map((t) => {
-              const sym = assetSymbols[t.toLowerCase()]
-              return (
-                <option key={t} value={t}>
-                  {sym ? `${sym} · ${t.slice(0, 6)}…${t.slice(-4)}` : t}
-                </option>
-              )
-            })}
+            {depositAssets.map((t) => (
+              <option key={t.address} value={t.address}>
+                {isEthPay(t.address) ? 'ETH' : `${t.symbol} · ${t.address.slice(0, 6)}…${t.address.slice(-4)}`}
+              </option>
+            ))}
           </select>
         </label>
       ) : null}
@@ -607,7 +648,7 @@ export function DepositPanel({
         onChange={setAmount}
         decimals={dec}
         balance={typeof balance === 'bigint' ? balance : undefined}
-        symbol={symbol ? String(symbol) : undefined}
+        symbol={payEth && mode === 'deposit' ? 'ETH' : symbol ? String(symbol) : undefined}
         usdValue={null}
       />
 

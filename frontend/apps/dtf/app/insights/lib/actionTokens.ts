@@ -23,7 +23,33 @@ function pushAll(out: `0x${string}`[], seen: Set<string>, values: readonly unkno
   for (const value of values) pushUnique(out, seen, value)
 }
 
-/** Addresses a user can mint or bond with: pair legs, SE shares, and SE vault tokens. */
+function excludeSet(values: readonly unknown[] | undefined): Set<string> {
+  const out = new Set<string>()
+  for (const value of values ?? []) {
+    const addr = asAddr(value)
+    if (addr) out.add(addr.toLowerCase())
+  }
+  return out
+}
+
+/** SE diamonds to read `vaultTokens()` from. One-vault uses `underlyingVault` / `standardExchangeVault`. */
+export function collectSeVaultReadAddresses(input: {
+  standardExchanges?: readonly unknown[]
+  underlyingVault?: unknown
+  standardExchangeVault?: unknown
+}): `0x${string}`[] {
+  const seen = new Set<string>()
+  const out: `0x${string}`[] = []
+  pushAll(out, seen, input.standardExchanges)
+  pushUnique(out, seen, input.underlyingVault)
+  pushUnique(out, seen, input.standardExchangeVault)
+  return out
+}
+
+/**
+ * Tokens mint and bond actually settle: pair legs, vault shares, and every token
+ * the backing SE lists. `acceptedBondTokens` is a subset on some families.
+ */
 export function collectActionTokenAddresses(input: {
   pairTokens?: readonly unknown[]
   acceptedBondTokens?: readonly unknown[]
@@ -34,19 +60,38 @@ export function collectActionTokenAddresses(input: {
   pair0?: unknown
   pair1?: unknown
   pair2?: unknown
+  rateAsset?: unknown
+  underlyingVault?: unknown
+  standardExchangeVault?: unknown
+  standardExchangeVaultShare?: unknown
+  exclude?: readonly unknown[]
 }): `0x${string}`[] {
+  const skip = excludeSet(input.exclude)
   const seen = new Set<string>()
-  const out: `0x${string}`[] = []
-  pushAll(out, seen, input.pairTokens)
-  pushAll(out, seen, input.acceptedBondTokens)
-  pushUnique(out, seen, input.pairToken)
-  pushUnique(out, seen, input.pair0)
-  pushUnique(out, seen, input.pair1)
-  pushUnique(out, seen, input.pair2)
-  pushAll(out, seen, input.vaultShares)
-  pushAll(out, seen, input.standardExchanges)
+  const raw: `0x${string}`[] = []
+  pushAll(raw, seen, input.pairTokens)
+  pushAll(raw, seen, input.acceptedBondTokens)
+  pushUnique(raw, seen, input.pairToken)
+  pushUnique(raw, seen, input.pair0)
+  pushUnique(raw, seen, input.pair1)
+  pushUnique(raw, seen, input.pair2)
+  pushUnique(raw, seen, input.rateAsset)
+  pushAll(raw, seen, input.vaultShares)
+  pushUnique(raw, seen, input.standardExchangeVaultShare)
+  pushAll(raw, seen, input.standardExchanges)
+  pushUnique(raw, seen, input.underlyingVault)
+  pushUnique(raw, seen, input.standardExchangeVault)
   if (input.seVaultTokens) {
-    for (const row of input.seVaultTokens) pushAll(out, seen, row)
+    for (const row of input.seVaultTokens) pushAll(raw, seen, row)
   }
-  return out
+  if (skip.size === 0) return raw
+  return raw.filter((addr) => !skip.has(addr.toLowerCase()))
+}
+
+export function actionTokenOptionLabel(token: ActionToken, vaultShare?: string | null): string {
+  const symbol = token.symbol.trim() || `${token.address.slice(0, 6)}…${token.address.slice(-4)}`
+  if (vaultShare && token.address.toLowerCase() === vaultShare.toLowerCase()) {
+    return `${symbol} (vault token)`
+  }
+  return symbol
 }

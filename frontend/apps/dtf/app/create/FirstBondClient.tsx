@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { erc20Abi, formatUnits, parseUnits, type Address } from 'viem'
 import {
   useAccount,
+  useBalance,
   useConnect,
   usePublicClient,
   useReadContract,
@@ -22,6 +23,7 @@ import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { rememberCreatedDetf } from '../lib/detf/createdDetfs'
+import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../lib/ethPay'
 import { parseContractError } from '../lib/tx/parseContractError'
 import {
   asBondLockTerms,
@@ -187,13 +189,18 @@ export function FirstBondClient() {
   useEffect(() => {
     if (!seTokensKnown) return
     if (bondTokens.length === 0) return
-    const stillValid = tokenIn && bondTokens.some((t) => sameAddress(t, tokenIn))
+    const stillValid =
+      (tokenIn && bondTokens.some((t) => sameAddress(t, tokenIn))) ||
+      (tokenIn &&
+        isEthPay(tokenIn) &&
+        !!platform.weth &&
+        bondTokens.some((t) => sameAddress(t, platform.weth!)))
     if (didPickToken.current && stillValid) return
     const next = defaultFirstBondToken(bondTokens, pairToken)
     if (!next) return
     if (tokenIn && sameAddress(tokenIn, next)) return
     setTokenIn(next)
-  }, [seTokensKnown, bondTokens, pairToken, tokenIn])
+  }, [seTokensKnown, bondTokens, pairToken, tokenIn, platform.weth])
 
   const { data: tokenMeta } = useReadContracts({
     contracts: bondTokens.flatMap((address) => [
@@ -222,7 +229,19 @@ export function FirstBondClient() {
     [bondTokens, listedTokens, tokenMeta],
   )
 
-  const selected = tokenOptions.find((t) => tokenIn && sameAddress(t.address, tokenIn))
+  const payOptions = useMemo(
+    () =>
+      withEthPayOption(tokenOptions, platform.weth, {
+        address: ETH_PAY,
+        symbol: 'ETH',
+        decimals: 18,
+      }),
+    [tokenOptions, platform.weth],
+  )
+
+  const selected = payOptions.find((t) => tokenIn && sameAddress(t.address, tokenIn))
+  const payEth = isEthPay(tokenIn)
+  const spendToken = tokenIn ? settlePayToken(tokenIn, platform.weth) : null
 
   const { data: weightedAllowances, refetch: refetchWeightedAllowances } = useReadContracts({
     contracts:
@@ -280,21 +299,27 @@ export function FirstBondClient() {
       })
     : undefined
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: tokenIn || undefined,
+    address: spendToken || undefined,
     abi: erc20Abi,
     functionName: 'allowance',
-    args: address && detf && tokenIn ? [address, detf] : undefined,
+    args: address && detf && spendToken ? [address, detf] : undefined,
     chainId: selectedChainId,
-    query: { enabled: !!tokenIn && !!address && !!detf },
+    query: { enabled: !!spendToken && !!address && !!detf },
   })
-  const { data: balance } = useReadContract({
-    address: tokenIn || undefined,
+  const { data: ethBal } = useBalance({
+    address,
+    chainId: selectedChainId,
+    query: { enabled: payEth && !!address },
+  })
+  const { data: erc20Bal } = useReadContract({
+    address: payEth ? undefined : tokenIn || undefined,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     chainId: selectedChainId,
-    query: { enabled: !!tokenIn && !!address },
+    query: { enabled: !!tokenIn && !!address && !payEth },
   })
+  const balance = payEth ? ethBal?.value : erc20Bal
   const { data: oracleTerms } = useReadContract({
     address: platform.feeOracle ?? undefined,
     abi: FEE_ORACLE_BOND_ABI,
@@ -337,7 +362,7 @@ export function FirstBondClient() {
     }
   }, [amount, dec])
   const lockSeconds = lockSecondsFromDays(lockDaysValid ?? minDays)
-  const needsApprove = parsed != null && (allowance == null || allowance < parsed)
+  const needsApprove = !payEth && parsed != null && (allowance == null || allowance < parsed)
 
   const writeOnWallet = async (params: Parameters<typeof writeContractAsync>[0]) => {
     const localWallet = walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
@@ -368,7 +393,7 @@ export function FirstBondClient() {
 
   const approve = async () => {
     const weightedFirst = weightedReady && !live
-    const token = weightedFirst ? weightedNeedApprove?.address : tokenIn
+    const token = weightedFirst ? weightedNeedApprove?.address : spendToken
     const amt = weightedFirst ? weightedNeedApprove?.parsed : parsed
     if (!token || !detf || amt == null) return
     setStatus(null)
@@ -403,12 +428,32 @@ export function FirstBondClient() {
         setStatus('Enter an amount for every pair token.')
         return
       }
-    } else if (!tokenIn || parsed == null) {
+    } else if (!spendToken || parsed == null) {
       return
     }
     setStatus(null)
     setPending('bond')
     try {
+      if (payEth && platform.weth && parsed != null) {
+        const wrapHash = await writeOnWallet({
+          address: platform.weth,
+          abi: WETH9_DEPOSIT_ABI,
+          functionName: 'deposit',
+          value: parsed,
+        })
+        await waitMined(wrapHash)
+        setStatus('Wrapped ETH to WETH.')
+        if (allowance == null || allowance < parsed) {
+          const appr = await writeOnWallet({
+            address: spendToken,
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [detf, parsed],
+          })
+          await waitMined(appr)
+          await refetchAllowance()
+        }
+      }
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600)
       const hash = weightedFirst
         ? await writeOnWallet({
@@ -429,7 +474,7 @@ export function FirstBondClient() {
             address: detf,
             abi: DETF_BOND_ABI,
             functionName: 'bond',
-            args: [tokenIn, parsed, lockSeconds, address, false, deadline],
+            args: [spendToken, parsed, lockSeconds, address, false, deadline],
           })
       await waitMined(hash)
       setStatus('Bonded. The DETF is live.')
@@ -549,16 +594,18 @@ export function FirstBondClient() {
                   disabled={tokenOptions.length === 0}
                   data-testid="first-bond-token"
                 >
-                  {tokenOptions.length === 0 ? (
+                  {payOptions.length === 0 ? (
                     <option value="">Reading vault tokens…</option>
                   ) : (
-                    tokenOptions.map((t) => (
+                    payOptions.map((t) => (
                       <option key={t.address} value={t.address}>
-                        {firstBondTokenOptionLabel({
-                          address: t.address,
-                          symbol: t.symbol,
-                          vaultShare,
-                        })}
+                        {isEthPay(t.address)
+                          ? 'ETH'
+                          : firstBondTokenOptionLabel({
+                              address: t.address,
+                              symbol: t.symbol,
+                              vaultShare,
+                            })}
                       </option>
                     ))
                   )}
@@ -566,6 +613,7 @@ export function FirstBondClient() {
               </label>
               <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
                 These are the tokens the strategy vault lists, plus the vault token.
+                {platform.weth ? ' ETH wraps to WETH first.' : ''}
               </p>
               <label className="mt-4 block text-sm text-[var(--text-primary,#EDEDED)]">
                 {selected?.symbol ?? 'Token'} amount

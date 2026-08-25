@@ -17,7 +17,8 @@ import { VAULT_TOKENS_ABI } from '../create/lib/seAbi'
 import { DetfAbout } from './components/DetfAbout'
 import { DetfActions } from './components/DetfActions'
 import { ThresholdGauge } from './components/ThresholdGauge'
-import { collectActionTokenAddresses } from './lib/actionTokens'
+import { resolveVaultShare } from '../create/lib/bondTokens'
+import { collectActionTokenAddresses, collectSeVaultReadAddresses } from './lib/actionTokens'
 import { insightsStakingHref } from './lib/claimMint'
 import { insightsViewAbi, rebasingClaimAbi } from './lib/insightsAbi'
 import { pairAddresses, profileFor, type DetfLeg } from './lib/detfProfiles'
@@ -142,6 +143,18 @@ export default function InsightsPageClient() {
     functionName: 'vaultShares',
     query: { enabled, retry: 0 },
   })
+  const { data: standardExchangeVault } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'standardExchangeVault',
+    query: { enabled, retry: 0 },
+  })
+  const { data: standardExchangeVaultShare } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'standardExchangeVaultShare',
+    query: { enabled, retry: 0 },
+  })
 
   const { data: walletBal } = useReadContract({
     address: detfAddr,
@@ -191,8 +204,21 @@ export default function InsightsPageClient() {
   const exchanges = result<readonly `0x${string}`[]>(18)
   const allLegsMint = result<boolean>(19)
   const seList = useMemo(
-    () => (exchanges ?? []).map((a) => asAddr(a)).filter((a): a is `0x${string}` => !!a),
-    [exchanges],
+    () =>
+      collectSeVaultReadAddresses({
+        standardExchanges: exchanges,
+        underlyingVault,
+        standardExchangeVault,
+      }),
+    [exchanges, underlyingVault, standardExchangeVault],
+  )
+  const vaultShare = useMemo(
+    () =>
+      resolveVaultShare(
+        asAddr(standardExchangeVault) ?? underlyingVault,
+        asAddr(standardExchangeVaultShare) ?? (vaultShares as readonly unknown[] | undefined)?.[0],
+      ),
+    [standardExchangeVault, underlyingVault, standardExchangeVaultShare, vaultShares],
   )
   const seTokenReads = useReadContracts({
     contracts: seList.map((address) => ({
@@ -362,6 +388,11 @@ export default function InsightsPageClient() {
         pair0,
         pair1,
         pair2,
+        rateAsset,
+        underlyingVault,
+        standardExchangeVault,
+        standardExchangeVaultShare,
+        exclude: detfAddr ? [detfAddr] : [],
       }),
     [
       weightedPairTokens,
@@ -373,6 +404,11 @@ export default function InsightsPageClient() {
       pair0,
       pair1,
       pair2,
+      rateAsset,
+      underlyingVault,
+      standardExchangeVault,
+      standardExchangeVaultShare,
+      detfAddr,
     ],
   )
   const { data: actionMeta } = useReadContracts({
@@ -552,6 +588,7 @@ export default function InsightsPageClient() {
               detf={detfAddr}
               detfSymbol={symbol}
               pairTokens={actionTokens}
+              vaultShare={vaultShare}
               chainId={selectedChainId}
               claimToken={claimToken}
               claimSymbol={claimSymbol}

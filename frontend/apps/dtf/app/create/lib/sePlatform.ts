@@ -31,6 +31,7 @@ export type SePlatform = {
   hookFactory: Address | null
   diamondPackageFactory: Address | null
   feeOracle: Address | null
+  weth: Address | null
 }
 
 export function resolveSePlatform(
@@ -63,6 +64,7 @@ export function resolveSePlatform(
     hookFactory: asAddr(platform.hookFactory),
     diamondPackageFactory: asAddr(platform.diamondPackageFactory),
     feeOracle: asAddr(platform.indexedexManager) ?? asAddr(platform.feeOracle),
+    weth: asAddr(platform.weth9) ?? asAddr(platform.weth),
   }
 }
 

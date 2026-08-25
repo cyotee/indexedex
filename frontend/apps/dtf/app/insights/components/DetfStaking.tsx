@@ -2,15 +2,16 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { erc20Abi, formatUnits, parseUnits } from 'viem'
-import { useAccount, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
+import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
+import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
-import type { ActionToken } from '../lib/actionTokens'
+import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
 import { diamondLoupeAbi, insightsViewAbi, rebasingClaimAbi } from '../lib/insightsAbi'
 import {
   BUY_CLAIM_SELECTOR,
@@ -43,6 +44,8 @@ export function DetfStaking({
   claimToken,
   claimSymbol,
   pairTokens,
+  vaultShare,
+  weth,
   chainId,
   reserveLive,
   explorer,
@@ -52,6 +55,8 @@ export function DetfStaking({
   claimToken?: `0x${string}`
   claimSymbol: string
   pairTokens: ActionToken[]
+  vaultShare?: `0x${string}` | null
+  weth?: `0x${string}` | null
   chainId: number
   reserveLive?: boolean
   explorer?: string
@@ -135,14 +140,17 @@ export function DetfStaking({
     [path, detf, pairTokens],
   )
   const stakeTokens: ActionToken[] = useMemo(() => {
-    return stakeAddrs.map((addr) => {
+    const listed = stakeAddrs.map((addr) => {
       if (detf && addr.toLowerCase() === detf.toLowerCase()) {
         return { address: addr, symbol: detfSymbol }
       }
-      const listed = pairTokens.find((t) => t.address.toLowerCase() === addr.toLowerCase())
-      return listed ?? { address: addr, symbol: addr.slice(0, 6) }
+      const known = pairTokens.find((t) => t.address.toLowerCase() === addr.toLowerCase())
+      return known ?? { address: addr, symbol: addr.slice(0, 6) }
     })
-  }, [stakeAddrs, detf, detfSymbol, pairTokens])
+    return path === 'depositClaim'
+      ? withEthPayOption(listed, weth, { address: ETH_PAY, symbol: 'ETH' })
+      : listed
+  }, [stakeAddrs, detf, detfSymbol, pairTokens, path, weth])
 
   useEffect(() => {
     if (stakeTokens.length === 0) return
@@ -152,28 +160,36 @@ export function DetfStaking({
 
   const tokenAddr = (token || stakeTokens[0]?.address || '') as `0x${string}` | ''
   const tokenMeta = stakeTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? stakeTokens[0]
+  const payEth = tab === 'stake' && isEthPay(tokenAddr)
+  const settledIn = settlePayToken(tokenAddr, weth)
 
   useEffect(() => {
     setApprovedSpend(0n)
   }, [tokenAddr, detf, address, tab])
 
-  const spendToken = tab === 'unstake' ? claimToken : tokenAddr || undefined
+  const spendToken = tab === 'unstake' ? claimToken : payEth ? settledIn || undefined : tokenAddr || undefined
   const { data: tokenDecimals } = useReadContract({
-    address: spendToken,
+    address: payEth ? undefined : spendToken,
     abi: erc20Abi,
     functionName: 'decimals',
-    query: { enabled: !!spendToken },
+    query: { enabled: !!spendToken && !payEth },
   })
-  const decimals = tokenDecimals == null ? 18 : Number(tokenDecimals)
+  const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
   const parsed = parseAmount(amount, decimals)
 
-  const { data: balance } = useReadContract({
-    address: spendToken,
+  const { data: ethBal } = useBalance({
+    address,
+    chainId,
+    query: { enabled: payEth && !!address },
+  })
+  const { data: erc20Bal } = useReadContract({
+    address: payEth ? undefined : spendToken,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
-    query: { enabled: !!spendToken && !!address },
+    query: { enabled: !!spendToken && !!address && !payEth },
   })
+  const balance = payEth ? ethBal?.value : erc20Bal
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
     address: spendToken,
     abi: erc20Abi,
@@ -203,7 +219,7 @@ export function DetfStaking({
   })
 
   const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
-  const needApprove = tab === 'stake' && parsed != null && parsed > 0n && covered < parsed
+  const needApprove = !payEth && tab === 'stake' && parsed != null && parsed > 0n && covered < parsed
   const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
   const inert = reserveLive === false
   const noClaim = !claimToken
@@ -229,13 +245,13 @@ export function DetfStaking({
   }
 
   async function approve() {
-    if (!detf || !tokenAddr || parsed == null || !address) return
+    if (!detf || !spendToken || parsed == null || !address) return
     setPendingLeg('approve')
     setStatus('')
     try {
       const hash = await writeOnWallet({
         account: address,
-        address: tokenAddr,
+        address: spendToken,
         abi: erc20Abi,
         functionName: 'approve',
         args: [detf, parsed],
@@ -252,10 +268,33 @@ export function DetfStaking({
   }
 
   async function stake() {
-    if (!detf || !tokenAddr || parsed == null || !address) return
+    if (!detf || !spendToken || parsed == null || !address) return
     setPendingLeg('stake')
     setStatus('')
     try {
+      if (payEth && weth) {
+        const wrapHash = await writeOnWallet({
+          account: address,
+          address: weth,
+          abi: WETH9_DEPOSIT_ABI,
+          functionName: 'deposit',
+          value: parsed,
+        })
+        await wait(wrapHash, 'Wrap')
+        const coveredNow = allowance != null && allowance >= parsed ? allowance : approvedSpend
+        if (coveredNow < parsed) {
+          const appr = await writeOnWallet({
+            account: address,
+            address: spendToken,
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [detf, parsed],
+          })
+          await wait(appr, 'Approve')
+          setApprovedSpend(parsed)
+          await refetchAllowance()
+        }
+      }
       const minOut = previewBuy != null && previewBuy > 0n ? (previewBuy * 99n) / 100n : 0n
       const hash =
         path === 'buyClaim'
@@ -271,7 +310,7 @@ export function DetfStaking({
               address: detf,
               abi: insightsViewAbi,
               functionName: 'depositClaim',
-              args: [tokenAddr, parsed, minOut, address, false, deadline()],
+              args: [spendToken, parsed, minOut, address, false, deadline()],
             })
       await wait(hash, 'Stake')
     } catch (e) {
@@ -319,9 +358,9 @@ export function DetfStaking({
   return (
     <div data-testid="detf-staking">
       <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-        Stake pays {buyClaimOnly ? detfSymbol : `a pair token or ${detfSymbol}`} and mints the rebasing
-        claim token. That is not minting {detfSymbol}. Unstake burns claim and pays {detfSymbol}.
-        Amounts are not guaranteed.
+        Stake pays {buyClaimOnly ? detfSymbol : `a token this DETF accepts, or ${detfSymbol}`} and
+        mints the rebasing claim token. That is not minting {detfSymbol}. Unstake burns claim and
+        pays {detfSymbol}. Amounts are not guaranteed.
       </p>
 
       {claimToken ? (
@@ -376,11 +415,12 @@ export function DetfStaking({
       <TabPanel when="stake" active={tab}>
         {buyClaimOnly ? (
           <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-            This DETF accepts {detfSymbol} only.
+            This DETF mints claim from {detfSymbol} only. Mint first if you hold a pair or vault
+            token.
           </p>
         ) : (
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-            Token in
+            Pay with
             <select
               className={inputClass}
               value={tokenAddr}
@@ -392,7 +432,11 @@ export function DetfStaking({
               ) : (
                 stakeTokens.map((t) => (
                   <option key={t.address} value={t.address}>
-                    {t.symbol}
+                    {isEthPay(t.address)
+                      ? 'ETH'
+                      : detf && t.address.toLowerCase() === detf.toLowerCase()
+                        ? t.symbol
+                        : actionTokenOptionLabel(t, vaultShare)}
                   </option>
                 ))
               )}
