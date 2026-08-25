@@ -97,7 +97,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
         assertEq(token1Vaults[0], vault, "token1 registered vault");
     }
 
-    /// @notice Native ETH is V4 currency0 `address(0)`. initAccount must skip ERC-20/Permit2 approve.
+    /// @notice Native ETH PoolKey maps to a WETH vault face so DETF / registry stay ERC-20.
     function test_deployVault_nativeEthCurrency0_registersVault() public {
         PoolKey memory poolKey = _buildPoolKey(address(0), address(tokenA));
 
@@ -108,17 +108,17 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
 
         address[] memory vaultTokens = IBasicVault(vault).vaultTokens();
         assertEq(vaultTokens.length, 2, "vault token count");
-        assertEq(vaultTokens[0], address(0), "native ETH currency0");
+        assertEq(vaultTokens[0], address(weth), "WETH face for native ETH");
         assertEq(vaultTokens[1], address(tokenA), "pairToken");
 
-        address[] memory nativeVaults = indexedexManager.vaultsOfToken(address(0));
+        address[] memory wethVaults = indexedexManager.vaultsOfToken(address(weth));
         address[] memory pairVaults = indexedexManager.vaultsOfToken(address(tokenA));
-        assertEq(nativeVaults.length, 1, "native ETH registry count");
-        assertEq(nativeVaults[0], vault, "native ETH registered vault");
+        assertEq(wethVaults.length, 1, "WETH registry count");
+        assertEq(wethVaults[0], vault, "WETH registered vault");
         assertEq(pairVaults.length, 1, "pairToken registry count");
         assertEq(pairVaults[0], vault, "pairToken registered vault");
         assertEq(IERC20Metadata(vault).symbol(), "UV4X", "symbol");
-        assertEq(IERC20Metadata(vault).name(), "UniV4 Vault of (ETH / TKNA)", "name");
+        assertEq(IERC20Metadata(vault).name(), "UniV4 Vault of (WETH / TKNA)", "name");
     }
 
     function _buildPoolKey(address token0Candidate, address token1Candidate)

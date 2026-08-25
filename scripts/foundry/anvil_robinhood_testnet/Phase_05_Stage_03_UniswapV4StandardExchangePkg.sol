@@ -6,6 +6,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
@@ -51,6 +52,7 @@ library Phase_05_Stage_03_UniswapV4StandardExchangePkg {
         pkgInit.poolManager = IPoolManager(RobinhoodCanonicalLib.poolManager());
         pkgInit.positionManager = IPositionManager(RobinhoodCanonicalLib.positionManagerV4());
         pkgInit.twapOracle = s.twapOracle;
+        pkgInit.weth = IWETH(RobinhoodCanonicalLib.weth());
         s.uniV4SePkg = s.indexedexManager.deployUniswapV4StandardExchangeDFPkg(pkgInit);
     }
 }

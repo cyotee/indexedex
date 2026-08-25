@@ -8,6 +8,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {
@@ -218,8 +219,8 @@ library UniswapV4_Component_FactoryService {
                 vaultRegistry.deployPkg(
                     type(UniswapV4StandardExchangeDFPkg).creationCode,
                     abi.encode(pkgInit),
-                    // v1 was name-only; that CREATE3 slot is occupied on 4663 with pre-native-ETH bytecode.
-                    abi.encode(type(UniswapV4StandardExchangeDFPkg).name, "nativeEth")._hash()
+                    // v1 name-only and v2 nativeEth salts are occupied on 4663.
+                    abi.encode(type(UniswapV4StandardExchangeDFPkg).name, "wethWrap")._hash()
                 )
             )
         );
@@ -244,6 +245,7 @@ library UniswapV4_Component_FactoryService {
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
         IPoolManager poolManager;
+        IWETH weth;
     }
 
     function buildArgsUniswapV4StandardExchangePkgInit(Univ4SePkgInitCore memory a)
@@ -266,6 +268,7 @@ library UniswapV4_Component_FactoryService {
         pkgInit.vaultRegistryDeployment = a.vaultRegistryDeployment;
         pkgInit.permit2 = a.permit2;
         pkgInit.poolManager = a.poolManager;
+        pkgInit.weth = a.weth;
         // positionManager defaults to address(0). twapOracle via attachTwapOracle.
     }
 

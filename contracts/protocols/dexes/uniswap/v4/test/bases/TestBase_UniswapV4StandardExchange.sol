@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {WETH9} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
@@ -34,6 +36,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
     uint256 internal constant DEFAULT_V4_LIQUID_RESERVE_PCT = 0.2e18;
 
     PoolManager internal poolManager;
+    IWETH internal weth;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
     IFacet internal uniswapV4StandardExchangePositionImportFacet;
@@ -53,6 +56,9 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
         TestBase_Permit2.setUp();
         TestBase_VaultComponents.setUp();
 
+        if (address(weth) == address(0)) {
+            weth = IWETH(address(new WETH9()));
+        }
         poolManager = new PoolManager(address(this));
         twapOracleFacet = create3Factory.deployUniswapV4MultiPoolTwapOracleFacet();
         twapOraclePkg =
@@ -113,5 +119,6 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
         a.vaultRegistryDeployment = indexedexManager;
         a.permit2 = permit2;
         a.poolManager = poolManager;
+        a.weth = weth;
     }
 }

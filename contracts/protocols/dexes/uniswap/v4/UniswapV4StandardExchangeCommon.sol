@@ -28,6 +28,8 @@ import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {WETHAwareRepo} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETHAwareRepo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -221,12 +223,24 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         return UniswapV4PoolKeyAwareRepo._currency1();
     }
 
+    function _weth() internal view returns (IWETH) {
+        return WETHAwareRepo._weth();
+    }
+
+    /// @dev PoolKey may use native ETH (`address(0)`). The vault face is WETH.
+    function _erc20Face(address token) internal view returns (address) {
+        if (token == address(0)) {
+            return address(_weth());
+        }
+        return token;
+    }
+
     function _token0() internal view returns (address) {
-        return Currency.unwrap(_currency0());
+        return _erc20Face(Currency.unwrap(_currency0()));
     }
 
     function _token1() internal view returns (address) {
-        return Currency.unwrap(_currency1());
+        return _erc20Face(Currency.unwrap(_currency1()));
     }
 
     function _slot0() internal view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee) {
@@ -901,6 +915,7 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
         }
         _poolManager().sync(currency);
         if (currency.isAddressZero()) {
+            _weth().withdraw(amount);
             _poolManager().settle{value: amount}();
         } else {
             currency.transfer(address(_poolManager()), amount);
@@ -913,6 +928,9 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
             return;
         }
         _poolManager().take(currency, address(this), amount);
+        if (currency.isAddressZero()) {
+            _weth().deposit{value: amount}();
+        }
     }
 
     function _quoteSwapOut(uint256 amountOut, bool zeroForOne) internal view returns (uint256 amountIn) {

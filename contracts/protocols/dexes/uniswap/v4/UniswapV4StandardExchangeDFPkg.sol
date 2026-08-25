@@ -13,6 +13,8 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {WETHAwareRepo} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETHAwareRepo.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -58,6 +60,7 @@ import {
 interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
     error ZeroTwapOracle();
+    error ZeroWeth();
     error TwapOraclePoolManagerMismatch();
 
     struct PkgInit {
@@ -82,6 +85,7 @@ interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IPoolManager poolManager;
         IPositionManager positionManager;
         IUniswapV4MultiPoolTwapOracle twapOracle;
+        IWETH weth;
     }
 
     struct PkgArgs {
@@ -116,6 +120,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     IPoolManager immutable POOL_MANAGER;
     IPositionManager immutable POSITION_MANAGER;
     IUniswapV4MultiPoolTwapOracle immutable TWAP_ORACLE;
+    IWETH immutable WETH;
 
     constructor(PkgInit memory pkgInit) {
         ERC20_FACET = pkgInit.erc20Facet;
@@ -145,6 +150,10 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
             revert TwapOraclePoolManagerMismatch();
         }
         TWAP_ORACLE = pkgInit.twapOracle;
+        if (address(pkgInit.weth) == address(0)) {
+            revert ZeroWeth();
+        }
+        WETH = pkgInit.weth;
     }
 
     function name() public pure override returns (string memory) {
@@ -291,8 +300,8 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         PkgArgs memory decodedArgs = abi.decode(initArgs, (PkgArgs));
 
         address[] memory tokens = new address[](2);
-        tokens[0] = Currency.unwrap(decodedArgs.poolKey.currency0);
-        tokens[1] = Currency.unwrap(decodedArgs.poolKey.currency1);
+        tokens[0] = _erc20Face(Currency.unwrap(decodedArgs.poolKey.currency0));
+        tokens[1] = _erc20Face(Currency.unwrap(decodedArgs.poolKey.currency1));
 
         MultiAssetBasicVaultRepo._initialize(tokens);
         StandardVaultRepo._initialize(
@@ -305,6 +314,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         UniswapV4PoolKeyAwareRepo._initialize(decodedArgs.poolKey);
         UniswapV4PositionRepo._initialize(decodedArgs.widthMultiplier, bytes32(0));
         UniswapV4PositionRepo._setAuthorizedPositionManager(POSITION_MANAGER);
+        WETHAwareRepo._initialize(WETH);
 
         _approvePoolManagerIfErc20(tokens[0]);
         _approvePoolManagerIfErc20(tokens[1]);
@@ -355,8 +365,15 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         );
     }
 
+    function _erc20Face(address token) internal view returns (address) {
+        if (token == address(0)) {
+            return address(WETH);
+        }
+        return token;
+    }
+
     function _approvePoolManagerIfErc20(address token) internal {
-        // Native ETH is currency0 address(0). It is not an ERC-20; approve reverts.
+        // Vault tokens are ERC-20 faces. Native ETH is mapped to WETH before approve.
         if (token == address(0)) {
             return;
         }

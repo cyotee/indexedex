@@ -400,7 +400,8 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                         vaultFeeOracleQuery: feeOracle,
                         vaultRegistryDeployment: vaultRegistry,
                         permit2: permit2,
-                        poolManager: poolManager
+                        poolManager: poolManager,
+                        weth: weth
                     })
                 ),
                 uniswapV4StandardExchangeInMultiFacet,
