@@ -306,10 +306,8 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         UniswapV4PositionRepo._initialize(decodedArgs.widthMultiplier, bytes32(0));
         UniswapV4PositionRepo._setAuthorizedPositionManager(POSITION_MANAGER);
 
-        IERC20(tokens[0]).approve(address(PERMIT2), type(uint256).max);
-        IERC20(tokens[1]).approve(address(PERMIT2), type(uint256).max);
-        PERMIT2.approve(tokens[0], address(POOL_MANAGER), type(uint160).max, type(uint48).max);
-        PERMIT2.approve(tokens[1], address(POOL_MANAGER), type(uint160).max, type(uint48).max);
+        _approvePoolManagerIfErc20(tokens[0]);
+        _approvePoolManagerIfErc20(tokens[1]);
 
         string memory name_ =
             string.concat("UniV4 Vault of (", _symbolOrToken(tokens[0]), " / ", _symbolOrToken(tokens[1]), ")");
@@ -357,7 +355,19 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         );
     }
 
+    function _approvePoolManagerIfErc20(address token) internal {
+        // Native ETH is currency0 address(0). It is not an ERC-20; approve reverts.
+        if (token == address(0)) {
+            return;
+        }
+        IERC20(token).approve(address(PERMIT2), type(uint256).max);
+        PERMIT2.approve(token, address(POOL_MANAGER), type(uint160).max, type(uint48).max);
+    }
+
     function _symbolOrToken(address token) internal view returns (string memory symbol_) {
+        if (token == address(0)) {
+            return "ETH";
+        }
         try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
             return fetchedSymbol;
         } catch {
