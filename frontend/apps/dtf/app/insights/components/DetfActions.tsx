@@ -19,7 +19,14 @@ import {
 } from '../../create/lib/bondLock'
 import { FEE_ORACLE_BOND_ABI } from '../../create/lib/detfAbi'
 import { resolveSePlatform } from '../../create/lib/sePlatform'
-import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
+import {
+  ETH_PAY,
+  WETH9_DEPOSIT_ABI,
+  type EthWrapWrite,
+  isEthPay,
+  settlePayToken,
+  withEthPayOption,
+} from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
 import { isZero } from '../lib/tokenLabels'
@@ -220,7 +227,7 @@ export function DetfActions({
   const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
   const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
 
-  async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0]) {
+  async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
     if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) {
       await switchChainAsync({ chainId })
     }
@@ -228,7 +235,8 @@ export function DetfActions({
       chain?: unknown
       chainId?: number
     }
-    return writeContractAsync(localWallet ? rest : params)
+    const next = (localWallet ? rest : params) as Parameters<typeof writeContractAsync>[0]
+    return writeContractAsync(next)
   }
 
   async function wait(hash: `0x${string}`, label: string) {

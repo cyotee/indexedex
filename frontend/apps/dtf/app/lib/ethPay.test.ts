@@ -2,13 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { ETH_PAY, isEthPay, settlePayToken, withEthPayOption } from './ethPay'
 
-const WETH = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73' as const
-const DTF = '0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01' as const
-const SE = '0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099' as const
+const WETH = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73' as `0x${string}`
+const DTF = '0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01' as `0x${string}`
+const SE = '0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099' as `0x${string}`
+
+type PayTok = { address: `0x${string}`; symbol: string }
 
 describe('ethPay', () => {
   it('inserts ETH before WETH when WETH is accepted', () => {
-    const got = withEthPayOption(
+    const got = withEthPayOption<PayTok>(
       [
         { address: DTF, symbol: 'DTF' },
         { address: WETH, symbol: 'WETH' },
@@ -21,12 +23,12 @@ describe('ethPay', () => {
   })
 
   it('does not insert ETH when WETH is not in the list', () => {
-    const tokens = [{ address: DTF, symbol: 'DTF' }]
+    const tokens: PayTok[] = [{ address: DTF, symbol: 'DTF' }]
     expect(withEthPayOption(tokens, WETH, { address: ETH_PAY, symbol: 'ETH' })).toEqual(tokens)
   })
 
   it('does not insert ETH twice', () => {
-    const once = withEthPayOption([{ address: WETH, symbol: 'WETH' }], WETH, {
+    const once = withEthPayOption<PayTok>([{ address: WETH, symbol: 'WETH' }], WETH, {
       address: ETH_PAY,
       symbol: 'ETH',
     })

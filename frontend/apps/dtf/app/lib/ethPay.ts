@@ -11,6 +11,16 @@ export const WETH9_DEPOSIT_ABI = [
   },
 ] as const
 
+/** Generic writeContract params collapse payable `value` to never. Use this for wrap. */
+export type EthWrapWrite = {
+  address: `0x${string}`
+  abi: typeof WETH9_DEPOSIT_ABI
+  functionName: 'deposit'
+  value: bigint
+  account?: `0x${string}`
+  chainId?: number
+}
+
 export function isEthPay(value: unknown): boolean {
   return typeof value === 'string' && value.toLowerCase() === ETH_PAY.toLowerCase()
 }

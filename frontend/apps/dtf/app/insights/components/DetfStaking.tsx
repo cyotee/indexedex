@@ -9,7 +9,14 @@ import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressA
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
-import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
+import {
+  ETH_PAY,
+  WETH9_DEPOSIT_ABI,
+  type EthWrapWrite,
+  isEthPay,
+  settlePayToken,
+  withEthPayOption,
+} from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
 import { diamondLoupeAbi, insightsViewAbi, rebasingClaimAbi } from '../lib/insightsAbi'
@@ -224,7 +231,7 @@ export function DetfStaking({
   const inert = reserveLive === false
   const noClaim = !claimToken
 
-  async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0]) {
+  async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
     if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) {
       await switchChainAsync({ chainId })
     }
@@ -232,7 +239,8 @@ export function DetfStaking({
       chain?: unknown
       chainId?: number
     }
-    return writeContractAsync(localWallet ? rest : params)
+    const next = (localWallet ? rest : params) as Parameters<typeof writeContractAsync>[0]
+    return writeContractAsync(next)
   }
 
   async function wait(hash: `0x${string}`, label: string) {

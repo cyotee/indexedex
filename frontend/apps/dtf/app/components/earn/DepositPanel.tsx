@@ -475,7 +475,7 @@ export function DepositPanel({
           functionName: 'deposit',
           value: parsedAmount,
           chainId,
-        })
+        } as unknown as Parameters<typeof writeContractAsync>[0])
         await publicClient.waitForTransactionReceipt({ hash: wrapHash })
       }
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200)

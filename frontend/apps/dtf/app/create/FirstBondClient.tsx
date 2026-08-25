@@ -23,7 +23,14 @@ import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { rememberCreatedDetf } from '../lib/detf/createdDetfs'
-import { ETH_PAY, WETH9_DEPOSIT_ABI, isEthPay, settlePayToken, withEthPayOption } from '../lib/ethPay'
+import {
+  ETH_PAY,
+  WETH9_DEPOSIT_ABI,
+  type EthWrapWrite,
+  isEthPay,
+  settlePayToken,
+  withEthPayOption,
+} from '../lib/ethPay'
 import { parseContractError } from '../lib/tx/parseContractError'
 import {
   asBondLockTerms,
@@ -364,7 +371,9 @@ export function FirstBondClient() {
   const lockSeconds = lockSecondsFromDays(lockDaysValid ?? minDays)
   const needsApprove = !payEth && parsed != null && (allowance == null || allowance < parsed)
 
-  const writeOnWallet = async (params: Parameters<typeof writeContractAsync>[0]) => {
+  const writeOnWallet = async (
+    params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite,
+  ) => {
     const localWallet = walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
     if (typeof walletChainId === 'number' && walletChainId !== selectedChainId && !localWallet) {
       await switchChainAsync({ chainId: selectedChainId })
@@ -373,7 +382,7 @@ export function FirstBondClient() {
       chainId?: number
       chain?: unknown
     }
-    return writeContractAsync(rest)
+    return writeContractAsync(rest as Parameters<typeof writeContractAsync>[0])
   }
 
   const waitMined = async (hash: `0x${string}`) => {
@@ -435,6 +444,7 @@ export function FirstBondClient() {
     setPending('bond')
     try {
       if (payEth && platform.weth && parsed != null) {
+        const wethSpend = spendToken ?? platform.weth
         const wrapHash = await writeOnWallet({
           address: platform.weth,
           abi: WETH9_DEPOSIT_ABI,
@@ -445,7 +455,7 @@ export function FirstBondClient() {
         setStatus('Wrapped ETH to WETH.')
         if (allowance == null || allowance < parsed) {
           const appr = await writeOnWallet({
-            address: spendToken,
+            address: wethSpend,
             abi: erc20Abi,
             functionName: 'approve',
             args: [detf, parsed],
@@ -474,7 +484,7 @@ export function FirstBondClient() {
             address: detf,
             abi: DETF_BOND_ABI,
             functionName: 'bond',
-            args: [spendToken, parsed, lockSeconds, address, false, deadline],
+            args: [spendToken as `0x${string}`, parsed as bigint, lockSeconds, address, false, deadline],
           })
       await waitMined(hash)
       setStatus('Bonded. The DETF is live.')
