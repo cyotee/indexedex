@@ -63,6 +63,42 @@ describe('sePoolRead', () => {
     expect(got.tickSpacing).toBe(200)
   })
 
+  it('looks up a V4 pool key from an initialize transaction hash', async () => {
+    const eth = '0x0000000000000000000000000000000000000000' as const
+    const dtf = '0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01' as const
+    const hooks = '0xe5E702641EA86f4ae6cC3cdaED2B886F976Be044' as const
+    const manager = '0x8366a39CC670B4001A1121B8F6A443A643e40951' as const
+    const got = await lookupV4PoolKeyById({
+      client: {
+        getBlockNumber: async () => 10n,
+        getLogs: async () => [],
+        getTransactionReceipt: async () =>
+          ({
+            logs: [
+              {
+                address: manager,
+                args: {
+                  currency0: eth,
+                  currency1: dtf,
+                  fee: 0,
+                  tickSpacing: 200,
+                  hooks,
+                },
+              },
+            ],
+          }) as never,
+      },
+      poolManager: manager,
+      poolId: '0x1975619ad4179048b8574d0679588c8eb132637a45fc0062c840b2640b7adcbc',
+    })
+    expect('error' in got).toBe(false)
+    if ('error' in got) return
+    expect(got.currency0).toBe(eth)
+    expect(got.currency1.toLowerCase()).toBe(dtf.toLowerCase())
+    expect(got.fee).toBe(0)
+    expect(got.tickSpacing).toBe(200)
+  })
+
   it('reports a missing V4 pool ID', async () => {
     const got = await lookupV4PoolKeyById({
       client: {

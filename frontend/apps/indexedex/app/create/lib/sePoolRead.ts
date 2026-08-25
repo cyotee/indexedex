@@ -1,4 +1,13 @@
-import { createPublicClient, encodePacked, http, keccak256, parseAbiItem, type Hex, type PublicClient } from 'viem'
+import {
+  createPublicClient,
+  decodeEventLog,
+  encodePacked,
+  http,
+  keccak256,
+  parseAbiItem,
+  type Hex,
+  type PublicClient,
+} from 'viem'
 
 import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
@@ -12,7 +21,8 @@ const V4_INITIALIZE_EVENT = parseAbiItem(
   'event Initialize(bytes32 indexed id, address indexed currency0, address indexed currency1, uint24 fee, int24 tickSpacing, address hooks, uint160 sqrtPriceX96, int24 tick)',
 )
 
-const DEFAULT_LOG_CHUNK = 50_000n
+const DEFAULT_LOG_CHUNK = 200_000n
+const FULL_RANGE_MAX = 250_000n
 
 function parseRpcGetLogsMaxRange(message: string): bigint | null {
   const upToMatch = message.match(/up to a\s+(\d+)\s+block range/i)
@@ -94,13 +104,61 @@ export async function readV4PoolInitialized(
   }
 }
 
-/** Reverse a Uniswap V4 PoolId to PoolKey via PoolManager Initialize logs. */
+function keyFromAnyInitializeLog(
+  log: {
+    address?: Address | string
+    args?: {
+      currency0?: Address
+      currency1?: Address
+      fee?: number | bigint
+      tickSpacing?: number | bigint
+      hooks?: Address
+    }
+    data?: Hex
+    topics?: readonly Hex[]
+  },
+  poolManager: Address,
+): V4PoolKeyFields | null {
+  if (log.address && log.address.toLowerCase() !== poolManager.toLowerCase()) return null
+  const fromArgs = poolKeyFromInitializeLog(log)
+  if (fromArgs) return fromArgs
+  if (!log.data || !log.topics || log.topics.length < 2) return null
+  try {
+    const decoded = decodeEventLog({
+      abi: [V4_INITIALIZE_EVENT],
+      data: log.data,
+      topics: log.topics as [Hex, ...Hex[]],
+    })
+    return poolKeyFromInitializeLog({ args: decoded.args as typeof log.args })
+  } catch {
+    return null
+  }
+}
+
+type LookupClient = Pick<PublicClient, 'getLogs' | 'getBlockNumber'> & {
+  getTransactionReceipt?: PublicClient['getTransactionReceipt']
+}
+
+/** PoolId, or the Initialize transaction hash. Uniswap UIs often copy the tx hash. */
 export async function lookupV4PoolKeyById(args: {
-  client: Pick<PublicClient, 'getLogs' | 'getBlockNumber'>
+  client: LookupClient
   poolManager: Address
   poolId: Hex
 }): Promise<V4PoolKeyFields | { error: string }> {
   const { client, poolManager, poolId } = args
+
+  if (typeof client.getTransactionReceipt === 'function') {
+    try {
+      const receipt = await client.getTransactionReceipt({ hash: poolId })
+      for (const log of receipt.logs) {
+        const key = keyFromAnyInitializeLog(log, poolManager)
+        if (key) return key
+      }
+    } catch {
+      /* not a transaction hash */
+    }
+  }
+
   let latest: bigint
   try {
     latest = await client.getBlockNumber()
@@ -119,35 +177,44 @@ export async function lookupV4PoolKeyById(args: {
 
   const firstKey = (logs: Awaited<ReturnType<typeof query>>) => {
     for (const log of logs) {
-      const key = poolKeyFromInitializeLog(log)
+      const key = keyFromAnyInitializeLog(log, poolManager)
       if (key) return key
     }
     return null
   }
 
-  try {
-    const found = firstKey(await query(0n, latest))
-    if (found) return found
-    return { error: 'No Uniswap V4 pool with that ID on this network.' }
-  } catch (err) {
-    const max = parseRpcGetLogsMaxRange(String((err as { message?: string })?.message ?? err)) ?? DEFAULT_LOG_CHUNK
-    for (let toBlock = latest; toBlock >= 0n; ) {
-      const fromBlock = toBlock + 1n > max ? toBlock - max + 1n : 0n
-      let logs: Awaited<ReturnType<typeof query>>
-      try {
-        logs = await query(fromBlock, toBlock)
-      } catch {
-        if (fromBlock === 0n) break
-        toBlock = fromBlock - 1n
+  if (latest <= FULL_RANGE_MAX) {
+    try {
+      const found = firstKey(await query(0n, latest))
+      if (found) return found
+      return { error: 'No Uniswap V4 pool with that ID on this network.' }
+    } catch {
+      /* page below */
+    }
+  }
+
+  let max = DEFAULT_LOG_CHUNK
+  for (let toBlock = latest; toBlock >= 0n; ) {
+    const fromBlock = toBlock + 1n > max ? toBlock - max + 1n : 0n
+    let logs: Awaited<ReturnType<typeof query>>
+    try {
+      logs = await query(fromBlock, toBlock)
+    } catch (err) {
+      const parsed = parseRpcGetLogsMaxRange(String((err as { message?: string })?.message ?? err))
+      if (parsed && parsed < max) {
+        max = parsed
         continue
       }
-      const found = firstKey(logs)
-      if (found) return found
       if (fromBlock === 0n) break
       toBlock = fromBlock - 1n
+      continue
     }
-    return { error: 'No Uniswap V4 pool with that ID on this network.' }
+    const found = firstKey(logs)
+    if (found) return found
+    if (fromBlock === 0n) break
+    toBlock = fromBlock - 1n
   }
+  return { error: 'No Uniswap V4 pool with that ID on this network.' }
 }
 
 export function uniqueAddresses(raw: Address[] | undefined, cap = 12): Address[] {

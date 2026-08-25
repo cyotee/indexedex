@@ -130,7 +130,7 @@ export function SeVaultSlot({
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const { address, isConnected, chainId: walletChainId, connector } = useAccount()
-  const { readClient } = useCreateChainClients(selectedChainId)
+  const { readClient, httpClient } = useCreateChainClients(selectedChainId)
 
   const platform = useMemo(
     () => resolveSePlatform(selectedChainId, environment),
@@ -736,7 +736,7 @@ export function SeVaultSlot({
       setPoolKeyError(null)
       try {
         const key = await lookupV4PoolKeyById({
-          client: readClient,
+          client: httpClient,
           poolManager: platform.poolManager,
           poolId,
         })
@@ -989,7 +989,7 @@ export function SeVaultSlot({
                   autoComplete="off"
                 />
                 <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-                  32-byte Uniswap V4 pool id. Starts with 0x, then 64 hex characters.
+                  32-byte Uniswap V4 pool id, or the initialize transaction hash.
                 </span>
               </label>
               <Button

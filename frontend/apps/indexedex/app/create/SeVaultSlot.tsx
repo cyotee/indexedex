@@ -758,7 +758,7 @@ export function SeVaultSlot({
                   autoComplete="off"
                 />
                 <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-                  32-byte Uniswap V4 pool id. Starts with 0x, then 64 hex characters.
+                  32-byte Uniswap V4 pool id, or the initialize transaction hash.
                 </span>
               </label>
               <Button
