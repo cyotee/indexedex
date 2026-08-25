@@ -1,9 +1,11 @@
 import { test, expect } from './wallet/fixture'
 
-const POOL_ID = '0x1975619ad4179048b8574d0679588c8eb132637a45fc0062c840b2640b7adcbc'
+const ETH = '0x0000000000000000000000000000000000000000'
+const DTF = '0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01'
+const HOOKS = '0xe5E702641EA86f4ae6cC3cdaED2B886F976Be044'
 
 test.describe('One-strategy Uniswap V4 pool key', () => {
-  test('accepts a 32-byte pool ID in a single field', async ({ walletPage }) => {
+  test('takes the five PoolKey fields used in SE PkgArgs', async ({ walletPage }) => {
     await walletPage.goto('/create/one-vault')
     await walletPage.getByTestId('create-host-uniswap-v4').click()
     await walletPage.getByTestId('create-next').click()
@@ -15,35 +17,28 @@ test.describe('One-strategy Uniswap V4 pool key', () => {
     await expect(poolKeyToggle).toBeVisible()
     await poolKeyToggle.click()
 
-    const field = walletPage.getByTestId('create-slot-0-pool-key')
-    await expect(field).toBeVisible()
-    await expect(field).toHaveJSProperty('tagName', 'INPUT')
+    await expect(walletPage.getByTestId('create-slot-0-currency0')).toBeVisible()
+    await expect(walletPage.getByTestId('create-slot-0-currency1')).toBeVisible()
+    await expect(walletPage.getByTestId('create-slot-0-apply-pool-key')).toHaveCount(0)
 
-    await walletPage.getByTestId('create-slot-0-apply-pool-key').click()
+    await walletPage.getByTestId('create-slot-0-currency0').fill(ETH)
+    await walletPage.getByTestId('create-slot-0-currency1').fill(ETH)
     await expect(walletPage.getByTestId('create-slot-0-pool-key-error')).toHaveText(
-      'Paste a pool ID first.',
+      'The two pool tokens must be different.',
     )
 
-    await field.fill('0x1975')
-    await walletPage.getByTestId('create-slot-0-apply-pool-key').click()
-    await expect(walletPage.getByTestId('create-slot-0-pool-key-error')).toHaveText(
-      'Need a 32-byte pool ID (0x plus 64 hex characters).',
-    )
+    await walletPage.getByTestId('create-slot-0-currency1').fill(DTF)
+    await walletPage.getByTestId('create-slot-0-fee').selectOption('custom')
+    await walletPage.getByTestId('create-slot-0-fee-custom').fill('0')
+    await walletPage.getByTestId('create-slot-0-tick-spacing').fill('200')
+    await walletPage.getByTestId('create-slot-0-hooks').fill(HOOKS)
 
-    await field.fill(POOL_ID)
-    await walletPage.getByTestId('create-slot-0-apply-pool-key').click()
-    await expect(walletPage.getByTestId('create-slot-0-apply-pool-key')).toHaveText(/Apply pool key/, {
-      timeout: 60_000,
-    })
-    const err = walletPage.getByTestId('create-slot-0-pool-key-error')
-    if (await err.isVisible()) {
-      await expect(err).toHaveText(
-        /No Uniswap V4 pool with that ID|Could not look up|No RPC|pool manager/,
-      )
-    } else {
-      await expect(walletPage.getByTestId('create-slot-0-token-a')).not.toHaveValue('')
-      await expect(walletPage.getByTestId('create-slot-0-token-b')).not.toHaveValue('')
-    }
+    await expect(walletPage.getByTestId('create-slot-0-currency0')).toHaveValue(ETH)
+    await expect(walletPage.getByTestId('create-slot-0-currency1')).toHaveValue(DTF)
+    await expect(walletPage.getByTestId('create-slot-0-fee-custom')).toHaveValue('0')
+    await expect(walletPage.getByTestId('create-slot-0-tick-spacing')).toHaveValue('200')
+    await expect(walletPage.getByTestId('create-slot-0-hooks')).toHaveValue(HOOKS)
   })
 })
+
 

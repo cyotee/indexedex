@@ -35,7 +35,7 @@ import {
   VAULT_TOKENS_ABI,
 } from './lib/seAbi'
 import { resolveSePlatform } from './lib/sePlatform'
-import { lookupV4PoolKeyById, slot0IsInitialized, uniqueAddresses } from './lib/sePoolRead'
+import { slot0IsInitialized, uniqueAddresses } from './lib/sePoolRead'
 import { requireContractCode, resolveWalletProvider, waitForCreateReceipt } from './lib/seTx'
 import { useCreateChainClients } from './lib/useCreateChainClients'
 import { MorphoMarketForm } from './MorphoMarketForm'
@@ -47,8 +47,6 @@ import {
   isPoolInitWalletRevert,
   checksumAddress,
   parseV3PoolAddressInput,
-  parseV4PoolIdInput,
-  parseV4PoolKeyInput,
   poolActionLabel,
   poolReadyState,
   poolStatusCopy,
@@ -130,7 +128,7 @@ export function SeVaultSlot({
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const { address, isConnected, chainId: walletChainId, connector } = useAccount()
-  const { readClient, httpClient } = useCreateChainClients(selectedChainId)
+  const { readClient } = useCreateChainClients(selectedChainId)
 
   const platform = useMemo(
     () => resolveSePlatform(selectedChainId, environment),
@@ -157,9 +155,6 @@ export function SeVaultSlot({
   const [httpVaults, setHttpVaults] = useState<Address[]>([])
   const [localPair, setLocalPair] = useState<`0x${string}` | ''>(pairToken)
   const [v4Entry, setV4Entry] = useState<'tokens' | 'poolkey'>('tokens')
-  const [poolKeyRaw, setPoolKeyRaw] = useState('')
-  const [poolKeyError, setPoolKeyError] = useState<string | null>(null)
-  const [v4ApplyPending, setV4ApplyPending] = useState(false)
   const [customFee, setCustomFee] = useState(false)
   const [v3Entry, setV3Entry] = useState<'tokens' | 'pool'>('tokens')
   const [v3PoolRaw, setV3PoolRaw] = useState('')
@@ -397,6 +392,20 @@ export function SeVaultSlot({
     (version === 'v3'
       ? appliedV3Matches || !platform.v3Factory || v3PoolFetched
       : !platform.stateView || v4SlotFetched)
+  const v4PoolKeyWarning =
+    version === 'v4' && v4Entry === 'poolkey'
+      ? tokenA && !checksumAddress(tokenA)
+        ? 'currency0 is not a valid address.'
+        : tokenB && !checksumAddress(tokenB)
+          ? 'currency1 is not a valid address.'
+          : hooks.trim() && !checksumAddress(hooks)
+            ? 'hooks is not a valid address.'
+            : tokenA && tokenB && same(tokenA, tokenB)
+              ? 'The two pool tokens must be different.'
+              : v4Key && poolLookupDone && !poolExists
+                ? 'No initialized pool with this key on this network.'
+                : null
+      : null
   const localWallet =
     walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
   const isWrongNetwork = Boolean(
@@ -599,8 +608,13 @@ export function SeVaultSlot({
               account: address,
               gas: 16_000_000n,
             })
-          } catch {
-            gas = undefined
+          } catch (err) {
+            const nativeEth = v4Key.currency0.toLowerCase() === ZERO_ADDRESS
+            throw new Error(
+              nativeEth
+                ? 'Native ETH is not an ERC-20. The factory on this network still tries to approve it, so this transaction would revert. Redeploy the Uniswap V4 SE factory, then try again.'
+                : parseContractError(err),
+            )
           }
           submittedHash = await writeOnWallet({
             address: platform.uniV4SePkg,
@@ -694,74 +708,6 @@ export function SeVaultSlot({
       setV3Entry('tokens')
     }
     onSelectHost?.(slotSourceToHost(next))
-  }
-
-  const fillV4Key = (parsed: {
-    currency0: Address
-    currency1: Address
-    fee: number
-    tickSpacing: number
-    hooks: Address
-  }) => {
-    setPoolKeyError(null)
-    setVersion('v4')
-    setTokenA(parsed.currency0)
-    setTokenB(parsed.currency1)
-    setFee(parsed.fee)
-    setTickSpacing(parsed.tickSpacing)
-    setHooks(parsed.hooks)
-    setCustomFee(!V4_FEE_TIERS.some((t) => t.fee === parsed.fee))
-    setConfirmedPoolKey(
-      `v4:${parsed.fee}:${parsed.tickSpacing}:${parsed.hooks}:${parsed.currency0}:${parsed.currency1}`,
-    )
-  }
-
-  const applyPoolKey = async () => {
-    const text = poolKeyRaw.trim()
-    if (!text) {
-      setPoolKeyError('Paste a pool ID first.')
-      return
-    }
-    const poolId = parseV4PoolIdInput(text)
-    if (typeof poolId === 'string') {
-      if (!readClient) {
-        setPoolKeyError('No RPC client.')
-        return
-      }
-      if (!platform.poolManager) {
-        setPoolKeyError('No Uniswap V4 pool manager on this network.')
-        return
-      }
-      setV4ApplyPending(true)
-      setPoolKeyError(null)
-      try {
-        const key = await lookupV4PoolKeyById({
-          client: httpClient,
-          poolManager: platform.poolManager,
-          poolId,
-        })
-        if ('error' in key) {
-          setPoolKeyError(key.error)
-          return
-        }
-        fillV4Key(key)
-      } catch {
-        setPoolKeyError('Could not look up that pool ID.')
-      } finally {
-        setV4ApplyPending(false)
-      }
-      return
-    }
-    const parsed = parseV4PoolKeyInput(text)
-    if ('error' in parsed) {
-      setPoolKeyError(
-        text.startsWith('{') || text.startsWith('[') || text.includes(',')
-          ? parsed.error
-          : poolId.error,
-      )
-      return
-    }
-    fillV4Key(parsed)
   }
 
   const applyV3Pool = async () => {
@@ -974,43 +920,10 @@ export function SeVaultSlot({
             </div>
           ) : null}
           {version === 'v4' && v4Entry === 'poolkey' ? (
-            <div className="mt-4 space-y-3">
-              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-                Pool key
-                <input
-                  className={`${inputClass} font-mono`}
-                  value={poolKeyRaw}
-                  onChange={(e) => {
-                    setPoolKeyRaw(e.target.value)
-                    if (poolKeyError) setPoolKeyError(null)
-                  }}
-                  data-testid={`${testIdPrefix}-pool-key`}
-                  spellCheck={false}
-                  autoComplete="off"
-                />
-                <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-                  32-byte Uniswap V4 pool id, or the initialize transaction hash.
-                </span>
-              </label>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => void applyPoolKey()}
-                disabled={v4ApplyPending}
-                data-testid={`${testIdPrefix}-apply-pool-key`}
-              >
-                {v4ApplyPending ? 'Looking up pool…' : 'Apply pool key'}
-              </Button>
-              {poolKeyError ? (
-                <p
-                  className="text-sm text-[var(--danger,#E6386A)]"
-                  role="alert"
-                  data-testid={`${testIdPrefix}-pool-key-error`}
-                >
-                  {poolKeyError}
-                </p>
-              ) : null}
-            </div>
+            <p className="mt-4 text-xs text-[var(--text-muted,#9aa3b2)]">
+              The SE vault deploys with this Uniswap V4 pool key. Native ETH is
+              currency0 {ZERO_ADDRESS}, not wrapped ETH.
+            </p>
           ) : null}
           {version === 'v3' && v3Entry === 'pool' ? (
             <div className="mt-4 space-y-3">
@@ -1052,26 +965,56 @@ export function SeVaultSlot({
             </div>
           ) : null}
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <TokenSelect
-              label="Token A"
-              value={tokenA}
-              tokens={tokens}
-              exclude={tokenB}
-              testId={`${testIdPrefix}-token-a`}
-              onChange={setTokenA}
-              allowNative={version === 'v4'}
-              chainId={selectedChainId}
-            />
-            <TokenSelect
-              label="Token B"
-              value={tokenB}
-              tokens={tokens}
-              exclude={tokenA}
-              testId={`${testIdPrefix}-token-b`}
-              onChange={setTokenB}
-              allowNative={version === 'v4'}
-              chainId={selectedChainId}
-            />
+            {version === 'v4' && v4Entry === 'poolkey' ? (
+              <>
+                <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                  currency0
+                  <input
+                    className={`${inputClass} font-mono`}
+                    value={tokenA}
+                    onChange={(e) => setTokenA((e.target.value as `0x${string}`) || '')}
+                    data-testid={`${testIdPrefix}-currency0`}
+                    spellCheck={false}
+                    autoComplete="off"
+                    placeholder={ZERO_ADDRESS}
+                  />
+                </label>
+                <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                  currency1
+                  <input
+                    className={`${inputClass} font-mono`}
+                    value={tokenB}
+                    onChange={(e) => setTokenB((e.target.value as `0x${string}`) || '')}
+                    data-testid={`${testIdPrefix}-currency1`}
+                    spellCheck={false}
+                    autoComplete="off"
+                  />
+                </label>
+              </>
+            ) : (
+              <>
+                <TokenSelect
+                  label="Token A"
+                  value={tokenA}
+                  tokens={tokens}
+                  exclude={tokenB}
+                  testId={`${testIdPrefix}-token-a`}
+                  onChange={setTokenA}
+                  allowNative={version === 'v4'}
+                  chainId={selectedChainId}
+                />
+                <TokenSelect
+                  label="Token B"
+                  value={tokenB}
+                  tokens={tokens}
+                  exclude={tokenA}
+                  testId={`${testIdPrefix}-token-b`}
+                  onChange={setTokenB}
+                  allowNative={version === 'v4'}
+                  chainId={selectedChainId}
+                />
+              </>
+            )}
             {lockPoolType ? null : (
               <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
                 Pool type
@@ -1213,6 +1156,15 @@ export function SeVaultSlot({
               </p>
             ) : null}
           </div>
+          {v4PoolKeyWarning ? (
+            <p
+              className="mt-3 text-sm text-[var(--danger,#E6386A)]"
+              role="alert"
+              data-testid={`${testIdPrefix}-pool-key-error`}
+            >
+              {v4PoolKeyWarning}
+            </p>
+          ) : null}
 
           {showPickExisting ? (
             <label className="mt-4 block text-sm text-[var(--text-primary,#EDEDED)]">
