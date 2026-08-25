@@ -9,6 +9,16 @@ test.describe('App routes & redirects (DTF)', () => {
     }
   })
 
+  test('/mint is gone', async ({ walletPage }) => {
+    const res = await walletPage.goto('/mint')
+    expect(res?.status()).toBe(404)
+    await expect(walletPage.getByRole('heading', { name: 'Mint Test Tokens' })).toHaveCount(0)
+    await walletPage.goto('/explore')
+    await walletPage.getByRole('button', { name: 'More' }).click()
+    await expect(walletPage.locator('a[href="/mint"]')).toHaveCount(0)
+    await expect(walletPage.getByRole('link', { name: 'Mint Test Tokens' })).toHaveCount(0)
+  })
+
   test('/vaults redirects toward earn', async ({ walletPage }) => {
     await walletPage.goto('/vaults')
     await walletPage.waitForURL(/earn/, { timeout: 15_000 })

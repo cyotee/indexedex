@@ -28,7 +28,7 @@ import {
   VAULT_TOKENS_ABI,
 } from './lib/seAbi'
 import { resolveSePlatform } from './lib/sePlatform'
-import { createAppReadClient, readV4PoolInitialized, uniqueAddresses } from './lib/sePoolRead'
+import { createAppReadClient, lookupV4PoolKeyById, readV4PoolInitialized, uniqueAddresses } from './lib/sePoolRead'
 import {
   SQRT_PRICE_1_1,
   V3_FEE_TIERS,
@@ -36,6 +36,7 @@ import {
   isPoolAlreadyExistsError,
   checksumAddress,
   parseV3PoolAddressInput,
+  parseV4PoolIdInput,
   poolActionLabel,
   poolReadyState,
   poolStatusCopy,
@@ -111,7 +112,10 @@ export function SeVaultSlot({
   const [v4Live, setV4Live] = useState(false)
   const [httpVaults, setHttpVaults] = useState<Address[]>([])
   const [localPair, setLocalPair] = useState<`0x${string}` | ''>(pairToken)
-  const [v4Entry, setV4Entry] = useState<'tokens' | 'poolkey'>('tokens')
+  const [v4Entry, setV4Entry] = useState<'tokens' | 'poolkey' | 'poolid'>('tokens')
+  const [v4PoolIdRaw, setV4PoolIdRaw] = useState('')
+  const [v4PoolIdError, setV4PoolIdError] = useState<string | null>(null)
+  const [v4ApplyPending, setV4ApplyPending] = useState(false)
   const [customFee, setCustomFee] = useState(false)
   const [v3Entry, setV3Entry] = useState<'tokens' | 'pool'>('tokens')
   const [v3PoolRaw, setV3PoolRaw] = useState('')
@@ -603,6 +607,65 @@ export function SeVaultSlot({
     }
   }
 
+  const applyV4PoolId = async (raw = v4PoolIdRaw) => {
+    const parsed = parseV4PoolIdInput(raw)
+    if (typeof parsed !== 'string') {
+      setV4PoolIdError(parsed.error)
+      return
+    }
+    const client = readClient ?? publicClient
+    if (!client) {
+      setV4PoolIdError('No RPC client.')
+      return
+    }
+    if (!platform.poolManager) {
+      setV4PoolIdError('No Uniswap V4 pool manager on this network.')
+      return
+    }
+    if (v4ApplyPending) return
+    setV4ApplyPending(true)
+    setV4PoolIdError(null)
+    try {
+      const looked = await lookupV4PoolKeyById({
+        client,
+        poolManager: platform.poolManager,
+        poolId: parsed,
+      })
+      if ('error' in looked) {
+        if (platform.stateView) {
+          const live = await readV4PoolInitialized(client, platform.stateView, parsed)
+          if (live) {
+            setV4PoolIdError(
+              'This ID is an initialized pool, but this RPC did not return the Initialize log. Enter the five pool key fields.',
+            )
+            return
+          }
+        }
+        setV4PoolIdError(looked.error)
+        return
+      }
+      setTokenA(looked.currency0)
+      setTokenB(looked.currency1)
+      setFee(looked.fee)
+      setTickSpacing(looked.tickSpacing)
+      setHooks(looked.hooks)
+      setCustomFee(!V4_FEE_TIERS.some((t) => t.fee === looked.fee))
+      setV4Entry('poolkey')
+      if (platform.stateView) {
+        const live = await readV4PoolInitialized(client, platform.stateView, parsed)
+        if (live) {
+          setConfirmedPoolKey(
+            `v4:${looked.fee}:${looked.tickSpacing}:${looked.hooks}:${looked.currency0}:${looked.currency1}`,
+          )
+        }
+      }
+    } catch {
+      setV4PoolIdError('Could not look up that pool ID.')
+    } finally {
+      setV4ApplyPending(false)
+    }
+  }
+
   return (
     <div className="space-y-4" data-testid={testIdPrefix}>
       <div className="flex flex-wrap gap-2">
@@ -664,6 +727,15 @@ export function SeVaultSlot({
               <Button
                 type="button"
                 size="sm"
+                variant={v4Entry === 'poolid' ? 'primary' : 'secondary'}
+                onClick={() => setV4Entry('poolid')}
+                data-testid={`${testIdPrefix}-v4-entry-poolid`}
+              >
+                Pool ID
+              </Button>
+              <Button
+                type="button"
+                size="sm"
                 variant={v4Entry === 'poolkey' ? 'primary' : 'secondary'}
                 onClick={() => setV4Entry('poolkey')}
                 data-testid={`${testIdPrefix}-v4-entry-poolkey`}
@@ -699,6 +771,51 @@ export function SeVaultSlot({
               The SE vault deploys with this Uniswap V4 pool key. Native ETH is
               currency0 {ZERO_ADDRESS}, not wrapped ETH.
             </p>
+          ) : null}
+          {version === 'v4' && v4Entry === 'poolid' ? (
+            <div className="mt-4 space-y-3">
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Pool ID
+                <input
+                  className={`${inputClass} font-mono`}
+                  value={v4PoolIdRaw}
+                  onChange={(e) => {
+                    const next = e.target.value
+                    setV4PoolIdRaw(next)
+                    if (v4PoolIdError) setV4PoolIdError(null)
+                    if (typeof parseV4PoolIdInput(next) === 'string') {
+                      void applyV4PoolId(next)
+                    }
+                  }}
+                  data-testid={`${testIdPrefix}-pool-id`}
+                  spellCheck={false}
+                  autoComplete="off"
+                  placeholder="0x…"
+                />
+                <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
+                  Paste the 32-byte Uniswap V4 pool ID (0x plus 64 hex characters).
+                  We fill the pool key from the chain.
+                </span>
+              </label>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => void applyV4PoolId()}
+                disabled={v4ApplyPending}
+                data-testid={`${testIdPrefix}-apply-pool-id`}
+              >
+                {v4ApplyPending ? 'Reading pool…' : 'Apply pool ID'}
+              </Button>
+              {v4PoolIdError ? (
+                <p
+                  className="text-sm text-[var(--danger,#E6386A)]"
+                  role="alert"
+                  data-testid={`${testIdPrefix}-pool-id-error`}
+                >
+                  {v4PoolIdError}
+                </p>
+              ) : null}
+            </div>
           ) : null}
           {version === 'v3' && v3Entry === 'pool' ? (
             <div className="mt-4 space-y-3">
@@ -739,6 +856,7 @@ export function SeVaultSlot({
               ) : null}
             </div>
           ) : null}
+          {version === 'v4' && v4Entry === 'poolid' ? null : (
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {version === 'v4' && v4Entry === 'poolkey' ? (
               <>
@@ -896,6 +1014,7 @@ export function SeVaultSlot({
               </span>
             </label>
           </div>
+          )}
 
           <p className="landing-section-label mt-6">SE vault</p>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

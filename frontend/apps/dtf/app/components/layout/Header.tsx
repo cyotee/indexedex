@@ -802,7 +802,6 @@ export function Header() {
                     <div className="py-1">
                       <Link href="/swap" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Trade</Link>
                       <Link href="/earn" className={moreItemClass} onClick={() => setIsTestnetDropdownOpen(false)}>Vaults</Link>
-                      <Link href="/mint" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Mint Test Tokens</Link>
                       {process.env.NEXT_PUBLIC_SHOW_DEBUG === 'true' ? (
                         <>
                           <Link href="/token-info" className={`${moreItemClass} text-amber-200`} onClick={() => setIsTestnetDropdownOpen(false)}>Token Info</Link>
