@@ -62,6 +62,11 @@ library UniswapV4_Component_FactoryService {
 
     Vm constant vm = Vm(VM_ADDRESS);
 
+    /// @dev 4663 already occupied name-only facet salts and the nativeEth package salt.
+    function _wethWrapSalt(string memory typeName) internal pure returns (bytes32) {
+        return abi.encode(typeName, "wethWrap")._hash();
+    }
+
     function deployUniswapV4StandardExchangeInFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
@@ -69,7 +74,7 @@ library UniswapV4_Component_FactoryService {
         address executionDelegate = deployUniswapV4StandardExchangeInExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
             bytes.concat(type(UniswapV4StandardExchangeInFacet).creationCode, abi.encode(executionDelegate)),
-            abi.encode(type(UniswapV4StandardExchangeInFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeInFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeInFacet).name);
     }
@@ -80,7 +85,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.create3(
             type(UniswapV4StandardExchangeInExecutionDelegate).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeInExecutionDelegate).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeInExecutionDelegate).name)
         );
         vm.label(instance, type(UniswapV4StandardExchangeInExecutionDelegate).name);
     }
@@ -91,7 +96,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeInQueryFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeInQueryFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeInQueryFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeInQueryFacet).name);
     }
@@ -102,7 +107,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangePositionImportFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangePositionImportFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangePositionImportFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangePositionImportFacet).name);
     }
@@ -113,7 +118,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.create3(
             type(UniswapV4StandardExchangeOutExecutionDelegate).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeOutExecutionDelegate).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeOutExecutionDelegate).name)
         );
         vm.label(instance, type(UniswapV4StandardExchangeOutExecutionDelegate).name);
     }
@@ -125,7 +130,7 @@ library UniswapV4_Component_FactoryService {
         address executionDelegate = deployUniswapV4StandardExchangeOutExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
             bytes.concat(type(UniswapV4StandardExchangeOutFacet).creationCode, abi.encode(executionDelegate)),
-            abi.encode(type(UniswapV4StandardExchangeOutFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeOutFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeOutFacet).name);
     }
@@ -136,7 +141,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeOutQueryFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeOutQueryFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeOutQueryFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeOutQueryFacet).name);
     }
@@ -147,7 +152,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeLiquidReserveFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeLiquidReserveFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeLiquidReserveFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeLiquidReserveFacet).name);
     }
@@ -158,7 +163,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeInMultiFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeInMultiFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeInMultiFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeInMultiFacet).name);
     }
@@ -169,7 +174,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeInMultiQueryFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeInMultiQueryFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeInMultiQueryFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeInMultiQueryFacet).name);
     }
@@ -180,7 +185,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeOutMultiFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeOutMultiFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeOutMultiFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeOutMultiFacet).name);
     }
@@ -191,7 +196,7 @@ library UniswapV4_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             type(UniswapV4StandardExchangeOutMultiQueryFacet).creationCode,
-            abi.encode(type(UniswapV4StandardExchangeOutMultiQueryFacet).name)._hash()
+            _wethWrapSalt(type(UniswapV4StandardExchangeOutMultiQueryFacet).name)
         );
         vm.label(address(instance), type(UniswapV4StandardExchangeOutMultiQueryFacet).name);
     }
@@ -219,8 +224,7 @@ library UniswapV4_Component_FactoryService {
                 vaultRegistry.deployPkg(
                     type(UniswapV4StandardExchangeDFPkg).creationCode,
                     abi.encode(pkgInit),
-                    // v1 name-only and v2 nativeEth salts are occupied on 4663.
-                    abi.encode(type(UniswapV4StandardExchangeDFPkg).name, "wethWrap")._hash()
+                    _wethWrapSalt(type(UniswapV4StandardExchangeDFPkg).name)
                 )
             )
         );

@@ -20,6 +20,8 @@ import {
 /// @title Phase_05_Stage_03_UniswapV4StandardExchangePkg
 /// @notice Uni V4 SE DFPkg + In/Out/Query/PositionImport/LiquidReserve/Multi facets.
 /// @dev `PkgInit.twapOracle` is the canonical instance from Phase 05 Stage 02.
+/// @dev Facet and package CREATE3 salts include `wethWrap`. Name-only salts on 4663 still
+///      hold pre-wrap bytecode; FORCE=1 if JSON `uniV4SePkg` already has code.
 library Phase_05_Stage_03_UniswapV4StandardExchangePkg {
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
     using UniswapV4_Component_FactoryService for IIndexedexManagerProxy;
