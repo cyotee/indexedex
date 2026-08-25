@@ -72,6 +72,19 @@ export function parseV3PoolAddressInput(raw: string): Address | { error: string 
   return addr
 }
 
+const POOL_ID_RE = /^(0x)?[0-9a-fA-F]{64}$/
+
+/** Uniswap V4 PoolId: keccak256(abi.encode(PoolKey)), 32 bytes. */
+export function parseV4PoolIdInput(raw: string): `0x${string}` | { error: string } {
+  const text = raw.trim()
+  if (!text) return { error: 'Paste a pool ID first.' }
+  if (!POOL_ID_RE.test(text)) {
+    return { error: 'Need a 32-byte pool ID (0x plus 64 hex characters).' }
+  }
+  const hex = text.startsWith('0x') || text.startsWith('0X') ? text : `0x${text}`
+  return hex.toLowerCase() as `0x${string}`
+}
+
 function asInt(raw: unknown, min: number, max: number): number | null {
   const n = typeof raw === 'number' ? raw : Number(String(raw).trim())
   if (!Number.isFinite(n) || !Number.isInteger(n)) return null

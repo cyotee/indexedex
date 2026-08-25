@@ -6,6 +6,7 @@ import {
   isPoolAlreadyExistsError,
   isPoolInitWalletRevert,
   parseV3PoolAddressInput,
+  parseV4PoolIdInput,
   parseV4PoolKeyInput,
   poolActionLabel,
   poolReadyState,
@@ -126,6 +127,17 @@ describe('sePool', () => {
     if ('error' in got) return
     expect(got.fee).toBe(0)
     expect(got.tickSpacing).toBe(200)
+  })
+
+  it('parses a Uniswap V4 pool ID', () => {
+    const id = '0x1975619ad4179048b8574d0679588c8eb132637a45fc0062c840b2640b7adcbc'
+    const got = parseV4PoolIdInput(id)
+    expect(got).toBe(id)
+    expect(parseV4PoolIdInput(id.slice(2))).toBe(id)
+    expect(parseV4PoolIdInput('  ')).toEqual({ error: 'Paste a pool ID first.' })
+    expect(parseV4PoolIdInput('0x1975')).toEqual({
+      error: 'Need a 32-byte pool ID (0x plus 64 hex characters).',
+    })
   })
 
   it('parses a Uniswap V3 pool address and rejects blanks or zero', () => {

@@ -28,7 +28,7 @@ import {
   VAULT_TOKENS_ABI,
 } from './lib/seAbi'
 import { resolveSePlatform } from './lib/sePlatform'
-import { createAppReadClient, readV4PoolInitialized, uniqueAddresses } from './lib/sePoolRead'
+import { createAppReadClient, lookupV4PoolKeyById, readV4PoolInitialized, uniqueAddresses } from './lib/sePoolRead'
 import {
   SQRT_PRICE_1_1,
   V3_FEE_TIERS,
@@ -36,6 +36,7 @@ import {
   isPoolAlreadyExistsError,
   checksumAddress,
   parseV3PoolAddressInput,
+  parseV4PoolIdInput,
   parseV4PoolKeyInput,
   poolActionLabel,
   poolReadyState,
@@ -115,6 +116,7 @@ export function SeVaultSlot({
   const [v4Entry, setV4Entry] = useState<'tokens' | 'poolkey'>('tokens')
   const [poolKeyRaw, setPoolKeyRaw] = useState('')
   const [poolKeyError, setPoolKeyError] = useState<string | null>(null)
+  const [v4ApplyPending, setV4ApplyPending] = useState(false)
   const [customFee, setCustomFee] = useState(false)
   const [v3Entry, setV3Entry] = useState<'tokens' | 'pool'>('tokens')
   const [v3PoolRaw, setV3PoolRaw] = useState('')
@@ -513,12 +515,13 @@ export function SeVaultSlot({
     onSelectPair(token)
   }
 
-  const applyPoolKey = () => {
-    const parsed = parseV4PoolKeyInput(poolKeyRaw)
-    if ('error' in parsed) {
-      setPoolKeyError(parsed.error)
-      return
-    }
+  const fillV4Key = (parsed: {
+    currency0: Address
+    currency1: Address
+    fee: number
+    tickSpacing: number
+    hooks: Address
+  }) => {
     setPoolKeyError(null)
     setVersion('v4')
     setTokenA(parsed.currency0)
@@ -527,6 +530,58 @@ export function SeVaultSlot({
     setTickSpacing(parsed.tickSpacing)
     setHooks(parsed.hooks)
     setCustomFee(!V4_FEE_TIERS.some((t) => t.fee === parsed.fee))
+    setConfirmedPoolKey(
+      `v4:${parsed.fee}:${parsed.tickSpacing}:${parsed.hooks}:${parsed.currency0}:${parsed.currency1}`,
+    )
+  }
+
+  const applyPoolKey = async () => {
+    const text = poolKeyRaw.trim()
+    if (!text) {
+      setPoolKeyError('Paste a pool ID first.')
+      return
+    }
+    const poolId = parseV4PoolIdInput(text)
+    if (typeof poolId === 'string') {
+      const client = readClient ?? publicClient
+      if (!client) {
+        setPoolKeyError('No RPC client.')
+        return
+      }
+      if (!platform.poolManager) {
+        setPoolKeyError('No Uniswap V4 pool manager on this network.')
+        return
+      }
+      setV4ApplyPending(true)
+      setPoolKeyError(null)
+      try {
+        const key = await lookupV4PoolKeyById({
+          client,
+          poolManager: platform.poolManager,
+          poolId,
+        })
+        if ('error' in key) {
+          setPoolKeyError(key.error)
+          return
+        }
+        fillV4Key(key)
+      } catch {
+        setPoolKeyError('Could not look up that pool ID.')
+      } finally {
+        setV4ApplyPending(false)
+      }
+      return
+    }
+    const parsed = parseV4PoolKeyInput(text)
+    if ('error' in parsed) {
+      setPoolKeyError(
+        text.startsWith('{') || text.startsWith('[') || text.includes(',')
+          ? parsed.error
+          : poolId.error,
+      )
+      return
+    }
+    fillV4Key(parsed)
   }
 
   const applyV3Pool = async () => {
@@ -691,8 +746,8 @@ export function SeVaultSlot({
             <div className="mt-4 space-y-3">
               <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
                 Pool key
-                <textarea
-                  className={`${inputClass} min-h-[7.5rem] font-mono text-xs`}
+                <input
+                  className={`${inputClass} font-mono`}
                   value={poolKeyRaw}
                   onChange={(e) => {
                     setPoolKeyRaw(e.target.value)
@@ -703,17 +758,17 @@ export function SeVaultSlot({
                   autoComplete="off"
                 />
                 <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-                  JSON, a Solidity tuple, or five fields: token0, token1, fee, tick spacing, hooks.
-                  Native ETH is the zero address.
+                  32-byte Uniswap V4 pool id. Starts with 0x, then 64 hex characters.
                 </span>
               </label>
               <Button
                 type="button"
                 size="sm"
-                onClick={applyPoolKey}
+                onClick={() => void applyPoolKey()}
+                disabled={v4ApplyPending}
                 data-testid={`${testIdPrefix}-apply-pool-key`}
               >
-                Apply pool key
+                {v4ApplyPending ? 'Looking up pool…' : 'Apply pool key'}
               </Button>
               {poolKeyError ? (
                 <p
