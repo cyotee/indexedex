@@ -8,7 +8,7 @@ const STEPS = [
     n: '01',
     label: 'Mint',
     title: 'You buy in with one token',
-    body: 'You send stablecoins and get back one DETF token. That single token stands for everything inside the basket. You never open the individual positions yourself.',
+    body: 'Get one DETF token for the whole basket. You do not open each position.',
     youDo: 'Send stables, receive one token',
     basketDoes: 'Puts your deposit to work across its positions',
     example: [
@@ -22,9 +22,9 @@ const STEPS = [
     n: '02',
     label: 'Hold',
     title: 'It keeps working for you',
-    body: 'The basket stays active in other apps: trading pools, lending books, vaults, and staking. You do not move anything. There is no manager and no promised return.',
+    body: 'Hold one token. The market manages the basket for you.',
     youDo: 'Hold the DETF token',
-    basketDoes: 'Keeps the positions working in other apps',
+    basketDoes: 'The market keeps the positions working',
     example: [
       { left: 'Your wallet', right: '1 DETF token', tone: 'mint' as const },
       { left: 'Stable lending position', right: 'Working', tone: 'ok' as const },
@@ -36,13 +36,13 @@ const STEPS = [
     n: '03',
     label: 'Bond',
     title: 'Or lock in for more',
-    body: 'Bond means locking money in. The first bond is also what switches a brand-new DETF on. You may receive more of the DETF token over time. Amounts are not guaranteed.',
+    body: 'Lock money in a bond. The first bond turns a new DETF on.',
     youDo: 'Lock money in a bond',
-    basketDoes: 'Goes live on the first bond. Later bonds add protocol-owned depth.',
+    basketDoes: 'Goes live on the first bond',
     example: [
       { left: 'Bond', right: 'Locked', tone: 'mint' as const },
       { left: 'DETF', right: 'Live', tone: 'ok' as const },
-      { left: 'Extra token over time', right: 'Not a promise', tone: 'ok' as const },
+      { left: 'Extra token over time', right: 'From mint', tone: 'ok' as const },
     ],
   },
 ] as const

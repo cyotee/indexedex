@@ -33,6 +33,7 @@ import { TokenSelect } from './components/TokenSelect'
 import SlippageInput from '../components/SlippageInput'
 import { computeMinAmountOut, DEFAULT_SLIPPAGE_PERCENT } from '../lib/earn/computeMinAmountOut'
 import { parseLaunchQuery } from '../lib/earn/launchQuery'
+import { displayTokenLabel, displayTokenSymbol } from '../lib/customerSymbols'
 import { useApprovalFlow } from '../lib/hooks/useApprovalFlow'
 import {
   resolveWalletGate,
@@ -153,7 +154,7 @@ function SwapPageInner() {
         type: 'token',
       })
     }
-    return opts
+    return opts.map((o) => ({ ...o, label: displayTokenLabel(o.label) }))
   }, [selectedChainId, launch.tokenIn, launch.tokenOut, seShareSet])
 
   const [imported, setImported] = useState<SearchToken[]>([])
@@ -189,7 +190,7 @@ function SwapPageInner() {
     const m = new Map<string, string>()
     for (let i = 0; i < searchTokens.length; i++) {
       const t = searchTokens[i]!
-      m.set(t.address.toLowerCase(), t.symbol)
+      m.set(t.address.toLowerCase(), displayTokenSymbol(t.symbol) || t.symbol)
     }
     return m
   }, [searchTokens])

@@ -5,8 +5,8 @@ import { useMemo } from 'react'
 
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
-import { feeDetfStakingHref, getProtocolDetfsForChain } from '@indexedex/protocol/tokenlists'
+import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../lib/earn/loadEarnProducts'
+import { feeDetfStakingHref } from '@indexedex/protocol/tokenlists'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 
@@ -21,7 +21,7 @@ export default function ExplorePageClient() {
     [selectedChainId, environment],
   )
   const protocol = useMemo(
-    () => getProtocolDetfsForChain(selectedChainId, environment),
+    () => loadProtocolDetfsForChain(selectedChainId, environment),
     [selectedChainId, environment],
   )
 

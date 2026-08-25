@@ -11,6 +11,7 @@ import {
 } from '@indexedex/protocol/tokenlists'
 import { assembleEarnProducts, filterEarnProducts, resolveFeaturedProducts, parseFeaturedAddressList } from './assembleEarnProducts'
 import type { EarnFilterOptions, EarnProduct, EarnProductInput } from '@indexedex/protocol/earn/types'
+import { relabelChirList } from '../customerSymbols'
 
 function toInput(entry: TokenListEntry): EarnProductInput {
   return {
@@ -38,7 +39,7 @@ export function loadEarnProductsForChain(
   )
   const catalog = assembleEarnProducts({
     strategy: getStrategyVaultTokensForChain(chainId, environment).map(toInput),
-    protocolDetf: getProtocolDetfsForChain(chainId, environment).map(toInput),
+    protocolDetf: relabelChirList(getProtocolDetfsForChain(chainId, environment)).map(toInput),
   })
   if (feeExcluded.size === 0) return catalog
   return catalog.filter((p) => !feeExcluded.has(p.address.toLowerCase()))
@@ -90,7 +91,16 @@ export function loadFeaturedFeeDetfs(
   environment: DeploymentEnvironment = getDefaultDeploymentEnvironment(),
   max = 3,
 ): TokenListEntry[] {
-  return getFeaturedFeeDetfsForChain(chainId, environment).slice(0, Math.max(0, max))
+  return relabelChirList(
+    getFeaturedFeeDetfsForChain(chainId, environment).slice(0, Math.max(0, max)),
+  )
+}
+
+export function loadProtocolDetfsForChain(
+  chainId: number,
+  environment: DeploymentEnvironment = getDefaultDeploymentEnvironment(),
+): TokenListEntry[] {
+  return relabelChirList(getProtocolDetfsForChain(chainId, environment))
 }
 
 export {

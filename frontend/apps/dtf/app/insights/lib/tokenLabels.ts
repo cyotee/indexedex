@@ -1,4 +1,5 @@
 import type { TokenListEntry } from '@indexedex/protocol/tokenlists'
+import { displayTokenSymbol } from '../../lib/customerSymbols'
 
 export function indexTokens(lists: TokenListEntry[][]): Map<string, TokenListEntry> {
   const m = new Map<string, TokenListEntry>()
@@ -29,6 +30,6 @@ export function labelFor(
 ): { symbol: string; name: string } | null {
   if (!addr || isZero(addr)) return null
   const t = index.get(addr.toLowerCase())
-  if (t) return { symbol: t.symbol, name: t.name }
+  if (t) return { symbol: displayTokenSymbol(t.symbol) || t.symbol, name: t.name }
   return { symbol: shortAddr(addr), name: 'Not in the local list' }
 }

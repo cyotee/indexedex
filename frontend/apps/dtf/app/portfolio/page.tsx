@@ -51,10 +51,10 @@ import {
   isSupportedChainId,
   resolveArtifactsChainId,
 } from '@indexedex/protocol/addressArtifacts'
-import { loadFeaturedFeeDetfs } from '../lib/earn/loadEarnProducts'
+import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../lib/earn/loadEarnProducts'
+import { relabelChirList } from '../lib/customerSymbols'
 import {
   feeDetfStakingHref,
-  getProtocolDetfsForChain,
   getProtocolDetfTokensForChain,
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
@@ -325,15 +325,15 @@ function PortfolioPage() {
     [environment, resolvedChainId]
   )
   const protocolDetfTokens = useMemo(
-    () => getProtocolDetfTokensForChain(resolvedChainId, environment),
+    () => relabelChirList(getProtocolDetfTokensForChain(resolvedChainId, environment)),
     [environment, resolvedChainId]
   )
   const listedProtocolDetfs = useMemo(
-    () => getProtocolDetfsForChain(resolvedChainId, environment),
+    () => loadProtocolDetfsForChain(resolvedChainId, environment),
     [environment, resolvedChainId]
   )
   const createdProtocolDetfs = useMemo(
-    () => loadCreatedDetfs(resolvedChainId),
+    () => relabelChirList(loadCreatedDetfs(resolvedChainId)),
     [resolvedChainId]
   )
   const queryProtocolDetfs = useMemo(

@@ -1,0 +1,52 @@
+export SENDER="$DEPLOYER_ADDRESS" \
+export DEV_ADDRESS="$DEPLOYER_ADDRESS" \
+export OWNER="$DEPLOYER_ADDRESS" \
+export UI_WALLET="$DEPLOYER_ADDRESS" \
+export OUT_DIR_OVERRIDE=deployments/anvil_robinhood_main \
+export NETWORK_PROFILE=anvil_robinhood_main \
+export CHAIN_ID=4663 \
+export RPC_URL=https://rpc.mainnet.chain.robinhood.com
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_01_Permit2.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_01_Permit2.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_02_Weth.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_02_Weth.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_03_UniswapV4.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_01_Stage_03_UniswapV4.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_01_Create3Factory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_01_Create3Factory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_02_DiamondPackageFactory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_02_DiamondPackageFactory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_03_HookFactory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_02_Stage_03_HookFactory.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_03_Stage_01_CommonFacets.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_03_Stage_01_CommonFacets.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_04_Stage_01_FeeCollectorAndManager.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_04_Stage_01_FeeCollectorAndManager.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProviderPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProviderPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_CpDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_CpDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300

@@ -14,12 +14,9 @@ import useChainResolution from '../lib/hooks/useChainResolution'
 import useRouterBytecode from '../lib/hooks/useRouterBytecode'
 import { useStakingContractReads } from '../lib/hooks/useStakingContractReads'
 import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
-import {
-  getFeaturedFeeDetfsForChain,
-  getProtocolDetfsForChain,
-  type Address,
-  type TokenListEntry,
-} from '@indexedex/protocol/tokenlists'
+import { type Address, type TokenListEntry } from '@indexedex/protocol/tokenlists'
+import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../lib/earn/loadEarnProducts'
+import { displayTokenSymbol } from '../lib/customerSymbols'
 import BondSection from './sections/BondSection'
 import BurnChirSection from './sections/BurnChirSection'
 import DetfSelectorSection from './sections/DetfSelectorSection'
@@ -74,15 +71,15 @@ export default function StakingPageClient({
 
   // Wave 2: prefer featured-fee-detfs list; merge protocol DETFs for lab discovery.
   const detfs = useMemo((): TokenListEntry[] => {
-    const fee = getFeaturedFeeDetfsForChain(chain.dataChainId, chain.environment)
-    const protocol = getProtocolDetfsForChain(chain.dataChainId, chain.environment)
+    const fee = loadFeaturedFeeDetfs(chain.dataChainId, chain.environment, 50)
+    const protocol = loadProtocolDetfsForChain(chain.dataChainId, chain.environment)
     if (fee.length === 0) return protocol
     const seen = new Set(fee.map((t) => t.address.toLowerCase()))
     const rest = protocol.filter((t) => !seen.has(t.address.toLowerCase()))
     return [...fee, ...rest]
   }, [chain.dataChainId, chain.environment])
   const feeDetfs = useMemo(
-    () => getFeaturedFeeDetfsForChain(chain.dataChainId, chain.environment),
+    () => loadFeaturedFeeDetfs(chain.dataChainId, chain.environment, 50),
     [chain.dataChainId, chain.environment],
   )
   const detfOptions = useMemo(
@@ -248,7 +245,7 @@ export default function StakingPageClient({
     const match = detfs.find(
       (d) => detfAddress && d.address.toLowerCase() === detfAddress.toLowerCase(),
     )
-    return match?.symbol || match?.display || match?.name || 'DETF'
+    return displayTokenSymbol(match?.symbol || match?.display) || match?.name || 'DTF-DETF'
   }, [detfs, detfAddress])
 
   const addrOrDash = (value: string | undefined) =>

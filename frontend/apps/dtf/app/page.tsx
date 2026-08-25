@@ -9,6 +9,7 @@ import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
 import { getLaunchTokenAddress } from './lib/lab'
 import { useBrand } from './lib/brandContext'
 import { appPath } from './lib/siteOrigins'
+import { displayTokenTicker } from './lib/customerSymbols'
 import { feeDetfStakingHref, getBaseTokensForChain } from '@indexedex/protocol/tokenlists'
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -20,19 +21,19 @@ const STEPS = [
     n: '01',
     k: 'Mint',
     t: 'Buy in with one token',
-    d: 'Pick a basket that matches how much risk you want. A single transaction gets you the whole thing. No strategy to design, no positions to open.',
+    d: 'Pick a basket. One transaction gets you the whole thing.',
   },
   {
     n: '02',
     k: 'Hold',
     t: 'It keeps working for you',
-    d: 'The basket stays active inside other apps: trading pools, lending books, vaults, and staking. You do not move anything. There is no manager and no promised return.',
+    d: 'Hold one token. The market manages the basket for you.',
   },
   {
     n: '03',
     k: 'Bond',
     t: 'Or lock in for more',
-    d: 'Prefer more of the token instead? Bond means locking money in. The first bond is also what switches a brand-new DETF on. Amounts are not guaranteed.',
+    d: 'Bond means lock money in. The first bond is what turns a new DETF on.',
   },
 ] as const
 
@@ -94,8 +95,8 @@ export default function HomePage() {
             <span className="dtf-landing__h1-accent">in a single token.</span>
           </h1>
           <p className="dtf-landing__lede">
-            A DETF is one token for a basket you pick. Mint it and hold the whole basket. The
-            basket works in other apps. There is no manager and no promised return.
+            One token for any basket of assets you pick. Anyone can create a DETF. Mint it and
+            hold the whole basket. It works with markets, tokenized stocks, and other apps.
           </p>
           <div className="dtf-landing__hero-cta">
             <Link href={appPath('/explore')} className="dtf-landing__btn dtf-landing__btn--primary">
@@ -133,8 +134,7 @@ export default function HomePage() {
           <p className="dtf-landing__kicker">Try it</p>
           <h2>Walk through an example basket</h2>
           <p className="dtf-landing__section-lede">
-            Pick a step to see what you do and what the basket does. Nothing here is a return
-            estimate. It just shows how the pieces move.
+            Pick a step. See what you do and what the basket does.
           </p>
           <LandingWalkthrough />
         </section>
@@ -154,7 +154,7 @@ export default function HomePage() {
             <article className="dtf-landing__card">
               <div className="dtf-landing__card-top">
                 <div>
-                  <h3>{heroFee?.symbol ? `$${heroFee.symbol}` : '$DTF-DETF'}</h3>
+                  <h3>{displayTokenTicker(heroFee?.symbol)}</h3>
                   <p className="dtf-landing__card-kicker">The protocol&apos;s own basket</p>
                 </div>
                 <span className="dtf-landing__live-badge">Live</span>
@@ -174,7 +174,7 @@ export default function HomePage() {
                 </li>
               </ul>
               <Link href={protocolHref} className="dtf-landing__btn dtf-landing__btn--block">
-                Open {heroFee?.symbol ? `$${heroFee.symbol}` : '$DTF-DETF'}
+                Open {displayTokenTicker(heroFee?.symbol)}
               </Link>
             </article>
 

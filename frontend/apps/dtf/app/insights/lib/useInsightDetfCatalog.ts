@@ -6,12 +6,12 @@ import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironm
 import { useSelectedNetwork } from '@indexedex/protocol/networkSelection'
 import {
   getBaseTokensForChain,
-  getFeaturedFeeDetfsForChain,
-  getProtocolDetfsForChain,
   getStrategyVaultTokensForChain,
   isFeaturedFeeDetfAddress,
   type TokenListEntry,
 } from '@indexedex/protocol/tokenlists'
+import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../../lib/earn/loadEarnProducts'
+import { relabelChirEntry } from '../../lib/customerSymbols'
 import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRegistryAddress'
 
 import { createAppReadClient } from '../../create/lib/sePoolRead'
@@ -34,7 +34,7 @@ function mergeDetfs(
     const k = t.address.toLowerCase()
     if (seen.has(k)) return
     seen.add(k)
-    out.push({ ...t, protocolFee })
+    out.push({ ...relabelChirEntry(t), protocolFee })
   }
   for (let i = 0; i < featured.length; i++) add(featured[i]!, true)
   for (let i = 0; i < protocol.length; i++) {
@@ -57,11 +57,11 @@ export function useInsightDetfCatalog() {
   const { environment } = useDeploymentEnvironment()
 
   const featured = useMemo(
-    () => getFeaturedFeeDetfsForChain(selectedChainId, environment),
+    () => loadFeaturedFeeDetfs(selectedChainId, environment, 50),
     [selectedChainId, environment],
   )
   const protocol = useMemo(
-    () => getProtocolDetfsForChain(selectedChainId, environment),
+    () => loadProtocolDetfsForChain(selectedChainId, environment),
     [selectedChainId, environment],
   )
   const [registryDetfs, setRegistryDetfs] = useState<TokenListEntry[]>([])
