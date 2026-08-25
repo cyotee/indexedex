@@ -1,8 +1,8 @@
 import { test, expect } from './wallet/fixture'
 
 test.describe('App routes & redirects (DTF)', () => {
-  test('home, explore, create, you, learn, earn, token load', async ({ walletPage }) => {
-    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn', '/token']) {
+  test('home, explore, create, you, learn, earn load', async ({ walletPage }) => {
+    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn']) {
       const res = await walletPage.goto(path)
       expect(res?.ok() || res?.status() === 304).toBeTruthy()
       await expect(walletPage.locator('body')).not.toBeEmpty()

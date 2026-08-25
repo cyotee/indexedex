@@ -61,7 +61,7 @@ export default function HomePage() {
       return symbol === 'DTF' || symbol === 'TTDTF' || symbol === 'TTRICH' || symbol === 'RICH'
     })
     const addr = dtf?.address ?? launch
-    return appPath(addr ? `/swap?launch=1&tokenOut=${addr}` : '/token')
+    return appPath(addr ? `/swap?launch=1&tokenOut=${addr}` : '/swap')
   }, [selectedChainId, environment])
 
   const protocolHref = appPath(heroFee ? feeDetfStakingHref(heroFee.address) : '/staking')
