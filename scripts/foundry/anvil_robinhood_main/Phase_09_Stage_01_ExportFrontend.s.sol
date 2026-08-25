@@ -8,6 +8,7 @@ import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 /// @notice Always rewrite JSON. No txs. Architecture packages only. No tokens or DETF instances.
 contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
     string internal constant FRONTEND_DIR = "frontend/packages/protocol/src/addresses/chain/4663";
+    address internal constant PONS = 0x39dBED3a2bd333467115dE45665cC57F813C4571;
 
     function run() external {
         _start("Phase 09 Stage 01: Export frontend");
@@ -77,7 +78,11 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
     }
 
     function _writeBaseTokens() internal {
-        string memory body = _tok("Wrapped Ether", "WETH", RobinhoodCanonicalLib.weth(), '["weth"]');
+        string memory body = string.concat(
+            _tok("Wrapped Ether", "WETH", RobinhoodCanonicalLib.weth(), '["weth"]'),
+            ",",
+            _tok("Pons", "PONS", PONS, '["token"]')
+        );
         vm.writeFile(_frontendPath("base-tokens.tokenlist.json"), _list("IndexedEx Robinhood Base Tokens", body));
     }
 

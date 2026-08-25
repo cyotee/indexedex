@@ -34,6 +34,9 @@ import {
   V3_FEE_TIERS,
   V4_FEE_TIERS,
   isPoolAlreadyExistsError,
+  checksumAddress,
+  parseV3PoolAddressInput,
+  parseV4PoolKeyInput,
   poolActionLabel,
   poolReadyState,
   poolStatusCopy,
@@ -109,6 +112,20 @@ export function SeVaultSlot({
   const [v4Live, setV4Live] = useState(false)
   const [httpVaults, setHttpVaults] = useState<Address[]>([])
   const [localPair, setLocalPair] = useState<`0x${string}` | ''>(pairToken)
+  const [v4Entry, setV4Entry] = useState<'tokens' | 'poolkey'>('tokens')
+  const [poolKeyRaw, setPoolKeyRaw] = useState('')
+  const [poolKeyError, setPoolKeyError] = useState<string | null>(null)
+  const [customFee, setCustomFee] = useState(false)
+  const [v3Entry, setV3Entry] = useState<'tokens' | 'pool'>('tokens')
+  const [v3PoolRaw, setV3PoolRaw] = useState('')
+  const [v3PoolError, setV3PoolError] = useState<string | null>(null)
+  const [appliedV3, setAppliedV3] = useState<{
+    pool: Address
+    tokenA: Address
+    tokenB: Address
+    fee: number
+  } | null>(null)
+  const [v3ApplyPending, setV3ApplyPending] = useState(false)
 
   const readClient = useMemo(() => createAppReadClient(selectedChainId), [selectedChainId])
 
@@ -123,13 +140,15 @@ export function SeVaultSlot({
 
   const v4Key = useMemo(() => {
     if (!sorted || version !== 'v4') return null
-    const hook = /^0x[0-9a-fA-F]{40}$/.test(hooks) ? (hooks as Address) : ZERO_ADDRESS
+    const currency0 = checksumAddress(sorted.currency0)
+    const currency1 = checksumAddress(sorted.currency1)
+    if (!currency0 || !currency1) return null
     return {
-      currency0: sorted.currency0,
-      currency1: sorted.currency1,
+      currency0,
+      currency1,
       fee,
       tickSpacing,
-      hooks: hook,
+      hooks: checksumAddress(hooks) ?? ZERO_ADDRESS,
     }
   }, [sorted, version, fee, tickSpacing, hooks])
 
@@ -144,12 +163,24 @@ export function SeVaultSlot({
     query: { enabled: version === 'v3' && !!platform.v3Factory && !!sorted },
   })
 
+  const appliedV3Matches = Boolean(
+    appliedV3 &&
+      tokenA &&
+      tokenB &&
+      appliedV3.fee === fee &&
+      ((same(tokenA, appliedV3.tokenA) && same(tokenB, appliedV3.tokenB)) ||
+        (same(tokenA, appliedV3.tokenB) && same(tokenB, appliedV3.tokenA))),
+  )
+  const v3PoolForReads: Address | undefined =
+    (appliedV3Matches ? appliedV3!.pool : undefined) ||
+    (v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS ? (v3PoolAddr as Address) : undefined)
+
   const { data: v3Slot0, refetch: refetchV3Slot } = useReadContract({
-    address: (v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS ? v3PoolAddr : undefined) as Address | undefined,
+    address: v3PoolForReads,
     abi: V3_POOL_ABI,
     functionName: 'slot0',
     chainId: selectedChainId,
-    query: { enabled: version === 'v3' && !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS },
+    query: { enabled: version === 'v3' && !!v3PoolForReads },
   })
 
   const pkg = version === 'v4' ? platform.uniV4SePkg : platform.uniV3SePkg
@@ -267,7 +298,7 @@ export function SeVaultSlot({
     if (candidateVaults.length === 1) onSelectVault(candidateVaults[0]!)
   }, [source, selectedVault, candidateVaults, onSelectVault, confirmedPoolKey, pairKey])
 
-  const v3PoolExists = !!v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS
+  const v3PoolExists = !!v3PoolForReads
   const v3Initialized = v3PoolExists && !!v3Slot0 && (v3Slot0[0] as bigint) > BigInt(0)
   const v4Exists = v4Live
   const justCreatedThisPool = confirmedPoolKey !== '' && confirmedPoolKey === pairKey
@@ -378,12 +409,14 @@ export function SeVaultSlot({
             })
             await publicClient.waitForTransactionReceipt({ hash })
           }
-          const pool = (await publicClient.readContract({
-            address: platform.v3Factory,
-            abi: V3_FACTORY_ABI,
-            functionName: 'getPool',
-            args: [sorted.currency0, sorted.currency1, fee],
-          })) as Address
+          const pool = v3PoolForReads
+            ? v3PoolForReads
+            : ((await publicClient.readContract({
+                address: platform.v3Factory,
+                abi: V3_FACTORY_ABI,
+                functionName: 'getPool',
+                args: [sorted.currency0, sorted.currency1, fee],
+              })) as Address)
           if (!pool || pool === ZERO_ADDRESS) throw new Error('Pool was not created.')
           const slot = await publicClient.readContract({
             address: pool,
@@ -437,8 +470,8 @@ export function SeVaultSlot({
         } else {
           if (!platform.uniV3SePkg) throw new Error('No Uniswap V3 SE package on this network.')
           const pool =
-            v3PoolAddr && v3PoolAddr !== ZERO_ADDRESS
-              ? v3PoolAddr
+            v3PoolForReads && v3PoolForReads !== ZERO_ADDRESS
+              ? v3PoolForReads
               : ((await publicClient.readContract({
                   address: platform.v3Factory!,
                   abi: V3_FACTORY_ABI,
@@ -478,6 +511,89 @@ export function SeVaultSlot({
   const pickPair = (token: `0x${string}` | '') => {
     setLocalPair(token)
     onSelectPair(token)
+  }
+
+  const applyPoolKey = () => {
+    const parsed = parseV4PoolKeyInput(poolKeyRaw)
+    if ('error' in parsed) {
+      setPoolKeyError(parsed.error)
+      return
+    }
+    setPoolKeyError(null)
+    setVersion('v4')
+    setTokenA(parsed.currency0)
+    setTokenB(parsed.currency1)
+    setFee(parsed.fee)
+    setTickSpacing(parsed.tickSpacing)
+    setHooks(parsed.hooks)
+    setCustomFee(!V4_FEE_TIERS.some((t) => t.fee === parsed.fee))
+  }
+
+  const applyV3Pool = async () => {
+    const parsed = parseV3PoolAddressInput(v3PoolRaw)
+    if (typeof parsed !== 'string') {
+      setV3PoolError(parsed.error)
+      return
+    }
+    const client = readClient ?? publicClient
+    if (!client) {
+      setV3PoolError('No RPC client.')
+      return
+    }
+    setV3ApplyPending(true)
+    setV3PoolError(null)
+    try {
+      const code = await client.getCode({ address: parsed })
+      if (!code || code === '0x') {
+        setV3PoolError('No contract at that address.')
+        return
+      }
+      const [token0, token1, poolFee, poolTick] = await Promise.all([
+        client.readContract({ address: parsed, abi: V3_POOL_ABI, functionName: 'token0' }),
+        client.readContract({ address: parsed, abi: V3_POOL_ABI, functionName: 'token1' }),
+        client.readContract({ address: parsed, abi: V3_POOL_ABI, functionName: 'fee' }),
+        client.readContract({ address: parsed, abi: V3_POOL_ABI, functionName: 'tickSpacing' }),
+      ])
+      const c0 = checksumAddress(token0 as string)
+      const c1 = checksumAddress(token1 as string)
+      const feeN = Number(poolFee)
+      if (!c0 || !c1 || c0.toLowerCase() === c1.toLowerCase()) {
+        setV3PoolError('That contract is not a Uniswap V3 pool.')
+        return
+      }
+      if (!Number.isFinite(feeN) || !Number.isInteger(feeN) || feeN < 0) {
+        setV3PoolError('Could not read the pool fee.')
+        return
+      }
+      const tickN = Number(poolTick)
+      setAppliedV3({ pool: parsed, tokenA: c0, tokenB: c1, fee: feeN })
+      setVersion('v3')
+      setHooks(ZERO_ADDRESS)
+      setTokenA(c0)
+      setTokenB(c1)
+      setFee(feeN)
+      setTickSpacing(
+        Number.isFinite(tickN) && Number.isInteger(tickN) && tickN > 0
+          ? tickN
+          : tickSpacingForV3Fee(feeN),
+      )
+      setCustomFee(!V3_FEE_TIERS.some((t) => t.fee === feeN))
+      const slot = await client.readContract({
+        address: parsed,
+        abi: V3_POOL_ABI,
+        functionName: 'slot0',
+      })
+      if (slot && (slot[0] as bigint) > 0n) {
+        const [sorted0, sorted1] = sortPoolTokens(c0, c1)
+        setConfirmedPoolKey(
+          `v3:${feeN}:${Number.isFinite(tickN) && tickN > 0 ? tickN : tickSpacingForV3Fee(feeN)}:${ZERO_ADDRESS}:${sorted0}:${sorted1}`,
+        )
+      }
+    } catch {
+      setV3PoolError('That contract is not a Uniswap V3 pool.')
+    } finally {
+      setV3ApplyPending(false)
+    }
   }
 
   return (
@@ -527,6 +643,128 @@ export function SeVaultSlot({
       ) : (
         <Card>
           <p className="landing-section-label">Pool</p>
+          {version === 'v4' ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={v4Entry === 'tokens' ? 'primary' : 'secondary'}
+                onClick={() => setV4Entry('tokens')}
+                data-testid={`${testIdPrefix}-v4-entry-tokens`}
+              >
+                Tokens
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={v4Entry === 'poolkey' ? 'primary' : 'secondary'}
+                onClick={() => setV4Entry('poolkey')}
+                data-testid={`${testIdPrefix}-v4-entry-poolkey`}
+              >
+                Pool key
+              </Button>
+            </div>
+          ) : null}
+          {version === 'v3' ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={v3Entry === 'tokens' ? 'primary' : 'secondary'}
+                onClick={() => setV3Entry('tokens')}
+                data-testid={`${testIdPrefix}-v3-entry-tokens`}
+              >
+                Tokens
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={v3Entry === 'pool' ? 'primary' : 'secondary'}
+                onClick={() => setV3Entry('pool')}
+                data-testid={`${testIdPrefix}-v3-entry-pool`}
+              >
+                Pool address
+              </Button>
+            </div>
+          ) : null}
+          {version === 'v4' && v4Entry === 'poolkey' ? (
+            <div className="mt-4 space-y-3">
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Pool key
+                <textarea
+                  className={`${inputClass} min-h-[7.5rem] font-mono text-xs`}
+                  value={poolKeyRaw}
+                  onChange={(e) => {
+                    setPoolKeyRaw(e.target.value)
+                    if (poolKeyError) setPoolKeyError(null)
+                  }}
+                  data-testid={`${testIdPrefix}-pool-key`}
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+                <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
+                  JSON, a Solidity tuple, or five fields: token0, token1, fee, tick spacing, hooks.
+                  Native ETH is the zero address.
+                </span>
+              </label>
+              <Button
+                type="button"
+                size="sm"
+                onClick={applyPoolKey}
+                data-testid={`${testIdPrefix}-apply-pool-key`}
+              >
+                Apply pool key
+              </Button>
+              {poolKeyError ? (
+                <p
+                  className="text-sm text-[var(--danger,#E6386A)]"
+                  role="alert"
+                  data-testid={`${testIdPrefix}-pool-key-error`}
+                >
+                  {poolKeyError}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+          {version === 'v3' && v3Entry === 'pool' ? (
+            <div className="mt-4 space-y-3">
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Pool address
+                <input
+                  className={`${inputClass} font-mono`}
+                  value={v3PoolRaw}
+                  onChange={(e) => {
+                    setV3PoolRaw(e.target.value)
+                    if (v3PoolError) setV3PoolError(null)
+                  }}
+                  data-testid={`${testIdPrefix}-v3-pool`}
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+                <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
+                  Uniswap V3 pool contract. Apply reads the two tokens and the fee.
+                </span>
+              </label>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => void applyV3Pool()}
+                disabled={v3ApplyPending}
+                data-testid={`${testIdPrefix}-apply-v3-pool`}
+              >
+                {v3ApplyPending ? 'Reading pool…' : 'Apply pool'}
+              </Button>
+              {v3PoolError ? (
+                <p
+                  className="text-sm text-[var(--danger,#E6386A)]"
+                  role="alert"
+                  data-testid={`${testIdPrefix}-v3-pool-error`}
+                >
+                  {v3PoolError}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <TokenSelect
               label="Token A"
@@ -535,6 +773,8 @@ export function SeVaultSlot({
               exclude={tokenB}
               testId={`${testIdPrefix}-token-a`}
               onChange={setTokenA}
+              allowNative={version === 'v4'}
+              chainId={selectedChainId}
             />
             <TokenSelect
               label="Token B"
@@ -543,6 +783,8 @@ export function SeVaultSlot({
               exclude={tokenA}
               testId={`${testIdPrefix}-token-b`}
               onChange={setTokenB}
+              allowNative={version === 'v4'}
+              chainId={selectedChainId}
             />
             <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
               Pool type
@@ -553,6 +795,8 @@ export function SeVaultSlot({
                   const next = e.target.value as PoolVersion
                   setVersion(next)
                   setTickSpacing(tickSpacingForV3Fee(fee))
+                  if (next !== 'v4') setV4Entry('tokens')
+                  if (next !== 'v3') setV3Entry('tokens')
                 }}
                 data-testid={`${testIdPrefix}-version`}
               >
@@ -564,9 +808,16 @@ export function SeVaultSlot({
               Fee
               <select
                 className={inputClass}
-                value={String(fee)}
+                value={
+                  customFee || !feeTiers.some((t) => t.fee === fee) ? 'custom' : String(fee)
+                }
                 onChange={(e) => {
+                  if (e.target.value === 'custom') {
+                    setCustomFee(true)
+                    return
+                  }
                   const next = Number(e.target.value)
+                  setCustomFee(false)
                   setFee(next)
                   setTickSpacing(tickSpacingForV3Fee(next))
                 }}
@@ -577,8 +828,30 @@ export function SeVaultSlot({
                     {t.label} ({t.fee})
                   </option>
                 ))}
+                <option value="custom">Custom</option>
               </select>
             </label>
+            {customFee || !feeTiers.some((t) => t.fee === fee) ? (
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                Custom fee
+                <input
+                  className={`${inputClass} font-mono`}
+                  value={String(fee)}
+                  onChange={(e) => {
+                    const n = Number(e.target.value)
+                    if (!Number.isFinite(n)) return
+                    setFee(Math.max(0, Math.min(0xff_ffff, Math.floor(n))))
+                  }}
+                  inputMode="numeric"
+                  data-testid={`${testIdPrefix}-fee-custom`}
+                />
+                <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
+                  {version === 'v4'
+                    ? 'Uniswap V4 fee in millionths. 0 is a zero-fee pool. 3000 is 0.3%.'
+                    : 'Uniswap V3 fee in millionths. 3000 is 0.3%.'}
+                </span>
+              </label>
+            ) : null}
             {version === 'v4' ? (
               <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
                 Tick spacing
@@ -587,6 +860,7 @@ export function SeVaultSlot({
                   value={String(tickSpacing)}
                   onChange={(e) => setTickSpacing(Number(e.target.value) || 60)}
                   inputMode="numeric"
+                  data-testid={`${testIdPrefix}-tick-spacing`}
                 />
               </label>
             ) : null}
@@ -598,6 +872,7 @@ export function SeVaultSlot({
                   value={hooks}
                   onChange={(e) => setHooks(e.target.value)}
                   placeholder={ZERO_ADDRESS}
+                  data-testid={`${testIdPrefix}-hooks`}
                 />
                 <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
                   Zero address is a normal Uniswap V4 pool with no hook.
@@ -752,6 +1027,8 @@ function TokenSelect({
   exclude,
   onChange,
   testId,
+  allowNative = false,
+  chainId = 0,
 }: {
   label: string
   value: string
@@ -759,14 +1036,39 @@ function TokenSelect({
   exclude?: string
   onChange: (addr: `0x${string}` | '') => void
   testId: string
+  allowNative?: boolean
+  chainId?: number
 }) {
-  const options = exclude ? tokens.filter((t) => !same(t.address, exclude)) : tokens
+  const extras: TokenListEntry[] = []
+  if (allowNative && !tokens.some((t) => same(t.address, ZERO_ADDRESS))) {
+    extras.push({
+      chainId,
+      address: ZERO_ADDRESS,
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    })
+  }
+  if (value && ![...extras, ...tokens].some((t) => same(t.address, value))) {
+    extras.push({
+      chainId,
+      address: value as Address,
+      name: same(value, ZERO_ADDRESS) ? 'Ether' : 'Token',
+      symbol: same(value, ZERO_ADDRESS) ? 'ETH' : shortAddr(value),
+      decimals: 18,
+    })
+  }
+  const merged = [...extras, ...tokens]
+  const options = (exclude ? merged.filter((t) => !same(t.address, exclude)) : merged).filter(
+    (t, i, list) => list.findIndex((x) => same(x.address, t.address)) === i,
+  )
+  const selected = options.find((t) => same(t.address, value))?.address ?? value
   return (
     <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
       {label}
       <select
         className={inputClass}
-        value={value}
+        value={selected}
         onChange={(e) => onChange((e.target.value as `0x${string}`) || '')}
         data-testid={testId}
       >

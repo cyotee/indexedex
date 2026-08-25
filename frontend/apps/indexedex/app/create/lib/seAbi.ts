@@ -82,6 +82,20 @@ export const V3_POOL_ABI = [
     inputs: [],
     outputs: [{ type: 'address' }],
   },
+  {
+    type: 'function',
+    name: 'fee',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'uint24' }],
+  },
+  {
+    type: 'function',
+    name: 'tickSpacing',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'int24' }],
+  },
 ] as const
 
 export const V4_POOL_KEY_COMPONENTS = [
