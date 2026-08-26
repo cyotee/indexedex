@@ -45,6 +45,15 @@ describe('parseContractError', () => {
     )
   })
 
+  it('maps bond claim authorization errors', () => {
+    expect(parseContractError(new Error('NotBondHolder()'))).toMatch(/does not own that bond/i)
+    expect(parseContractError(new Error('NotAuthorized(address)'))).toMatch(/does not own that bond/i)
+  })
+
+  it('maps BondNotMature without blocking reward claims in copy', () => {
+    expect(parseContractError(new Error('BondNotMature(uint256)'))).toMatch(/still locked/i)
+  })
+
   it('maps an already-initialized pool', () => {
     expect(parseContractError(new Error('PoolAlreadyInitialized()'))).toMatch(/already exists/i)
     expect(parseContractError({ data: '0x7983c051', message: 'execution reverted' })).toMatch(/already exists/i)

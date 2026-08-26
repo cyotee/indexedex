@@ -158,12 +158,14 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
     query: { enabled, retry: 0 },
   })
   const { data: bondNftVaultRaw } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'bondNftVault',
     query: { enabled, retry: 0 },
   })
   const { data: protocolNftVaultRaw } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'protocolNFTVault',
@@ -745,6 +747,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               reserveLive={reserveLive}
               burningAllowed={burningAllowed}
               initialTab={actionTab}
+              nftVault={bondNftVault ?? protocolNftVault}
             />
 
             <Card>

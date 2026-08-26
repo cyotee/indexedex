@@ -76,6 +76,14 @@ export function parseContractError(err: unknown): string {
     return 'This DETF is inert until the first bond.'
   }
 
+  if (/NotBondHolder|NotAuthorized/i.test(blob)) {
+    return 'This wallet does not own that bond.'
+  }
+
+  if (/BondNotMature/i.test(blob)) {
+    return 'This bond is still locked. Rewards can be claimed; principal cannot be cashed out yet.'
+  }
+
   if (/insufficient funds|insufficient balance|exceeds balance/i.test(raw)) {
     return 'Insufficient balance for this transaction'
   }

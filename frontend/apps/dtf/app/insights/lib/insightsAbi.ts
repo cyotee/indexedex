@@ -274,4 +274,18 @@ export const bondNftAbi = [
     inputs: [{ name: 'tokenId', type: 'uint256' }],
     outputs: [{ type: 'address' }],
   },
+  {
+    type: 'function',
+    name: 'unlockTimeOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'nextTokenId',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'uint256' }],
+  },
 ] as const

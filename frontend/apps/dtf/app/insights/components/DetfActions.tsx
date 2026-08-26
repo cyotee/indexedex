@@ -2,11 +2,20 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { erc20Abi, formatUnits, parseUnits } from 'viem'
-import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  usePublicClient,
+  useReadContract,
+  useReadContracts,
+  useSwitchChain,
+  useWriteContract,
+} from 'wagmi'
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
 
+import { AddressLink } from '../../components/ui/AddressLink'
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -28,9 +37,21 @@ import {
   settlePayToken,
   withEthPayOption,
 } from '../../lib/ethPay'
+import { isFunctionNotFound } from '../../lib/detf/bondNftVault'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { isInsightsActionTab } from '../lib/insightsHref'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
+import {
+  addressesMatch,
+  bondIdScanCount,
+  bondOwnerAddress,
+  bondUnlockState,
+  claimRewardsBlockedReason,
+  claimRewardsButtonEnabled,
+  ownedBondIdsFromOwnerReads,
+  parseBondTokenId,
+  walletCanSignOnChain,
+} from '../lib/claimRewardsGate'
 import { isZero } from '../lib/tokenLabels'
 import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
 import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
@@ -65,6 +86,7 @@ export function DetfActions({
   reserveLive,
   burningAllowed,
   initialTab,
+  nftVault: nftVaultProp,
 }: {
   detf?: `0x${string}`
   detfSymbol: string
@@ -76,6 +98,7 @@ export function DetfActions({
   reserveLive?: boolean
   burningAllowed?: boolean
   initialTab?: string
+  nftVault?: `0x${string}`
 }) {
   const { address, isConnected, chainId: walletChainId } = useAccount()
   const { environment } = useDeploymentEnvironment()
@@ -83,7 +106,12 @@ export function DetfActions({
   const { writeContractAsync } = useWriteContract()
   const { switchChainAsync } = useSwitchChain()
   const localWallet = walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
-  const walletMatches = isConnected && (walletChainId === chainId || localWallet)
+  const walletMatches = walletCanSignOnChain({
+    isConnected,
+    walletChainId,
+    appChainId: chainId,
+    localWallet,
+  })
   const platform = useMemo(() => resolveSePlatform(chainId, environment), [chainId, environment])
 
   const [tab, setTab] = useState(() => (isInsightsActionTab(initialTab) ? initialTab : 'mint'))
@@ -132,14 +160,7 @@ export function DetfActions({
   const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
   const parsed = parseAmount(amount, decimals)
   const lock = lockSecondsFromDays(lockDays)
-  const parsedId = useMemo(() => {
-    try {
-      if (!tokenId.trim()) return undefined
-      return BigInt(tokenId.trim())
-    } catch {
-      return undefined
-    }
-  }, [tokenId])
+  const parsedId = useMemo(() => parseBondTokenId(tokenId), [tokenId])
 
   const { data: ethBal } = useBalance({
     address,
@@ -224,34 +245,108 @@ export function DetfActions({
         parsedBurn > BigInt(0),
     },
   })
+  const skipNftLookup = !!nftVaultProp && !isZero(nftVaultProp)
   const { data: bondVault } = useReadContract({
+    chainId,
     address: detf,
     abi: insightsViewAbi,
     functionName: 'bondNftVault',
-    query: { enabled: !!detf },
+    query: { enabled: !!detf && !skipNftLookup, retry: 0 },
   })
   const { data: protocolVault } = useReadContract({
+    chainId,
     address: detf,
     abi: insightsViewAbi,
     functionName: 'protocolNFTVault',
-    query: { enabled: !!detf },
+    query: { enabled: !!detf && !skipNftLookup, retry: 0 },
   })
-  const nftVault =
-    bondVault && !isZero(bondVault) ? bondVault : protocolVault && !isZero(protocolVault) ? protocolVault : undefined
+  const nftVault = skipNftLookup
+    ? nftVaultProp
+    : bondVault && !isZero(bondVault)
+      ? bondVault
+      : protocolVault && !isZero(protocolVault)
+        ? protocolVault
+        : undefined
+  const { data: nextTokenIdRaw } = useReadContract({
+    chainId,
+    address: nftVault,
+    abi: bondNftAbi,
+    functionName: 'nextTokenId',
+    query: { enabled: tab === 'claim' && !!nftVault, retry: 0 },
+  })
+  const scanCount = bondIdScanCount(typeof nextTokenIdRaw === 'bigint' ? nextTokenIdRaw : undefined)
+  const ownerScanContracts = useMemo(() => {
+    if (tab !== 'claim' || !nftVault) return []
+    return Array.from({ length: scanCount }, (_, i) => ({
+      address: nftVault,
+      abi: bondNftAbi,
+      functionName: 'ownerOf' as const,
+      args: [BigInt(i + 1)] as const,
+      chainId,
+    }))
+  }, [tab, nftVault, scanCount, chainId])
+  const ownerScan = useReadContracts({
+    contracts: ownerScanContracts,
+    allowFailure: true,
+    query: { enabled: ownerScanContracts.length > 0 && !!address },
+  })
+  const ownedIds = useMemo(
+    () => ownedBondIdsFromOwnerReads(ownerScan.data, address),
+    [ownerScan.data, address],
+  )
+
+  useEffect(() => {
+    if (tokenId.trim()) return
+    if (ownedIds.length === 0) return
+    setTokenId(ownedIds[0]!.toString())
+  }, [ownedIds, tokenId])
+
+  const claimReadsOn =
+    tab === 'claim' && !!nftVault && parsedId !== undefined
 
   const { data: pendingRewards } = useReadContract({
+    chainId,
     address: nftVault,
     abi: bondNftAbi,
     functionName: 'pendingRewards',
     args: parsedId !== undefined ? [parsedId] : undefined,
-    query: { enabled: tab === 'claim' && !!nftVault && parsedId !== undefined },
+    query: { enabled: claimReadsOn, retry: 0 },
   })
-  const { data: ownerOf } = useReadContract({
+  const { data: ownerOf, isError: ownerReadFailed, isFetching: ownerReading } = useReadContract({
+    chainId,
     address: nftVault,
     abi: bondNftAbi,
     functionName: 'ownerOf',
     args: parsedId !== undefined ? [parsedId] : undefined,
-    query: { enabled: tab === 'claim' && !!nftVault && parsedId !== undefined },
+    query: { enabled: claimReadsOn, retry: 0 },
+  })
+  const { data: unlockTime } = useReadContract({
+    chainId,
+    address: nftVault,
+    abi: bondNftAbi,
+    functionName: 'unlockTimeOf',
+    args: parsedId !== undefined ? [parsedId] : undefined,
+    query: { enabled: claimReadsOn, retry: 0 },
+  })
+  const ownerAddr = bondOwnerAddress(typeof ownerOf === 'string' ? ownerOf : undefined)
+  const ownsBond = addressesMatch(ownerAddr, address)
+  const unlock = bondUnlockState(
+    typeof unlockTime === 'bigint' ? unlockTime : undefined,
+    Math.floor(Date.now() / 1000),
+  )
+  const canClaim = claimRewardsButtonEnabled({
+    canSign: isConnected && walletMatches && !!detf && !!address && pendingLeg == null,
+    tokenId: parsedId,
+    matured: unlock.locked === false,
+    pendingRewards: typeof pendingRewards === 'bigint' ? pendingRewards : undefined,
+    owner: ownerAddr,
+    wallet: address,
+  })
+  const claimBlocked = claimRewardsBlockedReason({
+    isConnected,
+    walletMatches,
+    appChainId: chainId,
+    tokenId: parsedId,
   })
 
   const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
@@ -480,19 +575,46 @@ export function DetfActions({
 
   async function claim() {
     if (!address || parsedId === undefined) return
-    const target = nftVault ?? detf
-    if (!target) return
+    const attempts: { address: `0x${string}`; abi: typeof insightsViewAbi | typeof bondNftAbi }[] = []
+    if (detf) attempts.push({ address: detf, abi: insightsViewAbi })
+    if (nftVault && (!detf || nftVault.toLowerCase() !== detf.toLowerCase())) {
+      attempts.push({ address: nftVault, abi: bondNftAbi })
+    }
+    if (attempts.length === 0) return
     setPendingLeg('claim')
     setStatus('')
     try {
-      const hash = await writeOnWallet({
-        account: address,
-        address: target,
-        abi: bondNftAbi,
-        functionName: 'claimRewards',
-        args: [parsedId, address],
-      })
-      await wait(hash, 'Claim rewards')
+      const args = [parsedId, address] as const
+      let lastError: unknown
+      for (let i = 0; i < attempts.length; i++) {
+        const attempt = attempts[i]!
+        try {
+          if (publicClient) {
+            await publicClient.simulateContract({
+              account: address,
+              address: attempt.address,
+              abi: attempt.abi,
+              functionName: 'claimRewards',
+              args,
+            })
+          }
+          const hash = await writeOnWallet({
+            account: address,
+            address: attempt.address,
+            abi: attempt.abi,
+            functionName: 'claimRewards',
+            args,
+          })
+          await wait(hash, 'Claim rewards')
+          lastError = undefined
+          break
+        } catch (e) {
+          lastError = e
+          if (i < attempts.length - 1 && isFunctionNotFound(e)) continue
+          throw e
+        }
+      }
+      if (lastError) throw lastError
     } catch (e) {
       setStatus(parseContractError(e))
     } finally {
@@ -518,7 +640,7 @@ export function DetfActions({
         Mint pays a token this DETF accepts and receives {detfSymbol}. Burn pays {detfSymbol} and
         returns a token from that list. Bond locks from the same list. Stake mints the rebasing
         claim token. That is not minting {detfSymbol}. Claim takes DETF that accrued to a bond.
-        Claiming is not cashing the bond out.
+        You can claim while the bond is still locked. Claiming is not cashing the bond out.
       </p>
 
       <div className="mt-4">
@@ -741,19 +863,68 @@ export function DetfActions({
             data-testid="detf-claim-id"
           />
         </label>
-        <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Pending: {pendingRewards != null ? `${formatUnits(pendingRewards, 18)} ${detfSymbol}` : '—'}
-          {ownerOf && address && ownerOf.toLowerCase() !== address.toLowerCase()
-            ? '. This wallet does not own that bond.'
-            : ''}
-        </p>
+        {ownedIds.length > 0 ? (
+          <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="detf-claim-owned">
+            Your bonds:{' '}
+            {ownedIds.map((id) => (
+              <button
+                key={id.toString()}
+                type="button"
+                className="mr-1 font-mono text-[var(--accent,#4FD44B)] underline-offset-2 hover:underline"
+                onClick={() => setTokenId(id.toString())}
+              >
+                #{id.toString()}
+              </button>
+            ))}
+          </p>
+        ) : address && tab === 'claim' && ownerScan.isFetched ? (
+          <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="detf-claim-owned">
+            No bonds found for this wallet on this DETF.
+          </p>
+        ) : null}
+        <div className="mt-3 space-y-1.5 text-sm text-[var(--text-primary,#EDEDED)]">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1" data-testid="detf-claim-owner">
+            <span className="text-[var(--text-muted,#9aa3b2)]">Owner</span>
+            {parsedId === undefined ? (
+              <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Enter a bond token ID.</span>
+            ) : ownerAddr ? (
+              <AddressLink chainId={chainId} address={ownerAddr} display="full" />
+            ) : ownerReading ? (
+              <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Reading…</span>
+            ) : ownerReadFailed || !nftVault ? (
+              <span className="text-xs text-[var(--text-muted,#9aa3b2)]">
+                {nftVault ? 'No bond with that ID.' : 'Bond NFT vault not found on this DETF.'}
+              </span>
+            ) : (
+              <span className="text-xs text-[var(--text-muted,#9aa3b2)]">No bond with that ID.</span>
+            )}
+          </div>
+          <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+            Pending:{' '}
+            {pendingRewards != null ? `${formatUnits(pendingRewards, 18)} ${detfSymbol}` : '—'}
+            . The owner can claim even if pending is 0.
+          </p>
+          <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+            {unlock.locked === true && typeof unlockTime === 'bigint'
+              ? `Locked until ${new Date(Number(unlockTime) * 1000).toLocaleString()}. You can still claim rewards.`
+              : unlock.locked === false && typeof unlockTime === 'bigint'
+                ? `Unlocked ${new Date(Number(unlockTime) * 1000).toLocaleString()}.`
+                : 'Lock time: —'}
+          </p>
+          {ownerAddr && address ? (
+            <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+              {ownsBond ? 'This wallet owns this bond.' : 'This wallet does not own that bond.'}
+            </p>
+          ) : null}
+        </div>
         {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
         <Button
           type="button"
           className="mt-4"
           onClick={() => void claim()}
-          disabled={!canSign || parsedId === undefined}
+          disabled={!canClaim}
           loading={pendingLeg === 'claim'}
+          title={claimBlocked ?? undefined}
           data-testid="detf-claim"
         >
           Claim rewards

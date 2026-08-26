@@ -71,4 +71,17 @@ test.describe('App routes & redirects (DTF)', () => {
     const body = await walletPage.locator('body').innerText()
     expect(/claim token|rebasing claim|Stake/i.test(body)).toBe(true)
   })
+
+  test('insights claim tab shows bond owner and claim control', async ({ walletPage }) => {
+    const addr = feeDetfAddress() ?? SAMPLE_DETF
+    await walletPage.goto(`/insights/${addr}?tab=claim`)
+    await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
+    await expect(walletPage.getByTestId('detf-claim-id')).toBeVisible()
+    await expect(walletPage.getByTestId('detf-claim-owner')).toBeVisible()
+    await expect(walletPage.getByTestId('detf-claim-owner')).toContainText(/Owner/i)
+    await expect(walletPage.getByTestId('detf-claim')).toBeVisible()
+    await expect(walletPage.getByTestId('detf-claim')).toBeDisabled()
+    await walletPage.getByTestId('detf-claim-id').fill('1')
+    await expect(walletPage.getByTestId('detf-claim-owner')).toBeVisible()
+  })
 })
