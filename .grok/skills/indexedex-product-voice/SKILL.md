@@ -121,7 +121,7 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 | Earn `/earn` | Vault catalog only; not a top-level product |
 | X / external | Same product law; disclaimers in body not hook |
 
-**Page chrome (when refining a surface, not a bulk restyle):** match `/research/bond-vs-mint` (`BondVsMintView`) and landing `/`. Atmosphere, eyebrow, large title, section labels, choice cards, numbered tiles, FAQ as a card grid, folded disclaimers, named CTAs. Do **not** restyle every route in one pass. Apply this look only to the page being refined. Reference: `frontend/apps/indexedex/app/research/components/BondVsMintView.tsx`.
+**Page chrome (when refining a surface, not a bulk restyle):** match `/research/bond-vs-mint` (`BondVsMintView`) and landing `/`. Atmosphere, eyebrow, large title, section labels, choice cards, numbered tiles, FAQ as a card grid, folded disclaimers, named CTAs. Do **not** restyle every route in one pass. Apply this look only to the page being refined. Reference: `frontend/apps/dtf/app/research/components/BondVsMintView.tsx`.
 
 ---
 
@@ -151,5 +151,5 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 - Spine: `docs/marketing/DETF_NARRATIVE_SPINE.md`  
 - Research article: `frontend/app/content/research/articles/detf.ts`  
-- Landing: `frontend/apps/indexedex/app/page.tsx`  
+- Landing: `frontend/apps/dtf/app/page.tsx`  
 - Shared marketing context (if present): `.agents/product-marketing.md`  

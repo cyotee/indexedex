@@ -260,8 +260,9 @@ Start the frontend from the monorepo’s usual frontend workspace (see `frontend
 Minimal agent checklist:
 
 ```bash
-# Example — adapt to current frontend package layout
-cd frontend   # or frontend/apps/<app>
+# DTF is the only Next app
+cd frontend
+# or: cd frontend/apps/dtf
 
 # Prefer loading chain-keyed artifacts for 4663.
 # If the app still defaults to supersim/sepolia, set RPC + chain so the wallet

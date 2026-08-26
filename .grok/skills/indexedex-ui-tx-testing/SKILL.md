@@ -33,7 +33,7 @@ Prove the **Next app builds and submits correct txs** by driving the real UI wit
 | Wallet | Anvil **#0** (e2e inject); scripts fund **#1** as human UI wallet |
 | Artifacts | `frontend/packages/protocol/src/addresses/chain/4663/` |
 
-IndexedEx app e2e (port 3000, often Sepolia `11155111`) remains at `frontend/apps/indexedex/e2e/` for regression.
+Do not look for `frontend/apps/indexedex`. That app was removed. DTF is the only Next app.
 
 ## Quick start
 
@@ -94,7 +94,7 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
 | `frontend/apps/dtf/e2e/staking-bond-live.spec.ts` | Bond WETH via `/staking` |
 | `frontend/apps/dtf/e2e/swap-routes-live.spec.ts` | Live swap/deposit when stack supports |
 | `frontend/apps/dtf/playwright.config.ts` | Port 3002 + RH env |
-| `frontend/apps/indexedex/e2e/` | IndexedEx regression suite |
+| `frontend/packages/protocol/` | Shared addresses / tokenlists |
 | `frontend/packages/protocol/src/addresses/chain/4663/` | RH artifacts |
 
 ## Agent verification loop

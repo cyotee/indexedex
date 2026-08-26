@@ -1,8 +1,10 @@
 # PRD: Multi-app frontend monorepo (shared protocol package)
 
+> **Historical.** `apps/indexedex` and `apps/pachira` were removed. The only Next app is `frontend/apps/dtf`. Do not re-split sites from this PRD.
+
 | Field | Value |
 |-------|--------|
-| **Status** | **Shipped** (implemented 2026-08-08) |
+| **Status** | **Superseded** (DTF-only; original split shipped 2026-08-08) |
 | **Working directory** | `frontend/` (repo root for git is still IndexedEx monorepo root) |
 | **Audience** | Implementation agents in an **isolated git worktree** (parallel to other agents) |
 | **Related** | [README.md](./README.md), [ROADMAP.md](./ROADMAP.md), Vercel projects `indexedex` + `pachira` |

@@ -18,7 +18,7 @@
 | **Fee-DETF** under `…/uniswap/v4/standardExchange/constantProduct/single/` | Uni V4 Single SE CP DETF + Buffer CP Hook reserve (**not** listing DETF) |
 | Skills `pons-architecture`, `pons-integration`, `pons-operations` | pons v1 facts |
 | Crane `ROBINHOOD_MAIN.sol` | RH Uni / WETH / Permit2 / **Universal Router** pins |
-| `frontend/ROADMAP.md` + `frontend/apps/indexedex/` | Indexedex first; fee-DETF UI on **`/staking`** |
+| `frontend/ROADMAP.md` + `frontend/apps/dtf/` | DTF is the only Next app; fee-DETF UI on **`/staking`** |
 | `@indexedex/protocol` `chain/4663/` | Address + tokenlist export SoT |
 
 **Out-of-scope as product references (D26):** Base CCA RICH, Ethereum RICH supply plans, multi-chain launch calendars in `LAUNCH_PLAN.md` / `ROBINHOOD_LAUNCH_PLAN.md` capital topology. Those docs may still exist historically; **this PRD does not depend on them.** This track is **RH-only RICH via pons**.

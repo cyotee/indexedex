@@ -181,7 +181,7 @@ Crane owns **framework ports** (Morpho, Olympus, Aave vendor trees, etc.) under 
 | Path | Role |
 |------|------|
 | `frontend/ROADMAP.md` | Active UI product roadmap (not root `PROGRESS.md`) |
-| `frontend/apps/` | Multi-app monorepo |
+| `frontend/apps/dtf` | The only Next app (`@indexedex/app-dtf`, port 3002) |
 | Plans / PRDs | `frontend/*PRD*`, redesign plans |
 
 Skills: `indexedex-ui-refactor`, `indexedex-product-voice`.

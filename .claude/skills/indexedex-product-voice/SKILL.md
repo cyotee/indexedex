@@ -142,5 +142,5 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 
 - Spine: `docs/marketing/DETF_NARRATIVE_SPINE.md`  
 - Research article: `frontend/app/content/research/articles/detf.ts`  
-- Landing: `frontend/apps/indexedex/app/page.tsx`  
+- Landing: `frontend/apps/dtf/app/page.tsx`  
 - Shared marketing context (if present): `.agents/product-marketing.md`  

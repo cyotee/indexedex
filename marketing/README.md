@@ -8,7 +8,7 @@ Public go-to-market materials for **DETFs** (Decentralized ETF product pattern).
 | [`X_POSTS.md`](./X_POSTS.md) | X Premium long-form posts |
 | [`X_ACCOUNTS_TO_TAG.md`](./X_ACCOUNTS_TO_TAG.md) | Who to @, tiers, anti-patterns |
 | [`research-site/`](./research-site/) | Static public teaser (not deployed via GitHub Pages) |
-| In-app Research + landing | `frontend/apps/indexedex/app/content/research/`, `frontend/apps/indexedex/app/page.tsx` |
+| In-app Research + landing | `frontend/apps/dtf/app/content/research/`, `frontend/apps/dtf/app/page.tsx` |
 
 ## Public story (static teaser / social)
 

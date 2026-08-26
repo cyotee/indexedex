@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
-# Vercel "Ignored Build Step" for multi-app frontend monorepo.
+# Vercel "Ignored Build Step" for the DTF frontend app.
 #
-# Usage: bash scripts/vercel-ignore-build.sh <indexedex|pachira|dtf>
+# Usage: bash scripts/vercel-ignore-build.sh [dtf]
 # Exit 0 → skip deploy; Exit 1 → build.
 #
 # Rebuild when this app, packages/protocol, or shared workspace root files change.
+# The only Next app is DTF (`frontend/apps/dtf`).
 
 set -u
 
-APP_NAME="${1:-}"
-if [[ -z "$APP_NAME" ]]; then
-  # Fallback: detect from Vercel project name if set
-  case "${VERCEL_PROJECT_NAME:-}" in
-    *pachira*) APP_NAME=pachira ;;
-    *dtf*|*dtfinance*|*down-to-finance*|*downtofinance*) APP_NAME=dtf ;;
-    *) APP_NAME=indexedex ;;
-  esac
+APP_NAME="${1:-dtf}"
+if [[ "$APP_NAME" != "dtf" ]]; then
+  echo "vercel-ignore: unknown app '${APP_NAME}' — only dtf remains; building dtf"
+  APP_NAME=dtf
 fi
 
 # Paths relative to monorepo git root (when Root Directory is frontend/apps/<app>,

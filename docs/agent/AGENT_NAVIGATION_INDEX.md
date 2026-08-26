@@ -47,7 +47,7 @@ method: cartographer+survey
 | Olympus port status / integration | `crane-olympus`, `olympus-architecture` | Crane capability inventory | Crane tokens/stable olympus area + skills; see Crane inventory |
 | Fee oracle / fee collector | — | Agent law platform | `contracts/oracles/fee`, `contracts/fee/collector` |
 | Uni V4 multi-pool TWAP oracle (poke, Morpho adapters) | — | [`UNISWAP_V4_MULTI_POOL_TWAP_ORACLE_PRD.md`](../../contracts/oracles/uniswap/v4/twap/UNISWAP_V4_MULTI_POOL_TWAP_ORACLE_PRD.md) | `contracts/oracles/uniswap/v4/twap/` — DFPkg; diamond **instance per `PkgArgs.poolManager`**; **not** a V4 hook or vault |
-| Frontend product / redesign | `indexedex-ui-refactor` (env/registry) | `frontend/ROADMAP.md` | `frontend/apps/**` |
+| Frontend product / redesign | `indexedex-ui-refactor` (env/registry) | `frontend/ROADMAP.md` | `frontend/apps/dtf` (the only Next app) |
 | Frontend live TX / UI e2e (DTF, RH 4663) | `indexedex-ui-tx-testing` | `frontend/apps/dtf/e2e/README.md` | `frontend/apps/dtf/e2e/**` |
 | UI product copy | `indexedex-product-voice` | — | frontend copy surfaces |
 | Docs site → skills | agent `docs-skill-scribe` + `docs-to-skills` | `skill-authoring` | skill trees under Crane or IX SoT |

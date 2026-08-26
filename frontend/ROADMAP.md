@@ -7,12 +7,12 @@
 | **Product / architecture SoT** | [FRONTEND_REDESIGN_DESIGN.md](./FRONTEND_REDESIGN_DESIGN.md) (**rev 9**) |
 | **Wave 2 design SoT** | [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) (**rev 2** — implemented) |
 | **Narrative spine** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) |
-| **Working directory** | `frontend/` |
-| **Multi-site architecture** | [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md) · [IMPLEMENTATION_PLAN](./MULTI_APP_MONOREPO_IMPLEMENTATION_PLAN.md) · [AGENT_PROMPT](./MULTI_APP_MONOREPO_AGENT_PROMPT.md) |
+| **Working directory** | `frontend/apps/dtf` (the only Next app) |
+| **Workspace root** | `frontend/` (`packages/protocol` + DTF) |
 
-**Cold-start rule:** Open **this file first** for frontend product work. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated).
+**Cold-start rule:** Open **this file first** for frontend product work, then edit **`frontend/apps/dtf`**. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated). Do not recreate `apps/indexedex` or `apps/pachira`.
 
-**Multi-app monorepo work:** If the task is splitting sites / shared protocol package / dual Vercel app roots, open **[MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md)** and implement only that PRD (prefer isolated worktree).
+The old multi-site PRD ([MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md)) is **historical**. DTF is the only remaining app.
 
 ---
 
@@ -30,7 +30,7 @@
 
 **Historical note:** Wave 1.5 once exercised a live Anvil stack; that work is **done**. Do **not** re-run deploys to “complete” residual QA.
 
-**Dev tip:** `npm run dev` hardcodes `--kill-port 3000`. Prefer `node scripts/next.mjs dev --port 3001` if another app may own 3000.
+**Dev tip:** from `frontend/`, `npm run dev` starts DTF on **port 3002**.
 
 ---
 

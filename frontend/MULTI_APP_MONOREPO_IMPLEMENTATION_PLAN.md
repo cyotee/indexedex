@@ -1,8 +1,10 @@
 # Implementation plan: Multi-app frontend monorepo
 
+> **Historical.** `apps/indexedex` and `apps/pachira` were removed. The only Next app is `frontend/apps/dtf`. Do not execute this plan.
+
 | Field | Value |
 |-------|--------|
-| **Status** | Ready to execute |
+| **Status** | **Superseded** (DTF-only) |
 | **Normative product law** | [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md) |
 | **Agent prompt (copy-paste)** | [MULTI_APP_MONOREPO_AGENT_PROMPT.md](./MULTI_APP_MONOREPO_AGENT_PROMPT.md) |
 | **Branch** | `frontend/multi-app-monorepo` |

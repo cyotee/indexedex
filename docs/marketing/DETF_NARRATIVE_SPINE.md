@@ -173,7 +173,7 @@ Engineering gate: prefer P1 (Single Standard Exchange DETF) green before asserti
 
 ## 6. Landing page outline
 
-Target route: `frontend/apps/indexedex/app/page.tsx`.
+Target route: `frontend/apps/dtf/app/page.tsx`.
 
 `/` is a **choice page**, not the full education walk. Policy vs Open, creator-bond detail, vault legs, and research summaries live on `/create`, `/learn`, and `/research/[slug]`.
 

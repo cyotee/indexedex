@@ -1,5 +1,7 @@
 # Agent prompt — multi-app monorepo (copy all below the line)
 
+> **Historical.** `apps/indexedex` and `apps/pachira` were removed. The only Next app is `frontend/apps/dtf`. Do not run this prompt.
+
 Copy everything from the horizontal rule to the end of the file into a **new agent session**.  
 That agent should create its own worktree, implement the plan, rebase onto `main`, and **fast-forward** `main` for a linear history.
 

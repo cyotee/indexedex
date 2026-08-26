@@ -215,6 +215,6 @@ Create-path still accepts legacy platform aliases (`chirDetfPkg`, `bufferCpHookP
 | Resolve | `frontend/packages/protocol/src/addressArtifacts.ts` |
 | Lists | `frontend/packages/protocol/src/tokenlists.ts` |
 | Aggregator | `scripts/node` `npm run build-tokenlists` |
-| Create platform | `frontend/apps/indexedex/app/create/lib/sePlatform.ts` (DTF has a copy) |
-| Mint | `frontend/apps/indexedex/app/mint/page.tsx` (`erc20MinterFacade`) |
+| Create platform | `frontend/apps/dtf/app/create/lib/sePlatform.ts` |
+| Mint | DTF has no `/mint` route; `erc20MinterFacade` is still on `platform.json` |
 | Spec | `frontend/packages/protocol/src/addressArtifacts.46630.test.ts` |

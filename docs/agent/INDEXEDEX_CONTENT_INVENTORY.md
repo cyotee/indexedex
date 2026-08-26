@@ -114,8 +114,9 @@ Cartographer (2026-08-09): IndexedEx graph ~5408 files / 7264 nodes under `.cart
 | `scripts/sync-crane-skills.sh` | Mirror Crane skills into IX trees | IndexedEx | Claude.md | — |
 | `scripts/sync-bankr-skills.sh` | Sync Bankr to **parent** workspace only | IndexedEx | Claude.md | — |
 | `scripts/foundry/`, `scripts/shell/`, `scripts/node/` | Deploy/orchestration & tooling | IndexedEx | deploy docs | — |
-| `frontend/` | Next apps, redesign plans | IndexedEx | `frontend/ROADMAP.md` + multi-app PRDs | UI checklists |
-| `frontend/apps/` | App monorepo packages | IndexedEx | multi-app PRD | — |
+| `frontend/` | Frontend workspace + redesign plans | IndexedEx | `frontend/ROADMAP.md` | UI checklists |
+| `frontend/apps/dtf` | The only Next app (`@indexedex/app-dtf`) | IndexedEx | `frontend/apps/dtf/README.md` | `frontend/apps/dtf/e2e/` |
+| `frontend/packages/protocol` | Shared addresses, ABIs, chains, registry | IndexedEx | — | protocol package tests |
 
 ## Docs & research
 

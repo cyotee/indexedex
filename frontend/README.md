@@ -1,11 +1,11 @@
-# IndexedEx frontend monorepo
+# IndexedEx frontend
+
+The only Next app is **DTF** (`frontend/apps/dtf`). Do not recreate `apps/indexedex` or `apps/pachira`.
 
 npm workspaces under `frontend/`:
 
 | Path | Package | Role |
 |------|---------|------|
-| `apps/indexedex` | `@indexedex/app-indexedex` | IndexedEx site (blue) — https://indexedex.vercel.app |
-| `apps/pachira` | `@indexedex/app-pachira` | Pachira site (green) — https://pachirav2.vercel.app |
 | `apps/dtf` | `@indexedex/app-dtf` | Down To Finance: https://downto.finance (app: https://app.downto.finance, project `dtfinance`) |
 | `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains, registry, swap helpers |
 
@@ -14,24 +14,17 @@ npm workspaces under `frontend/`:
 ```bash
 cd frontend
 npm install
-npm run dev:indexedex   # http://localhost:3000
-npm run dev:pachira     # http://localhost:3001
-npm run build:indexedex
-npm run build:pachira
-npm test                # IndexedEx unit tests
-npm run test:e2e        # Playwright — IndexedEx only (Option A)
+npm run dev          # DTF — http://localhost:3002
+npm run build
+npm test             # DTF unit tests
+npm run test:e2e     # Playwright — DTF
 ```
 
-**Site = app:** each app hardcodes its theme/name/logo. Do not use `NEXT_PUBLIC_DEFAULT_BRAND` to choose a site.
+App details: [apps/dtf/README.md](./apps/dtf/README.md). Product roadmap: [ROADMAP.md](./ROADMAP.md).
 
-**Vercel Root Directory:**
+**Vercel Root Directory:** project `dtfinance` → `frontend/apps/dtf`.
 
-- Project `indexedex` → `frontend/apps/indexedex`
-- Project `pachira` → `frontend/apps/pachira`
-
-Ignore build: `bash ../../scripts/vercel-ignore-build.sh <indexedex|pachira>` (skips when neither that app nor `packages/protocol` / workspace root changed).
-
-Product law: [MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md).
+Ignore build: `bash ../../scripts/vercel-ignore-build.sh dtf` (skips when neither the DTF app nor `packages/protocol` / workspace root changed).
 
 ---
 
@@ -112,7 +105,7 @@ Base Sepolia under `supersim_sepolia`). Only edit this if your new chain
 needs the same kind of indirection — e.g. a local fork that should be served
 artifacts from a different canonical chain id.
 
-### 5. Wire the chain into the Wagmi config in `apps/indexedex/app/providers.tsx`
+### 5. Wire the chain into the Wagmi config in `apps/dtf/app/providers.tsx`
 
 - Import the chain from `wagmi/chains` (or `defineChain` if it's not built-in).
 - Add it to the `chains: [...]` array passed to `createConfig`.
@@ -245,24 +238,17 @@ cd frontend && npm run typecheck
 | Add a brand-new bucket / `*.tokenlist.json` filename                   | `tokenlists.config.ts`, then `lib/menuConfig.ts` for each surface the bucket should appear in.                                              |
 | Add a bucket whose tokens need a UI behavior that doesn't exist yet    | All of the above, plus new renderer/`type` plumbing in the relevant menu/page components.                                                  |
 
-## Vercel (production) — dual brand sites
+## Vercel (production)
 
-Same `frontend/` builds twice, once per Vercel project. Brand is **deploy-time only**
-(`NEXT_PUBLIC_DEFAULT_BRAND`); there is no navbar theme toggle.
-
-| Project | Public URL | Env |
-|---------|------------|-----|
-| **indexedex** | https://indexedex.vercel.app | `NEXT_PUBLIC_DEFAULT_BRAND=indexedex` |
-| **pachira** | https://pachirav2.vercel.app | `NEXT_PUBLIC_DEFAULT_BRAND=pachira` |
-
-Shared settings (both projects):
+One site: **DTF**.
 
 | Setting | Value |
 |--------|--------|
-| Git repo | `cyotee/indexedex` → production branch `main` |
-| Root Directory | `frontend` |
+| Project | `dtfinance` |
+| Public URL | https://downto.finance (app: https://app.downto.finance) |
+| Git repo | `cyotee/indexedex` |
+| Root Directory | `frontend/apps/dtf` |
 | Framework | Next.js |
-| Ignored Build Step | `frontend/scripts/vercel-ignore-build.sh` (skip when `frontend/` is unchanged) |
+| Ignored Build Step | `bash ../../scripts/vercel-ignore-build.sh dtf` |
 
-Pushes to `main` that touch `frontend/` deploy both projects. Config: `frontend/vercel.json`.
-Local: `NEXT_PUBLIC_DEFAULT_BRAND=pachira|indexedex npm run dev`.
+Config: `frontend/apps/dtf/vercel.json`. Details: [apps/dtf/README.md](./apps/dtf/README.md).

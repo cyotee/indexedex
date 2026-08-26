@@ -144,7 +144,7 @@ Use existing primitives: `PageHeader`, `Card`, `Button`, design tokens (`--text-
 First screen DETF → Three steps → Protocol DETF / $RICH card → Learn → /learn → Disclaimers
 ```
 
-Implemented in `frontend/apps/indexedex/app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. Wave 2 Protocol DETF → `/staking` preserved. Policy/Open, research notes, and Earn vaults are **not** on `/`.
+Implemented in `frontend/apps/dtf/app/page.tsx` per `docs/marketing/DETF_NARRATIVE_SPINE.md` §6. Wave 2 Protocol DETF → `/staking` preserved. Policy/Open, research notes, and Earn vaults are **not** on `/`.
 
 ---
 
@@ -154,7 +154,7 @@ Implemented in `frontend/apps/indexedex/app/page.tsx` per `docs/marketing/DETF_N
 |-------|--------|--------|
 | **R1** | Registry, notes, `/research`, `/research/[slug]`, nav + footer | **Shipped 2026-07-27** (catalog evolved: types + bond-vs-mint; dropped preview-execution) |
 | **R2** | Polish DETF note (Policy/Open + spine claims) | **Shipped 2026-07-27** (`articles/detf.ts`) |
-| **R3** | Landing DETF-first rewrite + research teaser strip | **Shipped 2026-07-27**; **compacted 2026-08-21** (`frontend/apps/indexedex/app/page.tsx`) |
+| **R3** | Landing DETF-first rewrite + research teaser strip | **Shipped 2026-07-27**; **compacted 2026-08-21** (`frontend/apps/dtf/app/page.tsx`) |
 | **R4** | Selected plots under `public/research/` | Pending |
 | **R5** | e2e smoke + OG metadata per slug | Pending |
 
