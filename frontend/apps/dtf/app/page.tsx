@@ -211,6 +211,13 @@ export default function HomePage() {
             </article>
           </div>
         </section>
+
+        <section className="dtf-landing__fee">
+          <p className="dtf-landing__kicker">App fees</p>
+          <p className="dtf-landing__section-lede" data-testid="official-dtf-token">
+            The official fee-accruing token is $DTF at 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01.
+          </p>
+        </section>
       </main>
 
       <footer className="dtf-landing__foot">

@@ -688,7 +688,8 @@ html:has(.dtf-landing) body::after {
 }
 
 .dtf-landing__try,
-.dtf-landing__live {
+.dtf-landing__live,
+.dtf-landing__fee {
   max-width: 72rem;
   margin: 0 auto;
   padding: 0 1.25rem 4.5rem;
@@ -707,6 +708,11 @@ html:has(.dtf-landing) body::after {
   color: var(--text-muted, #8b9bb0);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.dtf-landing__fee .dtf-landing__section-lede {
+  max-width: 48rem;
+  overflow-wrap: anywhere;
 }
 
 .dtf-landing__walk {

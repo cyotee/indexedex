@@ -9,6 +9,13 @@ test.describe('App routes & redirects (DTF)', () => {
     }
   })
 
+  test('landing names official $DTF fee token and address', async ({ walletPage }) => {
+    await walletPage.goto('/')
+    await expect(walletPage.getByTestId('official-dtf-token')).toHaveText(
+      'The official fee-accruing token is $DTF at 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01.',
+    )
+  })
+
   test('/mint is gone', async ({ walletPage }) => {
     const res = await walletPage.goto('/mint')
     expect(res?.status()).toBe(404)
