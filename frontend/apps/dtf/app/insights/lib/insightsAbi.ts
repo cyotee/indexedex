@@ -6,6 +6,7 @@ export const insightsViewAbi = [
   { type: 'function', name: 'isReserveLive', stateMutability: 'view', inputs: [], outputs: [{ type: 'bool' }] },
   { type: 'function', name: 'rebasingClaimToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'reserveHook', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'rateAsset', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'pairToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'standardExchangeVault', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
@@ -172,6 +173,46 @@ export const insightsViewAbi = [
     ],
     outputs: [{ name: 'amountOut', type: 'uint256' }],
   },
+] as const
+
+const V4_POOL_KEY_COMPONENTS = [
+  { name: 'currency0', type: 'address' },
+  { name: 'currency1', type: 'address' },
+  { name: 'fee', type: 'uint24' },
+  { name: 'tickSpacing', type: 'int24' },
+  { name: 'hooks', type: 'address' },
+] as const
+
+/** Uni V4 hook / claim views used to recover PoolId. allowFailure. */
+export const v4PoolViewAbi = [
+  {
+    type: 'function',
+    name: 'listingPoolKey',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'tuple', components: V4_POOL_KEY_COMPONENTS }],
+  },
+  {
+    type: 'function',
+    name: 'pairPoolKey',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'tokenA', type: 'address' },
+      { name: 'tokenB', type: 'address' },
+    ],
+    outputs: [{ type: 'tuple', components: V4_POOL_KEY_COMPONENTS }],
+  },
+  { type: 'function', name: 'currency0', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'currency1', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'poolFee', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint24' }] },
+  {
+    type: 'function',
+    name: 'tickSpacingHint',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'int24' }],
+  },
+  { type: 'function', name: 'reserveHook', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
 ] as const
 
 export const diamondLoupeAbi = [

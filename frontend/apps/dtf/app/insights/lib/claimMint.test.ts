@@ -1,3 +1,4 @@
+import { getAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -84,7 +85,8 @@ describe('formatTokenAmount', () => {
 
 describe('insightsStakingHref', () => {
   it('keeps Protocol DETF /staking separate', () => {
-    expect(insightsStakingHref(DETF)).toBe(`/insights?detf=${DETF}&tab=stake`)
+    expect(insightsStakingHref(DETF)).toBe(`/insights/${getAddress(DETF)}?tab=stake`)
     expect(insightsStakingHref(DETF)).not.toMatch(/^\/staking(\?|$)/)
+    expect(insightsStakingHref(DETF)).not.toMatch(/[?&]detf=/)
   })
 })

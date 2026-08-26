@@ -6,6 +6,7 @@ import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChai
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 
+import { AddressLink } from '../../components/ui/AddressLink'
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
@@ -27,8 +28,6 @@ import {
   formatTokenAmount,
   resolveClaimMintPath,
 } from '../lib/claimMint'
-import { shortAddr } from '../lib/tokenLabels'
-
 const inputClass =
   'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
 
@@ -55,7 +54,6 @@ export function DetfStaking({
   weth,
   chainId,
   reserveLive,
-  explorer,
 }: {
   detf?: `0x${string}`
   detfSymbol: string
@@ -66,7 +64,6 @@ export function DetfStaking({
   weth?: `0x${string}` | null
   chainId: number
   reserveLive?: boolean
-  explorer?: string
 }) {
   const { address, isConnected, chainId: walletChainId } = useAccount()
   const publicClient = usePublicClient({ chainId })
@@ -385,22 +382,10 @@ export function DetfStaking({
             {' · '}
             You hold{' '}
             {claimBalance != null ? formatTokenAmount(claimBalance) : isConnected ? '0' : 'Connect to see'}
-            {explorer ? (
-              <>
-                {' · '}
-                <a
-                  href={`${explorer}/address/${claimToken}`}
-                  className="underline-offset-2 hover:underline"
-                  target="_blank"
-                  rel="noreferrer"
-                  data-testid="insights-claim-address"
-                >
-                  {shortAddr(claimToken)}
-                </a>
-              </>
-            ) : (
-              <> · {shortAddr(claimToken)}</>
-            )}
+            {' · '}
+            <span data-testid="insights-claim-address">
+              <AddressLink chainId={chainId} address={claimToken} display="full" />
+            </span>
           </p>
         </div>
       ) : (

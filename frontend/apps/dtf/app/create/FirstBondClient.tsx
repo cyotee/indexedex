@@ -31,6 +31,7 @@ import {
   settlePayToken,
   withEthPayOption,
 } from '../lib/ethPay'
+import { insightsDetfHref } from '../insights/lib/insightsHref'
 import { parseContractError } from '../lib/tx/parseContractError'
 import {
   asBondLockTerms,
@@ -488,7 +489,7 @@ export function FirstBondClient() {
           })
       await waitMined(hash)
       setStatus('Bonded. The DETF is live.')
-      router.push(`/insights?detf=${detf}`)
+      router.push(insightsDetfHref(detf))
     } catch (err) {
       setStatus(parseContractError(err))
     } finally {
@@ -721,7 +722,7 @@ export function FirstBondClient() {
           <Link href={`/you?detf=${detf}`}>
             <Button variant="secondary">View bond</Button>
           </Link>
-          <Link href={`/insights?detf=${detf}`}>
+          <Link href={insightsDetfHref(detf)}>
             <Button variant="secondary">Open this DETF</Button>
           </Link>
           <Link href="/create/one-vault">

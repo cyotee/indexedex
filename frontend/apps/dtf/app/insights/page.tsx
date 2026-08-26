@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import InsightsPageClient from './InsightsPageClient'
+import InsightsCatalogClient from './InsightsCatalogClient'
 
 export const metadata = {
   title: 'DETFs — Down To Finance',
@@ -10,7 +10,7 @@ export const metadata = {
 export default function InsightsPage() {
   return (
     <Suspense fallback={<p className="text-sm text-[var(--text-muted,#9aa3b2)]">Loading insights…</p>}>
-      <InsightsPageClient />
+      <InsightsCatalogClient />
     </Suspense>
   )
 }

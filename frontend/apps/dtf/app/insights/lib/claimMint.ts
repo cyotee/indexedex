@@ -1,6 +1,7 @@
 import { formatUnits, toFunctionSelector } from 'viem'
 
 import { asAddr } from './actionTokens'
+import { insightsDetfHref } from './insightsHref'
 import { isZero } from './tokenLabels'
 
 export const DEPOSIT_CLAIM_SELECTOR = toFunctionSelector(
@@ -70,5 +71,5 @@ export function formatTokenAmount(value: bigint | undefined, decimals = 18, maxF
 }
 
 export function insightsStakingHref(detf: string): string {
-  return `/insights?detf=${detf}&tab=stake`
+  return insightsDetfHref(detf, 'stake')
 }

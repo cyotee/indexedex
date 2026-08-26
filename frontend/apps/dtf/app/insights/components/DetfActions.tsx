@@ -22,12 +22,14 @@ import { resolveSePlatform } from '../../create/lib/sePlatform'
 import {
   ETH_PAY,
   WETH9_DEPOSIT_ABI,
+  WETH9_WITHDRAW_ABI,
   type EthWrapWrite,
   isEthPay,
   settlePayToken,
   withEthPayOption,
 } from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
+import { isInsightsActionTab } from '../lib/insightsHref'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
 import { isZero } from '../lib/tokenLabels'
 import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
@@ -61,8 +63,8 @@ export function DetfActions({
   claimToken,
   claimSymbol,
   reserveLive,
+  burningAllowed,
   initialTab,
-  explorer,
 }: {
   detf?: `0x${string}`
   detfSymbol: string
@@ -72,8 +74,8 @@ export function DetfActions({
   claimToken?: `0x${string}`
   claimSymbol?: string
   reserveLive?: boolean
+  burningAllowed?: boolean
   initialTab?: string
-  explorer?: string
 }) {
   const { address, isConnected, chainId: walletChainId } = useAccount()
   const { environment } = useDeploymentEnvironment()
@@ -84,29 +86,20 @@ export function DetfActions({
   const walletMatches = isConnected && (walletChainId === chainId || localWallet)
   const platform = useMemo(() => resolveSePlatform(chainId, environment), [chainId, environment])
 
-  const [tab, setTab] = useState(() =>
-    initialTab === 'stake' || initialTab === 'bond' || initialTab === 'claim' || initialTab === 'mint'
-      ? initialTab
-      : 'mint',
-  )
+  const [tab, setTab] = useState(() => (isInsightsActionTab(initialTab) ? initialTab : 'mint'))
 
   useEffect(() => {
-    if (
-      initialTab === 'stake' ||
-      initialTab === 'bond' ||
-      initialTab === 'claim' ||
-      initialTab === 'mint'
-    ) {
-      setTab(initialTab)
-    }
+    if (isInsightsActionTab(initialTab)) setTab(initialTab)
   }, [initialTab])
   const [token, setToken] = useState<string>(pairTokens[0]?.address ?? '')
   const [amount, setAmount] = useState('')
+  const [burnAmount, setBurnAmount] = useState('')
   const [lockDays, setLockDays] = useState(String(MIN_LOCK_DAYS))
   const [tokenId, setTokenId] = useState('')
   const [status, setStatus] = useState('')
-  const [pendingLeg, setPendingLeg] = useState<'approve' | 'mint' | 'bond' | 'claim' | null>(null)
+  const [pendingLeg, setPendingLeg] = useState<'approve' | 'mint' | 'bond' | 'claim' | 'burn' | null>(null)
   const [approvedSpend, setApprovedSpend] = useState(0n)
+  const [approvedDetfSpend, setApprovedDetfSpend] = useState(0n)
 
   const payTokens = useMemo(
     () =>
@@ -127,6 +120,7 @@ export function DetfActions({
 
   useEffect(() => {
     setApprovedSpend(0n)
+    setApprovedDetfSpend(0n)
   }, [tokenAddr, detf, address])
 
   const { data: tokenDecimals } = useReadContract({
@@ -192,6 +186,44 @@ export function DetfActions({
     args: parsed && spendToken && detf ? [spendToken, parsed, detf] : undefined,
     query: { enabled: tab === 'mint' && !!detf && !!spendToken && parsed != null && parsed > BigInt(0) },
   })
+  const { data: detfDecimalsRaw } = useReadContract({
+    address: detf,
+    abi: erc20Abi,
+    functionName: 'decimals',
+    query: { enabled: !!detf },
+  })
+  const detfDecimals = detfDecimalsRaw == null ? 18 : Number(detfDecimalsRaw)
+  const parsedBurn = parseAmount(burnAmount, detfDecimals)
+  const burnLive = reserveLive !== false && burningAllowed !== false
+  const { data: detfBal } = useReadContract({
+    address: detf,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: tab === 'burn' && !!detf && !!address },
+  })
+  const { data: detfAllowance, refetch: refetchDetfAllowance } = useReadContract({
+    address: detf,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args: address && detf ? [address, detf] : undefined,
+    query: { enabled: tab === 'burn' && !!detf && !!address },
+  })
+  const { data: burnPreview } = useReadContract({
+    address: detf,
+    abi: insightsViewAbi,
+    functionName: 'previewExchangeIn',
+    args: parsedBurn && spendToken && detf ? [detf, parsedBurn, spendToken] : undefined,
+    query: {
+      enabled:
+        tab === 'burn' &&
+        burnLive &&
+        !!detf &&
+        !!spendToken &&
+        parsedBurn != null &&
+        parsedBurn > BigInt(0),
+    },
+  })
   const { data: bondVault } = useReadContract({
     address: detf,
     abi: insightsViewAbi,
@@ -224,7 +256,11 @@ export function DetfActions({
 
   const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
   const needApprove = !payEth && parsed != null && parsed > 0n && covered < parsed
+  const detfCovered =
+    detfAllowance != null && detfAllowance >= (parsedBurn ?? 0n) ? detfAllowance : approvedDetfSpend
+  const needApproveDetf = parsedBurn != null && parsedBurn > 0n && detfCovered < parsedBurn
   const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
+  const canBurn = canSign && burnLive
   const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
 
   async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
@@ -292,6 +328,93 @@ export function DetfActions({
       setApprovedSpend(parsed)
       await refetchAllowance()
       setStatus('Approved. Bond or mint next.')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
+  }
+
+  async function approveDetf() {
+    if (!detf || parsedBurn == null || !address) return
+    setPendingLeg('approve')
+    setStatus('')
+    try {
+      const hash = await writeOnWallet({
+        account: address,
+        address: detf,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [detf, parsedBurn],
+      })
+      await wait(hash, 'Approve')
+      setApprovedDetfSpend(parsedBurn)
+      await refetchDetfAllowance()
+      setStatus('Approved. Burn next.')
+    } catch (e) {
+      setStatus(parseContractError(e))
+    } finally {
+      setPendingLeg(null)
+    }
+  }
+
+  async function unwrapWeth(wad: bigint) {
+    if (!payEth || !platform.weth || !address || wad <= BigInt(0)) return
+    const hash = await writeOnWallet({
+      account: address,
+      address: platform.weth,
+      abi: WETH9_WITHDRAW_ABI,
+      functionName: 'withdraw',
+      args: [wad],
+    })
+    await wait(hash, 'Unwrap')
+  }
+
+  async function burn() {
+    if (!detf || !spendToken || parsedBurn == null || !address) return
+    setPendingLeg('burn')
+    setStatus('')
+    try {
+      const wethBefore =
+        payEth && platform.weth && publicClient
+          ? ((await publicClient.readContract({
+              address: platform.weth,
+              abi: erc20Abi,
+              functionName: 'balanceOf',
+              args: [address],
+            })) as bigint)
+          : null
+      const minOut =
+        burnPreview != null && burnPreview > BigInt(0)
+          ? (burnPreview * BigInt(99)) / BigInt(100)
+          : BigInt(0)
+      const args = [detf, parsedBurn, spendToken, minOut, address, false, deadline()] as const
+      if (publicClient) {
+        await publicClient.simulateContract({
+          account: address,
+          address: detf,
+          abi: insightsViewAbi,
+          functionName: 'exchangeIn',
+          args,
+        })
+      }
+      const hash = await writeOnWallet({
+        account: address,
+        address: detf,
+        abi: insightsViewAbi,
+        functionName: 'exchangeIn',
+        args,
+      })
+      await wait(hash, 'Burn')
+      if (wethBefore != null && platform.weth && publicClient) {
+        const wethAfter = (await publicClient.readContract({
+          address: platform.weth,
+          abi: erc20Abi,
+          functionName: 'balanceOf',
+          args: [address],
+        })) as bigint
+        if (wethAfter > wethBefore) await unwrapWeth(wethAfter - wethBefore)
+      }
     } catch (e) {
       setStatus(parseContractError(e))
     } finally {
@@ -388,29 +511,35 @@ export function DetfActions({
   return (
     <Card id="detf-actions" data-testid="detf-actions">
       <p className="text-[11px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">Use this DETF</p>
-      <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Mint, bond, stake, claim</h3>
+      <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">
+        Mint, burn, bond, stake, claim
+      </h3>
       <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-        Mint pays a token this DETF accepts and receives {detfSymbol}. Bond locks from the same
-        list. Stake mints the rebasing claim token. That is not minting {detfSymbol}. Claim takes
-        DETF that accrued to a bond. Claiming is not cashing the bond out.
+        Mint pays a token this DETF accepts and receives {detfSymbol}. Burn pays {detfSymbol} and
+        returns a token from that list. Bond locks from the same list. Stake mints the rebasing
+        claim token. That is not minting {detfSymbol}. Claim takes DETF that accrued to a bond.
+        Claiming is not cashing the bond out.
       </p>
 
       <div className="mt-4">
         <Tabs
           tabs={[
             { id: 'mint', label: 'Mint' },
+            { id: 'burn', label: 'Burn' },
             { id: 'bond', label: 'Bond' },
             { id: 'stake', label: 'Stake' },
             { id: 'claim', label: 'Claim rewards' },
           ]}
           active={tab}
-          onChange={setTab}
+          onChange={(id) => {
+            if (isInsightsActionTab(id)) setTab(id)
+          }}
         />
       </div>
 
-      {tab === 'mint' || tab === 'bond' ? (
+      {tab === 'mint' || tab === 'bond' || tab === 'burn' ? (
         <label className="mt-4 block text-sm text-[var(--text-primary,#EDEDED)]">
-          Pay with
+          {tab === 'burn' ? 'Receive' : 'Pay with'}
           <select
             className={inputClass}
             value={tokenAddr}
@@ -429,10 +558,69 @@ export function DetfActions({
           </select>
           <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
             Pair token, vault token, and the tokens in the vault.
-            {platform.weth ? ' ETH wraps to WETH, then this DETF takes WETH.' : ''}
+            {tab === 'burn'
+              ? platform.weth
+                ? ' ETH unwraps WETH after the burn.'
+                : ''
+              : platform.weth
+                ? ' ETH wraps to WETH, then this DETF takes WETH.'
+                : ''}
           </span>
         </label>
       ) : null}
+
+      <TabPanel when="burn" active={tab}>
+        <AmountField
+          className="mt-4"
+          label="Burn"
+          symbol={detfSymbol}
+          value={burnAmount}
+          onChange={setBurnAmount}
+          decimals={detfDecimals}
+          balance={typeof detfBal === 'bigint' ? detfBal : undefined}
+          data-testid="detf-burn-amount"
+        />
+        <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+          Preview:{' '}
+          {burnPreview != null
+            ? `${formatUnits(burnPreview, decimals)} ${payEth ? 'ETH' : tokenMeta?.symbol ?? ''}`
+            : '—'}
+          . Preview is a quote, not a guarantee the reserve can pay that token out.
+        </p>
+        {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
+        {reserveLive === false ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
+            This DETF is inert until the first bond.
+          </p>
+        ) : burningAllowed === false ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
+            Burn is blocked. Policy burn is allowed when the contract price is below the burn line.
+          </p>
+        ) : null}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {needApproveDetf ? (
+            <Button
+              type="button"
+              onClick={() => void approveDetf()}
+              disabled={!canBurn || parsedBurn == null}
+              loading={pendingLeg === 'approve'}
+              data-testid="detf-burn-approve"
+            >
+              Approve {detfSymbol}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => void burn()}
+              disabled={!canBurn || parsedBurn == null || !spendToken}
+              loading={pendingLeg === 'burn'}
+              data-testid="detf-burn"
+            >
+              Burn {detfSymbol}
+            </Button>
+          )}
+        </div>
+      </TabPanel>
 
       <TabPanel when="mint" active={tab}>
         <AmountField
@@ -538,7 +726,6 @@ export function DetfActions({
             weth={platform.weth}
             chainId={chainId}
             reserveLive={reserveLive}
-            explorer={explorer}
           />
         </div>
       </TabPanel>

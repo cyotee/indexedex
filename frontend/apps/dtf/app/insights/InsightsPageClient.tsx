@@ -1,26 +1,29 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useAccount, useReadContract, useReadContracts, type UseReadContractsParameters } from 'wagmi'
 import { erc20Abi, formatUnits, isAddress } from 'viem'
 
 import { isFeaturedFeeDetfAddress } from '@indexedex/protocol/tokenlists'
-import { robinhood, robinhoodTestnet } from '@indexedex/protocol/runtimeChains'
-import { CHAIN_ID_ROBINHOOD } from '@indexedex/protocol/addressArtifacts'
 
+import { AddressLink } from '../components/ui/AddressLink'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Stat } from '../components/ui/Stat'
 import { VAULT_TOKENS_ABI } from '../create/lib/seAbi'
 import { DetfAbout } from './components/DetfAbout'
 import { DetfActions } from './components/DetfActions'
+import { DetfContracts, type ContractRow } from './components/DetfContracts'
 import { ThresholdGauge } from './components/ThresholdGauge'
 import { resolveVaultShare } from '../create/lib/bondTokens'
 import { collectActionTokenAddresses, collectSeVaultReadAddresses } from './lib/actionTokens'
 import { insightsStakingHref } from './lib/claimMint'
+import { checksumDetfAddress, insightsDetfHref, isInsightsActionTab } from './lib/insightsHref'
 import { insightsViewAbi, rebasingClaimAbi } from './lib/insightsAbi'
+import { collectDetfRelatedAddresses } from './lib/relatedAddresses'
+import { useDetfPoolIds } from './lib/useDetfPoolIds'
 import { pairAddresses, profileFor, type DetfLeg } from './lib/detfProfiles'
 import { formatWad, scaleThresholds } from './lib/thresholdScale'
 import { isZero, labelFor, shortAddr } from './lib/tokenLabels'
@@ -42,32 +45,30 @@ function asAddr(v: unknown): `0x${string}` | undefined {
   return v as `0x${string}`
 }
 
-export default function InsightsPageClient() {
+export default function InsightsPageClient({ pathAddress }: { pathAddress: string }) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { address: wallet, isConnected } = useAccount()
   const { selectedChainId, environment, detfs, labels, registryLoading, registryError } =
     useInsightDetfCatalog()
 
-  const qDetf = searchParams.get('detf')
-  const qTab = searchParams.get('tab') ?? undefined
-  const [selected, setSelected] = useState(() => (qDetf && isAddress(qDetf) ? qDetf : ''))
+  const qTab = searchParams.get('tab')
+  const pathTab = isInsightsActionTab(qTab) ? qTab : undefined
+  const canonical = checksumDetfAddress(pathAddress)
+  const selected = canonical ?? ''
 
   useEffect(() => {
-    if (qDetf && isAddress(qDetf)) {
-      setSelected(qDetf)
-      return
+    if (!canonical) return
+    if (canonical !== pathAddress) {
+      router.replace(insightsDetfHref(canonical, pathTab), { scroll: false })
     }
-    if (!qDetf && detfs[0] && !selected) setSelected(detfs[0].address)
-  }, [qDetf, detfs, selected])
+  }, [canonical, pathAddress, pathTab, router])
 
   const pick = useCallback(
     (addr: string) => {
-      setSelected(addr)
-      const tab = qTab ? `&tab=${encodeURIComponent(qTab)}` : ''
-      router.replace(`/insights?detf=${addr}${tab}`, { scroll: false })
+      router.replace(insightsDetfHref(addr, pathTab), { scroll: false })
     },
-    [router, qTab],
+    [router, pathTab],
   )
 
   const detf =
@@ -81,7 +82,7 @@ export default function InsightsPageClient() {
           decimals: 18,
           protocolFee: isFeaturedFeeDetfAddress(selectedChainId, environment, selected),
         }
-      : detfs[0])
+      : undefined)
   const detfAddr = detf?.address as `0x${string}` | undefined
   const enabled = !!detfAddr
   const profile = detfAddr ? profileFor(detfAddr, detf?.symbol) : undefined
@@ -156,6 +157,27 @@ export default function InsightsPageClient() {
     functionName: 'standardExchangeVaultShare',
     query: { enabled, retry: 0 },
   })
+  const { data: bondNftVaultRaw } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'bondNftVault',
+    query: { enabled, retry: 0 },
+  })
+  const { data: protocolNftVaultRaw } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'protocolNFTVault',
+    query: { enabled, retry: 0 },
+  })
+  const { data: reserveHookRaw } = useReadContract({
+    address: detfAddr,
+    abi: insightsViewAbi,
+    functionName: 'reserveHook',
+    query: { enabled, retry: 0 },
+  })
+  const bondNftVault = asAddr(bondNftVaultRaw)
+  const protocolNftVault = asAddr(protocolNftVaultRaw)
+  const reserveHookFromDetf = asAddr(reserveHookRaw)
 
   const { data: walletBal } = useReadContract({
     address: detfAddr,
@@ -275,11 +297,15 @@ export default function InsightsPageClient() {
   const mintLabel =
     mintingAllowed != null ? (mintingAllowed ? 'Allowed' : 'Blocked') : allLegsMint != null ? (allLegsMint ? 'Allowed' : 'Blocked') : '—'
   const burnLabel = burningAllowed == null ? '—' : burningAllowed ? 'Allowed' : 'Blocked'
-
-  const explorer =
-    selectedChainId === CHAIN_ID_ROBINHOOD
-      ? robinhood.blockExplorers.default.url
-      : robinhoodTestnet.blockExplorers.default.url
+  const reserveHook = reserveHookFromDetf ?? reservePool
+  const { reservePoolId, sePoolIds } = useDetfPoolIds({
+    chainId: selectedChainId,
+    detf: detfAddr,
+    pairToken: pairToken ?? pair0,
+    reserveHook,
+    claimToken,
+    seVaults: seList,
+  })
 
   const basket: BasketRow[] = useMemo(() => {
     if (profile) {
@@ -456,6 +482,106 @@ export default function InsightsPageClient() {
     return []
   }, [actionAddrs, actionMeta, labels, profile])
   const protocolFee = !!detf?.protocolFee
+  const defaultBurn = burningAllowed === true && mintingAllowed === false
+  const actionTab = pathTab ?? (defaultBurn ? 'burn' : undefined)
+
+  const relatedBase = useMemo(
+    () =>
+      collectDetfRelatedAddresses({
+        detf: detfAddr,
+        rateAsset,
+        pairTokens: weightedPairTokens as readonly unknown[] | undefined,
+        pairToken,
+        pair0,
+        pair1,
+        pair2,
+        vaultShares: vaultShares as readonly unknown[] | undefined,
+        standardExchangeVaultShare,
+        underlyingVault,
+        standardExchangeVault,
+        standardExchanges: exchanges,
+        seVaultTokens,
+        claimToken,
+        reservePool,
+        bondNftVault,
+        protocolNftVault,
+      }),
+    [
+      detfAddr,
+      rateAsset,
+      weightedPairTokens,
+      pairToken,
+      pair0,
+      pair1,
+      pair2,
+      vaultShares,
+      standardExchangeVaultShare,
+      underlyingVault,
+      standardExchangeVault,
+      exchanges,
+      seVaultTokens,
+      claimToken,
+      reservePool,
+      bondNftVault,
+      protocolNftVault,
+    ],
+  )
+  const { data: relatedMeta } = useReadContracts({
+    contracts: relatedBase.map((row) => ({
+      address: row.address,
+      abi: erc20Abi,
+      functionName: 'symbol' as const,
+    })),
+    query: { enabled: relatedBase.length > 0 },
+    allowFailure: true,
+  })
+  const relatedRows: ContractRow[] = useMemo(() => {
+    const meaning: Record<string, string> = {
+      'Rate asset': 'Settlement token used to mint and bond',
+      'Pair token': 'A pair token in the reserve',
+      'Vault share': 'Share token of a vault in the basket',
+      'Underlying vault': 'Standard Exchange the basket holds',
+      'Vault token': 'Token held by a vault in the basket',
+      'Claim token': 'Rebasing claim token. Stake to mint it.',
+      'Reserve pool': 'Market for the DETF token',
+      'Bond NFT': 'Bond positions for this DETF',
+      'Protocol NFT': 'Protocol-owned bond vault',
+    }
+    return relatedBase.map((row, i) => {
+      if (row.role === 'DETF token') {
+        return { ...row, symbol, name }
+      }
+      const lab = labelFor(labels, row.address)
+      const listed = lab && lab.name !== 'Not in the local list'
+      const onchain =
+        relatedMeta?.[i]?.status === 'success' ? String(relatedMeta[i]!.result) : undefined
+      return {
+        ...row,
+        symbol: listed
+          ? lab.symbol
+          : displayTokenSymbol(onchain || lab?.symbol || '') || shortAddr(row.address),
+        name: listed ? lab.name : meaning[row.role] ?? row.role,
+      }
+    })
+  }, [relatedBase, relatedMeta, labels, symbol, name])
+
+  if (!canonical) {
+    return (
+      <div className="space-y-5">
+        <Card>
+          <p className="text-sm text-[var(--text-primary,#EDEDED)]">That is not a DETF token address.</p>
+          <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+            Open a DETF from the list, or paste a 0x address in the URL.
+          </p>
+          <div className="mt-4">
+            <Link href="/insights">
+              <Button>All DETFs</Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -484,13 +610,24 @@ export default function InsightsPageClient() {
       ) : (
         <div className="space-y-5">
           <Card>
-            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-              DETF
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+                DETF
+              </label>
+              <Link
+                href="/insights"
+                className="text-xs text-[var(--accent,#4FD44B)] underline-offset-2 hover:underline"
+              >
+                All DETFs
+              </Link>
+            </div>
+            <label className="mt-1 block text-sm text-[var(--text-primary,#EDEDED)]">
               <select
                 className={selectClass}
                 value={detfAddr ?? ''}
                 onChange={(e) => pick(e.target.value)}
                 data-testid="insights-detf-list"
+                aria-label="DETF"
               >
                 {detfs.length === 0 && !detfAddr ? <option value="">Reading DETFs…</option> : null}
                 {detfAddr &&
@@ -537,14 +674,9 @@ export default function InsightsPageClient() {
                   <h2 className="mt-1 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">{symbol}</h2>
                   <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">{name}</p>
                   {detfAddr ? (
-                    <a
-                      href={`${explorer}/address/${detfAddr}`}
-                      className="mt-2 inline-block font-mono text-[11px] text-[var(--text-muted,#9aa3b2)] underline-offset-2 hover:underline"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {shortAddr(detfAddr)}
-                    </a>
+                    <div className="mt-2">
+                      <AddressLink chainId={selectedChainId} address={detfAddr} display="full" />
+                    </div>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -554,7 +686,7 @@ export default function InsightsPageClient() {
                       document.getElementById('detf-actions')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   >
-                    Mint or bond {symbol}
+                    {defaultBurn ? `Burn ${symbol}` : `Mint or bond ${symbol}`}
                   </Button>
                   {claimToken ? (
                     <Button
@@ -611,8 +743,8 @@ export default function InsightsPageClient() {
               claimToken={claimToken}
               claimSymbol={claimSymbol}
               reserveLive={reserveLive}
-              initialTab={qTab}
-              explorer={explorer}
+              burningAllowed={burningAllowed}
+              initialTab={actionTab}
             />
 
             <Card>
@@ -711,14 +843,7 @@ export default function InsightsPageClient() {
                         </button>
                       ) : null}
                       {r.address ? (
-                        <a
-                          href={`${explorer}/address/${r.address}`}
-                          className="font-mono text-xs text-[var(--text-muted,#9aa3b2)] underline-offset-2 hover:underline"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {shortAddr(r.address)}
-                        </a>
+                        <AddressLink chainId={selectedChainId} address={r.address} display="full" />
                       ) : (
                         <span className="text-xs text-[var(--text-muted,#9aa3b2)]">Not on this DETF</span>
                       )}
@@ -727,6 +852,13 @@ export default function InsightsPageClient() {
                 ))}
               </ul>
             </Card>
+
+            <DetfContracts
+              rows={relatedRows}
+              chainId={selectedChainId}
+              reservePoolId={reservePoolId}
+              sePoolIds={sePoolIds}
+            />
 
             <div className="flex flex-wrap gap-3">
               <Link href="/create">

@@ -11,7 +11,7 @@ function RedirectToInsightsStake() {
 
   useEffect(() => {
     const detf = searchParams.get('detf')
-    router.replace(detf ? insightsStakingHref(detf) : '/insights?tab=stake')
+    router.replace(detf ? insightsStakingHref(detf) : '/insights')
   }, [router, searchParams])
 
   return <p className="text-sm text-[var(--text-muted,#9aa3b2)]">Opening stake…</p>

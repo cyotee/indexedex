@@ -1,8 +1,13 @@
+import { getAddress } from 'viem'
+
+import { feeDetfAddress } from './helpers/chainArtifacts'
 import { test, expect } from './wallet/fixture'
+
+const SAMPLE_DETF = '0xd31fe4f8d93a373fb08ecf6a955095f8b3d27117'
 
 test.describe('App routes & redirects (DTF)', () => {
   test('home, explore, create, you, learn, earn load', async ({ walletPage }) => {
-    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn']) {
+    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn', '/insights']) {
       const res = await walletPage.goto(path)
       expect(res?.ok() || res?.status() === 304).toBeTruthy()
       await expect(walletPage.locator('body')).not.toBeEmpty()
@@ -44,10 +49,25 @@ test.describe('App routes & redirects (DTF)', () => {
     expect(/DETF|Staking|workspace|DTF-DETF|mint|bond/i.test(body)).toBe(true)
   })
 
-  test('insights stake tab is on the DETF actions panel', async ({ walletPage }) => {
-    await walletPage.goto('/insights?tab=stake')
+  test('insights ?detf= redirects to the token path', async ({ walletPage }) => {
+    const checksum = getAddress(SAMPLE_DETF)
+    await walletPage.goto(`/insights?detf=${SAMPLE_DETF}`)
+    await walletPage.waitForURL(new RegExp(`/insights/${checksum}`, 'i'), { timeout: 15_000 })
+  })
+
+  test('insights burn tab is on the DETF actions panel', async ({ walletPage }) => {
+    const addr = feeDetfAddress() ?? SAMPLE_DETF
+    await walletPage.goto(`/insights/${addr}?tab=burn`)
     await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
-    await expect(walletPage.getByRole('button', { name: /^Stake$/ })).toBeVisible()
+    await expect(walletPage.getByTestId('detf-burn')).toBeVisible()
+    await expect(walletPage.getByTestId('insights-contracts')).toBeVisible()
+  })
+
+  test('insights stake tab is on the DETF actions panel', async ({ walletPage }) => {
+    const addr = feeDetfAddress() ?? SAMPLE_DETF
+    await walletPage.goto(`/insights/${addr}?tab=stake`)
+    await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
+    await expect(walletPage.getByTestId('detf-staking')).toBeVisible()
     const body = await walletPage.locator('body').innerText()
     expect(/claim token|rebasing claim|Stake/i.test(body)).toBe(true)
   })

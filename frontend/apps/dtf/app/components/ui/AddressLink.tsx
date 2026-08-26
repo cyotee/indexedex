@@ -1,82 +1,59 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { getAddress } from 'viem'
+
 import { explorerAddressUrl } from '../../lib/explorer'
+import { isLocalRobinhoodTestnet } from '../../lib/localRpc'
+import { CopyButton } from './CopyButton'
+
+function checksum(addr: string): string {
+  try {
+    return getAddress(addr)
+  } catch {
+    return addr
+  }
+}
+
+function shortAddr(addr: string): string {
+  if (addr.length === 42) return `${addr.slice(0, 6)}…${addr.slice(-4)}`
+  if (addr.length === 66) return `${addr.slice(0, 10)}…${addr.slice(-8)}`
+  return addr
+}
 
 export function AddressLink({
   chainId,
   address,
   className = '',
   showCopy = true,
+  display = 'short',
 }: {
   chainId: number
   address: string
   className?: string
   /** Copy-to-clipboard control (default true). */
   showCopy?: boolean
+  /** `short` is 0x1234…abcd. `full` is the checksummed address. */
+  display?: 'short' | 'full'
 }) {
-  const url = explorerAddressUrl(chainId, address)
-  const short =
-    address.length === 42 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address
-  const [copied, setCopied] = useState(false)
+  const full = checksum(address)
+  const url = explorerAddressUrl(chainId, full, isLocalRobinhoodTestnet())
+  const shown = display === 'full' ? full : shortAddr(full)
 
-  const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(address)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // Fallback for environments without clipboard API
-      try {
-        const ta = document.createElement('textarea')
-        ta.value = address
-        ta.setAttribute('readonly', '')
-        ta.style.position = 'absolute'
-        ta.style.left = '-9999px'
-        document.body.appendChild(ta)
-        ta.select()
-        document.execCommand('copy')
-        document.body.removeChild(ta)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 1500)
-      } catch {
-        /* ignore */
-      }
-    }
-  }, [address])
-
-  const monoClass = `font-mono text-xs text-[var(--text-muted,#9aa3b2)] ${className}`
-  const linkClass = `font-mono text-xs text-[var(--accent,#4FD44B)] hover:underline ${className}`
+  const monoClass = `break-all font-mono text-xs text-[var(--text-muted,#9aa3b2)] ${className}`
+  const linkClass = `break-all font-mono text-xs text-[var(--accent,#4FD44B)] underline-offset-2 hover:underline ${className}`
 
   return (
-    <span className="inline-flex items-center gap-1.5" data-testid="address-link">
+    <span className="inline-flex max-w-full flex-wrap items-center gap-1.5" data-testid="address-link">
       {url ? (
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className={linkClass}
-          title={address}
-        >
-          {short}
+        <a href={url} target="_blank" rel="noreferrer" className={linkClass} title={full}>
+          {shown}
         </a>
       ) : (
-        <span className={monoClass} title={address}>
-          {short}
+        <span className={monoClass} title={full}>
+          {shown}
         </span>
       )}
-      {showCopy ? (
-        <button
-          type="button"
-          data-testid="address-link-copy"
-          onClick={() => void handleCopy()}
-          className="rounded px-1 py-0.5 text-[10px] text-[var(--text-muted,#9aa3b2)] hover:bg-white/5 hover:text-[var(--text-primary,#EDEDED)]"
-          title="Copy address"
-          aria-label="Copy address"
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </button>
-      ) : null}
+      {showCopy ? <CopyButton value={full} testId="address-link-copy" ariaLabel={`Copy ${full}`} /> : null}
     </span>
   )
 }
