@@ -17,6 +17,7 @@ import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
 import { type Address, type TokenListEntry } from '@indexedex/protocol/tokenlists'
 import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../lib/earn/loadEarnProducts'
 import { displayTokenSymbol } from '../lib/customerSymbols'
+import { isArchivedDetf } from '../insights/lib/archivedDetfs'
 import BondSection from './sections/BondSection'
 import BurnChirSection from './sections/BurnChirSection'
 import DetfSelectorSection from './sections/DetfSelectorSection'
@@ -130,6 +131,7 @@ export default function StakingPageClient({
   }, [detfs, preferredDetf])
 
   const detfAddress = selectedDetf ? (selectedDetf as `0x${string}`) : undefined
+  const archived = isArchivedDetf(detfAddress)
   const stakingReads = useStakingContractReads({
     detfAddress,
     dataChainId: chain.dataChainId,
@@ -169,6 +171,10 @@ export default function StakingPageClient({
   const handleBondWithWeth = useCallback(async (amount: bigint, lockSeconds: bigint, _wethAsEth?: boolean) => {
     // DETF bond surface is ERC20-only (rateAsset); ignore native ETH flag.
     if (!detfAddress || !chain.address || !stakingReads.effectiveWethToken) return
+    if (isArchivedDetf(detfAddress)) {
+      setStatus('Bond is off on this archived DETF.')
+      return
+    }
     if (!chain.walletMatchesDataChain) {
       setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
       return
@@ -195,6 +201,10 @@ export default function StakingPageClient({
 
   const handleBondWithRich = useCallback(async (amount: bigint, lockSeconds: bigint) => {
     if (!detfAddress || !chain.address || !stakingReads.effectiveRichToken) return
+    if (isArchivedDetf(detfAddress)) {
+      setStatus('Bond is off on this archived DETF.')
+      return
+    }
     if (!chain.walletMatchesDataChain) {
       setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
       return
@@ -388,6 +398,13 @@ export default function StakingPageClient({
             availabilityMismatch={stakingReads.availabilityMismatch}
           />
 
+          {archived ? (
+            <p className="text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="staking-archived-note">
+              This DETF is archived. Mint and bond are off. Burn and sell still work when the
+              contract allows them.
+            </p>
+          ) : null}
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <MintChirSection
               detfAddress={detfAddress}
@@ -397,7 +414,7 @@ export default function StakingPageClient({
               dataChainId={chain.dataChainId}
               isConnected={chain.isConnected}
               walletMatchesDataChain={chain.walletMatchesDataChain}
-              mintingAllowedNow={stakingReads.mintingAllowedNow}
+              mintingAllowedNow={archived ? false : stakingReads.mintingAllowedNow}
               routerAddress={routerAddress}
               routerHasBytecode={routerHasBytecode}
               permit2Address={permit2Address}
@@ -445,6 +462,8 @@ export default function StakingPageClient({
             pairTokenSymbol="pair token"
             onBondWithWeth={handleBondWithWeth}
             onBondWithRich={handleBondWithRich}
+            disabled={archived}
+            disabledReason="Bond is off on this archived DETF."
           />
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

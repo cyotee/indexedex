@@ -39,6 +39,7 @@ import {
 } from '../../lib/ethPay'
 import { isFunctionNotFound } from '../../lib/detf/bondNftVault'
 import { parseContractError } from '../../lib/tx/parseContractError'
+import { isArchivedDetf } from '../lib/archivedDetfs'
 import { isInsightsActionTab } from '../lib/insightsHref'
 import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
 import {
@@ -85,6 +86,7 @@ export function DetfActions({
   claimSymbol,
   reserveLive,
   burningAllowed,
+  archived: archivedProp,
   initialTab,
   nftVault: nftVaultProp,
 }: {
@@ -97,6 +99,7 @@ export function DetfActions({
   claimSymbol?: string
   reserveLive?: boolean
   burningAllowed?: boolean
+  archived?: boolean
   initialTab?: string
   nftVault?: `0x${string}`
 }) {
@@ -113,8 +116,11 @@ export function DetfActions({
     localWallet,
   })
   const platform = useMemo(() => resolveSePlatform(chainId, environment), [chainId, environment])
+  const archived = archivedProp || isArchivedDetf(detf)
 
-  const [tab, setTab] = useState(() => (isInsightsActionTab(initialTab) ? initialTab : 'mint'))
+  const [tab, setTab] = useState(() =>
+    isInsightsActionTab(initialTab) ? initialTab : archived ? 'burn' : 'mint',
+  )
 
   useEffect(() => {
     if (isInsightsActionTab(initialTab)) setTab(initialTab)
@@ -355,6 +361,7 @@ export function DetfActions({
     detfAllowance != null && detfAllowance >= (parsedBurn ?? 0n) ? detfAllowance : approvedDetfSpend
   const needApproveDetf = parsedBurn != null && parsedBurn > 0n && detfCovered < parsedBurn
   const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
+  const canMintOrBond = canSign && !archived
   const canBurn = canSign && burnLive
   const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
 
@@ -408,7 +415,7 @@ export function DetfActions({
   }
 
   async function approve() {
-    if (!detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || !address) return
     setPendingLeg('approve')
     setStatus('')
     try {
@@ -518,7 +525,7 @@ export function DetfActions({
   }
 
   async function mint() {
-    if (!detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || !address) return
     setPendingLeg('mint')
     setStatus('')
     try {
@@ -552,7 +559,7 @@ export function DetfActions({
   }
 
   async function bond() {
-    if (!detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || !address) return
     setPendingLeg('bond')
     setStatus('')
     try {
@@ -637,10 +644,12 @@ export function DetfActions({
         Mint, burn, bond, stake, claim
       </h3>
       <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-        Mint pays a token this DETF accepts and receives {detfSymbol}. Burn pays {detfSymbol} and
+        {archived
+          ? `Mint and bond are off on this archived DETF. Burn pays ${detfSymbol} and returns a token from the list. Stake mints the rebasing claim token. Claim takes DETF that accrued to a bond.`
+          : `Mint pays a token this DETF accepts and receives ${detfSymbol}. Burn pays ${detfSymbol} and
         returns a token from that list. Bond locks from the same list. Stake mints the rebasing
-        claim token. That is not minting {detfSymbol}. Claim takes DETF that accrued to a bond.
-        You can claim while the bond is still locked. Claiming is not cashing the bond out.
+        claim token. That is not minting ${detfSymbol}. Claim takes DETF that accrued to a bond.
+        You can claim while the bond is still locked. Claiming is not cashing the bond out.`}
       </p>
 
       <div className="mt-4">
@@ -759,13 +768,19 @@ export function DetfActions({
           Preview: {preview != null ? `${formatUnits(preview, 18)} ${detfSymbol}` : '—'}
           . Preview is a quote, not a guarantee the reserve can take the token in.
         </p>
-        {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
+        {archived ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-mint-archived">
+            Mint is off on this archived DETF.
+          </p>
+        ) : blockedCopy ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-2">
           {needApprove ? (
             <Button
               type="button"
               onClick={() => void approve()}
-              disabled={!canSign || parsed == null}
+              disabled={!canMintOrBond || parsed == null}
               loading={pendingLeg === 'approve'}
               data-testid="detf-approve"
             >
@@ -775,7 +790,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void mint()}
-              disabled={!canSign || parsed == null || !spendToken}
+              disabled={!canMintOrBond || parsed == null || !spendToken}
               loading={pendingLeg === 'mint'}
               data-testid="detf-mint"
             >
@@ -810,13 +825,19 @@ export function DetfActions({
           Minimum {minDays} days. Maximum {maxDays} days. Set by the vault fee oracle. You cannot cash
           the bond principal until it matures.
         </p>
-        {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
+        {archived ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-bond-archived">
+            Bond is off on this archived DETF.
+          </p>
+        ) : blockedCopy ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-2">
           {needApprove ? (
             <Button
               type="button"
               onClick={() => void approve()}
-              disabled={!canSign || parsed == null}
+              disabled={!canMintOrBond || parsed == null}
               loading={pendingLeg === 'approve'}
               data-testid="detf-approve"
             >
@@ -826,7 +847,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void bond()}
-              disabled={!canSign || parsed == null || lock == null || !spendToken}
+              disabled={!canMintOrBond || parsed == null || lock == null || !spendToken}
               loading={pendingLeg === 'bond'}
               data-testid="detf-bond"
             >

@@ -7,18 +7,60 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { insightsDetfHref, parseInsightsDetfQuery } from './lib/insightsHref'
-import { useInsightDetfCatalog } from './lib/useInsightDetfCatalog'
+import { useInsightDetfCatalog, type InsightDetf } from './lib/useInsightDetfCatalog'
+
+function DetfRows({
+  detfs,
+  archived,
+  testId,
+}: {
+  detfs: InsightDetf[]
+  archived?: boolean
+  testId: string
+}) {
+  return (
+    <ul className="mt-4 divide-y divide-[var(--border-subtle,rgba(255,255,255,0.08))]" data-testid={testId}>
+      {detfs.map((d) => (
+        <li key={d.address}>
+          <Link
+            href={insightsDetfHref(d.address)}
+            className="flex flex-wrap items-baseline justify-between gap-2 py-3 hover:text-[var(--accent,#4FD44B)]"
+          >
+            <span className="text-sm text-[var(--text-primary,#EDEDED)]">
+              {d.symbol} · {d.name}
+              {d.protocolFee ? (
+                <span className="ml-2 text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
+                  Protocol fees
+                </span>
+              ) : null}
+              {archived ? (
+                <span className="ml-2 text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
+                  {' '}
+                  Archived
+                </span>
+              ) : null}
+            </span>
+            <span className="font-mono text-[11px] text-[var(--text-muted,#9aa3b2)]">{d.address}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export default function InsightsCatalogClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { detfs, registryLoading, registryError } = useInsightDetfCatalog()
+  const { liveDetfs, archivedDetfs, registryLoading, registryError } = useInsightDetfCatalog()
 
   useEffect(() => {
     const detf = parseInsightsDetfQuery(searchParams.get('detf'))
     if (!detf) return
     router.replace(insightsDetfHref(detf, searchParams.get('tab')))
   }, [router, searchParams])
+
+  const noLive = liveDetfs.length === 0 && !registryLoading
+  const showLiveEmpty = noLive && archivedDetfs.length === 0
 
   return (
     <div className="space-y-8">
@@ -34,7 +76,7 @@ export default function InsightsCatalogClient() {
         </p>
       </section>
 
-      {detfs.length === 0 && !registryLoading ? (
+      {showLiveEmpty ? (
         <Card>
           <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
             {registryError
@@ -56,31 +98,18 @@ export default function InsightsCatalogClient() {
             Vault registry
           </p>
           <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
-            {registryLoading ? 'Reading DETFs from the vault registry…' : 'All DETFs reported by the vault registry.'}
+            {registryLoading ? 'Reading DETFs from the vault registry…' : 'DETFs reported by the vault registry.'}
           </p>
           {registryError ? (
             <p className="mt-2 text-xs text-[var(--danger,#E6386A)]">{registryError}</p>
           ) : null}
-          <ul className="mt-4 divide-y divide-[var(--border-subtle,rgba(255,255,255,0.08))]" data-testid="insights-detf-list">
-            {detfs.map((d) => (
-              <li key={d.address}>
-                <Link
-                  href={insightsDetfHref(d.address)}
-                  className="flex flex-wrap items-baseline justify-between gap-2 py-3 hover:text-[var(--accent,#4FD44B)]"
-                >
-                  <span className="text-sm text-[var(--text-primary,#EDEDED)]">
-                    {d.symbol} · {d.name}
-                    {d.protocolFee ? (
-                      <span className="ml-2 text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
-                        Protocol fees
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="font-mono text-[11px] text-[var(--text-muted,#9aa3b2)]">{d.address}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {liveDetfs.length > 0 ? (
+            <DetfRows detfs={liveDetfs} testId="insights-detf-list" />
+          ) : (
+            <p className="mt-4 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="insights-detf-list">
+              {registryLoading ? 'Reading DETFs…' : 'No live DETF on this list.'}
+            </p>
+          )}
           <div className="mt-4">
             <Link href="/create">
               <Button size="sm" variant="secondary">
@@ -90,6 +119,18 @@ export default function InsightsCatalogClient() {
           </div>
         </Card>
       )}
+
+      {archivedDetfs.length > 0 ? (
+        <Card>
+          <p className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
+            Archived DETFs
+          </p>
+          <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
+            Mint and bond are off. You can still open one to burn, stake, or claim.
+          </p>
+          <DetfRows detfs={archivedDetfs} archived testId="insights-archived-detf-list" />
+        </Card>
+      ) : null}
     </div>
   )
 }

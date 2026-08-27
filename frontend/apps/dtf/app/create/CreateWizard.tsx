@@ -147,7 +147,9 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
       const offered = initialTypeId && isOfferedCreateType(initialTypeId) ? initialTypeId : null
       if (offered) next = applyType(next, offered)
       else if (next.typeId && isComingSoonCreateType(next.typeId)) next = applyType(next, '')
-      else if (next.typeId && !isOfferedCreateType(next.typeId)) next = applyType(next, 'one-vault')
+      else if (next.typeId && !isOfferedCreateType(next.typeId)) {
+        next = applyType(next, isComingSoonCreateType('one-vault') ? '' : 'one-vault')
+      }
       return next
     })
     if (searchParams.get('step')) setStep(qStep)
@@ -461,7 +463,7 @@ function StepShape({
                   data-testid={`create-type-${t.id}-soon`}
                 >
                   <span className="rounded-md bg-[var(--surface-0,#0a0a0a)]/85 px-3 py-1.5 text-sm font-semibold tracking-wide text-[var(--text-primary,#EDEDED)]">
-                    Coming Soon
+                    {t.comingSoonLabel ?? 'Coming Soon'}
                   </span>
                 </div>
               ) : null}

@@ -28,6 +28,7 @@ import { pairAddresses, profileFor, type DetfLeg } from './lib/detfProfiles'
 import { formatWad, scaleThresholds } from './lib/thresholdScale'
 import { isZero, labelFor, shortAddr } from './lib/tokenLabels'
 import { displayTokenLabel, displayTokenSymbol, isRetiredRichBrand } from '../lib/customerSymbols'
+import { isArchivedDetf } from './lib/archivedDetfs'
 import { useInsightDetfCatalog } from './lib/useInsightDetfCatalog'
 
 type BasketRow = {
@@ -49,8 +50,16 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
   const searchParams = useSearchParams()
   const router = useRouter()
   const { address: wallet, isConnected } = useAccount()
-  const { selectedChainId, environment, detfs, labels, registryLoading, registryError } =
-    useInsightDetfCatalog()
+  const {
+    selectedChainId,
+    environment,
+    detfs,
+    liveDetfs,
+    archivedDetfs,
+    labels,
+    registryLoading,
+    registryError,
+  } = useInsightDetfCatalog()
 
   const qTab = searchParams.get('tab')
   const pathTab = isInsightsActionTab(qTab) ? qTab : undefined
@@ -84,6 +93,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
         }
       : undefined)
   const detfAddr = detf?.address as `0x${string}` | undefined
+  const archived = isArchivedDetf(detfAddr)
   const enabled = !!detfAddr
   const profile = detfAddr ? profileFor(detfAddr, detf?.symbol) : undefined
   const pairs = profile ? pairAddresses(profile) : []
@@ -296,8 +306,17 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
     walletBal != null ? formatUnits(walletBal, detf?.decimals ?? 18) : isConnected ? '0' : 'Connect to see'
   const modeLabel =
     thresholdMode === 1 ? 'Open' : thresholdMode === 0 ? 'Policy' : profile?.mintBurn === 'open' ? 'Open' : profile ? 'Policy' : '—'
-  const mintLabel =
-    mintingAllowed != null ? (mintingAllowed ? 'Allowed' : 'Blocked') : allLegsMint != null ? (allLegsMint ? 'Allowed' : 'Blocked') : '—'
+  const mintLabel = archived
+    ? 'Off'
+    : mintingAllowed != null
+      ? mintingAllowed
+        ? 'Allowed'
+        : 'Blocked'
+      : allLegsMint != null
+        ? allLegsMint
+          ? 'Allowed'
+          : 'Blocked'
+        : '—'
   const burnLabel = burningAllowed == null ? '—' : burningAllowed ? 'Allowed' : 'Blocked'
   const reserveHook = reserveHookFromDetf ?? reservePool
   const { reservePoolId, sePoolIds } = useDetfPoolIds({
@@ -484,7 +503,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
     return []
   }, [actionAddrs, actionMeta, labels, profile])
   const protocolFee = !!detf?.protocolFee
-  const defaultBurn = burningAllowed === true && mintingAllowed === false
+  const defaultBurn = archived || (burningAllowed === true && mintingAllowed === false)
   const actionTab = pathTab ?? (defaultBurn ? 'burn' : undefined)
 
   const relatedBase = useMemo(
@@ -631,27 +650,43 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
                 data-testid="insights-detf-list"
                 aria-label="DETF"
               >
-                {detfs.length === 0 && !detfAddr ? <option value="">Reading DETFs…</option> : null}
+                {liveDetfs.length === 0 && archivedDetfs.length === 0 && !detfAddr ? (
+                  <option value="">Reading DETFs…</option>
+                ) : null}
                 {detfAddr &&
                 !detfs.some((d) => d.address.toLowerCase() === detfAddr.toLowerCase()) &&
                 !isRetiredRichBrand(rawSymbol) &&
                 !isRetiredRichBrand(rawName) ? (
                   <option value={detfAddr}>
                     {symbol} · {name}
+                    {archived ? ' · Archived' : ''}
                   </option>
                 ) : null}
-                {detfs.map((d) => (
-                  <option key={d.address} value={d.address}>
-                    {d.symbol} · {d.name}
-                    {d.protocolFee ? ' · Protocol fees' : ''}
-                  </option>
-                ))}
+                {liveDetfs.length > 0 ? (
+                  <optgroup label="DETFs">
+                    {liveDetfs.map((d) => (
+                      <option key={d.address} value={d.address}>
+                        {d.symbol} · {d.name}
+                        {d.protocolFee ? ' · Protocol fees' : ''}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null}
+                {archivedDetfs.length > 0 ? (
+                  <optgroup label="Archived DETFs">
+                    {archivedDetfs.map((d) => (
+                      <option key={d.address} value={d.address}>
+                        {d.symbol} · {d.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null}
               </select>
             </label>
             <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
               {registryLoading
                 ? 'Reading DETFs from the vault registry…'
-                : 'All DETFs reported by the vault registry.'}
+                : 'Live DETFs from the vault registry. Archived DETFs are in their own group.'}
             </p>
             {registryError ? (
               <p className="mt-2 text-xs text-[var(--danger,#E6386A)]">{registryError}</p>
@@ -671,7 +706,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-[var(--accent,#4FD44B)]">
-                    {protocolFee ? 'Protocol DETF' : profile?.kicker || 'DETF'}
+                    {archived ? 'Archived DETF' : protocolFee ? 'Protocol DETF' : profile?.kicker || 'DETF'}
                   </p>
                   <h2 className="mt-1 text-2xl font-semibold text-[var(--text-primary,#EDEDED)]">{symbol}</h2>
                   <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">{name}</p>
@@ -688,7 +723,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
                       document.getElementById('detf-actions')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }
                   >
-                    {defaultBurn ? `Burn ${symbol}` : `Mint or bond ${symbol}`}
+                    {archived ? `Burn ${symbol}` : defaultBurn ? `Burn ${symbol}` : `Mint or bond ${symbol}`}
                   </Button>
                   {claimToken ? (
                     <Button
@@ -714,7 +749,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               </div>
 
               <div className="mt-6">
-                <DetfAbout profile={profile} protocolFee={protocolFee} />
+                <DetfAbout profile={profile} protocolFee={protocolFee} archived={archived} />
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -746,6 +781,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               claimSymbol={claimSymbol}
               reserveLive={reserveLive}
               burningAllowed={burningAllowed}
+              archived={archived}
               initialTab={actionTab}
               nftVault={bondNftVault ?? protocolNftVault}
             />

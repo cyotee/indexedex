@@ -49,6 +49,28 @@ test.describe('App routes & redirects (DTF)', () => {
     expect(/DETF|Staking|workspace|DTF-DETF|mint|bond/i.test(body)).toBe(true)
   })
 
+  test('insights catalog lists archived DETFs with mint and bond off', async ({ walletPage }) => {
+    await walletPage.goto('/insights')
+    await expect(walletPage.getByText('Archived DETFs').first()).toBeVisible({ timeout: 20_000 })
+    const archived = walletPage.getByTestId('insights-archived-detf-list')
+    await expect(archived).toBeVisible()
+    await expect(archived.getByText('0xaf0E1967c8F755c747615c5427108Bc549CA1122')).toBeVisible()
+    await expect(archived.getByText('0x72EF4Be65e356E102bB31a97d2d7B309e8c97226')).toBeVisible()
+    await expect(walletPage.getByText('Mint and bond are off.')).toBeVisible()
+  })
+
+  test('archived DETF mint and bond controls stay disabled', async ({ walletPage }) => {
+    const addr = '0xaf0E1967c8F755c747615c5427108Bc549CA1122'
+    await walletPage.goto(`/insights/${addr}?tab=mint`)
+    await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
+    await expect(walletPage.getByTestId('detf-mint-archived')).toBeVisible()
+    await expect(walletPage.getByTestId('detf-mint')).toBeDisabled()
+    await walletPage.goto(`/insights/${addr}?tab=bond`)
+    await expect(walletPage.getByTestId('detf-actions')).toBeVisible({ timeout: 20_000 })
+    await expect(walletPage.getByTestId('detf-bond-archived')).toBeVisible()
+    await expect(walletPage.getByTestId('detf-bond')).toBeDisabled()
+  })
+
   test('insights ?detf= redirects to the token path', async ({ walletPage }) => {
     const checksum = getAddress(SAMPLE_DETF)
     await walletPage.goto(`/insights?detf=${SAMPLE_DETF}`)

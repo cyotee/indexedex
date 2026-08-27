@@ -24,6 +24,8 @@ interface BondSectionProps {
   pairTokenSymbol?: string
   onBondWithWeth: (amount: bigint, lockSeconds: bigint, wethAsEth: boolean) => Promise<void>
   onBondWithRich: (amount: bigint, lockSeconds: bigint) => Promise<void>
+  disabled?: boolean
+  disabledReason?: string
 }
 
 const inputClass =
@@ -43,6 +45,8 @@ export default function BondSection({
   pairTokenSymbol = 'pair token',
   onBondWithWeth,
   onBondWithRich,
+  disabled = false,
+  disabledReason,
 }: BondSectionProps) {
   const [bondWethAmount, setBondWethAmount] = useState('')
   const [bondRichAmount, setBondRichAmount] = useState('')
@@ -73,7 +77,9 @@ export default function BondSection({
     <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
       <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Bond positions</div>
       <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-        Lock duration is shared across both bond actions.
+        {disabled
+          ? disabledReason || 'Bond is off on this archived DETF.'
+          : 'Lock duration is shared across both bond actions.'}
       </div>
 
       <label className="mt-3 block text-xs text-[var(--text-muted,#9aa3b2)]">Lock (days)</label>
@@ -132,7 +138,7 @@ export default function BondSection({
                 : undefined
             }
             disabled={
-              !isConnected || !walletMatchesDataChain || isWritePending || !parsedBondWeth
+              disabled || !isConnected || !walletMatchesDataChain || isWritePending || !parsedBondWeth
             }
             loading={isWritePending}
           >
@@ -176,7 +182,7 @@ export default function BondSection({
                 : undefined
             }
             disabled={
-              !isConnected || !walletMatchesDataChain || isWritePending || !parsedBondRich
+              disabled || !isConnected || !walletMatchesDataChain || isWritePending || !parsedBondRich
             }
             loading={isWritePending}
           >

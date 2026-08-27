@@ -6,8 +6,10 @@ export type CreateDetfType = {
   title: string
   blurb: string
   href: `/create/${CreateDetfTypeId}`
-  /** When true, the picker shows Coming Soon and cannot be selected. Wizard routes stay. */
+  /** When true, the picker greys the card and cannot be selected. Wizard routes stay. */
   comingSoon?: boolean
+  /** Overlay on a coming-soon card. Defaults to Coming Soon. */
+  comingSoonLabel?: string
 }
 
 /**
@@ -22,6 +24,8 @@ export const CREATE_DETF_TYPES: readonly CreateDetfType[] = [
     title: 'One strategy',
     blurb: 'One vault. Mint and burn against one pair token from that vault.',
     href: '/create/one-vault',
+    comingSoon: true,
+    comingSoonLabel: 'Update Coming Soon',
   },
   {
     id: 'weighted',

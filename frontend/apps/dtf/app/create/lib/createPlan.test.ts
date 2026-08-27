@@ -198,8 +198,10 @@ describe('include choice limits', () => {
     expect(platformSePkgKey('morpho')).toBe('morphoBlueSePkg')
   })
 
-  it('marks several-strategy and stables types coming soon', () => {
-    expect(CREATE_DETF_TYPES.find((t) => t.id === 'one-vault')?.comingSoon).toBeFalsy()
+  it('marks one-strategy as update coming soon and the other types coming soon', () => {
+    const one = CREATE_DETF_TYPES.find((t) => t.id === 'one-vault')
+    expect(one?.comingSoon).toBe(true)
+    expect(one?.comingSoonLabel).toBe('Update Coming Soon')
     expect(CREATE_DETF_TYPES.find((t) => t.id === 'weighted')?.comingSoon).toBe(true)
     expect(CREATE_DETF_TYPES.find((t) => t.id === 'stables')?.comingSoon).toBe(true)
   })

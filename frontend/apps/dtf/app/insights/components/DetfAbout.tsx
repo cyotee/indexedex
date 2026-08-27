@@ -3,19 +3,28 @@ import type { DetfProfile } from '../lib/detfProfiles'
 export function DetfAbout({
   profile,
   protocolFee,
+  archived,
 }: {
   profile: DetfProfile | undefined
   protocolFee: boolean
+  archived?: boolean
 }) {
   if (!profile) {
     return (
       <section data-testid="insights-about">
         <p className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">About</p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          This listing has no write-up yet. A DETF is a Decentralized ETF: one token over a basket
-          that works in other apps. Live fields below are reads from the contract when the RPC can
-          see it.
-        </p>
+        {archived ? (
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+            This DETF is archived. Mint and bond are off in this app. Burn, stake, and claim still
+            work when the contract allows them.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+            This listing has no write-up yet. A DETF is a Decentralized ETF: one token over a basket
+            that works in other apps. Live fields below are reads from the contract when the RPC can
+            see it.
+          </p>
+        )}
       </section>
     )
   }
@@ -25,6 +34,12 @@ export function DetfAbout({
       <p className="text-[11px] uppercase tracking-wide text-[var(--accent,#4FD44B)]">
         {protocolFee ? 'Protocol DETF' : profile.kicker}
       </p>
+      {archived ? (
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          This DETF is archived. Mint and bond are off in this app. Burn, stake, and claim still
+          work when the contract allows them.
+        </p>
+      ) : null}
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-primary,#EDEDED)]">{profile.blurb}</p>
       <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
         <div>

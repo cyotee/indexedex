@@ -16,6 +16,7 @@ import { getVaultRegistryAddress } from '@indexedex/protocol/registry/getVaultRe
 import { createAppReadClient } from '../../create/lib/sePoolRead'
 import { loadCreatedDetfs } from '../../lib/detf/createdDetfs'
 import { entriesFromAddresses, loadRegisteredVaults, selectDetfsFromVaults } from '../../lib/detf/discoverDetfs'
+import { splitInsightDetfs } from './archivedDetfs'
 import { mergeDetfs } from './mergeInsightDetfs'
 import { indexTokens } from './tokenLabels'
 
@@ -74,13 +75,18 @@ export function useInsightDetfCatalog() {
     }
   }, [selectedChainId, environment])
 
-  const detfs = useMemo(
+  const merged = useMemo(
     () =>
       mergeDetfs(featured, protocol, registryDetfs, createdDetfs, (addr) =>
         isFeaturedFeeDetfAddress(selectedChainId, environment, addr),
       ),
     [featured, protocol, registryDetfs, createdDetfs, selectedChainId, environment],
   )
+  const { live: liveDetfs, archived: archivedDetfs } = useMemo(
+    () => splitInsightDetfs(merged, selectedChainId),
+    [merged, selectedChainId],
+  )
+  const detfs = useMemo(() => [...liveDetfs, ...archivedDetfs], [liveDetfs, archivedDetfs])
   const labels = useMemo(
     () =>
       indexTokens([
@@ -98,6 +104,8 @@ export function useInsightDetfCatalog() {
     selectedChainId,
     environment,
     detfs,
+    liveDetfs,
+    archivedDetfs,
     labels,
     registryLoading,
     registryError,
