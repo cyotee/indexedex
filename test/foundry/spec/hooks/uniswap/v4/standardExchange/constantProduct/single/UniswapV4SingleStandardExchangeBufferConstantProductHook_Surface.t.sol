@@ -13,6 +13,7 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -69,14 +70,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IHook.rawToken.selector), "J1 rawToken");
         assertTrue(_contains(funcs_, IHook.rawReserve.selector), "J1 rawReserve");
         assertTrue(_contains(funcs_, IHook.seClaimSupply.selector), "J1 seClaimSupply");
-        assertTrue(_contains(funcs_, IHook.isLive.selector), "J1 isLive");
-        assertTrue(_contains(funcs_, IHook.previewSwapExactIn.selector), "J1 previewSwapExactIn");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
+        assertTrue(
+            _contains(funcs_, bytes4(keccak256("previewSwapExactIn(bool,uint256)"))),
+            "J1 previewSwapExactIn bool"
+        );
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewSwapExactIn.selector), "J1 previewSwapExactIn addr");
         assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
         assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "J1 previewExchangeIn");
-        assertTrue(_contains(funcs_, IHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
-        assertTrue(_contains(funcs_, IHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
-        assertEq(funcs_.length, 37, "J1 SeFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
+        assertEq(funcs_.length, 46, "J1 SeFacet facetFuncs length");
     }
 
     /// @notice J1: deposit / zap / SE-share multipath money entrypoints are cut.
@@ -99,7 +105,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IHook.previewZapSplit.selector), "J1 previewZapSplit");
         assertTrue(_contains(funcs_, IHook.depositWithSeShares.selector), "J1 depositWithSeShares");
         assertTrue(_contains(funcs_, IHook.previewDepositWithSeShares.selector), "J1 previewDepositWithSeShares");
-        assertEq(funcs_.length, 11, "J1 DepositFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
+        assertEq(funcs_.length, 19, "J1 DepositFacet facetFuncs length");
     }
 
     /// @notice J1: withdraw / SE-share multipath money entrypoints are cut.
@@ -111,7 +119,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IHook.previewWithdrawSingle.selector), "J1 previewWithdrawSingle");
         assertTrue(_contains(funcs_, IHook.withdrawSeShares.selector), "J1 withdrawSeShares");
         assertTrue(_contains(funcs_, IHook.previewWithdrawSeShares.selector), "J1 previewWithdrawSeShares");
-        assertEq(funcs_.length, 6, "J1 WithdrawFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.exitProportional.selector), "J1 exitProportional");
+        assertEq(funcs_.length, 13, "J1 WithdrawFacet facetFuncs length");
     }
 
     /* ---------------------------------------------------------------------- */

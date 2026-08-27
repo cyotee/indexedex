@@ -15,6 +15,7 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /// @dev Owner that can hold an open PoolManager unlock and call hook owner paths from unlockCallback.
 contract CpOwnerDuringLockHarness is IUnlockCallback {
@@ -153,7 +154,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         bytes memory ret = harness.run(
             hook,
             abi.encodeWithSelector(
-                IHook.ownerSwapExactIn.selector,
+                IUniswapV4SeBufferHook.ownerSwapExactIn.selector,
                 tokenIn,
                 tokenOut,
                 amountIn,

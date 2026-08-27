@@ -189,6 +189,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         view
         returns (uint256 amountOut)
     {
+        if (!_isLive() || amountIn == 0 || tokenIn == tokenOut) return 0;
+        if (!_isBoundToken(tokenIn) || !_isBoundToken(tokenOut)) return 0;
         return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
     }
 
@@ -197,7 +199,14 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         view
         returns (uint256 amountIn)
     {
+        if (!_isLive() || amountOut == 0 || tokenIn == tokenOut) return 0;
+        if (!_isBoundToken(tokenIn) || !_isBoundToken(tokenOut)) return 0;
         return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+    }
+
+    function _isBoundToken(address t) private view returns (bool) {
+        Repo.Layout storage l = Repo._layout();
+        return t == l.tokens[0] || t == l.tokens[1] || t == l.tokens[2] || t == l.tokens[3];
     }
 
     function _previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)

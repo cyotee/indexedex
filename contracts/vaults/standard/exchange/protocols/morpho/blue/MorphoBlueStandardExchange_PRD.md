@@ -95,7 +95,7 @@ Robinhood Earn (Steakhouse USDG) is Morpho **Vault V2**. That wrap is a **second
 | # | Topic | Decision |
 |---|--------|----------|
 | D34 | Rate provider | **In v1 DoD.** Deploy existing **`StandardExchangeRateProvider`** against a live instance: `reserveVault = this SE`, `rateSubject = address(this)`, `rateTarget = loanToken`. Assert `getRate()` vs `previewExchangeIn` / `convertToAssets` (empty supply → `0`, as the provider already does). Do **not** fork rate-provider code. |
-| D35 | Uni V4 SE buffer hook | **Out of v1.** Later: hook `pairToken` **must** be this vault's `loanToken` and ∈ `vaultTokens()`. Instant unwrap inherits D23 (utilization revert) until a sleeve revision. Closed-form **pairToken ↔ SE** is D7 + D27. |
+| D35 | Uni V4 SE buffer hook | **Out of Morpho package v1 DoD** (rate-provider smoke still closes this package). Later consumer: unified DETF × hook matrix binds this vault as a hook pair leg (`pairToken` **must** be `loanToken` and ∈ `vaultTokens()`). Instant unwrap inherits D23 (utilization revert) until a sleeve revision. Closed-form **pairToken ↔ SE** is D7 + D27. Test PRD: [`UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md`](../../../../../detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md). |
 | D36 | DETF opacity | Production DETF/hook code talks only to `IStandardExchange*` / share ERC-20. Do **not** import Morpho types into DETF/hook sources. |
 | D37 | Vault V2 wrap | **Follow-on package** under `…/morpho/vault-v2/` (or generic ERC-4626 SE). Not this PRD. |
 

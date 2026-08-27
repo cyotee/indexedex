@@ -39,7 +39,7 @@ contract UniswapV3StandardExchange_Import_Test is TestBase_UniswapV3StandardExch
         tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
         pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
         _seedExternalLiquidity(pool, 5_000_000);
-        vault = _deployVault(pool, DEFAULT_WIDTH_MULTIPLIER);
+        vault = _deployVault(pool);
 
         address descriptor = address(new MockTokenDescriptor());
         // WETH arg unused for ERC20-only mints in these tests.

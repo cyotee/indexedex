@@ -6,6 +6,7 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookHooksTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol";
@@ -19,13 +20,14 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](2);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4StandardExchangeWeightedBufferHook).interfaceId;
+        interfaces[2] = type(IUniswapV4SeBufferHook).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](39);
+        funcs = new bytes4[](45);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -65,6 +67,12 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
         funcs[36] = IUniswapV4StandardExchangeWeightedBufferHook.pairDoorCount.selector;
         funcs[37] = IUniswapV4StandardExchangeWeightedBufferHook.previewSwapExactIn.selector;
         funcs[38] = IUniswapV4StandardExchangeWeightedBufferHook.previewSwapExactOut.selector;
+        funcs[39] = IUniswapV4SeBufferHook.isLive.selector;
+        funcs[40] = IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector;
+        funcs[41] = IUniswapV4SeBufferHook.requiredFirstBondTokens.selector;
+        funcs[42] = IUniswapV4SeBufferHook.standardExchangeOf.selector;
+        funcs[43] = IUniswapV4SeBufferHook.syntheticNumeraires.selector;
+        funcs[44] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
     }
 
     function facetMetadata()

@@ -40,6 +40,9 @@ import {
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4DualStandardExchangeBufferConstantProductHookCommon
@@ -73,6 +76,9 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     error HookNotImplemented();
     error InvalidPermit2Data();
     error UnsupportedRoute();
+    error InvalidRoute();
+    error PairAndShareSameLeg();
+    error FirstJoinMustBeFullBook();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -189,6 +195,39 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         return token == l.token0 || token == l.token1;
     }
 
+    function _classify(address addr)
+        internal
+        view
+        returns (UniswapV4SeBufferHookLegLib.LegKind)
+    {
+        return UniswapV4SeBufferHookLegLib.classify(Repo._layout().legs, addr);
+    }
+
+    function _tryRouteZeroForOne(address tokenIn, address tokenOut)
+        internal
+        view
+        returns (bool ok, bool zfo)
+    {
+        UniswapV4SeBufferHookLegLib.LegKind kIn = _classify(tokenIn);
+        UniswapV4SeBufferHookLegLib.LegKind kOut = _classify(tokenOut);
+        if (
+            kIn == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+                || kOut == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+        ) {
+            return (false, false);
+        }
+        Repo.Layout storage l = Repo._layout();
+        address in_ = kIn == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange
+            ? l.legs.pairOfStandardExchange[tokenIn]
+            : tokenIn;
+        address out_ = kOut == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange
+            ? l.legs.pairOfStandardExchange[tokenOut]
+            : tokenOut;
+        if (in_ == l.currency0 && out_ == l.currency1) return (true, true);
+        if (in_ == l.currency1 && out_ == l.currency0) return (true, false);
+        return (false, false);
+    }
+
 
     function _isLive() internal view returns (bool) {
         return claimSupplyCurrency0() > 0 && claimSupplyCurrency1() > 0;
@@ -298,6 +337,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(
             IERC20(se), seIn, IERC20(pairToken)
         );
+        // Uni V4 SE pulls shares with transferFrom when pretransferred=false.
+        IERC20(se).forceApprove(se, seIn);
         tokenOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(pairToken), minOut, address(this), false, block.timestamp
         );
@@ -352,9 +393,20 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _refundPairDust(address token, address to) internal {
         uint256 bal = IERC20(token).balanceOf(address(this));
-        if (bal > Repo.MAX_DUST_WEI) {
-            IERC20(token).safeTransfer(to, bal);
+        if (bal <= Repo.MAX_DUST_WEI) return;
+        uint256 excess = bal - Repo.MAX_DUST_WEI;
+        address se = _seFor(token);
+        uint256 preview = IStandardExchangeIn(se).previewExchangeIn(
+            IERC20(token), excess, IERC20(se)
+        );
+        if (preview > 0) {
+            _buffer(se, token, excess);
+            bal = IERC20(token).balanceOf(address(this));
+            if (bal <= Repo.MAX_DUST_WEI) return;
+            excess = bal - Repo.MAX_DUST_WEI;
         }
+        if (to == address(0) || to == address(this)) return;
+        IERC20(token).safeTransfer(to, excess);
     }
 
 

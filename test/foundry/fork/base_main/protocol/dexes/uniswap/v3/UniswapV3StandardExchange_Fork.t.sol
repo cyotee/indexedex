@@ -56,7 +56,7 @@ contract UniswapV3StandardExchange_Fork_Test is TestBase_BaseFork, TestBase_Perm
 
         pool = _resolveLivePool();
         pkg = _deployPkg(IUniswapV3Factory(UNI_V3_FACTORY));
-        vault = IStandardExchangeProxy(pkg.deployVault(pool, 10));
+        vault = IStandardExchangeProxy(pkg.deployVault(pool));
     }
 
     function _resolveLivePool() private view returns (IUniswapV3Pool livePool) {

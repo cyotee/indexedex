@@ -521,14 +521,23 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
 
     function _refundBufferedDust() internal {
         Repo.Layout storage l = Repo._layout();
+        address to = msg.sender;
         for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (l.standardExchanges[i] == address(0)) continue;
-            uint256 bal = IERC20(l.tokens[i]).balanceOf(address(this));
-            if (bal > 0 && bal <= Repo.MAX_DUST_WEI) {
-                // leave tiny dust
-            } else if (bal > Repo.MAX_DUST_WEI) {
-                IERC20(l.tokens[i]).safeTransfer(msg.sender, bal);
+            address se = l.standardExchanges[i];
+            if (se == address(0)) continue;
+            IERC20 pair_ = IERC20(l.tokens[i]);
+            uint256 bal = pair_.balanceOf(address(this));
+            if (bal <= Repo.MAX_DUST_WEI) continue;
+            uint256 excess = bal - Repo.MAX_DUST_WEI;
+            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
+            if (preview > 0) {
+                _bufferToken(i, excess);
+                bal = pair_.balanceOf(address(this));
+                if (bal <= Repo.MAX_DUST_WEI) continue;
+                excess = bal - Repo.MAX_DUST_WEI;
             }
+            if (to == address(0) || to == address(this)) continue;
+            pair_.safeTransfer(to, excess);
         }
     }
 

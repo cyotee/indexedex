@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
 /**
  * @title UniswapV4DualStandardExchangeBufferConstantProductHookRepo
  * @notice Diamond storage for dual SE buffer CP hook (bindings + kLast + one-pool + reentrancy).
  * @dev LP ERC-20 uses shared ERC20Repo; vault tokens/reserves use MultiAssetBasicVaultRepo.
  *      Bindings live in storage (diamond package) — not constructor immutables.
+ *      Dual is not a DETF reserve: legs.detfToken stays address(0).
  */
 library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256(
@@ -37,6 +42,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         bool poolInitialized;
         uint256 reentrancyStatus;
         bool initializationFinalized;
+        UniswapV4SeBufferHookLegLib.Layout legs;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -72,5 +78,8 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         l.decimalsCurrency1 = dec1;
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
+        l.legs.detfToken = address(0);
+        UniswapV4SeBufferHookLegLib.addPairSe(l.legs, token0_, se0_);
+        UniswapV4SeBufferHookLegLib.addPairSe(l.legs, token1_, se1_);
     }
 }

@@ -3,18 +3,20 @@ pragma solidity ^0.8.0;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title IUniswapV4StandardExchangeCurveQuadStableBufferHook
  * @notice Public product surface: 4-asset StableSwap book with ≥1 SE buffer legs.
- * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
+ * @dev DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote. Family extras stay here
+ *      (baseAmp, indexed getters, B6 flexible, ordered joinUnbalanced(uint256[]) wrapper).
  *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
- *      Multi-token liquidity also on IStandardExchangeMultiAssetLiquidity (1:1 with this surface).
- *      No permit2Data on join ABI — transferFrom if allowance else Permit2 AllowanceTransfer.
- *      Firm: joinUnbalanced / joinSingleAssetExactOut / exitSingleAssetExactTokenOut shipped closed-form.
- *      B6: flexible SE-share / pair LP paths with per-leg flags.
  */
-interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
+interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
+    IUniswapV4SeBufferHook,
+    IDetfReserveQuote
+{
     error InvalidRoute();
 
     event Join(
@@ -105,7 +107,6 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
     function feeOracle() external view returns (IVaultFeeOracleQuery);
     function permit2() external view returns (address);
     function numTokens() external view returns (uint8);
-    function tokens() external view returns (address[] memory);
     function token(uint256 index) external view returns (address);
     function baseAmp() external view returns (uint256);
     function getCurrentAmp() external view returns (uint256);
@@ -139,62 +140,8 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
 
     /* ------------------------------ Previews -------------------------------- */
 
-    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
-        external
-        view
-        returns (uint256 amountOut);
-
-    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
-        external
-        view
-        returns (uint256 amountIn);
-
-    /// @notice D89 / D30: owner exact-in on the StableSwap book. Internal settlement (no nested unlock).
-    function ownerSwapExactIn(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 minAmountOut,
-        uint256 deadline
-    ) external returns (uint256 amountOut);
-
-    /// @notice D89 / D30: owner exact-out on the StableSwap book. Internal settlement (no nested unlock).
-    function ownerSwapExactOut(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountOut,
-        uint256 maxAmountIn,
-        uint256 deadline
-    ) external returns (uint256 amountIn);
-
-    function previewJoinProportional(uint256[] calldata amounts)
-        external
-        view
-        returns (uint256 shares, uint256[] memory usedAmounts);
-
-    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
-        external
-        view
-        returns (uint256 shares);
-
-    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
-        external
-        view
-        returns (uint256 amountIn);
-
+    /// @notice Family wrapper: amounts in `tokens()` order. Canonical is `previewJoinUnbalanced(address[],uint256[])`.
     function previewJoinUnbalanced(uint256[] calldata amounts) external view returns (uint256 shares);
-
-    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts);
-
-    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
-        external
-        view
-        returns (uint256 amountOut);
-
-    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
-        external
-        view
-        returns (uint256 sharesIn);
 
     function previewDepositSingle(address tokenIn, uint256 amountIn)
         external
@@ -244,52 +191,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook {
 
     /* ------------------------------ Liquidity ------------------------------- */
 
-    function joinProportional(
-        uint256[] calldata amounts,
-        address to,
-        uint256 sharesMin,
-        uint256 deadline
-    ) external returns (uint256 shares, uint256[] memory usedAmounts);
-
-    function joinSingleAssetExactIn(
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        uint256 sharesMin,
-        uint256 deadline
-    ) external returns (uint256 shares);
-
-    function joinSingleAssetExactOut(
-        address tokenIn,
-        uint256 sharesOut,
-        address to,
-        uint256 amountInMax,
-        uint256 deadline
-    ) external returns (uint256 amountIn);
-
+    /// @notice Family wrapper: amounts in `tokens()` order. Canonical is `joinUnbalanced(address[],uint256[],…)`.
     function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
         external
         returns (uint256 shares);
-
-    function exitProportional(uint256 shares, address to, uint256[] calldata amountsMin, uint256 deadline)
-        external
-        returns (uint256[] memory amounts);
-
-    function exitSingleAssetExactBptIn(
-        address tokenOut,
-        uint256 sharesIn,
-        address to,
-        uint256 amountOutMin,
-        uint256 deadline
-    ) external returns (uint256 amountOut);
-
-    function exitSingleAssetExactTokenOut(
-        address tokenOut,
-        uint256 amountOut,
-        address to,
-        uint256 sharesInMax,
-        uint256 deadline
-    ) external returns (uint256 sharesIn);
 
     function depositSingle(
         address tokenIn,

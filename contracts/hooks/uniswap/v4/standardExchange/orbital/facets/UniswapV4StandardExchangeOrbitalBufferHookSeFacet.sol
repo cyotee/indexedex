@@ -7,9 +7,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {
     UniswapV4StandardExchangeOrbitalBufferHookSeTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookSeTarget.sol";
-import {
-    IUniswapV4StandardExchangeOrbitalBufferHook
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /**
  * @title UniswapV4StandardExchangeOrbitalBufferHookSeFacet
@@ -35,8 +33,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookSeFacet is
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
-        funcs[4] = IUniswapV4StandardExchangeOrbitalBufferHook.ownerSwapExactIn.selector;
-        funcs[5] = IUniswapV4StandardExchangeOrbitalBufferHook.ownerSwapExactOut.selector;
+        funcs[4] = IUniswapV4SeBufferHook.ownerSwapExactIn.selector;
+        funcs[5] = IUniswapV4SeBufferHook.ownerSwapExactOut.selector;
     }
 
     function facetMetadata()

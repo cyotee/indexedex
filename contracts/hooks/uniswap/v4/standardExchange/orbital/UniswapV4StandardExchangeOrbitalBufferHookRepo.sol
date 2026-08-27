@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
 /**
  * @title UniswapV4StandardExchangeOrbitalBufferHookRepo
  * @notice Diamond storage: 3-token binding, optional SE/RP per leg, sphere book, kLast, lock.
  * @dev Slot: indexedex.hooks.uv4.se.orbital.buffer.storage
  *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
  *      Raw-leg intentional inventory in reserves[token]; SE-leg book is SE share balances.
+ *      DETF-facing membership lives in `legs` (AddressSetRepo; no tokens() scan).
  */
 library UniswapV4StandardExchangeOrbitalBufferHookRepo {
+    using AddressSetRepo for AddressSet;
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("indexedex.hooks.uv4.se.orbital.buffer.storage")) - 1)
     ) & ~bytes32(uint256(0xff));
@@ -49,6 +56,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         uint256 reentrancyStatus;
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
+        UniswapV4SeBufferHookLegLib.Layout legs;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -101,6 +109,31 @@ library UniswapV4StandardExchangeOrbitalBufferHookRepo {
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
         l.ownerOnlyLiquidity = b.ownerOnlyLiquidity;
+        _initLegs(l, b);
+    }
+
+    /// @dev First unbuffered token is the DETF self-leg; remaining unbuffered tokens are raw pairs.
+    function _initLegs(Layout storage l, BindingsInit memory b) private {
+        address detf_;
+        if (b.se0 == address(0)) {
+            detf_ = b.token0;
+        } else if (b.se1 == address(0)) {
+            detf_ = b.token1;
+        } else if (b.se2 == address(0)) {
+            detf_ = b.token2;
+        }
+        l.legs.detfToken = detf_;
+        _bindLeg(l, b.token0, b.se0, detf_);
+        _bindLeg(l, b.token1, b.se1, detf_);
+        _bindLeg(l, b.token2, b.se2, detf_);
+    }
+
+    function _bindLeg(Layout storage l, address token, address se, address detf_) private {
+        if (se != address(0)) {
+            UniswapV4SeBufferHookLegLib.addPairSe(l.legs, token, se);
+        } else if (token != detf_) {
+            l.legs.pairTokens._add(token);
+        }
     }
 
     function _tokenAt(Layout storage l, uint8 i) internal view returns (address) {

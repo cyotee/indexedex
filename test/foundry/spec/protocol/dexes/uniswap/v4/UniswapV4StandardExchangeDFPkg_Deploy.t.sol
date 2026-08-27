@@ -58,7 +58,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
     function test_deployVault_registersVaultAndInitializesConfig() public {
         PoolKey memory poolKey = _buildPoolKey(address(tokenA), address(tokenB));
 
-        address vault = uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60);
+        address vault = uniswapV4StandardExchangeDFPkg.deployVault(poolKey);
 
         assertTrue(vault != address(0), "vault deployed");
         assertTrue(indexedexManager.isVault(vault), "vault registered");
@@ -101,7 +101,7 @@ contract UniswapV4StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV4Standar
     function test_deployVault_nativeEthCurrency0_registersVault() public {
         PoolKey memory poolKey = _buildPoolKey(address(0), address(tokenA));
 
-        address vault = uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 1);
+        address vault = uniswapV4StandardExchangeDFPkg.deployVault(poolKey);
 
         assertTrue(vault != address(0), "vault deployed");
         assertTrue(indexedexManager.isVault(vault), "vault registered");

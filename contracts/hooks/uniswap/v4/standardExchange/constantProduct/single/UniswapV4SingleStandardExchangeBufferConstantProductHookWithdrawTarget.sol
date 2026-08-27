@@ -401,6 +401,82 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         revert UnsupportedRoute();
     }
 
+    function exitProportional(
+        uint256 shares,
+        address to,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256[] memory amounts) {
+        uint256 min0 = amountsMin.length > 0 ? amountsMin[0] : 0;
+        uint256 min1 = amountsMin.length > 1 ? amountsMin[1] : 0;
+        (uint256 a0, uint256 a1) = _withdraw(shares, to, min0, min1, deadline);
+        amounts = new uint256[](2);
+        Repo.Layout storage l = Repo._layout();
+        amounts[0] = l.currency0 == l.rawToken ? a0 : a1;
+        amounts[1] = l.currency0 == l.rawToken ? a1 : a0;
+    }
+
+    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts) {
+        (uint256 a0, uint256 a1) = this.previewWithdraw(shares);
+        amounts = new uint256[](2);
+        Repo.Layout storage l = Repo._layout();
+        amounts[0] = l.currency0 == l.rawToken ? a0 : a1;
+        amounts[1] = l.currency0 == l.rawToken ? a1 : a0;
+    }
+
+    function exitSingleAssetExactBptIn(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+        return _withdrawSingle(sharesIn, tokenOut, to, amountOutMin, deadline);
+    }
+
+    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (sharesIn == 0 || ERC20Repo._totalSupply() == 0) return 0;
+        return this.previewWithdrawSingle(sharesIn, tokenOut);
+    }
+
+    function exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 sharesIn) {
+        uint256 previewOut = this.previewWithdrawSingle(sharesInMax, tokenOut);
+        if (previewOut < amountOut) revert InsufficientTokenOut();
+        uint256 got = _withdrawSingle(sharesInMax, tokenOut, to, amountOut, deadline);
+        got;
+        return sharesInMax;
+    }
+
+    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256 sharesIn)
+    {
+        tokenOut;
+        amountOut;
+        return 0;
+    }
+
+    function previewBurnToToken(uint256 lpAmount, address tokenOut) external view returns (uint256 amountOut) {
+        if (lpAmount == 0 || ERC20Repo._totalSupply() == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        if (tokenOut == l.standardExchange) {
+            tokenOut = l.pairToken;
+        }
+        if (tokenOut != l.pairToken && tokenOut != l.rawToken) return 0;
+        return this.previewWithdrawSingle(lpAmount, tokenOut);
+    }
+
     function withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)
         external
         onlyLiquidityOwner

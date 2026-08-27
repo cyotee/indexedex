@@ -6,6 +6,8 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookHooksTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol";
@@ -23,9 +25,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](2);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4StandardExchangeOrbitalBufferHook).interfaceId;
+        interfaces[2] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[3] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
@@ -65,7 +69,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](17);
+        funcs = new bytes4[](25);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.rawReserve.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.seBalance.selector;
         funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.seClaim.selector;
@@ -80,9 +84,17 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
         funcs[11] = IUniswapV4StandardExchangeOrbitalBufferHook.pairPoolTickSpacing.selector;
         funcs[12] = IUniswapV4StandardExchangeOrbitalBufferHook.pairPoolSqrtPriceX96.selector;
         funcs[13] = IUniswapV4StandardExchangeOrbitalBufferHook.isZapEligible.selector;
-        funcs[14] = IUniswapV4StandardExchangeOrbitalBufferHook.previewSwapExactIn.selector;
-        funcs[15] = IUniswapV4StandardExchangeOrbitalBufferHook.previewSwapExactOut.selector;
+        funcs[14] = IUniswapV4SeBufferHook.previewSwapExactIn.selector;
+        funcs[15] = IUniswapV4SeBufferHook.previewSwapExactOut.selector;
         funcs[16] = this.getHookPermissions.selector;
+        funcs[17] = IUniswapV4SeBufferHook.tokens.selector;
+        funcs[18] = IUniswapV4SeBufferHook.standardExchangeOf.selector;
+        funcs[19] = IUniswapV4SeBufferHook.syntheticNumeraires.selector;
+        funcs[20] = IUniswapV4SeBufferHook.requiredFirstBondTokens.selector;
+        funcs[21] = IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector;
+        funcs[22] = IUniswapV4SeBufferHook.isLive.selector;
+        funcs[23] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
+        funcs[24] = IDetfReserveQuote.previewSynthetic.selector;
     }
 
     function facetMetadata()

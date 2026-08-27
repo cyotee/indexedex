@@ -20,6 +20,7 @@ import {
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /// @dev Hostile pair: transferFrom reenters target, then completes (records nested error).
 contract HostileQuadPairToken is SimpleMintableERC20 {
@@ -482,7 +483,7 @@ contract UniswapV4StandardExchangeCurveQuadStableDETF_Adversarial is
     function _expectNoWithdrawSingle(address hook) internal {
         vm.expectCall(hook, abi.encodeWithSelector(IHook.withdrawSingle.selector), 0);
         vm.expectCall(hook, abi.encodeWithSelector(IHook.withdrawSingleExactOut.selector), 0);
-        vm.expectCall(hook, abi.encodeWithSelector(IHook.exitSingleAssetExactBptIn.selector), 0);
-        vm.expectCall(hook, abi.encodeWithSelector(IHook.exitSingleAssetExactTokenOut.selector), 0);
+        vm.expectCall(hook, abi.encodeWithSelector(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector), 0);
+        vm.expectCall(hook, abi.encodeWithSelector(IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut.selector), 0);
     }
 }

@@ -106,7 +106,7 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
     }
 
     function _deadline() internal view returns (uint256) {

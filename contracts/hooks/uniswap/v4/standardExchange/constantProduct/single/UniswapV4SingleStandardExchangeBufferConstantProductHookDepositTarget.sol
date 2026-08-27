@@ -41,6 +41,10 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget
@@ -89,6 +93,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     error InvalidPoolFee();
     error HookNotImplemented();
     error UnsupportedRoute();
+    error InvalidRoute();
+    error PairAndShareSameLeg();
+    error FirstJoinMustBeFullBook();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -414,6 +421,178 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (tokenIn == l.currency0 && tokenOut == l.currency1) return true;
         if (tokenIn == l.currency1 && tokenOut == l.currency0) return false;
         revert UnsupportedRoute();
+    }
+
+    struct JoinUnbalancedAcc {
+        uint256 raw;
+        uint256 pair;
+        uint256 seShare;
+        bool sawPair;
+        bool sawSe;
+    }
+
+    function joinProportional(
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256[] memory usedAmounts) {
+        Repo.Layout storage l = Repo._layout();
+        if (amounts.length != 2) revert InvalidRoute();
+        uint256 amt0 = l.currency0 == l.rawToken ? amounts[0] : amounts[1];
+        uint256 amt1 = l.currency0 == l.rawToken ? amounts[1] : amounts[0];
+        PullLib.pullErc20Dual(l.currency0, l.currency1, amt0, amt1);
+        uint256 used0;
+        uint256 used1;
+        (shares, used0, used1) = _deposit(amt0, amt1, to, sharesMin, deadline);
+        usedAmounts = new uint256[](2);
+        usedAmounts[0] = l.currency0 == l.rawToken ? used0 : used1;
+        usedAmounts[1] = l.currency0 == l.rawToken ? used1 : used0;
+    }
+
+    function previewJoinProportional(uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares, uint256[] memory usedAmounts)
+    {
+        Repo.Layout storage l = Repo._layout();
+        if (amounts.length != 2) revert InvalidRoute();
+        uint256 amt0 = l.currency0 == l.rawToken ? amounts[0] : amounts[1];
+        uint256 amt1 = l.currency0 == l.rawToken ? amounts[1] : amounts[0];
+        uint256 used0;
+        uint256 used1;
+        (shares, used0, used1) = this.previewDeposit(amt0, amt1);
+        usedAmounts = new uint256[](2);
+        usedAmounts[0] = l.currency0 == l.rawToken ? used0 : used1;
+        usedAmounts[1] = l.currency0 == l.rawToken ? used1 : used0;
+    }
+
+    function joinUnbalanced(
+        address[] calldata tokensIn,
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
+        _requireFirstJoinFullBook(acc);
+        if (acc.seShare > 0) {
+            PullLib.pullErc20Single(Repo._layout().rawToken, acc.raw);
+            PullLib.pullErc20Single(Repo._layout().standardExchange, acc.seShare);
+            (shares,,) = _depositWithSeShares(acc.raw, acc.seShare, to, sharesMin, deadline);
+            return shares;
+        }
+        Repo.Layout storage l = Repo._layout();
+        uint256 amt0 = l.currency0 == l.rawToken ? acc.raw : acc.pair;
+        uint256 amt1 = l.currency0 == l.rawToken ? acc.pair : acc.raw;
+        PullLib.pullErc20Dual(l.currency0, l.currency1, amt0, amt1);
+        (shares,,) = _deposit(amt0, amt1, to, sharesMin, deadline);
+    }
+
+    function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
+        external
+        view
+        returns (uint256 shares)
+    {
+        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
+        if (!_isLive() && (acc.raw == 0 || (acc.pair == 0 && acc.seShare == 0))) {
+            return 0;
+        }
+        if (acc.seShare > 0) {
+            (shares,,) = this.previewDepositWithSeShares(acc.raw, acc.seShare);
+            return shares;
+        }
+        Repo.Layout storage l = Repo._layout();
+        uint256 amt0 = l.currency0 == l.rawToken ? acc.raw : acc.pair;
+        uint256 amt1 = l.currency0 == l.rawToken ? acc.pair : acc.raw;
+        (shares,,) = this.previewDeposit(amt0, amt1);
+    }
+
+    function joinSingleAssetExactIn(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+        if (!_isLive()) revert NotLive();
+        Repo.Layout storage l = Repo._layout();
+        UniswapV4SeBufferHookLegLib.LegKind kind =
+            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
+        PullLib.pullErc20Single(tokenIn, amountIn);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            uint256 pairOut = _unwrapSeShares(amountIn);
+            return _depositSingle(l.pairToken, pairOut, to, sharesMin, deadline);
+        }
+        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline);
+    }
+
+    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
+        external
+        view
+        returns (uint256 shares)
+    {
+        if (!_isLive() || amountIn == 0) return 0;
+        return this.previewDepositSingle(tokenIn, amountIn);
+    }
+
+    function joinSingleAssetExactOut(
+        address tokenIn,
+        uint256 sharesOut,
+        address to,
+        uint256 amountInMax,
+        uint256 deadline
+    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountIn) {
+        if (!_isLive()) revert NotLive();
+        uint256 previewIn = this.previewDepositSingle(tokenIn, amountInMax);
+        if (previewIn < sharesOut) revert InsufficientLpOut();
+        PullLib.pullErc20Single(tokenIn, amountInMax);
+        uint256 minted = _depositSingle(tokenIn, amountInMax, to, sharesOut, deadline);
+        minted;
+        return amountInMax;
+    }
+
+    function previewJoinSingleAssetExactOut(address tokenIn, uint256 sharesOut)
+        external
+        view
+        returns (uint256 amountIn)
+    {
+        if (!_isLive() || sharesOut == 0) return 0;
+        return 0;
+    }
+
+    function _accumulateJoin(address[] calldata tokensIn, uint256[] calldata amounts)
+        internal
+        view
+        returns (JoinUnbalancedAcc memory acc)
+    {
+        if (tokensIn.length != amounts.length) revert InvalidRoute();
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < tokensIn.length; ++i) {
+            if (amounts[i] == 0) continue;
+            UniswapV4SeBufferHookLegLib.LegKind kind =
+                UniswapV4SeBufferHookLegLib.classify(l.legs, tokensIn[i]);
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Detf) {
+                acc.raw += amounts[i];
+            } else if (kind == UniswapV4SeBufferHookLegLib.LegKind.Pair) {
+                if (acc.sawSe) revert PairAndShareSameLeg();
+                acc.sawPair = true;
+                acc.pair += amounts[i];
+            } else {
+                if (acc.sawPair) revert PairAndShareSameLeg();
+                acc.sawSe = true;
+                acc.seShare += amounts[i];
+            }
+        }
+    }
+
+    function _requireFirstJoinFullBook(JoinUnbalancedAcc memory acc) internal view {
+        if (_isLive()) return;
+        if (acc.raw == 0 || (acc.pair == 0 && acc.seShare == 0)) {
+            revert FirstJoinMustBeFullBook();
+        }
     }
 
     function deposit(uint256 amount0, uint256 amount1, address to, uint256 minLpAmount, uint256 deadline)

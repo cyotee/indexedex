@@ -3,17 +3,17 @@ pragma solidity ^0.8.0;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title IUniswapV4StandardExchangeWeightedBufferHook
  * @notice Public product surface: n-asset (2–8) Balancer weighted book with ≥1 SE buffer legs.
- * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
- *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
- *      Multi-token liquidity also on IStandardExchangeMultiAssetLiquidity (1:1 with this surface).
- *      No permit2Data on join ABI (Q24) — transferFrom if allowance else Permit2 AllowanceTransfer.
- *      B6: *Flexible paths accept pair token and/or SE vault share per buffered leg.
+ * @dev DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote.
+ *      Family joinUnbalanced(uint256[]) / depositSingle / *Flexible remain as wrappers.
+ *      LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
  */
-interface IUniswapV4StandardExchangeWeightedBufferHook {
+interface IUniswapV4StandardExchangeWeightedBufferHook is IUniswapV4SeBufferHook, IDetfReserveQuote {
     enum KLastMode {
         FullProduct,
         PartialInterim

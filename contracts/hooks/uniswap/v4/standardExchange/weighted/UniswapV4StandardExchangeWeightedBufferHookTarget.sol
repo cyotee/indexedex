@@ -85,6 +85,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
     error SeShareNotBuffered();
     error ArrayLengthMismatch();
+    error PairAndShareSameLeg();
+    error FirstJoinMustBeFullBook();
+    error NotLive();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -218,6 +221,41 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         return Math.isFullBookReserves(_nativeAll());
     }
 
+    function isLive() public view returns (bool) {
+        return _isLive();
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory) {
+        return tokens();
+    }
+
+    function standardExchangeOf(address query) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[query];
+    }
+
+    function syntheticNumeraires() public view returns (address[] memory n) {
+        Repo.Layout storage l = Repo._layout();
+        address detf_ = l.legs.detfToken;
+        uint8 m = l.numTokens;
+        uint256 count;
+        for (uint8 i; i < m; ++i) {
+            if (l.tokens[i] != detf_) ++count;
+        }
+        n = new address[](count);
+        uint256 k;
+        for (uint8 i; i < m; ++i) {
+            if (l.tokens[i] != detf_) n[k++] = l.tokens[i];
+        }
+    }
+
+    function tradingFeeWad() public view returns (uint256) {
+        return dexSwapFee();
+    }
+
     function pairDoorCount() public view returns (uint256) {
         return PairPoolLib.pairDoorCount(Repo._layout().numTokens);
     }
@@ -329,6 +367,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
 
     function _totalSupply() internal view returns (uint256) {
         return ERC20Repo._totalSupply();
+    }
+
+    function _isLive() internal view returns (bool) {
+        return _totalSupply() > 0 && Math.isFullBookReserves(_nativeAll());
     }
 
     function _take(Currency currency, address to, uint256 amount) internal {
@@ -501,12 +543,23 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
 
     function _refundBufferedDust() internal {
         Repo.Layout storage l = Repo._layout();
+        address to = msg.sender;
         for (uint8 i; i < l.numTokens; ++i) {
-            if (l.standardExchanges[i] == address(0)) continue;
-            uint256 bal = IERC20(l.tokens[i]).balanceOf(address(this));
-            if (bal > Repo.MAX_DUST_WEI) {
-                IERC20(l.tokens[i]).safeTransfer(msg.sender, bal);
+            address se = l.standardExchanges[i];
+            if (se == address(0)) continue;
+            IERC20 pair_ = IERC20(l.tokens[i]);
+            uint256 bal = pair_.balanceOf(address(this));
+            if (bal <= Repo.MAX_DUST_WEI) continue;
+            uint256 excess = bal - Repo.MAX_DUST_WEI;
+            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
+            if (preview > 0) {
+                _bufferToken(i, excess);
+                bal = pair_.balanceOf(address(this));
+                if (bal <= Repo.MAX_DUST_WEI) continue;
+                excess = bal - Repo.MAX_DUST_WEI;
             }
+            if (to == address(0) || to == address(this)) continue;
+            pair_.safeTransfer(to, excess);
         }
     }
 

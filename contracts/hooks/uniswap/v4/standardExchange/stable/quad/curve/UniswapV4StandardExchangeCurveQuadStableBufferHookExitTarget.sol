@@ -139,6 +139,21 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
 
     /* -------------------------- proportional exit --------------------------- */
 
+    function previewBurnToToken(uint256 lpAmount, address tokenOut)
+        public
+        view
+        returns (uint256 amountOut)
+    {
+        if (lpAmount == 0 || _totalSupply() == 0 || !_isLive()) return 0;
+        (bool ok, uint8 idx, bool wantSe) = _tryResolveJoinToken(tokenOut);
+        if (!ok) return 0;
+        uint256[4] memory invOut =
+            Math.proportionalExitAmounts(lpAmount, _nativeAll(), _previewSupplyAfterProtocolMint());
+        if (wantSe) return invOut[idx];
+        uint256[4] memory pairOut = _invToPairOutPreview(invOut);
+        return pairOut[idx];
+    }
+
     function previewExitProportional(uint256 shares)
         public
         view

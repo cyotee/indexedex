@@ -14,6 +14,7 @@ Lean, always-on instructions for agents in this monorepo. **Full product law** (
 | Frontend redesign / active UI work | [`frontend/ROADMAP.md`](frontend/ROADMAP.md) — **only app:** [`frontend/apps/dtf`](frontend/apps/dtf) (not root `PROGRESS.md`) |
 | Crane framework | `lib/crane/AGENTS.md` + skills under `lib/crane/.claude/skills/` |
 | Family product law | Co-located `*_PRD.md` / impl plans next to the package |
+| Uni V4 DETF I/O routing | [`contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md`](contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md) §16; [`DETF_INSTANCE_IO_ROUTING_IMPLEMENTATION_AND_TEST_PLAN.md`](contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_IMPLEMENTATION_AND_TEST_PLAN.md) |
 
 Root `PROGRESS.md` is **historical only** (Permit2 notes). Do not treat it as current roadmap.
 

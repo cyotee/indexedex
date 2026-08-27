@@ -35,6 +35,9 @@ import {
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
@@ -107,6 +110,46 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
             IERC20(address(tokenIn)).safeTransfer(msg.sender, observedDelta - amountIn);
         }
         _executeBookSwap(zfo, amountIn, amountOut, recipient);
+    }
+
+    function ownerSwapExactIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 minAmountOut,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        _requireLive();
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) revert InvalidRoute();
+        if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        amountOut = _previewSwapExactIn(zfo, amountIn);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _executeBookSwap(zfo, amountIn, amountOut, msg.sender);
+    }
+
+    function ownerSwapExactOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut,
+        uint256 maxAmountIn,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountIn) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountOut);
+        _requireLive();
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) revert InvalidRoute();
+        if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
+        amountIn = _previewSwapExactOut(zfo, amountOut);
+        if (amountIn > maxAmountIn) revert InsufficientTokenOut();
+        _securePull(IERC20(tokenIn), amountIn, false);
+        _executeBookSwap(zfo, amountIn, amountOut, msg.sender);
     }
 
 

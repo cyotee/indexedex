@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bonding</title>
+    <link rel="stylesheet" href="architecture.css" />
+    <style>
+      .why-row { grid-template-columns: 1fr 1.2fr; }
+      .buy-row { grid-template-columns: 1.1fr 1fr 1fr; }
+      .who-row { grid-template-columns: 1.15fr 1fr; }
+      .close-row { grid-template-columns: 1fr 1fr 1fr; }
+      .flow-line {
+        margin-top: 10px;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text);
+      }
+      .flow-line span { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Drill-down · Bonding</p>
+          <h1>Lock liquidity. Get an NFT. Claim while it matures.</h1>
+          <p class="lede">
+            Mint and burn alone cannot build the book. Bonding is a timed deposit: the buyer’s payment
+            plus newly minted $DTF-DETF join the reserve together. The buyer gets a bond NFT. A cut of
+            all minted DETF goes to bond holders, more for a longer lock, claimable while the bond is
+            still locked.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">Why bond</p>
+          <div class="two why-row">
+            <div class="box">
+              <p class="kicker">Mint and burn are not enough</p>
+              <h2>The DETF needs committed liquidity</h2>
+              <p>Primary mint and burn move size in and out. The reserve still needs deposits that stay for a set time, so the book has depth that is not leaving on the next trade.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Most efficient way to add LP</p>
+              <h2>Payment plus free $DTF-DETF</h2>
+              <p>When someone buys a bond, a proportional amount of $DTF-DETF is minted to join their payment as liquidity. The buyer does not have to buy that DETF on the market. They receive it into the LP while the bond is locked.</p>
+              <p class="flow-line">$DTF in <span>→</span> mint matching $DTF-DETF <span>→</span> both join reserve LP</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Who gets a bond NFT</p>
+          <div class="two who-row">
+            <div class="box accent">
+              <p class="kicker">Bond buyer</p>
+              <h2>NFT for a timed lock</h2>
+              <p>The buyer receives a Bond NFT. It records the lock, their share of reserve LP, and the weight that earns rewards. Principal stays locked until maturity.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">DETF creator</p>
+              <h2>NFT that never unlocks</h2>
+              <p>Creating a DETF also mints a creator bond. It is permanently locked. The creator cannot cash the principal. They can claim a portion of the DETF minted to bond holders, same claim path as any other bond.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Rewards while the bond is locked</p>
+          <div class="three buy-row">
+            <div class="box accent">
+              <p class="kicker">Incentive</p>
+              <h2>A cut of all minted DETF</h2>
+              <p>A portion of every $DTF-DETF mint goes to bond holders. That is the reward for locking liquidity, not a cash-out of the bond.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Lock length</p>
+              <h2>Longer lock, larger share</h2>
+              <p>The longer the buyer commits, the greater their portion of those rewards relative to other bonds.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">While it matures</p>
+              <h2>Claim on the NFT</h2>
+              <p>Those extra rewards are claimable while the bond is still locked. Claiming is not closing. Amounts are not guaranteed.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">When the bond matures, the buyer may close</p>
+          <div class="three close-row">
+            <div class="box">
+              <p class="kicker">1</p>
+              <h2>Withdraw the LP</h2>
+              <p>The DETF pulls that bond’s liquidity out of the reserve pool.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">2</p>
+              <h2>Return their share</h2>
+              <p>The buyer gets back the liquidity for their share of the reserve: the $DTF side, through the SE vault. Not a full dump on the $DTF / $DTF-DETF book.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">3</p>
+              <h2>Protocol keeps the DETF</h2>
+              <p>The $DTF-DETF from that LP is not returned to the buyer. It is redeposited so the protocol owns it. Bonding is how the DETF acquires lasting DETF liquidity.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

@@ -35,6 +35,9 @@ import {
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
@@ -84,5 +87,142 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         return _previewWithdrawFlexible(lpAmount, receiveSeShare0, receiveSeShare1);
     }
 
+    function exitProportional(
+        uint256 shares,
+        address to,
+        uint256[] calldata amountsMin,
+        uint256 deadline
+    ) external nonReentrant returns (uint256[] memory amounts) {
+        uint256 min0 = amountsMin.length > 0 ? amountsMin[0] : 0;
+        uint256 min1 = amountsMin.length > 1 ? amountsMin[1] : 0;
+        (uint256 a0, uint256 a1) = _withdraw(shares, to, min0, min1, deadline);
+        amounts = new uint256[](2);
+        amounts[0] = a0;
+        amounts[1] = a1;
+    }
+
+    function previewExitProportional(uint256 shares) external view returns (uint256[] memory amounts) {
+        (uint256 a0, uint256 a1) = _previewWithdraw(shares);
+        amounts = new uint256[](2);
+        amounts[0] = a0;
+        amounts[1] = a1;
+    }
+
+    function exitSingleAssetExactBptIn(
+        address tokenOut,
+        uint256 sharesIn,
+        address to,
+        uint256 amountOutMin,
+        uint256 deadline
+    ) external nonReentrant returns (uint256 amountOut) {
+        amountOut = _exitSingleAsset(tokenOut, sharesIn, to, deadline);
+        if (amountOut < amountOutMin) revert InsufficientTokenOut();
+    }
+
+    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 sharesIn)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (sharesIn == 0 || !_isLive()) return 0;
+        return _previewExitSingleAsset(tokenOut, sharesIn);
+    }
+
+    function exitSingleAssetExactTokenOut(
+        address tokenOut,
+        uint256 amountOut,
+        address to,
+        uint256 sharesInMax,
+        uint256 deadline
+    ) external pure returns (uint256) {
+        tokenOut;
+        amountOut;
+        to;
+        sharesInMax;
+        deadline;
+        revert InvalidRoute();
+    }
+
+    function previewExitSingleAssetExactTokenOut(address tokenOut, uint256 amountOut)
+        external
+        view
+        returns (uint256)
+    {
+        tokenOut;
+        amountOut;
+        return 0;
+    }
+
+    /// @dev Dual has no DETF self-leg: proportional tokenOut only, no residual swap (H2).
+    function previewBurnToToken(uint256 lpAmount, address tokenOut)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (lpAmount == 0 || !_isLive()) return 0;
+        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+        Repo.Layout storage l = Repo._layout();
+        (uint256 a0, uint256 a1) = _previewWithdraw(lpAmount);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        }
+        if (tokenOut == l.currency0) return a0;
+        if (tokenOut == l.currency1) return a1;
+        return 0;
+    }
+
+    function _exitSingleAsset(address tokenOut, uint256 sharesIn, address to, uint256 deadline)
+        internal
+        returns (uint256 amountOut)
+    {
+        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
+        Repo.Layout storage l = Repo._layout();
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        }
+        (uint256 a0, uint256 a1) = _withdraw(sharesIn, address(this), 0, 0, deadline);
+        bool outIs0 = tokenOut == l.currency0;
+        if (!outIs0 && tokenOut != l.currency1) revert InvalidRoute();
+        if (outIs0) {
+            if (a1 > 0) {
+                uint256 extra = _previewSwapExactIn(false, a1);
+                if (extra > 0) _executeBookSwap(false, a1, extra, address(this));
+            }
+            amountOut = IERC20(l.currency0).balanceOf(address(this));
+            IERC20(l.currency0).safeTransfer(to, amountOut);
+        } else {
+            if (a0 > 0) {
+                uint256 extra = _previewSwapExactIn(true, a0);
+                if (extra > 0) _executeBookSwap(true, a0, extra, address(this));
+            }
+            amountOut = IERC20(l.currency1).balanceOf(address(this));
+            IERC20(l.currency1).safeTransfer(to, amountOut);
+        }
+    }
+
+    function _previewExitSingleAsset(address tokenOut, uint256 sharesIn)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
+        UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+        Repo.Layout storage l = Repo._layout();
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        }
+        (uint256 a0, uint256 a1) = _previewWithdraw(sharesIn);
+        if (tokenOut == l.currency0) {
+            uint256 extra = a1 == 0 ? 0 : _previewSwapExactIn(false, a1);
+            return a0 + extra;
+        }
+        if (tokenOut == l.currency1) {
+            uint256 extra = a0 == 0 ? 0 : _previewSwapExactIn(true, a0);
+            return a1 + extra;
+        }
+        return 0;
+    }
 
 }

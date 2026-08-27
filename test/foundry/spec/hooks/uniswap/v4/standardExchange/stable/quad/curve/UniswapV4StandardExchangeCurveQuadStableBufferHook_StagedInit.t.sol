@@ -26,6 +26,7 @@ import {
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -138,7 +139,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test is
         IDiamondLoupe loupe = IDiamondLoupe(h);
         assertEq(
             loupe.facetAddress(
-                IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinProportional.selector
+                IUniswapV4SeBufferHook.joinProportional.selector
             ),
             address(0)
         );
@@ -238,7 +239,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test is
         );
         assertEq(
             loupe.facetAddress(
-                IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinProportional.selector
+                IUniswapV4SeBufferHook.joinProportional.selector
             ),
             address(hookPkg.LIQUIDITY_FACET())
         );

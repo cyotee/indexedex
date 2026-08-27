@@ -40,6 +40,10 @@ import {
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
@@ -268,5 +272,71 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         return _previewSwapExactOut(zeroForOne, amountOut);
     }
 
+    function tokens() public view returns (address[] memory t) {
+        t = new address[](2);
+        t[0] = Repo._layout().currency0;
+        t[1] = Repo._layout().currency1;
+    }
+
+    function standardExchangeOf(address token) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[token];
+    }
+
+    function syntheticNumeraires() public view returns (address[] memory n) {
+        n = new address[](2);
+        n[0] = Repo._layout().currency0;
+        n[1] = Repo._layout().currency1;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory) {
+        return tokens();
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function isLive() public view returns (bool) {
+        return _isLive();
+    }
+
+    function tradingFeeWad() public pure returns (uint256) {
+        return (Repo.TRADING_FEE_PERCENT * 1e18) / Repo.TRADING_FEE_DENOMINATOR;
+    }
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        public
+        view
+        returns (uint256 amountOut)
+    {
+        if (!_isLive() || amountIn == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return _previewSwapExactIn(zfo, amountIn);
+    }
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        public
+        view
+        returns (uint256 amountIn)
+    {
+        if (!_isLive() || amountOut == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return _previewSwapExactOut(zfo, amountOut);
+    }
+
+    /// @dev Dual has no DETF self-leg. Do not invent Dual-as-DETF-reserve math (H2).
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256)
+    {
+        ctx;
+        if (_classify(numeraire) == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+            return 0;
+        }
+        return 0;
+    }
 
 }

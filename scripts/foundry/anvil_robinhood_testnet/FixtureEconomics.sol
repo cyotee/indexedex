@@ -19,7 +19,6 @@ library FixtureEconomics {
     uint256 internal constant V4_LIQUID_RESERVE = 0.2e18;
     uint256 internal constant DEFAULT_V4_LIQUID_RESERVE_PCT = V4_LIQUID_RESERVE;
 
-    uint24 internal constant SE_WIDTH_MULTIPLIER = 1;
     uint256 internal constant CLAIM_WIDTH_MULTIPLIER = 1;
 
     uint256 internal constant CREATION_PAIR_PER_DETF = 1e18;

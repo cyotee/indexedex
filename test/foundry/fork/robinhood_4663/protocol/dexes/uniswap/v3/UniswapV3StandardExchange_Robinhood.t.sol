@@ -50,7 +50,7 @@ contract UniswapV3StandardExchange_Robinhood_Test is TestBase_Permit2, TestBase_
         require(factory.code.length > 0, "4663 Uniswap V3 factory missing");
         pool = _resolvePool(IUniswapV3Factory(factory));
         pkg = _deployPkg(IUniswapV3Factory(factory));
-        vault = IStandardExchangeProxy(pkg.deployVault(pool, 10));
+        vault = IStandardExchangeProxy(pkg.deployVault(pool));
     }
 
     function _selectRobinhoodFork() internal {

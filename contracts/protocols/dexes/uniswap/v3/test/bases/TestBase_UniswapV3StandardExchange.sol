@@ -45,7 +45,6 @@ contract TestBase_UniswapV3StandardExchange is
     using UniswapV3_Component_FactoryService for IFacet;
     using UniswapV3_Component_FactoryService for IIndexedexManagerProxy;
 
-    uint24 internal constant DEFAULT_WIDTH_MULTIPLIER = 10;
     uint24 internal constant FEE_MEDIUM = 3000;
     uint256 internal constant DEFAULT_V3_LIQUID_RESERVE_PCT = 0.20e18;
 
@@ -122,11 +121,8 @@ contract TestBase_UniswapV3StandardExchange is
         vm.label(address(pool), "V3Pool");
     }
 
-    function _deployVault(IUniswapV3Pool pool, uint24 widthMultiplier)
-        internal
-        returns (IStandardExchangeProxy vault)
-    {
-        vault = IStandardExchangeProxy(uniswapV3StandardExchangeDFPkg.deployVault(pool, widthMultiplier));
+    function _deployVault(IUniswapV3Pool pool) internal returns (IStandardExchangeProxy vault) {
+        vault = IStandardExchangeProxy(uniswapV3StandardExchangeDFPkg.deployVault(pool));
     }
 
     function _seedExternalLiquidity(IUniswapV3Pool pool, uint128 liquidity) internal {

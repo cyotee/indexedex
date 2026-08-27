@@ -1,0 +1,152 @@
+:root {
+  --bg: #07080c;
+  --surface: #151a28;
+  --surface-2: #1c2233;
+  --line: rgba(255, 255, 255, 0.12);
+  --text: #ededed;
+  --muted: #9aa3b2;
+  --accent: #4fd44b;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #000; }
+
+.board {
+  width: 1920px;
+  height: auto;
+  overflow: visible;
+  padding: 28px 40px 36px;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse 62% 42% at 50% 0%, rgba(79, 212, 75, 0.12), transparent 58%),
+    var(--bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 620;
+  letter-spacing: -0.03em;
+}
+
+.lede {
+  margin: 8px 0 0;
+  max-width: 1400px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.brand {
+  margin: 0;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stack-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.band {
+  padding: 12px 14px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(20, 24, 36, 0.78);
+}
+
+.layer-label {
+  margin: 0 0 8px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.three, .two, .reserve-row, .under-row {
+  display: grid;
+  gap: 12px;
+}
+
+.three { grid-template-columns: 1fr 1fr 1fr; }
+.two { grid-template-columns: 1.4fr 1fr; }
+.reserve-row { grid-template-columns: 1fr 1.25fr; }
+.under-row { grid-template-columns: 140px 1.2fr 140px 1.4fr; align-items: stretch; }
+
+.box, .token {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.box.accent {
+  border-color: rgba(79, 212, 75, 0.35);
+  background: rgba(79, 212, 75, 0.07);
+}
+
+.kicker {
+  margin: 0 0 4px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.box h2, .token h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.box p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.token {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-color: rgba(79, 212, 75, 0.4);
+  background: rgba(79, 212, 75, 0.08);
+}
+
+.down {
+  text-align: center;
+  color: var(--accent);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.down::before {
+  content: "↓ ";
+}

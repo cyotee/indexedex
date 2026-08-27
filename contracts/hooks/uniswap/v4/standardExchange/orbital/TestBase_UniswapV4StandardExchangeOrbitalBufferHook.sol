@@ -198,6 +198,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
     function _defaultPkgArgs()
         internal
         view
+        virtual
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
     {
         return IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({

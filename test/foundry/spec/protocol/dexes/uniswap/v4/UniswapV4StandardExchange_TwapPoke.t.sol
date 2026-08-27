@@ -127,7 +127,7 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
             100_000 ether
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(vault));
     }
 
@@ -202,7 +202,7 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
 
     function test_H27_everyVaultSharesPackageOracle() public {
         IStandardExchangeProxy vault2 =
-            IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+            IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
         IUniswapV4StandardExchangeLiquidReserve liquid2 =
             IUniswapV4StandardExchangeLiquidReserve(address(vault2));
         assertEq(address(liquid.twapOracle()), address(twapOracle));
@@ -243,7 +243,7 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         vm.stopPrank();
         flip.setPm(address(uint160(address(poolManager)) + 1));
         vm.expectRevert(IUniswapV4StandardExchangeDFPkg.TwapOraclePoolManagerMismatch.selector);
-        hostilePkg.deployVault(poolKey, 60);
+        hostilePkg.deployVault(poolKey);
     }
 
     function _copyPkgInit() internal view returns (IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit) {

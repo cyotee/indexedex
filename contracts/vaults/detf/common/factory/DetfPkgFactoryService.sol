@@ -21,6 +21,14 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {
+    UniswapV4DetfBondNFTVaultDFPkg,
+    IUniswapV4DetfBondNFTVaultDFPkg
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {UniswapV4DetfDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol";
+import {IUniswapV4DetfDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {RebasingClaimTokenDFPkg, IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {
@@ -47,6 +55,38 @@ library DetfPkgFactoryService {
             )
         );
         vm.label(address(instance), type(DETFNFTVaultDFPkg).name);
+    }
+
+    function deployUniswapV4DetfDFPkg(
+        IVaultRegistryDeployment vaultRegistry,
+        IUniswapV4DetfDFPkg.PkgInit memory pkgInit
+    ) internal returns (IUniswapV4DetfDFPkg instance) {
+        instance = IUniswapV4DetfDFPkg(
+            address(
+                vaultRegistry.deployPkg(
+                    type(UniswapV4DetfDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    abi.encode(type(UniswapV4DetfDFPkg).name)._hash()
+                )
+            )
+        );
+        vm.label(address(instance), type(UniswapV4DetfDFPkg).name);
+    }
+
+    function deployUniswapV4DetfBondNFTVaultDFPkg(
+        IVaultRegistryDeployment vaultRegistry,
+        IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory pkgInit
+    ) internal returns (IUniswapV4DetfBondNFTVaultDFPkg instance) {
+        instance = IUniswapV4DetfBondNFTVaultDFPkg(
+            address(
+                vaultRegistry.deployPkg(
+                    type(UniswapV4DetfBondNFTVaultDFPkg).creationCode,
+                    abi.encode(pkgInit),
+                    abi.encode(type(UniswapV4DetfBondNFTVaultDFPkg).name)._hash()
+                )
+            )
+        );
+        vm.label(address(instance), type(UniswapV4DetfBondNFTVaultDFPkg).name);
     }
 
     function deployRebasingDETFTokenDFPkg(

@@ -3,6 +3,11 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
+    IStandardExchangeMultiAssetLiquidity
+} from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
 import {
@@ -23,21 +28,21 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](32);
-        funcs[0] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewJoinProportional.selector;
-        funcs[1] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinProportional.selector;
-        funcs[2] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewJoinUnbalanced.selector;
-        funcs[3] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinUnbalanced.selector;
-        funcs[4] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewJoinSingleAssetExactIn.selector;
-        funcs[5] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinSingleAssetExactIn.selector;
-        funcs[6] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewJoinSingleAssetExactOut.selector;
-        funcs[7] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.joinSingleAssetExactOut.selector;
-        funcs[8] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewExitProportional.selector;
-        funcs[9] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.exitProportional.selector;
-        funcs[10] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewExitSingleAssetExactBptIn.selector;
-        funcs[11] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.exitSingleAssetExactBptIn.selector;
-        funcs[12] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewExitSingleAssetExactTokenOut.selector;
-        funcs[13] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.exitSingleAssetExactTokenOut.selector;
+        funcs = new bytes4[](35);
+        funcs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+        funcs[1] = IUniswapV4SeBufferHook.joinProportional.selector;
+        funcs[2] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
+        funcs[3] = IStandardExchangeMultiAssetLiquidity.joinUnbalanced.selector;
+        funcs[4] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        funcs[5] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+        funcs[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        funcs[7] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        funcs[8] = IUniswapV4SeBufferHook.previewExitProportional.selector;
+        funcs[9] = IUniswapV4SeBufferHook.exitProportional.selector;
+        funcs[10] = IUniswapV4SeBufferHook.previewExitSingleAssetExactBptIn.selector;
+        funcs[11] = IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector;
+        funcs[12] = IUniswapV4SeBufferHook.previewExitSingleAssetExactTokenOut.selector;
+        funcs[13] = IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut.selector;
         funcs[14] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewDepositSingle.selector;
         funcs[15] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.depositSingle.selector;
         funcs[16] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewWithdrawSingle.selector;
@@ -57,6 +62,9 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet is
         funcs[29] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.exitSingleAssetExactBptInFlexible.selector;
         funcs[30] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewWithdrawSingleFlexible.selector;
         funcs[31] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.withdrawSingleFlexible.selector;
+        funcs[32] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        funcs[33] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[34] = IDetfReserveQuote.previewBurnToToken.selector;
     }
 
     function facetMetadata()

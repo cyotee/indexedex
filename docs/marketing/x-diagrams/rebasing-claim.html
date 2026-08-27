@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rebasing claim token</title>
+    <link rel="stylesheet" href="architecture.css" />
+    <style>
+      .join-row { grid-template-columns: 1fr 1.15fr 1fr; }
+      .earn-row { grid-template-columns: 1.2fr 1fr; }
+      .flow-line {
+        margin-top: 10px;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text);
+      }
+      .flow-line span { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Drill-down · Rebasing claim token</p>
+          <h1>Share in bond rewards without a timed lock</h1>
+          <p class="lede">
+            The rebasing token, or claim token, is how anyone can take part in bond rewards by giving
+            the DETF its own token to buy into liquidity. It owns a Bond NFT, so it earns a portion of
+            all minted $DTF-DETF, like other bond holders, but a lesser amount than timed bonds.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">How you join</p>
+          <div class="three join-row">
+            <div class="box">
+              <p class="kicker">You give</p>
+              <h2>$DTF-DETF</h2>
+              <p>You send the DETF its own token. You are not locking a timed bond. You are funding protocol-owned liquidity.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">The DETF uses it</p>
+              <h2>Buys into the reserve</h2>
+              <p>That $DTF-DETF is deposited so the protocol owns more reserve LP. The book gets DETF liquidity without a buyer’s timed lock.</p>
+              <p class="flow-line">$DTF-DETF in <span>→</span> reserve LP owned by the protocol <span>→</span> you hold claim tokens</p>
+            </div>
+            <div class="box">
+              <p class="kicker">You hold</p>
+              <h2>Rebasing claim tokens</h2>
+              <p>Those tokens are your claim on that protocol-owned liquidity and on the rewards that accrue to its bond.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">It is a bond holder</p>
+          <div class="two earn-row">
+            <div class="box accent">
+              <p class="kicker">Owns a Bond NFT</p>
+              <h2>Token ID 0</h2>
+              <p>The rebasing token owns the protocol Bond NFT. Same reward ledger as other bonds. A portion of all minted $DTF-DETF accrues here, and holders of the claim token share in it.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Vs timed bonds</p>
+              <h2>Lesser share than lockers</h2>
+              <p>Timed bond buyers commit for days and get a larger portion, more for a longer lock. The claim token’s bond has no timed commitment from you, so it earns a lesser amount than those holders.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

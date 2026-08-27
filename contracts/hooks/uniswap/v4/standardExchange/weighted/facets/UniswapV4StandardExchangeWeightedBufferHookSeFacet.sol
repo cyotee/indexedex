@@ -13,6 +13,7 @@ import {
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     UniswapV4StandardExchangeWeightedBufferHookSeTarget,
@@ -23,20 +24,22 @@ contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
         interfaces[1] = type(IStandardExchangeOut).interfaceId;
         interfaces[2] = type(IStandardExchangeMultiAssetLiquidity).interfaceId;
+        interfaces[3] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](7);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
         funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactIn.selector;
         funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactOut.selector;
+        funcs[6] = IDetfReserveQuote.previewSynthetic.selector;
     }
 
     function facetMetadata()

@@ -16,6 +16,7 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
@@ -29,6 +30,27 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
     IStandardExchangeOut
 {
     using SafeERC20 for IERC20;
+
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256 wad)
+    {
+        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
+            return 0;
+        }
+        if (!_isLive()) return 0;
+        address out_ = numeraire;
+        if (out_ == address(0)) {
+            address[] memory n = syntheticNumeraires();
+            if (n.length == 0) return 0;
+            out_ = n[0];
+        }
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 mid_ = (pairOut * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external

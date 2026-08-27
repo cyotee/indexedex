@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mint, burn, supply to bonds</title>
+    <link rel="stylesheet" href="architecture.css" />
+    <style>
+      .mint-row { grid-template-columns: 0.9fr 1.1fr 1.1fr; }
+      .burn-row { grid-template-columns: 0.9fr 1.1fr 1.1fr; }
+      .bond-row { grid-template-columns: 1.15fr 1fr 1fr; }
+      .flow-line {
+        margin-top: 10px;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text);
+      }
+      .flow-line span { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Drill-down · Mint, burn, expansion</p>
+          <h1>Mint and burn on the reserve curve. Bonds get a cut.</h1>
+          <p class="lede">
+            Protocol mint uses the same constant-product curve as the $DTF / $DTF-DETF pool, with an
+            incentive on the payment so minting here beats buying on the market. The $DTF paid is
+            deposited in the SE vault and added to liquidity. Burn is the inverse. Whenever
+            $DTF-DETF is minted, a percentage is minted to bond holders for locking that liquidity.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">Mint</p>
+          <div class="three mint-row">
+            <div class="box">
+              <p class="kicker">User pays</p>
+              <h2>$DTF in</h2>
+              <p>The payment is deposited in the SE vault and added as double-sided liquidity in $DTF / ETH. That is the same vault the reserve already uses as its $DTF book.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Same curve as the reserve</p>
+              <h2>Mint $DTF-DETF + incentive</h2>
+              <p>Price follows the reserve pool’s constant-product curve. An incentive is applied to the payment so the user gets more $DTF-DETF than by buying it on Uniswap.</p>
+              <p class="flow-line">$DTF <span>→</span> SE vault LP <span>→</span> mint $DTF-DETF at CP + incentive</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Why mint here</p>
+              <h2>Better than buying the pool</h2>
+              <p>The market can always buy $DTF-DETF on $DTF / $DTF-DETF. The protocol mint is built to win that flow: same curve, extra DETF on the payment, and the $DTF stays in the vault as LP.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Burn</p>
+          <div class="three burn-row">
+            <div class="box">
+              <p class="kicker">User pays</p>
+              <h2>$DTF-DETF in</h2>
+              <p>The protocol burns that DETF. This is the inverse of mint, not a sale on the Uniswap book.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Same curve, inverse</p>
+              <h2>Pay $DTF out + incentive</h2>
+              <p>Buy-back follows the same reserve constant-product curve. An incentive is applied so the user gets more $DTF than by selling $DTF-DETF on the market. $DTF comes out through the SE vault (zap out).</p>
+              <p class="flow-line">burn $DTF-DETF <span>→</span> SE vault zap out <span>→</span> $DTF at CP + incentive</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Why burn here</p>
+              <h2>Better than selling the pool</h2>
+              <p>Selling on $DTF / $DTF-DETF is always available. Protocol burn is built to win that flow: same curve, extra $DTF on the way out, liquidity pulled from the vault instead of a full market dump.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Bond holders and automatic expansion</p>
+          <div class="three bond-row">
+            <div class="box accent">
+              <p class="kicker">On every mint</p>
+              <h2>A percentage to bonds</h2>
+              <p>Whenever $DTF-DETF is minted, a cut is minted to bond holders. That is the reward for locking liquidity in the reserve. It is not cashing the bond principal.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Automatic expansion</p>
+              <h2>Extra DETF to the same bonds</h2>
+              <p>The protocol can also mint new $DTF-DETF to bond holders without a user mint. Same destination: the bond NFT reward ledger, for liquidity that stays locked.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Who can take it</p>
+              <h2>Claim on the bond NFT</h2>
+              <p>That DETF accrues to the NFT. The owner can claim it while the bond is still locked. Amounts are not guaranteed.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

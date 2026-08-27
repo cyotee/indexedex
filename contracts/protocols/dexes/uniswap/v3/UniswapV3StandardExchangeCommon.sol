@@ -390,7 +390,7 @@ abstract contract UniswapV3StandardExchangeCommon is
         (managedTicks.centerLower, managedTicks.centerUpper) = UniswapV3VaultRepo._getPositionTicks();
     }
 
-    /// @dev D30: one full-range center. `widthMultiplier` does not size ticks. Import uses stored NFT ticks.
+    /// @dev One full-range center. Import uses stored NFT ticks.
     function _deriveManagedTicks() internal view returns (ManagedTicks memory managedTicks) {
         int24 tickSpacing = _pool().tickSpacing();
         managedTicks.centerLower = TickMath.minUsableTick(tickSpacing);

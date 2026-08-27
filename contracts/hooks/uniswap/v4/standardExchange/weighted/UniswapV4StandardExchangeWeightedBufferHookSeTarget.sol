@@ -49,6 +49,7 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookSeTarget
@@ -160,6 +161,29 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
             l.rawReserves[ii] += amountIn;
         }
         _syncVaultReserves();
+    }
+
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256 wad)
+    {
+        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
+            return 0;
+        }
+        if (!_isLive()) return 0;
+        address out_ = numeraire;
+        if (out_ == address(0)) {
+            address[] memory nums_ = syntheticNumeraires();
+            if (nums_.length == 0) return 0;
+            out_ = nums_[0];
+        }
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 den_ = ctx.detfTotalSupply + ctx.pendingExpansion;
+        if (den_ == 0) return 0;
+        uint256 mid_ = (pairOut * 1e18) / den_;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }
 
     /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).

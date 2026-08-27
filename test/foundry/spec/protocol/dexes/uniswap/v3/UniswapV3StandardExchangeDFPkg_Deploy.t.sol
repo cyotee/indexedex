@@ -20,8 +20,6 @@ import {
     UniswapV3StandardExchangeDFPkg,
     IUniswapV3StandardExchangeDFPkg
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
-import {UniswapV3PoolAwareRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3PoolAwareRepo.sol";
-import {UniswapV3VaultRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol";
 import {
     TestBase_UniswapV3StandardExchange
 } from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";
@@ -56,9 +54,9 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
         assertEq(facets[14], address(uniswapV3StandardExchangeOutMultiQueryFacet), "out multi query");
     }
 
-    function test_deployVault_registersAndInitializesPoolAndWidth() public {
+    function test_deployVault_registersAndInitializesPool() public {
         IUniswapV3Pool pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
-        address vault = address(_deployVault(pool, 10));
+        address vault = address(_deployVault(pool));
 
         assertTrue(vault != address(0), "vault deployed");
         assertTrue(indexedexManager.isVault(vault), "registered");
@@ -97,6 +95,6 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
         roguePool.initialize(uint160(uint256(1) << 96));
 
         vm.expectRevert();
-        uniswapV3StandardExchangeDFPkg.deployVault(roguePool, 10);
+        uniswapV3StandardExchangeDFPkg.deployVault(roguePool);
     }
 }

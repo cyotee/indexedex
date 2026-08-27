@@ -108,6 +108,18 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Liquidity is
         assertEq(token1.balanceOf(user) - bal1, got[1]);
     }
 
+    function test_exitProportional_doesNotDumpDustOnCaller() public {
+        uint256 mintShares = _firstMintEqual(100 ether);
+        assertLe(token0.balanceOf(hook), 10, "SE-buffered pair after deposit is dust");
+        uint256[] memory mins = new uint256[](2);
+        uint256 userBefore = token0.balanceOf(user);
+        vm.prank(user);
+        uint256[] memory got =
+            weighted.exitProportional(mintShares / 4, user, mins, block.timestamp + 1 hours);
+        assertEq(token0.balanceOf(user) - userBefore, got[0], "caller not inflated by dust dump");
+        assertLe(token0.balanceOf(hook), 10, "SE-buffered pair after withdraw is dust");
+    }
+
     function test_exitSingleAssetExactTokenOut_d42a() public {
         _firstMintEqual(200 ether);
         uint256 amountOut = 5 ether;

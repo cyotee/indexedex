@@ -8,6 +8,7 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
     UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget,
@@ -22,7 +23,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](11);
+        funcs = new bytes4[](19);
         funcs[0] = IHook.deposit.selector;
         funcs[1] = IHook.depositSingle.selector;
         funcs[2] = IHook.depositWithPermit2Signature.selector;
@@ -34,6 +35,14 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
         funcs[8] = IHook.previewZapSplit.selector;
         funcs[9] = IHook.depositWithSeShares.selector;
         funcs[10] = IHook.previewDepositWithSeShares.selector;
+        funcs[11] = IUniswapV4SeBufferHook.joinProportional.selector;
+        funcs[12] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+        funcs[13] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[14] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        funcs[15] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+        funcs[16] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        funcs[17] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        funcs[18] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
     }
 
     function facetMetadata()

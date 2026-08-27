@@ -980,8 +980,8 @@ abstract contract UniswapV4StandardExchangeCommon is IUnlockCallback, ISecurePul
     }
 
     /**
-     * @dev D30: one full-range center. `widthMultiplier` does not size ticks.
-     *      Wings unused (zero-width placeholders). Rebalance never recasts ticks (D35).
+     * @dev One full-range center. Wings unused (zero-width placeholders).
+     *      Rebalance never recasts ticks.
      */
     function _deriveManagedTicks() internal view returns (ManagedTicks memory managedTicks) {
         int24 tickSpacing = UniswapV4PoolKeyAwareRepo._tickSpacing();

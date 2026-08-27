@@ -51,7 +51,7 @@ contract UniswapV3StandardExchange_FullRangeBook_Test is TestBase_UniswapV3Stand
         tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
         pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
         _seedExternalLiquidity(pool, 50_000_000e18);
-        vault = _deployVault(pool, DEFAULT_WIDTH_MULTIPLIER);
+        vault = _deployVault(pool);
         liquid = IUniswapV3StandardExchangeLiquidReserve(address(vault));
         inMulti = IStandardExchangeInMulti(address(vault));
         lockCaller = new UniswapV3BoundPoolLockSeCaller(pool);
@@ -138,7 +138,7 @@ contract UniswapV3StandardExchange_FullRangeBook_Test is TestBase_UniswapV3Stand
         (int24 minTick, int24 maxTick) = _fullRangeTicks();
         assertTrue(importedLower != minTick || importedUpper != maxTick, "FR6: imported != full range");
 
-        IStandardExchangeProxy emptyVault = _deployVault(pool, DEFAULT_WIDTH_MULTIPLIER);
+        IStandardExchangeProxy emptyVault = _deployVault(pool);
         address token0 = pool.token0();
         address token1 = pool.token1();
         ERC20PermitMintableStub(token0).mint(address(this), 20 ether);

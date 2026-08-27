@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Single SE DETF architecture</title>
+    <link rel="stylesheet" href="architecture.css" />
+  </head>
+  <body>
+    <article class="board fit" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Example: $DTF / ETH Single SE DETF</p>
+          <h1>Components and who holds what</h1>
+          <p class="lede">
+            Bottom: a Uniswap V4 $DTF / ETH pool, and an SE vault that holds that LP.
+            Middle: the DETF reserve is another Uniswap V4 pool ($DTF / $DTF-DETF) whose hook
+            keeps $DTF in the SE vault and prices the vault token as $DTF.
+            Top: the Bond NFT owns the reserve LP. The DETF token and the rebasing claim talk to that NFT.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">Contracts people call</p>
+          <div class="three">
+            <div class="box">
+              <p class="kicker">DETF token</p>
+              <h2>$DTF-DETF</h2>
+              <p>The DETF contract. Facade in front of the Bond NFT. Mint, burn, and bond go here. It tells the Bond NFT to deposit or withdraw reserve LP.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Rebasing claim token</p>
+              <h2>Owns Bond NFT ID 0</h2>
+              <p>ID 0 is the protocol bond. The rebasing token uses that ID to tell the Bond NFT how to touch protocol-owned liquidity.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">User bonds</p>
+              <h2>Bond NFTs, IDs 1+</h2>
+              <p>Each lock is an NFT. Principal is reserve LP. Rewards accrue on the NFT. Claim takes DETF. It does not cash the principal.</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="down">calls deposit / withdraw LP</div>
+
+        <section class="band">
+          <p class="layer-label">Owns the reserve liquidity</p>
+          <div class="two">
+            <div class="box">
+              <p class="kicker">Bond NFT vault</p>
+              <h2>Holds hook LP</h2>
+              <p>The Bond NFT actually owns the reserve pool LP. Token ID 0 is protocol. User IDs are 1+. The DETF never sits on the LP itself.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Reserve LP</p>
+              <h2>Hook LP token</h2>
+              <p>Fungible claim on the hook’s book: raw $DTF-DETF plus SE vault tokens (the $DTF side).</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="down">owns LP in</div>
+
+        <section class="band">
+          <p class="layer-label">DETF reserve (Single SE constant product buffer hook)</p>
+          <div class="reserve-row">
+            <div class="box">
+              <p class="kicker">Uniswap V4 pool</p>
+              <h2>$DTF ↔ $DTF-DETF</h2>
+              <p>What Uniswap lists as the reserve pool. The hook is this pool’s hook. Swaps are $DTF against the DETF token.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Buffer hook</p>
+              <h2>Holds the SE vault token</h2>
+              <p>Incoming $DTF is deposited into the configured SE vault. $DTF-DETF stays as raw inventory. Rate provider prices the SE vault token as $DTF, so the book is $DTF vs $DTF-DETF.</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="down">$DTF side is the SE vault token. Hook deposits $DTF into the vault.</div>
+
+        <section class="band">
+          <p class="layer-label">Underlying Standard Exchange</p>
+          <div class="under-row">
+            <div class="token">
+              <h2>ETH</h2>
+            </div>
+            <div class="box">
+              <p class="kicker">Uniswap V4 pool</p>
+              <h2>$DTF ↔ ETH</h2>
+              <p>Two-token pool. This is the market the SE vault LPs into.</p>
+            </div>
+            <div class="token">
+              <h2>$DTF</h2>
+            </div>
+            <div class="box accent">
+              <p class="kicker">SE vault</p>
+              <h2>Holds that pool’s LP</h2>
+              <p>So the vault token is a claim on $DTF and ETH. That vault token is what the buffer hook holds as $DTF-side liquidity.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

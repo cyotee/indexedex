@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookRepo
  * @notice Diamond storage for single SE buffer constant-product hook.
@@ -36,6 +40,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookRepo {
         uint256 reentrancyStatus;
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
+        UniswapV4SeBufferHookLegLib.Layout legs;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -69,5 +74,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookRepo {
         l.decimalsCurrency1 = dec1;
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
+        l.legs.detfToken = rawToken_;
+        UniswapV4SeBufferHookLegLib.addPairSe(l.legs, pairToken_, se_);
     }
 }

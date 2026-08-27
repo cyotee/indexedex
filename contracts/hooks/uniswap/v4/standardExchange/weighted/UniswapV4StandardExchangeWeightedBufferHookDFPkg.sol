@@ -42,6 +42,8 @@ import {
 import {
     IUniswapV4StandardExchangeWeightedBufferHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookDFPkg
@@ -137,7 +139,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeWeightedBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](11);
+        interfaces = new bytes4[](13);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -149,6 +151,8 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
         interfaces[8] = type(IStandardVault).interfaceId;
         interfaces[9] = type(IMultiStepOwnable).interfaceId;
         interfaces[10] = HOOK_VAULT_TYPE;
+        interfaces[11] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[12] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {

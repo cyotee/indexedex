@@ -20,6 +20,7 @@ import {ModifyLiquidityParams, SwapParams} from
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IAllowanceTransfer} from
@@ -38,6 +39,10 @@ import {
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookTarget
@@ -216,6 +221,90 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         nonReentrant
         returns (uint256 shares)
     {
+        shares = _joinUnbalancedPairAmounts(amounts, to, sharesMin, deadline);
+    }
+
+    function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
+        public
+        view
+        returns (uint256 shares)
+    {
+        (uint256[] memory edge, bool[] memory isSe) = _accumulateJoin(tokensIn, amounts);
+        if (!_isLive() && Math.countPositive(edge) != Repo._layout().numTokens) {
+            return 0;
+        }
+        if (_anySeShare(isSe)) {
+            uint256[] memory invIn = _edgeToInvPreview(edge, isSe);
+            if (_totalSupply() == 0) {
+                (shares,) = _firstMint(invIn, edge);
+                return shares;
+            }
+            uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+            if (feeWad >= Math.WAD) return 0;
+            return Math.unbalancedJoinShares(
+                _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
+            );
+        }
+        if (_totalSupply() == 0) {
+            (shares,) = _firstMint(_pairToInvPreview(edge), edge);
+            return shares;
+        }
+        return _quoteUnbalancedJoin(edge);
+    }
+
+    function joinUnbalanced(
+        address[] calldata tokensIn,
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) public nonReentrant returns (uint256 shares) {
+        (uint256[] memory edge, bool[] memory isSe) = _accumulateJoin(tokensIn, amounts);
+        _requireFirstJoinFullBook(edge);
+        if (_anySeShare(isSe)) {
+            return _joinUnbalancedFlexible(edge, isSe, to, sharesMin, deadline);
+        }
+        return _joinUnbalancedPairAmounts(edge, to, sharesMin, deadline);
+    }
+
+    function previewBurnToToken(uint256 lpAmount, address tokenOut)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (lpAmount == 0 || _totalSupply() == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        UniswapV4SeBufferHookLegLib.LegKind k =
+            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        }
+        uint256[] memory amounts = previewExitProportional(lpAmount);
+        address detf_ = l.legs.detfToken;
+        for (uint8 i; i < l.numTokens; ++i) {
+            if (amounts[i] == 0) continue;
+            address t = l.tokens[i];
+            if (t == tokenOut) {
+                amountOut += amounts[i];
+            } else if (t == detf_) {
+                continue;
+            } else {
+                try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(t, tokenOut, amounts[i])
+                    returns (uint256 so)
+                {
+                    amountOut += so;
+                } catch {}
+            }
+        }
+    }
+
+    function _joinUnbalancedPairAmounts(
+        uint256[] memory amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) internal returns (uint256 shares) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         Repo.Layout storage l = Repo._layout();
@@ -233,6 +322,92 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         shares = _quoteUnbalancedJoin(amounts);
         if (shares < sharesMin) revert Slippage();
         _commitJoin(amounts, to, shares, false);
+    }
+
+    function _joinUnbalancedFlexible(
+        uint256[] memory edge,
+        bool[] memory isSe,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) internal returns (uint256 shares) {
+        _requireDeadline(deadline);
+        if (to == address(0)) revert ZeroAddress();
+        bool first = _totalSupply() == 0;
+        uint256[] memory invIn = _edgeToInvPreview(edge, isSe);
+        if (first) {
+            _maybeMintProtocolFee();
+            (shares,) = _firstMint(invIn, edge);
+            if (shares < sharesMin) revert Slippage();
+            _commitJoinFlexible(edge, isSe, to, shares, true);
+            return shares;
+        }
+        if (!_isLive()) revert NotLive();
+        _maybeMintProtocolFee();
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        shares = Math.unbalancedJoinShares(
+            _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
+        );
+        if (shares < sharesMin) revert Slippage();
+        _commitJoinFlexible(edge, isSe, to, shares, false);
+    }
+
+    function _accumulateJoin(address[] calldata tokensIn, uint256[] calldata amounts)
+        internal
+        view
+        returns (uint256[] memory edge, bool[] memory isSe)
+    {
+        if (tokensIn.length != amounts.length) {
+            revert IStandardExchangeErrors.InvalidRoute(address(0), address(0));
+        }
+        Repo.Layout storage l = Repo._layout();
+        uint8 n = l.numTokens;
+        edge = new uint256[](n);
+        isSe = new bool[](n);
+        bool[] memory sawPair = new bool[](n);
+        bool[] memory sawSe = new bool[](n);
+        for (uint256 i; i < tokensIn.length; ++i) {
+            if (amounts[i] == 0) continue;
+            UniswapV4SeBufferHookLegLib.LegKind kind =
+                UniswapV4SeBufferHookLegLib.classify(l.legs, tokensIn[i]);
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+                revert IStandardExchangeErrors.InvalidRoute(tokensIn[i], address(0));
+            }
+            uint8 idx;
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Detf) {
+                idx = _tokenIndex(tokensIn[i]);
+                edge[idx] += amounts[i];
+                continue;
+            }
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Pair) {
+                idx = _tokenIndex(tokensIn[i]);
+                if (sawSe[idx]) revert PairAndShareSameLeg();
+                sawPair[idx] = true;
+                edge[idx] += amounts[i];
+                continue;
+            }
+            address pair_ = l.legs.pairOfStandardExchange[tokensIn[i]];
+            idx = _tokenIndex(pair_);
+            if (sawPair[idx]) revert PairAndShareSameLeg();
+            sawSe[idx] = true;
+            isSe[idx] = true;
+            edge[idx] += amounts[i];
+        }
+    }
+
+    function _anySeShare(bool[] memory isSe) internal pure returns (bool) {
+        for (uint256 i; i < isSe.length; ++i) {
+            if (isSe[i]) return true;
+        }
+        return false;
+    }
+
+    function _requireFirstJoinFullBook(uint256[] memory edge) internal view {
+        if (_isLive()) return;
+        if (Math.countPositive(edge) != Repo._layout().numTokens) {
+            revert FirstJoinMustBeFullBook();
+        }
     }
 
     function _quoteUnbalancedJoin(uint256[] memory pairAmounts) internal view returns (uint256 shares) {

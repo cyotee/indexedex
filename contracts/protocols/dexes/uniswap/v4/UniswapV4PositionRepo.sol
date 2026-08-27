@@ -7,7 +7,6 @@ library UniswapV4PositionRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.protocols.dexes.uniswap.v4.position");
     bytes32 internal constant LOWER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.lowerWing");
     bytes32 internal constant UPPER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.upperWing");
-    uint16 internal constant MAX_BPS = 10_000;
 
     enum PositionKind {
         Center,
@@ -23,12 +22,6 @@ library UniswapV4PositionRepo {
         bool created;
     }
 
-    struct StrategyConfig {
-        uint24 widthMultiplier;
-        uint24 centerWidthMultiplier;
-        uint16 activeLiquidityBps;
-    }
-
     struct Storage {
         PositionState centerPosition;
         PositionState lowerWingPosition;
@@ -37,7 +30,6 @@ library UniswapV4PositionRepo {
         uint256 importedPositionTokenId;
         bool importedPositionActive;
         IPositionManager authorizedPositionManager;
-        StrategyConfig strategy;
         uint160 lastSqrtPriceX96;
         int24 lastTick;
         uint32 lastTimestamp;
@@ -53,20 +45,14 @@ library UniswapV4PositionRepo {
         return _layout(STORAGE_SLOT);
     }
 
-    function _initialize(Storage storage layout_, uint24 widthMultiplier_, bytes32 salt_) internal {
-        require(widthMultiplier_ >= 1, "widthMultiplier must be >= 1");
-        // D30/D31: ticks are full-range; widthMultiplier is ABI-only. Allocate 100% of
-        // deployable inventory to the center (wings unused).
-        layout_.strategy = StrategyConfig({
-            widthMultiplier: widthMultiplier_, centerWidthMultiplier: 2, activeLiquidityBps: MAX_BPS
-        });
+    function _initialize(Storage storage layout_, bytes32 salt_) internal {
         layout_.centerPosition.salt = salt_;
         layout_.lowerWingPosition.salt = LOWER_WING_SALT;
         layout_.upperWingPosition.salt = UPPER_WING_SALT;
     }
 
-    function _initialize(uint24 widthMultiplier_, bytes32 salt_) internal {
-        _initialize(_layout(), widthMultiplier_, salt_);
+    function _initialize(bytes32 salt_) internal {
+        _initialize(_layout(), salt_);
     }
 
     function _position(Storage storage layout_, PositionKind kind_)
@@ -237,38 +223,6 @@ library UniswapV4PositionRepo {
 
     function _salt(PositionKind kind_) internal view returns (bytes32 salt_) {
         return _salt(_layout(), kind_);
-    }
-
-    function _widthMultiplier(Storage storage layout_) internal view returns (uint24 widthMultiplier_) {
-        return layout_.strategy.widthMultiplier;
-    }
-
-    function _widthMultiplier() internal view returns (uint24 widthMultiplier_) {
-        return _widthMultiplier(_layout());
-    }
-
-    function _centerWidthMultiplier(Storage storage layout_) internal view returns (uint24 centerWidthMultiplier_) {
-        return layout_.strategy.centerWidthMultiplier;
-    }
-
-    function _centerWidthMultiplier() internal view returns (uint24 centerWidthMultiplier_) {
-        return _centerWidthMultiplier(_layout());
-    }
-
-    function _activeLiquidityBps(Storage storage layout_) internal view returns (uint16 activeLiquidityBps_) {
-        return layout_.strategy.activeLiquidityBps;
-    }
-
-    function _activeLiquidityBps() internal view returns (uint16 activeLiquidityBps_) {
-        return _activeLiquidityBps(_layout());
-    }
-
-    function _inactiveLiquidityBps(Storage storage layout_) internal view returns (uint16 inactiveLiquidityBps_) {
-        return MAX_BPS - layout_.strategy.activeLiquidityBps;
-    }
-
-    function _inactiveLiquidityBps() internal view returns (uint16 inactiveLiquidityBps_) {
-        return _inactiveLiquidityBps(_layout());
     }
 
     function _setPoolState(Storage storage layout_, uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {

@@ -120,7 +120,7 @@ contract UniswapV4StandardExchange_MultiJoinExit is TestBase_UniswapV4StandardEx
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(vault));
         inMulti = IStandardExchangeInMulti(address(vault));
         outMulti = IStandardExchangeOutMulti(address(vault));

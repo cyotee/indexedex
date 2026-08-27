@@ -10,6 +10,7 @@ import {
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /// @notice D30 / D89: owner swap + MIN depositSingle while PoolManager is unlocked.
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test is
@@ -84,7 +85,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test
         bytes memory ret = harness.run(
             hook,
             abi.encodeWithSelector(
-                IHook.ownerSwapExactIn.selector,
+                IUniswapV4SeBufferHook.ownerSwapExactIn.selector,
                 address(token1),
                 address(token2),
                 uint256(1 ether),

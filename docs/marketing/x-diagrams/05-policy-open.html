@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Policy vs Open</title>
+    <link rel="stylesheet" href="board.css" />
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="top">
+        <div>
+          <p class="eyebrow">Mint and burn rules</p>
+          <h1>Policy or Open</h1>
+          <p class="lede">
+            Set at deploy. This is about when you may mint or burn against the reserve, not a promise
+            the token stays at a price.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+      <div class="split">
+        <section class="panel">
+          <p class="kicker">Default</p>
+          <h2>Policy</h2>
+          <ul>
+            <li>Mint is allowed when the contract price is above the mint line.</li>
+            <li>Burn is allowed when it is below the burn line.</li>
+            <li>Inside the band, use the market, not primary mint or burn.</li>
+          </ul>
+        </section>
+        <section class="panel">
+          <p class="kicker">Deploy option</p>
+          <h2>Open</h2>
+          <ul>
+            <li>No price restrictions on mint or burn.</li>
+            <li>You can mint and burn regardless of contract price.</li>
+            <li>Fees can still apply. Open is not a peg.</li>
+          </ul>
+        </section>
+      </div>
+      <p class="note">Contract price is the DETF token versus a pair in the reserve, not a dollar price.</p>
+    </article>
+  </body>
+</html>

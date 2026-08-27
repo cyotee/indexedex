@@ -5,6 +5,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget.sol";
@@ -23,11 +25,11 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](32);
+        funcs = new bytes4[](35);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
         funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.joinProportional.selector;
-        funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinUnbalanced.selector;
-        funcs[3] = IUniswapV4StandardExchangeWeightedBufferHook.joinUnbalanced.selector;
+        funcs[2] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
+        funcs[3] = bytes4(keccak256("joinUnbalanced(uint256[],address,uint256,uint256)"));
         funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
         funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.joinSingleAssetExactIn.selector;
         funcs[6] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactOut.selector;
@@ -57,6 +59,9 @@ contract UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet is
         funcs[29] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptInFlexible.selector;
         funcs[30] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleFlexible.selector;
         funcs[31] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleFlexible.selector;
+        funcs[32] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        funcs[33] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[34] = IDetfReserveQuote.previewBurnToToken.selector;
     }
 
     function facetMetadata()

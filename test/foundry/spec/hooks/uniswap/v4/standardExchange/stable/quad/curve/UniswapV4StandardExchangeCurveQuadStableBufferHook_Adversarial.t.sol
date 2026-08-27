@@ -209,7 +209,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
         assertGt(IERC20(hook).balanceOf(feeTo_), before_, "feeTo got protocol shares");
     }
 
-    /// @notice H1: pre-live swap preview reverts.
+    /// @notice H2: pre-live swap preview returns 0 (empty/unquotable views).
     function test_H1_preLive_swapReverts() public {
         // fresh hook with zero supply
         _deployHookWithArgs(_defaultPkgArgs());
@@ -218,8 +218,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Adversarial is TestB
         _fundAndApprove(token2);
         _fundAndApprove(token3);
         assertEq(IERC20(hook).totalSupply(), 0);
-        vm.expectRevert();
-        quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
+        assertEq(quad.previewSwapExactIn(address(token0), address(token1), 1 ether), 0);
     }
 
     /* ---------------------------------------------------------------------- */

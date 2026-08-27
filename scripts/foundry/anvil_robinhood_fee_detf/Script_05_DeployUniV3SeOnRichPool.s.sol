@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
-import {FixtureEconomics} from "./FixtureEconomics.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -44,7 +43,6 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
 
     IUniswapV3StandardExchangeDFPkg private uniV3SePkg;
     address private uniV3Se_rich;
-    uint24 private widthMultiplier;
     address private rich;
     address private pool;
     address private weth;
@@ -62,13 +60,9 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
             return;
         }
 
-        widthMultiplier = FixtureEconomics.v3SeWidthMultiplier();
-
         vm.startBroadcast();
         _deployPkg();
-        uniV3Se_rich = address(
-            IStandardExchangeProxy(uniV3SePkg.deployVault(IUniswapV3Pool(pool), widthMultiplier))
-        );
+        uniV3Se_rich = address(IStandardExchangeProxy(uniV3SePkg.deployVault(IUniswapV3Pool(pool))));
         vm.label(uniV3Se_rich, "uniV3Se_rich");
         vm.stopBroadcast();
 
@@ -99,7 +93,6 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         if (!okPkg || !okSe || pkg.code.length == 0 || se.code.length == 0) return false;
         uniV3SePkg = IUniswapV3StandardExchangeDFPkg(pkg);
         uniV3Se_rich = se;
-        widthMultiplier = FixtureEconomics.v3SeWidthMultiplier();
         return true;
     }
 
@@ -156,7 +149,6 @@ contract Script_05_DeployUniV3SeOnRichPool is DeploymentBase {
         json = vm.serializeAddress("univ3se", "rich", rich);
         json = vm.serializeAddress("univ3se", "pool", pool);
         json = vm.serializeAddress("univ3se", "weth", weth);
-        json = vm.serializeUint("univ3se", "widthMultiplier", uint256(widthMultiplier));
         json = vm.serializeUint("univ3se", "chainId", block.chainid);
         _writeJson(json, ARTIFACT_FILE);
     }

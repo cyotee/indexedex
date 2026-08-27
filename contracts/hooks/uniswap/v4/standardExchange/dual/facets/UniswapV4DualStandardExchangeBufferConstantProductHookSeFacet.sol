@@ -7,6 +7,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /**
  * @title UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet
@@ -27,11 +28,13 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](4);
+        funcs = new bytes4[](6);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
+        funcs[4] = IUniswapV4SeBufferHook.ownerSwapExactIn.selector;
+        funcs[5] = IUniswapV4SeBufferHook.ownerSwapExactOut.selector;
     }
 
     function facetMetadata()

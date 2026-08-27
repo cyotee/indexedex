@@ -7,7 +7,7 @@ const SAMPLE_DETF = '0xd31fe4f8d93a373fb08ecf6a955095f8b3d27117'
 
 test.describe('App routes & redirects (DTF)', () => {
   test('home, explore, create, you, learn, earn load', async ({ walletPage }) => {
-    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn', '/insights']) {
+    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn', '/insights', '/protocol']) {
       const res = await walletPage.goto(path)
       expect(res?.ok() || res?.status() === 304).toBeTruthy()
       await expect(walletPage.locator('body')).not.toBeEmpty()
@@ -19,6 +19,20 @@ test.describe('App routes & redirects (DTF)', () => {
     await expect(walletPage.getByTestId('official-dtf-token')).toHaveText(
       'The official fee-accruing token is $DTF at 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01.',
     )
+  })
+
+  test('/protocol shows fee oracle owner', async ({ walletPage }) => {
+    await walletPage.goto('/protocol')
+    await expect(walletPage.getByRole('heading', { name: 'Protocol fees' })).toBeVisible()
+    await expect(walletPage.getByTestId('protocol-identity')).toBeVisible()
+    await expect(walletPage.getByTestId('protocol-globals')).toBeVisible()
+    await expect(walletPage.getByTestId('protocol-owner')).toBeVisible()
+  })
+
+  test('/admin redirects to protocol', async ({ walletPage }) => {
+    await walletPage.goto('/admin')
+    await walletPage.waitForURL(/protocol/, { timeout: 15_000 })
+    expect(walletPage.url()).toMatch(/protocol/)
   })
 
   test('/mint is gone', async ({ walletPage }) => {

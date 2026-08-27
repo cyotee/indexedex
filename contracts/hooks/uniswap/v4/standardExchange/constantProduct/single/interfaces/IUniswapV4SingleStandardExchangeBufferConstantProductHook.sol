@@ -2,12 +2,18 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title IUniswapV4SingleStandardExchangeBufferConstantProductHook
- * @notice Single SE + rawToken CP buffer hook surface (LP + SE In/Out + vault views).
+ * @notice Single SE + rawToken CP buffer hook. DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote.
+ * @dev Family deposit/withdraw names remain so existing CP DETF still type-checks until Stage 07.
  */
-interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
+interface IUniswapV4SingleStandardExchangeBufferConstantProductHook is
+    IUniswapV4SeBufferHook,
+    IDetfReserveQuote
+{
     event Deposit(
         address indexed sender,
         address indexed to,
@@ -85,7 +91,6 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
     function seClaimSupply() external view returns (uint256);
     function reserveCurrency0() external view returns (uint256);
     function reserveCurrency1() external view returns (uint256);
-    function isLive() external view returns (bool);
     function isZapEligible() external view returns (bool);
 
     // --- Fees ---
@@ -195,24 +200,7 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook {
 
     function previewSwapExactOut(bool zeroForOne, uint256 amountOut) external view returns (uint256 amountIn);
 
-    /// @notice D89 / D30: owner exact-in on the same book and 0.3% fee as public swaps. Internal settlement (no nested unlock).
-    function ownerSwapExactIn(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 minAmountOut,
-        uint256 deadline
-    ) external returns (uint256 amountOut);
-
-    /// @notice D89 / D30: owner exact-out on the same book and 0.3% fee as public swaps. Internal settlement (no nested unlock).
-    function ownerSwapExactOut(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountOut,
-        uint256 maxAmountIn,
-        uint256 deadline
-    ) external returns (uint256 amountIn);
-
     // LP ERC-20, IBasicVault, IStandardVault: shared diamond facets (ERC20 / MultiAsset Basic+Standard).
     // Do not redeclare them here — use IERC20 / IBasicVault / IStandardVault on the proxy.
+    // ownerSwapExactIn/Out and isLive come from IUniswapV4SeBufferHook.
 }

@@ -40,11 +40,17 @@ import {
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
 
 /// @title UniswapV4StandardExchangeOrbitalBufferHookHooksTarget
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon, IHooks {
     using SafeERC20 for IERC20;
+    using AddressSetRepo for AddressSet;
 
     function poolManager() public view returns (IPoolManager) {
         return IPoolManager(Repo._layout().poolManager);
@@ -329,6 +335,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         view
         returns (uint256 amountOut)
     {
+        if (amountIn == 0 || !_isLive()) return 0;
         return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
     }
 
@@ -338,9 +345,78 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         view
         returns (uint256 amountIn)
     {
+        if (amountOut == 0 || !_isLive()) return 0;
         return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
     }
 
+    function tokens() public view returns (address[] memory t) {
+        Repo.Layout storage l = Repo._layout();
+        t = new address[](3);
+        t[0] = l.token0;
+        t[1] = l.token1;
+        t[2] = l.token2;
+    }
 
+    function standardExchangeOf(address token) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[token];
+    }
 
+    function syntheticNumeraires() public view returns (address[] memory n) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 count_;
+        if (l.legs.pairTokens._contains(l.token0)) count_++;
+        if (l.legs.pairTokens._contains(l.token1)) count_++;
+        if (l.legs.pairTokens._contains(l.token2)) count_++;
+        n = new address[](count_);
+        uint256 w_;
+        if (l.legs.pairTokens._contains(l.token0)) n[w_++] = l.token0;
+        if (l.legs.pairTokens._contains(l.token1)) n[w_++] = l.token1;
+        if (l.legs.pairTokens._contains(l.token2)) n[w_++] = l.token2;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory) {
+        return tokens();
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function tradingFeeWad() public view returns (uint256) {
+        return IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
+    }
+
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256 wad)
+    {
+        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
+            return 0;
+        }
+        if (!_isLive()) return 0;
+        address out_ = _resolveNumeraire(numeraire);
+        if (out_ == address(0)) return 0;
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 mid_ = (pairOut * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    function _resolveNumeraire(address numeraire) private view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        if (numeraire == address(0)) {
+            if (l.legs.pairTokens._contains(l.token0)) return l.token0;
+            if (l.legs.pairTokens._contains(l.token1)) return l.token1;
+            if (l.legs.pairTokens._contains(l.token2)) return l.token2;
+            return address(0);
+        }
+        UniswapV4SeBufferHookLegLib.LegKind kind_ =
+            UniswapV4SeBufferHookLegLib.classify(l.legs, numeraire);
+        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            return l.legs.pairOfStandardExchange[numeraire];
+        }
+        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Pair) return numeraire;
+        return address(0);
+    }
 }

@@ -146,7 +146,6 @@ export function SeVaultSlot({
   const [fee, setFee] = useState(3000)
   const [tickSpacing, setTickSpacing] = useState(60)
   const [hooks, setHooks] = useState<string>(ZERO_ADDRESS)
-  const [width, setWidth] = useState('1')
   const [initPrice, setInitPrice] = useState('1')
   const [status, setStatus] = useState<string | null>(null)
   const [pending, setPending] = useState<'pool' | 'vault' | null>(null)
@@ -286,12 +285,6 @@ export function SeVaultSlot({
   const v4SlotLive = slot0IsInitialized(
     Array.isArray(v4Slot0) ? (v4Slot0[0] as bigint) : undefined,
   )
-
-  const widthMul = (() => {
-    const n = Number(width)
-    if (!Number.isFinite(n) || n < 1 || n > 1_000_000) return 1
-    return Math.floor(n)
-  })()
 
   useEffect(() => {
     if (!isBuildSource(source) || version !== 'v4') {
@@ -594,7 +587,6 @@ export function SeVaultSlot({
         setConfirmedPoolKey(pairKey)
         setStatus('Pool is ready. Deploy the SE vault next.')
       } else {
-        const w = widthMul as number
         let vault: Address | undefined
         if (version === 'v4') {
           if (!platform.uniV4SePkg) throw new Error('No Uniswap V4 SE package on this network.')
@@ -610,7 +602,7 @@ export function SeVaultSlot({
               address: platform.uniV4SePkg,
               abi: V4_SE_PKG_ABI,
               functionName: 'deployVault',
-              args: [v4Key, w],
+              args: [v4Key],
               account: address,
               gas: 16_000_000n,
             })
@@ -621,7 +613,7 @@ export function SeVaultSlot({
             address: platform.uniV4SePkg,
             abi: V4_SE_PKG_ABI,
             functionName: 'deployVault',
-            args: [v4Key, w],
+            args: [v4Key],
             ...(gas && gas > 1_000_000n ? { gas } : {}),
           })
           setStatus('Waiting for the vault transaction…')
@@ -648,7 +640,7 @@ export function SeVaultSlot({
             address: platform.uniV3SePkg,
             abi: V3_SE_PKG_ABI,
             functionName: 'deployVault',
-            args: [pool, w],
+            args: [pool],
           })
           setStatus('Waiting for the vault transaction…')
           const receipt = await waitMined(submittedHash)
@@ -1240,20 +1232,6 @@ export function SeVaultSlot({
           )}
 
           <p className="landing-section-label mt-6">SE vault</p>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-              Width multiplier
-              <input
-                className={`${inputClass} font-mono`}
-                value={width}
-                onChange={(e) => setWidth(e.target.value)}
-                inputMode="numeric"
-              />
-              <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-                How many tick spacings wide the vault position is. 1 is the default.
-              </span>
-            </label>
-          </div>
 
           <div className="mt-4 space-y-1 text-sm text-[var(--text-muted,#9aa3b2)]">
             {!v3Ready ? <p>No Uniswap V3 factory on this network.</p> : null}

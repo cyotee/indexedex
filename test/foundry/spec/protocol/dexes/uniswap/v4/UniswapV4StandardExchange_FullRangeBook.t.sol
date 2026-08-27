@@ -210,7 +210,7 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(vault));
         inMulti = IStandardExchangeInMulti(address(vault));
     }
@@ -403,7 +403,7 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
             )
         );
         vm.stopPrank();
-        return IStandardExchangeProxy(boundPkg_.deployVault(poolKey, 60));
+        return IStandardExchangeProxy(boundPkg_.deployVault(poolKey));
     }
 
     function _token0() internal view returns (address) {

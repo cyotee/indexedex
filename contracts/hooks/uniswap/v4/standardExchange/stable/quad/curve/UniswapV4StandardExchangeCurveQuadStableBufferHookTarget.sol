@@ -33,6 +33,10 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookTarget
@@ -42,6 +46,7 @@ import {
  */
 abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     using SafeERC20 for IERC20;
+    using AddressSetRepo for AddressSet;
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 
@@ -68,6 +73,16 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
     /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
     error SeShareNotBuffered();
     error ArrayLengthMismatch();
+    error PairAndShareSameLeg();
+    error FirstJoinMustBeFullBook();
+    error NotLive();
+
+    struct JoinUnbalancedAcc {
+        uint256[4] edge;
+        bool[4] isSeShare;
+        bool[4] filled;
+        bool anySe;
+    }
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -210,6 +225,30 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         return Math.isFullBookReserves(_nativeAll());
     }
 
+    function isLive() public view returns (bool) {
+        return _isLive();
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory) {
+        return tokens();
+    }
+
+    function standardExchangeOf(address token_) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[token_];
+    }
+
+    function syntheticNumeraires() public view returns (address[] memory) {
+        return Repo._layout().legs.pairTokens._asArray();
+    }
+
+    function tradingFeeWad() public view returns (uint256) {
+        return dexSwapFee();
+    }
+
     function pairDoorCount() public pure returns (uint256) {
         return PairPoolLib.pairDoorCount();
     }
@@ -257,6 +296,107 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
 
     function _tokenIndex(address t) internal view returns (uint8) {
         return Repo._indexOf(Repo._layout(), t);
+    }
+
+    function _isLive() internal view returns (bool) {
+        return Math.isFullBookReserves(_nativeAll());
+    }
+
+    function _accumulateJoin(address[] memory tokensIn, uint256[] memory amounts)
+        internal
+        view
+        returns (JoinUnbalancedAcc memory acc)
+    {
+        if (tokensIn.length != amounts.length || tokensIn.length == 0) {
+            revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+        }
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < tokensIn.length; ++i) {
+            if (amounts[i] == 0) revert ZeroAmount();
+            UniswapV4SeBufferHookLegLib.LegKind kind =
+                UniswapV4SeBufferHookLegLib.classify(l.legs, tokensIn[i]);
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+                revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+            }
+            uint8 idx;
+            bool isSe;
+            if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+                idx = _tokenIndex(l.legs.pairOfStandardExchange[tokensIn[i]]);
+                isSe = true;
+            } else {
+                idx = _tokenIndex(tokensIn[i]);
+            }
+            if (acc.filled[idx]) revert PairAndShareSameLeg();
+            acc.filled[idx] = true;
+            acc.edge[idx] = amounts[i];
+            acc.isSeShare[idx] = isSe;
+            if (isSe) acc.anySe = true;
+        }
+    }
+
+    function _requireFirstJoinFullBook(JoinUnbalancedAcc memory acc) internal view {
+        if (_isLive()) return;
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (!acc.filled[i]) revert FirstJoinMustBeFullBook();
+        }
+    }
+
+    function _tryResolveJoinToken(address tokenIn)
+        internal
+        view
+        returns (bool ok, uint8 idx, bool isSeShare)
+    {
+        UniswapV4SeBufferHookLegLib.LegKind kind =
+            UniswapV4SeBufferHookLegLib.classify(Repo._layout().legs, tokenIn);
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+            return (false, 0, false);
+        }
+        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            idx = _tokenIndex(Repo._layout().legs.pairOfStandardExchange[tokenIn]);
+            return (true, idx, true);
+        }
+        return (true, _tokenIndex(tokenIn), false);
+    }
+
+    function _resolveJoinToken(address tokenIn) internal view returns (uint8 idx, bool isSeShare) {
+        bool ok;
+        (ok, idx, isSeShare) = _tryResolveJoinToken(tokenIn);
+        if (!ok) revert IUniswapV4StandardExchangeCurveQuadStableBufferHook.InvalidRoute();
+    }
+
+    function _seFlags(JoinUnbalancedAcc memory acc) internal pure returns (bool[] memory flags) {
+        flags = new bool[](Repo.N_TOKENS);
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            flags[i] = acc.isSeShare[i];
+        }
+    }
+
+    function _tokensAmountsFromOrdered(uint256[] memory amounts)
+        internal
+        view
+        returns (address[] memory ts, uint256[] memory am)
+    {
+        _requireAmountsLen4(amounts);
+        address[] memory toks = tokens();
+        uint256 n;
+        for (uint256 i; i < Repo.N_TOKENS; ++i) {
+            if (amounts[i] > 0) {
+                unchecked {
+                    ++n;
+                }
+            }
+        }
+        ts = new address[](n);
+        am = new uint256[](n);
+        uint256 w;
+        for (uint256 i; i < Repo.N_TOKENS; ++i) {
+            if (amounts[i] == 0) continue;
+            ts[w] = toks[i];
+            am[w] = amounts[i];
+            unchecked {
+                ++w;
+            }
+        }
     }
 
     function _amp() internal view returns (uint256) {
@@ -545,14 +685,23 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
 
     function _refundBufferedDust() internal {
         Repo.Layout storage l = Repo._layout();
+        address to = msg.sender;
         for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            if (l.standardExchanges[i] == address(0)) continue;
-            uint256 bal = IERC20(l.tokens[i]).balanceOf(address(this));
-            if (bal > 0 && bal <= Repo.MAX_DUST_WEI) {
-                // leave tiny dust
-            } else if (bal > Repo.MAX_DUST_WEI) {
-                IERC20(l.tokens[i]).safeTransfer(msg.sender, bal);
+            address se = l.standardExchanges[i];
+            if (se == address(0)) continue;
+            IERC20 pair_ = IERC20(l.tokens[i]);
+            uint256 bal = pair_.balanceOf(address(this));
+            if (bal <= Repo.MAX_DUST_WEI) continue;
+            uint256 excess = bal - Repo.MAX_DUST_WEI;
+            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
+            if (preview > 0) {
+                _bufferToken(i, excess);
+                bal = pair_.balanceOf(address(this));
+                if (bal <= Repo.MAX_DUST_WEI) continue;
+                excess = bal - Repo.MAX_DUST_WEI;
             }
+            if (to == address(0) || to == address(this)) continue;
+            pair_.safeTransfer(to, excess);
         }
     }
 

@@ -33,6 +33,17 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Liquidity is TestBas
         assertEq(IERC20(hook).totalSupply(), supply - burn);
     }
 
+    function test_exitProportional_doesNotDumpDustOnCaller() public {
+        uint256 shares = _firstMintEqual(500 ether);
+        assertLe(token0.balanceOf(hook), 10, "SE-buffered pair after deposit is dust");
+        uint256[] memory mins = new uint256[](4);
+        uint256 userBefore = token0.balanceOf(user);
+        vm.prank(user);
+        uint256[] memory out = quad.exitProportional(shares / 2, user, mins, block.timestamp + 1);
+        assertEq(token0.balanceOf(user) - userBefore, out[0], "caller not inflated by dust dump");
+        assertLe(token0.balanceOf(hook), 10, "SE-buffered pair after withdraw is dust");
+    }
+
     function test_depositSingle_withdrawSingle_previewEqualsExec() public {
         _firstMintEqual(500 ether);
         uint256 pShares = quad.previewDepositSingle(address(token1), 20 ether);

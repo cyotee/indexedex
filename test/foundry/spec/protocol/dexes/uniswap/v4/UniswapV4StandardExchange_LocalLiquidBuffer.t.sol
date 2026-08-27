@@ -109,7 +109,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(vault));
     }
 
@@ -162,9 +162,10 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
         uint256 amountIn = 5 ether;
         // L-GAPS-9: honest path is in-call transferFrom (!pretransferred). Transfer-before-call
         // + pretransferred=true is outside the pull window and free-credits inventory.
-        tokenA.mint(address(unlockCaller), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(unlockCaller), amountIn);
         vm.prank(address(unlockCaller));
-        tokenA.approve(address(vault), amountIn);
+        t0.approve(address(vault), amountIn);
 
         uint256 shares = unlockCaller.runExchangeIn(
             address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
@@ -257,9 +258,10 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T6_blockedDirectSwap_reverts() public {
         uint256 amountIn = 1e15;
-        tokenA.mint(address(unlockCaller), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(unlockCaller), amountIn);
         vm.prank(address(unlockCaller));
-        tokenA.approve(address(vault), amountIn);
+        t0.approve(address(vault), amountIn);
 
         // In-session direct swap must not open nested unlock (product gate), independent of pull.
         vm.expectRevert();
@@ -271,8 +273,9 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     function test_T7_idleDirectSwap_thenRebalance() public {
         _bootstrapDeposit(20 ether);
         uint256 amountIn = 1e15;
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(this), amountIn);
+        t0.approve(address(vault), amountIn);
         uint256 outAmt =
             vault.exchangeIn(IERC20(_token0()), amountIn, IERC20(_token1()), 0, address(this), false, _deadline());
         assertGt(outAmt, 0, "swap out");
@@ -281,8 +284,9 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T8_previewEqualsExec_freeZapIn() public {
         uint256 amountIn = 3 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(this), amountIn);
+        t0.approve(address(vault), amountIn);
         uint256 preview = vault.previewExchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)));
         uint256 exec =
             vault.exchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline());
@@ -292,8 +296,9 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     function test_T8b_previewEqualsExec_freeZapIn_withRebalance() public {
         _bootstrapDeposit(10 ether);
         uint256 amountIn = 5 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(this), amountIn);
+        t0.approve(address(vault), amountIn);
         uint256 preview = vault.previewExchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)));
         uint256 exec =
             vault.exchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline());
@@ -337,9 +342,10 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition() public {
         uint256 amountIn = 8 ether;
-        tokenA.mint(address(unlockCaller), amountIn);
+        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+        t0.mint(address(unlockCaller), amountIn);
         vm.prank(address(unlockCaller));
-        tokenA.approve(address(vault), amountIn);
+        t0.approve(address(vault), amountIn);
 
         uint256 shares = unlockCaller.runExchangeIn(
             address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
@@ -409,7 +415,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
         );
         seeder.addLiquidity(hk, tickLower, tickUpper, liq);
 
-        IStandardExchangeProxy hVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(hk, 60));
+        IStandardExchangeProxy hVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(hk));
         hostile.setAttackTarget(address(hVault), Currency.unwrap(hk.currency0) == address(hostile));
 
         uint256 amountIn = 1 ether;

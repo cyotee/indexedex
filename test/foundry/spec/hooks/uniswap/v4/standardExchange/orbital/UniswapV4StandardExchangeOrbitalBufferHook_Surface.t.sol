@@ -13,6 +13,8 @@ import {
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
@@ -72,9 +74,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IHook.rawReserve.selector), "J1 rawReserve");
         assertTrue(_contains(funcs_, IHook.seClaim.selector), "J1 seClaim");
         assertTrue(_contains(funcs_, IHook.effectiveReserve.selector), "J1 effectiveReserve");
-        assertTrue(_contains(funcs_, IHook.previewSwapExactIn.selector), "J1 previewSwapExactIn");
-        assertTrue(_contains(funcs_, IHook.previewSwapExactOut.selector), "J1 previewSwapExactOut");
-        assertEq(funcs_.length, 37, "J1 HooksFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewSwapExactIn.selector), "J1 previewSwapExactIn");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewSwapExactOut.selector), "J1 previewSwapExactOut");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector), "J1 firstJoinMustBeFullBook");
+        assertEq(funcs_.length, 45, "J1 HooksFacet facetFuncs length");
     }
 
     function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {
@@ -86,7 +91,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IHook.previewZapSplit.selector), "J1 previewZapSplit");
         assertTrue(_contains(funcs_, IHook.depositFlexible.selector), "J1 depositFlexible");
         assertTrue(_contains(funcs_, IHook.previewDepositFlexible.selector), "J1 previewDepositFlexible");
-        assertEq(funcs_.length, 7, "J1 DepositFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
+        assertEq(funcs_.length, 15, "J1 DepositFacet facetFuncs length");
     }
 
     function test_J1_withdraw_targetSelectors_subseteq_facetFuncs() public view {
@@ -95,7 +102,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IHook.previewRemoveLiquidity.selector), "J1 previewRemoveLiquidity");
         assertTrue(_contains(funcs_, IHook.withdrawFlexible.selector), "J1 withdrawFlexible");
         assertTrue(_contains(funcs_, IHook.previewWithdrawFlexible.selector), "J1 previewWithdrawFlexible");
-        assertEq(funcs_.length, 4, "J1 WithdrawFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.exitProportional.selector), "J1 exitProportional");
+        assertTrue(_contains(funcs_, IDetfReserveQuote.previewBurnToToken.selector), "J1 previewBurnToToken");
+        assertEq(funcs_.length, 11, "J1 WithdrawFacet facetFuncs length");
     }
 
     function test_J1_se_targetSelectors_subseteq_facetFuncs() public view {
@@ -104,8 +113,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "J1 exchangeIn");
         assertTrue(_contains(funcs_, IStandardExchangeOut.previewExchangeOut.selector), "J1 previewExchangeOut");
         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
-        assertTrue(_contains(funcs_, IHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
-        assertTrue(_contains(funcs_, IHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
         assertEq(funcs_.length, 6, "J1 SeFacet facetFuncs length");
     }
 

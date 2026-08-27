@@ -156,7 +156,7 @@ contract UniV4DetfRebasingClaimDFPkg is IUniV4DetfRebasingClaimDFPkg {
             args.widthMultiplier,
             args.owner
         );
-        UniswapV4PositionRepo._initialize(args.widthMultiplier, keccak256("univ4.detf.rebasing.center"));
+        UniswapV4PositionRepo._initialize(keccak256("univ4.detf.rebasing.center"));
         UniV4DetfRebasingClaimRepo._clearOwner();
     }
 

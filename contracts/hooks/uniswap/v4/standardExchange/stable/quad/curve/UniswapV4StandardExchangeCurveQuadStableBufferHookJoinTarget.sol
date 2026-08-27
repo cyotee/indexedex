@@ -146,7 +146,8 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget i
     /* ----------------------- firm: unbalanced join -------------------------- */
 
     function previewJoinUnbalanced(uint256[] calldata amounts) public view returns (uint256 shares) {
-        return _quoteUnbalancedJoin(amounts, _previewSupplyAfterProtocolMint());
+        (address[] memory ts, uint256[] memory am) = _tokensAmountsFromOrdered(amounts);
+        return _previewJoinUnbalanced(ts, am);
     }
 
     function joinUnbalanced(uint256[] calldata amounts, address to, uint256 sharesMin, uint256 deadline)
@@ -155,23 +156,103 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget i
         nonReentrant
         returns (uint256 shares)
     {
+        (address[] memory ts, uint256[] memory am) = _tokensAmountsFromOrdered(amounts);
+        shares = _joinUnbalanced(ts, am, to, sharesMin, deadline);
+    }
+
+    function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
+        public
+        view
+        returns (uint256 shares)
+    {
+        return _previewJoinUnbalanced(tokensIn, amounts);
+    }
+
+    function _previewJoinUnbalanced(address[] memory tokensIn, uint256[] memory amounts)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
+        if (!_isLive()) {
+            for (uint8 i; i < Repo.N_TOKENS; ++i) {
+                if (!acc.filled[i]) return 0;
+            }
+        }
+        uint256[] memory used = Math.toDynamic(acc.edge);
+        uint256 supply = _previewSupplyAfterProtocolMint();
+        if (acc.anySe) {
+            bool[] memory flags = _seFlags(acc);
+            if (supply == 0) {
+                (shares,) = _computeJoinProportionalFlexible(used, flags, 0);
+                return shares;
+            }
+            return _quoteUnbalancedJoinEdge(acc.edge, flags, supply);
+        }
+        if (supply == 0) {
+            (shares,) = _computeJoinProportional(used, 0);
+            return shares;
+        }
+        return _quoteUnbalancedJoin(used, supply);
+    }
+
+    function joinUnbalanced(
+        address[] calldata tokensIn,
+        uint256[] calldata amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) public onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+        shares = _joinUnbalanced(tokensIn, amounts, to, sharesMin, deadline);
+    }
+
+    function _joinUnbalanced(
+        address[] memory tokensIn,
+        uint256[] memory amounts,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) internal returns (uint256 shares) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
-        _requireAmountsLen4(amounts);
+        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
+        _requireFirstJoinFullBook(acc);
         uint256 protocolShares = _maybeMintProtocolFee();
-        if (_totalSupply() == 0) {
-            // First mint: require all four edge amounts > 0 (same as proportional first mint).
-            (shares,) = _computeJoinProportional(amounts, 0);
+        bool first = _totalSupply() == 0;
+        uint256[] memory used = Math.toDynamic(acc.edge);
+        if (acc.anySe) {
+            bool[] memory flags = _seFlags(acc);
+            if (first) {
+                (shares,) = _computeJoinProportionalFlexible(used, flags, 0);
+            } else {
+                if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+                shares = _quoteUnbalancedJoinEdge(acc.edge, flags, _totalSupply());
+            }
             if (shares < sharesMin) revert Slippage();
-            uint256[4] memory used = _toFixed4(amounts);
-            _commitJoin(used, to, shares, true, protocolShares);
+            _commitJoinFlexible(used, flags, to, shares, first, protocolShares);
+            return shares;
+        }
+        if (first) {
+            (shares,) = _computeJoinProportional(used, 0);
+            if (shares < sharesMin) revert Slippage();
+            _commitJoin(acc.edge, to, shares, true, protocolShares);
             return shares;
         }
         if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        shares = _quoteUnbalancedJoin(amounts, _totalSupply());
+        shares = _quoteUnbalancedJoin(used, _totalSupply());
         if (shares < sharesMin) revert Slippage();
-        uint256[4] memory used = _toFixed4(amounts);
-        _commitJoin(used, to, shares, false, protocolShares);
+        _commitJoin(acc.edge, to, shares, false, protocolShares);
+    }
+
+    function _quoteUnbalancedJoinEdge(uint256[4] memory edge, bool[] memory isSe, uint256 supply)
+        internal
+        view
+        returns (uint256 shares)
+    {
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+        uint256[4] memory invIn = _edgeToInvPreview(edge, isSe);
+        shares = Math.unbalancedJoinShares(_invWadAll(), _scaleInv(invIn), _amp(), supply, feeWad);
     }
 
     function _quoteUnbalancedJoin(uint256[] memory pairAmounts, uint256 supply)
@@ -261,6 +342,14 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget i
         view
         returns (uint256 shares)
     {
+        if (!_isLive() || amountIn == 0) return 0;
+        (bool ok, uint8 idx, bool isSeShare) = _tryResolveJoinToken(tokenIn);
+        if (!ok) return 0;
+        if (isSeShare) {
+            return _quoteSingleJoinExactInFlexible(
+                Repo._layout().tokens[idx], amountIn, true, _previewSupplyAfterProtocolMint()
+            );
+        }
         return _quoteSingleJoinExactIn(tokenIn, amountIn, _previewSupplyAfterProtocolMint());
     }
 
@@ -302,11 +391,17 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget i
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (amountIn == 0) revert ZeroAmount();
-        if (_totalSupply() == 0 || !Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
+        if (!_isLive()) revert NotLive();
+        (uint8 idx, bool isSeShare) = _resolveJoinToken(tokenIn);
+        if (isSeShare) {
+            shares = _joinSingleAssetExactInFlexible(
+                Repo._layout().tokens[idx], amountIn, true, to, sharesMin, deadline
+            );
+            return shares;
+        }
         uint256 protocolShares = _maybeMintProtocolFee();
         shares = _quoteSingleJoinExactIn(tokenIn, amountIn, _totalSupply());
         if (shares < sharesMin) revert Slippage();
-        uint8 idx = _tokenIndex(tokenIn);
         uint256[4] memory used;
         used[idx] = amountIn;
         _pullAmounts(used);

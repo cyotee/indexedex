@@ -17,7 +17,6 @@ library FixtureEconomics {
     uint256 internal constant DEFAULT_FIRST_BOND_WETH = 1 ether;
     uint256 internal constant DEFAULT_MIN_LOCK = 30 days;
     uint256 internal constant DEFAULT_MAX_LOCK = 180 days;
-    uint24 internal constant V3_SE_WIDTH_MULTIPLIER = 10;
 
     string internal constant CHIR_NAME = "IndexedEx Fee DETF";
     string internal constant CHIR_SYMBOL = "CHIR";
@@ -55,12 +54,5 @@ library FixtureEconomics {
             if (v > 0) return v;
         } catch {}
         return DEFAULT_FIRST_BOND_WETH;
-    }
-
-    function v3SeWidthMultiplier() internal view returns (uint24) {
-        try vm.envUint("UNI_V3_SE_WIDTH_MULTIPLIER") returns (uint256 v) {
-            if (v > 0 && v <= type(uint24).max) return uint24(v);
-        } catch {}
-        return V3_SE_WIDTH_MULTIPLIER;
     }
 }

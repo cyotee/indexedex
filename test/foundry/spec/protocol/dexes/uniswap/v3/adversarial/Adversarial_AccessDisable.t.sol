@@ -42,6 +42,6 @@ contract Adversarial_AccessDisable_Test is TestBase_UniswapV3StandardExchange_Ad
         IUniswapV3Pool rogue = IUniswapV3Pool(other.createPool(t0, t1, FEE_MEDIUM));
         rogue.initialize(uint160(uint256(1) << 96));
         vm.expectRevert();
-        uniswapV3StandardExchangeDFPkg.deployVault(rogue, 10);
+        uniswapV3StandardExchangeDFPkg.deployVault(rogue);
     }
 }

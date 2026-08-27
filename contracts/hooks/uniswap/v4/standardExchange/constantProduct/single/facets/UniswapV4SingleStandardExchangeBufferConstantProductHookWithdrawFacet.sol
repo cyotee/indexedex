@@ -8,6 +8,8 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet is
     UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget,
@@ -22,13 +24,20 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet i
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](13);
         funcs[0] = IHook.withdraw.selector;
         funcs[1] = IHook.withdrawSingle.selector;
         funcs[2] = IHook.previewWithdraw.selector;
         funcs[3] = IHook.previewWithdrawSingle.selector;
         funcs[4] = IHook.withdrawSeShares.selector;
         funcs[5] = IHook.previewWithdrawSeShares.selector;
+        funcs[6] = IUniswapV4SeBufferHook.exitProportional.selector;
+        funcs[7] = IUniswapV4SeBufferHook.previewExitProportional.selector;
+        funcs[8] = IUniswapV4SeBufferHook.exitSingleAssetExactBptIn.selector;
+        funcs[9] = IUniswapV4SeBufferHook.previewExitSingleAssetExactBptIn.selector;
+        funcs[10] = IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut.selector;
+        funcs[11] = IUniswapV4SeBufferHook.previewExitSingleAssetExactTokenOut.selector;
+        funcs[12] = IDetfReserveQuote.previewBurnToToken.selector;
     }
 
     function facetMetadata()

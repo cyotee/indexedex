@@ -1,15 +1,23 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+
 /**
  * @title IUniswapV4DualStandardExchangeBufferConstantProductHook
  * @notice Dual SE buffer + constant-product pricing hook (pair-token pool).
  * @dev LP ERC-20 is the same contract. Liquidity amount0/amount1 = pool currency0/currency1.
  *      Product law: UNISWAP_V4_DUAL_STANDARD_EXCHANGE_BUFFER_CONSTANT_PRODUCT_HOOK_PRD.md v3.12.
- *      B6: depositFlexible / withdrawFlexible accept pair token and/or SE vault share per leg.
- *      M3: diamond also cuts IStandardExchangeIn / IStandardExchangeOut for pair0↔pair1 book swaps.
+ *      DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote. Dual is not a DETF reserve
+ *      (detfToken == address(0); tokens() has no self-leg). Family deposit/withdraw names remain
+ *      as wrappers of join/exit internals. B6: depositFlexible / withdrawFlexible accept pair
+ *      token and/or SE vault share per leg. M3: diamond also cuts IStandardExchangeIn / Out.
  */
-interface IUniswapV4DualStandardExchangeBufferConstantProductHook {
+interface IUniswapV4DualStandardExchangeBufferConstantProductHook is
+    IUniswapV4SeBufferHook,
+    IDetfReserveQuote
+{
     event Deposit(
         address indexed sender,
         address indexed to,

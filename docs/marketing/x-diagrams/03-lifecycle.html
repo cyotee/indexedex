@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DETF lifecycle</title>
+    <link rel="stylesheet" href="board.css" />
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="top">
+        <div>
+          <p class="eyebrow">Lifecycle</p>
+          <h1>Inert until the first bond</h1>
+          <p class="lede">
+            A new DETF does nothing until someone bonds. That first bond turns it live and puts
+            assets into protocol-owned reserve.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+      <div class="steps">
+        <section class="step">
+          <span class="num">1</span>
+          <h2>Deploy</h2>
+          <p>The DETF exists. It is inert. Mint and burn are blocked. No owner can patch it later.</p>
+        </section>
+        <section class="step">
+          <span class="num">2</span>
+          <h2>First bond</h2>
+          <p>Someone locks accepted tokens and receives a bond NFT. The DETF goes live. Protocol-owned reserve starts.</p>
+        </section>
+        <section class="step">
+          <span class="num">3</span>
+          <h2>Use it</h2>
+          <p>Hold the token. Mint and burn against the reserve. Bond more. Claim rewards on a bond you own.</p>
+        </section>
+      </div>
+      <p class="note">After deploy, a DETF instance stays unowned. Bad config means ship a new one.</p>
+    </article>
+  </body>
+</html>

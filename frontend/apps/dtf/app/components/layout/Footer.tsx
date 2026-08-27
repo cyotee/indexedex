@@ -42,6 +42,9 @@ export function Footer() {
             <Link href="/earn" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Vaults
             </Link>
+            <Link href="/protocol" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Protocol
+            </Link>
             <a
               href={docsUrl}
               target="_blank"

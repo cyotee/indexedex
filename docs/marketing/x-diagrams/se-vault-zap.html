@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SE vault zap in and zap out</title>
+    <link rel="stylesheet" href="architecture.css" />
+    <style>
+      .three-cost { grid-template-columns: 1fr 1fr 1fr; }
+      .zap-pair { grid-template-columns: 1fr 1fr; }
+      .flow-line {
+        margin-top: 10px;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text);
+      }
+      .flow-line span { color: var(--accent); }
+      .tiny {
+        margin: 8px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <article class="board fit" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Drill-down · SE vault</p>
+          <h1>Double-sided LP, zap in, zap out</h1>
+          <p class="lede">
+            The SE vault keeps both $DTF and ETH in the Uniswap V4 book so it earns pool swap fees.
+            A single-token deposit is a zap in. Redeeming vault shares is a zap out. That is cheaper
+            than buying the full amount on the pool, because a withdraw already returns part of the token you want.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">What the vault holds</p>
+          <div class="under-row">
+            <div class="token"><h2>ETH</h2></div>
+            <div class="box">
+              <p class="kicker">Uniswap V4 pool</p>
+              <h2>$DTF ↔ ETH</h2>
+              <p>The underlying market. The vault stays in this book on both sides.</p>
+            </div>
+            <div class="token"><h2>$DTF</h2></div>
+            <div class="box accent">
+              <p class="kicker">SE vault</p>
+              <h2>Double-sided LP</h2>
+              <p>Holds the pool’s LP. Maximum exposure to market-maker fees from swaps in that pool. Vault shares are a claim on both tokens.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">One token in, one token out</p>
+          <div class="two zap-pair">
+            <div class="box">
+              <p class="kicker">Deposit · zap in</p>
+              <h2>Pay one token, mint shares</h2>
+              <p class="flow-line">
+                $DTF in <span>→</span> sell some $DTF for ETH <span>→</span> add $DTF + ETH to the pool <span>→</span> mint SE vault shares
+              </p>
+              <p class="tiny">Same path if you pay ETH. The vault does not sit on a single-asset pile. It zaps into both sides.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">Redeem · zap out</p>
+              <h2>Burn shares, take one token</h2>
+              <p class="flow-line">
+                Burn shares <span>→</span> withdraw $DTF + ETH from the pool <span>→</span> swap the other side if needed <span>→</span> pay one token
+              </p>
+              <p class="tiny">The quote is a zap out. You are not owed a full buy on the pool. You are owed a withdraw, then only the leftover trade.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Cost to get $DTF (this is the rate later)</p>
+          <div class="three three-cost">
+            <div class="box">
+              <p class="kicker">No vault</p>
+              <h2>Trade the full amount</h2>
+              <p>Buy all of the $DTF on the $DTF / ETH pool. Swap impact applies to the whole size.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Through the SE vault</p>
+              <h2>Withdraw first, then trade half</h2>
+              <p>Zap out already returns some $DTF from the LP. Only the ETH half needs a swap. Cost to acquire the rest is smaller than a full trade.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">If the vault can pay</p>
+              <h2>No extra trade</h2>
+              <p>If withdraw plus inventory already covers the $DTF due, the vault honors the redemption without swapping. Cost to acquire that amount is zero.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

@@ -42,7 +42,7 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
         tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
         pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
         _seedExternalLiquidity(pool, 50_000_000e18);
-        vault = _deployVault(pool, DEFAULT_WIDTH_MULTIPLIER);
+        vault = _deployVault(pool);
         liquid = IUniswapV3StandardExchangeLiquidReserve(address(vault));
         lockCaller = new UniswapV3BoundPoolLockSeCaller(pool);
         ERC20PermitMintableStub(pool.token0()).mint(address(lockCaller), 100 ether);

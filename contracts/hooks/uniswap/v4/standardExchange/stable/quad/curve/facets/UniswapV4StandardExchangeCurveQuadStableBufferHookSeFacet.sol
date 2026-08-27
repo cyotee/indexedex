@@ -10,6 +10,8 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -23,20 +25,22 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
         interfaces[1] = type(IStandardExchangeOut).interfaceId;
         interfaces[2] = type(IStandardExchangeMultiAssetLiquidity).interfaceId;
+        interfaces[3] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](7);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
-        funcs[4] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.ownerSwapExactIn.selector;
-        funcs[5] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.ownerSwapExactOut.selector;
+        funcs[4] = IUniswapV4SeBufferHook.ownerSwapExactIn.selector;
+        funcs[5] = IUniswapV4SeBufferHook.ownerSwapExactOut.selector;
+        funcs[6] = IDetfReserveQuote.previewSynthetic.selector;
     }
 
     function facetMetadata()

@@ -165,7 +165,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         // Pool with hostile as one leg so vault pulls/pays it on real SE routes.
         hostilePool = _createPoolOneToOne(address(hostile), address(pairToken), FEE_MEDIUM);
         _seedHostilePool(50_000_000e18);
-        hostileVault = _deployVault(hostilePool, DEFAULT_WIDTH_MULTIPLIER);
+        hostileVault = _deployVault(hostilePool);
 
         npm = new NonfungiblePositionManager(address(uniswapV3Factory), address(1), address(new MockTokenDescriptorRe()));
     }
@@ -304,7 +304,7 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         assertGt(liq, 0, "nft liq");
 
         // Fresh empty vault for import (hostileVault may already have inventory from other tests - redeploy).
-        IStandardExchangeProxy importVault = _deployVault(hostilePool, DEFAULT_WIDTH_MULTIPLIER);
+        IStandardExchangeProxy importVault = _deployVault(hostilePool);
 
         bytes memory reentry = abi.encodeCall(
             UniV3SeReentryTarget.reenterImport,

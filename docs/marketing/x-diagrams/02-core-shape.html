@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DETF core shape</title>
+    <link rel="stylesheet" href="board.css" />
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="top">
+        <div>
+          <p class="eyebrow">Inside a DETF</p>
+          <h1>Token, reserve, vaults</h1>
+          <p class="lede">
+            The DETF token is the contract. Behind it is a reserve: the assets that back the token.
+            Vaults underneath run the legs of the basket.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+      <div class="stack">
+        <section class="card">
+          <p class="kicker">DETF token</p>
+          <h2>The diamond is the token</h2>
+          <p>Mint, burn, and bond happen here. People trade this token. There is no separate share contract.</p>
+        </section>
+        <section class="card">
+          <p class="kicker">Reserve</p>
+          <h2>The assets behind the token</h2>
+          <p>A pool that holds the DETF itself plus vault shares. Putting the DETF in that market is how the reserve is managed.</p>
+          <div class="reserve">
+            <div class="leg">
+              <strong>DETF in the pool</strong>
+              <span>The token’s own market leg</span>
+            </div>
+            <div class="leg">
+              <strong>Vault shares</strong>
+              <span>Receipts from the vaults in the basket</span>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <p class="kicker">Vaults</p>
+          <h2>Where the basket works</h2>
+          <p>Each vault holds and moves the underlying tokens. Earn vaults are building blocks a DETF can put in its basket.</p>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

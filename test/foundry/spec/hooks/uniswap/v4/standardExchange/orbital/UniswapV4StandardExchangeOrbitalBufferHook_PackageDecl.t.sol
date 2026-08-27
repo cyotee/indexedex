@@ -13,6 +13,8 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
@@ -80,7 +82,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
 
     function test_facetInterfaces_nineProductionIds() public view {
         bytes4[] memory ids = hookPkg.facetInterfaces();
-        assertEq(ids.length, 10);
+        assertEq(ids.length, 12);
         assertEq(ids[0], type(IERC20).interfaceId);
         assertEq(ids[1], type(IERC20Metadata).interfaceId);
         assertEq(ids[2], type(IERC20Permit).interfaceId);
@@ -91,6 +93,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
         assertEq(ids[7], type(IStandardVault).interfaceId);
         assertEq(ids[8], type(IMultiStepOwnable).interfaceId);
         assertEq(ids[9], bytes4(keccak256("UniswapV4StandardExchangeOrbitalBufferHook")));
+        assertEq(ids[10], type(IUniswapV4SeBufferHook).interfaceId);
+        assertEq(ids[11], type(IDetfReserveQuote).interfaceId);
     }
 
     function test_facetAddresses_ten() public view {

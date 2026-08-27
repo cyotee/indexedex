@@ -90,10 +90,9 @@ interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
 
     struct PkgArgs {
         PoolKey poolKey;
-        uint24 widthMultiplier;
     }
 
-    function deployVault(PoolKey memory poolKey, uint24 widthMultiplier) external returns (address vault);
+    function deployVault(PoolKey memory poolKey) external returns (address vault);
 }
 
 contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
@@ -312,7 +311,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         UniswapV4PoolManagerAwareRepo._initialize(POOL_MANAGER);
         UniswapV4TwapOracleAwareRepo._initialize(TWAP_ORACLE);
         UniswapV4PoolKeyAwareRepo._initialize(decodedArgs.poolKey);
-        UniswapV4PositionRepo._initialize(decodedArgs.widthMultiplier, bytes32(0));
+        UniswapV4PositionRepo._initialize(bytes32(0));
         UniswapV4PositionRepo._setAuthorizedPositionManager(POSITION_MANAGER);
         WETHAwareRepo._initialize(WETH);
 
@@ -358,10 +357,9 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         facets = facetAddresses();
     }
 
-    function deployVault(PoolKey memory poolKey, uint24 widthMultiplier) external override returns (address vault) {
+    function deployVault(PoolKey memory poolKey) external override returns (address vault) {
         vault = VAULT_REGISTRY_DEPLOYMENT.deployVault(
-            IUniswapV4StandardExchangeDFPkg(address(this)),
-            abi.encode(PkgArgs({poolKey: poolKey, widthMultiplier: widthMultiplier}))
+            IUniswapV4StandardExchangeDFPkg(address(this)), abi.encode(PkgArgs({poolKey: poolKey}))
         );
     }
 

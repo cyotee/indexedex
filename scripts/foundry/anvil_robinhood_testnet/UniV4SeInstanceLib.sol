@@ -63,7 +63,7 @@ library UniV4SeInstanceLib {
     ) private returns (address se, address rp) {
         PoolKey memory key = PoolSeedLib.buildKey(tokenA, tokenB);
         PoolSeedLib.initAndSeed(IPoolManager(RobinhoodCanonicalLib.poolManager()), seeder, key, seed, seed);
-        se = s.uniV4SePkg.deployVault(key, FixtureEconomics.SE_WIDTH_MULTIPLIER);
+        se = s.uniV4SePkg.deployVault(key);
         rp = address(s.rateProviderPkg.deployRateProvider(IStandardExchange(se), IERC20(pairToken)));
     }
 

@@ -3,10 +3,9 @@ pragma solidity ^0.8.0;
 
 /**
  * @title UniswapV3VaultRepo
- * @notice Strategy + one vault-owned bound-pool position for Uniswap V3 Standard Exchange vaults.
+ * @notice One vault-owned bound-pool position for Uniswap V3 Standard Exchange vaults.
  * @dev Organic books use Crane V3 `TickMath.minUsableTick` / `maxUsableTick` as the single center.
- *      Imported books keep the NFT ticks as that center. `widthMultiplier` is ABI-only (`>= 1`) and
- *      does not size ticks. Position keys use Uniswap V3 canonical packing:
+ *      Imported books keep the NFT ticks as that center. Position keys use Uniswap V3 canonical packing:
  *      `keccak256(abi.encodePacked(owner, tickLower, tickUpper))`.
  */
 library UniswapV3VaultRepo {
@@ -19,14 +18,8 @@ library UniswapV3VaultRepo {
         bool created;
     }
 
-    /// @dev `widthMultiplier` is required at deploy (`>= 1`) and ignored for tick geometry (D30/D31).
-    struct StrategyConfig {
-        uint24 widthMultiplier;
-    }
-
     struct Storage {
         Position centerPosition;
-        StrategyConfig strategy;
         uint160 lastSqrtPriceX96;
         int24 lastTick;
         uint32 lastTimestamp;
@@ -43,15 +36,6 @@ library UniswapV3VaultRepo {
 
     function _layout() internal pure returns (Storage storage layout_) {
         return _layout(STORAGE_SLOT);
-    }
-
-    function _initialize(Storage storage layout_, uint24 widthMultiplier_) internal {
-        require(widthMultiplier_ >= 1, "widthMultiplier must be >= 1");
-        layout_.strategy = StrategyConfig({widthMultiplier: widthMultiplier_});
-    }
-
-    function _initialize(uint24 widthMultiplier_) internal {
-        _initialize(_layout(), widthMultiplier_);
     }
 
     function _createPositionIfNeeded(Storage storage layout_, int24 tickLower_, int24 tickUpper_) internal {
@@ -129,14 +113,6 @@ library UniswapV3VaultRepo {
     function _getOwnPositionKey() internal view returns (bytes32) {
         (int24 tickLower_, int24 tickUpper_) = _getPositionTicks();
         return _getPositionKey(address(this), tickLower_, tickUpper_);
-    }
-
-    function _strategy() internal view returns (StrategyConfig memory) {
-        return _layout().strategy;
-    }
-
-    function _widthMultiplier() internal view returns (uint24) {
-        return _layout().strategy.widthMultiplier;
     }
 
     function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {

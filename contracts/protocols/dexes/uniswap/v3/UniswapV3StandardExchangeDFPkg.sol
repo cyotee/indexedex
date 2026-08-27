@@ -39,7 +39,6 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {UniswapV3PoolAwareRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3PoolAwareRepo.sol";
 import {UniswapV3FactoryAwareRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3FactoryAwareRepo.sol";
-import {UniswapV3VaultRepo} from "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol";
 import {
     IUniswapV3StandardExchangePositionImport
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol";
@@ -75,10 +74,9 @@ interface IUniswapV3StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
 
     struct PkgArgs {
         IUniswapV3Pool pool;
-        uint24 widthMultiplier;
     }
 
-    function deployVault(IUniswapV3Pool pool, uint24 widthMultiplier) external returns (address vault);
+    function deployVault(IUniswapV3Pool pool) external returns (address vault);
 }
 
 /**
@@ -286,7 +284,6 @@ contract UniswapV3StandardExchangeDFPkg is IUniswapV3StandardExchangeDFPkg {
         Permit2AwareRepo._initialize(PERMIT2);
         UniswapV3FactoryAwareRepo._initialize(UNISWAP_V3_FACTORY);
         UniswapV3PoolAwareRepo._initialize(decodedArgs.pool);
-        UniswapV3VaultRepo._initialize(decodedArgs.widthMultiplier);
 
         string memory name_ = string.concat(
             "UniV3 Vault of (", _symbolOrToken(token0), " / ", _symbolOrToken(token1), " ", _feeLabel(decodedArgs.pool.fee()), ")"
@@ -328,10 +325,9 @@ contract UniswapV3StandardExchangeDFPkg is IUniswapV3StandardExchangeDFPkg {
         facets = facetAddresses();
     }
 
-    function deployVault(IUniswapV3Pool pool, uint24 widthMultiplier) external override returns (address vault) {
+    function deployVault(IUniswapV3Pool pool) external override returns (address vault) {
         vault = VAULT_REGISTRY_DEPLOYMENT.deployVault(
-            IUniswapV3StandardExchangeDFPkg(address(this)),
-            abi.encode(PkgArgs({pool: pool, widthMultiplier: widthMultiplier}))
+            IUniswapV3StandardExchangeDFPkg(address(this)), abi.encode(PkgArgs({pool: pool}))
         );
     }
 

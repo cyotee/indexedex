@@ -78,6 +78,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     /// @notice B6: SE-share flag set on a raw (unbuffered) leg.
     error InvalidSeShareLeg();
     error InvalidRoute(address tokenIn, address tokenOut);
+    error PairAndShareSameLeg();
+    error FirstJoinMustBeFullBook();
 
     event LiquidityAdded(
         address indexed provider,
@@ -150,6 +152,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     function isZapEligible() public view returns (bool) {
         if (_totalSupply() <= Repo.MINIMUM_LIQUIDITY) return false;
+        return _isLive();
+    }
+
+    function isLive() public view returns (bool) {
+        return _isLive();
+    }
+
+    function _isLive() internal view returns (bool) {
         (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
         return e0 > 0 && e1 > 0 && e2 > 0;
     }
@@ -1677,13 +1687,40 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (plan.shares < sharesMin) revert InsufficientSharesOut();
 
         _pullTokenIn(tokenIn, amountIn, permit2Data);
+        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan);
+    }
+
+    /// @dev Zap-in when `amountIn` of `tokenIn` is already on the hook (joinSingleAsset SE unwrap).
+    function _depositSingleFromBalance(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        uint256 sharesMin,
+        uint256 deadline
+    ) internal returns (uint256 shares) {
+        _requireDeadline(deadline);
+        _requireNonZero(amountIn);
+        if (to == address(0)) revert ZeroAddress();
+        _requireZapEligibleOrOwnerMin();
+        if (!_isBound(tokenIn)) revert InvalidPoolToken();
+
+        _maybeMintProtocolFee();
+        ZapPlan memory plan = _planZap(tokenIn, amountIn);
+        if (plan.shares < sharesMin) revert InsufficientSharesOut();
+        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan);
+    }
+
+    function _executeDepositSinglePlan(
+        address tokenIn,
+        uint256 amountIn,
+        address to,
+        ZapPlan memory plan
+    ) private returns (uint256 shares) {
         _executeZapSwaps(tokenIn, plan);
-        // Multipath join residual + outs using planned used amounts (same numbers as preview).
         uint256 supplyBefore = _totalSupply();
         _bufferLastUsed(plan.used0, plan.used1, plan.used2);
         _applyAdd(supplyBefore, plan.shares, plan.used0, plan.used1, plan.used2, to);
         shares = plan.shares;
-        // D47 unused residual/outs face + D35 buffered dust
         _refundConservation(msg.sender);
         emit DepositSingle(msg.sender, to, tokenIn, amountIn, shares);
     }

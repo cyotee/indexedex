@@ -123,7 +123,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         );
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
     }
 
     function _token0() internal view returns (address) {

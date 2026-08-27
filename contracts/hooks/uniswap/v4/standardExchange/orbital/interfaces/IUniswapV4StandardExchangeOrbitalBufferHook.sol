@@ -3,14 +3,18 @@ pragma solidity ^0.8.0;
 
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title IUniswapV4StandardExchangeOrbitalBufferHook
  * @notice Public product surface: 3-asset sphere on effective reserves, optional SE per leg, zap-in, SE In/Out.
  * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
  *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
+ *      DETF-facing ABI is IUniswapV4SeBufferHook + IDetfReserveQuote. Family addLiquidity /
+ *      removeLiquidity / depositSingle names remain as wrappers so existing tests type-check.
  */
-interface IUniswapV4StandardExchangeOrbitalBufferHook {
+interface IUniswapV4StandardExchangeOrbitalBufferHook is IUniswapV4SeBufferHook, IDetfReserveQuote {
     enum KLastMode {
         FullProduct,
         SumInterim
@@ -133,34 +137,6 @@ interface IUniswapV4StandardExchangeOrbitalBufferHook {
         external
         view
         returns (uint256 saleJ, uint256 saleK, uint256 residualIn, uint256 outJ, uint256 outK);
-
-    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
-        external
-        view
-        returns (uint256 amountOut);
-
-    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
-        external
-        view
-        returns (uint256 amountIn);
-
-    /// @notice D89 / D30: owner exact-in on the sphere book. Internal settlement (no nested unlock).
-    function ownerSwapExactIn(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 minAmountOut,
-        uint256 deadline
-    ) external returns (uint256 amountOut);
-
-    /// @notice D89 / D30: owner exact-out on the sphere book. Internal settlement (no nested unlock).
-    function ownerSwapExactOut(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountOut,
-        uint256 maxAmountIn,
-        uint256 deadline
-    ) external returns (uint256 amountIn);
 
     /// @param permit2Data empty => SafeERC20 transferFrom only; non-empty => Permit2 packing
     function addLiquidity(

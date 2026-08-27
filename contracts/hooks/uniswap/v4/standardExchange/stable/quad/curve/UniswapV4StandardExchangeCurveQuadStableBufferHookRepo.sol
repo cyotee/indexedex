@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookRepo
  * @notice Diamond storage: 4-token binding, optional SE/RP per leg, dual scales, kLast, lock.
@@ -11,8 +16,10 @@ pragma solidity ^0.8.0;
  *      rawReserves[i] = intentional raw book for free-pretransfer gate only
  *      (free_raw = bal - rawReserves; inventory cannot fund pretransfer).
  *      I1 freeze: kLast = geometricMean4(invWad0..3).
+ *      DETF-facing membership is `legs` (AddressSetRepo); do not scan tokens() at runtime.
  */
 library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
+    using AddressSetRepo for AddressSet;
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("indexedex.hooks.uv4.se.stable.quad.buffer.storage")) - 1)
     ) & ~bytes32(uint256(0xff));
@@ -49,6 +56,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
         /// @dev Append-only: set by finalizeInitialization after all six product doors are live.
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
+        UniswapV4SeBufferHookLegLib.Layout legs;
     }
 
     function _layout() internal pure returns (Layout storage l) {
@@ -84,6 +92,32 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
         l.invDecimals = invDecimals_;
         l.bindingsInitialized = true;
         l.reentrancyStatus = NOT_ENTERED;
+        _initLegs(l, tokens_, ses_);
+    }
+
+    /// @dev Exactly one unbuffered leg is the DETF self-leg. Else unbuffered tokens are bare pairs.
+    function _initLegs(Layout storage l, address[4] memory tokens_, address[4] memory ses_) private {
+        uint8 unbuffered;
+        address unbufferedTok;
+        for (uint8 i; i < N_TOKENS; ++i) {
+            if (ses_[i] != address(0)) {
+                UniswapV4SeBufferHookLegLib.addPairSe(l.legs, tokens_[i], ses_[i]);
+            } else {
+                unchecked {
+                    ++unbuffered;
+                }
+                unbufferedTok = tokens_[i];
+            }
+        }
+        if (unbuffered == 1) {
+            l.legs.detfToken = unbufferedTok;
+            return;
+        }
+        for (uint8 i; i < N_TOKENS; ++i) {
+            if (ses_[i] == address(0)) {
+                l.legs.pairTokens._add(tokens_[i]);
+            }
+        }
     }
 
     function _indexOf(Layout storage l, address token) internal view returns (uint8) {

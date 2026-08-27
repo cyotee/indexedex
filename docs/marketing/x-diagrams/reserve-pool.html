@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DETF reserve pool</title>
+    <link rel="stylesheet" href="architecture.css" />
+    <style>
+      .face-row { grid-template-columns: 1.05fr 1.15fr 1fr; }
+      .curve-row { grid-template-columns: 1.15fr 1fr; align-items: stretch; }
+      .loop-row { grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .chart {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        background: #10141f;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .legend i {
+        display: inline-block;
+        width: 22px;
+        height: 3px;
+        margin-right: 8px;
+        vertical-align: middle;
+        background: var(--accent);
+      }
+      .legend i.cp { background: #ededed; }
+      .legend i.gap { height: 10px; background: rgba(79, 212, 75, 0.28); }
+    </style>
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="head">
+        <div>
+          <p class="eyebrow">Drill-down · Reserve pool</p>
+          <h1>Listed as $DTF / $DTF-DETF. Book is the SE vault.</h1>
+          <p class="lede">
+            Uniswap V4 shows a $DTF / $DTF-DETF pool. The hook moves $DTF in and out of the SE vault
+            for swaps, so the book actually holds SE vault tokens. A rate provider prices those tokens
+            as $DTF. The pool still sells $DTF on a constant-product curve. It acquires $DTF on a
+            cheaper linear path from the vault.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+
+      <div class="stack-layers">
+        <section class="band">
+          <p class="layer-label">What Uniswap lists vs what sits in the book</p>
+          <div class="three face-row">
+            <div class="box">
+              <p class="kicker">Uniswap V4</p>
+              <h2>$DTF ↔ $DTF-DETF</h2>
+              <p>The listed pair. Same constant-product shape as the $DTF / ETH pool. Traders see $DTF against the DETF token.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Buffer hook</p>
+              <h2>Holds SE vault tokens</h2>
+              <p>Swaps move $DTF in and out of the configured SE vault as needed. The reserve does not sit on a pile of idle $DTF. It sits on vault shares.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">Rate provider</p>
+              <h2>Vault token priced as $DTF</h2>
+              <p>Tells the pool how much $DTF each SE vault token is worth. That is how a vault-share book can quote as a $DTF book.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Two curves for the same $DTF</p>
+          <div class="two curve-row">
+            <div class="box">
+              <svg class="chart" viewBox="0 0 560 240" role="img" aria-label="Constant product sell curve above a linear acquire curve">
+                <rect x="0" y="0" width="560" height="240" fill="#10141f" />
+                <line x1="48" y1="200" x2="530" y2="200" stroke="rgba(255,255,255,0.18)" />
+                <line x1="48" y1="200" x2="48" y2="22" stroke="rgba(255,255,255,0.18)" />
+                <text x="430" y="220" fill="#9aa3b2" font-size="11" font-family="ui-monospace, Menlo, monospace">$DTF amount</text>
+                <text x="8" y="18" fill="#9aa3b2" font-size="11" font-family="ui-monospace, Menlo, monospace">price</text>
+                <path d="M56,188 L520,52 L520,188 Z" fill="rgba(79,212,75,0.16)" />
+                <path d="M56,188 Q 210,92 520,52" fill="none" stroke="#ededed" stroke-width="3" />
+                <path d="M56,188 L520,118" fill="none" stroke="#4fd44b" stroke-width="3" />
+                <text x="300" y="78" fill="#ededed" font-size="13" font-family="ui-sans-serif, system-ui, sans-serif">Sell $DTF on constant product</text>
+                <text x="300" y="142" fill="#4fd44b" font-size="13" font-family="ui-sans-serif, system-ui, sans-serif">Acquire $DTF on the vault path</text>
+              </svg>
+              <p class="legend">
+                <span><i class="cp"></i>Pool quote (xy = k)</span>
+                <span><i></i>Vault acquire (linear, always under)</span>
+                <span><i class="gap"></i>Spread</span>
+              </p>
+            </div>
+            <div class="box">
+              <p class="kicker">Why the SE vault cost matters here</p>
+              <h2>Sell on CP. Buy on a cheaper line.</h2>
+              <p>The reserve sells $DTF as if it were a normal constant-product pool. It gets that $DTF from the SE vault: withdraw first, then trade only the leftover, or pay from inventory at no extra swap. That acquire path stays under the constant-product curve. The gap is one place DETFs take a profit. Amounts are not guaranteed.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band">
+          <p class="layer-label">Fees in the SE vault pull the reserve price</p>
+          <div class="three loop-row">
+            <div class="box">
+              <p class="kicker">1</p>
+              <h2>Vault earns swap fees</h2>
+              <p>Double-sided LP in $DTF / ETH collects market-maker fees. The SE vault token is worth more $DTF.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">2</p>
+              <h2>Rate provider updates</h2>
+              <p>Each vault token now prices as more $DTF. The reserve book has more $DTF on the vault side without a matching DETF mint.</p>
+            </div>
+            <div class="box">
+              <p class="kicker">3</p>
+              <h2>$DTF looks cheaper</h2>
+              <p>That extra $DTF claim lowers the vault token’s price in the reserve pool versus $DTF-DETF.</p>
+            </div>
+            <div class="box accent">
+              <p class="kicker">4</p>
+              <h2>Market buys through the vault</h2>
+              <p>Traders take the cheaper $DTF from this pool. Flow goes through the SE vault, not a full buy on $DTF / ETH.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+  </body>
+</html>

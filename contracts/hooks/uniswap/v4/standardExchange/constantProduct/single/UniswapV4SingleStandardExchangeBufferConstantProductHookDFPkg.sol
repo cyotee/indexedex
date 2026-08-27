@@ -36,6 +36,8 @@ import {
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg
@@ -134,7 +136,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         returns (bytes4[] memory interfaces)
     {
         // ERC20PermitDFPkg interfaces + vault/SE + product type.
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -145,6 +147,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         interfaces[7] = type(IStandardVault).interfaceId;
         interfaces[8] = type(IMultiStepOwnable).interfaceId;
         interfaces[9] = HOOK_VAULT_TYPE;
+        interfaces[10] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[11] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {

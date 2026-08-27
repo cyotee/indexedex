@@ -177,7 +177,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
 
         seeder.addLiquidity(poolKey, tickLower, tickUpper, liquidity);
 
-        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey, 60));
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
     }
 
     function test_exchangeIn_zap_secondDeposit_checkpointsAccruedFees_afterRoundTripTrading() public {
@@ -306,8 +306,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         uint256 preview = vault.previewExchangeOut(tokenIn, tokenOut, desiredAmountOut);
         assertGt(preview, 0, "preview input");
 
-        tokenA.mint(address(this), preview);
-        tokenA.approve(address(vault), preview);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), preview);
+        t0.approve(address(vault), preview);
 
         vm.expectRevert();
         vault.exchangeOut(tokenIn, preview - 1, tokenOut, desiredAmountOut, makeAddr("tooLow"), false, _deadline());
@@ -322,15 +323,16 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         uint256 maxAmountIn = preview + 1e12;
         address recipient = makeAddr("refundRecipient");
 
-        tokenA.mint(address(this), maxAmountIn);
-        tokenA.approve(address(vault), maxAmountIn);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), maxAmountIn);
+        t0.approve(address(vault), maxAmountIn);
 
-        uint256 senderBalanceBefore = tokenA.balanceOf(address(this));
+        uint256 senderBalanceBefore = t0.balanceOf(address(this));
         uint256 amountIn =
             vault.exchangeOut(tokenIn, maxAmountIn, tokenOut, desiredAmountOut, recipient, false, _deadline());
 
         assertLt(amountIn, maxAmountIn, "actual input less than cap");
-        assertEq(tokenA.balanceOf(address(this)), senderBalanceBefore - amountIn, "excess input refunded");
+        assertEq(t0.balanceOf(address(this)), senderBalanceBefore - amountIn, "excess input refunded");
         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient refunded exact out");
     }
 
@@ -346,8 +348,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         IERC20 vaultToken = IERC20(address(vault));
         uint256 bootstrapAmount = 1e18;
 
-        tokenA.mint(address(this), bootstrapAmount);
-        tokenA.approve(address(vault), bootstrapAmount);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), bootstrapAmount);
+        t0.approve(address(vault), bootstrapAmount);
         uint256 bootstrapShares = vault.exchangeIn(
             IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
         );
@@ -358,8 +361,8 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         uint256 supplyBefore = vault.totalSupply();
         uint256 recipientSharesBefore = vault.balanceOf(recipient);
 
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
+        t0.mint(address(this), amountIn);
+        t0.approve(address(vault), amountIn);
 
         uint256 preview = vault.previewExchangeIn(IERC20(_token0Address()), amountIn, vaultToken);
         assertGt(preview, 0, "preview shares second deposit");
@@ -376,8 +379,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         IERC20 vaultToken = IERC20(address(vault));
         uint256 amountIn = 1e18;
 
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), amountIn);
+        t0.approve(address(vault), amountIn);
 
         uint256 preview = vault.previewExchangeIn(IERC20(_token0Address()), amountIn, vaultToken);
         assertGt(preview, 0, "preview shares slippage");
@@ -398,8 +402,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
 
         // Ensure face free is booked (R==B) so only this push creates U.
         // Bootstrap any residual face via a tiny honest pull if needed, then push+true.
-        tokenA.mint(address(this), amountIn);
-        tokenA.transfer(address(vault), amountIn);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), amountIn);
+        t0.transfer(address(vault), amountIn);
 
         uint256 out_ =
             vault.exchangeIn(IERC20(_token0Address()), amountIn, vaultToken, 0, recipient, true, _deadline());
@@ -460,7 +465,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_exchangeIn_direct(bool token0ToToken1) internal {
         IERC20 tokenIn = token0ToToken1 ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 tokenOut = token0ToToken1 ? IERC20(_token1Address()) : IERC20(_token0Address());
-        ERC20PermitMintableStub inputStub = token0ToToken1 ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 amountIn = 1e12;
         address recipient = makeAddr(token0ToToken1 ? "recipient01" : "recipient10");
@@ -480,7 +485,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_exchangeOut_direct(bool token0ToToken1) internal {
         IERC20 tokenIn = token0ToToken1 ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 tokenOut = token0ToToken1 ? IERC20(_token1Address()) : IERC20(_token0Address());
-        ERC20PermitMintableStub inputStub = token0ToToken1 ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 desiredAmountOut = 1e12;
         address recipient = makeAddr(token0ToToken1 ? "recipientOut01" : "recipientOut10");
@@ -501,7 +506,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_previewExchangeIn_direct_matchesExecution(bool token0ToToken1) internal {
         IERC20 tokenIn = token0ToToken1 ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 tokenOut = token0ToToken1 ? IERC20(_token1Address()) : IERC20(_token0Address());
-        ERC20PermitMintableStub inputStub = token0ToToken1 ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 amountIn = 5e17;
         address recipient = makeAddr(token0ToToken1 ? "previewExactIn01" : "previewExactIn10");
@@ -520,7 +525,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_previewExchangeOut_direct_matchesExecution(bool token0ToToken1) internal {
         IERC20 tokenIn = token0ToToken1 ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 tokenOut = token0ToToken1 ? IERC20(_token1Address()) : IERC20(_token0Address());
-        ERC20PermitMintableStub inputStub = token0ToToken1 ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 desiredAmountOut = 5e17;
         address recipient = makeAddr(token0ToToken1 ? "previewExactOut01" : "previewExactOut10");
@@ -540,7 +545,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_exchangeIn_zap_firstDeposit(bool token0ToShares) internal {
         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 vaultToken = IERC20(address(vault));
-        ERC20PermitMintableStub inputStub = token0ToShares ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 amountIn = 1e18;
         address recipient = makeAddr(token0ToShares ? "zapRecipient0" : "zapRecipient1");
@@ -567,7 +572,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_previewExchangeIn_zap_firstDeposit_matchesExecution(bool token0ToShares) internal {
         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 vaultToken = IERC20(address(vault));
-        ERC20PermitMintableStub inputStub = token0ToShares ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 amountIn = 1e18;
         address recipient = makeAddr(token0ToShares ? "previewZapInFirst0" : "previewZapInFirst1");
@@ -586,11 +591,12 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     function _test_previewExchangeIn_zap_secondDeposit_matchesExecution(bool token0ToShares) internal {
         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 vaultToken = IERC20(address(vault));
-        ERC20PermitMintableStub inputStub = token0ToShares ? tokenA : tokenB;
+        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
         uint256 bootstrapAmount = 2e18;
-        tokenA.mint(address(this), bootstrapAmount);
-        tokenA.approve(address(vault), bootstrapAmount);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), bootstrapAmount);
+        t0.approve(address(vault), bootstrapAmount);
         vault.exchangeIn(IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline());
 
         uint256 amountIn = 1e18;
@@ -653,8 +659,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         IERC20 vaultToken = IERC20(address(vault));
         uint256 bootstrapAmount = 2e18;
 
-        tokenA.mint(address(this), bootstrapAmount);
-        tokenA.approve(address(vault), bootstrapAmount);
+        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+        t0.mint(address(this), bootstrapAmount);
+        t0.approve(address(vault), bootstrapAmount);
         bootstrapShares = vault.exchangeIn(
             IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
         );

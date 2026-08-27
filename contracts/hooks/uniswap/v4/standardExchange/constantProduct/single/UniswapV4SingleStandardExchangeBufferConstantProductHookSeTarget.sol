@@ -43,6 +43,11 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget
@@ -75,6 +80,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     error InvalidPoolFee();
     error HookNotImplemented();
     error UnsupportedRoute();
+    error InvalidRoute();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -160,6 +166,88 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
 
     function kLast() public view returns (uint256) {
         return Repo._layout().kLast;
+    }
+
+    function tokens() public view returns (address[] memory t) {
+        t = new address[](2);
+        t[0] = Repo._layout().rawToken;
+        t[1] = Repo._layout().pairToken;
+    }
+
+    function standardExchangeOf(address token) public view returns (address) {
+        return Repo._layout().legs.standardExchangeOf[token];
+    }
+
+    function syntheticNumeraires() public view returns (address[] memory n) {
+        n = new address[](1);
+        n[0] = Repo._layout().pairToken;
+    }
+
+    function requiredFirstBondTokens() public view returns (address[] memory) {
+        return tokens();
+    }
+
+    function firstJoinMustBeFullBook() public pure returns (bool) {
+        return true;
+    }
+
+    function tradingFeeWad() public pure returns (uint256) {
+        return (Repo.TRADING_FEE_PERCENT * 1e18) / Repo.TRADING_FEE_DENOMINATOR;
+    }
+
+    function previewSwapExactIn(address tokenIn, address tokenOut, uint256 amountIn)
+        public
+        view
+        returns (uint256 amountOut)
+    {
+        if (!_isLive() || amountIn == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return _quoteExactIn(zfo, amountIn);
+    }
+
+    function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
+        public
+        view
+        returns (uint256 amountIn)
+    {
+        if (!_isLive() || amountOut == 0) return 0;
+        (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
+        if (!ok) return 0;
+        return _quoteExactOut(zfo, amountOut);
+    }
+
+    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
+        external
+        view
+        returns (uint256 wad)
+    {
+        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
+            return 0;
+        }
+        if (!_isLive()) return 0;
+        address out_ = numeraire == address(0) ? Repo._layout().pairToken : numeraire;
+        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
+        if (pairOut == 0) return 0;
+        uint256 mid_ = (pairOut * 1e18) / ctx.detfTotalSupply;
+        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
+    }
+
+    function _tryRouteZeroForOne(address tokenIn, address tokenOut) internal view returns (bool ok, bool zfo) {
+        Repo.Layout storage l = Repo._layout();
+        UniswapV4SeBufferHookLegLib.LegKind kIn = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
+        UniswapV4SeBufferHookLegLib.LegKind kOut = UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
+        if (
+            kIn == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+                || kOut == UniswapV4SeBufferHookLegLib.LegKind.Unknown
+        ) {
+            return (false, false);
+        }
+        address in_ = kIn == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange ? l.pairToken : tokenIn;
+        address out_ = kOut == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange ? l.pairToken : tokenOut;
+        if (in_ == l.currency0 && out_ == l.currency1) return (true, true);
+        if (in_ == l.currency1 && out_ == l.currency0) return (true, false);
+        return (false, false);
     }
 
     function _seClaim() internal view returns (uint256) {

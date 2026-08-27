@@ -9,6 +9,8 @@ import {
 import {
     IUniswapV4DualStandardExchangeBufferConstantProductHook as IHook
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 
 /// @notice IHooks + product binding/claim/fee views + swap previews (size-split facet).
 contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
@@ -20,8 +22,10 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IHooks).interfaceId;
+        interfaces[1] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[2] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
@@ -61,7 +65,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](11);
+        funcs = new bytes4[](21);
         funcs[0] = IHook.claimSupply1.selector;
         funcs[1] = IHook.claimSupplyCurrency0.selector;
         funcs[2] = IHook.claimSupplyCurrency1.selector;
@@ -70,9 +74,19 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
         funcs[5] = IHook.dexSwapFee.selector;
         funcs[6] = IHook.feeTo.selector;
         funcs[7] = IHook.kLast.selector;
-        funcs[8] = IHook.previewSwapExactIn.selector;
-        funcs[9] = IHook.previewSwapExactOut.selector;
+        funcs[8] = bytes4(keccak256("previewSwapExactIn(bool,uint256)"));
+        funcs[9] = bytes4(keccak256("previewSwapExactOut(bool,uint256)"));
         funcs[10] = this.getHookPermissions.selector;
+        funcs[11] = IUniswapV4SeBufferHook.tokens.selector;
+        funcs[12] = IUniswapV4SeBufferHook.standardExchangeOf.selector;
+        funcs[13] = IUniswapV4SeBufferHook.syntheticNumeraires.selector;
+        funcs[14] = IUniswapV4SeBufferHook.requiredFirstBondTokens.selector;
+        funcs[15] = IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector;
+        funcs[16] = IUniswapV4SeBufferHook.isLive.selector;
+        funcs[17] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
+        funcs[18] = IUniswapV4SeBufferHook.previewSwapExactIn.selector;
+        funcs[19] = IUniswapV4SeBufferHook.previewSwapExactOut.selector;
+        funcs[20] = IDetfReserveQuote.previewSynthetic.selector;
     }
 
     function facetMetadata()

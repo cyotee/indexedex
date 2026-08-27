@@ -42,12 +42,12 @@
 | **D17** | Ids 1 and 2 | Always `claimRewards`. **Never** sell-to-protocol. **Never** redeem for capital/LP. | 2026-08-19 |
 | **D18** | `buyClaim` is `exchangeIn` | DETF → claim is `exchangeIn`. **No new DETF mint.** The user’s DETF is **moved into liquidity** (self-leg join). NFT credits **id 0** 4626 for that LP. Only **bonds** mint new DETF into the pool. | 2026-08-19 |
 | **D19** | `feeTo()` change | Do **not** transfer token id 1 when oracle `feeTo()` changes. Id 1 stays with the address that received it at wire. | 2026-08-19 |
-| **D20** | DETF burn `tokenOut` | Burn may pay **any reserve token**, or the **SE buffer / rate asset** of a vault-share leg. Quote with D8 on the **DETF–tokenOut** pair (that leg’s curve). | 2026-08-19 |
+| **D20** | DETF burn `tokenOut` | Unified Uni V4 DETF: burn may pay only resolved **`burnRoutes`** tokens ([`DETF_INSTANCE_IO_ROUTING_PRD.md`](./DETF_INSTANCE_IO_ROUTING_PRD.md) §16). Other families: any reserve token or SE buffer / rate asset of a vault-share leg until their I/O tables ship. Quote with D8 on the DETF–tokenOut pair. | 2026-08-26 |
 | **D21** | `creator == 0` | If `PkgArgs.creator` is `address(0)`, mint token id **2** to `feeTo()`. `feeTo` then holds ids **1 and 2** (recovery if the deployer omitted a creator). Do not skip id 2 or force `c = 0`. | 2026-08-19 |
 | **D22** | Claim paths ungated | `exchangeIn` DETF ↔ rebasing claim is **not** subject to mint/burn synthetic threshold gates. Live-only is enough. | 2026-08-19 |
 | **D23** | Exact-out | If a **closed-form** exact-out exists on that family’s reserve curve, support it. If not, keep reverting `InvalidRoute`. No binary-search solvers. | 2026-08-19 |
 | **D24** | Bonus vs bond matching | Free mint/burn and bond join are **different processes**. Live **mint** applies the **amountIn bonus** (D8) so expanding supply can move price. Live **burn** contracts supply (D12/D20; D8 bonus still off on burn). A bond mints **unboosted** proportional matching DETF (`G`) into liquidity to **deepen** the book, not to move price. Do not size `G` from a D8 boosted quote. | 2026-08-19 |
-| **D25** | Mature close | Global. A mature user bond (id ≥ 3) `convertToAssets(originalShares)` → **proportional** reserve withdraw → **rejoin the withdrawn DETF** to the reserve and **credit originalShares to id 0** → send the **remaining** (non-DETF) tokens to the user. Do **not** burn that DETF. Not D20. Distinct from sell-to-claim (D10). | 2026-08-22 |
+| **D25** | Mature close | Process unchanged: proportional withdraw, rejoin DETF to id 0, do not burn that DETF. Remainder: Default = full non-DETF basket. Unified Uni V4 Custom close = **exactly one** hook pair + leftover `ownerSwapExactIn` in `tokens()` order ([`DETF_INSTANCE_IO_ROUTING_PRD.md`](./DETF_INSTANCE_IO_ROUTING_PRD.md) §6 / §16.5). | 2026-08-26 |
 | **D26** | `PkgArgs.creator` | Every true DETF family `PkgArgs` has `address creator`. Wire mints token id 2 to that address. `creator == 0` still follows D21. | 2026-08-19 |
 | **D27** | Live-mint `U` = D8 `Gross` | Q2 locked. On a live liquid mint, `U` is the entire D8 `Gross`. D3 then splits it. The non-user slice is **only** pot (old `feeToDetf` + `inventoryDetf` destinations merge). See §9. | 2026-08-19 |
 | **D28** | Ids 1–2 claim tests | Every family must prove `feeTo` (id 1) and creator (id 2) **can** `claimRewards`, and that after D2 share top-ups and pot deposits they receive **only** their `effectiveShares` share of **new** pot. No leak that pays them more than due. Ship gate. Matrix in §20. | 2026-08-19 |
@@ -568,7 +568,7 @@ Token id 1 is not transferred, reminted, or reassigned when `feeOracle.feeTo()` 
 
 ### 15.10 D20 — DETF burn `tokenOut`
 
-`exchangeIn(DETF, amount, tokenOut)` may use any token in the reserve, or the **buffer / rate asset** of an SE vault-share leg. Size the burn with D8: capital bonus does **not** apply on burn; quote **outGivenIn / inGivenOut** on the **DETF–tokenOut** book (that leg). Invalid `tokenOut` → `InvalidRoute`.
+`exchangeIn(DETF, amount, tokenOut)`: unified Uni V4 DETF pays only **`burnRoutes`** `tokenOut` (I/O routing PRD §16.3). Other families still: any reserve token or SE buffer / rate asset until their tables ship. Size the burn with D8: capital bonus does **not** apply on burn. Invalid `tokenOut` → `InvalidRoute`.
 
 ### 15.11 D21 — Creator omitted
 
@@ -610,8 +610,8 @@ Policy/Open gates, protocol compound (id 0 only), and natural expansion stay as 
 |---------|----------------|-----|
 | **Reserve curve** | Family | D8: use **this instance’s** reserve book. Weighted, mixed-buffer stable, composed-of-BPTs, Uni V4 CP, orbital sphere, V4 weighted, quad StableSwap. |
 | **Reserve token set** | Family | Which legs sit next to the DETF self-leg. |
-| **Live mint `tokenIn`** | Family | Vault share, buffer, pair, or SE zap **into** a reserve leg. Not share↔share on the DETF. Donate (D29) uses this same list plus **DETF** and reserve `lpToken`. |
-| **Burn `tokenOut`** | Family ∩ D20 | Any **reserve** token, or that SE leg’s buffer/rate asset. Quote DETF–`tokenOut` on **that** curve. |
+| **Live mint `tokenIn`** | Instance tables; family **defaults** | Unified Uni V4: resolved `mintRoutes` ([`DETF_INSTANCE_IO_ROUTING_PRD.md`](./DETF_INSTANCE_IO_ROUTING_PRD.md)). Other families: vault share, buffer, pair, or SE zap into a reserve leg until I/O tables ship. Not share↔share on the DETF. Donate uses donateRoutes plus DETF and reserve `lpToken`. |
+| **Burn `tokenOut`** | Instance tables ∩ D20 | Unified Uni V4: `burnRoutes` only. Other families: any reserve token or SE buffer/rate asset until tables ship. |
 | **First-bond capital** | Family | The concrete non-DETF legs D16 requires (see §16.3). |
 | **Empty-pool / first-bond quote** | Family | Pool is empty: **Uni V4 uses `openingPairPerDetfWad`** (0 → creation at init). Synthetic peg stays **`creationPairPerDetfWad`**. **D8 does not run here.** D8’s live curve + amountIn bonus applies **after** live, and only to free mint/burn. Balancer Single SE / MVW: weights (`detfWeight` / `vaultWeights`). Mixed-buffer: amp + first-bond amounts. Composed: existing reserve + first join. Do **not** add a Uni-style opening field to Balancer families. |
 | **Closed-form exact-out?** | Family curve | D23: implement if the host has `inGivenOut`; else `InvalidRoute`. |
@@ -694,7 +694,7 @@ Sell-to-claim (D10) is unchanged and remains a **different** mature path: transf
 2. `lp = convertToAssets(originalShares)` (ERC-4626, D10 / N10). Input is originalShares, not effectiveShares.
 3. Through the NFT (D13): **proportional** withdraw of `lp` from the reserve. Every reserve leg comes out, including the DETF self-leg.
 4. **Rejoin** the DETF that came out of that withdraw as the self-leg. Credit **originalShares to id 0** (`addToDETFNFT`, 1×). Do **not** burn that DETF. Do **not** send it to the user. Owner `depositSingle` at hook `MINIMUM_LIQUIDITY` is allowed and **must mint lpOut > 0**. D2 then runs.
-5. Send **every remaining withdrawn token** (all non-DETF legs) to the user. **Basket.** Do not consolidate to a single `tokenOut` / buffer. Balancer family close text that swaps leftover legs into one settlement asset is **superseded**.
+5. Send **every remaining withdrawn token** (all non-DETF legs) to the user. **Default remainder is the basket.** Unified Uni V4 Custom close is the I/O PRD exception: exactly one hook pair + leftover `ownerSwapExactIn` in `tokens()` order ([`DETF_INSTANCE_IO_ROUTING_PRD.md`](./DETF_INSTANCE_IO_ROUTING_PRD.md) §16.5). Balancer family close text that swaps leftover legs into one settlement asset is **superseded** except that Uni V4 Custom path.
 6. Retire the NFT (burn that id’s `originalShares` / `effectiveShares`).
 
 Ids 1 and 2 cannot take this path (D17). Close is not Policy mint/burn gated.

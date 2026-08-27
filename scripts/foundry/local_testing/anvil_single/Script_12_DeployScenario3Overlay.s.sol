@@ -95,7 +95,6 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     uint256 private constant INITIAL_WETH_DEPOSIT = 10e18;
     uint256 private constant INITIAL_RICH_DEPOSIT = 10e18;
-    uint24 private constant WETH_RICH_WIDTH_MULTIPLIER = 60;
     uint24 private constant WETH_RICH_FEE = 3000;
     int24 private constant WETH_RICH_TICK_SPACING = 60;
 
@@ -445,7 +444,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     /// @dev Deploy Uni V4 SE vault separately, inject address into Single SE DETF PkgArgs (DETF stays SE-opaque).
     function _deployUniV4SeVaultAndDetf() internal {
-        underlyingVault = underlyingVaultPkg.deployVault(_buildPoolKey(), WETH_RICH_WIDTH_MULTIPLIER);
+        underlyingVault = underlyingVaultPkg.deployVault(_buildPoolKey());
 
         ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
             name: "Single Standard Exchange DETF CHIR",

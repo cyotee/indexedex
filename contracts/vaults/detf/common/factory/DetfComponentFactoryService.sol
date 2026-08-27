@@ -15,6 +15,8 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
 import {
     IRebasingDETFTokenDFPkg
@@ -38,6 +40,24 @@ library DetfComponentFactoryService {
         IVaultRegistryDeployment vaultRegistryDeployment
     ) internal pure returns (IDETFNFTVaultDFPkg.PkgInit memory pkgInit) {
         pkgInit = IDETFNFTVaultDFPkg.PkgInit({
+            erc721Facet: erc721Facet,
+            erc4626BasicVaultFacet: erc4626BasicVaultFacet,
+            erc4626StandardVaultFacet: erc4626StandardVaultFacet,
+            detfNFTVaultFacet: detfNFTVaultFacet,
+            feeOracle: feeOracle,
+            vaultRegistryDeployment: vaultRegistryDeployment
+        });
+    }
+
+    function buildUniswapV4DetfBondNFTVaultPkgInit(
+        IFacet erc721Facet,
+        IFacet erc4626BasicVaultFacet,
+        IFacet erc4626StandardVaultFacet,
+        IFacet detfNFTVaultFacet,
+        IVaultFeeOracleQuery feeOracle,
+        IVaultRegistryDeployment vaultRegistryDeployment
+    ) internal pure returns (IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory pkgInit) {
+        pkgInit = IUniswapV4DetfBondNFTVaultDFPkg.PkgInit({
             erc721Facet: erc721Facet,
             erc4626BasicVaultFacet: erc4626BasicVaultFacet,
             erc4626StandardVaultFacet: erc4626StandardVaultFacet,

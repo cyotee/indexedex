@@ -151,7 +151,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
             seeder.addLiquidity(sePoolKey, tickLower, tickUpper, liq);
         }
 
-        seVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(sePoolKey, 60));
+        seVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(sePoolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(seVault));
         assertTrue(liquid.canOpenPoolManagerUnlock(), "SE idle at deploy");
 

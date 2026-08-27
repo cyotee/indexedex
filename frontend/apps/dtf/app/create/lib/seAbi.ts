@@ -141,7 +141,6 @@ export const V4_SE_PKG_ABI = [
     stateMutability: 'nonpayable',
     inputs: [
       { name: 'poolKey', type: 'tuple', components: V4_POOL_KEY_COMPONENTS },
-      { name: 'widthMultiplier', type: 'uint24' },
     ],
     outputs: [{ name: 'vault', type: 'address' }],
   },
@@ -237,7 +236,6 @@ export const V3_SE_PKG_ABI = [
     stateMutability: 'nonpayable',
     inputs: [
       { name: 'pool', type: 'address' },
-      { name: 'widthMultiplier', type: 'uint24' },
     ],
     outputs: [{ name: 'vault', type: 'address' }],
   },

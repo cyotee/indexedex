@@ -38,6 +38,10 @@ import {
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookTarget
@@ -141,6 +145,38 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitTarget is
         }
     }
 
+
+    function previewBurnToToken(uint256 lpAmount, address tokenOut)
+        external
+        view
+        returns (uint256 amountOut)
+    {
+        if (lpAmount == 0 || _totalSupply() == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
+        UniswapV4SeBufferHookLegLib.LegKind k =
+            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        }
+        uint256[] memory amounts = previewExitProportional(lpAmount);
+        address detf_ = l.legs.detfToken;
+        for (uint8 i; i < l.numTokens; ++i) {
+            if (amounts[i] == 0) continue;
+            address t = l.tokens[i];
+            if (t == tokenOut) {
+                amountOut += amounts[i];
+            } else if (t == detf_) {
+                continue;
+            } else {
+                try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(t, tokenOut, amounts[i])
+                    returns (uint256 so)
+                {
+                    amountOut += so;
+                } catch {}
+            }
+        }
+    }
 
     function previewExitProportional(uint256 shares)
         public

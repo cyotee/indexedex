@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -19,13 +20,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](2);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IHooks).interfaceId;
         interfaces[1] = type(IUniswapV4StandardExchangeCurveQuadStableBufferHook).interfaceId;
+        interfaces[2] = type(IUniswapV4SeBufferHook).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](38);
+        funcs = new bytes4[](44);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -40,7 +42,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet is
         funcs[11] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.feeOracle.selector;
         funcs[12] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.permit2.selector;
         funcs[13] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.numTokens.selector;
-        funcs[14] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.tokens.selector;
+        funcs[14] = IUniswapV4SeBufferHook.tokens.selector;
         funcs[15] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.token.selector;
         funcs[16] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.baseAmp.selector;
         funcs[17] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.getCurrentAmp.selector;
@@ -62,8 +64,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet is
         funcs[33] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.isFullBook.selector;
         funcs[34] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.ensurePairPools.selector;
         funcs[35] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.pairDoorCount.selector;
-        funcs[36] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewSwapExactIn.selector;
-        funcs[37] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewSwapExactOut.selector;
+        funcs[36] = IUniswapV4SeBufferHook.previewSwapExactIn.selector;
+        funcs[37] = IUniswapV4SeBufferHook.previewSwapExactOut.selector;
+        funcs[38] = IUniswapV4SeBufferHook.standardExchangeOf.selector;
+        funcs[39] = IUniswapV4SeBufferHook.syntheticNumeraires.selector;
+        funcs[40] = IUniswapV4SeBufferHook.requiredFirstBondTokens.selector;
+        funcs[41] = IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector;
+        funcs[42] = IUniswapV4SeBufferHook.isLive.selector;
+        funcs[43] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
     }
 
     function facetMetadata()

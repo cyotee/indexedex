@@ -23,7 +23,7 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
         tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
         pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
         _seedExternalLiquidity(pool, 50_000_000e18);
-        vault = _deployVault(pool, DEFAULT_WIDTH_MULTIPLIER);
+        vault = _deployVault(pool);
     }
 
     function test_P_IN_01_exactIn_token0_to_token1() public {

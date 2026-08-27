@@ -21,6 +21,8 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {DETFNFTVaultFacet} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol";
+import {UniswapV4DetfBondNFTVaultFacet} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol";
 import {RebasingClaimTokenFacet} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol";
 import {RebasingDETFTokenFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenFacet.sol";
 import {ERC4626BasedBasicVaultFacet} from "contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol";
@@ -37,6 +39,17 @@ library DetfFacetFactoryService {
             abi.encode(type(DETFNFTVaultFacet).name)._hash()
         );
         vm.label(address(instance), type(DETFNFTVaultFacet).name);
+    }
+
+    function deployUniswapV4DetfBondNFTVaultFacet(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            type(UniswapV4DetfBondNFTVaultFacet).creationCode,
+            abi.encode(type(UniswapV4DetfBondNFTVaultFacet).name)._hash()
+        );
+        vm.label(address(instance), type(UniswapV4DetfBondNFTVaultFacet).name);
     }
 
     function deployRebasingClaimTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {

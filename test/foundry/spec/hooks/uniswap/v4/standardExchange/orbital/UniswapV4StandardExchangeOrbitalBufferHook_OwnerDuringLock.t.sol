@@ -7,9 +7,7 @@ import {HookOwnerDuringLockHarness} from "contracts/test/stubs/HookOwnerDuringLo
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
-import {
-    IUniswapV4StandardExchangeOrbitalBufferHook as IHook
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
 /// @notice D30 / D89: owner swap + MIN depositSingle while PoolManager is unlocked.
 contract UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock_Test is
@@ -82,7 +80,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock_Test is
         bytes memory ret = harness.run(
             hook,
             abi.encodeWithSelector(
-                IHook.ownerSwapExactIn.selector,
+                IUniswapV4SeBufferHook.ownerSwapExactIn.selector,
                 address(token1),
                 address(token2),
                 uint256(1 ether),

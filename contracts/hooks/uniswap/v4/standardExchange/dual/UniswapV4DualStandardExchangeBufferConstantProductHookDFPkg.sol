@@ -20,6 +20,8 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
@@ -133,8 +135,8 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4DualStandardExchangeBufferConstantProductHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        // ERC20Permit + vault + product type + M3 SE In/Out.
-        interfaces = new bytes4[](9);
+        // ERC20Permit + vault + product type + M3 SE In/Out + §15.12 hook ABI.
+        interfaces = new bytes4[](11);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -144,6 +146,8 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         interfaces[6] = type(IStandardExchangeIn).interfaceId;
         interfaces[7] = type(IStandardExchangeOut).interfaceId;
         interfaces[8] = HOOK_VAULT_TYPE;
+        interfaces[9] = type(IUniswapV4SeBufferHook).interfaceId;
+        interfaces[10] = type(IDetfReserveQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
