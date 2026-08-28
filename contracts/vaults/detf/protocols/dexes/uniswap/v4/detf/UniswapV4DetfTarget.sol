@@ -387,30 +387,40 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon, IUniswapV4Detf, IS
         if (lpOut_ == 0) revert Repo.ZeroAmount();
         IERC20(address(this)).safeTransferFrom(msg.sender, address(this), detfIn_);
         _burnDetf(address(this), detfIn_);
-        _exitBurnLp(lpOut_, deadline_);
+        uint256[] memory exitAmts_ = _exitBurnLp(lpOut_, deadline_);
         amountOut_ = _payBurnOut(tokenOut_, recipient_, deadline_);
         if (amountOut_ < minAmountOut_) {
             revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
         }
+        _rejoinExitDetf(exitAmts_, deadline_);
         _returnLeftoverLp();
         _tryCompoundProtocolRewards();
         _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
 
-    function _exitBurnLp(uint256 lpOut_, uint256 deadline_) private {
+    function _exitBurnLp(uint256 lpOut_, uint256 deadline_) private returns (uint256[] memory amounts_) {
         Repo.Storage storage s = Repo._layoutStruct();
         _pullNftLp(lpOut_);
         IERC20(s.hook).forceApprove(s.hook, lpOut_);
-        uint256[] memory amounts_ =
+        amounts_ =
             _hook().exitProportional(lpOut_, address(this), new uint256[](_hook().tokens().length), deadline_);
         IERC20(s.hook).forceApprove(s.hook, 0);
+    }
+
+    function _rejoinExitDetf(uint256[] memory amounts_, uint256 deadline_) private {
         address[] memory tokens_ = _hook().tokens();
-        for (uint256 i; i < tokens_.length; ++i) {
+        uint256 n_ = amounts_.length < tokens_.length ? amounts_.length : tokens_.length;
+        for (uint256 i; i < n_; ++i) {
             if (tokens_[i] == address(this) && amounts_[i] > 0) {
-                IERC20(address(this)).forceApprove(s.hook, amounts_[i]);
-                _hook().joinSingleAssetExactIn(address(this), amounts_[i], _bondLpHolder(), 0, deadline_);
-                IERC20(address(this)).forceApprove(s.hook, 0);
+                uint256 have_ = IERC20(address(this)).balanceOf(address(this));
+                uint256 joinAmt_ = amounts_[i] < have_ ? amounts_[i] : have_;
+                if (joinAmt_ == 0) continue;
+                IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, joinAmt_);
+                _hook().joinSingleAssetExactIn(
+                    address(this), joinAmt_, _bondLpHolder(), 0, deadline_
+                );
+                IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, 0);
             }
         }
     }

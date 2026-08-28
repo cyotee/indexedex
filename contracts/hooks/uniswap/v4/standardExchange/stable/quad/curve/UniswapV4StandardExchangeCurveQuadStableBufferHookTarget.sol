@@ -646,17 +646,32 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         if (seOut < minOut) revert BufferFailed();
     }
 
+    function _spendableSeSharesAt(uint8 i) internal view returns (uint256) {
+        address se = Repo._layout().standardExchanges[i];
+        if (se == address(0)) return 0;
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        uint256 dust = Repo.MAX_DUST_WEI;
+        return seBal > dust ? seBal - dust : 0;
+    }
+
     function _unwrapSeShares(uint8 i, uint256 seIn, address to) internal returns (uint256 pairOut) {
+        uint256 cap = _spendableSeSharesAt(i);
+        if (seIn > cap) seIn = cap;
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
-        uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
-        if (minOut == 0) revert UnwrapFailed();
+        uint256 minOut;
+        try IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t)) returns (uint256 m) {
+            minOut = m;
+        } catch {
+            minOut = 0;
+        }
         IERC20(se).forceApprove(se, seIn);
         pairOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
         if (pairOut < minOut) revert UnwrapFailed();
     }
 
@@ -668,11 +683,19 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
+        uint256 cap = _spendableSeSharesAt(i);
+        if (cap == 0) revert UnwrapFailed();
         seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(t), amountOut);
+        if (seIn > cap) {
+            uint256 pairGot = _unwrapSeShares(i, cap, to);
+            if (pairGot == 0) revert UnwrapFailed();
+            return cap;
+        }
         IERC20(se).forceApprove(se, seIn);
         uint256 got = IStandardExchangeOut(se).exchangeOut(
             IERC20(se), seIn, IERC20(t), amountOut, to, false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
         if (got < amountOut) revert UnwrapFailed();
     }
 

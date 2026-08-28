@@ -300,7 +300,8 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256[] memory amountsScaled,
         uint256[] memory weights,
         uint256 supply,
-        uint256 swapFeeWad
+        uint256 swapFeeWad,
+        bool enforceInvariantCap
     ) private pure returns (uint256 bptOut) {
         if (supply == 0) revert MathDomain();
         if (swapFeeWad >= WAD) revert InvalidFeeWad();
@@ -319,7 +320,7 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 currentInvariant = WeightedMath.computeInvariantUp(weights, currentScaled);
         uint256 newInvariant = WeightedMath.computeInvariantDown(weights, newBalances);
         uint256 invariantRatio = newInvariant.divDown(currentInvariant);
-        if (invariantRatio > MAX_INVARIANT_RATIO) revert MaxInvariantRatio();
+        if (enforceInvariantCap && invariantRatio > MAX_INVARIANT_RATIO) revert MaxInvariantRatio();
 
         for (uint256 i; i < n; ++i) {
             uint256 proportionalTokenBalance = invariantRatio.mulDown(currentScaled[i]);
@@ -345,7 +346,18 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 supply,
         uint256 swapFeeWad
     ) external pure returns (uint256 bptOut) {
-        return _unbalancedJoinShares(currentScaled, amountsScaled, weights, supply, swapFeeWad);
+        return _unbalancedJoinShares(currentScaled, amountsScaled, weights, supply, swapFeeWad, true);
+    }
+
+    /// @dev DETF owner-only reserve: close rejoin may exceed Balancer 3x growth.
+    function unbalancedJoinSharesUncapped(
+        uint256[] memory currentScaled,
+        uint256[] memory amountsScaled,
+        uint256[] memory weights,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) external pure returns (uint256 bptOut) {
+        return _unbalancedJoinShares(currentScaled, amountsScaled, weights, supply, swapFeeWad, false);
     }
 
     /// @dev Single-asset exact-out shares → amountIn scaled (with swap fee on taxable).
@@ -393,7 +405,21 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
         uint256 n = currentScaled.length;
         uint256[] memory amounts = new uint256[](n);
         amounts[tokenInIndex] = amountInScaled;
-        return _unbalancedJoinShares(currentScaled, amounts, weights, supply, swapFeeWad);
+        return _unbalancedJoinShares(currentScaled, amounts, weights, supply, swapFeeWad, true);
+    }
+
+    function singleJoinExactInSharesUncapped(
+        uint256[] memory currentScaled,
+        uint256[] memory weights,
+        uint256 tokenInIndex,
+        uint256 amountInScaled,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) external pure returns (uint256 shares) {
+        uint256 n = currentScaled.length;
+        uint256[] memory amounts = new uint256[](n);
+        amounts[tokenInIndex] = amountInScaled;
+        return _unbalancedJoinShares(currentScaled, amounts, weights, supply, swapFeeWad, false);
     }
 
     /// @dev Single-asset exact-in exit: shares → amountOut raw-scaled domain then caller descales.

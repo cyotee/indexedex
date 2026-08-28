@@ -18,7 +18,7 @@ rh_stage_script() {
 }
 
 # Catalog order: Phase 00 Stage 01, architecture Stages of 01–06, then Phase 09 export.
-# Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05/06-09 (Orbital) stay unused.
+# Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 (Orbital hook) stay unused.
 rh_catalog_rows() {
   cat <<'EOF'
 00 01
@@ -40,8 +40,6 @@ rh_catalog_rows() {
 06 04
 06 06
 06 07
-06 08
-06 10
 09 01
 EOF
 }

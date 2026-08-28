@@ -46,9 +46,7 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_06_03 = "phase06_stage03_cp_buffer_hook_pkg.json";
     string internal constant FILE_06_04 = "phase06_stage04_weighted_buffer_hook_pkg.json";
     string internal constant FILE_06_06 = "phase06_stage06_curve_quad_buffer_hook_pkg.json";
-    string internal constant FILE_06_07 = "phase06_stage07_cp_detf_pkg.json";
-    string internal constant FILE_06_08 = "phase06_stage08_weighted_detf_pkg.json";
-    string internal constant FILE_06_10 = "phase06_stage10_curve_quad_detf_pkg.json";
+    string internal constant FILE_06_07 = "phase06_stage07_uniswap_v4_detf_pkg.json";
     string internal constant FILE_09_01 = "phase09_stage01_export_frontend.json";
 
     function _loadAddr(string memory file, string memory key) internal view returns (address) {
@@ -240,9 +238,7 @@ abstract contract LaunchIo is DeploymentBase {
         _exportPkg("p0603", FILE_06_03, "cpHookPkg", s.cpHookPkg);
         _exportPkg("p0604", FILE_06_04, "weightedHookPkg", s.weightedHookPkg);
         _exportPkg("p0606", FILE_06_06, "curveQuadHookPkg", s.curveQuadHookPkg);
-        _exportPkg("p0607", FILE_06_07, "cpDetfPkg", s.cpDetfPkg);
-        _exportPkg("p0608", FILE_06_08, "weightedDetfPkg", s.weightedDetfPkg);
-        _exportPkg("p0610", FILE_06_10, "curveQuadDetfPkg", s.curveQuadDetfPkg);
+        _exportPkg("p0607", FILE_06_07, "uniV4DetfPkg", s.uniV4DetfPkg);
     }
 
     function _loadPhasePriorForExport(LaunchState storage s) internal {
@@ -263,11 +259,7 @@ abstract contract LaunchIo is DeploymentBase {
         require(_hasCode(s.weightedHookPkg), "run Phase 06 Stage 04 first");
         s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
         require(_hasCode(s.curveQuadHookPkg), "run Phase 06 Stage 06 first");
-        s.cpDetfPkg = _loadAddr(FILE_06_07, "cpDetfPkg");
-        require(_hasCode(s.cpDetfPkg), "run Phase 06 Stage 07 first");
-        s.weightedDetfPkg = _loadAddr(FILE_06_08, "weightedDetfPkg");
-        require(_hasCode(s.weightedDetfPkg), "run Phase 06 Stage 08 first");
-        s.curveQuadDetfPkg = _loadAddr(FILE_06_10, "curveQuadDetfPkg");
-        require(_hasCode(s.curveQuadDetfPkg), "run Phase 06 Stage 10 first");
+        s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
+        require(_hasCode(s.uniV4DetfPkg), "run Phase 06 Stage 07 first");
     }
 }

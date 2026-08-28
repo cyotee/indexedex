@@ -2,7 +2,7 @@
 # =============================================================================
 # Anvil Robinhood mainnet fork — IndexedEx architecture (chain 4663)
 # Phase/Stage catalog: Crane factories, IndexedEx manager, TWAP, Uni V4 SE pkg,
-# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook + DETF pkgs.
+# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook pkgs, unified Uni V4 DETF pkg.
 # No test tokens. No SE vault instances. No DETF instances.
 # =============================================================================
 set -euo pipefail

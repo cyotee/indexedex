@@ -111,7 +111,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         );
     }
 
-    function _deployQuadHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal returns (address detf_) {
+    function _deployQuadHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal virtual returns (address detf_) {
         address predicted_ = _predictDetf(args);
         vm.etch(predicted_, address(pair0).code);
         address[4] memory toks;
@@ -177,7 +177,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
             IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});
     }
 
-    function _firstBond(uint256 pairAmount_) internal override returns (uint256 tokenId, uint256 shares) {
+    function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
         vm.startPrank(detfUser);
         (tokenId, shares) = detfInfo.bond(
             IERC20(address(pair0)),
@@ -190,7 +190,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         vm.stopPrank();
     }
 
-    function _assertNoJoinableDust() internal view override {
+    function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP");
         assertEq(IERC20(address(pair0)).balanceOf(detf), 0, "no pair0");

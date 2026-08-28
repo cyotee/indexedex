@@ -10,7 +10,7 @@
 
 | Field | Value |
 |-------|--------|
-| **Status** | **READY-FOR-IMPLEMENTATION** (tests only; no product-law reopen) |
+| **Status** | **DONE** (2026-08-27; tests only; no product-law reopen) |
 | **Kind** | Test PRD. Authorizes tests + TestBases. Does **not** authorize Dual-as-hook, Balancer DETF I/O, native-ETH quote, or ERC-4626 as production proof |
 | **Date** | 2026-08-27 |
 | **Home** | `contracts/vaults/detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md` |
@@ -541,7 +541,19 @@ When done: paste forge match-path results; keep UniswapV4Detf_Mint/Burn/Close/Or
 
 | WP | Status |
 |----|--------|
-| WP-UDSM-CP | OPEN |
-| WP-UDSM-OR | OPEN |
-| WP-UDSM-WE | OPEN |
-| WP-UDSM-QD | OPEN |
+| WP-UDSM-CP | done |
+| WP-UDSM-OR | done |
+| WP-UDSM-WE | done |
+| WP-UDSM-QD | done |
+
+Parent merge 2026-08-27 (`forge test --offline -vv`):
+
+| Matcher | Result |
+|---------|--------|
+| `prod-se/**` | 100 passed, 0 failed (25 files × 4 paths) |
+| `pons/**` | 7 passed, 0 failed (H-CP-P2 firstBond/mint/burn/close + T10_8/9/10) |
+| `UniswapV4Detf_*.t.sol` | 24 passed, 0 failed (Mint/Burn/Close/Orbital/Weighted/Quad plus Bond/Deploy/Donate/Dust) |
+
+26 fixtures × 4 = 104 money paths green. Dual not bound. ERC-4626 T7/T8 not used as production SE proof. `foundry.toml` `via_ir = false`.
+
+Close/mint rejoin into a keep-10 remainder pool: CP hook zap never sells 100% of `tokenIn` (`saleAmt >= amountIn` → `amountIn / 2`); owner-only clamp uses 1 wei instead of `ZeroAmount` when a leg would floor to 0.

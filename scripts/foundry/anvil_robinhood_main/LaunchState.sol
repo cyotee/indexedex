@@ -52,9 +52,7 @@ struct LaunchState {
     address morphoBlueSePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
-    address cpDetfPkg;
+    address uniV4DetfPkg;
     address weightedHookPkg;
-    address weightedDetfPkg;
     address curveQuadHookPkg;
-    address curveQuadDetfPkg;
 }

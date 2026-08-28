@@ -160,8 +160,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
     function _isLive() internal view returns (bool) {
-        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        return e0 > 0 && e1 > 0 && e2 > 0;
+        Repo.Layout storage l = Repo._layout();
+        return _legLive(l, 0) && _legLive(l, 1) && _legLive(l, 2);
+    }
+
+    function _legLive(Repo.Layout storage l, uint8 i) private view returns (bool) {
+        address se = Repo._seAt(l, i);
+        if (se == address(0)) return l.reserves[Repo._tokenAt(l, i)] > 0;
+        return IERC20(se).balanceOf(address(this)) > 0;
     }
 
     /// @dev D89: owner may zap at MINIMUM_LIQUIDITY. Public still sees isZapEligible()==false.
@@ -292,12 +298,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _decimalsOf(address token) internal view returns (uint8) {
+    function _decimalsOf(address token) internal view returns (uint8 d) {
         Repo.Layout storage l = Repo._layout();
-        if (token == l.token0) return l.decimals0;
-        if (token == l.token1) return l.decimals1;
-        if (token == l.token2) return l.decimals2;
-        revert InvalidPoolToken();
+        if (token == l.token0) d = l.decimals0;
+        else if (token == l.token1) d = l.decimals1;
+        else if (token == l.token2) d = l.decimals2;
+        else revert InvalidPoolToken();
+        // CREATE3 DETF may not exist at hook bind, so stored decimals can be 0.
+        if (d == 0) d = 18;
     }
 
 
@@ -496,35 +504,61 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             Repo._layout().reserves[token] += amount;
             return 0;
         }
-        uint256 minOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
+        uint256 minOut;
+        try IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se))
+            returns (uint256 m)
+        {
+            minOut = m > 0 ? m - 1 : 0;
+        } catch {}
         IERC20(token).forceApprove(se, amount);
         seOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
+        IERC20(token).forceApprove(se, 0);
     }
 
+
+    function _spendableSeShares(address token) internal view returns (uint256) {
+        address se = _seOf(token);
+        if (se == address(0)) return 0;
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        // Leave 1 wei so `_isLive` stays true. Keep-10 blocked owner last-exit unwrap.
+        return seBal > 1 ? seBal - 1 : 0;
+    }
 
     function _unwrapSeShares(address token, uint256 seIn) internal returns (uint256 pairOut) {
         if (seIn == 0) return 0;
         address se = _seOf(token);
-        uint256 minOut =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
+        uint256 minOut;
+        try IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token)) returns (uint256 m) {
+            minOut = m > 0 ? m - 1 : 0;
+        } catch {
+            minOut = 0;
+        }
         IERC20(se).forceApprove(se, seIn);
         pairOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
     }
 
 
     function _unwrapExactTokenOut(address token, uint256 amountOut) internal returns (uint256 seIn) {
         if (amountOut == 0) return 0;
         address se = _seOf(token);
+        uint256 cap = _spendableSeShares(token);
+        if (cap == 0) revert InsufficientTokenOut();
         seIn = ClaimLib.invertUnwrapExactTokenOut(se, token, amountOut);
+        if (seIn > cap) {
+            uint256 pairGot = _unwrapSeShares(token, cap);
+            if (pairGot < amountOut) revert InsufficientTokenOut();
+            return cap;
+        }
         IERC20(se).forceApprove(se, seIn);
         uint256 got = IStandardExchangeOut(se).exchangeOut(
             IERC20(se), seIn, IERC20(token), amountOut, address(this), false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
         if (got < amountOut) revert InsufficientTokenOut();
     }
 
@@ -867,7 +901,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             return _computeFirstMint(a0Max, a1Max, a2Max);
         }
         (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
-        if (e0 > 0 && e1 > 0 && e2 > 0) {
+        // Live 3-positive book still accepts 1- or 2-leg residual joins via partial
+        // NAV (R19 leftover pair/SE). Full-book is only when every leg is offered.
+        if (e0 > 0 && e1 > 0 && e2 > 0 && a0Max > 0 && a1Max > 0 && a2Max > 0) {
             return _computeFullBook(a0Max, a1Max, a2Max, supply);
         }
         if (Repo._layout().R == 0) revert NotLive();
@@ -911,11 +947,39 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         view
         returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
     {
+        (a0Max, a1Max, a2Max) = _capFaceUnderRadius(a0Max, a1Max, a2Max);
+        if (a0Max == 0 && a1Max == 0 && a2Max == 0) revert ZeroAmount();
         SharesUsed memory r = _partialSharesUsed(a0Max, a1Max, a2Max, supply);
         shares = r.shares;
         used0 = r.used0;
         used1 = r.used1;
         used2 = r.used2;
+    }
+
+    /// @dev Single-sided leftover must stay strictly inside R (same gate as `_requirePostUnderRadius`).
+    function _capFaceUnderRadius(uint256 a0, uint256 a1, uint256 a2)
+        private
+        view
+        returns (uint256, uint256, uint256)
+    {
+        Repo.Layout storage l = Repo._layout();
+        if (l.R == 0) return (a0, a1, a2);
+        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
+        a0 = _capOneFaceUnderRadius(l.token0, a0, e0, l.R);
+        a1 = _capOneFaceUnderRadius(l.token1, a1, e1, l.R);
+        a2 = _capOneFaceUnderRadius(l.token2, a2, e2, l.R);
+        return (a0, a1, a2);
+    }
+
+    function _capOneFaceUnderRadius(address token, uint256 face, uint256 eWad, uint256 R)
+        private
+        view
+        returns (uint256)
+    {
+        if (face == 0) return 0;
+        if (eWad + 1 >= R) return 0;
+        uint256 roomFace = _fromWadFloor(token, R - eWad - 1);
+        return face > roomFace ? roomFace : face;
     }
 
 
@@ -1406,12 +1470,21 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         }
 
         (s.e0, s.e1, s.e2) = _effectiveWad();
-        if (s.e0 > 0 && s.e1 > 0 && s.e2 > 0) {
+        if (
+            s.e0 > 0 && s.e1 > 0 && s.e2 > 0 && v.amount0 > 0 && v.amount1 > 0 && v.amount2 > 0
+        ) {
             _fillFullBookFlexible(v, s);
             return;
         }
 
         if (Repo._layout().R == 0) revert NotLive();
+        if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
+            (v.amount0, v.amount1, v.amount2) = _capFaceUnderRadius(v.amount0, v.amount1, v.amount2);
+            if (v.amount0 == 0 && v.amount1 == 0 && v.amount2 == 0) revert ZeroAmount();
+            s.o0 = _offeredEffectiveNative(0, v.amount0, false);
+            s.o1 = _offeredEffectiveNative(1, v.amount1, false);
+            s.o2 = _offeredEffectiveNative(2, v.amount2, false);
+        }
         _fillPartialFlexible(v, s);
     }
 
@@ -1810,9 +1883,38 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         p.inIdx = Repo._indexOf(l, tokenIn);
         (p.j, p.k) = _otherIdx(p.inIdx);
 
+        // Close rejoin can return more DETF than remaining book. A 3-leg ratio zap
+        // would drain pair SE (MathDomain). Use single-sided only when an other
+        // leg is small vs amountIn (live depositClaim/Policy mint stays ratio zap).
+        uint256 eIn = _effectiveNativeOf(tokenIn);
+        if (eIn > 0 && amountIn > eIn && _ratioZapWouldDrain(p.inIdx, amountIn)) {
+            return _singleSidedPlan(tokenIn, amountIn);
+        }
+
         _fillZapSales(p, tokenIn, amountIn);
         _fillZapOuts(p, tokenIn);
         _fillZapShares(p, tokenIn);
+    }
+
+    function _ratioZapWouldDrain(uint8 inIdx, uint256 amountIn) private view returns (bool) {
+        (uint8 j, uint8 k) = _otherIdx(inIdx);
+        uint256 quarter = amountIn / 4;
+        return _effectiveNativeAt(j) < quarter || _effectiveNativeAt(k) < quarter;
+    }
+
+    function _singleSidedPlan(address tokenIn, uint256 amountIn) private view returns (ZapPlan memory p) {
+        Repo.Layout storage l = Repo._layout();
+        p.inIdx = Repo._indexOf(l, tokenIn);
+        (p.j, p.k) = _otherIdx(p.inIdx);
+        p.residual = amountIn;
+        uint256 a0;
+        uint256 a1;
+        uint256 a2;
+        if (p.inIdx == 0) a0 = amountIn;
+        else if (p.inIdx == 1) a1 = amountIn;
+        else a2 = amountIn;
+        (, uint256 supplyAfter) = _previewProtocolMintShares();
+        (p.shares, p.used0, p.used1, p.used2) = _computePartial(a0, a1, a2, supplyAfter);
     }
 
 
@@ -2073,7 +2175,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _refundFreeOfToken(l.token1, l.se1 != address(0), to);
         _refundFreeOfToken(l.token2, l.se2 != address(0), to);
     }
-
 
     function _refundFreeOfToken(address token, bool buffered, address to) private {
         uint256 free = _freeTokenBalance(token);

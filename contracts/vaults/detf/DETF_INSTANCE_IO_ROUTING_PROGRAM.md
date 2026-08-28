@@ -140,7 +140,7 @@ Parallel after 00 is legal: **01 + 06 + 09**, and **02–05** (rebase if 01 move
 | 08 DETF hook matrix | green | same UniswapV4DetfDFPkg vs Orbital/Weighted/Quad |
 | 09 Docs | green | D20/D25 remainder / §16.2 pointers |
 | 10 pons v2 SE + DETF | green | unified DETF bound to pons Uni V4 SE; Open threshold |
-| 11 production SE/hook matrix tests | PRD ready | [`UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md`](./UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md); Uni V3/V4 + Morpho Blue SE; ERC-4626 T7/T8 is not production SE proof |
+| 11 production SE/hook matrix tests | green | [`UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md`](./UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md); 26 fixtures × 4 paths (prod-se 100 + H-CP-P2 on pons file 4) plus T10 3; regression UniswapV4Detf_*.t.sol 24/24; ERC-4626 T7/T8 is not production SE proof |
 
 ---
 

@@ -61,11 +61,9 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
             json = vm.serializeAddress("p", "uniswapV3Factory", v3_);
         }
         json = vm.serializeAddress("p", "cpHookPkg", s.cpHookPkg);
-        json = vm.serializeAddress("p", "cpDetfPkg", s.cpDetfPkg);
         json = vm.serializeAddress("p", "weightedHookPkg", s.weightedHookPkg);
-        json = vm.serializeAddress("p", "weightedDetfPkg", s.weightedDetfPkg);
         json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
-        json = vm.serializeAddress("p", "curveQuadDetfPkg", s.curveQuadDetfPkg);
+        json = vm.serializeAddress("p", "uniV4DetfPkg", s.uniV4DetfPkg);
         json = vm.serializeAddress("p", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("p", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         json = vm.serializeAddress("p", "deployer", deployer);

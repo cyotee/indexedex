@@ -36,19 +36,17 @@ After a pons Family sale, add a **later** Stage that deploys the Protocol DETF i
 | 05 | 02 | `Phase_05_Stage_02_UniswapV4TwapOracle.s.sol` | TWAP facet + DFPkg + canonical instance + adapter factory |
 | 05 | 03 | `Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol` | Uni V4 SE DFPkg (`PkgInit.twapOracle` from 05-02) |
 | 05 | 05 | `Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol` | Morpho Blue SE DFPkg (no vaults; Morpho is `PkgArgs`) |
-| 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Bond NFT DFPkg |
+| 06 | 01 | `Phase_06_Stage_01_BondNftPkg.s.sol` | Uni V4 Bond NFT DFPkg (R12a) |
 | 06 | 02 | `Phase_06_Stage_02_RebasingClaimPkg.s.sol` | Rebasing claim DFPkg |
 | 06 | 03 | `Phase_06_Stage_03_CpBufferHookPkg.s.sol` | CP buffer hook DFPkg |
 | 06 | 04 | `Phase_06_Stage_04_WeightedBufferHookPkg.s.sol` | Weighted buffer hook DFPkg |
 | 06 | 06 | `Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol` | Curve Quad buffer hook DFPkg |
-| 06 | 07 | `Phase_06_Stage_07_CpDetfPkg.s.sol` | CP single SE DETF DFPkg |
-| 06 | 08 | `Phase_06_Stage_08_WeightedDetfPkg.s.sol` | Weighted DETF DFPkg |
-| 06 | 10 | `Phase_06_Stage_10_CurveQuadDetfPkg.s.sol` | Curve Quad DETF DFPkg |
+| 06 | 07 | `Phase_06_Stage_07_UniswapV4DetfPkg.s.sol` | Unified Uni V4 DETF DFPkg |
 | 09 | 01 | `Phase_09_Stage_01_ExportFrontend.s.sol` | Frontend `chain/4663/` export. No txs |
 
-Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 / 06-09 (Orbital) stay unused.
+Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 (Orbital hook) stay unused.
 
-Not in this catalog: minter facade, test tokens, Uni V3 rehearsal or SE package, Orbital hook/DETF packages, SE vault instances, Protocol DETF instances.
+Not in this catalog: minter facade, test tokens, Uni V3 rehearsal or SE package, Orbital hook, old family DETF packages, SE vault instances, Protocol DETF instances.
 
 ## Shells
 
@@ -70,3 +68,5 @@ DEV_ADDRESS=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
 ```
 
 `simulate` is not `all`. Do not run it after a completed staged deploy on the same Anvil (CREATE3 collision).
+
+**Package delta (unified DETF, R12a Bond NFT, optional SE pkgs):** do not re-run Phases 02–04. Follow [`DEPLOY_UNIFIED_DETF_PACKAGES.md`](./DEPLOY_UNIFIED_DETF_PACKAGES.md).

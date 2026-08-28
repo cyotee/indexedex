@@ -504,47 +504,144 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         }
         if (!s.isReserveLive) return;
         address[] memory tokens_ = IUniswapV4SeBufferHook(hookAddr_).tokens();
-        for (uint256 i; i < tokens_.length; ++i) {
-            _tryJoinResidual(tokens_[i]);
-        }
         address[] storage ses_ = s.hookStandardExchanges._values();
-        for (uint256 j; j < ses_.length; ++j) {
-            _tryJoinResidual(ses_[j]);
+        // Later residual joins can refund an earlier-cleared pair via conservation.
+        // Repeat until diamond leftovers are dust or the round makes no progress.
+        for (uint256 round_; round_ < 8; ++round_) {
+            uint256 dirty_;
+            for (uint256 i; i < tokens_.length; ++i) {
+                uint256 before_ = IERC20(tokens_[i]).balanceOf(address(this));
+                _tryJoinResidual(tokens_[i]);
+                if (IERC20(tokens_[i]).balanceOf(address(this)) > 10) dirty_ = 1;
+                if (IERC20(tokens_[i]).balanceOf(address(this)) + 10 < before_) dirty_ = 1;
+            }
+            for (uint256 j; j < ses_.length; ++j) {
+                uint256 beforeSe_ = IERC20(ses_[j]).balanceOf(address(this));
+                _tryJoinResidual(ses_[j]);
+                if (IERC20(ses_[j]).balanceOf(address(this)) > 10) dirty_ = 1;
+                if (IERC20(ses_[j]).balanceOf(address(this)) + 10 < beforeSe_) dirty_ = 1;
+            }
+            if (dirty_ == 0) break;
         }
     }
 
     function _tryJoinResidual(address token_) internal {
         uint256 bal_ = IERC20(token_).balanceOf(address(this));
         if (bal_ == 0) return;
+
         Repo.Storage storage s = Repo._layoutStruct();
-        if (token_ == address(this) || s.hookStandardExchanges._contains(token_)) {
-            IERC20(token_).forceApprove(s.hook, bal_);
-            try _hook().joinSingleAssetExactIn(token_, bal_, _bondLpHolder(), 0, block.timestamp + 1) returns (
-                uint256 lpOut_
-            ) {
-                _bookUnassignedLp(lpOut_);
-            } catch {}
-            IERC20(token_).forceApprove(s.hook, 0);
+        bool isSe_ = s.hookStandardExchanges._contains(token_);
+        // Leftover DETF/SE: partial-add. Zap of leftover DETF sells inventory;
+        // leftover SE unwraps back to pair after the pair loop.
+        if (!isSe_ && token_ != address(this)) {
+            _joinResidualCapped(token_, bal_);
+        }
+        uint256 leftover_ = IERC20(token_).balanceOf(address(this));
+        if (leftover_ > 10) _joinResidualUnbalanced(token_, leftover_);
+
+        if (token_ == address(this)) {
             return;
         }
+        leftover_ = IERC20(token_).balanceOf(address(this));
+        if (leftover_ <= 10) return;
+        // Last-resort only: tiny unjoinable remainder. Do not park large SE
+        // (donates book without LP and can fail later burns).
         if (s.hookPairTokens._contains(token_)) {
-            address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(token_);
-            if (se_ == address(0)) return;
-            uint256 shares_;
-            try this.sweepPairToShare(se_, token_, bal_) returns (uint256 sh_) {
-                shares_ = sh_;
-            } catch {
-                return;
-            }
-            if (shares_ == 0) return;
-            IERC20(se_).forceApprove(s.hook, shares_);
-            try _hook().joinSingleAssetExactIn(se_, shares_, _bondLpHolder(), 0, block.timestamp + 1) returns (
-                uint256 lpOut_
-            ) {
-                _bookUnassignedLp(lpOut_);
-            } catch {}
-            IERC20(se_).forceApprove(s.hook, 0);
+            _wrapAndParkPair(token_);
+        } else if (isSe_) {
+            _parkResidualOnHook(token_);
         }
+    }
+
+    /// @dev Orbital leftover can MathDomain on a 3-leg zap of the full residual.
+    ///      Halve and retry so R19 still clears.
+    function _joinResidualCapped(address token_, uint256 amount_) internal {
+        if (amount_ == 0) return;
+        address hook_ = Repo._layoutStruct().hook;
+        uint256 amt_ = amount_;
+        for (uint256 i; i < 24 && amt_ > 10; ++i) {
+            uint256 before_ = IERC20(token_).balanceOf(address(this));
+            if (amt_ > before_) amt_ = before_;
+            if (amt_ <= 10) break;
+            IERC20(token_).forceApprove(hook_, amt_);
+            try _hook().joinSingleAssetExactIn(
+                token_, amt_, _bondLpHolder(), 0, block.timestamp + 1
+            ) returns (uint256 lpOut_) {
+                IERC20(token_).forceApprove(hook_, 0);
+                _bookUnassignedLp(lpOut_);
+                uint256 after_ = IERC20(token_).balanceOf(address(this));
+                if (lpOut_ == 0 || after_ + 10 >= before_) {
+                    amt_ = amt_ / 2;
+                } else {
+                    amt_ = after_;
+                }
+            } catch {
+                IERC20(token_).forceApprove(hook_, 0);
+                amt_ = amt_ / 2;
+            }
+        }
+        IERC20(token_).forceApprove(hook_, 0);
+    }
+
+    function _joinResidualUnbalanced(address token_, uint256 amount_) internal {
+        if (amount_ <= 10) return;
+        address hook_ = Repo._layoutStruct().hook;
+        address[] memory tokensIn_ = new address[](1);
+        uint256[] memory amounts_ = new uint256[](1);
+        tokensIn_[0] = token_;
+        uint256 amt_ = amount_;
+        for (uint256 i; i < 24 && amt_ > 10; ++i) {
+            uint256 before_ = IERC20(token_).balanceOf(address(this));
+            if (amt_ > before_) amt_ = before_;
+            if (amt_ <= 10) break;
+            amounts_[0] = amt_;
+            IERC20(token_).forceApprove(hook_, amt_);
+            try _hook().joinUnbalanced(
+                tokensIn_, amounts_, _bondLpHolder(), 0, block.timestamp + 1
+            ) returns (uint256 lpOut_) {
+                IERC20(token_).forceApprove(hook_, 0);
+                _bookUnassignedLp(lpOut_);
+                uint256 after_ = IERC20(token_).balanceOf(address(this));
+                if (lpOut_ == 0 || after_ + 10 >= before_) {
+                    amt_ = amt_ / 2;
+                } else {
+                    amt_ = after_;
+                }
+            } catch {
+                IERC20(token_).forceApprove(hook_, 0);
+                amt_ = amt_ / 2;
+            }
+        }
+        IERC20(token_).forceApprove(hook_, 0);
+    }
+
+    function _parkResidualOnHook(address token_) internal {
+        uint256 left_ = IERC20(token_).balanceOf(address(this));
+        if (left_ <= 10) return;
+        IERC20(token_).safeTransfer(Repo._layoutStruct().hook, left_ - 10);
+    }
+
+    function _wrapAndParkPair(address pair_) internal {
+        Repo.Storage storage s = Repo._layoutStruct();
+        address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pair_);
+        if (se_ == address(0)) return;
+        uint256 amt_ = IERC20(pair_).balanceOf(address(this));
+        if (amt_ > 10) amt_ -= 10;
+        for (uint256 i; i < 16 && amt_ > 0; ++i) {
+            uint256 before_ = IERC20(pair_).balanceOf(address(this));
+            if (amt_ + 10 > before_) amt_ = before_ > 10 ? before_ - 10 : 0;
+            if (amt_ == 0) break;
+            try this.sweepPairToShare(se_, pair_, amt_) returns (uint256) {
+                uint256 seBal_ = IERC20(se_).balanceOf(address(this));
+                if (seBal_ > 10) IERC20(se_).safeTransfer(s.hook, seBal_ - 10);
+                uint256 after_ = IERC20(pair_).balanceOf(address(this));
+                if (after_ + 10 >= before_) amt_ = amt_ / 2;
+                else amt_ = after_ > 10 ? after_ - 10 : 0;
+            } catch {
+                amt_ = amt_ / 2;
+            }
+        }
+        _parkResidualOnHook(se_);
     }
 
     function sweepPairToShare(address se_, address pair_, uint256 amount_)
@@ -552,14 +649,10 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         returns (uint256 shares_)
     {
         if (msg.sender != address(this)) revert Repo.NotAuthorized(msg.sender);
-        shares_ = _nestedExchangeInPush(
-            IStandardExchangeIn(se_),
-            IERC20(pair_),
-            amount_,
-            IERC20(se_),
-            0,
-            address(this),
-            block.timestamp + 1
+        IERC20(pair_).forceApprove(se_, amount_);
+        shares_ = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1
         );
+        IERC20(pair_).forceApprove(se_, 0);
     }
 }

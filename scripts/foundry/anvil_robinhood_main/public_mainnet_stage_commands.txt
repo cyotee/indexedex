@@ -57,13 +57,7 @@ forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBuff
 forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
 forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_CpDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_CpDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
-
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_08_WeightedDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_08_WeightedDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
-
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_10_CurveQuadDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
-forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_10_CurveQuadDetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"
+forge script scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --broadcast --slow --gas-estimate-multiplier 300
 
 forge script scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS"

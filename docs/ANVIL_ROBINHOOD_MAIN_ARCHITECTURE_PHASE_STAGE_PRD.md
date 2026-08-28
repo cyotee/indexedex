@@ -28,17 +28,15 @@ Stand up Crane factories and IndexedEx architecture on 4663 so a Protocol DETF i
 | 05 | 02 | Uni V4 TWAP oracle (facet + DFPkg + canonical instance + adapter factory) | `twapOraclePkg`, `twapOracle`, `twapAdapterFactory` |
 | 05 | 03 | Uni V4 SE DFPkg | `uniV4SePkg` |
 | 05 | 05 | Morpho Blue SE DFPkg | `morphoBlueSePkg` |
-| 06 | 01 | Bond NFT DFPkg | `bondNftVaultPkg` |
+| 06 | 01 | Uni V4 Bond NFT DFPkg (R12a) | `bondNftVaultPkg` |
 | 06 | 02 | Rebasing claim DFPkg | `rebasingClaimTokenPkg` |
 | 06 | 03 | CP buffer hook DFPkg | `cpHookPkg` |
 | 06 | 04 | Weighted buffer hook DFPkg | `weightedHookPkg` |
 | 06 | 06 | Curve Quad buffer hook DFPkg | `curveQuadHookPkg` |
-| 06 | 07 | CP single SE DETF DFPkg | `cpDetfPkg` |
-| 06 | 08 | Weighted DETF DFPkg | `weightedDetfPkg` |
-| 06 | 10 | Curve Quad DETF DFPkg | `curveQuadDetfPkg` |
+| 06 | 07 | Unified Uni V4 DETF DFPkg | `uniV4DetfPkg` |
 | 09 | 01 | Frontend `chain/4663/` export | none (always rewrite) |
 
-Stage numbers match 46630. **05-04** (Uni V3 SE) and **06-05 / 06-09** (Orbital) stay unused so those families can fill later without renaming.
+Stage numbers match 46630. **05-04** (Uni V3 SE) and **06-05** (Orbital hook) stay unused so those packages can fill later without renaming. Family DETF packages (old CP / Weighted / Quad DETF DFPkgs) are **not** in this catalog. One `UniswapV4DetfDFPkg` binds any in-scope SE buffer hook at instance deploy.
 
 Morpho SE is a **package** only. Morpho Blue host is `PkgArgs` at vault deploy, not this catalog. No Morpho rehearsal (`new Morpho`) on 4663.
 
@@ -46,12 +44,13 @@ Morpho SE is a **package** only. Morpho Blue host is `PkgArgs` at vault deploy, 
 
 - Minter facade, test tokens, Mag7
 - Uni V3 rehearsal or Uni V3 SE package
-- Orbital hook or DETF packages
+- Orbital hook package
+- Old family DETF packages (`UniswapV4SingleStandardExchangeDETF`, Weighted DETF, Curve Quad DETF)
 - SE vault instances and Protocol DETF instances
 
 Phase 09 writes `platform.json` and empty instance tokenlists under `frontend/packages/protocol/src/addresses/chain/4663/`. It does not overwrite `pons-launch.json`.
 
-A later Stage (Phase 08) will `deployPair` / first-bond a Protocol DETF from a pons `PoolKey`. Do not add that Stage until the key exists.
+A later Stage (Phase 08) will deploy a Protocol DETF **instance** from `uniV4DetfPkg` plus a hook package, after a pons `PoolKey` exists. Hook DFPkg first (predicted DETF as owner). Do not add that Stage until the key exists.
 
 ## Shells
 

@@ -3,7 +3,7 @@
 # Public Robinhood Chain mainnet (4663) architecture launch.
 # No Phase 00. --sender $DEPLOYER_ADDRESS (cast wallet).
 # Catalog: pins, Crane factories, FeeCollector, Manager, TWAP, Uni V4 SE pkg,
-# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook + DETF pkgs.
+# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook pkgs, unified Uni V4 DETF pkg.
 # No tokens. No Protocol DETF instances.
 # Simulate each Foundry Stage then broadcast. Never --skip-simulation.
 # =============================================================================
@@ -56,7 +56,8 @@ Usage:
 
 Public 4663 architecture path. Does not run Phase 00. Requires DEPLOYER_ADDRESS.
 Deploys Crane factories, FeeCollector, Manager, TWAP oracle, Uni V4 SE package,
-Morpho Blue SE package, and CP / Weighted / Curve Quad hook and DETF packages.
+Morpho Blue SE package, CP / Weighted / Curve Quad hook packages, and the
+unified Uni V4 DETF package.
 No tokens. No Protocol DETF instances.
 
 Commands:

@@ -310,4 +310,72 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     function _boundSe() internal view returns (address) {
         return IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(address(weth));
     }
+
+    /// @dev First non-DETF `hook.tokens()` entry after finalize (WETH on this fixture).
+    function _mintToken() internal view returns (address t) {
+        address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] != detf) return toks[i];
+        }
+        revert("no mintToken");
+    }
+
+    function _assertSeAllowancesZero() internal view {
+        address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+        for (uint256 i; i < toks.length; ++i) {
+            address se_ = IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(toks[i]);
+            if (se_ != address(0)) {
+                assertEq(IERC20(se_).allowance(reserveHook, se_), 0, "SE allowance(hook, se)==0");
+            }
+        }
+    }
+
+    function _assertR19() internal {
+        address hook_ = detfInfo.hook();
+        address[] memory toks = IUniswapV4SeBufferHook(hook_).tokens();
+        bool needSweep = IERC20(hook_).balanceOf(detf) > 0;
+        for (uint256 i; i < toks.length; ++i) {
+            if (IERC20(toks[i]).balanceOf(detf) > 0) needSweep = true;
+            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
+            if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
+        }
+        if (needSweep) detfInfo.sweepDust();
+        assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
+        for (uint256 i; i < toks.length; ++i) {
+            uint256 bal = IERC20(toks[i]).balanceOf(detf);
+            if (bal > 10) {
+                _logR19JoinFailure(hook_, toks[i], bal);
+                assertLe(bal, 10, string.concat("R19 token after sweep ", vm.toString(toks[i])));
+            }
+            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
+            if (se_ != address(0)) {
+                uint256 seBal = IERC20(se_).balanceOf(detf);
+                if (seBal > 10) {
+                    emit log_named_address("R19 leftover SE", se_);
+                    emit log_named_uint("R19 leftover SE bal", seBal);
+                }
+                assertLe(seBal, 10, "R19 SE share");
+            }
+        }
+    }
+
+    function _logR19JoinFailure(address hook_, address token_, uint256 bal_) internal {
+        emit log_named_address("R19 leftover token", token_);
+        emit log_named_uint("R19 leftover is DETF", token_ == detf ? 1 : 0);
+        emit log_named_uint("R19 leftover is WETH", token_ == address(weth) ? 1 : 0);
+        emit log_named_uint("R19 leftover bal", bal_);
+        try IUniswapV4SeBufferHook(hook_).previewJoinSingleAssetExactIn(token_, bal_) returns (uint256 p) {
+            emit log_named_uint("R19 previewJoin", p);
+        } catch (bytes memory err) {
+            if (err.length >= 4) emit log_named_bytes32("R19 join revert", bytes32(err));
+        }
+        address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_);
+        if (se_ != address(0)) {
+            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(token_), bal_, IERC20(se_)) returns (uint256 w) {
+                emit log_named_uint("R19 sePreview wrap", w);
+            } catch (bytes memory err2) {
+                if (err2.length >= 4) emit log_named_bytes32("R19 wrap revert", bytes32(err2));
+            }
+        }
+    }
 }

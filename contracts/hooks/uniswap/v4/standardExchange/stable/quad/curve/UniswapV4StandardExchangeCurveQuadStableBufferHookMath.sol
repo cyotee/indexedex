@@ -163,26 +163,74 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
             }
         }
 
-        D = S;
         uint256 Ann = amp * N_TOKENS;
+        D = _getDNewton(xp, S, Ann);
+        if (D != 0) return D;
+        return _getDBisect(xp, S, Ann);
+    }
+
+    function _dP(uint256[4] memory xp, uint256 D) private pure returns (bool ok, uint256 D_P) {
+        D_P = D;
+        for (uint256 j; j < N_TOKENS; ++j) {
+            uint256 den = xp[j] * N_TOKENS;
+            if (den == 0) return (false, 0);
+            unchecked {
+                uint256 prod = D_P * D;
+                if (D_P != 0 && prod / D_P != D) {
+                    return (false, 0);
+                }
+                D_P = prod / den;
+            }
+        }
+        return (true, D_P);
+    }
+
+    function _getDNewton(uint256[4] memory xp, uint256 S, uint256 Ann) private pure returns (uint256 D) {
+        D = S;
         for (uint256 i; i < MAX_NR_ITERS; ++i) {
-            uint256 D_P = D;
-            D_P = (D_P * D) / (xp[0] * N_TOKENS);
-            D_P = (D_P * D) / (xp[1] * N_TOKENS);
-            D_P = (D_P * D) / (xp[2] * N_TOKENS);
-            D_P = (D_P * D) / (xp[3] * N_TOKENS);
-
+            (bool ok, uint256 D_P) = _dP(xp, D);
+            if (!ok) return 0;
             uint256 Dprev = D;
-            D = (((Ann * S) / AMP_PRECISION + D_P * N_TOKENS) * D)
-                / (((Ann - AMP_PRECISION) * D) / AMP_PRECISION + (N_TOKENS + 1) * D_P);
-
+            uint256 numA = (Ann * S) / AMP_PRECISION;
+            uint256 denA = ((Ann - AMP_PRECISION) * D) / AMP_PRECISION;
+            if (D_P > type(uint256).max / (N_TOKENS + 1)) return 0;
+            uint256 den = denA + D_P * (N_TOKENS + 1);
+            if (den == 0) return 0;
+            D = FixedPointMathLib.fullMulDiv(numA + D_P * N_TOKENS, D, den);
             if (D > Dprev) {
                 if (D - Dprev <= 1) return D;
             } else if (Dprev - D <= 1) {
                 return D;
             }
         }
-        revert InvariantFailed();
+        return 0;
+    }
+
+    /// @dev Compare Ann*S/A + D  vs  Ann*D/A + D*D_P. True if D is above the root.
+    function _dTooHigh(uint256[4] memory xp, uint256 S, uint256 Ann, uint256 D) private pure returns (bool) {
+        (bool ok, uint256 D_P) = _dP(xp, D);
+        if (!ok) return true;
+        uint256 left = (Ann * S) / AMP_PRECISION + D;
+        uint256 annD = (Ann * D) / AMP_PRECISION;
+        if (left < annD) return true;
+        uint256 lhs = left - annD;
+        if (D_P == 0) return false;
+        uint256 q = lhs / D_P;
+        if (q < D) return true;
+        if (q > D) return false;
+        return false;
+    }
+
+    function _getDBisect(uint256[4] memory xp, uint256 S, uint256 Ann) private pure returns (uint256 D) {
+        uint256 lo = 1;
+        uint256 hi = S;
+        for (uint256 i; i < 256; ++i) {
+            if (hi - lo <= 1) return lo;
+            uint256 mid = lo + (hi - lo) / 2;
+            if (_dTooHigh(xp, S, Ann, mid)) hi = mid;
+            else lo = mid;
+        }
+        return lo;
     }
 
     function getY(uint256 i, uint256 j, uint256 x, uint256[4] memory xp, uint256 amp, uint256 D)

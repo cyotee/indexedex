@@ -18,9 +18,7 @@ import {Phase_06_Stage_02_RebasingClaimPkg} from "./Phase_06_Stage_02_RebasingCl
 import {Phase_06_Stage_03_CpBufferHookPkg} from "./Phase_06_Stage_03_CpBufferHookPkg.sol";
 import {Phase_06_Stage_04_WeightedBufferHookPkg} from "./Phase_06_Stage_04_WeightedBufferHookPkg.sol";
 import {Phase_06_Stage_06_CurveQuadBufferHookPkg} from "./Phase_06_Stage_06_CurveQuadBufferHookPkg.sol";
-import {Phase_06_Stage_07_CpDetfPkg} from "./Phase_06_Stage_07_CpDetfPkg.sol";
-import {Phase_06_Stage_08_WeightedDetfPkg} from "./Phase_06_Stage_08_WeightedDetfPkg.sol";
-import {Phase_06_Stage_10_CurveQuadDetfPkg} from "./Phase_06_Stage_10_CurveQuadDetfPkg.sol";
+import {Phase_06_Stage_07_UniswapV4DetfPkg} from "./Phase_06_Stage_07_UniswapV4DetfPkg.sol";
 
 /// @title Script_SimulateArchitecture
 /// @notice One Foundry script wrapping architecture library execute() for a 4663 gas quote.
@@ -49,9 +47,7 @@ contract Script_SimulateArchitecture is LaunchIo {
         Phase_06_Stage_03_CpBufferHookPkg.execute(s);
         Phase_06_Stage_04_WeightedBufferHookPkg.execute(s);
         Phase_06_Stage_06_CurveQuadBufferHookPkg.execute(s);
-        Phase_06_Stage_07_CpDetfPkg.execute(s);
-        Phase_06_Stage_08_WeightedDetfPkg.execute(s);
-        Phase_06_Stage_10_CurveQuadDetfPkg.execute(s);
+        Phase_06_Stage_07_UniswapV4DetfPkg.execute(s);
         vm.stopBroadcast();
 
         _exportArchitecture(s);
@@ -61,9 +57,7 @@ contract Script_SimulateArchitecture is LaunchIo {
         _logAddress("twapOracle:", address(s.twapOracle));
         _logAddress("uniV4SePkg:", address(s.uniV4SePkg));
         _logAddress("morphoBlueSePkg:", s.morphoBlueSePkg);
-        _logAddress("cpDetfPkg:", s.cpDetfPkg);
-        _logAddress("weightedDetfPkg:", s.weightedDetfPkg);
-        _logAddress("curveQuadDetfPkg:", s.curveQuadDetfPkg);
+        _logAddress("uniV4DetfPkg:", s.uniV4DetfPkg);
         _logComplete("SimulateArchitecture 02-06");
     }
 }

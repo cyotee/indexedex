@@ -11,20 +11,22 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
 
 /// @title Phase_06_Stage_01_BondNftPkg
-/// @notice Bond NFT DFPkg + ERC721 + DETF NFT vault facets used only here.
+/// @notice Uni V4 Bond NFT DFPkg (R12a) + ERC721 + DETF NFT vault facets. Not the common Balancer NFT.
 library Phase_06_Stage_01_BondNftPkg {
     using DetfFacetFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
 
     function execute(LaunchState storage s) internal {
-        IFacet detfNFTVaultFacet = s.create3Factory.deployDETFNFTVaultFacet();
+        IFacet detfNFTVaultFacet = s.create3Factory.deployUniswapV4DetfBondNFTVaultFacet();
         IFacet erc721FacetDetf = IFacet(
             s.create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("RhMain_ERC721Facet"))
         );
-        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
+        IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+            .buildUniswapV4DetfBondNFTVaultPkgInit(
             erc721FacetDetf,
             s.erc4626BasicVaultFacet,
             s.erc4626StandardVaultFacet,
@@ -32,7 +34,8 @@ library Phase_06_Stage_01_BondNftPkg {
             IVaultFeeOracleQuery(address(s.indexedexManager)),
             IVaultRegistryDeployment(address(s.indexedexManager))
         );
-        s.bondNftVaultPkg =
-            address(IVaultRegistryDeployment(address(s.indexedexManager)).deployDETFNFTVaultDFPkg(nftPkgInit));
+        s.bondNftVaultPkg = address(
+            IVaultRegistryDeployment(address(s.indexedexManager)).deployUniswapV4DetfBondNFTVaultDFPkg(nftPkgInit)
+        );
     }
 }

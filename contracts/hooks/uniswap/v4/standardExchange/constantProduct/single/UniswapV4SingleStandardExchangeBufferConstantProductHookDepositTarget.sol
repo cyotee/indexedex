@@ -192,9 +192,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         Repo.Layout storage l = Repo._layout();
         uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
         if (seBal == 0) return 0;
-        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
         );
+        return claim == 0 ? 1 : claim;
     }
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
@@ -205,7 +206,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _isLive() internal view returns (bool) {
-        return reserveCurrency0() > 0 && reserveCurrency1() > 0;
+        if (reserveCurrency0() > 0 && reserveCurrency1() > 0) return true;
+        Repo.Layout storage l = Repo._layout();
+        return IERC20(l.rawToken).balanceOf(address(this)) > 0
+            && IERC20(l.standardExchange).balanceOf(address(this)) > 0;
     }
 
     function _isZapEligible() internal view returns (bool) {
@@ -256,16 +260,19 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (block.timestamp > deadline) revert DeadlineExpired();
     }
 
-    function _decimalsOf(address token) internal view returns (uint8) {
+    function _decimalsOf(address token) internal view returns (uint8 d) {
         Repo.Layout storage l = Repo._layout();
-        if (token == l.currency0) return l.decimalsCurrency0;
-        if (token == l.currency1) return l.decimalsCurrency1;
-        revert InvalidToken();
+        if (token == l.currency0) d = l.decimalsCurrency0;
+        else if (token == l.currency1) d = l.decimalsCurrency1;
+        else revert InvalidToken();
+        // CREATE3 DETF may not exist at hook bind, so stored decimals can be 0.
+        if (d == 0) d = 18;
     }
 
     function _wadProduct() internal view returns (uint256) {
-        return Math.toWad(reserveCurrency0(), Repo._layout().decimalsCurrency0)
-            * Math.toWad(reserveCurrency1(), Repo._layout().decimalsCurrency1);
+        Repo.Layout storage l = Repo._layout();
+        return Math.toWad(reserveCurrency0(), _decimalsOf(l.currency0))
+            * Math.toWad(reserveCurrency1(), _decimalsOf(l.currency1));
     }
 
     function _feeOnAndShare()
@@ -323,12 +330,32 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         );
     }
 
+    function _spendableSeShares() internal view returns (uint256) {
+        uint256 seBal = IERC20(Repo._layout().standardExchange).balanceOf(address(this));
+        // Leave 1 wei so `_isLive` stays true. Proportional exit already retains MAX_DUST_WEI.
+        return seBal > 1 ? seBal - 1 : 0;
+    }
+
+    function _spendableRaw() internal view returns (uint256) {
+        uint256 rawBal = IERC20(Repo._layout().rawToken).balanceOf(address(this));
+        return rawBal > 1 ? rawBal - 1 : 0;
+    }
+
     function _unwrapSeShares(uint256 seIn) internal returns (uint256 pairOut) {
-        _requireNonZero(seIn);
+        uint256 cap = _spendableSeShares();
+        if (seIn > cap) seIn = cap;
+        if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
-        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        uint256 minOut;
+        try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
-        );
+        ) returns (uint256 m) {
+            minOut = m;
+        } catch {
+            minOut = 0;
+        }
+        // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
             IERC20(l.standardExchange),
             seIn,
@@ -338,14 +365,34 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             false,
             block.timestamp
         );
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
     }
 
     function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
         _requireNonZero(pairOut);
         Repo.Layout storage l = Repo._layout();
-        seIn = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+        uint256 cap = _spendableSeShares();
+        if (cap == 0) {
+            if (Repo._layout().ownerOnlyLiquidity) return 0;
+            revert InsufficientTokenOut();
+        }
+        try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
             IERC20(l.standardExchange), IERC20(l.pairToken), pairOut
-        );
+        ) returns (uint256 need) {
+            seIn = need;
+        } catch {
+            seIn = type(uint256).max;
+        }
+        // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
+        if (seIn > cap) {
+            uint256 pairGot = _unwrapSeShares(cap);
+            if (pairGot == 0) {
+                if (Repo._layout().ownerOnlyLiquidity) return 0;
+                revert InsufficientTokenOut();
+            }
+            return cap;
+        }
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         uint256 spent = IStandardExchangeOut(l.standardExchange).exchangeOut(
             IERC20(l.standardExchange),
             seIn,
@@ -355,14 +402,29 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             false,
             block.timestamp
         );
+        IERC20(l.standardExchange).forceApprove(l.standardExchange, 0);
         require(spent == seIn, "unwrap exact-out");
     }
 
+    function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
+        uint256 pairBefore = IERC20(Repo._layout().pairToken).balanceOf(address(this));
+        _unwrapExactPairOut(pairWant);
+        pairGot = IERC20(Repo._layout().pairToken).balanceOf(address(this)) - pairBefore;
+        if (pairGot == 0 && !Repo._layout().ownerOnlyLiquidity) revert InsufficientTokenOut();
+    }
+
     function _refundPairDust(address to) internal {
+        to;
         Repo.Layout storage l = Repo._layout();
-        uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
-        if (bal > Repo.MAX_DUST_WEI) {
-            IERC20(l.pairToken).safeTransfer(to, bal);
+        for (uint256 i; i < 3; ++i) {
+            uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
+            if (bal <= Repo.MAX_DUST_WEI) return;
+            uint256 excess = bal - Repo.MAX_DUST_WEI;
+            uint256 preview = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+                IERC20(l.pairToken), excess, IERC20(l.standardExchange)
+            );
+            if (preview == 0) return;
+            _bufferPair(excess);
         }
     }
 
@@ -729,7 +791,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
 
     function _clampToReserveRatioFrom(uint256 x, uint256 y, uint256 amount0, uint256 amount1)
         internal
-        pure
+        view
         returns (uint256 used0, uint256 used1)
     {
         used0 = amount0;
@@ -741,7 +803,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         } else {
             used0 = (used1 * x) / y;
         }
-        if (used0 == 0 || used1 == 0) revert ZeroAmount();
+        if (used0 == 0 || used1 == 0) {
+            if (Repo._layout().ownerOnlyLiquidity) {
+                if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
+                if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
+            }
+            if (used0 == 0 || used1 == 0) revert ZeroAmount();
+        }
     }
 
     function _intakePoolAmounts(uint256 used0, uint256 used1) internal {
@@ -784,17 +852,25 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         } else {
             used0 = (used1 * x) / y;
         }
-        if (used0 == 0 || used1 == 0) revert ZeroAmount();
+        if (used0 == 0 || used1 == 0) {
+            if (Repo._layout().ownerOnlyLiquidity) {
+                if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
+                if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
+            }
+            if (used0 == 0 || used1 == 0) revert ZeroAmount();
+        }
     }
 
     function _mintFromDeltas(uint256 xBefore, uint256 yBefore, address to)
         internal
         returns (uint256 lpAmount)
     {
-        uint256 dxN = Math.toWad(reserveCurrency0() - xBefore, Repo._layout().decimalsCurrency0);
-        uint256 dyN = Math.toWad(reserveCurrency1() - yBefore, Repo._layout().decimalsCurrency1);
-        uint256 xN = Math.toWad(xBefore, Repo._layout().decimalsCurrency0);
-        uint256 yN = Math.toWad(yBefore, Repo._layout().decimalsCurrency1);
+        uint8 d0 = _decimalsOf(Repo._layout().currency0);
+        uint8 d1 = _decimalsOf(Repo._layout().currency1);
+        uint256 dxN = Math.toWad(reserveCurrency0() - xBefore, d0);
+        uint256 dyN = Math.toWad(reserveCurrency1() - yBefore, d1);
+        uint256 xN = Math.toWad(xBefore, d0);
+        uint256 yN = Math.toWad(yBefore, d1);
         lpAmount = Math.mintSharesLater(dxN, dyN, xN, yN, ERC20Repo._totalSupply());
         if (lpAmount == 0) revert InsufficientLpOut();
         _mintLp(to, lpAmount);
@@ -958,16 +1034,27 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             }
         }
         if (saleAmt > amountIn) saleAmt = amountIn;
-        if (saleAmt == 0) saleAmt = amountIn / 2;
+        // Never sell 100% of tokenIn: keptIn==0 makes _clampToReserveRatioFrom ZeroAmount
+        // on close/mint rejoin into a keep-10 remainder pool.
+        if (saleAmt == 0 || saleAmt >= amountIn) saleAmt = amountIn / 2;
 
         // Quote on pre-buffer book with pulled inventory (raw-in includes amountIn for face quote).
         amountOtherOut = _quoteExactInZap(zfo, saleAmt, tokenIn, amountIn);
-        if (amountOtherOut == 0) revert InsufficientTokenOut();
 
         if (tokenIn == l.pairToken) {
             _bufferPair(saleAmt);
         } else {
-            _unwrapExactPairOut(amountOtherOut);
+            if (amountOtherOut == 0) {
+                uint256 cap = _spendableSeShares();
+                if (cap > 0) amountOtherOut = _unwrapSeShares(cap);
+            } else {
+                amountOtherOut = _unwrapPairLeavingDust(amountOtherOut);
+            }
+            // Owner last-exit rejoin (D15/D30) must mint lpOut > 0 against dust.
+            // Public zaps still revert when the other leg cannot be sourced.
+            if (amountOtherOut == 0 && !Repo._layout().ownerOnlyLiquidity) {
+                revert InsufficientTokenOut();
+            }
         }
         emit ZapSwap(msg.sender, tokenIn, tokenOut, saleAmt, amountOtherOut);
     }
@@ -1044,8 +1131,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         }
 
         (uint256 used0, uint256 used1) = _clampToReserveRatioFrom(xBefore, yBefore, add0, add1);
-        if (add0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, add0 - used0);
-        if (add1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, add1 - used1);
+        // Unused pair stays for `_refundPairDust` rebuffer. Unused raw stays as book
+        // inventory (D71) — refunding it to the DETF parks dust the diamond cannot rejoin
+        // when the bound SE panics or previews 0 on the residual zap.
 
         _intakePoolAmounts(used0, used1);
         lpAmount = _mintFromDeltas(xBefore, yBefore, to);
@@ -1257,7 +1345,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             saleAmt = claimInFull == 0 ? amountIn / 2 : (amountIn * saleClaim) / claimInFull;
         }
         if (saleAmt > amountIn) saleAmt = amountIn;
-        if (saleAmt == 0) saleAmt = amountIn / 2;
+        if (saleAmt == 0 || saleAmt >= amountIn) saleAmt = amountIn / 2;
         amountOtherOut = _quoteExactIn(zfo, saleAmt);
         keptIn = amountIn - saleAmt;
     }

@@ -64,6 +64,39 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
 {
     using SafeERC20 for IERC20;
 
+    function _unbalancedJoinSharesOwnerAware(
+        uint256[] memory currentScaled,
+        uint256[] memory amountsScaled,
+        uint256[] memory weights,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) internal view returns (uint256 bptOut) {
+        if (Repo._layout().ownerOnlyLiquidity) {
+            return Math.unbalancedJoinSharesUncapped(
+                currentScaled, amountsScaled, weights, supply, swapFeeWad
+            );
+        }
+        return Math.unbalancedJoinShares(currentScaled, amountsScaled, weights, supply, swapFeeWad);
+    }
+
+    function _singleJoinExactInSharesOwnerAware(
+        uint256[] memory currentScaled,
+        uint256[] memory weights,
+        uint256 tokenInIndex,
+        uint256 amountInScaled,
+        uint256 supply,
+        uint256 swapFeeWad
+    ) internal view returns (uint256 shares) {
+        if (Repo._layout().ownerOnlyLiquidity) {
+            return Math.singleJoinExactInSharesUncapped(
+                currentScaled, weights, tokenInIndex, amountInScaled, supply, swapFeeWad
+            );
+        }
+        return Math.singleJoinExactInShares(
+            currentScaled, weights, tokenInIndex, amountInScaled, supply, swapFeeWad
+        );
+    }
+
 /* ---------------------------------------------------------------------- */
     /*                         liquidity: join / exit                         */
     /* ---------------------------------------------------------------------- */
@@ -327,7 +360,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
             }
             uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
             if (feeWad >= Math.WAD) return 0;
-            return Math.unbalancedJoinShares(
+            return _unbalancedJoinSharesOwnerAware(
                 _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
             );
         }
@@ -400,7 +433,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         _maybeMintProtocolFee();
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
-        shares = Math.unbalancedJoinShares(
+        shares = _unbalancedJoinSharesOwnerAware(
             _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
         );
         if (shares < sharesMin) revert Slippage();
@@ -470,7 +503,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory invIn = _pairToInvPreview(pairAmounts);
-        shares = Math.unbalancedJoinShares(
+        shares = _unbalancedJoinSharesOwnerAware(
             _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
         );
     }
@@ -568,7 +601,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         uint256[] memory pair = new uint256[](Repo._layout().numTokens);
         pair[idx] = amountIn;
         uint256[] memory invIn = _pairToInvPreview(pair);
-        shares = Math.singleJoinExactInShares(
+        shares = _singleJoinExactInSharesOwnerAware(
             _invWadAll(),
             Repo._layout().weights,
             idx,
@@ -820,7 +853,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinTarget is
         bool[] memory flags = new bool[](Repo._layout().numTokens);
         flags[idx] = amountIsSeShare;
         uint256[] memory invIn = _edgeToInvPreview(edge, flags);
-        shares = Math.singleJoinExactInShares(
+        shares = _singleJoinExactInSharesOwnerAware(
             _invWadAll(),
             Repo._layout().weights,
             idx,

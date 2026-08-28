@@ -39,6 +39,7 @@ import {
     UniswapV4StandardExchangeWeightedDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETF_Component_FactoryService.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
@@ -330,6 +331,73 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedDETF is
         args.name = "Wgt n3 AllSE";
         args.symbol = "w3all";
         args.standardExchanges[1] = IStandardExchangeProxy(se1);
+    }
+
+    /// @notice n=8 all-external-SE: 7 pairs, 7 distinct ERC-4626 SEs, Open thresholds.
+    /// @dev Unique `name`/`symbol` per `tag_` (CREATE2). Extra pairs/SEs are deployed here;
+    ///      default n=2 setUp is left in place. Tests call `_deployDetfWired(customArgs)`.
+    function _argsN8_AllSe(string memory tag_)
+        internal
+        returns (IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs memory args)
+    {
+        IERC20[] memory pairs_ = new IERC20[](7);
+        pairs_[0] = IERC20(address(token0));
+        pairs_[1] = IERC20(address(token1));
+        pairs_[2] = IERC20(address(token2));
+        pairs_[3] = IERC20(address(token3));
+        pairs_[4] = IERC20(address(new SimpleMintableERC20("T4", "T4")));
+        pairs_[5] = IERC20(address(new SimpleMintableERC20("T5", "T5")));
+        pairs_[6] = IERC20(address(new SimpleMintableERC20("T6", "T6")));
+
+        IStandardExchangeProxy[] memory ses_ = new IStandardExchangeProxy[](7);
+        ses_[0] = IStandardExchangeProxy(se0);
+        ses_[1] = IStandardExchangeProxy(se1);
+        ses_[2] = IStandardExchangeProxy(se2);
+        ses_[3] = IStandardExchangeProxy(se3);
+        ses_[4] = IStandardExchangeProxy(
+            _deployERC4626SE(address(new SimpleYieldERC4626(SimpleMintableERC20(address(pairs_[4])))))
+        );
+        ses_[5] = IStandardExchangeProxy(
+            _deployERC4626SE(address(new SimpleYieldERC4626(SimpleMintableERC20(address(pairs_[5])))))
+        );
+        ses_[6] = IStandardExchangeProxy(
+            _deployERC4626SE(address(new SimpleYieldERC4626(SimpleMintableERC20(address(pairs_[6])))))
+        );
+
+        uint256[] memory pairW_ = new uint256[](7);
+        uint256[] memory rates_ = new uint256[](7);
+        uint256 wEach = 0.12e18;
+        uint256 wSum = 0.16e18;
+        for (uint256 i; i < 7; ++i) {
+            pairW_[i] = (i == 6) ? (1e18 - wSum) : wEach;
+            if (i != 6) wSum += pairW_[i];
+            rates_[i] = DEFAULT_CREATION;
+        }
+        pairW_[6] = 1e18 - wSum;
+
+        args = IUniswapV4StandardExchangeWeightedDETDFPkg.PkgArgs({
+            name: string(abi.encodePacked("Wgt n8 allSE ", tag_)),
+            symbol: string(abi.encodePacked("w8a", tag_)),
+            pairTokens: pairs_,
+            standardExchanges: ses_,
+            vaultShares: new IERC20[](7),
+            rateProviders: new address[](7),
+            detfWeight: 0.16e18,
+            pairWeights: pairW_,
+            creationPairPerDetfWad: rates_,
+            openingPairPerDetfWad: new uint256[](7),
+            mintThreshold: 0,
+            burnThreshold: 0,
+            thresholdMode: ThresholdMode.Open,
+            expansionEpochLength: 0,
+            expansionClosureRatePerYearWad: 0,
+            expansionMaxCatchUpEpochs: 0,
+            creator: address(0),
+            claimName: "",
+            claimSymbol: "",
+            bondName: "",
+            bondSymbol: ""
+        });
     }
 
     /// @notice Reject: all external bare.
