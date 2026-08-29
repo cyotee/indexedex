@@ -135,12 +135,11 @@ Shared expectations (thresholds, bond maturity → claim, immutable instances, f
 
 | Family | Path | Co-located PRD |
 |--------|------|----------------|
-| Single SE constant product | `…/uniswap/v4/standardExchange/constantProduct/single/` | `UniswapV4SingleStandardExchangeDETF_PRD.md` |
-| SE weighted | `…/uniswap/v4/standardExchange/weighted/` | `UniswapV4StandardExchangeWeightedDETF_PRD.md` |
-| SE orbital | `…/uniswap/v4/standardExchange/orbital/` | `UniswapV4StandardExchangeOrbitalDETF_PRD.md` |
-| Shared NFT / rebasing claim | `…/uniswap/v4/common/{nft,rebasing}/` | — |
+| Unified Uni V4 DETF | `…/uniswap/v4/detf/` | [`UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`](../contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md); [`DETF_INSTANCE_IO_ROUTING_PRD.md`](../contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md) §16 |
+| Uni V4 Bond NFT | `…/uniswap/v4/bondNft/` | I/O routing Stage 06 |
+| Hook premine / staged init | `…/uniswap/v4/standardExchange/UniswapV4DetfHook{Premine,StagedInit}Lib.sol` | — |
 
-**Removed:** listing-family draft at `…/uniswap/v4/standardExchange/single/` (hooks=`0` listing pool; no liquidity-holding reserve).
+**Removed:** family Uni V4 DETF diamonds under `…/uniswap/v4/standardExchange/{constantProduct/single,orbital,weighted,stable/quad/curve}/*DETF*` and leftover `…/uniswap/v4/common/{nft,rebasing}/`. Buffer **hooks** stay under `contracts/hooks/uniswap/v4/`. Listing-family draft at `…/uniswap/v4/standardExchange/single/` remains deleted.
 
 ## Uniswap V4 hooks
 

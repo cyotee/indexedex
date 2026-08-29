@@ -45,9 +45,9 @@ contract Phase_08_Stage_02_TtDolQ is LaunchStageBase {
         _requireManager(s);
         _requireCoreTokens(s);
         _requireUsdSes(s);
-        s.curveQuadDetfPkg = _loadAddr(FILE_06_10, "curveQuadDetfPkg");
+        s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
         s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
-        require(_hasCode(s.curveQuadDetfPkg), "run Phase 06 Stage 10 first");
+        require(_hasCode(s.uniV4DetfPkg), "run Phase 06 Stage 07 first");
         require(_hasCode(s.curveQuadHookPkg), "run Phase 06 Stage 06 first");
         s.ttDolQ = _loadAddr(FILE_08_02, "TTDOL-Q");
     }

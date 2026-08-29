@@ -120,6 +120,11 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
         return _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
     }
 
+    /// @notice Same-tx `previewRedeem` DETF out for the in-flight `claimLiquidity` (R-22).
+    function pendingRedeemDetfOut() external view returns (uint256) {
+        return RebasingClaimTokenRepo._layoutStruct().pendingRedeemDetfOut;
+    }
+
     /**
      * @inheritdoc IRebasingClaimToken
      */
@@ -536,11 +541,15 @@ contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, Multi
         uint256 bptOut_ = _convertInternalSharesToProtocolBpt(layoutStruct_, shares);
         if (bptOut_ == 0) revert ZeroAmount();
 
+        // R-22: same two-step as previewRedeem, consumed by DETF claimLiquidity in this tx.
+        layoutStruct_.pendingRedeemDetfOut = RebasingClaimTokenRepo._sharesToBalance(shares, rate);
+
         // Burn claim shares first (CEI).
         RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
 
         // L-CLAIM-1/2: fund redeem by unwinding protocol NFT LP via DETF - not idle rateAsset inventory.
         wethOut_ = layoutStruct_.detf.claimLiquidity(bptOut_, recipient_);
+        layoutStruct_.pendingRedeemDetfOut = 0;
 
         emit IRebasingClaimToken.Redeemed(
             msg.sender, recipient_, rebasingClaimAmount_, bptOut_, wethOut_

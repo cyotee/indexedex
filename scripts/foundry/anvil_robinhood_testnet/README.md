@@ -45,10 +45,7 @@ Each Stage simulates, then broadcasts. Never `--skip-simulation`. `FORCE=1` / `-
 | 06 | 04 | `Phase_06_Stage_04_WeightedBufferHookPkg.s.sol` | Weighted buffer hook DFPkg |
 | 06 | 05 | `Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol` | Orbital buffer hook DFPkg |
 | 06 | 06 | `Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol` | Curve Quad buffer hook DFPkg |
-| 06 | 07 | `Phase_06_Stage_07_CpDetfPkg.s.sol` | CP DETF DFPkg |
-| 06 | 08 | `Phase_06_Stage_08_WeightedDetfPkg.s.sol` | Weighted DETF DFPkg |
-| 06 | 09 | `Phase_06_Stage_09_OrbitalDetfPkg.s.sol` | Orbital DETF DFPkg |
-| 06 | 10 | `Phase_06_Stage_10_CurveQuadDetfPkg.s.sol` | Curve Quad DETF DFPkg |
+| 06 | 07 | `Phase_06_Stage_07_UniswapV4DetfPkg.s.sol` | Unified Uni V4 DETF DFPkg |
 | 07 | 01 | `Phase_07_Stage_01_CoreTestTokens.s.sol` | `DTF`, `TTUSDG`, `TTUSDE`, `TTWETH` |
 | 07 | 02 | `Phase_07_Stage_02_Mag7TestTokens.s.sol` | Mag7 `TTNVDA`…`TTTSLA` |
 | 07 | 03 | `Phase_07_Stage_03_UniV4SeDtfWeth.s.sol` | Uni V4 SE `DTF`/`TTWETH` |

@@ -466,6 +466,280 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         s.bondNftVault.transferHeldToken(lp_, address(this), need_);
     }
 
+    /// @dev Join DETF as protocol id-0 LP. Caps to diamond balance.
+    function _rejoinDetfAsProtocolLp(uint256 detfAmt_) internal {
+        if (detfAmt_ == 0) return;
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint256 have_ = IERC20(address(this)).balanceOf(address(this));
+        if (detfAmt_ > have_) detfAmt_ = have_;
+        if (detfAmt_ == 0) return;
+        IERC20(address(this)).forceApprove(s.hook, detfAmt_);
+        uint256 lpOut_ = _hook().joinSingleAssetExactIn(
+            address(this), detfAmt_, _bondLpHolder(), 0, block.timestamp + 1
+        );
+        IERC20(address(this)).forceApprove(s.hook, 0);
+        if (lpOut_ > 0) {
+            s.bondNftVault.addToDETFNFT(s.bondNftVault.detfNFTId(), lpOut_);
+            _topUpFeeCreatorShares();
+        }
+    }
+
+    /// @dev Swap this-call withdrawn non-DETF legs to DETF. Snapshot DETF-buying power once;
+    ///      dump largest leftover first (D15-5). Uses exit amounts, not booked inventory.
+    function _dumpWithdrawnToDetf(address[] memory tokens_, uint256[] memory withdrawn_, uint256 deadline_)
+        internal
+    {
+        (uint256[] memory order_, uint256[] memory amt_, uint256 m_) = _dumpPlan(tokens_, withdrawn_);
+        _executeDumpPlan(tokens_, order_, amt_, m_, deadline_);
+    }
+
+    function _dumpPlan(address[] memory tokens_, uint256[] memory withdrawn_)
+        private
+        view
+        returns (uint256[] memory order_, uint256[] memory amt_, uint256 m_)
+    {
+        uint256 n_ = tokens_.length < withdrawn_.length ? tokens_.length : withdrawn_.length;
+        amt_ = new uint256[](n_);
+        uint256[] memory pow_ = new uint256[](n_);
+        order_ = new uint256[](n_);
+        for (uint256 i; i < n_; ++i) {
+            if (tokens_[i] == address(this) || withdrawn_[i] == 0) continue;
+            uint256 a_ = _dumpAmt(tokens_[i], withdrawn_[i]);
+            if (a_ == 0) continue;
+            amt_[m_] = a_;
+            uint256 q_ = _dumpQuote(tokens_[i], a_);
+            pow_[m_] = q_ == 0 ? a_ : q_;
+            order_[m_] = i;
+            unchecked {
+                ++m_;
+            }
+        }
+        _sortDumpDesc(order_, pow_, amt_, m_);
+    }
+
+    function _dumpAmt(address token_, uint256 withdrawn_) private view returns (uint256 a_) {
+        uint256 have_ = IERC20(token_).balanceOf(address(this));
+        a_ = withdrawn_ < have_ ? withdrawn_ : have_;
+    }
+
+    function _dumpQuote(address token_, uint256 amt_) private view returns (uint256 q_) {
+        try _hook().previewSwapExactIn(token_, address(this), amt_) returns (uint256 d_) {
+            q_ = d_;
+        } catch {}
+    }
+
+    function _sortDumpDesc(
+        uint256[] memory order_,
+        uint256[] memory pow_,
+        uint256[] memory amt_,
+        uint256 m_
+    ) private pure {
+        for (uint256 a = 1; a < m_; ++a) {
+            uint256 idx_ = order_[a];
+            uint256 p_ = pow_[a];
+            uint256 w_ = amt_[a];
+            uint256 b_ = a;
+            while (b_ > 0 && pow_[b_ - 1] < p_) {
+                order_[b_] = order_[b_ - 1];
+                pow_[b_] = pow_[b_ - 1];
+                amt_[b_] = amt_[b_ - 1];
+                unchecked {
+                    --b_;
+                }
+            }
+            order_[b_] = idx_;
+            pow_[b_] = p_;
+            amt_[b_] = w_;
+        }
+    }
+
+    function _executeDumpPlan(
+        address[] memory tokens_,
+        uint256[] memory order_,
+        uint256[] memory amt_,
+        uint256 m_,
+        uint256 deadline_
+    ) private {
+        for (uint256 k; k < m_; ++k) {
+            _swapDumpLeg(tokens_[order_[k]], amt_[k], deadline_);
+        }
+    }
+
+    function _swapDumpLeg(address t_, uint256 dump_, uint256 deadline_) private {
+        uint256 have_ = IERC20(t_).balanceOf(address(this));
+        if (dump_ > have_) dump_ = have_;
+        if (dump_ == 0) return;
+        address hook_ = Repo._layoutStruct().hook;
+        IERC20(t_).forceApprove(hook_, dump_);
+        try IUniswapV4SeBufferHook(hook_).ownerSwapExactIn(t_, address(this), dump_, 0, deadline_) {} catch {}
+        IERC20(t_).forceApprove(hook_, 0);
+    }
+
+    /// @dev Physical unwind of hook LP to DETF. Does not spend booked diamond inventory.
+    function _exitLpToDetf(uint256 lpAmount_, uint256 deadline_) internal returns (uint256 detfFromLp_) {
+        if (lpAmount_ == 0) return 0;
+        Repo.Storage storage s = Repo._layoutStruct();
+        uint256 detfBefore_ = IERC20(address(this)).balanceOf(address(this));
+        _pullNftLp(lpAmount_);
+        address[] memory tokens_ = _hook().tokens();
+        IERC20(s.hook).forceApprove(s.hook, lpAmount_);
+        uint256[] memory withdrawn_ =
+            _hook().exitProportional(lpAmount_, address(this), new uint256[](tokens_.length), deadline_);
+        IERC20(s.hook).forceApprove(s.hook, 0);
+        _dumpWithdrawnToDetf(tokens_, withdrawn_, deadline_);
+        uint256 detfAfter_ = IERC20(address(this)).balanceOf(address(this));
+        detfFromLp_ = detfAfter_ > detfBefore_ ? detfAfter_ - detfBefore_ : 0;
+    }
+
+    /// @dev Claim-token D15: convertToAssets-scale the originalShares slice so previewRedeem matches.
+    function _claimUnwindLp(uint256 lpAmount_) internal view returns (uint256 unwindLp_) {
+        unwindLp_ = lpAmount_;
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0) || lpAmount_ == 0) return unwindLp_;
+        uint256 orig_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        if (orig_ == 0) return unwindLp_;
+        uint256 assets_ = orig_;
+        try s.bondNftVault.convertToAssets(orig_) returns (uint256 a_) {
+            if (a_ > 0) assets_ = a_;
+        } catch {}
+        unwindLp_ = Math.mulDiv(lpAmount_, assets_, orig_);
+        if (unwindLp_ == 0) unwindLp_ = lpAmount_;
+        uint256 nftLp_ = IERC20(s.hook).balanceOf(address(s.bondNftVault));
+        uint256 diamondLp_ = IERC20(s.hook).balanceOf(address(this));
+        uint256 cap_ = nftLp_ + diamondLp_;
+        if (unwindLp_ > cap_) unwindLp_ = cap_;
+    }
+
+    /// @dev Owed DETF for claim-token redeem. Two-step identity of `previewRedeem` (R-22).
+    ///      `totalShares` is post-burn here; reconstruct pre-burn shares from `lpAmount`.
+    function _claimOwedDetf(uint256 lpAmount_)
+        internal
+        view
+        returns (uint256 owed_, uint256 unwindLp_, uint256 floorOwed_)
+    {
+        unwindLp_ = _claimUnwindLp(lpAmount_);
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0) || lpAmount_ == 0) {
+            owed_ = _previewClaimLiquidity(unwindLp_);
+            floorOwed_ = owed_;
+            return (owed_, unwindLp_, floorOwed_);
+        }
+        uint256 orig_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        if (orig_ == 0) {
+            owed_ = _previewClaimLiquidity(unwindLp_);
+            floorOwed_ = owed_;
+            return (owed_, unwindLp_, floorOwed_);
+        }
+        uint256 assets_ = orig_;
+        try s.bondNftVault.convertToAssets(orig_) returns (uint256 a_) {
+            if (a_ > 0) assets_ = a_;
+        } catch {}
+        uint256 zapout_ = _previewClaimLiquidity(assets_);
+        uint256 sPost_;
+        if (address(s.rebasingClaimToken) != address(0)) {
+            sPost_ = s.rebasingClaimToken.totalShares();
+        }
+        if (sPost_ == 0 || lpAmount_ >= orig_) {
+            owed_ = zapout_;
+            floorOwed_ = zapout_;
+            return (owed_, unwindLp_, floorOwed_);
+        }
+        uint256 extShares_ = Math.mulDiv(lpAmount_, sPost_, orig_ - lpAmount_, Math.Rounding.Ceil);
+        uint256 sPre_ = sPost_ + extShares_;
+        if (sPre_ == 0 || zapout_ == 0 || extShares_ == 0) {
+            owed_ = Math.mulDiv(zapout_, lpAmount_, orig_);
+            floorOwed_ = owed_;
+            return (owed_, unwindLp_, floorOwed_);
+        }
+        uint256 internalTotal_ = sPre_ * 1e9;
+        uint256 rate_ = Math.mulDiv(zapout_, 1e18 * 1e9, internalTotal_);
+        if (rate_ == 0) {
+            owed_ = Math.mulDiv(zapout_, lpAmount_, orig_);
+            floorOwed_ = owed_;
+            return (owed_, unwindLp_, floorOwed_);
+        }
+        uint256 amount_ = Math.mulDiv(extShares_ * 1e9, rate_, 1e18 * 1e9);
+        uint256 shares2_ = Math.mulDiv(amount_, 1e18 * 1e9, rate_);
+        floorOwed_ = Math.mulDiv(shares2_, rate_, 1e18 * 1e9);
+        owed_ = Math.mulDiv(shares2_, rate_, 1e18 * 1e9, Math.Rounding.Ceil);
+    }
+
+    function _previewClaimLiquidity(uint256 lpAmount_) internal view returns (uint256 detfOut_) {
+        if (lpAmount_ == 0) return 0;
+        address[] memory tokens_ = _hook().tokens();
+        uint256[] memory withdrawn_ = _hook().previewExitProportional(lpAmount_);
+        uint256 n_ = tokens_.length < withdrawn_.length ? tokens_.length : withdrawn_.length;
+        for (uint256 i; i < n_; ++i) {
+            if (tokens_[i] == address(this)) {
+                detfOut_ += withdrawn_[i];
+                continue;
+            }
+            if (withdrawn_[i] == 0) continue;
+            try _hook().previewSwapExactIn(tokens_[i], address(this), withdrawn_[i]) returns (uint256 d_) {
+                detfOut_ += d_;
+            } catch {}
+        }
+    }
+
+    /// @dev Same-tx `previewRedeem` quote stored on the claim token (R-22).
+    function _claimHint() internal view returns (uint256 hinted_) {
+        address claim_ = address(Repo._layoutStruct().rebasingClaimToken);
+        if (claim_ == address(0)) return 0;
+        (bool ok_, bytes memory data_) =
+            claim_.staticcall(abi.encodeWithSelector(bytes4(keccak256("pendingRedeemDetfOut()"))));
+        if (ok_ && data_.length >= 32) hinted_ = abi.decode(data_, (uint256));
+    }
+
+    /// @dev Dump any leftover hook pair sitting on the diamond after proportional exit.
+    function _dumpSittingPairToDetf() internal {
+        address[] memory tokens_ = _hook().tokens();
+        uint256 n_ = tokens_.length;
+        uint256[] memory amt_ = new uint256[](n_);
+        for (uint256 i; i < n_; ++i) {
+            if (tokens_[i] == address(this)) continue;
+            amt_[i] = IERC20(tokens_[i]).balanceOf(address(this));
+        }
+        _dumpWithdrawnToDetf(tokens_, amt_, block.timestamp + 1);
+    }
+
+    /// @dev Claim-token pay: never above `previewRedeem` hint (`owed_`). Surplus rejoins as protocol LP.
+    ///      Sequential leftover dump can be 1–3 wei short of the independent zapout quote; mint that dust.
+    function _claimPayAmount(uint256 owed_, uint256 produced_)
+        internal
+        returns (uint256 detfOut_)
+    {
+        detfOut_ = (owed_ > 0 && produced_ > owed_) ? owed_ : produced_;
+        if (owed_ > detfOut_ && owed_ - detfOut_ <= 3) {
+            uint256 have_ = IERC20(address(this)).balanceOf(address(this));
+            if (have_ < owed_) _mintDetf(address(this), owed_ - have_);
+            detfOut_ = owed_;
+        }
+    }
+
+    /// @dev D15 pending-first: if harvest covers two-step owed, pay and skip LP unwind.
+    function _claimPayFromPending(uint256 owed_, uint256 harvested_, address recipient_)
+        internal
+        returns (bool paid_)
+    {
+        if (owed_ == 0 || harvested_ < owed_) return false;
+        IERC20(address(this)).safeTransfer(recipient_, owed_);
+        uint256 leftoverHarv_ = harvested_ - owed_;
+        if (leftoverHarv_ > 0) _rejoinDetfAsProtocolLp(leftoverHarv_);
+        _trySweepDust();
+        _syncAllExpectedHoldReserves();
+        return true;
+    }
+
+    function _claimRemoveOrigShares(uint256 lpAmount_) internal {
+        Repo.Storage storage s = Repo._layoutStruct();
+        if (address(s.bondNftVault) == address(0)) return;
+        uint256 id0_ = s.bondNftVault.originalSharesOf(s.bondNftVault.detfNFTId());
+        uint256 remove_ = lpAmount_ < id0_ ? lpAmount_ : id0_;
+        if (remove_ > 0) {
+            s.bondNftVault.removeFromDETFNFT(s.bondNftVault.detfNFTId(), remove_);
+        }
+    }
+
     function _returnLeftoverLp() internal {
         Repo.Storage storage s = Repo._layoutStruct();
         IERC20 lp_ = IERC20(s.hook);

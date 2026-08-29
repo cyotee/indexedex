@@ -173,6 +173,14 @@ interface IUniswapV4Detf {
 
     function compoundProtocolRewards() external returns (uint256 detfIn, uint256 lpOut);
 
+    /// @notice Preview DETF paid if `lpAmount` of hook LP is unwound (claim/NFT path).
+    function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 detfOut);
+
+    /// @notice Unwind hook LP and pay DETF to `recipient`. Bond NFT and claim token only.
+    /// @dev Selector must match `IDetf.claimLiquidity` (`0xcaaf4702`). Claim-token redeem
+    ///      harvests pending DETF first and skips LP withdraw when pending covers owed.
+    function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 detfOut);
+
     function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
         external
         returns (uint256 lpOut);

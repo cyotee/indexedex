@@ -16,7 +16,7 @@ import {
 contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se {
     function test_T10_8_firstBond_withPonsSeLive() public {
         assertEq(_boundSe(), address(ponsSe), "T10.8: bound SE");
-        assertEq(IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(address(weth)), address(ponsSe));
+        assertEq(IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(launchToken), address(ponsSe));
         (uint256 tokenId, uint256 shares) = _firstBond(50 ether);
         assertGt(tokenId, 0, "T10.8: tokenId");
         assertGt(shares, 0, "T10.8: shares");
@@ -28,7 +28,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se {
         uint256 mintIn = 20 ether;
         vm.startPrank(detfUser);
         uint256 userDetf = detfExchangeIn.exchangeIn(
-            IERC20(address(weth)),
+            IERC20(launchToken),
             mintIn,
             IERC20(detf),
             0,
@@ -37,7 +37,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se {
             block.timestamp + 1 hours
         );
         vm.stopPrank();
-        assertGt(userDetf, 0, "T10.9: mint WETH -> detfToken");
+        assertGt(userDetf, 0, "T10.9: mint launch token -> detfToken");
         assertGt(IERC20(detf).balanceOf(detfUser), 0, "T10.9: holder balance");
     }
 
@@ -45,7 +45,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se {
         _firstBond(60 ether);
         vm.startPrank(detfUser);
         detfExchangeIn.exchangeIn(
-            IERC20(address(weth)),
+            IERC20(launchToken),
             15 ether,
             IERC20(detf),
             0,
@@ -68,7 +68,7 @@ contract UniswapV4Detf_PonsV2Se is TestBase_UniswapV4Detf_PonsV2Se {
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "shares");
         assertTrue(detfInfo.isReserveLive(), "live");
-        assertEq(mintToken, address(weth), "Stage 10 hook pair is WETH");
+        assertEq(mintToken, launchToken, "hook pair is pons v2 launch token");
         _assertR19();
     }
 

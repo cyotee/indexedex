@@ -46,6 +46,40 @@ contract UniswapV4Detf_Quad is TestBase_UniswapV4Detf_Quad {
         assertTrue(info.isReserveLive(), "live");
         assertGt(tokenId, 0, "tokenId");
         assertGt(shares, 0, "lp");
-        // Custom close leftover swaps: CP pathfinder T7.12 drives closeBondMature on this DFPkg.
+
+        vm.startPrank(detfUser);
+        info.bond(
+            IERC20(address(pair1)),
+            40 ether,
+            DEFAULT_MIN_LOCK,
+            detfUser,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+        uint256[] memory minOut_ = new uint256[](1);
+        uint256 pair0Before_ = IERC20(address(pair0)).balanceOf(detfUser);
+        uint256 deadline_ = block.timestamp + 1 hours;
+
+        vm.expectCall(
+            info.hook(),
+            abi.encodeWithSelector(IUniswapV4SeBufferHook.ownerSwapExactIn.selector)
+        );
+        vm.prank(detfUser);
+        uint256[] memory paid_ = info.closeBondMature(tokenId, minOut_, detfUser, deadline_);
+
+        assertEq(paid_.length, 1, "custom close pays one pair");
+        assertGt(paid_[0], 0, "close-route pair0 out");
+        assertEq(
+            IERC20(address(pair0)).balanceOf(detfUser) - pair0Before_,
+            paid_[0],
+            "user received close-route pair0"
+        );
+        assertEq(IERC20(customDetf).balanceOf(customDetf), 0, "DETF slot 0 not paid as close basket");
+        assertLe(IERC20(address(pair1)).balanceOf(customDetf), 10, "leftover pair1 ownerSwapExactIn");
+        assertLe(IERC20(address(pair2)).balanceOf(customDetf), 10, "leftover pair2 ownerSwapExactIn");
+        assertLe(IERC20(address(pair0)).balanceOf(customDetf), 10, "close leftovers swapped or paid");
     }
 }

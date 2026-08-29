@@ -84,7 +84,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4De
         revert("no mintToken");
     }
 
-    function _firstBond(uint256 pairAmount_) internal override returns (uint256 tokenId, uint256 shares) {
+    function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
         vm.startPrank(detfUser);
         (tokenId, shares) = detfInfo.bond(
             IERC20(mintToken), pairAmount_, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
@@ -149,7 +149,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4De
         }
     }
 
-    function _assertNoJoinableDust() internal view override {
+    function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
         assertEq(IERC20(mintToken).balanceOf(detf), 0, "no mintToken on diamond");

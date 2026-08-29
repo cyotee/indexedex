@@ -63,10 +63,7 @@ abstract contract LaunchIo is DeploymentBase {
     string internal constant FILE_06_04 = "phase06_stage04_weighted_buffer_hook_pkg.json";
     string internal constant FILE_06_05 = "phase06_stage05_orbital_buffer_hook_pkg.json";
     string internal constant FILE_06_06 = "phase06_stage06_curve_quad_buffer_hook_pkg.json";
-    string internal constant FILE_06_07 = "phase06_stage07_cp_detf_pkg.json";
-    string internal constant FILE_06_08 = "phase06_stage08_weighted_detf_pkg.json";
-    string internal constant FILE_06_09 = "phase06_stage09_orbital_detf_pkg.json";
-    string internal constant FILE_06_10 = "phase06_stage10_curve_quad_detf_pkg.json";
+    string internal constant FILE_06_07 = "phase06_stage07_uniswap_v4_detf_pkg.json";
     string internal constant FILE_07_01 = "phase07_stage01_core_test_tokens.json";
     string internal constant FILE_07_02 = "phase07_stage02_mag7_test_tokens.json";
     string internal constant FILE_07_03 = "phase07_stage03_uni_v4_se_dtf_weth.json";
@@ -152,23 +149,16 @@ abstract contract LaunchIo is DeploymentBase {
         if (ok) s.bondNftVaultPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "rebasingClaimTokenPkg");
         if (ok) s.rebasingClaimTokenPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpDetfPkg");
+        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "uniV4DetfPkg");
         if (!ok || !_hasCode(a)) return false;
-        s.cpDetfPkg = a;
+        s.uniV4DetfPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadHookPkg");
         if (!ok || !_hasCode(a)) return false;
         s.curveQuadHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "curveQuadDetfPkg");
-        if (!ok || !_hasCode(a)) return false;
-        s.curveQuadDetfPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalHookPkg");
         if (ok && _hasCode(a)) s.orbitalHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalDetfPkg");
-        if (ok && _hasCode(a)) s.orbitalDetfPkg = a;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedHookPkg");
         if (ok && _hasCode(a)) s.weightedHookPkg = a;
-        (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedDetfPkg");
-        if (ok && _hasCode(a)) s.weightedDetfPkg = a;
         return true;
     }
 
@@ -216,13 +206,10 @@ abstract contract LaunchIo is DeploymentBase {
         json = vm.serializeAddress("g03", "uniV4SePkg", address(s.uniV4SePkg));
         json = vm.serializeAddress("g03", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("g03", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
-        json = vm.serializeAddress("g03", "cpDetfPkg", s.cpDetfPkg);
+        json = vm.serializeAddress("g03", "uniV4DetfPkg", s.uniV4DetfPkg);
         json = vm.serializeAddress("g03", "curveQuadHookPkg", s.curveQuadHookPkg);
-        json = vm.serializeAddress("g03", "curveQuadDetfPkg", s.curveQuadDetfPkg);
         json = vm.serializeAddress("g03", "orbitalHookPkg", s.orbitalHookPkg);
-        json = vm.serializeAddress("g03", "orbitalDetfPkg", s.orbitalDetfPkg);
         json = vm.serializeAddress("g03", "weightedHookPkg", s.weightedHookPkg);
-        json = vm.serializeAddress("g03", "weightedDetfPkg", s.weightedDetfPkg);
         json = vm.serializeAddress("g03", "poolManager", RobinhoodCanonicalLib.poolManager());
         json = vm.serializeUint("g03", "chainId", block.chainid);
         _writeJson(json, FILE_UNIV4_PKGS);
@@ -235,17 +222,13 @@ abstract contract LaunchIo is DeploymentBase {
             (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalHookPkg");
             if (ok && _hasCode(a)) s.orbitalHookPkg = a;
         }
-        if (s.orbitalDetfPkg == address(0) || s.orbitalDetfPkg.code.length == 0) {
-            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "orbitalDetfPkg");
-            if (ok && _hasCode(a)) s.orbitalDetfPkg = a;
-        }
         if (s.weightedHookPkg == address(0) || s.weightedHookPkg.code.length == 0) {
             (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedHookPkg");
             if (ok && _hasCode(a)) s.weightedHookPkg = a;
         }
-        if (s.weightedDetfPkg == address(0) || s.weightedDetfPkg.code.length == 0) {
-            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "weightedDetfPkg");
-            if (ok && _hasCode(a)) s.weightedDetfPkg = a;
+        if (s.uniV4DetfPkg == address(0) || s.uniV4DetfPkg.code.length == 0) {
+            (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "uniV4DetfPkg");
+            if (ok && _hasCode(a)) s.uniV4DetfPkg = a;
         }
     }
 
@@ -817,10 +800,7 @@ abstract contract LaunchIo is DeploymentBase {
         s.weightedHookPkg = _loadAddr(FILE_06_04, "weightedHookPkg");
         s.orbitalHookPkg = _loadAddr(FILE_06_05, "orbitalHookPkg");
         s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
-        s.cpDetfPkg = _loadAddr(FILE_06_07, "cpDetfPkg");
-        s.weightedDetfPkg = _loadAddr(FILE_06_08, "weightedDetfPkg");
-        s.orbitalDetfPkg = _loadAddr(FILE_06_09, "orbitalDetfPkg");
-        s.curveQuadDetfPkg = _loadAddr(FILE_06_10, "curveQuadDetfPkg");
+        s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
         _requireCoreTokens(s);
         _hydrateMag7(s);
         _requireDtfWethSe(s);

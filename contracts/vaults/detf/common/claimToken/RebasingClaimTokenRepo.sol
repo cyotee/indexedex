@@ -74,6 +74,9 @@ library RebasingClaimTokenRepo {
         /// @notice Legacy last-self balance slot (unused). Secure pull uses in-call balance delta
         ///         (L-GAPS-9/10 / ISecurePullErrors). Kept for storage layout compatibility.
         uint256 lastSelfBalance;
+
+        /// @notice Same-tx `previewRedeem` DETF out consumed by `claimLiquidity` (R-22).
+        uint256 pendingRedeemDetfOut;
     }
 
     /* ---------------------------------------------------------------------- */

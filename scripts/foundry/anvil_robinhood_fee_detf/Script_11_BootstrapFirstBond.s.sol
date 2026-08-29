@@ -8,9 +8,8 @@ import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/external/IWETH9.sol";
 
-import {
-    IUniswapV4SingleStandardExchangeDETF
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
+import {IUniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 
 /// @title Script_11_BootstrapFirstBond
 /// @notice Minimal WETH first bond -> isReserveLive for CHIR.
@@ -39,8 +38,7 @@ contract Script_11_BootstrapFirstBond is DeploymentBase {
             return;
         }
 
-        IUniswapV4SingleStandardExchangeDETF detf = IUniswapV4SingleStandardExchangeDETF(chir);
-        require(detf.pairToken() == weth, "CHIR pairToken != WETH");
+        IUniswapV4Detf detf = IUniswapV4Detf(chir);
 
         pairIn = FixtureEconomics.firstBondWeth();
         lockDuration = FixtureEconomics.DEFAULT_MIN_LOCK;
@@ -85,7 +83,7 @@ contract Script_11_BootstrapFirstBond is DeploymentBase {
 
     function _loadExisting() internal returns (bool) {
         if (_force()) return false;
-        if (!IUniswapV4SingleStandardExchangeDETF(chir).isReserveLive()) return false;
+        if (!IUniswapV4Detf(chir).isReserveLive()) return false;
         try vm.readFile(_artifactPath(ARTIFACT_FILE)) returns (string memory) {
             (pairIn,) = _readUintSafe(ARTIFACT_FILE, "pairIn");
             (detfOut,) = _readUintSafe(ARTIFACT_FILE, "detfOut");

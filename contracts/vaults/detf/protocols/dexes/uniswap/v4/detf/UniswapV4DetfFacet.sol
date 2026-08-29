@@ -99,7 +99,7 @@ contract UniswapV4DetfFacet is IFacet, UniswapV4DetfTarget {
     }
 
     function _funcsC() private pure returns (bytes4[] memory f) {
-        f = new bytes4[](16);
+        f = new bytes4[](18);
         f[0] = IUniswapV4Detf.rebasingClaimToken.selector;
         f[1] = IUniswapV4Detf.acceptedBondTokens.selector;
         f[2] = bytes4(keccak256("isMintingAllowed()"));
@@ -116,5 +116,7 @@ contract UniswapV4DetfFacet is IFacet, UniswapV4DetfTarget {
         f[13] = UniswapV4DetfCommon.compoundProtocolRewardsAtomic.selector;
         f[14] = UniswapV4DetfCommon.sweepDustAtomic.selector;
         f[15] = UniswapV4DetfCommon.sweepPairToShare.selector;
+        f[16] = IUniswapV4Detf.claimLiquidity.selector;
+        f[17] = IUniswapV4Detf.previewClaimLiquidity.selector;
     }
 }

@@ -73,6 +73,9 @@ Stage 10  pons v2 graduated V4 pool → Uni V4 SE → DETF bound leg (R20)
               (after 07; hermetic TestBase_PonsFamilyV2, same PoolManager)
 Stage 11  Production SE × hook matrix tests (this PROGRAM index only)
               (after 07+08+10). Law: UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md
+Stage 12  Unified DETF deprecation test coverage, then family DETF delete
+              (after 11). Law: UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md
+              Execute: UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_IMPLEMENTATION_AND_TEST_PLAN.md
 ```
 
 **Hard rules:**
@@ -82,9 +85,10 @@ Stage 11  Production SE × hook matrix tests (this PROGRAM index only)
 - Stage 07 (DETF) waits for **01 + 06**. Do not implement DETF against Orbital first.
 - Stage 08 waits for 07 and the matching hook stages.
 - Stage 05 (Dual) never binds as `PkgArgs.hook`.
-- Do **not** delete old CP/Orbital/Weighted/Quad **DETF** packages in this program.
+- Stages 00–11 of this PROGRAM do **not** delete family Uni V4 DETF packages. **Stage 12** (WP-UDPL-DEPRECATE) does.
 - Do **not** edit common `DETFNFTVault` donate booking.
 - Stage **10** waits for **07**. Same `PoolManager` for pons graduation and Uni V4 SE `PkgInit`.
+- Stage **12** waits for **11**. Execute from the deprecation implementation plan, not from this PROGRAM text. Family Uni V4 DETF diamonds are deleted in WP-UDPL-DEPRECATE. Buffer **hooks** stay.
 
 Parallel after 00 is legal: **01 + 06 + 09**, and **02–05** (rebase if 01 moves the shared ABI).
 
@@ -106,6 +110,7 @@ Parallel after 00 is legal: **01 + 06 + 09**, and **02–05** (rebase if 01 move
 | **09** | Alignment / donation / agent-law pointers | [`io-routing/09_Docs_Alignment_IMPLEMENTATION_AND_TEST_PLAN.md`](./io-routing/09_Docs_Alignment_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | **10** | pons v2 graduated pool as Uni V4 SE + DETF (R20) | [`io-routing/10_Pons_V2_Graduated_Pool_Se_And_Detf_IMPLEMENTATION_AND_TEST_PLAN.md`](./io-routing/10_Pons_V2_Graduated_Pool_Se_And_Detf_IMPLEMENTATION_AND_TEST_PLAN.md) |
 | **11** | Unified DETF × Uni V3/V4 SE × Morpho Blue SE × CP/Orbital/Weighted/Quad, including pons v1 and v2 | [`UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md`](./UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md) |
+| **12** | Unified DETF deprecation coverage (product-law suites on `UniswapV4DetfDFPkg`) then family Uni V4 DETF delete | [`UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`](./UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md) + [`UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_IMPLEMENTATION_AND_TEST_PLAN.md) |
 
 ---
 

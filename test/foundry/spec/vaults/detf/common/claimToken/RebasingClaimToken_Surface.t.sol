@@ -73,7 +73,7 @@ contract RebasingClaimToken_Surface_Test is TestBase_VaultComponents {
 
     /// @dev Target/product API (IRebasingClaimToken + IERC20/metadata + SE in/out + both mints).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](29);
+        sels_ = new bytes4[](30);
         sels_[0] = IERC20.totalSupply.selector;
         sels_[1] = IERC20.balanceOf.selector;
         sels_[2] = IERC20.transfer.selector;
@@ -103,6 +103,7 @@ contract RebasingClaimToken_Surface_Test is TestBase_VaultComponents {
         sels_[26] = IRebasingClaimToken.transferHeldToken.selector;
         sels_[27] = IRebasingClaimToken.updateRedemptionRate.selector;
         sels_[28] = MINT_FROM_NFT_SALE_3;
+        sels_[29] = bytes4(keccak256("pendingRedeemDetfOut()"));
     }
 
     function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {

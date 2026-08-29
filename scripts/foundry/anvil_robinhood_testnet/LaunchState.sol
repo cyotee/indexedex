@@ -51,13 +51,10 @@ struct LaunchState {
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
-    address cpDetfPkg;
+    address uniV4DetfPkg;
     address curveQuadHookPkg;
-    address curveQuadDetfPkg;
     address orbitalHookPkg;
-    address orbitalDetfPkg;
     address weightedHookPkg;
-    address weightedDetfPkg;
     address morpho;
     address morphoIrm;
     address morphoOracle;

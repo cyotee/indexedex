@@ -1218,7 +1218,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         (a0, a1, a2) = _proRataOut(shares);
         if (a0 < a0Min || a1 < a1Min || a2 < a2Min) revert InsufficientTokenOut();
 
-        _burnAndPay(shares, to, a0, a1, a2);
+        (a0, a1, a2) = _burnAndPay(shares, to, a0, a1, a2);
         emit LiquidityRemoved(msg.sender, to, shares, a0, a1, a2);
     }
 
@@ -1255,7 +1255,10 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _burnAndPay(uint256 shares, address to, uint256 a0, uint256 a1, uint256 a2) private {
+    function _burnAndPay(uint256 shares, address to, uint256 a0, uint256 a1, uint256 a2)
+        private
+        returns (uint256, uint256, uint256)
+    {
         Repo.Layout storage l = Repo._layout();
         uint256 supply = _totalSupply();
         _burnLp(msg.sender, shares);
@@ -1299,6 +1302,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _snapshotKLastIfFeeOn();
         _refundConservation(msg.sender);
         _syncVaultReserves();
+        return (a0, a1, a2);
     }
 
 

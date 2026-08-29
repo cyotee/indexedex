@@ -58,7 +58,7 @@ import {
 /**
  * @title TestBase_UniswapV4Detf_PonsV2Se
  * @notice Unified UniswapV4DetfDFPkg whose bound SE is the pons v2 graduated Uni V4 vault.
- *         Same PoolManager. WETH is pairToken. Open threshold so mint is reachable.
+ *         Same PoolManager. Hook pair / mintToken is the pons v2 launch token (R-5).
  */
 abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardExchange_PonsV2 {
     using BetterEfficientHashLib for bytes;
@@ -102,7 +102,13 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         _setBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
 
         _wrapWeth(detfUser, 10_000 ether);
+        uint256 launchBal_ = IERC20(launchToken).balanceOf(address(this));
+        if (launchBal_ > 1 ether) {
+            IERC20(launchToken).transfer(detfUser, launchBal_ / 2);
+        }
         vm.startPrank(detfUser);
+        IERC20(launchToken).approve(detf, type(uint256).max);
+        IERC20(launchToken).approve(address(ponsSe), type(uint256).max);
         IERC20(address(weth)).approve(detf, type(uint256).max);
         IERC20(address(weth)).approve(address(ponsSe), type(uint256).max);
         IERC20(address(ponsSe)).approve(detf, type(uint256).max);
@@ -247,7 +253,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 poolManager: address(poolManager),
                 feeOracle: address(indexedexManager),
                 standardExchange: address(ponsSe),
-                pairToken: address(weth),
+                pairToken: launchToken,
                 rawToken: predicted_,
                 ownerOnlyLiquidity: true,
                 owner: predicted_
@@ -255,7 +261,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
-        init.deployPair(predicted_, address(weth));
+        init.deployPair(predicted_, launchToken);
         require(init.finalizeInitialization(), "finalize");
         vm.etch(predicted_, "");
         args.hook = reserveHook;
@@ -297,7 +303,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     function _firstBond(uint256 pairAmount_) internal returns (uint256 tokenId, uint256 shares) {
         vm.startPrank(detfUser);
         (tokenId, shares) = detfInfo.bond(
-            IERC20(address(weth)),
+            IERC20(launchToken),
             pairAmount_,
             DEFAULT_MIN_LOCK,
             detfUser,
@@ -308,10 +314,10 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     }
 
     function _boundSe() internal view returns (address) {
-        return IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(address(weth));
+        return IUniswapV4SeBufferHook(reserveHook).standardExchangeOf(launchToken);
     }
 
-    /// @dev First non-DETF `hook.tokens()` entry after finalize (WETH on this fixture).
+    /// @dev First non-DETF `hook.tokens()` entry after finalize (pons v2 launch token).
     function _mintToken() internal view returns (address t) {
         address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
         for (uint256 i; i < toks.length; ++i) {

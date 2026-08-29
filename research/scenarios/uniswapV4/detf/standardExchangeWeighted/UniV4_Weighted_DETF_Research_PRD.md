@@ -1,3 +1,7 @@
+# SUPERSEDED
+
+Family Uni V4 Weighted DETF diamond is deleted. Research against `UniswapV4DetfDFPkg` / `IUniswapV4Detf` and `UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`. Do not restore the family package.
+
 # Product Requirements Document (PRD)
 
 ## Title
@@ -6,9 +10,7 @@ Uniswap V4 Standard Exchange Weighted DETF — Research Campaign (BLOCKED)
 
 ## Status
 
-**BLOCKED** (2026-08-06) — product is PRD/plan only under  
-`contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/`.  
-No package code, TestBase, or hermetic suite.
+**SUPERSEDED** — family diamond deleted (2026-08-29). Historical blocked campaign only.
 
 | Field | Value |
 |-------|--------|

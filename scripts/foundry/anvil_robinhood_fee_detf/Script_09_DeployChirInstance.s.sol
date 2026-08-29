@@ -8,7 +8,6 @@ import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 
-import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
@@ -16,17 +15,22 @@ import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
+    IUniswapV4HookStagedPairInit
+} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
 import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpHookFactory
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
+import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
+import {
+    IUniswapV4Detf,
+    IUniswapV4DetfDFPkg
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
-import {UniswapV4DetfScriptWireLib} from "scripts/foundry/UniswapV4DetfScriptWireLib.sol";
-
-import {
-    IUniswapV4SingleStandardExchangeDETDFPkg,
-    IUniswapV4SingleStandardExchangeDETF
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
 
 /// @title Script_09_DeployChirInstance
 /// @notice Deploy inert CHIR fee-DETF instance (launch-rich @ 10 WETH/CHIR).
@@ -68,39 +72,48 @@ contract Script_09_DeployChirInstance is DeploymentBase {
 
         creationPairPerDetfWad = FixtureEconomics.creationPairPerDetfWad();
 
-        IUniswapV4SingleStandardExchangeDETDFPkg.PkgArgs memory args = IUniswapV4SingleStandardExchangeDETDFPkg
-            .PkgArgs({
-            name: FixtureEconomics.CHIR_NAME,
-            symbol: FixtureEconomics.CHIR_SYMBOL,
-            standardExchangeVault: IStandardExchangeProxy(uniV3Se_rich),
-            standardExchangeVaultShare: IERC20(address(0)),
-            pairToken: IERC20(RobinhoodCanonicalLib.weth()),
-            creationPairPerDetfWad: creationPairPerDetfWad,
-            openingPairPerDetfWad: 0,
-            mintThreshold: 0,
-            burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy,
-            expansionEpochLength: 0,
-            expansionClosureRatePerYearWad: FixtureEconomics.expansionClosureRatePerYearWad(),
-            expansionMaxCatchUpEpochs: 0,
-            creator: address(0),
-            claimName: "",
-            claimSymbol: "",
-            bondName: "",
-            bondSymbol: ""
-        });
+        IUniswapV4Detf.PkgArgs memory args;
+        args.name = FixtureEconomics.CHIR_NAME;
+        args.symbol = FixtureEconomics.CHIR_SYMBOL;
+        args.creationPairPerDetfWad = new uint256[](1);
+        args.creationPairPerDetfWad[0] = creationPairPerDetfWad;
+        args.openingPairPerDetfWad = new uint256[](1);
+        args.thresholdMode = ThresholdMode.Policy;
+        args.expansionClosureRatePerYearWad = FixtureEconomics.expansionClosureRatePerYearWad();
 
+        address weth_ = RobinhoodCanonicalLib.weth();
         (address predicted, uint256 nonce) = UniswapV4DetfHookPremineLib.premineCp(
             diamondPackageFactory,
             hookFactory,
-            IUniswapV4SingleStandardExchangeDETDFPkg(chirDetfPkg),
+            IUniswapV4DetfDFPkg(chirDetfPkg),
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(bufferCpHookPkg),
             args,
             RobinhoodCanonicalLib.poolManager(),
-            indexedexManager
+            indexedexManager,
+            uniV3Se_rich,
+            weth_
         );
         vm.startBroadcast();
-        chir = IUniswapV4SingleStandardExchangeDETDFPkg(chirDetfPkg).deployVault(args, nonce);
+        vm.etch(predicted, weth_.code);
+        IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
+                poolManager: RobinhoodCanonicalLib.poolManager(),
+                feeOracle: indexedexManager,
+                standardExchange: uniV3Se_rich,
+                pairToken: weth_,
+                rawToken: predicted,
+                ownerOnlyLiquidity: true,
+                owner: predicted
+            });
+        address hook_ = CpHookFactory.deployHook(
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(bufferCpHookPkg), hArgs, nonce
+        );
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        init.deployPair(predicted, weth_);
+        require(init.finalizeInitialization(), "finalize");
+        vm.etch(predicted, "");
+        args.hook = hook_;
+        chir = IUniswapV4DetfDFPkg(chirDetfPkg).deployVault(args);
         require(chir == predicted, "detf != predicted");
         UniswapV4DetfScriptWireLib._wireCp(chir);
         // Pin vault bond terms after deploy (postDeploy fee NFT path needs global defaults already set in stage 07).
@@ -115,17 +128,17 @@ contract Script_09_DeployChirInstance is DeploymentBase {
         ) {} catch {}
         vm.stopBroadcast();
 
-        IUniswapV4SingleStandardExchangeDETF detf = IUniswapV4SingleStandardExchangeDETF(chir);
+        IUniswapV4Detf detf = IUniswapV4Detf(chir);
         require(!detf.isReserveLive(), "CHIR unexpectedly live before first bond");
-        reserveHook = detf.reserveHook();
+        reserveHook = detf.hook();
         bondNftVault = detf.bondNftVault();
         try detf.rebasingClaimToken() returns (address claim_) {
             rebasingClaim = claim_;
         } catch {
             rebasingClaim = address(0);
         }
-        creationPairPerDetfWad = detf.creationPairPerDetfWad();
-        require(creationPairPerDetfWad == FixtureEconomics.creationPairPerDetfWad(), "creation rate mismatch");
+        uint256[] memory creation_ = detf.creationPairPerDetfWad();
+        require(creation_.length > 0 && creation_[0] == FixtureEconomics.creationPairPerDetfWad(), "creation rate mismatch");
 
         vm.label(chir, "CHIR");
         if (reserveHook != address(0)) vm.label(reserveHook, "reserveHook");

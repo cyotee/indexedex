@@ -1,3 +1,7 @@
+# SUPERSEDED
+
+Family Uni V4 CP DETF diamond is deleted. Research against `UniswapV4DetfDFPkg` / `IUniswapV4Detf` and `UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`. Do not restore the family package.
+
 # Product Requirements Document (PRD)
 
 ## Title
@@ -6,7 +10,7 @@ Uniswap V4 Single Standard Exchange Constant Product DETF — Lifecycle Research
 
 ## Status
 
-**ACTIVE** — Phase 0 PRD; Phase 1 harness (D0–D1 first) (2026-08-06).
+**SUPERSEDED** — family diamond deleted (2026-08-29). Historical Phase 0 PRD only.
 
 | Field | Value |
 |-------|--------|

@@ -56,13 +56,10 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         json = vm.serializeAddress("p", "uniswapV3Factory", s.v3Factory);
         json = vm.serializeAddress("p", "uniV3SePkg", s.uniV3SePkg);
         json = vm.serializeAddress("p", "cpHookPkg", s.cpHookPkg);
-        json = vm.serializeAddress("p", "cpDetfPkg", s.cpDetfPkg);
+        json = vm.serializeAddress("p", "uniV4DetfPkg", s.uniV4DetfPkg);
         json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
-        json = vm.serializeAddress("p", "curveQuadDetfPkg", s.curveQuadDetfPkg);
         json = vm.serializeAddress("p", "orbitalHookPkg", s.orbitalHookPkg);
-        json = vm.serializeAddress("p", "orbitalDetfPkg", s.orbitalDetfPkg);
         json = vm.serializeAddress("p", "weightedHookPkg", s.weightedHookPkg);
-        json = vm.serializeAddress("p", "weightedDetfPkg", s.weightedDetfPkg);
         json = vm.serializeAddress("p", "morpho", s.morpho);
         json = vm.serializeAddress("p", "morphoBlue", s.morpho);
         json = vm.serializeAddress("p", "morphoIrm", s.morphoIrm);

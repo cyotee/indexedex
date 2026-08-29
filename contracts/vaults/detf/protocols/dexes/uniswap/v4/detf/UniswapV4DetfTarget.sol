@@ -628,11 +628,11 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon, IUniswapV4Detf, IS
         if (lpOut_ == 0) revert Repo.ZeroAmount();
         s.bondNftVault.retireMaturePosition(tokenId, recipient);
         Repo._subUserBondedLp(orig_);
-        _exitAndRejoinDetf(lpOut_, tokens_, deadline);
+        uint256[] memory withdrawn_ = _exitAndRejoinDetf(lpOut_, tokens_, deadline);
         if (custom_) {
             amountsOut = _payCustomClose(tokens_, minAmountsOut[0], recipient, deadline);
         } else {
-            amountsOut = _payDefaultClose(tokens_, minAmountsOut, recipient);
+            amountsOut = _payDefaultClose(tokens_, withdrawn_, minAmountsOut, recipient);
         }
         _returnLeftoverLp();
         _tryCompoundProtocolRewards();
@@ -657,18 +657,21 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon, IUniswapV4Detf, IS
         }
     }
 
-    function _exitAndRejoinDetf(uint256 lpOut_, address[] memory tokens_, uint256 deadline_) private {
+    function _exitAndRejoinDetf(uint256 lpOut_, address[] memory tokens_, uint256 deadline_)
+        private
+        returns (uint256[] memory withdrawn_)
+    {
         Repo.Storage storage s = Repo._layoutStruct();
         _pullNftLp(lpOut_);
         IERC20(s.hook).forceApprove(s.hook, lpOut_);
-        uint256[] memory withdrawn_ =
+        withdrawn_ =
             _hook().exitProportional(lpOut_, address(this), new uint256[](tokens_.length), deadline_);
         IERC20(s.hook).forceApprove(s.hook, 0);
         uint256 detfWithdrawn_;
         for (uint256 j; j < tokens_.length; ++j) {
             if (tokens_[j] == address(this)) detfWithdrawn_ = withdrawn_[j];
         }
-        if (detfWithdrawn_ == 0) return;
+        if (detfWithdrawn_ == 0) return withdrawn_;
         IERC20(address(this)).forceApprove(s.hook, detfWithdrawn_);
         uint256 lpRejoin_ =
             _hook().joinSingleAssetExactIn(address(this), detfWithdrawn_, _bondLpHolder(), 0, deadline_);
@@ -706,13 +709,16 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon, IUniswapV4Detf, IS
 
     function _payDefaultClose(
         address[] memory tokens_,
+        uint256[] memory withdrawn_,
         uint256[] calldata minAmountsOut_,
         address recipient_
     ) private returns (uint256[] memory amountsOut_) {
         amountsOut_ = new uint256[](tokens_.length);
-        for (uint256 m; m < tokens_.length; ++m) {
+        uint256 n_ = tokens_.length < withdrawn_.length ? tokens_.length : withdrawn_.length;
+        for (uint256 m; m < n_; ++m) {
             if (tokens_[m] == address(this)) continue;
-            uint256 pay_ = IERC20(tokens_[m]).balanceOf(address(this));
+            uint256 have_ = IERC20(tokens_[m]).balanceOf(address(this));
+            uint256 pay_ = withdrawn_[m] < have_ ? withdrawn_[m] : have_;
             if (pay_ < minAmountsOut_[m]) {
                 revert IStandardExchangeErrors.MinAmountNotMet(minAmountsOut_[m], pay_);
             }
@@ -824,6 +830,60 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon, IUniswapV4Detf, IS
     function compoundProtocolRewards() public nonReentrant returns (uint256 detfIn, uint256 lpOut) {
         _realizeExpansionIfNeeded();
         (detfIn, lpOut) = _tryCompoundProtocolRewards();
+        _syncAllExpectedHoldReserves();
+    }
+
+    /// @notice Preview DETF paid if `lpAmount` of hook LP is unwound.
+    function previewClaimLiquidity(uint256 lpAmount) public view returns (uint256 detfOut) {
+        return _previewClaimLiquidity(lpAmount);
+    }
+
+    /// @notice Bond NFT / claim token unwind: pay DETF to `recipient`.
+    /// @dev Claim-token path is family D15: harvest pending first; skip LP when pending covers owed;
+    ///      shortfall unwinds convertToAssets-scaled LP and dumps leftover pair to DETF.
+    ///      No `_requireNotDisabled` (CROPS: redeem still works). Selector matches `IDetf.claimLiquidity`.
+    function claimLiquidity(uint256 lpAmount, address recipient) public nonReentrant returns (uint256 detfOut) {
+        Repo.Storage storage s = Repo._layoutStruct();
+        address bond_ = address(s.bondNftVault);
+        address claim_ = address(s.rebasingClaimToken);
+        if (msg.sender != bond_ && msg.sender != claim_ && msg.sender != address(this)) {
+            revert Repo.NotAuthorized(msg.sender);
+        }
+        if (lpAmount == 0) revert Repo.ZeroAmount();
+        if (recipient == address(0)) recipient = msg.sender;
+        _realizeExpansionIfNeeded();
+        bool fromClaim_ = msg.sender == claim_ || msg.sender == address(this);
+        uint256 unwindLp_ = lpAmount;
+        uint256 owed_;
+        if (fromClaim_) {
+            owed_ = _claimHint();
+            if (owed_ == 0) {
+                (owed_, unwindLp_,) = _claimOwedDetf(lpAmount);
+            } else {
+                unwindLp_ = _claimUnwindLp(lpAmount);
+            }
+        }
+        uint256 detfBefore_ = IERC20(address(this)).balanceOf(address(this));
+        uint256 harvested_;
+        if (fromClaim_ && bond_ != address(0)) {
+            harvested_ = s.bondNftVault.reallocateDetfNftRewards(address(this));
+        }
+        if (fromClaim_ && _claimPayFromPending(owed_, harvested_, recipient)) {
+            return owed_;
+        }
+        if (fromClaim_ && bond_ != address(0)) {
+            _claimRemoveOrigShares(lpAmount);
+        }
+        _exitLpToDetf(unwindLp_, block.timestamp + 1);
+        if (fromClaim_) _dumpSittingPairToDetf();
+        uint256 produced_ = IERC20(address(this)).balanceOf(address(this));
+        produced_ = produced_ > detfBefore_ ? produced_ - detfBefore_ : 0;
+        detfOut = fromClaim_ ? _claimPayAmount(owed_, produced_) : produced_;
+        if (fromClaim_ && owed_ > 0 && detfOut > owed_) detfOut = owed_;
+        if (detfOut > 0) IERC20(address(this)).safeTransfer(recipient, detfOut);
+        if (produced_ > detfOut) _rejoinDetfAsProtocolLp(produced_ - detfOut);
+        _returnLeftoverLp();
+        _trySweepDust();
         _syncAllExpectedHoldReserves();
     }
 

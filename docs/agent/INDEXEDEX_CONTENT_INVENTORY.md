@@ -56,16 +56,15 @@ Cartographer (2026-08-09): IndexedEx graph ~5408 files / 7264 nodes under `.cart
 | `…/balancer/v3/stable/common/` | Composed stable common DETF | IndexedEx | — | `TestBase_ComposedStableCommonDetf*.sol` |
 | `…/balancer/v3/uniswap/v4/crossVersion/v2/` | Dual-liquidity linked cross-version | IndexedEx | `docs/detf/balancer/v3/uniswap/v4/crossVersion/v2/*` | package |
 
-## DETF — Uniswap V4 families
+## DETF — Uniswap V4 (unified)
 
 | path | purpose | owner | PRD | test root |
 |------|---------|-------|-----|-----------|
-| `…/uniswap/v4/standardExchange/constantProduct/single/` | Uni V4 Single SE CP DETF | IndexedEx | `UniswapV4SingleStandardExchangeDETF_PRD.md` | package |
-| `…/uniswap/v4/standardExchange/weighted/` | Uni V4 SE weighted DETF | IndexedEx | `UniswapV4StandardExchangeWeightedDETF_PRD.md` | package |
-| `…/uniswap/v4/standardExchange/orbital/` | Uni V4 SE orbital DETF | IndexedEx | `UniswapV4StandardExchangeOrbitalDETF_PRD.md` | package |
-| `…/uniswap/v4/common/{nft,rebasing}/` | Uni V4 DETF bond NFT + claim packages | IndexedEx | — | package |
+| `…/uniswap/v4/detf/` | Unified Uni V4 DETF DFPkg (`UniswapV4DetfDFPkg` / `IUniswapV4Detf`). One diamond; hook is CP / Orbital / Weighted / Quad | IndexedEx | `UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`; `DETF_INSTANCE_IO_ROUTING_PRD.md` §16 | `test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/` |
+| `…/uniswap/v4/bondNft/` | Uni V4 Bond NFT (R12a) | IndexedEx | I/O routing Stage 06 | package |
+| `…/uniswap/v4/standardExchange/` | Premine + staged-init libs only (not DETF diamonds) | IndexedEx | — | — |
 
-**Removed:** `…/uniswap/v4/standardExchange/single/` listing-family draft DETF (no liquidity-holding reserve).
+**Removed:** family Uni V4 DETF diamonds (`*DETF*` under `standardExchange/{constantProduct/single,orbital,weighted,stable/quad/curve}/`) and `…/uniswap/v4/common/{nft,rebasing}/`. Listing-family draft at `…/uniswap/v4/standardExchange/single/` remains deleted. Buffer hooks stay under `contracts/hooks/uniswap/v4/`.
 
 ## Hooks (Uniswap V4)
 

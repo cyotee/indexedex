@@ -46,7 +46,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](29);
+        funcs_ = new bytes4[](30);
         // ERC20 functions
         funcs_[0] = IERC20.totalSupply.selector;
         funcs_[1] = IERC20.balanceOf.selector;
@@ -79,6 +79,7 @@ contract RebasingClaimTokenFacet is RebasingClaimTokenTarget, IFacet {
         funcs_[26] = IRebasingClaimToken.transferHeldToken.selector;
         funcs_[27] = IRebasingClaimToken.updateRedemptionRate.selector;
         funcs_[28] = bytes4(keccak256("mintFromNFTSale(uint256,uint256,address)"));
+        funcs_[29] = bytes4(keccak256("pendingRedeemDetfOut()"));
     }
 
     /// @inheritdoc IFacet

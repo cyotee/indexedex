@@ -14,9 +14,9 @@ contract DetfNestedPush_ProductionPresence_Test is Test {
         paths[2] = "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/";
         paths[3] = "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/";
         paths[4] = "contracts/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/";
-        paths[5] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/";
-        paths[6] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/";
-        paths[7] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/";
+        paths[5] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/";
+        paths[6] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/";
+        paths[7] = "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/";
         paths[8] = "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/";
         paths[9] = "contracts/hooks/uniswap/v4/standardExchange/weighted/";
         paths[10] = "contracts/hooks/uniswap/v4/standardExchange/orbital/";
@@ -37,7 +37,7 @@ contract DetfNestedPush_ProductionPresence_Test is Test {
                 "_nestedExchangeInPush"
             );
             _assertFileContains(
-                "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETFCommon.sol",
+                "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
                 "_nestedExchangeInPush"
             );
             _assertFileContains(
@@ -71,16 +71,8 @@ contract DetfNestedPush_ProductionPresence_Test is Test {
             "U = B0 - R"
         );
         _assertFileContains(
-            "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETFCommon.sol",
-            "U = B0 - R"
-        );
-        _assertFileContains(
-            "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETFCommon.sol",
-            "U = B0 - R"
-        );
-        _assertFileContains(
-            "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETFCommon.sol",
-            "U = B0 - R"
+            "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+            "U = B0 > R ? B0 - R : 0"
         );
     }
 

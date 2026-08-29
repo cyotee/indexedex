@@ -12,8 +12,9 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
 import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {
@@ -27,19 +28,20 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 
 import {
-    IUniswapV4SingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeDETF.sol";
+    IUniswapV4DetfDFPkg
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {
-    UniswapV4SingleStandardExchangeDETF_Component_FactoryService as CpDetfFS
-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETF_Component_FactoryService.sol";
+    UniswapV4Detf_Facet_FactoryService
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol";
+import {
+    UniswapV4Detf_Pkg_FactoryService
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 
 /// @title Script_08_DeployFeeDetfPackage
 /// @notice Buffer CP hook DFPkg + CP fee-DETF DFPkg via manager registry only.
 contract Script_08_DeployFeeDetfPackage is DeploymentBase {
     using BetterEfficientHashLib for bytes;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
-    using CpDetfFS for ICreate3FactoryProxy;
-    using CpDetfFS for IVaultRegistryDeployment;
 
     string internal constant CRANE_FOUNDATION_FILE = "01_crane_foundation.json";
     string internal constant CORE_FILE = "02_indexedex_core.json";
@@ -104,28 +106,22 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
             );
         }
 
-        // CP DETF package via registry FactoryService
         {
-            IFacet multiAssetBasicVaultFacetDetf = create3Factory.deployMultiAssetBasicVaultFacet();
-            IFacet multiAssetStandardVaultFacetDetf = create3Factory.deployMultiAssetStandardVaultFacet();
-            IFacet exchangeInFacet = CpDetfFS.deployExchangeInFacet(create3Factory);
+            IFacet productFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(create3Factory);
             chirDetfPkg = address(
-                CpDetfFS.deployPkg(
+                UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(
                     reg,
-                    IUniswapV4SingleStandardExchangeDETDFPkg.PkgInit({
+                    IUniswapV4DetfDFPkg.PkgInit({
                         erc20Facet: erc20Facet,
                         erc5267Facet: erc5267Facet,
                         erc2612Facet: erc2612Facet,
-                        multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
-                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
-                        exchangeInFacet: exchangeInFacet,
+                        multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
+                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                        productFacet: productFacet,
                         feeOracle: feeOracle,
                         vaultRegistryDeployment: reg,
-                        poolManager: pm,
-                        hookPkg: ICpPkg(bufferCpHookPkg),
-                        bondNftVaultPkg: IDetfSelfNftInventoryDFPkg(bondNftVaultPkg),
-                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg),
-                        diamondFactory: diamondPackageFactory
+                        bondNftVaultPkg: IUniswapV4DetfBondNFTVaultDFPkg(bondNftVaultPkg),
+                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg)
                     })
                 )
             );

@@ -71,6 +71,8 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         vm.startPrank(detfUser);
         pair0.approve(detf, type(uint256).max);
         pair1.approve(detf, type(uint256).max);
+        pair0.approve(se0, type(uint256).max);
+        pair1.approve(se1, type(uint256).max);
         IERC20(se0).approve(detf, type(uint256).max);
         IERC20(se1).approve(detf, type(uint256).max);
         vm.stopPrank();
@@ -102,11 +104,12 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         );
     }
 
-    function _deployWeightedHookThenDetf(IUniswapV4Detf.PkgArgs memory args)
+    /// @dev Bind a 3-token weighted hook to `args.hook` without deploying the DETF.
+    function _deployWeightedHookForArgs(IUniswapV4Detf.PkgArgs memory args)
         internal
-        returns (address detf_)
+        returns (address predicted_)
     {
-        address predicted_ = _predictDetf(args);
+        predicted_ = _predictDetf(args);
         vm.etch(predicted_, address(pair0).code);
         address[] memory toks = new address[](3);
         toks[0] = predicted_;
@@ -145,12 +148,19 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         require(init.finalizeInitialization(), "finalize");
         vm.etch(predicted_, "");
         args.hook = reserveHook;
+        vm.label(reserveHook, "weightedReserveHook");
+    }
+
+    function _deployWeightedHookThenDetf(IUniswapV4Detf.PkgArgs memory args)
+        internal
+        returns (address detf_)
+    {
+        address predicted_ = _deployWeightedHookForArgs(args);
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
         vm.stopPrank();
         require(detf_ == predicted_, "detf != predicted");
         vm.label(detf_, args.symbol);
-        vm.label(reserveHook, "weightedReserveHook");
     }
 
     function _sortInPlace(address[] memory a) internal pure {
@@ -172,7 +182,20 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
             IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});
     }
 
-    function _firstBond(uint256 pairAmount_) internal override returns (uint256 tokenId, uint256 shares) {
+    function _fundActor(address vault_, address who, uint256 amt) internal {
+        pair0.mint(who, amt);
+        pair1.mint(who, amt);
+        vm.startPrank(who);
+        pair0.approve(vault_, type(uint256).max);
+        pair1.approve(vault_, type(uint256).max);
+        pair0.approve(se0, type(uint256).max);
+        pair1.approve(se1, type(uint256).max);
+        IERC20(se0).approve(vault_, type(uint256).max);
+        IERC20(se1).approve(vault_, type(uint256).max);
+        vm.stopPrank();
+    }
+
+    function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
         vm.startPrank(detfUser);
         (tokenId, shares) = detfInfo.bond(
             IERC20(address(pair0)),
@@ -185,7 +208,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         vm.stopPrank();
     }
 
-    function _assertNoJoinableDust() internal view override {
+    function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP");
         assertEq(IERC20(address(pair0)).balanceOf(detf), 0, "no pair0");

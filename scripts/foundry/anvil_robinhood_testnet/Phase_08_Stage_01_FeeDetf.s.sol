@@ -51,9 +51,9 @@ contract Phase_08_Stage_01_FeeDetf is LaunchStageBase {
         _requireManager(s);
         _requireCoreTokens(s);
         _requireDtfWethSe(s);
-        s.cpDetfPkg = _loadAddr(FILE_06_07, "cpDetfPkg");
+        s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
         s.cpHookPkg = _loadAddr(FILE_06_03, "cpHookPkg");
-        require(_hasCode(s.cpDetfPkg), "run Phase 06 Stage 07 first");
+        require(_hasCode(s.uniV4DetfPkg), "run Phase 06 Stage 07 first");
         require(_hasCode(s.cpHookPkg), "run Phase 06 Stage 03 first");
         s.dtfDetf = _loadAddr(FILE_08_01, "DTF-DETF");
         s.dtfClaim = _loadAddr(FILE_08_01, "DTF-CLAIM");

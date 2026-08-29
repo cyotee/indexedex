@@ -79,11 +79,37 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
 
         SeLib.warpPastPonsV1Restrictions(launchToken);
         _buyLaunchTokens(detfUser, 5 ether);
+        pairToken = SimpleMintableERC20(launchToken);
         vm.startPrank(detfUser);
         IERC20(launchToken).approve(detf, type(uint256).max);
         IERC20(launchToken).approve(se, type(uint256).max);
         IERC20(se).approve(detf, type(uint256).max);
         vm.stopPrank();
+    }
+
+    /// @dev Extra Policy deploys and `_fundToken` top-ups. Swap until `to_` holds `minBal`.
+    function _buyLaunchFor(address to_, uint256 minBal) internal {
+        IERC20 tok_ = IERC20(launchToken);
+        if (tok_.balanceOf(to_) >= minBal) return;
+        SeLib.warpPastPonsV1Restrictions(launchToken);
+        for (uint256 i; i < 16 && tok_.balanceOf(to_) < minBal; ++i) {
+            uint256 ethIn = 5 ether;
+            vm.deal(to_, to_.balance + ethIn);
+            ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+                tokenIn: address(weth),
+                tokenOut: launchToken,
+                fee: SeLib.PONS_V1_POOL_FEE,
+                recipient: to_,
+                deadline: block.timestamp + 1 hours,
+                amountIn: ethIn,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            });
+            vm.prank(to_);
+            try ponsV1.swapRouter.exactInputSingle{value: ethIn}(params) {} catch {
+                break;
+            }
+        }
     }
 
     function tryLaunchPonsV1(bytes32 saltStart) external returns (address token) {
@@ -167,8 +193,10 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
         revert("no mintToken");
     }
 
-    function _firstBond(uint256 pairAmount_) internal override returns (uint256 tokenId, uint256 shares) {
+    function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
+        _buyLaunchFor(detfUser, pairAmount_);
         vm.startPrank(detfUser);
+        IERC20(mintToken).approve(detf, type(uint256).max);
         (tokenId, shares) = detfInfo.bond(
             IERC20(mintToken), pairAmount_, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
         );
@@ -232,7 +260,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
         }
     }
 
-    function _assertNoJoinableDust() internal view override {
+    function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
         assertEq(IERC20(mintToken).balanceOf(detf), 0, "no mintToken on diamond");
