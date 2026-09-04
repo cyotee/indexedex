@@ -21,6 +21,21 @@ test.describe('App routes & redirects (DTF)', () => {
     )
   })
 
+  test('landing shows temporary $DTF staking overlay', async ({ walletPage }) => {
+    await walletPage.goto('/')
+    const overlay = walletPage.getByTestId('token-staking-overlay')
+    await expect(overlay).toBeVisible()
+    await expect(overlay.getByRole('heading', { name: 'Stake $DTF' })).toBeVisible()
+    await expect(
+      overlay.getByTestId('token-staking-connect').or(overlay.locator('.dtf-landing__stake-connected')),
+    ).toBeVisible()
+    await expect(overlay.getByText('Reward reserve')).toBeVisible()
+    await expect(overlay.getByText('Your stake', { exact: true })).toBeVisible()
+    await expect(overlay.getByText('$DTF rewards')).toBeVisible()
+    await expect(overlay.getByText('Migration')).toBeVisible()
+    await expect(overlay.getByText('Claim after wrap')).toBeVisible()
+  })
+
   test('/protocol shows fee oracle owner', async ({ walletPage }) => {
     await walletPage.goto('/protocol')
     await expect(walletPage.getByRole('heading', { name: 'Protocol fees' })).toBeVisible()

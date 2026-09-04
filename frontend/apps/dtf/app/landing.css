@@ -478,6 +478,96 @@ html:has(.dtf-landing) body::after {
   z-index: 1;
 }
 
+.dtf-landing > .dtf-landing__stake-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.dtf-landing__stake-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 12, 29, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.dtf-landing__stake-panel {
+  position: relative;
+  width: min(28rem, 100%);
+  max-height: min(92vh, 44rem);
+  overflow: auto;
+  border-radius: 1.15rem;
+  padding: 1.35rem 1.25rem 1.25rem;
+  background: color-mix(in srgb, var(--surface-1, #12182a) 92%, #050c1d);
+  border: 1px solid color-mix(in srgb, var(--accent, #8cd6c5) 28%, transparent);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.dtf-landing__stake-panel h2 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.dtf-landing__stake-lede,
+.dtf-landing__stake-note,
+.dtf-landing__stake-error {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--text-primary, #e8eef4) 78%, transparent);
+}
+
+.dtf-landing__stake-error {
+  color: var(--danger, #e6386a);
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.dtf-landing__stake-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1rem;
+  margin: 0 0 1.15rem;
+}
+
+.dtf-landing__stake-wallet {
+  margin: 0 0 1rem;
+}
+
+.dtf-landing__stake-connected {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--text-primary, #e8eef4) 78%, transparent);
+}
+
+.dtf-landing__stake-cta {
+  width: 100%;
+  margin-top: 0.85rem;
+}
+
+.dtf-landing__stake-wallet .dtf-landing__stake-cta {
+  margin-top: 0;
+}
+
+.dtf-landing__stake-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .dtf-landing__stake-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dtf-landing__nav {
   display: flex;
   align-items: center;

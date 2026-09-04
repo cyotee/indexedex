@@ -25,6 +25,7 @@
   "rpcUrl": "https://rpc.mainnet.chain.robinhood.com",
   "twapAdapterFactory": "0x90916b9EB39C4B7070aFC3065F3BfD492fa6dBac",
   "twapOracle": "0xe473a78C654EDb7564B8f6393745d2bc6ABd8FA7",
+  "tokenStaking": "0xE4c9Ff4Cfd17AE73ECb3825ebDf7db113C146d00",
   "twapOraclePkg": "0x41e873c6432189B6363dE94DE68bbEB5e6451Caa",
   "uiWallet": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
   "uniV4SePkg": "0x72b0243E3806eab5E30412cc93682f98f0d20eaE",
