@@ -48,6 +48,16 @@ export function parseContractError(err: unknown): string {
   const blob = `${raw} ${extractDataBlob(err)}`
   const lower = blob.toLowerCase()
 
+  if (
+    /provider not found/i.test(lower) ||
+    (typeof err === 'object' &&
+      err != null &&
+      'name' in err &&
+      (err as { name?: string }).name === 'ProviderNotFoundError')
+  ) {
+    return 'No browser wallet found. Unlock MetaMask or another injected wallet, then try again.'
+  }
+
   // EIP-1193 user rejection
   if (
     code === 4001 ||

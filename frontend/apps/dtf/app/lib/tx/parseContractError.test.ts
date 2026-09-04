@@ -2,6 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { parseContractError } from './parseContractError'
 
 describe('parseContractError', () => {
+  it('maps Provider not found', () => {
+    const err = new Error('Provider not found.')
+    err.name = 'ProviderNotFoundError'
+    expect(parseContractError(err)).toMatch(/No browser wallet found/)
+  })
+
   it('maps user rejection (code 4001)', () => {
     expect(parseContractError({ code: 4001, message: 'User rejected the request' })).toBe(
       'Transaction rejected in wallet',

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { erc20Abi, type PublicClient } from 'viem'
 import {
   useAccount,
@@ -18,7 +18,7 @@ import { Button } from '../ui/Button'
 import { Stat } from '../ui/Stat'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { resolveWalletGate, type PendingLeg } from '../../lib/tx/actionState'
-import { ActionCta } from '../ui/ActionCta'
+import { resolveWalletProvider, waitForCreateReceipt } from '../../create/lib/seTx'
 import { TOKEN_STAKING_PHASE, tokenStakingAbi } from '../../lib/tokenStaking/abi'
 import {
   claimAfterWrapDisplay,
@@ -26,6 +26,7 @@ import {
   migrationLabel,
 } from '../../lib/tokenStaking/display'
 import { DTF_TOKEN, resolveTokenStakingAddress } from '../../lib/tokenStaking/resolveAddress'
+import { connectInjectedWallet } from '../../lib/wallet/connectInjected'
 
 const DECIMALS = 18
 
@@ -113,11 +114,18 @@ export function TokenStakingOverlay() {
   const [amount, setAmount] = useState('')
   const [status, setStatus] = useState('')
   const [pendingLeg, setPendingLeg] = useState<PendingLeg>(null)
+  /** Last on-receipt allowance so Approve does not stick while the read refetches. */
+  const [receiptAllowance, setReceiptAllowance] = useState(0n)
+
+  useEffect(() => {
+    setReceiptAllowance(0n)
+  }, [address])
 
   const parsedAmount = useMemo(() => parseAmountFieldValue(amount, DECIMALS), [amount])
   const amountValid = parsedAmount != null && parsedAmount > 0n
-  const needsApproval =
-    canStake && amountValid && parsedAmount != null && (allowance == null || allowance < parsedAmount)
+  const knownAllowance =
+    allowance != null && allowance > receiptAllowance ? allowance : receiptAllowance
+  const needsApproval = canStake && amountValid && parsedAmount != null && knownAllowance < parsedAmount
   const isWrongNetwork = isConnected && walletChainId !== CHAIN_ID_ROBINHOOD
 
   const gate = resolveWalletGate({
@@ -128,7 +136,7 @@ export function TokenStakingOverlay() {
     needsTokenApproval: canStake && needsApproval,
     needsPermit2Approval: false,
     signedMode: true,
-    executeLabel: 'Stake $DTF',
+    executeLabel: 'Stake',
   })
 
   const refetchAll = useCallback(async () => {
@@ -144,32 +152,25 @@ export function TokenStakingOverlay() {
 
   const waitTx = useCallback(
     async (hash: `0x${string}`) => {
-      if (!publicClient) return
-      await publicClient.waitForTransactionReceipt({ hash })
+      const walletProvider = await resolveWalletProvider()
+      await waitForCreateReceipt({
+        hash,
+        readClient: publicClient ?? null,
+        walletProvider,
+        timeoutMs: 90_000,
+      })
     },
     [publicClient],
   )
 
-  const walletConnector = useMemo(() => {
-    return (
-      connectors.find((c) => c.id === 'metaMask' || c.name.toLowerCase().includes('metamask'))
-      ?? connectors.find((c) => c.id === 'injected')
-      ?? connectors[0]
-    )
-  }, [connectors])
-
   const handleConnect = useCallback(async () => {
-    if (!walletConnector) {
-      setStatus('No browser wallet found.')
-      return
-    }
     setStatus('')
     try {
-      await connectAsync({ connector: walletConnector })
+      await connectInjectedWallet({ connectAsync, connectors })
     } catch (e) {
       setStatus(parseContractError(e))
     }
-  }, [connectAsync, walletConnector])
+  }, [connectAsync, connectors])
 
   const handleSwitch = useCallback(async () => {
     try {
@@ -192,15 +193,12 @@ export function TokenStakingOverlay() {
         args: [stakingAddress, parsedAmount],
         chainId: CHAIN_ID_ROBINHOOD,
       })
-      try {
-        await waitTx(hash)
-      } catch {
-        /* Receipt wait can fail on sparse-fork RPCs after inclusion. */
-      }
+      await waitTx(hash)
+      setReceiptAllowance(parsedAmount)
       try {
         await refetchAllowance()
       } catch {
-        /* Allowance reads can miss untouched mapping slots on RH Anvil forks. */
+        /* Receipt already landed; the button can move to Stake. */
       }
     } catch (e) {
       setStatus(parseContractError(e))
@@ -210,7 +208,7 @@ export function TokenStakingOverlay() {
   }, [parsedAmount, refetchAllowance, stakingAddress, waitTx, writeContractAsync])
 
   const handleStake = useCallback(async () => {
-    if (!stakingAddress || !parsedAmount || !publicClient) return
+    if (!stakingAddress || !parsedAmount) return
     setPendingLeg('execute')
     setStatus('')
     try {
@@ -221,23 +219,20 @@ export function TokenStakingOverlay() {
         args: [parsedAmount],
         chainId: CHAIN_ID_ROBINHOOD,
       })
-      try {
-        await waitTx(hash)
-      } catch {
-        /* Receipt wait can fail on sparse-fork RPCs after inclusion. */
-      }
-      setAmount('')
+      await waitTx(hash)
       try {
         await refetchAll()
       } catch {
-        /* Post-tx reads must not look like a failed stake. */
+        /* Stats retry on the next read; do not hide a confirmed stake. */
       }
+      setReceiptAllowance(0n)
+      setAmount('')
     } catch (e) {
       setStatus(parseContractError(e))
     } finally {
       setPendingLeg(null)
     }
-  }, [parsedAmount, publicClient, refetchAll, stakingAddress, waitTx, writeContractAsync])
+  }, [parsedAmount, refetchAll, stakingAddress, waitTx, writeContractAsync])
 
   const handleGetReward = useCallback(async () => {
     if (!stakingAddress) return
@@ -376,20 +371,32 @@ export function TokenStakingOverlay() {
               balance={typeof dtfBal === 'bigint' ? dtfBal : undefined}
               data-testid="token-staking-amount"
             />
-            <ActionCta
-              gate={
-                gate.kind === 'approve'
-                  ? { kind: 'approve', leg: 'token-permit2', label: 'Approve $DTF' }
-                  : gate
-              }
-              pendingLeg={ctaPending}
-              onConnect={handleConnect}
-              onSwitchNetwork={handleSwitch}
-              onApproveTokenPermit2={handleApprove}
-              onExecute={handleStake}
+            <Button
               className="dtf-landing__stake-cta"
               data-testid="token-staking-cta"
-            />
+              data-gate={gate.kind}
+              loading={
+                ctaPending === 'approve-token-permit2' || ctaPending === 'execute'
+              }
+              disabled={
+                gate.kind === 'disabled' ||
+                (ctaPending != null &&
+                  ctaPending !== 'approve-token-permit2' &&
+                  ctaPending !== 'execute')
+              }
+              onClick={() => {
+                if (gate.kind === 'approve') handleApprove()
+                else if (gate.kind === 'execute') handleStake()
+              }}
+            >
+              {ctaPending === 'approve-token-permit2'
+                ? 'Approving'
+                : ctaPending === 'execute'
+                  ? 'Staking'
+                  : gate.kind === 'approve'
+                    ? 'Approve'
+                    : 'Stake'}
+            </Button>
             <div className="dtf-landing__stake-secondary">
               {earned != null && earned > 0n ? (
                 <Button variant="secondary" size="sm" onClick={handleGetReward}>
