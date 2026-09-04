@@ -11,6 +11,16 @@ export const WETH9_DEPOSIT_ABI = [
   },
 ] as const
 
+export const WETH9_WITHDRAW_ABI = [
+  {
+    type: 'function',
+    name: 'withdraw',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'wad', type: 'uint256' }],
+    outputs: [],
+  },
+] as const
+
 /** Generic writeContract params collapse payable `value` to never. Use this for wrap. */
 export type EthWrapWrite = {
   address: `0x${string}`
