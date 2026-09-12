@@ -1,33 +1,32 @@
 # IndexedEx frontend
 
-The only Next app is **DTF** (`frontend/apps/dtf`). Do not recreate `apps/indexedex` or `apps/pachira`.
+Two Next.js deployments share one application source in this npm workspace.
 
-npm workspaces under `frontend/`:
-
-| Path | Package | Role |
-|------|---------|------|
-| `apps/dtf` | `@indexedex/app-dtf` | Down To Finance: https://downto.finance (app: https://app.downto.finance, project `dtfinance`) |
-| `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains, registry, swap helpers |
+| Path | Package | Role | Local URL |
+|------|---------|------|-----------|
+| `apps/indexedex` | `@indexedex/app-indexedex` | Main application at indexedex.com | http://localhost:3002 |
+| `apps/dtf` | `@indexedex/app-dtf` | Full application with a closable domain/X announcement | http://localhost:3003 |
+| `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains and helpers | — |
 
 ## Local development
 
 ```bash
 cd frontend
 npm install
-npm run dev          # DTF — http://localhost:3002
-npm run build
-npm test             # DTF unit tests
-npm run test:e2e     # Playwright — DTF
+npm run dev           # IndexedEx
+npm run dev:dtf       # DTF notice, in another terminal
+npm run build         # Both apps
+npm test              # Main app unit tests
+npm run test:e2e       # Main app Playwright tests
+npm run test:e2e:dtf   # Announcement navigation checks
 ```
 
-App details: [apps/dtf/README.md](./apps/dtf/README.md). Product roadmap: [ROADMAP.md](./ROADMAP.md).
+App details: [IndexedEx](apps/indexedex/README.md), [DTF notice](apps/dtf/README.md).
+Product roadmap: [ROADMAP.md](ROADMAP.md). Vercel configuration and rollout: [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md).
 
-**Vercel Root Directory:** project `dtfinance` → `frontend/apps/dtf`.
-
-Ignore build: `bash ../../scripts/vercel-ignore-build.sh dtf` (skips when neither the DTF app nor `packages/protocol` / workspace root changed).
+The token-list guidance below applies to both deployments. Product source is maintained in `apps/indexedex`; DTF links to that source and adds its landing notice.
 
 ---
-
 
 ## How Token Lists reach the UI
 
@@ -105,7 +104,7 @@ Base Sepolia under `supersim_sepolia`). Only edit this if your new chain
 needs the same kind of indirection — e.g. a local fork that should be served
 artifacts from a different canonical chain id.
 
-### 5. Wire the chain into the Wagmi config in `apps/dtf/app/providers.tsx`
+### 5. Wire the chain into the Wagmi config in `apps/indexedex/app/providers.tsx`
 
 - Import the chain from `wagmi/chains` (or `defineChain` if it's not built-in).
 - Add it to the `chains: [...]` array passed to `createConfig`.
@@ -240,15 +239,4 @@ cd frontend && npm run typecheck
 
 ## Vercel (production)
 
-One site: **DTF**.
-
-| Setting | Value |
-|--------|--------|
-| Project | `dtfinance` |
-| Public URL | https://downto.finance (app: https://app.downto.finance) |
-| Git repo | `cyotee/indexedex` |
-| Root Directory | `frontend/apps/dtf` |
-| Framework | Next.js |
-| Ignored Build Step | `bash ../../scripts/vercel-ignore-build.sh dtf` |
-
-Config: `frontend/apps/dtf/vercel.json`. Details: [apps/dtf/README.md](./apps/dtf/README.md).
+See [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md) for the separate project roots and build commands.

@@ -7,13 +7,13 @@
 | **Product / architecture SoT** | [FRONTEND_REDESIGN_DESIGN.md](./FRONTEND_REDESIGN_DESIGN.md) (**rev 9**) |
 | **Wave 2 design SoT** | [WAVE2_FEE_DETF_DESIGN.md](./WAVE2_FEE_DETF_DESIGN.md) (**rev 2** — implemented) |
 | **Narrative spine** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) |
-| **Working directory** | `frontend/apps/dtf` (the only Next app) |
-| **Workspace root** | `frontend/` (`packages/protocol` + DTF) |
-| **Wallet connection** | RainbowKit 2 / Wagmi 2; [configuration and verification](apps/dtf/WALLET_CONNECTION.md) |
+| **Working directory** | `frontend/apps/indexedex` (main app); `frontend/apps/dtf` (same app with a landing notice) |
+| **Workspace root** | `frontend/` (`packages/protocol` + IndexedEx + DTF) |
+| **Wallet connection** | RainbowKit 2 / Wagmi 2; [configuration and verification](apps/indexedex/WALLET_CONNECTION.md) |
 
-**Cold-start rule:** Open **this file first** for frontend product work, then edit **`frontend/apps/dtf`**. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated). Do not recreate `apps/indexedex` or `apps/pachira`.
+**Cold-start rule:** Open **this file first** for frontend product work, then edit **`frontend/apps/indexedex`** for product work. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated). DTF shares the full IndexedEx app through relative source symlinks and adds a closable domain announcement. Edit product pages in `apps/indexedex` to update both deployments.
 
-The old multi-site PRD ([MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md)) is **historical**. DTF is the only remaining app.
+The old multi-site PRD ([MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md)) is **historical**. Owner decision (2026-09-12): maintain two apps. IndexedEx is the main app at `indexedex.com`; DTF serves the same application with a closable landing overlay announcing the new domain and @Indexedex on X. Both domains remain supported for the foreseeable future; no automatic or domain-level redirect. See [site deployment settings](SITE_DEPLOYMENT.md).
 
 ---
 
@@ -31,7 +31,7 @@ The old multi-site PRD ([MULTI_APP_MONOREPO_PRD.md](./MULTI_APP_MONOREPO_PRD.md)
 
 **Historical note:** Wave 1.5 once exercised a live Anvil stack; that work is **done**. Do **not** re-run deploys to “complete” residual QA.
 
-**Dev tip:** from `frontend/`, `npm run dev` starts DTF on **port 3002**.
+**Dev tip:** from `frontend/`, `npm run dev` starts IndexedEx on **port 3002**; `npm run dev:dtf` starts DTF with its landing notice on **port 3003**.
 
 ---
 

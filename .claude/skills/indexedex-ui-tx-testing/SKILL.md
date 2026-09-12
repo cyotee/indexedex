@@ -20,14 +20,14 @@ Prove the **Next app builds and submits correct txs** by driving the real UI wit
 
 | Item | Value |
 |------|--------|
-| App | `frontend/apps/dtf` (`@indexedex/app-dtf`) |
+| App | `frontend/apps/indexedex` (`@indexedex/app-indexedex`) |
 | Port | **3002** |
 | Chain id | **4663** |
 | RPC | `http://127.0.0.1:8545` |
 | Wallet | Anvil **#0** (e2e inject); scripts fund **#1** as human UI wallet |
 | Artifacts | `frontend/packages/protocol/src/addresses/chain/4663/` |
 
-Do not look for `frontend/apps/indexedex`. That app was removed. DTF is the only Next app.
+The canonical source is `frontend/apps/indexedex`. DTF shares that source and adds a domain notice before the temporary staking overlay.
 
 ## Quick start
 
@@ -43,21 +43,21 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must be 4663
 # 1) Frontend
 cd frontend
 npm install
-npm run build -w @indexedex/app-dtf
-npm run test:e2e:install -w @indexedex/app-dtf
+npm run build -w @indexedex/app-indexedex
+npm run test:e2e:install -w @indexedex/app-indexedex
 
 # 2) Shell + IA (no live txs required)
-npm run test:e2e -w @indexedex/app-dtf
+npm run test:e2e -w @indexedex/app-indexedex
 
 # 3) Live money paths (bond / deposit when stack allows)
-npm run test:e2e:live -w @indexedex/app-dtf
+npm run test:e2e:live -w @indexedex/app-indexedex
 ```
 
 Reuse a running DTF dev server:
 
 ```bash
 npm run dev:dtf
-E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
+E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-indexedex
 ```
 
 ## Navigation (read on demand)
@@ -84,10 +84,10 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
 
 | Path | Role |
 |------|------|
-| `frontend/apps/dtf/e2e/` | DTF Playwright suite (RH default) |
-| `frontend/apps/dtf/e2e/staking-bond-live.spec.ts` | Bond WETH via `/staking` |
-| `frontend/apps/dtf/e2e/swap-routes-live.spec.ts` | Live swap/deposit when stack supports |
-| `frontend/apps/dtf/playwright.config.ts` | Port 3002 + RH env |
+| `frontend/apps/indexedex/e2e/` | DTF Playwright suite (RH default) |
+| `frontend/apps/indexedex/e2e/staking-bond-live.spec.ts` | Bond WETH via `/staking` |
+| `frontend/apps/indexedex/e2e/swap-routes-live.spec.ts` | Live swap/deposit when stack supports |
+| `frontend/apps/indexedex/playwright.config.ts` | Port 3002 + RH env |
 | `frontend/packages/protocol/` | Shared addresses / tokenlists |
 | `frontend/packages/protocol/src/addresses/chain/4663/` | RH artifacts |
 

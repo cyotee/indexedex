@@ -36,6 +36,7 @@ next-env.d.ts
 
 # Multi-app monorepo
 apps/*/.next/
+apps/*/.next-dtf/
 apps/*/playwright-report/
 apps/*/test-results/
 

@@ -1,15 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  transpilePackages: ['@indexedex/protocol'],
-  webpack: (config) => {
-    // Wallet connectors need the SDK's browser entry during SSR as well.
-    // Its Node entry imports CDP server payments and optional x402 peers.
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@base-org/account$': require.resolve('@base-org/account/browser'),
-    }
-    return config
-  },
-}
+const sharedConfig = require('../indexedex/next.config')
 
-module.exports = nextConfig
+module.exports = {
+  ...sharedConfig,
+  env: { ...sharedConfig.env, NEXT_PUBLIC_SITE_DEPLOYMENT: 'dtf' },
+}
