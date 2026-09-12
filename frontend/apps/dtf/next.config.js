@@ -1,20 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  transpilePackages: ['@indexedex/protocol'],
-  webpack: (config) => {
-    config.resolve = config.resolve || {}
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      '@base-org/account': false,
-      '@coinbase/wallet-sdk': false,
-      '@gemini-wallet/core': false,
-      '@metamask/sdk': false,
-      '@safe-global/safe-apps-provider': false,
-      '@safe-global/safe-apps-sdk': false,
-      '@walletconnect/ethereum-provider': false,
-    }
-    return config
-  },
-}
+const sharedConfig = require('../indexedex/next.config')
 
-module.exports = nextConfig
+module.exports = {
+  ...sharedConfig,
+  env: { ...sharedConfig.env, NEXT_PUBLIC_SITE_DEPLOYMENT: 'dtf' },
+}

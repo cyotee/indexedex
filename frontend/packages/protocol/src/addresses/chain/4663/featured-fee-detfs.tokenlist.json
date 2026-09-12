@@ -1,1 +1,26 @@
-{"name":"IndexedEx Robinhood Featured Fee DETFs","timestamp":"0","version":{"major":1,"minor":0,"patch":0},"keywords":["indexedex","4663"],"tokens":[]}
+{
+  "name": "IndexedEx Robinhood Featured Fee DETFs",
+  "timestamp": "2026-09-11T00:00:00Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 1
+  },
+  "keywords": [
+    "indexedex",
+    "4663"
+  ],
+  "tokens": [
+    {
+      "chainId": 4663,
+      "address": "0x8ff37779B8Fe866470aEcf64910F4Bf899d73705",
+      "name": "DTF-DETF",
+      "symbol": "DTF-DETF",
+      "decimals": 9,
+      "tags": [
+        "protocol-detf",
+        "fee-detf"
+      ]
+    }
+  ]
+}

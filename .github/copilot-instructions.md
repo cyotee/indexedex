@@ -124,3 +124,5 @@ forge script scripts/foundry/Script_Crane.s.sol --rpc-url http://127.0.0.1:8545 
 Keep this file short and update when tooling or layout changes. Primary references: `indexedex/README.md`, `foundry.toml`, `remappings.txt`, `test/foundry/`, `scripts/foundry/`.
 
 ````
+
+- The main frontend app is `frontend/apps/indexedex`; `frontend/apps/dtf` shares that source and adds a landing notice; use `frontend/ROADMAP.md`.

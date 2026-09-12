@@ -1,37 +1,35 @@
 #!/usr/bin/env bash
-# Vercel "Ignored Build Step" for the DTF frontend app.
+# Vercel "Ignored Build Step" for the IndexedEx and DTF frontend apps.
 #
-# Usage: bash scripts/vercel-ignore-build.sh [dtf]
+# Usage: bash scripts/vercel-ignore-build.sh [indexedex|dtf]
 # Exit 0 → skip deploy; Exit 1 → build.
 #
 # Rebuild when this app, packages/protocol, or shared workspace root files change.
-# The only Next app is DTF (`frontend/apps/dtf`).
+# Both deployments share the main app; DTF adds a landing announcement.
 
 set -u
 
-APP_NAME="${1:-dtf}"
-if [[ "$APP_NAME" != "dtf" ]]; then
-  echo "vercel-ignore: unknown app '${APP_NAME}' — only dtf remains; building dtf"
-  APP_NAME=dtf
+APP_NAME="${1:-indexedex}"
+if [[ "$APP_NAME" != "dtf" && "$APP_NAME" != "indexedex" ]]; then
+  echo "vercel-ignore: unknown app '${APP_NAME}' — build"
+  exit 1
 fi
+
+# Anchor scopes to the git root even when Vercel runs this inside an app.
+REPO_ROOT="$(git rev-parse --show-toplevel)" || exit 1
+cd "$REPO_ROOT" || exit 1
 
 # Paths relative to monorepo git root (when Root Directory is frontend/apps/<app>,
 # git still sees the full repo if project is monorepo-linked).
 SCOPES=(
   "frontend/apps/${APP_NAME}"
-  "frontend/packages/protocol"
   "frontend/package.json"
   "frontend/package-lock.json"
+  "frontend/patches"
+  "frontend/scripts/vercel-ignore-build.sh"
+  "scripts/shell/vercel-ignore-frontend.sh"
 )
-
-# When cwd is already frontend/ (or app dir), also check relative scopes.
-REL_SCOPES=(
-  "apps/${APP_NAME}"
-  "packages/protocol"
-  "package.json"
-  "package-lock.json"
-  "."
-)
+SCOPES+=("frontend/apps/indexedex" "frontend/packages/protocol")
 
 has_commit() {
   git rev-parse -q --verify "${1}^{commit}" >/dev/null 2>&1
@@ -40,7 +38,7 @@ has_commit() {
 diff_touches() {
   local base="$1"
   local path
-  for path in "${SCOPES[@]}" "${REL_SCOPES[@]}"; do
+  for path in "${SCOPES[@]}"; do
     if [[ -e "$path" ]] || git cat-file -e "${base}:${path}" 2>/dev/null; then
       if ! git diff --quiet "$base" HEAD -- "$path" 2>/dev/null; then
         return 0

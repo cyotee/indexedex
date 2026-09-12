@@ -1,0 +1,26 @@
+diff --git a/node_modules/@rainbow-me/rainbowkit/dist/index.js b/node_modules/@rainbow-me/rainbowkit/dist/index.js
+--- a/node_modules/@rainbow-me/rainbowkit/dist/index.js
++++ b/node_modules/@rainbow-me/rainbowkit/dist/index.js
+@@ -2020,7 +2020,9 @@
+     ...connector.rkDetails || {}
+   }));
+   async function connectWallet(connector, parameters) {
+-    const walletChainId = await connector.getChainId();
++    // An explicit destination does not need a pre-connection network lookup.
++    // Some extensions cannot answer eth_chainId until account access is granted.
++    const walletChainId = parameters?.chainId ?? intialChainId ?? await connector.getChainId();
+     const result = await connectAsync({
+       ...parameters,
+       chainId: parameters?.chainId ?? // The goal here is to ensure users are always on a supported chain when connecting.
+@@ -5499,9 +5501,8 @@
+   let headerLabel = null;
+   let headerBackButtonLink = null;
+   let headerBackButtonCallback;
+-  useEffect15(() => {
+-    setConnectionError(false);
+-  }, [walletStep, selectedWallet]);
++  // Reset errors in connectToWallet, not on the delayed screen transition:
++  // an immediate rejection can arrive before selectedWallet is set.
+   const hasExtension = !!selectedWallet?.extensionDownloadUrl;
+   const hasExtensionAndMobile = !!(hasExtension && selectedWallet?.mobileDownloadUrl);
+   switch (walletStep) {
